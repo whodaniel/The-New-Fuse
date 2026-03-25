@@ -57,9 +57,9 @@ interface JWTPayload {
 - WebAuthn support for hardware keys
 
 **Implementation Components:**
-- [Email Verification](../../src/components/auth/EmailVerification.tsx)
-- [Two Factor Authentication](../../src/components/auth/TwoFactorAuth.tsx)
-- [Security Compliance Workflow](../../apps/web/src/components/workflow/examples/SecurityComplianceWorkflow.tsx)
+- [Email Verification](../security/AUTHENTICATION_SECURITY_FIX.md)
+- [Two Factor Authentication](../security/AUTHENTICATION_SECURITY_FIX.md)
+- [Security Compliance Workflow](../security/SECURITY_IMPLEMENTATION.md)
 
 #### Single Sign-On (SSO)
 ```typescript
@@ -595,18 +595,18 @@ interface SecuritySettings {
 
 ## API Reference
 
-For detailed API reference, please see the [Security API Reference](./security/API_REFERENCE.md) document.
+For detailed API reference, please see the [Security API Reference](../security/README.md) document.
 
 ## Use Cases and Examples
 
 For specific use cases and implementation examples, please refer to:
-- [Security Use Cases](./security/USE_CASES.md)
-- [Security Examples](./security/EXAMPLES.md)
-- [Specific Security Scenarios](./security/SPECIFIC_SCENARIOS.md)
+- [Security Use Cases](../security/SECURITY_BEST_PRACTICES.md)
+- [Security Examples](../security/SECURITY_IMPLEMENTATION.md)
+- [Specific Security Scenarios](../security/INCIDENT_RESPONSE_PLAN.md)
 
 ## Advanced Topics
 
-For advanced security topics and implementations, please see the [Advanced Security Topics](./security/ADVANCED_TOPICS.md) document.
+For advanced security topics and implementations, please see the [Advanced Security Topics](../security/SECURITY_IMPROVEMENTS.md) document.
 
 ## Compliance
 

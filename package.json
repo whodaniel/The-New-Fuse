@@ -98,6 +98,7 @@
     "agents:registry:build": "node scripts/agent-registry/build-agent-registry.mjs",
     "agents:registry:check": "node scripts/agent-registry/check-agent-registry.mjs",
     "agents:registry:import": "node scripts/agent-registry/import-agent-registry-snapshot.mjs",
+    "agents:registry:refresh-hybrid": "node scripts/agent-registry/refresh-hybrid-registry.mjs",
     "agents:registry:railway": "bash scripts/agent-registry/railway-auto-import.sh",
     "notebooklm:export": "node scripts/notebooklm/export-notebooks.mjs",
     "tnf:mcp:generate": "node scripts/tnf-generate-mcp-clients.cjs",

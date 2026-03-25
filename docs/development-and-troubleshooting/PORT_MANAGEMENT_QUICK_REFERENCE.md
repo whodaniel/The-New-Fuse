@@ -189,7 +189,7 @@ ls -la .port-management-backups/
 
 - [Full Port Management Documentation](docs/PORT_MANAGEMENT.md)
 - [Technical Architecture](docs/PORT_MANAGEMENT_ARCHITECTURE.md)
-- [CLI Help](run: `tnf-ports --help`)
+- CLI Help: `tnf-ports --help`
 - [Development Guide](README.md)
 
 ---

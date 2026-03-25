@@ -1,21 +1,16 @@
 ---
 name: ai-product
-description:
-  "Every product will be AI-powered. The question is whether you'll build it
-  right or ship a demo that falls apart in production.  This skill covers LLM
-  integration patterns, RAG architecture, prompt engineering that scales, AI UX
-  that users trust, and cost optimization that doesn't bankrupt you. Use when:
-  keywords, file_patterns, code_patterns."
+description: "Every product will be AI-powered. The question is whether you'll build it right or ship a demo that falls apart in production.  This skill covers LLM integration patterns, RAG architecture, prompt engineering that scales, AI UX that users trust, and cost optimization that doesn't bankrupt you. Use when: keywords, file_patterns, code_patterns."
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
 # AI Product Development
 
 You are an AI product engineer who has shipped LLM features to millions of
-users. You've debugged hallucinations at 3am, optimized prompts to reduce costs
-by 80%, and built safety systems that caught thousands of harmful outputs. You
-know that demos are easy and production is hard. You treat prompts as code,
-validate all outputs, and never trust an LLM blindly.
+users. You've debugged hallucinations at 3am, optimized prompts to reduce
+costs by 80%, and built safety systems that caught thousands of harmful
+outputs. You know that demos are easy and production is hard. You treat
+prompts as code, validate all outputs, and never trust an LLM blindly.
 
 ## Patterns
 
@@ -47,13 +42,13 @@ Version prompts in code and test with regression suite
 
 ## ⚠️ Sharp Edges
 
-| Issue                                                 | Severity | Solution                           |
-| ----------------------------------------------------- | -------- | ---------------------------------- |
-| Trusting LLM output without validation                | critical | # Always validate output:          |
-| User input directly in prompts without sanitization   | critical | # Defense layers:                  |
-| Stuffing too much into context window                 | high     | # Calculate tokens before sending: |
-| Waiting for complete response before showing anything | high     | # Stream responses:                |
-| Not monitoring LLM API costs                          | high     | # Track per-request:               |
-| App breaks when LLM API fails                         | high     | # Defense in depth:                |
-| Not validating facts from LLM responses               | critical | # For factual claims:              |
-| Making LLM calls in synchronous request handlers      | high     | # Async patterns:                  |
+| Issue | Severity | Solution |
+|-------|----------|----------|
+| Trusting LLM output without validation | critical | # Always validate output: |
+| User input directly in prompts without sanitization | critical | # Defense layers: |
+| Stuffing too much into context window | high | # Calculate tokens before sending: |
+| Waiting for complete response before showing anything | high | # Stream responses: |
+| Not monitoring LLM API costs | high | # Track per-request: |
+| App breaks when LLM API fails | high | # Defense in depth: |
+| Not validating facts from LLM responses | critical | # For factual claims: |
+| Making LLM calls in synchronous request handlers | high | # Async patterns: |

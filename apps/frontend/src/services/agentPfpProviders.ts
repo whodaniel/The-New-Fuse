@@ -1,3 +1,5 @@
+import { apiService } from './api';
+
 export interface PfpProviderModelOption {
   id: string;
   label: string;
@@ -64,8 +66,27 @@ export interface GeneratePfpInput {
   signal?: AbortSignal;
 }
 
+interface BackendGenerateResponse {
+  imageDataUrl?: string;
+  mimeType?: string;
+}
+
 function normalizePrompt(prompt: string): string {
   return prompt.trim().replace(/\s+/g, ' ');
+}
+
+function canFallbackToDirect(input: GeneratePfpInput): boolean {
+  if (input.providerId === 'imfinit' || input.providerId === 'pollinations') return true;
+  if (input.providerId === 'custom') return true;
+  return Boolean(input.apiKey?.trim());
+}
+
+async function dataUrlToBlob(dataUrl: string): Promise<Blob> {
+  const response = await fetch(dataUrl);
+  if (!response.ok) {
+    throw new Error('Failed to decode generated image payload.');
+  }
+  return await response.blob();
 }
 
 async function responseToBlob(response: Response): Promise<Blob> {
@@ -76,12 +97,27 @@ async function responseToBlob(response: Response): Promise<Blob> {
   return await response.blob();
 }
 
-export async function generatePfpImage(input: GeneratePfpInput): Promise<Blob> {
-  const prompt = normalizePrompt(input.prompt);
-  if (!prompt) {
-    throw new Error('Prompt is required.');
+async function generateViaBackend(input: GeneratePfpInput, prompt: string): Promise<Blob> {
+  const payload = await apiService.post<BackendGenerateResponse>(
+    '/api/agent-pfp-overrides/generate',
+    {
+      providerId: input.providerId,
+      modelId: input.modelId,
+      prompt,
+      apiKey: input.apiKey,
+      customEndpoint: input.customEndpoint,
+    },
+    { silent: true }
+  );
+
+  if (!payload?.imageDataUrl) {
+    throw new Error('Backend generation did not return an image payload.');
   }
 
+  return await dataUrlToBlob(payload.imageDataUrl);
+}
+
+async function generateDirect(input: GeneratePfpInput, prompt: string): Promise<Blob> {
   if (input.providerId === 'imfinit') {
     const url = new URL('https://api.imfin.it/api/generate');
     url.searchParams.set('prompt', prompt);
@@ -130,12 +166,7 @@ export async function generatePfpImage(input: GeneratePfpInput): Promise<Blob> {
     const entry = payload.data?.[0];
 
     if (entry?.b64_json) {
-      const binary = atob(entry.b64_json);
-      const bytes = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i += 1) {
-        bytes[i] = binary.charCodeAt(i);
-      }
-      return new Blob([bytes], { type: 'image/png' });
+      return await dataUrlToBlob(`data:image/png;base64,${entry.b64_json}`);
     }
 
     if (entry?.url) {
@@ -197,12 +228,7 @@ export async function generatePfpImage(input: GeneratePfpInput): Promise<Blob> {
       };
 
       if (payload.b64) {
-        const binary = atob(payload.b64);
-        const bytes = new Uint8Array(binary.length);
-        for (let i = 0; i < binary.length; i += 1) {
-          bytes[i] = binary.charCodeAt(i);
-        }
-        return new Blob([bytes], { type: 'image/png' });
+        return await dataUrlToBlob(`data:image/png;base64,${payload.b64}`);
       }
 
       if (payload.imageUrl) {
@@ -215,4 +241,21 @@ export async function generatePfpImage(input: GeneratePfpInput): Promise<Blob> {
   }
 
   throw new Error(`Unsupported provider: ${input.providerId}`);
+}
+
+export async function generatePfpImage(input: GeneratePfpInput): Promise<Blob> {
+  const prompt = normalizePrompt(input.prompt);
+  if (!prompt) {
+    throw new Error('Prompt is required.');
+  }
+
+  try {
+    return await generateViaBackend(input, prompt);
+  } catch (backendError) {
+    if (!canFallbackToDirect(input)) {
+      throw backendError;
+    }
+  }
+
+  return await generateDirect(input, prompt);
 }

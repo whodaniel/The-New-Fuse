@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sales Funnel Architect Agent"
+  short_description: "Help with Sales Funnel Architect Agent tasks"
+  default_prompt: "Run the Sales Funnel Architect Agent workflow using SKILL.md instructions."

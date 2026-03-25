@@ -4,7 +4,7 @@ Welcome to The New Fuse deployment documentation.
 
 ## Quick Links
 
-- **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Complete deployment
+- **[Deployment Guide](../guides/deployment-guide.md)** - Complete deployment
   instructions
 - **[Current Production Status](./DEPLOYMENT_STATUS.md)** - Live Railway status,
   domains, and verification commands

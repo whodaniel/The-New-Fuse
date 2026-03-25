@@ -134,15 +134,15 @@ export default function Workflows() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <GlassCard className="p-4">
           <p className="text-xs uppercase tracking-wide text-gray-400">Total Runs</p>
-          <p className="text-2xl font-bold text-white mt-1">{executions.length}</p>
+          <p className="text-xl font-bold text-white mt-1">{executions.length}</p>
         </GlassCard>
         <GlassCard className="p-4">
           <p className="text-xs uppercase tracking-wide text-gray-400">Running Now</p>
-          <p className="text-2xl font-bold text-white mt-1">{runningExecutions}</p>
+          <p className="text-xl font-bold text-white mt-1">{runningExecutions}</p>
         </GlassCard>
         <GlassCard className="p-4">
           <p className="text-xs uppercase tracking-wide text-gray-400">Failure Count</p>
-          <p className="text-2xl font-bold text-white mt-1">{failedExecutions}</p>
+          <p className="text-xl font-bold text-white mt-1">{failedExecutions}</p>
         </GlassCard>
       </div>
 
@@ -233,7 +233,7 @@ export default function Workflows() {
             <div className="w-10 h-10 rounded-md bg-linear-to-r from-purple-500 to-pink-500 flex items-center justify-center">
               <Activity className="w-5 h-5 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-white">Workflow Builder</h2>
+            <h2 className="text-xl font-bold text-white">Workflow Builder</h2>
           </div>
           <div className="h-96 bg-slate-900/50 rounded-md border border-slate-700/50 flex items-center justify-center backdrop-blur-sm">
             <p className="text-slate-400">Select a workflow to visualize or create a new one.</p>
@@ -256,7 +256,7 @@ export default function Workflows() {
             <div className="w-10 h-10 rounded-md bg-linear-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-white">Recent Executions</h2>
+            <h2 className="text-xl font-bold text-white">Recent Executions</h2>
           </div>
           {executions.length > 0 ? (
             <div className="overflow-x-auto">

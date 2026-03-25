@@ -78,12 +78,12 @@ instructions.
 All documentation is in `<repo-root>/docs/ci-cd/`:
 
 - **`README.md`** - Overview and quick links
-- **`architecture.md`** - CI/CD architecture and diagrams
+- **`../architecture/ARCHITECTURE.md`** - CI/CD architecture and diagrams
 - **`workflows.md`** - Detailed guide for each workflow
 - **`secrets-setup.md`** - Required secrets and setup instructions
-- **`deployment.md`** - Deployment procedures and best practices
-- **`troubleshooting.md`** - Common issues and solutions
-- **`monitoring.md`** - Monitoring setup and alerting
+- **`../deployment/DEPLOYMENT.md`** - Deployment procedures and best practices
+- **`../deployment/TROUBLESHOOTING.md`** - Common issues and solutions
+- **`../deployment/MONITORING.md`** - Monitoring setup and alerting
 
 ## Quick Start
 
@@ -218,7 +218,7 @@ JWT_SECRET=<secret>
    - Add Incoming Webhook
    - Configure notifications
 
-See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
+See [Monitoring Guide](../deployment/MONITORING.md) for details.
 
 ## Workflow Behavior
 
@@ -473,7 +473,7 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 
 1. Check error message in logs
 2. Run tests locally: `pnpm run test`
-3. See [Troubleshooting Guide](./docs/ci-cd/troubleshooting.md)
+3. See [Troubleshooting Guide](../deployment/TROUBLESHOOTING.md)
 
 **Build fails**:
 
@@ -486,7 +486,7 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 1. Check Railway logs: `railway logs`
 2. Verify environment variables
 3. Check health endpoints
-4. See [Deployment Guide](./docs/ci-cd/deployment.md)
+4. See [Deployment Guide](../deployment/DEPLOYMENT.md)
 
 ### Getting Help
 
@@ -525,11 +525,11 @@ See [Monitoring Guide](./docs/ci-cd/monitoring.md) for details.
 
 ### Documentation
 
-- [Architecture](./docs/ci-cd/architecture.md)
+- [Architecture](../architecture/ARCHITECTURE.md)
 - [Workflows](./docs/ci-cd/workflows.md)
-- [Deployment](./docs/ci-cd/deployment.md)
-- [Troubleshooting](./docs/ci-cd/troubleshooting.md)
-- [Monitoring](./docs/ci-cd/monitoring.md)
+- [Deployment](../deployment/DEPLOYMENT.md)
+- [Troubleshooting](../deployment/TROUBLESHOOTING.md)
+- [Monitoring](../deployment/MONITORING.md)
 
 ### External Resources
 

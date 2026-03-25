@@ -17,7 +17,7 @@ When managing the Jules AI pull request (+154/-314 changes) while simultaneously
 ### Strategic Decision Framework
 
 **Priority Matrix Applied:**
-```
+```text
 High Impact + Urgent: Merge Jules' fixes (build/test failures block everything)
 High Impact + Not Urgent: Web scraping integration (can be adapted)
 Low Impact: Documentation updates (easily recoverable)
@@ -34,10 +34,7 @@ Instead of forcing through changes, employed:
 ### Phase 2: Adversarial Conflict Resolution
 When conflicts emerged, used **"Best of Both Worlds"** synthesis:
 ```bash
-# Not just taking one side:
-<<<<<<< HEAD (Claude's changes)
-=======
->>>>>>> origin/fix-test-suite (Jules' changes)
+# Not just taking one side of the merge conflict.
 
 # But intelligently combining through adversarial analysis:
 - Jules' Node.js version fixes (critical infrastructure)

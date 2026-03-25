@@ -12,9 +12,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { DatabaseService } from '@the-new-fuse/database';
-import { tnfMcpServers } from '@the-new-fuse/database/drizzle/schema';
-import { eq, like, or } from 'drizzle-orm';
+import { DatabaseService, drizzleSchema, eq, like, or } from '@the-new-fuse/database';
 import { MarketplaceService } from '../modules/marketplace/marketplace.service';
 
 @ApiTags('mcp')
@@ -24,6 +22,10 @@ export class MCPServerController {
     private readonly db: DatabaseService,
     private readonly marketplaceService: MarketplaceService
   ) {}
+
+  private get tnfMcpServers() {
+    return drizzleSchema.tnfMcpServers;
+  }
 
   /**
    * GET /api/mcp/servers
@@ -44,15 +46,15 @@ export class MCPServerController {
     if (sources.includes('tnf')) {
       // Query TNF curated MCP servers from DB
       const conditions = [];
-      if (q) conditions.push(like(tnfMcpServers.name, `%${q}%`));
-      if (scope) conditions.push(eq(tnfMcpServers.scope, scope as any));
+      if (q) conditions.push(like(this.tnfMcpServers.name, `%${q}%`));
+      if (scope) conditions.push(eq(this.tnfMcpServers.scope, scope as any));
 
       const servers =
         conditions.length === 0
-          ? await this.db.select().from(tnfMcpServers)
-          : await this.db
+          ? await this.db.client.select().from(this.tnfMcpServers)
+          : await this.db.client
               .select()
-              .from(tnfMcpServers)
+              .from(this.tnfMcpServers)
               .where(conditions.length === 1 ? conditions[0] : or(...conditions));
 
       for (const s of servers) {
@@ -140,9 +142,9 @@ export class MCPServerController {
   async getServerById(@Param('id') id: string) {
     // Try TNF DB first
     const [server] = await this.db
-      .select()
-      .from(tnfMcpServers)
-      .where(eq(tnfMcpServers.tnfId, id))
+      .client.select()
+      .from(this.tnfMcpServers)
+      .where(eq(this.tnfMcpServers.tnfId, id))
       .limit(1);
     if (server) {
       return {
@@ -177,7 +179,7 @@ export class MCPServerController {
     const { name, description, protocol, transport, command, args, env, endpointUrl } = serverData;
 
     const [created] = await this.db
-      .insert(tnfMcpServers)
+      .client.insert(this.tnfMcpServers)
       .values({
         tnfId: `TNF:MCP:usr:${name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
         name,
@@ -208,9 +210,9 @@ export class MCPServerController {
     const userId = req.user?.id;
     // Only allow updating user's own servers
     const [updated] = await this.db
-      .update(tnfMcpServers)
+      .client.update(this.tnfMcpServers)
       .set({ ...config, updatedAt: new Date() })
-      .where(eq(tnfMcpServers.tnfId, id))
+      .where(eq(this.tnfMcpServers.tnfId, id))
       .returning();
     return updated ? { success: true, server: updated } : { error: 'Not found or not allowed' };
   }
@@ -224,8 +226,8 @@ export class MCPServerController {
   @ApiResponse({ status: 200, description: 'Server deleted' })
   async deleteServer(@Param('id') id: string, @Request() req: any) {
     const deleted = await this.db
-      .delete(tnfMcpServers)
-      .where(eq(tnfMcpServers.tnfId, id))
+      .client.delete(this.tnfMcpServers)
+      .where(eq(this.tnfMcpServers.tnfId, id))
       .returning();
     return deleted.length > 0 ? { success: true } : { error: 'Not found' };
   }
@@ -269,9 +271,9 @@ export class MCPServerController {
   async getServerTools(@Param('serverId') serverId: string) {
     // Get the server definition
     const [server] = await this.db
-      .select()
-      .from(tnfMcpServers)
-      .where(eq(tnfMcpServers.tnfId, serverId))
+      .client.select()
+      .from(this.tnfMcpServers)
+      .where(eq(this.tnfMcpServers.tnfId, serverId))
       .limit(1);
     if (server?.tools?.length) {
       return server.tools;
@@ -305,9 +307,9 @@ export class MCPServerController {
   @ApiOperation({ summary: 'Get resources from an MCP server' })
   async getServerResources(@Param('serverId') serverId: string) {
     const [server] = await this.db
-      .select()
-      .from(tnfMcpServers)
-      .where(eq(tnfMcpServers.tnfId, serverId))
+      .client.select()
+      .from(this.tnfMcpServers)
+      .where(eq(this.tnfMcpServers.tnfId, serverId))
       .limit(1);
     return server?.resources || [];
   }

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Customer Support Agent"
+  short_description: "Help with Customer Support Agent tasks"
+  default_prompt: "Run the Customer Support Agent workflow using SKILL.md instructions."

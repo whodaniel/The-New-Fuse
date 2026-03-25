@@ -20,6 +20,7 @@ export * from './entitlements';
 export * from './jules';
 export * from './marketplace';
 export * from './mass';
+export * from './personal-skills';
 export * from './prompt-templates';
 export * from './resource-interactions';
 export * from './system';

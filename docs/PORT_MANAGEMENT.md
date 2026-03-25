@@ -39,6 +39,7 @@ tnf-ports health
    - `tnf-ports status` - Show port allocation
    - `tnf-ports conflicts` - Detect and resolve conflicts
    - `tnf-ports health` - Monitor service health
+   - `tnf-ports register` - Register or update service port assignments
    - `tnf-ports dev` - Optimize development environment
 
 4. **Configuration Auto-Update**
@@ -117,6 +118,12 @@ tnf-ports health -p 3000
 
 # Check specific service
 tnf-ports health -s api
+```
+
+### Service Registration
+```bash
+# Register or update a service port
+tnf-ports register -s frontend -e development -p 3000 -t frontend
 ```
 
 ### Development Environment

@@ -1,0 +1,12 @@
+{
+  "skillName": "context-frontloader",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/context-frontloader/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/context-frontloader/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/context-frontloader.json",
+  "status": "present"
+}

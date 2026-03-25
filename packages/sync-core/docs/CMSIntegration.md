@@ -518,8 +518,8 @@ const cmsConfig = {
 
 ## API Reference
 
-See the [API Reference](./API_REFERENCE.md) for detailed documentation of all CMS integration methods and interfaces.
+See the [API Reference](../README.md) for detailed documentation of all CMS integration methods and interfaces.
 
 ## Examples
 
-See the [Usage Examples](./USAGE_EXAMPLES.md) for comprehensive examples of CMS integration usage patterns and best practices.
+See the [Usage Examples](../examples/README.md) for comprehensive examples of CMS integration usage patterns and best practices.

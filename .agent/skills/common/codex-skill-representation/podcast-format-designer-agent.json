@@ -1,0 +1,12 @@
+{
+  "skillName": "podcast-format-designer-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-format-designer-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/podcast-format-designer-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/podcast-format-designer-agent.json",
+  "status": "present"
+}

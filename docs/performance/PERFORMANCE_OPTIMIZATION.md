@@ -605,4 +605,4 @@ if (import.meta.env.PROD) {
 
 - [Monitoring Setup](../monitoring/MONITORING_SETUP.md)
 - [Alert Runbooks](../monitoring/ALERT_RUNBOOKS.md)
-- [Deployment Guide](../deployment/DEPLOYMENT_GUIDE.md)
+- [Deployment Guide](../guides/deployment-guide.md)

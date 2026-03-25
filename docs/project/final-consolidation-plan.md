@@ -140,6 +140,29 @@ Update architecture documentation to reflect the current state of the project.
    - State management approach
    - API communication patterns
 
+### 3.4 Database Layer Consolidation Track
+
+Consolidate historical split database responsibilities into a unified
+`@the-new-fuse/database` package interface while preserving backward
+compatibility.
+
+**Implementation Steps:**
+
+1. Unify service responsibilities:
+   - `DatabaseService` as the primary operational interface
+   - `DrizzleService` integration for schema/migration workflows
+   - `RedisService` integration for caching and invalidation
+
+2. Standardize data access patterns:
+   - Repository-style access boundaries
+   - Shared error handling and logging
+   - Connection pooling and retry policy normalization
+
+3. Migration and verification:
+   - Document public API mapping (old imports to unified imports)
+   - Validate migrations, cache behavior, and performance parity
+   - Capture rollout checklist for phased migration
+
 ## 4. Performance Optimization
 
 ### 4.1 Tree Shaking

@@ -797,7 +797,7 @@ This example demonstrates the core concepts of creating workflow node extensions
 
 For more advanced examples, see:
 - **[Agent Capability Example](agent-capability-example.md)** - Add skills to AI agents
-- **[NestJS Module Example](nestjs-module-example.md)** - Backend service integration
+- **NestJS Module Example** - Backend service integration
 
 ## Troubleshooting
 

@@ -435,7 +435,7 @@ See [Troubleshooting Guide](./PERFORMANCE_MONITORING_SETUP.md#troubleshooting) f
 
 - [Monitoring Setup](../monitoring/MONITORING_SETUP.md)
 - [Alert Runbooks](../monitoring/ALERT_RUNBOOKS.md)
-- [Deployment Guide](../deployment/DEPLOYMENT_GUIDE.md)
+- [Deployment Guide](../guides/deployment-guide.md)
 
 ### External Resources
 

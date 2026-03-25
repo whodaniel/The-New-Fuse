@@ -361,5 +361,5 @@ async findAgentsByTag(tag: string): Promise<Agent[]> {
 
 - Review migrated files in `apps/backend/src/` for examples
 - Check [MIGRATION_PROGRESS_REPORT.md](./MIGRATION_PROGRESS_REPORT.md) for status
-- See [DRIZZLE_TO_DRIZZLE_MIGRATION_PLAN.md](./DRIZZLE_TO_DRIZZLE_MIGRATION_PLAN.md) for full plan
+- See [PRISMA_TO_DRIZZLE_MIGRATION_PLAN.md](./PRISMA_TO_DRIZZLE_MIGRATION_PLAN.md) for full plan
 - Repository source: `packages/database/src/drizzle/repositories/`

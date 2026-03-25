@@ -446,7 +446,7 @@ For issues or questions about the build system:
 
 ## Related Documentation
 
-- [Deployment Guide](DEPLOYMENT.md)
+- [Deployment Guide](../deployment/DEPLOYMENT.md)
 - [Railway Setup](RAILWAY_SETUP_COMMANDS.sh)
 - [Package Manager Guide](README.md#package-manager)
 - [Turbo Configuration](turbo.json)

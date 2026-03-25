@@ -1,0 +1,12 @@
+{
+  "skillName": "limitation-challenge-schema-loop",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/limitation-challenge-schema-loop/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/limitation-challenge-schema-loop/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/limitation-challenge-schema-loop.json",
+  "status": "present"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@the-new-fuse/audio-trigger-kws-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Trigger-first audio KWS pipeline scaffold with mini-omni LLM backend adapter",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json --skipLibCheck",
+    "type-check": "tsc --noEmit",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "demo": "tsx src/index.ts --demo"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "skillName": "transcribe",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/transcribe/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/transcribe/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/transcribe.json",
+  "status": "present"
+}

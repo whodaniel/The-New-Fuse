@@ -167,18 +167,18 @@ node apps/cloud-sandbox/scripts/audit_website.js
 
 All documentation is in your repo:
 
-1. **[ANTIGRAVITY_DEVTOOLS_SETUP.md](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/ANTIGRAVITY_DEVTOOLS_SETUP.md)** - Complete setup guide (this was just created)
-2. **[QUICK_FIX_LIVE_VIEW.md](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/QUICK_FIX_LIVE_VIEW.md)** - Quick explanation of the fix
-3. **[.agent/skills/chrome-devtools/](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/)** - All 5 skills with examples
+1. **[ANTIGRAVITY_DEVTOOLS_SETUP.md](./ANTIGRAVITY_DEVTOOLS_SETUP.md)** - Complete setup guide (this was just created)
+2. **[QUICK_FIX_LIVE_VIEW.md](./QUICK_FIX_LIVE_VIEW.md)** - Quick explanation of the fix
+3. **[.agent/skills/chrome-devtools/](.agent/skills/chrome-devtools)** - All 5 skills with examples
 
 ### Skill Files
 
-- **[QUICK_START.md](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/QUICK_START.md)** - 5-minute quick start
-- **[console-debugger.md](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/console-debugger.md)** - Console access guide
-- **[performance-monitor.md](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/performance-monitor.md)** - Performance profiling
-- **[network-analyzer.md](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/network-analyzer.md)** - Network debugging
-- **[browser-automation.md](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/browser-automation.md)** - Browser control
-- **[README.md](file:///path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/chrome-devtools/README.md)** - Master documentation
+- **[QUICK_START.md](.agent/skills/chrome-devtools/QUICK_START.md)** - 5-minute quick start
+- **[console-debugger.md](.agent/skills/chrome-devtools/console-debugger.md)** - Console access guide
+- **[performance-monitor.md](.agent/skills/chrome-devtools/performance-monitor.md)** - Performance profiling
+- **[network-analyzer.md](.agent/skills/chrome-devtools/network-analyzer.md)** - Network debugging
+- **[browser-automation.md](.agent/skills/chrome-devtools/browser-automation.md)** - Browser control
+- **[README.md](.agent/skills/chrome-devtools/README.md)** - Master documentation
 
 ---
 

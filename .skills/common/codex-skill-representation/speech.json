@@ -1,0 +1,12 @@
+{
+  "skillName": "speech",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/speech/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/speech/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/speech.json",
+  "status": "present"
+}

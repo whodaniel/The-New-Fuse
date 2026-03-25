@@ -19,7 +19,7 @@ What it does:
 3. Produces a macro summary and active-session set.
 4. Computes deltas against prior run state.
 5. Writes:
-   - latest report: `docs/protocols/reports/twip-terminal-macro-board-latest.md`
+   - latest report: `data/protocols/twip-terminal-macro-board-latest.md`
    - state: `data/protocols/twip-macro-board.state.json`
    - optional history report with timestamp.
 6. Mirrors latest state/report for static UI fallback:

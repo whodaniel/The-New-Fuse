@@ -74,5 +74,5 @@ If you encounter module resolution issues:
 ### Documentation
 
 For more details, see:
-- [TypeScript ESM Configuration Guide](/docs/TYPESCRIPT_ESM_CONFIGURATION.md)
-- [Development Log](/docs/DEVELOPMENT-LOG.md)
+- [TypeScript ESM Configuration Guide](./TYPESCRIPT_ESM_CONFIGURATION.md)
+- [Development Log](../development/DEVELOPMENT_LOG.md)

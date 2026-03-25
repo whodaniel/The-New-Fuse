@@ -28,14 +28,14 @@ This document provides a final summary of the automation work that has been done
    - Renamed Jest configuration files to use .cjs extension
 
 5. **Created Automation Scripts**
-   - Build scripts: `comprehensive-build.sh`, `build-incremental.sh`
-   - Run scripts: `run-development.sh`, `run-frontend.sh`, `run-backend.sh`, `run-mcp-server.sh`, `run-docker-app.sh`, `run-tests.sh`
-   - Fix scripts: `fix-all-typescript-errors.sh`, `fix-database-migrations.sh`, `fix-frontend-imports.sh`, `fix-chakra-imports.sh`, `fix-react-components.sh`, `fix-database-composite.sh`, `fix-jest-config.sh`
+   - Build scripts: `comprehensive-build.sh` (run fixes + full build), `build-incremental.sh` (incremental build loop).
+   - Run scripts: `run-development.sh` (full stack), `run-frontend.sh`, `run-backend.sh`, `run-mcp-server.sh`, `run-docker-app.sh`, `run-tests.sh`.
+   - Fix scripts: `fix-all-typescript-errors.sh`, `fix-database-migrations.sh`, `fix-frontend-imports.sh`, `fix-chakra-imports.sh`, `fix-react-components.sh`, `fix-database-composite.sh`, `fix-jest-config.sh` for targeted remediation.
 
 6. **Created Documentation**
    - `AUTOMATION-GUIDE.md`: Provides instructions on how to use the automation scripts
-   - `AUTOMATION-SUMMARY.md`: Summarizes the automation work that has been done
    - `AUTOMATION-FINAL-SUMMARY.md`: Provides a final summary of the automation work
+   - Archived near-duplicate summary: `docs/_archive/redundant-near/2026-03-24/automation/AUTOMATION-SUMMARY.md`
 
 ## How to Use
 

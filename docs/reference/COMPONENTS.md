@@ -4,6 +4,20 @@
 
 The New Fuse component library is built using atomic design principles, providing a scalable and maintainable UI system. This document consolidates component guidelines, standards, and implementation details to serve as a comprehensive reference.
 
+## Inventory Snapshot Notes
+
+A flat file inventory pass (previously maintained as a status report) surfaced a few consistency signals worth preserving:
+
+- Mixed naming styles exist in the same domains (for example `ChatInterface.tsx` and `chat-interface.tsx`).
+- Parallel admin trees exist (`components/AdminPanel/` and `components/admin/`).
+- Some layout and shared component entrypoints have both direct-file and folder-index variants.
+
+Use this command to regenerate a complete component file inventory when planning cleanup work:
+
+```bash
+find apps/frontend/src/components -type f \( -name '*.ts' -o -name '*.tsx' \) | sort
+```
+
 ## Component Organization
 
 ### Directory Structure

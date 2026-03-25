@@ -1,9 +1,6 @@
 ---
 name: discord-bot-architect
-description:
-  'Specialized skill for building production-ready Discord bots. Covers
-  Discord.js (JavaScript) and Pycord (Python), gateway intents, slash commands,
-  interactive components, rate limiting, and sharding.'
+description: "Specialized skill for building production-ready Discord bots. Covers Discord.js (JavaScript) and Pycord (Python), gateway intents, slash commands, interactive components, rate limiting, and sharding."
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -15,10 +12,9 @@ source: vibeship-spawner-skills (Apache 2.0)
 
 Modern Discord bot setup with Discord.js v14 and slash commands
 
-**When to use**: ['Building Discord bots with JavaScript/TypeScript', 'Need full
-gateway connection with events', 'Building bots with complex interactions']
+**When to use**: ['Building Discord bots with JavaScript/TypeScript', 'Need full gateway connection with events', 'Building bots with complex interactions']
 
-````javascript
+```javascript
 ```javascript
 // src/index.js
 const { Client, Collection, GatewayIntentBits, Events } = require('discord.js');
@@ -64,7 +60,7 @@ for (const file of eventFiles) {
 }
 
 client.login(process.env.DISCORD_TOKEN);
-````
+```
 
 ```javascript
 // src/commands/ping.js
@@ -78,12 +74,12 @@ module.exports = {
   async execute(interaction) {
     const sent = await interaction.reply({
       content: 'Pinging...',
-      fetchReply: true,
+      fetchReply: true
     });
 
     const latency = sent.createdTimestamp - interaction.createdTimestamp;
     await interaction.editReply(`Pong! Latency: ${latency}ms`);
-  },
+  }
 };
 ```
 
@@ -99,10 +95,9 @@ module.exports = {
 
 Discord bot with Pycord (Python) and application commands
 
-**When to use**: ['Building Discord bots with Python', 'Prefer async/await
-patterns', 'Need good slash command support']
+**When to use**: ['Building Discord bots with Python', 'Prefer async/await patterns', 'Need good slash command support']
 
-````python
+```python
 ```python
 # main.py
 import os
@@ -150,7 +145,7 @@ for filename in os.listdir("./cogs"):
         bot.load_extension(f"cogs.{filename[:-3]}")
 
 bot.run(os.environ["DISCORD_TOKEN"])
-````
+```
 
 ```python
 # cogs/general.py
@@ -179,10 +174,9 @@ class General(commands.Cog):
 
 Using buttons, select menus, and modals for rich UX
 
-**When to use**: ['Need interactive user interfaces', 'Collecting user input
-beyond slash command options', 'Building menus, confirmations, or forms']
+**When to use**: ['Need interactive user interfaces', 'Collecting user input beyond slash command options', 'Building menus, confirmations, or forms']
 
-````python
+```python
 ```javascript
 // Discord.js - Buttons and Select Menus
 const {
@@ -250,19 +244,19 @@ module.exports = {
         await i.update({ content: 'Confirmed!', components: [] });
         collector.stop();
       } else if (i.custo
-````
+```
 
 ## Anti-Patterns
 
 ### ❌ Message Content for Commands
 
-**Why bad**: Message Content Intent is privileged and deprecated for bot
-commands. Slash commands are the intended approach.
+**Why bad**: Message Content Intent is privileged and deprecated for bot commands.
+Slash commands are the intended approach.
 
 ### ❌ Syncing Commands on Every Start
 
-**Why bad**: Command registration is rate limited. Global commands take up to 1
-hour to propagate. Syncing on every start wastes API calls and can hit limits.
+**Why bad**: Command registration is rate limited. Global commands take up to 1 hour
+to propagate. Syncing on every start wastes API calls and can hit limits.
 
 ### ❌ Blocking the Event Loop
 
@@ -271,13 +265,13 @@ cause missed heartbeats and disconnections.
 
 ## ⚠️ Sharp Edges
 
-| Issue | Severity | Solution                                         |
-| ----- | -------- | ------------------------------------------------ |
-| Issue | critical | ## Acknowledge immediately, process later        |
-| Issue | critical | ## Step 1: Enable in Developer Portal            |
-| Issue | high     | ## Use a separate deploy script (not on startup) |
-| Issue | critical | ## Never hardcode tokens                         |
-| Issue | high     | ## Generate correct invite URL                   |
-| Issue | medium   | ## Development: Use guild commands               |
-| Issue | medium   | ## Never block the event loop                    |
-| Issue | medium   | ## Show modal immediately                        |
+| Issue | Severity | Solution |
+|-------|----------|----------|
+| Issue | critical | ## Acknowledge immediately, process later |
+| Issue | critical | ## Step 1: Enable in Developer Portal |
+| Issue | high | ## Use a separate deploy script (not on startup) |
+| Issue | critical | ## Never hardcode tokens |
+| Issue | high | ## Generate correct invite URL |
+| Issue | medium | ## Development: Use guild commands |
+| Issue | medium | ## Never block the event loop |
+| Issue | medium | ## Show modal immediately |

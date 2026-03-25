@@ -488,4 +488,4 @@ async function getResourceAnalytics() {
    - Check searchable text is being generated
    - Verify indexes are created
 
-For more help, see the [API Documentation](./API.md) and [Examples](./EXAMPLES.md).
+For more help, see the [API Documentation](./API.md) and [Examples](../README.md).

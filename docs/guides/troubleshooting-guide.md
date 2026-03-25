@@ -169,6 +169,37 @@ npm install
 pnpm test  # Use Bun for running tests
 ```
 
+### **Issue 7: Chrome Extension Panel / Relay Disconnects (Port 3710)**
+**Problem:** The extension panel is missing, or it stays in a disconnected state.
+
+**Root Cause:** Content script not injected, saved panel state is invalid, or local WebSocket relay is down.
+
+**Solutions:**
+1. **Check extension APIs and panel injection:**
+   ```javascript
+   typeof chrome !== 'undefined' && chrome.runtime
+   document.getElementById('tnf-floating-panel') !== null
+   ```
+2. **Reset panel position/state:**
+   ```javascript
+   localStorage.removeItem('tnf-panel-position');
+   localStorage.removeItem('tnf-panel-state');
+   ```
+3. **Verify relay server and socket connection:**
+   ```bash
+   lsof -i :3710
+   node launchWebSocketServer.js
+   ```
+   ```javascript
+   const ws = new WebSocket('ws://localhost:3710');
+   ws.onopen = () => console.log('connected');
+   ```
+4. **Check page limitations:** `chrome://` pages, sandboxed iframes, and strict CSP can block content scripts.
+5. **Run extension validation script (if present):**
+   ```bash
+   ./test-chrome-extension-fixes.sh
+   ```
+
 ## 🔍 **Diagnostic Commands**
 
 ### **Check Service Status**
@@ -348,4 +379,4 @@ pnpm run dev
 
 - **[Native Modules Guide](docs/NATIVE_MODULES_GUIDE.md)** - Comprehensive guide for handling native module compatibility issues with Bun
 - **[Build Optimization](docs/BUILD_OPTIMIZATION.md)** - Memory-efficient build strategies and troubleshooting
-- **[Development Setup](DEVELOPMENT_SETUP.md)** - Complete development environment setup guide
+- **[Development Setup](../GETTING_STARTED.md)** - Complete development environment setup guide

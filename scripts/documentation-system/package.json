@@ -5,13 +5,14 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "discover": "bash 01-discover-simple.sh",
     "classify": "tsx 02-classify-advanced.ts",
     "classify:sample": "tsx 02-classify-advanced.ts --sample",
     "classify:basic": "tsx 02-classify-rules.ts",
     "classify:ai": "tsx 02-classify.ts",
     "classify:ai:sample": "tsx 02-classify.ts --sample",
-    "analyze": "tsx 03-analyze.ts",
-    "consolidate": "tsx 04-consolidate.ts",
+    "analyze": "tsx 03-analyze-local.ts",
+    "consolidate": "tsx 04-consolidate-fast.ts",
     "evolve": "tsx 05-evolve.ts"
   },
   "dependencies": {

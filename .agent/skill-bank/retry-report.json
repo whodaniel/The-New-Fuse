@@ -1,7 +1,13 @@
 {
-  "at": "2026-03-03T01:43:28.777Z",
+  "at": "2026-03-25T10:24:45.207Z",
   "endpoint": "https://api-production-48f1.up.railway.app/api/resources",
-  "total": 324,
-  "posted": 324,
+  "endpointCandidates": [
+    "https://api-production-48f1.up.railway.app/api/resources",
+    "https://api-production-48f1.up.railway.app/resources"
+  ],
+  "marketplaceFallback": "https://api-production-48f1.up.railway.app/api/marketplace/catalog/submit",
+  "total": 544,
+  "posted": 268,
+  "skipped": 276,
   "failed": 0
 }

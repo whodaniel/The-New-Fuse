@@ -1,0 +1,12 @@
+{
+  "skillName": "inter-agentic-workflow-definer",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/inter-agentic-workflow-definer/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/inter-agentic-workflow-definer/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/inter-agentic-workflow-definer.json",
+  "status": "present"
+}

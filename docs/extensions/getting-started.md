@@ -409,24 +409,24 @@ Congratulations! You've created your first extension. Here are some next steps:
 ### 1. Explore More Extension Types
 
 - **[Agent Capability Example](examples/agent-capability-example.md)** - Add skills to AI agents
-- **[NestJS Module Example](examples/nestjs-module-example.md)** - Backend service integration
-- **[API Integration Example](examples/api-integration-example.md)** - External service connectors
+- **[NestJS Module Example](examples/workflow-node-example.md)** - Backend service integration
+- **[API Integration Example](examples/agent-capability-example.md)** - External service connectors
 
 ### 2. Learn Advanced Features
 
-- **[Development Guide](development-guide.md)** - Advanced extension development
-- **[Security Model](security-model.md)** - Security best practices
-- **[Integration Patterns](integration-patterns.md)** - Platform integration patterns
+- **[Development Guide](../guides/development-workflow.md)** - Advanced extension development
+- **[Security Model](../security/SECURITY_BEST_PRACTICES.md)** - Security best practices
+- **[Integration Patterns](../guides/MCP-INTEGRATION-GUIDE-component-analysis.md)** - Platform integration patterns
 
 ### 3. Publish Your Extension
 
-- **[Publishing Guide](publishing-guide.md)** - Share your extension with others
-- **[Extension Registry](registry-guide.md)** - Submit to the official registry
+- **[Publishing Guide](../README.md)** - Share your extension with others
+- **[Extension Registry](../AVAILABLE_AGENTS_REGISTRY.md)** - Submit to the official registry
 
 ### 4. Get Help
 
-- **[API Reference](api-reference.md)** - Complete API documentation
-- **[Troubleshooting](troubleshooting.md)** - Common issues and solutions
+- **[API Reference](../API_DOCUMENTATION_README.md)** - Complete API documentation
+- **[Troubleshooting](../troubleshooting/MCP-TROUBLESHOOTING-COMPLETE.md)** - Common issues and solutions
 - **[Community](https://github.com/the-new-fuse/framework/discussions)** - Ask questions and share ideas
 
 ## Common Patterns

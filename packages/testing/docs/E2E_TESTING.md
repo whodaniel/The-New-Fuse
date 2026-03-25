@@ -180,6 +180,6 @@ The framework integrates with GitHub Actions and provides:
 ## Resources
 
 - [Playwright Documentation](https://playwright.dev)
-- [The New Fuse API Documentation](./API_SPECIFICATION.md)
+- [The New Fuse API Documentation](../../../docs/api/COMPLETE-API-GUIDE.md)
 - [Performance Testing Guide](./PERFORMANCE_TESTING.md)
 - [Visual Testing Guide](./VISUAL_TESTING.md)

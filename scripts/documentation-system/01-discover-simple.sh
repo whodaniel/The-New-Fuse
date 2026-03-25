@@ -1,15 +1,17 @@
-#!/bin/bash
-# Stage 1: Comprehensive Document Discovery (Simplified, Compatible Version)
+#!/usr/bin/env bash
+# Stage 1: Comprehensive Document Discovery (Robust)
 # Part of The Living Documentation System
 
-set -e
+set -euo pipefail
 
 # Configuration
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 OUTPUT_DIR="${PROJECT_ROOT}/.documentation-system"
 MANIFEST_FILE="${OUTPUT_DIR}/manifest.json"
 RAW_FILE="${OUTPUT_DIR}/raw_manifest.txt"
-TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u +%Y-%m-%dT%H:%M:%S)
+TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u +%Y-%m-%dT%H:%M:%S)"
+VERBOSE="${DOC_DISCOVERY_VERBOSE:-0}"
+INCLUDE_PULL_CREATE="${DOC_DISCOVERY_INCLUDE_PULL_CREATE:-0}"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  The New Fuse - Living Documentation System"
@@ -17,117 +19,134 @@ echo "  Stage 1: Document Discovery"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# Create output directory
 mkdir -p "$OUTPUT_DIR"
-
-# Clear output files
 > "$RAW_FILE"
 > "$MANIFEST_FILE"
 
-echo "🔍 Discovering all documentation files..."
+echo "🔍 Discovering documentation files..."
 echo ""
 
-total_files=0
+EXCLUDES=(
+  "*/node_modules/*"
+  "*/.git/*"
+  "*/dist/*"
+  "*/build/*"
+  "*/coverage/*"
+  "*/.next/*"
+  "*/venv/*"
+  "*/.venv/*"
+  "*/.venv_*/*"
+  "*/.venv-*/*"
+  "*/__pycache__/*"
+  "*/.documentation-system/*"
+  "*/.turbo/*"
+  "*/.tmp/*"
+)
 
-# Find all documentation files and process them
-find "$PROJECT_ROOT" -type f \
-  \( -name "*.md" -o -name "*.txt" -o -name "*.json" -o -name "*.yaml" -o -name "*.yml" -o -name "*.mdx" \) \
-  ! -path "*/node_modules/*" \
-  ! -path "*/.git/*" \
-  ! -path "*/dist/*" \
-  ! -path "*/build/*" \
-  ! -path "*/coverage/*" \
-  ! -path "*/.next/*" \
-  ! -path "*/venv/*" \
-  ! -path "*/__pycache__/*" \
-  ! -path "*/.documentation-system/*" \
-  -print0 | while IFS= read -r -d '' file; do
+if [[ "$INCLUDE_PULL_CREATE" != "1" ]]; then
+  EXCLUDES+=("*/pull-create/*")
+fi
 
-    # Get relative path
-    rel_path="${file#$PROJECT_ROOT/}"
+find_cmd=(
+  find "$PROJECT_ROOT" -type f
+  \( -name "*.md" -o -name "*.txt" -o -name "*.json" -o -name "*.yaml" -o -name "*.yml" -o -name "*.mdx" \)
+)
 
-    # Get file extension
-    extension="${file##*.}"
+for pattern in "${EXCLUDES[@]}"; do
+  find_cmd+=( ! -path "$pattern" )
+done
+find_cmd+=( -print0 )
 
-    # Get directory
-    directory=$(dirname "$rel_path")
+while IFS= read -r -d '' file; do
+  rel_path="${file#$PROJECT_ROOT/}"
+  extension="${file##*.}"
+  directory="$(dirname -- "$rel_path")"
 
-    # Get file size (cross-platform)
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        size=$(stat -f%z "$file" 2>/dev/null || echo 0)
-        modified=$(stat -f%m "$file" 2>/dev/null || echo 0)
-    else
-        size=$(stat -c%s "$file" 2>/dev/null || echo 0)
-        modified=$(stat -c%Y "$file" 2>/dev/null || echo 0)
-    fi
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    size="$(stat -f%z "$file" 2>/dev/null || echo 0)"
+    modified="$(stat -f%m "$file" 2>/dev/null || echo 0)"
+  else
+    size="$(stat -c%s "$file" 2>/dev/null || echo 0)"
+    modified="$(stat -c%Y "$file" 2>/dev/null || echo 0)"
+  fi
 
-    # Calculate hash (try different tools)
-    if command -v sha256sum &> /dev/null; then
-        hash=$(sha256sum "$file" | cut -d' ' -f1)
-    elif command -v shasum &> /dev/null; then
-        hash=$(shasum -a 256 "$file" | cut -d' ' -f1)
-    else
-        hash="unknown"
-    fi
+  if command -v sha256sum >/dev/null 2>&1; then
+    hash="$(sha256sum "$file" | cut -d' ' -f1)"
+  elif command -v shasum >/dev/null 2>&1; then
+    hash="$(shasum -a 256 "$file" | cut -d' ' -f1)"
+  else
+    hash="unknown"
+  fi
 
-    # Count lines (for text files)
-    if [[ "$extension" == "md" || "$extension" == "txt" || "$extension" == "mdx" ]]; then
-        line_count=$(wc -l < "$file" 2>/dev/null | tr -d ' ' || echo 0)
-    else
-        line_count=0
-    fi
+  if [[ "$extension" == "md" || "$extension" == "txt" || "$extension" == "mdx" ]]; then
+    line_count="$(wc -l < "$file" 2>/dev/null | tr -d ' ' || echo 0)"
+  else
+    line_count=0
+  fi
 
-    # Write to raw file (tab-separated)
-    echo -e "${rel_path}\t${size}\t${extension}\t${directory}\t${modified}\t${hash}\t${line_count}" >> "$RAW_FILE"
+  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" \
+    "$rel_path" "$size" "$extension" "$directory" "$modified" "$hash" "$line_count" >> "$RAW_FILE"
 
+  if [[ "$VERBOSE" == "1" ]]; then
     echo "  ✓ $rel_path (${size} bytes)"
+  fi
+done < <("${find_cmd[@]}")
 
-    total_files=$((total_files + 1))
+total_files="$(wc -l < "$RAW_FILE" | tr -d ' ')"
+md_count="$(awk -F '\t' '$3=="md"{c++} END{print c+0}' "$RAW_FILE")"
+txt_count="$(awk -F '\t' '$3=="txt"{c++} END{print c+0}' "$RAW_FILE")"
+json_count="$(awk -F '\t' '$3=="json"{c++} END{print c+0}' "$RAW_FILE")"
+yaml_count="$(awk -F '\t' '$3=="yaml" || $3=="yml"{c++} END{print c+0}' "$RAW_FILE")"
+mdx_count="$(awk -F '\t' '$3=="mdx"{c++} END{print c+0}' "$RAW_FILE")"
+
+declare -A dir_counts=()
+while IFS=$'\t' read -r _path _size _type directory _modified _hash _lines; do
+  top="${directory%%/*}"
+  [[ -z "$top" ]] && top="."
+  dir_counts["$top"]=$(( ${dir_counts["$top"]:-0} + 1 ))
+done < "$RAW_FILE"
+
+{
+  echo "{"
+  echo "  \"metadata\": {"
+  echo "    \"generated\": \"$TIMESTAMP\","
+  echo "    \"total_files\": $total_files,"
+  echo "    \"by_type\": {"
+  echo "      \"markdown\": $md_count,"
+  echo "      \"text\": $txt_count,"
+  echo "      \"json\": $json_count,"
+  echo "      \"yaml\": $yaml_count,"
+  echo "      \"mdx\": $mdx_count"
+  echo "    },"
+  echo "    \"by_directory\": {"
+} > "$MANIFEST_FILE"
+
+first=true
+for key in "${!dir_counts[@]}"; do
+  if [[ "$first" == true ]]; then
+    first=false
+  else
+    echo "," >> "$MANIFEST_FILE"
+  fi
+  printf "      \"%s\": %s" "$key" "${dir_counts[$key]}" >> "$MANIFEST_FILE"
 done
 
-echo ""
-echo "📊 Processing results..."
-echo ""
-
-# Count files by type
-md_count=$(grep -c $'\t'"md"$'\t' "$RAW_FILE" 2>/dev/null || echo 0)
-txt_count=$(grep -c $'\t'"txt"$'\t' "$RAW_FILE" 2>/dev/null || echo 0)
-json_count=$(grep -c $'\t'"json"$'\t' "$RAW_FILE" 2>/dev/null || echo 0)
-yaml_count=$(grep -c $'\t'"yaml"$'\t' "$RAW_FILE" 2>/dev/null || echo 0)
-yml_count=$(grep -c $'\t'"yml"$'\t' "$RAW_FILE" 2>/dev/null || echo 0)
-mdx_count=$(grep -c $'\t'"mdx"$'\t' "$RAW_FILE" 2>/dev/null || echo 0)
-
-# Calculate total YAML (yaml + yml)
-total_yaml=$((yaml_count + yml_count))
-
-# Build JSON manifest
-cat > "$MANIFEST_FILE" << EOF
 {
-  "metadata": {
-    "generated": "$TIMESTAMP",
-    "total_files": $total_files,
-    "by_type": {
-      "markdown": $md_count,
-      "text": $txt_count,
-      "json": $json_count,
-      "yaml": $total_yaml,
-      "mdx": $mdx_count
-    },
-    "by_directory": {}
-  },
-  "files": [
-EOF
+  echo ""
+  echo "    }"
+  echo "  },"
+  echo "  \"files\": ["
+} >> "$MANIFEST_FILE"
 
-# Convert raw data to JSON
-first_file=true
+first=true
 while IFS=$'\t' read -r path size type directory modified hash lines; do
-    if [ "$first_file" = true ]; then
-        first_file=false
-    else
-        echo "," >> "$MANIFEST_FILE"
-    fi
+  if [[ "$first" == true ]]; then
+    first=false
+  else
+    echo "," >> "$MANIFEST_FILE"
+  fi
 
-    cat >> "$MANIFEST_FILE" << EOF
+  cat >> "$MANIFEST_FILE" <<EOF
     {
       "path": "$path",
       "size": $size,
@@ -140,14 +159,12 @@ while IFS=$'\t' read -r path size type directory modified hash lines; do
 EOF
 done < "$RAW_FILE"
 
-# Close JSON
-cat >> "$MANIFEST_FILE" << EOF
+cat >> "$MANIFEST_FILE" <<EOF
 
   ]
 }
 EOF
 
-# Display summary
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  Discovery Complete!"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -158,12 +175,11 @@ echo "By Type:"
 echo "  markdown: $md_count"
 echo "  text: $txt_count"
 echo "  json: $json_count"
-echo "  yaml: $total_yaml"
+echo "  yaml: $yaml_count"
 echo "  mdx: $mdx_count"
 echo ""
 echo "Manifest saved to: $MANIFEST_FILE"
+echo "Raw manifest saved to: $RAW_FILE"
 echo ""
 echo "✅ Stage 1 Complete"
-echo ""
-echo "Next step: Review manifest.json and prepare for classification"
 echo ""

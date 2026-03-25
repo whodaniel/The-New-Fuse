@@ -1,0 +1,12 @@
+{
+  "skillName": "ecom-platform-manager-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/ecom-platform-manager-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/ecom-platform-manager-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/ecom-platform-manager-agent.json",
+  "status": "present"
+}

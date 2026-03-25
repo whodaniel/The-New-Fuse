@@ -1,0 +1,4 @@
+interface:
+  display_name: "Task Agent Router"
+  short_description: "Detect pending work and dispatch best agents"
+  default_prompt: "Use $task-agent-router to identify highest-priority tasks and choose the best agent set to execute them."

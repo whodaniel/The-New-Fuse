@@ -2,9 +2,11 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -24,17 +26,24 @@ import type {
 import type { Request } from 'express';
 import { JwtAuth, SecureAuthGuard } from '../../guards/secure-auth.guard';
 import { MarketplaceService } from '../marketplace/marketplace.service';
-import { MarketplaceCatalogItem } from '../marketplace/marketplace.types';
+import { MarketplaceCatalogItem, MarketplaceCatalogSubmissionInput } from '../marketplace/marketplace.types';
 import {
   ResourceSearchProtocolRequestEnvelopeDto,
   ResourceSearchProtocolResponseEnvelopeDto,
 } from './dto/resource-search-protocol.dto';
+import {
+  CreatePersonalSkillDto,
+  PersonalSkillDto,
+  UpdatePersonalSkillDto,
+} from './dto/personal-skill.dto';
 import {
   ResourceDto,
   ResourceSearchEnvelopeDto,
   ResourceSearchMetaDto,
   ResourceSearchRequestDto,
 } from './dto/resource-search.dto';
+import { PersonalSkillsService } from './personal-skills.service';
+import { ResourceRegistryApiKeyGuard } from './resource-registry-api-key.guard';
 import { ResourceInteractionService } from './resource-interaction.service';
 import { ResourceSearchPolicyService } from './resource-search-policy.service';
 import { ResourceSearchProtocolService } from './resource-search-protocol.service';
@@ -46,7 +55,8 @@ export class ResourcesController {
     private readonly marketplaceService: MarketplaceService,
     private readonly resourceSearchPolicyService: ResourceSearchPolicyService,
     private readonly resourceSearchProtocolService: ResourceSearchProtocolService,
-    private readonly resourceInteractionService: ResourceInteractionService
+    private readonly resourceInteractionService: ResourceInteractionService,
+    private readonly personalSkillsService: PersonalSkillsService
   ) {}
 
   private resolveUserId(req: Request, fallbackUserId?: string): string {
@@ -171,6 +181,117 @@ export class ResourcesController {
     return items;
   }
 
+  private normalizeText(value: unknown): string {
+    return String(value || '')
+      .trim()
+      .replace(/\s+/g, ' ');
+  }
+
+  private normalizeTextList(value: unknown): string[] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+    const seen = new Set<string>();
+    const result: string[] = [];
+    for (const entry of value) {
+      const normalized = this.normalizeText(entry).toLowerCase();
+      if (!normalized || seen.has(normalized)) {
+        continue;
+      }
+      seen.add(normalized);
+      result.push(normalized);
+    }
+    return result;
+  }
+
+  private inferKindFromRegistryPayload(payload: Record<string, unknown>): MarketplaceCatalogItem['kind'] {
+    const categoryHint = this.normalizeText(payload.category).toUpperCase();
+    const typeHint = this.normalizeText(payload.type).toUpperCase();
+    const tagHints = this.normalizeTextList(payload.tags).join(' ');
+    const allHints = `${categoryHint} ${typeHint} ${tagHints}`.trim();
+
+    if (allHints.includes('WORKFLOW')) return 'workflow';
+    if (allHints.includes('TEMPLATE')) return 'agent_template';
+    if (allHints.includes('MODEL')) return 'model';
+    if (allHints.includes('MCP')) return 'mcp_server';
+    if (allHints.includes('PROMPT')) return 'prompt';
+    if (allHints.includes('EXPERIENCE')) return 'experience';
+    return 'skill';
+  }
+
+  private inferCategoryFromRegistryPayload(payload: Record<string, unknown>): string {
+    const categoryHint = this.normalizeText(payload.category).toUpperCase();
+    if (categoryHint.includes('WORKFLOW')) return 'automation';
+    if (categoryHint.includes('MODEL')) return 'ai';
+    if (categoryHint.includes('MCP')) return 'developer-tools';
+    if (categoryHint.includes('PROMPT')) return 'productivity';
+    if (categoryHint.includes('SKILL')) return 'development';
+
+    const tags = this.normalizeTextList(payload.tags);
+    return tags[0] || 'automation';
+  }
+
+  private mapRegistryPayloadToCatalogSubmission(
+    payload: Record<string, unknown>
+  ): MarketplaceCatalogSubmissionInput {
+    const contentDescription =
+      payload.content && typeof payload.content === 'object'
+        ? this.normalizeText((payload.content as Record<string, unknown>).description)
+        : '';
+    const name = this.normalizeText(payload.name) || 'Imported Skill';
+    const description =
+      this.normalizeText(payload.description) ||
+      contentDescription ||
+      'Imported from skill-bank resource registry';
+    const tags = Array.from(
+      new Set([
+        ...this.normalizeTextList(payload.tags),
+        ...this.normalizeTextList(payload.keywords),
+      ])
+    ).slice(0, 12);
+    const capabilities = [...tags].slice(0, 12);
+
+    const sourceHint = this.normalizeText(payload.source).toLowerCase();
+    const createdBy = sourceHint || 'skill-bank';
+
+    return {
+      name,
+      description,
+      kind: this.inferKindFromRegistryPayload(payload),
+      category: this.inferCategoryFromRegistryPayload(payload),
+      tags,
+      capabilities,
+      createdBy,
+    };
+  }
+
+  @Post()
+  @UseGuards(ResourceRegistryApiKeyGuard)
+  @ApiOperation({ summary: 'Create resource registry entry (skill-bank ingest compatibility)' })
+  async createResource(@Body() body: Record<string, unknown>) {
+    const submission = this.mapRegistryPayloadToCatalogSubmission(body || {});
+
+    // Idempotent behavior for bulk imports/retries.
+    const { items } = await this.marketplaceService.getCatalog({
+      q: submission.name,
+      limit: 200,
+    });
+    const existing = items.find(
+      (item) =>
+        this.normalizeText(item.name).toLowerCase() === submission.name.toLowerCase() &&
+        this.normalizeText(item.description).toLowerCase() === submission.description.toLowerCase() &&
+        this.normalizeText(item.createdBy).toLowerCase() === submission.createdBy?.toLowerCase()
+    );
+    if (existing) {
+      return {
+        ...existing,
+        deduplicated: true,
+      };
+    }
+
+    return await this.marketplaceService.submitCatalogItem(submission);
+  }
+
   @Get()
   async getAllResources() {
     const items = await this.getPublishedCatalog();
@@ -232,6 +353,64 @@ export class ResourcesController {
       totalTemplates,
       totalDownloads,
       averageRating,
+    };
+  }
+
+  @Get('personal-skills')
+  @UseGuards(SecureAuthGuard)
+  @JwtAuth()
+  @ApiOperation({ summary: 'List authenticated user private/personal AI skills' })
+  @ApiOkResponse({ type: [PersonalSkillDto] })
+  async getPersonalSkills(@Req() req: Request) {
+    const userId = this.resolveUserId(req);
+    return this.personalSkillsService.listByUser(userId);
+  }
+
+  @Post('personal-skills')
+  @UseGuards(SecureAuthGuard)
+  @JwtAuth()
+  @ApiOperation({ summary: 'Create a new private/personal AI skill for the authenticated user' })
+  @ApiBody({ type: CreatePersonalSkillDto })
+  @ApiOkResponse({ type: PersonalSkillDto })
+  async createPersonalSkill(@Body() body: CreatePersonalSkillDto, @Req() req: Request) {
+    const userId = this.resolveUserId(req);
+    return this.personalSkillsService.createByUser(userId, body);
+  }
+
+  @Put('personal-skills/:id')
+  @UseGuards(SecureAuthGuard)
+  @JwtAuth()
+  @ApiOperation({ summary: 'Update an authenticated user private/personal AI skill' })
+  @ApiBody({ type: UpdatePersonalSkillDto })
+  @ApiOkResponse({ type: PersonalSkillDto })
+  async updatePersonalSkill(
+    @Param('id') id: string,
+    @Body() body: UpdatePersonalSkillDto,
+    @Req() req: Request
+  ) {
+    const userId = this.resolveUserId(req);
+    return this.personalSkillsService.updateByUser(userId, id, body);
+  }
+
+  @Delete('personal-skills/:id')
+  @UseGuards(SecureAuthGuard)
+  @JwtAuth()
+  @ApiOperation({ summary: 'Delete an authenticated user private/personal AI skill' })
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        success: { type: 'boolean' },
+        id: { type: 'string' },
+      },
+    },
+  })
+  async deletePersonalSkill(@Param('id') id: string, @Req() req: Request) {
+    const userId = this.resolveUserId(req);
+    await this.personalSkillsService.deleteByUser(userId, id);
+    return {
+      success: true,
+      id,
     };
   }
 

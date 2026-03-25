@@ -1,0 +1,12 @@
+{
+  "skillName": "brand-prospecting-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/brand-prospecting-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/brand-prospecting-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/brand-prospecting-agent.json",
+  "status": "present"
+}

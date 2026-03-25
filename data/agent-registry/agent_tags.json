@@ -1988,6 +1988,69 @@
     "confidenceScore": 1
   },
   {
+    "id": "27638966-c3c7-bea2-4114-853cb6d92bdd",
+    "agentId": "claude-code-cli",
+    "tagCategory": "keyword",
+    "tagName": "chat",
+    "confidenceScore": 1
+  },
+  {
+    "id": "328a3b8c-bc14-691e-b3c4-b72defcb483a",
+    "agentId": "claude-code-cli",
+    "tagCategory": "keyword",
+    "tagName": "code_generation",
+    "confidenceScore": 1
+  },
+  {
+    "id": "6d1a48ae-a3f6-d2f0-4ca0-039605da6de9",
+    "agentId": "claude-code-cli",
+    "tagCategory": "keyword",
+    "tagName": "file_management",
+    "confidenceScore": 1
+  },
+  {
+    "id": "b00b8198-367e-87b7-a445-2c34be7cf00f",
+    "agentId": "claude-code-cli",
+    "tagCategory": "keyword",
+    "tagName": "data_analysis",
+    "confidenceScore": 1
+  },
+  {
+    "id": "3fdd6ae6-7e92-de0a-3cec-e6f5a46c089a",
+    "agentId": "claude-code-cli",
+    "tagCategory": "keyword",
+    "tagName": "automation",
+    "confidenceScore": 1
+  },
+  {
+    "id": "3529bd42-869b-6cea-cdbc-4243172b9743",
+    "agentId": "claude-code-cli",
+    "tagCategory": "keyword",
+    "tagName": "bash",
+    "confidenceScore": 1
+  },
+  {
+    "id": "02aa9914-8654-653d-bb68-991ea6ccf652",
+    "agentId": "claude-code-cli",
+    "tagCategory": "normalized_category",
+    "tagName": "external-llm",
+    "confidenceScore": 1
+  },
+  {
+    "id": "03995dc0-cc96-19bf-51a5-9620cc8e588e",
+    "agentId": "claude-code-cli",
+    "tagCategory": "normalized_category",
+    "tagName": "orchestration",
+    "confidenceScore": 1
+  },
+  {
+    "id": "2e7987df-3dd9-427b-5837-242dd8e09bf1",
+    "agentId": "claude-code-cli",
+    "tagCategory": "normalized_category",
+    "tagName": "engineering",
+    "confidenceScore": 1
+  },
+  {
     "id": "eed054eb-93b9-694f-3550-ce0a3b3b2a18",
     "agentId": "code-fossil-investigator",
     "tagCategory": "keyword",
@@ -4949,55 +5012,6 @@
     "confidenceScore": 1
   },
   {
-    "id": "d7b7c8a6-0e48-613d-2d71-14a7197a7c8a",
-    "agentId": "email-custodian-agent",
-    "tagCategory": "keyword",
-    "tagName": "do_not_persist_plaintext_credentials_in_files_chat_logs_or_prompts",
-    "confidenceScore": 1
-  },
-  {
-    "id": "72414c3f-1527-80c2-b6ac-2d8add52e83f",
-    "agentId": "email-custodian-agent",
-    "tagCategory": "keyword",
-    "tagName": "use_only_encrypted_db_backed_records_and_grant_tokens",
-    "confidenceScore": 1
-  },
-  {
-    "id": "10896e6c-8c57-f6ba-d9a0-28e05c77368f",
-    "agentId": "email-custodian-agent",
-    "tagCategory": "keyword",
-    "tagName": "enforce_short_grant_expirations_and_explicit_scopes",
-    "confidenceScore": 1
-  },
-  {
-    "id": "7c6448ca-8394-7bbc-c412-9dfd6a275dc1",
-    "agentId": "email-custodian-agent",
-    "tagCategory": "keyword",
-    "tagName": "refuse_operations_that_bypass_platform_policy_or_legal_terms",
-    "confidenceScore": 1
-  },
-  {
-    "id": "b1c18df8-28a0-1f2b-9dad-bfbcb1404dd5",
-    "agentId": "email-custodian-agent",
-    "tagCategory": "normalized_category",
-    "tagName": "orchestration",
-    "confidenceScore": 1
-  },
-  {
-    "id": "d1a05f54-fc69-73da-8717-b825ea56dc80",
-    "agentId": "email-custodian-agent",
-    "tagCategory": "normalized_category",
-    "tagName": "engineering",
-    "confidenceScore": 1
-  },
-  {
-    "id": "3303e88e-5551-cbc0-f892-21cbfa24da80",
-    "agentId": "email-custodian-agent",
-    "tagCategory": "normalized_category",
-    "tagName": "operations",
-    "confidenceScore": 1
-  },
-  {
     "id": "f68b6d5b-f02b-bd1b-3ee8-f09a6cfa6d6d",
     "agentId": "email-marketing-automation-agent",
     "tagCategory": "keyword",
@@ -5317,6 +5331,111 @@
     "agentId": "financial-manager-agent",
     "tagCategory": "normalized_category",
     "tagName": "marketing",
+    "confidenceScore": 1
+  },
+  {
+    "id": "01429d15-6ef3-4b29-5817-1b146bc591a3",
+    "agentId": "frontend-debugger-agent",
+    "tagCategory": "keyword",
+    "tagName": "react_debugging",
+    "confidenceScore": 1
+  },
+  {
+    "id": "67c02120-a4f5-ae0e-5825-f06234a3e2a3",
+    "agentId": "frontend-debugger-agent",
+    "tagCategory": "keyword",
+    "tagName": "vite_debugging",
+    "confidenceScore": 1
+  },
+  {
+    "id": "956434c9-d515-7ee3-1e03-2a71a4325927",
+    "agentId": "frontend-debugger-agent",
+    "tagCategory": "keyword",
+    "tagName": "websocket_diagnostics",
+    "confidenceScore": 1
+  },
+  {
+    "id": "1d216c32-4917-fbf7-e576-793275b5367e",
+    "agentId": "frontend-debugger-agent",
+    "tagCategory": "keyword",
+    "tagName": "extension_conflict_analysis",
+    "confidenceScore": 1
+  },
+  {
+    "id": "d491759d-a3b2-4ac2-79f2-250e2475be83",
+    "agentId": "frontend-debugger-agent",
+    "tagCategory": "keyword",
+    "tagName": "bash",
+    "confidenceScore": 1
+  },
+  {
+    "id": "9c24eddd-eac4-16f0-6ef8-29fe346c3de5",
+    "agentId": "frontend-debugger-agent",
+    "tagCategory": "keyword",
+    "tagName": "grep",
+    "confidenceScore": 1
+  },
+  {
+    "id": "59243456-a49c-8938-88df-f019d7f13725",
+    "agentId": "frontend-debugger-agent",
+    "tagCategory": "keyword",
+    "tagName": "read",
+    "confidenceScore": 1
+  },
+  {
+    "id": "6934bc46-66f4-dedd-8495-758c8b9bc0ab",
+    "agentId": "frontend-debugger-agent",
+    "tagCategory": "keyword",
+    "tagName": "write",
+    "confidenceScore": 1
+  },
+  {
+    "id": "54116d0e-eb27-e100-d0a6-958d19dd175a",
+    "agentId": "frontend-debugger-agent",
+    "tagCategory": "keyword",
+    "tagName": "debug_react_context_and_hooks",
+    "confidenceScore": 1
+  },
+  {
+    "id": "4e04d79c-927c-f6f0-c483-bc24a58552c9",
+    "agentId": "frontend-debugger-agent",
+    "tagCategory": "keyword",
+    "tagName": "diagnose_websocket_and_hmr_failures",
+    "confidenceScore": 1
+  },
+  {
+    "id": "97249ce5-6018-deaf-65c7-03190feefa3f",
+    "agentId": "frontend-debugger-agent",
+    "tagCategory": "keyword",
+    "tagName": "resolve_duplicate_react_instance_conflicts",
+    "confidenceScore": 1
+  },
+  {
+    "id": "a2a5d0f1-2c5d-a270-3590-184f4aa35913",
+    "agentId": "frontend-debugger-agent",
+    "tagCategory": "keyword",
+    "tagName": "troubleshoot_custom_element_registration_collisions",
+    "confidenceScore": 1
+  },
+  {
+    "id": "780f3f4c-29f1-69f4-062c-6d02453095c2",
+    "agentId": "frontend-debugger-agent",
+    "tagCategory": "keyword",
+    "tagName": "analyze_javascript_runtime_stack_traces",
+    "confidenceScore": 1
+  },
+  {
+    "id": "3ccc60a7-fb93-3408-cc96-1a4bfa937df8",
+    "agentId": "frontend-debugger-agent",
+    "tagCategory": "keyword",
+    "tagName": "fix_module_resolution_and_bundling_issues",
+    "confidenceScore": 1
+  },
+  {
+    "id": "06290e68-7719-d111-ecbf-ba6f632ed937",
+    "agentId": "frontend-debugger-agent",
+    "tagCategory": "normalized_category",
+    "tagName": "engineering",
     "confidenceScore": 1
   },
   {
@@ -6038,6 +6157,76 @@
     "agentId": "gemini",
     "tagCategory": "normalized_category",
     "tagName": "operations",
+    "confidenceScore": 1
+  },
+  {
+    "id": "304619b4-6774-b095-65be-591991ea725c",
+    "agentId": "gemini-cli",
+    "tagCategory": "keyword",
+    "tagName": "chat",
+    "confidenceScore": 1
+  },
+  {
+    "id": "0791d176-2118-ddc2-5bf6-cafd047d77f7",
+    "agentId": "gemini-cli",
+    "tagCategory": "keyword",
+    "tagName": "code_generation",
+    "confidenceScore": 1
+  },
+  {
+    "id": "8f8ef75e-bc1c-aae0-fde5-61e754be6a9e",
+    "agentId": "gemini-cli",
+    "tagCategory": "keyword",
+    "tagName": "data_analysis",
+    "confidenceScore": 1
+  },
+  {
+    "id": "b3b3d412-3119-25b3-bba0-0aee34f80dd5",
+    "agentId": "gemini-cli",
+    "tagCategory": "keyword",
+    "tagName": "multimodal_reasoning",
+    "confidenceScore": 1
+  },
+  {
+    "id": "55a0e43f-3897-ffa3-e414-267d76bb861c",
+    "agentId": "gemini-cli",
+    "tagCategory": "keyword",
+    "tagName": "bash",
+    "confidenceScore": 1
+  },
+  {
+    "id": "999df0ea-2262-fa06-f588-db1ede313f04",
+    "agentId": "gemini-cli",
+    "tagCategory": "keyword",
+    "tagName": "websearch",
+    "confidenceScore": 1
+  },
+  {
+    "id": "9aecebc8-c0f9-e1eb-d8cc-9b6020ec76fe",
+    "agentId": "gemini-cli",
+    "tagCategory": "keyword",
+    "tagName": "webfetch",
+    "confidenceScore": 1
+  },
+  {
+    "id": "e31c2656-fee9-bbe5-529c-ffc5364db7b2",
+    "agentId": "gemini-cli",
+    "tagCategory": "normalized_category",
+    "tagName": "external-llm",
+    "confidenceScore": 1
+  },
+  {
+    "id": "d2e975c0-a91a-8ca5-fa33-03cb138e2dfb",
+    "agentId": "gemini-cli",
+    "tagCategory": "normalized_category",
+    "tagName": "orchestration",
+    "confidenceScore": 1
+  },
+  {
+    "id": "de68c2ea-af98-9962-bd80-25f586138b03",
+    "agentId": "gemini-cli",
+    "tagCategory": "normalized_category",
+    "tagName": "engineering",
     "confidenceScore": 1
   },
   {
@@ -6881,6 +7070,83 @@
     "confidenceScore": 1
   },
   {
+    "id": "3f708c6d-cb27-6107-9e51-b510f486864b",
+    "agentId": "jules-cli-agent",
+    "tagCategory": "keyword",
+    "tagName": "parallel_task_execution",
+    "confidenceScore": 1
+  },
+  {
+    "id": "ed6d20a5-c02b-45b2-6b9b-2f5f01a3f133",
+    "agentId": "jules-cli-agent",
+    "tagCategory": "keyword",
+    "tagName": "asynchronous_processing",
+    "confidenceScore": 1
+  },
+  {
+    "id": "1babb502-e5c8-200a-bc6d-44ec9e56385e",
+    "agentId": "jules-cli-agent",
+    "tagCategory": "keyword",
+    "tagName": "repository_refactoring",
+    "confidenceScore": 1
+  },
+  {
+    "id": "a1d40862-cdb0-0c78-fd2c-8e74c863a478",
+    "agentId": "jules-cli-agent",
+    "tagCategory": "keyword",
+    "tagName": "session_management",
+    "confidenceScore": 1
+  },
+  {
+    "id": "0b25c25c-e5c6-3f4c-3de2-d38a17fa5909",
+    "agentId": "jules-cli-agent",
+    "tagCategory": "keyword",
+    "tagName": "patch_application",
+    "confidenceScore": 1
+  },
+  {
+    "id": "f1e95fef-fcbb-cc7a-69d7-1f8d2792d2e1",
+    "agentId": "jules-cli-agent",
+    "tagCategory": "keyword",
+    "tagName": "bash",
+    "confidenceScore": 1
+  },
+  {
+    "id": "605006c3-f880-a0b3-6ada-90333c9129d9",
+    "agentId": "jules-cli-agent",
+    "tagCategory": "keyword",
+    "tagName": "async_code_generation",
+    "confidenceScore": 1
+  },
+  {
+    "id": "1ba494c0-1a9c-8598-6dd2-92dba82e1cd5",
+    "agentId": "jules-cli-agent",
+    "tagCategory": "keyword",
+    "tagName": "multi_session_management",
+    "confidenceScore": 1
+  },
+  {
+    "id": "7f5da2f6-b1c9-e09d-1bd0-63cbd9d1abdb",
+    "agentId": "jules-cli-agent",
+    "tagCategory": "keyword",
+    "tagName": "automated_code_improvements",
+    "confidenceScore": 1
+  },
+  {
+    "id": "84763ed1-964a-2f67-a739-bb426640c22d",
+    "agentId": "jules-cli-agent",
+    "tagCategory": "normalized_category",
+    "tagName": "development-automation",
+    "confidenceScore": 1
+  },
+  {
+    "id": "12115202-9917-15f9-61dd-5eb49924dece",
+    "agentId": "jules-cli-agent",
+    "tagCategory": "normalized_category",
+    "tagName": "engineering",
+    "confidenceScore": 1
+  },
+  {
     "id": "d8f4b27f-4d6b-2ce2-b331-0c3a5362356b",
     "agentId": "keyword-research-agent",
     "tagCategory": "keyword",
@@ -7543,6 +7809,13 @@
     "agentId": "media-evidence-investigator",
     "tagCategory": "normalized_category",
     "tagName": "media",
+    "confidenceScore": 1
+  },
+  {
+    "id": "cb0a6a55-9bdb-4ccd-a583-8e85bf8cdd1e",
+    "agentId": "meta-agent-architect",
+    "tagCategory": "keyword",
+    "tagName": "write",
     "confidenceScore": 1
   },
   {
@@ -8257,6 +8530,27 @@
     "agentId": "orchestrator-agent",
     "tagCategory": "normalized_category",
     "tagName": "orchestration",
+    "confidenceScore": 1
+  },
+  {
+    "id": "12ef7c72-6573-6172-4fce-865d111ddb04",
+    "agentId": "orchestrator-agent-copy",
+    "tagCategory": "keyword",
+    "tagName": "subagentexecutor",
+    "confidenceScore": 1
+  },
+  {
+    "id": "c92a9c51-6656-27dd-5371-a7d3013b5e62",
+    "agentId": "orchestrator-agent-copy",
+    "tagCategory": "normalized_category",
+    "tagName": "orchestration",
+    "confidenceScore": 1
+  },
+  {
+    "id": "029ae1b4-d741-224d-d457-003c4b95bf7a",
+    "agentId": "orchestrator-agent-copy",
+    "tagCategory": "normalized_category",
+    "tagName": "content",
     "confidenceScore": 1
   },
   {

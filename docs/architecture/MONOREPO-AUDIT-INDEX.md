@@ -11,24 +11,24 @@ fundamentally sound
 
 ### Essential Documents (Start Here)
 
-1. **[Quick Start Fixes](./QUICK-START-FIXES.md)** ⚡
+1. **[Quick Start Fixes](../archive/QUICK-START-FIXES.md)** ⚡
    - **Purpose:** Fast track to fixing all critical issues
    - **Time:** 30-45 minutes
    - **Best for:** Immediate action
 
-2. **[Monorepo Audit Report](./monorepo-audit-report.md)** 📊
+2. **[Monorepo Audit Report](../development/monorepo-audit-report.md)** 📊
    - **Purpose:** Complete analysis of current state
    - **Time:** 15-20 minutes to read
    - **Best for:** Understanding the full scope
 
-3. **[Dependency Map](./DEPENDENCY-MAP.md)** 🗺️
+3. **[Dependency Map](../development/DEPENDENCY-MAP.md)** 🗺️
    - **Purpose:** Visual reference of all package dependencies
    - **Time:** 5-10 minutes to read
    - **Best for:** Understanding package relationships
 
 ### Detailed Planning
 
-4. **[Fix Plan](./fix-plan.md)** 🔧
+4. **[Fix Plan](../archive/fix-plan.md)** 🔧
    - **Purpose:** Step-by-step instructions for all fixes
    - **Time:** Reference document
    - **Best for:** Systematic implementation
@@ -335,15 +335,15 @@ Most depended-on packages:
 
 ### Option 1: Quick Fix (Recommended)
 
-1. Read: [QUICK-START-FIXES.md](./QUICK-START-FIXES.md)
+1. Read: [QUICK-START-FIXES.md](../archive/QUICK-START-FIXES.md)
 2. Run: The commands in that file
 3. Time: 30-45 minutes
 
 ### Option 2: Comprehensive Understanding
 
-1. Read: [monorepo-audit-report.md](./monorepo-audit-report.md)
-2. Review: [DEPENDENCY-MAP.md](./DEPENDENCY-MAP.md)
-3. Plan: [fix-plan.md](./fix-plan.md)
+1. Read: [monorepo-audit-report.md](../development/monorepo-audit-report.md)
+2. Review: [DEPENDENCY-MAP.md](../development/DEPENDENCY-MAP.md)
+3. Plan: [fix-plan.md](../archive/fix-plan.md)
 4. Execute: Step by step from fix plan
 5. Time: 2-3 hours initial reading + implementation time
 
@@ -407,7 +407,7 @@ QUICK-START-FIXES.md
 ### Troubleshooting
 
 **Issue:** Build fails after fixes **Solution:** Check
-[QUICK-START-FIXES.md](./QUICK-START-FIXES.md) troubleshooting section
+[QUICK-START-FIXES.md](../archive/QUICK-START-FIXES.md) troubleshooting section
 
 **Issue:** Package can't be imported **Solution:** Verify it has `main`,
 `types`, and `exports` in package.json
@@ -467,7 +467,7 @@ documentation ✅ Clean build pipeline ✅ Fast iteration speed
 If you find issues with this audit or have suggestions:
 
 1. Check if issue is already documented
-2. Review [QUICK-START-FIXES.md](./QUICK-START-FIXES.md) troubleshooting
+2. Review [QUICK-START-FIXES.md](../archive/QUICK-START-FIXES.md) troubleshooting
 3. Run `node analyze-monorepo.js` to get current state
 4. Open an issue or contact the team
 

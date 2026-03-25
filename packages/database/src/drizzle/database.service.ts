@@ -48,6 +48,10 @@ import {
   DrizzleWorkflowRepository,
   drizzleWorkspaceMemberRepository,
   DrizzleWorkspaceMemberRepository,
+  drizzleWorkspaceBookmarkRepository,
+  DrizzleWorkspaceBookmarkRepository,
+  drizzleWorkspaceDomainRepository,
+  DrizzleWorkspaceDomainRepository,
   drizzleWorkspaceRepository,
   DrizzleWorkspaceRepository,
 } from './repositories';
@@ -188,6 +192,20 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
    */
   get workspaceMembers(): DrizzleWorkspaceMemberRepository {
     return drizzleWorkspaceMemberRepository;
+  }
+
+  /**
+   * Workspace bookmarks repository for workspace quick links
+   */
+  get workspaceBookmarks(): DrizzleWorkspaceBookmarkRepository {
+    return drizzleWorkspaceBookmarkRepository;
+  }
+
+  /**
+   * Workspace domains repository for custom domain management
+   */
+  get workspaceDomains(): DrizzleWorkspaceDomainRepository {
+    return drizzleWorkspaceDomainRepository;
   }
 
   /**

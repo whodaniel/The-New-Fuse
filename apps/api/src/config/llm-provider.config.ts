@@ -13,6 +13,16 @@ export default () => ({
       maxTokens: parseInt(process.env.ANTHROPIC_MAX_TOKENS || '4000'),
       temperature: parseFloat(process.env.ANTHROPIC_TEMPERATURE || '0.7'),
     },
+    'google-adk': {
+      apiKey: process.env.GOOGLE_ADK_API_KEY || process.env.ADK_GATEWAY_API_KEY,
+      model: process.env.GOOGLE_ADK_MODEL || 'gemini-2.5-pro',
+      baseURL:
+        process.env.GOOGLE_ADK_BASE_URL || process.env.ADK_GATEWAY_URL || 'http://localhost:8089',
+      gatewayApiKey: process.env.ADK_GATEWAY_API_KEY,
+      maxTokens: parseInt(process.env.GOOGLE_ADK_MAX_TOKENS || '4000'),
+      temperature: parseFloat(process.env.GOOGLE_ADK_TEMPERATURE || '0.7'),
+      timeout: parseInt(process.env.GOOGLE_ADK_TIMEOUT || '120000'),
+    },
     opencode: {
       apiKey: process.env.OPENCODE_API_KEY,
       model: process.env.OPENCODE_MODEL || 'anthropic/claude-sonnet-4-5',

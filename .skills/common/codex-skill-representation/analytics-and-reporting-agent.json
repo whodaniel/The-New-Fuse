@@ -1,0 +1,12 @@
+{
+  "skillName": "analytics-and-reporting-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/analytics-and-reporting-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/analytics-and-reporting-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/analytics-and-reporting-agent.json",
+  "status": "present"
+}

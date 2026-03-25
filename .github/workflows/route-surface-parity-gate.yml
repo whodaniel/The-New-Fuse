@@ -1,0 +1,53 @@
+name: Route Surface Parity Gate
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "apps/frontend/src/ComprehensiveRouter.tsx"
+      - "apps/frontend/src/config/sidebarNavigation.ts"
+      - "apps/frontend/src/config/routeCatalog.ts"
+      - "apps/frontend/src/config/legacyRedirects.ts"
+      - "apps/frontend/scripts/audit-parity-ledger.mjs"
+      - "apps/frontend/scripts/generate-route-surface-matrix.mjs"
+      - "apps/frontend/package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/route-surface-parity-gate.yml"
+  push:
+    branches: [main, develop]
+    paths:
+      - "apps/frontend/src/ComprehensiveRouter.tsx"
+      - "apps/frontend/src/config/sidebarNavigation.ts"
+      - "apps/frontend/src/config/routeCatalog.ts"
+      - "apps/frontend/src/config/legacyRedirects.ts"
+      - "apps/frontend/scripts/audit-parity-ledger.mjs"
+      - "apps/frontend/scripts/generate-route-surface-matrix.mjs"
+      - "apps/frontend/package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/route-surface-parity-gate.yml"
+  workflow_dispatch:
+
+jobs:
+  route-surface-governance:
+    name: Validate Route Surface Governance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --prefer-offline
+
+      - name: Run strict parity ledger gate
+        run: pnpm --filter @the-new-fuse/frontend-app audit:parity-ledger:strict
+
+      - name: Generate route-surface matrix artifacts
+        run: pnpm --filter @the-new-fuse/frontend-app audit:route-surface-matrix

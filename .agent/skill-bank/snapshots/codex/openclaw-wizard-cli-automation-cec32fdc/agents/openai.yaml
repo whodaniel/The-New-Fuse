@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenClaw Wizard CLI Automation"
+  short_description: "Automate openclaw onboard safely"
+  default_prompt: "Use this skill to generate and verify non-interactive OpenClaw onboarding commands and flags with safe auth and gateway defaults."

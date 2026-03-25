@@ -1,0 +1,12 @@
+{
+  "skillName": "x-strategy-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/x-strategy-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/x-strategy-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/x-strategy-agent.json",
+  "status": "present"
+}

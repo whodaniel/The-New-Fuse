@@ -57,6 +57,59 @@ export const workspaceMembers = pgTable(
   })
 );
 
+export const workspaceDomainStatusEnum = pgEnum('WorkspaceDomainStatus', [
+  'pending',
+  'verified',
+  'error',
+]);
+
+export const workspaceDomains = pgTable(
+  'workspace_domains',
+  {
+    id: text('id').primaryKey(),
+    workspaceId: text('workspace_id')
+      .notNull()
+      .references(() => workspaces.id, { onDelete: 'cascade' }),
+    domain: varchar('domain', { length: 255 }).notNull(),
+    status: workspaceDomainStatusEnum('status').default('pending').notNull(),
+    verificationMessage: text('verification_message'),
+    createdByUserId: text('created_by_user_id').references(() => users.id, {
+      onDelete: 'set null',
+    }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (table) => ({
+    uniqueWorkspaceDomain: unique().on(table.workspaceId, table.domain),
+  })
+);
+
+export const workspaceBookmarks = pgTable(
+  'workspace_bookmarks',
+  {
+    id: text('id').primaryKey(),
+    workspaceId: text('workspace_id')
+      .notNull()
+      .references(() => workspaces.id, { onDelete: 'cascade' }),
+    title: varchar('title', { length: 255 }).notNull(),
+    url: text('url').notNull(),
+    tags: jsonb('tags').$type<string[]>().default([]).notNull(),
+    note: text('note'),
+    createdByUserId: text('created_by_user_id').references(() => users.id, {
+      onDelete: 'set null',
+    }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (table) => ({
+    uniqueWorkspaceBookmarkUserUrl: unique().on(
+      table.workspaceId,
+      table.createdByUserId,
+      table.url
+    ),
+  })
+);
+
 // =============================================================================
 // PROJECT
 // =============================================================================
@@ -221,6 +274,8 @@ export const workspacesRelations = relations(workspaces, ({ one, many }) => ({
   }),
   projects: many(projects),
   members: many(workspaceMembers),
+  domains: many(workspaceDomains),
+  bookmarks: many(workspaceBookmarks),
 }));
 
 export const workspaceMembersRelations = relations(workspaceMembers, ({ one }) => ({
@@ -234,6 +289,28 @@ export const workspaceMembersRelations = relations(workspaceMembers, ({ one }) =
   }),
   addedBy: one(users, {
     fields: [workspaceMembers.addedByUserId],
+    references: [users.id],
+  }),
+}));
+
+export const workspaceDomainsRelations = relations(workspaceDomains, ({ one }) => ({
+  workspace: one(workspaces, {
+    fields: [workspaceDomains.workspaceId],
+    references: [workspaces.id],
+  }),
+  createdBy: one(users, {
+    fields: [workspaceDomains.createdByUserId],
+    references: [users.id],
+  }),
+}));
+
+export const workspaceBookmarksRelations = relations(workspaceBookmarks, ({ one }) => ({
+  workspace: one(workspaces, {
+    fields: [workspaceBookmarks.workspaceId],
+    references: [workspaces.id],
+  }),
+  createdBy: one(users, {
+    fields: [workspaceBookmarks.createdByUserId],
     references: [users.id],
   }),
 }));

@@ -1,0 +1,545 @@
+{
+  "capturedAt": "2026-03-25T00:40:43.413Z",
+  "url": "https://www.zo.computer/skills/mcporter-setup",
+  "title": "mcporter-setup | Zo Skills",
+  "links": [
+    {
+      "text": "MiniMax 2.7 & Kimi K2.5 are free on Zo",
+      "href": "https://www.zo.computer/signup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo",
+      "href": "https://www.zo.computer/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Get started",
+      "href": "https://www.zo.computer/signup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo",
+      "href": "https://www.zo.computer/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Pricing",
+      "href": "https://www.zo.computer/pricing",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "About",
+      "href": "https://www.zo.computer/about",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Newsletter",
+      "href": "https://www.zo.computer/newsletter",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Blog",
+      "href": "https://www.zo.computer/blog",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Download",
+      "href": "https://github.com/zocomputer/Zo/releases/latest/download/Zo.dmg",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Get started",
+      "href": "https://www.zo.computer/signup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Back to Skills",
+      "href": "https://www.zo.computer/skills",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "",
+      "href": "https://github.com/zocomputer/skills/blob/main/Community/mcporter-setup/SKILL.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Settings > Advanced",
+      "href": "https://www.zo.computer/?t=settings&s=advanced",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "MCPorter Documentation",
+      "href": "https://github.com/steipete/mcporter",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "MCP Server Registry",
+      "href": "https://github.com/modelcontextprotocol/servers",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Zo Secrets",
+      "href": "https://www.zo.computer/?t=settings&s=advanced",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Documentation",
+      "href": "https://docs.zocomputer.com/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Blog",
+      "href": "https://www.zo.computer/blog",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Newsletter",
+      "href": "https://www.zo.computer/newsletter",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Comparisons",
+      "href": "https://www.zo.computer/comparisons",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Pricing",
+      "href": "https://www.zo.computer/pricing",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Skills",
+      "href": "https://www.zo.computer/skills",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Integrations",
+      "href": "https://www.zo.computer/integrations",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Channels",
+      "href": "https://www.zo.computer/channels",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Models",
+      "href": "https://www.zo.computer/models",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Product Updates",
+      "href": "https://www.zo.computer/updates",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "FAQ",
+      "href": "https://www.zo.computer/faq",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Careers",
+      "href": "https://www.zo.computer/careers",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Brand",
+      "href": "https://www.zo.computer/brand",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Terms",
+      "href": "https://docs.zocomputer.com/information/terms",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Privacy",
+      "href": "https://docs.zocomputer.com/information/privacy-policy",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Help Center",
+      "href": "https://support.zocomputer.com/",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Contact",
+      "href": "https://docs.zocomputer.com/information/contact",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Security",
+      "href": "https://docs.zocomputer.com/information/security",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Discord",
+      "href": "https://discord.gg/invite/zocomputer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "LinkedIn",
+      "href": "https://www.linkedin.com/company/zocomputer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "X @zocomputer",
+      "href": "https://x.com/zocomputer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "YouTube",
+      "href": "https://www.youtube.com/@zo-computer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Testimonials",
+      "href": "https://www.zo.computer/testimonials",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Ambassadors",
+      "href": "https://www.zo.computer/ambassador",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Merch",
+      "href": "https://zo-computer.canarycanary.com/store",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Zo Computer Company",
+      "href": "https://www.zo.computer/about",
+      "rel": "",
+      "target": ""
+    }
+  ],
+  "buttons": [
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Personalization",
+      "text": "",
+      "classes": "inline-flex h-9 w-9 items-center justify-center rounded-md border border-border/50 hover:bg-accent/50 text-foreground transition-colors"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Menu",
+      "text": "",
+      "classes": "zo-btn aspect-square !px-2.5 !py-2 flex items-center justify-center border border-border bg-background/80 text-foreground transition-[background-color,border-color,transform] duration-0 hover:bg-muted/70 hover:border-border hover:duration-150 hover:[transition-timing-function:cubic-bezier(0.23,1,0.32,1)] active:bg-muted/60 active:scale-[0.97] active:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background touch-manipulation transform-gpu"
+    },
+    {
+      "tag": "button",
+      "id": "radix-_R_2rneitb_",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Resources",
+      "classes": "px-3 py-2 text-[0.9375rem] text-muted-foreground rounded transition-colors duration-0 hover:text-foreground hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 inline-flex items-center gap-1.5"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Personalization",
+      "text": "",
+      "classes": "inline-flex h-9 w-9 items-center justify-center rounded-md border border-border/50 hover:bg-accent/50 text-foreground transition-colors"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Run in Zo",
+      "classes": "zo-btn zo-btn-cta w-auto h-10"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Copy code",
+      "text": "Copy",
+      "classes": "absolute cursor-pointer bottom-2 right-2 h-7 px-2 rounded-md bg-muted/40 hover:bg-muted/60 active:bg-muted/80 transition-[background-color,opacity] duration-150 hover:duration-0 ease-out active:scale-95 inline-flex items-center gap-1.5 opacity-0 group-hover/codeblock:opacity-100"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Copy table",
+      "text": "Copy",
+      "classes": "absolute cursor-pointer bottom-2 right-2 h-7 px-2 rounded-md bg-muted/40 hover:bg-muted/60 active:bg-muted/80 transition-[background-color,opacity] duration-150 hover:duration-0 ease-out active:scale-95 inline-flex items-center gap-1.5 opacity-0 group-hover/table:opacity-100"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Copy code",
+      "text": "Copy",
+      "classes": "absolute cursor-pointer bottom-2 right-2 h-7 px-2 rounded-md bg-muted/40 hover:bg-muted/60 active:bg-muted/80 transition-[background-color,opacity] duration-150 hover:duration-0 ease-out active:scale-95 inline-flex items-center gap-1.5 opacity-0 group-hover/codeblock:opacity-100"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Copy code",
+      "text": "Copy",
+      "classes": "absolute cursor-pointer bottom-2 right-2 h-7 px-2 rounded-md bg-muted/40 hover:bg-muted/60 active:bg-muted/80 transition-[background-color,opacity] duration-150 hover:duration-0 ease-out active:scale-95 inline-flex items-center gap-1.5 opacity-0 group-hover/codeblock:opacity-100"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Copy code",
+      "text": "Copy",
+      "classes": "absolute cursor-pointer bottom-2 right-2 h-7 px-2 rounded-md bg-muted/40 hover:bg-muted/60 active:bg-muted/80 transition-[background-color,opacity] duration-150 hover:duration-0 ease-out active:scale-95 inline-flex items-center gap-1.5 opacity-0 group-hover/codeblock:opacity-100"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Copy code",
+      "text": "Copy",
+      "classes": "absolute cursor-pointer bottom-2 right-2 h-7 px-2 rounded-md bg-muted/40 hover:bg-muted/60 active:bg-muted/80 transition-[background-color,opacity] duration-150 hover:duration-0 ease-out active:scale-95 inline-flex items-center gap-1.5 opacity-0 group-hover/codeblock:opacity-100"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Copy code",
+      "text": "Copy",
+      "classes": "absolute cursor-pointer bottom-2 right-2 h-7 px-2 rounded-md bg-muted/40 hover:bg-muted/60 active:bg-muted/80 transition-[background-color,opacity] duration-150 hover:duration-0 ease-out active:scale-95 inline-flex items-center gap-1.5 opacity-0 group-hover/codeblock:opacity-100"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Copy code",
+      "text": "Copy",
+      "classes": "absolute cursor-pointer bottom-2 right-2 h-7 px-2 rounded-md bg-muted/40 hover:bg-muted/60 active:bg-muted/80 transition-[background-color,opacity] duration-150 hover:duration-0 ease-out active:scale-95 inline-flex items-center gap-1.5 opacity-0 group-hover/codeblock:opacity-100"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Copy code",
+      "text": "Copy",
+      "classes": "absolute cursor-pointer bottom-2 right-2 h-7 px-2 rounded-md bg-muted/40 hover:bg-muted/60 active:bg-muted/80 transition-[background-color,opacity] duration-150 hover:duration-0 ease-out active:scale-95 inline-flex items-center gap-1.5 opacity-0 group-hover/codeblock:opacity-100"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Copy code",
+      "text": "Copy",
+      "classes": "absolute cursor-pointer bottom-2 right-2 h-7 px-2 rounded-md bg-muted/40 hover:bg-muted/60 active:bg-muted/80 transition-[background-color,opacity] duration-150 hover:duration-0 ease-out active:scale-95 inline-flex items-center gap-1.5 opacity-0 group-hover/codeblock:opacity-100"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Copy code",
+      "text": "Copy",
+      "classes": "absolute cursor-pointer bottom-2 right-2 h-7 px-2 rounded-md bg-muted/40 hover:bg-muted/60 active:bg-muted/80 transition-[background-color,opacity] duration-150 hover:duration-0 ease-out active:scale-95 inline-flex items-center gap-1.5 opacity-0 group-hover/codeblock:opacity-100"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Copy code",
+      "text": "Copy",
+      "classes": "absolute cursor-pointer bottom-2 right-2 h-7 px-2 rounded-md bg-muted/40 hover:bg-muted/60 active:bg-muted/80 transition-[background-color,opacity] duration-150 hover:duration-0 ease-out active:scale-95 inline-flex items-center gap-1.5 opacity-0 group-hover/codeblock:opacity-100"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Copy code",
+      "text": "Copy",
+      "classes": "absolute cursor-pointer bottom-2 right-2 h-7 px-2 rounded-md bg-muted/40 hover:bg-muted/60 active:bg-muted/80 transition-[background-color,opacity] duration-150 hover:duration-0 ease-out active:scale-95 inline-flex items-center gap-1.5 opacity-0 group-hover/codeblock:opacity-100"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Copy code",
+      "text": "Copy",
+      "classes": "absolute cursor-pointer bottom-2 right-2 h-7 px-2 rounded-md bg-muted/40 hover:bg-muted/60 active:bg-muted/80 transition-[background-color,opacity] duration-150 hover:duration-0 ease-out active:scale-95 inline-flex items-center gap-1.5 opacity-0 group-hover/codeblock:opacity-100"
+    }
+  ],
+  "inputs": [],
+  "headings": [
+    {
+      "level": "h1",
+      "text": "mcporter-setup"
+    },
+    {
+      "level": "h1",
+      "text": "MCPorter Setup"
+    },
+    {
+      "level": "h2",
+      "text": "When to Use"
+    },
+    {
+      "level": "h2",
+      "text": "Setup Process"
+    },
+    {
+      "level": "h3",
+      "text": "Step 1: Check MCPorter Installation"
+    },
+    {
+      "level": "h3",
+      "text": "Step 2: Gather MCP Server Details"
+    },
+    {
+      "level": "h3",
+      "text": "Step 3: Determine Authentication Method"
+    },
+    {
+      "level": "h3",
+      "text": "Step 4: Handle Authentication"
+    },
+    {
+      "level": "h4",
+      "text": "No Auth"
+    },
+    {
+      "level": "h4",
+      "text": "OAuth"
+    },
+    {
+      "level": "h4",
+      "text": "API Key / Bearer Token"
+    },
+    {
+      "level": "h3",
+      "text": "Step 5: Add Server Configuration"
+    },
+    {
+      "level": "h3",
+      "text": "Step 6: Test Connection"
+    },
+    {
+      "level": "h2",
+      "text": "Common MCP Servers"
+    },
+    {
+      "level": "h3",
+      "text": "Linear"
+    },
+    {
+      "level": "h3",
+      "text": "Context7 (No Auth)"
+    },
+    {
+      "level": "h3",
+      "text": "GitHub MCP (STDIO)"
+    },
+    {
+      "level": "h3",
+      "text": "Firecrawl"
+    },
+    {
+      "level": "h2",
+      "text": "Troubleshooting"
+    },
+    {
+      "level": "h3",
+      "text": "SSE Error / Invalid Content Type"
+    },
+    {
+      "level": "h3",
+      "text": "Authentication Required (401/403)"
+    },
+    {
+      "level": "h3",
+      "text": "Tools Unavailable"
+    },
+    {
+      "level": "h2",
+      "text": "Scripts"
+    },
+    {
+      "level": "h3",
+      "text": "check-install.ts"
+    },
+    {
+      "level": "h3",
+      "text": "detect-auth.ts <url>"
+    },
+    {
+      "level": "h3",
+      "text": "add-server.ts"
+    },
+    {
+      "level": "h3",
+      "text": "test-server.ts <name>"
+    },
+    {
+      "level": "h2",
+      "text": "After Setup"
+    },
+    {
+      "level": "h2",
+      "text": "References"
+    },
+    {
+      "level": "h3",
+      "text": "PRODUCT"
+    },
+    {
+      "level": "h3",
+      "text": "INFORMATION"
+    },
+    {
+      "level": "h3",
+      "text": "COMMUNITY"
+    }
+  ],
+  "bodyText": "MiniMax 2.7 & Kimi K2.5 are free on Zo Zo · Pricing About Newsletter Blog Resources Download Get started Back to Skills Run in Zo mcporter-setup Install MCPorter and configure MCP servers from scratch. Use when setting up MCP integration for the first time, adding new MCP servers, or troubleshooting MCP connectivity. Handles installation, configuration, secrets management, and connection testing. curtastrophe MCPorter Setup Install and configure MCP (Model Context Protocol) servers on Zo Computer. This skill handles the complete setup process from installation to working connection. When to Use User wants to use an MCP server but mcporter isn't installed User wants to add a new MCP server to their configuration User mentions a platform/service that might be available via MCP Troubleshooting MCP connection issues User asks \"set up MCP\" or \"add MCP server\" Setup Process Follow these steps in order: Step 1: Check MCPorter Installation Run the installation check script: bun Skills/mcporter-setup/scripts/check-install.ts Copy If not installed, the script will install mcporter automatically. Step 2: Gather MCP Server Details Ask the user for the following information: Required Question Example Server URL \"What is the MCP server URL?\" https://mcp.example.com/mcp Server Name \"What name would you like for this server?\" myserver Description \"What does this server provide?\" My API integration Copy Step 3: Determine Authentication Method Check the server's auth requirements: bun Skills/mcporter-setup/scripts/detect-auth.ts <server_url> Copy This will return one of: none - No authentication required oauth - Standard OAuth (browser-based) api-key - API key in header bearer - Bearer token custom - Non-standard auth (requires manual setup) Step 4: Handle Authentication Based on the auth type: No Auth Proceed directly to Step 5. OAuth Run the auth flow: npx mcporter auth <server_url> Copy Tell the user: \"A browser window will open for authentication. Please complete the login and return here.\" API Key / Bearer Token Ask the user: \"What is the header name for the API key?\" (e.g., x-api-key, Authorization) \"What is your API key or token?\" Then store the secret: # Tell user to add secret in Settings > Advanced # Then reference it in config Copy For API keys: Direct the user to Settings > Advanced to add the secret, then continue with the variable reference. Step 5: Add Server Configuration Run the setup script with gathered information: bun Skills/mcporter-setup/scripts/add-server.ts \\ --name \"<server_name>\" \\ --url \"<server_url>\" \\ --description \"<description>\" \\ --auth-type \"<auth_type>\" \\ --header-name \"<header_name>\" \\ --secret-var \"<SECRET_VAR_NAME>\" Copy Step 6: Test Connection Verify the setup works: bun Skills/mcporter-setup/scripts/test-server.ts <server_name> Copy If successful, show the available tools: npx mcporter list <server_name> --all-parameters Copy Common MCP Servers Use these pre-configured setups for popular services: Linear URL: https://mcp.linear.app/mcp Auth: Bearer token (LINEAR_API_KEY) Header: Authorization: Bearer ${LINEAR_API_KEY} Copy Setup: Get API key from Linear Settings > API Store as LINEAR_API_KEY in Zo Secrets Run: npx mcporter config add linear https://mcp.linear.app/mcp --header \"Authorization: Bearer ${LINEAR_API_KEY}\" --scope home Context7 (No Auth) URL: https://mcp.context7.com/mcp Auth: None Copy Setup: npx mcporter config add context7 https://mcp.context7.com/mcp --description \"Documentation search\" --scope home Copy GitHub MCP (STDIO) Command: npx -y @github/mcp-server Auth: GITHUB_TOKEN environment variable Copy Setup: Create GitHub Personal Access Token Store as GITHUB_TOKEN in Zo Secrets Run: npx mcporter config add github --command \"npx\" --arg \"-y\" --arg \"@github/mcp-server\" --env \"GITHUB_TOKEN=${GITHUB_TOKEN}\" --scope home Firecrawl URL: https://mcp.firecrawl.dev/mcp Auth: Bearer token (FIRECRAWL_API_KEY) Header: Authorization: Bearer ${FIRECRAWL_API_KEY} Copy Setup: Get API key from Firecrawl dashboard Store as FIRECRAWL_API_KEY in Zo Secrets Run: npx mcporter config add firecrawl https://mcp.firecrawl.dev/mcp --header \"Authorization: Bearer ${FIRECRAWL_API_KEY}\" --scope home Troubleshooting SSE Error / Invalid Content Type The server may use a different transport or require custom auth: Check server documentation Try --http-url flag instead of SSE May need manual token configuration Authentication Required (401/403) Secret may not be loaded: Verify secret exists in Zo Secrets Check the environment variable name matches exactly Test with: curl -H \"Authorization: Bearer $SECRET\" <url> Tools Unavailable Server may be offline or auth failed: Test connectivity: curl -v <server_url> Re-run auth: npx mcporter auth <server_url> Check server status page if available Scripts check-install.ts Checks if mcporter is installed and installs if needed. detect-auth.ts <url> Analyzes server auth requirements. add-server.ts Adds server configuration with proper auth setup. test-server.ts <name> Tests server connectivity and lists available tools. After Setup Once configured, use the mcporter skill for quick command reference: npx mcporter list <server> npx mcporter call <server>.<tool> param=value Copy References MCPorter Documentation MCP Server Registry Zo Secrets Preview - Open in Zo to view the full skill. PRODUCT Documentation Blog Newsletter Comparisons Pricing Skills Integrations Channels Models Product Updates INFORMATION FAQ Careers Brand Terms Privacy Help Center Contact Security COMMUNITY Discord LinkedIn X @zocomputer YouTube Testimonials Ambassadors Merch Zo Computer Company"
+}

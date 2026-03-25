@@ -273,7 +273,7 @@ await service.create({
 ## Next Steps
 
 - Read the [API Documentation](./API.md) for detailed endpoint information
-- Check out [Examples](./EXAMPLES.md) for more use cases
+- Check out [Examples](../README.md) for more use cases
 - See [Integration Guide](./INTEGRATION.md) for advanced integration patterns
 - Review the [README](../README.md) for comprehensive information
 
@@ -316,4 +316,4 @@ pnpm build
 
 - [GitHub Issues](https://github.com/the-new-fuse/the-new-fuse/issues)
 - [API Documentation](./API.md)
-- [Examples](./EXAMPLES.md)
+- [Examples](../README.md)

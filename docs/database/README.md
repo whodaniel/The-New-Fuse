@@ -1,1 +1,4 @@
-# Database Documentation\n\n- [Database Development Guide](development-guide.md)\n- [Database Consolidation Plan](consolidation-plan.md)
+# Database Documentation
+
+- [Database Development Guide](development-guide.md)
+- [Final Consolidation Plan](../project/final-consolidation-plan.md)

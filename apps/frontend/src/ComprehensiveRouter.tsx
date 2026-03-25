@@ -2,8 +2,8 @@ import { Suspense, lazy, type ReactNode } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { LEGACY_REDIRECTS } from './config/legacyRedirects';
 // Lazy load layouts for code splitting
-const PerpetualStatus = lazy(() => import('../pages/PerpetualStatus'));
-const LaunchpadDashboard = lazy(() => import('../pages/LaunchpadDashboard'));
+const PerpetualStatus = lazy(() => import('./pages/PerpetualStatus'));
+const LaunchpadDashboard = lazy(() => import('./pages/LaunchpadDashboard'));
 const PremiumLayout = lazy(() => import('./layouts/PremiumLayout'));
 const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
 
@@ -64,6 +64,9 @@ const ModernHub = lazy(() => import('./pages/Hub/ModernHub'));
 
 // Resources pages
 const ResourcesDashboard = lazy(() => import('./pages/Resources/ResourcesDashboard'));
+const FilesWorkspacePage = lazy(() => import('./pages/Files/FilesWorkspace'));
+const DatasetsWorkbenchPage = lazy(() => import('./pages/Datasets/DatasetsWorkbench'));
+const HostingControlCenterPage = lazy(() => import('./pages/Hosting/HostingControlCenter'));
 const MarketplaceDashboard = lazy(() => import('./pages/Marketplace'));
 const MarketplacePublicPage = lazy(() => import('./pages/Marketplace/MarketplacePublicPage'));
 
@@ -134,6 +137,8 @@ const ConnectExtensionPage = lazy(() => import('./pages/ConnectExtension'));
 const MembershipPage = lazy(() => import('./pages/Membership'));
 const VisualizationsPage = lazy(() => import('./pages/Visualizations'));
 const TerminalGraphPage = lazy(() => import('./pages/TerminalGraph'));
+const BookmarksPage = lazy(() => import('./pages/Bookmarks'));
+const ZoParityDashboardPage = lazy(() => import('./pages/Parity/ZoParityDashboard'));
 
 // AI Agent Onboarding - Critical for autonomous agent self-registration
 const AIAgentOnboardingPage = lazy(() =>
@@ -414,6 +419,70 @@ export default function ComprehensiveRouter() {
                   </RequireMemberAccess>
                 }
               />
+              <Route
+                path="/files"
+                element={
+                  <RequireMemberAccess>
+                    <FilesWorkspacePage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/skills"
+                element={
+                  <RequireMemberAccess>
+                    <ResourcesDashboard />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/tools"
+                element={
+                  <RequireMemberAccess>
+                    <ResourcesDashboard />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/tools/*"
+                element={
+                  <RequireMemberAccess>
+                    <ResourcesDashboard />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/integrations"
+                element={
+                  <RequireMemberAccess>
+                    <ResourcesDashboard />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/integrations/*"
+                element={
+                  <RequireMemberAccess>
+                    <ResourcesDashboard />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/datasets"
+                element={
+                  <RequireMemberAccess>
+                    <DatasetsWorkbenchPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/automations"
+                element={
+                  <RequireMemberAccess>
+                    <Workflows />
+                  </RequireMemberAccess>
+                }
+              />
 
               {/* All routes using LazyPage for now to avoid import issues */}
               <Route
@@ -434,6 +503,31 @@ export default function ComprehensiveRouter() {
               />
               <Route
                 path="/chat"
+                element={
+                  <RequireMemberAccess>
+                    <ChatPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/channels"
+                element={
+                  <RequireMemberAccess>
+                    <ChatPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/channels/*"
+                element={
+                  <RequireMemberAccess>
+                    <ChatPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route path="/models" element={<Navigate to="/settings/api" replace />} />
+              <Route
+                path="/chats"
                 element={
                   <RequireMemberAccess>
                     <ChatPage />
@@ -829,6 +923,22 @@ export default function ComprehensiveRouter() {
                 }
               />
               <Route
+                path="/space"
+                element={
+                  <RequireMemberAccess>
+                    <SpacesOverview />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/hosting"
+                element={
+                  <RequireMemberAccess>
+                    <HostingControlCenterPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
                 path="/admin/feature-flags"
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
@@ -907,6 +1017,42 @@ export default function ComprehensiveRouter() {
                   <RequireMemberAccess>
                     <MCPHub />
                   </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/terminal"
+                element={
+                  <RequireMemberAccess>
+                    <TerminalGraphPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/billing"
+                element={<MembershipPage />}
+              />
+              <Route
+                path="/bookmarks"
+                element={
+                  <RequireMemberAccess>
+                    <BookmarksPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/zo-parity"
+                element={
+                  <RequireMemberAccess>
+                    <ZoParityDashboardPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/system"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <SystemHealth />
+                  </RequirePermission>
                 }
               />
               <Route
@@ -1115,6 +1261,11 @@ export default function ComprehensiveRouter() {
               {/* Enhanced Landing Routes */}
               <Route path="/landing" element={<RedirectToStatic to="/" />} />
               <Route path="/about" element={<Navigate to="/brand" replace />} />
+              <Route path="/faq" element={<Navigate to="/docs" replace />} />
+              <Route path="/comparisons" element={<Navigate to="/product-map" replace />} />
+              <Route path="/careers" element={<Navigate to="/community" replace />} />
+              <Route path="/ambassador" element={<Navigate to="/community" replace />} />
+              <Route path="/testimonials" element={<RedirectToStatic to="/#testimonials" />} />
               <Route path="/features" element={<RedirectToStatic to="/#features" />} />
               <Route path="/pricing" element={<RedirectToStatic to="/#pricing" />} />
               <Route path="/community" element={<CommunityHubPage />} />

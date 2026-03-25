@@ -71,6 +71,13 @@ const HIGH_RISK_KEYWORDS = [
 ];
 
 const MEDIUM_RISK_KEYWORDS = ['security', 'auth', 'compliance', 'legal', 'tax', 'privacy'];
+const BLOCKED_CLASSIFICATIONS = new Set([
+  'private',
+  'private_skill',
+  'private_skills',
+  'private_agent',
+  'restricted',
+]);
 
 function parseArgs(argv) {
   const out = {
@@ -96,16 +103,25 @@ function slugify(input) {
 
 function parseFrontmatter(raw) {
   const text = raw.replace(/^\uFEFF/, '');
-  if (!text.startsWith('---\n')) return { fm: {}, body: text.trim() };
+  if (!text.startsWith('---\n')) return { fm: {}, body: text.trim(), fmText: '' };
   const end = text.indexOf('\n---\n', 4);
-  if (end === -1) return { fm: {}, body: text.trim() };
+  if (end === -1) return { fm: {}, body: text.trim(), fmText: '' };
   const fmText = text.slice(4, end);
   const body = text.slice(end + 5).trim();
+  const simplePairs = {};
+  for (const line of fmText.split(/\r?\n/)) {
+    const match = line.match(/^([A-Za-z0-9_]+):\s*(.+?)\s*$/);
+    if (!match) continue;
+    const key = match[1];
+    const value = match[2].replace(/^['"]|['"]$/g, '').trim();
+    if (!value) continue;
+    simplePairs[key] = value;
+  }
   try {
     const parsed = parseYaml(fmText) || {};
-    return { fm: parsed, body };
+    return { fm: parsed, body, fmText };
   } catch {
-    return { fm: {}, body };
+    return { fm: simplePairs, body, fmText };
   }
 }
 
@@ -161,6 +177,23 @@ function normalizeCapabilityName(capability) {
 
 function normalizeTag(tag) {
   return slugify(tag).replace(/-/g, '_');
+}
+
+function normalizeClassification(value) {
+  return slugify(value).replace(/-/g, '_');
+}
+
+function collectClassificationHints(payload) {
+  return uniqStrings([
+    ...asArray(payload?.classification),
+    ...asArray(payload?.classifications),
+    ...asArray(payload?.visibility),
+    ...asArray(payload?.access),
+  ]).map(normalizeClassification);
+}
+
+function isBlockedByClassification(hints) {
+  return hints.find((hint) => BLOCKED_CLASSIFICATIONS.has(hint)) || null;
 }
 
 function uniqStrings(values) {
@@ -349,6 +382,7 @@ function inferWorkflowStages(text) {
 async function readSourceVariants(repoRoot) {
   const variants = [];
   const errors = [];
+  const skipped = [];
 
   for (const source of SOURCE_DEFS) {
     const absDir = path.join(repoRoot, source.relDir);
@@ -361,6 +395,17 @@ async function readSourceVariants(repoRoot) {
         const raw = await fs.readFile(absPath, 'utf8');
         if (source.kind === 'markdown') {
           const { fm, body } = parseFrontmatter(raw);
+          const classificationHints = collectClassificationHints(fm);
+          const blockedReason = isBlockedByClassification(classificationHints);
+          if (blockedReason) {
+            skipped.push({
+              sourceId: source.id,
+              sourceFile: relPath,
+              reason: 'classification-block',
+              classification: blockedReason,
+            });
+            continue;
+          }
           const id = slugify(fm.id || fm.name || path.basename(filename, '.md'));
           if (!id) continue;
           const tools = uniqStrings(asArray(fm.tools).map(normalizeToolName));
@@ -403,6 +448,22 @@ async function readSourceVariants(repoRoot) {
           });
         } else {
           const parsed = JSON.parse(raw);
+          const classificationHints = collectClassificationHints({
+            classification: parsed.classification,
+            classifications: parsed.classifications,
+            visibility: parsed.visibility || parsed?.metadata?.visibility,
+            access: parsed.access || parsed?.metadata?.access,
+          });
+          const blockedReason = isBlockedByClassification(classificationHints);
+          if (blockedReason) {
+            skipped.push({
+              sourceId: source.id,
+              sourceFile: relPath,
+              reason: 'classification-block',
+              classification: blockedReason,
+            });
+            continue;
+          }
           const id = slugify(parsed.id || parsed.name || parsed.displayName || path.basename(filename, '.json'));
           if (!id) continue;
 
@@ -450,7 +511,7 @@ async function readSourceVariants(repoRoot) {
     }
   }
 
-  return { variants, errors };
+  return { variants, errors, skipped };
 }
 
 function choosePrimaryVariant(variants) {
@@ -754,7 +815,17 @@ CREATE TABLE IF NOT EXISTS agent_tags (
 `;
 }
 
-function buildRegistrySummary({ cards, capabilities, tags, relationships, variants, collisions, errors, taxonomyCandidates }) {
+function buildRegistrySummary({
+  cards,
+  capabilities,
+  tags,
+  relationships,
+  variants,
+  collisions,
+  errors,
+  skipped,
+  taxonomyCandidates,
+}) {
   const byType = cards.reduce((acc, card) => {
     acc[card.agentType] = (acc[card.agentType] || 0) + 1;
     return acc;
@@ -783,6 +854,7 @@ function buildRegistrySummary({ cards, capabilities, tags, relationships, varian
       tags: tags.length,
       collisions: collisions.length,
       parseErrors: errors.length,
+      skippedByClassification: skipped.length,
       byType,
       byCategory,
       bySource,
@@ -790,6 +862,7 @@ function buildRegistrySummary({ cards, capabilities, tags, relationships, varian
     taxonomyCandidates,
     collisions,
     parseErrors: errors,
+    skippedByClassification: skipped,
   };
 }
 
@@ -807,7 +880,7 @@ async function main() {
   const outputDir = path.resolve(repoRoot, args.outputDir);
   await ensureDir(outputDir);
 
-  const { variants, errors } = await readSourceVariants(repoRoot);
+  const { variants, errors, skipped } = await readSourceVariants(repoRoot);
   const { cards, collisions, taxonomyCandidates } = mergeVariantsToCards(variants);
   const capabilities = buildCapabilities(cards);
   const tags = buildTags(cards);
@@ -862,6 +935,7 @@ async function main() {
     variants,
     collisions,
     errors,
+    skipped,
     taxonomyCandidates,
   });
 

@@ -1,0 +1,12 @@
+{
+  "skillName": "live-stream-manager-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/live-stream-manager-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/live-stream-manager-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/live-stream-manager-agent.json",
+  "status": "present"
+}

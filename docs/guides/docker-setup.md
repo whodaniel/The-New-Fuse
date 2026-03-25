@@ -4,6 +4,13 @@
 
 The New Fuse uses Docker for production-ready database infrastructure including PostgreSQL and Redis. This provides reliable data persistence, caching, and scalability for production deployments.
 
+## Docker Image Profiles
+
+- Use `Dockerfile.dev` for local development workflows (source mounts, hot reload, development dependencies).
+- Use `Dockerfile` for production images with a multi-stage build:
+  - **Builder stage**: install/build dependencies and compile application code.
+  - **Runtime stage**: minimal runtime image with production dependencies only.
+
 ## Architecture
 
 ```

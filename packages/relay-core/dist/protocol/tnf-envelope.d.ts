@@ -9,17 +9,18 @@
  * - Workflow execution
  */
 import { z } from 'zod';
+import { type TnfAuditTrace } from '../contracts/audit';
 /**
  * Message Types
  */
 export declare const MessageType: z.ZodEnum<{
     command: "command";
-    query: "query";
     event: "event";
     task: "task";
     handoff: "handoff";
     "handoff-ack": "handoff-ack";
     "state-sync": "state-sync";
+    query: "query";
     response: "response";
     "resource-negotiate": "resource-negotiate";
     auction: "auction";
@@ -32,6 +33,10 @@ export type MessageType = z.infer<typeof MessageType>;
  */
 export declare const AgentIdentity: z.ZodObject<{
     agentId: z.ZodString;
+    canonicalEntityId: z.ZodOptional<z.ZodString>;
+    operationalHandle: z.ZodOptional<z.ZodString>;
+    runtimeSessionId: z.ZodOptional<z.ZodString>;
+    aliases: z.ZodOptional<z.ZodArray<z.ZodString>>;
     role: z.ZodOptional<z.ZodEnum<{
         orchestrator: "orchestrator";
         worker: "worker";
@@ -64,12 +69,12 @@ export declare const TNFEnvelope: z.ZodObject<{
     timestamp: z.ZodString;
     type: z.ZodEnum<{
         command: "command";
-        query: "query";
         event: "event";
         task: "task";
         handoff: "handoff";
         "handoff-ack": "handoff-ack";
         "state-sync": "state-sync";
+        query: "query";
         response: "response";
         "resource-negotiate": "resource-negotiate";
         auction: "auction";
@@ -78,6 +83,10 @@ export declare const TNFEnvelope: z.ZodObject<{
     }>;
     from: z.ZodObject<{
         agentId: z.ZodString;
+        canonicalEntityId: z.ZodOptional<z.ZodString>;
+        operationalHandle: z.ZodOptional<z.ZodString>;
+        runtimeSessionId: z.ZodOptional<z.ZodString>;
+        aliases: z.ZodOptional<z.ZodArray<z.ZodString>>;
         role: z.ZodOptional<z.ZodEnum<{
             orchestrator: "orchestrator";
             worker: "worker";
@@ -89,6 +98,10 @@ export declare const TNFEnvelope: z.ZodObject<{
     }, z.core.$strip>;
     to: z.ZodUnion<[z.ZodObject<{
         agentId: z.ZodString;
+        canonicalEntityId: z.ZodOptional<z.ZodString>;
+        operationalHandle: z.ZodOptional<z.ZodString>;
+        runtimeSessionId: z.ZodOptional<z.ZodString>;
+        aliases: z.ZodOptional<z.ZodArray<z.ZodString>>;
         role: z.ZodOptional<z.ZodEnum<{
             orchestrator: "orchestrator";
             worker: "worker";
@@ -126,9 +139,9 @@ export declare const TNFEnvelope: z.ZodObject<{
             "priority-pro": "priority-pro";
         }>>;
         onQuotaExhausted: z.ZodDefault<z.ZodEnum<{
-            wait: "wait";
             "switch-account": "switch-account";
             "switch-tier": "switch-tier";
+            wait: "wait";
             fail: "fail";
             negotiate: "negotiate";
         }>>;
@@ -139,6 +152,11 @@ export declare const TNFEnvelope: z.ZodObject<{
     metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
 }, z.core.$strip>;
 export type TNFEnvelope = z.infer<typeof TNFEnvelope>;
+export interface CreateTNFEnvelopeOptions {
+    metadata?: Record<string, unknown>;
+    traceId?: string;
+    audit?: Partial<TnfAuditTrace>;
+}
 /**
  * Specific Message Payloads
  */
@@ -166,9 +184,9 @@ export declare const StateSyncPayload: z.ZodObject<{
     version: z.ZodNumber;
     operation: z.ZodEnum<{
         set: "set";
-        get: "get";
-        delete: "delete";
         update: "update";
+        delete: "delete";
+        get: "get";
     }>;
 }, z.core.$strip>;
 export type StateSyncPayload = z.infer<typeof StateSyncPayload>;
@@ -204,12 +222,11 @@ export declare const BidPayload: z.ZodObject<{
     metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
 }, z.core.$strip>;
 export type BidPayload = z.infer<typeof BidPayload>;
-/**
- * Helper Functions
- */
+export declare function getTNFEnvelopeAuditTrace(envelope: Pick<TNFEnvelope, 'traceId' | 'from' | 'context' | 'metadata'>): TnfAuditTrace;
+export declare function normalizeTNFEnvelope(envelope: TNFEnvelope): TNFEnvelope;
 export declare function createTNFEnvelope(type: MessageType, from: AgentIdentity, to: AgentIdentity | {
     broadcast: boolean;
-}, payload: Record<string, unknown>, context?: MessageContext): TNFEnvelope;
+}, payload: Record<string, unknown>, context?: MessageContext, options?: CreateTNFEnvelopeOptions): TNFEnvelope;
 export declare function validateTNFEnvelope(data: unknown): TNFEnvelope;
 export declare function isTaskMessage(envelope: TNFEnvelope): boolean;
 export declare function isEventMessage(envelope: TNFEnvelope): boolean;

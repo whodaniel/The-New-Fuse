@@ -1,0 +1,12 @@
+{
+  "skillName": "personal-brand-architect-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/personal-brand-architect-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/personal-brand-architect-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/personal-brand-architect-agent.json",
+  "status": "present"
+}

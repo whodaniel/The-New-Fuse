@@ -3,6 +3,8 @@ import {
   AgentTemplate,
   ClaudeSkill,
   N8NWorkflow,
+  PersonalSkill,
+  PersonalSkillInput,
   Resource,
   ResourceFilter,
   ResourceSearchEnvelope,
@@ -410,6 +412,38 @@ export class ResourcesService {
     return marketplaceItems
       .filter((item) => ['skill', 'prompt', 'mcp_server', 'model'].includes(item.kind))
       .map((item) => this.toSkill(item));
+  }
+
+  // Fetch authenticated user's private skills
+  async getPersonalSkills(): Promise<PersonalSkill[]> {
+    const response = await axios.get(`${API_BASE}/resources/personal-skills`, {
+      headers: this.getAuthHeaders(),
+    });
+    return Array.isArray(response.data) ? (response.data as PersonalSkill[]) : [];
+  }
+
+  // Create authenticated user's private skill
+  async createPersonalSkill(input: PersonalSkillInput): Promise<PersonalSkill> {
+    const response = await axios.post(`${API_BASE}/resources/personal-skills`, input, {
+      headers: this.getAuthHeaders(),
+    });
+    return response.data as PersonalSkill;
+  }
+
+  // Update authenticated user's private skill
+  async updatePersonalSkill(id: string, input: Partial<PersonalSkillInput>): Promise<PersonalSkill> {
+    const response = await axios.put(`${API_BASE}/resources/personal-skills/${id}`, input, {
+      headers: this.getAuthHeaders(),
+    });
+    return response.data as PersonalSkill;
+  }
+
+  // Delete authenticated user's private skill
+  async deletePersonalSkill(id: string): Promise<{ success: boolean; id: string }> {
+    const response = await axios.delete(`${API_BASE}/resources/personal-skills/${id}`, {
+      headers: this.getAuthHeaders(),
+    });
+    return response.data as { success: boolean; id: string };
   }
 
   // Fetch workflows

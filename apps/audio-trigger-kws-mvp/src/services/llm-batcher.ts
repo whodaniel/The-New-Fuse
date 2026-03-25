@@ -1,0 +1,58 @@
+import { ContextPackage } from "../types/events";
+import { renderPromptFromPackage } from "../templates/context-package";
+import { MiniOmniClient } from "./llm-backends/mini-omni-client";
+
+export class LlmBatcher {
+  private readonly queue: ContextPackage[] = [];
+  private readonly dedupe = new Set<string>();
+  private flushTimer: NodeJS.Timeout | null = null;
+
+  constructor(
+    private readonly llmClient: MiniOmniClient,
+    private readonly flushIntervalMs: number,
+    private readonly maxItems: number
+  ) {}
+
+  start(): void {
+    if (this.flushTimer) {
+      return;
+    }
+    this.flushTimer = setInterval(() => {
+      void this.flush();
+    }, this.flushIntervalMs);
+  }
+
+  stop(): void {
+    if (this.flushTimer) {
+      clearInterval(this.flushTimer);
+      this.flushTimer = null;
+    }
+  }
+
+  enqueue(pkg: ContextPackage): void {
+    const dedupeKey = `${pkg.stream_id}:${pkg.rule_id}:${pkg.created_at.slice(0, 16)}`;
+    if (this.dedupe.has(dedupeKey)) {
+      return;
+    }
+
+    this.dedupe.add(dedupeKey);
+    this.queue.push(pkg);
+
+    if (this.queue.length >= this.maxItems) {
+      void this.flush();
+    }
+  }
+
+  async flush(): Promise<void> {
+    if (this.queue.length === 0) {
+      return;
+    }
+
+    const batch = this.queue.splice(0, this.maxItems);
+    for (const pkg of batch) {
+      const prompt = renderPromptFromPackage(pkg);
+      const result = await this.llmClient.complete(prompt, pkg);
+      console.log(`[mini-omni] rule=${pkg.rule_id} stream=${pkg.stream_id} response=${result.slice(0, 180)}`);
+    }
+  }
+}

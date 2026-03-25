@@ -282,7 +282,7 @@ After installation, try these features:
 
 - **Documentation**: Check the `/docs` folder for detailed guides
 - **Troubleshooting**: See
-  [MCP Troubleshooting Guide](../troubleshooting/MCP-TROUBLESHOOTING-COMPLETE.md)
+  [MCP Troubleshooting Guide](./troubleshooting/MCP-TROUBLESHOOTING-COMPLETE.md)
 - **Issues**: Report issues on the project GitHub repository
 
 ## Next Steps
@@ -296,9 +296,9 @@ Once you have the basic setup working:
    - Real-time collaboration
 
 2. **Development:**
-   - Read the [Architecture Guide](../architecture/)
-   - Check out [Development Guidelines](../development/)
-   - Explore [API Documentation](../reference/)
+   - Read the [Architecture Guide](./architecture/)
+   - Check out [Development Guidelines](./development/)
+   - Explore [API Documentation](./reference/)
 
 3. **Customization:**
    - Configure additional LLM providers
@@ -308,7 +308,7 @@ Once you have the basic setup working:
 
 ## Related Documentation
 
-- [MCP Complete Guide](../protocols/MCP-COMPLETE-GUIDE.md)
-- [Architecture Overview](../architecture/README.md)
-- [API Reference](../reference/API.md)
-- [Troubleshooting](../troubleshooting/)
+- [MCP Complete Guide](./protocols/MCP-COMPLETE-GUIDE.md)
+- [Architecture Overview](./architecture/ARCHITECTURE_STANDARDS.md)
+- [API Reference](./reference/API.md)
+- [Troubleshooting](./troubleshooting/)

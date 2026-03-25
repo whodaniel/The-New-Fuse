@@ -1,0 +1,4 @@
+interface:
+  display_name: "Orchestrator Agent"
+  short_description: "Help with Orchestrator Agent tasks"
+  default_prompt: "Run the Orchestrator Agent workflow using SKILL.md instructions."

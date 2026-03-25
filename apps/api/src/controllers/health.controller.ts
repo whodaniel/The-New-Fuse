@@ -64,7 +64,7 @@ export class HealthController {
     const since = new Date(Date.now() - hoursNum * 60 * 60 * 1000).toISOString();
 
     try {
-      const result = await this.db.executeRaw(
+      const errors = await this.db.executeRaw<any>(
         `SELECT id, action, "userId", "resourceType", status, "errorMessage", "createdAt"
          FROM "auditLogs"
          WHERE "createdAt" >= '${since}'
@@ -72,7 +72,6 @@ export class HealthController {
          ORDER BY "createdAt" DESC
          LIMIT 20`
       );
-      const errors = result?.rows ?? result ?? [];
       return {
         count: errors.length,
         hours: hoursNum,

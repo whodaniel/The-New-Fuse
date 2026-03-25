@@ -1,0 +1,12 @@
+{
+  "skillName": "visual-asset-creator-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/visual-asset-creator-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/visual-asset-creator-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/visual-asset-creator-agent.json",
+  "status": "present"
+}

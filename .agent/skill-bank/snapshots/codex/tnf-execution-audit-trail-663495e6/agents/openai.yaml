@@ -1,0 +1,4 @@
+interface:
+  display_name: "TNF Execution Audit Trail"
+  short_description: "Implement task execution logging across TNF stack"
+  default_prompt: "Use $tnf-execution-audit-trail to add per-task execution logs across API, workflow engine, and task UI."

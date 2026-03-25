@@ -1,8 +1,6 @@
 ---
 name: clean-code
-description:
-  Pragmatic coding standards - concise, direct, no over-engineering, no
-  unnecessary comments
+description: Pragmatic coding standards - concise, direct, no over-engineering, no unnecessary comments
 allowed-tools: Read, Write, Edit
 version: 2.0
 priority: CRITICAL
@@ -16,24 +14,24 @@ priority: CRITICAL
 
 ## Core Principles
 
-| Principle     | Rule                                                       |
-| ------------- | ---------------------------------------------------------- |
-| **SRP**       | Single Responsibility - each function/class does ONE thing |
-| **DRY**       | Don't Repeat Yourself - extract duplicates, reuse          |
-| **KISS**      | Keep It Simple - simplest solution that works              |
-| **YAGNI**     | You Aren't Gonna Need It - don't build unused features     |
-| **Boy Scout** | Leave code cleaner than you found it                       |
+| Principle | Rule |
+|-----------|------|
+| **SRP** | Single Responsibility - each function/class does ONE thing |
+| **DRY** | Don't Repeat Yourself - extract duplicates, reuse |
+| **KISS** | Keep It Simple - simplest solution that works |
+| **YAGNI** | You Aren't Gonna Need It - don't build unused features |
+| **Boy Scout** | Leave code cleaner than you found it |
 
 ---
 
 ## Naming Rules
 
-| Element       | Convention                                            |
-| ------------- | ----------------------------------------------------- |
-| **Variables** | Reveal intent: `userCount` not `n`                    |
-| **Functions** | Verb + noun: `getUserById()` not `user()`             |
-| **Booleans**  | Question form: `isActive`, `hasPermission`, `canEdit` |
-| **Constants** | SCREAMING_SNAKE: `MAX_RETRY_COUNT`                    |
+| Element | Convention |
+|---------|------------|
+| **Variables** | Reveal intent: `userCount` not `n` |
+| **Functions** | Verb + noun: `getUserById()` not `user()` |
+| **Booleans** | Question form: `isActive`, `hasPermission`, `canEdit` |
+| **Constants** | SCREAMING_SNAKE: `MAX_RETRY_COUNT` |
 
 > **Rule:** If you need a comment to explain a name, rename it.
 
@@ -41,49 +39,49 @@ priority: CRITICAL
 
 ## Function Rules
 
-| Rule                | Description                           |
-| ------------------- | ------------------------------------- |
-| **Small**           | Max 20 lines, ideally 5-10            |
-| **One Thing**       | Does one thing, does it well          |
-| **One Level**       | One level of abstraction per function |
-| **Few Args**        | Max 3 arguments, prefer 0-2           |
-| **No Side Effects** | Don't mutate inputs unexpectedly      |
+| Rule | Description |
+|------|-------------|
+| **Small** | Max 20 lines, ideally 5-10 |
+| **One Thing** | Does one thing, does it well |
+| **One Level** | One level of abstraction per function |
+| **Few Args** | Max 3 arguments, prefer 0-2 |
+| **No Side Effects** | Don't mutate inputs unexpectedly |
 
 ---
 
 ## Code Structure
 
-| Pattern           | Apply                             |
-| ----------------- | --------------------------------- |
-| **Guard Clauses** | Early returns for edge cases      |
+| Pattern | Apply |
+|---------|-------|
+| **Guard Clauses** | Early returns for edge cases |
 | **Flat > Nested** | Avoid deep nesting (max 2 levels) |
-| **Composition**   | Small functions composed together |
-| **Colocation**    | Keep related code close           |
+| **Composition** | Small functions composed together |
+| **Colocation** | Keep related code close |
 
 ---
 
 ## AI Coding Style
 
-| Situation             | Action                |
-| --------------------- | --------------------- |
-| User asks for feature | Write it directly     |
-| User reports bug      | Fix it, don't explain |
-| No clear requirement  | Ask, don't assume     |
+| Situation | Action |
+|-----------|--------|
+| User asks for feature | Write it directly |
+| User reports bug | Fix it, don't explain |
+| No clear requirement | Ask, don't assume |
 
 ---
 
 ## Anti-Patterns (DON'T)
 
-| ❌ Pattern               | ✅ Fix                  |
-| ------------------------ | ----------------------- |
-| Comment every line       | Delete obvious comments |
-| Helper for one-liner     | Inline the code         |
-| Factory for 2 objects    | Direct instantiation    |
-| utils.ts with 1 function | Put code where used     |
-| "First we import..."     | Just write code         |
-| Deep nesting             | Guard clauses           |
-| Magic numbers            | Named constants         |
-| God functions            | Split by responsibility |
+| ❌ Pattern | ✅ Fix |
+|-----------|-------|
+| Comment every line | Delete obvious comments |
+| Helper for one-liner | Inline the code |
+| Factory for 2 objects | Direct instantiation |
+| utils.ts with 1 function | Put code where used |
+| "First we import..." | Just write code |
+| Deep nesting | Guard clauses |
+| Magic numbers | Named constants |
+| God functions | Split by responsibility |
 
 ---
 
@@ -91,36 +89,35 @@ priority: CRITICAL
 
 **Before changing a file, ask yourself:**
 
-| Question                        | Why                      |
-| ------------------------------- | ------------------------ |
-| **What imports this file?**     | They might break         |
-| **What does this file import?** | Interface changes        |
-| **What tests cover this?**      | Tests might fail         |
+| Question | Why |
+|----------|-----|
+| **What imports this file?** | They might break |
+| **What does this file import?** | Interface changes |
+| **What tests cover this?** | Tests might fail |
 | **Is this a shared component?** | Multiple places affected |
 
 **Quick Check:**
-
 ```
 File to edit: UserService.ts
 └── Who imports this? → UserController.ts, AuthController.ts
 └── Do they need changes too? → Check function signatures
 ```
 
-> 🔴 **Rule:** Edit the file + all dependent files in the SAME task. 🔴 **Never
-> leave broken imports or missing updates.**
+> 🔴 **Rule:** Edit the file + all dependent files in the SAME task.
+> 🔴 **Never leave broken imports or missing updates.**
 
 ---
 
 ## Summary
 
-| Do                     | Don't                     |
-| ---------------------- | ------------------------- |
-| Write code directly    | Write tutorials           |
-| Let code self-document | Add obvious comments      |
-| Fix bugs immediately   | Explain the fix first     |
-| Inline small things    | Create unnecessary files  |
-| Name things clearly    | Use abbreviations         |
-| Keep functions small   | Write 100+ line functions |
+| Do | Don't |
+|----|-------|
+| Write code directly | Write tutorials |
+| Let code self-document | Add obvious comments |
+| Fix bugs immediately | Explain the fix first |
+| Inline small things | Create unnecessary files |
+| Name things clearly | Use abbreviations |
+| Keep functions small | Write 100+ line functions |
 
 > **Remember: The user wants working code, not a programming lesson.**
 
@@ -130,13 +127,13 @@ File to edit: UserService.ts
 
 **Before saying "task complete", verify:**
 
-| Check                     | Question                          |
-| ------------------------- | --------------------------------- |
-| ✅ **Goal met?**          | Did I do exactly what user asked? |
-| ✅ **Files edited?**      | Did I modify all necessary files? |
-| ✅ **Code works?**        | Did I test/verify the change?     |
-| ✅ **No errors?**         | Lint and TypeScript pass?         |
-| ✅ **Nothing forgotten?** | Any edge cases missed?            |
+| Check | Question |
+|-------|----------|
+| ✅ **Goal met?** | Did I do exactly what user asked? |
+| ✅ **Files edited?** | Did I modify all necessary files? |
+| ✅ **Code works?** | Did I test/verify the change? |
+| ✅ **No errors?** | Lint and TypeScript pass? |
+| ✅ **Nothing forgotten?** | Any edge cases missed? |
 
 > 🔴 **Rule:** If ANY check fails, fix it before completing.
 
@@ -144,30 +141,29 @@ File to edit: UserService.ts
 
 ## Verification Scripts (MANDATORY)
 
-> 🔴 **CRITICAL:** Each agent runs ONLY their own skill's scripts after
-> completing work.
+> 🔴 **CRITICAL:** Each agent runs ONLY their own skill's scripts after completing work.
 
 ### Agent → Script Mapping
 
-| Agent                     | Script          | Command                                                                           |
-| ------------------------- | --------------- | --------------------------------------------------------------------------------- |
-| **frontend-specialist**   | UX Audit        | `python ~/.claude/skills/frontend-design/scripts/ux_audit.py .`                   |
-| **frontend-specialist**   | A11y Check      | `python ~/.claude/skills/frontend-design/scripts/accessibility_checker.py .`      |
-| **backend-specialist**    | API Validator   | `python ~/.claude/skills/api-patterns/scripts/api_validator.py .`                 |
-| **mobile-developer**      | Mobile Audit    | `python ~/.claude/skills/mobile-design/scripts/mobile_audit.py .`                 |
-| **database-architect**    | Schema Validate | `python ~/.claude/skills/database-design/scripts/schema_validator.py .`           |
-| **security-auditor**      | Security Scan   | `python ~/.claude/skills/vulnerability-scanner/scripts/security_scan.py .`        |
-| **seo-specialist**        | SEO Check       | `python ~/.claude/skills/seo-fundamentals/scripts/seo_checker.py .`               |
-| **seo-specialist**        | GEO Check       | `python ~/.claude/skills/geo-fundamentals/scripts/geo_checker.py .`               |
-| **performance-optimizer** | Lighthouse      | `python ~/.claude/skills/performance-profiling/scripts/lighthouse_audit.py <url>` |
-| **test-engineer**         | Test Runner     | `python ~/.claude/skills/testing-patterns/scripts/test_runner.py .`               |
-| **test-engineer**         | Playwright      | `python ~/.claude/skills/webapp-testing/scripts/playwright_runner.py <url>`       |
-| **Any agent**             | Lint Check      | `python ~/.claude/skills/lint-and-validate/scripts/lint_runner.py .`              |
-| **Any agent**             | Type Coverage   | `python ~/.claude/skills/lint-and-validate/scripts/type_coverage.py .`            |
-| **Any agent**             | i18n Check      | `python ~/.claude/skills/i18n-localization/scripts/i18n_checker.py .`             |
+| Agent | Script | Command |
+|-------|--------|---------|
+| **frontend-specialist** | UX Audit | `python ~/.claude/skills/frontend-design/scripts/ux_audit.py .` |
+| **frontend-specialist** | A11y Check | `python ~/.claude/skills/frontend-design/scripts/accessibility_checker.py .` |
+| **backend-specialist** | API Validator | `python ~/.claude/skills/api-patterns/scripts/api_validator.py .` |
+| **mobile-developer** | Mobile Audit | `python ~/.claude/skills/mobile-design/scripts/mobile_audit.py .` |
+| **database-architect** | Schema Validate | `python ~/.claude/skills/database-design/scripts/schema_validator.py .` |
+| **security-auditor** | Security Scan | `python ~/.claude/skills/vulnerability-scanner/scripts/security_scan.py .` |
+| **seo-specialist** | SEO Check | `python ~/.claude/skills/seo-fundamentals/scripts/seo_checker.py .` |
+| **seo-specialist** | GEO Check | `python ~/.claude/skills/geo-fundamentals/scripts/geo_checker.py .` |
+| **performance-optimizer** | Lighthouse | `python ~/.claude/skills/performance-profiling/scripts/lighthouse_audit.py <url>` |
+| **test-engineer** | Test Runner | `python ~/.claude/skills/testing-patterns/scripts/test_runner.py .` |
+| **test-engineer** | Playwright | `python ~/.claude/skills/webapp-testing/scripts/playwright_runner.py <url>` |
+| **Any agent** | Lint Check | `python ~/.claude/skills/lint-and-validate/scripts/lint_runner.py .` |
+| **Any agent** | Type Coverage | `python ~/.claude/skills/lint-and-validate/scripts/type_coverage.py .` |
+| **Any agent** | i18n Check | `python ~/.claude/skills/i18n-localization/scripts/i18n_checker.py .` |
 
-> ❌ **WRONG:** `test-engineer` running `ux_audit.py` ✅ **CORRECT:**
-> `frontend-specialist` running `ux_audit.py`
+> ❌ **WRONG:** `test-engineer` running `ux_audit.py`
+> ✅ **CORRECT:** `frontend-specialist` running `ux_audit.py`
 
 ---
 
@@ -183,16 +179,13 @@ File to edit: UserService.ts
 ## Script Results: [script_name.py]
 
 ### ❌ Errors Found (X items)
-
 - [File:Line] Error description 1
 - [File:Line] Error description 2
 
 ### ⚠️ Warnings (Y items)
-
 - [File:Line] Warning description
 
 ### ✅ Passed (Z items)
-
 - Check 1 passed
 - Check 2 passed
 
@@ -202,6 +195,7 @@ File to edit: UserService.ts
 4. **Wait for user confirmation** before fixing
 5. **After fixing** → Re-run script to confirm
 
-> 🔴 **VIOLATION:** Running script and ignoring output = FAILED task. 🔴
-> **VIOLATION:** Auto-fixing without asking = Not allowed. 🔴 **Rule:** Always
-> READ output → SUMMARIZE → ASK → then fix.
+> 🔴 **VIOLATION:** Running script and ignoring output = FAILED task.
+> 🔴 **VIOLATION:** Auto-fixing without asking = Not allowed.
+> 🔴 **Rule:** Always READ output → SUMMARIZE → ASK → then fix.
+

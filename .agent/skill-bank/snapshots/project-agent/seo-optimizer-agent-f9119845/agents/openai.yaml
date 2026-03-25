@@ -1,0 +1,4 @@
+interface:
+  display_name: "Seo Optimizer Agent"
+  short_description: "Help with Seo Optimizer Agent tasks"
+  default_prompt: "Run the Seo Optimizer Agent workflow using SKILL.md instructions."

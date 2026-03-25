@@ -92,9 +92,9 @@ The following UI states have been captured for reference:
 - [Plan Creator Dashboard](https://builder.bizplan.com/p/5870005428)
 - [Financial Personnel Grid](https://builder.bizplan.com/f/5870005428#/personnel/plan/monthly/2026)
 - [Revenue Forecasting UI](https://builder.bizplan.com/f/5870005428#/revenue/plan/monthly/2026)
-- [Income Statement Report](.playwright-mcp/bizplan_income_statement.md)
-- [Cash Flow Report](.playwright-mcp/bizplan_cash_flow.md)
-- [Break Even Analysis](.playwright-mcp/bizplan_break_even.md)
+- Income Statement Report (captured in internal notes)
+- Cash Flow Report (captured in internal notes)
+- Break Even Analysis (captured in internal notes)
 
 ---
 

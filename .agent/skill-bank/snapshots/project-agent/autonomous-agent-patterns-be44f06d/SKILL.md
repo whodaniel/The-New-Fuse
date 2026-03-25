@@ -1,17 +1,11 @@
 ---
 name: autonomous-agent-patterns
-description:
-  'Design patterns for building autonomous coding agents. Covers tool
-  integration, permission systems, browser automation, and human-in-the-loop
-  workflows. Use when building AI agents, designing tool APIs, implementing
-  permission systems, or creating autonomous coding assistants.'
+description: "Design patterns for building autonomous coding agents. Covers tool integration, permission systems, browser automation, and human-in-the-loop workflows. Use when building AI agents, designing tool APIs, implementing permission systems, or creating autonomous coding assistants."
 ---
 
 # 🕹️ Autonomous Agent Patterns
 
-> Design patterns for building autonomous coding agents, inspired by
-> [Cline](https://github.com/cline/cline) and
-> [OpenAI Codex](https://github.com/openai/codex).
+> Design patterns for building autonomous coding agents, inspired by [Cline](https://github.com/cline/cline) and [OpenAI Codex](https://github.com/openai/codex).
 
 ## When to Use This Skill
 

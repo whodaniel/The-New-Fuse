@@ -1,0 +1,12 @@
+{
+  "skillName": "long-range-business-plan-architect",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/long-range-business-plan-architect/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/long-range-business-plan-architect/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/long-range-business-plan-architect.json",
+  "status": "present"
+}

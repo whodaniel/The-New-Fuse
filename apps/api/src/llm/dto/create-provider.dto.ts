@@ -8,11 +8,11 @@ export class CreateProviderDto {
   userId!: string;
 
   @ApiProperty({
-    enum: ['openai', 'anthropic', 'cohere'],
+    enum: ['openai', 'anthropic', 'cohere', 'google-adk'],
     description: 'Name of the LLM provider'
   })
   @IsString()
-  @IsIn(['openai', 'anthropic', 'cohere'])
+  @IsIn(['openai', 'anthropic', 'cohere', 'google-adk'])
   providerName!: string;
 
   @ApiProperty({ description: 'API key for the LLM provider' })

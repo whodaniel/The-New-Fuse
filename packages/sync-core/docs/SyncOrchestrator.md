@@ -375,5 +375,5 @@ When contributing to the SyncOrchestrator:
 
 - [MasterClockService](./MasterClockService.md) - Time synchronization
 - [EnhancedFileSystemWatcher](./EnhancedFileSystemWatcher.md) - File monitoring
-- [Multi-Tenant Architecture](../../../docs/MULTI_TENANT_ARCHITECTURE.md) - Platform architecture
-- [Redis Integration](../../../docs/REDIS_INTEGRATION.md) - Redis usage patterns
+- [Multi-Tenant Architecture](../../../docs/TNF_HOSTED_SPACES_ARCHITECTURE.md) - Platform architecture
+- [Redis Integration](../../../docs/integrations/REDIS_INTEGRATION.md) - Redis usage patterns

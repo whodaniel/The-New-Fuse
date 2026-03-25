@@ -1,0 +1,12 @@
+{
+  "skillName": "influencer-niche-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/influencer-niche-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/influencer-niche-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/influencer-niche-agent.json",
+  "status": "present"
+}

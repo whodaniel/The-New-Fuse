@@ -57,7 +57,7 @@ This document consolidates essential protocols and procedures for AI agents work
 - `TECH_SUMMARY.md` - Technical architecture
 - `BUILD_COMPLETION_REPORT.md` - Current build status
 - `TODO_CHECKLIST.md` - Outstanding tasks
-- `TROUBLESHOOTING_GUIDE.md` - Known issues and solutions
+- `docs/guides/troubleshooting-guide.md` - Known issues and solutions
 
 ## Session Handoff Template
 
@@ -154,7 +154,7 @@ When transferring between AI agents or starting a new session, provide:
 2. Review TypeScript errors systematically
 3. Verify dependency installations
 4. Check for configuration conflicts
-5. Consult TROUBLESHOOTING_GUIDE.md
+5. Consult docs/guides/troubleshooting-guide.md
 
 ### Service Outage Response
 

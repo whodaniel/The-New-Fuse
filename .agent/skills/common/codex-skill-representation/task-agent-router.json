@@ -1,0 +1,12 @@
+{
+  "skillName": "task-agent-router",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/task-agent-router/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/task-agent-router/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/task-agent-router.json",
+  "status": "present"
+}

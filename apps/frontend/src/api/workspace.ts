@@ -30,6 +30,29 @@ export interface WorkspaceSubAccessMember {
   joinedAt: string;
 }
 
+export type WorkspaceDomainStatus = 'pending' | 'verified' | 'error';
+
+export interface WorkspaceDomain {
+  id: string;
+  workspaceId: string;
+  domain: string;
+  status: WorkspaceDomainStatus;
+  verificationMessage?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WorkspaceBookmark {
+  id: string;
+  workspaceId: string;
+  title: string;
+  url: string;
+  tags: string[];
+  note?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export class WorkspaceApiService {
   private baseUrl: string;
 
@@ -206,6 +229,168 @@ export class WorkspaceApiService {
         success: false,
         error: this.toApiError(error, 'NETWORK_ERROR'),
         message: `Failed to fetch projects for workspace ${workspaceId}`,
+      };
+    }
+  }
+
+  async listWorkspaceDomains(
+    workspaceId: string
+  ): Promise<ApiResponse<{ workspaceId: string; items: WorkspaceDomain[] }>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${workspaceId}/domains`, {
+        method: 'GET',
+        headers: this.getAuthHeaders(),
+        credentials: 'include',
+      });
+      return this.handleResponse<{ workspaceId: string; items: WorkspaceDomain[] }>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: this.toApiError(error, 'NETWORK_ERROR'),
+        message: `Failed to fetch domains for workspace ${workspaceId}`,
+      };
+    }
+  }
+
+  async addWorkspaceDomain(
+    workspaceId: string,
+    payload: { domain: string }
+  ): Promise<ApiResponse<{ workspaceId: string; item: WorkspaceDomain }>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${workspaceId}/domains`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(payload),
+        credentials: 'include',
+      });
+      return this.handleResponse<{ workspaceId: string; item: WorkspaceDomain }>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: this.toApiError(error, 'NETWORK_ERROR'),
+        message: `Failed to add domain for workspace ${workspaceId}`,
+      };
+    }
+  }
+
+  async removeWorkspaceDomain(
+    workspaceId: string,
+    domainId: string
+  ): Promise<ApiResponse<{ workspaceId: string; domainId: string }>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${workspaceId}/domains/${domainId}`, {
+        method: 'DELETE',
+        headers: this.getAuthHeaders(),
+        credentials: 'include',
+      });
+      return this.handleResponse<{ workspaceId: string; domainId: string }>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: this.toApiError(error, 'NETWORK_ERROR'),
+        message: `Failed to remove domain for workspace ${workspaceId}`,
+      };
+    }
+  }
+
+  async verifyWorkspaceDomain(
+    workspaceId: string,
+    domainId: string
+  ): Promise<ApiResponse<{ workspaceId: string; item: WorkspaceDomain }>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${workspaceId}/domains/${domainId}/verify`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        credentials: 'include',
+      });
+      return this.handleResponse<{ workspaceId: string; item: WorkspaceDomain }>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: this.toApiError(error, 'NETWORK_ERROR'),
+        message: `Failed to verify domain for workspace ${workspaceId}`,
+      };
+    }
+  }
+
+  async listWorkspaceBookmarks(
+    workspaceId: string
+  ): Promise<ApiResponse<{ workspaceId: string; items: WorkspaceBookmark[] }>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${workspaceId}/bookmarks`, {
+        method: 'GET',
+        headers: this.getAuthHeaders(),
+        credentials: 'include',
+      });
+      return this.handleResponse<{ workspaceId: string; items: WorkspaceBookmark[] }>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: this.toApiError(error, 'NETWORK_ERROR'),
+        message: `Failed to fetch bookmarks for workspace ${workspaceId}`,
+      };
+    }
+  }
+
+  async addWorkspaceBookmark(
+    workspaceId: string,
+    payload: { title: string; url: string; tags?: string[]; note?: string }
+  ): Promise<ApiResponse<{ workspaceId: string; item: WorkspaceBookmark }>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${workspaceId}/bookmarks`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(payload),
+        credentials: 'include',
+      });
+      return this.handleResponse<{ workspaceId: string; item: WorkspaceBookmark }>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: this.toApiError(error, 'NETWORK_ERROR'),
+        message: `Failed to add bookmark for workspace ${workspaceId}`,
+      };
+    }
+  }
+
+  async updateWorkspaceBookmark(
+    workspaceId: string,
+    bookmarkId: string,
+    payload: { title?: string; url?: string; tags?: string[]; note?: string }
+  ): Promise<ApiResponse<{ workspaceId: string; item: WorkspaceBookmark }>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${workspaceId}/bookmarks/${bookmarkId}`, {
+        method: 'PATCH',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(payload),
+        credentials: 'include',
+      });
+      return this.handleResponse<{ workspaceId: string; item: WorkspaceBookmark }>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: this.toApiError(error, 'NETWORK_ERROR'),
+        message: `Failed to update bookmark for workspace ${workspaceId}`,
+      };
+    }
+  }
+
+  async removeWorkspaceBookmark(
+    workspaceId: string,
+    bookmarkId: string
+  ): Promise<ApiResponse<{ workspaceId: string; bookmarkId: string }>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${workspaceId}/bookmarks/${bookmarkId}`, {
+        method: 'DELETE',
+        headers: this.getAuthHeaders(),
+        credentials: 'include',
+      });
+      return this.handleResponse<{ workspaceId: string; bookmarkId: string }>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: this.toApiError(error, 'NETWORK_ERROR'),
+        message: `Failed to remove bookmark for workspace ${workspaceId}`,
       };
     }
   }

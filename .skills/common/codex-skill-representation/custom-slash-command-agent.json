@@ -1,0 +1,12 @@
+{
+  "skillName": "custom-slash-command-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/custom-slash-command-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/custom-slash-command-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/custom-slash-command-agent.json",
+  "status": "present"
+}

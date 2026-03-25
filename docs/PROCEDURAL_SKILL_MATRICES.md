@@ -641,7 +641,7 @@ Phase 1: Issue Identification (10 minutes)
 [ ] Step 1.3: Check known issues
     ├─ Review: Recent commits
     ├─ Search: Issue tracker
-    ├─ Check: TROUBLESHOOTING_GUIDE.md
+    ├─ Check: docs/guides/troubleshooting-guide.md
     └─ Time: 3 minutes
 
 Phase 2: Root Cause Analysis (20-40 minutes)
@@ -724,7 +724,7 @@ Phase 5: Deployment (10-20 minutes)
     └─ Time: Variable
 
 [ ] Step 5.4: Document
-    ├─ Update: TROUBLESHOOTING_GUIDE.md
+    ├─ Update: docs/guides/troubleshooting-guide.md
     ├─ Add: To known issues list
     ├─ Write: Post-mortem if major
     └─ Time: 5-10 minutes

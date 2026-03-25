@@ -1,0 +1,12 @@
+{
+  "skillName": "codebase-pathway-tracer",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/codebase-pathway-tracer/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/codebase-pathway-tracer/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/codebase-pathway-tracer.json",
+  "status": "present"
+}

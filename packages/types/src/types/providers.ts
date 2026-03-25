@@ -6,6 +6,7 @@ export enum LLMProviderType {
   OPENAI = 'openai',
   ANTHROPIC = 'anthropic',
   GEMINI = 'gemini',
+  GOOGLE_ADK = 'google-adk',
   OPENROUTER = 'openrouter',
   LITELLM = 'litellm',
   DEEPSEEK = 'deepseek',

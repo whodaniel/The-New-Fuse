@@ -241,3 +241,23 @@ The New Fuse implements a comprehensive security architecture that covers authen
 - **Agent Management**: `POST /agents/register`, `GET /agents/discover`, `PUT /agents/{id}/capabilities`
 - **Workflow Management**: `POST /workflows`, `GET /workflows/{id}`, `PUT /workflows/{id}/execute`
 - **Analytics**: `GET /analytics/performance`, `GET /analytics/usage`, `GET /analytics/errors`
+
+## CI/CD Delivery Architecture
+
+The CI/CD architecture uses GitHub Actions as the control plane and Railway as
+the runtime deployment target for backend services.
+
+### Pipeline Flow
+
+1. Pull request or push triggers test/build workflows.
+2. Quality gates validate lint, type safety, tests, and security checks.
+3. Build artifacts and service images are produced in parallel where possible.
+4. Deployment jobs publish services to Railway.
+5. Health checks and smoke tests validate runtime readiness.
+6. Rollback paths are available when verification fails.
+
+### Operational Goals
+
+- Fast feedback through parallelized verification.
+- Deterministic release quality via required gates.
+- Safe production deploys with post-deploy validation and rollback support.

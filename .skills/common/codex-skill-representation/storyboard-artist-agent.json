@@ -1,0 +1,12 @@
+{
+  "skillName": "storyboard-artist-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/storyboard-artist-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/storyboard-artist-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/storyboard-artist-agent.json",
+  "status": "present"
+}

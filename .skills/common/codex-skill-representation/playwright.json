@@ -1,0 +1,12 @@
+{
+  "skillName": "playwright",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/playwright/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/playwright/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/playwright.json",
+  "status": "present"
+}

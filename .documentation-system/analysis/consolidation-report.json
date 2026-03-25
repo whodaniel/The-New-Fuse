@@ -1,78 +1,366 @@
 {
   "metadata": {
-    "timestamp": "2026-01-17T19:38:29.566Z",
-    "processingTime": "0.65s",
-    "originalCount": 93089,
-    "consolidatedCount": 86748,
-    "reductionCount": 6341,
-    "reductionPercentage": "6.8"
+    "timestamp": "2026-03-25T07:22:48.244Z",
+    "processingTime": "0.69s",
+    "originalCount": 116040,
+    "consolidatedCount": 108222,
+    "reductionCount": 7818,
+    "reductionPercentage": "6.7"
   },
   "conceptGroups": [
     {
       "canonical": "100",
-      "variants": ["100%", "+100%"],
-      "totalFrequency": 9,
-      "sourceCount": 9
+      "variants": [
+        "100%",
+        "+100%"
+      ],
+      "totalFrequency": 7,
+      "sourceCount": 7
     },
     {
-      "canonical": "3001",
-      "variants": ["`3001`"],
+      "canonical": "209",
+      "variants": [
+        "20.9+"
+      ],
       "totalFrequency": 3,
       "sourceCount": 3
     },
     {
-      "canonical": "resolution",
-      "variants": ["resolution:"],
+      "canonical": "when\nready",
+      "variants": [
+        "when ready",
+        "when ready:"
+      ],
+      "totalFrequency": 3,
+      "sourceCount": 3
+    },
+    {
+      "canonical": "nft",
+      "variants": [
+        "nfts"
+      ],
       "totalFrequency": 32,
-      "sourceCount": 32
+      "sourceCount": 29
+    },
+    {
+      "canonical": "thank",
+      "variants": [
+        "thanks"
+      ],
+      "totalFrequency": 15,
+      "sourceCount": 15
+    },
+    {
+      "canonical": "sound",
+      "variants": [
+        "sounds"
+      ],
+      "totalFrequency": 10,
+      "sourceCount": 9
+    },
+    {
+      "canonical": "read",
+      "variants": [
+        "reads"
+      ],
+      "totalFrequency": 423,
+      "sourceCount": 356
+    },
+    {
+      "canonical": "verify",
+      "variants": [
+        "verify:"
+      ],
+      "totalFrequency": 535,
+      "sourceCount": 524
+    },
+    {
+      "canonical": "there",
+      "variants": [
+        "the re"
+      ],
+      "totalFrequency": 68,
+      "sourceCount": 66
+    },
+    {
+      "canonical": "affiliate",
+      "variants": [
+        "affiliates"
+      ],
+      "totalFrequency": 16,
+      "sourceCount": 13
+    },
+    {
+      "canonical": "when",
+      "variants": [
+        "when:"
+      ],
+      "totalFrequency": 482,
+      "sourceCount": 472
+    },
+    {
+      "canonical": "feel",
+      "variants": [
+        "feels"
+      ],
+      "totalFrequency": 8,
+      "sourceCount": 6
+    },
+    {
+      "canonical": "also",
+      "variants": [
+        "also:"
+      ],
+      "totalFrequency": 132,
+      "sourceCount": 130
+    },
+    {
+      "canonical": "see",
+      "variants": [
+        "sees",
+        "see:"
+      ],
+      "totalFrequency": 295,
+      "sourceCount": 293
+    },
+    {
+      "canonical": "twitter",
+      "variants": [
+        "twitter:"
+      ],
+      "totalFrequency": 63,
+      "sourceCount": 62
+    },
+    {
+      "canonical": "use",
+      "variants": [
+        "uses",
+        "use:"
+      ],
+      "totalFrequency": 1573,
+      "sourceCount": 1465
+    },
+    {
+      "canonical": "change",
+      "variants": [
+        "changes",
+        "changes:",
+        "change:"
+      ],
+      "totalFrequency": 186,
+      "sourceCount": 171
+    },
+    {
+      "canonical": "unstoppable domain",
+      "variants": [
+        "unstoppable domains"
+      ],
+      "totalFrequency": 6,
+      "sourceCount": 5
+    },
+    {
+      "canonical": "follow",
+      "variants": [
+        "follows"
+      ],
+      "totalFrequency": 196,
+      "sourceCount": 189
+    },
+    {
+      "canonical": "comment",
+      "variants": [
+        "comments"
+      ],
+      "totalFrequency": 49,
+      "sourceCount": 41
+    },
+    {
+      "canonical": "tweet",
+      "variants": [
+        "tweets"
+      ],
+      "totalFrequency": 14,
+      "sourceCount": 10
+    },
+    {
+      "canonical": "user",
+      "variants": [
+        "users",
+        "user:"
+      ],
+      "totalFrequency": 602,
+      "sourceCount": 498
+    },
+    {
+      "canonical": "star",
+      "variants": [
+        "stars"
+      ],
+      "totalFrequency": 9,
+      "sourceCount": 9
+    },
+    {
+      "canonical": "timeline",
+      "variants": [
+        "📅 timeline",
+        "timeline:",
+        "**📅 timeline:**",
+        "📅 timeline:",
+        "timelines"
+      ],
+      "totalFrequency": 74,
+      "sourceCount": 63
+    },
+    {
+      "canonical": "unknown",
+      "variants": [
+        "unknowns"
+      ],
+      "totalFrequency": 30,
+      "sourceCount": 30
+    },
+    {
+      "canonical": "cost",
+      "variants": [
+        "costs",
+        "cost:"
+      ],
+      "totalFrequency": 60,
+      "sourceCount": 57
+    },
+    {
+      "canonical": "market",
+      "variants": [
+        "markets"
+      ],
+      "totalFrequency": 26,
+      "sourceCount": 26
+    },
+    {
+      "canonical": "what",
+      "variants": [
+        "whats"
+      ],
+      "totalFrequency": 366,
+      "sourceCount": 353
+    },
+    {
+      "canonical": "like",
+      "variants": [
+        "likes"
+      ],
+      "totalFrequency": 35,
+      "sourceCount": 31
+    },
+    {
+      "canonical": "make",
+      "variants": [
+        "makes"
+      ],
+      "totalFrequency": 164,
+      "sourceCount": 158
+    },
+    {
+      "canonical": "success",
+      "variants": [
+        "`success`",
+        "success:",
+        "success! 🎉"
+      ],
+      "totalFrequency": 119,
+      "sourceCount": 113
+    },
+    {
+      "canonical": "why",
+      "variants": [
+        "whys",
+        "why:",
+        "why?"
+      ],
+      "totalFrequency": 98,
+      "sourceCount": 97
+    },
+    {
+      "canonical": "channel",
+      "variants": [
+        "channel:",
+        "channels"
+      ],
+      "totalFrequency": 100,
+      "sourceCount": 83
     },
     {
       "canonical": "used by",
-      "variants": ["used by:"],
+      "variants": [
+        "used by:"
+      ],
       "totalFrequency": 4,
       "sourceCount": 4
     },
     {
       "canonical": "lock",
-      "variants": ["locks"],
-      "totalFrequency": 15,
-      "sourceCount": 13
+      "variants": [
+        "locks"
+      ],
+      "totalFrequency": 49,
+      "sourceCount": 41
     },
     {
       "canonical": "build failure",
-      "variants": ["build failures", "build failures:"],
-      "totalFrequency": 16,
-      "sourceCount": 16
+      "variants": [
+        "build failures",
+        "build failures:"
+      ],
+      "totalFrequency": 21,
+      "sourceCount": 20
     },
     {
       "canonical": "conflict",
-      "variants": ["conflicts"],
-      "totalFrequency": 46,
-      "sourceCount": 40
+      "variants": [
+        "conflicts"
+      ],
+      "totalFrequency": 53,
+      "sourceCount": 50
     },
     {
       "canonical": "api",
-      "variants": ["api:", "apis:", "✅ api", "apis"],
-      "totalFrequency": 549,
-      "sourceCount": 541
+      "variants": [
+        "apis",
+        "api:",
+        "apis:",
+        "✅ api"
+      ],
+      "totalFrequency": 1325,
+      "sourceCount": 1285
     },
     {
       "canonical": "fixed",
-      "variants": ["fixed:"],
-      "totalFrequency": 90,
-      "sourceCount": 90
+      "variants": [
+        "fixed:"
+      ],
+      "totalFrequency": 112,
+      "sourceCount": 110
     },
     {
       "canonical": "readme",
-      "variants": ["readmes"],
-      "totalFrequency": 134,
-      "sourceCount": 131
+      "variants": [
+        "readmes"
+      ],
+      "totalFrequency": 260,
+      "sourceCount": 253
     },
     {
       "canonical": "build",
-      "variants": ["builds", "build:", "\", \"build/", "`build`"],
-      "totalFrequency": 296,
-      "sourceCount": 259
+      "variants": [
+        "builds",
+        "build:",
+        "\", \"build/",
+        "[build]",
+        "`build`",
+        "/build/"
+      ],
+      "totalFrequency": 550,
+      "sourceCount": 485
     },
     {
       "canonical": "overview",
@@ -82,42 +370,52 @@
         "🎯 overview",
         "📋 overview",
         "overview:",
-        "🌍 overview",
         "🎯 **overview**"
       ],
-      "totalFrequency": 318,
-      "sourceCount": 301
+      "totalFrequency": 456,
+      "sourceCount": 430
     },
     {
       "canonical": "module",
-      "variants": ["modules", "modules:"],
-      "totalFrequency": 58,
-      "sourceCount": 57
+      "variants": [
+        "modules",
+        "modules:"
+      ],
+      "totalFrequency": 83,
+      "sourceCount": 79
     },
     {
       "canonical": "problem",
-      "variants": ["problems", "problem:", "problems:"],
-      "totalFrequency": 67,
-      "sourceCount": 63
+      "variants": [
+        "problems",
+        "problem:"
+      ],
+      "totalFrequency": 165,
+      "sourceCount": 150
     },
     {
       "canonical": "test",
       "variants": [
         "tests",
+        "test:",
         "`test`",
         "\", \"test/",
         "tests:",
-        "'\n      - 'tests/",
-        "test:"
+        "'\n      - 'tests/"
       ],
-      "totalFrequency": 447,
-      "sourceCount": 386
+      "totalFrequency": 670,
+      "sourceCount": 578
     },
     {
       "canonical": "solution",
-      "variants": ["solutions", "solution:", "solutions:", "🛠️ solution"],
-      "totalFrequency": 151,
-      "sourceCount": 122
+      "variants": [
+        "solutions",
+        "solution:",
+        "solutions:",
+        "🛠️ solution"
+      ],
+      "totalFrequency": 374,
+      "sourceCount": 306
     },
     {
       "canonical": "result",
@@ -132,58 +430,57 @@
         "🎉 **result**",
         "results:"
       ],
-      "totalFrequency": 139,
-      "sourceCount": 124
+      "totalFrequency": 205,
+      "sourceCount": 181
     },
     {
       "canonical": "type",
-      "variants": ["types", "type:", "types/"],
-      "totalFrequency": 437,
-      "sourceCount": 379
+      "variants": [
+        "types",
+        "type:",
+        "types:",
+        "types/"
+      ],
+      "totalFrequency": 773,
+      "sourceCount": 646
     },
     {
       "canonical": "configuration",
       "variants": [
         "configurations",
         "configuration:",
+        "⚙️ configuration",
         "🎛️ configuration",
         "🔧 configuration",
-        "⚙️ configuration",
         "**configuration**",
         "⚙️ **configuration**"
       ],
-      "totalFrequency": 280,
-      "sourceCount": 240
-    },
-    {
-      "canonical": "updated",
-      "variants": ["updated:"],
-      "totalFrequency": 185,
-      "sourceCount": 184
+      "totalFrequency": 422,
+      "sourceCount": 378
     },
     {
       "canonical": "added",
-      "variants": ["added:"],
-      "totalFrequency": 123,
-      "sourceCount": 122
+      "variants": [
+        "added:"
+      ],
+      "totalFrequency": 165,
+      "sourceCount": 158
     },
     {
       "canonical": "created",
-      "variants": ["created:"],
-      "totalFrequency": 127,
-      "sourceCount": 124
+      "variants": [
+        "created:"
+      ],
+      "totalFrequency": 152,
+      "sourceCount": 142
     },
     {
       "canonical": "set",
-      "variants": ["sets"],
-      "totalFrequency": 244,
-      "sourceCount": 239
-    },
-    {
-      "canonical": "removed",
-      "variants": ["removed:"],
-      "totalFrequency": 60,
-      "sourceCount": 59
+      "variants": [
+        "sets"
+      ],
+      "totalFrequency": 618,
+      "sourceCount": 564
     },
     {
       "canonical": "files\nmodified",
@@ -194,59 +491,81 @@
         "🔧 files modified",
         "📁 files modified",
         "**files modified:**",
-        "**files modified**",
-        "files\nmodified:"
+        "**files modified**"
       ],
-      "totalFrequency": 66,
-      "sourceCount": 51
+      "totalFrequency": 68,
+      "sourceCount": 52
     },
     {
       "canonical": "error",
-      "variants": ["errors", "error:"],
-      "totalFrequency": 298,
-      "sourceCount": 271
+      "variants": [
+        "errors",
+        "error:",
+        "errors:"
+      ],
+      "totalFrequency": 547,
+      "sourceCount": 493
     },
     {
       "canonical": "missing",
-      "variants": ["missing:"],
-      "totalFrequency": 89,
-      "sourceCount": 88
-    },
-    {
-      "canonical": "use",
-      "variants": ["uses"],
-      "totalFrequency": 517,
-      "sourceCount": 487
+      "variants": [
+        "' : 'missing')`",
+        "missing:"
+      ],
+      "totalFrequency": 188,
+      "sourceCount": 179
     },
     {
       "canonical": "node",
-      "variants": ["nodes"],
-      "totalFrequency": 167,
-      "sourceCount": 159
+      "variants": [
+        "nodes"
+      ],
+      "totalFrequency": 283,
+      "sourceCount": 267
+    },
+    {
+      "canonical": "internal",
+      "variants": [
+        "internals"
+      ],
+      "totalFrequency": 70,
+      "sourceCount": 68
     },
     {
       "canonical": "promise",
-      "variants": ["promises"],
-      "totalFrequency": 108,
-      "sourceCount": 107
+      "variants": [
+        "promises"
+      ],
+      "totalFrequency": 346,
+      "sourceCount": 337
     },
     {
       "canonical": "status",
-      "variants": ["status:", "🏆 status"],
-      "totalFrequency": 405,
-      "sourceCount": 357
+      "variants": [
+        "status:",
+        "🏆 status"
+      ],
+      "totalFrequency": 544,
+      "sourceCount": 478
     },
     {
       "canonical": "fix",
-      "variants": ["fix:"],
-      "totalFrequency": 143,
-      "sourceCount": 138
+      "variants": [
+        "fix:"
+      ],
+      "totalFrequency": 262,
+      "sourceCount": 244
     },
     {
       "canonical": "note",
-      "variants": ["notes", "note:", "📝 notes", "notes:"],
-      "totalFrequency": 126,
-      "sourceCount": 115
+      "variants": [
+        "notes",
+        "note:",
+        "notes:",
+        "📝 notes"
+      ],
+      "totalFrequency": 478,
+      "sourceCount": 415
     },
     {
       "canonical": "current status",
@@ -257,56 +576,79 @@
         "🚀 current status",
         "✅ current status"
       ],
-      "totalFrequency": 42,
-      "sourceCount": 35
+      "totalFrequency": 38,
+      "sourceCount": 32
     },
     {
       "canonical": "issue",
-      "variants": ["issue:", "issues", "issues:"],
-      "totalFrequency": 213,
-      "sourceCount": 180
+      "variants": [
+        "issue:",
+        "issues",
+        "issues:"
+      ],
+      "totalFrequency": 334,
+      "sourceCount": 290
     },
     {
       "canonical": "impact",
-      "variants": ["impact:"],
-      "totalFrequency": 137,
-      "sourceCount": 120
+      "variants": [
+        "impact:"
+      ],
+      "totalFrequency": 208,
+      "sourceCount": 184
     },
     {
       "canonical": "priority",
-      "variants": ["priority:"],
-      "totalFrequency": 126,
-      "sourceCount": 117
+      "variants": [
+        "priority:"
+      ],
+      "totalFrequency": 182,
+      "sourceCount": 169
     },
     {
       "canonical": "high",
-      "variants": [": high", "high:"],
-      "totalFrequency": 179,
-      "sourceCount": 176
+      "variants": [
+        ": high",
+        "high:"
+      ],
+      "totalFrequency": 373,
+      "sourceCount": 357
     },
     {
       "canonical": "critical",
-      "variants": [": critical", "critical:"],
-      "totalFrequency": 122,
-      "sourceCount": 120
+      "variants": [
+        "critical:",
+        "⚠️ critical:",
+        ": critical"
+      ],
+      "totalFrequency": 221,
+      "sourceCount": 212
     },
     {
       "canonical": "medium",
-      "variants": ["medium:"],
-      "totalFrequency": 112,
-      "sourceCount": 111
+      "variants": [
+        "medium:"
+      ],
+      "totalFrequency": 195,
+      "sourceCount": 190
     },
     {
       "canonical": "low",
-      "variants": [": low", "low:"],
-      "totalFrequency": 109,
-      "sourceCount": 106
+      "variants": [
+        ": low",
+        "low:"
+      ],
+      "totalFrequency": 203,
+      "sourceCount": 198
     },
     {
       "canonical": "code",
-      "variants": ["codes", "code:"],
-      "totalFrequency": 264,
-      "sourceCount": 263
+      "variants": [
+        "codes",
+        "code:"
+      ],
+      "totalFrequency": 425,
+      "sourceCount": 409
     },
     {
       "canonical": "next step",
@@ -333,32 +675,36 @@
         "🔮 next steps",
         "💡 next steps"
       ],
-      "totalFrequency": 274,
-      "sourceCount": 224
-    },
-    {
-      "canonical": "see",
-      "variants": ["see:", "sees"],
-      "totalFrequency": 96,
-      "sourceCount": 96
+      "totalFrequency": 277,
+      "sourceCount": 227
     },
     {
       "canonical": "warning",
-      "variants": ["warnings", "⚠️ warning", "warning:", "⚠️ warning:"],
-      "totalFrequency": 39,
-      "sourceCount": 38
+      "variants": [
+        "warnings",
+        "warning:",
+        "⚠️ warning",
+        "⚠️ warning:"
+      ],
+      "totalFrequency": 65,
+      "sourceCount": 61
     },
     {
       "canonical": "review",
-      "variants": ["reviews"],
-      "totalFrequency": 231,
-      "sourceCount": 222
+      "variants": [
+        "reviews"
+      ],
+      "totalFrequency": 389,
+      "sourceCount": 374
     },
     {
       "canonical": "developer",
-      "variants": ["developers", "developer:"],
-      "totalFrequency": 57,
-      "sourceCount": 54
+      "variants": [
+        "developers",
+        "developer:"
+      ],
+      "totalFrequency": 79,
+      "sourceCount": 73
     },
     {
       "canonical": "summary",
@@ -370,132 +716,203 @@
         "✅ **summary**",
         "🎊 summary"
       ],
-      "totalFrequency": 124,
-      "sourceCount": 110
+      "totalFrequency": 162,
+      "sourceCount": 142
     },
     {
       "canonical": "related documentation",
-      "variants": ["🔗 related documentation", "📚 related documentation"],
-      "totalFrequency": 23,
-      "sourceCount": 19
+      "variants": [
+        "🔗 related documentation",
+        "📚 related documentation"
+      ],
+      "totalFrequency": 33,
+      "sourceCount": 28
     },
     {
       "canonical": "core package",
-      "variants": ["core packages", "core package ⏳"],
-      "totalFrequency": 15,
-      "sourceCount": 14
+      "variants": [
+        "core packages",
+        "core package ⏳"
+      ],
+      "totalFrequency": 14,
+      "sourceCount": 13
     },
     {
       "canonical": "testtype",
-      "variants": ["test type", "test types", "test types:"],
-      "totalFrequency": 5,
-      "sourceCount": 5
+      "variants": [
+        "test type",
+        "test types",
+        "test types:"
+      ],
+      "totalFrequency": 10,
+      "sourceCount": 9
     },
     {
       "canonical": "date",
-      "variants": ["date:", "[date]:"],
-      "totalFrequency": 236,
-      "sourceCount": 221
+      "variants": [
+        "date:",
+        "dates",
+        "[date]:"
+      ],
+      "totalFrequency": 419,
+      "sourceCount": 386
     },
     {
       "canonical": "session",
-      "variants": ["session:", "sessions", "sessions:"],
-      "totalFrequency": 87,
-      "sourceCount": 78
+      "variants": [
+        "session:",
+        "sessions",
+        "sessions:"
+      ],
+      "totalFrequency": 189,
+      "sourceCount": 172
     },
     {
       "canonical": "detail",
-      "variants": ["details:", "details"],
-      "totalFrequency": 58,
-      "sourceCount": 56
+      "variants": [
+        "details:",
+        "details"
+      ],
+      "totalFrequency": 85,
+      "sourceCount": 80
     },
     {
       "canonical": "what was fixed",
-      "variants": ["what was fixed:", "🔧 what was fixed"],
-      "totalFrequency": 5,
-      "sourceCount": 4
+      "variants": [
+        "what was fixed:",
+        "🔧 what was fixed"
+      ],
+      "totalFrequency": 6,
+      "sourceCount": 5
     },
     {
-      "canonical": "success",
-      "variants": ["success:", "success! 🎉", "🎉 success!"],
-      "totalFrequency": 58,
-      "sourceCount": 56
-    },
-    {
-      "canonical": "found",
-      "variants": ["found:"],
-      "totalFrequency": 38,
-      "sourceCount": 37
-    },
-    {
-      "canonical": "what changed",
-      "variants": ["what changed:", "what changed?"],
-      "totalFrequency": 4,
-      "sourceCount": 3
-    },
-    {
-      "canonical": "before",
-      "variants": ["before:", "**before:**", "before ❌"],
-      "totalFrequency": 151,
-      "sourceCount": 143
-    },
-    {
-      "canonical": "after",
-      "variants": ["after:", "**after:**", "after ✅"],
-      "totalFrequency": 200,
-      "sourceCount": 192
-    },
-    {
-      "canonical": "commit",
-      "variants": ["commits", "commit:"],
-      "totalFrequency": 50,
-      "sourceCount": 45
-    },
-    {
-      "canonical": "build status",
-      "variants": ["build status:", "**build status**", "📈 build status"],
-      "totalFrequency": 24,
-      "sourceCount": 20
-    },
-    {
-      "canonical": "local",
-      "variants": ["local:"],
-      "totalFrequency": 44,
-      "sourceCount": 44
-    },
-    {
-      "canonical": "railway",
-      "variants": ["railway:"],
-      "totalFrequency": 110,
-      "sourceCount": 110
-    },
-    {
-      "canonical": "why this happened",
-      "variants": ["why this happened:", "🚨 why this happened"],
+      "canonical": "what happened",
+      "variants": [
+        "what happened:"
+      ],
       "totalFrequency": 3,
       "sourceCount": 3
     },
     {
-      "canonical": "prevention",
-      "variants": ["prevention:"],
+      "canonical": "found",
+      "variants": [
+        "found:"
+      ],
+      "totalFrequency": 52,
+      "sourceCount": 50
+    },
+    {
+      "canonical": "what changed",
+      "variants": [
+        "what changed:",
+        "what changed?"
+      ],
+      "totalFrequency": 6,
+      "sourceCount": 5
+    },
+    {
+      "canonical": "before",
+      "variants": [
+        "before:",
+        "**before:**",
+        "before ❌"
+      ],
+      "totalFrequency": 296,
+      "sourceCount": 278
+    },
+    {
+      "canonical": "after",
+      "variants": [
+        "after:",
+        "**after:**",
+        "after ✅"
+      ],
+      "totalFrequency": 350,
+      "sourceCount": 330
+    },
+    {
+      "canonical": "commit",
+      "variants": [
+        "commits",
+        "commit:"
+      ],
+      "totalFrequency": 82,
+      "sourceCount": 75
+    },
+    {
+      "canonical": "build status",
+      "variants": [
+        "**build status**",
+        "📈 build status",
+        "build status:"
+      ],
       "totalFrequency": 21,
-      "sourceCount": 21
+      "sourceCount": 17
+    },
+    {
+      "canonical": "local",
+      "variants": [
+        "local:"
+      ],
+      "totalFrequency": 141,
+      "sourceCount": 138
+    },
+    {
+      "canonical": "git",
+      "variants": [
+        "/.git/"
+      ],
+      "totalFrequency": 298,
+      "sourceCount": 293
+    },
+    {
+      "canonical": "why this happened",
+      "variants": [
+        "why this happened:",
+        "🚨 why this happened"
+      ],
+      "totalFrequency": 3,
+      "sourceCount": 3
+    },
+    {
+      "canonical": "included",
+      "variants": [
+        "included:"
+      ],
+      "totalFrequency": 20,
+      "sourceCount": 20
+    },
+    {
+      "canonical": "prevention",
+      "variants": [
+        "prevention:"
+      ],
+      "totalFrequency": 39,
+      "sourceCount": 39
     },
     {
       "canonical": "future improvement",
-      "variants": ["future improvements", "future improvements:"],
+      "variants": [
+        "future improvements",
+        "future improvements:"
+      ],
       "totalFrequency": 9,
       "sourceCount": 8
     },
     {
       "canonical": "add",
-      "variants": ["adds", "add:"],
-      "totalFrequency": 371,
-      "sourceCount": 364
+      "variants": [
+        "adds",
+        "add:"
+      ],
+      "totalFrequency": 823,
+      "sourceCount": 786
     },
     {
       "canonical": "proto definitions",
-      "variants": ["proto-definitions"],
+      "variants": [
+        "proto-definitions"
+      ],
       "totalFrequency": 2,
       "sourceCount": 1
     },
@@ -507,1172 +924,618 @@
         "root causes:",
         "❌ root cause"
       ],
-      "totalFrequency": 30,
-      "sourceCount": 29
+      "totalFrequency": 36,
+      "sourceCount": 32
     },
     {
       "canonical": "changes made",
-      "variants": ["changes made:", "✅ changes made"],
+      "variants": [
+        "changes made:",
+        "✅ changes made"
+      ],
       "totalFrequency": 17,
       "sourceCount": 16
     },
     {
       "canonical": "import",
-      "variants": ["imports"],
-      "totalFrequency": 71,
-      "sourceCount": 65
-    },
-    {
-      "canonical": "benefit",
       "variants": [
-        "benefits",
-        "benefits:",
-        "📈 benefits",
-        "✅ benefits",
-        "🎯 benefits"
+        "imports"
       ],
-      "totalFrequency": 71,
-      "sourceCount": 64
-    },
-    {
-      "canonical": "package",
-      "variants": [
-        "packages",
-        "\", \"packages/",
-        "'\n      - 'packages/",
-        "packages:",
-        "package:"
-      ],
-      "totalFrequency": 172,
-      "sourceCount": 140
-    },
-    {
-      "canonical": "deployment status",
-      "variants": [
-        "🎬 deployment status",
-        "deployment status:",
-        "🎯 deployment status",
-        "🔗 deployment status"
-      ],
-      "totalFrequency": 11,
-      "sourceCount": 9
-    },
-    {
-      "canonical": "searchresult",
-      "variants": ["search results"],
-      "totalFrequency": 2,
-      "sourceCount": 2
-    },
-    {
-      "canonical": "file",
-      "variants": ["files", "file:", "files:"],
-      "totalFrequency": 336,
-      "sourceCount": 275
-    },
-    {
-      "canonical": "activation plan",
-      "variants": ["🚀 activation plan"],
-      "totalFrequency": 3,
-      "sourceCount": 2
-    },
-    {
-      "canonical": "agent",
-      "variants": [
-        "agents",
-        "🤖 agents",
-        "agent:",
-        "agents:",
-        "`/agents`",
-        "/agents"
-      ],
-      "totalFrequency": 476,
-      "sourceCount": 354
-    },
-    {
-      "canonical": "discovery service",
-      "variants": ["discovery services"],
-      "totalFrequency": 4,
-      "sourceCount": 4
-    },
-    {
-      "canonical": "skill",
-      "variants": ["skills"],
-      "totalFrequency": 80,
-      "sourceCount": 60
-    },
-    {
-      "canonical": "onboarding flow",
-      "variants": ["onboarding flows"],
-      "totalFrequency": 12,
-      "sourceCount": 12
-    },
-    {
-      "canonical": "discovery",
-      "variants": ["discovery:"],
-      "totalFrequency": 78,
-      "sourceCount": 77
-    },
-    {
-      "canonical": "type system",
-      "variants": ["type systems:"],
-      "totalFrequency": 6,
-      "sourceCount": 5
-    },
-    {
-      "canonical": "communication",
-      "variants": ["communications", "communication:"],
-      "totalFrequency": 164,
-      "sourceCount": 157
-    },
-    {
-      "canonical": "coordination",
-      "variants": ["coordination:"],
-      "totalFrequency": 71,
-      "sourceCount": 71
-    },
-    {
-      "canonical": "feedback",
-      "variants": ["feedback:", "💬 feedback"],
-      "totalFrequency": 31,
-      "sourceCount": 30
-    },
-    {
-      "canonical": "registration",
-      "variants": ["registrations"],
-      "totalFrequency": 82,
-      "sourceCount": 81
-    },
-    {
-      "canonical": "integration",
-      "variants": [
-        "integrations",
-        "integration:",
-        "✅ integrations",
-        "/integrations/"
-      ],
-      "totalFrequency": 386,
-      "sourceCount": 362
-    },
-    {
-      "canonical": "guide",
-      "variants": ["guides"],
-      "totalFrequency": 119,
-      "sourceCount": 112
-    },
-    {
-      "canonical": "documentation",
-      "variants": [
-        "📁 documentation",
-        "📚 documentation",
-        "documentation:",
-        "**documentation**",
-        "📖 documentation",
-        "✅ documentation"
-      ],
-      "totalFrequency": 365,
-      "sourceCount": 338
-    },
-    {
-      "canonical": "analysis",
-      "variants": ["analysis:"],
-      "totalFrequency": 127,
-      "sourceCount": 126
-    },
-    {
-      "canonical": "user",
-      "variants": ["users", "user:"],
-      "totalFrequency": 272,
-      "sourceCount": 239
-    },
-    {
-      "canonical": "post",
-      "variants": ["posts"],
-      "totalFrequency": 174,
-      "sourceCount": 172
-    },
-    {
-      "canonical": "get",
-      "variants": ["gets"],
-      "totalFrequency": 182,
-      "sourceCount": 182
-    },
-    {
-      "canonical": "basic",
-      "variants": ["basics"],
-      "totalFrequency": 86,
-      "sourceCount": 86
-    },
-    {
-      "canonical": "task",
-      "variants": ["tasks", "tasks:", "task:", "`/tasks`", "✅ tasks"],
-      "totalFrequency": 246,
-      "sourceCount": 203
-    },
-    {
-      "canonical": "chat",
-      "variants": ["chats", "/chat"],
-      "totalFrequency": 106,
-      "sourceCount": 104
-    },
-    {
-      "canonical": "router",
-      "variants": ["router:"],
-      "totalFrequency": 24,
-      "sourceCount": 24
-    },
-    {
-      "canonical": "today",
-      "variants": ["today:"],
-      "totalFrequency": 10,
-      "sourceCount": 10
+      "totalFrequency": 134,
+      "sourceCount": 122
     }
   ],
   "gaps": {
     "underDocumented": [],
     "orphanConcepts": [
       {
-        "concept": "built",
+        "concept": "nft",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "which",
+        "frequency": 41,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "january",
+        "frequency": 57,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "twitter",
+        "frequency": 63,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "discord",
         "frequency": 62,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "added",
-        "frequency": 123,
+        "concept": "unknown",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "friday",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "still",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "like",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "build failure",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "built",
+        "frequency": 95,
         "issue": "No relationships to other concepts"
       },
       {
         "concept": "configured",
-        "frequency": 21,
+        "frequency": 24,
         "issue": "No relationships to other concepts"
       },
       {
         "concept": "files\nmodified",
-        "frequency": 66,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "partial",
-        "frequency": 37,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "see",
-        "frequency": 96,
+        "frequency": 68,
         "issue": "No relationships to other concepts"
       },
       {
         "concept": "jest",
-        "frequency": 30,
+        "frequency": 33,
         "issue": "No relationships to other concepts"
       },
       {
         "concept": "related documentation",
-        "frequency": 23,
+        "frequency": 33,
         "issue": "No relationships to other concepts"
       },
       {
         "concept": "build status",
-        "frequency": 24,
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "included",
+        "frequency": 20,
         "issue": "No relationships to other concepts"
       },
       {
         "concept": "prevention",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "cannot",
-        "frequency": 28,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "root cause",
-        "frequency": 30,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "first",
-        "frequency": 67,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "rest",
-        "frequency": 58,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "master",
-        "frequency": 34,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "running",
-        "frequency": 51,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "subscribe",
-        "frequency": 35,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "success metrics",
-        "frequency": 82,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "files created",
-        "frequency": 58,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "developer experience",
-        "frequency": 50,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "started",
-        "frequency": 27,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "however",
-        "frequency": 28,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "slack",
-        "frequency": 36,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "improved",
-        "frequency": 47,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "mode",
-        "frequency": 30,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "number",
-        "frequency": 33,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "enter",
-        "frequency": 24,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "better",
-        "frequency": 46,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "typography",
-        "frequency": 30,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "focus",
-        "frequency": 60,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "successfully",
-        "frequency": 56,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "cause",
-        "frequency": 40,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "expected",
-        "frequency": 35,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "pipeline",
-        "frequency": 35,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "put",
-        "frequency": 38,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "in\nprogress",
-        "frequency": 29,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "replace",
-        "frequency": 43,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "convert",
-        "frequency": 26,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "community",
-        "frequency": 28,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "jsx",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "vite",
-        "frequency": 26,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "rebuild",
-        "frequency": 24,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "common issues",
-        "frequency": 108,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "force",
-        "frequency": 26,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "additional resources",
-        "frequency": 33,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "mission accomplished",
-        "frequency": 29,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "documentation created",
-        "frequency": 22,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "quickstart",
-        "frequency": 67,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "quick\nreference",
-        "frequency": 30,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "zero",
-        "frequency": 46,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "fixes",
-        "frequency": 40,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "changed",
-        "frequency": 24,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "separate",
-        "frequency": 31,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "is as follows",
-        "frequency": 98,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "social",
-        "frequency": 22,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "receive",
-        "frequency": 114,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "analyze input:",
-        "frequency": 86,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "generate report",
-        "frequency": 54,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "conduct",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "write",
-        "frequency": 65,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "format",
-        "frequency": 70,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "websearch",
-        "frequency": 35,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "collaboration",
-        "frequency": 51,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "pull",
-        "frequency": 22,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "compare",
-        "frequency": 45,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "prioritize",
-        "frequency": 28,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "learning",
-        "frequency": 31,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "once",
-        "frequency": 46,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "context\nprotocol",
-        "frequency": 66,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "claude code",
-        "frequency": 36,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "edit",
-        "frequency": 46,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "determine",
-        "frequency": 33,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "please",
-        "frequency": 41,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "confirm",
-        "frequency": 24,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "instruction",
-        "frequency": 25,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "example usage",
-        "frequency": 24,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "usage example",
-        "frequency": 54,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "look",
-        "frequency": 44,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "finding",
-        "frequency": 23,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "strategy",
-        "frequency": 59,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "definition",
-        "frequency": 47,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "recognition",
-        "frequency": 20,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "graph",
-        "frequency": 41,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "notify",
-        "frequency": 23,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "configuration\nfile",
-        "frequency": 41,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "blue",
-        "frequency": 31,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "practice",
-        "frequency": 28,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "ecosystem",
-        "frequency": 23,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "calculate",
-        "frequency": 24,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "transaction",
-        "frequency": 26,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "user experience",
-        "frequency": 20,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "theme",
-        "frequency": 33,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "scan",
-        "frequency": 36,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "tracking",
-        "frequency": 37,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "quality assurance",
         "frequency": 39,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "submit",
-        "frequency": 27,
+        "concept": "rest",
+        "frequency": 145,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "run test",
-        "frequency": 28,
+        "concept": "today",
+        "frequency": 20,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "reliability",
-        "frequency": 31,
+        "concept": "master",
+        "frequency": 48,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "landing",
-        "frequency": 31,
+        "concept": "running",
+        "frequency": 77,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "dom",
-        "frequency": 38,
+        "concept": "subscribe",
+        "frequency": 43,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "resolve",
-        "frequency": 21,
+        "concept": "success metrics",
+        "frequency": 92,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "debugging",
-        "frequency": 44,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "impact assessment",
-        "frequency": 24,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "case",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "wcag",
-        "frequency": 27,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "agentregistry",
-        "frequency": 25,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "specific",
-        "frequency": 31,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "deliverable",
-        "frequency": 28,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "deep",
-        "frequency": 28,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "code review",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "interface",
-        "frequency": 58,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "math",
-        "frequency": 30,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "persistent",
+        "concept": "changelog",
         "frequency": 22,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "graceful",
-        "frequency": 32,
+        "concept": "files created",
+        "frequency": 53,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "resource management",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "privacy",
-        "frequency": 26,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "access control",
-        "frequency": 25,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "logging",
-        "frequency": 71,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "average",
-        "frequency": 27,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "success rate",
-        "frequency": 23,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "approach",
-        "frequency": 26,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "risk",
-        "frequency": 41,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "unauthorized",
-        "frequency": 28,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "safety",
-        "frequency": 34,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "static",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "unique",
-        "frequency": 29,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "storage",
-        "frequency": 30,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "api endpoint",
-        "frequency": 30,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "api documentation",
-        "frequency": 20,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "diagram",
-        "frequency": 30,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "professional",
-        "frequency": 23,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "cloud",
-        "frequency": 20,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "edge",
-        "frequency": 22,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "grid",
-        "frequency": 22,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "styling",
-        "frequency": 25,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "category",
-        "frequency": 56,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "general",
-        "frequency": 33,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "performance issue",
-        "frequency": 26,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "reusable",
-        "frequency": 20,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "categories",
-        "frequency": 28,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "third",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "clone",
-        "frequency": 25,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "model context\nprotocol",
-        "frequency": 56,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "rbac",
-        "frequency": 23,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "owasp",
-        "frequency": 20,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "enhance",
-        "frequency": 33,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "navigation",
-        "frequency": 52,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "form",
+        "concept": "developer experience",
         "frequency": 49,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "public",
-        "frequency": 24,
+        "concept": "started",
+        "frequency": 51,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "license",
-        "frequency": 40,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "sdk",
-        "frequency": 25,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "limited",
-        "frequency": 25,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "integration tests",
-        "frequency": 36,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "invalid",
-        "frequency": 24,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "reduce",
-        "frequency": 32,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "knowledge",
-        "frequency": 26,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "risk mitigation",
+        "concept": "however",
         "frequency": 27,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "cleanup",
-        "frequency": 71,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "watch",
-        "frequency": 37,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "mitigation",
-        "frequency": 24,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "communication guide",
+        "concept": "monthly",
         "frequency": 33,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "agent communication guide",
-        "frequency": 21,
+        "concept": "slack",
+        "frequency": 96,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "use case",
-        "frequency": 32,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "limiting",
-        "frequency": 28,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "getting started",
-        "frequency": 45,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "successful",
-        "frequency": 23,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "join",
-        "frequency": 23,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "getting help",
-        "frequency": 31,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "tableofcontents",
-        "frequency": 64,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "vision",
-        "frequency": 22,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "antigravity",
-        "frequency": 20,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "architecture overview",
-        "frequency": 31,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "worker",
-        "frequency": 24,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "message format",
-        "frequency": 22,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "take",
-        "frequency": 26,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "implementation steps",
-        "frequency": 20,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "footer",
-        "frequency": 20,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "gap",
-        "frequency": 24,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "current state",
-        "frequency": 28,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "implementation plan",
-        "frequency": 26,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "password",
-        "frequency": 26,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "nft",
-        "frequency": 22,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "overall",
-        "frequency": 24,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "reduction",
-        "frequency": 24,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "test\ncoverage",
-        "frequency": 23,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "migrate",
+        "concept": "improved",
         "frequency": 46,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "migration guide",
+        "concept": "smooth",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "help",
+        "frequency": 48,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "enter",
+        "frequency": 60,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "spacing",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "typography",
+        "frequency": 50,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "successfully",
+        "frequency": 60,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "timeout",
+        "frequency": 65,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "pipeline",
+        "frequency": 65,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "item",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "failed",
+        "frequency": 61,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "gpt",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "lower",
+        "frequency": 51,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "in\nprogress",
+        "frequency": 53,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "fetches",
+        "frequency": 46,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "testing checklist",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "database_url",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "openai_api_key",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "database migration",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "shell",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "jsx",
+        "frequency": 66,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "website",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "console",
+        "frequency": 38,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "vite",
+        "frequency": 56,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "redeploy",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "for developers",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "rebuild",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "force",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "additional resources",
         "frequency": 41,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "type\nsafety",
+        "concept": "universal knowledge",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "ocr",
+        "frequency": 45,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "specification",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "locate",
         "frequency": 24,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "connection pooling",
-        "frequency": 25,
+        "concept": "crawl",
+        "frequency": 46,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "compare",
+        "frequency": 96,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "once",
+        "frequency": 102,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "spec",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "combine",
+        "frequency": 52,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "repeat",
+        "frequency": 46,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "mission accomplished",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "documentation created",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "zero",
+        "frequency": 67,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "discovered",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "changed",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "history",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "context\nprotocol",
+        "frequency": 114,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "environment variable",
+        "frequency": 142,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "installation",
+        "frequency": 82,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "usage example",
+        "frequency": 67,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "documented",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "code review",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "gate",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "suite",
+        "frequency": 51,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "title",
+        "frequency": 67,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "palette",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "wcag",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "circuit",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "reliability",
+        "frequency": 50,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "growth",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "wrap",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "sec",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "engineer",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "rfc",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "ctrl",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "firefox",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cleanup",
+        "frequency": 110,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "workaround",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "access control",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "npm",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "ssrf",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "otherwise",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "double",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "uint",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "logging",
+        "frequency": 92,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "encryption",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "pick",
+        "frequency": 75,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "take",
+        "frequency": 49,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "restrict",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "contract",
+        "frequency": 39,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "surface",
+        "frequency": 62,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "spa",
+        "frequency": 42,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "observability",
+        "frequency": 55,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "without",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "capture",
+        "frequency": 70,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "contentsecuritypolicy",
+        "frequency": 45,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "crud",
+        "frequency": 48,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "category",
+        "frequency": 98,
         "issue": "No relationships to other concepts"
       },
       {
@@ -1681,38 +1544,223 @@
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "effort",
-        "frequency": 27,
+        "concept": "migrate",
+        "frequency": 63,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "rollback plan",
+        "concept": "refactor",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "organized",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "meta",
+        "frequency": 105,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "search engine",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "refresh",
+        "frequency": 47,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "media",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "tik",
+        "frequency": 54,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "distribution",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "retrieval",
         "frequency": 22,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "never",
-        "frequency": 34,
+        "concept": "immediate",
+        "frequency": 97,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "development workflow",
-        "frequency": 40,
+        "concept": "guidance",
+        "frequency": 28,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "availability",
+        "concept": "filtering",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "badge",
         "frequency": 23,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "order",
+        "concept": "tailwind",
+        "frequency": 79,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "drag",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "explain",
+        "frequency": 51,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "navigate",
+        "frequency": 108,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "grow",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "join",
+        "frequency": 46,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "efficiency",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "codebase",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "old",
+        "frequency": 70,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "simplified",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "moderate",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "sort",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "insufficient",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "speed",
+        "frequency": 42,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "creative",
         "frequency": 21,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "short",
-        "frequency": 35,
+        "concept": "variant",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "continuous",
+        "frequency": 47,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "current state",
+        "frequency": 47,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cloud",
+        "frequency": 53,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "refactoring",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "left",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "null",
+        "frequency": 43,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "hardcoded",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "startup",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "concurrent",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "stress",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "integration testing",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "production deployment",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "key metrics",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "average",
+        "frequency": 40,
         "issue": "No relationships to other concepts"
       },
       {
@@ -1721,143 +1769,23 @@
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "january",
-        "frequency": 23,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "consolidation strategy",
-        "frequency": 22,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "old",
-        "frequency": 33,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "verification checklist",
-        "frequency": 26,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "need help",
-        "frequency": 25,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "environment variable",
-        "frequency": 89,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "navigate",
-        "frequency": 73,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "installation",
-        "frequency": 60,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "editor",
-        "frequency": 20,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "restart",
-        "frequency": 50,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "install dependencies",
-        "frequency": 46,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "adminpanel",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "cmd",
-        "frequency": 20,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "principle",
-        "frequency": 23,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "slow",
-        "frequency": 32,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "docker compose",
-        "frequency": 22,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "right",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "tailwind",
-        "frequency": 29,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "feature flags",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "firebase",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "symptom",
-        "frequency": 23,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "immediate action",
-        "frequency": 42,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "ssl",
-        "frequency": 25,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "unit tests",
-        "frequency": 30,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "connected",
-        "frequency": 20,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "three",
-        "frequency": 20,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "prometheus",
+        "concept": "gradual",
         "frequency": 24,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "production deployment",
-        "frequency": 28,
+        "concept": "rollback plan",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "disable",
+        "frequency": 57,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "maintainability",
+        "frequency": 26,
         "issue": "No relationships to other concepts"
       },
       {
@@ -1866,123 +1794,2178 @@
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "health\nmonitoring",
-        "frequency": 49,
+        "concept": "api documentation",
+        "frequency": 20,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "centralized",
-        "frequency": 35,
+        "concept": "deployment guide",
+        "frequency": 20,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "performance monitoring",
-        "frequency": 35,
+        "concept": "risk mitigation",
+        "frequency": 27,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "efficiency",
+        "concept": "diagram",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "uuid",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "desc",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "condition",
         "frequency": 23,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "integration testing",
+        "concept": "throw",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "modify",
+        "frequency": 97,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "weak",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "hash",
         "frequency": 30,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "account",
-        "frequency": 28,
+        "concept": "unit tests",
+        "frequency": 34,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "bundle",
+        "concept": "room",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "exponential",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "short",
+        "frequency": 71,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cron",
+        "frequency": 45,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "second",
         "frequency": 33,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "key achievement:",
-        "frequency": 35,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "library",
-        "frequency": 43,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "technical implementation",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "organization",
-        "frequency": 27,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "organized",
-        "frequency": 25,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "scalability",
-        "frequency": 27,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "modern",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "archive",
-        "frequency": 30,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "historical",
-        "frequency": 25,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "fully",
-        "frequency": 36,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "the new fuse platform",
-        "frequency": 20,
+        "concept": "prometheus",
+        "frequency": 24,
         "issue": "No relationships to other concepts"
       },
       {
         "concept": "messaging",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "aws",
+        "frequency": 48,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "gcp",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "daily",
+        "frequency": 99,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "serve",
+        "frequency": 38,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "identifies",
         "frequency": 22,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "many",
-        "frequency": 23,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "august",
+        "concept": "sending",
         "frequency": 20,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "workflowengine",
-        "frequency": 27,
+        "concept": "forward",
+        "frequency": 37,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "easy",
+        "concept": "relayserver",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "connected",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "timestamp",
+        "frequency": 51,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "frequency",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "systemprompt",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "soul",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "mini",
+        "frequency": 149,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "philosophy",
+        "frequency": 54,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "determine",
+        "frequency": 57,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "reading",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "persistent",
+        "frequency": 42,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "library",
+        "frequency": 71,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "action\nrequired",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "communicationprotocol",
+        "frequency": 43,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "task management",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "health\nmonitoring",
+        "frequency": 51,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "operational",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "immediate next steps",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "listen",
         "frequency": 33,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "sidebar",
+        "concept": "mark",
+        "frequency": 51,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "browser automation",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "message format",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "pdf",
+        "frequency": 118,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "programmatic",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "foundation",
+        "frequency": 60,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "claudeskill",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "privacy",
+        "frequency": 52,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "operating",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "antigravity",
         "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "general",
+        "frequency": 47,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "historical",
+        "frequency": 47,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "whether",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "receive",
+        "frequency": 258,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "poll",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cloudflare worker",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "telegram",
+        "frequency": 65,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "use case",
+        "frequency": 120,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "safari",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "symptom",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "ssh",
+        "frequency": 51,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "utc",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "dns",
+        "frequency": 101,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "blue",
+        "frequency": 48,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "purple",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "enabled",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "zo agent",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "integration guide",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "space",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "browser hub",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "pending",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "extraction",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "describe",
+        "frequency": 39,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "fully",
+        "frequency": 46,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "strict",
+        "frequency": 39,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "systemarchitecture",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "how it works",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "knowledge",
+        "frequency": 91,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "archive",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "enhance",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "entrypoint",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "translation",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "before implementation",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "standards apply",
+        "frequency": 39,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "that avoids generic ai aesthetics",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "for co-authoring documentation",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "helps users efficiently transfer context",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "email program",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "design philosophy",
+        "frequency": 38,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "the formats that my company likes to use",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "templates and data",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "modern frontend web technologies",
+        "frequency": 38,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "the blogwatcher cli",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "ffmpeg",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cro",
+        "frequency": 45,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "ltv",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "rss",
+        "frequency": 43,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "xml",
+        "frequency": 52,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "csv",
+        "frequency": 69,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "utm",
+        "frequency": 44,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "gtm",
+        "frequency": 51,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "svg",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "crm",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "ppc",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "roas",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cpa",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "gif",
+        "frequency": 50,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "sms",
+        "frequency": 68,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "mime",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "image",
+        "frequency": 146,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "google ad",
+        "frequency": 52,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "niche",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "claude code",
+        "frequency": 63,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "spotify",
+        "frequency": 47,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "funnel",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "linear",
+        "frequency": 72,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "remotion",
+        "frequency": 39,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cover",
+        "frequency": 60,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "explore",
+        "frequency": 60,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "vue",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "svelte",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "emphasize",
+        "frequency": 56,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "operator",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "docker compose",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "when claude",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "firebase",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "modern",
+        "frequency": 43,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "linked",
+        "frequency": 74,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "distinct",
+        "frequency": 41,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "westendorp",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "operate",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "apple",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "payment",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "stripe",
+        "frequency": 67,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "vapi",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "eleven",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cursor",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "drive",
+        "frequency": 58,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "processes",
+        "frequency": 58,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "editing",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "use this skill",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "api reference",
+        "frequency": 70,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "isolation",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "initialization",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "answer",
+        "frequency": 42,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "ecosystem",
+        "frequency": 38,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "progressive",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "propose",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "evaluate",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "vision",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "concept",
+        "frequency": 45,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "convention",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "respond",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "solve",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "agent coordination",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "trace",
+        "frequency": 57,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "aggregate",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "compile",
+        "frequency": 232,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "gap",
+        "frequency": 38,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "area",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "scalability",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "prioritize",
+        "frequency": 69,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "compute",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "organize",
+        "frequency": 105,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "orchestratoragent",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "objective",
+        "frequency": 53,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "quality metrics",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "check docker",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "confirm",
+        "frequency": 108,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "authenticate",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "mit",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "limiting",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "prompting",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "wrong",
+        "frequency": 94,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "submit",
+        "frequency": 64,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "reusable",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "generic",
+        "frequency": 41,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "invoke",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "applies anthropic",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "secondary",
+        "frequency": 39,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "orange",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "insert",
+        "frequency": 77,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "established",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "transition",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cdn",
+        "frequency": 64,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "threshold",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "order",
+        "frequency": 79,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "previous",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "output format",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "study",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "balance",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "core workflow",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "maximum",
+        "frequency": 63,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "toolkit",
+        "frequency": 42,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "professional",
+        "frequency": 43,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "warm",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "natural",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "hour",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "rich",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "bold",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "give",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "selector",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "grid",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "world",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "key finding",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "raw",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "break",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "sequential",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "last",
+        "frequency": 47,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "center",
+        "frequency": 134,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "individual",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "theme",
+        "frequency": 56,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "deep",
+        "frequency": 76,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "horizontal",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "sidebar",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "edge",
+        "frequency": 44,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "negative",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "two",
+        "frequency": 44,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "quote",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "named",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "properties",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "unexpected",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "sum",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "place",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "preview",
+        "frequency": 225,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "specify",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "organization",
+        "frequency": 38,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "dry",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "naming",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "google drive",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "look",
+        "frequency": 110,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "summarize",
+        "frequency": 38,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "acknowledge",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "transcribe",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "home",
+        "frequency": 51,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "collect",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "workflow using skill",
+        "frequency": 143,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "using skill",
+        "frequency": 154,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "integration pattern",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "example usage",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "is as follows",
+        "frequency": 235,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "analyze input:",
+        "frequency": 209,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "generate report",
+        "frequency": 130,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cmd",
+        "frequency": 45,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "supply",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "safety",
+        "frequency": 71,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "untrusted",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "origin",
+        "frequency": 42,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "outdated",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "style",
+        "frequency": 46,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "feature flags",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "syntax",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "callback",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "persist",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "0) safety, boundaries, and anti-abuse constraints (must follow)",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "1) operating modes",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "1.1 generation mode (default)",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "1.3 active audit mode (explicit scan request)",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "2) definitions and review guidance",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "2.1 untrusted input (treat as attacker-controlled unless proven otherwise)",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "2.3 required audit finding format",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "3) secure baseline: minimum production configuration (must in production)",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "4) rules (generation + audit)",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "5) practical scanning heuristics (how to “hunt”)",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "security spec",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "secure-by-default code generation",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "security review / vulnerability hunting",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "normative requirements",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "audit rules",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "kubernetes",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "accept",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "resolve",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "static",
+        "frequency": 68,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "baseline",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "payload",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "minimum",
+        "frequency": 47,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "ssl",
+        "frequency": 41,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "private",
+        "frequency": 63,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "demo",
+        "frequency": 43,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "apikey",
+        "frequency": 50,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "override",
+        "frequency": 56,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "websearch",
+        "frequency": 75,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "deliver",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "chart",
+        "frequency": 57,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "when to use",
+        "frequency": 45,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "configuration\nfile",
+        "frequency": 45,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "practice",
+        "frequency": 41,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "categorize",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "outline",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "legal",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "table of contents",
+        "frequency": 75,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "footer",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "pull",
+        "frequency": 76,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "staging",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "desktop",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "rbac",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "trust",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "availability",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "tenant",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "gotcha",
+        "frequency": 68,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "common error",
+        "frequency": 103,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "configurationmd",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "rest api",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "sha",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "apimd",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "local development",
+        "frequency": 41,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "wrangler.jsonc",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "traffic",
+        "frequency": 41,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "fetcher",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "tail worker",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "durable object",
+        "frequency": 66,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "paid",
+        "frequency": 47,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "terraform",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "see also",
+        "frequency": 132,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "common patterns",
+        "frequency": 53,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "cname",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "vectorize",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "hyperdrive",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "clone",
+        "frequency": 42,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "debugging",
+        "frequency": 89,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "subrequest",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "readable",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "supported",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "deny",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "best for",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "avg",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "correct",
+        "frequency": 45,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "performance issue",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "type\nsafety",
+        "frequency": 44,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "yyyy",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "gotchasmd",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "duck",
+        "frequency": 47,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "streaming",
+        "frequency": 41,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "patternsmd",
+        "frequency": 46,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "analytics engine",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "migration guide",
+        "frequency": 43,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "into",
+        "frequency": 50,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "durable",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "warn",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "buffer",
+        "frequency": 74,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "integration tests",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "workflow integration",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "view logs",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "training",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "easier",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "early",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "performance tips",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "bulk",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "performance considerations",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "hot",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "exclude",
+        "frequency": 38,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "check logs",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "restart",
+        "frequency": 71,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "fire",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "disk",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "connection pooling",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "timing",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "secrets management",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "plugin",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "collection",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "screen",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "heavy",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "throughput",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "catch",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "batch operations",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "transaction",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "getting",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "guardrail",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "usd",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "debug mode",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "unauthorized",
+        "frequency": 39,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "conduct",
+        "frequency": 57,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "manually",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "model context\nprotocol",
+        "frequency": 56,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "brief",
+        "frequency": 44,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "trend",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "generate package:",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "directories",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "synthesize",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "performance monitoring",
+        "frequency": 39,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "actual",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "readmemd",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "watch",
+        "frequency": 54,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "serp",
+        "frequency": 38,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "configuration management",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "notify",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "visualization",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "outcome",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "user experience",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "quality assurance",
+        "frequency": 44,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "regularly",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "hierarchy",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "headline",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "run test",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "getting started",
+        "frequency": 54,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "introduction",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "landing",
+        "frequency": 43,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "subject",
+        "frequency": 42,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "down",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "resource management",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "success rate",
+        "frequency": 27,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "system health",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "api endpoint",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "styling",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "animate",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "categories",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "respect",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "deliverable",
+        "frequency": 38,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "extended",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "swagger",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "implementation plan",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "nice",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "reduction",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "test\ncoverage",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "backend service",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "effort",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "development workflow",
+        "frequency": 44,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "need help",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "editor",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "install dependencies",
+        "frequency": 52,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "wizard",
+        "frequency": 23,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "transparent",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "immediate action",
+        "frequency": 45,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "successful",
+        "frequency": 21,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "key achievement",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "getting help",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "safely",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "verification checklist",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "august",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "workflowengine",
+        "frequency": 26,
         "issue": "No relationships to other concepts"
       },
       {
@@ -1991,143 +3974,108 @@
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "circuit",
-        "frequency": 27,
+        "concept": "achievement",
+        "frequency": 21,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "established",
-        "frequency": 22,
+        "concept": "typecheck",
+        "frequency": 23,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "guideline",
-        "frequency": 29,
+        "concept": "the new fuse platform",
+        "frequency": 20,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "todo",
-        "frequency": 24,
+        "concept": "directory structure",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "prettier",
+        "frequency": 23,
         "issue": "No relationships to other concepts"
       },
       {
         "concept": "file structure",
-        "frequency": 26,
+        "frequency": 34,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "demo",
-        "frequency": 29,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "contribution",
-        "frequency": 30,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "project structure",
-        "frequency": 23,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "specification",
-        "frequency": 26,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "maximum",
-        "frequency": 23,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "individual",
-        "frequency": 24,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "array",
-        "frequency": 33,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "api reference",
-        "frequency": 31,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "observability",
-        "frequency": 28,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "preference:",
-        "frequency": 20,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "modify",
-        "frequency": 26,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "continuous",
-        "frequency": 30,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "configuration management",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "home",
-        "frequency": 20,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "foundation",
-        "frequency": 41,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "maintainability",
+        "concept": "kill",
         "frequency": 25,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "fast",
-        "frequency": 42,
+        "concept": "project structure",
+        "frequency": 25,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "term",
-        "frequency": 31,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "task management",
-        "frequency": 21,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "documented",
+        "concept": "subscription",
         "frequency": 29,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "daily",
-        "frequency": 27,
-        "issue": "No relationships to other concepts"
-      },
-      {
-        "concept": "severity",
+        "concept": "buildcommand",
         "frequency": 26,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "communicationprotocol",
-        "frequency": 36,
+        "concept": "preference:",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "consolidation strategy",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "customization",
+        "frequency": 24,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "impact assessment",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "communication guide",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "white",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "mint",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "architecture overview",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "interact",
+        "frequency": 43,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "pbr",
+        "frequency": 38,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "scene",
+        "frequency": 24,
         "issue": "No relationships to other concepts"
       },
       {
@@ -2136,717 +4084,1162 @@
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "mark",
+        "concept": "readiness",
+        "frequency": 22,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "agent communication guide",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "clarify",
+        "frequency": 25,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "resize",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "development guide",
+        "frequency": 20,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "hacker news",
+        "frequency": 38,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "reorganize",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "sharp edges",
+        "frequency": 42,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "zo skills",
+        "frequency": 93,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "google maps",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "persona framework",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "kimi",
+        "frequency": 255,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "zo zo",
+        "frequency": 254,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "pricing about newsletter blog",
+        "frequency": 254,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "documentation blog newsletter comparisons",
+        "frequency": 254,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "pricing skills integrations channels",
+        "frequency": 254,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "models product updates",
+        "frequency": 254,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "careers brand terms privacy",
+        "frequency": 254,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "help center contact security",
+        "frequency": 254,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "discord linked",
+        "frequency": 254,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "testimonials ambassadors merch zo",
+        "frequency": 254,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "computer company",
+        "frequency": 254,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "optimize claude code pro",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "sunday",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "coreyhaines",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "create distinctive",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "create beautiful visual art in",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "for cross-conversation continuity",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "logs and data threejs-shaders three",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "detection and context warming",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "on their zo with telegram",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "at your preferred morning time",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "their zo",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "gateway bootstrap",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "a tiered approach",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "session cookies",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "your own notion api key",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "a plan file",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "the memegen",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "reveal",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "your own trello api key",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "bls",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "fred",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "naics",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "hdr",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "glsl",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "gltf",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "epub",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "ibl",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "dof",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "tools try",
         "frequency": 28,
         "issue": "No relationships to other concepts"
       },
       {
-        "concept": "encryption",
-        "frequency": 21,
+        "concept": "banana",
+        "frequency": 31,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "all tools run",
+        "frequency": 26,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "find git",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "search git",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "find linked",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "search google maps research",
+        "frequency": 30,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "search google maps",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "google maps find",
+        "frequency": 28,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "connect git",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "all skills",
+        "frequency": 29,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "tailscale",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "handles tailscale",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "use zo",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "let zo",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "covers claude",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "google workspace",
+        "frequency": 41,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "manim",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "google cloud console",
+        "frequency": 35,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "census bureau",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "moltbook",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "query google calendar",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "ask zo",
+        "frequency": 40,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "convert markdown",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "simplifies",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "create zo datasets",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "checked",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "shorten",
+        "frequency": 37,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "supports apple card",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "chase",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "shader",
+        "frequency": 34,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "control eight sleep",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "craigslist",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "access last",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "midday",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "pitchfork",
+        "frequency": 36,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "best new tracks",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "zo skills registry",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "trello",
+        "frequency": 33,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "david attenborough",
+        "frequency": 32,
+        "issue": "No relationships to other concepts"
+      },
+      {
+        "concept": "bluesky",
+        "frequency": 32,
         "issue": "No relationships to other concepts"
       }
     ]
   },
   "topConsolidatedConcepts": [
     {
-      "concept": "api",
-      "frequency": 549,
-      "sources": 541,
-      "variants": 4,
-      "relatedConcepts": 34
-    },
-    {
       "concept": "use",
-      "frequency": 517,
-      "sources": 487,
-      "variants": 1,
-      "relatedConcepts": 94
+      "frequency": 1573,
+      "sources": 1465,
+      "variants": 2,
+      "relatedConcepts": 172
     },
     {
-      "concept": "agent",
-      "frequency": 476,
-      "sources": 354,
-      "variants": 6,
-      "relatedConcepts": 65
+      "concept": "api",
+      "frequency": 1325,
+      "sources": 1285,
+      "variants": 4,
+      "relatedConcepts": 47
     },
     {
       "concept": "create",
-      "frequency": 450,
-      "sources": 427,
-      "variants": 3,
-      "relatedConcepts": 32
-    },
-    {
-      "concept": "test",
-      "frequency": 447,
-      "sources": 386,
-      "variants": 6,
-      "relatedConcepts": 26
+      "frequency": 1010,
+      "sources": 913,
+      "variants": 4,
+      "relatedConcepts": 36
     },
     {
       "concept": "check",
-      "frequency": 439,
-      "sources": 396,
+      "frequency": 835,
+      "sources": 759,
       "variants": 3,
-      "relatedConcepts": 18
-    },
-    {
-      "concept": "type",
-      "frequency": 437,
-      "sources": 379,
-      "variants": 3,
-      "relatedConcepts": 46
-    },
-    {
-      "concept": "all",
-      "frequency": 414,
-      "sources": 414,
-      "variants": 0,
-      "relatedConcepts": 43
-    },
-    {
-      "concept": "the\nnew fuse",
-      "frequency": 410,
-      "sources": 399,
-      "variants": 3,
-      "relatedConcepts": 16
-    },
-    {
-      "concept": "status",
-      "frequency": 405,
-      "sources": 357,
-      "variants": 2,
-      "relatedConcepts": 18
-    },
-    {
-      "concept": "integration",
-      "frequency": 386,
-      "sources": 362,
-      "variants": 4,
-      "relatedConcepts": 25
-    },
-    {
-      "concept": "update",
-      "frequency": 379,
-      "sources": 335,
-      "variants": 2,
-      "relatedConcepts": 21
+      "relatedConcepts": 30
     },
     {
       "concept": "add",
-      "frequency": 371,
-      "sources": 364,
+      "frequency": 823,
+      "sources": 786,
       "variants": 2,
-      "relatedConcepts": 14
+      "relatedConcepts": 26
     },
     {
-      "concept": "documentation",
-      "frequency": 365,
-      "sources": 338,
+      "concept": "type",
+      "frequency": 773,
+      "sources": 646,
+      "variants": 4,
+      "relatedConcepts": 60
+    },
+    {
+      "concept": "json",
+      "frequency": 762,
+      "sources": 748,
+      "variants": 0,
+      "relatedConcepts": 10
+    },
+    {
+      "concept": "update",
+      "frequency": 738,
+      "sources": 650,
+      "variants": 2,
+      "relatedConcepts": 25
+    },
+    {
+      "concept": "test",
+      "frequency": 670,
+      "sources": 578,
       "variants": 6,
-      "relatedConcepts": 15
+      "relatedConcepts": 40
+    },
+    {
+      "concept": "run",
+      "frequency": 659,
+      "sources": 585,
+      "variants": 2,
+      "relatedConcepts": 22
+    },
+    {
+      "concept": "all",
+      "frequency": 646,
+      "sources": 629,
+      "variants": 0,
+      "relatedConcepts": 58
+    },
+    {
+      "concept": "agent",
+      "frequency": 646,
+      "sources": 456,
+      "variants": 6,
+      "relatedConcepts": 70
+    },
+    {
+      "concept": "skill",
+      "frequency": 645,
+      "sources": 484,
+      "variants": 1,
+      "relatedConcepts": 20
+    },
+    {
+      "concept": "example",
+      "frequency": 620,
+      "sources": 489,
+      "variants": 4,
+      "relatedConcepts": 16
+    },
+    {
+      "concept": "set",
+      "frequency": 618,
+      "sources": 564,
+      "variants": 1,
+      "relatedConcepts": 23
+    },
+    {
+      "concept": "user",
+      "frequency": 602,
+      "sources": 498,
+      "variants": 2,
+      "relatedConcepts": 44
+    },
+    {
+      "concept": "open",
+      "frequency": 561,
+      "sources": 535,
+      "variants": 1,
+      "relatedConcepts": 12
+    },
+    {
+      "concept": "build",
+      "frequency": 550,
+      "sources": 485,
+      "variants": 6,
+      "relatedConcepts": 17
+    },
+    {
+      "concept": "error",
+      "frequency": 547,
+      "sources": 493,
+      "variants": 3,
+      "relatedConcepts": 27
+    },
+    {
+      "concept": "get",
+      "frequency": 546,
+      "sources": 506,
+      "variants": 1,
+      "relatedConcepts": 19
+    },
+    {
+      "concept": "status",
+      "frequency": 544,
+      "sources": 478,
+      "variants": 2,
+      "relatedConcepts": 20
     },
     {
       "concept": "file",
-      "frequency": 336,
-      "sources": 275,
+      "frequency": 540,
+      "sources": 421,
       "variants": 3,
+      "relatedConcepts": 22
+    },
+    {
+      "concept": "integration",
+      "frequency": 537,
+      "sources": 498,
+      "variants": 4,
+      "relatedConcepts": 23
+    },
+    {
+      "concept": "verify",
+      "frequency": 535,
+      "sources": 524,
+      "variants": 1,
+      "relatedConcepts": 7
+    },
+    {
+      "concept": "post",
+      "frequency": 535,
+      "sources": 522,
+      "variants": 1,
+      "relatedConcepts": 12
+    },
+    {
+      "concept": "url",
+      "frequency": 525,
+      "sources": 507,
+      "variants": 2,
+      "relatedConcepts": 10
+    },
+    {
+      "concept": "task",
+      "frequency": 499,
+      "sources": 420,
+      "variants": 5,
+      "relatedConcepts": 15
+    },
+    {
+      "concept": "when",
+      "frequency": 482,
+      "sources": 472,
+      "variants": 1,
+      "relatedConcepts": 23
+    },
+    {
+      "concept": "note",
+      "frequency": 478,
+      "sources": 415,
+      "variants": 4,
+      "relatedConcepts": 9
+    },
+    {
+      "concept": "description",
+      "frequency": 457,
+      "sources": 441,
+      "variants": 2,
+      "relatedConcepts": 9
+    },
+    {
+      "concept": "overview",
+      "frequency": 456,
+      "sources": 430,
+      "variants": 6,
+      "relatedConcepts": 8
+    },
+    {
+      "concept": "workflow",
+      "frequency": 456,
+      "sources": 374,
+      "variants": 6,
+      "relatedConcepts": 19
+    },
+    {
+      "concept": "thenewfuse",
+      "frequency": 450,
+      "sources": 430,
+      "variants": 4,
+      "relatedConcepts": 16
+    },
+    {
+      "concept": "not",
+      "frequency": 449,
+      "sources": 438,
+      "variants": 0,
+      "relatedConcepts": 22
+    },
+    {
+      "concept": "http",
+      "frequency": 447,
+      "sources": 371,
+      "variants": 2,
       "relatedConcepts": 15
     },
     {
       "concept": "service",
-      "frequency": 328,
-      "sources": 252,
+      "frequency": 443,
+      "sources": 356,
       "variants": 5,
-      "relatedConcepts": 31
+      "relatedConcepts": 28
     },
     {
-      "concept": "overview",
-      "frequency": 318,
-      "sources": 301,
-      "variants": 7,
-      "relatedConcepts": 7
+      "concept": "input",
+      "frequency": 432,
+      "sources": 422,
+      "variants": 3,
+      "relatedConcepts": 9
     },
     {
-      "concept": "run",
-      "frequency": 312,
-      "sources": 284,
+      "concept": "web",
+      "frequency": 429,
+      "sources": 419,
+      "variants": 0,
+      "relatedConcepts": 20
+    },
+    {
+      "concept": "code",
+      "frequency": 425,
+      "sources": 409,
       "variants": 2,
+      "relatedConcepts": 29
+    },
+    {
+      "concept": "documentation",
+      "frequency": 424,
+      "sources": 390,
+      "variants": 6,
+      "relatedConcepts": 16
+    },
+    {
+      "concept": "read",
+      "frequency": 423,
+      "sources": 356,
+      "variants": 1,
+      "relatedConcepts": 20
+    },
+    {
+      "concept": "configuration",
+      "frequency": 422,
+      "sources": 378,
+      "variants": 7,
       "relatedConcepts": 15
     },
     {
-      "concept": "verify",
-      "frequency": 307,
-      "sources": 307,
+      "concept": "mcp",
+      "frequency": 422,
+      "sources": 408,
+      "variants": 0,
+      "relatedConcepts": 20
+    },
+    {
+      "concept": "date",
+      "frequency": 419,
+      "sources": 386,
+      "variants": 3,
+      "relatedConcepts": 19
+    },
+    {
+      "concept": "ensure",
+      "frequency": 418,
+      "sources": 404,
       "variants": 1,
       "relatedConcepts": 5
     },
     {
-      "concept": "error",
-      "frequency": 298,
-      "sources": 271,
+      "concept": "start",
+      "frequency": 406,
+      "sources": 384,
+      "variants": 3,
+      "relatedConcepts": 6
+    },
+    {
+      "concept": "response",
+      "frequency": 406,
+      "sources": 387,
       "variants": 2,
-      "relatedConcepts": 23
+      "relatedConcepts": 8
+    },
+    {
+      "concept": "security",
+      "frequency": 394,
+      "sources": 379,
+      "variants": 2,
+      "relatedConcepts": 12
     },
     {
       "concept": "feature",
-      "frequency": 297,
-      "sources": 257,
+      "frequency": 394,
+      "sources": 328,
+      "variants": 4,
+      "relatedConcepts": 24
+    },
+    {
+      "concept": "pattern",
+      "frequency": 393,
+      "sources": 303,
+      "variants": 2,
+      "relatedConcepts": 28
+    },
+    {
+      "concept": "review",
+      "frequency": 389,
+      "sources": 374,
+      "variants": 1,
+      "relatedConcepts": 17
+    },
+    {
+      "concept": "performance",
+      "frequency": 389,
+      "sources": 371,
+      "variants": 5,
+      "relatedConcepts": 10
+    },
+    {
+      "concept": "system",
+      "frequency": 380,
+      "sources": 353,
+      "variants": 2,
+      "relatedConcepts": 34
+    },
+    {
+      "concept": "always",
+      "frequency": 377,
+      "sources": 372,
+      "variants": 1,
+      "relatedConcepts": 6
+    },
+    {
+      "concept": "solution",
+      "frequency": 374,
+      "sources": 306,
       "variants": 4,
       "relatedConcepts": 16
     },
     {
-      "concept": "build",
-      "frequency": 296,
-      "sources": 259,
-      "variants": 4,
-      "relatedConcepts": 17
-    },
-    {
-      "concept": "web",
-      "frequency": 283,
-      "sources": 283,
-      "variants": 0,
-      "relatedConcepts": 18
-    },
-    {
-      "concept": "workflow",
-      "frequency": 282,
-      "sources": 235,
-      "variants": 6,
-      "relatedConcepts": 19
-    },
-    {
-      "concept": "configuration",
-      "frequency": 280,
-      "sources": 240,
-      "variants": 7,
-      "relatedConcepts": 17
-    },
-    {
-      "concept": "next step",
-      "frequency": 274,
-      "sources": 224,
-      "variants": 21,
-      "relatedConcepts": 3
-    },
-    {
-      "concept": "system",
-      "frequency": 274,
-      "sources": 259,
+      "concept": "high",
+      "frequency": 373,
+      "sources": 357,
       "variants": 2,
-      "relatedConcepts": 33
+      "relatedConcepts": 12
     },
     {
-      "concept": "user",
-      "frequency": 272,
-      "sources": 239,
-      "variants": 2,
-      "relatedConcepts": 20
-    },
-    {
-      "concept": "json",
-      "frequency": 271,
-      "sources": 271,
-      "variants": 0,
-      "relatedConcepts": 8
-    },
-    {
-      "concept": "performance",
-      "frequency": 270,
-      "sources": 262,
+      "concept": "resource",
+      "frequency": 372,
+      "sources": 316,
       "variants": 4,
       "relatedConcepts": 11
     },
     {
-      "concept": "code",
-      "frequency": 264,
-      "sources": 263,
-      "variants": 2,
-      "relatedConcepts": 27
-    },
-    {
-      "concept": "example",
-      "frequency": 263,
-      "sources": 207,
-      "variants": 4,
-      "relatedConcepts": 7
-    },
-    {
-      "concept": "complete",
-      "frequency": 262,
-      "sources": 259,
-      "variants": 2,
-      "relatedConcepts": 5
-    },
-    {
-      "concept": "testing",
-      "frequency": 257,
-      "sources": 243,
-      "variants": 4,
-      "relatedConcepts": 8
-    },
-    {
-      "concept": "implement",
-      "frequency": 256,
-      "sources": 249,
+      "concept": "generate",
+      "frequency": 372,
+      "sources": 320,
       "variants": 1,
-      "relatedConcepts": 50
-    },
-    {
-      "concept": "monitoring",
-      "frequency": 255,
-      "sources": 250,
-      "variants": 4,
       "relatedConcepts": 15
     },
     {
-      "concept": "task",
-      "frequency": 246,
-      "sources": 203,
-      "variants": 5,
+      "concept": "action",
+      "frequency": 371,
+      "sources": 308,
+      "variants": 3,
       "relatedConcepts": 17
     },
     {
-      "concept": "set",
-      "frequency": 244,
-      "sources": 239,
-      "variants": 1,
-      "relatedConcepts": 18
+      "concept": "reference",
+      "frequency": 369,
+      "sources": 348,
+      "variants": 5,
+      "relatedConcepts": 22
     },
     {
-      "concept": "security",
-      "frequency": 243,
-      "sources": 239,
+      "concept": "worker",
+      "frequency": 369,
+      "sources": 287,
       "variants": 1,
       "relatedConcepts": 9
     },
     {
-      "concept": "ensure",
-      "frequency": 242,
-      "sources": 236,
+      "concept": "what",
+      "frequency": 366,
+      "sources": 353,
       "variants": 1,
-      "relatedConcepts": 2
+      "relatedConcepts": 15
     },
     {
-      "concept": "mcp",
-      "frequency": 237,
-      "sources": 237,
-      "variants": 0,
-      "relatedConcepts": 19
-    },
-    {
-      "concept": "date",
-      "frequency": 236,
-      "sources": 221,
+      "concept": "step",
+      "frequency": 366,
+      "sources": 326,
       "variants": 2,
       "relatedConcepts": 18
     },
     {
-      "concept": "step",
-      "frequency": 233,
-      "sources": 205,
-      "variants": 2,
-      "relatedConcepts": 17
-    },
-    {
-      "concept": "review",
-      "frequency": 231,
-      "sources": 222,
+      "concept": "implement",
+      "frequency": 358,
+      "sources": 341,
       "variants": 1,
-      "relatedConcepts": 11
+      "relatedConcepts": 57
     },
     {
-      "concept": "support",
-      "frequency": 225,
-      "sources": 205,
+      "concept": "testing",
+      "frequency": 357,
+      "sources": 338,
       "variants": 5,
+      "relatedConcepts": 10
+    },
+    {
+      "concept": "request",
+      "frequency": 354,
+      "sources": 338,
+      "variants": 2,
+      "relatedConcepts": 12
+    },
+    {
+      "concept": "cli",
+      "frequency": 352,
+      "sources": 342,
+      "variants": 0,
+      "relatedConcepts": 4
+    },
+    {
+      "concept": "after",
+      "frequency": 350,
+      "sources": 330,
+      "variants": 3,
+      "relatedConcepts": 6
+    },
+    {
+      "concept": "keep",
+      "frequency": 350,
+      "sources": 331,
+      "variants": 2,
+      "relatedConcepts": 5
+    },
+    {
+      "concept": "full",
+      "frequency": 348,
+      "sources": 342,
+      "variants": 0,
+      "relatedConcepts": 6
+    },
+    {
+      "concept": "complete",
+      "frequency": 347,
+      "sources": 335,
+      "variants": 3,
+      "relatedConcepts": 6
+    },
+    {
+      "concept": "promise",
+      "frequency": 346,
+      "sources": 337,
+      "variants": 1,
       "relatedConcepts": 15
     },
     {
       "concept": "troubleshooting",
-      "frequency": 223,
-      "sources": 193,
+      "frequency": 346,
+      "sources": 313,
       "variants": 10,
-      "relatedConcepts": 1
+      "relatedConcepts": 2
     },
     {
-      "concept": "database",
-      "frequency": 220,
-      "sources": 211,
-      "variants": 4,
+      "concept": "list",
+      "frequency": 340,
+      "sources": 326,
+      "variants": 1,
+      "relatedConcepts": 4
+    },
+    {
+      "concept": "support",
+      "frequency": 338,
+      "sources": 310,
+      "variants": 6,
+      "relatedConcepts": 17
+    },
+    {
+      "concept": "tnf",
+      "frequency": 336,
+      "sources": 307,
+      "variants": 0,
+      "relatedConcepts": 13
+    },
+    {
+      "concept": "issue",
+      "frequency": 334,
+      "sources": 290,
+      "variants": 3,
       "relatedConcepts": 20
     },
     {
       "concept": "monitor",
-      "frequency": 218,
-      "sources": 212,
+      "frequency": 331,
+      "sources": 314,
       "variants": 1,
-      "relatedConcepts": 14
+      "relatedConcepts": 11
     },
     {
-      "concept": "component",
-      "frequency": 217,
-      "sources": 185,
-      "variants": 3,
-      "relatedConcepts": 20
-    },
-    {
-      "concept": "start",
-      "frequency": 215,
-      "sources": 210,
-      "variants": 3,
-      "relatedConcepts": 7
-    },
-    {
-      "concept": "issue",
-      "frequency": 213,
-      "sources": 180,
-      "variants": 3,
-      "relatedConcepts": 17
-    },
-    {
-      "concept": "metric",
-      "frequency": 210,
-      "sources": 179,
-      "variants": 6,
-      "relatedConcepts": 14
-    },
-    {
-      "concept": "comprehensive",
-      "frequency": 209,
-      "sources": 209,
+      "concept": "only",
+      "frequency": 330,
+      "sources": 321,
       "variants": 0,
-      "relatedConcepts": 7
-    },
-    {
-      "concept": "description",
-      "frequency": 208,
-      "sources": 204,
-      "variants": 2,
-      "relatedConcepts": 6
-    },
-    {
-      "concept": "redis",
-      "frequency": 205,
-      "sources": 204,
-      "variants": 1,
-      "relatedConcepts": 23
-    },
-    {
-      "concept": "after",
-      "frequency": 200,
-      "sources": 192,
-      "variants": 3,
-      "relatedConcepts": 5
-    },
-    {
-      "concept": "message",
-      "frequency": 193,
-      "sources": 159,
-      "variants": 1,
-      "relatedConcepts": 25
-    },
-    {
-      "concept": "action",
-      "frequency": 190,
-      "sources": 168,
-      "variants": 3,
-      "relatedConcepts": 12
-    },
-    {
-      "concept": "updated",
-      "frequency": 185,
-      "sources": 184,
-      "variants": 1,
-      "relatedConcepts": 2
-    },
-    {
-      "concept": "management",
-      "frequency": 185,
-      "sources": 185,
-      "variants": 0,
-      "relatedConcepts": 9
-    },
-    {
-      "concept": "new",
-      "frequency": 185,
-      "sources": 172,
-      "variants": 10,
       "relatedConcepts": 16
     },
     {
-      "concept": "input",
-      "frequency": 184,
-      "sources": 180,
+      "concept": "limit",
+      "frequency": 330,
+      "sources": 247,
       "variants": 3,
       "relatedConcepts": 4
-    },
-    {
-      "concept": "full",
-      "frequency": 183,
-      "sources": 183,
-      "variants": 0,
-      "relatedConcepts": 4
-    },
-    {
-      "concept": "get",
-      "frequency": 182,
-      "sources": 182,
-      "variants": 1,
-      "relatedConcepts": 12
-    },
-    {
-      "concept": "frontend",
-      "frequency": 182,
-      "sources": 177,
-      "variants": 2,
-      "relatedConcepts": 15
-    },
-    {
-      "concept": "server",
-      "frequency": 181,
-      "sources": 165,
-      "variants": 1,
-      "relatedConcepts": 11
-    },
-    {
-      "concept": "implementation",
-      "frequency": 180,
-      "sources": 159,
-      "variants": 4,
-      "relatedConcepts": 17
-    },
-    {
-      "concept": "high",
-      "frequency": 179,
-      "sources": 176,
-      "variants": 2,
-      "relatedConcepts": 5
-    },
-    {
-      "concept": "real",
-      "frequency": 179,
-      "sources": 179,
-      "variants": 0,
-      "relatedConcepts": 7
-    },
-    {
-      "concept": "usage",
-      "frequency": 177,
-      "sources": 170,
-      "variants": 4,
-      "relatedConcepts": 8
-    },
-    {
-      "concept": "architecture",
-      "frequency": 176,
-      "sources": 166,
-      "variants": 4,
-      "relatedConcepts": 6
-    },
-    {
-      "concept": "post",
-      "frequency": 174,
-      "sources": 172,
-      "variants": 1,
-      "relatedConcepts": 10
-    },
-    {
-      "concept": "package",
-      "frequency": 172,
-      "sources": 140,
-      "variants": 5,
-      "relatedConcepts": 14
-    },
-    {
-      "concept": "resource",
-      "frequency": 172,
-      "sources": 147,
-      "variants": 4,
-      "relatedConcepts": 7
-    },
-    {
-      "concept": "tool",
-      "frequency": 171,
-      "sources": 133,
-      "variants": 3,
-      "relatedConcepts": 11
-    },
-    {
-      "concept": "authentication",
-      "frequency": 171,
-      "sources": 168,
-      "variants": 2,
-      "relatedConcepts": 4
-    },
-    {
-      "concept": "multi",
-      "frequency": 170,
-      "sources": 170,
-      "variants": 0,
-      "relatedConcepts": 9
-    },
-    {
-      "concept": "node",
-      "frequency": 167,
-      "sources": 159,
-      "variants": 1,
-      "relatedConcepts": 6
-    },
-    {
-      "concept": "git",
-      "frequency": 165,
-      "sources": 165,
-      "variants": 0,
-      "relatedConcepts": 4
-    },
-    {
-      "concept": "communication",
-      "frequency": 164,
-      "sources": 157,
-      "variants": 2,
-      "relatedConcepts": 21
-    },
-    {
-      "concept": "core",
-      "frequency": 164,
-      "sources": 163,
-      "variants": 2,
-      "relatedConcepts": 10
-    },
-    {
-      "concept": "phase",
-      "frequency": 163,
-      "sources": 158,
-      "variants": 2,
-      "relatedConcepts": 11
-    },
-    {
-      "concept": "document",
-      "frequency": 162,
-      "sources": 158,
-      "variants": 2,
-      "relatedConcepts": 13
-    },
-    {
-      "concept": "development",
-      "frequency": 161,
-      "sources": 157,
-      "variants": 3,
-      "relatedConcepts": 5
-    },
-    {
-      "concept": "health",
-      "frequency": 160,
-      "sources": 160,
-      "variants": 0,
-      "relatedConcepts": 7
-    },
-    {
-      "concept": "url",
-      "frequency": 158,
-      "sources": 147,
-      "variants": 2,
-      "relatedConcepts": 8
     },
     {
       "concept": "validate",
-      "frequency": 156,
-      "sources": 143,
+      "frequency": 327,
+      "sources": 305,
       "variants": 1,
+      "relatedConcepts": 10
+    },
+    {
+      "concept": "multi",
+      "frequency": 326,
+      "sources": 318,
+      "variants": 0,
+      "relatedConcepts": 11
+    },
+    {
+      "concept": "data",
+      "frequency": 319,
+      "sources": 314,
+      "variants": 1,
+      "relatedConcepts": 29
+    },
+    {
+      "concept": "tool",
+      "frequency": 318,
+      "sources": 245,
+      "variants": 3,
+      "relatedConcepts": 15
+    },
+    {
+      "concept": "used",
+      "frequency": 314,
+      "sources": 311,
+      "variants": 0,
       "relatedConcepts": 7
     },
     {
-      "concept": "pattern",
-      "frequency": 155,
-      "sources": 128,
+      "concept": "enable",
+      "frequency": 310,
+      "sources": 288,
       "variants": 2,
-      "relatedConcepts": 16
+      "relatedConcepts": 9
     },
     {
-      "concept": "main",
-      "frequency": 153,
-      "sources": 153,
-      "variants": 0,
-      "relatedConcepts": 10
-    },
-    {
-      "concept": "content",
-      "frequency": 152,
-      "sources": 137,
-      "variants": 2,
-      "relatedConcepts": 5
-    },
-    {
-      "concept": "solution",
-      "frequency": 151,
-      "sources": 122,
-      "variants": 4,
-      "relatedConcepts": 8
-    },
-    {
-      "concept": "before",
-      "frequency": 151,
-      "sources": 143,
-      "variants": 3,
-      "relatedConcepts": 2
-    },
-    {
-      "concept": "validation",
-      "frequency": 150,
-      "sources": 150,
+      "concept": "select",
+      "frequency": 309,
+      "sources": 303,
       "variants": 1,
-      "relatedConcepts": 10
+      "relatedConcepts": 11
     },
     {
-      "concept": "conclusion",
-      "frequency": 149,
-      "sources": 125,
-      "variants": 12,
-      "relatedConcepts": 2
-    },
-    {
-      "concept": "production",
-      "frequency": 149,
-      "sources": 146,
-      "variants": 2,
+      "concept": "best practice",
+      "frequency": 308,
+      "sources": 297,
+      "variants": 9,
       "relatedConcepts": 4
     },
     {
-      "concept": "backend",
-      "frequency": 148,
-      "sources": 145,
-      "variants": 2,
+      "concept": "monitoring",
+      "frequency": 305,
+      "sources": 296,
+      "variants": 4,
       "relatedConcepts": 14
     },
     {
-      "concept": "event",
-      "frequency": 146,
-      "sources": 128,
-      "variants": 1,
-      "relatedConcepts": 4
+      "concept": "output",
+      "frequency": 303,
+      "sources": 284,
+      "variants": 3,
+      "relatedConcepts": 5
     },
     {
-      "concept": "open",
-      "frequency": 145,
-      "sources": 137,
-      "variants": 1,
-      "relatedConcepts": 4
-    },
-    {
-      "concept": "deployment",
-      "frequency": 144,
-      "sources": 134,
-      "variants": 4,
+      "concept": "setup",
+      "frequency": 299,
+      "sources": 291,
+      "variants": 2,
       "relatedConcepts": 6
     },
     {
-      "concept": "fix",
-      "frequency": 143,
-      "sources": 138,
+      "concept": "database",
+      "frequency": 299,
+      "sources": 275,
+      "variants": 4,
+      "relatedConcepts": 26
+    },
+    {
+      "concept": "git",
+      "frequency": 298,
+      "sources": 293,
       "variants": 1,
+      "relatedConcepts": 4
+    },
+    {
+      "concept": "before",
+      "frequency": 296,
+      "sources": 278,
+      "variants": 3,
+      "relatedConcepts": 7
+    },
+    {
+      "concept": "see",
+      "frequency": 295,
+      "sources": 293,
+      "variants": 2,
       "relatedConcepts": 8
+    },
+    {
+      "concept": "key",
+      "frequency": 292,
+      "sources": 266,
+      "variants": 1,
+      "relatedConcepts": 10
+    },
+    {
+      "concept": "provide",
+      "frequency": 289,
+      "sources": 273,
+      "variants": 1,
+      "relatedConcepts": 13
+    },
+    {
+      "concept": "write",
+      "frequency": 289,
+      "sources": 276,
+      "variants": 1,
+      "relatedConcepts": 4
+    },
+    {
+      "concept": "name",
+      "frequency": 284,
+      "sources": 271,
+      "variants": 2,
+      "relatedConcepts": 12
+    },
+    {
+      "concept": "faq",
+      "frequency": 284,
+      "sources": 283,
+      "variants": 1,
+      "relatedConcepts": 1
     }
   ]
 }

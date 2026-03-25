@@ -1,0 +1,12 @@
+{
+  "skillName": "agent-registry-manager",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/agent-registry-manager/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/agent-registry-manager/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/agent-registry-manager.json",
+  "status": "present"
+}

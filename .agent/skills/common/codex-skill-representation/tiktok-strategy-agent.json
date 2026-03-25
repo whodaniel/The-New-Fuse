@@ -1,0 +1,12 @@
+{
+  "skillName": "tiktok-strategy-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/tiktok-strategy-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/tiktok-strategy-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/tiktok-strategy-agent.json",
+  "status": "present"
+}

@@ -1,0 +1,11 @@
+RULE med_intent:
+  HIT(group:drug, min_conf=0.78, count>=1, window=5s)
+  AND HIT(group:dose, min_conf=0.72, count>=1, window=5s)
+WITHIN 5s COOLDOWN 8s PRIORITY 10
+THEN enqueue_llm(med_safety_v1)
+
+RULE escalation:
+  SEQ(group:distress -> group:self_harm, max_gap=7s, ordered=true)
+  AND NOT HIT(group:joke_context, min_conf=0.80, window=7s)
+WITHIN 7s COOLDOWN 20s PRIORITY 1
+THEN enqueue_llm(crisis_triage_v1)

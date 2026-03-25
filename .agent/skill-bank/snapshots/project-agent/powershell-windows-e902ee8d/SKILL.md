@@ -1,8 +1,6 @@
 ---
 name: powershell-windows
-description:
-  PowerShell Windows patterns. Critical pitfalls, operator syntax, error
-  handling.
+description: PowerShell Windows patterns. Critical pitfalls, operator syntax, error handling.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
@@ -16,10 +14,10 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ### CRITICAL: Parentheses Required
 
-| ❌ Wrong                               | ✅ Correct                                 |
-| -------------------------------------- | ------------------------------------------ |
+| ❌ Wrong | ✅ Correct |
+|----------|-----------|
 | `if (Test-Path "a" -or Test-Path "b")` | `if ((Test-Path "a") -or (Test-Path "b"))` |
-| `if (Get-Item $x -and $y -eq 5)`       | `if ((Get-Item $x) -and ($y -eq 5))`       |
+| `if (Get-Item $x -and $y -eq 5)` | `if ((Get-Item $x) -and ($y -eq 5))` |
 
 **Rule:** Each cmdlet call MUST be in parentheses when using logical operators.
 
@@ -29,13 +27,13 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ### CRITICAL: No Unicode in Scripts
 
-| Purpose  | ❌ Don't Use | ✅ Use     |
-| -------- | ------------ | ---------- |
-| Success  | ✅ ✓         | [OK] [+]   |
-| Error    | ❌ ✗ 🔴      | [!] [X]    |
-| Warning  | ⚠️ 🟡        | [*] [WARN] |
-| Info     | ℹ️ 🔵        | [i] [INFO] |
-| Progress | ⏳           | [...]      |
+| Purpose | ❌ Don't Use | ✅ Use |
+|---------|-------------|--------|
+| Success | ✅ ✓ | [OK] [+] |
+| Error | ❌ ✗ 🔴 | [!] [X] |
+| Warning | ⚠️ 🟡 | [*] [WARN] |
+| Info | ℹ️ 🔵 | [i] [INFO] |
+| Progress | ⏳ | [...] |
 
 **Rule:** Use ASCII characters only in PowerShell scripts.
 
@@ -45,10 +43,10 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ### Always Check Before Access
 
-| ❌ Wrong             | ✅ Correct                       |
-| -------------------- | -------------------------------- |
+| ❌ Wrong | ✅ Correct |
+|----------|-----------|
 | `$array.Count -gt 0` | `$array -and $array.Count -gt 0` |
-| `$text.Length`       | `if ($text) { $text.Length }`    |
+| `$text.Length` | `if ($text) { $text.Length }` |
 
 ---
 
@@ -56,12 +54,11 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ### Complex Expressions
 
-| ❌ Wrong                    | ✅ Correct              |
-| --------------------------- | ----------------------- |
+| ❌ Wrong | ✅ Correct |
+|----------|-----------|
 | `"Value: $($obj.prop.sub)"` | Store in variable first |
 
 **Pattern:**
-
 ```
 $value = $obj.prop.sub
 Write-Output "Value: $value"
@@ -73,11 +70,11 @@ Write-Output "Value: $value"
 
 ### ErrorActionPreference
 
-| Value            | Use                     |
-| ---------------- | ----------------------- |
-| Stop             | Development (fail fast) |
-| Continue         | Production scripts      |
-| SilentlyContinue | When errors expected    |
+| Value | Use |
+|-------|-----|
+| Stop | Development (fail fast) |
+| Continue | Production scripts |
+| SilentlyContinue | When errors expected |
 
 ### Try/Catch Pattern
 
@@ -91,11 +88,11 @@ Write-Output "Value: $value"
 
 ### Windows Path Rules
 
-| Pattern       | Use                                     |
-| ------------- | --------------------------------------- |
-| Literal path  | `C:\Users\User\file.txt`                |
+| Pattern | Use |
+|---------|-----|
+| Literal path | `C:\Users\User\file.txt` |
 | Variable path | `Join-Path $env:USERPROFILE "file.txt"` |
-| Relative      | `Join-Path $ScriptDir "data"`           |
+| Relative | `Join-Path $ScriptDir "data"` |
 
 **Rule:** Use Join-Path for cross-platform safety.
 
@@ -105,10 +102,10 @@ Write-Output "Value: $value"
 
 ### Correct Patterns
 
-| Operation     | Syntax            |
-| ------------- | ----------------- | --------- |
-| Empty array   | `$array = @()`    |
-| Add item      | `$array += $item` |
+| Operation | Syntax |
+|-----------|--------|
+| Empty array | `$array = @()` |
+| Add item | `$array += $item` |
 | ArrayList add | `$list.Add($item) | Out-Null` |
 
 ---
@@ -117,29 +114,29 @@ Write-Output "Value: $value"
 
 ### CRITICAL: Depth Parameter
 
-| ❌ Wrong         | ✅ Correct                 |
-| ---------------- | -------------------------- |
+| ❌ Wrong | ✅ Correct |
+|----------|-----------|
 | `ConvertTo-Json` | `ConvertTo-Json -Depth 10` |
 
 **Rule:** Always specify `-Depth` for nested objects.
 
 ### File Operations
 
-| Operation | Pattern                       |
-| --------- | ----------------------------- | ------------------------ | ------------------------------------ |
-| Read      | `Get-Content "file.json" -Raw | ConvertFrom-Json`        |
-| Write     | `$data                        | ConvertTo-Json -Depth 10 | Out-File "file.json" -Encoding UTF8` |
+| Operation | Pattern |
+|-----------|---------|
+| Read | `Get-Content "file.json" -Raw | ConvertFrom-Json` |
+| Write | `$data | ConvertTo-Json -Depth 10 | Out-File "file.json" -Encoding UTF8` |
 
 ---
 
 ## 9. Common Errors
 
-| Error Message          | Cause               | Fix                |
-| ---------------------- | ------------------- | ------------------ |
-| "parameter 'or'"       | Missing parentheses | Wrap cmdlets in () |
-| "Unexpected token"     | Unicode character   | Use ASCII only     |
-| "Cannot find property" | Null object         | Check null first   |
-| "Cannot convert"       | Type mismatch       | Use .ToString()    |
+| Error Message | Cause | Fix |
+|---------------|-------|-----|
+| "parameter 'or'" | Missing parentheses | Wrap cmdlets in () |
+| "Unexpected token" | Unicode character | Use ASCII only |
+| "Cannot find property" | Null object | Check null first |
+| "Cannot convert" | Type mismatch | Use .ToString() |
 
 ---
 
@@ -167,5 +164,4 @@ catch {
 
 ---
 
-> **Remember:** PowerShell has unique syntax rules. Parentheses, ASCII-only, and
-> null checks are non-negotiable.
+> **Remember:** PowerShell has unique syntax rules. Parentheses, ASCII-only, and null checks are non-negotiable.

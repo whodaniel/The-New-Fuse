@@ -380,7 +380,7 @@ For troubleshooting MCP issues, see the [MCP Troubleshooting Guide](../troublesh
 
 ## Related Documentation
 
-- [Getting Started with MCP](../getting-started/mcp-setup.md)
+- [Getting Started with MCP](../GETTING_STARTED.md)
 - [MCP Troubleshooting](../troubleshooting/mcp-troubleshooting-complete.md)
-- [API Reference](../reference/mcp-api-reference.md)
-- [Architecture Overview](../architecture/mcp-architecture.md)
+- [API Reference](../API_DOCUMENTATION_README.md)
+- [Architecture Overview](../agents-and-protocols/AGENT_FRAMEWORK_PROTOCOLS.md)

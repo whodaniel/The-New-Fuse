@@ -1,0 +1,12 @@
+{
+  "skillName": "audience-growth-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/audience-growth-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/audience-growth-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/audience-growth-agent.json",
+  "status": "present"
+}

@@ -429,6 +429,13 @@ error logging
 - Added production validation checks
 - Implemented secure random generation for development
 
+### ✅ Secret Scanning Remediation (GitHub Alerts)
+
+- Triaged and remediated six secret-scanning alerts (Firebase key, service account credentials, Stripe key, and OpenRouter key pattern).
+- Removed hardcoded values from scripts/UI and standardized environment-variable usage.
+- Removed/retired committed credential artifacts and hardened `.gitignore` with credential/secret file patterns.
+- Remaining operational follow-up: keep secrets in local/deployment secret stores, rotate credentials before any public-repo transition, and re-run secret scans after rotation.
+
 ---
 
 ## Recommendations for Continued Security

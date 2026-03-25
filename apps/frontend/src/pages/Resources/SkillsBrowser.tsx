@@ -4,20 +4,47 @@ import { Badge } from '@/components/ui/badge';
 import { GlassCard, PremiumButton } from '@/components/ui/premium';
 import { useAuth } from '@/providers/AuthProvider';
 import { resourcesService } from '@/services/resources.service';
-import { ClaudeSkill, SkillExample } from '@/types/resources';
-import { useQuery } from '@tanstack/react-query';
+import { ClaudeSkill, PersonalSkill, SkillExample } from '@/types/resources';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
-import { BookOpen, Code, Download, Heart, Share2, Star, Terminal, X, Zap } from 'lucide-react';
+import {
+  BookOpen,
+  Code,
+  Download,
+  Heart,
+  Lock,
+  Pencil,
+  Share2,
+  Star,
+  Terminal,
+  Trash2,
+  X,
+  Zap,
+} from 'lucide-react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function SkillsBrowser() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [selectedSkill, setSelectedSkill] = useState<ClaudeSkill | null>(null);
+  const [personalSkillForm, setPersonalSkillForm] = useState({
+    name: '',
+    description: '',
+    instructions: '',
+    tags: '',
+  });
+  const [editingPersonalSkillId, setEditingPersonalSkillId] = useState<string | null>(null);
+  const [savingPersonalSkill, setSavingPersonalSkill] = useState(false);
 
   const { data: skills = [], isLoading } = useQuery({
     queryKey: ['skills'],
     queryFn: () => resourcesService.getSkills(),
+  });
+  const { data: personalSkills = [], isLoading: isPersonalSkillsLoading } = useQuery({
+    queryKey: ['personal-skills'],
+    queryFn: () => resourcesService.getPersonalSkills(),
+    enabled: Boolean(user?.id),
   });
 
   const filterFields: FilterField[] = [
@@ -77,6 +104,80 @@ export default function SkillsBrowser() {
         break;
       case 'view-details':
         setSelectedSkill(skill);
+    }
+  };
+
+  const resetPersonalSkillForm = () => {
+    setPersonalSkillForm({
+      name: '',
+      description: '',
+      instructions: '',
+      tags: '',
+    });
+    setEditingPersonalSkillId(null);
+  };
+
+  const handleEditPersonalSkill = (skill: PersonalSkill) => {
+    setEditingPersonalSkillId(skill.id);
+    setPersonalSkillForm({
+      name: skill.name,
+      description: skill.description || '',
+      instructions: skill.instructions,
+      tags: (skill.tags || []).join(', '),
+    });
+  };
+
+  const handleDeletePersonalSkill = async (id: string) => {
+    if (!window.confirm('Delete this private skill?')) {
+      return;
+    }
+
+    try {
+      await resourcesService.deletePersonalSkill(id);
+      toast.success('Private skill deleted');
+      await queryClient.invalidateQueries({ queryKey: ['personal-skills'] });
+      if (editingPersonalSkillId === id) {
+        resetPersonalSkillForm();
+      }
+    } catch {
+      toast.error('Failed to delete private skill');
+    }
+  };
+
+  const handlePersonalSkillSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!user?.id) {
+      toast.error('Sign in to manage private skills');
+      return;
+    }
+
+    const tags = personalSkillForm.tags
+      .split(',')
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+
+    const payload = {
+      name: personalSkillForm.name,
+      description: personalSkillForm.description || undefined,
+      instructions: personalSkillForm.instructions,
+      tags,
+    };
+
+    setSavingPersonalSkill(true);
+    try {
+      if (editingPersonalSkillId) {
+        await resourcesService.updatePersonalSkill(editingPersonalSkillId, payload);
+        toast.success('Private skill updated');
+      } else {
+        await resourcesService.createPersonalSkill(payload);
+        toast.success('Private skill created');
+      }
+      resetPersonalSkillForm();
+      await queryClient.invalidateQueries({ queryKey: ['personal-skills'] });
+    } catch {
+      toast.error('Failed to save private skill');
+    } finally {
+      setSavingPersonalSkill(false);
     }
   };
 
@@ -310,8 +411,129 @@ export default function SkillsBrowser() {
     );
   };
 
+  const renderPersonalSkillManager = () => {
+    if (!user) {
+      return null;
+    }
+
+    return (
+      <GlassCard className="mb-6 p-5 border border-white/10 bg-black/20">
+        <div className="flex items-center gap-2 mb-2 text-white">
+          <Lock className="w-4 h-4 text-blue-400" />
+          <h2 className="text-lg font-semibold">My Private Skills</h2>
+        </div>
+        <p className="text-sm text-gray-400 mb-4">
+          Build personal AI skills stored only under your account.
+        </p>
+
+        <form className="grid gap-3 mb-4" onSubmit={handlePersonalSkillSubmit}>
+          <input
+            className="w-full rounded-md bg-black/30 border border-white/10 px-3 py-2 text-sm text-white"
+            placeholder="Skill name"
+            value={personalSkillForm.name}
+            onChange={(e) => setPersonalSkillForm((prev) => ({ ...prev, name: e.target.value }))}
+            required
+          />
+          <input
+            className="w-full rounded-md bg-black/30 border border-white/10 px-3 py-2 text-sm text-white"
+            placeholder="Short description (optional)"
+            value={personalSkillForm.description}
+            onChange={(e) =>
+              setPersonalSkillForm((prev) => ({ ...prev, description: e.target.value }))
+            }
+          />
+          <textarea
+            className="w-full rounded-md bg-black/30 border border-white/10 px-3 py-2 text-sm text-white min-h-[120px]"
+            placeholder="Skill instructions"
+            value={personalSkillForm.instructions}
+            onChange={(e) =>
+              setPersonalSkillForm((prev) => ({ ...prev, instructions: e.target.value }))
+            }
+            required
+          />
+          <input
+            className="w-full rounded-md bg-black/30 border border-white/10 px-3 py-2 text-sm text-white"
+            placeholder="Tags (comma-separated)"
+            value={personalSkillForm.tags}
+            onChange={(e) => setPersonalSkillForm((prev) => ({ ...prev, tags: e.target.value }))}
+          />
+          <div className="flex gap-2">
+            <PremiumButton
+              type="submit"
+              variant="gradient"
+              size="sm"
+              disabled={savingPersonalSkill}
+              className="min-w-[140px]"
+            >
+              {editingPersonalSkillId ? 'Update Skill' : 'Create Skill'}
+            </PremiumButton>
+            {editingPersonalSkillId && (
+              <PremiumButton type="button" variant="glass" size="sm" onClick={resetPersonalSkillForm}>
+                Cancel Edit
+              </PremiumButton>
+            )}
+          </div>
+        </form>
+
+        {isPersonalSkillsLoading ? (
+          <p className="text-sm text-gray-400">Loading your private skills...</p>
+        ) : personalSkills.length === 0 ? (
+          <p className="text-sm text-gray-400">No private skills yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            {personalSkills.map((skill) => (
+              <div
+                key={skill.id}
+                className="rounded-md border border-white/10 bg-black/20 p-3 flex flex-col gap-2"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h3 className="text-white font-medium">{skill.name}</h3>
+                    <p className="text-xs text-gray-400">
+                      Updated {new Date(skill.updatedAt).toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="flex gap-1">
+                    <PremiumButton
+                      type="button"
+                      variant="glass"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={() => handleEditPersonalSkill(skill)}
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </PremiumButton>
+                    <PremiumButton
+                      type="button"
+                      variant="glass"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={() => handleDeletePersonalSkill(skill.id)}
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                    </PremiumButton>
+                  </div>
+                </div>
+                {skill.description && <p className="text-sm text-gray-300">{skill.description}</p>}
+                <p className="text-xs text-gray-400 line-clamp-2">{skill.instructions}</p>
+                <div className="flex flex-wrap gap-1">
+                  {(skill.tags || []).map((tag) => (
+                    <Badge key={`${skill.id}-${tag}`} variant="outline" className="text-[10px]">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </GlassCard>
+    );
+  };
+
   return (
     <>
+      {renderPersonalSkillManager()}
       <BaseBrowser<ClaudeSkill>
         items={skills}
         isLoading={isLoading}

@@ -1,29 +1,20 @@
 ---
 name: SMTP Penetration Testing
-description:
-  This skill should be used when the user asks to "perform SMTP penetration
-  testing", "enumerate email users", "test for open mail relays", "grab SMTP
-  banners", "brute force email credentials", or "assess mail server security".
-  It provides comprehensive techniques for testing SMTP server security.
+description: This skill should be used when the user asks to "perform SMTP penetration testing", "enumerate email users", "test for open mail relays", "grab SMTP banners", "brute force email credentials", or "assess mail server security". It provides comprehensive techniques for testing SMTP server security.
 metadata:
   author: zebbern
-  version: '1.1'
+  version: "1.1"
 ---
 
 # SMTP Penetration Testing
 
 ## Purpose
 
-Conduct comprehensive security assessments of SMTP (Simple Mail Transfer
-Protocol) servers to identify vulnerabilities including open relays, user
-enumeration, weak authentication, and misconfiguration. This skill covers banner
-grabbing, user enumeration techniques, relay testing, brute force attacks, and
-security hardening recommendations.
+Conduct comprehensive security assessments of SMTP (Simple Mail Transfer Protocol) servers to identify vulnerabilities including open relays, user enumeration, weak authentication, and misconfiguration. This skill covers banner grabbing, user enumeration techniques, relay testing, brute force attacks, and security hardening recommendations.
 
 ## Prerequisites
 
 ### Required Tools
-
 ```bash
 # Nmap with SMTP scripts
 sudo apt-get install nmap
@@ -42,14 +33,12 @@ msfconsole
 ```
 
 ### Required Knowledge
-
 - SMTP protocol fundamentals
 - Email architecture (MTA, MDA, MUA)
 - DNS and MX records
 - Network protocols
 
 ### Required Access
-
 - Target SMTP server IP/hostname
 - Written authorization for testing
 - Wordlists for enumeration and brute force
@@ -345,68 +334,65 @@ dig TXT _dmarc.target.com                 # DMARC
 
 ### Essential SMTP Commands
 
-| Command   | Purpose            | Example                       |
-| --------- | ------------------ | ----------------------------- |
-| HELO      | Identify client    | `HELO client.com`             |
-| EHLO      | Extended HELO      | `EHLO client.com`             |
-| MAIL FROM | Set sender         | `MAIL FROM:<sender@test.com>` |
-| RCPT TO   | Set recipient      | `RCPT TO:<user@target.com>`   |
-| DATA      | Start message body | `DATA`                        |
-| VRFY      | Verify user        | `VRFY admin`                  |
-| EXPN      | Expand alias       | `EXPN staff`                  |
-| QUIT      | End session        | `QUIT`                        |
+| Command | Purpose | Example |
+|---------|---------|---------|
+| HELO | Identify client | `HELO client.com` |
+| EHLO | Extended HELO | `EHLO client.com` |
+| MAIL FROM | Set sender | `MAIL FROM:<sender@test.com>` |
+| RCPT TO | Set recipient | `RCPT TO:<user@target.com>` |
+| DATA | Start message body | `DATA` |
+| VRFY | Verify user | `VRFY admin` |
+| EXPN | Expand alias | `EXPN staff` |
+| QUIT | End session | `QUIT` |
 
 ### SMTP Response Codes
 
-| Code | Meaning                          |
-| ---- | -------------------------------- |
-| 220  | Service ready                    |
-| 221  | Closing connection               |
-| 250  | OK / Requested action completed  |
-| 354  | Start mail input                 |
-| 421  | Service not available            |
-| 450  | Mailbox unavailable              |
-| 550  | User unknown / Mailbox not found |
-| 553  | Mailbox name not allowed         |
+| Code | Meaning |
+|------|---------|
+| 220 | Service ready |
+| 221 | Closing connection |
+| 250 | OK / Requested action completed |
+| 354 | Start mail input |
+| 421 | Service not available |
+| 450 | Mailbox unavailable |
+| 550 | User unknown / Mailbox not found |
+| 553 | Mailbox name not allowed |
 
 ### Enumeration Tool Commands
 
-| Tool           | Command                                     |
-| -------------- | ------------------------------------------- |
+| Tool | Command |
+|------|---------|
 | smtp-user-enum | `smtp-user-enum -M VRFY -U users.txt -t IP` |
-| Nmap           | `nmap --script smtp-enum-users -p 25 IP`    |
-| Metasploit     | `use auxiliary/scanner/smtp/smtp_enum`      |
-| Netcat         | `nc IP 25` then manual commands             |
+| Nmap | `nmap --script smtp-enum-users -p 25 IP` |
+| Metasploit | `use auxiliary/scanner/smtp/smtp_enum` |
+| Netcat | `nc IP 25` then manual commands |
 
 ### Common Vulnerabilities
 
-| Vulnerability     | Risk   | Test Method                        |
-| ----------------- | ------ | ---------------------------------- |
-| Open Relay        | High   | Relay test with external recipient |
-| User Enumeration  | Medium | VRFY/EXPN/RCPT commands            |
-| Banner Disclosure | Low    | Banner grabbing                    |
-| Weak Auth         | High   | Brute force attack                 |
-| No TLS            | Medium | STARTTLS test                      |
-| Missing SPF/DKIM  | Medium | DNS record lookup                  |
+| Vulnerability | Risk | Test Method |
+|--------------|------|-------------|
+| Open Relay | High | Relay test with external recipient |
+| User Enumeration | Medium | VRFY/EXPN/RCPT commands |
+| Banner Disclosure | Low | Banner grabbing |
+| Weak Auth | High | Brute force attack |
+| No TLS | Medium | STARTTLS test |
+| Missing SPF/DKIM | Medium | DNS record lookup |
 
 ## Constraints and Limitations
 
 ### Legal Requirements
-
 - Only test SMTP servers you own or have authorization to test
 - Sending spam or malicious emails is illegal
 - Document all testing activities
 - Do not abuse discovered open relays
 
 ### Technical Limitations
-
 - VRFY/EXPN often disabled on modern servers
 - Rate limiting may slow enumeration
 - Some servers respond identically for valid/invalid users
 - Greylisting may delay enumeration responses
 
 ### Ethical Boundaries
-
 - Never send actual spam through discovered relays
 - Do not harvest email addresses for malicious use
 - Report open relays to server administrators
@@ -491,12 +477,12 @@ nmap -p 25 --script smtp-open-relay --script-args smtp-open-relay.from=test@atta
 
 ## Troubleshooting
 
-| Issue               | Cause                  | Solution                                                            |
-| ------------------- | ---------------------- | ------------------------------------------------------------------- |
-| Connection Refused  | Port blocked or closed | Check port with nmap; ISP may block port 25; try 587/465; use VPN   |
-| VRFY/EXPN Disabled  | Server hardened        | Use RCPT TO method; analyze response time/code variations           |
-| Brute Force Blocked | Rate limiting/lockout  | Slow down (`hydra -W 5`); use password spraying; check for fail2ban |
-| SSL/TLS Errors      | Wrong port or protocol | Use 465 for SSL, 25/587 for STARTTLS; verify EHLO response          |
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Connection Refused | Port blocked or closed | Check port with nmap; ISP may block port 25; try 587/465; use VPN |
+| VRFY/EXPN Disabled | Server hardened | Use RCPT TO method; analyze response time/code variations |
+| Brute Force Blocked | Rate limiting/lockout | Slow down (`hydra -W 5`); use password spraying; check for fail2ban |
+| SSL/TLS Errors | Wrong port or protocol | Use 465 for SSL, 25/587 for STARTTLS; verify EHLO response |
 
 ## Security Recommendations
 

@@ -196,7 +196,7 @@ cd node_modules/canvas && node-gyp rebuild
 ## Getting Help
 
 - **Documentation**: Check `docs/` directory
-- **Troubleshooting**: See `TROUBLESHOOTING_GUIDE.md`
+- **Troubleshooting**: See `docs/guides/troubleshooting-guide.md`
 - **Native Modules**: See `docs/NATIVE_MODULES_GUIDE.md`
 - **Issues**: Create an issue in the repository
 

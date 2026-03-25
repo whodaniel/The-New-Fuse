@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { db } from '@the-new-fuse/database';
 import { tnfAgentDefinitions } from '@the-new-fuse/database/drizzle/schema';
+import fsSync from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { AgentProfileVectorService } from './agent-profile-vector.service';
@@ -42,7 +43,27 @@ export class AgentRegistryImportService {
   constructor(private readonly agentProfileVectorService: AgentProfileVectorService) {}
 
   private getRepoRoot() {
-    return process.env.AGENT_REGISTRY_REPO_ROOT || path.resolve(process.cwd(), '../../..');
+    const override = process.env.AGENT_REGISTRY_REPO_ROOT?.trim();
+    if (override) return override;
+
+    const cwd = process.cwd();
+    const candidates = [
+      cwd,
+      path.resolve(cwd, '..'),
+      path.resolve(cwd, '../..'),
+      path.resolve(cwd, '../../..'),
+      '/app',
+    ];
+
+    for (const candidate of candidates) {
+      const snapshotCandidate = path.join(candidate, 'data/agent-registry/agents.json');
+      if (fsSync.existsSync(snapshotCandidate)) {
+        return candidate;
+      }
+    }
+
+    // Best default for runtime layouts like /app/apps/backend and local apps/backend.
+    return path.resolve(cwd, '../..');
   }
 
   private resolveSnapshotPath(snapshotPath: string) {

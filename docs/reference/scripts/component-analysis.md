@@ -123,8 +123,8 @@ node scripts/compare-component-analysis.js component-analysis-results-2025-03-28
 
 The component analysis functionality is also available as VS Code commands and MCP tools. See the following documentation for more details:
 
-- [Component Analysis Commands](../COMMAND-REFERENCE.md#component-analysis-commands)
-- [Component Analysis MCP Tools](../../guides/MCP-INTEGRATION-GUIDE.md#component-analysis-tools)
+- [Component Analysis Commands](../COMMAND-REFERENCE-component-analysis.md#component-analysis-commands)
+- [Component Analysis MCP Tools](../../guides/MCP-INTEGRATION-GUIDE-component-analysis.md#component-analysis-tools)
 
 ## Best Practices
 

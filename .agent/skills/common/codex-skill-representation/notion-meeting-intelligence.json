@@ -1,0 +1,12 @@
+{
+  "skillName": "notion-meeting-intelligence",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/notion-meeting-intelligence/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/notion-meeting-intelligence/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/notion-meeting-intelligence.json",
+  "status": "present"
+}

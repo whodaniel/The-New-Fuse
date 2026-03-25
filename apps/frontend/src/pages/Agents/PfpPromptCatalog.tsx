@@ -7,9 +7,11 @@ import {
   type AgentVisualProfileRecord,
 } from '@/data/agentVisualProfiles';
 import {
+  fetchCloudOverrides,
   getDefaultPrompt,
   loadPfpOverrides,
   loadPromptOverrides,
+  mergePfpOverrides,
   savePromptOverrides,
   type AgentPfpOverrideMap,
   type AgentPromptOverrideMap,
@@ -44,6 +46,16 @@ export default function PfpPromptCatalogPage() {
     setPfpOverrides(localPfps);
     setPromptOverrides(localPrompts);
 
+    let mounted = true;
+    fetchCloudOverrides()
+      .then((cloud) => {
+        if (!mounted || !cloud) return;
+        setPfpOverrides((current) => mergePfpOverrides(current, cloud));
+      })
+      .catch(() => {
+        // Non-blocking: cloud sync optional when auth/session is unavailable.
+      });
+
     const initialId = agentVisualProfileCatalog.agents[0]?.id || null;
     setSelectedId(initialId);
     if (initialId) {
@@ -63,7 +75,10 @@ export default function PfpPromptCatalogPage() {
     };
 
     window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
+    return () => {
+      mounted = false;
+      window.removeEventListener('storage', onStorage);
+    };
   }, []);
 
   const filtered = useMemo(() => {

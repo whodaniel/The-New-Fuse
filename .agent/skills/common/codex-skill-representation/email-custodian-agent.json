@@ -1,0 +1,12 @@
+{
+  "skillName": "email-custodian-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/email-custodian-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/email-custodian-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/email-custodian-agent.json",
+  "status": "present"
+}

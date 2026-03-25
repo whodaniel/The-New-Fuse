@@ -150,7 +150,7 @@ pnpm run dev:no-ide  # Fastest startup
 | Document                                                       | Purpose                                               |
 | -------------------------------------------------------------- | ----------------------------------------------------- |
 | [README.md](./README.md)                                       | Project overview and development setup                |
-| [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md)           | Current production status and comprehensive roadmap   |
+| [PRODUCTION_READINESS.md](./docs/project-management/PRODUCTION_READINESS.md)           | Current production status and comprehensive roadmap   |
 | [DOCUMENTATION_MAP.md](./DOCUMENTATION_MAP.md)                 | Complete map of all 1,200+ docs with navigation paths |
 | [DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md)             | Organized index by category                           |
 | [BUILD_STATUS.md](./docs/development/BUILD_STATUS.md)          | Current build status and known issues                 |
@@ -160,17 +160,17 @@ pnpm run dev:no-ide  # Fastest startup
 
 ### Development
 
-- [Getting Started Guide](./docs/development/GETTING_STARTED.md)
+- [Getting Started Guide](./docs/GETTING_STARTED.md)
 - [Build Guide](./docs/development/BUILD_GUIDE.md)
 - [Build System Overview](./docs/development/BUILD_SYSTEM.md)
 - [Development Workflow](./docs/guides/development-workflow.md)
 
 ### Deployment
 
-- [Deployment Guide](./docs/deployment/DEPLOYMENT_GUIDE.md)
+- [Deployment Guide](./docs/guides/deployment-guide.md)
 - [Railway Deployment](./docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md)
 - [Docker Setup](./docs/guides/docker-setup.md)
-- [CI/CD Strategy](./docs/CICD_STRATEGY.md)
+- [CI/CD Strategy](./docs/ci-cd/workflows.md)
 
 ### Architecture
 

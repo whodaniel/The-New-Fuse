@@ -1,8 +1,6 @@
 // TNF Launchpad Dashboard — See every cycle, every item, every result
 import { useState, useEffect } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { ref, onValue } from 'firebase/database';
-import { rtdb } from '../lib/firebase';
+import { motion } from 'framer-motion';
 
 const AnimatedEmoji = ({ emoji, size = 48 }: { emoji: string; size?: number }) => (
   <motion.span
@@ -21,26 +19,83 @@ interface CycleRun {
   dryRun: boolean;
 }
 
+const CYCLE_ENDPOINTS = ['/api/relay/launchpad/cycles', '/api/launchpad/cycles'] as const;
+const BACKLOG_ENDPOINTS = ['/api/relay/health', '/api/health'] as const;
+
+const fetchJson = async (url: string) => {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Request failed: ${response.status}`);
+  }
+  return response.json();
+};
+
+const normalizeCycles = (payload: unknown): CycleRun[] => {
+  if (!payload) return [];
+
+  if (Array.isArray(payload)) {
+    return payload as CycleRun[];
+  }
+
+  if (typeof payload === 'object' && payload !== null) {
+    const record = payload as Record<string, unknown>;
+    if (Array.isArray(record.cycles)) {
+      return record.cycles as CycleRun[];
+    }
+    return Object.values(record) as CycleRun[];
+  }
+
+  return [];
+};
+
 export default function LaunchpadDashboard() {
   const [cycles, setCycles] = useState<CycleRun[]>([]);
   const [launchBacklog, setLaunchBacklog] = useState<{ name: string; status: string }[]>([]);
   const [isLive] = useState(true);
 
   useEffect(() => {
-    const cyclesRef = ref(rtdb, 'launchpad/cycles');
-    const unsub = onValue(cyclesRef, (snap) => {
-      if (snap.exists()) {
-        const data = snap.val();
-        setCycles(Object.values(data).reverse().slice(0, 20));
+    let isMounted = true;
+
+    const loadCycles = async () => {
+      for (const endpoint of CYCLE_ENDPOINTS) {
+        try {
+          const payload = await fetchJson(endpoint);
+          const nextCycles = normalizeCycles(payload).reverse().slice(0, 20);
+          if (isMounted) {
+            setCycles(nextCycles);
+          }
+          return;
+        } catch {
+          // Try the next endpoint.
+        }
       }
-    });
+    };
 
-    fetch('/api/relay/health')
-      .then(r => r.json())
-      .then(data => setLaunchBacklog(data?.backlog || []))
-      .catch(() => {});
+    const loadBacklog = async () => {
+      for (const endpoint of BACKLOG_ENDPOINTS) {
+        try {
+          const payload = await fetchJson(endpoint);
+          if (isMounted && payload && typeof payload === 'object') {
+            setLaunchBacklog(((payload as Record<string, unknown>).backlog as any[]) || []);
+          }
+          return;
+        } catch {
+          // Try the next endpoint.
+        }
+      }
+    };
 
-    return () => unsub();
+    const loadData = async () => {
+      await Promise.all([loadCycles(), loadBacklog()]);
+    };
+
+    loadData();
+    const interval = window.setInterval(loadData, 15000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(interval);
+    };
   }, []);
 
   return (

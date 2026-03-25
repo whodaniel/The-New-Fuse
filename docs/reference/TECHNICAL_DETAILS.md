@@ -137,19 +137,19 @@ class SystemRecovery {
 Our component system follows atomic design principles. For detailed
 documentation, see:
 
-- [Component Overview](/docs/components/overview.md)
-- [Atoms Documentation](/docs/components/atoms/)
-- [Molecules Documentation](/docs/components/molecules/)
-- [Organisms Documentation](/docs/components/organisms/)
+- [Component Overview](../components/consolidation-workflow.md)
+- [Atoms Documentation](../../apps/frontend/src/components/layout/README.md)
+- [Molecules Documentation](../../apps/frontend/src/components/WorkflowEditor/README.md)
+- [Organisms Documentation](../../apps/frontend/src/components/WorkflowEditor/README.md)
 
 ## API Documentation
 
 The API is fully documented in the following locations:
 
-- [API Overview](/docs/api/overview.md)
-- [Authentication](/docs/api/authentication.md)
-- [Endpoints](/docs/api/endpoints.md)
-- [WebSocket Protocol](/docs/api/websocket.md)
+- [API Overview](../API_DOCUMENTATION_README.md)
+- [Authentication](../security/AUTHENTICATION_SECURITY_FIX.md)
+- [Endpoints](../../apps/backend/API_EXAMPLES.md)
+- [WebSocket Protocol](../../apps/backend/WEBSOCKET_INTEGRATION_GUIDE.md)
 
 ## Database Schema
 

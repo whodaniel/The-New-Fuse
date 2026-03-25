@@ -66,7 +66,7 @@ pnpm run analyze:components:report
 
 ## Integration with MCP
 
-The component analysis functionality is also available as MCP tools, making it accessible to AI agents. See the [MCP Integration Guide](../guides/MCP-INTEGRATION-GUIDE.md#component-analysis-tools) for more details.
+The component analysis functionality is also available as MCP tools, making it accessible to AI agents. See the [MCP Integration Guide](../guides/MCP-INTEGRATION-GUIDE-component-analysis.md#component-analysis-tools) for more details.
 
 ## Troubleshooting
 

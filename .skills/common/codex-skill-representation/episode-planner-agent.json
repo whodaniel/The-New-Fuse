@@ -1,0 +1,12 @@
+{
+  "skillName": "episode-planner-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/episode-planner-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/episode-planner-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/episode-planner-agent.json",
+  "status": "present"
+}

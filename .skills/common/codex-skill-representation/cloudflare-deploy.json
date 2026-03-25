@@ -1,0 +1,12 @@
+{
+  "skillName": "cloudflare-deploy",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/cloudflare-deploy/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/cloudflare-deploy/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/cloudflare-deploy.json",
+  "status": "present"
+}

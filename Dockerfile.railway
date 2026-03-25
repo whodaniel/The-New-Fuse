@@ -139,8 +139,10 @@ RUN echo "Runner stage - checking node_modules symlink for n8n-workflows..." && 
 COPY --from=builder --chmod=755 /app/scripts/run-service.sh ./${SERVICE_ROOT}/${SERVICE_PATH}/run-service.sh
 COPY --from=builder --chmod=755 /app/scripts/healthcheck.sh ./${SERVICE_ROOT}/${SERVICE_PATH}/healthcheck.sh
 
-# Create logs directory with proper permissions for non-root user (fallback for local dev logging)
-RUN mkdir -p ./${SERVICE_ROOT}/${SERVICE_PATH}/logs && chown -R app-user:app-user ./${SERVICE_ROOT}/${SERVICE_PATH}/logs
+# Create runtime-writable directories for non-root user.
+# API startup persists unified ledger state under ./data, and several services write logs.
+RUN mkdir -p ./${SERVICE_ROOT}/${SERVICE_PATH}/logs ./${SERVICE_ROOT}/${SERVICE_PATH}/data && \
+    chown -R app-user:app-user ./${SERVICE_ROOT}/${SERVICE_PATH}/logs ./${SERVICE_ROOT}/${SERVICE_PATH}/data
 
 # Switch to non-root user for security
 USER app-user
@@ -149,5 +151,5 @@ USER app-user
 WORKDIR /app/${SERVICE_ROOT}/${SERVICE_PATH}
 
 ENV SERVICE_PATH=$SERVICE_PATH
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD ["./healthcheck.sh"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=5 CMD ["./healthcheck.sh"]
 CMD ["./run-service.sh"]

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Value Ladder Architect"
+  short_description: "Design a full value ladder and linked funnel ecosystem."
+  default_prompt: "Create a strict JSON ValueLadderReport from the product/service catalog using the SKILL.md workflow."

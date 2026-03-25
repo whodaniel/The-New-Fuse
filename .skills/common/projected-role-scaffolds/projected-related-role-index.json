@@ -1,0 +1,4938 @@
+{
+  "generatedAt": "2026-03-24T22:37:29.845112Z",
+  "source": ".skills/**/SKILL.md",
+  "entryCount": 224,
+  "notes": "Placeholder-only scaffolds. Full skill specs intentionally omitted.",
+  "entries": [
+    {
+      "sourceSkill": "ab-testing-optimizer-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/ab-testing-optimizer-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "ab-testing-optimizer-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "ab-testing-optimizer-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "ad-network-manager-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/ad-network-manager-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "ad-network-manager-agent-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "ad-network-manager-agent-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "affiliate-link-manager-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/affiliate-link-manager-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "affiliate-link-manager-agent-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "affiliate-link-manager-agent-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "agent-registry-manager",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/agent-registry-manager/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "agent-registry-manager-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "agent-registry-manager-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "agent-relationship-autopilot",
+      "sourcePaths": [
+        ".skills/agent-relationship-autopilot/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "agent-relationship-autopilot-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "agent-relationship-autopilot-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "agent-relationship-grapher",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/agent-relationship-grapher/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "agent-relationship-grapher-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "agent-relationship-grapher-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "agent-search-engine",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/agent-search-engine/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "agent-search-engine-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "agent-search-engine-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "agent-tagger",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/agent-tagger/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "agent-tagger-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "agent-tagger-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "algorithm-adaptation-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/algorithm-adaptation-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "algorithm-adaptation-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "algorithm-adaptation-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "algorithmic-art",
+      "sourcePaths": [
+        ".skills/algorithmic-art/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "algorithmic-art-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "algorithmic-art-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "analytics-and-reporting-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/analytics-and-reporting-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "analytics-and-reporting-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "analytics-and-reporting-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "api-fuzzing-for-bug-bounty",
+      "sourcePaths": [
+        ".skills/security/pentest/api-fuzzing-for-bug-bounty/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "api-fuzzing-for-bug-bounty-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "api-fuzzing-for-bug-bounty-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "asset-sourcer-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/asset-sourcer-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "asset-sourcer-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "asset-sourcer-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "audience-growth-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/audience-growth-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "audience-growth-agent-attribution-agent",
+          "displayName": "Attribution Agent",
+          "reason": "Attribute performance and spend impact across channels.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "audience-growth-agent-experiment-agent",
+          "displayName": "Experiment Agent",
+          "reason": "Drive iterative hypothesis testing and conversion improvements.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "audience-persona-architect-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/audience-persona-architect-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "audience-persona-architect-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "audience-persona-architect-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "audience-segmentation-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/audience-segmentation-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "audience-segmentation-agent-attribution-agent",
+          "displayName": "Attribution Agent",
+          "reason": "Attribute performance and spend impact across channels.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "audience-segmentation-agent-experiment-agent",
+          "displayName": "Experiment Agent",
+          "reason": "Drive iterative hypothesis testing and conversion improvements.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "audio-recording-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/audio-recording-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "audio-recording-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "audio-recording-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "backend-patterns",
+      "sourcePaths": [
+        ".skills/engineering/patterns/backend-patterns/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "backend-patterns-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "backend-patterns-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "brand-guidelines",
+      "sourcePaths": [
+        ".skills/brand-guidelines/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "brand-guidelines-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "brand-guidelines-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "brand-identity-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/brand-identity-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "brand-identity-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "brand-identity-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "brand-outreach-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/brand-outreach-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "brand-outreach-agent-attribution-agent",
+          "displayName": "Attribution Agent",
+          "reason": "Attribute performance and spend impact across channels.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "brand-outreach-agent-experiment-agent",
+          "displayName": "Experiment Agent",
+          "reason": "Drive iterative hypothesis testing and conversion improvements.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "brand-prospecting-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/brand-prospecting-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "brand-prospecting-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "brand-prospecting-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "broken-authentication-testing",
+      "sourcePaths": [
+        ".skills/security/pentest/broken-authentication-testing/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "broken-authentication-testing-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "broken-authentication-testing-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "burp-suite-web-application-testing",
+      "sourcePaths": [
+        ".skills/security/pentest/burp-suite-web-application-testing/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "burp-suite-web-application-testing-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "burp-suite-web-application-testing-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "business-law-specialist-agent",
+      "sourcePaths": [
+        ".skills/business-law-specialist-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "business-law-specialist-agent-risk-monitor-agent",
+          "displayName": "Risk Monitor Agent",
+          "reason": "Track legal/security risk indicators and escalation triggers.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "business-law-specialist-agent-control-audit-agent",
+          "displayName": "Control Audit Agent",
+          "reason": "Validate control execution and produce evidence-ready reports.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "business-model-architect-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/business-model-architect-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "business-model-architect-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "business-model-architect-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "campaign-execution-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/campaign-execution-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "campaign-execution-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "campaign-execution-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "campaign-reporting-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/campaign-reporting-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "campaign-reporting-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "campaign-reporting-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "canvas-design",
+      "sourcePaths": [
+        ".skills/canvas-design/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "canvas-design-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "canvas-design-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "chatgpt-apps",
+      "sourcePaths": [
+        ".skills/chatgpt-apps/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "chatgpt-apps-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "chatgpt-apps-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "chrome-patient-scan",
+      "sourcePaths": [
+        ".skills/chrome-patient-scan/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "chrome-patient-scan-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "chrome-patient-scan-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "clawhub-skill-scout",
+      "sourcePaths": [
+        ".skills/clawhub-skill-scout/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "clawhub-skill-scout-risk-monitor-agent",
+          "displayName": "Risk Monitor Agent",
+          "reason": "Track legal/security risk indicators and escalation triggers.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "clawhub-skill-scout-control-audit-agent",
+          "displayName": "Control Audit Agent",
+          "reason": "Validate control execution and produce evidence-ready reports.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "clickhouse-io",
+      "sourcePaths": [
+        ".skills/data/analytics/clickhouse-io/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "clickhouse-io-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "clickhouse-io-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "cloudflare-deploy",
+      "sourcePaths": [
+        ".skills/cloudflare-deploy/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "cloudflare-deploy-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "cloudflare-deploy-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "codebase-pathway-tracer",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/codebase-pathway-tracer/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "codebase-pathway-tracer-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "codebase-pathway-tracer-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "coding-standards",
+      "sourcePaths": [
+        ".skills/engineering/governance/coding-standards/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "coding-standards-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "coding-standards-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "cognitive-bias-optimizer-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/cognitive-bias-optimizer-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "cognitive-bias-optimizer-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "cognitive-bias-optimizer-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "community-engagement-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/community-engagement-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "community-engagement-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "community-engagement-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "community-manager-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/community-manager-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "community-manager-agent-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "community-manager-agent-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "competitive-intelligence-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/competitive-intelligence-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "competitive-intelligence-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "competitive-intelligence-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "content-calendar-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/content-calendar-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "content-calendar-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "content-calendar-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "content-calendar-orchestrator-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/content-calendar-orchestrator-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "content-calendar-orchestrator-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "content-calendar-orchestrator-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "content-refresh-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/content-refresh-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "content-refresh-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "content-refresh-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "content-repurposing-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/content-repurposing-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "content-repurposing-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "content-repurposing-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "content-writer-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/content-writer-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "content-writer-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "content-writer-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "context-frontloader",
+      "sourcePaths": [
+        ".skills/context-frontloader/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "context-frontloader-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "context-frontloader-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "contract-manager-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/contract-manager-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "contract-manager-agent-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "contract-manager-agent-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "cro-process-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/cro-process-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "cro-process-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "cro-process-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "cross-site-scripting-and-html-injection-testing",
+      "sourcePaths": [
+        ".skills/security/pentest/cross-site-scripting-and-html-injection-testing/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "cross-site-scripting-and-html-injection-testing-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "cross-site-scripting-and-html-injection-testing-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "custom-slash-command-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/custom-slash-command-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "custom-slash-command-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "custom-slash-command-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "customer-journey-map-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/customer-journey-map-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "customer-journey-map-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "customer-journey-map-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "customer-support-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/customer-support-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "customer-support-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "customer-support-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "d3-viz",
+      "sourcePaths": [
+        ".skills/data/visualization/d3-viz/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "d3-viz-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "d3-viz-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "deal-negotiator-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/deal-negotiator-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "deal-negotiator-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "deal-negotiator-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "design-md",
+      "sourcePaths": [
+        ".skills/design-md/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "design-md-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "design-md-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "develop-web-game",
+      "sourcePaths": [
+        ".skills/develop-web-game/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "develop-web-game-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "develop-web-game-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "digital-asset-manager-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/digital-asset-manager-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "digital-asset-manager-agent-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "digital-asset-manager-agent-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "digital-product-creator-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/digital-product-creator-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "digital-product-creator-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "digital-product-creator-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "digital-product-factory-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/digital-product-factory-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "digital-product-factory-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "digital-product-factory-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "doc",
+      "sourcePaths": [
+        ".skills/doc/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "doc-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "doc-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "doc-coauthoring",
+      "sourcePaths": [
+        ".skills/doc-coauthoring/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "doc-coauthoring-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "doc-coauthoring-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "docx",
+      "sourcePaths": [
+        ".skills/docx/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "docx-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "docx-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "ecom-platform-manager-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/ecom-platform-manager-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "ecom-platform-manager-agent-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "ecom-platform-manager-agent-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "email-custodian-agent",
+      "sourcePaths": [
+        ".skills/email-custodian-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "email-custodian-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "email-custodian-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "email-marketing-automation-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/email-marketing-automation-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "email-marketing-automation-agent-attribution-agent",
+          "displayName": "Attribution Agent",
+          "reason": "Attribute performance and spend impact across channels.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "email-marketing-automation-agent-experiment-agent",
+          "displayName": "Experiment Agent",
+          "reason": "Drive iterative hypothesis testing and conversion improvements.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "enhance-prompt",
+      "sourcePaths": [
+        ".skills/enhance-prompt/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "enhance-prompt-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "enhance-prompt-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "episode-planner-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/episode-planner-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "episode-planner-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "episode-planner-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "equipment-recommendation-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/equipment-recommendation-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "equipment-recommendation-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "equipment-recommendation-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "ethical-bias-auditor-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/ethical-bias-auditor-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "ethical-bias-auditor-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "ethical-bias-auditor-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "facebook-strategy-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/facebook-strategy-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "facebook-strategy-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "facebook-strategy-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "fan-funding-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/fan-funding-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "fan-funding-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "fan-funding-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "figma",
+      "sourcePaths": [
+        ".skills/figma/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "figma-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "figma-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "figma-implement-design",
+      "sourcePaths": [
+        ".skills/figma-implement-design/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "figma-implement-design-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "figma-implement-design-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "file-path-traversal-testing",
+      "sourcePaths": [
+        ".skills/security/pentest/file-path-traversal-testing/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "file-path-traversal-testing-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "file-path-traversal-testing-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "financial-manager-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/financial-manager-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "financial-manager-agent-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "financial-manager-agent-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "framework-consciousness",
+      "sourcePaths": [
+        ".skills/framework-consciousness/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "framework-consciousness-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "framework-consciousness-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "frontend-debugger-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/frontend-debugger-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "frontend-debugger-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "frontend-debugger-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "frontend-design",
+      "sourcePaths": [
+        ".skills/frontend-design/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "frontend-design-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "frontend-design-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "frontend-patterns",
+      "sourcePaths": [
+        ".skills/engineering/patterns/frontend-patterns/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "frontend-patterns-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "frontend-patterns-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "funnel-economics-analyst-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/funnel-economics-analyst-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "funnel-economics-analyst-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "funnel-economics-analyst-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "gemini",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/gemini/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "gemini-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "gemini-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "gh-address-comments",
+      "sourcePaths": [
+        ".skills/gh-address-comments/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "gh-address-comments-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "gh-address-comments-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "gh-fix-ci",
+      "sourcePaths": [
+        ".skills/gh-fix-ci/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "gh-fix-ci-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "gh-fix-ci-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "graph-writer",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/graph-writer/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "graph-writer-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "graph-writer-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "guest-booking-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/guest-booking-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "guest-booking-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "guest-booking-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "guest-relationship-manager-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/guest-relationship-manager-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "guest-relationship-manager-agent-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "guest-relationship-manager-agent-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "hardware",
+      "sourcePaths": [
+        ".skills/ops/hardware/hardware/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "hardware-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "hardware-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "idor-vulnerability-testing",
+      "sourcePaths": [
+        ".skills/security/pentest/idor-vulnerability-testing/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "idor-vulnerability-testing-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "idor-vulnerability-testing-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "imagegen",
+      "sourcePaths": [
+        ".skills/imagegen/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "imagegen-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "imagegen-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "influencer-media-kit-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/influencer-media-kit-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "influencer-media-kit-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "influencer-media-kit-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "influencer-niche-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/influencer-niche-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "influencer-niche-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "influencer-niche-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "information-retrieval-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/information-retrieval-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "information-retrieval-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "information-retrieval-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "instagram-strategy-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/instagram-strategy-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "instagram-strategy-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "instagram-strategy-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "inter-agentic-workflow-definer",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/inter-agentic-workflow-definer/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "inter-agentic-workflow-definer-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "inter-agentic-workflow-definer-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "internal-comms",
+      "sourcePaths": [
+        ".skills/internal-comms/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "internal-comms-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "internal-comms-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "interoperability-protocol-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/interoperability-protocol-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "interoperability-protocol-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "interoperability-protocol-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "jules-cli-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/jules-cli-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "jules-cli-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "jules-cli-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "jules-followup-ops",
+      "sourcePaths": [
+        ".skills/jules-followup-ops/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "jules-followup-ops-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "jules-followup-ops-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "jupyter-notebook",
+      "sourcePaths": [
+        ".skills/jupyter-notebook/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "jupyter-notebook-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "jupyter-notebook-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "keyword-research-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/keyword-research-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "keyword-research-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "keyword-research-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "lead-capture-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/lead-capture-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "lead-capture-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "lead-capture-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "lead-magnet-funnel-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/lead-magnet-funnel-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "lead-magnet-funnel-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "lead-magnet-funnel-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "legal-compliance-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/legal-compliance-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "legal-compliance-agent-risk-monitor-agent",
+          "displayName": "Risk Monitor Agent",
+          "reason": "Track legal/security risk indicators and escalation triggers.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "legal-compliance-agent-control-audit-agent",
+          "displayName": "Control Audit Agent",
+          "reason": "Validate control execution and produce evidence-ready reports.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "library-of-living-knowledge",
+      "sourcePaths": [
+        ".skills/library-of-living-knowledge/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "library-of-living-knowledge-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "library-of-living-knowledge-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "limitation-challenge-schema-loop",
+      "sourcePaths": [
+        ".skills/limitation-challenge-schema-loop/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "limitation-challenge-schema-loop-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "limitation-challenge-schema-loop-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "linear",
+      "sourcePaths": [
+        ".skills/linear/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "linear-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "linear-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "link-building-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/link-building-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "link-building-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "link-building-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "linux-production-shell-scripts",
+      "sourcePaths": [
+        ".skills/ops/systems/linux-production-shell-scripts/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "linux-production-shell-scripts-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "linux-production-shell-scripts-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "live-stream-manager-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/live-stream-manager-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "live-stream-manager-agent-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "live-stream-manager-agent-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "logical-reasoning-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/logical-reasoning-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "logical-reasoning-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "logical-reasoning-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "long-range-business-plan-architect",
+      "sourcePaths": [
+        ".skills/long-range-business-plan-architect/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "long-range-business-plan-architect-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "long-range-business-plan-architect-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "mcp-builder",
+      "sourcePaths": [
+        ".skills/mcp-builder/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "mcp-builder-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "mcp-builder-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "meta-agent-architect",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/meta-agent-architect/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "meta-agent-architect-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "meta-agent-architect-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "monetization-strategy-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/monetization-strategy-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "monetization-strategy-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "monetization-strategy-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "netlify-deploy",
+      "sourcePaths": [
+        ".skills/netlify-deploy/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "netlify-deploy-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "netlify-deploy-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "niche-analyst-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/niche-analyst-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "niche-analyst-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "niche-analyst-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "notion-knowledge-capture",
+      "sourcePaths": [
+        ".skills/notion-knowledge-capture/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "notion-knowledge-capture-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "notion-knowledge-capture-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "notion-meeting-intelligence",
+      "sourcePaths": [
+        ".skills/notion-meeting-intelligence/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "notion-meeting-intelligence-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "notion-meeting-intelligence-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "notion-research-documentation",
+      "sourcePaths": [
+        ".skills/notion-research-documentation/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "notion-research-documentation-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "notion-research-documentation-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "notion-spec-to-implementation",
+      "sourcePaths": [
+        ".skills/notion-spec-to-implementation/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "notion-spec-to-implementation-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "notion-spec-to-implementation-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "openai-docs",
+      "sourcePaths": [
+        ".skills/openai-docs/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "openai-docs-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "openai-docs-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "openclaw-assistant-setup",
+      "sourcePaths": [
+        ".skills/openclaw-assistant-setup/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "openclaw-assistant-setup-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "openclaw-assistant-setup-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "openclaw-onboarding-wizard",
+      "sourcePaths": [
+        ".skills/openclaw-onboarding-wizard/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "openclaw-onboarding-wizard-risk-monitor-agent",
+          "displayName": "Risk Monitor Agent",
+          "reason": "Track legal/security risk indicators and escalation triggers.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "openclaw-onboarding-wizard-control-audit-agent",
+          "displayName": "Control Audit Agent",
+          "reason": "Validate control execution and produce evidence-ready reports.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "openclaw-protocol",
+      "sourcePaths": [
+        ".skills/openclaw-protocol/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "openclaw-protocol-risk-monitor-agent",
+          "displayName": "Risk Monitor Agent",
+          "reason": "Track legal/security risk indicators and escalation triggers.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "openclaw-protocol-control-audit-agent",
+          "displayName": "Control Audit Agent",
+          "reason": "Validate control execution and produce evidence-ready reports.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "openclaw-sherpa",
+      "sourcePaths": [
+        ".skills/openclaw-sherpa-service/SKILL.md",
+        ".skills/openclaw-sherpa/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "openclaw-sherpa-risk-monitor-agent",
+          "displayName": "Risk Monitor Agent",
+          "reason": "Track legal/security risk indicators and escalation triggers.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "openclaw-sherpa-control-audit-agent",
+          "displayName": "Control Audit Agent",
+          "reason": "Validate control execution and produce evidence-ready reports.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "openclaw-wizard-cli-automation",
+      "sourcePaths": [
+        ".skills/openclaw-wizard-cli-automation/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "openclaw-wizard-cli-automation-risk-monitor-agent",
+          "displayName": "Risk Monitor Agent",
+          "reason": "Track legal/security risk indicators and escalation triggers.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "openclaw-wizard-cli-automation-control-audit-agent",
+          "displayName": "Control Audit Agent",
+          "reason": "Validate control execution and produce evidence-ready reports.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "openclaw-wizard-cli-reference",
+      "sourcePaths": [
+        ".skills/openclaw-wizard-cli-reference/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "openclaw-wizard-cli-reference-risk-monitor-agent",
+          "displayName": "Risk Monitor Agent",
+          "reason": "Track legal/security risk indicators and escalation triggers.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "openclaw-wizard-cli-reference-control-audit-agent",
+          "displayName": "Control Audit Agent",
+          "reason": "Validate control execution and produce evidence-ready reports.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "orchestrator-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/orchestrator-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "orchestrator-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "orchestrator-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "orchestrator-agent-copy",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/orchestrator-agent-copy/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "orchestrator-agent-copy-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "orchestrator-agent-copy-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "oto-sequence-architect-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/oto-sequence-architect-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "oto-sequence-architect-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "oto-sequence-architect-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "overwatch",
+      "sourcePaths": [
+        ".skills/ops/monitoring/overwatch/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "overwatch-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "overwatch-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "pdf",
+      "sourcePaths": [
+        ".skills/pdf/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "pdf-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "pdf-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "personal-brand-architect-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/personal-brand-architect-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "personal-brand-architect-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "personal-brand-architect-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "personalized-content-recommendation-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/personalized-content-recommendation-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "personalized-content-recommendation-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "personalized-content-recommendation-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "platform-selection-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/platform-selection-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "platform-selection-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "platform-selection-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "playwright",
+      "sourcePaths": [
+        ".skills/playwright/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "playwright-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "playwright-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "podcast-ad-network-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/podcast-ad-network-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "podcast-ad-network-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "podcast-ad-network-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "podcast-affiliate-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/podcast-affiliate-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "podcast-affiliate-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "podcast-affiliate-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "podcast-analytics-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/podcast-analytics-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "podcast-analytics-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "podcast-analytics-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "podcast-audio-editor-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/podcast-audio-editor-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "podcast-audio-editor-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "podcast-audio-editor-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "podcast-distribution-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/podcast-distribution-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "podcast-distribution-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "podcast-distribution-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "podcast-equipment-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/podcast-equipment-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "podcast-equipment-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "podcast-equipment-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "podcast-format-designer-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/podcast-format-designer-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "podcast-format-designer-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "podcast-format-designer-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "podcast-hosting-setup-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/podcast-hosting-setup-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "podcast-hosting-setup-agent-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "podcast-hosting-setup-agent-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "podcast-monetization-strategy-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/podcast-monetization-strategy-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "podcast-monetization-strategy-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "podcast-monetization-strategy-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "podcast-niche-analyst-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/podcast-niche-analyst-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "podcast-niche-analyst-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "podcast-niche-analyst-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "podcast-promotion-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/podcast-promotion-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "podcast-promotion-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "podcast-promotion-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "podcast-seo-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/podcast-seo-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "podcast-seo-agent-attribution-agent",
+          "displayName": "Attribution Agent",
+          "reason": "Attribute performance and spend impact across channels.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "podcast-seo-agent-experiment-agent",
+          "displayName": "Experiment Agent",
+          "reason": "Drive iterative hypothesis testing and conversion improvements.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "podcast-video-editor-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/podcast-video-editor-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "podcast-video-editor-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "podcast-video-editor-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "pptx",
+      "sourcePaths": [
+        ".skills/pptx/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "pptx-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "pptx-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "print-on-demand-manager-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/print-on-demand-manager-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "print-on-demand-manager-agent-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "print-on-demand-manager-agent-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "production-pipeline-segment",
+      "sourcePaths": [
+        ".skills/production-pipeline-segment/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "production-pipeline-segment-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "production-pipeline-segment-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "productivity-and-burnout-prevention-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/productivity-and-burnout-prevention-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "productivity-and-burnout-prevention-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "productivity-and-burnout-prevention-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "react:components",
+      "sourcePaths": [
+        ".skills/react-components/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "react:components-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "react:components-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "red-team-tools-and-methodology",
+      "sourcePaths": [
+        ".skills/security/red-team/red-team-tools-and-methodology/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "red-team-tools-and-methodology-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "red-team-tools-and-methodology-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "remotion",
+      "sourcePaths": [
+        ".skills/remotion/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "remotion-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "remotion-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "render-deploy",
+      "sourcePaths": [
+        ".skills/render-deploy/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "render-deploy-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "render-deploy-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "reputation-management-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/reputation-management-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "reputation-management-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "reputation-management-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "sales-funnel-architect-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/sales-funnel-architect-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "sales-funnel-architect-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "sales-funnel-architect-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "screenshot",
+      "sourcePaths": [
+        ".skills/screenshot/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "screenshot-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "screenshot-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "scriptwriter-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/scriptwriter-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "scriptwriter-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "scriptwriter-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "security-best-practices",
+      "sourcePaths": [
+        ".skills/security-best-practices/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "security-best-practices-risk-monitor-agent",
+          "displayName": "Risk Monitor Agent",
+          "reason": "Track legal/security risk indicators and escalation triggers.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "security-best-practices-control-audit-agent",
+          "displayName": "Control Audit Agent",
+          "reason": "Validate control execution and produce evidence-ready reports.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "security-ownership-map",
+      "sourcePaths": [
+        ".skills/security-ownership-map/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "security-ownership-map-risk-monitor-agent",
+          "displayName": "Risk Monitor Agent",
+          "reason": "Track legal/security risk indicators and escalation triggers.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "security-ownership-map-control-audit-agent",
+          "displayName": "Control Audit Agent",
+          "reason": "Validate control execution and produce evidence-ready reports.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "security-review",
+      "sourcePaths": [
+        ".skills/security/review/security-review/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "security-review-risk-monitor-agent",
+          "displayName": "Risk Monitor Agent",
+          "reason": "Track legal/security risk indicators and escalation triggers.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "security-review-control-audit-agent",
+          "displayName": "Control Audit Agent",
+          "reason": "Validate control execution and produce evidence-ready reports.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "security-scanning-tools",
+      "sourcePaths": [
+        ".skills/security/scanning/security-scanning-tools/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "security-scanning-tools-risk-monitor-agent",
+          "displayName": "Risk Monitor Agent",
+          "reason": "Track legal/security risk indicators and escalation triggers.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "security-scanning-tools-control-audit-agent",
+          "displayName": "Control Audit Agent",
+          "reason": "Validate control execution and produce evidence-ready reports.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "security-threat-model",
+      "sourcePaths": [
+        ".skills/security-threat-model/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "security-threat-model-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "security-threat-model-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "sentry",
+      "sourcePaths": [
+        ".skills/sentry/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "sentry-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "sentry-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "seo-optimizer-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/seo-optimizer-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "seo-optimizer-agent-attribution-agent",
+          "displayName": "Attribution Agent",
+          "reason": "Attribute performance and spend impact across channels.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "seo-optimizer-agent-experiment-agent",
+          "displayName": "Experiment Agent",
+          "reason": "Drive iterative hypothesis testing and conversion improvements.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "shadcn-ui",
+      "sourcePaths": [
+        ".skills/shadcn-ui/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "shadcn-ui-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "shadcn-ui-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "shodan-reconnaissance-and-pentesting",
+      "sourcePaths": [
+        ".skills/security/recon/shodan-reconnaissance-and-pentesting/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "shodan-reconnaissance-and-pentesting-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "shodan-reconnaissance-and-pentesting-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "skill-bank-operations",
+      "sourcePaths": [
+        ".skills/engineering/governance/skill-bank-operations/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "skill-bank-operations-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "skill-bank-operations-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "skill-builder",
+      "sourcePaths": [
+        ".skills/skill-builder/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "skill-builder-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "skill-builder-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "skill-creator",
+      "sourcePaths": [
+        ".skills/skill-creator/SKILL.md",
+        ".skills/.system/skill-creator/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "skill-creator-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "skill-creator-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "skill-evolution",
+      "sourcePaths": [
+        ".skills/skill-evolution/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "skill-evolution-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "skill-evolution-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "skill-installer",
+      "sourcePaths": [
+        ".skills/.system/skill-installer/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "skill-installer-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "skill-installer-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "skill-synthesizer",
+      "sourcePaths": [
+        ".skills/skill-synthesizer/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "skill-synthesizer-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "skill-synthesizer-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "slack-gif-creator",
+      "sourcePaths": [
+        ".skills/slack-gif-creator/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "slack-gif-creator-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "slack-gif-creator-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "social-selling-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/social-selling-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "social-selling-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "social-selling-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "sora",
+      "sourcePaths": [
+        ".skills/sora/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "sora-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "sora-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "speech",
+      "sourcePaths": [
+        ".skills/speech/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "speech-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "speech-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "sponsorship-outreach-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/sponsorship-outreach-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "sponsorship-outreach-agent-attribution-agent",
+          "displayName": "Attribution Agent",
+          "reason": "Attribute performance and spend impact across channels.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "sponsorship-outreach-agent-experiment-agent",
+          "displayName": "Experiment Agent",
+          "reason": "Drive iterative hypothesis testing and conversion improvements.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "spreadsheet",
+      "sourcePaths": [
+        ".skills/spreadsheet/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "spreadsheet-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "spreadsheet-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "sqlmap-database-penetration-testing",
+      "sourcePaths": [
+        ".skills/security/pentest/sqlmap-database-penetration-testing/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "sqlmap-database-penetration-testing-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "sqlmap-database-penetration-testing-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "stitch-direct",
+      "sourcePaths": [
+        ".skills/stitch-direct/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "stitch-direct-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "stitch-direct-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "stitch-loop",
+      "sourcePaths": [
+        ".skills/stitch-loop/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "stitch-loop-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "stitch-loop-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "storyboard-artist-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/storyboard-artist-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "storyboard-artist-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "storyboard-artist-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "talent-manager-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/talent-manager-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "talent-manager-agent-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "talent-manager-agent-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "task-agent-router",
+      "sourcePaths": [
+        ".skills/task-agent-router/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "task-agent-router-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "task-agent-router-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "tax-compliance-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/tax-compliance-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "tax-compliance-agent-risk-monitor-agent",
+          "displayName": "Risk Monitor Agent",
+          "reason": "Track legal/security risk indicators and escalation triggers.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "tax-compliance-agent-control-audit-agent",
+          "displayName": "Control Audit Agent",
+          "reason": "Validate control execution and produce evidence-ready reports.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "technical-seo-auditor-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/technical-seo-auditor-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "technical-seo-auditor-agent-attribution-agent",
+          "displayName": "Attribution Agent",
+          "reason": "Attribute performance and spend impact across channels.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "technical-seo-auditor-agent-experiment-agent",
+          "displayName": "Experiment Agent",
+          "reason": "Drive iterative hypothesis testing and conversion improvements.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "technical-setup-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/technical-setup-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "technical-setup-agent-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "technical-setup-agent-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "template-skill",
+      "sourcePaths": [
+        ".skills/meta/templates/template-skill/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "template-skill-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "template-skill-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "temporal-agent-reclassifier",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/temporal-agent-reclassifier/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "temporal-agent-reclassifier-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "temporal-agent-reclassifier-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "theme-factory",
+      "sourcePaths": [
+        ".skills/theme-factory/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "theme-factory-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "theme-factory-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "tiktok-strategy-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/tiktok-strategy-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "tiktok-strategy-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "tiktok-strategy-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "tmux",
+      "sourcePaths": [
+        ".skills/ops/tooling/tmux/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "tmux-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "tmux-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "tnf-execution-audit-trail",
+      "sourcePaths": [
+        ".skills/tnf-execution-audit-trail/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "tnf-execution-audit-trail-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "tnf-execution-audit-trail-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "tnf-frontload-protocols",
+      "sourcePaths": [
+        ".skills/tnf-frontload-protocols/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "tnf-frontload-protocols-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "tnf-frontload-protocols-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "tnf-live-session-coordination",
+      "sourcePaths": [
+        ".skills/tnf-live-session-coordination/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "tnf-live-session-coordination-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "tnf-live-session-coordination-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "tnf-master-clock-sync",
+      "sourcePaths": [
+        ".skills/tnf-master-clock-sync/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "tnf-master-clock-sync-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "tnf-master-clock-sync-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "tnf-skill-bridging",
+      "sourcePaths": [
+        ".skills/tnf-skill-bridging/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "tnf-skill-bridging-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "tnf-skill-bridging-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "tnf-skill-types",
+      "sourcePaths": [
+        ".skills/tnf-skill-types/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "tnf-skill-types-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "tnf-skill-types-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "tnf-stack-self-improvement-loop",
+      "sourcePaths": [
+        ".skills/tnf-stack-self-improvement-loop/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "tnf-stack-self-improvement-loop-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "tnf-stack-self-improvement-loop-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "tnf-task-production-pipeline",
+      "sourcePaths": [
+        ".skills/tnf-task-production-pipeline/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "tnf-task-production-pipeline-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "tnf-task-production-pipeline-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "top-100-web-vulnerabilities-reference",
+      "sourcePaths": [
+        ".skills/security/reference/top-100-web-vulnerabilities-reference/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "top-100-web-vulnerabilities-reference-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "top-100-web-vulnerabilities-reference-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "traffic-generation-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/traffic-generation-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "traffic-generation-agent-attribution-agent",
+          "displayName": "Attribution Agent",
+          "reason": "Attribute performance and spend impact across channels.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "traffic-generation-agent-experiment-agent",
+          "displayName": "Experiment Agent",
+          "reason": "Drive iterative hypothesis testing and conversion improvements.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "transcribe",
+      "sourcePaths": [
+        ".skills/transcribe/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "transcribe-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "transcribe-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "user-feedback-analysis-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/user-feedback-analysis-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "user-feedback-analysis-agent-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "user-feedback-analysis-agent-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "value-ladder-architect-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/value-ladder-architect-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "value-ladder-architect-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "value-ladder-architect-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "vercel-deploy",
+      "sourcePaths": [
+        ".skills/vercel-deploy/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "vercel-deploy-reliability-agent",
+          "displayName": "Reliability Agent",
+          "reason": "Monitor health, failures, and rollback readiness for operations.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "vercel-deploy-compliance-agent",
+          "displayName": "Compliance Agent",
+          "reason": "Ensure policy, control, and audit expectations are consistently met.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "vercel-react-best-practices",
+      "sourcePaths": [
+        ".skills/engineering/deployment/vercel-react-best-practices/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "vercel-react-best-practices-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "vercel-react-best-practices-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "video-editor-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/video-editor-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "video-editor-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "video-editor-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "visual-asset-creator-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/visual-asset-creator-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "visual-asset-creator-agent-qa-agent",
+          "displayName": "Content QA Agent",
+          "reason": "Check quality, consistency, and policy conformance before publish.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "visual-asset-creator-agent-repurpose-agent",
+          "displayName": "Repurposing Agent",
+          "reason": "Convert outputs into adjacent formats and channel variants.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "voice-link-trigger",
+      "sourcePaths": [
+        ".skills/voice-link-trigger/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "voice-link-trigger-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "voice-link-trigger-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "web-artifacts-builder",
+      "sourcePaths": [
+        ".skills/web-artifacts-builder/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "web-artifacts-builder-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "web-artifacts-builder-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "web-game-deterministic-loop",
+      "sourcePaths": [
+        ".skills/web-game-deterministic-loop/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "web-game-deterministic-loop-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "web-game-deterministic-loop-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "webapp-testing",
+      "sourcePaths": [
+        ".skills/webapp-testing/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "webapp-testing-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "webapp-testing-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "wireshark-network-traffic-analysis",
+      "sourcePaths": [
+        ".skills/security/network-analysis/wireshark-network-traffic-analysis/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "wireshark-network-traffic-analysis-attribution-agent",
+          "displayName": "Attribution Agent",
+          "reason": "Attribute performance and spend impact across channels.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "wireshark-network-traffic-analysis-experiment-agent",
+          "displayName": "Experiment Agent",
+          "reason": "Drive iterative hypothesis testing and conversion improvements.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "x-strategy-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/x-strategy-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "x-strategy-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "x-strategy-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "xlsx",
+      "sourcePaths": [
+        ".skills/xlsx/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "xlsx-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "xlsx-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "yeet",
+      "sourcePaths": [
+        ".skills/yeet/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "yeet-orchestration-agent",
+          "displayName": "Orchestration Agent",
+          "reason": "Coordinate handoffs between this skill and dependent specialist skills.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "yeet-review-agent",
+          "displayName": "Review Agent",
+          "reason": "Perform structured QA and regression checks for outputs.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "yt-content-strategy-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/yt-content-strategy-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "yt-content-strategy-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "yt-content-strategy-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "yt-niche-strategy-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/yt-niche-strategy-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "yt-niche-strategy-agent-execution-agent",
+          "displayName": "Execution Agent",
+          "reason": "Translate strategy outputs into sequenced delivery plans.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "yt-niche-strategy-agent-metrics-agent",
+          "displayName": "Metrics Agent",
+          "reason": "Measure adoption, outcomes, and drift against plan assumptions.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    },
+    {
+      "sourceSkill": "yt-seo-optimizer-agent",
+      "sourcePaths": [
+        ".skills/imported-claude-agents/yt-seo-optimizer-agent/SKILL.md"
+      ],
+      "projectedRelatedRoles": [
+        {
+          "roleId": "yt-seo-optimizer-agent-attribution-agent",
+          "displayName": "Attribution Agent",
+          "reason": "Attribute performance and spend impact across channels.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        },
+        {
+          "roleId": "yt-seo-optimizer-agent-experiment-agent",
+          "displayName": "Experiment Agent",
+          "reason": "Drive iterative hypothesis testing and conversion improvements.",
+          "status": "placeholder",
+          "specStatus": "todo"
+        }
+      ]
+    }
+  ]
+}

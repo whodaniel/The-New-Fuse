@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TriggerRule",
+  "type": "object",
+  "required": [
+    "rule_id",
+    "name",
+    "enabled",
+    "expr",
+    "thresholds",
+    "action"
+  ],
+  "properties": {
+    "rule_id": {
+      "type": "string",
+      "pattern": "^rule_[a-z0-9_]+$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 100
+    },
+    "expr": {
+      "type": "string"
+    },
+    "thresholds": {
+      "type": "object",
+      "required": [
+        "min_rule_conf",
+        "window_ms",
+        "cooldown_ms"
+      ],
+      "properties": {
+        "min_rule_conf": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "window_ms": {
+          "type": "integer",
+          "minimum": 50
+        },
+        "cooldown_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "action": {
+      "type": "object",
+      "required": [
+        "type",
+        "template_id"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "enqueue_llm",
+            "emit",
+            "webhook"
+          ]
+        },
+        "template_id": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -3,7 +3,7 @@
 The following documentation has been updated to reflect the refactored project structure:
 
 1. Added new section in VSCODE-EXTENSION.md with project structure details
-2. Created a new DEVELOPMENT-LOG.md file with details of the refactoring
+2. Created a new DEVELOPMENT_LOG.md file with details of the refactoring
 3. Updated the CHANGELOG.md to include refactoring information
 4. Updated src/vscode-extension/README.md with current project structure
 5. Updated src/vscode-extension/src/commands/README.md with refactoring guidance
@@ -15,6 +15,6 @@ The following documentation has been updated to reflect the refactored project s
 These updates document how the project structure has been refactored, with utilities previously in separate files now integrated directly into relevant service and component classes.
 
 Key files to review:
-- DEVELOPMENT-LOG.md - Complete details of the refactoring
+- DEVELOPMENT_LOG.md - Complete details of the refactoring
 - VSCODE-EXTENSION.md - Updated project structure and migration guide
 - src/vscode-extension/src/utils/README.md - Utility consolidation details

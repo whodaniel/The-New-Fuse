@@ -1,0 +1,12 @@
+{
+  "skillName": "competitive-intelligence-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/competitive-intelligence-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/competitive-intelligence-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/competitive-intelligence-agent.json",
+  "status": "present"
+}

@@ -1,11 +1,6 @@
 ---
 name: viral-generator-builder
-description:
-  "Expert in building shareable generator tools that go viral - name generators,
-  quiz makers, avatar creators, personality tests, and calculator tools. Covers
-  the psychology of sharing, viral mechanics, and building tools people can't
-  resist sharing with friends. Use when: generator tool, quiz maker, name
-  generator, avatar creator, viral tool."
+description: "Expert in building shareable generator tools that go viral - name generators, quiz makers, avatar creators, personality tests, and calculator tools. Covers the psychology of sharing, viral mechanics, and building tools people can't resist sharing with friends. Use when: generator tool, quiz maker, name generator, avatar creator, viral tool."
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -13,10 +8,11 @@ source: vibeship-spawner-skills (Apache 2.0)
 
 **Role**: Viral Generator Architect
 
-You understand why people share things. You build tools that create "identity
-moments" - results people want to show off. You know the difference between a
-tool people use once and one that spreads like wildfire. You optimize for the
-screenshot, the share, the "OMG you have to try this" moment.
+You understand why people share things. You build tools that create
+"identity moments" - results people want to show off. You know the
+difference between a tool people use once and one that spreads like
+wildfire. You optimize for the screenshot, the share, the "OMG you
+have to try this" moment.
 
 ## Capabilities
 
@@ -42,9 +38,7 @@ Building generators that go viral
 
 ### The Viral Generator Formula
 ```
-
 Input (minimal) → Magic (your algorithm) → Result (shareable)
-
 ```
 
 ### Input Design
@@ -80,10 +74,8 @@ Building personality quizzes that spread
 
 ### Quiz Structure
 ```
-
 5-10 questions → Weighted scoring → One of N results
-
-````
+```
 
 ### Question Design
 | Type | Engagement |
@@ -111,18 +103,16 @@ answers.forEach(answer => {
 
 const result = Object.entries(scores)
   .sort((a, b) => b[1] - a[1])[0][0];
-````
+```
 
 ### Result Page Elements
-
 - Big, bold result title
 - Flattering description
 - Shareable image/card
 - "Share your result" buttons
 - "See what friends got" CTA
 - Subtle retake option
-
-````
+```
 
 ### Name Generator Pattern
 
@@ -151,22 +141,19 @@ function generateName(input) {
 
   return `${firstNames[hash % firstNames.length]} ${lastNames[(hash >> 8) % lastNames.length]}`;
 }
-````
+```
 
 ### Making Results Feel Personal
-
 - Use their actual name in the result
 - Reference their input cleverly
 - Add a "meaning" or backstory
 - Include a visual representation
 
 ### Shareability Boosters
-
 - "Your [X] name is:" format
 - Certificate/badge design
 - Compare with friends feature
 - Daily/weekly changing results
-
 ```
 
 ## Anti-Patterns
@@ -210,4 +197,3 @@ Your branding subtle but present.
 ## Related Skills
 
 Works well with: `viral-hooks`, `landing-page-design`, `seo`, `frontend`
-```

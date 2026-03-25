@@ -1,0 +1,12 @@
+{
+  "skillName": "sales-funnel-architect-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/sales-funnel-architect-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/sales-funnel-architect-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/sales-funnel-architect-agent.json",
+  "status": "present"
+}

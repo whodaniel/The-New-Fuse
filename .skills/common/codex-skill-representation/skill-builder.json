@@ -1,0 +1,12 @@
+{
+  "skillName": "skill-builder",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/skill-builder/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/skill-builder/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/skill-builder.json",
+  "status": "present"
+}

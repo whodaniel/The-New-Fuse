@@ -1,0 +1,12 @@
+{
+  "skillName": "instagram-strategy-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/instagram-strategy-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/instagram-strategy-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/instagram-strategy-agent.json",
+  "status": "present"
+}

@@ -497,6 +497,6 @@ wss://a2a.protocol.local/ws?api_key=<api_key>
 
 For more information, refer to:
 
-- [A2A Protocol Documentation](../architecture/a2a-protocol.md)
-- [Workflow Builder Documentation](../workflow-builder.md)
-- [MCP Integration Guide](../architecture/mcp-integration.md)
+- [A2A Protocol Documentation](../agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md)
+- [Workflow Builder Documentation](../guides/workflow-builder.md)
+- [MCP Integration Guide](../guides/MCP-INTEGRATION-GUIDE-component-analysis.md)

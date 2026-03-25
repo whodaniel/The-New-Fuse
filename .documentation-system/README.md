@@ -23,6 +23,12 @@ npx tsx scripts/documentation-system/03-analyze-local.ts
 # Stage 4: Consolidate and refine knowledge
 npx tsx scripts/documentation-system/04-consolidate-fast.ts
 
+# Stage 5: Generate prioritized evolution/consolidation tasks
+npx tsx scripts/documentation-system/05-evolve.ts
+
+# Or run the full Stage 1-5 pipeline
+./scripts/documentation-system/run-full-pipeline.sh
+
 # View complete status
 cat .documentation-system/LIVING_DOCUMENTATION_STATUS.md
 ```
@@ -89,11 +95,11 @@ Living Documentation System Pipeline
 │                                                               │
 ├─────────────────────────────────────────────────────────────┤
 │                                                               │
-│  Stage 5: EVOLUTION (Pending)                                │
-│  ├─ Continuous monitoring                                    │
-│  ├─ Auto-documentation generation                            │
-│  ├─ Quality improvement                                      │
-│  └─ Intelligent recommendations                              │
+│  Stage 5: EVOLUTION                                          │
+│  ├─ Build prioritized task backlog                           │
+│  ├─ Detect stale docs vs referenced code                     │
+│  ├─ Detect exact/near duplicates for consolidation           │
+│  └─ Optional safe apply: archive exact duplicate docs        │
 │                                                               │
 └─────────────────────────────────────────────────────────────┘
 ```

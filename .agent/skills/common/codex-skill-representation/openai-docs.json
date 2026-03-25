@@ -1,0 +1,12 @@
+{
+  "skillName": "openai-docs",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/openai-docs/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/openai-docs/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/openai-docs.json",
+  "status": "present"
+}

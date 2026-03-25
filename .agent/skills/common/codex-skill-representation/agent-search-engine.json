@@ -1,0 +1,12 @@
+{
+  "skillName": "agent-search-engine",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/agent-search-engine/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/agent-search-engine/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/agent-search-engine.json",
+  "status": "present"
+}

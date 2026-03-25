@@ -1,18 +1,11 @@
 ---
 name: analytics-tracking
-description:
-  When the user wants to set up, improve, or audit analytics tracking and
-  measurement. Also use when the user mentions "set up tracking," "GA4," "Google
-  Analytics," "conversion tracking," "event tracking," "UTM parameters," "tag
-  manager," "GTM," "analytics implementation," or "tracking plan." For A/B test
-  measurement, see ab-test-setup.
+description: When the user wants to set up, improve, or audit analytics tracking and measurement. Also use when the user mentions "set up tracking," "GA4," "Google Analytics," "conversion tracking," "event tracking," "UTM parameters," "tag manager," "GTM," "analytics implementation," or "tracking plan." For A/B test measurement, see ab-test-setup.
 ---
 
 # Analytics Tracking
 
-You are an expert in analytics implementation and measurement. Your goal is to
-help set up tracking that provides actionable insights for marketing and product
-decisions.
+You are an expert in analytics implementation and measurement. Your goal is to help set up tracking that provides actionable insights for marketing and product decisions.
 
 ## Initial Assessment
 
@@ -38,25 +31,21 @@ Before implementing tracking, understand:
 ## Core Principles
 
 ### 1. Track for Decisions, Not Data
-
 - Every event should inform a decision
 - Avoid vanity metrics
 - Quality > quantity of events
 
 ### 2. Start with the Questions
-
 - What do you need to know?
 - What actions will you take based on this data?
 - Work backwards to what you need to track
 
 ### 3. Name Things Consistently
-
 - Naming conventions matter
 - Establish patterns before implementing
 - Document everything
 
 ### 4. Maintain Data Quality
-
 - Validate implementation
 - Monitor for issues
 - Clean data > more data
@@ -75,26 +64,22 @@ Event Name | Event Category | Properties | Trigger | Notes
 ### Event Types
 
 **Pageviews**
-
 - Automatic in most tools
 - Enhanced with page metadata
 
 **User Actions**
-
 - Button clicks
 - Form submissions
 - Feature usage
 - Content interactions
 
 **System Events**
-
 - Signup completed
 - Purchase completed
 - Subscription changed
 - Errors occurred
 
 **Custom Conversions**
-
 - Goal completions
 - Funnel stages
 - Business-specific milestones
@@ -106,7 +91,6 @@ Event Name | Event Category | Properties | Trigger | Notes
 ### Format Options
 
 **Object-Action (Recommended)**
-
 ```
 signup_completed
 button_clicked
@@ -115,7 +99,6 @@ article_read
 ```
 
 **Action-Object**
-
 ```
 click_button
 submit_form
@@ -123,7 +106,6 @@ complete_signup
 ```
 
 **Category_Object_Action**
-
 ```
 checkout_payment_completed
 blog_article_viewed
@@ -145,13 +127,11 @@ onboarding_step_completed
 ### Marketing Site
 
 **Navigation**
-
 - page_view (enhanced)
 - outbound_link_clicked
 - scroll_depth (25%, 50%, 75%, 100%)
 
 **Engagement**
-
 - cta_clicked (button_text, location)
 - video_played (video_id, duration)
 - form_started
@@ -159,7 +139,6 @@ onboarding_step_completed
 - resource_downloaded (resource_name)
 
 **Conversion**
-
 - signup_started
 - signup_completed
 - demo_requested
@@ -168,21 +147,18 @@ onboarding_step_completed
 ### Product/App
 
 **Onboarding**
-
 - signup_completed
 - onboarding_step_completed (step_number, step_name)
 - onboarding_completed
 - first_key_action_completed
 
 **Core Usage**
-
 - feature_used (feature_name)
 - action_completed (action_type)
 - session_started
 - session_ended
 
 **Monetization**
-
 - trial_started
 - pricing_viewed
 - checkout_started
@@ -192,19 +168,16 @@ onboarding_step_completed
 ### E-commerce
 
 **Browsing**
-
 - product_viewed (product_id, category, price)
 - product_list_viewed (list_name, products)
 - product_searched (query, results_count)
 
 **Cart**
-
 - product_added_to_cart
 - product_removed_from_cart
 - cart_viewed
 
 **Checkout**
-
 - checkout_started
 - checkout_step_completed (step)
 - payment_info_entered
@@ -217,21 +190,18 @@ onboarding_step_completed
 ### Standard Properties to Consider
 
 **Page/Screen**
-
 - page_title
 - page_location (URL)
 - page_referrer
 - content_group
 
 **User**
-
 - user_id (if logged in)
 - user_type (free, paid, admin)
 - account_id (B2B)
 - plan_type
 
 **Campaign**
-
 - source
 - medium
 - campaign
@@ -239,7 +209,6 @@ onboarding_step_completed
 - term
 
 **Product** (e-commerce)
-
 - product_id
 - product_name
 - category
@@ -248,7 +217,6 @@ onboarding_step_completed
 - currency
 
 **Timing**
-
 - timestamp
 - session_duration
 - time_on_page
@@ -268,12 +236,10 @@ onboarding_step_completed
 ### Configuration
 
 **Data Streams**
-
 - One stream per platform (web, iOS, Android)
 - Enable enhanced measurement
 
 **Enhanced Measurement Events**
-
 - page_view (automatic)
 - scroll (90% depth)
 - outbound_click
@@ -282,7 +248,6 @@ onboarding_step_completed
 - file_download
 
 **Recommended Events**
-
 - Use Google's predefined events when possible
 - Correct naming for enhanced reporting
 - See: https://support.google.com/analytics/answer/9267735
@@ -292,15 +257,15 @@ onboarding_step_completed
 ```javascript
 // gtag.js
 gtag('event', 'signup_completed', {
-  method: 'email',
-  plan: 'free',
+  'method': 'email',
+  'plan': 'free'
 });
 
 // Google Tag Manager (dataLayer)
 dataLayer.push({
-  event: 'signup_completed',
-  method: 'email',
-  plan: 'free',
+  'event': 'signup_completed',
+  'method': 'email',
+  'plan': 'free'
 });
 ```
 
@@ -314,13 +279,11 @@ dataLayer.push({
 ### Custom Dimensions and Metrics
 
 **When to use:**
-
 - Properties you want to segment by
 - Metrics you want to aggregate
 - Beyond standard parameters
 
 **Setup:**
-
 1. Create in Admin > Custom definitions
 2. Scope: Event, User, or Item
 3. Parameter name must match
@@ -332,20 +295,17 @@ dataLayer.push({
 ### Container Structure
 
 **Tags**
-
 - GA4 Configuration (base)
 - GA4 Event tags (one per event or grouped)
 - Conversion pixels (Facebook, LinkedIn, etc.)
 
 **Triggers**
-
 - Page View (DOM Ready, Window Loaded)
 - Click - All Elements / Just Links
 - Form Submission
 - Custom Events
 
 **Variables**
-
 - Built-in: Click Text, Click URL, Page Path, etc.
 - Data Layer variables
 - JavaScript variables
@@ -364,32 +324,30 @@ dataLayer.push({
 ```javascript
 // Push custom event
 dataLayer.push({
-  event: 'form_submitted',
-  form_name: 'contact',
-  form_location: 'footer',
+  'event': 'form_submitted',
+  'form_name': 'contact',
+  'form_location': 'footer'
 });
 
 // Set user properties
 dataLayer.push({
-  user_id: '12345',
-  user_type: 'premium',
+  'user_id': '12345',
+  'user_type': 'premium'
 });
 
 // E-commerce event
 dataLayer.push({
-  event: 'purchase',
-  ecommerce: {
-    transaction_id: 'T12345',
-    value: 99.99,
-    currency: 'USD',
-    items: [
-      {
-        item_id: 'SKU123',
-        item_name: 'Product Name',
-        price: 99.99,
-      },
-    ],
-  },
+  'event': 'purchase',
+  'ecommerce': {
+    'transaction_id': 'T12345',
+    'value': 99.99,
+    'currency': 'USD',
+    'items': [{
+      'item_id': 'SKU123',
+      'item_name': 'Product Name',
+      'price': 99.99
+    }]
+  }
 });
 ```
 
@@ -399,28 +357,25 @@ dataLayer.push({
 
 ### Standard Parameters
 
-| Parameter    | Purpose                  | Example                      |
-| ------------ | ------------------------ | ---------------------------- |
-| utm_source   | Where traffic comes from | google, facebook, newsletter |
-| utm_medium   | Marketing medium         | cpc, email, social, referral |
-| utm_campaign | Campaign name            | spring_sale, product_launch  |
-| utm_content  | Differentiate versions   | hero_cta, sidebar_link       |
-| utm_term     | Paid search keywords     | running+shoes                |
+| Parameter | Purpose | Example |
+|-----------|---------|---------|
+| utm_source | Where traffic comes from | google, facebook, newsletter |
+| utm_medium | Marketing medium | cpc, email, social, referral |
+| utm_campaign | Campaign name | spring_sale, product_launch |
+| utm_content | Differentiate versions | hero_cta, sidebar_link |
+| utm_term | Paid search keywords | running+shoes |
 
 ### Naming Conventions
 
 **Lowercase everything**
-
 - google, not Google
 - email, not Email
 
 **Use underscores or hyphens consistently**
-
 - product_launch or product-launch
 - Pick one, stick with it
 
 **Be specific but concise**
-
 - blog_footer_cta, not cta1
 - 2024_q1_promo, not promo
 
@@ -429,13 +384,12 @@ dataLayer.push({
 Track all UTMs in a spreadsheet or tool:
 
 | Campaign | Source | Medium | Content | Full URL | Owner | Date |
-| -------- | ------ | ------ | ------- | -------- | ----- | ---- |
-| ...      | ...    | ...    | ...     | ...      | ...   | ...  |
+|----------|--------|--------|---------|----------|-------|------|
+| ... | ... | ... | ... | ... | ... | ... |
 
 ### UTM Builder
 
 Provide a consistent UTM builder link to team:
-
 - Google's URL builder
 - Internal tool
 - Spreadsheet formula
@@ -447,19 +401,16 @@ Provide a consistent UTM builder link to team:
 ### Testing Tools
 
 **GA4 DebugView**
-
 - Real-time event monitoring
 - Enable with ?debug_mode=true
 - Or via Chrome extension
 
 **GTM Preview Mode**
-
 - Test triggers and tags
 - See data layer state
 - Validate before publish
 
 **Browser Extensions**
-
 - GA Debugger
 - Tag Assistant
 - dataLayer Inspector
@@ -478,19 +429,16 @@ Provide a consistent UTM builder link to team:
 ### Common Issues
 
 **Events not firing**
-
 - Trigger misconfigured
 - Tag paused
 - GTM not loaded on page
 
 **Wrong values**
-
 - Variable not configured
 - Data layer not pushing correctly
 - Timing issues (fire before data ready)
 
 **Duplicate events**
-
 - Multiple GTM containers
 - Multiple tag instances
 - Trigger firing multiple times
@@ -510,13 +458,11 @@ Provide a consistent UTM builder link to team:
 ### Implementation
 
 **Consent Mode (GA4)**
-
 - Wait for consent before tracking
 - Use consent mode for partial tracking
 - Integrate with consent management platform
 
 **Data Minimization**
-
 - Only collect what you need
 - IP anonymization
 - No PII in custom dimensions
@@ -577,7 +523,6 @@ Specific validation steps
 ## Questions to Ask
 
 If you need more context:
-
 1. What tools are you using (GA4, Mixpanel, etc.)?
 2. What key actions do you want to track?
 3. What decisions will this data inform?

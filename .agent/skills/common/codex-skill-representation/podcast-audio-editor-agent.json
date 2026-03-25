@@ -1,0 +1,12 @@
+{
+  "skillName": "podcast-audio-editor-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/podcast-audio-editor-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/podcast-audio-editor-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/podcast-audio-editor-agent.json",
+  "status": "present"
+}

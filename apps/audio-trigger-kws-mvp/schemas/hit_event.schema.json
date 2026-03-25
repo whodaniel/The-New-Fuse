@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HitEvent",
+  "type": "object",
+  "required": [
+    "event_id",
+    "stream_id",
+    "ts_start_ms",
+    "ts_end_ms",
+    "term_id",
+    "group_id",
+    "confidence"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string"
+    },
+    "stream_id": {
+      "type": "string"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "ts_start_ms": {
+      "type": "integer"
+    },
+    "ts_end_ms": {
+      "type": "integer"
+    },
+    "term_id": {
+      "type": "string"
+    },
+    "group_id": {
+      "type": "string"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "audio_offset_ms": {
+      "type": "integer"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "kws"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

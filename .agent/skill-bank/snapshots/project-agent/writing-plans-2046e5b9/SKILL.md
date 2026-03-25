@@ -1,35 +1,25 @@
 ---
 name: writing-plans
-description:
-  Use when you have a spec or requirements for a multi-step task, before
-  touching code
+description: Use when you have a spec or requirements for a multi-step task, before touching code
 ---
 
 # Writing Plans
 
 ## Overview
 
-Write comprehensive implementation plans assuming the engineer has zero context
-for our codebase and questionable taste. Document everything they need to know:
-which files to touch for each task, code, testing, docs they might need to
-check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI.
-TDD. Frequent commits.
+Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Frequent commits.
 
-Assume they are a skilled developer, but know almost nothing about our toolset
-or problem domain. Assume they don't know good test design very well.
+Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
 
-**Announce at start:** "I'm using the writing-plans skill to create the
-implementation plan."
+**Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
-**Context:** This should be run in a dedicated worktree (created by
-brainstorming skill).
+**Context:** This should be run in a dedicated worktree (created by brainstorming skill).
 
 **Save plans to:** `docs/plans/YYYY-MM-DD-<feature-name>.md`
 
 ## Bite-Sized Task Granularity
 
 **Each step is one action (2-5 minutes):**
-
 - "Write the failing test" - step
 - "Run it to make sure it fails" - step
 - "Implement the minimal code to make the test pass" - step
@@ -43,8 +33,7 @@ brainstorming skill).
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to
-> implement this plan task-by-task.
+> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
 **Goal:** [One sentence describing what this builds]
 
@@ -57,11 +46,10 @@ brainstorming skill).
 
 ## Task Structure
 
-````markdown
+```markdown
 ### Task N: [Component Name]
 
 **Files:**
-
 - Create: `exact/path/to/file.py`
 - Modify: `exact/path/to/existing.py:123-145`
 - Test: `tests/exact/path/to/test.py`
@@ -73,12 +61,11 @@ def test_specific_behavior():
     result = function(input)
     assert result == expected
 ```
-````
 
 **Step 2: Run test to verify it fails**
 
-Run: `pytest tests/path/test.py::test_name -v` Expected: FAIL with "function not
-defined"
+Run: `pytest tests/path/test.py::test_name -v`
+Expected: FAIL with "function not defined"
 
 **Step 3: Write minimal implementation**
 
@@ -89,7 +76,8 @@ def function(input):
 
 **Step 4: Run test to verify it passes**
 
-Run: `pytest tests/path/test.py::test_name -v` Expected: PASS
+Run: `pytest tests/path/test.py::test_name -v`
+Expected: PASS
 
 **Step 5: Commit**
 
@@ -97,7 +85,6 @@ Run: `pytest tests/path/test.py::test_name -v` Expected: PASS
 git add tests/path/test.py src/path/file.py
 git commit -m "feat: add specific feature"
 ```
-
 ```
 
 ## Remember
@@ -127,4 +114,3 @@ After saving the plan, offer execution choice:
 **If Parallel Session chosen:**
 - Guide them to open new session in worktree
 - **REQUIRED SUB-SKILL:** New session uses superpowers:executing-plans
-```

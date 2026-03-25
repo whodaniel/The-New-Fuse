@@ -185,5 +185,5 @@ Database migrations are managed using TypeORM. Migration files are located in:
 ## Backup and Recovery
 
 For backup and recovery procedures, see:
-- [Backup Procedures](/docs/operations/backup.md)
-- [Recovery Procedures](/docs/operations/recovery.md)
+- [Backup Procedures](../guides/operations/backup.md)
+- [Recovery Procedures](../guides/operations/recovery.md)

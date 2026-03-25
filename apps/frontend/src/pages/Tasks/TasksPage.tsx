@@ -195,15 +195,15 @@ export default function TasksPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <GlassCard className="p-4">
           <p className="text-xs uppercase tracking-wide text-gray-400">Completed</p>
-          <p className="text-2xl font-bold text-white mt-1">{completedCount}</p>
+          <p className="text-xl font-bold text-white mt-1">{completedCount}</p>
         </GlassCard>
         <GlassCard className="p-4">
           <p className="text-xs uppercase tracking-wide text-gray-400">Open Work</p>
-          <p className="text-2xl font-bold text-white mt-1">{tasks.length - completedCount}</p>
+          <p className="text-xl font-bold text-white mt-1">{tasks.length - completedCount}</p>
         </GlassCard>
         <GlassCard className="p-4">
           <p className="text-xs uppercase tracking-wide text-gray-400">Visible Results</p>
-          <p className="text-2xl font-bold text-white mt-1">{sortedTasks.length}</p>
+          <p className="text-xl font-bold text-white mt-1">{sortedTasks.length}</p>
         </GlassCard>
       </div>
 
@@ -374,7 +374,7 @@ export default function TasksPage() {
           </div>
         </GlassCard>
       ) : (
-        <div className="flex md:grid md:grid-cols-4 gap-4 overflow-x-auto pb-4 h-[calc(100vh-280px)] snap-x snap-mandatory md:snap-none">
+        <div className="flex md:grid md:grid-cols-4 gap-4 overflow-x-auto pb-4 min-h-[420px] md:max-h-[70vh] md:overflow-y-auto snap-x snap-mandatory md:snap-none">
           {(['pending', 'in-progress', 'completed', 'cancelled'] as const).map((status) => {
             const statusTasks = sortedTasks.filter((t) => t.status === status);
             return (

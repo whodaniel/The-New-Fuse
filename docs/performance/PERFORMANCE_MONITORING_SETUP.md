@@ -704,4 +704,4 @@ curl http://localhost:8080/metrics
 
 1. [Performance Optimization Guide](./PERFORMANCE_OPTIMIZATION.md)
 2. [Alert Configuration](../monitoring/ALERT_RUNBOOKS.md)
-3. [Dashboard Customization](./DASHBOARD_CUSTOMIZATION.md)
+3. [Dashboard Customization](../monitoring/COMPLETE-MONITORING-GUIDE.md)

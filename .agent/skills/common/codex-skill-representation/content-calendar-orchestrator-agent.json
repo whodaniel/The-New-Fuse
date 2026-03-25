@@ -1,0 +1,12 @@
+{
+  "skillName": "content-calendar-orchestrator-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/content-calendar-orchestrator-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/content-calendar-orchestrator-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/content-calendar-orchestrator-agent.json",
+  "status": "present"
+}

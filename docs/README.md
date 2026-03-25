@@ -6,8 +6,8 @@ Welcome to The New Fuse documentation. This repository contains comprehensive gu
 
 ## Getting Started
 
-[Installation Guide](getting-started/installation.md)
-[Quick Start](getting-started/quick-start.md)
+[Installation Guide](GETTING_STARTED.md)
+[Quick Start](../QUICK_START_GUIDE.md)
 
 ## Development & Troubleshooting
 
@@ -17,7 +17,7 @@ Welcome to The New Fuse documentation. This repository contains comprehensive gu
 
 ## Deployment
 
-[Deployment Guide](deployment/DEPLOYMENT_GUIDE.md)
+[Deployment Guide](guides/deployment-guide.md)
 - [Architecture](architecture/) - System architecture and design
 - [API](api/) - API specifications and usage
 - [Development](development/) - Development guides and practices
@@ -28,4 +28,4 @@ Welcome to The New Fuse documentation. This repository contains comprehensive gu
 
 ## Contributing to Documentation
 
-Please follow the [contribution guidelines](../CONTRIBUTING.md) when updating documentation. All documentation should be written in Markdown and properly linked from this index.
+Please follow the [contribution guidelines](../README.md) when updating documentation. All documentation should be written in Markdown and properly linked from this index.

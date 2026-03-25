@@ -4,6 +4,18 @@
 
 This document outlines the comprehensive implementation plan for refactoring the agent communication platform, focusing on protocol standardization, component cleanup, and enhanced inter-agent communication capabilities.
 
+## Supplemental Schedule Snapshot
+
+This plan also tracks the weekly delivery sizing used in the architectural
+refactor lane:
+
+| Week | Focus Area | Tasks | Estimated LOC |
+|------|------------|-------|---------------|
+| 1 | Protocol Implementation | Complete WebSocket protocol, implement Zod validation | 800 |
+| 2 | Component Cleanup | Remove duplicated code, consolidate utilities | 600 (removed) |
+| 3 | Integration | Build integration layer, update existing consumers | 1200 |
+| 4 | Testing | Integration tests, performance tests, documentation | 1000 |
+
 ## Phase 1: Protocol Foundation (Week 1)
 
 ### 1.1 Message Protocol Implementation
@@ -417,6 +429,13 @@ This document outlines the comprehensive implementation plan for refactoring the
 - **User Satisfaction**: >4.5/5 rating from developer feedback
 - **Adoption Rate**: 80% migration to new protocol within 1 month
 
+### Refactoring Efficiency Metrics
+
+- **Code Reduction**: At least 30% reduction in codebase size
+- **Latency Improvement**: 25% improvement in message processing latency
+- **Communication Error Reduction**: 50% reduction in communication-related errors
+- **Implementation Velocity**: 40% reduction in time to implement new agents
+
 ## Resource Requirements
 
 ### Development Team
@@ -440,6 +459,26 @@ This document outlines the comprehensive implementation plan for refactoring the
 - **Stakeholder Approval**: 1 day for major decisions
 - **Third-party Integration**: 3 days for external service updates
 - **Documentation**: Ongoing throughout all phases
+
+## Appendix: Operational Budgets
+
+### Protocol Performance Targets
+
+| Protocol | Max Latency | Throughput | Reconnection Time |
+|----------|-------------|------------|-------------------|
+| File | 100ms | 100 msg/s | N/A |
+| Redis | 20ms | 5000 msg/s | 2s |
+| WebSocket | 50ms | 1000 msg/s | 3s |
+
+### Memory Usage Targets
+
+| Component | Max Memory | GC Pressure |
+|-----------|------------|-------------|
+| AgentRegistry | 50MB | Low |
+| A2AService | 100MB | Medium |
+| MCPService | 150MB | Medium |
+| MessageRouter | 30MB | Low |
+| All Protocols | 80MB | Medium |
 
 ## Conclusion
 

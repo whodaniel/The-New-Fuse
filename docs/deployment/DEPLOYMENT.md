@@ -300,6 +300,50 @@ https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app/
 
 ---
 
+## 🧰 Alternative Deployment Modes
+
+In addition to the hybrid Vercel + Railway path, these operational modes remain
+available when needed for specific environments.
+
+### Docker-Based Deployment
+
+```bash
+yarn clean
+yarn install
+yarn build
+yarn start
+
+# Unified script option
+./scripts/build-and-launch.sh production
+```
+
+### Kubernetes Deployment
+
+```bash
+kubectl create namespace fuse
+helm install fuse-infra ./helm/infrastructure
+helm install fuse ./helm/fuse
+```
+
+### Manual Monorepo Deployment
+
+```bash
+yarn workspace @the-new-fuse/types build
+yarn workspace @the-new-fuse/utils build
+yarn workspace @the-new-fuse/core build
+yarn workspace @the-new-fuse/database build
+yarn workspace @the-new-fuse/database generate
+yarn workspace @the-new-fuse/database migrate:deploy
+```
+
+### Additional Post-Deploy Checks
+
+- `/health` for base service readiness
+- `/metrics` for monitoring scrape validation
+- `/status` for detailed runtime checks
+
+---
+
 ## 🐛 Troubleshooting
 
 ### Railway Build Failing
@@ -430,6 +474,49 @@ vercel logs <deployment-url>
 - [ ] SSL certificates active
 - [ ] Rate limiting configured
 - [ ] Security headers set
+
+### CI/CD Runbook Addendum
+
+Use this checklist-oriented flow for routine and emergency releases.
+
+#### Pre-Deployment Checks
+
+- [ ] `pnpm run lint && pnpm run type-check && pnpm run test && pnpm run build` all pass
+- [ ] PR approvals and CI checks are complete
+- [ ] Railway environment variables and migration plan are confirmed
+- [ ] Team/stakeholders are notified for the deployment window
+
+#### Release Paths
+
+- **Production (default)**: merge to `main`, then monitor GitHub Actions (`gh run watch`)
+- **Tagged release**: `git tag -a vX.Y.Z -m "Release vX.Y.Z"` and `git push origin vX.Y.Z`
+- **Staging**: manual workflow dispatch (`gh workflow run deploy.yml -f environment=staging`)
+
+#### Hotfix and Rollback
+
+```bash
+# Hotfix branch
+git checkout main && git pull
+git checkout -b hotfix/<issue>
+
+# Rollback (service-level)
+railway rollback --service=api-gateway
+railway rollback --service=api
+railway rollback --service=backend
+railway rollback --service=frontend
+
+# Rollback (git-level)
+git revert <merge-commit-sha> -m 1
+git push origin main
+```
+
+#### Deployment Metrics to Track
+
+- **Lead time for changes**: commit/merge to production
+- **Deployment frequency**: number of successful production deploys
+- **Change failure rate**: percent of deploys that require rollback or hotfix
+- **MTTR**: time to recover from failed deploys
+- **Success rate**: percent of deploys completing with healthy checks
 
 ---
 

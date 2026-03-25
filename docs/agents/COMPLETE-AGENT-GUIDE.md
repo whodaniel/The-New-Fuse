@@ -1525,7 +1525,7 @@ communicationManager
 - [MCP Specification](../protocols/MCP-COMPLETE-GUIDE.md)
 - [API Documentation](../api/README.md)
 - [Troubleshooting Guide](../troubleshooting/MCP-TROUBLESHOOTING-COMPLETE.md)
-- [Getting Started Guide](../getting-started/COMPLETE-GETTING-STARTED.md)
+- [Getting Started Guide](../GETTING_STARTED.md)
 
 ---
 
@@ -1545,9 +1545,9 @@ communicationManager
 
 ### Agent Communication
 
-- [Agent Communication Guide](../AGENT-COMMUNICATION-GUIDE.md) - Communication
+- [Agent Communication Guide](../agents-and-protocols/AGENT_COMMUNICATION_GUIDE.md) - Communication
   overview
-- [Agent Redis Communication](../AGENT_REDIS_COMMUNICATION.md) - Redis
+- [Agent Redis Communication](../agents-and-protocols/AGENT_COMMUNICATION_GUIDE.md) - Redis
   integration
 - [Agent Communication Architecture](../agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md)
 
@@ -1589,7 +1589,7 @@ communicationManager
 - [API Examples](../../apps/backend/API_EXAMPLES.md) - API usage patterns
 - [WebSocket Integration](../../apps/backend/WEBSOCKET_INTEGRATION_GUIDE.md) -
   Real-time comm
-- [Chat Rooms Module](../../apps/backend/src/modules/chat-rooms/README.md) -
+- [Chat Rooms Module](../../apps/backend/README.md) -
   Chat system
 
 ### Workflows
@@ -1597,7 +1597,7 @@ communicationManager
 - [Workflow Quickstart](../workflows/WORKFLOW_QUICKSTART.md) - Workflow basics
 - [Workflow Builder](../workflows/WORKFLOW_BUILDER_ENHANCEMENTS.md) - Builder
   guide
-- [n8n Integration](../../WORKFLOW_N8N_COMPLETE.md) - n8n workflows
+- [n8n Integration](../history/WORKFLOW_N8N_COMPLETE_2026-03-22.md) - n8n workflows
 
 ### Architecture & Standards
 
@@ -1605,7 +1605,7 @@ communicationManager
   standards
 - [Monorepo Architecture](../architecture/MONOREPO_ARCHITECTURE.md) - Project
   structure
-- [API Usage Guide](../API_USAGE_GUIDE.md) - API guidelines
+- [API Usage Guide](../API_DOCUMENTATION_README.md) - API guidelines
 
 ### Testing & Quality
 
@@ -1615,8 +1615,8 @@ communicationManager
 
 ### Deployment
 
-- [Deployment Guide](../deployment/DEPLOYMENT_GUIDE.md) - Production deployment
-- [Production Readiness](../../PRODUCTION_READINESS.md) - Production status
+- [Deployment Guide](../guides/deployment-guide.md) - Production deployment
+- [Production Readiness](../project-management/PRODUCTION_READINESS.md) - Production status
 
 ### Getting Started
 

@@ -1610,6 +1610,62 @@
     "capabilityLevel": "intermediate"
   },
   {
+    "id": "9ae431a6-38bc-0a60-be6e-74d529547b38",
+    "agentId": "claude-code-cli",
+    "capabilityType": "explicit",
+    "capabilityName": "CHAT",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "0fd6ab27-b6d7-e489-d3e7-b6e1f3670748",
+    "agentId": "claude-code-cli",
+    "capabilityType": "explicit",
+    "capabilityName": "CODE_GENERATION",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "18107087-56e5-8b79-9576-4a17bbf4a4d8",
+    "agentId": "claude-code-cli",
+    "capabilityType": "explicit",
+    "capabilityName": "FILE_MANAGEMENT",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "288bbf93-58b9-131f-95b4-eb888022498f",
+    "agentId": "claude-code-cli",
+    "capabilityType": "explicit",
+    "capabilityName": "DATA_ANALYSIS",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "0dcf67df-58c6-ea12-ead9-dabf1a28a011",
+    "agentId": "claude-code-cli",
+    "capabilityType": "explicit",
+    "capabilityName": "AUTOMATION",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "bf2da491-bd74-0353-1bf0-a55399d30892",
+    "agentId": "claude-code-cli",
+    "capabilityType": "domain",
+    "capabilityName": "external-llm",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "2a5fb370-4c7d-89c8-59b9-385928b09fa7",
+    "agentId": "claude-code-cli",
+    "capabilityType": "domain",
+    "capabilityName": "orchestration",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "ea9ca4da-6952-56c5-6055-c60d7ef488a5",
+    "agentId": "claude-code-cli",
+    "capabilityType": "domain",
+    "capabilityName": "engineering",
+    "capabilityLevel": "intermediate"
+  },
+  {
     "id": "685032b6-12d1-689d-50ec-9a0f11d01a48",
     "agentId": "code-fossil-investigator",
     "capabilityType": "domain",
@@ -3955,83 +4011,6 @@
     "capabilityLevel": "intermediate"
   },
   {
-    "id": "e59d80a6-d3a3-444f-d44b-add2ab1d134f",
-    "agentId": "email-custodian-agent",
-    "capabilityType": "explicit",
-    "capabilityName": "Do not persist plaintext credentials in files, chat logs, or prompts.",
-    "capabilityLevel": "advanced"
-  },
-  {
-    "id": "4f122153-6282-ecaf-a7a7-4809d947e720",
-    "agentId": "email-custodian-agent",
-    "capabilityType": "explicit",
-    "capabilityName": "Use only encrypted DB-backed records and grant tokens.",
-    "capabilityLevel": "advanced"
-  },
-  {
-    "id": "fb3ad3b4-8540-f1b9-d2ae-51864796aa97",
-    "agentId": "email-custodian-agent",
-    "capabilityType": "explicit",
-    "capabilityName": "Enforce short grant expirations and explicit scopes.",
-    "capabilityLevel": "advanced"
-  },
-  {
-    "id": "b61dbabc-9645-6902-0583-b4c2428de057",
-    "agentId": "email-custodian-agent",
-    "capabilityType": "explicit",
-    "capabilityName": "Refuse operations that bypass platform policy or legal terms.",
-    "capabilityLevel": "advanced"
-  },
-  {
-    "id": "ee83daf4-5e94-91e0-0e84-09d5ba450b64",
-    "agentId": "email-custodian-agent",
-    "capabilityType": "explicit",
-    "capabilityName": "HOSTED_EMAIL_PROVISION",
-    "capabilityLevel": "advanced"
-  },
-  {
-    "id": "2c0d2622-a06d-c9bd-561e-5242a9f9a0b2",
-    "agentId": "email-custodian-agent",
-    "capabilityType": "explicit",
-    "capabilityName": "CHATGPT_ONBOARDING_COORDINATION",
-    "capabilityLevel": "advanced"
-  },
-  {
-    "id": "b855cb39-405d-b4dd-4678-f58d8adbc00b",
-    "agentId": "email-custodian-agent",
-    "capabilityType": "explicit",
-    "capabilityName": "CREDENTIAL_GRANT_ISSUANCE",
-    "capabilityLevel": "advanced"
-  },
-  {
-    "id": "5c003b9c-0b6e-d08b-72b1-313fa352f37f",
-    "agentId": "email-custodian-agent",
-    "capabilityType": "explicit",
-    "capabilityName": "CREDENTIAL_GRANT_REDEMPTION",
-    "capabilityLevel": "advanced"
-  },
-  {
-    "id": "66227a5b-5821-d043-9469-49b7d21b5b35",
-    "agentId": "email-custodian-agent",
-    "capabilityType": "domain",
-    "capabilityName": "orchestration",
-    "capabilityLevel": "intermediate"
-  },
-  {
-    "id": "386c62cf-c6da-8dd0-12aa-6db222ec6970",
-    "agentId": "email-custodian-agent",
-    "capabilityType": "domain",
-    "capabilityName": "engineering",
-    "capabilityLevel": "intermediate"
-  },
-  {
-    "id": "67224b8f-7e97-7af3-03f3-a1afa871fda5",
-    "agentId": "email-custodian-agent",
-    "capabilityType": "domain",
-    "capabilityName": "operations",
-    "capabilityLevel": "intermediate"
-  },
-  {
     "id": "4d9b7e5d-655b-9eb7-8969-33cd81ba6649",
     "agentId": "email-marketing-automation-agent",
     "capabilityType": "domain",
@@ -4288,6 +4267,55 @@
     "agentId": "financial-manager-agent",
     "capabilityType": "domain",
     "capabilityName": "marketing",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "a5131186-55fe-10f2-6523-807e45dc915f",
+    "agentId": "frontend-debugger-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "debug-react-context-and-hooks",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "a8916024-ce5f-1bda-08c2-b8e724c429af",
+    "agentId": "frontend-debugger-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "diagnose-websocket-and-hmr-failures",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "fc4a3e16-4a6a-efe1-a3c7-a666dc8cbc5e",
+    "agentId": "frontend-debugger-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "resolve-duplicate-react-instance-conflicts",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "bf520fd4-2f30-c3b7-a738-dccc69acdf02",
+    "agentId": "frontend-debugger-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "troubleshoot-custom-element-registration-collisions",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "e5a00bb2-7fd2-5ccb-3f7f-157f308b9d4c",
+    "agentId": "frontend-debugger-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "analyze-javascript-runtime-stack-traces",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "dac875c4-8ade-0e3d-ae58-445fe84f6a0b",
+    "agentId": "frontend-debugger-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "fix-module-resolution-and-bundling-issues",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "cd896edc-d8cb-0942-bc3c-d0c8fc85c3ad",
+    "agentId": "frontend-debugger-agent",
+    "capabilityType": "domain",
+    "capabilityName": "engineering",
     "capabilityLevel": "intermediate"
   },
   {
@@ -4946,6 +4974,48 @@
     "agentId": "gemini",
     "capabilityType": "domain",
     "capabilityName": "operations",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "910b73a0-2401-2fcb-f81c-bf262cd29f99",
+    "agentId": "gemini-cli",
+    "capabilityType": "explicit",
+    "capabilityName": "CHAT",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "c3db8810-0f0f-ddf9-b33f-36cf5a7ee6d8",
+    "agentId": "gemini-cli",
+    "capabilityType": "explicit",
+    "capabilityName": "CODE_GENERATION",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "b70cd390-6529-8755-e307-670a693c26bb",
+    "agentId": "gemini-cli",
+    "capabilityType": "explicit",
+    "capabilityName": "DATA_ANALYSIS",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "c0455d83-523a-d3ef-6106-dec6273fac35",
+    "agentId": "gemini-cli",
+    "capabilityType": "domain",
+    "capabilityName": "external-llm",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "39ba9f08-c4ae-bd76-dd35-44c0325a9e42",
+    "agentId": "gemini-cli",
+    "capabilityType": "domain",
+    "capabilityName": "orchestration",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "81f5ef0e-834e-e618-95bb-f9600bbc722c",
+    "agentId": "gemini-cli",
+    "capabilityType": "domain",
+    "capabilityName": "engineering",
     "capabilityLevel": "intermediate"
   },
   {
@@ -5616,6 +5686,55 @@
   {
     "id": "57f6e457-6d34-407b-4898-68dc53521cf8",
     "agentId": "interoperability-protocol-agent",
+    "capabilityType": "domain",
+    "capabilityName": "engineering",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "a56d7517-e57d-cbbf-9988-e3187b4a9fb9",
+    "agentId": "jules-cli-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "parallel-task-execution",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "9f39e798-a87e-8947-0305-3a2c348f2302",
+    "agentId": "jules-cli-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "async-code-generation",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "58be828d-4dd9-952b-9557-fb5f4604355c",
+    "agentId": "jules-cli-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "repository-refactoring",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "89440db8-3bd4-03d2-ee30-5b969040a5e3",
+    "agentId": "jules-cli-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "multi-session-management",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "00a28879-6597-b57b-4e4b-b71f9f2347d9",
+    "agentId": "jules-cli-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "automated-code-improvements",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "2ea04cc7-3351-6600-e332-117a75d922d4",
+    "agentId": "jules-cli-agent",
+    "capabilityType": "domain",
+    "capabilityName": "development-automation",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "6b3c7afa-8b83-8074-a611-c6648364672c",
+    "agentId": "jules-cli-agent",
     "capabilityType": "domain",
     "capabilityName": "engineering",
     "capabilityLevel": "intermediate"
@@ -6633,6 +6752,20 @@
     "agentId": "orchestrator-agent",
     "capabilityType": "domain",
     "capabilityName": "orchestration",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "9dcb1647-5c96-cb19-addc-86c801ca856a",
+    "agentId": "orchestrator-agent-copy",
+    "capabilityType": "domain",
+    "capabilityName": "orchestration",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "266cace7-bada-f6d2-ede8-61711a0482ec",
+    "agentId": "orchestrator-agent-copy",
+    "capabilityType": "domain",
+    "capabilityName": "content",
     "capabilityLevel": "intermediate"
   },
   {

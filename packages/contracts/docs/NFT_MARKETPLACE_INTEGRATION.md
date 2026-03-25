@@ -177,7 +177,7 @@ http://localhost:3000/agents/revenue-dashboard
 
 ## 📄 **Related Documentation**
 
-- [NFT Agent System Documentation](./NFT_AGENT_SYSTEM_DOCUMENTATION.md)
+- [Contracts Package Overview](../README.md)
 - [Smart Contract Documentation](./contracts/)
 - [API Documentation](./apps/backend/)
 - [Frontend Components](./apps/frontend/src/components/nft/)

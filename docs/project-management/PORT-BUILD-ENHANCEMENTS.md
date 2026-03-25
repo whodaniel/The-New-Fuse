@@ -48,7 +48,7 @@ bash ./scripts/production-build.sh
 
 ## Documentation
 - Full details: [BUILD-DEPLOYMENT-PIPELINE.md](./docs/deployment/BUILD-DEPLOYMENT-PIPELINE.md)
-- Port management: [PORT-MANAGEMENT-SOLUTION.md](./docs/PORT-MANAGEMENT-SOLUTION.md)
+- Port management: [PORT-MANAGEMENT-SOLUTION.md](../PORT_MANAGEMENT.md)
 
 ## Testing
 - Run `bash ./scripts/test-build-workflow.sh` to verify port management and build workflow

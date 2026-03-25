@@ -294,10 +294,10 @@ individual packages.
 ### Application Documentation
 - [Backend Application](../../apps/backend/README.md)
 - [Frontend Application](../../apps/frontend/README.md)
-- [API Server](../../apps/api/README.md)
-- [API Gateway](../../apps/api-gateway/README.md) (if exists)
+- [API Server](../api/README.md)
+- API Gateway documentation: `apps/api-gateway`
 
 ### Deployment
-- [Deployment Guide](../deployment/DEPLOYMENT_GUIDE.md)
+- [Deployment Guide](../guides/deployment-guide.md)
 - [Railway Deployment](../deployment/RAILWAY_DEPLOYMENT_GUIDE.md)
 - [Docker Optimization](../deployment/DOCKER_OPTIMIZATION_SUMMARY.md)

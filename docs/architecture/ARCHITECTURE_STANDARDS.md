@@ -1732,7 +1732,7 @@ Before submitting PR:
 
 ### Development
 - [README.md](../../README.md) - Project overview
-- [Getting Started](../development/GETTING_STARTED.md) - Development setup
+- [Getting Started](../GETTING_STARTED.md) - Development setup
 - [Build Guide](../development/BUILD_GUIDE.md) - Build system documentation
 - [Testing Best Practices](../testing/BEST_PRACTICES.md) - Testing standards
 

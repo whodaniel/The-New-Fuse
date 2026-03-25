@@ -23,6 +23,18 @@ We use a hybrid approach that leverages the strengths of both package managers:
 - **Bun** for fast runtime and most package installations
 - **Node.js toolchain** for native module compilation when needed
 
+## Project Native Module Inventory
+
+### Core Modules
+- **canvas** - HTML5 canvas support for server-side rendering
+- **drivelist** - Drive enumeration for system integration
+- **node-pty** - Pseudo-terminal support for SkIDEancer IDE
+- **@vscode/ripgrep** - Fast text search functionality
+
+### Optional Modules
+- **keytar** - Secure credential storage
+- **find-git-repositories** - Git repository discovery
+
 ## Step-by-Step Resolution
 
 ### 1. Environment Setup
@@ -149,6 +161,45 @@ sudo chown -R $(whoami) node_modules/
 npm install --unsafe-perm
 ```
 
+### Issue: drivelist module missing
+```bash
+Error: Cannot find module 'drivelist/build/Release/drivelist.node'
+```
+
+```bash
+# Automatic fix
+pnpm run setup:native-modules
+
+# Manual fix
+pnpm add drivelist --dev
+```
+
+### Issue: node-pty helper missing
+```bash
+Error: Cannot find module 'node-pty/build/Release/spawn-helper'
+```
+
+```bash
+# Automatic fix
+pnpm run setup:native-modules
+
+# Manual fix
+pnpm add node-pty --dev
+```
+
+### Issue: ripgrep binary missing
+```bash
+Error: Cannot find module '@vscode/ripgrep/bin/rg'
+```
+
+```bash
+# Automatic fix
+pnpm run setup:native-modules
+
+# Manual fix
+pnpm add @vscode/ripgrep --dev
+```
+
 ## Best Practices
 
 ### 1. Version Pinning
@@ -210,6 +261,10 @@ New developers can now simply run:
 ./scripts/setup-project.sh  # Complete automated setup
 # OR
 pnpm install                  # Automatic postinstall fixes
+
+# Native module helpers
+pnpm run setup:native-modules
+pnpm run fix:native-modules
 ```
 
 ## Future Considerations

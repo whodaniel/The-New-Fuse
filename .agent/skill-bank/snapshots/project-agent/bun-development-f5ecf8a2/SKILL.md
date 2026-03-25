@@ -1,16 +1,11 @@
 ---
 name: bun-development
-description:
-  'Modern JavaScript/TypeScript development with Bun runtime. Covers package
-  management, bundling, testing, and migration from Node.js. Use when working
-  with Bun, optimizing JS/TS development speed, or migrating from Node.js to
-  Bun.'
+description: "Modern JavaScript/TypeScript development with Bun runtime. Covers package management, bundling, testing, and migration from Node.js. Use when working with Bun, optimizing JS/TS development speed, or migrating from Node.js to Bun."
 ---
 
 # ⚡ Bun Development
 
-> Fast, modern JavaScript/TypeScript development with the Bun runtime, inspired
-> by [oven-sh/bun](https://github.com/oven-sh/bun).
+> Fast, modern JavaScript/TypeScript development with the Bun runtime, inspired by [oven-sh/bun](https://github.com/oven-sh/bun).
 
 ## When to Use This Skill
 
@@ -244,7 +239,7 @@ bun --hot run server.ts
 
 // Access environment variables
 const apiKey = Bun.env.API_KEY;
-const port = Bun.env.PORT ?? '3000';
+const port = Bun.env.PORT ?? "3000";
 
 // Or use process.env (Node.js compatible)
 const dbUrl = process.env.DATABASE_URL;
@@ -263,7 +258,7 @@ bun --env-file=.env.production run index.ts
 
 ```typescript
 // Read file
-const file = Bun.file('./data.json');
+const file = Bun.file("./data.json");
 const text = await file.text();
 const json = await file.json();
 const buffer = await file.arrayBuffer();
@@ -273,8 +268,8 @@ console.log(file.size); // bytes
 console.log(file.type); // MIME type
 
 // Write file
-await Bun.write('./output.txt', 'Hello, Bun!');
-await Bun.write('./data.json', JSON.stringify({ foo: 'bar' }));
+await Bun.write("./output.txt", "Hello, Bun!");
+await Bun.write("./data.json", JSON.stringify({ foo: "bar" }));
 
 // Stream large files
 const reader = file.stream();
@@ -292,18 +287,18 @@ const server = Bun.serve({
   fetch(request) {
     const url = new URL(request.url);
 
-    if (url.pathname === '/') {
-      return new Response('Hello World!');
+    if (url.pathname === "/") {
+      return new Response("Hello World!");
     }
 
-    if (url.pathname === '/api/users') {
+    if (url.pathname === "/api/users") {
       return Response.json([
-        { id: 1, name: 'Alice' },
-        { id: 2, name: 'Bob' },
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
       ]);
     }
 
-    return new Response('Not Found', { status: 404 });
+    return new Response("Not Found", { status: 404 });
   },
 
   error(error) {
@@ -325,13 +320,13 @@ const server = Bun.serve({
     if (server.upgrade(req)) {
       return; // Upgraded
     }
-    return new Response('Upgrade failed', { status: 500 });
+    return new Response("Upgrade failed", { status: 500 });
   },
 
   websocket: {
     open(ws) {
-      console.log('Client connected');
-      ws.send('Welcome!');
+      console.log("Client connected");
+      ws.send("Welcome!");
     },
 
     message(ws, message) {
@@ -340,7 +335,7 @@ const server = Bun.serve({
     },
 
     close(ws) {
-      console.log('Client disconnected');
+      console.log("Client disconnected");
     },
   },
 });
@@ -349,9 +344,9 @@ const server = Bun.serve({
 ### 5.4 SQLite (Bun.sql)
 
 ```typescript
-import { Database } from 'bun:sqlite';
+import { Database } from "bun:sqlite";
 
-const db = new Database('mydb.sqlite');
+const db = new Database("mydb.sqlite");
 
 // Create table
 db.run(`
@@ -363,23 +358,23 @@ db.run(`
 `);
 
 // Insert
-const insert = db.prepare('INSERT INTO users (name, email) VALUES (?, ?)');
-insert.run('Alice', 'alice@example.com');
+const insert = db.prepare("INSERT INTO users (name, email) VALUES (?, ?)");
+insert.run("Alice", "alice@example.com");
 
 // Query
-const query = db.prepare('SELECT * FROM users WHERE name = ?');
-const user = query.get('Alice');
+const query = db.prepare("SELECT * FROM users WHERE name = ?");
+const user = query.get("Alice");
 console.log(user); // { id: 1, name: "Alice", email: "alice@example.com" }
 
 // Query all
-const allUsers = db.query('SELECT * FROM users').all();
+const allUsers = db.query("SELECT * FROM users").all();
 ```
 
 ### 5.5 Password Hashing
 
 ```typescript
 // Hash password
-const password = 'super-secret';
+const password = "super-secret";
 const hash = await Bun.password.hash(password);
 
 // Verify password
@@ -388,7 +383,7 @@ console.log(isValid); // true
 
 // With algorithm options
 const bcryptHash = await Bun.password.hash(password, {
-  algorithm: 'bcrypt',
+  algorithm: "bcrypt",
   cost: 12,
 });
 ```
@@ -401,14 +396,14 @@ const bcryptHash = await Bun.password.hash(password, {
 
 ```typescript
 // math.test.ts
-import { describe, it, expect, beforeAll, afterAll } from 'bun:test';
+import { describe, it, expect, beforeAll, afterAll } from "bun:test";
 
-describe('Math operations', () => {
-  it('adds two numbers', () => {
+describe("Math operations", () => {
+  it("adds two numbers", () => {
     expect(1 + 1).toBe(2);
   });
 
-  it('subtracts two numbers', () => {
+  it("subtracts two numbers", () => {
     expect(5 - 3).toBe(2);
   });
 });
@@ -439,9 +434,9 @@ bun test --timeout 5000
 ### 6.3 Matchers
 
 ```typescript
-import { expect, test } from 'bun:test';
+import { expect, test } from "bun:test";
 
-test('matchers', () => {
+test("matchers", () => {
   // Equality
   expect(1).toBe(1);
   expect({ a: 1 }).toEqual({ a: 1 });
@@ -457,27 +452,27 @@ test('matchers', () => {
   expect(undefined).toBeUndefined();
 
   // Strings
-  expect('hello').toMatch(/ell/);
-  expect('hello').toContain('ell');
+  expect("hello").toMatch(/ell/);
+  expect("hello").toContain("ell");
 
   // Arrays
   expect([1, 2, 3]).toHaveLength(3);
 
   // Exceptions
   expect(() => {
-    throw new Error('fail');
-  }).toThrow('fail');
+    throw new Error("fail");
+  }).toThrow("fail");
 
   // Async
   await expect(Promise.resolve(1)).resolves.toBe(1);
-  await expect(Promise.reject('err')).rejects.toBe('err');
+  await expect(Promise.reject("err")).rejects.toBe("err");
 });
 ```
 
 ### 6.4 Mocking
 
 ```typescript
-import { mock, spyOn } from 'bun:test';
+import { mock, spyOn } from "bun:test";
 
 // Mock function
 const mockFn = mock((x: number) => x * 2);
@@ -488,10 +483,10 @@ expect(mockFn.mock.results[0].value).toBe(10);
 
 // Spy on method
 const obj = {
-  method: () => 'original',
+  method: () => "original",
 };
-const spy = spyOn(obj, 'method').mockReturnValue('mocked');
-expect(obj.method()).toBe('mocked');
+const spy = spyOn(obj, "method").mockReturnValue("mocked");
+expect(obj.method()).toBe("mocked");
 expect(spy).toHaveBeenCalled();
 ```
 
@@ -517,27 +512,27 @@ bun build ./src/index.ts \
 
 ```typescript
 const result = await Bun.build({
-  entrypoints: ['./src/index.ts'],
-  outdir: './dist',
-  target: 'browser', // or "bun", "node"
+  entrypoints: ["./src/index.ts"],
+  outdir: "./dist",
+  target: "browser", // or "bun", "node"
   minify: true,
-  sourcemap: 'external',
+  sourcemap: "external",
   splitting: true,
-  format: 'esm',
+  format: "esm",
 
   // External packages (not bundled)
-  external: ['react', 'react-dom'],
+  external: ["react", "react-dom"],
 
   // Define globals
   define: {
-    'process.env.NODE_ENV': JSON.stringify('production'),
+    "process.env.NODE_ENV": JSON.stringify("production"),
   },
 
   // Naming
   naming: {
-    entry: '[name].[hash].js',
-    chunk: 'chunks/[name].[hash].js',
-    asset: 'assets/[name].[hash][ext]',
+    entry: "[name].[hash].js",
+    chunk: "chunks/[name].[hash].js",
+    asset: "assets/[name].[hash][ext]",
   },
 });
 
@@ -568,16 +563,16 @@ bun build ./src/cli.ts --compile --outfile myapp --embed ./assets
 
 ```typescript
 // Most Node.js APIs work out of the box
-import fs from 'fs';
-import path from 'path';
-import crypto from 'crypto';
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
 
 // process is global
 console.log(process.cwd());
 console.log(process.env.HOME);
 
 // Buffer is global
-const buf = Buffer.from('hello');
+const buf = Buffer.from("hello");
 
 // __dirname and __filename work
 console.log(__dirname);
@@ -633,11 +628,11 @@ Bun.password.hash(password);           // Built-in hashing
 
 ```typescript
 // Slow (Node.js compat)
-import fs from 'fs/promises';
-const content = await fs.readFile('./data.txt', 'utf-8');
+import fs from "fs/promises";
+const content = await fs.readFile("./data.txt", "utf-8");
 
 // Fast (Bun-native)
-const file = Bun.file('./data.txt');
+const file = Bun.file("./data.txt");
 const content = await file.text();
 ```
 
@@ -645,19 +640,19 @@ const content = await file.text();
 
 ```typescript
 // Don't: Express/Fastify (overhead)
-import express from 'express';
+import express from "express";
 const app = express();
 
 // Do: Bun.serve (native, 4-10x faster)
 Bun.serve({
   fetch(req) {
-    return new Response('Hello!');
+    return new Response("Hello!");
   },
 });
 
 // Or use Elysia (Bun-optimized framework)
-import { Elysia } from 'elysia';
-new Elysia().get('/', () => 'Hello!').listen(3000);
+import { Elysia } from "elysia";
+new Elysia().get("/", () => "Hello!").listen(3000);
 ```
 
 ### 9.3 Bundle for Production

@@ -1,3 +1,56 @@
+# Development Log - The New Fuse
+
+## 2025-05-16 - TypeScript ESM Configuration Modernization
+
+**Issue Summary:**
+After enabling ESM support, startup surfaced warnings related to:
+1. `--experimental-specifier-resolution=node`
+2. Experimental loaders
+
+**Applied Fixes:**
+1. Updated Node execution flags:
+   - Replaced `--loader ts-node/esm` with `--import ts-node/register/esm`
+   - Removed `--experimental-specifier-resolution=node`
+2. Simplified `tsconfig.node.json`:
+   - Removed `experimentalSpecifierResolution`
+   - Added explicit module settings
+3. Added `tsconfig.paths.json` to improve path alias resolution
+4. Updated supporting docs (including ESM quick reference updates)
+
+**Results:**
+- Application runs with stable ESM startup behavior.
+
+**Next Steps:**
+- Validate all path aliases across API/backend/runtime scripts
+- Standardize ESM import patterns across the repo
+- Remove obsolete backup files after validation
+
+---
+
+## 2025-05-16 - TypeScript ESM Configuration Fix
+
+**Issue Summary:**
+Primary ESM issues were:
+1. `ERROR_UNKNOWN_FILE_EXTENSION` for `.ts` in ESM context
+2. Path alias failures (for example `Cannot find module '@/routes/agents'`)
+3. CommonJS syntax used inside ESM execution paths
+
+**Applied Fixes:**
+1. Updated nodemon execution for API/backend app runners.
+2. Added `tsconfig.node.json` where required (root + service apps).
+3. Converted selected alias imports to compatible relative `.js` imports.
+4. Added missing route scaffolding for failing imports.
+5. Added fix automation script for repeatability (`fix-typescript-esm-all.sh`).
+
+**Results:**
+- API and backend services boot successfully under ESM execution.
+- Follow-on cleanup can focus on standardization rather than boot failure.
+
+**Documentation:**
+- Updated TypeScript ESM guidance and quick references.
+
+---
+
 ## 2025-05-01 (Part 3)
 
 **Goal:** Address TODOs in `MCPRegistryService` / `MCPRegistryServer` (Authentication, Parameter Validation, Configuration).

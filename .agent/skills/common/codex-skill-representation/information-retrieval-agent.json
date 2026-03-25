@@ -1,0 +1,12 @@
+{
+  "skillName": "information-retrieval-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/information-retrieval-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/information-retrieval-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/information-retrieval-agent.json",
+  "status": "present"
+}

@@ -1,15 +1,11 @@
 ---
 name: jules-autonomous-loop
-description:
-  Run Jules delegation and PR lifecycle autonomously (status, plan approval,
-  publish, PR creation, conflict resolution, merge) and schedule unattended runs
-  with cron.
+description: Run Jules delegation and PR lifecycle autonomously (status, plan approval, publish, PR creation, conflict resolution, merge) and schedule unattended runs with cron.
 ---
 
 # Jules Autonomous Loop
 
-Use this skill when the user wants fully programmatic Jules operations with
-minimal supervision.
+Use this skill when the user wants fully programmatic Jules operations with minimal supervision.
 
 ## Trigger cues
 

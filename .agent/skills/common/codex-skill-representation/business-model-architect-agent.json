@@ -1,0 +1,12 @@
+{
+  "skillName": "business-model-architect-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/business-model-architect-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/business-model-architect-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/business-model-architect-agent.json",
+  "status": "present"
+}

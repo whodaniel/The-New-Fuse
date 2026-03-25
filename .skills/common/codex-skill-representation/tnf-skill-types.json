@@ -1,0 +1,12 @@
+{
+  "skillName": "tnf-skill-types",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/tnf-skill-types/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/tnf-skill-types/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/tnf-skill-types.json",
+  "status": "present"
+}

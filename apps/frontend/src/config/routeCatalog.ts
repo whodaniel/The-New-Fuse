@@ -386,6 +386,23 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   },
   { name: 'Blog', path: '/blog', description: 'Marketing blog page' },
   { name: 'Brand', path: '/brand', description: 'Brand identity page' },
+  { name: 'FAQ Alias', path: '/faq', description: 'Zo-compatible FAQ alias to TNF docs' },
+  {
+    name: 'Comparisons Alias',
+    path: '/comparisons',
+    description: 'Zo-compatible comparisons alias to TNF product map',
+  },
+  { name: 'Careers Alias', path: '/careers', description: 'Zo-compatible careers alias to TNF community' },
+  {
+    name: 'Ambassador Alias',
+    path: '/ambassador',
+    description: 'Zo-compatible ambassador alias to TNF community',
+  },
+  {
+    name: 'Testimonials Alias',
+    path: '/testimonials',
+    description: 'Zo-compatible testimonials alias to TNF landing testimonials section',
+  },
   { name: 'Command Center', path: '/command-center', description: 'TNF command center' },
   { name: 'Community', path: '/community', description: 'Community hub page' },
   { name: 'Contact', path: '/contact', description: 'Contact and support entry' },
@@ -410,6 +427,74 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
     name: 'Resources',
     path: '/resources',
     description: 'Resources marketplace dashboard (legacy)',
+  },
+  {
+    name: 'Files Workspace',
+    path: '/files',
+    description: 'Operator file workspace for indexed skill files and resource search',
+  },
+  {
+    name: 'Tools Alias',
+    path: '/tools',
+    description: 'Zo-compatible tools alias mapped to TNF resources workspace',
+  },
+  {
+    name: 'Integrations Alias',
+    path: '/integrations',
+    description: 'Zo-compatible integrations alias mapped to TNF resources workspace',
+  },
+  {
+    name: 'Channels Alias',
+    path: '/channels',
+    description: 'Zo-compatible channels alias mapped to TNF chat workspace',
+  },
+  {
+    name: 'Models Alias',
+    path: '/models',
+    description: 'Zo-compatible models alias mapped to TNF API/model settings',
+  },
+  { name: 'Skills Alias', path: '/skills', description: 'Zo-compatible skills surface alias' },
+  {
+    name: 'Datasets Workbench',
+    path: '/datasets',
+    description: 'Dataset catalog and indexed corpus inspection workbench',
+  },
+  {
+    name: 'Automations Alias',
+    path: '/automations',
+    description: 'Zo-compatible automation surface alias',
+  },
+  { name: 'Chats Alias', path: '/chats', description: 'Zo-compatible chats alias route' },
+  {
+    name: 'Space Alias',
+    path: '/space',
+    description: 'Space control surface with routed project and domain management',
+  },
+  {
+    name: 'Hosting Control Center',
+    path: '/hosting',
+    description: 'Hosting target management with database-backed custom domain controls',
+  },
+  {
+    name: 'Terminal Alias',
+    path: '/terminal',
+    description: 'Zo-compatible terminal alias route',
+  },
+  { name: 'Billing Alias', path: '/billing', description: 'Zo-compatible billing alias route' },
+  {
+    name: 'Bookmarks',
+    path: '/bookmarks',
+    description: 'Workspace-aware bookmark management with database-backed workspace APIs',
+  },
+  {
+    name: 'Zo Parity Dashboard',
+    path: '/zo-parity',
+    description: 'Competitive parity tracker for Zo feature coverage',
+  },
+  {
+    name: 'System Alias',
+    path: '/system',
+    description: 'Zo-compatible system health alias route',
   },
   { name: 'Support', path: '/support', description: 'Support page' },
   {

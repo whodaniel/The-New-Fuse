@@ -1,0 +1,12 @@
+{
+  "skillName": "agent-relationship-grapher",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/agent-relationship-grapher/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/agent-relationship-grapher/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/agent-relationship-grapher.json",
+  "status": "present"
+}

@@ -1,0 +1,12 @@
+{
+  "skillName": "library-of-living-knowledge",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/library-of-living-knowledge/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/library-of-living-knowledge/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/library-of-living-knowledge.json",
+  "status": "present"
+}

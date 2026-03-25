@@ -1,0 +1,12 @@
+{
+  "skillName": "productivity-and-burnout-prevention-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/productivity-and-burnout-prevention-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/productivity-and-burnout-prevention-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/productivity-and-burnout-prevention-agent.json",
+  "status": "present"
+}

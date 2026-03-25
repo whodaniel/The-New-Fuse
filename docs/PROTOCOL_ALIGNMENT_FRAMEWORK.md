@@ -711,7 +711,7 @@ Testing:
   - docs/testing/E2E_TEST_SUMMARY.md
 
 Deployment:
-  - docs/deployment/DEPLOYMENT_GUIDE.md
+  - docs/guides/deployment-guide.md
   - docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md
   - docs/DOCKER.md
 ```

@@ -28,14 +28,95 @@ function ensureDir(file) {
   fs.mkdirSync(path.dirname(path.resolve(process.cwd(), file)), { recursive: true });
 }
 
-function endpoint() {
-  const base =
+function normalizeBase(value) {
+  return String(value || '')
+    .trim()
+    .replace(/\/+$/, '');
+}
+
+function normalizePath(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '/';
+  return raw.startsWith('/') ? raw : `/${raw}`;
+}
+
+function joinUrl(base, routePath) {
+  const normalizedBase = normalizeBase(base);
+  let normalizedPath = normalizePath(routePath);
+
+  if (normalizedBase.toLowerCase().endsWith('/api') && normalizedPath.toLowerCase().startsWith('/api/')) {
+    normalizedPath = normalizedPath.slice('/api'.length);
+  }
+
+  return `${normalizedBase}${normalizedPath}`;
+}
+
+function stripApiSuffix(base) {
+  return normalizeBase(base).replace(/\/api$/i, '');
+}
+
+function uniqueUrls(values) {
+  const seen = new Set();
+  const out = [];
+  for (const value of values) {
+    const normalized = normalizeBase(value);
+    if (!normalized || seen.has(normalized)) {
+      continue;
+    }
+    seen.add(normalized);
+    out.push(normalized);
+  }
+  return out;
+}
+
+function resolveEndpoints() {
+  const baseRaw =
     process.env.RESOURCE_REGISTRY_API_BASE_URL ||
     process.env.TNF_API_BASE_URL ||
     process.env.API_BASE_URL ||
     'http://localhost:3001';
-  const path = process.env.RESOURCE_REGISTRY_ENDPOINT_PATH || '/api/resources';
-  return `${String(base).replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
+  const configuredPath = process.env.RESOURCE_REGISTRY_ENDPOINT_PATH || '/api/resources';
+
+  const base = normalizeBase(baseRaw);
+  const ingestUrl = joinUrl(base, configuredPath);
+  const rootBase = stripApiSuffix(base);
+  const marketplaceSubmitUrl = joinUrl(rootBase, '/api/marketplace/catalog/submit');
+  const marketplaceCatalogUrl = joinUrl(rootBase, '/api/marketplace/catalog');
+
+  const alternateResourceUrls = [];
+  if (/\/api\/resources$/i.test(ingestUrl)) {
+    alternateResourceUrls.push(ingestUrl.replace(/\/api\/resources$/i, '/resources'));
+  } else if (/\/resources$/i.test(ingestUrl)) {
+    alternateResourceUrls.push(ingestUrl.replace(/\/resources$/i, '/api/resources'));
+  }
+
+  return {
+    ingestUrl,
+    resourceCandidateUrls: uniqueUrls([ingestUrl, ...alternateResourceUrls]),
+    marketplaceSubmitUrl,
+    marketplaceCatalogUrl,
+    isDirectMarketplace: /\/api\/marketplace\/catalog\/submit$/i.test(ingestUrl),
+  };
+}
+
+function isMissingRouteStatus(status) {
+  return status === 404 || status === 405;
+}
+
+function buildFailureHint(status, isDirectMarketplace) {
+  if (status === 401 || status === 403) {
+    if (isDirectMarketplace) {
+      return 'Marketplace submit requires a valid member/admin JWT bearer token.';
+    }
+    return 'Resource-registry ingest requires RESOURCE_REGISTRY_API_KEY or a valid ingest bearer token.';
+  }
+  if (status === 404 || status === 405) {
+    return 'Ingest route not available; deploy API with POST /api/resources or set RESOURCE_REGISTRY_ENDPOINT_PATH to a valid ingest route.';
+  }
+  if (status === 500) {
+    return 'Server error from ingest endpoint; check backend logs and endpoint/auth contract.';
+  }
+  return '';
 }
 
 function headers() {
@@ -49,11 +130,12 @@ function headers() {
     process.env.RESOURCE_REGISTRY_API_KEY ||
     process.env.TNF_RESOURCE_REGISTRY_API_KEY ||
     process.env.API_KEY ||
+    process.env.COMMUNITY_API_KEY ||
     '';
   if (bearer) out.Authorization = `Bearer ${bearer}`;
   if (apiKey) {
     out['x-api-key'] = apiKey;
-    out['X-API-Key'] = apiKey;
+    out['x-community-api-key'] = apiKey;
   }
   return out;
 }
@@ -214,11 +296,12 @@ async function main() {
     })
     .filter(Boolean);
 
-  const url = endpoint();
-  const base = url.replace(/\/api\/[^/]+(?:\/[^/]+)?$/, '');
-  const marketplaceUrl = `${base}/api/marketplace/catalog/submit`;
-  const marketplaceCatalogUrl = `${base}/api/marketplace/catalog`;
-  const isDirectMarketplace = /\/api\/marketplace\/catalog\/submit$/i.test(url);
+  const endpointConfig = resolveEndpoints();
+  const url = endpointConfig.ingestUrl;
+  const resourceCandidateUrls = endpointConfig.resourceCandidateUrls;
+  const marketplaceUrl = endpointConfig.marketplaceSubmitUrl;
+  const marketplaceCatalogUrl = endpointConfig.marketplaceCatalogUrl;
+  const isDirectMarketplace = endpointConfig.isDirectMarketplace;
   const hdrs = headers();
   const dedupeRemote = process.env.SKILL_BANK_DEDUPE_REMOTE !== 'false';
   const remoteLookupCache = new Map();
@@ -227,6 +310,8 @@ async function main() {
   const summary = {
     at: new Date().toISOString(),
     endpoint: url,
+    endpointCandidates: resourceCandidateUrls,
+    marketplaceFallback: marketplaceUrl,
     total: entries.length,
     posted: 0,
     skipped: 0,
@@ -277,7 +362,17 @@ async function main() {
       while (attempts < 4) {
         attempts += 1;
         result = isDirectMarketplace ? await postMarketplace(url, hdrs, row) : await post(url, hdrs, row);
-        if (!isDirectMarketplace && !result.ok && (result.status === 404 || result.status === 405)) {
+        if (!isDirectMarketplace && !result.ok && isMissingRouteStatus(result.status)) {
+          for (const candidateUrl of resourceCandidateUrls) {
+            if (candidateUrl === url) continue;
+            const altResult = await post(candidateUrl, hdrs, row);
+            result = altResult;
+            if (altResult.ok || !isMissingRouteStatus(altResult.status)) {
+              break;
+            }
+          }
+        }
+        if (!isDirectMarketplace && !result.ok && isMissingRouteStatus(result.status)) {
           result = await postMarketplace(marketplaceUrl, hdrs, row);
         }
         if (result.ok) break;
@@ -291,8 +386,14 @@ async function main() {
       if (result?.ok) {
         summary.posted += 1;
       } else {
+        const hint = buildFailureHint(result?.status, isDirectMarketplace);
         summary.failed += 1;
-        stillPending.push({ row, reason: `HTTP ${result?.status || 'unknown'}`, response: result?.body || null });
+        stillPending.push({
+          row,
+          reason: `HTTP ${result?.status || 'unknown'}`,
+          response: result?.body || null,
+          hint: hint || undefined,
+        });
       }
     } catch (error) {
       summary.failed += 1;

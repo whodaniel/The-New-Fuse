@@ -1,0 +1,12 @@
+{
+  "skillName": "spreadsheet",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/spreadsheet/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/spreadsheet/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/spreadsheet.json",
+  "status": "present"
+}

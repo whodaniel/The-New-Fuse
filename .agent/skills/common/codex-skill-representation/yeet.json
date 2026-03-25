@@ -1,0 +1,12 @@
+{
+  "skillName": "yeet",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/yeet/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/yeet/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/yeet.json",
+  "status": "present"
+}

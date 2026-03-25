@@ -15,6 +15,56 @@ This guide implements a three-phase deployment strategy for The New Fuse Platfor
 - **Build System**: Turborepo with memory-optimized builds
 - **Containerization**: Docker with multi-stage builds
 
+## Operational Runbook (Current Scripts)
+
+In addition to the phased strategy below, day-to-day production deployments use the automation scripts in `scripts/deployment`.
+
+### Standard Automated Flow
+
+```bash
+# 1. Validate environment and config
+./scripts/deployment/validate-deployment.sh
+
+# 2. Deploy with automation + rollback hooks
+./scripts/deployment/deploy-automated.sh
+
+# 3. Verify deployment health
+./scripts/deployment/smoke-tests.sh
+```
+
+### Railway-Focused Script Flow
+
+```bash
+# Deploy all services
+./scripts/deployment/railway-deploy.sh all
+
+# Deploy one service
+./scripts/deployment/railway-deploy.sh deploy api-gateway
+
+# Stream service logs
+./scripts/deployment/railway-deploy.sh watch api-gateway
+```
+
+### Manual Controlled Flow
+
+```bash
+./scripts/deployment/validate-deployment.sh
+./scripts/deployment/db-backup.sh
+./scripts/deployment/db-migrate.sh
+pnpm run build:railway
+railway up --service api-gateway
+railway up --service backend
+railway up --service frontend
+./scripts/deployment/smoke-tests.sh
+```
+
+### Deployment Strategy Toggles
+
+Set `.deployment-config` as needed:
+- `DEPLOYMENT_STRATEGY=rolling|blue-green|canary`
+- `AUTO_ROLLBACK=true|false`
+- `BACKUP_BEFORE_MIGRATE=true|false`
+
 ## Phase 1: Short-Range Plan (Managed PaaS) 🚀
 
 **Goal**: Achieve production deployment within days using fully managed platforms.

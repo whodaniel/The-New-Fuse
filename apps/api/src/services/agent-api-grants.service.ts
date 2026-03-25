@@ -6,6 +6,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { and, DatabaseService, desc, eq, gte } from '@the-new-fuse/database';
@@ -212,7 +213,7 @@ export class AgentApiGrantsService {
     }
 
     const endpoint = this.getProviderEndpoint(provider, body?.endpoint);
-    const outboundBody = this.buildOutboundPayload(body);
+    const outboundBody = this.buildOutboundPayload(provider, body);
     const headers = this.buildProviderHeaders(provider, providerKey.apiKey, body);
 
     let statusCode = 500;
@@ -421,10 +422,72 @@ export class AgentApiGrantsService {
     return decoded as GrantTokenPayload;
   }
 
-  private buildOutboundPayload(body: any) {
+  private buildOutboundPayload(provider: string, body: any) {
     if (!body || typeof body !== 'object') return {};
     const { endpoint: _endpoint, ...rest } = body;
-    return rest;
+    if (provider !== 'google-adk') return rest;
+
+    // Accept either native ADK execute envelopes or OpenAI-style chat payloads.
+    if (rest.requestId && rest.traceId && rest.input && rest.workspaceId && rest.agentId) {
+      return rest;
+    }
+
+    const mappedMessages = this.normalizeGoogleADKMessages(rest);
+    return {
+      requestId: typeof rest.requestId === 'string' && rest.requestId.trim() ? rest.requestId : randomUUID(),
+      traceId: typeof rest.traceId === 'string' && rest.traceId.trim() ? rest.traceId : randomUUID(),
+      workspaceId:
+        typeof rest.workspaceId === 'string' && rest.workspaceId.trim()
+          ? rest.workspaceId
+          : 'tnf-agent-proxy',
+      agentId:
+        typeof rest.agentId === 'string' && rest.agentId.trim() ? rest.agentId : 'tnf-agent-proxy',
+      model:
+        typeof rest.model === 'string' && rest.model.trim()
+          ? rest.model
+          : process.env.GOOGLE_ADK_MODEL?.trim() || 'gemini-2.5-pro',
+      input: {
+        messages: mappedMessages,
+      },
+      tools: Array.isArray(rest.tools) ? rest.tools : [],
+      metadata:
+        rest.metadata && typeof rest.metadata === 'object'
+          ? rest.metadata
+          : {
+              source: 'tnf-agent-proxy',
+              policyProfile: 'default',
+            },
+      timeoutMs:
+        typeof rest.timeoutMs === 'number' && Number.isFinite(rest.timeoutMs) && rest.timeoutMs > 0
+          ? rest.timeoutMs
+          : 120000,
+    };
+  }
+
+  private normalizeGoogleADKMessages(body: any): Array<{ role: string; content: string }> {
+    if (body?.input?.messages && Array.isArray(body.input.messages)) {
+      return body.input.messages
+        .map((message: any) => ({
+          role: typeof message?.role === 'string' ? message.role : 'user',
+          content: typeof message?.content === 'string' ? message.content : '',
+        }))
+        .filter((message: { role: string; content: string }) => message.content.length > 0);
+    }
+
+    if (Array.isArray(body?.messages)) {
+      return body.messages
+        .map((message: any) => ({
+          role: typeof message?.role === 'string' ? message.role : 'user',
+          content: typeof message?.content === 'string' ? message.content : '',
+        }))
+        .filter((message: { role: string; content: string }) => message.content.length > 0);
+    }
+
+    if (typeof body?.prompt === 'string' && body.prompt.trim()) {
+      return [{ role: 'user', content: body.prompt.trim() }];
+    }
+
+    return [];
   }
 
   private getProviderEndpoint(provider: string, requestedEndpoint?: string): string {
@@ -436,6 +499,7 @@ export class AgentApiGrantsService {
       perplexity: { baseUrl: 'https://api.perplexity.ai', path: '/chat/completions' },
       groq: { baseUrl: 'https://api.groq.com/openai/v1', path: '/chat/completions' },
       anthropic: { baseUrl: 'https://api.anthropic.com/v1', path: '/messages' },
+      'google-adk': { baseUrl: this.resolveGoogleADKBaseUrl(), path: '/v1/execute' },
     };
 
     const config = defaults[provider];
@@ -443,7 +507,7 @@ export class AgentApiGrantsService {
       throw new ForbiddenException(`Unsupported provider for proxy: ${provider}`);
     }
 
-    const allowedPaths = new Set(['/chat/completions', '/responses', '/messages']);
+    const allowedPaths = new Set(['/chat/completions', '/responses', '/messages', '/v1/execute']);
     const path = safeEndpoint && allowedPaths.has(safeEndpoint) ? safeEndpoint : config.path;
     return `${config.baseUrl}${path}`;
   }
@@ -464,6 +528,11 @@ export class AgentApiGrantsService {
       return headers;
     }
 
+    if (provider === 'google-adk') {
+      headers['x-adk-gateway-key'] = apiKey;
+      return headers;
+    }
+
     headers.Authorization = `Bearer ${apiKey}`;
     return headers;
   }
@@ -474,9 +543,11 @@ export class AgentApiGrantsService {
     totalTokens: number;
   } {
     const usage = responseBody?.usage || {};
-    const promptTokens = Number(usage.prompt_tokens ?? usage.input_tokens ?? 0);
-    const completionTokens = Number(usage.completion_tokens ?? usage.output_tokens ?? 0);
-    const totalTokens = Number(usage.total_tokens ?? promptTokens + completionTokens);
+    const promptTokens = Number(usage.prompt_tokens ?? usage.input_tokens ?? usage.inputTokens ?? 0);
+    const completionTokens = Number(
+      usage.completion_tokens ?? usage.output_tokens ?? usage.outputTokens ?? 0
+    );
+    const totalTokens = Number(usage.total_tokens ?? usage.totalTokens ?? promptTokens + completionTokens);
     return {
       promptTokens: Number.isFinite(promptTokens) ? promptTokens : 0,
       completionTokens: Number.isFinite(completionTokens) ? completionTokens : 0,
@@ -504,5 +575,14 @@ export class AgentApiGrantsService {
     } catch {
       return text;
     }
+  }
+
+  private resolveGoogleADKBaseUrl(): string {
+    const raw =
+      process.env.GOOGLE_ADK_BASE_URL?.trim() ||
+      process.env.ADK_GATEWAY_URL?.trim() ||
+      'http://localhost:8089';
+    const withoutExecutePath = raw.replace(/\/v1\/execute(?:\/stream)?$/, '');
+    return withoutExecutePath.replace(/\/+$/, '');
   }
 }

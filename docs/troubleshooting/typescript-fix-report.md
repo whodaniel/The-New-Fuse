@@ -27,6 +27,17 @@
 ✅ All component files are properly using .tsx extension
 ✅ React imports are present in all component files
 
+## Project-Wide Setup Prerequisites
+
+For broader TypeScript remediation runs (for example, when working through high error-volume branches), apply this baseline first:
+
+1. Install common missing dependencies:
+   ```bash
+   yarn add -D rimraf
+   yarn add date-fns lodash
+   ```
+2. In `tsconfig.base.json`, use `"moduleResolution": "node"` and remove `"allowImportingTsExtensions"` to avoid resolver mismatch issues.
+
 ## Best Practices Implemented
 
 1. Component Types

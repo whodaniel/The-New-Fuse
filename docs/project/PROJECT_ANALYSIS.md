@@ -8,6 +8,7 @@ The New Fuse is an advanced AI communication system designed for seamless intera
 /
 ├── apps/
 │   ├── api/         # Backend API service
+│   ├── backend/     # Additional NestJS backend services
 │   └── frontend/    # React/Vite frontend
 ├── packages/
 │   ├── agent/       # AI agent system
@@ -18,6 +19,13 @@ The New Fuse is an advanced AI communication system designed for seamless intera
 ├── docs/           # Documentation
 └── tools/          # Development tools
 ```
+
+## Technical Stack
+- **Frontend**: React with TypeScript, Vite build tooling
+- **Backend**: NestJS with TypeScript (`apps/api`, `apps/backend`)
+- **Communication**: WebSockets for real-time agent communication
+- **State Management**: React Context and custom hooks
+- **Styling**: CSS modules and component-scoped styling patterns
 
 ## Key Components
 1. **Agent Interface**: UI components for interacting with AI agents
@@ -41,6 +49,14 @@ The New Fuse is an advanced AI communication system designed for seamless intera
 - Redis pub/sub system
 - PostgreSQL database
 - WebSocket integration
+
+## Architecture
+The New Fuse follows a hub-and-spoke model where the Fuse orchestrates
+communication between multiple AI agents and tools. This supports:
+- Asynchronous cross-agent messaging
+- Protocol translation between different agent systems
+- Centralized telemetry and monitoring
+- Human-in-the-loop oversight via frontend dashboards
 
 ## Recommendations for Improvement
 1. **Standardized Agent API**: Develop a consistent interface for all agents to simplify integration
@@ -109,6 +125,12 @@ The New Fuse is an advanced AI communication system designed for seamless intera
 3. Update development workflows
 4. Enhance testing coverage
 5. Expand workflow builder templates
+
+## Getting Started Guide
+1. Clone the repository
+2. Install dependencies with `pnpm install`
+3. Start the development server with `pnpm run dev`
+4. Access the application at `http://localhost:3000`
 
 ## Contribution Guidelines
 When contributing to The New Fuse, please follow these practices:

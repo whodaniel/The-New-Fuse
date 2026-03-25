@@ -63,3 +63,17 @@ export async function apiRequest<T = any>(url: string, options: ApiRequestOption
   
   return { data: responseData };
 }
+
+// Backward-compatible axios-like helper used by older services.
+export const api = {
+  get: <T = any>(url: string, options: Omit<ApiRequestOptions, 'method' | 'data'> = {}) =>
+    apiRequest<T>(url, { ...options, method: 'GET' }),
+  post: <T = any>(url: string, data?: any, options: Omit<ApiRequestOptions, 'method' | 'data'> = {}) =>
+    apiRequest<T>(url, { ...options, method: 'POST', data }),
+  put: <T = any>(url: string, data?: any, options: Omit<ApiRequestOptions, 'method' | 'data'> = {}) =>
+    apiRequest<T>(url, { ...options, method: 'PUT', data }),
+  patch: <T = any>(url: string, data?: any, options: Omit<ApiRequestOptions, 'method' | 'data'> = {}) =>
+    apiRequest<T>(url, { ...options, method: 'PATCH', data }),
+  delete: <T = any>(url: string, options: Omit<ApiRequestOptions, 'method' | 'data'> = {}) =>
+    apiRequest<T>(url, { ...options, method: 'DELETE' }),
+};

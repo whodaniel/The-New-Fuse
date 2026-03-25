@@ -196,4 +196,4 @@ If you continue to encounter issues with MCP:
 
 - [MCP Complete Guide](../protocols/MCP-COMPLETE-GUIDE.md)
 - [MCP Configuration](../protocols/MCP-COMPLETE-GUIDE.md#mcp-configuration-management)
-- [Getting Started with MCP](../getting-started/mcp-setup.md)
+- [Getting Started with MCP](../guides/mcp_config.README.md)

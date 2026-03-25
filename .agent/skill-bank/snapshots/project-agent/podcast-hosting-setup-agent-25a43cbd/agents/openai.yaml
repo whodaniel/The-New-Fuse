@@ -1,0 +1,4 @@
+interface:
+  display_name: "Podcast Hosting Setup Agent"
+  short_description: "Help with Podcast Hosting Setup Agent tasks"
+  default_prompt: "Run the Podcast Hosting Setup Agent workflow using SKILL.md instructions."

@@ -1,18 +1,11 @@
 ---
 name: schema-markup
-description:
-  When the user wants to add, fix, or optimize schema markup and structured data
-  on their site. Also use when the user mentions "schema markup," "structured
-  data," "JSON-LD," "rich snippets," "schema.org," "FAQ schema," "product
-  schema," "review schema," or "breadcrumb schema." For broader SEO issues, see
-  seo-audit.
+description: When the user wants to add, fix, or optimize schema markup and structured data on their site. Also use when the user mentions "schema markup," "structured data," "JSON-LD," "rich snippets," "schema.org," "FAQ schema," "product schema," "review schema," or "breadcrumb schema." For broader SEO issues, see seo-audit.
 ---
 
 # Schema Markup
 
-You are an expert in structured data and schema markup. Your goal is to
-implement schema.org markup that helps search engines understand content and
-enables rich results in search.
+You are an expert in structured data and schema markup. Your goal is to implement schema.org markup that helps search engines understand content and enables rich results in search.
 
 ## Initial Assessment
 
@@ -37,25 +30,21 @@ Before implementing schema, understand:
 ## Core Principles
 
 ### 1. Accuracy First
-
 - Schema must accurately represent page content
 - Don't markup content that doesn't exist
 - Keep updated when content changes
 
 ### 2. Use JSON-LD
-
 - Google recommends JSON-LD format
 - Easier to implement and maintain
 - Place in `<head>` or end of `<body>`
 
 ### 3. Follow Google's Guidelines
-
 - Only use markup Google supports
 - Avoid spam tactics
 - Review eligibility requirements
 
 ### 4. Validate Everything
-
 - Test before deploying
 - Monitor Search Console
 - Fix errors promptly
@@ -65,16 +54,13 @@ Before implementing schema, understand:
 ## Common Schema Types
 
 ### Organization
-
 **Use for**: Company/brand homepage or about page
 
 **Required properties**:
-
 - name
 - url
 
 **Recommended properties**:
-
 - logo
 - sameAs (social profiles)
 - contactPoint
@@ -100,16 +86,13 @@ Before implementing schema, understand:
 ```
 
 ### WebSite (with SearchAction)
-
 **Use for**: Homepage, enables sitelinks search box
 
 **Required properties**:
-
 - name
 - url
 
 **For search box**:
-
 - potentialAction with SearchAction
 
 ```json
@@ -130,18 +113,15 @@ Before implementing schema, understand:
 ```
 
 ### Article / BlogPosting
-
 **Use for**: Blog posts, news articles
 
 **Required properties**:
-
 - headline
 - image
 - datePublished
 - author
 
 **Recommended properties**:
-
 - dateModified
 - publisher
 - description
@@ -177,17 +157,14 @@ Before implementing schema, understand:
 ```
 
 ### Product
-
 **Use for**: Product pages (e-commerce or SaaS)
 
 **Required properties**:
-
 - name
 - image
 - offers (with price and availability)
 
 **Recommended properties**:
-
 - description
 - sku
 - brand
@@ -223,16 +200,13 @@ Before implementing schema, understand:
 ```
 
 ### SoftwareApplication
-
 **Use for**: SaaS product pages, app landing pages
 
 **Required properties**:
-
 - name
 - offers (or free indicator)
 
 **Recommended properties**:
-
 - applicationCategory
 - operatingSystem
 - aggregateRating
@@ -258,11 +232,9 @@ Before implementing schema, understand:
 ```
 
 ### FAQPage
-
 **Use for**: Pages with frequently asked questions
 
 **Required properties**:
-
 - mainEntity (array of Question/Answer)
 
 ```json
@@ -291,16 +263,13 @@ Before implementing schema, understand:
 ```
 
 ### HowTo
-
 **Use for**: Instructional content, tutorials
 
 **Required properties**:
-
 - name
 - step (array of HowToStep)
 
 **Recommended properties**:
-
 - image
 - totalTime
 - estimatedCost
@@ -337,7 +306,6 @@ Before implementing schema, understand:
 ```
 
 ### BreadcrumbList
-
 **Use for**: Any page with breadcrumb navigation
 
 ```json
@@ -368,11 +336,9 @@ Before implementing schema, understand:
 ```
 
 ### LocalBusiness
-
 **Use for**: Local business location pages
 
 **Required properties**:
-
 - name
 - address
 - (Various by business type)
@@ -410,11 +376,9 @@ Before implementing schema, understand:
 ```
 
 ### Review / AggregateRating
-
 **Use for**: Review pages or products with reviews
 
-Note: Self-serving reviews (reviewing your own product) are against guidelines.
-Reviews must be from real customers.
+Note: Self-serving reviews (reviewing your own product) are against guidelines. Reviews must be from real customers.
 
 ```json
 {
@@ -447,11 +411,9 @@ Reviews must be from real customers.
 ```
 
 ### Event
-
 **Use for**: Event pages, webinars, conferences
 
 **Required properties**:
-
 - name
 - startDate
 - location (or eventAttendanceMode for online)
@@ -529,7 +491,6 @@ You can (and often should) have multiple schema types:
 ## Validation and Testing
 
 ### Tools
-
 - **Google Rich Results Test**: https://search.google.com/test/rich-results
 - **Schema.org Validator**: https://validator.schema.org/
 - **Search Console**: Enhancements reports
@@ -537,18 +498,15 @@ You can (and often should) have multiple schema types:
 ### Common Errors
 
 **Missing required properties**
-
 - Check Google's documentation for required fields
 - Different from schema.org minimum requirements
 
 **Invalid values**
-
 - Dates must be ISO 8601 format
 - URLs must be fully qualified
 - Enumerations must use exact values
 
 **Mismatch with page content**
-
 - Schema doesn't match visible content
 - Ratings for products without reviews shown
 - Prices that don't match displayed prices
@@ -558,12 +516,10 @@ You can (and often should) have multiple schema types:
 ## Implementation Patterns
 
 ### Static Sites
-
 - Add JSON-LD directly in HTML template
 - Use includes/partials for reusable schema
 
 ### Dynamic Sites (React, Next.js, etc.)
-
 - Component that renders schema
 - Server-side rendered for SEO
 - Serialize data to JSON-LD
@@ -572,8 +528,8 @@ You can (and often should) have multiple schema types:
 // Next.js example
 export default function ProductPage({ product }) {
   const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
+    "@context": "https://schema.org",
+    "@type": "Product",
     name: product.name,
     // ... other properties
   };
@@ -593,7 +549,6 @@ export default function ProductPage({ product }) {
 ```
 
 ### CMS / WordPress
-
 - Plugins (Yoast, Rank Math, Schema Pro)
 - Theme modifications
 - Custom fields to structured data
@@ -603,22 +558,19 @@ export default function ProductPage({ product }) {
 ## Output Format
 
 ### Schema Implementation
-
 ```json
 // Full JSON-LD code block
 {
   "@context": "https://schema.org",
-  "@type": "..."
+  "@type": "...",
   // Complete markup
 }
 ```
 
 ### Placement Instructions
-
 Where to add the code and how
 
 ### Testing Checklist
-
 - [ ] Validates in Rich Results Test
 - [ ] No errors or warnings
 - [ ] Matches page content
@@ -629,7 +581,6 @@ Where to add the code and how
 ## Questions to Ask
 
 If you need more context:
-
 1. What type of page is this?
 2. What rich results are you hoping to achieve?
 3. What data is available to populate the schema?

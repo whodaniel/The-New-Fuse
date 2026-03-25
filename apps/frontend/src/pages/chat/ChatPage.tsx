@@ -5,6 +5,7 @@ import {
   type Message,
   type SynthesisJob,
 } from '@/services/chatApi';
+import OpsPageHeader from '@/components/ops/OpsPageHeader';
 import {
   Copy,
   Lightbulb,
@@ -509,13 +510,13 @@ function ChatPage() {
   const getStatusBadge = (status: ChatAgent['status']) => {
     switch (status) {
       case 'online':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-emerald-500/12 text-emerald-200 border-emerald-500/25';
       case 'busy':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-amber-500/12 text-amber-200 border-amber-500/25';
       case 'offline':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-slate-500/12 text-slate-200 border-slate-500/25';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-slate-500/12 text-slate-200 border-slate-500/25';
     }
   };
 
@@ -543,51 +544,65 @@ function ChatPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] w-full p-4 bg-background text-foreground flex flex-col">
-      {/* Header */}
-      <div className="mb-6 flex-none">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">💬 Chat Center</h1>
-            <p className="text-muted-foreground">Communicate with AI agents and get instant help</p>
+    <div className="w-full min-h-[640px] bg-background text-foreground flex flex-col gap-4">
+      <OpsPageHeader
+        eyebrow="Collaboration"
+        title="Chat Operations"
+        subtitle="Coordinate human + agent conversations, goals, and response chains."
+        meta={
+          <div className="flex flex-wrap gap-2 text-xs">
+            <span className="rounded-full border border-slate-500/30 bg-slate-500/12 px-2 py-1 text-slate-200">
+              {agents?.length || 0} agents
+            </span>
+            <span className="rounded-full border border-slate-500/30 bg-slate-500/12 px-2 py-1 text-slate-200">
+              {rules?.length || 0} rules
+            </span>
+            <span className="rounded-full border border-slate-500/30 bg-slate-500/10 px-2 py-1 text-slate-200">
+              mode: {mode}
+            </span>
+            <span className="rounded-full border border-slate-500/30 bg-slate-500/12 px-2 py-1 text-slate-200">
+              tts: {isTtsEnabled ? 'on' : 'off'}
+            </span>
           </div>
-          <div className="flex flex-wrap gap-3">
+        }
+        actions={
+          <div className="flex flex-wrap gap-2 md:justify-end">
             <button
               onClick={() => setIsAgentModalOpen(true)}
-              className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors flex items-center shadow-none"
+              className="border border-slate-600/70 bg-slate-800/80 text-slate-100 px-3 py-2 rounded-md hover:bg-slate-700/80 transition-colors flex items-center shadow-none text-sm"
             >
-              <Users size={16} className="mr-2" />
+              <Users size={14} className="mr-2" />
               Agents ({agents?.length || 0})
             </button>
             <button
               onClick={() => setIsGoalModalOpen(true)}
-              className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition-colors flex items-center shadow-none"
+              className="border border-slate-600/70 bg-slate-800/80 text-slate-100 px-3 py-2 rounded-md hover:bg-slate-700/80 transition-colors flex items-center shadow-none text-sm"
             >
-              <Lightbulb size={16} className="mr-2" />
+              <Lightbulb size={14} className="mr-2" />
               Set Goal
             </button>
             <button
               onClick={() => setIsRuleModalOpen(true)}
-              className="bg-yellow-500 text-black px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors flex items-center shadow-none"
+              className="border border-slate-600/70 bg-slate-800/80 text-slate-100 px-3 py-2 rounded-md hover:bg-slate-700/80 transition-colors flex items-center shadow-none text-sm"
             >
-              <Copy size={16} className="mr-2" />
+              <Copy size={14} className="mr-2" />
               Rules
             </button>
             <button
-              className="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 transition-colors flex items-center shadow-none"
+              className="border border-cyan-500/40 bg-cyan-600/80 text-white px-3 py-2 rounded-md hover:bg-cyan-600 transition-colors flex items-center shadow-none text-sm"
               disabled={isSynthesizing}
             >
-              <Sparkles size={16} className="mr-2" />
+              <Sparkles size={14} className="mr-2" />
               {isSynthesizing ? 'Synthesizing...' : 'Creative Synthesis'}
             </button>
           </div>
-        </div>
-      </div>
+        }
+      />
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-4 overflow-hidden">
+      <div className="flex-1 min-h-[520px] grid grid-cols-1 xl:grid-cols-[320px_minmax(0,1fr)] gap-4 overflow-hidden">
         {/* Agent Selection Sidebar */}
-        <div className="flex flex-col gap-4 overflow-hidden h-full">
-          <div className="bg-card text-card-foreground rounded-md border border-border shadow-none p-4 flex flex-col h-full overflow-hidden">
+        <div className="flex flex-col gap-4 overflow-hidden h-full min-h-0">
+          <div className="bg-card text-card-foreground rounded-xl border border-border shadow-none p-4 flex flex-col h-full overflow-hidden">
             <h2 className="text-lg font-semibold mb-4 flex-none">Available Agents</h2>
             <div className="space-y-3 flex-1 overflow-y-auto pr-2">
               {agents.map((agent) => (
@@ -650,7 +665,7 @@ function ChatPage() {
                 <span className="text-sm">Text-to-Speech:</span>
                 <button
                   onClick={() => setIsTtsEnabled(!isTtsEnabled)}
-                  className={`px-3 py-1 rounded-full text-sm transition-colors ${isTtsEnabled ? 'bg-green-500 text-white' : 'bg-secondary text-secondary-foreground'}`}
+                  className={`px-3 py-1 rounded-full text-sm transition-colors ${isTtsEnabled ? 'bg-slate-700 text-slate-100' : 'bg-secondary text-secondary-foreground'}`}
                 >
                   {isTtsEnabled ? 'ON' : 'OFF'}
                 </button>
@@ -659,25 +674,25 @@ function ChatPage() {
               <div className="space-y-2">
                 <Link
                   to="/agents"
-                  className="block w-full text-left p-2 text-sm text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded transition-colors"
+                  className="block w-full text-left p-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white rounded transition-colors"
                 >
                   🤖 Manage All Agents
                 </Link>
                 <Link
                   to="/agents/new"
-                  className="block w-full text-left p-2 text-sm text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-colors"
+                  className="block w-full text-left p-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white rounded transition-colors"
                 >
                   ➕ Create New Agent
                 </Link>
                 <Link
                   to="/tasks/new"
-                  className="block w-full text-left p-2 text-sm text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
+                  className="block w-full text-left p-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white rounded transition-colors"
                 >
                   📋 Create Task
                 </Link>
                 <button
                   onClick={() => setIsGalleryOpen(true)}
-                  className="block w-full text-left p-2 text-sm text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-colors"
+                  className="block w-full text-left p-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white rounded transition-colors"
                 >
                   🎬 Synthesis Gallery
                 </button>
@@ -687,8 +702,8 @@ function ChatPage() {
         </div>
 
         {/* Chat Interface */}
-        <div className="lg:col-span-1 h-full overflow-hidden">
-          <div className="bg-card text-card-foreground rounded-md border border-border shadow-none flex flex-col h-full">
+        <div className="h-full overflow-hidden min-h-0">
+          <div className="bg-card text-card-foreground rounded-xl border border-border shadow-none flex flex-col h-full overflow-hidden">
             {/* Chat Header */}
             <div className="p-4 border-b border-border flex-none">
               <div className="flex items-center justify-between">
@@ -863,7 +878,7 @@ function ChatPage() {
             </div>
             <div className="p-5 space-y-4">
               {conversationGoal && (
-                <div className="p-3 rounded-lg border border-orange-500/30 bg-orange-500/10">
+                <div className="p-3 rounded-lg border border-slate-500/25 bg-slate-500/12">
                   <p className="text-sm font-medium text-foreground">Current Goal:</p>
                   <p className="text-sm text-muted-foreground mt-1">{conversationGoal}</p>
                 </div>
@@ -882,7 +897,7 @@ function ChatPage() {
                 <button
                   onClick={() => { setConversationGoal(newGoalInput.trim()); setNewGoalInput(''); setIsGoalModalOpen(false); }}
                   disabled={!newGoalInput.trim()}
-                  className="flex-1 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition-colors disabled:opacity-50"
+                  className="flex-1 bg-slate-800 text-slate-100 border border-slate-600 px-4 py-2 rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50"
                 >
                   Set Goal
                 </button>
@@ -922,7 +937,7 @@ function ChatPage() {
                     <span className="text-sm font-medium text-foreground">{target?.name || rule.targetId}</span>
                     <button
                       onClick={() => setRules((prev) => prev.filter((r) => r !== rule))}
-                      className="ml-auto text-red-400 hover:text-red-300 text-sm"
+                      className="ml-auto text-rose-300 hover:text-rose-200 text-sm"
                     >
                       Remove
                     </button>
@@ -943,7 +958,7 @@ function ChatPage() {
                   <option value="">Target Agent</option>
                   {agents.map((a) => <option key={a.id} value={a.id}>{a.avatar} {a.name}</option>)}
                 </select>
-                <button onClick={handleAddRule} disabled={!newRuleSource || !newRuleTarget || newRuleSource === newRuleTarget} className="bg-yellow-500 text-black px-3 py-2 rounded-md hover:bg-yellow-600 transition-colors disabled:opacity-50 text-sm font-medium">
+                <button onClick={handleAddRule} disabled={!newRuleSource || !newRuleTarget || newRuleSource === newRuleTarget} className="bg-slate-800 text-slate-100 border border-slate-600 px-3 py-2 rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50 text-sm font-medium">
                   Add
                 </button>
               </div>
@@ -968,9 +983,9 @@ function ChatPage() {
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium text-foreground">{job.type || 'Synthesis'}</span>
                         <span className={`px-2 py-0.5 text-xs rounded-full ${
-                          job.status === 'completed' ? 'bg-green-100 text-green-800 border border-green-200' :
-                          job.status === 'running' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
-                          'bg-gray-100 text-gray-800 border border-gray-200'
+                          job.status === 'completed' ? 'bg-emerald-500/12 text-emerald-200 border border-emerald-500/25' :
+                          job.status === 'running' ? 'bg-cyan-500/12 text-cyan-200 border border-cyan-500/25' :
+                          'bg-slate-500/12 text-slate-200 border border-slate-500/25'
                         }`}>{job.status}</span>
                       </div>
                       {job.result && <p className="text-sm text-muted-foreground whitespace-pre-wrap">{job.result}</p>}

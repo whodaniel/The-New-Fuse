@@ -323,6 +323,28 @@ chmod +x scripts/deployment/*.sh
 railway whoami
 ```
 
+## Monitoring-Led Troubleshooting
+
+### High API Latency
+
+```sql
+SELECT * FROM pg_stat_activity WHERE state = 'active';
+```
+
+```bash
+redis-cli INFO | grep connected_clients
+```
+
+### Memory Pressure Signals
+
+```bash
+# Kubernetes resource check (if running in k8s)
+kubectl top pods -n production
+
+# Node heap diagnostics
+node --heapsnapshot
+```
+
 ## Getting Help
 
 ### Logs to Collect

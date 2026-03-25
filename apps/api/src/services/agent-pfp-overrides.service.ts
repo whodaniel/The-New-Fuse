@@ -42,6 +42,7 @@ export class AgentPfpOverridesService {
     canSave: boolean;
     tier: 'STARTER' | 'PRO' | 'ENTERPRISE';
     active: boolean;
+    storageBackend: 'cloudflare-images' | 'inline';
   }> {
     await this.ensureSchema();
     const membership = await this.payPalService.getMembershipForUser(userId);
@@ -49,6 +50,7 @@ export class AgentPfpOverridesService {
       canSave: membership.active,
       tier: membership.tier,
       active: membership.active,
+      storageBackend: this.getStorageBackend(),
     };
   }
 
@@ -101,9 +103,15 @@ export class AgentPfpOverridesService {
     const safeNamespace = this.escapeSqlLiteral(this.normalizeNamespace(namespace));
     const safeAgentId = this.escapeSqlLiteral(agentId.trim());
     const now = new Date().toISOString();
+    const storedImageUrl = await this.prepareImageForStorage(
+      userId,
+      namespace,
+      agentId,
+      override.imageUrl
+    );
 
     const id = randomUUID();
-    const imageUrlSql = this.toSqlString(override.imageUrl);
+    const imageUrlSql = this.toSqlString(storedImageUrl);
     const promptSql = this.toSqlNullableString(override.prompt);
     const providerSql = this.toSqlNullableString(override.provider);
     const modelSql = this.toSqlNullableString(override.model);
@@ -230,6 +238,157 @@ export class AgentPfpOverridesService {
       .replace(/[^a-zA-Z0-9:_-]+/g, '_')
       .slice(0, 120);
     return normalized || 'global';
+  }
+
+  private getStorageBackend(): 'cloudflare-images' | 'inline' {
+    if (this.hasCloudflareImagesConfig()) return 'cloudflare-images';
+    return 'inline';
+  }
+
+  private hasCloudflareImagesConfig(): boolean {
+    return Boolean(this.getCloudflareAccountId() && this.getCloudflareApiToken());
+  }
+
+  private getCloudflareAccountId(): string {
+    return (
+      process.env.CLOUDFLARE_IMAGES_ACCOUNT_ID ||
+      process.env.CLOUDFLARE_ACCOUNT_ID ||
+      ''
+    ).trim();
+  }
+
+  private getCloudflareApiToken(): string {
+    return (
+      process.env.CLOUDFLARE_IMAGES_API_TOKEN ||
+      process.env.CLOUDFLARE_API_TOKEN ||
+      ''
+    ).trim();
+  }
+
+  private async prepareImageForStorage(
+    userId: string,
+    namespace: string,
+    agentId: string,
+    imageUrl: string
+  ): Promise<string> {
+    const normalized = String(imageUrl || '').trim();
+    if (!normalized || !normalized.startsWith('data:')) {
+      return normalized;
+    }
+
+    if (!this.hasCloudflareImagesConfig()) {
+      return normalized;
+    }
+
+    const parsed = this.parseDataUrl(normalized);
+    if (!parsed) {
+      return normalized;
+    }
+
+    try {
+      const uploaded = await this.uploadToCloudflareImages({
+        userId,
+        namespace,
+        agentId,
+        mimeType: parsed.mimeType,
+        buffer: parsed.buffer,
+      });
+      return uploaded || normalized;
+    } catch (error) {
+      this.logger.warn(`Cloudflare image upload failed; storing inline image: ${String(error)}`);
+      return normalized;
+    }
+  }
+
+  private parseDataUrl(dataUrl: string): { mimeType: string; buffer: Buffer } | null {
+    const match = /^data:([^;,]+)(;base64)?,(.*)$/i.exec(dataUrl);
+    if (!match) return null;
+
+    const mimeType = match[1] || 'image/png';
+    const isBase64 = Boolean(match[2]);
+    const payload = match[3] || '';
+
+    try {
+      const buffer = isBase64
+        ? Buffer.from(payload, 'base64')
+        : Buffer.from(decodeURIComponent(payload), 'utf8');
+      if (!buffer.length) return null;
+      return { mimeType, buffer };
+    } catch {
+      return null;
+    }
+  }
+
+  private async uploadToCloudflareImages(input: {
+    userId: string;
+    namespace: string;
+    agentId: string;
+    mimeType: string;
+    buffer: Buffer;
+  }): Promise<string | null> {
+    const accountId = this.getCloudflareAccountId();
+    const token = this.getCloudflareApiToken();
+    if (!accountId || !token) return null;
+
+    const endpoint = `https://api.cloudflare.com/client/v4/accounts/${accountId}/images/v1`;
+    const fileExt = this.extensionForMimeType(input.mimeType);
+    const filename = `${this.normalizeNamespace(input.namespace)}_${input.agentId}_${Date.now()}.${fileExt}`;
+    const byteView = Uint8Array.from(input.buffer);
+
+    const form = new FormData();
+    form.append(
+      'file',
+      new Blob([byteView], { type: input.mimeType || 'image/png' }),
+      filename
+    );
+    form.append(
+      'metadata',
+      JSON.stringify({
+        userId: input.userId,
+        namespace: this.normalizeNamespace(input.namespace),
+        agentId: input.agentId,
+      })
+    );
+    form.append('requireSignedURLs', 'false');
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: form,
+    });
+
+    const raw = await response.text().catch(() => '');
+    if (!response.ok) {
+      this.logger.warn(
+        `Cloudflare upload failed with status ${response.status}: ${raw.slice(0, 240)}`
+      );
+      return null;
+    }
+
+    try {
+      const payload = JSON.parse(raw) as {
+        success?: boolean;
+        result?: { variants?: string[]; id?: string };
+      };
+      const variant = payload?.result?.variants?.[0];
+      if (variant && typeof variant === 'string') {
+        return variant;
+      }
+    } catch {
+      this.logger.warn('Cloudflare upload returned non-JSON payload');
+    }
+
+    return null;
+  }
+
+  private extensionForMimeType(mimeType: string): string {
+    const normalized = String(mimeType || '').toLowerCase();
+    if (normalized.includes('jpeg') || normalized.includes('jpg')) return 'jpg';
+    if (normalized.includes('webp')) return 'webp';
+    if (normalized.includes('gif')) return 'gif';
+    return 'png';
   }
 
   private normalizeSource(source: string | null | undefined): PfpSource {

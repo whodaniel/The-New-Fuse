@@ -2,11 +2,13 @@
 
 ## Table of Contents
 1. [Overview](#overview)
-2. [Metrics Collection](#metrics-collection)
-3. [Logging Setup](#logging-setup)
-4. [Alert Configuration](#alert-configuration)
-5. [Dashboard Setup](#dashboard-setup)
-6. [Performance Monitoring](#performance-monitoring)
+2. [CI/CD Pipeline Monitoring](#cicd-pipeline-monitoring)
+3. [Metrics Collection](#metrics-collection)
+4. [Logging Setup](#logging-setup)
+5. [Alert Configuration](#alert-configuration)
+6. [Dashboard Setup](#dashboard-setup)
+7. [Performance Monitoring](#performance-monitoring)
+8. [Incident Severity & Response](#incident-severity--response)
 
 ## Overview
 
@@ -16,6 +18,38 @@ The New Fuse uses a comprehensive monitoring stack:
 - ELK Stack for log aggregation
 - Cloud Monitoring for cloud resources
 - Custom health checks for service status
+
+## CI/CD Pipeline Monitoring
+
+Track delivery health alongside runtime health.
+
+### Core CI/CD KPIs
+
+- **Build success rate**: target >95% (alert below 90% over 24h)
+- **Deployment success rate**: target >95% (alert below 90% over 7d)
+- **Test/build duration**: target <20 minutes each (alert above 30 minutes)
+- **Queue time**: target <2 minutes (alert above 10 minutes)
+- **Cache hit rate**: target >80% (alert below 50%)
+
+### GitHub Actions Quick Checks
+
+```bash
+# Recent runs and failed runs
+gh run list --limit 50
+gh run list --status failed --limit 20
+
+# Watch active run
+gh run watch
+```
+
+### Railway Runtime Quick Checks
+
+```bash
+# Service status, metrics, logs
+railway status --service=api-gateway
+railway metrics --service=api-gateway
+railway logs --service=api-gateway --tail 100
+```
 
 ## Metrics Collection
 
@@ -287,6 +321,61 @@ Track the following business metrics:
 - Error distribution by type
 - API usage by endpoint
 - WebSocket message rate
+
+## Incident Severity & Response
+
+Use severity levels to route alerts consistently.
+
+- **P0**: production outage/data-loss risk, immediate response
+- **P1**: major feature degradation, respond within 1 hour
+- **P2**: moderate impact/performance issues, respond within 4 hours
+- **P3**: low impact/non-blocking issue, next business day
+
+Response sequence: acknowledge, assess impact, mitigate (or rollback), resolve root cause, and document post-mortem actions.
+
+## Operations Runbook
+
+### Daily Checks
+
+```bash
+# Check overall health
+./scripts/health-check.sh
+
+# Review recent errors
+./scripts/view-errors.sh
+
+# Confirm metrics endpoint
+curl http://localhost:9090/metrics
+```
+
+### Performance Checks
+
+```bash
+# Generate performance report
+./scripts/analyze-performance.sh
+
+# Review slow queries
+./scripts/analyze-queries.sh
+```
+
+### Capacity Thresholds
+
+- CPU: 80% utilization
+- Memory: 85% usage
+- Disk: 90% full
+- Network: 70% bandwidth
+
+### Critical Alert Triage
+
+1. High Error Rate
+   - `./scripts/error-analysis.sh`
+   - Restart affected service if needed
+2. Database Issues
+   - `./scripts/db-health.sh`
+   - `./scripts/analyze-slow-queries.sh`
+3. Memory Pressure
+   - `./scripts/memory-analysis.sh`
+   - `./scripts/clear-caches.sh`
 
 ## Integration with Cloud Monitoring
 

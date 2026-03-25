@@ -62,11 +62,11 @@
 
 | Document | Purpose | Lines |
 |----------|---------|-------|
-| [N8N_FEATURE_PARITY_ANALYSIS.md](.analysis/N8N_FEATURE_PARITY_ANALYSIS.md) | Comprehensive analysis | 800+ |
-| [N8N_IMPLEMENTATION_SUMMARY.md](.analysis/N8N_IMPLEMENTATION_SUMMARY.md) | Implementation details | 600+ |
-| [N8N_QUICK_REFERENCE.md](.analysis/N8N_QUICK_REFERENCE.md) | Quick start guide | 400+ |
+| [N8N_FEATURE_PARITY_ANALYSIS.md](../N8N_WORKFLOWS.md) | Comprehensive analysis | 800+ |
+| [N8N_IMPLEMENTATION_SUMMARY.md](../N8N_WORKFLOWS.md) | Implementation details | 600+ |
+| [N8N_QUICK_REFERENCE.md](../N8N_WORKFLOWS.md) | Quick start guide | 400+ |
 | [WorkflowEditor/README.md](apps/frontend/src/components/WorkflowEditor/README.md) | API reference & examples | 500+ |
-| [N8N_IMPLEMENTATION_CHECKLIST.md](.analysis/N8N_IMPLEMENTATION_CHECKLIST.md) | Deployment checklist | 400+ |
+| [N8N_IMPLEMENTATION_CHECKLIST.md](../N8N_WORKFLOWS.md) | Deployment checklist | 400+ |
 
 ---
 
@@ -252,11 +252,11 @@ The-New-Fuse/
 
 ### Quick Links
 
-1. **Getting Started:** [N8N_QUICK_REFERENCE.md](.analysis/N8N_QUICK_REFERENCE.md)
-2. **Full Analysis:** [N8N_FEATURE_PARITY_ANALYSIS.md](.analysis/N8N_FEATURE_PARITY_ANALYSIS.md)
+1. **Getting Started:** [N8N_QUICK_REFERENCE.md](../N8N_WORKFLOWS.md)
+2. **Full Analysis:** [N8N_FEATURE_PARITY_ANALYSIS.md](../N8N_WORKFLOWS.md)
 3. **API Reference:** [WorkflowEditor/README.md](apps/frontend/src/components/WorkflowEditor/README.md)
-4. **Implementation:** [N8N_IMPLEMENTATION_SUMMARY.md](.analysis/N8N_IMPLEMENTATION_SUMMARY.md)
-5. **Deployment:** [N8N_IMPLEMENTATION_CHECKLIST.md](.analysis/N8N_IMPLEMENTATION_CHECKLIST.md)
+4. **Implementation:** [N8N_IMPLEMENTATION_SUMMARY.md](../N8N_WORKFLOWS.md)
+5. **Deployment:** [N8N_IMPLEMENTATION_CHECKLIST.md](../N8N_WORKFLOWS.md)
 
 ### Example Workflows
 
@@ -395,10 +395,10 @@ The-New-Fuse/
 
 ### Need Help?
 
-1. **Quick Start:** Check [N8N_QUICK_REFERENCE.md](.analysis/N8N_QUICK_REFERENCE.md)
+1. **Quick Start:** Check [N8N_QUICK_REFERENCE.md](../N8N_WORKFLOWS.md)
 2. **Examples:** Check [README.md](apps/frontend/src/components/WorkflowEditor/README.md)
 3. **Issues:** Check [Troubleshooting Guide](apps/frontend/src/components/WorkflowEditor/README.md#troubleshooting)
-4. **Full Docs:** Check [N8N_FEATURE_PARITY_ANALYSIS.md](.analysis/N8N_FEATURE_PARITY_ANALYSIS.md)
+4. **Full Docs:** Check [N8N_FEATURE_PARITY_ANALYSIS.md](../N8N_WORKFLOWS.md)
 
 ### Common Questions
 

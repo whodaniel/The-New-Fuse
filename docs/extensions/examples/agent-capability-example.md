@@ -175,4 +175,4 @@ This example provides a foundation for creating agent capabilities. You can exte
 
 For more examples, see:
 - **[Workflow Node Example](workflow-node-example.md)** - Custom workflow processing
-- **[NestJS Module Example](nestjs-module-example.md)** - Backend service integration
+- **NestJS Module Example** - Backend service integration

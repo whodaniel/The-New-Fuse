@@ -7,5 +7,6 @@
 
 export * from './AnthropicProvider';
 export * from './GeminiProvider';
+export * from './GoogleADKProvider';
 export * from './OpenCodeApiProvider';
 export * from './OpenCodeCliProvider';

@@ -4,7 +4,7 @@ This directory contains comprehensive documentation for The New Fuse API.
 
 ## Available Documentation
 
-### 📖 [API Usage Guide](./API_USAGE_GUIDE.md)
+### 📖 [API Usage Guide](./api/COMPLETE-API-GUIDE.md)
 Complete guide for developers using The New Fuse API, including:
 - Getting started instructions
 - Authentication flow
@@ -298,7 +298,7 @@ curl -X GET http://localhost:3001/api/agents \
 
 ## Contributing
 
-See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines on contributing to the API.
+See [CONTRIBUTING.md](../README.md) for guidelines on contributing to the API.
 
 ## License
 

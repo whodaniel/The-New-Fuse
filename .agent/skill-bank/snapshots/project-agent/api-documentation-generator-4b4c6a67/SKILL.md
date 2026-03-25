@@ -1,18 +1,13 @@
 ---
 name: api-documentation-generator
-description:
-  'Generate comprehensive, developer-friendly API documentation from code,
-  including endpoints, parameters, examples, and best practices'
+description: "Generate comprehensive, developer-friendly API documentation from code, including endpoints, parameters, examples, and best practices"
 ---
 
 # API Documentation Generator
 
 ## Overview
 
-Automatically generate clear, comprehensive API documentation from your
-codebase. This skill helps you create professional documentation that includes
-endpoint descriptions, request/response examples, authentication details, error
-handling, and usage guidelines.
+Automatically generate clear, comprehensive API documentation from your codebase. This skill helps you create professional documentation that includes endpoint descriptions, request/response examples, authentication details, error handling, and usage guidelines.
 
 Perfect for REST APIs, GraphQL APIs, and WebSocket APIs.
 
@@ -30,7 +25,6 @@ Perfect for REST APIs, GraphQL APIs, and WebSocket APIs.
 ### Step 1: Analyze the API Structure
 
 First, I'll examine your API codebase to understand:
-
 - Available endpoints and routes
 - HTTP methods (GET, POST, PUT, DELETE, etc.)
 - Request parameters and body structure
@@ -43,27 +37,23 @@ First, I'll examine your API codebase to understand:
 For each endpoint, I'll create documentation including:
 
 **Endpoint Details:**
-
 - HTTP method and URL path
 - Brief description of what it does
 - Authentication requirements
 - Rate limiting information (if applicable)
 
 **Request Specification:**
-
 - Path parameters
 - Query parameters
 - Request headers
 - Request body schema (with types and validation rules)
 
 **Response Specification:**
-
 - Success response (status code + body structure)
 - Error responses (all possible error codes)
 - Response headers
 
 **Code Examples:**
-
 - cURL command
 - JavaScript/TypeScript (fetch/axios)
 - Python (requests)
@@ -72,7 +62,6 @@ For each endpoint, I'll create documentation including:
 ### Step 3: Add Usage Guidelines
 
 I'll include:
-
 - Getting started guide
 - Authentication setup
 - Common use cases
@@ -84,7 +73,6 @@ I'll include:
 ### Step 4: Document Error Handling
 
 Clear error documentation including:
-
 - All possible error codes
 - Error message formats
 - Troubleshooting guide
@@ -93,7 +81,6 @@ Clear error documentation including:
 ### Step 5: Create Interactive Examples
 
 Where possible, I'll provide:
-
 - Postman collection
 - OpenAPI/Swagger specification
 - Interactive code examples
@@ -112,49 +99,100 @@ Creates a new user account.
 
 **Authentication:** Required (Bearer token)
 
-**Request Body:** \`\`\`json { "email": "user@example.com", // Required: Valid
-email address "password": "SecurePass123!", // Required: Min 8 chars, 1
-uppercase, 1 number "name": "John Doe", // Required: 2-50 characters "role":
-"user" // Optional: "user" or "admin" (default: "user") } \`\`\`
+**Request Body:**
+\`\`\`json
+{
+  "email": "user@example.com",      // Required: Valid email address
+  "password": "SecurePass123!",     // Required: Min 8 chars, 1 uppercase, 1 number
+  "name": "John Doe",               // Required: 2-50 characters
+  "role": "user"                    // Optional: "user" or "admin" (default: "user")
+}
+\`\`\`
 
-**Success Response (201 Created):** \`\`\`json { "id": "usr_1234567890",
-"email": "user@example.com", "name": "John Doe", "role": "user", "createdAt":
-"2026-01-20T10:30:00Z", "emailVerified": false } \`\`\`
+**Success Response (201 Created):**
+\`\`\`json
+{
+  "id": "usr_1234567890",
+  "email": "user@example.com",
+  "name": "John Doe",
+  "role": "user",
+  "createdAt": "2026-01-20T10:30:00Z",
+  "emailVerified": false
+}
+\`\`\`
 
 **Error Responses:**
 
-- `400 Bad Request` - Invalid input data \`\`\`json { "error":
-  "VALIDATION_ERROR", "message": "Invalid email format", "field": "email" }
+- `400 Bad Request` - Invalid input data
+  \`\`\`json
+  {
+    "error": "VALIDATION_ERROR",
+    "message": "Invalid email format",
+    "field": "email"
+  }
   \`\`\`
 
-- `409 Conflict` - Email already exists \`\`\`json { "error": "EMAIL_EXISTS",
-  "message": "An account with this email already exists" } \`\`\`
+- `409 Conflict` - Email already exists
+  \`\`\`json
+  {
+    "error": "EMAIL_EXISTS",
+    "message": "An account with this email already exists"
+  }
+  \`\`\`
 
 - `401 Unauthorized` - Missing or invalid authentication token
 
-**Example Request (cURL):** \`\`\`bash curl -X POST
-https://api.example.com/api/v1/users \
- -H "Authorization: Bearer YOUR_TOKEN" \
- -H "Content-Type: application/json" \
- -d '{ "email": "user@example.com", "password": "SecurePass123!", "name": "John
-Doe" }' \`\`\`
+**Example Request (cURL):**
+\`\`\`bash
+curl -X POST https://api.example.com/api/v1/users \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "SecurePass123!",
+    "name": "John Doe"
+  }'
+\`\`\`
 
-**Example Request (JavaScript):** \`\`\`javascript const response = await
-fetch('https://api.example.com/api/v1/users', { method: 'POST', headers: {
-'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body:
-JSON.stringify({ email: 'user@example.com', password: 'SecurePass123!', name:
-'John Doe' }) });
+**Example Request (JavaScript):**
+\`\`\`javascript
+const response = await fetch('https://api.example.com/api/v1/users', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    email: 'user@example.com',
+    password: 'SecurePass123!',
+    name: 'John Doe'
+  })
+});
 
-const user = await response.json(); console.log(user); \`\`\`
+const user = await response.json();
+console.log(user);
+\`\`\`
 
-**Example Request (Python):** \`\`\`python import requests
+**Example Request (Python):**
+\`\`\`python
+import requests
 
-response = requests.post( 'https://api.example.com/api/v1/users', headers={
-'Authorization': f'Bearer {token}', 'Content-Type': 'application/json' }, json={
-'email': 'user@example.com', 'password': 'SecurePass123!', 'name': 'John Doe' }
+response = requests.post(
+    'https://api.example.com/api/v1/users',
+    headers={
+        'Authorization': f'Bearer {token}',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'email': 'user@example.com',
+        'password': 'SecurePass123!',
+        'name': 'John Doe'
+    }
 )
 
-user = response.json() print(user) \`\`\`
+user = response.json()
+print(user)
+\`\`\`
 ```
 
 ### Example 2: GraphQL API Documentation
@@ -164,18 +202,66 @@ user = response.json() print(user) \`\`\`
 
 Fetch user information by ID.
 
-**Query:** \`\`\`graphql query GetUser($id: ID!) { user(id: $id) { id email name
-role createdAt posts { id title publishedAt } } } \`\`\`
+**Query:**
+\`\`\`graphql
+query GetUser($id: ID!) {
+  user(id: $id) {
+    id
+    email
+    name
+    role
+    createdAt
+    posts {
+      id
+      title
+      publishedAt
+    }
+  }
+}
+\`\`\`
 
-**Variables:** \`\`\`json { "id": "usr_1234567890" } \`\`\`
+**Variables:**
+\`\`\`json
+{
+  "id": "usr_1234567890"
+}
+\`\`\`
 
-**Response:** \`\`\`json { "data": { "user": { "id": "usr_1234567890", "email":
-"user@example.com", "name": "John Doe", "role": "user", "createdAt":
-"2026-01-20T10:30:00Z", "posts": [ { "id": "post_123", "title": "My First Post",
-"publishedAt": "2026-01-21T14:00:00Z" } ] } } } \`\`\`
+**Response:**
+\`\`\`json
+{
+  "data": {
+    "user": {
+      "id": "usr_1234567890",
+      "email": "user@example.com",
+      "name": "John Doe",
+      "role": "user",
+      "createdAt": "2026-01-20T10:30:00Z",
+      "posts": [
+        {
+          "id": "post_123",
+          "title": "My First Post",
+          "publishedAt": "2026-01-21T14:00:00Z"
+        }
+      ]
+    }
+  }
+}
+\`\`\`
 
-**Errors:** \`\`\`json { "errors": [ { "message": "User not found",
-"extensions": { "code": "USER_NOT_FOUND", "userId": "usr_1234567890" } } ] }
+**Errors:**
+\`\`\`json
+{
+  "errors": [
+    {
+      "message": "User not found",
+      "extensions": {
+        "code": "USER_NOT_FOUND",
+        "userId": "usr_1234567890"
+      }
+    }
+  ]
+}
 \`\`\`
 ```
 
@@ -190,17 +276,30 @@ All API requests require authentication using Bearer tokens.
 
 **Endpoint:** `POST /api/v1/auth/login`
 
-**Request:** \`\`\`json { "email": "user@example.com", "password":
-"your-password" } \`\`\`
+**Request:**
+\`\`\`json
+{
+  "email": "user@example.com",
+  "password": "your-password"
+}
+\`\`\`
 
-**Response:** \`\`\`json { "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-"expiresIn": 3600, "refreshToken": "refresh_token_here" } \`\`\`
+**Response:**
+\`\`\`json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expiresIn": 3600,
+  "refreshToken": "refresh_token_here"
+}
+\`\`\`
 
 ### Using the Token
 
 Include the token in the Authorization header:
 
-\`\`\` Authorization: Bearer YOUR_TOKEN \`\`\`
+\`\`\`
+Authorization: Bearer YOUR_TOKEN
+\`\`\`
 
 ### Token Expiration
 
@@ -208,7 +307,12 @@ Tokens expire after 1 hour. Use the refresh token to get a new access token:
 
 **Endpoint:** `POST /api/v1/auth/refresh`
 
-**Request:** \`\`\`json { "refreshToken": "refresh_token_here" } \`\`\`
+**Request:**
+\`\`\`json
+{
+  "refreshToken": "refresh_token_here"
+}
+\`\`\`
 ```
 
 ## Best Practices
@@ -288,38 +392,32 @@ Tokens expire after 1 hour. Use the refresh token to get a new access token:
 ## Common Pitfalls
 
 ### Problem: Documentation Gets Out of Sync
-
-**Symptoms:** Examples don't work, parameters are wrong, endpoints return
-different data **Solution:**
-
+**Symptoms:** Examples don't work, parameters are wrong, endpoints return different data
+**Solution:** 
 - Generate docs from code comments/annotations
 - Use tools like Swagger/OpenAPI
 - Add API tests that validate documentation
 - Review docs with every API change
 
 ### Problem: Missing Error Documentation
-
 **Symptoms:** Users don't know how to handle errors, support tickets increase
 **Solution:**
-
 - Document every possible error code
 - Provide clear error messages
 - Include troubleshooting steps
 - Show example error responses
 
 ### Problem: Examples Don't Work
-
-**Symptoms:** Users can't get started, frustration increases **Solution:**
-
+**Symptoms:** Users can't get started, frustration increases
+**Solution:**
 - Test every code example
 - Use real, working endpoints
 - Include complete examples (not fragments)
 - Provide a sandbox environment
 
 ### Problem: Unclear Parameter Requirements
-
-**Symptoms:** Users send invalid requests, validation errors **Solution:**
-
+**Symptoms:** Users send invalid requests, validation errors
+**Solution:**
 - Mark required vs optional clearly
 - Document data types and formats
 - Show validation rules
@@ -328,9 +426,7 @@ different data **Solution:**
 ## Tools and Formats
 
 ### OpenAPI/Swagger
-
 Generate interactive documentation:
-
 ```yaml
 openapi: 3.0.0
 info:
@@ -349,9 +445,7 @@ paths:
 ```
 
 ### Postman Collection
-
 Export collection for easy testing:
-
 ```json
 {
   "info": {
@@ -387,5 +481,4 @@ Export collection for easy testing:
 
 ---
 
-**Pro Tip:** Keep your API documentation as close to your code as possible. Use
-tools that generate docs from code comments to ensure they stay in sync!
+**Pro Tip:** Keep your API documentation as close to your code as possible. Use tools that generate docs from code comments to ensure they stay in sync!

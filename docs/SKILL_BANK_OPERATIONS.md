@@ -74,6 +74,7 @@ Ingestion endpoint and auth:
 
 - `RESOURCE_REGISTRY_API_BASE_URL` (fallback: `TNF_API_BASE_URL`,
   `API_BASE_URL`)
+- `RESOURCE_REGISTRY_ENDPOINT_PATH` (default: `/api/resources`)
 - `RESOURCE_REGISTRY_BEARER_TOKEN` (fallback:
   `TNF_RESOURCE_REGISTRY_BEARER_TOKEN`, `SUPER_ADMIN_TOKEN`)
 - `RESOURCE_REGISTRY_API_KEY` (fallback: `TNF_RESOURCE_REGISTRY_API_KEY`,
@@ -88,3 +89,8 @@ Supervisor cadence:
 - `sync` can run without API availability.
 - `ingest` writes failures to `pending-import.ndjson` for later recovery.
 - `retry-pending` is idempotent and shrinks pending entries as posts succeed.
+- If ingest shows `POST /api/resources -> 404` and marketplace fallback fails,
+  deploy backend with `POST /api/resources` enabled or set
+  `RESOURCE_REGISTRY_ENDPOINT_PATH` to a valid ingest route. Marketplace submit
+  requires a valid member/admin JWT, while `/api/resources` supports API-key
+  based ingest.

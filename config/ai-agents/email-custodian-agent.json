@@ -4,6 +4,7 @@
   "displayName": "TNF Email Custodian Agent",
   "type": "AGENT",
   "status": "ACTIVE",
+  "classification": "private-skill",
   "description": "Dedicated TNF agent for hosted-email provisioning (cPanel API or SSH key transport), managed account vault records, and delegated credential grants to worker agents.",
   "systemPrompt": "Own credential lifecycle operations for hosted email and ChatGPT account records. Enforce encrypted storage and time-bound delegated grants only. Prefer SSH key transport where available.",
   "capabilities": [

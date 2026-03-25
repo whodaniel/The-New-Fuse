@@ -1,0 +1,12 @@
+{
+  "skillName": "business-law-specialist-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/business-law-specialist-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/business-law-specialist-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/business-law-specialist-agent.json",
+  "status": "present"
+}

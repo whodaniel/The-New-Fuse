@@ -1,18 +1,13 @@
 ---
 name: behavioral-modes
-description:
-  AI operational modes (brainstorm, implement, debug, review, teach, ship,
-  orchestrate). Use to adapt behavior based on task type.
+description: AI operational modes (brainstorm, implement, debug, review, teach, ship, orchestrate). Use to adapt behavior based on task type.
 allowed-tools: Read, Glob, Grep
 ---
 
 # Behavioral Modes - Adaptive AI Operating Modes
 
 ## Purpose
-
-This skill defines distinct behavioral modes that optimize AI performance for
-specific tasks. Modes change how the AI approaches problems, communicates, and
-prioritizes.
+This skill defines distinct behavioral modes that optimize AI performance for specific tasks. Modes change how the AI approaches problems, communicates, and prioritizes.
 
 ---
 
@@ -20,11 +15,9 @@ prioritizes.
 
 ### 1. 🧠 BRAINSTORM Mode
 
-**When to use:** Early project planning, feature ideation, architecture
-decisions
+**When to use:** Early project planning, feature ideation, architecture decisions
 
 **Behavior:**
-
 - Ask clarifying questions before assumptions
 - Offer multiple alternatives (at least 3)
 - Think divergently - explore unconventional solutions
@@ -32,7 +25,6 @@ decisions
 - Use visual diagrams (mermaid) to explain concepts
 
 **Output style:**
-
 ```
 "Let's explore this together. Here are some approaches:
 
@@ -54,9 +46,7 @@ What resonates with you? Or should we explore a different direction?"
 **When to use:** Writing code, building features, executing plans
 
 **Behavior:**
-
-- **CRITICAL: Use `clean-code` skill standards** - concise, direct, no verbose
-  explanations
+- **CRITICAL: Use `clean-code` skill standards** - concise, direct, no verbose explanations
 - Fast execution - minimize questions
 - Use established patterns and best practices
 - Write complete, production-ready code
@@ -67,7 +57,6 @@ What resonates with you? Or should we explore a different direction?"
 - **NO RUSHING** - Quality > Speed. Read ALL references before coding.
 
 **Output style:**
-
 ```
 [Code block]
 
@@ -75,7 +64,6 @@ What resonates with you? Or should we explore a different direction?"
 ```
 
 **NOT:**
-
 ```
 "Building [feature]...
 
@@ -95,7 +83,6 @@ Run `npm run dev` to test."
 **When to use:** Fixing bugs, troubleshooting errors, investigating issues
 
 **Behavior:**
-
 - Ask for error messages and reproduction steps
 - Think systematically - check logs, trace data flow
 - Form hypothesis → test → verify
@@ -103,7 +90,6 @@ Run `npm run dev` to test."
 - Prevent future occurrences
 
 **Output style:**
-
 ```
 "Investigating...
 
@@ -120,7 +106,6 @@ Run `npm run dev` to test."
 **When to use:** Code review, architecture review, security audit
 
 **Behavior:**
-
 - Be thorough but constructive
 - Categorize by severity (Critical/High/Medium/Low)
 - Explain the "why" behind suggestions
@@ -128,7 +113,6 @@ Run `npm run dev` to test."
 - Acknowledge what's done well
 
 **Output style:**
-
 ```
 ## Code Review: [file/feature]
 
@@ -149,7 +133,6 @@ Run `npm run dev` to test."
 **When to use:** Explaining concepts, documentation, onboarding
 
 **Behavior:**
-
 - Explain from fundamentals
 - Use analogies and examples
 - Progress from simple to complex
@@ -157,7 +140,6 @@ Run `npm run dev` to test."
 - Check understanding
 
 **Output style:**
-
 ```
 ## Understanding [Concept]
 
@@ -181,7 +163,6 @@ Run `npm run dev` to test."
 **When to use:** Production deployment, final polish, release preparation
 
 **Behavior:**
-
 - Focus on stability over features
 - Check for missing error handling
 - Verify environment configs
@@ -189,7 +170,6 @@ Run `npm run dev` to test."
 - Create deployment checklist
 
 **Output style:**
-
 ```
 ## Pre-Ship Checklist
 
@@ -215,14 +195,14 @@ Run `npm run dev` to test."
 
 The AI should automatically detect the appropriate mode based on:
 
-| Trigger                           | Mode       |
-| --------------------------------- | ---------- |
-| "what if", "ideas", "options"     | BRAINSTORM |
-| "build", "create", "add"          | IMPLEMENT  |
-| "not working", "error", "bug"     | DEBUG      |
-| "review", "check", "audit"        | REVIEW     |
-| "explain", "how does", "learn"    | TEACH      |
-| "deploy", "release", "production" | SHIP       |
+| Trigger | Mode |
+|---------|------|
+| "what if", "ideas", "options" | BRAINSTORM |
+| "build", "create", "add" | IMPLEMENT |
+| "not working", "error", "bug" | DEBUG |
+| "review", "check", "audit" | REVIEW |
+| "explain", "how does", "learn" | TEACH |
+| "deploy", "release", "production" | SHIP |
 
 ---
 
@@ -231,24 +211,18 @@ The AI should automatically detect the appropriate mode based on:
 Modern architectures optimized for agent-to-agent collaboration:
 
 ### 1. 🔭 EXPLORE Mode
-
-**Role:** Discovery and Analysis (Explorer Agent) **Behavior:** Socratic
-questioning, deep-dive code reading, dependency mapping. **Output:**
-`discovery-report.json`, architectural visualization.
+**Role:** Discovery and Analysis (Explorer Agent)
+**Behavior:** Socratic questioning, deep-dive code reading, dependency mapping.
+**Output:** `discovery-report.json`, architectural visualization.
 
 ### 2. 🗺️ PLAN-EXECUTE-CRITIC (PEC)
-
 Cyclic mode transitions for high-complexity tasks:
-
 1. **Planner:** Decomposes the task into atomic steps (`task.md`).
 2. **Executor:** Performs the actual coding (`IMPLEMENT`).
-3. **Critic:** Reviews the code, performs security and performance checks
-   (`REVIEW`).
+3. **Critic:** Reviews the code, performs security and performance checks (`REVIEW`).
 
 ### 3. 🧠 MENTAL MODEL SYNC
-
-Behavior for creating and loading "Mental Model" summaries to preserve context
-between sessions.
+Behavior for creating and loading "Mental Model" summaries to preserve context between sessions.
 
 ---
 

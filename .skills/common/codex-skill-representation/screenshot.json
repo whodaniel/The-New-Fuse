@@ -1,0 +1,12 @@
+{
+  "skillName": "screenshot",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/screenshot/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/screenshot/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/screenshot.json",
+  "status": "present"
+}

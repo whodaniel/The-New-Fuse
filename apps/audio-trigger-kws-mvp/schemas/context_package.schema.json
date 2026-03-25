@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContextPackage",
+  "type": "object",
+  "required": [
+    "pkg_id",
+    "stream_id",
+    "rule_id",
+    "normalized_facts",
+    "evidence",
+    "provenance",
+    "created_at"
+  ],
+  "properties": {
+    "pkg_id": {
+      "type": "string"
+    },
+    "stream_id": {
+      "type": "string"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "rule_id": {
+      "type": "string"
+    },
+    "normalized_facts": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "event_id",
+          "term_id",
+          "group_id",
+          "confidence",
+          "ts_ms"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string"
+          },
+          "term_id": {
+            "type": "string"
+          },
+          "group_id": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "ts_ms": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "vector_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "graph_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "template_id",
+        "builder_version"
+      ],
+      "properties": {
+        "template_id": {
+          "type": "string"
+        },
+        "builder_version": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

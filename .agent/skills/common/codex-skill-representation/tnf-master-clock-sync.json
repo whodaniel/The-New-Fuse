@@ -1,0 +1,12 @@
+{
+  "skillName": "tnf-master-clock-sync",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/tnf-master-clock-sync/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/tnf-master-clock-sync/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/tnf-master-clock-sync.json",
+  "status": "present"
+}

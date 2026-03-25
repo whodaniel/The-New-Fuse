@@ -1,0 +1,12 @@
+{
+  "skillName": "enhance-prompt",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/enhance-prompt/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/enhance-prompt/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/enhance-prompt.json",
+  "status": "present"
+}

@@ -10,9 +10,8 @@ const snapshotPath = path.join(repoRoot, 'data', 'protocols', 'twip-inventory.sn
 const statePath = path.join(repoRoot, 'data', 'protocols', 'twip-macro-board.state.json');
 const latestReportPath = path.join(
   repoRoot,
-  'docs',
+  'data',
   'protocols',
-  'reports',
   'twip-terminal-macro-board-latest.md'
 );
 const reportsDir = path.join(repoRoot, 'docs', 'protocols', 'reports');

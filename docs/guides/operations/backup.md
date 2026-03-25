@@ -168,5 +168,5 @@ See [Recovery Procedures](recovery.md) for detailed recovery steps.
 ## Related Documentation
 
 - [Recovery Procedures](recovery.md)
-- [Monitoring Guide](monitoring.md)
-- [Deployment Guide](deployment.md)
+- [Monitoring Guide](../../deployment/MONITORING.md)
+- [Deployment Guide](../../deployment/DEPLOYMENT.md)

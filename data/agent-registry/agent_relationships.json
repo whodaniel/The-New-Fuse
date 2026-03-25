@@ -301,6 +301,13 @@
     "strengthScore": 0.67
   },
   {
+    "id": "481adf49-ae05-0dbe-ae65-e603fd231318",
+    "agentId": "orchestrator-agent",
+    "relatedAgentId": "orchestrator-agent-copy",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
     "id": "ad342595-1563-a27b-8008-a403211846f7",
     "agentId": "personal-archaeology-integrity-team-orchestrator",
     "relatedAgentId": "personal-archaeology-master-orchestrator",
@@ -558,6 +565,13 @@
     "relatedAgentId": "personal-historical-archaeologist",
     "relationshipType": "similar",
     "strengthScore": 0.59
+  },
+  {
+    "id": "40d3f182-4633-6cd3-9167-196fa98e8f59",
+    "agentId": "claude-code-cli",
+    "relatedAgentId": "gemini-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.58
   },
   {
     "id": "d60e20c0-489a-6fcd-6af6-8bf60757c7c0",
@@ -934,13 +948,6 @@
     "id": "e0f20f6d-b390-2a0d-078e-dbfa68e8c1e7",
     "agentId": "brand-prospecting-agent",
     "relatedAgentId": "podcast-affiliate-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.5
-  },
-  {
-    "id": "285e4010-1030-1597-8823-14583a9366b8",
-    "agentId": "business-model-architect-agent",
-    "relatedAgentId": "meta-agent-architect",
     "relationshipType": "similar",
     "strengthScore": 0.5
   },
@@ -1347,13 +1354,6 @@
     "id": "a0f16c29-bf8f-c8d5-fcbf-503ab23ce4ed",
     "agentId": "local-ai-gemini-cli",
     "relatedAgentId": "productivity-and-burnout-prevention-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.5
-  },
-  {
-    "id": "a9e484c3-c2b8-a8f7-64dd-5d7efbb2ee92",
-    "agentId": "meta-agent-architect",
-    "relatedAgentId": "unitary-guardian",
     "relationshipType": "similar",
     "strengthScore": 0.5
   },
@@ -2611,13 +2611,6 @@
     "strengthScore": 0.33
   },
   {
-    "id": "49605049-0dca-37af-a3e7-68dd8b50ef7e",
-    "agentId": "agent-traits",
-    "relatedAgentId": "meta-agent-architect",
-    "relationshipType": "similar",
-    "strengthScore": 0.33
-  },
-  {
     "id": "046101ec-2d67-58f4-1a1c-ef3fcb956a16",
     "agentId": "analytics-and-reporting-agent",
     "relatedAgentId": "asset-sourcer-agent",
@@ -2691,6 +2684,13 @@
     "id": "0abd66b7-c63a-dc9c-987b-cd8a0c854430",
     "agentId": "auth-blocker-sentinel",
     "relatedAgentId": "master-of-taxonomies",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "e3cf1d2f-494e-4ec5-8917-dc89f095f246",
+    "agentId": "business-model-architect-agent",
+    "relatedAgentId": "meta-agent-architect",
     "relationshipType": "similar",
     "strengthScore": 0.33
   },
@@ -2772,6 +2772,13 @@
     "strengthScore": 0.33
   },
   {
+    "id": "fa6ba13a-c6ea-c25c-68fc-03ea6a4fb41b",
+    "agentId": "content-calendar-agent",
+    "relatedAgentId": "orchestrator-agent-copy",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
     "id": "5899036a-1a21-2203-4bc0-8be36ce7a54c",
     "agentId": "content-calendar-agent",
     "relatedAgentId": "user-feedback-analysis-agent",
@@ -2779,16 +2786,16 @@
     "strengthScore": 0.33
   },
   {
-    "id": "0d41c37c-af1a-0111-1941-f8a3c0042268",
-    "agentId": "content-calendar-agent",
-    "relatedAgentId": "yt-content-strategy-agent",
+    "id": "80f2d184-2155-b35c-d8d9-6a94924fb8b6",
+    "agentId": "content-calendar-orchestrator-agent",
+    "relatedAgentId": "ethical-bias-auditor-agent",
     "relationshipType": "similar",
     "strengthScore": 0.33
   },
   {
-    "id": "80f2d184-2155-b35c-d8d9-6a94924fb8b6",
+    "id": "52baf126-56bb-4502-1fd7-6b65690febc5",
     "agentId": "content-calendar-orchestrator-agent",
-    "relatedAgentId": "ethical-bias-auditor-agent",
+    "relatedAgentId": "orchestrator-agent-copy",
     "relationshipType": "similar",
     "strengthScore": 0.33
   },
@@ -3094,6 +3101,20 @@
     "strengthScore": 0.33
   },
   {
+    "id": "24e28ddb-be41-501c-fd5b-c3c9a05afe06",
+    "agentId": "meta-agent-architect",
+    "relatedAgentId": "unitary-guardian",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "1c367f6e-3a7d-66a2-7451-9e9fc74609d7",
+    "agentId": "orchestrator-agent-copy",
+    "relatedAgentId": "twip-protocol-bridge",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
     "id": "9c306ef0-42ff-58d1-7826-1ff5fd55a210",
     "agentId": "personalized-content-recommendation-agent",
     "relatedAgentId": "podcast-ad-network-agent",
@@ -3230,6 +3251,13 @@
     "id": "8ccac5d8-6a07-5d87-62e7-0b66647957e7",
     "agentId": "ab-testing-optimizer-agent",
     "relatedAgentId": "social-selling-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.29
+  },
+  {
+    "id": "42f936e2-303d-5578-1f36-aa15fec4cbda",
+    "agentId": "ab-testing-optimizer-agent",
+    "relatedAgentId": "yt-content-strategy-agent",
     "relationshipType": "similar",
     "strengthScore": 0.29
   },
@@ -3444,9 +3472,9 @@
     "strengthScore": 0.25
   },
   {
-    "id": "1d348472-ac6c-a5f1-8f95-0dafe4f69120",
-    "agentId": "ab-testing-optimizer-agent",
-    "relatedAgentId": "oto-sequence-architect-agent",
+    "id": "69106331-45a4-fe33-a93d-b354cfebbb63",
+    "agentId": "agent-traits",
+    "relatedAgentId": "meta-agent-architect",
     "relationshipType": "similar",
     "strengthScore": 0.25
   },
@@ -3486,9 +3514,9 @@
     "strengthScore": 0.25
   },
   {
-    "id": "b4784a9a-d136-20ad-dadc-fd63b47058c8",
-    "agentId": "content-calendar-orchestrator-agent",
-    "relatedAgentId": "content-refresh-agent",
+    "id": "f5d89db6-28a2-f71c-c9bd-b27792ec81f6",
+    "agentId": "content-refresh-agent",
+    "relatedAgentId": "technical-setup-agent",
     "relationshipType": "similar",
     "strengthScore": 0.25
   },
@@ -3647,13 +3675,6 @@
     "strengthScore": 0.25
   },
   {
-    "id": "b72197a8-f504-7fa0-7dc8-cf50554249a5",
-    "agentId": "contract-manager-agent",
-    "relatedAgentId": "email-custodian-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.22
-  },
-  {
     "id": "93549084-1d7e-e089-3f3f-a515c4a60491",
     "agentId": "customer-journey-map-agent",
     "relatedAgentId": "technical-support-agent",
@@ -3664,13 +3685,6 @@
     "id": "ca98d6fd-f48c-9f2d-fb2f-fcbe2746de9b",
     "agentId": "digital-product-factory-agent",
     "relatedAgentId": "technical-setup-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.22
-  },
-  {
-    "id": "b12316a6-1e6a-e0d8-ddfc-700247edcba0",
-    "agentId": "email-custodian-agent",
-    "relatedAgentId": "print-on-demand-manager-agent",
     "relationshipType": "similar",
     "strengthScore": 0.22
   },

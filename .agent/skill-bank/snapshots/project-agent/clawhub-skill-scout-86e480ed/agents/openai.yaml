@@ -1,0 +1,5 @@
+interface:
+  display_name: "ClawHub Skill Scout"
+  short_description: "Discover top ClawHub skills with live stats and safe filtering defaults."
+  default_prompt: "Find and rank relevant ClawHub skills for this request, prioritizing non-suspicious results and install-ready recommendations."
+

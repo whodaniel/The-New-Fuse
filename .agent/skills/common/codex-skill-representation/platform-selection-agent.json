@@ -1,0 +1,12 @@
+{
+  "skillName": "platform-selection-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/platform-selection-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/platform-selection-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/platform-selection-agent.json",
+  "status": "present"
+}

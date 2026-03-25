@@ -1,0 +1,12 @@
+{
+  "skillName": "cognitive-bias-optimizer-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/cognitive-bias-optimizer-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/cognitive-bias-optimizer-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/cognitive-bias-optimizer-agent.json",
+  "status": "present"
+}

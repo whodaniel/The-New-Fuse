@@ -1,0 +1,12 @@
+{
+  "skillName": "tnf-execution-audit-trail",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/tnf-execution-audit-trail/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/tnf-execution-audit-trail/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/tnf-execution-audit-trail.json",
+  "status": "present"
+}

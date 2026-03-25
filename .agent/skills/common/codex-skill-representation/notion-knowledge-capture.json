@@ -1,0 +1,12 @@
+{
+  "skillName": "notion-knowledge-capture",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/notion-knowledge-capture/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/notion-knowledge-capture/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/notion-knowledge-capture.json",
+  "status": "present"
+}

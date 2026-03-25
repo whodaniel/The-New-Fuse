@@ -73,4 +73,4 @@ node --loader ts-node/esm --experimental-specifier-resolution=node src/index.ts
 node --experimental-specifier-resolution=node dist/index.js
 ```
 
-For detailed information, see [TYPESCRIPT_ESM_CONFIGURATION.md](./docs/TYPESCRIPT_ESM_CONFIGURATION.md).
+For detailed information, see [TYPESCRIPT_ESM_CONFIGURATION.md](./TYPESCRIPT_ESM_CONFIGURATION.md).

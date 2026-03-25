@@ -1,0 +1,12 @@
+{
+  "skillName": "imagegen",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imagegen/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imagegen/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/imagegen.json",
+  "status": "present"
+}

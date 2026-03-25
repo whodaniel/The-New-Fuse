@@ -10,6 +10,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DatabaseService } from '@the-new-fuse/database';
 import { isPrivilegedUser } from '../auth/auth-policy';
@@ -191,24 +192,20 @@ export class OrchestrationController {
 
     if (orderedConfigs.length > 0) {
       const config = orderedConfigs[0];
-      if (config.apiKey && config.apiKey.trim()) {
+      const normalizedProvider = this.normalizeProvider(config.provider);
+      if (config.apiKey?.trim() || this.providerAllowsMissingApiKey(normalizedProvider)) {
         return {
-          provider: this.normalizeProvider(config.provider),
+          provider: normalizedProvider,
           modelName: config.modelName,
-          apiKey: config.apiKey,
+          apiKey: config.apiKey || '',
           apiEndpoint: config.apiEndpoint ?? null,
         };
       }
     }
 
-    const envKey = process.env.OPENAI_API_KEY?.trim();
-    if (envKey) {
-      return {
-        provider: 'openai',
-        modelName: process.env.OPENAI_MODEL?.trim() || 'gpt-4o-mini',
-        apiKey: envKey,
-        apiEndpoint: process.env.OPENAI_API_BASE?.trim() || null,
-      };
+    const fallback = this.resolveEnvProviderFallback();
+    if (fallback) {
+      return fallback;
     }
 
     throw new BadRequestException(
@@ -247,7 +244,7 @@ export class OrchestrationController {
       };
     }
 
-    if (config?.apiKey && config.apiKey.trim()) {
+    if (config && (config.apiKey?.trim() || this.providerAllowsMissingApiKey(provider))) {
       if (!isPrivilegedUser(user || {})) {
         throw new ForbiddenException(
           `Provider "${provider}" requires a personal API key in this workspace`
@@ -256,7 +253,7 @@ export class OrchestrationController {
       return {
         provider,
         modelName,
-        apiKey: config.apiKey,
+        apiKey: config.apiKey || '',
         apiEndpoint: config.apiEndpoint ?? null,
       };
     }
@@ -284,10 +281,12 @@ export class OrchestrationController {
     if (provider === 'openrouter') return 'openai/gpt-4o-mini';
     if (provider === 'perplexity') return 'sonar';
     if (provider === 'groq') return 'llama-3.1-70b-versatile';
+    if (provider === 'google-adk') return 'gemini-2.5-pro';
     return 'gpt-4o-mini';
   }
 
   private resolveChatEndpoint(provider: string, apiEndpoint?: string | null): string {
+    if (provider === 'google-adk') return this.resolveGoogleADKExecuteEndpoint(apiEndpoint);
     if (apiEndpoint && apiEndpoint.trim()) return apiEndpoint.trim();
     if (provider === 'anthropic') return 'https://api.anthropic.com/v1/messages';
     if (provider === 'openrouter') return 'https://openrouter.ai/api/v1/chat/completions';
@@ -297,6 +296,16 @@ export class OrchestrationController {
   }
 
   private buildHeaders(provider: string, apiKey: string): Record<string, string> {
+    if (provider === 'google-adk') {
+      const headers: Record<string, string> = {
+        'content-type': 'application/json',
+      };
+      if (apiKey?.trim()) {
+        headers['x-adk-gateway-key'] = apiKey.trim();
+      }
+      return headers;
+    }
+
     if (provider === 'anthropic') {
       return {
         'content-type': 'application/json',
@@ -318,6 +327,30 @@ export class OrchestrationController {
     temperature?: number,
     maxTokens?: number
   ): Record<string, unknown> {
+    if (provider === 'google-adk') {
+      return {
+        requestId: randomUUID(),
+        traceId: randomUUID(),
+        workspaceId: 'tnf-default-workspace',
+        agentId: 'tnf-orchestration-controller',
+        model: modelName,
+        input: {
+          messages: [
+            ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+            { role: 'user', content: message },
+          ],
+        },
+        tools: [],
+        metadata: {
+          source: 'tnf-orchestration-controller',
+          policyProfile: 'default',
+        },
+        timeoutMs: 120000,
+        temperature: typeof temperature === 'number' ? temperature : 0.7,
+        maxTokens: maxTokens ?? 800,
+      };
+    }
+
     if (provider === 'anthropic') {
       return {
         model: modelName,
@@ -342,6 +375,11 @@ export class OrchestrationController {
   }
 
   private extractTextContent(provider: string, payload: any): string | null {
+    if (provider === 'google-adk') {
+      const text = payload?.output?.content;
+      return typeof text === 'string' ? text : null;
+    }
+
     if (provider === 'anthropic') {
       const text = payload?.content?.[0]?.text;
       return typeof text === 'string' ? text : null;
@@ -406,5 +444,50 @@ export class OrchestrationController {
     } catch {
       return null;
     }
+  }
+
+  private providerAllowsMissingApiKey(provider: string): boolean {
+    return provider === 'google-adk';
+  }
+
+  private resolveEnvProviderFallback(): {
+    provider: string;
+    modelName: string;
+    apiKey: string;
+    apiEndpoint: string | null;
+  } | null {
+    const requestedProvider = process.env.LLM_PROVIDER?.trim().toLowerCase();
+    const openAIKey = process.env.OPENAI_API_KEY?.trim();
+    const adkBase = process.env.GOOGLE_ADK_BASE_URL?.trim() || process.env.ADK_GATEWAY_URL?.trim();
+    const adkGatewayKey =
+      process.env.GOOGLE_ADK_API_KEY?.trim() || process.env.ADK_GATEWAY_API_KEY?.trim() || '';
+
+    if (requestedProvider === 'google-adk' || (!openAIKey && adkBase)) {
+      return {
+        provider: 'google-adk',
+        modelName: process.env.GOOGLE_ADK_MODEL?.trim() || 'gemini-2.5-pro',
+        apiKey: adkGatewayKey,
+        apiEndpoint: adkBase || 'http://localhost:8089',
+      };
+    }
+
+    if (!openAIKey) return null;
+    return {
+      provider: 'openai',
+      modelName: process.env.OPENAI_MODEL?.trim() || 'gpt-4o-mini',
+      apiKey: openAIKey,
+      apiEndpoint: process.env.OPENAI_API_BASE?.trim() || null,
+    };
+  }
+
+  private resolveGoogleADKExecuteEndpoint(apiEndpoint?: string | null): string {
+    const raw =
+      apiEndpoint?.trim() ||
+      process.env.GOOGLE_ADK_BASE_URL?.trim() ||
+      process.env.ADK_GATEWAY_URL?.trim() ||
+      'http://localhost:8089';
+    if (raw.endsWith('/v1/execute')) return raw;
+    if (raw.endsWith('/v1/execute/stream')) return raw.replace(/\/stream$/, '');
+    return `${raw.replace(/\/+$/, '')}/v1/execute`;
   }
 }

@@ -79,6 +79,31 @@ graph TD
    ./launch-vscode.sh
    ```
 
+### Alternative Installation Paths
+
+If you are not building locally, you can install via:
+
+1. VS Code Marketplace
+   - Open Extensions view (`Ctrl+Shift+X` / `Cmd+Shift+X`)
+   - Search for `The New Fuse`
+   - Select Install
+2. VSIX package
+   - Open Extensions view
+   - Use `...` -> `Install from VSIX...`
+   - Select the generated `.vsix` artifact
+
+### Core Settings
+
+Use VS Code settings to configure runtime behavior:
+
+```json
+{
+  "thefuse.agentServerUrl": "ws://localhost:3002",
+  "thefuse.enableAutoConnect": false,
+  "thefuse.logLevel": "info"
+}
+```
+
 ## Commands
 
 All commands can be accessed via the Command Palette (Cmd+Shift+P or Ctrl+Shift+P):

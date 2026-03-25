@@ -15,6 +15,13 @@ minutes.
 4. **Database**: Railway PostgreSQL plugin
 5. **Redis**: Railway Redis plugin
 
+### Build Guardrails (Monorepo)
+
+- Prefer Docker-based deployments for monorepo consistency (instead of Nixpacks).
+- Set **Root Directory** to `.` for services that use `Dockerfile.railway`.
+- Set **Dockerfile Path** to `./Dockerfile.railway`.
+- Set `SERVICE_PATH` build arg per service (`api-gateway`, `backend`, etc.).
+
 ---
 
 ## Step 1: Prepare Repository
@@ -104,8 +111,8 @@ BACKEND_URL=${{Backend.RAILWAY_PRIVATE_DOMAIN}}
 1. Click **"+ New"** → **"GitHub Repo"** → Select `whodaniel/fuse`
 2. Configure service:
    - **Name**: `ApiGateway`
-   - **Root Directory**: Leave blank
-   - **Dockerfile Path**: `Dockerfile.railway`
+   - **Root Directory**: `.`
+   - **Dockerfile Path**: `./Dockerfile.railway`
    - **Build Args**: `SERVICE_PATH=api-gateway`
 
 **Environment Variables**:
@@ -124,8 +131,8 @@ JWT_SECRET=<GENERATE_32_CHAR_RANDOM_STRING>
 1. Click **"+ New"** → **"GitHub Repo"** → Select `whodaniel/fuse`
 2. Configure service:
    - **Name**: `Backend`
-   - **Root Directory**: Leave blank
-   - **Dockerfile Path**: `Dockerfile.railway`
+   - **Root Directory**: `.`
+   - **Dockerfile Path**: `./Dockerfile.railway`
    - **Build Args**: `SERVICE_PATH=backend`
 
 **Environment Variables**:
@@ -241,6 +248,8 @@ Railway logs → Backend → Search for "drizzle migrate"
 - Verify `package.json` has updated build script
 - Check Dockerfile.railway excludes problematic packages
 - Review build logs for specific missing packages
+- Ensure all required workspace `package.json` files are copied during image build
+- Ensure built workspace outputs are copied into the runtime image
 
 ### Service Won't Start
 
@@ -249,6 +258,8 @@ Railway logs → Backend → Search for "drizzle migrate"
 - Check environment variables are set correctly
 - Verify `DATABASE_URL` and `REDIS_URL` are populated
 - Review startup logs for specific errors
+- Ensure app binds to Railway-provided `PORT`
+- Ensure `/health` endpoint returns HTTP 200 for Railway health checks
 
 ### Database Connection Errors
 

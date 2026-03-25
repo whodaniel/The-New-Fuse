@@ -7,6 +7,7 @@ import {
   Post,
   ServiceUnavailableException,
 } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { DatabaseService } from '@the-new-fuse/database';
 
 @Controller('ai')
@@ -170,7 +171,8 @@ export class AiController {
     }
 
     const preferred = [...enabled].sort((a, b) => a.priority - b.priority)[0];
-    if (!preferred.apiKey || !preferred.apiKey.trim()) {
+    const providerName = preferred.provider.trim().toLowerCase();
+    if (!preferred.apiKey?.trim() && !this.providerAllowsMissingApiKey(providerName)) {
       throw new ServiceUnavailableException('Configured LLM provider has no API key.');
     }
 
@@ -190,7 +192,23 @@ export class AiController {
     apiEndpoint: string | null;
     priority: number;
   } | null {
-    const apiKey = process.env.OPENAI_API_KEY?.trim();
+    const requestedProvider = process.env.LLM_PROVIDER?.trim().toLowerCase();
+    const openAIKey = process.env.OPENAI_API_KEY?.trim();
+    const adkBase = process.env.GOOGLE_ADK_BASE_URL?.trim() || process.env.ADK_GATEWAY_URL?.trim();
+    const adkGatewayKey =
+      process.env.GOOGLE_ADK_API_KEY?.trim() || process.env.ADK_GATEWAY_API_KEY?.trim() || '';
+
+    if (requestedProvider === 'google-adk' || (!openAIKey && adkBase)) {
+      return {
+        provider: 'google-adk',
+        modelName: process.env.GOOGLE_ADK_MODEL?.trim() || 'gemini-2.5-pro',
+        apiKey: adkGatewayKey,
+        apiEndpoint: adkBase || 'http://localhost:8089',
+        priority: 1,
+      };
+    }
+
+    const apiKey = openAIKey;
     if (!apiKey) {
       return null;
     }
@@ -205,9 +223,8 @@ export class AiController {
   }
 
   private resolveTextEndpoint(provider: string, apiEndpoint?: string): string {
-    if (apiEndpoint && apiEndpoint.trim()) {
-      return apiEndpoint.trim();
-    }
+    if (provider === 'google-adk') return this.resolveGoogleADKExecuteEndpoint(apiEndpoint);
+    if (apiEndpoint && apiEndpoint.trim()) return apiEndpoint.trim();
 
     if (provider === 'anthropic') {
       return 'https://api.anthropic.com/v1/messages';
@@ -237,6 +254,16 @@ export class AiController {
   }
 
   private buildProviderHeaders(provider: string, apiKey: string): Record<string, string> {
+    if (provider === 'google-adk') {
+      const headers: Record<string, string> = {
+        'content-type': 'application/json',
+      };
+      if (apiKey?.trim()) {
+        headers['x-adk-gateway-key'] = apiKey.trim();
+      }
+      return headers;
+    }
+
     if (provider === 'anthropic') {
       return {
         'content-type': 'application/json',
@@ -257,6 +284,28 @@ export class AiController {
     prompt: string,
     systemPrompt?: string
   ): Record<string, unknown> {
+    if (provider === 'google-adk') {
+      return {
+        requestId: randomUUID(),
+        traceId: randomUUID(),
+        workspaceId: 'tnf-default-workspace',
+        agentId: 'tnf-ai-controller',
+        model,
+        input: {
+          messages: [
+            ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+            { role: 'user', content: prompt },
+          ],
+        },
+        tools: [],
+        metadata: {
+          source: 'tnf-ai-controller',
+          policyProfile: 'default',
+        },
+        timeoutMs: 120000,
+      };
+    }
+
     if (provider === 'anthropic') {
       return {
         model,
@@ -280,6 +329,11 @@ export class AiController {
       return null;
     }
 
+    if (provider === 'google-adk') {
+      const adkText = payload?.output?.content;
+      return typeof adkText === 'string' ? adkText : null;
+    }
+
     if (provider === 'anthropic') {
       const text = payload?.content?.find?.((item: any) => item?.type === 'text')?.text;
       return typeof text === 'string' ? text : null;
@@ -299,6 +353,21 @@ export class AiController {
   /** OpenAI-compatible providers support image generation via DALL-E proxy */
   private isOpenAICompatible(provider: string): boolean {
     return provider === 'openai' || provider === 'openai-codex' || provider === 'minimax';
+  }
+
+  private providerAllowsMissingApiKey(provider: string): boolean {
+    return provider === 'google-adk';
+  }
+
+  private resolveGoogleADKExecuteEndpoint(apiEndpoint?: string | null): string {
+    const raw =
+      apiEndpoint?.trim() ||
+      process.env.GOOGLE_ADK_BASE_URL?.trim() ||
+      process.env.ADK_GATEWAY_URL?.trim() ||
+      'http://localhost:8089';
+    if (raw.endsWith('/v1/execute')) return raw;
+    if (raw.endsWith('/v1/execute/stream')) return raw.replace(/\/stream$/, '');
+    return `${raw.replace(/\/+$/, '')}/v1/execute`;
   }
 
   private tryParseJson(text: string): any {

@@ -1,0 +1,12 @@
+{
+  "skillName": "tnf-live-session-coordination",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/tnf-live-session-coordination/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/tnf-live-session-coordination/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/tnf-live-session-coordination.json",
+  "status": "present"
+}

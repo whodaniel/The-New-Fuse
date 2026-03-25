@@ -232,7 +232,7 @@ patterns.
 
 3. **Complete Agent Communication Guide** ✅
    - **Location**:
-     `<repo-root>/docs/guides/COMPLETE-AGENT-COMMUNICATION-GUIDE.md`
+     `<repo-root>/docs/agents-and-protocols/AGENT_COMMUNICATION_GUIDE.md`
    - **Coverage**: Protocols, workflows, collaboration features
 
 4. **Agent Framework Protocols** ✅
@@ -374,7 +374,7 @@ practical guides.
 | ---------------------------------- | --------------------------------------------------------------------------- | ------ |
 | Agent Communication Architecture   | `<repo-root>/docs/agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md` | ✅ NEW |
 | Agent Development Guide            | `<repo-root>/docs/agents-and-protocols/AGENT_DEVELOPMENT_GUIDE.md`          | ✅ NEW |
-| Complete Agent Communication Guide | `<repo-root>/docs/guides/COMPLETE-AGENT-COMMUNICATION-GUIDE.md`             | ✅     |
+| Complete Agent Communication Guide | `<repo-root>/docs/agents-and-protocols/AGENT_COMMUNICATION_GUIDE.md`             | ✅     |
 | Agent Framework Protocols          | `<repo-root>/docs/agents-and-protocols/AGENT_FRAMEWORK_PROTOCOLS.md`        | ✅     |
 | Available Agents Registry          | `<repo-root>/docs/AVAILABLE_AGENTS_REGISTRY.md`                             | ✅     |
 | MCP Complete Guide                 | `<repo-root>/docs/protocols/MCP-COMPLETE-GUIDE.md`                          | ✅     |

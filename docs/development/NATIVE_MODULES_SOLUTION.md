@@ -140,7 +140,7 @@ node -e "const { createCanvas } = require('canvas'); console.log('Canvas OK');"
 
 ## 📚 Documentation Created
 
-1. **`docs/guides/native-modules-guide.md`** - Complete native modules documentation
+1. **`docs/NATIVE_MODULES_GUIDE.md`** - Complete native modules documentation
 2. **`docs/guides/development-workflow.md`** - Updated with native module information  
 3. **`README.md`** - Enhanced with troubleshooting and setup notes
 4. **`NATIVE_MODULES_SOLUTION.md`** - This comprehensive solution document

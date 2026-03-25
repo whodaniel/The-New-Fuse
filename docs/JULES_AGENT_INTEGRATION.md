@@ -529,7 +529,7 @@ X-Agent-Token: [AUTH_TOKEN]
 
 ### Documentation
 
-- Agent Definition: [jules-cli-agent.md](.claude/agents/jules-cli-agent.md)
+- Agent Definition: `jules-cli-agent.md`
 - Slash Command: [delegate-to-jules.md](.claude/commands/delegate-to-jules.md)
 - Registration Script:
   [register-jules-agent.ts](../scripts/register-jules-agent.ts)

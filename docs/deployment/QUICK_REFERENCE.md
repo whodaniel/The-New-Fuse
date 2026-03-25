@@ -78,6 +78,43 @@ tail -f logs/deployment/deploy-*.log
 ./scripts/deployment/notifications.sh custom "Title" "Message" "status"
 ```
 
+### GitHub Actions (gh CLI)
+
+```bash
+# List and inspect workflow runs
+gh run list --limit 20
+gh run view <run-id>
+gh run watch
+
+# Trigger deployment workflow manually
+gh workflow run deploy.yml -f environment=staging -f services=frontend
+
+# Re-run failed jobs
+gh run rerun <run-id> --failed
+```
+
+### Railway CLI (Direct Ops)
+
+```bash
+# Deploy or rollback a specific service
+railway up --service=api-gateway
+railway rollback --service=api-gateway
+
+# Runtime checks
+railway status --service=api-gateway
+railway metrics --service=api-gateway
+railway logs --service=api-gateway --tail 100 --follow
+```
+
+### Local CI Sanity Commands
+
+```bash
+pnpm run lint
+pnpm run type-check
+pnpm run test
+pnpm run build
+```
+
 ## Service-Specific Deployments
 
 ```bash
@@ -278,6 +315,29 @@ ls -lh backups/database/
 ### Dashboard
 
 - `Ctrl+C` - Exit dashboard
+
+## Quick Checklists
+
+### Pre-PR
+
+- [ ] `pnpm run lint`
+- [ ] `pnpm run type-check`
+- [ ] `pnpm run test`
+- [ ] `pnpm run build`
+
+### Pre-Deploy
+
+- [ ] CI checks are green on target branch
+- [ ] Required Railway variables are present
+- [ ] Database migration plan is confirmed
+- [ ] Rollback command path is ready
+
+### Post-Deploy
+
+- [ ] Health endpoints return 200
+- [ ] Error rates remain stable
+- [ ] Response times remain within target
+- [ ] Team notification sent
 
 ## Support
 

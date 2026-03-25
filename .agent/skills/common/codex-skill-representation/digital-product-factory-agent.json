@@ -1,0 +1,12 @@
+{
+  "skillName": "digital-product-factory-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/digital-product-factory-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/digital-product-factory-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/digital-product-factory-agent.json",
+  "status": "present"
+}

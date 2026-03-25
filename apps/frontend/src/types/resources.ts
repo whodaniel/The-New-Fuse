@@ -56,6 +56,28 @@ export interface SkillExample {
   output: string;
 }
 
+export interface PersonalSkill {
+  id: string;
+  userId: string;
+  slug: string;
+  name: string;
+  description: string;
+  instructions: string;
+  tags: string[];
+  metadata: Record<string, unknown>;
+  isPrivate: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PersonalSkillInput {
+  name: string;
+  description?: string;
+  instructions: string;
+  tags?: string[];
+  metadata?: Record<string, unknown>;
+}
+
 export interface N8NWorkflow extends Resource {
   type: 'workflow';
   nodes: number;

@@ -6,6 +6,48 @@ This guide provides comprehensive instructions for integrating Qwen AI models in
 
 Qwen (通义千问) is a series of large language models developed by Alibaba Cloud. This integration allows you to leverage Qwen's capabilities within your applications and development environment.
 
+## The New Fuse Relay Integration
+
+The repository also includes a TNF-specific bridge for bidirectional
+communication between VS Code and Qwen chat surfaces.
+
+### Components
+
+1. **VS Code Extension Enhancements** for external communication
+2. **Relay Server** (`relay-server`) for browser/editor routing
+3. **Chrome Extension** (`chrome-extension`) for in-page Qwen integration
+
+### Setup Quick Start
+
+1. Build the VS Code extension:
+   ```bash
+   cd src/vscode-extension
+   pnpm install
+   pnpm run compile
+   ```
+2. Start the relay server:
+   ```bash
+   cd relay-server
+   pnpm install
+   npm start
+   ```
+3. Load the Chrome extension from `chrome-extension` via
+   `chrome://extensions` (Developer mode).
+4. Configure both sides to use the relay URL (default
+   `http://localhost:3000`).
+
+### Usage Flows
+
+- **VS Code to Qwen**: select text and use `Send Selection to Web`.
+- **Qwen to VS Code**: use the VS Code toggle in the injected Qwen panel and
+  send text back to the editor.
+
+### Communication Channels
+
+- **WebSocket**: primary real-time channel
+- **Redis**: optional queue-based channel
+- **File IPC**: fallback channel
+
 ## Prerequisites
 
 - Node.js 18+ or Python 3.8+

@@ -248,7 +248,7 @@ All core business logic is fully functional on Drizzle:
    - File-by-file status
    - What's working on Drizzle
 
-3. **[DRIZZLE_TO_DRIZZLE_MIGRATION_PLAN.md](./DRIZZLE_TO_DRIZZLE_MIGRATION_PLAN.md)**
+3. **[PRISMA_TO_DRIZZLE_MIGRATION_PLAN.md](./PRISMA_TO_DRIZZLE_MIGRATION_PLAN.md)**
    - Complete migration roadmap
    - Phase-by-phase breakdown
    - Timeline and estimates

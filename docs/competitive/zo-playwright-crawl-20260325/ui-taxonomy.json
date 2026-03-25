@@ -1,0 +1,770 @@
+{
+  "topHeadings": [
+    {
+      "text": "PRODUCT",
+      "count": 64
+    },
+    {
+      "text": "INFORMATION",
+      "count": 61
+    },
+    {
+      "text": "COMMUNITY",
+      "count": 57
+    },
+    {
+      "text": "WHAT YOU CAN DO",
+      "count": 21
+    },
+    {
+      "text": "zopenclaw",
+      "count": 18
+    },
+    {
+      "text": "brainstorming",
+      "count": 17
+    },
+    {
+      "text": "frontend-design",
+      "count": 17
+    },
+    {
+      "text": "github",
+      "count": 17
+    },
+    {
+      "text": "skill-creator",
+      "count": 17
+    },
+    {
+      "text": "supermemory",
+      "count": 17
+    },
+    {
+      "text": "web-scraper",
+      "count": 17
+    },
+    {
+      "text": "All Skills",
+      "count": 14
+    },
+    {
+      "text": "All Tools",
+      "count": 14
+    },
+    {
+      "text": "PARAMETERS",
+      "count": 14
+    },
+    {
+      "text": "Purpose",
+      "count": 9
+    },
+    {
+      "text": "Notes",
+      "count": 8
+    },
+    {
+      "text": "Setup",
+      "count": 8
+    },
+    {
+      "text": "Initial Assessment",
+      "count": 7
+    },
+    {
+      "text": "Quick Start",
+      "count": 7
+    },
+    {
+      "text": "Workflow",
+      "count": 7
+    },
+    {
+      "text": "Core Principles",
+      "count": 6
+    },
+    {
+      "text": "Prerequisites",
+      "count": 6
+    },
+    {
+      "text": "Steps",
+      "count": 6
+    },
+    {
+      "text": "All Channels",
+      "count": 5
+    },
+    {
+      "text": "FEATURES",
+      "count": 5
+    },
+    {
+      "text": "Commands",
+      "count": 4
+    },
+    {
+      "text": "Input",
+      "count": 4
+    },
+    {
+      "text": "Overview",
+      "count": 4
+    },
+    {
+      "text": "Protocol",
+      "count": 4
+    },
+    {
+      "text": "Usage",
+      "count": 4
+    },
+    {
+      "text": "What to do",
+      "count": 4
+    },
+    {
+      "text": "When to Use",
+      "count": 4
+    },
+    {
+      "text": "Before Starting",
+      "count": 3
+    },
+    {
+      "text": "CLI",
+      "count": 3
+    },
+    {
+      "text": "Examples",
+      "count": 3
+    },
+    {
+      "text": "How to Use This File",
+      "count": 3
+    },
+    {
+      "text": "Key Tips",
+      "count": 3
+    },
+    {
+      "text": "Note",
+      "count": 3
+    },
+    {
+      "text": "Notice",
+      "count": 3
+    },
+    {
+      "text": "Options",
+      "count": 3
+    },
+    {
+      "text": "Process",
+      "count": 3
+    },
+    {
+      "text": "Step 1: Clarify the details",
+      "count": 3
+    },
+    {
+      "text": "Step 2: Create the site",
+      "count": 3
+    },
+    {
+      "text": "Step 3: Guide next steps",
+      "count": 3
+    },
+    {
+      "text": "TUTORIALS",
+      "count": 3
+    },
+    {
+      "text": "Zo Computer",
+      "count": 3
+    },
+    {
+      "text": "humanizer",
+      "count": 3
+    },
+    {
+      "text": "linkedin",
+      "count": 3
+    },
+    {
+      "text": "pdf",
+      "count": 3
+    },
+    {
+      "text": "research-topic",
+      "count": 3
+    },
+    {
+      "text": "2. Audience",
+      "count": 2
+    },
+    {
+      "text": "4. Resources",
+      "count": 2
+    },
+    {
+      "text": "All Integrations",
+      "count": 2
+    },
+    {
+      "text": "Authentication",
+      "count": 2
+    },
+    {
+      "text": "Common Operations",
+      "count": 2
+    },
+    {
+      "text": "Comparisons",
+      "count": 2
+    },
+    {
+      "text": "Configuration",
+      "count": 2
+    },
+    {
+      "text": "Core Philosophy",
+      "count": 2
+    },
+    {
+      "text": "ESSENTIAL PRINCIPLES",
+      "count": 2
+    },
+    {
+      "text": "Features",
+      "count": 2
+    },
+    {
+      "text": "How to Connect Telegram to Zo",
+      "count": 2
+    },
+    {
+      "text": "How to Text Zo",
+      "count": 2
+    },
+    {
+      "text": "How to Use Google Drive with Zo",
+      "count": 2
+    },
+    {
+      "text": "How to Use This Skill",
+      "count": 2
+    },
+    {
+      "text": "Inputs",
+      "count": 2
+    },
+    {
+      "text": "Output",
+      "count": 2
+    },
+    {
+      "text": "PHILOSOPHY EXAMPLES",
+      "count": 2
+    },
+    {
+      "text": "Procedure",
+      "count": 2
+    },
+    {
+      "text": "Prompt Improver",
+      "count": 2
+    },
+    {
+      "text": "Setup Instructions",
+      "count": 2
+    },
+    {
+      "text": "Step 1: Identify the Prompt & Intent",
+      "count": 2
+    },
+    {
+      "text": "Step 2: Diagnose the Core Issue",
+      "count": 2
+    },
+    {
+      "text": "Step 2: Set Up the Automation",
+      "count": 2
+    },
+    {
+      "text": "Step 3: Apply the 5-Element Persona Framework",
+      "count": 2
+    },
+    {
+      "text": "Step 4: Apply Structural Techniques",
+      "count": 2
+    },
+    {
+      "text": "Step 5: Apply Claude 4.x Optimizations",
+      "count": 2
+    },
+    {
+      "text": "Step 6: Generate the Improved Prompt",
+      "count": 2
+    },
+    {
+      "text": "THE CRITICAL UNDERSTANDING",
+      "count": 2
+    },
+    {
+      "text": "Tools",
+      "count": 2
+    },
+    {
+      "text": "Triggers",
+      "count": 2
+    },
+    {
+      "text": "Updating",
+      "count": 2
+    },
+    {
+      "text": "What This Does",
+      "count": 2
+    },
+    {
+      "text": "When to Load References",
+      "count": 2
+    },
+    {
+      "text": "blogwatcher",
+      "count": 2
+    },
+    {
+      "text": "gog",
+      "count": 2
+    },
+    {
+      "text": "just-fucking-cancel",
+      "count": 2
+    },
+    {
+      "text": "mcporter",
+      "count": 2
+    },
+    {
+      "text": "notion",
+      "count": 2
+    },
+    {
+      "text": "prompt-improver",
+      "count": 2
+    },
+    {
+      "text": "1. Business Context",
+      "count": 1
+    },
+    {
+      "text": "1. Campaign Goals",
+      "count": 1
+    },
+    {
+      "text": "1. Get Transaction CSV",
+      "count": 1
+    },
+    {
+      "text": "1. Goals",
+      "count": 1
+    },
+    {
+      "text": "1. Honesty Builds Trust",
+      "count": 1
+    },
+    {
+      "text": "1. Install Required Python Dependencies",
+      "count": 1
+    },
+    {
+      "text": "1. Install n8n",
+      "count": 1
+    },
+    {
+      "text": "1. One Email, One Job",
+      "count": 1
+    },
+    {
+      "text": "1. Page Purpose",
+      "count": 1
+    },
+    {
+      "text": "1. Present Curated Automation Ideas",
+      "count": 1
+    },
+    {
+      "text": "1. Preserve Functionality",
+      "count": 1
+    },
+    {
+      "text": "1. Program Type",
+      "count": 1
+    },
+    {
+      "text": "1. Set up Vapi",
+      "count": 1
+    },
+    {
+      "text": "1. Solve a Real Problem",
+      "count": 1
+    },
+    {
+      "text": "1. TODO Placeholders and Stub Implementations",
+      "count": 1
+    },
+    {
+      "text": "1. Templates",
+      "count": 1
+    },
+    {
+      "text": "1. Track for Decisions, Not Data",
+      "count": 1
+    },
+    {
+      "text": "1. Unique Value Per Page",
+      "count": 1
+    },
+    {
+      "text": "1. Value Proposition Clarity (Highest Impact)",
+      "count": 1
+    },
+    {
+      "text": "1.1 Understand Modern MCP Design",
+      "count": 1
+    },
+    {
+      "text": "1.2 Study MCP Protocol Documentation",
+      "count": 1
+    },
+    {
+      "text": "1.3 Study Framework Documentation",
+      "count": 1
+    },
+    {
+      "text": "1.4 Plan Your Implementation",
+      "count": 1
+    },
+    {
+      "text": "2. Adjacent to Core Product",
+      "count": 1
+    },
+    {
+      "text": "2. Analyze Recurring Charges",
+      "count": 1
+    },
+    {
+      "text": "2. Apply Project Standards",
+      "count": 1
+    },
+    {
+      "text": "2. Ask What They Want to Automate",
+      "count": 1
+    },
+    {
+      "text": "2. Choose a port",
+      "count": 1
+    },
+    {
+      "text": "2. Configure Environment Variables",
+      "count": 1
+    },
+    {
+      "text": "2. Create Project Directory Structure",
+      "count": 1
+    },
+    {
+      "text": "2. Current State",
+      "count": 1
+    }
+  ],
+  "topButtons": [
+    {
+      "text": "Copy",
+      "count": 476
+    },
+    {
+      "text": "Personalization",
+      "count": 256
+    },
+    {
+      "text": "Menu",
+      "count": 127
+    },
+    {
+      "text": "Resources",
+      "count": 127
+    },
+    {
+      "text": "Run in Zo",
+      "count": 91
+    },
+    {
+      "text": "Try on Zo",
+      "count": 14
+    },
+    {
+      "text": "Download",
+      "count": 4
+    },
+    {
+      "text": "2",
+      "count": 3
+    },
+    {
+      "text": "Continue with Google",
+      "count": 2
+    },
+    {
+      "text": "Continue with email",
+      "count": 2
+    },
+    {
+      "text": "Popular",
+      "count": 2
+    },
+    {
+      "text": "Search",
+      "count": 2
+    },
+    {
+      "text": "Subscribe",
+      "count": 2
+    },
+    {
+      "text": "1",
+      "count": 1
+    },
+    {
+      "text": "10",
+      "count": 1
+    },
+    {
+      "text": "11",
+      "count": 1
+    },
+    {
+      "text": "12",
+      "count": 1
+    },
+    {
+      "text": "3",
+      "count": 1
+    },
+    {
+      "text": "8",
+      "count": 1
+    },
+    {
+      "text": "ALL",
+      "count": 1
+    },
+    {
+      "text": "Black",
+      "count": 1
+    },
+    {
+      "text": "Close",
+      "count": 1
+    },
+    {
+      "text": "Content Creation 2 blog posts",
+      "count": 1
+    },
+    {
+      "text": "Data Analysis 2 blog posts",
+      "count": 1
+    },
+    {
+      "text": "Detailed",
+      "count": 1
+    },
+    {
+      "text": "Discussions",
+      "count": 1
+    },
+    {
+      "text": "E-commerce 0 blog posts",
+      "count": 1
+    },
+    {
+      "text": "FEATURED",
+      "count": 1
+    },
+    {
+      "text": "Filled",
+      "count": 1
+    },
+    {
+      "text": "Filters",
+      "count": 1
+    },
+    {
+      "text": "Finance 0 blog posts",
+      "count": 1
+    },
+    {
+      "text": "Fitness & Health 0 blog posts",
+      "count": 1
+    },
+    {
+      "text": "Gmail",
+      "count": 1
+    },
+    {
+      "text": "Go",
+      "count": 1
+    },
+    {
+      "text": "Go to Is it really 'Complex'? Or did we just make it 'Complicated'?",
+      "count": 1
+    },
+    {
+      "text": "Go to Personal Data Warehouses",
+      "count": 1
+    },
+    {
+      "text": "Go to Some Details of My Personal Infrastructure",
+      "count": 1
+    },
+    {
+      "text": "Go to The Dark Forest and the Cozy Web",
+      "count": 1
+    },
+    {
+      "text": "Go to The Timeless Way of Building",
+      "count": 1
+    },
+    {
+      "text": "Go to testimonials page 1",
+      "count": 1
+    },
+    {
+      "text": "Go to testimonials page 2",
+      "count": 1
+    },
+    {
+      "text": "Go to testimonials page 3",
+      "count": 1
+    },
+    {
+      "text": "Google Calendar",
+      "count": 1
+    },
+    {
+      "text": "Google Drive",
+      "count": 1
+    },
+    {
+      "text": "Home",
+      "count": 1
+    },
+    {
+      "text": "Latest",
+      "count": 1
+    },
+    {
+      "text": "Linear",
+      "count": 1
+    },
+    {
+      "text": "LinkedIn",
+      "count": 1
+    },
+    {
+      "text": "Marketing 3 blog posts",
+      "count": 1
+    },
+    {
+      "text": "Next",
+      "count": 1
+    },
+    {
+      "text": "Next testimonials",
+      "count": 1
+    },
+    {
+      "text": "No Computer",
+      "count": 1
+    },
+    {
+      "text": "Notion",
+      "count": 1
+    },
+    {
+      "text": "Previous",
+      "count": 1
+    },
+    {
+      "text": "Previous testimonials",
+      "count": 1
+    },
+    {
+      "text": "Productivity 13 blog posts",
+      "count": 1
+    },
+    {
+      "text": "Project Management 3 blog posts",
+      "count": 1
+    },
+    {
+      "text": "SMB 3 blog posts",
+      "count": 1
+    },
+    {
+      "text": "Share Publication",
+      "count": 1
+    },
+    {
+      "text": "Shuffle",
+      "count": 1
+    },
+    {
+      "text": "Sign in",
+      "count": 1
+    },
+    {
+      "text": "Spotify",
+      "count": 1
+    },
+    {
+      "text": "Telegram",
+      "count": 1
+    },
+    {
+      "text": "Top",
+      "count": 1
+    },
+    {
+      "text": "Travel 0 blog posts",
+      "count": 1
+    },
+    {
+      "text": "VS Code",
+      "count": 1
+    },
+    {
+      "text": "View comments (0)",
+      "count": 1
+    },
+    {
+      "text": "Watch video",
+      "count": 1
+    },
+    {
+      "text": "White",
+      "count": 1
+    },
+    {
+      "text": "X",
+      "count": 1
+    },
+    {
+      "text": "n8n",
+      "count": 1
+    }
+  ]
+}

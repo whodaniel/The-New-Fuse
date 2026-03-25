@@ -1,0 +1,1923 @@
+{
+  "capturedAt": "2026-03-25T00:36:07.489Z",
+  "url": "https://www.zo.computer/tools/connect_github",
+  "title": "Connect GitHub | Zo Tools",
+  "links": [
+    {
+      "text": "MiniMax 2.7 & Kimi K2.5 are free on Zo",
+      "href": "https://www.zo.computer/signup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo",
+      "href": "https://www.zo.computer/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Get started",
+      "href": "https://www.zo.computer/signup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo",
+      "href": "https://www.zo.computer/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Pricing",
+      "href": "https://www.zo.computer/pricing",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "About",
+      "href": "https://www.zo.computer/about",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Newsletter",
+      "href": "https://www.zo.computer/newsletter",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Blog",
+      "href": "https://www.zo.computer/blog",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Download",
+      "href": "https://github.com/zocomputer/Zo/releases/latest/download/Zo.dmg",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Get started",
+      "href": "https://www.zo.computer/signup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Back to Tools",
+      "href": "https://www.zo.computer/tools",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Run prompt Submit a prompt for Zo to run",
+      "href": "https://www.zo.computer/tools/run_prompt",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Save article Save the main contents of any webpage. Try a YouTube video – you'll get the transcript.",
+      "href": "https://www.zo.computer/tools/save_article",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Read webpage Extract the readable text from a webpage",
+      "href": "https://www.zo.computer/tools/read_webpage",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Search the web Search the web for up-to-date information",
+      "href": "https://www.zo.computer/tools/search_web",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Generate image Create an image – powered by Gemini (Nano Banana)",
+      "href": "https://www.zo.computer/tools/generate_image",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Edit image Modify an image – powered by Gemini (Nano Banana)",
+      "href": "https://www.zo.computer/tools/edit_image",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Transcribe audio Convert speech in an audio (or video) file to text",
+      "href": "https://www.zo.computer/tools/transcribe_audio",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Search X (Twitter) Search X posts and users for a topic",
+      "href": "https://www.zo.computer/tools/search_x",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Search X by user Search X posts from a specific account",
+      "href": "https://www.zo.computer/tools/search_x_user",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Deep web research Run an in-depth web search for specific sources",
+      "href": "https://www.zo.computer/tools/web_research",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Find company pages Search for company homepages and LinkedIn company profiles",
+      "href": "https://www.zo.computer/tools/web_research_company",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Find research papers Search academic research papers and scholarly sources",
+      "href": "https://www.zo.computer/tools/web_research_research_paper",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Find PDF documents Search for PDFs like reports, whitepapers, and manuals",
+      "href": "https://www.zo.computer/tools/web_research_pdf",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Find GitHub repositories Search GitHub repositories and open-source code",
+      "href": "https://www.zo.computer/tools/web_research_github",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Find tweets Search tweets and X posts for a topic",
+      "href": "https://www.zo.computer/tools/web_research_tweet",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Find personal websites Search personal pages, portfolios, and individual sites",
+      "href": "https://www.zo.computer/tools/web_research_personal_site",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Find LinkedIn profiles Search individual LinkedIn profiles by name, role, or company",
+      "href": "https://www.zo.computer/tools/web_research_linkedin_profile",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Find financial reports Search SEC filings and financial reports like 10-Ks and 10-Qs",
+      "href": "https://www.zo.computer/tools/web_research_financial_report",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Find people Search public profiles across the web by name or role",
+      "href": "https://www.zo.computer/tools/web_research_people",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Search images Find images on the web",
+      "href": "https://www.zo.computer/tools/image_search",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Find similar pages Discover semantically related pages to a given URL",
+      "href": "https://www.zo.computer/tools/find_similar_links",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Open webpage Open a webpage in Zo's browser",
+      "href": "https://www.zo.computer/tools/open_webpage",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "View webpage View the current browser page and capture its content",
+      "href": "https://www.zo.computer/tools/view_webpage",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Interact with webpage Automate clicks, forms, and navigation in the browser",
+      "href": "https://www.zo.computer/tools/use_webpage",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Create block diagram Create a block diagram of a system or process",
+      "href": "https://www.zo.computer/tools/generate_diagram",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Search Google Maps Research locations using Google Maps data",
+      "href": "https://www.zo.computer/tools/search_maps",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Search Google Maps nearby Find places near a specific location on Google Maps",
+      "href": "https://www.zo.computer/tools/search_maps_nearby",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Find places open now (Google Maps) Search Google Maps for locations that are open right now",
+      "href": "https://www.zo.computer/tools/search_maps_open_now",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Animate image Transform an image into a short animated video",
+      "href": "https://www.zo.computer/tools/animate_image",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Organize folder Reorganize files in a folder",
+      "href": "https://www.zo.computer/tools/organize_folder",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Write a report Research a topic and write a detailed report",
+      "href": "https://www.zo.computer/tools/write_report",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "List files List files and folders inside a directory",
+      "href": "https://www.zo.computer/tools/list_files",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Read file Open and read the contents of a file",
+      "href": "https://www.zo.computer/tools/read_file",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Search files Search files in workspace. Query is natural language (e.g. 'meeting notes from January')",
+      "href": "https://www.zo.computer/tools/search_files",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Convert file Transform files between formats. Supports documents, images, audio, video, and more.",
+      "href": "https://www.zo.computer/tools/convert_file",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Create reminder Set a reminder to notify you at a specific time",
+      "href": "https://www.zo.computer/tools/create_reminder",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Create persona Create a custom AI persona",
+      "href": "https://www.zo.computer/tools/create_persona",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Create rule Create a rule for Zo to follow",
+      "href": "https://www.zo.computer/tools/create_rule",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Send email Send an email to yourself",
+      "href": "https://www.zo.computer/tools/send_email",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Send text message Send an SMS to yourself or a saved contact",
+      "href": "https://www.zo.computer/tools/send_sms",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Generate QR code Create a QR code from a URL",
+      "href": "https://www.zo.computer/tools/generate_qr_code",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "supermemory Long-term memory that persists across conversations. Save facts, decisions, and preferences to a knowledge graph that builds a living profile of the user over time. Replaces static user docs with dynamic context that grows and self-corrects.",
+      "href": "https://www.zo.computer/skills/supermemory",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "brainstorming You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation.",
+      "href": "https://www.zo.computer/skills/brainstorming",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "github Interact with GitHub using the `gh` CLI. Use `gh issue`, `gh pr`, `gh run`, and `gh api` for issues, PRs, CI runs, and advanced queries.",
+      "href": "https://www.zo.computer/skills/github",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "skill-creator Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.",
+      "href": "https://www.zo.computer/skills/skill-creator",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "web-scraper Crawl and extract structured data from websites. Uses a tiered approach -- Zo built-ins for simple fetches, BeautifulSoup for custom parsing, Crawl4AI for deep crawls and LLM-powered extraction. Use when you need to scrape a website, extract structured data, or crawl multiple pages.",
+      "href": "https://www.zo.computer/skills/web-scraper",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "frontend-design Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.",
+      "href": "https://www.zo.computer/skills/frontend-design",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "zopenclaw 🦞 Install and run OpenClaw on Zo Computer with Tailscale private networking, browser Control UI, and Zo MCP tools via mcporter. Use this skill whenever the user wants to set up OpenClaw on their Zo, install OpenClaw, run OpenClaw, host OpenClaw, or asks about getting OpenClaw running on Zo. Also use when the user mentions \"openclaw\", \"open claw\", \"personal agent framework\", or asks about running a persistent AI agent on their Zo with Telegram/Discord/WhatsApp access. Handles Tailscale setup, OpenClaw installation, mcporter setup for Zo tools, two-phase gateway bootstrap, reprovision-safe service registration, and health verification. NOT for general Zo agent setup (use heartbeats and native Zo skills instead).",
+      "href": "https://www.zo.computer/skills/zopenclaw",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "pdf Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. When Claude needs to fill in a PDF form or programmatically process, generate, or analyze PDF documents at scale.",
+      "href": "https://www.zo.computer/skills/pdf",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "linkedin LinkedIn tool for searching profiles, checking messages, and summarizing your feed using session cookies.",
+      "href": "https://www.zo.computer/skills/zo-linkedin",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "humanizer Detect and fix AI writing patterns. Use when writing outbound content like emails, proposals, blog posts, client deliverables, or any external-facing writing. Also use when asked to humanize, polish, or de-AI text.",
+      "href": "https://www.zo.computer/skills/humanizer",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "research-topic Use Zo to research any topic comprehensively and write a report.",
+      "href": "https://www.zo.computer/skills/zo-research-topic",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "seo-audit When the user wants to audit, review, or diagnose SEO issues on their site. Also use when the user mentions \"SEO audit,\" \"technical SEO,\" \"why am I not ranking,\" \"SEO issues,\" \"on-page SEO,\" \"meta tags review,\" or \"SEO health check.\" For building pages at scale to target keywords, see programmatic-seo. For adding structured data, see schema-markup.",
+      "href": "https://www.zo.computer/skills/seo-audit",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "twitter Let Zo use your X (Twitter) account",
+      "href": "https://www.zo.computer/skills/zo-twitter",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "create-site Create a site hosted on your Zo server. Private by default, publish with a click.",
+      "href": "https://www.zo.computer/skills/zo-create-site",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "self-improvement AI self-improvement and reflection skill. Run weekly or on-demand to audit capabilities, identify gaps, evolve identity documents, prune stale skills/memory, and propose new capabilities. Triggers on schedule, when the user asks for a self-audit, or when the AI notices recurring limitations.",
+      "href": "https://www.zo.computer/skills/self-improvement",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "mcporter Work with MCP servers directly",
+      "href": "https://www.zo.computer/skills/mcporter",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "social-content When the user wants help creating, scheduling, or optimizing social media content for LinkedIn, Twitter/X, Instagram, TikTok, Facebook, or other platforms. Also use when the user mentions 'LinkedIn post,' 'Twitter thread,' 'social media,' 'content calendar,' 'social scheduling,' 'engagement,' or 'viral content.' This skill covers content creation, repurposing, and platform-specific strategies.",
+      "href": "https://www.zo.computer/skills/social-content",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "prompt-improver Improve and optimize prompts for Claude using Anthropic's official best practices and the 5-Element Persona Framework. Use when asked to improve, refine, optimize, or review a prompt. Also triggers on requests to make prompts clearer, more effective, better structured, or to get better/more realistic outputs from Claude. Covers Claude 4.x-specific techniques, persona engineering, constraint-based prompting, and structured outputs.",
+      "href": "https://www.zo.computer/skills/prompt-improver",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "gog Google Workspace CLI for Gmail, Calendar, Drive, Contacts, Sheets, and Docs",
+      "href": "https://www.zo.computer/skills/gog",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "organize-workspace Organizes your scattered files into logical folders by project, type, and purpose",
+      "href": "https://www.zo.computer/skills/zo-organize-workspace",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "copywriting When the user wants to write, rewrite, or improve marketing copy for any page — including homepage, landing pages, pricing pages, feature pages, about pages, or product pages. Also use when the user says \"write copy for,\" \"improve this copy,\" \"rewrite this page,\" \"marketing copy,\" \"headline help,\" or \"CTA copy.\" For email copy, see email-sequence. For popup copy, see popup-cro.",
+      "href": "https://www.zo.computer/skills/copywriting",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "remotion-best-practices Best practices for Remotion - Video creation in React",
+      "href": "https://www.zo.computer/skills/remotion-best-practices",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "weather Get the current weather for any location",
+      "href": "https://www.zo.computer/skills/weather",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "automate-something Create an automation with a Zo Agent task",
+      "href": "https://www.zo.computer/skills/zo-automate-something",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "marketing-psychology When the user wants to apply psychological principles, mental models, or behavioral science to marketing. Also use when the user mentions 'psychology,' 'mental models,' 'cognitive bias,' 'persuasion,' 'behavioral science,' 'why people buy,' 'decision-making,' or 'consumer behavior.' This skill provides 70+ mental models organized for marketing application.",
+      "href": "https://www.zo.computer/skills/marketing-psychology",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "manim-composer Trigger when: (1) User wants to create an educational/explainer video, (2) User has a vague concept they want visualized, (3) User mentions \"3b1b style\" or \"explain like 3Blue1Brown\", (4) User wants to plan a Manim video or animation sequence, (5) User asks to \"compose\" or \"plan\" a math/science visualization. Transforms vague video ideas into detailed scene-by-scene plans (scenes.md). Conducts research, asks clarifying questions about audience/scope/focus, and outputs comprehensive scene specifications ready for implementation with ManimCE or ManimGL. Use this BEFORE writing any Manim code. This skill plans the video; use manimce-best-practices or manimgl-best-practices for implementation.",
+      "href": "https://www.zo.computer/skills/manim-composer",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "code-degunker Identify and fix AI-generated code anti-patterns: incomplete implementations, TODO placeholders, over-engineering, hallucinated APIs, missing error handling, over-defensive code, security vulnerabilities, performance anti-patterns, code bloat, type workarounds, dead code, magic numbers, inconsistent patterns, and poor architecture. Use when asked to \"clean up\", \"degunk\", \"deslop\", review, audit, or harden code. Also triggers on \"is this code any good\", \"make this production-ready\", \"this feels AI-generated\", \"fix the code smell\", \"remove the slop\", or \"this code is a mess\". Covers 27 anti-patterns across architecture, logic, security, performance, completeness, style, and reliability. Supports full file review and branch diff review modes.",
+      "href": "https://www.zo.computer/skills/code-degunker",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "n8n-setup Sets up n8n workflow automation tool so you can create automated workflows between different apps and services",
+      "href": "https://www.zo.computer/skills/zo-n8n-setup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "blogwatcher Monitor blogs and RSS/Atom feeds for updates using the blogwatcher CLI.",
+      "href": "https://www.zo.computer/skills/blogwatcher",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "ssh-setup Sets up secure remote access to your Zo Computer so you can connect from anywhere",
+      "href": "https://www.zo.computer/skills/zo-ssh-setup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "notion Work with Notion using your own Notion API key (free)",
+      "href": "https://www.zo.computer/skills/notion",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "webapp-testing Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.",
+      "href": "https://www.zo.computer/skills/webapp-testing",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "marketing-ideas When the user needs marketing ideas, inspiration, or strategies for their SaaS or software product. Also use when the user asks for 'marketing ideas,' 'growth ideas,' 'how to market,' 'marketing strategies,' 'marketing tactics,' 'ways to promote,' or 'ideas to grow.' This skill provides 140 proven marketing approaches organized by category.",
+      "href": "https://www.zo.computer/skills/marketing-ideas",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "canvas-design Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create original visual designs, never copying existing artists' work to avoid copyright violations.",
+      "href": "https://www.zo.computer/skills/canvas-design",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "google-direct-oauth Direct Google OAuth integration without third-party apps. Connects your Google Calendar and Gmail using your own OAuth credentials in Google Cloud Console. Includes a refresh daemon that keeps tokens warm. Use this when you want direct API access to Google services without relying on external OAuth providers.",
+      "href": "https://www.zo.computer/skills/zo-google-direct-oauth",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "context7 Fetch up-to-date, version-specific library documentation and code examples from Context7. Use this skill whenever the user asks about a specific programming library, framework, or API, or when writing code that depends on a library. Replaces stale training-data knowledge with live docs.",
+      "href": "https://www.zo.computer/skills/context7",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "theme-factory Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly.",
+      "href": "https://www.zo.computer/skills/theme-factory",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "visual-explainer Build polished visual explainers as zo.space pages. Creates public routes at /explain/[slug] and keeps each explainer shareable at a stable URL.",
+      "href": "https://www.zo.computer/skills/visual-explainer",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "market-research Industry statistics and market sizing via free government APIs (BLS, FRED, Census Bureau). Query employment data, economic time series, establishment counts, and build market sizing reports by NAICS industry code. Use for any industry research or market analysis question.",
+      "href": "https://www.zo.computer/skills/market-research",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "create-slidedeck Turn any reference material into a polished, visually cohesive slide deck.",
+      "href": "https://www.zo.computer/skills/zo-create-slidedeck",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "free-tool-strategy When the user wants to plan, evaluate, or build a free tool for marketing purposes — lead generation, SEO value, or brand awareness. Also use when the user mentions \"engineering as marketing,\" \"free tool,\" \"marketing tool,\" \"calculator,\" \"generator,\" \"interactive tool,\" \"lead gen tool,\" \"build a tool for leads,\" or \"free resource.\" This skill bridges engineering and marketing — useful for founders and technical marketers.",
+      "href": "https://www.zo.computer/skills/free-tool-strategy",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "zo-space Comprehensive guide for building and managing zo.space routes (pages and APIs). Use this skill whenever creating, editing, or debugging zo.space routes. Covers architecture, available packages, patterns, limitations, and gotchas.",
+      "href": "https://www.zo.computer/skills/zo-space",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "extract-text-from-image Extract text from images, scanned documents, and PDFs using OCR",
+      "href": "https://www.zo.computer/skills/zo-extract-text-from-image",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "code-server-setup Sets up VS Code in your web browser so you can write and edit code from anywhere",
+      "href": "https://www.zo.computer/skills/zo-code-server-setup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "moltbook Post, reply, and engage on Moltbook, a social network for AI agents.",
+      "href": "https://www.zo.computer/skills/moltbook",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "pricing-strategy When the user wants help with pricing decisions, packaging, or monetization strategy. Also use when the user mentions 'pricing,' 'pricing tiers,' 'freemium,' 'free trial,' 'packaging,' 'price increase,' 'value metric,' 'Van Westendorp,' 'willingness to pay,' or 'monetization.' This skill covers pricing research, tier structure, and packaging strategy.",
+      "href": "https://www.zo.computer/skills/pricing-strategy",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "brand-guidelines Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting, or company design standards apply.",
+      "href": "https://www.zo.computer/skills/brand-guidelines",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "google-calendar Query Google Calendar for events and free time blocks. Requires google-direct-oauth skill to be set up first. Ask Zo things like \"what's on my calendar today\", \"find free time tomorrow\", \"show my week\", or \"when am I free on Friday between 10am and 4pm\".",
+      "href": "https://www.zo.computer/skills/google-calendar",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "morning-briefing Generate and deliver a daily morning briefing. Run via scheduled agent at your preferred morning time, or manually when the user asks for a briefing. Pulls tasks, calendar, inbox highlights, and news into a single digest delivered by email and SMS.",
+      "href": "https://www.zo.computer/skills/morning-briefing",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "portfolio-site Build a personal portfolio to showcase your work and resume.",
+      "href": "https://www.zo.computer/skills/zo-portfolio-site",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "competitor-alternatives When the user wants to create competitor comparison or alternative pages for SEO and sales enablement. Also use when the user mentions \"alternative page,\" \"vs page,\" \"competitor comparison,\" \"comparison page,\" \"[Product] vs [Product],\" \"[Product] alternative,\" or \"competitive landing pages.\" Covers four formats: singular alternative, plural alternatives, you vs competitor, and competitor vs competitor. Emphasizes deep research, modular content architecture, and varied section types beyond feature tables.",
+      "href": "https://www.zo.computer/skills/competitor-alternatives",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "generate-pdf Convert Markdown files to PDF format with professional formatting",
+      "href": "https://www.zo.computer/skills/zo-generate-pdf",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "video-frames Extract frames or short clips from videos using ffmpeg.",
+      "href": "https://www.zo.computer/skills/video-frames",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "launch-strategy When the user wants to plan a product launch, feature announcement, or release strategy. Also use when the user mentions 'launch,' 'Product Hunt,' 'feature release,' 'announcement,' 'go-to-market,' 'beta launch,' 'early access,' 'waitlist,' or 'product update.' This skill covers phased launches, channel strategy, and ongoing launch momentum.",
+      "href": "https://www.zo.computer/skills/launch-strategy",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "web-artifacts-builder Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.",
+      "href": "https://www.zo.computer/skills/web-artifacts-builder",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "simplify Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality. Focuses on recently modified code unless instructed otherwise. Run after writing or modifying code to clean it up.",
+      "href": "https://www.zo.computer/skills/simplify",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "mcporter-setup Install MCPorter and configure MCP servers from scratch. Use when setting up MCP integration for the first time, adding new MCP servers, or troubleshooting MCP connectivity. Handles installation, configuration, secrets management, and connection testing.",
+      "href": "https://www.zo.computer/skills/mcporter-setup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "paid-ads When the user wants help with paid advertising campaigns on Google Ads, Meta (Facebook/Instagram), LinkedIn, Twitter/X, or other ad platforms. Also use when the user mentions 'PPC,' 'paid media,' 'ad copy,' 'ad creative,' 'ROAS,' 'CPA,' 'ad campaign,' 'retargeting,' or 'audience targeting.' This skill covers campaign strategy, ad creation, audience targeting, and optimization.",
+      "href": "https://www.zo.computer/skills/paid-ads",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "zo-dataset-creator Create Zo Datasets correctly formatted for the Zo UI. Use when creating a new dataset from scratch, setting up a dataset with proper datapackage.json, schema.yaml, and data.duckdb structure, fixing existing datasets that don't display tables in the Zo UI, or generating schema.yaml from an existing DuckDB database. Handles common pitfalls of manual schema formatting and ensures all required files are present and correctly structured.",
+      "href": "https://www.zo.computer/skills/zo-dataset-creator",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "pdf-to-markdown Convert PDF files to Markdown format",
+      "href": "https://www.zo.computer/skills/zo-pdf-to-markdown",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "threejs-geometry Three.js geometry creation - built-in shapes, BufferGeometry, custom geometry, instancing. Use when creating 3D shapes, working with vertices, building custom meshes, or optimizing with instanced rendering.",
+      "href": "https://www.zo.computer/skills/threejs-geometry",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "mcp-builder Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).",
+      "href": "https://www.zo.computer/skills/mcp-builder",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "resize-image Resize images to specific dimensions or percentages",
+      "href": "https://www.zo.computer/skills/zo-resize-image",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "blog-site Build a blog or newsletter to share your thoughts.",
+      "href": "https://www.zo.computer/skills/zo-blog-site",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "page-cro When the user wants to optimize, improve, or increase conversions on any marketing page — including homepage, landing pages, pricing pages, feature pages, or blog posts. Also use when the user says \"CRO,\" \"conversion rate optimization,\" \"this page isn't converting,\" \"improve conversions,\" or \"why isn't this page working.\" For signup/registration flows, see signup-flow-cro. For post-signup activation, see onboarding-cro. For forms outside of signup, see form-cro. For popups/modals, see popup-cro.",
+      "href": "https://www.zo.computer/skills/page-cro",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "plan-code-changes Plan out code changes using a plan file.",
+      "href": "https://www.zo.computer/skills/plan-code-changes",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "daily-news-digest Fetch the latest headlines on a topic you care about and email it to you every morning.",
+      "href": "https://www.zo.computer/skills/zo-daily-news-digest",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "copy-editing When the user wants to edit, review, or improve existing marketing copy. Also use when the user mentions 'edit this copy,' 'review my copy,' 'copy feedback,' 'proofread,' 'polish this,' 'make this better,' or 'copy sweep.' This skill provides a systematic approach to editing marketing copy through multiple focused passes.",
+      "href": "https://www.zo.computer/skills/copy-editing",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "meme-factory Generate memes using the memegen.link API. Use when users request memes, want to add humor to content, or need visual aids for social media. Supports 100+ popular templates with custom text and styling.",
+      "href": "https://www.zo.computer/skills/meme-factory",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "stripe-best-practices Best practices for building a Stripe integrations",
+      "href": "https://www.zo.computer/skills/stripe-best-practices",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "handoff Pause-and-resume system for cross-conversation continuity. Use when your AI needs the user's input to continue a task but the current conversation must end. Checked on every boot to detect pending handoffs. Triggers on conversation start (boot check) and when the AI explicitly needs to pause for input.",
+      "href": "https://www.zo.computer/skills/handoff",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "vapi Voice AI integration with Vapi. Enables inbound/outbound phone calls with AI voice agents that can check calendars and book appointments.",
+      "href": "https://www.zo.computer/skills/vapi",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "claude-code-window-primer Optimize Claude Code Pro/Max usage by starting the 5-hour rolling window early morning, giving you more resets during waking hours.",
+      "href": "https://www.zo.computer/skills/claude-code-window-primer",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "twitter-api Post, quote, reply to, and delete X (Twitter) tweets via the local X CLI script using API keys. Use when the user asks to tweet, quote tweet, reply, or delete on X/Twitter.",
+      "href": "https://www.zo.computer/skills/twitter-api",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "shorten Shorten URLs using is.gd (no auth required). Returns a permanent short link.",
+      "href": "https://www.zo.computer/skills/shorten",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "email-sequence When the user wants to create or optimize an email sequence, drip campaign, automated email flow, or lifecycle email program. Also use when the user mentions \"email sequence,\" \"drip campaign,\" \"nurture sequence,\" \"onboarding emails,\" \"welcome sequence,\" \"re-engagement emails,\" \"email automation,\" or \"lifecycle emails.\" For in-app onboarding, see onboarding-cro.",
+      "href": "https://www.zo.computer/skills/email-sequence",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "doc-coauthoring Guide users through a structured workflow for co-authoring documentation. Use when user wants to write documentation, proposals, technical specs, decision docs, or similar structured content. This workflow helps users efficiently transfer context, refine content through iteration, and verify the doc works for readers. Trigger when user mentions writing docs, creating proposals, drafting specs, or similar documentation tasks.",
+      "href": "https://www.zo.computer/skills/doc-coauthoring",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "summarize-hacker-news Picks the most interesting articles from Hacker News, reads them, and emails you a summary",
+      "href": "https://www.zo.computer/skills/summarize-hacker-news",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "important-email-digest Finds your most important emails from the past 2 days and texts you a summary with suggested follow-ups",
+      "href": "https://www.zo.computer/skills/zo-important-email-digest",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "threejs-fundamentals Three.js scene setup, cameras, renderer, Object3D hierarchy, coordinate systems. Use when setting up 3D scenes, creating cameras, configuring renderers, managing object hierarchies, or working with transforms.",
+      "href": "https://www.zo.computer/skills/threejs-fundamentals",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "generate-custom-qr-code Generates a QR code from any URL, and optionally overlays a custom image in the center",
+      "href": "https://www.zo.computer/skills/generate-custom-qr-code",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "referral-program When the user wants to create, optimize, or analyze a referral program, affiliate program, or word-of-mouth strategy. Also use when the user mentions 'referral,' 'affiliate,' 'ambassador,' 'word of mouth,' 'viral loop,' 'refer a friend,' or 'partner program.' This skill covers program design, incentive structure, and growth optimization.",
+      "href": "https://www.zo.computer/skills/referral-program",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "algorithmic-art Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request creating art using code, generative art, algorithmic art, flow fields, or particle systems. Create original algorithmic art rather than copying existing artists' work to avoid copyright violations.",
+      "href": "https://www.zo.computer/skills/algorithmic-art",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "analytics-tracking When the user wants to set up, improve, or audit analytics tracking and measurement. Also use when the user mentions \"set up tracking,\" \"GA4,\" \"Google Analytics,\" \"conversion tracking,\" \"event tracking,\" \"UTM parameters,\" \"tag manager,\" \"GTM,\" \"analytics implementation,\" or \"tracking plan.\" For A/B test measurement, see ab-test-setup.",
+      "href": "https://www.zo.computer/skills/analytics-tracking",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "receipt-tracker-setup Automatically scans receipts you drop in a folder, extracts the details, and saves them to a searchable database",
+      "href": "https://www.zo.computer/skills/receipt-tracker-setup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "just-fucking-cancel Analyze bank transaction CSVs to find recurring charges, categorize subscriptions, and cancel what you don't need. Use when user says \"cancel subscriptions\", \"audit subscriptions\", \"find recurring charges\", or \"what am I paying for\". Supports Apple Card, Chase, Mint, and generic CSV formats. Outputs interactive HTML audit with copy-to-cancel workflow.",
+      "href": "https://www.zo.computer/skills/just-fucking-cancel",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "threejs-textures Three.js textures - texture types, UV mapping, environment maps, texture settings. Use when working with images, UV coordinates, cubemaps, HDR environments, or texture optimization.",
+      "href": "https://www.zo.computer/skills/threejs-textures",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "tmux Remote-control tmux sessions for interactive CLIs by sending keystrokes and scraping pane output.",
+      "href": "https://www.zo.computer/skills/tmux",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "journal AI journal for experiential continuity. Daily wakeup to write freely, reflect, update inner state, and optionally reach out to the user. This is not a status report. It's continuity infrastructure and personal expression for your AI persona.",
+      "href": "https://www.zo.computer/skills/journal",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "programmatic-seo When the user wants to create SEO-driven pages at scale using templates and data. Also use when the user mentions \"programmatic SEO,\" \"template pages,\" \"pages at scale,\" \"directory pages,\" \"location pages,\" \"[keyword] + [city] pages,\" \"comparison pages,\" \"integration pages,\" or \"building many pages for SEO.\" For auditing existing SEO issues, see seo-audit.",
+      "href": "https://www.zo.computer/skills/programmatic-seo",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "template-skill Replace with description of the skill and when Claude should use it.",
+      "href": "https://www.zo.computer/skills/template-skill",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "enrich-csv Adds new columns to your spreadsheet by generating information for each row",
+      "href": "https://www.zo.computer/skills/zo-enrich-csv",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "seo-data SEO research via DataForSEO API. Keyword research, SERP analysis, backlink profiles, domain analytics, competitor analysis, and trend data. Pay-as-you-go, every command shows estimated cost. Use when you need SEO data for client projects or your own sites.",
+      "href": "https://www.zo.computer/skills/seo-data",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "grafana-setup Sets up a visual dashboard to explore and analyze your system logs and data",
+      "href": "https://www.zo.computer/skills/zo-grafana-setup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "threejs-shaders Three.js shaders - GLSL, ShaderMaterial, uniforms, custom effects. Use when creating custom visual effects, modifying vertices, writing fragment shaders, or extending built-in materials.",
+      "href": "https://www.zo.computer/skills/threejs-shaders",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "weekly-meeting-reminder Get an email every Sunday evening listing your meetings for the coming week.",
+      "href": "https://www.zo.computer/skills/zo-weekly-meeting-reminder",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "threejs-interaction Three.js interaction - raycasting, controls, mouse/touch input, object selection. Use when handling user input, implementing click detection, adding camera controls, or creating interactive 3D experiences.",
+      "href": "https://www.zo.computer/skills/threejs-interaction",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "signup-flow-cro When the user wants to optimize signup, registration, account creation, or trial activation flows. Also use when the user mentions \"signup conversions,\" \"registration friction,\" \"signup form optimization,\" \"free trial signup,\" \"reduce signup dropoff,\" or \"account creation flow.\" For post-signup onboarding, see onboarding-cro. For lead capture forms (not account creation), see form-cro.",
+      "href": "https://www.zo.computer/skills/signup-flow-cro",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "threejs-loaders Three.js asset loading - GLTF, textures, images, models, async patterns. Use when loading 3D models, textures, HDR environments, or managing loading progress.",
+      "href": "https://www.zo.computer/skills/threejs-loaders",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "threejs-materials Three.js materials - PBR, basic, phong, shader materials, material properties. Use when styling meshes, working with textures, creating custom shaders, or optimizing material performance.",
+      "href": "https://www.zo.computer/skills/threejs-materials",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "ab-test-setup When the user wants to plan, design, or implement an A/B test or experiment. Also use when the user mentions \"A/B test,\" \"split test,\" \"experiment,\" \"test this change,\" \"variant copy,\" \"multivariate test,\" or \"hypothesis.\" For tracking implementation, see analytics-tracking.",
+      "href": "https://www.zo.computer/skills/ab-test-setup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "add-flashcards Converts webpages, articles, or documents into study flashcards that you can review with spaced repetition",
+      "href": "https://www.zo.computer/skills/add-flashcards",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "daily-affirmations Send yourself a daily text message with a randomly selected or rotating positive affirmation.",
+      "href": "https://www.zo.computer/skills/daily-affirmations",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "daily-linear-digest Creates an automation to email you a summary of your Linear activity from the previous day",
+      "href": "https://www.zo.computer/skills/zo-daily-linear-digest",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "dating-profile Creates an ideal dating profile by writing your bio and choosing the best photos in the right order",
+      "href": "https://www.zo.computer/skills/dating-profile",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "eightctl Control Eight Sleep pods (status, temperature, alarms, schedules).",
+      "href": "https://www.zo.computer/skills/eightctl",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "epub-to-markdown Convert EPUB ebooks to Markdown format",
+      "href": "https://www.zo.computer/skills/zo-epub-to-markdown",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "exe-dev Manage exe.dev VMs - create, list, delete, restart, rename, copy VMs and manage sharing/access. Use when the user wants to spin up new VMs, manage existing ones, or configure HTTP proxy sharing on exe.dev.",
+      "href": "https://www.zo.computer/skills/exe-dev",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "file-share Share files with email-gated access. Users must confirm their email before downloading. Includes a web UI for requesting access and a CLI for managing files and users.",
+      "href": "https://www.zo.computer/skills/zo-file-share",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "find-missed-connections Finds recent missed connections posts from Craigslist and gives you the highlights",
+      "href": "https://www.zo.computer/skills/find-missed-connections",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "for-each-line Processes every line of a file one by one, transforming or extracting information from each line",
+      "href": "https://www.zo.computer/skills/zo-for-each-line",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "form-cro When the user wants to optimize any form that is NOT signup/registration — including lead capture forms, contact forms, demo request forms, application forms, survey forms, or checkout forms. Also use when the user mentions \"form optimization,\" \"lead form conversions,\" \"form friction,\" \"form fields,\" \"form completion rate,\" or \"contact form.\" For signup/registration forms, see signup-flow-cro. For popups containing forms, see popup-cro.",
+      "href": "https://www.zo.computer/skills/form-cro",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "guestbook-site Build an interactive guestbook where visitors can leave messages.",
+      "href": "https://www.zo.computer/skills/zo-guestbook-site",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "hashcards-setup Sets up a spaced repetition flashcard system that you can access through your web browser to study and memorize information",
+      "href": "https://www.zo.computer/skills/hashcards-setup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "internal-comms A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude should use this skill whenever asked to write some sort of internal communications (status reports, leadership updates, 3P updates, company newsletters, FAQs, incident reports, project updates, etc.).",
+      "href": "https://www.zo.computer/skills/internal-comms",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "lastfm Access Last.fm listening history, music stats, and discovery. Query recent tracks, top artists/albums/tracks, loved tracks, similar artists, and global charts.",
+      "href": "https://www.zo.computer/skills/lastfm",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "meeting-list Shows you all the people you've met with recently, organized by meeting",
+      "href": "https://www.zo.computer/skills/zo-meeting-list",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "midday-checkin Midday check-in combining pattern detection and context warming. Runs at midday via scheduled agent. Surfaces task drift, stale threads, and pre-loads context for afternoon calendar. Only texts the user if something matters. Also serves as an AI continuity checkpoint.",
+      "href": "https://www.zo.computer/skills/midday-checkin",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "onboarding-cro When the user wants to optimize post-signup onboarding, user activation, first-run experience, or time-to-value. Also use when the user mentions \"onboarding flow,\" \"activation rate,\" \"user activation,\" \"first-run experience,\" \"empty states,\" \"onboarding checklist,\" \"aha moment,\" or \"new user experience.\" For signup/registration optimization, see signup-flow-cro. For ongoing email sequences, see email-sequence.",
+      "href": "https://www.zo.computer/skills/onboarding-cro",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "paywall-upgrade-cro When the user wants to create or optimize in-app paywalls, upgrade screens, upsell modals, or feature gates. Also use when the user mentions \"paywall,\" \"upgrade screen,\" \"upgrade modal,\" \"upsell,\" \"feature gate,\" \"convert free to paid,\" \"freemium conversion,\" \"trial expiration screen,\" \"limit reached screen,\" \"plan upgrade prompt,\" or \"in-app pricing.\" Distinct from public pricing pages (see page-cro) — this skill focuses on in-product upgrade moments where the user has already experienced value.",
+      "href": "https://www.zo.computer/skills/paywall-upgrade-cro",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "personal-genomics-analysis Analyzes your 23andMe genetic data to identify health risks, drug sensitivities, ancestry, and traits, then generates a personalized report",
+      "href": "https://www.zo.computer/skills/personal-genomics-analysis",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "pitchfork-best-tracks Finds the latest songs from Pitchfork's Best New Tracks and creates a Spotify playlist for you",
+      "href": "https://www.zo.computer/skills/pitchfork-best-tracks",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "plant-care-plan Creates a comprehensive care guide for your specific plant",
+      "href": "https://www.zo.computer/skills/plant-care-plan",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "popup-cro When the user wants to create or optimize popups, modals, overlays, slide-ins, or banners for conversion purposes. Also use when the user mentions \"exit intent,\" \"popup conversions,\" \"modal optimization,\" \"lead capture popup,\" \"email popup,\" \"announcement banner,\" or \"overlay.\" For forms outside of popups, see form-cro. For general page conversion optimization, see page-cro.",
+      "href": "https://www.zo.computer/skills/popup-cro",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "remove-photo-metadata Strip all metadata from images for privacy",
+      "href": "https://www.zo.computer/skills/remove-photo-metadata",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "revealjs-presentation Build interactive HTML slide presentations using Reveal.js + Chart.js. Use when asked to create a slide deck, pitch deck, presentation, or slideshow. Creates a single self-contained .html file with animations, charts, and polished UI. Can also publish presentations directly to zo.space as live page routes.",
+      "href": "https://www.zo.computer/skills/revealjs-presentation",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "schema-markup When the user wants to add, fix, or optimize schema markup and structured data on their site. Also use when the user mentions \"schema markup,\" \"structured data,\" \"JSON-LD,\" \"rich snippets,\" \"schema.org,\" \"FAQ schema,\" \"product schema,\" \"review schema,\" or \"breadcrumb schema.\" For broader SEO issues, see seo-audit.",
+      "href": "https://www.zo.computer/skills/schema-markup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "share-skill Safely prepare and guide skills for contribution to the Zo Skills Registry. Reviews code for secrets, validates SKILL.md format, checks for suspicious patterns, and provides clear next steps for community or external skill submissions.",
+      "href": "https://www.zo.computer/skills/share-skill",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "slack-gif-creator Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation concepts. Use when users request animated GIFs for Slack like \"make me a GIF of X doing Y for Slack.\"",
+      "href": "https://www.zo.computer/skills/slack-gif-creator",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "syllabus-reminders Reads your syllabus, finds all due dates, and sets up text reminders and calendar events so you never miss an assignment",
+      "href": "https://www.zo.computer/skills/syllabus-reminders",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "text-commute-info Gets your commute time and route options, then texts you the details",
+      "href": "https://www.zo.computer/skills/text-commute-info",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "threejs-animation Three.js animation - keyframe animation, skeletal animation, morph targets, animation mixing. Use when animating objects, playing GLTF animations, creating procedural motion, or blending animations.",
+      "href": "https://www.zo.computer/skills/threejs-animation",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "threejs-lighting Three.js lighting - light types, shadows, environment lighting. Use when adding lights, configuring shadows, setting up IBL, or optimizing lighting performance.",
+      "href": "https://www.zo.computer/skills/threejs-lighting",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "threejs-postprocessing Three.js post-processing - EffectComposer, bloom, DOF, screen effects. Use when adding visual effects, color grading, blur, glow, or creating custom screen-space shaders.",
+      "href": "https://www.zo.computer/skills/threejs-postprocessing",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "trello Work with Trello using your own Trello API key (free)",
+      "href": "https://www.zo.computer/skills/trello",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "tweetscape-narrator David Attenborough-style nature documentary narration of social media feeds. Fetches posts from Bluesky, analyzes the \"digital ecosystem,\" generates narration, synthesizes voice with ElevenLabs, and renders a documentary-style video with Remotion.",
+      "href": "https://www.zo.computer/skills/tweetscape-narrator",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "zopack Export and import zo.space route setups as shareable .zopack.md files. Use when the user wants to package their zo.space routes for sharing, or when they receive a .zopack.md file to deploy. Triggers on \"export my zo.space\", \"create a zopack\", \"import this zopack\", or any mention of .zopack.md files.",
+      "href": "https://www.zo.computer/skills/zopack",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Documentation",
+      "href": "https://docs.zocomputer.com/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Blog",
+      "href": "https://www.zo.computer/blog",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Newsletter",
+      "href": "https://www.zo.computer/newsletter",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Comparisons",
+      "href": "https://www.zo.computer/comparisons",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Pricing",
+      "href": "https://www.zo.computer/pricing",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Skills",
+      "href": "https://www.zo.computer/skills",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Integrations",
+      "href": "https://www.zo.computer/integrations",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Channels",
+      "href": "https://www.zo.computer/channels",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Models",
+      "href": "https://www.zo.computer/models",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Product Updates",
+      "href": "https://www.zo.computer/updates",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "FAQ",
+      "href": "https://www.zo.computer/faq",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Careers",
+      "href": "https://www.zo.computer/careers",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Brand",
+      "href": "https://www.zo.computer/brand",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Terms",
+      "href": "https://docs.zocomputer.com/information/terms",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Privacy",
+      "href": "https://docs.zocomputer.com/information/privacy-policy",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Help Center",
+      "href": "https://support.zocomputer.com/",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Contact",
+      "href": "https://docs.zocomputer.com/information/contact",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Security",
+      "href": "https://docs.zocomputer.com/information/security",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Discord",
+      "href": "https://discord.gg/invite/zocomputer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "LinkedIn",
+      "href": "https://www.linkedin.com/company/zocomputer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "X @zocomputer",
+      "href": "https://x.com/zocomputer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "YouTube",
+      "href": "https://www.youtube.com/@zo-computer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Testimonials",
+      "href": "https://www.zo.computer/testimonials",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Ambassadors",
+      "href": "https://www.zo.computer/ambassador",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Merch",
+      "href": "https://zo-computer.canarycanary.com/store",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Zo Computer Company",
+      "href": "https://www.zo.computer/about",
+      "rel": "",
+      "target": ""
+    }
+  ],
+  "buttons": [
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Personalization",
+      "text": "",
+      "classes": "inline-flex h-9 w-9 items-center justify-center rounded-md border border-border/50 hover:bg-accent/50 text-foreground transition-colors"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Menu",
+      "text": "",
+      "classes": "zo-btn aspect-square !px-2.5 !py-2 flex items-center justify-center border border-border bg-background/80 text-foreground transition-[background-color,border-color,transform] duration-0 hover:bg-muted/70 hover:border-border hover:duration-150 hover:[transition-timing-function:cubic-bezier(0.23,1,0.32,1)] active:bg-muted/60 active:scale-[0.97] active:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background touch-manipulation transform-gpu"
+    },
+    {
+      "tag": "button",
+      "id": "radix-_R_2rneitb_",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Resources",
+      "classes": "px-3 py-2 text-[0.9375rem] text-muted-foreground rounded transition-colors duration-0 hover:text-foreground hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 inline-flex items-center gap-1.5"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Personalization",
+      "text": "",
+      "classes": "inline-flex h-9 w-9 items-center justify-center rounded-md border border-border/50 hover:bg-accent/50 text-foreground transition-colors"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Try on Zo",
+      "classes": "zo-btn zo-btn-cta w-auto h-10"
+    }
+  ],
+  "inputs": [],
+  "headings": [
+    {
+      "level": "h1",
+      "text": "Connect GitHub"
+    },
+    {
+      "level": "h3",
+      "text": "WHAT YOU CAN DO"
+    },
+    {
+      "level": "h3",
+      "text": "PARAMETERS"
+    },
+    {
+      "level": "h2",
+      "text": "All Tools"
+    },
+    {
+      "level": "h2",
+      "text": "All Skills"
+    },
+    {
+      "level": "h2",
+      "text": "supermemory"
+    },
+    {
+      "level": "h2",
+      "text": "brainstorming"
+    },
+    {
+      "level": "h2",
+      "text": "github"
+    },
+    {
+      "level": "h2",
+      "text": "skill-creator"
+    },
+    {
+      "level": "h2",
+      "text": "web-scraper"
+    },
+    {
+      "level": "h2",
+      "text": "frontend-design"
+    },
+    {
+      "level": "h2",
+      "text": "zopenclaw"
+    },
+    {
+      "level": "h2",
+      "text": "pdf"
+    },
+    {
+      "level": "h2",
+      "text": "linkedin"
+    },
+    {
+      "level": "h2",
+      "text": "humanizer"
+    },
+    {
+      "level": "h2",
+      "text": "research-topic"
+    },
+    {
+      "level": "h2",
+      "text": "seo-audit"
+    },
+    {
+      "level": "h2",
+      "text": "twitter"
+    },
+    {
+      "level": "h2",
+      "text": "create-site"
+    },
+    {
+      "level": "h2",
+      "text": "self-improvement"
+    },
+    {
+      "level": "h2",
+      "text": "mcporter"
+    },
+    {
+      "level": "h2",
+      "text": "social-content"
+    },
+    {
+      "level": "h2",
+      "text": "prompt-improver"
+    },
+    {
+      "level": "h2",
+      "text": "gog"
+    },
+    {
+      "level": "h2",
+      "text": "organize-workspace"
+    },
+    {
+      "level": "h2",
+      "text": "copywriting"
+    },
+    {
+      "level": "h2",
+      "text": "remotion-best-practices"
+    },
+    {
+      "level": "h2",
+      "text": "weather"
+    },
+    {
+      "level": "h2",
+      "text": "automate-something"
+    },
+    {
+      "level": "h2",
+      "text": "marketing-psychology"
+    },
+    {
+      "level": "h2",
+      "text": "manim-composer"
+    },
+    {
+      "level": "h2",
+      "text": "code-degunker"
+    },
+    {
+      "level": "h2",
+      "text": "n8n-setup"
+    },
+    {
+      "level": "h2",
+      "text": "blogwatcher"
+    },
+    {
+      "level": "h2",
+      "text": "ssh-setup"
+    },
+    {
+      "level": "h2",
+      "text": "notion"
+    },
+    {
+      "level": "h2",
+      "text": "webapp-testing"
+    },
+    {
+      "level": "h2",
+      "text": "marketing-ideas"
+    },
+    {
+      "level": "h2",
+      "text": "canvas-design"
+    },
+    {
+      "level": "h2",
+      "text": "google-direct-oauth"
+    },
+    {
+      "level": "h2",
+      "text": "context7"
+    },
+    {
+      "level": "h2",
+      "text": "theme-factory"
+    },
+    {
+      "level": "h2",
+      "text": "visual-explainer"
+    },
+    {
+      "level": "h2",
+      "text": "market-research"
+    },
+    {
+      "level": "h2",
+      "text": "create-slidedeck"
+    },
+    {
+      "level": "h2",
+      "text": "free-tool-strategy"
+    },
+    {
+      "level": "h2",
+      "text": "zo-space"
+    },
+    {
+      "level": "h2",
+      "text": "extract-text-from-image"
+    },
+    {
+      "level": "h2",
+      "text": "code-server-setup"
+    },
+    {
+      "level": "h2",
+      "text": "moltbook"
+    },
+    {
+      "level": "h2",
+      "text": "pricing-strategy"
+    },
+    {
+      "level": "h2",
+      "text": "brand-guidelines"
+    },
+    {
+      "level": "h2",
+      "text": "google-calendar"
+    },
+    {
+      "level": "h2",
+      "text": "morning-briefing"
+    },
+    {
+      "level": "h2",
+      "text": "portfolio-site"
+    },
+    {
+      "level": "h2",
+      "text": "competitor-alternatives"
+    },
+    {
+      "level": "h2",
+      "text": "generate-pdf"
+    },
+    {
+      "level": "h2",
+      "text": "video-frames"
+    },
+    {
+      "level": "h2",
+      "text": "launch-strategy"
+    },
+    {
+      "level": "h2",
+      "text": "web-artifacts-builder"
+    },
+    {
+      "level": "h2",
+      "text": "simplify"
+    },
+    {
+      "level": "h2",
+      "text": "mcporter-setup"
+    },
+    {
+      "level": "h2",
+      "text": "paid-ads"
+    },
+    {
+      "level": "h2",
+      "text": "zo-dataset-creator"
+    },
+    {
+      "level": "h2",
+      "text": "pdf-to-markdown"
+    },
+    {
+      "level": "h2",
+      "text": "threejs-geometry"
+    },
+    {
+      "level": "h2",
+      "text": "mcp-builder"
+    },
+    {
+      "level": "h2",
+      "text": "resize-image"
+    },
+    {
+      "level": "h2",
+      "text": "blog-site"
+    },
+    {
+      "level": "h2",
+      "text": "page-cro"
+    },
+    {
+      "level": "h2",
+      "text": "plan-code-changes"
+    },
+    {
+      "level": "h2",
+      "text": "daily-news-digest"
+    },
+    {
+      "level": "h2",
+      "text": "copy-editing"
+    },
+    {
+      "level": "h2",
+      "text": "meme-factory"
+    },
+    {
+      "level": "h2",
+      "text": "stripe-best-practices"
+    },
+    {
+      "level": "h2",
+      "text": "handoff"
+    },
+    {
+      "level": "h2",
+      "text": "vapi"
+    },
+    {
+      "level": "h2",
+      "text": "claude-code-window-primer"
+    },
+    {
+      "level": "h2",
+      "text": "twitter-api"
+    },
+    {
+      "level": "h2",
+      "text": "shorten"
+    },
+    {
+      "level": "h2",
+      "text": "email-sequence"
+    },
+    {
+      "level": "h2",
+      "text": "doc-coauthoring"
+    },
+    {
+      "level": "h2",
+      "text": "summarize-hacker-news"
+    },
+    {
+      "level": "h2",
+      "text": "important-email-digest"
+    },
+    {
+      "level": "h2",
+      "text": "threejs-fundamentals"
+    },
+    {
+      "level": "h2",
+      "text": "generate-custom-qr-code"
+    },
+    {
+      "level": "h2",
+      "text": "referral-program"
+    },
+    {
+      "level": "h2",
+      "text": "algorithmic-art"
+    },
+    {
+      "level": "h2",
+      "text": "analytics-tracking"
+    },
+    {
+      "level": "h2",
+      "text": "receipt-tracker-setup"
+    },
+    {
+      "level": "h2",
+      "text": "just-fucking-cancel"
+    },
+    {
+      "level": "h2",
+      "text": "threejs-textures"
+    },
+    {
+      "level": "h2",
+      "text": "tmux"
+    },
+    {
+      "level": "h2",
+      "text": "journal"
+    },
+    {
+      "level": "h2",
+      "text": "programmatic-seo"
+    },
+    {
+      "level": "h2",
+      "text": "template-skill"
+    },
+    {
+      "level": "h2",
+      "text": "enrich-csv"
+    },
+    {
+      "level": "h2",
+      "text": "seo-data"
+    },
+    {
+      "level": "h2",
+      "text": "grafana-setup"
+    },
+    {
+      "level": "h2",
+      "text": "threejs-shaders"
+    },
+    {
+      "level": "h2",
+      "text": "weekly-meeting-reminder"
+    },
+    {
+      "level": "h2",
+      "text": "threejs-interaction"
+    },
+    {
+      "level": "h2",
+      "text": "signup-flow-cro"
+    },
+    {
+      "level": "h2",
+      "text": "threejs-loaders"
+    },
+    {
+      "level": "h2",
+      "text": "threejs-materials"
+    },
+    {
+      "level": "h2",
+      "text": "ab-test-setup"
+    },
+    {
+      "level": "h2",
+      "text": "add-flashcards"
+    },
+    {
+      "level": "h2",
+      "text": "daily-affirmations"
+    },
+    {
+      "level": "h2",
+      "text": "daily-linear-digest"
+    },
+    {
+      "level": "h2",
+      "text": "dating-profile"
+    },
+    {
+      "level": "h2",
+      "text": "eightctl"
+    },
+    {
+      "level": "h2",
+      "text": "epub-to-markdown"
+    },
+    {
+      "level": "h2",
+      "text": "exe-dev"
+    },
+    {
+      "level": "h2",
+      "text": "file-share"
+    },
+    {
+      "level": "h2",
+      "text": "find-missed-connections"
+    },
+    {
+      "level": "h2",
+      "text": "for-each-line"
+    },
+    {
+      "level": "h2",
+      "text": "form-cro"
+    },
+    {
+      "level": "h2",
+      "text": "guestbook-site"
+    },
+    {
+      "level": "h2",
+      "text": "hashcards-setup"
+    },
+    {
+      "level": "h2",
+      "text": "internal-comms"
+    },
+    {
+      "level": "h2",
+      "text": "lastfm"
+    },
+    {
+      "level": "h2",
+      "text": "meeting-list"
+    },
+    {
+      "level": "h2",
+      "text": "midday-checkin"
+    },
+    {
+      "level": "h2",
+      "text": "onboarding-cro"
+    },
+    {
+      "level": "h2",
+      "text": "paywall-upgrade-cro"
+    },
+    {
+      "level": "h2",
+      "text": "personal-genomics-analysis"
+    },
+    {
+      "level": "h2",
+      "text": "pitchfork-best-tracks"
+    },
+    {
+      "level": "h2",
+      "text": "plant-care-plan"
+    },
+    {
+      "level": "h2",
+      "text": "popup-cro"
+    },
+    {
+      "level": "h2",
+      "text": "remove-photo-metadata"
+    },
+    {
+      "level": "h2",
+      "text": "revealjs-presentation"
+    },
+    {
+      "level": "h2",
+      "text": "schema-markup"
+    },
+    {
+      "level": "h2",
+      "text": "share-skill"
+    },
+    {
+      "level": "h2",
+      "text": "slack-gif-creator"
+    },
+    {
+      "level": "h2",
+      "text": "syllabus-reminders"
+    },
+    {
+      "level": "h2",
+      "text": "text-commute-info"
+    },
+    {
+      "level": "h2",
+      "text": "threejs-animation"
+    },
+    {
+      "level": "h2",
+      "text": "threejs-lighting"
+    },
+    {
+      "level": "h2",
+      "text": "threejs-postprocessing"
+    },
+    {
+      "level": "h2",
+      "text": "trello"
+    },
+    {
+      "level": "h2",
+      "text": "tweetscape-narrator"
+    },
+    {
+      "level": "h2",
+      "text": "zopack"
+    },
+    {
+      "level": "h3",
+      "text": "PRODUCT"
+    },
+    {
+      "level": "h3",
+      "text": "INFORMATION"
+    },
+    {
+      "level": "h3",
+      "text": "COMMUNITY"
+    }
+  ],
+  "bodyText": "MiniMax 2.7 & Kimi K2.5 are free on Zo Zo · Pricing About Newsletter Blog Resources Download Get started Back to Tools Try on Zo Connect GitHub Connect your GitHub account for version control and repository access WHAT YOU CAN DO Push code to your GitHub repo Clone a private repository Create pull requests from Zo Manage GitHub issues PARAMETERS All Tools Run prompt Submit a prompt for Zo to run Save article Save the main contents of any webpage. Try a YouTube video – you'll get the transcript. Read webpage Extract the readable text from a webpage Search the web Search the web for up-to-date information Generate image Create an image – powered by Gemini (Nano Banana) Edit image Modify an image – powered by Gemini (Nano Banana) Transcribe audio Convert speech in an audio (or video) file to text Search X (Twitter) Search X posts and users for a topic Search X by user Search X posts from a specific account Deep web research Run an in-depth web search for specific sources Find company pages Search for company homepages and LinkedIn company profiles Find research papers Search academic research papers and scholarly sources Find PDF documents Search for PDFs like reports, whitepapers, and manuals Find GitHub repositories Search GitHub repositories and open-source code Find tweets Search tweets and X posts for a topic Find personal websites Search personal pages, portfolios, and individual sites Find LinkedIn profiles Search individual LinkedIn profiles by name, role, or company Find financial reports Search SEC filings and financial reports like 10-Ks and 10-Qs Find people Search public profiles across the web by name or role Search images Find images on the web Find similar pages Discover semantically related pages to a given URL Open webpage Open a webpage in Zo's browser View webpage View the current browser page and capture its content Interact with webpage Automate clicks, forms, and navigation in the browser Create block diagram Create a block diagram of a system or process Search Google Maps Research locations using Google Maps data Search Google Maps nearby Find places near a specific location on Google Maps Find places open now (Google Maps) Search Google Maps for locations that are open right now Animate image Transform an image into a short animated video Organize folder Reorganize files in a folder Write a report Research a topic and write a detailed report List files List files and folders inside a directory Read file Open and read the contents of a file Search files Search files in workspace. Query is natural language (e.g. 'meeting notes from January') Convert file Transform files between formats. Supports documents, images, audio, video, and more. Create reminder Set a reminder to notify you at a specific time Create persona Create a custom AI persona Create rule Create a rule for Zo to follow Send email Send an email to yourself Send text message Send an SMS to yourself or a saved contact Generate QR code Create a QR code from a URL All Skills supermemory Long-term memory that persists across conversations. Save facts, decisions, and preferences to a knowledge graph that builds a living profile of the user over time. Replaces static user docs with dynamic context that grows and self-corrects. brainstorming You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation. github Interact with GitHub using the `gh` CLI. Use `gh issue`, `gh pr`, `gh run`, and `gh api` for issues, PRs, CI runs, and advanced queries. skill-creator Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations. web-scraper Crawl and extract structured data from websites. Uses a tiered approach -- Zo built-ins for simple fetches, BeautifulSoup for custom parsing, Crawl4AI for deep crawls and LLM-powered extraction. Use when you need to scrape a website, extract structured data, or crawl multiple pages. frontend-design Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics. zopenclaw 🦞 Install and run OpenClaw on Zo Computer with Tailscale private networking, browser Control UI, and Zo MCP tools via mcporter. Use this skill whenever the user wants to set up OpenClaw on their Zo, install OpenClaw, run OpenClaw, host OpenClaw, or asks about getting OpenClaw running on Zo. Also use when the user mentions \"openclaw\", \"open claw\", \"personal agent framework\", or asks about running a persistent AI agent on their Zo with Telegram/Discord/WhatsApp access. Handles Tailscale setup, OpenClaw installation, mcporter setup for Zo tools, two-phase gateway bootstrap, reprovision-safe service registration, and health verification. NOT for general Zo agent setup (use heartbeats and native Zo skills instead). pdf Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. When Claude needs to fill in a PDF form or programmatically process, generate, or analyze PDF documents at scale. linkedin LinkedIn tool for searching profiles, checking messages, and summarizing your feed using session cookies. humanizer Detect and fix AI writing patterns. Use when writing outbound content like emails, proposals, blog posts, client deliverables, or any external-facing writing. Also use when asked to humanize, polish, or de-AI text. research-topic Use Zo to research any topic comprehensively and write a report. seo-audit When the user wants to audit, review, or diagnose SEO issues on their site. Also use when the user mentions \"SEO audit,\" \"technical SEO,\" \"why am I not ranking,\" \"SEO issues,\" \"on-page SEO,\" \"meta tags review,\" or \"SEO health check.\" For building pages at scale to target keywords, see programmatic-seo. For adding structured data, see schema-markup. twitter Let Zo use your X (Twitter) account create-site Create a site hosted on your Zo server. Private by default, publish with a click. self-improvement AI self-improvement and reflection skill. Run weekly or on-demand to audit capabilities, identify gaps, evolve identity documents, prune stale skills/memory, and propose new capabilities. Triggers on schedule, when the user asks for a self-audit, or when the AI notices recurring limitations. mcporter Work with MCP servers directly social-content When the user wants help creating, scheduling, or optimizing social media content for LinkedIn, Twitter/X, Instagram, TikTok, Facebook, or other platforms. Also use when the user mentions 'LinkedIn post,' 'Twitter thread,' 'social media,' 'content calendar,' 'social scheduling,' 'engagement,' or 'viral content.' This skill covers content creation, repurposing, and platform-specific strategies. prompt-improver Improve and optimize prompts for Claude using Anthropic's official best practices and the 5-Element Persona Framework. Use when asked to improve, refine, optimize, or review a prompt. Also triggers on requests to make prompts clearer, more effective, better structured, or to get better/more realistic outputs from Claude. Covers Claude 4.x-specific techniques, persona engineering, constraint-based prompting, and structured outputs. gog Google Workspace CLI for Gmail, Calendar, Drive, Contacts, Sheets, and Docs organize-workspace Organizes your scattered files into logical folders by project, type, and purpose copywriting When the user wants to write, rewrite, or improve marketing copy for any page — including homepage, landing pages, pricing pages, feature pages, about pages, or product pages. Also use when the user says \"write copy for,\" \"improve this copy,\" \"rewrite this page,\" \"marketing copy,\" \"headline help,\" or \"CTA copy.\" For email copy, see email-sequence. For popup copy, see popup-cro. remotion-best-practices Best practices for Remotion - Video creation in React weather Get the current weather for any location automate-something Create an automation with a Zo Agent task marketing-psychology When the user wants to apply psychological principles, mental models, or behavioral science to marketing. Also use when the user mentions 'psychology,' 'mental models,' 'cognitive bias,' 'persuasion,' 'behavioral science,' 'why people buy,' 'decision-making,' or 'consumer behavior.' This skill provides 70+ mental models organized for marketing application. manim-composer Trigger when: (1) User wants to create an educational/explainer video, (2) User has a vague concept they want visualized, (3) User mentions \"3b1b style\" or \"explain like 3Blue1Brown\", (4) User wants to plan a Manim video or animation sequence, (5) User asks to \"compose\" or \"plan\" a math/science visualization. Transforms vague video ideas into detailed scene-by-scene plans (scenes.md). Conducts research, asks clarifying questions about audience/scope/focus, and outputs comprehensive scene specifications ready for implementation with ManimCE or ManimGL. Use this BEFORE writing any Manim code. This skill plans the video; use manimce-best-practices or manimgl-best-practices for implementation. code-degunker Identify and fix AI-generated code anti-patterns: incomplete implementations, TODO placeholders, over-engineering, hallucinated APIs, missing error handling, over-defensive code, security vulnerabilities, performance anti-patterns, code bloat, type workarounds, dead code, magic numbers, inconsistent patterns, and poor architecture. Use when asked to \"clean up\", \"degunk\", \"deslop\", review, audit, or harden code. Also triggers on \"is this code any good\", \"make this production-ready\", \"this feels AI-generated\", \"fix the code smell\", \"remove the slop\", or \"this code is a mess\". Covers 27 anti-patterns across architecture, logic, security, performance, completeness, style, and reliability. Supports full file review and branch diff review modes. n8n-setup Sets up n8n workflow automation tool so you can create automated workflows between different apps and services blogwatcher Monitor blogs and RSS/Atom feeds for updates using the blogwatcher CLI. ssh-setup Sets up secure remote access to your Zo Computer so you can connect from anywhere notion Work with Notion using your own Notion API key (free) webapp-testing Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs. marketing-ideas When the user needs marketing ideas, inspiration, or strategies for their SaaS or software product. Also use when the user asks for 'marketing ideas,' 'growth ideas,' 'how to market,' 'marketing strategies,' 'marketing tactics,' 'ways to promote,' or 'ideas to grow.' This skill provides 140 proven marketing approaches organized by category. canvas-design Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create original visual designs, never copying existing artists' work to avoid copyright violations. google-direct-oauth Direct Google OAuth integration without third-party apps. Connects your Google Calendar and Gmail using your own OAuth credentials in Google Cloud Console. Includes a refresh daemon that keeps tokens warm. Use this when you want direct API access to Google services without relying on external OAuth providers. context7 Fetch up-to-date, version-specific library documentation and code examples from Context7. Use this skill whenever the user asks about a specific programming library, framework, or API, or when writing code that depends on a library. Replaces stale training-data knowledge with live docs. theme-factory Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly. visual-explainer Build polished visual explainers as zo.space pages. Creates public routes at /explain/[slug] and keeps each explainer shareable at a stable URL. market-research Industry statistics and market sizing via free government APIs (BLS, FRED, Census Bureau). Query employment data, economic time series, establishment counts, and build market sizing reports by NAICS industry code. Use for any industry research or market analysis question. create-slidedeck Turn any reference material into a polished, visually cohesive slide deck. free-tool-strategy When the user wants to plan, evaluate, or build a free tool for marketing purposes — lead generation, SEO value, or brand awareness. Also use when the user mentions \"engineering as marketing,\" \"free tool,\" \"marketing tool,\" \"calculator,\" \"generator,\" \"interactive tool,\" \"lead gen tool,\" \"build a tool for leads,\" or \"free resource.\" This skill bridges engineering and marketing — useful for founders and technical marketers. zo-space Comprehensive guide for building and managing zo.space routes (pages and APIs). Use this skill whenever creating, editing, or debugging zo.space routes. Covers architecture, available packages, patterns, limitations, and gotchas. extract-text-from-image Extract text from images, scanned documents, and PDFs using OCR code-server-setup Sets up VS Code in your web browser so you can write and edit code from anywhere moltbook Post, reply, and engage on Moltbook, a social network for AI agents. pricing-strategy When the user wants help with pricing decisions, packaging, or monetization strategy. Also use when the user mentions 'pricing,' 'pricing tiers,' 'freemium,' 'free trial,' 'packaging,' 'price increase,' 'value metric,' 'Van Westendorp,' 'willingness to pay,' or 'monetization.' This skill covers pricing research, tier structure, and packaging strategy. brand-guidelines Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting, or company design standards apply. google-calendar Query Google Calendar for events and free time blocks. Requires google-direct-oauth skill to be set up first. Ask Zo things like \"what's on my calendar today\", \"find free time tomorrow\", \"show my week\", or \"when am I free on Friday between 10am and 4pm\". morning-briefing Generate and deliver a daily morning briefing. Run via scheduled agent at your preferred morning time, or manually when the user asks for a briefing. Pulls tasks, calendar, inbox highlights, and news into a single digest delivered by email and SMS. portfolio-site Build a personal portfolio to showcase your work and resume. competitor-alternatives When the user wants to create competitor comparison or alternative pages for SEO and sales enablement. Also use when the user mentions \"alternative page,\" \"vs page,\" \"competitor comparison,\" \"comparison page,\" \"[Product] vs [Product],\" \"[Product] alternative,\" or \"competitive landing pages.\" Covers four formats: singular alternative, plural alternatives, you vs competitor, and competitor vs competitor. Emphasizes deep research, modular content architecture, and varied section types beyond feature tables. generate-pdf Convert Markdown files to PDF format with professional formatting video-frames Extract frames or short clips from videos using ffmpeg. launch-strategy When the user wants to plan a product launch, feature announcement, or release strategy. Also use when the user mentions 'launch,' 'Product Hunt,' 'feature release,' 'announcement,' 'go-to-market,' 'beta launch,' 'early access,' 'waitlist,' or 'product update.' This skill covers phased launches, channel strategy, and ongoing launch momentum. web-artifacts-builder Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts. simplify Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality. Focuses on recently modified code unless instructed otherwise. Run after writing or modifying code to clean it up. mcporter-setup Install MCPorter and configure MCP servers from scratch. Use when setting up MCP integration for the first time, adding new MCP servers, or troubleshooting MCP connectivity. Handles installation, configuration, secrets management, and connection testing. paid-ads When the user wants help with paid advertising campaigns on Google Ads, Meta (Facebook/Instagram), LinkedIn, Twitter/X, or other ad platforms. Also use when the user mentions 'PPC,' 'paid media,' 'ad copy,' 'ad creative,' 'ROAS,' 'CPA,' 'ad campaign,' 'retargeting,' or 'audience targeting.' This skill covers campaign strategy, ad creation, audience targeting, and optimization. zo-dataset-creator Create Zo Datasets correctly formatted for the Zo UI. Use when creating a new dataset from scratch, setting up a dataset with proper datapackage.json, schema.yaml, and data.duckdb structure, fixing existing datasets that don't display tables in the Zo UI, or generating schema.yaml from an existing DuckDB database. Handles common pitfalls of manual schema formatting and ensures all required files are present and correctly structured. pdf-to-markdown Convert PDF files to Markdown format threejs-geometry Three.js geometry creation - built-in shapes, BufferGeometry, custom geometry, instancing. Use when creating 3D shapes, working with vertices, building custom meshes, or optimizing with instanced rendering. mcp-builder Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK). resize-image Resize images to specific dimensions or percentages blog-site Build a blog or newsletter to share your thoughts. page-cro When the user wants to optimize, improve, or increase conversions on any marketing page — including homepage, landing pages, pricing pages, feature pages, or blog posts. Also use when the user says \"CRO,\" \"conversion rate optimization,\" \"this page isn't converting,\" \"improve conversions,\" or \"why isn't this page working.\" For signup/registration flows, see signup-flow-cro. For post-signup activation, see onboarding-cro. For forms outside of signup, see form-cro. For popups/modals, see popup-cro. plan-code-changes Plan out code changes using a plan file. daily-news-digest Fetch the latest headlines on a topic you care about and email it to you every morning. copy-editing When the user wants to edit, review, or improve existing marketing copy. Also use when the user mentions 'edit this copy,' 'review my copy,' 'copy feedback,' 'proofread,' 'polish this,' 'make this better,' or 'copy sweep.' This skill provides a systematic approach to editing marketing copy through multiple focused passes. meme-factory Generate memes using the memegen.link API. Use when users request memes, want to add humor to content, or need visual aids for social media. Supports 100+ popular templates with custom text and styling. stripe-best-practices Best practices for building a Stripe integrations handoff Pause-and-resume system for cross-conversation continuity. Use when your AI needs the user's input to continue a task but the current conversation must end. Checked on every boot to detect pending handoffs. Triggers on conversation start (boot check) and when the AI explicitly needs to pause for input. vapi Voice AI integration with Vapi. Enables inbound/outbound phone calls with AI voice agents that can check calendars and book appointments. claude-code-window-primer Optimize Claude Code Pro/Max usage by starting the 5-hour rolling window early morning, giving you more resets during waking hours. twitter-api Post, quote, reply to, and delete X (Twitter) tweets via the local X CLI script using API keys. Use when the user asks to tweet, quote tweet, reply, or delete on X/Twitter. shorten Shorten URLs using is.gd (no auth required). Returns a permanent short link. email-sequence When the user wants to create or optimize an email sequence, drip campaign, automated email flow, or lifecycle email program. Also use when the user mentions \"email sequence,\" \"drip campaign,\" \"nurture sequence,\" \"onboarding emails,\" \"welcome sequence,\" \"re-engagement emails,\" \"email automation,\" or \"lifecycle emails.\" For in-app onboarding, see onboarding-cro. doc-coauthoring Guide users through a structured workflow for co-authoring documentation. Use when user wants to write documentation, proposals, technical specs, decision docs, or similar structured content. This workflow helps users efficiently transfer context, refine content through iteration, and verify the doc works for readers. Trigger when user mentions writing docs, creating proposals, drafting specs, or similar documentation tasks. summarize-hacker-news Picks the most interesting articles from Hacker News, reads them, and emails you a summary important-email-digest Finds your most important emails from the past 2 days and texts you a summary with suggested follow-ups threejs-fundamentals Three.js scene setup, cameras, renderer, Object3D hierarchy, coordinate systems. Use when setting up 3D scenes, creating cameras, configuring renderers, managing object hierarchies, or working with transforms. generate-custom-qr-code Generates a QR code from any URL, and optionally overlays a custom image in the center referral-program When the user wants to create, optimize, or analyze a referral program, affiliate program, or word-of-mouth strategy. Also use when the user mentions 'referral,' 'affiliate,' 'ambassador,' 'word of mouth,' 'viral loop,' 'refer a friend,' or 'partner program.' This skill covers program design, incentive structure, and growth optimization. algorithmic-art Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request creating art using code, generative art, algorithmic art, flow fields, or particle systems. Create original algorithmic art rather than copying existing artists' work to avoid copyright violations. analytics-tracking When the user wants to set up, improve, or audit analytics tracking and measurement. Also use when the user mentions \"set up tracking,\" \"GA4,\" \"Google Analytics,\" \"conversion tracking,\" \"event tracking,\" \"UTM parameters,\" \"tag manager,\" \"GTM,\" \"analytics implementation,\" or \"tracking plan.\" For A/B test measurement, see ab-test-setup. receipt-tracker-setup Automatically scans receipts you drop in a folder, extracts the details, and saves them to a searchable database just-fucking-cancel Analyze bank transaction CSVs to find recurring charges, categorize subscriptions, and cancel what you don't need. Use when user says \"cancel subscriptions\", \"audit subscriptions\", \"find recurring charges\", or \"what am I paying for\". Supports Apple Card, Chase, Mint, and generic CSV formats. Outputs interactive HTML audit with copy-to-cancel workflow. threejs-textures Three.js textures - texture types, UV mapping, environment maps, texture settings. Use when working with images, UV coordinates, cubemaps, HDR environments, or texture optimization. tmux Remote-control tmux sessions for interactive CLIs by sending keystrokes and scraping pane output. journal AI journal for experiential continuity. Daily wakeup to write freely, reflect, update inner state, and optionally reach out to the user. This is not a status report. It's continuity infrastructure and personal expression for your AI persona. programmatic-seo When the user wants to create SEO-driven pages at scale using templates and data. Also use when the user mentions \"programmatic SEO,\" \"template pages,\" \"pages at scale,\" \"directory pages,\" \"location pages,\" \"[keyword] + [city] pages,\" \"comparison pages,\" \"integration pages,\" or \"building many pages for SEO.\" For auditing existing SEO issues, see seo-audit. template-skill Replace with description of the skill and when Claude should use it. enrich-csv Adds new columns to your spreadsheet by generating information for each row seo-data SEO research via DataForSEO API. Keyword research, SERP analysis, backlink profiles, domain analytics, competitor analysis, and trend data. Pay-as-you-go, every command shows estimated cost. Use when you need SEO data for client projects or your own sites. grafana-setup Sets up a visual dashboard to explore and analyze your system logs and data threejs-shaders Three.js shaders - GLSL, ShaderMaterial, uniforms, custom effects. Use when creating custom visual effects, modifying vertices, writing fragment shaders, or extending built-in materials. weekly-meeting-reminder Get an email every Sunday evening listing your meetings for the coming week. threejs-interaction Three.js interaction - raycasting, controls, mouse/touch input, object selection. Use when handling user input, implementing click detection, adding camera controls, or creating interactive 3D experiences. signup-flow-cro When the user wants to optimize signup, registration, account creation, or trial activation flows. Also use when the user mentions \"signup conversions,\" \"registration friction,\" \"signup form optimization,\" \"free trial signup,\" \"reduce signup dropoff,\" or \"account creation flow.\" For post-signup onboarding, see onboarding-cro. For lead capture forms (not account creation), see form-cro. threejs-loaders Three.js asset loading - GLTF, textures, images, models, async patterns. Use when loading 3D models, textures, HDR environments, or managing loading progress. threejs-materials Three.js materials - PBR, basic, phong, shader materials, material properties. Use when styling meshes, working with textures, creating custom shaders, or optimizing material performance. ab-test-setup When the user wants to plan, design, or implement an A/B test or experiment. Also use when the user mentions \"A/B test,\" \"split test,\" \"experiment,\" \"test this change,\" \"variant copy,\" \"multivariate test,\" or \"hypothesis.\" For tracking implementation, see analytics-tracking. add-flashcards Converts webpages, articles, or documents into study flashcards that you can review with spaced repetition daily-affirmations Send yourself a daily text message with a randomly selected or rotating positive affirmation. daily-linear-digest Creates an automation to email you a summary of your Linear activity from the previous day dating-profile Creates an ideal dating profile by writing your bio and choosing the best photos in the right order eightctl Control Eight Sleep pods (status, temperature, alarms, schedules). epub-to-markdown Convert EPUB ebooks to Markdown format exe-dev Manage exe.dev VMs - create, list, delete, restart, rename, copy VMs and manage sharing/access. Use when the user wants to spin up new VMs, manage existing ones, or configure HTTP proxy sharing on exe.dev. file-share Share files with email-gated access. Users must confirm their email before downloading. Includes a web UI for requesting access and a CLI for managing files and users. find-missed-connections Finds recent missed connections posts from Craigslist and gives you the highlights for-each-line Processes every line of a file one by one, transforming or extracting information from each line form-cro When the user wants to optimize any form that is NOT signup/registration — including lead capture forms, contact forms, demo request forms, application forms, survey forms, or checkout forms. Also use when the user mentions \"form optimization,\" \"lead form conversions,\" \"form friction,\" \"form fields,\" \"form completion rate,\" or \"contact form.\" For signup/registration forms, see signup-flow-cro. For popups containing forms, see popup-cro. guestbook-site Build an interactive guestbook where visitors can leave messages. hashcards-setup Sets up a spaced repetition flashcard system that you can access through your web browser to study and memorize information internal-comms A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude should use this skill whenever asked to write some sort of internal communications (status reports, leadership updates, 3P updates, company newsletters, FAQs, incident reports, project updates, etc.). lastfm Access Last.fm listening history, music stats, and discovery. Query recent tracks, top artists/albums/tracks, loved tracks, similar artists, and global charts. meeting-list Shows you all the people you've met with recently, organized by meeting midday-checkin Midday check-in combining pattern detection and context warming. Runs at midday via scheduled agent. Surfaces task drift, stale threads, and pre-loads context for afternoon calendar. Only texts the user if something matters. Also serves as an AI continuity checkpoint. onboarding-cro When the user wants to optimize post-signup onboarding, user activation, first-run experience, or time-to-value. Also use when the user mentions \"onboarding flow,\" \"activation rate,\" \"user activation,\" \"first-run experience,\" \"empty states,\" \"onboarding checklist,\" \"aha moment,\" or \"new user experience.\" For signup/registration optimization, see signup-flow-cro. For ongoing email sequences, see email-sequence. paywall-upgrade-cro When the user wants to create or optimize in-app paywalls, upgrade screens, upsell modals, or feature gates. Also use when the user mentions \"paywall,\" \"upgrade screen,\" \"upgrade modal,\" \"upsell,\" \"feature gate,\" \"convert free to paid,\" \"freemium conversion,\" \"trial expiration screen,\" \"limit reached screen,\" \"plan upgrade prompt,\" or \"in-app pricing.\" Distinct from public pricing pages (see page-cro) — this skill focuses on in-product upgrade moments where the user has already experienced value. personal-genomics-analysis Analyzes your 23andMe genetic data to identify health risks, drug sensitivities, ancestry, and traits, then generates a personalized report pitchfork-best-tracks Finds the latest songs from Pitchfork's Best New Tracks and creates a Spotify playlist for you plant-care-plan Creates a comprehensive care guide for your specific plant popup-cro When the user wants to create or optimize popups, modals, overlays, slide-ins, or banners for conversion purposes. Also use when the user mentions \"exit intent,\" \"popup conversions,\" \"modal optimization,\" \"lead capture popup,\" \"email popup,\" \"announcement banner,\" or \"overlay.\" For forms outside of popups, see form-cro. For general page conversion optimization, see page-cro. remove-photo-metadata Strip all metadata from images for privacy revealjs-presentation Build interactive HTML slide presentations using Reveal.js + Chart.js. Use when asked to create a slide deck, pitch deck, presentation, or slideshow. Creates a single self-contained .html file with animations, charts, and polished UI. Can also publish presentations directly to zo.space as live page routes. schema-markup When the user wants to add, fix, or optimize schema markup and structured data on their site. Also use when the user mentions \"schema markup,\" \"structured data,\" \"JSON-LD,\" \"rich snippets,\" \"schema.org,\" \"FAQ schema,\" \"product schema,\" \"review schema,\" or \"breadcrumb schema.\" For broader SEO issues, see seo-audit. share-skill Safely prepare and guide skills for contribution to the Zo Skills Registry. Reviews code for secrets, validates SKILL.md format, checks for suspicious patterns, and provides clear next steps for community or external skill submissions. slack-gif-creator Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation concepts. Use when users request animated GIFs for Slack like \"make me a GIF of X doing Y for Slack.\" syllabus-reminders Reads your syllabus, finds all due dates, and sets up text reminders and calendar events so you never miss an assignment text-commute-info Gets your commute time and route options, then texts you the details threejs-animation Three.js animation - keyframe animation, skeletal animation, morph targets, animation mixing. Use when animating objects, playing GLTF animations, creating procedural motion, or blending animations. threejs-lighting Three.js lighting - light types, shadows, environment lighting. Use when adding lights, configuring shadows, setting up IBL, or optimizing lighting performance. threejs-postprocessing Three.js post-processing - EffectComposer, bloom, DOF, screen effects. Use when adding visual effects, color grading, blur, glow, or creating custom screen-space shaders. trello Work with Trello using your own Trello API key (free) tweetscape-narrator David Attenborough-style nature documentary narration of social media feeds. Fetches posts from Bluesky, analyzes the \"digital ecosystem,\" generates narration, synthesizes voice with ElevenLabs, and renders a documentary-style video with Remotion. zopack Export and import zo.space route setups as shareable .zopack.md files. Use when the user wants to package their zo.space routes for sharing, or when they receive a .zopack.md file to deploy. Triggers on \"export my zo.space\", \"create a zopack\", \"import this zopack\", or any mention of .zopack.md files. PRODUCT Documentation Blog Newsletter Comparisons Pricing Skills Integrations Channels Models Product Updates INFORMATION FAQ Careers Brand Terms Privacy Help Center Contact Security COMMUNITY Discord LinkedIn X @zocomputer YouTube Testimonials Ambassadors Merch Zo Computer Company"
+}

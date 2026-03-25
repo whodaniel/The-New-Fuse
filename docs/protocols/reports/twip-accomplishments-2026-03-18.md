@@ -130,7 +130,7 @@ capability catalog alignment
 1. Added rolling macro-board generator:
    - `scripts/protocols/twip-macro-board.cjs`
 2. Added report and state artifacts:
-   - `docs/protocols/reports/twip-terminal-macro-board-latest.md`
+   - `data/protocols/twip-terminal-macro-board-latest.md`
    - `data/protocols/twip-macro-board.state.json`
 3. Added operations guide:
    - `docs/protocols/twip-terminal-macro-board.md`

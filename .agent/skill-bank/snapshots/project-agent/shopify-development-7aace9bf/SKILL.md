@@ -22,18 +22,17 @@ Use this skill when the user asks about:
 
 ## ROUTING: What to Build
 
-**IF user wants to integrate external services OR build merchant tools OR charge
-for features:** → Build an **App** (see `references/app-development.md`)
+**IF user wants to integrate external services OR build merchant tools OR charge for features:**
+→ Build an **App** (see `references/app-development.md`)
 
-**IF user wants to customize checkout OR add admin UI OR create POS actions OR
-implement discount rules:** → Build an **Extension** (see
-`references/extensions.md`)
+**IF user wants to customize checkout OR add admin UI OR create POS actions OR implement discount rules:**
+→ Build an **Extension** (see `references/extensions.md`)
 
-**IF user wants to customize storefront design OR modify product/collection
-pages:** → Build a **Theme** (see `references/themes.md`)
+**IF user wants to customize storefront design OR modify product/collection pages:**
+→ Build a **Theme** (see `references/themes.md`)
 
-**IF user needs both backend logic AND storefront UI:** → Build **App + Theme
-Extension** combination
+**IF user needs both backend logic AND storefront UI:**
+→ Build **App + Theme Extension** combination
 
 ---
 
@@ -194,22 +193,22 @@ import {
   TextField,
   Checkbox,
   useApplyAttributeChange,
-} from '@shopify/ui-extensions-react/checkout';
+} from "@shopify/ui-extensions-react/checkout";
 
-export default reactExtension('purchase.checkout.block.render', () => (
+export default reactExtension("purchase.checkout.block.render", () => (
   <GiftMessage />
 ));
 
 function GiftMessage() {
   const [isGift, setIsGift] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const applyAttributeChange = useApplyAttributeChange();
 
   useEffect(() => {
     if (isGift && message) {
       applyAttributeChange({
-        type: 'updateAttribute',
-        key: 'gift_message',
+        type: "updateAttribute",
+        key: "gift_message",
         value: message,
       });
     }
@@ -313,24 +312,30 @@ shop_deletion_url = "/webhooks/gdpr/shop-deletion"
 
 ## Troubleshooting
 
-**IF you see rate limit errors:** → Implement exponential backoff retry logic →
-Switch to bulk operations for large datasets → Monitor
-`X-Shopify-Shop-Api-Call-Limit` header
+**IF you see rate limit errors:**
+→ Implement exponential backoff retry logic
+→ Switch to bulk operations for large datasets
+→ Monitor `X-Shopify-Shop-Api-Call-Limit` header
 
-**IF authentication fails:** → Verify the access token is still valid → Check
-that all required scopes were granted → Ensure OAuth flow completed successfully
+**IF authentication fails:**
+→ Verify the access token is still valid
+→ Check that all required scopes were granted
+→ Ensure OAuth flow completed successfully
 
-**IF extension is not appearing:** → Verify the extension target is correct →
-Check that extension is published via `shopify app deploy` → Confirm the app is
-installed on the test store
+**IF extension is not appearing:**
+→ Verify the extension target is correct
+→ Check that extension is published via `shopify app deploy`
+→ Confirm the app is installed on the test store
 
-**IF webhook is not receiving events:** → Verify the webhook URL is publicly
-accessible → Check HMAC signature validation logic → Review webhook logs in
-Partner Dashboard
+**IF webhook is not receiving events:**
+→ Verify the webhook URL is publicly accessible
+→ Check HMAC signature validation logic
+→ Review webhook logs in Partner Dashboard
 
-**IF GraphQL query fails:** → Validate query against schema (use GraphiQL
-explorer) → Check for deprecated fields in error message → Verify you have
-required access scopes
+**IF GraphQL query fails:**
+→ Validate query against schema (use GraphiQL explorer)
+→ Check for deprecated fields in error message
+→ Verify you have required access scopes
 
 ---
 
@@ -338,22 +343,16 @@ required access scopes
 
 For detailed implementation guides, read these files:
 
-- `references/app-development.md` - OAuth authentication flow, GraphQL mutations
-  for products/orders/billing, webhook handlers, billing API integration
-- `references/extensions.md` - Checkout UI components, Admin UI extensions, POS
-  extensions, Shopify Functions for discounts/payment/delivery
-- `references/themes.md` - Liquid syntax reference, theme directory structure,
-  sections and snippets, common patterns
+- `references/app-development.md` - OAuth authentication flow, GraphQL mutations for products/orders/billing, webhook handlers, billing API integration
+- `references/extensions.md` - Checkout UI components, Admin UI extensions, POS extensions, Shopify Functions for discounts/payment/delivery
+- `references/themes.md` - Liquid syntax reference, theme directory structure, sections and snippets, common patterns
 
 ---
 
 ## Scripts
 
-- `scripts/shopify_init.py` - Interactive project scaffolding. Run:
-  `python scripts/shopify_init.py`
-- `scripts/shopify_graphql.py` - GraphQL utilities with query templates,
-  pagination, rate limiting. Import:
-  `from shopify_graphql import ShopifyGraphQL`
+- `scripts/shopify_init.py` - Interactive project scaffolding. Run: `python scripts/shopify_init.py`
+- `scripts/shopify_graphql.py` - GraphQL utilities with query templates, pagination, rate limiting. Import: `from shopify_graphql import ShopifyGraphQL`
 
 ---
 

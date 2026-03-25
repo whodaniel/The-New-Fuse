@@ -1,0 +1,4 @@
+interface:
+  display_name: "Deal Negotiator Agent"
+  short_description: "Help with Deal Negotiator Agent tasks"
+  default_prompt: "Run the Deal Negotiator Agent workflow using SKILL.md instructions."

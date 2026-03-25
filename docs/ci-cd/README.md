@@ -4,12 +4,12 @@ This directory contains comprehensive documentation for The New Fuse CI/CD pipel
 
 ## Quick Links
 
-- [Architecture Overview](./architecture.md) - High-level architecture and workflow diagrams
+- [Architecture Overview](../architecture/ARCHITECTURE.md) - High-level architecture and workflow diagrams
 - [Workflows Guide](./workflows.md) - Detailed guide for each GitHub Actions workflow
 - [Secrets Setup](./secrets-setup.md) - Required secrets and environment variables
-- [Deployment Procedures](./deployment.md) - Step-by-step deployment guides
-- [Troubleshooting](./troubleshooting.md) - Common issues and solutions
-- [Monitoring & Alerts](./monitoring.md) - Monitoring setup and alert configuration
+- [Deployment Procedures](../deployment/DEPLOYMENT.md) - Step-by-step deployment guides
+- [Troubleshooting](../deployment/TROUBLESHOOTING.md) - Common issues and solutions
+- [Monitoring & Alerts](../deployment/MONITORING.md) - Monitoring setup and alert configuration
 
 ## Overview
 
@@ -42,14 +42,14 @@ The New Fuse uses a comprehensive CI/CD pipeline built on GitHub Actions to auto
 ### For Developers
 
 1. Read the [Workflows Guide](./workflows.md) to understand what happens when you create a PR
-2. Check [Troubleshooting](./troubleshooting.md) if you encounter CI failures
-3. Review [Deployment Procedures](./deployment.md) before deploying
+2. Check [Troubleshooting](../deployment/TROUBLESHOOTING.md) if you encounter CI failures
+3. Review [Deployment Procedures](../deployment/DEPLOYMENT.md) before deploying
 
 ### For Maintainers
 
-1. Review [Architecture Overview](./architecture.md) to understand the system
+1. Review [Architecture Overview](../architecture/ARCHITECTURE.md) to understand the system
 2. Set up required secrets following [Secrets Setup](./secrets-setup.md)
-3. Configure monitoring using [Monitoring & Alerts](./monitoring.md)
+3. Configure monitoring using [Monitoring & Alerts](../deployment/MONITORING.md)
 
 ## Key Features
 
@@ -90,7 +90,7 @@ All workflows generate detailed reports:
 
 For issues with CI/CD:
 
-1. Check [Troubleshooting Guide](./troubleshooting.md)
+1. Check [Troubleshooting Guide](../deployment/TROUBLESHOOTING.md)
 2. Review workflow logs in GitHub Actions
 3. Contact the DevOps team
 4. Create an issue with the `ci` label

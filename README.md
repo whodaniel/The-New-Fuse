@@ -448,7 +448,7 @@ Key Railway services: `TheNewFuse` (frontend), `api-gateway`, `api`, `backend`,
 - **[DOCUMENTATION_MAP.md](./DOCUMENTATION_MAP.md)** — Complete map of all
   1,200+ docs
 - **[QUICK_START_GUIDE.md](./QUICK_START_GUIDE.md)** — Fast setup guide
-- **[PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md)** — Production status
+- **[PRODUCTION_READINESS.md](./docs/project-management/PRODUCTION_READINESS.md)** — Production status
 
 ### By Topic
 
@@ -457,10 +457,10 @@ Key Railway services: `TheNewFuse` (frontend), `api-gateway`, `api`, `backend`,
 | Architecture        | [docs/architecture/ARCHITECTURE_STANDARDS.md](./docs/architecture/ARCHITECTURE_STANDARDS.md) |
 | Agent Development   | [docs/agents/COMPLETE-AGENT-GUIDE.md](./docs/agents/COMPLETE-AGENT-GUIDE.md)                 |
 | Agent Communication | [docs/AGENT_COMMUNICATION_PROTOCOL.md](./docs/AGENT_COMMUNICATION_PROTOCOL.md)               |
-| API Usage           | [docs/API_USAGE_GUIDE.md](./docs/API_USAGE_GUIDE.md)                                         |
+| API Usage           | [docs/API_USAGE_GUIDE.md](./docs/api/COMPLETE-API-GUIDE.md)                                         |
 | GraphQL             | [apps/api/src/graphql/README.md](./apps/api/src/graphql/README.md)                           |
 | MCP Integration     | [apps/backend/src/modules/mcp/README.md](./apps/backend/src/modules/mcp/README.md)           |
-| Deployment          | [docs/deployment/DEPLOYMENT_GUIDE.md](./docs/deployment/DEPLOYMENT_GUIDE.md)                 |
+| Deployment          | [docs/guides/deployment-guide.md](./docs/guides/deployment-guide.md)                         |
 | Railway             | [docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md](./docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md) |
 | Security            | [docs/security/SECURITY_BEST_PRACTICES.md](./docs/security/SECURITY_BEST_PRACTICES.md)       |
 | Testing             | [docs/testing/TESTING_SETUP_COMPLETE.md](./docs/testing/TESTING_SETUP_COMPLETE.md)           |

@@ -376,9 +376,9 @@ node scripts/pre-build-check.cjs
 ## Additional Resources
 
 **For Comprehensive Launch Plan**: See
-[`PUBLIC_LAUNCH_ROADMAP.md`](./PUBLIC_LAUNCH_ROADMAP.md) **For Quick
+[`PUBLIC_LAUNCH_ROADMAP.md`](../project/ROADMAP.md) **For Quick
 Reference**: See [`QUICK_START_GUIDE.md`](./QUICK_START_GUIDE.md) **For
-Deployment Guide**: See [`DEPLOYMENT_STATUS.md`](./DEPLOYMENT_STATUS.md)
+Deployment Guide**: See [`DEPLOYMENT_STATUS.md`](../deployment/DEPLOYMENT_STATUS.md)
 
 ---
 

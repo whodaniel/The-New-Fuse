@@ -1,5 +1,5 @@
 ---
-name: orchestrator-agent
+name: orchestrator-agent-copy
 description: This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.
 tools:
   - SubAgentExecutor

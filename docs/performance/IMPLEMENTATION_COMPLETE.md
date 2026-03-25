@@ -285,11 +285,11 @@ Automatic alerts are triggered when:
 
 | Document | Purpose | Size |
 |----------|---------|------|
-| [Quick Start](../../PERFORMANCE_QUICK_START.md) | 5-minute setup guide | Quick |
+| [Quick Start](./PERFORMANCE_QUICK_START.md) | 5-minute setup guide | Quick |
 | [Monitoring Setup](./PERFORMANCE_MONITORING_SETUP.md) | Complete integration guide | 17KB |
 | [Optimization Guide](./PERFORMANCE_OPTIMIZATION.md) | Best practices & workflows | 14KB |
 | [Overview](./README.md) | Features & getting started | 10KB |
-| [Summary](../../PERFORMANCE_MONITORING_SUMMARY.md) | Implementation details | Comprehensive |
+| [Summary](./PERFORMANCE_MONITORING_SUMMARY.md) | Implementation details | Comprehensive |
 
 ## 🧪 Testing Commands
 
@@ -435,7 +435,7 @@ Your performance monitoring and optimization system is ready to use!
 
 For questions or support:
 - Review documentation in `docs/performance/`
-- Check [Quick Start Guide](../../PERFORMANCE_QUICK_START.md)
+- Check [Quick Start Guide](./PERFORMANCE_QUICK_START.md)
 - Contact DevOps team
 
 ---

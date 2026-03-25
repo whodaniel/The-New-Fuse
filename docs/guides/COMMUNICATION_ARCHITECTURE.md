@@ -21,7 +21,7 @@ The New Fuse is designed to be multi-modal, but these modalities are layered, no
 -   **Direct Connection (Development):** The Chrome Extension connects directly to the WebSocket server hosted by the VS Code Extension.
     -   **VS Code Server Port:** `3710` (Default)
     -   **Test Server Port:** `3711` (For isolated client testing)
--   **Relayed Connection (Production/Flexibility):** The Chrome Extension and VS Code Extension both connect to a central Relay Server. The Relay is responsible for routing messages between them. This pattern is detailed in the `QWEN_INTEGRATION_README.md`.
+-   **Relayed Connection (Production/Flexibility):** The Chrome Extension and VS Code Extension both connect to a central Relay Server. The Relay is responsible for routing messages between them. This pattern is detailed in [QWEN_INTEGRATION_README.md](../development-and-troubleshooting/QWEN_INTEGRATION_README.md).
 
 For a detailed breakdown of when to use each pathway, see the Communication Modes & Pathways Guide.
 

@@ -1,0 +1,12 @@
+{
+  "skillName": "orchestrator-agent-copy",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/orchestrator-agent-copy/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/orchestrator-agent-copy/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/orchestrator-agent-copy.json",
+  "status": "present"
+}

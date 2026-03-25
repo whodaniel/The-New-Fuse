@@ -1,0 +1,12 @@
+{
+  "skillName": "oto-sequence-architect-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/oto-sequence-architect-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/oto-sequence-architect-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/oto-sequence-architect-agent.json",
+  "status": "present"
+}

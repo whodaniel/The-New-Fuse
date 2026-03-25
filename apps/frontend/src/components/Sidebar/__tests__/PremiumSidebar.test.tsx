@@ -12,6 +12,7 @@ vi.mock('../../../hooks/useAuth', () => ({
   useAuth: () => ({
     logout: mockLogout,
     user: { name: 'Test User' },
+    isAuthenticated: true,
   }),
 }));
 
@@ -66,8 +67,13 @@ describe('PremiumSidebar Accessibility', () => {
 
   it('navigation links have aria-label matching name when collapsed', () => {
     renderSidebar({ isCollapsed: true });
-    const chatLink = screen.getByLabelText('Chat');
-    expect(chatLink).toBeInTheDocument();
+    const workspaceLink = screen.getByLabelText('Workspace');
+    expect(workspaceLink).toBeInTheDocument();
+  });
+
+  it('renders parent navigation toggles for grouped sub-pages when expanded', () => {
+    renderSidebar({ isCollapsed: false });
+    expect(screen.getByLabelText('Expand Workspace navigation')).toBeInTheDocument();
   });
 
   it('logout button has aria-label "Sign Out" when collapsed', () => {

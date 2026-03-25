@@ -1,0 +1,12 @@
+{
+  "skillName": "react:components",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/react-components/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/react-components/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/react:components.json",
+  "status": "present"
+}

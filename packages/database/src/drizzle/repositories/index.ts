@@ -47,4 +47,12 @@ export {
   DrizzleWorkspaceMemberRepository,
   drizzleWorkspaceMemberRepository,
 } from './workspace-member.repository';
+export {
+  DrizzleWorkspaceBookmarkRepository,
+  drizzleWorkspaceBookmarkRepository,
+} from './workspace-bookmark.repository';
+export {
+  DrizzleWorkspaceDomainRepository,
+  drizzleWorkspaceDomainRepository,
+} from './workspace-domain.repository';
 export { DrizzleWorkspaceRepository, drizzleWorkspaceRepository } from './workspace.repository';

@@ -21,6 +21,7 @@ export class ModelsController {
       { id: 'openai', name: 'OpenAI', models: ['gpt-4', 'gpt-3.5-turbo'] },
       { id: 'anthropic', name: 'Anthropic', models: ['claude-3-opus', 'claude-3-sonnet'] },
       { id: 'google', name: 'Google', models: ['gemini-pro'] },
+      { id: 'google-adk', name: 'Google ADK Gateway', models: ['gemini-2.5-pro'] },
     ];
   }
 

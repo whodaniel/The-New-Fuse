@@ -207,7 +207,7 @@ The New Fuse project successfully implemented the ESM configuration. Here's what
 
 4. **Verification**: A successful implementation shows servers starting on their respective ports with no module resolution errors.
 
-See `docs/DEVELOPMENT-LOG.md` for a detailed account of the specific fixes applied to The New Fuse project.
+See `docs/development/DEVELOPMENT_LOG.md` for a detailed account of the specific fixes applied to The New Fuse project.
 
 ---
 

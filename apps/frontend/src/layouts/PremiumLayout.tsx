@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast'; // Added Toaster import
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { PremiumHeader } from '../components/Navigation/PremiumHeader';
 import { PremiumSidebar } from '../components/Sidebar/PremiumSidebar';
 import FeatureAIAssistDock from '../components/ai/FeatureAIAssistDock';
@@ -11,8 +11,48 @@ interface PremiumLayoutProps {
 }
 
 export const PremiumLayout: React.FC<PremiumLayoutProps> = ({ children }) => {
+  const { pathname } = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const adaptiveWorkspacePrefixes = [
+    '/dashboard',
+    '/timeline',
+    '/analytics',
+    '/workspace',
+    '/chat',
+    '/tasks',
+    '/suggestions',
+    '/goals',
+    '/plans',
+    '/workflows',
+    '/automations',
+    '/agents',
+    '/ai-portal',
+    '/resources',
+    '/skills',
+    '/datasets',
+    '/files',
+    '/spaces',
+    '/space',
+    '/hosting',
+    '/nexus',
+    '/visualizations',
+    '/hub',
+    '/knowledge-hub',
+    '/mcp-hub',
+    '/marketplace',
+    '/observatory',
+    '/command-center',
+    '/admin',
+    '/terminal',
+    '/a2a-control',
+    '/live-view',
+    '/ai-command-center',
+  ];
+  const isWorkspaceSurface = adaptiveWorkspacePrefixes.some((prefix) =>
+    pathname.startsWith(prefix)
+  );
 
   useEffect(() => {
     const handleSidebarToggle = () => {
@@ -59,8 +99,19 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({ children }) => {
       >
         <PremiumHeader onMenuClick={() => setIsSidebarOpen(true)} />
 
-        <main id="main-content" className="flex-1 w-full p-4 sm:p-6 lg:p-8 relative z-10">
-          <div className="w-full max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <main
+          id="main-content"
+          className={`flex-1 w-full relative z-10 overflow-x-hidden ${
+            isWorkspaceSurface
+              ? 'px-2 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5 xl:px-8'
+              : 'p-4 sm:p-6 lg:p-8'
+          }`}
+        >
+          <div
+            className={`w-full mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 ${
+              isWorkspaceSurface ? 'max-w-[1720px] space-y-4' : 'max-w-7xl'
+            }`}
+          >
             {children || <Outlet />}
           </div>
         </main>

@@ -1,0 +1,12 @@
+{
+  "skillName": "stitch-loop",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/stitch-loop/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/stitch-loop/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/stitch-loop.json",
+  "status": "present"
+}

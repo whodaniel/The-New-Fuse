@@ -1,7 +1,7 @@
 # Core Concepts
 
 ## Workflow System
-[→ Understand Workflows](../../vitereact/src/pages/docs/core-concepts/workflows.mdx)
+[→ Understand Workflows](../workflows/guide.md)
 
 ### Node Types
 The workflow system supports various node types for different operations:

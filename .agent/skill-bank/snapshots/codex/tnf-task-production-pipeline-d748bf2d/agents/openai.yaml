@@ -1,0 +1,4 @@
+interface:
+  display_name: "TNF Task Production Pipeline"
+  short_description: "Operate TNF task pipeline in production"
+  default_prompt: "Use $tnf-task-production-pipeline to run and verify TNF task execution logging and 30-minute monitor in production."

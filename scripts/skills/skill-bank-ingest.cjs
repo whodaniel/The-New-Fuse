@@ -37,14 +37,96 @@ function ensureDir(p) {
   fs.mkdirSync(path.dirname(path.resolve(process.cwd(), p)), { recursive: true });
 }
 
-function endpoint() {
-  const base =
+function normalizeBase(value) {
+  return String(value || '')
+    .trim()
+    .replace(/\/+$/, '');
+}
+
+function normalizePath(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '/';
+  return raw.startsWith('/') ? raw : `/${raw}`;
+}
+
+function joinUrl(base, routePath) {
+  const normalizedBase = normalizeBase(base);
+  let normalizedPath = normalizePath(routePath);
+
+  // Prevent accidental /api/api/... when base already ends in /api.
+  if (normalizedBase.toLowerCase().endsWith('/api') && normalizedPath.toLowerCase().startsWith('/api/')) {
+    normalizedPath = normalizedPath.slice('/api'.length);
+  }
+
+  return `${normalizedBase}${normalizedPath}`;
+}
+
+function stripApiSuffix(base) {
+  return normalizeBase(base).replace(/\/api$/i, '');
+}
+
+function uniqueUrls(values) {
+  const seen = new Set();
+  const out = [];
+  for (const value of values) {
+    const normalized = normalizeBase(value);
+    if (!normalized || seen.has(normalized)) {
+      continue;
+    }
+    seen.add(normalized);
+    out.push(normalized);
+  }
+  return out;
+}
+
+function resolveEndpoints() {
+  const baseRaw =
     process.env.RESOURCE_REGISTRY_API_BASE_URL ||
     process.env.TNF_API_BASE_URL ||
     process.env.API_BASE_URL ||
     'http://localhost:3001';
-  const path = process.env.RESOURCE_REGISTRY_ENDPOINT_PATH || '/api/resources';
-  return `${String(base).replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
+  const configuredPath = process.env.RESOURCE_REGISTRY_ENDPOINT_PATH || '/api/resources';
+
+  const base = normalizeBase(baseRaw);
+  const ingestUrl = joinUrl(base, configuredPath);
+  const rootBase = stripApiSuffix(base);
+  const marketplaceSubmitUrl = joinUrl(rootBase, '/api/marketplace/catalog/submit');
+  const marketplaceCatalogUrl = joinUrl(rootBase, '/api/marketplace/catalog');
+
+  const alternateResourceUrls = [];
+  if (/\/api\/resources$/i.test(ingestUrl)) {
+    alternateResourceUrls.push(ingestUrl.replace(/\/api\/resources$/i, '/resources'));
+  } else if (/\/resources$/i.test(ingestUrl)) {
+    alternateResourceUrls.push(ingestUrl.replace(/\/resources$/i, '/api/resources'));
+  }
+
+  return {
+    ingestUrl,
+    resourceCandidateUrls: uniqueUrls([ingestUrl, ...alternateResourceUrls]),
+    marketplaceSubmitUrl,
+    marketplaceCatalogUrl,
+    isDirectMarketplace: /\/api\/marketplace\/catalog\/submit$/i.test(ingestUrl),
+  };
+}
+
+function isMissingRouteStatus(status) {
+  return status === 404 || status === 405;
+}
+
+function buildFailureHint(status, isDirectMarketplace) {
+  if (status === 401 || status === 403) {
+    if (isDirectMarketplace) {
+      return 'Marketplace submit requires a valid member/admin JWT bearer token.';
+    }
+    return 'Resource-registry ingest requires RESOURCE_REGISTRY_API_KEY or a valid ingest bearer token.';
+  }
+  if (status === 404 || status === 405) {
+    return 'Ingest route not available; deploy API with POST /api/resources or set RESOURCE_REGISTRY_ENDPOINT_PATH to a valid ingest route.';
+  }
+  if (status === 500) {
+    return 'Server error from ingest endpoint; check backend logs and endpoint/auth contract.';
+  }
+  return '';
 }
 
 function buildHeaders() {
@@ -61,12 +143,13 @@ function buildHeaders() {
     process.env.RESOURCE_REGISTRY_API_KEY ||
     process.env.TNF_RESOURCE_REGISTRY_API_KEY ||
     process.env.API_KEY ||
+    process.env.COMMUNITY_API_KEY ||
     '';
 
   if (bearer) headers.Authorization = `Bearer ${bearer}`;
   if (apiKey) {
     headers['x-api-key'] = apiKey;
-    headers['X-API-Key'] = apiKey;
+    headers['x-community-api-key'] = apiKey;
   }
 
   return headers;
@@ -248,11 +331,12 @@ async function main() {
 
   const payload = JSON.parse(fs.readFileSync(sourceFile, 'utf8'));
   const rows = Array.isArray(payload.rows) ? payload.rows : [];
-  const url = endpoint();
-  const base = url.replace(/\/api\/[^/]+(?:\/[^/]+)?$/, '');
-  const marketplaceUrl = `${base}/api/marketplace/catalog/submit`;
-  const marketplaceCatalogUrl = `${base}/api/marketplace/catalog`;
-  const isDirectMarketplace = /\/api\/marketplace\/catalog\/submit$/i.test(url);
+  const endpointConfig = resolveEndpoints();
+  const url = endpointConfig.ingestUrl;
+  const resourceCandidateUrls = endpointConfig.resourceCandidateUrls;
+  const marketplaceUrl = endpointConfig.marketplaceSubmitUrl;
+  const marketplaceCatalogUrl = endpointConfig.marketplaceCatalogUrl;
+  const isDirectMarketplace = endpointConfig.isDirectMarketplace;
   const headers = buildHeaders();
   const dedupeRemote = process.env.SKILL_BANK_DEDUPE_REMOTE !== 'false';
   const remoteLookupCache = new Map();
@@ -262,6 +346,8 @@ async function main() {
     at: new Date().toISOString(),
     sourceFile,
     endpoint: url,
+    endpointCandidates: resourceCandidateUrls,
+    marketplaceFallback: marketplaceUrl,
     total: rows.length,
     dryRun: args.dryRun,
     posted: 0,
@@ -322,10 +408,23 @@ async function main() {
         let result = isDirectMarketplace
           ? await postRowMarketplace(url, headers, row)
           : await postRow(url, headers, row);
-        // Auto-fallback when API doesn't support POST /api/resources.
-        if (!isDirectMarketplace && !result.ok && (result.status === 404 || result.status === 405)) {
+
+        if (!isDirectMarketplace && !result.ok && isMissingRouteStatus(result.status)) {
+          for (const candidateUrl of resourceCandidateUrls) {
+            if (candidateUrl === url) continue;
+            const altResult = await postRow(candidateUrl, headers, row);
+            result = altResult;
+            if (altResult.ok || !isMissingRouteStatus(altResult.status)) {
+              break;
+            }
+          }
+        }
+
+        // Final compatibility fallback for legacy deployments that only expose marketplace submit.
+        if (!isDirectMarketplace && !result.ok && isMissingRouteStatus(result.status)) {
           result = await postRowMarketplace(marketplaceUrl, headers, row);
         }
+
         lastResult = result;
         if (result.ok) {
           summary.posted += 1;
@@ -340,11 +439,13 @@ async function main() {
         done = true;
       }
       if (!lastResult?.ok) {
+        const hint = buildFailureHint(lastResult?.status, isDirectMarketplace);
         summary.failed += 1;
         failedItems.push({
           row,
           reason: `HTTP ${lastResult?.status || 'unknown'}`,
           response: lastResult?.body || null,
+          hint: hint || undefined,
         });
       }
     } catch (error) {
@@ -359,6 +460,7 @@ async function main() {
     summary.errors = failedItems.slice(0, 20).map((e) => ({
       name: e.row?.name,
       reason: e.reason,
+      hint: e.hint || undefined,
     }));
   }
 

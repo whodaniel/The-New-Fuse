@@ -333,9 +333,9 @@ Set up alerts for:
 ## 🔗 Related Documentation
 
 - [Stripe Webhook Documentation](https://stripe.com/docs/webhooks)
-- [The New Fuse API Reference](../api/endpoints.md)
-- [Event Processing Guide](../development/architecture.md)
-- [Monitoring Setup](../deployment/monitoring.md)
+- [The New Fuse Webhooks OpenAPI Spec](../api/openapi.yaml)
+- [Webhooks Overview](../README.md)
+- [Environment Configuration](../deployment/environment.md)
 
 ## 💡 Advanced Configuration
 
@@ -371,4 +371,4 @@ const shouldProcess = (event) => {
 ---
 
 _For additional support, contact The New Fuse support team or refer to the
-[troubleshooting guide](../development/troubleshooting.md)._
+[webhooks overview](../README.md)._

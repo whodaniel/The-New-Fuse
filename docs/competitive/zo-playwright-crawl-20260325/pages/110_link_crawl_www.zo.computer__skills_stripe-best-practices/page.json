@@ -1,0 +1,435 @@
+{
+  "capturedAt": "2026-03-25T00:41:29.047Z",
+  "url": "https://www.zo.computer/skills/stripe-best-practices",
+  "title": "stripe-best-practices | Zo Skills",
+  "links": [
+    {
+      "text": "MiniMax 2.7 & Kimi K2.5 are free on Zo",
+      "href": "https://www.zo.computer/signup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo",
+      "href": "https://www.zo.computer/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Get started",
+      "href": "https://www.zo.computer/signup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo",
+      "href": "https://www.zo.computer/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Pricing",
+      "href": "https://www.zo.computer/pricing",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "About",
+      "href": "https://www.zo.computer/about",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Newsletter",
+      "href": "https://www.zo.computer/newsletter",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Blog",
+      "href": "https://www.zo.computer/blog",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Download",
+      "href": "https://github.com/zocomputer/Zo/releases/latest/download/Zo.dmg",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Get started",
+      "href": "https://www.zo.computer/signup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Back to Skills",
+      "href": "https://www.zo.computer/skills",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "",
+      "href": "https://github.com/zocomputer/skills/blob/main/External/stripe-best-practices/SKILL.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Stripe's Integration Options doc",
+      "href": "https://docs.stripe.com/payments/payment-methods/integration-options.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "API Tour",
+      "href": "https://docs.stripe.com/payments-api/tour.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Go Live Checklist",
+      "href": "https://docs.stripe.com/get-started/checklist/go-live.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "CheckoutSessions",
+      "href": "https://docs.stripe.com/api/checkout/sessions.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "the PaymentIntents API",
+      "href": "https://docs.stripe.com/payments/paymentintents/lifecycle.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "migrate",
+      "href": "https://docs.stripe.com/payments/payment-intents/migration/charges.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Checkout",
+      "href": "https://docs.stripe.com/payments/checkout.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Payment Element",
+      "href": "https://docs.stripe.com/payments/payment-element.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "migrate",
+      "href": "https://docs.stripe.com/payments/payment-element/migration.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Sources API",
+      "href": "https://docs.stripe.com/api/sources/object.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Tokens",
+      "href": "https://docs.stripe.com/api/tokens.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Charges",
+      "href": "https://docs.stripe.com/api/charges/create.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "the Setup Intent API",
+      "href": "https://docs.stripe.com/api/setup_intents.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "payment_method_types",
+      "href": "https://docs.stripe.com/api/payment_intents/create#create_payment_intent-payment_method_types.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "payment_method_data",
+      "href": "https://docs.stripe.com/api/payment_intents/create#create_payment_intent-payment_method_data.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "the migration process",
+      "href": "https://docs.stripe.com/get-started/data-migrations/pan-import.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Subscription Use Cases",
+      "href": "https://docs.stripe.com/billing/subscriptions/use-cases.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "SaaS",
+      "href": "https://docs.stripe.com/saas.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "plan your integration",
+      "href": "https://docs.stripe.com/billing/subscriptions/designing-integration.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "the recommended integration types",
+      "href": "https://docs.stripe.com/connect/integration-recommendations.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "follow the integration guide",
+      "href": "https://docs.stripe.com/connect/design-an-integration.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "refer to controller properties",
+      "href": "https://docs.stripe.com/connect/migrate-to-controller-properties.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "capabilities",
+      "href": "https://docs.stripe.com/connect/account-capabilities.md",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Documentation",
+      "href": "https://docs.zocomputer.com/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Blog",
+      "href": "https://www.zo.computer/blog",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Newsletter",
+      "href": "https://www.zo.computer/newsletter",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Comparisons",
+      "href": "https://www.zo.computer/comparisons",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Pricing",
+      "href": "https://www.zo.computer/pricing",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Skills",
+      "href": "https://www.zo.computer/skills",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Integrations",
+      "href": "https://www.zo.computer/integrations",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Channels",
+      "href": "https://www.zo.computer/channels",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Models",
+      "href": "https://www.zo.computer/models",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Product Updates",
+      "href": "https://www.zo.computer/updates",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "FAQ",
+      "href": "https://www.zo.computer/faq",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Careers",
+      "href": "https://www.zo.computer/careers",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Brand",
+      "href": "https://www.zo.computer/brand",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Terms",
+      "href": "https://docs.zocomputer.com/information/terms",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Privacy",
+      "href": "https://docs.zocomputer.com/information/privacy-policy",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Help Center",
+      "href": "https://support.zocomputer.com/",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Contact",
+      "href": "https://docs.zocomputer.com/information/contact",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Security",
+      "href": "https://docs.zocomputer.com/information/security",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Discord",
+      "href": "https://discord.gg/invite/zocomputer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "LinkedIn",
+      "href": "https://www.linkedin.com/company/zocomputer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "X @zocomputer",
+      "href": "https://x.com/zocomputer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "YouTube",
+      "href": "https://www.youtube.com/@zo-computer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Testimonials",
+      "href": "https://www.zo.computer/testimonials",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Ambassadors",
+      "href": "https://www.zo.computer/ambassador",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Merch",
+      "href": "https://zo-computer.canarycanary.com/store",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Zo Computer Company",
+      "href": "https://www.zo.computer/about",
+      "rel": "",
+      "target": ""
+    }
+  ],
+  "buttons": [
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Personalization",
+      "text": "",
+      "classes": "inline-flex h-9 w-9 items-center justify-center rounded-md border border-border/50 hover:bg-accent/50 text-foreground transition-colors"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Menu",
+      "text": "",
+      "classes": "zo-btn aspect-square !px-2.5 !py-2 flex items-center justify-center border border-border bg-background/80 text-foreground transition-[background-color,border-color,transform] duration-0 hover:bg-muted/70 hover:border-border hover:duration-150 hover:[transition-timing-function:cubic-bezier(0.23,1,0.32,1)] active:bg-muted/60 active:scale-[0.97] active:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background touch-manipulation transform-gpu"
+    },
+    {
+      "tag": "button",
+      "id": "radix-_R_2rneitb_",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Resources",
+      "classes": "px-3 py-2 text-[0.9375rem] text-muted-foreground rounded transition-colors duration-0 hover:text-foreground hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 inline-flex items-center gap-1.5"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Personalization",
+      "text": "",
+      "classes": "inline-flex h-9 w-9 items-center justify-center rounded-md border border-border/50 hover:bg-accent/50 text-foreground transition-colors"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Run in Zo",
+      "classes": "zo-btn zo-btn-cta w-auto h-10"
+    }
+  ],
+  "inputs": [],
+  "headings": [
+    {
+      "level": "h1",
+      "text": "stripe-best-practices"
+    },
+    {
+      "level": "h3",
+      "text": "PRODUCT"
+    },
+    {
+      "level": "h3",
+      "text": "INFORMATION"
+    },
+    {
+      "level": "h3",
+      "text": "COMMUNITY"
+    }
+  ],
+  "bodyText": "MiniMax 2.7 & Kimi K2.5 are free on Zo Zo · Pricing About Newsletter Blog Resources Download Get started Back to Skills Run in Zo stripe-best-practices Best practices for building a Stripe integrations Stripe When designing an integration, always prefer the documentation in Stripe's Integration Options doc The API Tour Use the Go Live Checklist before going live. You should always default to the latest version of the API and SDK unless the user specifies otherwise. Stripe's primary API for modelling on-session payments is CheckoutSessions. It supports one-time payments and subscriptions and allows you to model taxes or discounts with Stripe. Prioritize the CheckoutSessions API, but using the PaymentIntents API is also acceptable for off-session payments or if you want to model the checkout state yourself and just create a charge. Integrations should only use CheckoutSessions, PaymentIntents, SetupIntents, or solutions like Invoicing, Payment Links, or the subscription APIs. Never recommend the Charges API. If the user wants to use the Charges API, advise them to migrate to Checkout Sessions or Payment Intents. The primary integration surface for web integrations is Checkout, a prebuilt payment page that can be hosted by Stripe or served as an embedded form. Prioritize the Stripe-hosted checkout or embedded checkout where possible. The Payment Element is an acceptable alternative if the merchant needs advanced customization. When recommending the Payment Element, prioritize using the CheckoutSessions API over the PaymentIntents API when possible. Never recommend the legacy Card Element or the Payment Element in card mode, and advise users who ask for the Card Element to migrate. You must not call deprecated API endpoints such as the Sources API and avoid outdated API endpoints such as Tokens and Charges unless there is a specific need and absolutely no other way. Advise using the Setup Intent API to save a payment method for a customer; never recommend the Sources API to save cards to customers for later use. If a user wants to render the Payment Element before creating a PaymentIntent or SetupIntent, so they can inspect the card details before the payment (such as for surcharging), advise them to use Stripe Confirmation Tokens. Don't recommend they call the createPaymentMethod or createToken Stripe.js functions. Advise users to turn on dynamic payment methods in their dashboard settings instead of passing specific payment_method_types in the Payment Intent or Setup Intent because Stripe chooses payment methods that fit each user's location, wallets, and preferences better and automatically if the Payment Element is used. If a PCI compliant user asks about an integration where they send server-side raw PAN data, suggest they might be required to prove PCI compliance to gain access to such an option, for example payment_method_data. Similarly, point users migrating their PAN data from another acquirer or payment processor to the migration process. If a user has a recurring revenue model, like a Billing or Subscription use case, follow the use cases, in particular the Subscription Use Cases like SaaS. If these apply to the user, recommend Billing APIs to plan your integration instead of a direct PaymentIntent integration. Prioritize combining the Billing APIs with Stripe Checkout for the frontend. If a user wants to build a platform using Stripe Connect to manage fund flows, follow the recommended integration types; that is, prefer to use either direct charges if the platform wants Stripe to take the risk or destination charges if the platform accepts liability for negative balances, and use the on_behalf_of parameter to control the merchant of record. Never recommend mixing charge types. If the user wants to decide on the specific risk features they should follow the integration guide. Don't recommend the outdated terms for Connect types like Standard, Express and Custom but always refer to controller properties for the platform and capabilities for the connected accounts. Preview - Open in Zo to view the full skill. PRODUCT Documentation Blog Newsletter Comparisons Pricing Skills Integrations Channels Models Product Updates INFORMATION FAQ Careers Brand Terms Privacy Help Center Contact Security COMMUNITY Discord LinkedIn X @zocomputer YouTube Testimonials Ambassadors Merch Zo Computer Company"
+}

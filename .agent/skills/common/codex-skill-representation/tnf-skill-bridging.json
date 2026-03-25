@@ -1,0 +1,12 @@
+{
+  "skillName": "tnf-skill-bridging",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/tnf-skill-bridging/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/tnf-skill-bridging/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/tnf-skill-bridging.json",
+  "status": "present"
+}

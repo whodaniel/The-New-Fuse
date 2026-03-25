@@ -1,1 +1,5 @@
-# Getting Started\n\n- [Overview](overview.md)\n- [Quickstart](quickstart.md)\n- [Installation](installation.md)
+# Getting Started
+
+- [Overview](../GETTING_STARTED.md)
+- [Quickstart](../../QUICK_START_GUIDE.md)
+- [Installation](../guides/installation.md)

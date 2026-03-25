@@ -1,0 +1,12 @@
+{
+  "skillName": "gh-address-comments",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/gh-address-comments/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/gh-address-comments/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/gh-address-comments.json",
+  "status": "present"
+}

@@ -1,0 +1,12 @@
+{
+  "skillName": "guest-relationship-manager-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/guest-relationship-manager-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/guest-relationship-manager-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/guest-relationship-manager-agent.json",
+  "status": "present"
+}

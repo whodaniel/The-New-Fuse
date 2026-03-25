@@ -6,6 +6,7 @@ description:
   account credentials, and issue time-bound access grants to agents.
 tools: [Read, Grep, Glob, Bash, Write]
 model: inherit
+classification: private-skill
 skills:
   - security-best-practices
 ---

@@ -121,7 +121,7 @@
     "README.md",
     "docs/API_REFERENCE.md",
     "docs/EXAMPLES.md",
-    "docs/TROUBLESHOOTING.md",
+    "docs/MCP_CORE_TROUBLESHOOTING.md",
     "docs/DEVELOPER_GUIDE.md"
   ],
   "keywords": [

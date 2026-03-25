@@ -440,12 +440,11 @@ Once discovery is complete, the next stage will:
 ### Scripts
 
 - `scripts/documentation-system/01-discover.sh` - Discovery (Stage 1)
-- `scripts/documentation-system/02-classify.ts` - Classification (Stage 2)
-  [Coming]
-- `scripts/documentation-system/03-analyze.ts` - Analysis (Stage 3) [Coming]
-- `scripts/documentation-system/04-consolidate.ts` - Consolidation (Stage 4)
-  [Coming]
-- `scripts/documentation-system/05-evolve.ts` - Evolution (Stage 5) [Coming]
+- `scripts/documentation-system/02-classify-advanced.ts` - Classification (Stage 2)
+- `scripts/documentation-system/03-analyze-local.ts` - Analysis (Stage 3)
+- `scripts/documentation-system/04-consolidate-fast.ts` - Consolidation (Stage 4)
+- `scripts/documentation-system/05-evolve.ts` - Evolution (Stage 5, task generation + optional safe apply)
+- `scripts/documentation-system/run-full-pipeline.sh` - Run Stage 1-5 end-to-end
 
 ---
 

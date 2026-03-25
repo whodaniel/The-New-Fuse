@@ -849,3 +849,28 @@ on discoverAgents()
     return discoveredAgents
 end discoverAgents
 ```
+
+## Cross-Environment Integration Addendum
+
+The legacy `COMPLETE-AGENT-COMMUNICATION-GUIDE.md` included several integration
+patterns that remain relevant:
+
+- Inter-extension messaging contracts (VS Code ↔ Chrome) using a shared message
+  envelope and WebSocket + file-protocol fallback.
+- Workflow-engine orchestration patterns for multi-agent step execution,
+  variable binding, and step-level error handling.
+- Collaboration session patterns (session lifecycle, shared state, message
+  history, and participant synchronization).
+- Terminal and IDE agent integration patterns for command execution, status
+  reporting, and response correlation.
+
+For implementation specifics, use:
+
+- [Workflow System Guide](../workflows/guide.md)
+- [Extensions Getting Started](../extensions/getting-started.md)
+- [Complete Agent Guide](../agents/COMPLETE-AGENT-GUIDE.md)
+- [Complete Implementation Guide](../implementation/COMPLETE-IMPLEMENTATION-GUIDE.md)
+
+Archived deep-dive reference:
+
+- `docs/_archive/redundant-near/2026-03-25/guides/COMPLETE-AGENT-COMMUNICATION-GUIDE.md`

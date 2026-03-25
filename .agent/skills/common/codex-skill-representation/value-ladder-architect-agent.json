@@ -1,0 +1,12 @@
+{
+  "skillName": "value-ladder-architect-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/value-ladder-architect-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/value-ladder-architect-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/value-ladder-architect-agent.json",
+  "status": "present"
+}

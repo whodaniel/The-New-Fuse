@@ -116,7 +116,7 @@ Consolidated from:
 - Event handling best practices
 - State management conventions
 
-[See full System Integration documentation](architecture/system-integration.md)
+[See full System Integration documentation](../FEDERATION_ARCHITECTURE.md)
 
 ## Security
 
@@ -198,7 +198,7 @@ Consolidated from:
 Consolidated from:
 - docs/DEVELOPER_WORKFLOW.md
 - docs/workflow/current/*
-- docs/DOCKER_SETUP.md
+- docs/guides/docker-setup.md
 
 ### Setup
 - Local Development

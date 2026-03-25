@@ -1,0 +1,12 @@
+{
+  "skillName": "doc",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/doc/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/doc/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/doc.json",
+  "status": "present"
+}

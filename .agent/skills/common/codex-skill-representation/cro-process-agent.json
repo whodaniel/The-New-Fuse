@@ -1,0 +1,12 @@
+{
+  "skillName": "cro-process-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/cro-process-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/cro-process-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/cro-process-agent.json",
+  "status": "present"
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Search Engine"
+  short_description: "Help with Agent Search Engine tasks"
+  default_prompt: "Run the Agent Search Engine workflow using SKILL.md instructions."

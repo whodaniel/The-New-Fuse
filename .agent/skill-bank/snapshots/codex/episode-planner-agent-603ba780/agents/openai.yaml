@@ -1,0 +1,4 @@
+interface:
+  display_name: "Episode Planner Agent"
+  short_description: "Help with Episode Planner Agent tasks"
+  default_prompt: "Run the Episode Planner Agent workflow using SKILL.md instructions."

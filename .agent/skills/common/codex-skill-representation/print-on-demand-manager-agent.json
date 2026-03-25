@@ -1,0 +1,12 @@
+{
+  "skillName": "print-on-demand-manager-agent",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/imported-claude-agents/print-on-demand-manager-agent/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/imported-claude-agents/print-on-demand-manager-agent/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/print-on-demand-manager-agent.json",
+  "status": "present"
+}

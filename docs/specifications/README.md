@@ -1,7 +1,7 @@
 # MCP Specifications
 
 ## Complete Guide
-- **[Complete MCP Specifications](COMPLETE-MCP-SPECIFICATIONS.md)** - Comprehensive MCP protocol specifications, implementation details, server extensions, and troubleshooting
+- **[Complete MCP Specifications](../protocols/MCP-COMPLETE-GUIDE.md)** - Comprehensive MCP protocol specifications, implementation details, server extensions, and troubleshooting
 
 ## Overview
 This section consolidates all Model Context Protocol (MCP) specifications into a single comprehensive guide that includes:

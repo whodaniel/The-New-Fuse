@@ -13,6 +13,7 @@ import {
 } from '@/services/agentPfpProviders';
 import {
   blobToDataUrl,
+  fetchCloudAccess,
   fetchCloudOverrides,
   fileToDataUrl,
   getDefaultPrompt,
@@ -88,6 +89,13 @@ interface PendingSingleRegeneration {
   prompt: string;
 }
 
+interface CloudAccessState {
+  canSave: boolean;
+  tier: 'STARTER' | 'PRO' | 'ENTERPRISE';
+  active: boolean;
+  storageBackend?: 'cloudflare-images' | 'inline';
+}
+
 const badgeClass =
   'border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 transition-colors duration-200';
 
@@ -102,6 +110,13 @@ function downloadImage(name: string, dataUrl: string): void {
   link.href = dataUrl;
   link.download = `${name.replace(/[^a-z0-9]+/gi, '_').toLowerCase()}.png`;
   link.click();
+}
+
+function toErrorMessage(error: unknown): string {
+  if (!error) return 'Unknown error';
+  if (error instanceof Error) return error.message;
+  if (typeof error === 'string') return error;
+  return 'Unknown error';
 }
 
 export default function PfpStudioPage() {
@@ -120,6 +135,7 @@ export default function PfpStudioPage() {
   const [batchRunning, setBatchRunning] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ complete: 0, total: 0 });
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [cloudAccess, setCloudAccess] = useState<CloudAccessState | null>(null);
 
   const [modalState, setModalState] = useState<PendingSingleRegeneration | null>(null);
   const [singlePrompt, setSinglePrompt] = useState('');
@@ -154,6 +170,16 @@ export default function PfpStudioPage() {
       })
       .catch(() => {
         // Non-blocking: cloud override endpoint is optional.
+      });
+
+    fetchCloudAccess()
+      .then((access) => {
+        if (!mounted) return;
+        setCloudAccess(access || null);
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setCloudAccess(null);
       });
 
     const onStorage = (event: StorageEvent) => {
@@ -196,8 +222,7 @@ export default function PfpStudioPage() {
     () => STYLE_PRESETS.find((preset) => preset.id === stylePresetId) || STYLE_PRESETS[0],
     [stylePresetId]
   );
-  const cloudSyncEnabled =
-    typeof window !== 'undefined' && Boolean(window.TNF_PFP_OVERRIDES_ENDPOINT);
+  const cloudSyncEnabled = Boolean(cloudAccess);
 
   const selectedCount = selectedIds.size;
   const withOverrideCount = useMemo(() => Object.keys(overrides).length, [overrides]);
@@ -205,13 +230,18 @@ export default function PfpStudioPage() {
   const persistOverride = async (
     agentId: string,
     nextOverride: Omit<AgentPfpOverride, 'updatedAt'>
-  ) => {
+  ): Promise<boolean> => {
+    const timestamp = new Date().toISOString();
+    const overridePayload = {
+      ...nextOverride,
+      updatedAt: timestamp,
+    };
+
     setOverrides((current) => {
       const merged = {
         ...current,
         [agentId]: {
-          ...nextOverride,
-          updatedAt: new Date().toISOString(),
+          ...overridePayload,
         },
       };
       savePfpOverrides(merged);
@@ -219,12 +249,11 @@ export default function PfpStudioPage() {
     });
 
     try {
-      await pushCloudOverride(agentId, {
-        ...nextOverride,
-        updatedAt: new Date().toISOString(),
-      });
-    } catch {
-      // Optional cloud persistence should not block local success.
+      await pushCloudOverride(agentId, overridePayload);
+      return true;
+    } catch (error) {
+      setStatusMessage(`Saved locally. Cloud sync failed: ${toErrorMessage(error)}`);
+      return false;
     }
   };
 
@@ -316,7 +345,7 @@ export default function PfpStudioPage() {
     const profile = resolveAgentById(modalState.agentId);
     if (!profile) return;
 
-    await persistOverride(profile.id, {
+    const cloudSaved = await persistOverride(profile.id, {
       imageUrl: singlePreview,
       prompt: singlePrompt,
       provider: providerId,
@@ -335,7 +364,11 @@ export default function PfpStudioPage() {
     }
 
     closeSingleModal();
-    setStatusMessage(`Updated ${profile.displayName}.`);
+    setStatusMessage(
+      cloudSaved
+        ? `Updated ${profile.displayName}.`
+        : `Updated ${profile.displayName} locally. Cloud sync pending membership/API access.`
+    );
   };
 
   const regenerateSelected = async () => {
@@ -347,6 +380,7 @@ export default function PfpStudioPage() {
 
     const targetIds = Array.from(selectedIds);
     let failed = 0;
+    let cloudSaveFailed = 0;
 
     for (let index = 0; index < targetIds.length; index += 1) {
       const agentId = targetIds[index];
@@ -367,7 +401,7 @@ export default function PfpStudioPage() {
         });
         const dataUrl = await blobToDataUrl(imageBlob);
 
-        await persistOverride(agentId, {
+        const cloudSaved = await persistOverride(agentId, {
           imageUrl: dataUrl,
           prompt,
           provider: providerId,
@@ -375,6 +409,9 @@ export default function PfpStudioPage() {
           style: selectedStyle.label,
           source: 'generated',
         });
+        if (!cloudSaved) {
+          cloudSaveFailed += 1;
+        }
 
         if (autoDownload) {
           downloadImage(agent.displayName, dataUrl);
@@ -394,7 +431,9 @@ export default function PfpStudioPage() {
 
     setStatusMessage(
       failed === 0
-        ? `Batch complete: ${targetIds.length} updated.`
+        ? cloudSaveFailed === 0
+          ? `Batch complete: ${targetIds.length} updated.`
+          : `Batch complete: ${targetIds.length} updated (${cloudSaveFailed} local-only).`
         : `Batch complete: ${targetIds.length - failed} updated, ${failed} failed.`
     );
   };
@@ -407,7 +446,7 @@ export default function PfpStudioPage() {
 
     try {
       const dataUrl = await fileToDataUrl(file);
-      await persistOverride(agent.id, {
+      const cloudSaved = await persistOverride(agent.id, {
         imageUrl: dataUrl,
         prompt: promptOverrides[agent.id] || getDefaultPrompt(agent),
         provider: 'upload',
@@ -425,7 +464,11 @@ export default function PfpStudioPage() {
         return;
       }
 
-      setStatusMessage(`Uploaded replacement for ${agent.displayName}.`);
+      setStatusMessage(
+        cloudSaved
+          ? `Uploaded replacement for ${agent.displayName}.`
+          : `Uploaded replacement for ${agent.displayName} locally. Cloud sync pending membership/API access.`
+      );
     } catch {
       setStatusMessage('Failed to read dropped image file.');
     }
@@ -588,7 +631,12 @@ export default function PfpStudioPage() {
               <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-300">
                 <span className="inline-flex items-center gap-1">
                   <Cloud className="h-3.5 w-3.5 text-cyan-300" />
-                  Cloud sync {cloudSyncEnabled ? 'enabled' : 'optional (set endpoint)'}
+                  Cloud sync{' '}
+                  {cloudSyncEnabled
+                    ? cloudAccess?.canSave
+                      ? `enabled (${cloudAccess?.tier}, ${cloudAccess?.storageBackend || 'inline'})`
+                      : `read-only (${cloudAccess?.tier} - save needs paid membership)`
+                    : 'unavailable'}
                 </span>
                 <Link className="text-cyan-300 hover:text-cyan-200" to="/ai-portal/pfp-prompts">
                   Open Prompt Catalog →

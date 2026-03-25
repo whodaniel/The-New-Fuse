@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cognitive Bias Optimizer Agent"
+  short_description: "Help with Cognitive Bias Optimizer Agent tasks"
+  default_prompt: "Run the Cognitive Bias Optimizer Agent workflow using SKILL.md instructions."

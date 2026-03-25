@@ -345,8 +345,8 @@ Keep component usage documented and up-to-date.
 
 - **Design System Documentation**:
   [DESIGN_SYSTEM_DOCUMENTATION.md](DESIGN_SYSTEM_DOCUMENTATION.md)
-- **Component API Reference**: [COMPONENT_API.md](COMPONENT_API.md)
-- **Accessibility Guidelines**: [ACCESSIBILITY.md](ACCESSIBILITY.md)
+- **Component API Reference**: [COMPONENT_API.md](DESIGN_SYSTEM_DOCUMENTATION.md)
+- **Accessibility Guidelines**: [ACCESSIBILITY.md](DESIGN_SYSTEM_DOCUMENTATION.md#accessibility)
 
 ---
 

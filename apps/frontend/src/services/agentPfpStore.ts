@@ -1,4 +1,5 @@
 import type { AgentVisualProfileRecord } from '@/data/agentVisualProfiles';
+import { apiService } from './api';
 
 export const PFP_OVERRIDE_STORAGE_KEY = 'tnf_pfp_overrides_v5';
 export const PFP_PROMPT_STORAGE_KEY = 'tnf_pfp_prompt_overrides_v2';
@@ -124,23 +125,42 @@ export interface CloudOverridesEnvelope {
   overrides?: AgentPfpOverrideMap;
 }
 
-export async function fetchCloudOverrides(): Promise<AgentPfpOverrideMap | null> {
-  if (typeof window === 'undefined' || !window.TNF_PFP_OVERRIDES_ENDPOINT) return null;
+export interface CloudAccessResponse {
+  canSave: boolean;
+  tier: 'STARTER' | 'PRO' | 'ENTERPRISE';
+  active: boolean;
+  storageBackend?: 'cloudflare-images' | 'inline';
+}
 
-  const namespace = window.TNF_PFP_OVERRIDES_NAMESPACE || 'global';
-  const endpoint = new URL(window.TNF_PFP_OVERRIDES_ENDPOINT);
-  endpoint.searchParams.set('namespace', namespace);
+function resolveNamespace(): string {
+  if (typeof window === 'undefined') return 'global';
+  return window.TNF_PFP_OVERRIDES_NAMESPACE || 'global';
+}
 
-  const response = await fetch(endpoint.toString(), {
-    method: 'GET',
-    headers: { Accept: 'application/json' },
-  });
+function resolveEndpoint(): string {
+  if (typeof window === 'undefined') return '/api/agent-pfp-overrides';
+  return window.TNF_PFP_OVERRIDES_ENDPOINT || '/api/agent-pfp-overrides';
+}
 
-  if (!response.ok) {
-    throw new Error(`Cloud overrides request failed: ${response.status}`);
-  }
+function resolveAuthToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return (
+    window.localStorage.getItem('auth_token') ||
+    window.localStorage.getItem('authToken') ||
+    window.localStorage.getItem('token')
+  );
+}
 
-  const payload = (await response.json()) as unknown;
+function withAuthHeaders(base: Record<string, string>): Record<string, string> {
+  const token = resolveAuthToken();
+  if (!token) return base;
+  return {
+    ...base,
+    Authorization: `Bearer ${token}`,
+  };
+}
+
+function extractOverridesPayload(payload: unknown): AgentPfpOverrideMap {
   if (
     payload &&
     typeof payload === 'object' &&
@@ -151,24 +171,115 @@ export async function fetchCloudOverrides(): Promise<AgentPfpOverrideMap | null>
     return (payload as CloudOverridesEnvelope).overrides as AgentPfpOverrideMap;
   }
 
-  return payload as AgentPfpOverrideMap;
+  return (payload || {}) as AgentPfpOverrideMap;
 }
 
-export async function pushCloudOverride(
-  agentId: string,
-  override: AgentPfpOverride
-): Promise<void> {
-  if (typeof window === 'undefined' || !window.TNF_PFP_OVERRIDES_ENDPOINT) return;
+export async function fetchCloudOverrides(): Promise<AgentPfpOverrideMap | null> {
+  if (typeof window === 'undefined') return null;
+
+  const namespace = resolveNamespace();
+  const endpoint = resolveEndpoint();
+
+  if (endpoint.startsWith('/')) {
+    const payload = await apiService.get<CloudOverridesEnvelope | AgentPfpOverrideMap>(
+      endpoint,
+      { namespace },
+      { silent: true }
+    );
+    return extractOverridesPayload(payload);
+  }
+
+  const url = new URL(endpoint);
+  url.searchParams.set('namespace', namespace);
+
+  const response = await fetch(url.toString(), {
+    method: 'GET',
+    credentials: 'include',
+    headers: withAuthHeaders({ Accept: 'application/json' }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Cloud overrides request failed: ${response.status}`);
+  }
+
+  const payload = (await response.json()) as unknown;
+  return extractOverridesPayload(payload);
+}
+
+export async function fetchCloudAccess(): Promise<CloudAccessResponse | null> {
+  if (typeof window === 'undefined') return null;
+
+  const endpoint = resolveEndpoint();
+
+  if (endpoint.startsWith('/')) {
+    return await apiService.get<CloudAccessResponse>(`${endpoint}/access`, undefined, {
+      silent: true,
+    });
+  }
+
+  const url = new URL(endpoint.replace(/\/$/, '') + '/access');
+  const response = await fetch(url.toString(), {
+    method: 'GET',
+    credentials: 'include',
+    headers: withAuthHeaders({ Accept: 'application/json' }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Cloud access request failed: ${response.status}`);
+  }
+
+  return (await response.json()) as CloudAccessResponse;
+}
+
+export async function pushCloudOverride(agentId: string, override: AgentPfpOverride): Promise<void> {
+  if (typeof window === 'undefined') return;
 
   const body = {
-    namespace: window.TNF_PFP_OVERRIDES_NAMESPACE || 'global',
+    namespace: resolveNamespace(),
     agentId,
     override,
   };
 
-  await fetch(window.TNF_PFP_OVERRIDES_ENDPOINT, {
+  const endpoint = resolveEndpoint();
+
+  if (endpoint.startsWith('/')) {
+    await apiService.post(endpoint, body, { silent: true });
+    return;
+  }
+
+  const response = await fetch(endpoint, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    headers: withAuthHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(body),
   });
+
+  if (!response.ok) {
+    const bodyText = await response.text().catch(() => '');
+    throw new Error(`Cloud override save failed (${response.status}): ${bodyText.slice(0, 180)}`);
+  }
+}
+
+export async function pushCloudOverridesBatch(
+  updates: Array<{ agentId: string; override: AgentPfpOverride }>
+): Promise<void> {
+  if (typeof window === 'undefined' || updates.length === 0) return;
+
+  const endpoint = resolveEndpoint();
+
+  if (endpoint.startsWith('/')) {
+    await apiService.post(
+      `${endpoint}/batch`,
+      {
+        namespace: resolveNamespace(),
+        updates,
+      },
+      { silent: true }
+    );
+    return;
+  }
+
+  for (const update of updates) {
+    await pushCloudOverride(update.agentId, update.override);
+  }
 }

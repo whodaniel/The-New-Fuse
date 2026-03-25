@@ -10,6 +10,7 @@ export * from './services/llm-config.service';
 export * from './services/AgentLLMService';
 export * from './llm/providers/AnthropicProvider';
 export * from './llm/providers/GeminiProvider';
+export * from './llm/providers/GoogleADKProvider';
 
 // Task
 export * from './task/AgentInbox';

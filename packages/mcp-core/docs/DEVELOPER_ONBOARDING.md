@@ -831,16 +831,16 @@ test(integration): add broker service tests
 ## Resources and Next Steps
 
 ### Documentation
-- [API Reference](./API_REFERENCE.md) - Complete API documentation
-- [Best Practices](./BEST_PRACTICES.md) - Development best practices
-- [Troubleshooting](./TROUBLESHOOTING.md) - Common issues and solutions
+- [API Reference](./USAGE_EXAMPLES.md) - Complete API documentation
+- [Best Practices](./MCP_CORE_TROUBLESHOOTING.md) - Development best practices
+- [Troubleshooting](./MCP_CORE_TROUBLESHOOTING.md) - Common issues and solutions
 - [Usage Examples](./USAGE_EXAMPLES.md) - Real-world examples
 
 ### Example Projects
-- [Basic File Server](../examples/file-server.ts)
-- [Database Integration](../examples/database-integration.ts)
-- [Authentication Server](../examples/auth-server.ts)
-- [Monitoring Dashboard](../examples/monitoring-dashboard.ts)
+- [Basic File Server](../examples/basic-server.ts)
+- [Database Integration](../examples/service-mesh-integration.ts)
+- [Authentication Server](../examples/integrated-system.ts)
+- [Monitoring Dashboard](../examples/client-usage.ts)
 
 ### Community
 - GitHub Issues: Report bugs and request features

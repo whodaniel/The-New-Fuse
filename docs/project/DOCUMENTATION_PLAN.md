@@ -110,7 +110,7 @@ Document revision history
 - Include purpose comments: `# Authentication module`
 
 ### Version References
-- Use specific versions in reference/environment.md
+- Use specific versions in webhooks/deployment/environment.md
 - Reference this file in other docs
 - Include compatibility matrix
 

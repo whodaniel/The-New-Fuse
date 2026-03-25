@@ -214,7 +214,7 @@ brings 100% cohesion to all pages in The New Fuse application.
 
 - [Design System Documentation](DESIGN_SYSTEM_DOCUMENTATION.md)
 - [Implementation Guide](IMPLEMENTATION_GUIDE.md)
-- [Component API Reference](COMPONENT_API.md)
+- [Component API Reference](DESIGN_SYSTEM_DOCUMENTATION.md)
 
 ### **Usage Examples**
 

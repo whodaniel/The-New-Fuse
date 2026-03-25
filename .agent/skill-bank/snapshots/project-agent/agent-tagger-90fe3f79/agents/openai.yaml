@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Tagger"
+  short_description: "Help with Agent Tagger tasks"
+  default_prompt: "Run the Agent Tagger workflow using SKILL.md instructions."

@@ -32,6 +32,27 @@ API_HOST=0.0.0.0
 CORS_ORIGINS=https://app.thenewfuse.com,https://dashboard.thenewfuse.com
 ```
 
+### Frontend (Vite) Configuration
+
+```bash
+# Frontend API and websocket endpoints
+VITE_API_URL=http://localhost:3001
+VITE_WS_URL=ws://localhost:3001
+VITE_DEBUG_MODE=false
+
+# Frontend auth client settings
+VITE_AUTH_TOKEN_KEY=auth_token
+VITE_TOKEN_REFRESH_INTERVAL=15
+```
+
+### Service .env Bootstrap
+
+```bash
+# Initialize local env files from examples
+cp apps/frontend/.env.example apps/frontend/.env
+cp apps/api/.env.example apps/api/.env
+```
+
 ### Webhook Security Configuration
 
 ```bash
@@ -149,6 +170,15 @@ SSL_ENABLED=true
 REACT_APP_API_URL=https://api.thenewfuse.com
 REACT_APP_SSE_URL=https://api.thenewfuse.com/webhooks/events/stream
 REACT_APP_CLOUDFLARE_WORKER_URL=https://worker.thenewfuse.com
+```
+
+### Testing Environment (.env.test)
+
+```bash
+NODE_ENV=test
+LOGGING_LEVEL=debug
+METRICS_ENABLED=false
+DB_DATABASE=the_new_fuse_test
 ```
 
 ## ☁️ Cloudflare Workers Configuration

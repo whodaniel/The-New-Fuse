@@ -1,0 +1,12 @@
+{
+  "skillName": "security-ownership-map",
+  "codexPaths": [
+    "/Users/<owner>/.codex/skills/security-ownership-map/SKILL.md"
+  ],
+  "tnfSkillPaths": [
+    ".skills/security-ownership-map/SKILL.md"
+  ],
+  "representedInTnfCommon": true,
+  "commonRepresentationRef": "common/codex-skill-representation/security-ownership-map.json",
+  "status": "present"
+}

@@ -1,0 +1,940 @@
+{
+  "capturedAt": "2026-03-25T00:35:10.306Z",
+  "url": "https://zocomputer.substack.com/",
+  "title": "Zo Computer | 0thernet | Substack",
+  "links": [
+    {
+      "text": "Terms of Use",
+      "href": "https://substack.com/tos",
+      "rel": "",
+      "target": "_blank"
+    },
+    {
+      "text": "Information Collection Notice",
+      "href": "https://substack.com/ccpa#personal-data-collected",
+      "rel": "",
+      "target": "_blank"
+    },
+    {
+      "text": "Privacy Policy",
+      "href": "https://substack.com/privacy",
+      "rel": "",
+      "target": "_blank"
+    },
+    {
+      "text": "",
+      "href": "https://zocomputer.substack.com/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo Computer",
+      "href": "https://zocomputer.substack.com/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Home",
+      "href": "https://zocomputer.substack.com/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "We're hiring engineers",
+      "href": "https://zocomputer.substack.com/p/were-hiring-engineers",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Growing the Zo team to build the Personal Cloud",
+      "href": "https://zocomputer.substack.com/p/were-hiring-engineers",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "0thernet",
+      "href": "https://substack.com/@0thernet",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Open models are free on Zo",
+      "href": "https://zocomputer.substack.com/p/open-models-are-free-on-zo",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "GLM-5, Kimi K2.5, and MiniMax M2.5 are free until the end of February",
+      "href": "https://zocomputer.substack.com/p/open-models-are-free-on-zo",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "0thernet",
+      "href": "https://substack.com/@0thernet",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo Computer Monthly Recap",
+      "href": "https://zocomputer.substack.com/p/whats-new-at-zo-computer",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "January 2026 Recap",
+      "href": "https://zocomputer.substack.com/p/whats-new-at-zo-computer",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "jam",
+      "href": "https://substack.com/@sugarjammi",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Skip the todo – just write the prompt",
+      "href": "https://zocomputer.substack.com/p/skip-the-todo-just-write-the-prompt",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Plus: how I orchestrate Claude Code with Zo Computer",
+      "href": "https://zocomputer.substack.com/p/skip-the-todo-just-write-the-prompt",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "0thernet",
+      "href": "https://substack.com/@0thernet",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Using AI for Personal Data",
+      "href": "https://zocomputer.substack.com/p/using-ai-for-personal-data",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Actually using all this data that is collected around us",
+      "href": "https://zocomputer.substack.com/p/using-ai-for-personal-data",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "perceptnet",
+      "href": "https://substack.com/@perceptnet",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "What people actually need from AI",
+      "href": "https://zocomputer.substack.com/p/what-people-actually-need-from-ai",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "1 month after our launch, I reflect on Zo user feedback – using my Zo.",
+      "href": "https://zocomputer.substack.com/p/what-people-actually-need-from-ai",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "0thernet",
+      "href": "https://substack.com/@0thernet",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "How to code better with AI using this one weird trick",
+      "href": "https://zocomputer.substack.com/p/velocity-coding",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Velocity Coding, not Vibe Coding",
+      "href": "https://zocomputer.substack.com/p/velocity-coding",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "0thernet",
+      "href": "https://substack.com/@0thernet",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "We launched Zo Computer. My thoughts on how to launch a product.",
+      "href": "https://zocomputer.substack.com/p/we-launched-zo-computer-my-thoughts",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Also, I'm hosting a live class next week on coding with AI",
+      "href": "https://zocomputer.substack.com/p/we-launched-zo-computer-my-thoughts",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "0thernet",
+      "href": "https://substack.com/@0thernet",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "X (Twitter)",
+      "href": "https://x.com/0thernet",
+      "rel": "noopener",
+      "target": "_blank"
+    },
+    {
+      "text": "LinkedIn",
+      "href": "https://www.linkedin.com/in/0thernet",
+      "rel": "noopener",
+      "target": "_blank"
+    },
+    {
+      "text": "Homepage",
+      "href": "https://zo.computer/",
+      "rel": "noopener",
+      "target": "_blank"
+    },
+    {
+      "text": "Discord Community",
+      "href": "https://discord.gg/invite/zocomputer",
+      "rel": "noopener",
+      "target": "_blank"
+    },
+    {
+      "text": "About",
+      "href": "https://zocomputer.substack.com/about",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Archive",
+      "href": "https://zocomputer.substack.com/archive",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Sitemap",
+      "href": "https://zocomputer.substack.com/sitemap",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Privacy",
+      "href": "https://substack.com/privacy",
+      "rel": "noopener",
+      "target": "_blank"
+    },
+    {
+      "text": "Terms",
+      "href": "https://substack.com/tos",
+      "rel": "noopener",
+      "target": "_blank"
+    },
+    {
+      "text": "Collection notice",
+      "href": "https://substack.com/ccpa#personal-data-collected",
+      "rel": "noopener",
+      "target": "_blank"
+    },
+    {
+      "text": "Start your Substack",
+      "href": "https://substack.com/signup?utm_source=substack&utm_medium=web&utm_content=footer",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Get the app",
+      "href": "https://substack.com/app/app-store-redirect?utm_campaign=app-marketing&utm_content=web-footer-button",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Substack",
+      "href": "https://substack.com/",
+      "rel": "",
+      "target": ""
+    }
+  ],
+  "buttons": [
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Close",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft closeWelcomeModal-KVUfKQ iconButton-mq_Et5 iconButtonBase-dJGHgN buttonBase-GK1x3M buttonStyle-r7yGCK size_md-gCDS3o priority_tertiary-rlke8z"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Subscribe",
+      "classes": "pencraft pc-reset pencraft rightButton primary subscribe-btn button-VFSdkv buttonBase-GK1x3M"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "No Computer",
+      "classes": "pencraft pc-reset pencraft maybeLater-PlK9NK buttonBase-GK1x3M buttonText-X0uSmG buttonStyle-r7yGCK priority_quaternary-kpMibu size_md-gCDS3o"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Search",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft iconButton-mq_Et5 iconButtonBase-dJGHgN buttonBase-GK1x3M buttonStyle-r7yGCK size_md-gCDS3o priority_tertiary-rlke8z"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-4",
+      "role": "",
+      "ariaLabel": "Share Publication",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft iconButton-mq_Et5 iconButtonBase-dJGHgN buttonBase-GK1x3M buttonStyle-r7yGCK size_md-gCDS3o priority_tertiary-rlke8z"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Subscribe",
+      "classes": "pencraft pc-reset pencraft buttonBase-GK1x3M buttonText-X0uSmG buttonStyle-r7yGCK priority_primary-RfbeYt size_md-gCDS3o"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Sign in",
+      "classes": "pencraft pc-reset pencraft buttonBase-GK1x3M buttonText-X0uSmG buttonStyle-r7yGCK priority_tertiary-rlke8z size_md-gCDS3o"
+    },
+    {
+      "tag": "a",
+      "id": "",
+      "role": "button",
+      "ariaLabel": "",
+      "text": "Home",
+      "classes": ""
+    },
+    {
+      "tag": "div",
+      "id": "",
+      "role": "button",
+      "ariaLabel": "",
+      "text": "",
+      "classes": "scroll-button-hitbox"
+    },
+    {
+      "tag": "div",
+      "id": "",
+      "role": "button",
+      "ariaLabel": "",
+      "text": "",
+      "classes": "scroll-button-hitbox"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Like (10)",
+      "text": "10",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "View comments (2)",
+      "text": "2",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed post-ufi-comment-button has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-48",
+      "role": "",
+      "ariaLabel": "",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed no-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-56",
+      "role": "",
+      "ariaLabel": "",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed no-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-64-trigger-new",
+      "role": "tab",
+      "ariaLabel": "",
+      "text": "Latest",
+      "classes": "pencraft pc-reset flex-auto-j3S2WA pencraft segment-j4TeZ4 buttonBase-GK1x3M buttonText-X0uSmG buttonStyle-r7yGCK priority_quaternary-kpMibu size_sm-G3LciD"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-64-trigger-top",
+      "role": "tab",
+      "ariaLabel": "",
+      "text": "Top",
+      "classes": "pencraft pc-reset flex-auto-j3S2WA pencraft segment-j4TeZ4 buttonBase-GK1x3M buttonText-X0uSmG buttonStyle-r7yGCK priority_quaternary-kpMibu size_sm-G3LciD"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-64-trigger-community",
+      "role": "tab",
+      "ariaLabel": "",
+      "text": "Discussions",
+      "classes": "pencraft pc-reset flex-auto-j3S2WA pencraft segment-j4TeZ4 buttonBase-GK1x3M buttonText-X0uSmG buttonStyle-r7yGCK priority_quaternary-kpMibu size_sm-G3LciD"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Search",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft iconButton-mq_Et5 iconButtonBase-dJGHgN buttonBase-GK1x3M buttonStyle-r7yGCK size_md-gCDS3o priority_tertiary-rlke8z"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Like (12)",
+      "text": "12",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "View comments (0)",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed post-ufi-comment-button no-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-80",
+      "role": "",
+      "ariaLabel": "",
+      "text": "2",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-88",
+      "role": "",
+      "ariaLabel": "",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed no-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Like (8)",
+      "text": "8",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "View comments (2)",
+      "text": "2",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed post-ufi-comment-button has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-108",
+      "role": "",
+      "ariaLabel": "",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed no-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-116",
+      "role": "",
+      "ariaLabel": "",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed no-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Like (11)",
+      "text": "11",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "View comments (1)",
+      "text": "1",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed post-ufi-comment-button has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-136",
+      "role": "",
+      "ariaLabel": "",
+      "text": "3",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-144",
+      "role": "",
+      "ariaLabel": "",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed no-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Like (40)",
+      "text": "40",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "View comments (4)",
+      "text": "4",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed post-ufi-comment-button has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-164",
+      "role": "",
+      "ariaLabel": "",
+      "text": "5",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-172",
+      "role": "",
+      "ariaLabel": "",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed no-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Like (15)",
+      "text": "15",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "View comments (4)",
+      "text": "4",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed post-ufi-comment-button has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-192",
+      "role": "",
+      "ariaLabel": "",
+      "text": "1",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-200",
+      "role": "",
+      "ariaLabel": "",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed no-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Like (13)",
+      "text": "13",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "View comments (0)",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed post-ufi-comment-button no-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-220",
+      "role": "",
+      "ariaLabel": "",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed no-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-228",
+      "role": "",
+      "ariaLabel": "",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed no-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Like (14)",
+      "text": "14",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "View comments (4)",
+      "text": "4",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed post-ufi-comment-button has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-248",
+      "role": "",
+      "ariaLabel": "",
+      "text": "1",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed has-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "radix-P0-256",
+      "role": "",
+      "ariaLabel": "",
+      "text": "",
+      "classes": "pencraft pc-reset pencraft post-ufi-button style-compressed no-label with-border"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "See all",
+      "classes": "pencraft pc-reset pencraft buttonBase-GK1x3M buttonText-X0uSmG buttonStyle-r7yGCK priority_secondary-S63h9o size_md-gCDS3o"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Subscribe",
+      "classes": "pencraft pc-reset pencraft rightButton primary subscribe-btn button-VFSdkv buttonBase-GK1x3M"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Subscribe",
+      "classes": "pencraft pc-reset pencraft rightButton primary subscribe-btn button-VFSdkv buttonBase-GK1x3M"
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "id": "",
+      "name": "first_url",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "first_referrer",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "current_url",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "current_referrer",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "first_session_url",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "first_session_referrer",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "referral_code",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "source",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "referring_pub_id",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "additional_referring_pub_ids",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "email",
+      "type": "email",
+      "placeholder": "Type your email...",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "first_url",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "first_referrer",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "current_url",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "current_referrer",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "first_session_url",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "first_session_referrer",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "referral_code",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "source",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "referring_pub_id",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "additional_referring_pub_ids",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "email",
+      "type": "email",
+      "placeholder": "Type your email...",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "first_url",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "first_referrer",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "current_url",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "current_referrer",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "first_session_url",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "first_session_referrer",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "referral_code",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "source",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "referring_pub_id",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "additional_referring_pub_ids",
+      "type": "hidden",
+      "placeholder": "",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "email",
+      "type": "email",
+      "placeholder": "Type your email...",
+      "ariaLabel": ""
+    }
+  ],
+  "headings": [
+    {
+      "level": "h1",
+      "text": "Zo Computer"
+    },
+    {
+      "level": "h1",
+      "text": "Zo Computer"
+    },
+    {
+      "level": "h4",
+      "text": "Zo Computer"
+    }
+  ],
+  "bodyText": "Zo Computer The Zo Computer Company Blog Subscribe By subscribing, you agree Substack's Terms of Use, and acknowledge its Information Collection Notice and Privacy Policy. No Computer"
+}

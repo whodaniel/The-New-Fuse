@@ -8,7 +8,7 @@ Status: IMPLEMENTED
 1. TWIP macro board script generates rolling terminal workstream telemetry:
    - `scripts/protocols/twip-macro-board.cjs`
 2. Output artifacts are generated and persisted:
-   - `docs/protocols/reports/twip-terminal-macro-board-latest.md`
+   - `data/protocols/twip-terminal-macro-board-latest.md`
    - `data/protocols/twip-macro-board.state.json`
 3. Extension schemas added for orchestrator interoperability:
    - `docs/protocols/schemas/twip-workstream-signal.schema.json`

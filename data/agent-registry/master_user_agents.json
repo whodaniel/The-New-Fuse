@@ -2542,6 +2542,117 @@
     }
   },
   {
+    "id": "claude-code-cli",
+    "name": "claude-code-cli",
+    "displayName": "Claude Code CLI",
+    "description": "Anthropic Claude Code CLI local assistant profile for coding, analysis, and automation workflows.",
+    "agentType": "external",
+    "tags": [
+      "chat",
+      "code_generation",
+      "file_management",
+      "data_analysis",
+      "automation",
+      "bash"
+    ],
+    "tools": [
+      "Bash"
+    ],
+    "skills": [
+      "chat",
+      "code-generation",
+      "file-management",
+      "data-analysis",
+      "automation"
+    ],
+    "capabilities": [
+      "CHAT",
+      "CODE_GENERATION",
+      "FILE_MANAGEMENT",
+      "DATA_ANALYSIS",
+      "AUTOMATION"
+    ],
+    "sourceFile": ".agent/agents/claude-code-cli.md",
+    "status": "active",
+    "categoriesNormalized": [
+      "external-llm",
+      "orchestration",
+      "engineering"
+    ],
+    "classification": {
+      "domain": [
+        "external-llm",
+        "orchestration",
+        "engineering"
+      ],
+      "workflowStage": [
+        "execution"
+      ],
+      "complexity": "high",
+      "riskTier": "low"
+    },
+    "metadata": {
+      "tnf": {
+        "schemaVersion": "2.0.0",
+        "canonical": true,
+        "sourcePriority": 400,
+        "variantCount": 1,
+        "rawSources": [
+          "tnf_agents_md"
+        ]
+      },
+      "extensions": {
+        "com.tnf.agentCard": {
+          "unknownTags": [
+            "chat",
+            "code_generation",
+            "file_management",
+            "data_analysis",
+            "automation",
+            "bash"
+          ],
+          "unknownCategories": [
+            "external-llm"
+          ],
+          "rawMetadata": [
+            {
+              "sourceId": "tnf_agents_md",
+              "sourceFile": ".agent/agents/claude-code-cli.md",
+              "metadata": {
+                "frontmatter": {
+                  "name": "claude-code-cli",
+                  "displayName": "Claude Code CLI",
+                  "description": "Anthropic Claude Code CLI local assistant profile for coding, analysis, and automation workflows.",
+                  "agentType": "external",
+                  "tools": [
+                    "Bash"
+                  ],
+                  "skills": [
+                    "chat",
+                    "code-generation",
+                    "file-management",
+                    "data-analysis",
+                    "automation"
+                  ],
+                  "capabilities": [
+                    "CHAT",
+                    "CODE_GENERATION",
+                    "FILE_MANAGEMENT",
+                    "DATA_ANALYSIS",
+                    "AUTOMATION"
+                  ],
+                  "category": "external-llm",
+                  "status": "active",
+                  "version": "1.0.0"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
     "id": "code-fossil-investigator",
     "name": "code-fossil-investigator",
     "displayName": "code-fossil-investigator",
@@ -5990,105 +6101,6 @@
     }
   },
   {
-    "id": "email-custodian-agent",
-    "name": "email-custodian-agent",
-    "displayName": "Email Custodian Agent",
-    "description": "Dedicated TNF agent for hosted-email provisioning (cPanel API or SSH key transport), managed account vault records, and delegated credential grants to worker agents.",
-    "agentType": "external",
-    "tags": [
-      "do_not_persist_plaintext_credentials_in_files_chat_logs_or_prompts",
-      "use_only_encrypted_db_backed_records_and_grant_tokens",
-      "enforce_short_grant_expirations_and_explicit_scopes",
-      "refuse_operations_that_bypass_platform_policy_or_legal_terms"
-    ],
-    "tools": [
-      "a2a_email_custodian_provision",
-      "a2a_email_custodian_grant",
-      "a2a_email_custodian_redeem"
-    ],
-    "skills": [],
-    "capabilities": [
-      "Do not persist plaintext credentials in files, chat logs, or prompts.",
-      "Use only encrypted DB-backed records and grant tokens.",
-      "Enforce short grant expirations and explicit scopes.",
-      "Refuse operations that bypass platform policy or legal terms.",
-      "HOSTED_EMAIL_PROVISION",
-      "CHATGPT_ONBOARDING_COORDINATION",
-      "CREDENTIAL_GRANT_ISSUANCE",
-      "CREDENTIAL_GRANT_REDEMPTION"
-    ],
-    "sourceFile": ".agent/agents/email-custodian-agent.md",
-    "status": "active",
-    "categoriesNormalized": [
-      "orchestration",
-      "engineering",
-      "operations"
-    ],
-    "classification": {
-      "domain": [
-        "orchestration",
-        "engineering",
-        "operations"
-      ],
-      "workflowStage": [
-        "execution",
-        "governance"
-      ],
-      "complexity": "high",
-      "riskTier": "medium"
-    },
-    "metadata": {
-      "tnf": {
-        "schemaVersion": "2.0.0",
-        "canonical": true,
-        "sourcePriority": 400,
-        "variantCount": 2,
-        "rawSources": [
-          "tnf_agents_md",
-          "tnf_ai_agents_json"
-        ]
-      },
-      "extensions": {
-        "com.tnf.agentCard": {
-          "unknownTags": [
-            "do_not_persist_plaintext_credentials_in_files_chat_logs_or_prompts",
-            "use_only_encrypted_db_backed_records_and_grant_tokens",
-            "enforce_short_grant_expirations_and_explicit_scopes",
-            "refuse_operations_that_bypass_platform_policy_or_legal_terms"
-          ],
-          "unknownCategories": [],
-          "rawMetadata": [
-            {
-              "sourceId": "tnf_agents_md",
-              "sourceFile": ".agent/agents/email-custodian-agent.md",
-              "metadata": {
-                "frontmatter": {}
-              }
-            },
-            {
-              "sourceId": "tnf_ai_agents_json",
-              "sourceFile": "config/ai-agents/email-custodian-agent.json",
-              "metadata": {
-                "provider": "TNF",
-                "metadata": {
-                  "version": "0.1.0",
-                  "tenantScoped": true,
-                  "safeByDefault": true,
-                  "createdAt": "2026-03-22T00:00:00Z"
-                },
-                "configuration": {
-                  "provider": "tnf-api",
-                  "module": "agency-hub",
-                  "strictCredentialIsolation": true
-                }
-              }
-            }
-          ]
-        }
-      }
-    }
-  },
-  {
     "id": "email-marketing-automation-agent",
     "name": "email-marketing-automation-agent",
     "displayName": "email-marketing-automation-agent",
@@ -6786,6 +6798,134 @@
     }
   },
   {
+    "id": "frontend-debugger-agent",
+    "name": "frontend-debugger-agent",
+    "displayName": "Frontend Debugger Agent",
+    "description": "Specialized frontend diagnostics agent for React runtime errors, dependency conflicts, HMR/WebSocket faults, and browser-extension interference.",
+    "agentType": "local",
+    "tags": [
+      "react_debugging",
+      "vite_debugging",
+      "websocket_diagnostics",
+      "extension_conflict_analysis",
+      "bash",
+      "grep",
+      "read",
+      "write",
+      "debug_react_context_and_hooks",
+      "diagnose_websocket_and_hmr_failures",
+      "resolve_duplicate_react_instance_conflicts",
+      "troubleshoot_custom_element_registration_collisions",
+      "analyze_javascript_runtime_stack_traces",
+      "fix_module_resolution_and_bundling_issues"
+    ],
+    "tools": [
+      "Bash",
+      "Grep",
+      "Read",
+      "Write"
+    ],
+    "skills": [
+      "react-debugging",
+      "vite-debugging",
+      "websocket-diagnostics",
+      "extension-conflict-analysis"
+    ],
+    "capabilities": [
+      "debug-react-context-and-hooks",
+      "diagnose-websocket-and-hmr-failures",
+      "resolve-duplicate-react-instance-conflicts",
+      "troubleshoot-custom-element-registration-collisions",
+      "analyze-javascript-runtime-stack-traces",
+      "fix-module-resolution-and-bundling-issues"
+    ],
+    "sourceFile": ".agent/agents/frontend-debugger-agent.md",
+    "status": "active",
+    "categoriesNormalized": [
+      "engineering"
+    ],
+    "classification": {
+      "domain": [
+        "engineering"
+      ],
+      "workflowStage": [
+        "discovery",
+        "execution"
+      ],
+      "complexity": "medium",
+      "riskTier": "low"
+    },
+    "metadata": {
+      "tnf": {
+        "schemaVersion": "2.0.0",
+        "canonical": true,
+        "sourcePriority": 400,
+        "variantCount": 1,
+        "rawSources": [
+          "tnf_agents_md"
+        ]
+      },
+      "extensions": {
+        "com.tnf.agentCard": {
+          "unknownTags": [
+            "react_debugging",
+            "vite_debugging",
+            "websocket_diagnostics",
+            "extension_conflict_analysis",
+            "bash",
+            "grep",
+            "read",
+            "write",
+            "debug_react_context_and_hooks",
+            "diagnose_websocket_and_hmr_failures",
+            "resolve_duplicate_react_instance_conflicts",
+            "troubleshoot_custom_element_registration_collisions",
+            "analyze_javascript_runtime_stack_traces",
+            "fix_module_resolution_and_bundling_issues"
+          ],
+          "unknownCategories": [],
+          "rawMetadata": [
+            {
+              "sourceId": "tnf_agents_md",
+              "sourceFile": ".agent/agents/frontend-debugger-agent.md",
+              "metadata": {
+                "frontmatter": {
+                  "name": "frontend-debugger-agent",
+                  "displayName": "Frontend Debugger Agent",
+                  "description": "Specialized frontend diagnostics agent for React runtime errors, dependency conflicts, HMR/WebSocket faults, and browser-extension interference.",
+                  "agentType": "local",
+                  "tools": [
+                    "Bash",
+                    "Grep",
+                    "Read",
+                    "Write"
+                  ],
+                  "skills": [
+                    "react-debugging",
+                    "vite-debugging",
+                    "websocket-diagnostics",
+                    "extension-conflict-analysis"
+                  ],
+                  "capabilities": [
+                    "debug-react-context-and-hooks",
+                    "diagnose-websocket-and-hmr-failures",
+                    "resolve-duplicate-react-instance-conflicts",
+                    "troubleshoot-custom-element-registration-collisions",
+                    "analyze-javascript-runtime-stack-traces",
+                    "fix-module-resolution-and-bundling-issues"
+                  ],
+                  "category": "engineering",
+                  "status": "active",
+                  "version": "1.0.0"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
     "id": "frontend-specialist",
     "name": "frontend-specialist",
     "displayName": "frontend-specialist",
@@ -7354,6 +7494,117 @@
                   "complexity_level": "advanced",
                   "category": "external-llm",
                   "author": "Google"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "gemini-cli",
+    "name": "gemini-cli",
+    "displayName": "Gemini CLI",
+    "description": "Google Gemini CLI local assistant profile for chat, code generation, and data analysis workflows.",
+    "agentType": "external",
+    "tags": [
+      "chat",
+      "code_generation",
+      "data_analysis",
+      "multimodal_reasoning",
+      "bash",
+      "websearch",
+      "webfetch"
+    ],
+    "tools": [
+      "Bash",
+      "WebSearch",
+      "WebFetch"
+    ],
+    "skills": [
+      "chat",
+      "code-generation",
+      "data-analysis",
+      "multimodal-reasoning"
+    ],
+    "capabilities": [
+      "CHAT",
+      "CODE_GENERATION",
+      "DATA_ANALYSIS"
+    ],
+    "sourceFile": ".agent/agents/gemini-cli.md",
+    "status": "active",
+    "categoriesNormalized": [
+      "external-llm",
+      "orchestration",
+      "engineering"
+    ],
+    "classification": {
+      "domain": [
+        "external-llm",
+        "orchestration",
+        "engineering"
+      ],
+      "workflowStage": [
+        "execution"
+      ],
+      "complexity": "high",
+      "riskTier": "low"
+    },
+    "metadata": {
+      "tnf": {
+        "schemaVersion": "2.0.0",
+        "canonical": true,
+        "sourcePriority": 400,
+        "variantCount": 1,
+        "rawSources": [
+          "tnf_agents_md"
+        ]
+      },
+      "extensions": {
+        "com.tnf.agentCard": {
+          "unknownTags": [
+            "chat",
+            "code_generation",
+            "data_analysis",
+            "multimodal_reasoning",
+            "bash",
+            "websearch",
+            "webfetch"
+          ],
+          "unknownCategories": [
+            "external-llm"
+          ],
+          "rawMetadata": [
+            {
+              "sourceId": "tnf_agents_md",
+              "sourceFile": ".agent/agents/gemini-cli.md",
+              "metadata": {
+                "frontmatter": {
+                  "name": "gemini-cli",
+                  "displayName": "Gemini CLI",
+                  "description": "Google Gemini CLI local assistant profile for chat, code generation, and data analysis workflows.",
+                  "agentType": "external",
+                  "tools": [
+                    "Bash",
+                    "WebSearch",
+                    "WebFetch"
+                  ],
+                  "skills": [
+                    "chat",
+                    "code-generation",
+                    "data-analysis",
+                    "multimodal-reasoning"
+                  ],
+                  "capabilities": [
+                    "CHAT",
+                    "CODE_GENERATION",
+                    "DATA_ANALYSIS"
+                  ],
+                  "category": "external-llm",
+                  "status": "active",
+                  "version": "1.0.0"
                 }
               }
             }
@@ -8426,6 +8677,121 @@
                     "HttpAPI",
                     "StaticCodeAnalyzerAPI"
                   ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "jules-cli-agent",
+    "name": "jules-cli-agent",
+    "displayName": "Google Jules CLI",
+    "description": "Google's asynchronous coding agent for parallel multi-session code generation and repository-wide task execution.",
+    "agentType": "external",
+    "tags": [
+      "parallel_task_execution",
+      "asynchronous_processing",
+      "repository_refactoring",
+      "session_management",
+      "patch_application",
+      "bash",
+      "async_code_generation",
+      "multi_session_management",
+      "automated_code_improvements"
+    ],
+    "tools": [
+      "Bash"
+    ],
+    "skills": [
+      "parallel-task-execution",
+      "asynchronous-processing",
+      "repository-refactoring",
+      "session-management",
+      "patch-application"
+    ],
+    "capabilities": [
+      "parallel-task-execution",
+      "async-code-generation",
+      "repository-refactoring",
+      "multi-session-management",
+      "automated-code-improvements"
+    ],
+    "sourceFile": ".agent/agents/jules-cli-agent.md",
+    "status": "active",
+    "categoriesNormalized": [
+      "development-automation",
+      "engineering"
+    ],
+    "classification": {
+      "domain": [
+        "development-automation",
+        "engineering"
+      ],
+      "workflowStage": [
+        "execution"
+      ],
+      "complexity": "medium",
+      "riskTier": "low"
+    },
+    "metadata": {
+      "tnf": {
+        "schemaVersion": "2.0.0",
+        "canonical": true,
+        "sourcePriority": 400,
+        "variantCount": 1,
+        "rawSources": [
+          "tnf_agents_md"
+        ]
+      },
+      "extensions": {
+        "com.tnf.agentCard": {
+          "unknownTags": [
+            "parallel_task_execution",
+            "asynchronous_processing",
+            "repository_refactoring",
+            "session_management",
+            "patch_application",
+            "bash",
+            "async_code_generation",
+            "multi_session_management",
+            "automated_code_improvements"
+          ],
+          "unknownCategories": [
+            "development-automation"
+          ],
+          "rawMetadata": [
+            {
+              "sourceId": "tnf_agents_md",
+              "sourceFile": ".agent/agents/jules-cli-agent.md",
+              "metadata": {
+                "frontmatter": {
+                  "name": "jules-cli-agent",
+                  "displayName": "Google Jules CLI",
+                  "description": "Google's asynchronous coding agent for parallel multi-session code generation and repository-wide task execution.",
+                  "agentType": "external",
+                  "tools": [
+                    "Bash"
+                  ],
+                  "skills": [
+                    "parallel-task-execution",
+                    "asynchronous-processing",
+                    "repository-refactoring",
+                    "session-management",
+                    "patch-application"
+                  ],
+                  "capabilities": [
+                    "parallel-task-execution",
+                    "async-code-generation",
+                    "repository-refactoring",
+                    "multi-session-management",
+                    "automated-code-improvements"
+                  ],
+                  "category": "development-automation",
+                  "status": "active",
+                  "version": "1.0.0"
                 }
               }
             }
@@ -9605,13 +9971,16 @@
   {
     "id": "meta-agent-architect",
     "name": "meta-agent-architect",
-    "displayName": "Meta Agent Architect",
-    "description": "",
+    "displayName": "meta-agent-architect",
+    "description": "Expert agent architect. Use this to design and generate the",
     "agentType": "local",
     "tags": [
+      "write",
       "list_of_best_practices_relevant_to_the_new_agent_s_domain"
     ],
-    "tools": [],
+    "tools": [
+      "[Write]"
+    ],
     "skills": [],
     "capabilities": [
       "<list of best practices relevant to the new agent's domain.>",
@@ -9646,6 +10015,7 @@
       "extensions": {
         "com.tnf.agentCard": {
           "unknownTags": [
+            "write",
             "list_of_best_practices_relevant_to_the_new_agent_s_domain"
           ],
           "unknownCategories": [],
@@ -9654,14 +10024,24 @@
               "sourceId": "tnf_agents_md",
               "sourceFile": ".agent/agents/meta-agent-architect.md",
               "metadata": {
-                "frontmatter": {}
+                "frontmatter": {
+                  "name": "meta-agent-architect",
+                  "description": "Expert agent architect. Use this to design and generate the",
+                  "tools": "[Write]",
+                  "color": "Cyan"
+                }
               }
             },
             {
               "sourceId": "claude_agents_md",
               "sourceFile": ".claude/agents/meta-agent-architect.md",
               "metadata": {
-                "frontmatter": {}
+                "frontmatter": {
+                  "name": "meta-agent-architect",
+                  "description": "Expert agent architect. Use this to design and generate the",
+                  "tools": "[Write]",
+                  "color": "Cyan"
+                }
               }
             }
           ]
@@ -10461,7 +10841,7 @@
     ],
     "skills": [],
     "capabilities": [],
-    "sourceFile": ".agent/agents/orchestrator-agent copy.md",
+    "sourceFile": ".agent/agents/orchestrator-agent.md",
     "status": "active",
     "categoriesNormalized": [
       "orchestration"
@@ -10482,11 +10862,9 @@
         "schemaVersion": "2.0.0",
         "canonical": true,
         "sourcePriority": 400,
-        "variantCount": 4,
+        "variantCount": 2,
         "rawSources": [
           "tnf_agents_md",
-          "tnf_agents_md",
-          "claude_agents_md",
           "claude_agents_md"
         ]
       },
@@ -10499,33 +10877,7 @@
           "rawMetadata": [
             {
               "sourceId": "tnf_agents_md",
-              "sourceFile": ".agent/agents/orchestrator-agent copy.md",
-              "metadata": {
-                "frontmatter": {
-                  "name": "orchestrator-agent",
-                  "description": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
-                  "tools": [
-                    "SubAgentExecutor"
-                  ]
-                }
-              }
-            },
-            {
-              "sourceId": "tnf_agents_md",
               "sourceFile": ".agent/agents/orchestrator-agent.md",
-              "metadata": {
-                "frontmatter": {
-                  "name": "orchestrator-agent",
-                  "description": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
-                  "tools": [
-                    "SubAgentExecutor"
-                  ]
-                }
-              }
-            },
-            {
-              "sourceId": "claude_agents_md",
-              "sourceFile": ".claude/agents/orchestrator-agent copy.md",
               "metadata": {
                 "frontmatter": {
                   "name": "orchestrator-agent",
@@ -10542,6 +10894,87 @@
               "metadata": {
                 "frontmatter": {
                   "name": "orchestrator-agent",
+                  "description": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
+                  "tools": [
+                    "SubAgentExecutor"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "orchestrator-agent-copy",
+    "name": "orchestrator-agent-copy",
+    "displayName": "orchestrator-agent-copy",
+    "description": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
+    "agentType": "local",
+    "tags": [
+      "subagentexecutor"
+    ],
+    "tools": [
+      "SubAgentExecutor"
+    ],
+    "skills": [],
+    "capabilities": [],
+    "sourceFile": ".agent/agents/orchestrator-agent copy.md",
+    "status": "active",
+    "categoriesNormalized": [
+      "orchestration",
+      "content"
+    ],
+    "classification": {
+      "domain": [
+        "orchestration",
+        "content"
+      ],
+      "workflowStage": [
+        "planning",
+        "execution"
+      ],
+      "complexity": "high",
+      "riskTier": "low"
+    },
+    "metadata": {
+      "tnf": {
+        "schemaVersion": "2.0.0",
+        "canonical": true,
+        "sourcePriority": 400,
+        "variantCount": 2,
+        "rawSources": [
+          "tnf_agents_md",
+          "claude_agents_md"
+        ]
+      },
+      "extensions": {
+        "com.tnf.agentCard": {
+          "unknownTags": [
+            "subagentexecutor"
+          ],
+          "unknownCategories": [],
+          "rawMetadata": [
+            {
+              "sourceId": "tnf_agents_md",
+              "sourceFile": ".agent/agents/orchestrator-agent copy.md",
+              "metadata": {
+                "frontmatter": {
+                  "name": "orchestrator-agent-copy",
+                  "description": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
+                  "tools": [
+                    "SubAgentExecutor"
+                  ]
+                }
+              }
+            },
+            {
+              "sourceId": "claude_agents_md",
+              "sourceFile": ".claude/agents/orchestrator-agent copy.md",
+              "metadata": {
+                "frontmatter": {
+                  "name": "orchestrator-agent-copy",
                   "description": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
                   "tools": [
                     "SubAgentExecutor"

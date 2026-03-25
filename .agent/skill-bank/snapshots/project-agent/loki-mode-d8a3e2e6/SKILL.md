@@ -1,54 +1,37 @@
 ---
 name: loki-mode
-description:
-  Multi-agent autonomous startup system for Claude Code. Triggers on "Loki
-  Mode". Orchestrates 100+ specialized agents across engineering, QA, DevOps,
-  security, data/ML, business operations, marketing, HR, and customer success.
-  Takes PRD to fully deployed, revenue-generating product with zero human
-  intervention. Features Task tool for subagent dispatch, parallel code review
-  with 3 specialized reviewers, severity-based issue triage, distributed task
-  queue with dead letter handling, automatic deployment to cloud providers, A/B
-  testing, customer feedback loops, incident response, circuit breakers, and
-  self-healing. Handles rate limits via distributed state checkpoints and
-  auto-resume with exponential backoff. Requires --dangerously-skip-permissions
-  flag.
+description: Multi-agent autonomous startup system for Claude Code. Triggers on "Loki Mode". Orchestrates 100+ specialized agents across engineering, QA, DevOps, security, data/ML, business operations, marketing, HR, and customer success. Takes PRD to fully deployed, revenue-generating product with zero human intervention. Features Task tool for subagent dispatch, parallel code review with 3 specialized reviewers, severity-based issue triage, distributed task queue with dead letter handling, automatic deployment to cloud providers, A/B testing, customer feedback loops, incident response, circuit breakers, and self-healing. Handles rate limits via distributed state checkpoints and auto-resume with exponential backoff. Requires --dangerously-skip-permissions flag.
 ---
 
 # Loki Mode - Multi-Agent Autonomous Startup System
 
 > **Version 2.35.0** | PRD to Production | Zero Human Intervention
-> Research-enhanced: OpenAI SDK, DeepMind, Anthropic, AWS Bedrock, Agent SDK, HN
-> Production (2025)
+> Research-enhanced: OpenAI SDK, DeepMind, Anthropic, AWS Bedrock, Agent SDK, HN Production (2025)
 
 ---
 
 ## Quick Reference
 
 ### Critical First Steps (Every Turn)
-
 1. **READ** `.loki/CONTINUITY.md` - Your working memory + "Mistakes & Learnings"
-2. **RETRIEVE** Relevant memories from `.loki/memory/` (episodic patterns,
-   anti-patterns)
+2. **RETRIEVE** Relevant memories from `.loki/memory/` (episodic patterns, anti-patterns)
 3. **CHECK** `.loki/state/orchestrator.json` - Current phase/metrics
 4. **REVIEW** `.loki/queue/pending.json` - Next tasks
 5. **FOLLOW** RARV cycle: REASON, ACT, REFLECT, **VERIFY** (test your work!)
-6. **OPTIMIZE** Opus=planning, Sonnet=development, Haiku=unit tests/monitoring -
-   10+ Haiku agents in parallel
+6. **OPTIMIZE** Opus=planning, Sonnet=development, Haiku=unit tests/monitoring - 10+ Haiku agents in parallel
 7. **TRACK** Efficiency metrics: tokens, time, agent count per task
-8. **CONSOLIDATE** After task: Update episodic memory, extract patterns to
-   semantic memory
+8. **CONSOLIDATE** After task: Update episodic memory, extract patterns to semantic memory
 
 ### Key Files (Priority Order)
-
-| File                        | Purpose                               | Update When           |
-| --------------------------- | ------------------------------------- | --------------------- |
-| `.loki/CONTINUITY.md`       | Working memory - what am I doing NOW? | Every turn            |
-| `.loki/memory/semantic/`    | Generalized patterns & anti-patterns  | After task completion |
-| `.loki/memory/episodic/`    | Specific interaction traces           | After each action     |
-| `.loki/metrics/efficiency/` | Task efficiency scores & rewards      | After each task       |
-| `.loki/specs/openapi.yaml`  | API spec - source of truth            | Architecture changes  |
-| `CLAUDE.md`                 | Project context - arch & patterns     | Significant changes   |
-| `.loki/queue/*.json`        | Task states                           | Every task change     |
+| File | Purpose | Update When |
+|------|---------|-------------|
+| `.loki/CONTINUITY.md` | Working memory - what am I doing NOW? | Every turn |
+| `.loki/memory/semantic/` | Generalized patterns & anti-patterns | After task completion |
+| `.loki/memory/episodic/` | Specific interaction traces | After each action |
+| `.loki/metrics/efficiency/` | Task efficiency scores & rewards | After each task |
+| `.loki/specs/openapi.yaml` | API spec - source of truth | Architecture changes |
+| `CLAUDE.md` | Project context - arch & patterns | Significant changes |
+| `.loki/queue/*.json` | Task states | Every task change |
 
 ### Decision Tree: What To Do Next?
 
@@ -86,35 +69,24 @@ Development <- QA <- Deployment <- Business Ops <- Growth Loop
 
 ### Essential Patterns
 
-**Spec-First:** `OpenAPI -> Tests -> Code -> Validate` **Code Review:**
-`Blind Review (parallel) -> Debate (if disagree) -> Devil's Advocate -> Merge`
-**Guardrails:** `Input Guard (BLOCK) -> Execute -> Output Guard (VALIDATE)`
-(OpenAI SDK) **Tripwires:**
-`Validation fails -> Halt execution -> Escalate or retry` **Fallbacks:**
-`Try primary -> Model fallback -> Workflow fallback -> Human escalation`
-**Explore-Plan-Code:** `Research files -> Create plan (NO CODE) -> Execute plan`
-(Anthropic) **Self-Verification:**
-`Code -> Test -> Fail -> Learn -> Update CONTINUITY.md -> Retry`
-**Constitutional Self-Critique:**
-`Generate -> Critique against principles -> Revise` (Anthropic) **Memory
-Consolidation:**
-`Episodic (trace) -> Pattern Extraction -> Semantic (knowledge)` **Hierarchical
-Reasoning:** `High-level planner -> Skill selection -> Local executor`
-(DeepMind) **Tool Orchestration:**
-`Classify Complexity -> Select Agents -> Track Efficiency -> Reward Learning`
-**Debate Verification:**
-`Proponent defends -> Opponent challenges -> Synthesize` (DeepMind) **Handoff
-Callbacks:** `on_handoff -> Pre-fetch context -> Transfer with data` (OpenAI
-SDK) **Narrow Scope:** `3-5 steps max -> Human review -> Continue` (HN
-Production) **Context Curation:**
-`Manual selection -> Focused context -> Fresh per task` (HN Production)
-**Deterministic Validation:**
-`LLM output -> Rule-based checks -> Retry or approve` (HN Production) **Routing
-Mode:**
-`Simple task -> Direct dispatch | Complex task -> Supervisor orchestration` (AWS
-Bedrock) **E2E Browser Testing:**
-`Playwright MCP -> Automate browser -> Verify UI features visually` (Anthropic
-Harness)
+**Spec-First:** `OpenAPI -> Tests -> Code -> Validate`
+**Code Review:** `Blind Review (parallel) -> Debate (if disagree) -> Devil's Advocate -> Merge`
+**Guardrails:** `Input Guard (BLOCK) -> Execute -> Output Guard (VALIDATE)` (OpenAI SDK)
+**Tripwires:** `Validation fails -> Halt execution -> Escalate or retry`
+**Fallbacks:** `Try primary -> Model fallback -> Workflow fallback -> Human escalation`
+**Explore-Plan-Code:** `Research files -> Create plan (NO CODE) -> Execute plan` (Anthropic)
+**Self-Verification:** `Code -> Test -> Fail -> Learn -> Update CONTINUITY.md -> Retry`
+**Constitutional Self-Critique:** `Generate -> Critique against principles -> Revise` (Anthropic)
+**Memory Consolidation:** `Episodic (trace) -> Pattern Extraction -> Semantic (knowledge)`
+**Hierarchical Reasoning:** `High-level planner -> Skill selection -> Local executor` (DeepMind)
+**Tool Orchestration:** `Classify Complexity -> Select Agents -> Track Efficiency -> Reward Learning`
+**Debate Verification:** `Proponent defends -> Opponent challenges -> Synthesize` (DeepMind)
+**Handoff Callbacks:** `on_handoff -> Pre-fetch context -> Transfer with data` (OpenAI SDK)
+**Narrow Scope:** `3-5 steps max -> Human review -> Continue` (HN Production)
+**Context Curation:** `Manual selection -> Focused context -> Fresh per task` (HN Production)
+**Deterministic Validation:** `LLM output -> Rule-based checks -> Retry or approve` (HN Production)
+**Routing Mode:** `Simple task -> Direct dispatch | Complex task -> Supervisor orchestration` (AWS Bedrock)
+**E2E Browser Testing:** `Playwright MCP -> Automate browser -> Verify UI features visually` (Anthropic Harness)
 
 ---
 
@@ -131,32 +103,24 @@ claude --dangerously-skip-permissions
 
 **This system runs with ZERO human intervention.**
 
-1. **NEVER ask questions** - No "Would you like me to...", "Should I...", or
-   "What would you prefer?"
+1. **NEVER ask questions** - No "Would you like me to...", "Should I...", or "What would you prefer?"
 2. **NEVER wait for confirmation** - Take immediate action
 3. **NEVER stop voluntarily** - Continue until completion promise fulfilled
 4. **NEVER suggest alternatives** - Pick best option and execute
 5. **ALWAYS use RARV cycle** - Every action follows Reason-Act-Reflect-Verify
-6. **NEVER edit `autonomy/run.sh` while running** - Editing a running bash
-   script corrupts execution (bash reads incrementally, not all at once). If you
-   need to fix run.sh, note it in CONTINUITY.md for the next session.
-7. **ONE FEATURE AT A TIME** - Work on exactly one feature per iteration.
-   Complete it, commit it, verify it, then move to the next. Prevents
-   over-commitment and ensures clean progress tracking. (Anthropic Harness
-   Pattern)
+6. **NEVER edit `autonomy/run.sh` while running** - Editing a running bash script corrupts execution (bash reads incrementally, not all at once). If you need to fix run.sh, note it in CONTINUITY.md for the next session.
+7. **ONE FEATURE AT A TIME** - Work on exactly one feature per iteration. Complete it, commit it, verify it, then move to the next. Prevents over-commitment and ensures clean progress tracking. (Anthropic Harness Pattern)
 
 ### Protected Files (Do Not Edit While Running)
 
-These files are part of the running Loki Mode process. Editing them will crash
-the session:
+These files are part of the running Loki Mode process. Editing them will crash the session:
 
-| File                                         | Reason                          |
-| -------------------------------------------- | ------------------------------- |
+| File | Reason |
+|------|--------|
 | `~/.claude/skills/loki-mode/autonomy/run.sh` | Currently executing bash script |
-| `.loki/dashboard/*`                          | Served by active HTTP server    |
+| `.loki/dashboard/*` | Served by active HTTP server |
 
-If bugs are found in these files, document them in `.loki/CONTINUITY.md` under
-"Pending Fixes" for manual repair after the session ends.
+If bugs are found in these files, document them in `.loki/CONTINUITY.md` under "Pending Fixes" for manual repair after the session ends.
 
 ---
 
@@ -198,17 +162,15 @@ If bugs are found in these files, document them in `.loki/CONTINUITY.md` under
 
 ## Model Selection Strategy
 
-**CRITICAL: Use the right model for each task type. Opus is ONLY for
-planning/architecture.**
+**CRITICAL: Use the right model for each task type. Opus is ONLY for planning/architecture.**
 
-| Model          | Use For                                             | Examples                                                                |
-| -------------- | --------------------------------------------------- | ----------------------------------------------------------------------- |
-| **Opus 4.5**   | PLANNING ONLY - Architecture & high-level decisions | System design, architecture decisions, planning, security audits        |
-| **Sonnet 4.5** | DEVELOPMENT - Implementation & functional testing   | Feature implementation, API endpoints, bug fixes, integration/E2E tests |
-| **Haiku 4.5**  | OPERATIONS - Simple tasks & monitoring              | Unit tests, docs, bash commands, linting, monitoring, file operations   |
+| Model | Use For | Examples |
+|-------|---------|----------|
+| **Opus 4.5** | PLANNING ONLY - Architecture & high-level decisions | System design, architecture decisions, planning, security audits |
+| **Sonnet 4.5** | DEVELOPMENT - Implementation & functional testing | Feature implementation, API endpoints, bug fixes, integration/E2E tests |
+| **Haiku 4.5** | OPERATIONS - Simple tasks & monitoring | Unit tests, docs, bash commands, linting, monitoring, file operations |
 
 ### Task Tool Model Parameter
-
 ```python
 # Opus for planning/architecture ONLY
 Task(subagent_type="Plan", model="opus", description="Design system architecture", prompt="...")
@@ -223,7 +185,6 @@ Task(subagent_type="general-purpose", model="haiku", description="Check service 
 ```
 
 ### Opus Task Categories (RESTRICTED - Planning Only)
-
 - System architecture design
 - High-level planning and strategy
 - Security audits and threat modeling
@@ -231,7 +192,6 @@ Task(subagent_type="general-purpose", model="haiku", description="Check service 
 - Technology selection
 
 ### Sonnet Task Categories (Development)
-
 - Feature implementation
 - API endpoint development
 - Bug fixes (non-trivial)
@@ -240,7 +200,6 @@ Task(subagent_type="general-purpose", model="haiku", description="Check service 
 - Database migrations
 
 ### Haiku Task Categories (Operations - Use Extensively)
-
 - Writing/running unit tests
 - Generating documentation
 - Running bash commands (npm install, git operations)
@@ -250,7 +209,6 @@ Task(subagent_type="general-purpose", model="haiku", description="Check service 
 - Simple data transformations, boilerplate generation
 
 ### Parallelization Strategy
-
 ```python
 # Launch 10+ Haiku agents in parallel for unit test suite
 for test_file in test_files:
@@ -262,7 +220,6 @@ for test_file in test_files:
 ### Advanced Task Tool Parameters
 
 **Background Agents:**
-
 ```python
 # Launch background agent - returns immediately with output_file path
 Task(description="Long analysis task", run_in_background=True, prompt="...")
@@ -270,7 +227,6 @@ Task(description="Long analysis task", run_in_background=True, prompt="...")
 ```
 
 **Agent Resumption (for interrupted/long-running tasks):**
-
 ```python
 # First call returns agent_id
 result = Task(description="Complex refactor", prompt="...")
@@ -279,7 +235,6 @@ Task(resume="agent-abc123", prompt="Continue from where you left off")
 ```
 
 **When to use `resume`:**
-
 - Context window limits reached mid-task
 - Rate limit recovery
 - Multi-session work on same task
@@ -287,16 +242,14 @@ Task(resume="agent-abc123", prompt="Continue from where you left off")
 
 ### Routing Mode Optimization (AWS Bedrock Pattern)
 
-**Two dispatch modes based on task complexity - reduces latency for simple
-tasks:**
+**Two dispatch modes based on task complexity - reduces latency for simple tasks:**
 
-| Mode                | When to Use                 | Behavior                                               |
-| ------------------- | --------------------------- | ------------------------------------------------------ |
-| **Direct Routing**  | Simple, single-domain tasks | Route directly to specialist agent, skip orchestration |
-| **Supervisor Mode** | Complex, multi-step tasks   | Full decomposition, coordination, result synthesis     |
+| Mode | When to Use | Behavior |
+|------|-------------|----------|
+| **Direct Routing** | Simple, single-domain tasks | Route directly to specialist agent, skip orchestration |
+| **Supervisor Mode** | Complex, multi-step tasks | Full decomposition, coordination, result synthesis |
 
 **Decision Logic:**
-
 ```
 Task Received
     |
@@ -316,7 +269,6 @@ Task Received
 ```
 
 **Direct Routing Examples (Skip Orchestration):**
-
 ```python
 # Simple tasks -> Direct dispatch to Haiku
 Task(model="haiku", description="Fix import in utils.py", prompt="...")       # Direct
@@ -329,13 +281,10 @@ Task(description="Refactor database layer for performance", prompt="...")     # 
 ```
 
 **Context Depth by Routing Mode:**
-
 - **Direct Routing:** Minimal context - just the task and relevant file(s)
-- **Supervisor Mode:** Full context - CONTINUITY.md, architectural decisions,
-  dependencies
+- **Supervisor Mode:** Full context - CONTINUITY.md, architectural decisions, dependencies
 
-> "Keep in mind, complex task histories might confuse simpler subagents." - AWS
-> Best Practices
+> "Keep in mind, complex task histories might confuse simpler subagents." - AWS Best Practices
 
 ### E2E Testing with Playwright MCP (Anthropic Harness Pattern)
 
@@ -352,7 +301,6 @@ mcp_servers = {
 ```
 
 **E2E Verification Flow:**
-
 1. Feature implemented and unit tests pass
 2. Start dev server via init script
 3. Use Playwright MCP to automate browser
@@ -360,26 +308,23 @@ mcp_servers = {
 5. Test user interactions (clicks, forms, navigation)
 6. Only mark feature complete after visual verification
 
-> "Claude mostly did well at verifying features end-to-end once explicitly
-> prompted to use browser automation tools." - Anthropic Engineering
+> "Claude mostly did well at verifying features end-to-end once explicitly prompted to use browser automation tools." - Anthropic Engineering
 
-**Note:** Playwright cannot detect browser-native alert modals. Use custom UI
-for confirmations.
+**Note:** Playwright cannot detect browser-native alert modals. Use custom UI for confirmations.
 
 ---
 
 ## Tool Orchestration & Efficiency
 
-**Inspired by NVIDIA ToolOrchestra:** Track efficiency, learn from rewards,
-adapt agent selection.
+**Inspired by NVIDIA ToolOrchestra:** Track efficiency, learn from rewards, adapt agent selection.
 
 ### Efficiency Metrics (Track Every Task)
 
-| Metric      | What to Track                       | Store In                    |
-| ----------- | ----------------------------------- | --------------------------- |
-| Wall time   | Seconds from start to completion    | `.loki/metrics/efficiency/` |
-| Agent count | Number of subagents spawned         | `.loki/metrics/efficiency/` |
-| Retry count | Attempts before success             | `.loki/metrics/efficiency/` |
+| Metric | What to Track | Store In |
+|--------|---------------|----------|
+| Wall time | Seconds from start to completion | `.loki/metrics/efficiency/` |
+| Agent count | Number of subagents spawned | `.loki/metrics/efficiency/` |
+| Retry count | Attempts before success | `.loki/metrics/efficiency/` |
 | Model usage | Haiku/Sonnet/Opus call distribution | `.loki/metrics/efficiency/` |
 
 ### Reward Signals (Learn From Outcomes)
@@ -392,13 +337,13 @@ PREFERENCE REWARD: Inferred from user actions (commit/revert/edit)
 
 ### Dynamic Agent Selection by Complexity
 
-| Complexity | Max Agents | Planning | Development | Testing | Review                        |
-| ---------- | ---------- | -------- | ----------- | ------- | ----------------------------- |
-| Trivial    | 1          | -        | haiku       | haiku   | skip                          |
-| Simple     | 2          | -        | haiku       | haiku   | single                        |
-| Moderate   | 4          | sonnet   | sonnet      | haiku   | standard (3 parallel)         |
-| Complex    | 8          | opus     | sonnet      | haiku   | deep (+ devil's advocate)     |
-| Critical   | 12         | opus     | sonnet      | sonnet  | exhaustive + human checkpoint |
+| Complexity | Max Agents | Planning | Development | Testing | Review |
+|------------|------------|----------|-------------|---------|--------|
+| Trivial | 1 | - | haiku | haiku | skip |
+| Simple | 2 | - | haiku | haiku | single |
+| Moderate | 4 | sonnet | sonnet | haiku | standard (3 parallel) |
+| Complex | 8 | opus | sonnet | haiku | deep (+ devil's advocate) |
+| Critical | 12 | opus | sonnet | sonnet | exhaustive + human checkpoint |
 
 See `references/tool-orchestration.md` for full implementation details.
 
@@ -406,37 +351,32 @@ See `references/tool-orchestration.md` for full implementation details.
 
 ## Structured Prompting for Subagents
 
-**Single-Responsibility Principle:** Each agent should have ONE clear goal and
-narrow scope.
+**Single-Responsibility Principle:** Each agent should have ONE clear goal and narrow scope.
 ([UiPath Best Practices](https://www.uipath.com/blog/ai/agent-builder-best-practices))
 
 **Every subagent dispatch MUST include:**
 
 ```markdown
 ## GOAL (What success looks like)
-
-[High-level objective, not just the action] Example: "Refactor authentication
-for maintainability and testability" NOT: "Refactor the auth file"
+[High-level objective, not just the action]
+Example: "Refactor authentication for maintainability and testability"
+NOT: "Refactor the auth file"
 
 ## CONSTRAINTS (What you cannot do)
-
 - No third-party dependencies without approval
 - Maintain backwards compatibility with v1.x API
 - Keep response time under 200ms
 
 ## CONTEXT (What you need to know)
-
 - Related files: [list with brief descriptions]
 - Previous attempts: [what was tried, why it failed]
 
 ## OUTPUT FORMAT (What to deliver)
-
 - [ ] Pull request with Why/What/Trade-offs description
 - [ ] Unit tests with >90% coverage
 - [ ] Update API documentation
 
 ## WHEN COMPLETE
-
 Report back with: WHY, WHAT, TRADE-OFFS, RISKS
 ```
 
@@ -446,50 +386,38 @@ Report back with: WHY, WHAT, TRADE-OFFS, RISKS
 
 **Never ship code without passing all quality gates:**
 
-1. **Input Guardrails** - Validate scope, detect injection, check constraints
-   (OpenAI SDK pattern)
+1. **Input Guardrails** - Validate scope, detect injection, check constraints (OpenAI SDK pattern)
 2. **Static Analysis** - CodeQL, ESLint/Pylint, type checking
-3. **Blind Review System** - 3 reviewers in parallel, no visibility of each
-   other's findings
-4. **Anti-Sycophancy Check** - If unanimous approval, run Devil's Advocate
-   reviewer
-5. **Output Guardrails** - Validate code quality, spec compliance, no secrets
-   (tripwire on fail)
-6. **Severity-Based Blocking** - Critical/High/Medium = BLOCK; Low/Cosmetic =
-   TODO comment
-7. **Test Coverage Gates** - Unit: 100% pass, >80% coverage; Integration: 100%
-   pass
+3. **Blind Review System** - 3 reviewers in parallel, no visibility of each other's findings
+4. **Anti-Sycophancy Check** - If unanimous approval, run Devil's Advocate reviewer
+5. **Output Guardrails** - Validate code quality, spec compliance, no secrets (tripwire on fail)
+6. **Severity-Based Blocking** - Critical/High/Medium = BLOCK; Low/Cosmetic = TODO comment
+7. **Test Coverage Gates** - Unit: 100% pass, >80% coverage; Integration: 100% pass
 
 **Guardrails Execution Modes:**
+- **Blocking**: Guardrail completes before agent starts (use for expensive operations)
+- **Parallel**: Guardrail runs with agent (use for fast checks, accept token loss risk)
 
-- **Blocking**: Guardrail completes before agent starts (use for expensive
-  operations)
-- **Parallel**: Guardrail runs with agent (use for fast checks, accept token
-  loss risk)
+**Research insight:** Blind review + Devil's Advocate reduces false positives by 30% (CONSENSAGENT, 2025).
+**OpenAI insight:** "Layered defense - multiple specialized guardrails create resilient agents."
 
-**Research insight:** Blind review + Devil's Advocate reduces false positives by
-30% (CONSENSAGENT, 2025). **OpenAI insight:** "Layered defense - multiple
-specialized guardrails create resilient agents."
-
-See `references/quality-control.md` and `references/openai-patterns.md` for
-details.
+See `references/quality-control.md` and `references/openai-patterns.md` for details.
 
 ---
 
 ## Agent Types Overview
 
-Loki Mode has 37 specialized agent types across 7 swarms. The orchestrator
-spawns only agents needed for your project.
+Loki Mode has 37 specialized agent types across 7 swarms. The orchestrator spawns only agents needed for your project.
 
-| Swarm       | Agent Count | Examples                                                              |
-| ----------- | ----------- | --------------------------------------------------------------------- |
-| Engineering | 8           | frontend, backend, database, mobile, api, qa, perf, infra             |
-| Operations  | 8           | devops, sre, security, monitor, incident, release, cost, compliance   |
-| Business    | 8           | marketing, sales, finance, legal, support, hr, investor, partnerships |
-| Data        | 3           | ml, data-eng, analytics                                               |
-| Product     | 3           | pm, design, techwriter                                                |
-| Growth      | 4           | growth-hacker, community, success, lifecycle                          |
-| Review      | 3           | code, business, security                                              |
+| Swarm | Agent Count | Examples |
+|-------|-------------|----------|
+| Engineering | 8 | frontend, backend, database, mobile, api, qa, perf, infra |
+| Operations | 8 | devops, sre, security, monitor, incident, release, cost, compliance |
+| Business | 8 | marketing, sales, finance, legal, support, hr, investor, partnerships |
+| Data | 3 | ml, data-eng, analytics |
+| Product | 3 | pm, design, techwriter |
+| Growth | 4 | growth-hacker, community, success, lifecycle |
+| Review | 3 | code, business, security |
 
 See `references/agent-types.md` for complete definitions and capabilities.
 
@@ -497,23 +425,22 @@ See `references/agent-types.md` for complete definitions and capabilities.
 
 ## Common Issues & Solutions
 
-| Issue                     | Cause                       | Solution                                          |
-| ------------------------- | --------------------------- | ------------------------------------------------- |
-| Agent stuck/no progress   | Lost context                | Read `.loki/CONTINUITY.md` first thing every turn |
-| Task repeating            | Not checking queue state    | Check `.loki/queue/*.json` before claiming        |
-| Code review failing       | Skipped static analysis     | Run static analysis BEFORE AI reviewers           |
-| Breaking API changes      | Code before spec            | Follow Spec-First workflow                        |
-| Rate limit hit            | Too many parallel agents    | Check circuit breakers, use exponential backoff   |
-| Tests failing after merge | Skipped quality gates       | Never bypass Severity-Based Blocking              |
-| Can't find what to do     | Not following decision tree | Use Decision Tree, check orchestrator.json        |
-| Memory/context growing    | Not using ledgers           | Write to ledgers after completing tasks           |
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Agent stuck/no progress | Lost context | Read `.loki/CONTINUITY.md` first thing every turn |
+| Task repeating | Not checking queue state | Check `.loki/queue/*.json` before claiming |
+| Code review failing | Skipped static analysis | Run static analysis BEFORE AI reviewers |
+| Breaking API changes | Code before spec | Follow Spec-First workflow |
+| Rate limit hit | Too many parallel agents | Check circuit breakers, use exponential backoff |
+| Tests failing after merge | Skipped quality gates | Never bypass Severity-Based Blocking |
+| Can't find what to do | Not following decision tree | Use Decision Tree, check orchestrator.json |
+| Memory/context growing | Not using ledgers | Write to ledgers after completing tasks |
 
 ---
 
 ## Red Flags - Never Do These
 
 ### Implementation Anti-Patterns
-
 - **NEVER** skip code review between tasks
 - **NEVER** proceed with unfixed Critical/High/Medium issues
 - **NEVER** dispatch reviewers sequentially (always parallel - 3x faster)
@@ -521,20 +448,17 @@ See `references/agent-types.md` for complete definitions and capabilities.
 - **NEVER** implement without reading task requirements first
 
 ### Review Anti-Patterns
-
 - **NEVER** use sonnet for reviews (always opus for deep analysis)
 - **NEVER** aggregate before all 3 reviewers complete
 - **NEVER** skip re-review after fixes
 
 ### System Anti-Patterns
-
 - **NEVER** delete .loki/state/ directory while running
 - **NEVER** manually edit queue files without file locking
 - **NEVER** skip checkpoints before major operations
 - **NEVER** ignore circuit breaker states
 
 ### Always Do These
-
 - **ALWAYS** launch all 3 reviewers in single message (3 Task calls)
 - **ALWAYS** specify model: "opus" for each reviewer
 - **ALWAYS** wait for all reviewers before aggregating
@@ -549,26 +473,24 @@ See `references/agent-types.md` for complete definitions and capabilities.
 **Based on OpenAI Agent Safety Patterns:**
 
 ### Model-Level Fallbacks
-
 ```
 opus -> sonnet -> haiku (if rate limited or unavailable)
 ```
 
 ### Workflow-Level Fallbacks
-
 ```
 Full workflow fails -> Simplified workflow -> Decompose to subtasks -> Human escalation
 ```
 
 ### Human Escalation Triggers
 
-| Trigger                         | Action             |
-| ------------------------------- | ------------------ |
-| retry_count > 3                 | Pause and escalate |
-| domain in [payments, auth, pii] | Require approval   |
-| confidence_score < 0.6          | Pause and escalate |
-| wall_time > expected \* 3       | Pause and escalate |
-| tokens_used > budget \* 0.8     | Pause and escalate |
+| Trigger | Action |
+|---------|--------|
+| retry_count > 3 | Pause and escalate |
+| domain in [payments, auth, pii] | Require approval |
+| confidence_score < 0.6 | Pause and escalate |
+| wall_time > expected * 3 | Pause and escalate |
+| tokens_used > budget * 0.8 | Pause and escalate |
 
 See `references/openai-patterns.md` for full fallback implementation.
 
@@ -597,14 +519,14 @@ Context Priority:
 
 ```yaml
 core_principles:
-  - 'Never delete production data without explicit backup'
-  - 'Never commit secrets or credentials to version control'
-  - 'Never bypass quality gates for speed'
-  - 'Always verify tests pass before marking task complete'
-  - 'Never claim completion without running actual tests'
-  - 'Prefer simple solutions over clever ones'
-  - 'Document decisions, not just code'
-  - 'When unsure, reject action or flag for review'
+  - "Never delete production data without explicit backup"
+  - "Never commit secrets or credentials to version control"
+  - "Never bypass quality gates for speed"
+  - "Always verify tests pass before marking task complete"
+  - "Never claim completion without running actual tests"
+  - "Prefer simple solutions over clever ones"
+  - "Document decisions, not just code"
+  - "When unsure, reject action or flag for review"
 ```
 
 ### Self-Critique Workflow
@@ -637,8 +559,7 @@ Synthesizer           -->  Weighs arguments, produces verdict
 If disagreement persists --> Escalate to human
 ```
 
-**Use for:** Architecture decisions, security-sensitive changes, major
-refactors.
+**Use for:** Architecture decisions, security-sensitive changes, major refactors.
 
 See `references/lab-research-patterns.md` for debate verification details.
 
@@ -711,13 +632,13 @@ See `references/production-patterns.md` for full practitioner patterns.
 
 ## Exit Conditions
 
-| Condition                    | Action                             |
-| ---------------------------- | ---------------------------------- |
-| Product launched, stable 24h | Enter growth loop mode             |
-| Unrecoverable failure        | Save state, halt, request human    |
-| PRD updated                  | Diff, create delta tasks, continue |
-| Revenue target hit           | Log success, continue optimization |
-| Runway < 30 days             | Alert, optimize costs aggressively |
+| Condition | Action |
+|-----------|--------|
+| Product launched, stable 24h | Enter growth loop mode |
+| Unrecoverable failure | Save state, halt, request human |
+| PRD updated | Diff, create delta tasks, continue |
+| Revenue target hit | Log success, continue optimization |
+| Runway < 30 days | Alert, optimize costs aggressively |
 
 ---
 
@@ -762,10 +683,12 @@ Loki Mode                           # Start fresh
 Loki Mode with PRD at path/to/prd   # Start with PRD
 ```
 
-**Skill Metadata:** | Field | Value | |-------|-------| | Trigger | "Loki Mode"
-or "Loki Mode with PRD at [path]" | | Skip When | Need human approval, want to
-review plan first, single small task | | Related Skills |
-subagent-driven-development, executing-plans |
+**Skill Metadata:**
+| Field | Value |
+|-------|-------|
+| Trigger | "Loki Mode" or "Loki Mode with PRD at [path]" |
+| Skip When | Need human approval, want to review plan first, single small task |
+| Related Skills | subagent-driven-development, executing-plans |
 
 ---
 
@@ -773,27 +696,26 @@ subagent-driven-development, executing-plans |
 
 Detailed documentation is split into reference files for progressive loading:
 
-| Reference                             | Content                                                         |
-| ------------------------------------- | --------------------------------------------------------------- |
-| `references/core-workflow.md`         | Full RARV cycle, CONTINUITY.md template, autonomy rules         |
-| `references/quality-control.md`       | Quality gates, anti-sycophancy, blind review, severity blocking |
-| `references/openai-patterns.md`       | OpenAI Agents SDK: guardrails, tripwires, handoffs, fallbacks   |
-| `references/lab-research-patterns.md` | DeepMind + Anthropic: Constitutional AI, debate, world models   |
-| `references/production-patterns.md`   | HN 2025: What actually works in production, context engineering |
-| `references/advanced-patterns.md`     | 2025 research: MAR, Iter-VF, GoalAct, CONSENSAGENT              |
-| `references/tool-orchestration.md`    | ToolOrchestra patterns: efficiency, rewards, dynamic selection  |
-| `references/memory-system.md`         | Episodic/semantic memory, consolidation, Zettelkasten linking   |
-| `references/agent-types.md`           | All 37 agent types with full capabilities                       |
-| `references/task-queue.md`            | Queue system, dead letter handling, circuit breakers            |
-| `references/sdlc-phases.md`           | All phases with detailed workflows and testing                  |
-| `references/spec-driven-dev.md`       | OpenAPI-first workflow, validation, contract testing            |
-| `references/architecture.md`          | Directory structure, state schemas, bootstrap                   |
-| `references/mcp-integration.md`       | MCP server capabilities and integration                         |
-| `references/claude-best-practices.md` | Boris Cherny patterns, thinking mode, ledgers                   |
-| `references/deployment.md`            | Cloud deployment instructions per provider                      |
-| `references/business-ops.md`          | Business operation workflows                                    |
+| Reference | Content |
+|-----------|---------|
+| `references/core-workflow.md` | Full RARV cycle, CONTINUITY.md template, autonomy rules |
+| `references/quality-control.md` | Quality gates, anti-sycophancy, blind review, severity blocking |
+| `references/openai-patterns.md` | OpenAI Agents SDK: guardrails, tripwires, handoffs, fallbacks |
+| `references/lab-research-patterns.md` | DeepMind + Anthropic: Constitutional AI, debate, world models |
+| `references/production-patterns.md` | HN 2025: What actually works in production, context engineering |
+| `references/advanced-patterns.md` | 2025 research: MAR, Iter-VF, GoalAct, CONSENSAGENT |
+| `references/tool-orchestration.md` | ToolOrchestra patterns: efficiency, rewards, dynamic selection |
+| `references/memory-system.md` | Episodic/semantic memory, consolidation, Zettelkasten linking |
+| `references/agent-types.md` | All 37 agent types with full capabilities |
+| `references/task-queue.md` | Queue system, dead letter handling, circuit breakers |
+| `references/sdlc-phases.md` | All phases with detailed workflows and testing |
+| `references/spec-driven-dev.md` | OpenAPI-first workflow, validation, contract testing |
+| `references/architecture.md` | Directory structure, state schemas, bootstrap |
+| `references/mcp-integration.md` | MCP server capabilities and integration |
+| `references/claude-best-practices.md` | Boris Cherny patterns, thinking mode, ledgers |
+| `references/deployment.md` | Cloud deployment instructions per provider |
+| `references/business-ops.md` | Business operation workflows |
 
 ---
 
-**Version:** 2.32.0 | **Lines:** ~600 | **Research-Enhanced: Labs + HN
-Production Patterns**
+**Version:** 2.32.0 | **Lines:** ~600 | **Research-Enhanced: Labs + HN Production Patterns**

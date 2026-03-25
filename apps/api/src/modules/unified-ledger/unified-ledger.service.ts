@@ -811,8 +811,23 @@ export class UnifiedLedgerService implements OnModuleInit {
   }
 
   private async persist(): Promise<void> {
-    await this.ensureStoreDirectory();
-    await fs.writeFile(this.storePath, JSON.stringify(this.store, null, 2), 'utf8');
+    const payload = JSON.stringify(this.store, null, 2);
+    try {
+      await this.ensureStoreDirectory();
+      await fs.writeFile(this.storePath, payload, 'utf8');
+    } catch (error) {
+      if (!this.isPermissionError(error) || this.storePath.startsWith('/tmp/')) {
+        throw error;
+      }
+
+      const fallbackPath = path.join('/tmp', 'tnf-data', 'unified-task-ledger.json');
+      this.logger.warn(
+        `No write permission for ${this.storePath}; falling back to ${fallbackPath}`
+      );
+      this.storePath = fallbackPath;
+      await fs.mkdir(path.dirname(this.storePath), { recursive: true });
+      await fs.writeFile(this.storePath, payload, 'utf8');
+    }
   }
 
   private resolveStorePath(): string {
