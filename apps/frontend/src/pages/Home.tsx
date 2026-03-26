@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatedEmoji } from '../components/AnimatedEmoji';
@@ -234,8 +234,6 @@ const FeaturesSection: React.FC = () => {
 export default function HomePage() {
   const heroRef = useRef<HTMLDivElement>(null);
   const isHeroInView = useInView(heroRef, { once: true, amount: 0.3 });
-  const { scrollYProgress } = useScroll();
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
 
   return (
     <div className="bg-transparent">
