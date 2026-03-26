@@ -42,6 +42,9 @@ export const env = {
   api: {
     host: process.env.APP_HOST ?? '0.0.0.0',
     port: toInt(process.env.APP_PORT ?? process.env.PORT, 43110),
+    ingestApiKey:
+      process.env.INGEST_API_KEY ?? process.env.VOICE_KWS_API_KEY ?? process.env.EDGE_API_KEY ?? '',
+    requireIngestAuth: toBool(process.env.REQUIRE_INGEST_AUTH, true),
   },
   runtime: {
     maxRecentRuleFires: toInt(process.env.MAX_RECENT_RULE_FIRES, 200),

@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import http from 'node:http';
 import { env } from './config/env';
 import { AudioTriggerRuntime } from './runtime/audio-trigger-runtime';
@@ -24,6 +25,29 @@ const parseJsonBody = async <T>(req: http.IncomingMessage): Promise<T> => {
     throw new Error('Empty JSON body');
   }
   return JSON.parse(raw) as T;
+};
+
+const safeEquals = (left: string, right: string): boolean => {
+  const a = Buffer.from(left, 'utf8');
+  const b = Buffer.from(right, 'utf8');
+  if (a.length !== b.length) {
+    return false;
+  }
+  return timingSafeEqual(a, b);
+};
+
+const extractApiKey = (req: http.IncomingMessage): string => {
+  const edgeHeader = req.headers['x-edge-api-key'];
+  if (typeof edgeHeader === 'string' && edgeHeader.trim().length > 0) {
+    return edgeHeader.trim();
+  }
+
+  const authHeader = req.headers.authorization;
+  if (typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
+    return authHeader.slice('Bearer '.length).trim();
+  }
+
+  return '';
 };
 
 const sendJson = (
@@ -56,6 +80,12 @@ interface IngestTextRequest {
   utterance: string;
 }
 
+if (env.api.requireIngestAuth && !env.api.ingestApiKey) {
+  throw new Error(
+    'INGEST_API_KEY (or VOICE_KWS_API_KEY / EDGE_API_KEY) is required when REQUIRE_INGEST_AUTH=true'
+  );
+}
+
 const runtime = new AudioTriggerRuntime();
 runtime.start();
 
@@ -72,6 +102,10 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (method === 'POST' && path === '/v1/ingest/text') {
+      if (env.api.requireIngestAuth && !safeEquals(extractApiKey(req), env.api.ingestApiKey)) {
+        sendJson(res, 401, { error: 'unauthorized' });
+        return;
+      }
       const body = await parseJsonBody<IngestTextRequest>(req);
       if (!body.streamId || !body.utterance) {
         sendJson(res, 400, { error: 'streamId and utterance are required' });
@@ -83,6 +117,10 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (method === 'POST' && path === '/v1/flush') {
+      if (env.api.requireIngestAuth && !safeEquals(extractApiKey(req), env.api.ingestApiKey)) {
+        sendJson(res, 401, { error: 'unauthorized' });
+        return;
+      }
       await runtime.flush();
       sendJson(res, 200, { flushed: true });
       return;

@@ -235,6 +235,27 @@ export default function PromptInput({
     setPromptInput(e.target.value);
   }
 
+  function handleVoiceTranscript(transcript: string) {
+    const normalized = transcript.trim();
+    if (!normalized) return;
+
+    setPromptInput((current) => {
+      const separator = current.trim().length > 0 ? ' ' : '';
+      const nextValue = `${current}${separator}${normalized}`;
+      onChange({ target: { value: nextValue } } as React.ChangeEvent<HTMLTextAreaElement>);
+      return nextValue;
+    });
+
+    setTimeout(() => {
+      if (!textareaRef.current) return;
+      textareaRef.current.focus();
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      const end = textareaRef.current.value.length;
+      textareaRef.current.setSelectionRange(end, end);
+    }, 0);
+  }
+
   return (
     <div className="w-full fixed md:absolute bottom-0 left-0 z-10 md:z-0 flex justify-center items-center">
       <SlashCommands
@@ -314,7 +335,7 @@ export default function PromptInput({
                 <TextSizeButton />
               </div>
               <div className="flex gap-x-2">
-                <SpeechToText sendCommand={sendCommand} />
+                <SpeechToText onTranscript={handleVoiceTranscript} />
               </div>
             </div>
           </div>

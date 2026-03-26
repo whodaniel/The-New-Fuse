@@ -218,18 +218,44 @@ class NotebookLMService {
     for (let i = 0; i < maxAttempts; i++) {
       await this.sleep(5000);
 
-      const isReady = await chrome.scripting.executeScript({
+      const readiness = await chrome.scripting.executeScript({
         target: { tabId },
         func: () => {
-          // Check if audio player is visible
-          const audioPlayer =
-            document.querySelector('audio') || document.querySelector('[aria-label*="Play"]');
-          return !!audioPlayer;
+          const audio = document.querySelector('audio');
+          if (audio) {
+            const src = audio.currentSrc || audio.src || '';
+            const durationSeconds = Number.isFinite(audio.duration)
+              ? Math.max(0, Math.round(audio.duration))
+              : 0;
+            return {
+              ready: true,
+              audioUrl: src,
+              durationSeconds,
+            };
+          }
+
+          const playButton = document.querySelector('[aria-label*="Play"]');
+          if (playButton) {
+            return {
+              ready: true,
+              audioUrl: '',
+              durationSeconds: 0,
+            };
+          }
+
+          return { ready: false };
         },
       });
 
-      if (isReady[0]?.result) {
-        return { success: true, ready: true };
+      const result = readiness[0]?.result;
+      if (result?.ready) {
+        return {
+          success: true,
+          ready: true,
+          audioUrl: result.audioUrl || '',
+          durationSeconds: result.durationSeconds || 0,
+          duration: this.formatDuration(result.durationSeconds || 0),
+        };
       }
 
       // Progress update
@@ -275,16 +301,22 @@ class NotebookLMService {
   async createPodcast(notebooks, podcastTitle) {
     try {
       const episodes = [];
+      const skipped = [];
 
       for (const notebook of notebooks) {
         // Generate audio for each notebook
         const audio = await this.generateAudioOverview(notebook.tabId);
 
-        if (audio.success) {
+        if (audio.success && audio.audioUrl) {
           episodes.push({
             title: notebook.title,
             audioUrl: audio.audioUrl,
-            duration: audio.duration,
+            duration: audio.duration || this.formatDuration(audio.durationSeconds || 0),
+          });
+        } else {
+          skipped.push({
+            title: notebook.title,
+            reason: audio.error || 'audio_url_unavailable',
           });
         }
       }
@@ -299,6 +331,7 @@ class NotebookLMService {
           episodes: episodes.length,
           rssFeed,
         },
+        skipped,
       };
     } catch (error) {
       console.error('Failed to create podcast:', error);
@@ -334,6 +367,18 @@ class NotebookLMService {
 </rss>`;
 
     return rss;
+  }
+
+  formatDuration(totalSeconds) {
+    const safe = Number.isFinite(totalSeconds) ? Math.max(0, Math.round(totalSeconds)) : 0;
+    const hours = Math.floor(safe / 3600);
+    const minutes = Math.floor((safe % 3600) / 60);
+    const seconds = safe % 60;
+
+    if (hours > 0) {
+      return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+    return `${minutes}:${String(seconds).padStart(2, '0')}`;
   }
 
   // Utility: Chunk array into batches

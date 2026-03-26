@@ -1,7 +1,7 @@
 // @ts-nocheck
 import Workspace from '@/models/workspace';
 import { SpeakerHigh, SpeakerX } from '@phosphor-icons/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 
 interface TTSMessageProps {
@@ -13,12 +13,35 @@ interface TTSMessageProps {
 export default function TTSMessage({ slug, chatId, message }: TTSMessageProps): JSX.Element {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+
+  const stopPlayback = () => {
+    if (audio) {
+      audio.pause();
+      audio.src = '';
+      setAudio(null);
+    }
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+      setAudioUrl(null);
+    }
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsPlaying(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      stopPlayback();
+    };
+    // stopPlayback intentionally closes over latest state values.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audio, audioUrl]);
 
   const handleTTS = async () => {
     if (isPlaying) {
-      audio?.pause();
-      setIsPlaying(false);
-      setAudio(null);
+      stopPlayback();
       return;
     }
 
@@ -27,20 +50,31 @@ export default function TTSMessage({ slug, chatId, message }: TTSMessageProps): 
       const blob = new Blob([audioData], { type: 'audio/mp3' });
       const url = URL.createObjectURL(blob);
       const newAudio = new Audio(url);
+      setAudioUrl(url);
 
       newAudio.addEventListener('ended', () => {
-        setIsPlaying(false);
-        setAudio(null);
-        URL.revokeObjectURL(url);
+        stopPlayback();
       });
 
       newAudio.play();
       setAudio(newAudio);
       setIsPlaying(true);
     } catch (error) {
-      console.error('Failed to play TTS:', error);
-      setIsPlaying(false);
-      setAudio(null);
+      console.error('Failed to play backend TTS, falling back to browser speech:', error);
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window && message?.trim()) {
+        const utterance = new SpeechSynthesisUtterance(message.trim());
+        utterance.onend = () => {
+          setIsPlaying(false);
+        };
+        utterance.onerror = () => {
+          setIsPlaying(false);
+        };
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+        setIsPlaying(true);
+      } else {
+        setIsPlaying(false);
+      }
     }
   };
 

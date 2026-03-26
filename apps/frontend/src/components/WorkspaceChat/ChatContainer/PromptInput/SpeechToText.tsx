@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Mic, MicOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Mic, MicOff } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface SpeechToTextProps {
   onTranscript?: (transcript: string) => void;
@@ -8,18 +8,31 @@ interface SpeechToTextProps {
   className?: string;
 }
 
-const SpeechToText: React.FC<SpeechToTextProps> = ({ 
+const SpeechToText: React.FC<SpeechToTextProps> = ({
   onTranscript,
   disabled = false,
-  className 
+  className,
 }) => {
   const [isListening, setIsListening] = useState(false);
-  const hasSupport = typeof window !== 'undefined' && 'webkitSpeechRecognition' in window;
+  const recognitionRef = useRef<any>(null);
+  const hasSupport =
+    typeof window !== 'undefined' &&
+    ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window);
+
+  const buildRecognition = () => {
+    const SpeechRecognitionCtor =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) return null;
+    return new SpeechRecognitionCtor();
+  };
 
   const startListening = () => {
     if (!hasSupport || disabled) return;
 
-    const recognition = new (window as any).webkitSpeechRecognition();
+    const recognition = buildRecognition();
+    if (!recognition) return;
+
+    recognitionRef.current = recognition;
     recognition.continuous = false;
     recognition.interimResults = false;
     recognition.lang = 'en-US';
@@ -48,8 +61,25 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({
   };
 
   const stopListening = () => {
+    try {
+      recognitionRef.current?.stop?.();
+    } catch (error) {
+      console.error('Failed to stop speech recognition:', error);
+    }
+    recognitionRef.current = null;
     setIsListening(false);
   };
+
+  useEffect(() => {
+    return () => {
+      try {
+        recognitionRef.current?.stop?.();
+      } catch {
+        // noop
+      }
+      recognitionRef.current = null;
+    };
+  }, []);
 
   if (!hasSupport) {
     return null;
@@ -61,15 +91,15 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({
       onClick={isListening ? stopListening : startListening}
       disabled={disabled}
       className={cn(
-        "p-2 rounded-md transition-colors",
-        isListening 
-          ? "bg-red-100 text-red-600 hover:bg-red-200" 
-          : "bg-slate-100 text-slate-600 hover:bg-slate-200",
-        disabled && "opacity-50 cursor-not-allowed",
+        'p-2 rounded-md transition-colors',
+        isListening
+          ? 'bg-red-100 text-red-600 hover:bg-red-200'
+          : 'bg-slate-100 text-slate-600 hover:bg-slate-200',
+        disabled && 'opacity-50 cursor-not-allowed',
         className
       )}
-      title={isListening ? "Stop listening" : "Start voice input"}
-      aria-label={isListening ? "Stop listening" : "Start voice input"}
+      title={isListening ? 'Stop listening' : 'Start voice input'}
+      aria-label={isListening ? 'Stop listening' : 'Start voice input'}
     >
       {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
     </button>

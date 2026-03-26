@@ -127,6 +127,8 @@ Config keys:
 - `MINI_OMNI_OUTPUT_WAV_DIR`
 - `APP_HOST`
 - `APP_PORT`
+- `REQUIRE_INGEST_AUTH`
+- `INGEST_API_KEY`
 - `MAX_RECENT_RULE_FIRES`
 - `MAX_RECENT_PACKAGES`
 - `MAX_RECENT_LLM_RESULTS`
@@ -147,6 +149,7 @@ Example:
 
 ```bash
 curl -sS -X POST http://127.0.0.1:43110/v1/ingest/text \
+  -H 'x-edge-api-key: replace-with-strong-key' \
   -H 'content-type: application/json' \
   -d '{"streamId":"prod_stream_01","utterance":"aspirin 200 mg please"}'
 ```

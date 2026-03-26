@@ -1,8 +1,5 @@
-import { NLPEngine } from './NLPEngine';
-import { DashboardState } from '../collaboration/types';
-
 interface VoiceCommand {
-  type: navigation' | 'action' | 'query' | 'control';
+  type: 'navigation' | 'action' | 'query' | 'control';
   intent: string;
   parameters: Record<string, unknown>;
   confidence: number;
@@ -15,132 +12,210 @@ interface CommandHandler {
   handler: (command: VoiceCommand) => Promise<void>;
 }
 
+interface NLPEngineLike {
+  processQuery?: (
+    query: string,
+    context: Record<string, unknown> | null
+  ) => Promise<{
+    query?: {
+      intent?: string;
+      parameters?: Record<string, unknown>;
+      confidence?: number;
+      type?: string;
+    };
+  }>;
+}
+
+type RecognitionCtor = new () => {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start: () => void;
+  stop: () => void;
+  onresult?: ((event: any) => void) | null;
+  onerror?: ((event: any) => void) | null;
+  onend?: (() => void) | null;
+};
+
 export class VoiceEngine {
-  private nlpEngine: NLPEngine;
-  private recognition: unknown; // Web Speech API recognition
-  private synthesis: unknown; // Web Speech API synthesis
-  private isListening: boolean;
-  private commandHandlers: CommandHandler[];
-  private commandHistory: VoiceCommand[];
-  private contextState: DashboardState | null;
+  private nlpEngine: NLPEngineLike;
+  private recognition: InstanceType<RecognitionCtor> | null = null;
+  private synthesis: SpeechSynthesis | null = null;
+  private isListening = false;
+  private commandHandlers: CommandHandler[] = [];
+  private commandHistory: VoiceCommand[] = [];
+  private contextState: Record<string, unknown> | null = null;
 
-  constructor(nlpEngine: NLPEngine) {
+  constructor(nlpEngine: NLPEngineLike) {
     this.nlpEngine = nlpEngine;
-    this.isListening = false;
-    this.commandHandlers = [];
-    this.commandHistory = [];
-    this.contextState = null;
-    this.initializeSpeechAPI(): DashboardState): Promise<void> {
-    if(!(this as any)): void {
-      throw new Error('Speech recognition not supported')): void {
-      this.isListening = true;
-      (this as any).(recognition as any).start(): Promise<void> {
-    if((this as any)): void {
-      this.isListening = false;
-      (this as any).(recognition as any).stop(): CommandHandler): Promise<void> {
-    this.commandHandlers.push(handler): string): Promise<VoiceCommand | null> {
-    try {
-      // Normalize text
-      const normalizedText: VoiceCommand  = (text as any).toLowerCase().trim();
+    this.initializeSpeechApi();
+  }
 
-      // Check for wake word
-      if (!this.isWakeWordDetected(normalizedText)) {
-        return null;
-      }
-
-      // Process with NLP engine
-      const nlpResult: this.determineCommandType(nlpResult): (nlpResult as any).(query as any).intent,
-        parameters: (nlpResult as any).(query as any).parameters,
-        confidence: (nlpResult as any).(query as any).confidence,
-        raw: text,
-      };
-
-      // Add to history
-      this.commandHistory.push(command);
-
-      // Find and execute handler
-      await this.executeCommand(command);
-
-      return command;
-    } catch (error): void {
-      (console as any).error('Error processing voice command:', error): string): Promise<void> {
-    if(!(this as any)): void {
-      (console as any).warn('Speech synthesis not supported');
+  private initializeSpeechApi(): void {
+    if (typeof window === 'undefined') {
       return;
     }
 
-    return new Promise((resolve, reject)  = await (this as any).(nlpEngine as any).processQuery(
-        normalizedText,
-        this.contextState!
-      );
-
-      // Create voice command
-      const command {
-        type> {
-      const utterance: void {
-    // Initialize Web Speech API
-    if(typeof window ! = new SpeechSynthesisUtterance(text)): void {
-      const SpeechRecognition: unknown){
-        this.recognition  = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      if(SpeechRecognition new SpeechRecognition(): void {
-    (this as any).(recognition as any).continuous = true;
-    (this as any).(recognition as any).interimResults = false;
-    (this as any).(recognition as any).lang = 'en-US';
-
-    (this as any).(recognition as any).onresult = async (): Promise<void> {event: unknown) => {
-      const last: unknown)  = (event as any).results.length - 1;
-      const text: , (event as any)): void {
-        await this.speak('Please enable microphone access');
-      }
-    };
-
-    (this as any).(recognition as any).onend  = (event as any).results[last][0].transcript;
-      await this.processCommand(text);
-    };
-
-    (this as any).(recognition as any).onerror = async (): Promise<void> {event> {
-      (console as any).error('Speech recognition error () => {
-      if((this as any)): void {
-        (this as any).(recognition as any).start(): string): boolean {
-    const wakeWords: unknown
-  ): VoiceCommand['type'] {
-    if ((nlpResult as any).query.(intent as any).includes('navigate')) {
-      return 'navigation';
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      this.recognition = new SpeechRecognition();
+      this.recognition.continuous = true;
+      this.recognition.interimResults = false;
+      this.recognition.lang = 'en-US';
+      this.recognition.onresult = async (event: any) => {
+        const idx = event?.results?.length ? event.results.length - 1 : 0;
+        const transcript = event?.results?.[idx]?.[0]?.transcript;
+        if (typeof transcript === 'string' && transcript.trim()) {
+          await this.processCommand(transcript.trim());
+        }
+      };
+      this.recognition.onerror = async () => {
+        await this.speak('Please enable microphone access.');
+      };
+      this.recognition.onend = () => {
+        if (this.isListening) {
+          this.recognition?.start();
+        }
+      };
     }
-    if ((nlpResult as any).query.(intent as any).includes('search')) {
-      return 'query';
+
+    if (typeof window.speechSynthesis !== 'undefined') {
+      this.synthesis = window.speechSynthesis;
     }
-    if ((nlpResult as any).query.(intent as any).includes('control')) {
-      return 'control';
-    }
-    return 'action';
+
+    this.registerDefaultHandlers();
   }
 
-  private async executeCommand(): Promise<void> {
-    command: VoiceCommand
-  ): Promise<void> {
-    // Find matching handler
-    const handler): void {
-      try {
-        await(handler as any)): void {
-        (console as any).error('Error executing command:', error);
-        await this.speak('Sorry, I couldn\'t execute that command');
-      }
-    } else {
-      await(this as any): VoiceCommand): Promise<void> {
-    const { location }  = ['hey dashboard', 'ok dashboard', 'dashboard'];
-    return(wakeWords as any) (command as any).parameters;
-    await this.speak(`Navigating to ${location}`);
-    // Implement navigation logic
+  setContextState(state: Record<string, unknown> | null): void {
+    this.contextState = state;
   }
 
-  private async handleQuery(): Promise<void> {command: VoiceCommand): Promise<void> {
-    const { query } = (command as any).parameters;
-    await this.speak(`Searching for ${query}`): VoiceCommand): Promise<void> {
-    const { action, target } = (command as any).parameters;
-    await this.speak(`Performing ${action} on ${target}`): VoiceCommand): Promise<void> {
-    const { control, value } = (command as any).parameters;
-    await this.speak(`Setting ${control} to ${value}`);
-    // Implement control logic
+  startListening(): void {
+    if (!this.recognition || this.isListening) {
+      return;
+    }
+    this.isListening = true;
+    this.recognition.start();
+  }
+
+  stopListening(): void {
+    if (!this.recognition || !this.isListening) {
+      return;
+    }
+    this.isListening = false;
+    this.recognition.stop();
+  }
+
+  addCommandHandler(handler: CommandHandler): void {
+    this.commandHandlers.push(handler);
+  }
+
+  async processCommand(text: string): Promise<VoiceCommand | null> {
+    const normalizedText = text.trim().toLowerCase();
+    if (!normalizedText || !this.isWakeWordDetected(normalizedText)) {
+      return null;
+    }
+
+    let inferredType: VoiceCommand['type'] = 'action';
+    if (normalizedText.includes('navigate') || normalizedText.includes('open ')) {
+      inferredType = 'navigation';
+    } else if (normalizedText.includes('search') || normalizedText.includes('find')) {
+      inferredType = 'query';
+    } else if (normalizedText.includes('toggle') || normalizedText.includes('set ')) {
+      inferredType = 'control';
+    }
+
+    const nlpResult = await this.nlpEngine.processQuery?.(normalizedText, this.contextState);
+    const command: VoiceCommand = {
+      type: (nlpResult?.query?.type as VoiceCommand['type']) || inferredType,
+      intent: nlpResult?.query?.intent || inferredType,
+      parameters: nlpResult?.query?.parameters || {},
+      confidence: nlpResult?.query?.confidence || 0.7,
+      raw: text,
+    };
+
+    this.commandHistory.push(command);
+    await this.executeCommand(command);
+    return command;
+  }
+
+  async speak(text: string): Promise<void> {
+    if (!this.synthesis || !text.trim()) {
+      return;
+    }
+    await new Promise<void>((resolve) => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.onend = () => resolve();
+      utterance.onerror = () => resolve();
+      this.synthesis?.cancel();
+      this.synthesis?.speak(utterance);
+    });
+  }
+
+  getHistory(limit = 50): VoiceCommand[] {
+    if (limit <= 0) return [];
+    return this.commandHistory.slice(-limit);
+  }
+
+  private isWakeWordDetected(text: string): boolean {
+    const wakeWords = ['hey dashboard', 'ok dashboard', 'dashboard'];
+    return wakeWords.some((wakeWord) => text.includes(wakeWord));
+  }
+
+  private async executeCommand(command: VoiceCommand): Promise<void> {
+    const handler = this.commandHandlers.find(
+      (item) => item.type === command.type && item.pattern.test(command.raw.toLowerCase())
+    );
+
+    if (!handler) {
+      await this.speak("Sorry, I couldn't find a handler for that command.");
+      return;
+    }
+
+    try {
+      await handler.handler(command);
+    } catch (error) {
+      console.error('Voice command execution error:', error);
+      await this.speak("Sorry, I couldn't execute that command.");
+    }
+  }
+
+  private registerDefaultHandlers(): void {
+    this.addCommandHandler({
+      type: 'navigation',
+      pattern: /(open|go to|navigate)/i,
+      handler: async (command) => {
+        const location = String(command.parameters.location || 'the dashboard');
+        await this.speak(`Navigating to ${location}.`);
+      },
+    });
+
+    this.addCommandHandler({
+      type: 'query',
+      pattern: /(search|find|show)/i,
+      handler: async (command) => {
+        const query = String(command.parameters.query || command.raw);
+        await this.speak(`Searching for ${query}.`);
+      },
+    });
+
+    this.addCommandHandler({
+      type: 'action',
+      pattern: /(run|start|execute)/i,
+      handler: async (command) => {
+        const action = String(command.parameters.action || 'that action');
+        await this.speak(`Executing ${action}.`);
+      },
+    });
+
+    this.addCommandHandler({
+      type: 'control',
+      pattern: /(toggle|set|enable|disable)/i,
+      handler: async (command) => {
+        const control = String(command.parameters.control || 'setting');
+        await this.speak(`Updating ${control}.`);
+      },
+    });
   }
 }
