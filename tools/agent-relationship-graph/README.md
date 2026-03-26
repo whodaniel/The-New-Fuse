@@ -1,32 +1,35 @@
 # Agent Relationship Graph Tools
 
 Interactive visualization and analytics tools for the TNF agent relationship
-graph — a 113-node graph modeling orchestration hierarchies, cross-domain
-collaboration, and temporal evolution of the agent ecosystem.
+graph, modeling orchestration hierarchies, cross-domain collaboration, and
+temporal evolution of the agent ecosystem.
 
 ## Quick Start
 
 ```bash
 # From the project root:
 pnpm run graph:all        # Full pipeline: subgraphs → analytics → neo4j → temporal → alerts
+pnpm run graph:analytics  # Recompute metrics from the latest graph
 pnpm run graph:help       # Show all available targets
 
 # Or from this directory:
 make all                  # Same as above
+make graph                # Build base graph from registry + seed relationships
 make help                 # Show all targets
 ```
 
 ## Available Commands
 
-| Command           | Description                                                           |
-| ----------------- | --------------------------------------------------------------------- |
-| `graph:all`       | Run the full rebuild pipeline                                         |
-| `graph:subgraphs` | Generate domain subgraph JSON, Markdown, Cypher, and HTML             |
-| `graph:analytics` | Compute centrality, betweenness, eigenvector, and community detection |
-| `graph:neo4j`     | Build Neo4j CSV + Cypher import package                               |
-| `graph:temporal`  | Create timestamped snapshot and diff against previous                 |
-| `graph:alerts`    | Check latest delta against configurable thresholds                    |
-| `graph:html`      | Regenerate interactive force-directed HTML views                      |
+| Command           | Description                                                            |
+| ----------------- | ---------------------------------------------------------------------- |
+| `graph`           | Build expanded base graph JSON/Markdown/Cypher from registry artifacts |
+| `graph:all`       | Run the full rebuild pipeline                                          |
+| `graph:subgraphs` | Generate domain subgraph JSON, Markdown, Cypher, and HTML              |
+| `graph:analytics` | Compute centrality, betweenness, eigenvector, and community detection  |
+| `graph:neo4j`     | Build Neo4j CSV + Cypher import package                                |
+| `graph:temporal`  | Create timestamped snapshot and diff against previous                  |
+| `graph:alerts`    | Check latest delta against configurable thresholds                     |
+| `graph:html`      | Regenerate interactive force-directed HTML views                       |
 
 ## Directory Structure
 
@@ -34,7 +37,7 @@ make help                 # Show all targets
 tools/agent-relationship-graph/
 ├── Makefile                          # Build targets
 ├── README.md                         # This file
-├── agent-relationship-graph.json     # Master graph (113 nodes)
+├── agent-relationship-graph.json     # Master graph (registry-driven)
 ├── agent-relationship-graph.md       # Mermaid documentation
 ├── agent-relationship-graph.cypher   # Full-graph Neo4j import
 ├── agent-relationship-subgraphs-index.md
@@ -69,6 +72,7 @@ tools/agent-relationship-graph/
 │   └── latest-alert.{json,md}
 │
 ├── build_agent_graph_analytics.py    # Centrality + community detection
+├── build_agent_relationship_graph.py # Registry-driven base graph builder
 ├── build_agent_html_views.py         # Interactive HTML generator
 ├── build_agent_neo4j_package.py      # CSV + Cypher exporter
 ├── build_agent_temporal_diffs.py     # Snapshot & diff engine

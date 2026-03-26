@@ -21,7 +21,7 @@
   <div class="wrap">
     <aside class="side">
       <h1>Seo Agent Subgraph</h1>
-      <div class="meta">Generated 2026-03-12 14:01:56Z</div>
+      <div class="meta">Generated 2026-03-26 06:38:20Z</div>
       <div class="legend" id="counts"></div>
       <div class="legend" style="margin-top:10px">Drag nodes to reposition. Hover nodes for details.</div>
     </aside>
@@ -32,9 +32,14 @@
   </div>
 <script id="graph-data" type="application/json">
 {
-  "generated_at": "2026-03-03",
+  "generated_at": "2026-03-26",
   "domain": "seo",
   "nodes": [
+    {
+      "id": "content-calendar-orchestrator-agent",
+      "kind": "primary",
+      "cluster": "orchestration"
+    },
     {
       "id": "orchestrator-agent",
       "kind": "primary",
@@ -47,119 +52,266 @@
     },
     {
       "id": "content-writer-agent",
-      "kind": "sub",
-      "cluster": "content"
-    },
-    {
-      "id": "content-calendar-agent",
-      "kind": "sub",
-      "cluster": "content"
-    },
-    {
-      "id": "content-calendar-orchestrator-agent",
       "kind": "primary",
       "cluster": "content"
     },
     {
+      "id": "content-calendar-agent",
+      "kind": "primary",
+      "cluster": "seo"
+    },
+    {
+      "id": "content-refresh-agent",
+      "kind": "primary",
+      "cluster": "seo"
+    },
+    {
       "id": "keyword-research-agent",
-      "kind": "sub",
-      "cluster": "seo"
-    },
-    {
-      "id": "seo-optimizer-agent",
-      "kind": "sub",
-      "cluster": "seo"
-    },
-    {
-      "id": "technical-seo-auditor-agent",
-      "kind": "sub",
+      "kind": "primary",
       "cluster": "seo"
     },
     {
       "id": "link-building-agent",
-      "kind": "sub",
+      "kind": "primary",
+      "cluster": "seo"
+    },
+    {
+      "id": "seo-optimizer-agent",
+      "kind": "primary",
+      "cluster": "seo"
+    },
+    {
+      "id": "technical-seo-auditor-agent",
+      "kind": "primary",
+      "cluster": "seo"
+    },
+    {
+      "id": "yt-seo-optimizer-agent",
+      "kind": "primary",
       "cluster": "seo"
     }
   ],
   "edges": [
     {
-      "source": "orchestrator-agent",
-      "target": "task-agent-router",
-      "type": "delegates",
-      "strength": 0.98
-    },
-    {
-      "source": "task-agent-router",
+      "source": "content-calendar-agent",
       "target": "content-writer-agent",
-      "type": "routes_to",
-      "strength": 0.72
-    },
-    {
-      "source": "task-agent-router",
-      "target": "content-calendar-agent",
-      "type": "routes_to",
-      "strength": 0.74
-    },
-    {
-      "source": "task-agent-router",
-      "target": "content-calendar-orchestrator-agent",
-      "type": "routes_to",
-      "strength": 0.8
-    },
-    {
-      "source": "task-agent-router",
-      "target": "keyword-research-agent",
-      "type": "routes_to",
-      "strength": 0.73
-    },
-    {
-      "source": "task-agent-router",
-      "target": "seo-optimizer-agent",
-      "type": "routes_to",
-      "strength": 0.73
-    },
-    {
-      "source": "task-agent-router",
-      "target": "technical-seo-auditor-agent",
-      "type": "routes_to",
-      "strength": 0.68
+      "type": "depends_on",
+      "strength": 0.58,
+      "origin": "registry"
     },
     {
       "source": "content-calendar-agent",
       "target": "keyword-research-agent",
       "type": "depends_on",
-      "strength": 0.86
+      "strength": 0.86,
+      "origin": "seed"
     },
     {
-      "source": "keyword-research-agent",
-      "target": "content-writer-agent",
-      "type": "feeds",
-      "strength": 0.88
-    },
-    {
-      "source": "content-writer-agent",
+      "source": "content-calendar-agent",
       "target": "seo-optimizer-agent",
-      "type": "handoff",
-      "strength": 0.91
+      "type": "fallback",
+      "strength": 0.68,
+      "origin": "registry",
+      "risk": "capability_overlap"
     },
     {
-      "source": "seo-optimizer-agent",
+      "source": "content-calendar-agent",
       "target": "technical-seo-auditor-agent",
-      "type": "validated_by",
-      "strength": 0.79
-    },
-    {
-      "source": "technical-seo-auditor-agent",
-      "target": "content-calendar-agent",
-      "type": "feedback",
-      "strength": 0.71
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
     },
     {
       "source": "content-calendar-orchestrator-agent",
       "target": "content-calendar-agent",
       "type": "overlaps_with",
       "strength": 0.63,
+      "origin": "seed",
       "risk": "coordination_conflict"
+    },
+    {
+      "source": "content-refresh-agent",
+      "target": "keyword-research-agent",
+      "type": "fallback",
+      "strength": 0.68,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "content-refresh-agent",
+      "target": "yt-seo-optimizer-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "content-writer-agent",
+      "target": "link-building-agent",
+      "type": "depends_on",
+      "strength": 0.73,
+      "origin": "registry"
+    },
+    {
+      "source": "content-writer-agent",
+      "target": "seo-optimizer-agent",
+      "type": "depends_on",
+      "strength": 0.77,
+      "origin": "registry"
+    },
+    {
+      "source": "content-writer-agent",
+      "target": "seo-optimizer-agent",
+      "type": "feeds",
+      "strength": 0.91,
+      "origin": "chain"
+    },
+    {
+      "source": "content-writer-agent",
+      "target": "seo-optimizer-agent",
+      "type": "handoff",
+      "strength": 0.91,
+      "origin": "seed"
+    },
+    {
+      "source": "keyword-research-agent",
+      "target": "content-writer-agent",
+      "type": "feeds",
+      "strength": 0.88,
+      "origin": "seed"
+    },
+    {
+      "source": "keyword-research-agent",
+      "target": "link-building-agent",
+      "type": "fallback",
+      "strength": 0.68,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "keyword-research-agent",
+      "target": "seo-optimizer-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "link-building-agent",
+      "target": "content-refresh-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "orchestrator-agent",
+      "target": "content-calendar-orchestrator-agent",
+      "type": "delegates",
+      "strength": 0.86,
+      "origin": "scaffold"
+    },
+    {
+      "source": "orchestrator-agent",
+      "target": "content-calendar-orchestrator-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "orchestrator-agent",
+      "target": "task-agent-router",
+      "type": "delegates",
+      "strength": 0.98,
+      "origin": "seed"
+    },
+    {
+      "source": "seo-optimizer-agent",
+      "target": "content-calendar-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "seo-optimizer-agent",
+      "target": "technical-seo-auditor-agent",
+      "type": "depends_on",
+      "strength": 0.79,
+      "origin": "chain"
+    },
+    {
+      "source": "seo-optimizer-agent",
+      "target": "technical-seo-auditor-agent",
+      "type": "validated_by",
+      "strength": 0.79,
+      "origin": "seed"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "content-calendar-agent",
+      "type": "routes_to",
+      "strength": 0.74,
+      "origin": "seed"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "content-calendar-orchestrator-agent",
+      "type": "routes_to",
+      "strength": 0.8,
+      "origin": "seed"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "content-writer-agent",
+      "type": "routes_to",
+      "strength": 0.72,
+      "origin": "seed"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "keyword-research-agent",
+      "type": "delegates",
+      "strength": 0.82,
+      "origin": "scaffold"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "keyword-research-agent",
+      "type": "routes_to",
+      "strength": 0.73,
+      "origin": "seed"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "seo-optimizer-agent",
+      "type": "routes_to",
+      "strength": 0.73,
+      "origin": "seed"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "technical-seo-auditor-agent",
+      "type": "routes_to",
+      "strength": 0.68,
+      "origin": "seed"
+    },
+    {
+      "source": "technical-seo-auditor-agent",
+      "target": "content-calendar-agent",
+      "type": "feedback",
+      "strength": 0.71,
+      "origin": "seed"
+    },
+    {
+      "source": "technical-seo-auditor-agent",
+      "target": "link-building-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
     }
   ]
 }

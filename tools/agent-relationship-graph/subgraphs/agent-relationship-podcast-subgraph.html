@@ -21,7 +21,7 @@
   <div class="wrap">
     <aside class="side">
       <h1>Podcast Agent Subgraph</h1>
-      <div class="meta">Generated 2026-03-12 14:01:56Z</div>
+      <div class="meta">Generated 2026-03-26 06:38:20Z</div>
       <div class="legend" id="counts"></div>
       <div class="legend" style="margin-top:10px">Drag nodes to reposition. Hover nodes for details.</div>
     </aside>
@@ -32,7 +32,7 @@
   </div>
 <script id="graph-data" type="application/json">
 {
-  "generated_at": "2026-03-03",
+  "generated_at": "2026-03-26",
   "domain": "podcast",
   "nodes": [
     {
@@ -46,83 +46,409 @@
       "cluster": "orchestration"
     },
     {
-      "id": "podcast-niche-analyst-agent",
+      "id": "analytics-and-reporting-agent",
+      "kind": "primary",
+      "cluster": "content"
+    },
+    {
+      "id": "episode-planner-agent",
       "kind": "sub",
       "cluster": "podcast"
     },
     {
-      "id": "podcast-format-designer-agent",
+      "id": "guest-booking-agent",
       "kind": "sub",
       "cluster": "podcast"
     },
     {
-      "id": "podcast-hosting-setup-agent",
+      "id": "guest-relationship-manager-agent",
+      "kind": "primary",
+      "cluster": "podcast"
+    },
+    {
+      "id": "podcast-ad-network-agent",
       "kind": "sub",
       "cluster": "podcast"
     },
     {
-      "id": "podcast-distribution-agent",
-      "kind": "sub",
-      "cluster": "podcast"
-    },
-    {
-      "id": "podcast-promotion-agent",
+      "id": "podcast-affiliate-agent",
       "kind": "sub",
       "cluster": "podcast"
     },
     {
       "id": "podcast-analytics-agent",
+      "kind": "primary",
+      "cluster": "podcast"
+    },
+    {
+      "id": "podcast-audio-editor-agent",
       "kind": "sub",
       "cluster": "podcast"
     },
     {
-      "id": "analytics-and-reporting-agent",
+      "id": "podcast-distribution-agent",
       "kind": "primary",
-      "cluster": "ops"
+      "cluster": "podcast"
+    },
+    {
+      "id": "podcast-equipment-agent",
+      "kind": "sub",
+      "cluster": "podcast"
+    },
+    {
+      "id": "podcast-format-designer-agent",
+      "kind": "primary",
+      "cluster": "podcast"
+    },
+    {
+      "id": "podcast-hosting-setup-agent",
+      "kind": "primary",
+      "cluster": "podcast"
+    },
+    {
+      "id": "podcast-monetization-strategy-agent",
+      "kind": "sub",
+      "cluster": "podcast"
+    },
+    {
+      "id": "podcast-niche-analyst-agent",
+      "kind": "primary",
+      "cluster": "podcast"
+    },
+    {
+      "id": "podcast-promotion-agent",
+      "kind": "primary",
+      "cluster": "podcast"
+    },
+    {
+      "id": "podcast-seo-agent",
+      "kind": "sub",
+      "cluster": "podcast"
+    },
+    {
+      "id": "podcast-video-editor-agent",
+      "kind": "sub",
+      "cluster": "podcast"
+    },
+    {
+      "id": "sponsorship-outreach-agent",
+      "kind": "sub",
+      "cluster": "podcast"
     }
   ],
   "edges": [
     {
+      "source": "episode-planner-agent",
+      "target": "podcast-equipment-agent",
+      "type": "fallback",
+      "strength": 0.77,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "guest-booking-agent",
+      "target": "guest-relationship-manager-agent",
+      "type": "feeds",
+      "strength": 0.61,
+      "origin": "registry"
+    },
+    {
+      "source": "guest-booking-agent",
+      "target": "sponsorship-outreach-agent",
+      "type": "fallback",
+      "strength": 0.68,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "guest-relationship-manager-agent",
+      "target": "podcast-analytics-agent",
+      "type": "fallback",
+      "strength": 0.64,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "guest-relationship-manager-agent",
+      "target": "podcast-distribution-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
       "source": "orchestrator-agent",
       "target": "task-agent-router",
       "type": "delegates",
-      "strength": 0.98
+      "strength": 0.98,
+      "origin": "seed"
     },
     {
-      "source": "task-agent-router",
-      "target": "podcast-promotion-agent",
-      "type": "routes_to",
-      "strength": 0.66
+      "source": "podcast-ad-network-agent",
+      "target": "podcast-audio-editor-agent",
+      "type": "fallback",
+      "strength": 0.68,
+      "origin": "registry",
+      "risk": "capability_overlap"
     },
     {
-      "source": "podcast-niche-analyst-agent",
-      "target": "podcast-format-designer-agent",
-      "type": "feeds",
-      "strength": 0.85
-    },
-    {
-      "source": "podcast-format-designer-agent",
+      "source": "podcast-ad-network-agent",
       "target": "podcast-hosting-setup-agent",
-      "type": "handoff",
-      "strength": 0.81
+      "type": "fallback",
+      "strength": 0.68,
+      "origin": "registry",
+      "risk": "capability_overlap"
     },
     {
-      "source": "podcast-hosting-setup-agent",
-      "target": "podcast-distribution-agent",
-      "type": "handoff",
-      "strength": 0.93
+      "source": "podcast-affiliate-agent",
+      "target": "podcast-monetization-strategy-agent",
+      "type": "fallback",
+      "strength": 0.81,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "podcast-affiliate-agent",
+      "target": "podcast-niche-analyst-agent",
+      "type": "fallback",
+      "strength": 0.84,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "podcast-affiliate-agent",
+      "target": "sponsorship-outreach-agent",
+      "type": "fallback",
+      "strength": 0.77,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "podcast-analytics-agent",
+      "target": "podcast-hosting-setup-agent",
+      "type": "fallback",
+      "strength": 0.73,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "podcast-analytics-agent",
+      "target": "podcast-niche-analyst-agent",
+      "type": "fallback",
+      "strength": 0.64,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "podcast-analytics-agent",
+      "target": "podcast-video-editor-agent",
+      "type": "fallback",
+      "strength": 0.68,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "podcast-audio-editor-agent",
+      "target": "podcast-hosting-setup-agent",
+      "type": "fallback",
+      "strength": 0.68,
+      "origin": "registry",
+      "risk": "capability_overlap"
     },
     {
       "source": "podcast-distribution-agent",
       "target": "podcast-promotion-agent",
       "type": "enables",
-      "strength": 0.87
+      "strength": 0.87,
+      "origin": "seed"
+    },
+    {
+      "source": "podcast-distribution-agent",
+      "target": "podcast-promotion-agent",
+      "type": "feeds",
+      "strength": 0.87,
+      "origin": "chain"
+    },
+    {
+      "source": "podcast-distribution-agent",
+      "target": "sponsorship-outreach-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "podcast-equipment-agent",
+      "target": "podcast-format-designer-agent",
+      "type": "fallback",
+      "strength": 0.68,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "podcast-equipment-agent",
+      "target": "podcast-monetization-strategy-agent",
+      "type": "fallback",
+      "strength": 0.77,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "podcast-format-designer-agent",
+      "target": "guest-relationship-manager-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "podcast-format-designer-agent",
+      "target": "podcast-hosting-setup-agent",
+      "type": "feeds",
+      "strength": 0.81,
+      "origin": "chain"
+    },
+    {
+      "source": "podcast-format-designer-agent",
+      "target": "podcast-hosting-setup-agent",
+      "type": "handoff",
+      "strength": 0.81,
+      "origin": "seed"
+    },
+    {
+      "source": "podcast-hosting-setup-agent",
+      "target": "podcast-distribution-agent",
+      "type": "feeds",
+      "strength": 0.93,
+      "origin": "chain"
+    },
+    {
+      "source": "podcast-hosting-setup-agent",
+      "target": "podcast-distribution-agent",
+      "type": "handoff",
+      "strength": 0.93,
+      "origin": "seed"
+    },
+    {
+      "source": "podcast-hosting-setup-agent",
+      "target": "podcast-format-designer-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "podcast-monetization-strategy-agent",
+      "target": "podcast-niche-analyst-agent",
+      "type": "fallback",
+      "strength": 0.73,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "podcast-niche-analyst-agent",
+      "target": "podcast-format-designer-agent",
+      "type": "feeds",
+      "strength": 0.85,
+      "origin": "seed"
+    },
+    {
+      "source": "podcast-niche-analyst-agent",
+      "target": "podcast-hosting-setup-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "podcast-niche-analyst-agent",
+      "target": "podcast-video-editor-agent",
+      "type": "feeds",
+      "strength": 0.68,
+      "origin": "registry"
+    },
+    {
+      "source": "podcast-niche-analyst-agent",
+      "target": "sponsorship-outreach-agent",
+      "type": "fallback",
+      "strength": 0.71,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "podcast-promotion-agent",
+      "target": "podcast-analytics-agent",
+      "type": "depends_on",
+      "strength": 0.84,
+      "origin": "chain"
+    },
+    {
+      "source": "podcast-promotion-agent",
+      "target": "podcast-analytics-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
     },
     {
       "source": "podcast-promotion-agent",
       "target": "podcast-analytics-agent",
       "type": "measured_by",
-      "strength": 0.84
+      "strength": 0.84,
+      "origin": "seed"
+    },
+    {
+      "source": "podcast-promotion-agent",
+      "target": "sponsorship-outreach-agent",
+      "type": "fallback",
+      "strength": 0.64,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "podcast-video-editor-agent",
+      "target": "sponsorship-outreach-agent",
+      "type": "fallback",
+      "strength": 0.64,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "sponsorship-outreach-agent",
+      "target": "podcast-seo-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "analytics-and-reporting-agent",
+      "type": "delegates",
+      "strength": 0.82,
+      "origin": "scaffold"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "guest-booking-agent",
+      "type": "delegates",
+      "strength": 0.57,
+      "origin": "backstop",
+      "risk": "routing_backstop"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "podcast-promotion-agent",
+      "type": "delegates",
+      "strength": 0.82,
+      "origin": "scaffold"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "podcast-promotion-agent",
+      "type": "routes_to",
+      "strength": 0.66,
+      "origin": "seed"
     }
   ]
 }

@@ -1,7 +1,10 @@
-.PHONY: all subgraphs analytics neo4j temporal alerts cron launchd html clean help
+.PHONY: all graph subgraphs analytics neo4j temporal alerts cron launchd html clean help
 
 all: ## Run the full rebuild pipeline
 	./rebuild_agent_relationship_artifacts.sh
+
+graph: ## Rebuild expanded base graph JSON/Markdown/Cypher
+	python3 ./build_agent_relationship_graph.py
 
 subgraphs: ## Generate domain subgraphs (JSON + Markdown + Cypher)
 	./generate_agent_subgraphs.sh

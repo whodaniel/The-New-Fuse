@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-24T16:54:21.145Z",
+  "generatedAt": "2026-03-26T06:38:22.061Z",
   "source": "scripts/visualizations/publish-graph-artifacts.cjs",
   "datasets": [
     {
@@ -13,14 +13,14 @@
       },
       "graph": {
         "file": "/visualizations/graphs/agent-relationship-graph/agent-relationship-graph.json",
-        "nodes": 49,
-        "edges": 43
+        "nodes": 120,
+        "edges": 401
       },
       "subgraphs": [
         {
           "domain": "brand",
-          "nodes": 10,
-          "edges": 8,
+          "nodes": 20,
+          "edges": 44,
           "files": {
             "json": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-brand-subgraph.json",
             "html": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-brand-subgraph.html",
@@ -30,8 +30,8 @@
         },
         {
           "domain": "content",
-          "nodes": 9,
-          "edges": 10,
+          "nodes": 18,
+          "edges": 27,
           "files": {
             "json": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.json",
             "html": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.html",
@@ -41,8 +41,8 @@
         },
         {
           "domain": "funnel",
-          "nodes": 8,
-          "edges": 6,
+          "nodes": 25,
+          "edges": 36,
           "files": {
             "json": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-funnel-subgraph.json",
             "html": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-funnel-subgraph.html",
@@ -52,8 +52,8 @@
         },
         {
           "domain": "ops",
-          "nodes": 11,
-          "edges": 5,
+          "nodes": 13,
+          "edges": 19,
           "files": {
             "json": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-ops-subgraph.json",
             "html": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-ops-subgraph.html",
@@ -63,8 +63,8 @@
         },
         {
           "domain": "podcast",
-          "nodes": 9,
-          "edges": 7,
+          "nodes": 20,
+          "edges": 41,
           "files": {
             "json": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-podcast-subgraph.json",
             "html": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-podcast-subgraph.html",
@@ -74,8 +74,8 @@
         },
         {
           "domain": "seo",
-          "nodes": 9,
-          "edges": 13,
+          "nodes": 11,
+          "edges": 30,
           "files": {
             "json": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-seo-subgraph.json",
             "html": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-seo-subgraph.html",
@@ -85,8 +85,8 @@
         },
         {
           "domain": "social",
-          "nodes": 8,
-          "edges": 2,
+          "nodes": 18,
+          "edges": 26,
           "files": {
             "json": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-social-subgraph.json",
             "html": "/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-social-subgraph.html",
@@ -105,9 +105,9 @@
           "readme": "/visualizations/graphs/agent-relationship-graph/neo4j-package/README.md"
         },
         "rows": {
-          "nodes": 49,
-          "edges": 43,
-          "domainMembership": 64
+          "nodes": 120,
+          "edges": 401,
+          "domainMembership": 125
         }
       },
       "reports": {
@@ -176,8 +176,8 @@
   "missingImplementations": [],
   "totals": {
     "datasets": 2,
-    "graphNodes": 518,
-    "graphEdges": 1309,
+    "graphNodes": 589,
+    "graphEdges": 1667,
     "subgraphs": 7,
     "missingImplementations": 0
   }

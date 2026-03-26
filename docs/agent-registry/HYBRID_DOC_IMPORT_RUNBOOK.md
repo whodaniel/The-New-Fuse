@@ -5,7 +5,8 @@
 This pipeline keeps TNF retrieval hybrid and local-first:
 
 - Vector index: `pgvector` table (`tnf_agent_profile_vectors`) in Postgres.
-- Knowledge graph signal: built at query time from agent trait overlaps (skills, capabilities, tags, MCP IDs, type).
+- Knowledge graph signal: built at query time from agent trait overlaps (skills,
+  capabilities, tags, MCP IDs, type).
 
 No outside vector database is required.
 
@@ -42,12 +43,60 @@ Optional full rebuild:
 pnpm agents:registry:refresh-hybrid --reindex-all
 ```
 
+## Scheduled refresh + alerting (recommended)
+
+Install an idempotent cron loop (with lock + backoff) that runs hybrid refresh
+on a cadence:
+
+```bash
+pnpm agents:registry:cron:install
+```
+
+Recommended production install with explicit target + alerts:
+
+```bash
+AGENT_REGISTRY_API_BASE=https://backend-production-5c20.up.railway.app \
+AGENT_REGISTRY_IMPORT_TOKEN=your-token-if-required \
+AGENT_REGISTRY_ALERT_WEBHOOK_URL=https://hooks.slack.com/services/... \
+AGENT_REGISTRY_HYBRID_CRON_SCHEDULE="17 */4 * * *" \
+pnpm agents:registry:cron:install
+```
+
+Inspect cron + runtime state:
+
+```bash
+pnpm agents:registry:cron:status
+```
+
+Run once immediately (same config contract):
+
+```bash
+pnpm agents:registry:cron:run
+```
+
+Remove cron automation:
+
+```bash
+pnpm agents:registry:cron:uninstall
+```
+
+Alert contract:
+
+- `AGENT_REGISTRY_ALERT_WEBHOOK_URL`: HTTP webhook endpoint for failure alerts.
+- `AGENT_REGISTRY_ALERT_COOLDOWN_SEC`: alert cooldown per severity (default
+  `1800`).
+- `AGENT_REGISTRY_ALERT_ON_SUCCESS=true`: optional success notifications.
+- Local alert log is always written to:
+  - `~/.tnf/agent-registry-hybrid-refresh/alerts.jsonl`
+
 ## Troubleshooting
 
 - `POST /api/agent-registry/import/snapshot` returns `500` with:
   - `ENOENT: no such file or directory, open '/data/agent-registry/agents.json'`
-  - Cause: backend running an older import service build with incorrect repo-root resolution.
-  - Fix: deploy backend containing the updated import service path logic in `agent-registry-import.service.ts`, then rerun refresh.
+  - Cause: backend running an older import service build with incorrect
+    repo-root resolution.
+  - Fix: deploy backend containing the updated import service path logic in
+    `agent-registry-import.service.ts`, then rerun refresh.
 
 ## Local-only operation (no external embedding API)
 
@@ -57,7 +106,8 @@ Set:
 AGENT_PROFILE_EMBEDDING_ALLOW_LOCAL_FALLBACK=true
 ```
 
-If no OpenAI/OpenRouter/Gemini key is configured, embeddings fall back to deterministic local hashing so indexing still completes.
+If no OpenAI/OpenRouter/Gemini key is configured, embeddings fall back to
+deterministic local hashing so indexing still completes.
 
 ## Detailed Handoff Prompt (for the other terminal agent)
 

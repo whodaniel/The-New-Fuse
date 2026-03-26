@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-03-24T11:12:59.226Z",
+  "generated_at": "2026-03-26T06:38:22.788Z",
   "source": {
     "repo_root": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
     "generator": "scripts/visualizations/generate-dashboard-metrics.cjs"
   },
   "agents": {
-    "raw_files": 288,
-    "unique_names": 176,
+    "raw_files": 292,
+    "unique_names": 180,
     "by_source": {
-      "agent_agents": 163,
+      "agent_agents": 167,
       "claude_agents": 114,
       "config_ai_agents": 6,
       "config_agents": 5
@@ -465,10 +465,10 @@
     ]
   },
   "skills": {
-    "permanent_dot_skills": 224,
-    "permanent_agent_skills": 503,
-    "permanent_total": 727,
-    "snapshot_skills": 327,
+    "permanent_dot_skills": 226,
+    "permanent_agent_skills": 507,
+    "permanent_total": 733,
+    "snapshot_skills": 729,
     "promoted_snapshot_skills": 24
   },
   "graph": {
@@ -482,8 +482,8 @@
       "seo",
       "social"
     ],
-    "relationship_nodes": 49,
-    "relationship_edges": 43
+    "relationship_nodes": 120,
+    "relationship_edges": 401
   },
   "dashboard": {
     "graph_cards": 7,

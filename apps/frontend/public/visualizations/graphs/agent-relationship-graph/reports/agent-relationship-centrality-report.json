@@ -1,606 +1,961 @@
 {
-  "generated_at": "2026-03-12",
+  "generated_at": "2026-03-26",
   "reports": [
     {
       "graph_file": "agent-relationship-graph.json",
       "domain": "full",
-      "node_count": 49,
-      "edge_count": 43,
+      "node_count": 120,
+      "edge_count": 401,
       "top_degree": [
         {
           "id": "task-agent-router",
-          "score": 11.0
+          "score": 25.0
         },
         {
           "id": "orchestrator-agent",
-          "score": 8.0
+          "score": 19.0
         },
         {
-          "id": "content-calendar-agent",
-          "score": 4.0
+          "id": "seo-optimizer-agent",
+          "score": 13.0
         },
         {
-          "id": "agent-search-engine",
-          "score": 3.0
+          "id": "legal-compliance-agent",
+          "score": 12.0
         },
         {
-          "id": "campaign-execution-agent",
-          "score": 3.0
+          "id": "podcast-hosting-setup-agent",
+          "score": 12.0
         }
       ],
       "top_betweenness": [
         {
           "id": "task-agent-router",
-          "score": 0.807624
+          "score": 0.588868
         },
         {
           "id": "orchestrator-agent",
-          "score": 0.309397
+          "score": 0.296072
+        },
+        {
+          "id": "sponsorship-outreach-agent",
+          "score": 0.145282
         },
         {
           "id": "campaign-execution-agent",
-          "score": 0.255319
+          "score": 0.122701
         },
         {
-          "id": "podcast-promotion-agent",
-          "score": 0.255319
-        },
-        {
-          "id": "legal-compliance-agent",
-          "score": 0.163121
+          "id": "media-evidence-investigator",
+          "score": 0.102306
         }
       ],
       "top_closeness": [
         {
           "id": "task-agent-router",
-          "score": 0.328804
+          "score": 0.452471
         },
         {
-          "id": "orchestrator-agent",
-          "score": 0.254916
+          "id": "legal-compliance-agent",
+          "score": 0.385113
         },
         {
-          "id": "campaign-execution-agent",
-          "score": 0.249313
+          "id": "keyword-research-agent",
+          "score": 0.383871
         },
         {
           "id": "podcast-promotion-agent",
-          "score": 0.249313
+          "score": 0.38141
         },
         {
-          "id": "cro-process-agent",
-          "score": 0.238816
+          "id": "campaign-execution-agent",
+          "score": 0.380192
         }
       ],
       "top_eigenvector": [
         {
           "id": "task-agent-router",
-          "score": 0.591031
-        },
-        {
-          "id": "content-calendar-agent",
-          "score": 0.322098
+          "score": 0.355383
         },
         {
           "id": "keyword-research-agent",
-          "score": 0.278994
+          "score": 0.252331
         },
         {
-          "id": "technical-seo-auditor-agent",
-          "score": 0.278994
+          "id": "seo-optimizer-agent",
+          "score": 0.218323
+        },
+        {
+          "id": "content-calendar-agent",
+          "score": 0.213986
         },
         {
           "id": "content-writer-agent",
-          "score": 0.268819
+          "score": 0.213584
         }
       ],
       "communities": [
         {
           "community_id": 1,
-          "size": 7,
+          "size": 87,
+          "members": [
+            "ab-testing-optimizer-agent",
+            "ad-network-manager-agent",
+            "affiliate-link-manager-agent",
+            "algorithm-adaptation-agent",
+            "analytics-and-reporting-agent",
+            "asset-sourcer-agent",
+            "audience-growth-agent",
+            "audience-persona-architect-agent",
+            "audience-segmentation-agent",
+            "brand-identity-agent",
+            "brand-outreach-agent",
+            "brand-prospecting-agent",
+            "campaign-execution-agent",
+            "campaign-reporting-agent",
+            "cognitive-bias-optimizer-agent",
+            "community-engagement-agent",
+            "community-manager-agent",
+            "competitive-intelligence-agent",
+            "content-calendar-agent",
+            "content-calendar-orchestrator-agent",
+            "content-refresh-agent",
+            "content-repurposing-agent",
+            "content-writer-agent",
+            "contract-manager-agent",
+            "cro-process-agent",
+            "customer-journey-map-agent",
+            "deal-negotiator-agent",
+            "digital-product-creator-agent",
+            "digital-product-factory-agent",
+            "email-marketing-automation-agent",
+            "episode-planner-agent",
+            "equipment-recommendation-agent",
+            "ethical-bias-auditor-agent",
+            "facebook-strategy-agent",
+            "financial-manager-agent",
+            "funnel-economics-analyst-agent",
+            "guest-booking-agent",
+            "guest-relationship-manager-agent",
+            "influencer-media-kit-agent",
+            "influencer-niche-agent",
+            "information-retrieval-agent",
+            "instagram-strategy-agent",
+            "keyword-research-agent",
+            "lead-capture-agent",
+            "lead-magnet-funnel-agent",
+            "legal-compliance-agent",
+            "link-building-agent",
+            "live-stream-manager-agent",
+            "monetization-strategy-agent",
+            "niche-analyst-agent",
+            "orchestrator-agent-copy",
+            "oto-sequence-architect-agent",
+            "personal-brand-architect-agent",
+            "personalized-content-recommendation-agent",
+            "platform-selection-agent",
+            "podcast-affiliate-agent",
+            "podcast-analytics-agent",
+            "podcast-distribution-agent",
+            "podcast-equipment-agent",
+            "podcast-format-designer-agent",
+            "podcast-monetization-strategy-agent",
+            "podcast-niche-analyst-agent",
+            "podcast-promotion-agent",
+            "podcast-seo-agent",
+            "podcast-video-editor-agent",
+            "reputation-management-agent",
+            "sales-funnel-architect-agent",
+            "scout-llm-opportunities",
+            "scriptwriter-agent",
+            "seo-optimizer-agent",
+            "social-selling-agent",
+            "sponsorship-outreach-agent",
+            "talent-manager-agent",
+            "task-agent-router",
+            "tax-compliance-agent",
+            "technical-seo-auditor-agent",
+            "technical-setup-agent",
+            "tiktok-strategy-agent",
+            "traffic-generation-agent",
+            "twip-orchestration-bridge",
+            "user-feedback-analysis-agent",
+            "value-ladder-architect-agent",
+            "visual-asset-creator-agent",
+            "x-strategy-agent",
+            "yt-content-strategy-agent",
+            "yt-niche-strategy-agent",
+            "yt-seo-optimizer-agent"
+          ]
+        },
+        {
+          "community_id": 2,
+          "size": 25,
           "members": [
             "agent-registry-manager",
             "agent-relationship-grapher",
             "agent-search-engine",
             "agent-tagger",
+            "auth-blocker-sentinel",
+            "code-fossil-investigator",
+            "ecom-platform-manager-agent",
+            "gemini",
             "inter-agentic-workflow-definer",
             "interoperability-protocol-agent",
-            "orchestrator-agent"
-          ]
-        },
-        {
-          "community_id": 2,
-          "size": 7,
-          "members": [
-            "content-calendar-agent",
-            "content-calendar-orchestrator-agent",
-            "content-writer-agent",
-            "keyword-research-agent",
-            "seo-optimizer-agent",
-            "task-agent-router",
-            "technical-seo-auditor-agent"
+            "local-ai-claude-code-cli",
+            "local-ai-gemini-cli",
+            "master-of-taxonomies",
+            "media-evidence-investigator",
+            "notes-ledger-investigator",
+            "orchestrator-agent",
+            "personal-archaeology-integrity-team-orchestrator",
+            "personal-archaeology-master-orchestrator",
+            "personal-archaeology-narrative-team-orchestrator",
+            "personal-archaeology-source-team-orchestrator",
+            "personal-historical-archaeologist",
+            "print-on-demand-manager-agent",
+            "productivity-and-burnout-prevention-agent",
+            "repo-lineage-investigator",
+            "timeline-synthesis-investigator"
           ]
         },
         {
           "community_id": 3,
-          "size": 6,
+          "size": 8,
           "members": [
-            "brand-outreach-agent",
-            "brand-prospecting-agent",
-            "campaign-execution-agent",
-            "campaign-reporting-agent",
-            "contract-manager-agent",
-            "deal-negotiator-agent"
-          ]
-        },
-        {
-          "community_id": 4,
-          "size": 6,
-          "members": [
-            "podcast-analytics-agent",
-            "podcast-distribution-agent",
-            "podcast-format-designer-agent",
+            "audio-recording-agent",
+            "digital-asset-manager-agent",
+            "fan-funding-agent",
+            "podcast-ad-network-agent",
+            "podcast-audio-editor-agent",
             "podcast-hosting-setup-agent",
-            "podcast-niche-analyst-agent",
-            "podcast-promotion-agent"
+            "storyboard-artist-agent",
+            "video-editor-agent"
           ]
-        },
-        {
-          "community_id": 5,
-          "size": 4,
-          "members": [
-            "ab-testing-optimizer-agent",
-            "analytics-and-reporting-agent",
-            "cognitive-bias-optimizer-agent",
-            "cro-process-agent"
-          ]
-        },
-        {
-          "community_id": 6,
-          "size": 4,
-          "members": [
-            "affiliate-link-manager-agent",
-            "asset-sourcer-agent",
-            "legal-compliance-agent",
-            "visual-asset-creator-agent"
-          ]
-        },
-        {
-          "community_id": 7,
-          "size": 1,
-          "members": ["audience-growth-agent"]
-        },
-        {
-          "community_id": 8,
-          "size": 1,
-          "members": ["brand-identity-agent"]
-        },
-        {
-          "community_id": 9,
-          "size": 1,
-          "members": ["content-refresh-agent"]
-        },
-        {
-          "community_id": 10,
-          "size": 1,
-          "members": ["content-repurposing-agent"]
-        },
-        {
-          "community_id": 11,
-          "size": 1,
-          "members": ["facebook-strategy-agent"]
-        },
-        {
-          "community_id": 12,
-          "size": 1,
-          "members": ["financial-manager-agent"]
-        },
-        {
-          "community_id": 13,
-          "size": 1,
-          "members": ["instagram-strategy-agent"]
-        },
-        {
-          "community_id": 14,
-          "size": 1,
-          "members": ["link-building-agent"]
-        },
-        {
-          "community_id": 15,
-          "size": 1,
-          "members": ["productivity-and-burnout-prevention-agent"]
-        },
-        {
-          "community_id": 16,
-          "size": 1,
-          "members": ["reputation-management-agent"]
-        },
-        {
-          "community_id": 17,
-          "size": 1,
-          "members": ["sales-funnel-architect-agent"]
-        },
-        {
-          "community_id": 18,
-          "size": 1,
-          "members": ["tax-compliance-agent"]
-        },
-        {
-          "community_id": 19,
-          "size": 1,
-          "members": ["tiktok-strategy-agent"]
-        },
-        {
-          "community_id": 20,
-          "size": 1,
-          "members": ["value-ladder-architect-agent"]
-        },
-        {
-          "community_id": 21,
-          "size": 1,
-          "members": ["x-strategy-agent"]
         }
       ],
       "degree_detail": {
-        "orchestrator-agent": {
-          "in": 1,
-          "out": 7,
-          "total": 8
-        },
-        "task-agent-router": {
-          "in": 1,
-          "out": 10,
-          "total": 11
-        },
-        "inter-agentic-workflow-definer": {
-          "in": 1,
-          "out": 0,
-          "total": 1
-        },
-        "interoperability-protocol-agent": {
-          "in": 1,
-          "out": 0,
-          "total": 1
-        },
         "agent-registry-manager": {
-          "in": 1,
-          "out": 1,
-          "total": 2
+          "in": 2,
+          "out": 2,
+          "total": 4
         },
         "agent-relationship-grapher": {
-          "in": 1,
-          "out": 1,
-          "total": 2
+          "in": 2,
+          "out": 2,
+          "total": 4
         },
         "agent-search-engine": {
-          "in": 3,
-          "out": 0,
-          "total": 3
+          "in": 4,
+          "out": 1,
+          "total": 5
         },
         "agent-tagger": {
-          "in": 1,
-          "out": 1,
-          "total": 2
-        },
-        "content-writer-agent": {
           "in": 2,
-          "out": 1,
-          "total": 3
-        },
-        "content-calendar-agent": {
-          "in": 3,
-          "out": 1,
+          "out": 2,
           "total": 4
         },
         "content-calendar-orchestrator-agent": {
+          "in": 3,
+          "out": 5,
+          "total": 8
+        },
+        "gemini": {
           "in": 1,
-          "out": 1,
+          "out": 0,
+          "total": 1
+        },
+        "inter-agentic-workflow-definer": {
+          "in": 2,
+          "out": 0,
           "total": 2
         },
-        "content-refresh-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "content-repurposing-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "keyword-research-agent": {
+        "interoperability-protocol-agent": {
           "in": 2,
-          "out": 1,
-          "total": 3
+          "out": 4,
+          "total": 6
         },
-        "seo-optimizer-agent": {
+        "orchestrator-agent": {
           "in": 2,
-          "out": 1,
-          "total": 3
+          "out": 17,
+          "total": 19
         },
-        "technical-seo-auditor-agent": {
+        "orchestrator-agent-copy": {
           "in": 2,
-          "out": 1,
-          "total": 3
-        },
-        "link-building-agent": {
-          "in": 0,
           "out": 0,
-          "total": 0
+          "total": 2
         },
-        "instagram-strategy-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "tiktok-strategy-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "x-strategy-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "facebook-strategy-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "audience-growth-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "sales-funnel-architect-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "cro-process-agent": {
+        "personal-archaeology-integrity-team-orchestrator": {
           "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "personal-archaeology-master-orchestrator": {
+          "in": 4,
+          "out": 3,
+          "total": 7
+        },
+        "personal-archaeology-narrative-team-orchestrator": {
+          "in": 3,
+          "out": 3,
+          "total": 6
+        },
+        "personal-archaeology-source-team-orchestrator": {
+          "in": 5,
+          "out": 3,
+          "total": 8
+        },
+        "personal-historical-archaeologist": {
+          "in": 5,
           "out": 2,
-          "total": 3
+          "total": 7
         },
-        "ab-testing-optimizer-agent": {
-          "in": 1,
-          "out": 1,
-          "total": 2
-        },
-        "cognitive-bias-optimizer-agent": {
-          "in": 1,
-          "out": 1,
-          "total": 2
-        },
-        "value-ladder-architect-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "podcast-niche-analyst-agent": {
-          "in": 0,
-          "out": 1,
-          "total": 1
-        },
-        "podcast-format-designer-agent": {
-          "in": 1,
-          "out": 1,
-          "total": 2
-        },
-        "podcast-hosting-setup-agent": {
-          "in": 1,
-          "out": 1,
-          "total": 2
-        },
-        "podcast-distribution-agent": {
-          "in": 1,
-          "out": 1,
-          "total": 2
-        },
-        "podcast-promotion-agent": {
+        "print-on-demand-manager-agent": {
           "in": 2,
-          "out": 1,
-          "total": 3
-        },
-        "podcast-analytics-agent": {
-          "in": 1,
           "out": 0,
-          "total": 1
-        },
-        "brand-identity-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "brand-prospecting-agent": {
-          "in": 0,
-          "out": 1,
-          "total": 1
-        },
-        "brand-outreach-agent": {
-          "in": 1,
-          "out": 1,
           "total": 2
         },
-        "deal-negotiator-agent": {
+        "task-agent-router": {
           "in": 1,
-          "out": 1,
-          "total": 2
+          "out": 24,
+          "total": 25
         },
-        "contract-manager-agent": {
+        "ad-network-manager-agent": {
           "in": 1,
-          "out": 1,
-          "total": 2
-        },
-        "campaign-execution-agent": {
-          "in": 2,
-          "out": 1,
-          "total": 3
-        },
-        "campaign-reporting-agent": {
-          "in": 1,
-          "out": 0,
-          "total": 1
-        },
-        "legal-compliance-agent": {
-          "in": 1,
-          "out": 2,
-          "total": 3
-        },
-        "financial-manager-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "tax-compliance-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "reputation-management-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "productivity-and-burnout-prevention-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
+          "out": 4,
+          "total": 5
         },
         "analytics-and-reporting-agent": {
+          "in": 6,
+          "out": 4,
+          "total": 10
+        },
+        "content-writer-agent": {
+          "in": 4,
+          "out": 6,
+          "total": 10
+        },
+        "digital-product-creator-agent": {
+          "in": 3,
+          "out": 4,
+          "total": 7
+        },
+        "digital-product-factory-agent": {
+          "in": 1,
+          "out": 4,
+          "total": 5
+        },
+        "fan-funding-agent": {
+          "in": 3,
+          "out": 3,
+          "total": 6
+        },
+        "live-stream-manager-agent": {
+          "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "media-evidence-investigator": {
+          "in": 3,
+          "out": 4,
+          "total": 7
+        },
+        "storyboard-artist-agent": {
+          "in": 4,
+          "out": 2,
+          "total": 6
+        },
+        "technical-setup-agent": {
+          "in": 1,
+          "out": 2,
+          "total": 3
+        },
+        "twip-orchestration-bridge": {
           "in": 2,
           "out": 0,
           "total": 2
         },
-        "affiliate-link-manager-agent": {
-          "in": 1,
-          "out": 0,
-          "total": 1
-        },
-        "asset-sourcer-agent": {
-          "in": 1,
+        "user-feedback-analysis-agent": {
+          "in": 4,
           "out": 1,
-          "total": 2
+          "total": 5
+        },
+        "video-editor-agent": {
+          "in": 6,
+          "out": 1,
+          "total": 7
+        },
+        "yt-niche-strategy-agent": {
+          "in": 8,
+          "out": 2,
+          "total": 10
+        },
+        "content-calendar-agent": {
+          "in": 5,
+          "out": 5,
+          "total": 10
+        },
+        "content-refresh-agent": {
+          "in": 2,
+          "out": 4,
+          "total": 6
+        },
+        "keyword-research-agent": {
+          "in": 6,
+          "out": 5,
+          "total": 11
+        },
+        "link-building-agent": {
+          "in": 7,
+          "out": 3,
+          "total": 10
+        },
+        "seo-optimizer-agent": {
+          "in": 10,
+          "out": 3,
+          "total": 13
+        },
+        "technical-seo-auditor-agent": {
+          "in": 4,
+          "out": 3,
+          "total": 7
+        },
+        "yt-seo-optimizer-agent": {
+          "in": 8,
+          "out": 0,
+          "total": 8
+        },
+        "algorithm-adaptation-agent": {
+          "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "audience-growth-agent": {
+          "in": 2,
+          "out": 4,
+          "total": 6
+        },
+        "audience-persona-architect-agent": {
+          "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "audience-segmentation-agent": {
+          "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "community-engagement-agent": {
+          "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "community-manager-agent": {
+          "in": 4,
+          "out": 3,
+          "total": 7
+        },
+        "content-repurposing-agent": {
+          "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "facebook-strategy-agent": {
+          "in": 1,
+          "out": 4,
+          "total": 5
+        },
+        "instagram-strategy-agent": {
+          "in": 2,
+          "out": 4,
+          "total": 6
+        },
+        "scout-llm-opportunities": {
+          "in": 1,
+          "out": 2,
+          "total": 3
+        },
+        "scriptwriter-agent": {
+          "in": 6,
+          "out": 2,
+          "total": 8
+        },
+        "social-selling-agent": {
+          "in": 5,
+          "out": 1,
+          "total": 6
+        },
+        "tiktok-strategy-agent": {
+          "in": 6,
+          "out": 2,
+          "total": 8
+        },
+        "traffic-generation-agent": {
+          "in": 4,
+          "out": 3,
+          "total": 7
+        },
+        "x-strategy-agent": {
+          "in": 5,
+          "out": 4,
+          "total": 9
+        },
+        "ab-testing-optimizer-agent": {
+          "in": 3,
+          "out": 6,
+          "total": 9
+        },
+        "affiliate-link-manager-agent": {
+          "in": 3,
+          "out": 4,
+          "total": 7
+        },
+        "audio-recording-agent": {
+          "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "code-fossil-investigator": {
+          "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "cognitive-bias-optimizer-agent": {
+          "in": 3,
+          "out": 6,
+          "total": 9
+        },
+        "cro-process-agent": {
+          "in": 2,
+          "out": 7,
+          "total": 9
+        },
+        "customer-journey-map-agent": {
+          "in": 3,
+          "out": 3,
+          "total": 6
+        },
+        "ecom-platform-manager-agent": {
+          "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "equipment-recommendation-agent": {
+          "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "ethical-bias-auditor-agent": {
+          "in": 3,
+          "out": 3,
+          "total": 6
+        },
+        "funnel-economics-analyst-agent": {
+          "in": 4,
+          "out": 3,
+          "total": 7
+        },
+        "information-retrieval-agent": {
+          "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "lead-capture-agent": {
+          "in": 3,
+          "out": 3,
+          "total": 6
+        },
+        "lead-magnet-funnel-agent": {
+          "in": 3,
+          "out": 3,
+          "total": 6
+        },
+        "master-of-taxonomies": {
+          "in": 1,
+          "out": 2,
+          "total": 3
+        },
+        "monetization-strategy-agent": {
+          "in": 2,
+          "out": 3,
+          "total": 5
+        },
+        "niche-analyst-agent": {
+          "in": 5,
+          "out": 3,
+          "total": 8
+        },
+        "oto-sequence-architect-agent": {
+          "in": 4,
+          "out": 2,
+          "total": 6
+        },
+        "personalized-content-recommendation-agent": {
+          "in": 3,
+          "out": 3,
+          "total": 6
+        },
+        "sales-funnel-architect-agent": {
+          "in": 2,
+          "out": 2,
+          "total": 4
+        },
+        "value-ladder-architect-agent": {
+          "in": 6,
+          "out": 1,
+          "total": 7
         },
         "visual-asset-creator-agent": {
+          "in": 7,
+          "out": 1,
+          "total": 8
+        },
+        "episode-planner-agent": {
+          "in": 2,
+          "out": 3,
+          "total": 5
+        },
+        "guest-booking-agent": {
           "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "guest-relationship-manager-agent": {
+          "in": 3,
+          "out": 4,
+          "total": 7
+        },
+        "podcast-ad-network-agent": {
+          "in": 4,
+          "out": 3,
+          "total": 7
+        },
+        "podcast-affiliate-agent": {
+          "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "podcast-analytics-agent": {
+          "in": 6,
+          "out": 3,
+          "total": 9
+        },
+        "podcast-audio-editor-agent": {
+          "in": 4,
+          "out": 3,
+          "total": 7
+        },
+        "podcast-distribution-agent": {
+          "in": 3,
+          "out": 4,
+          "total": 7
+        },
+        "podcast-equipment-agent": {
+          "in": 2,
+          "out": 3,
+          "total": 5
+        },
+        "podcast-format-designer-agent": {
+          "in": 3,
+          "out": 5,
+          "total": 8
+        },
+        "podcast-hosting-setup-agent": {
+          "in": 7,
+          "out": 5,
+          "total": 12
+        },
+        "podcast-monetization-strategy-agent": {
+          "in": 4,
+          "out": 2,
+          "total": 6
+        },
+        "podcast-niche-analyst-agent": {
+          "in": 3,
+          "out": 5,
+          "total": 8
+        },
+        "podcast-promotion-agent": {
+          "in": 5,
+          "out": 6,
+          "total": 11
+        },
+        "podcast-seo-agent": {
+          "in": 5,
+          "out": 2,
+          "total": 7
+        },
+        "podcast-video-editor-agent": {
+          "in": 2,
+          "out": 2,
+          "total": 4
+        },
+        "sponsorship-outreach-agent": {
+          "in": 9,
+          "out": 2,
+          "total": 11
+        },
+        "brand-identity-agent": {
+          "in": 3,
+          "out": 4,
+          "total": 7
+        },
+        "brand-outreach-agent": {
+          "in": 3,
+          "out": 5,
+          "total": 8
+        },
+        "brand-prospecting-agent": {
+          "in": 1,
+          "out": 5,
+          "total": 6
+        },
+        "campaign-execution-agent": {
+          "in": 4,
+          "out": 7,
+          "total": 11
+        },
+        "campaign-reporting-agent": {
+          "in": 4,
+          "out": 4,
+          "total": 8
+        },
+        "competitive-intelligence-agent": {
+          "in": 4,
+          "out": 3,
+          "total": 7
+        },
+        "contract-manager-agent": {
+          "in": 3,
+          "out": 6,
+          "total": 9
+        },
+        "deal-negotiator-agent": {
+          "in": 4,
+          "out": 5,
+          "total": 9
+        },
+        "email-marketing-automation-agent": {
+          "in": 2,
+          "out": 3,
+          "total": 5
+        },
+        "financial-manager-agent": {
+          "in": 4,
+          "out": 4,
+          "total": 8
+        },
+        "influencer-media-kit-agent": {
+          "in": 5,
+          "out": 3,
+          "total": 8
+        },
+        "influencer-niche-agent": {
+          "in": 2,
+          "out": 3,
+          "total": 5
+        },
+        "personal-brand-architect-agent": {
+          "in": 4,
+          "out": 3,
+          "total": 7
+        },
+        "platform-selection-agent": {
+          "in": 5,
+          "out": 2,
+          "total": 7
+        },
+        "reputation-management-agent": {
+          "in": 3,
+          "out": 4,
+          "total": 7
+        },
+        "talent-manager-agent": {
+          "in": 4,
           "out": 0,
-          "total": 1
+          "total": 4
+        },
+        "yt-content-strategy-agent": {
+          "in": 7,
+          "out": 0,
+          "total": 7
+        },
+        "asset-sourcer-agent": {
+          "in": 3,
+          "out": 6,
+          "total": 9
+        },
+        "auth-blocker-sentinel": {
+          "in": 1,
+          "out": 4,
+          "total": 5
+        },
+        "digital-asset-manager-agent": {
+          "in": 2,
+          "out": 4,
+          "total": 6
+        },
+        "legal-compliance-agent": {
+          "in": 5,
+          "out": 7,
+          "total": 12
+        },
+        "local-ai-claude-code-cli": {
+          "in": 2,
+          "out": 2,
+          "total": 4
+        },
+        "local-ai-gemini-cli": {
+          "in": 3,
+          "out": 3,
+          "total": 6
+        },
+        "notes-ledger-investigator": {
+          "in": 3,
+          "out": 3,
+          "total": 6
+        },
+        "productivity-and-burnout-prevention-agent": {
+          "in": 4,
+          "out": 2,
+          "total": 6
+        },
+        "repo-lineage-investigator": {
+          "in": 6,
+          "out": 1,
+          "total": 7
+        },
+        "tax-compliance-agent": {
+          "in": 6,
+          "out": 2,
+          "total": 8
+        },
+        "timeline-synthesis-investigator": {
+          "in": 5,
+          "out": 0,
+          "total": 5
         }
       }
     },
     {
       "graph_file": "agent-relationship-podcast-subgraph.json",
       "domain": "podcast",
-      "node_count": 9,
-      "edge_count": 7,
+      "node_count": 20,
+      "edge_count": 41,
       "top_degree": [
         {
-          "id": "podcast-promotion-agent",
-          "score": 3.0
-        },
-        {
-          "id": "podcast-distribution-agent",
-          "score": 2.0
-        },
-        {
-          "id": "podcast-format-designer-agent",
-          "score": 2.0
-        },
-        {
           "id": "podcast-hosting-setup-agent",
-          "score": 2.0
+          "score": 9.0
         },
         {
-          "id": "task-agent-router",
-          "score": 2.0
+          "id": "podcast-promotion-agent",
+          "score": 8.0
+        },
+        {
+          "id": "podcast-analytics-agent",
+          "score": 7.0
+        },
+        {
+          "id": "podcast-niche-analyst-agent",
+          "score": 7.0
+        },
+        {
+          "id": "sponsorship-outreach-agent",
+          "score": 7.0
         }
       ],
       "top_betweenness": [
         {
-          "id": "podcast-promotion-agent",
-          "score": 1.0
-        },
-        {
-          "id": "podcast-distribution-agent",
-          "score": 0.857143
+          "id": "sponsorship-outreach-agent",
+          "score": 0.482651
         },
         {
           "id": "podcast-hosting-setup-agent",
-          "score": 0.714286
-        },
-        {
-          "id": "podcast-format-designer-agent",
-          "score": 0.428571
+          "score": 0.447693
         },
         {
           "id": "task-agent-router",
-          "score": 0.428571
+          "score": 0.415205
+        },
+        {
+          "id": "podcast-niche-analyst-agent",
+          "score": 0.383496
+        },
+        {
+          "id": "podcast-format-designer-agent",
+          "score": 0.317934
         }
       ],
       "top_closeness": [
         {
-          "id": "podcast-distribution-agent",
-          "score": 0.4375
+          "id": "podcast-niche-analyst-agent",
+          "score": 0.513514
         },
         {
-          "id": "podcast-promotion-agent",
-          "score": 0.4375
-        },
-        {
-          "id": "podcast-hosting-setup-agent",
-          "score": 0.382812
-        },
-        {
-          "id": "task-agent-router",
-          "score": 0.340278
+          "id": "sponsorship-outreach-agent",
+          "score": 0.5
         },
         {
           "id": "podcast-analytics-agent",
-          "score": 0.30625
+          "score": 0.487179
+        },
+        {
+          "id": "podcast-distribution-agent",
+          "score": 0.475
+        },
+        {
+          "id": "podcast-hosting-setup-agent",
+          "score": 0.475
         }
       ],
       "top_eigenvector": [
         {
-          "id": "podcast-promotion-agent",
-          "score": 0.539185
+          "id": "podcast-niche-analyst-agent",
+          "score": 0.433974
         },
         {
-          "id": "podcast-distribution-agent",
-          "score": 0.487128
-        },
-        {
-          "id": "task-agent-router",
-          "score": 0.4029
-        },
-        {
-          "id": "podcast-hosting-setup-agent",
-          "score": 0.333235
+          "id": "sponsorship-outreach-agent",
+          "score": 0.372495
         },
         {
           "id": "podcast-analytics-agent",
-          "score": 0.301062
+          "score": 0.334704
+        },
+        {
+          "id": "podcast-hosting-setup-agent",
+          "score": 0.330525
+        },
+        {
+          "id": "podcast-distribution-agent",
+          "score": 0.263057
         }
       ],
       "communities": [
         {
           "community_id": 1,
-          "size": 8,
+          "size": 20,
           "members": [
+            "analytics-and-reporting-agent",
+            "episode-planner-agent",
+            "guest-booking-agent",
+            "guest-relationship-manager-agent",
             "orchestrator-agent",
+            "podcast-ad-network-agent",
+            "podcast-affiliate-agent",
             "podcast-analytics-agent",
+            "podcast-audio-editor-agent",
             "podcast-distribution-agent",
+            "podcast-equipment-agent",
             "podcast-format-designer-agent",
             "podcast-hosting-setup-agent",
+            "podcast-monetization-strategy-agent",
             "podcast-niche-analyst-agent",
             "podcast-promotion-agent",
+            "podcast-seo-agent",
+            "podcast-video-editor-agent",
+            "sponsorship-outreach-agent",
             "task-agent-router"
           ]
-        },
-        {
-          "community_id": 2,
-          "size": 1,
-          "members": ["analytics-and-reporting-agent"]
         }
       ],
       "degree_detail": {
@@ -611,158 +966,667 @@
         },
         "task-agent-router": {
           "in": 1,
-          "out": 1,
-          "total": 2
+          "out": 4,
+          "total": 5
         },
-        "podcast-niche-analyst-agent": {
+        "analytics-and-reporting-agent": {
+          "in": 1,
+          "out": 0,
+          "total": 1
+        },
+        "episode-planner-agent": {
           "in": 0,
           "out": 1,
           "total": 1
         },
-        "podcast-format-designer-agent": {
+        "guest-booking-agent": {
           "in": 1,
-          "out": 1,
+          "out": 2,
+          "total": 3
+        },
+        "guest-relationship-manager-agent": {
+          "in": 2,
+          "out": 2,
+          "total": 4
+        },
+        "podcast-ad-network-agent": {
+          "in": 0,
+          "out": 2,
           "total": 2
         },
-        "podcast-hosting-setup-agent": {
+        "podcast-affiliate-agent": {
+          "in": 0,
+          "out": 3,
+          "total": 3
+        },
+        "podcast-analytics-agent": {
+          "in": 4,
+          "out": 3,
+          "total": 7
+        },
+        "podcast-audio-editor-agent": {
           "in": 1,
           "out": 1,
           "total": 2
         },
         "podcast-distribution-agent": {
-          "in": 1,
-          "out": 1,
-          "total": 2
+          "in": 3,
+          "out": 3,
+          "total": 6
         },
-        "podcast-promotion-agent": {
+        "podcast-equipment-agent": {
+          "in": 1,
+          "out": 2,
+          "total": 3
+        },
+        "podcast-format-designer-agent": {
+          "in": 3,
+          "out": 3,
+          "total": 6
+        },
+        "podcast-hosting-setup-agent": {
+          "in": 6,
+          "out": 3,
+          "total": 9
+        },
+        "podcast-monetization-strategy-agent": {
           "in": 2,
           "out": 1,
           "total": 3
         },
-        "podcast-analytics-agent": {
+        "podcast-niche-analyst-agent": {
+          "in": 3,
+          "out": 4,
+          "total": 7
+        },
+        "podcast-promotion-agent": {
+          "in": 4,
+          "out": 4,
+          "total": 8
+        },
+        "podcast-seo-agent": {
           "in": 1,
           "out": 0,
           "total": 1
         },
-        "analytics-and-reporting-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
+        "podcast-video-editor-agent": {
+          "in": 2,
+          "out": 1,
+          "total": 3
+        },
+        "sponsorship-outreach-agent": {
+          "in": 6,
+          "out": 1,
+          "total": 7
         }
       }
     },
     {
       "graph_file": "agent-relationship-seo-subgraph.json",
       "domain": "seo",
-      "node_count": 9,
-      "edge_count": 13,
+      "node_count": 11,
+      "edge_count": 30,
       "top_degree": [
         {
-          "id": "task-agent-router",
-          "score": 7.0
+          "id": "seo-optimizer-agent",
+          "score": 9.0
         },
         {
           "id": "content-calendar-agent",
-          "score": 4.0
+          "score": 8.0
+        },
+        {
+          "id": "task-agent-router",
+          "score": 8.0
         },
         {
           "id": "content-writer-agent",
-          "score": 3.0
+          "score": 7.0
         },
         {
           "id": "keyword-research-agent",
-          "score": 3.0
-        },
-        {
-          "id": "seo-optimizer-agent",
-          "score": 3.0
+          "score": 7.0
         }
       ],
       "top_betweenness": [
         {
+          "id": "keyword-research-agent",
+          "score": 0.562963
+        },
+        {
           "id": "task-agent-router",
-          "score": 0.821429
+          "score": 0.511111
+        },
+        {
+          "id": "content-refresh-agent",
+          "score": 0.4
         },
         {
           "id": "content-calendar-agent",
-          "score": 0.107143
+          "score": 0.177778
         },
         {
-          "id": "content-writer-agent",
-          "score": 0.035714
-        },
-        {
-          "id": "keyword-research-agent",
-          "score": 0.035714
-        },
-        {
-          "id": "seo-optimizer-agent",
-          "score": 0.035714
+          "id": "link-building-agent",
+          "score": 0.155556
         }
       ],
       "top_closeness": [
         {
+          "id": "keyword-research-agent",
+          "score": 0.714286
+        },
+        {
           "id": "task-agent-router",
-          "score": 0.875
+          "score": 0.714286
         },
         {
           "id": "content-calendar-agent",
-          "score": 0.6125
+          "score": 0.666667
         },
         {
           "id": "content-writer-agent",
-          "score": 0.556818
-        },
-        {
-          "id": "keyword-research-agent",
-          "score": 0.556818
+          "score": 0.625
         },
         {
           "id": "seo-optimizer-agent",
-          "score": 0.556818
+          "score": 0.625
         }
       ],
       "top_eigenvector": [
         {
           "id": "task-agent-router",
-          "score": 0.562419
+          "score": 0.431748
         },
         {
           "id": "content-calendar-agent",
-          "score": 0.395486
+          "score": 0.410937
         },
         {
           "id": "keyword-research-agent",
-          "score": 0.339338
+          "score": 0.391342
         },
         {
-          "id": "technical-seo-auditor-agent",
-          "score": 0.339338
+          "id": "seo-optimizer-agent",
+          "score": 0.378725
         },
         {
           "id": "content-writer-agent",
-          "score": 0.324481
+          "score": 0.369574
         }
       ],
       "communities": [
         {
           "community_id": 1,
-          "size": 8,
+          "size": 11,
           "members": [
             "content-calendar-agent",
             "content-calendar-orchestrator-agent",
+            "content-refresh-agent",
             "content-writer-agent",
             "keyword-research-agent",
+            "link-building-agent",
             "orchestrator-agent",
             "seo-optimizer-agent",
             "task-agent-router",
-            "technical-seo-auditor-agent"
+            "technical-seo-auditor-agent",
+            "yt-seo-optimizer-agent"
+          ]
+        }
+      ],
+      "degree_detail": {
+        "content-calendar-orchestrator-agent": {
+          "in": 3,
+          "out": 1,
+          "total": 4
+        },
+        "orchestrator-agent": {
+          "in": 0,
+          "out": 3,
+          "total": 3
+        },
+        "task-agent-router": {
+          "in": 1,
+          "out": 7,
+          "total": 8
+        },
+        "content-writer-agent": {
+          "in": 3,
+          "out": 4,
+          "total": 7
+        },
+        "content-calendar-agent": {
+          "in": 4,
+          "out": 4,
+          "total": 8
+        },
+        "content-refresh-agent": {
+          "in": 1,
+          "out": 2,
+          "total": 3
+        },
+        "keyword-research-agent": {
+          "in": 4,
+          "out": 3,
+          "total": 7
+        },
+        "link-building-agent": {
+          "in": 3,
+          "out": 1,
+          "total": 4
+        },
+        "seo-optimizer-agent": {
+          "in": 6,
+          "out": 3,
+          "total": 9
+        },
+        "technical-seo-auditor-agent": {
+          "in": 4,
+          "out": 2,
+          "total": 6
+        },
+        "yt-seo-optimizer-agent": {
+          "in": 1,
+          "out": 0,
+          "total": 1
+        }
+      }
+    },
+    {
+      "graph_file": "agent-relationship-brand-subgraph.json",
+      "domain": "brand",
+      "node_count": 20,
+      "edge_count": 44,
+      "top_degree": [
+        {
+          "id": "campaign-execution-agent",
+          "score": 10.0
+        },
+        {
+          "id": "deal-negotiator-agent",
+          "score": 8.0
+        },
+        {
+          "id": "brand-outreach-agent",
+          "score": 7.0
+        },
+        {
+          "id": "contract-manager-agent",
+          "score": 7.0
+        },
+        {
+          "id": "brand-prospecting-agent",
+          "score": 6.0
+        }
+      ],
+      "top_betweenness": [
+        {
+          "id": "campaign-execution-agent",
+          "score": 0.656809
+        },
+        {
+          "id": "deal-negotiator-agent",
+          "score": 0.443052
+        },
+        {
+          "id": "financial-manager-agent",
+          "score": 0.38499
+        },
+        {
+          "id": "campaign-reporting-agent",
+          "score": 0.285575
+        },
+        {
+          "id": "task-agent-router",
+          "score": 0.19883
+        }
+      ],
+      "top_closeness": [
+        {
+          "id": "campaign-execution-agent",
+          "score": 0.568421
+        },
+        {
+          "id": "deal-negotiator-agent",
+          "score": 0.532895
+        },
+        {
+          "id": "financial-manager-agent",
+          "score": 0.487218
+        },
+        {
+          "id": "contract-manager-agent",
+          "score": 0.460882
+        },
+        {
+          "id": "campaign-reporting-agent",
+          "score": 0.448753
+        }
+      ],
+      "top_eigenvector": [
+        {
+          "id": "deal-negotiator-agent",
+          "score": 0.399549
+        },
+        {
+          "id": "brand-outreach-agent",
+          "score": 0.359152
+        },
+        {
+          "id": "brand-prospecting-agent",
+          "score": 0.35111
+        },
+        {
+          "id": "personal-brand-architect-agent",
+          "score": 0.35111
+        },
+        {
+          "id": "campaign-execution-agent",
+          "score": 0.306727
+        }
+      ],
+      "communities": [
+        {
+          "community_id": 1,
+          "size": 13,
+          "members": [
+            "brand-outreach-agent",
+            "brand-prospecting-agent",
+            "campaign-execution-agent",
+            "contract-manager-agent",
+            "deal-negotiator-agent",
+            "influencer-niche-agent",
+            "legal-compliance-agent",
+            "orchestrator-agent",
+            "personal-brand-architect-agent",
+            "platform-selection-agent",
+            "reputation-management-agent",
+            "task-agent-router",
+            "yt-content-strategy-agent"
           ]
         },
         {
           "community_id": 2,
+          "size": 6,
+          "members": [
+            "brand-identity-agent",
+            "campaign-reporting-agent",
+            "competitive-intelligence-agent",
+            "email-marketing-automation-agent",
+            "financial-manager-agent",
+            "influencer-media-kit-agent"
+          ]
+        },
+        {
+          "community_id": 3,
           "size": 1,
-          "members": ["link-building-agent"]
+          "members": [
+            "talent-manager-agent"
+          ]
+        }
+      ],
+      "degree_detail": {
+        "orchestrator-agent": {
+          "in": 0,
+          "out": 1,
+          "total": 1
+        },
+        "task-agent-router": {
+          "in": 1,
+          "out": 4,
+          "total": 5
+        },
+        "brand-identity-agent": {
+          "in": 1,
+          "out": 2,
+          "total": 3
+        },
+        "brand-outreach-agent": {
+          "in": 2,
+          "out": 5,
+          "total": 7
+        },
+        "brand-prospecting-agent": {
+          "in": 1,
+          "out": 5,
+          "total": 6
+        },
+        "campaign-execution-agent": {
+          "in": 4,
+          "out": 6,
+          "total": 10
+        },
+        "campaign-reporting-agent": {
+          "in": 3,
+          "out": 3,
+          "total": 6
+        },
+        "competitive-intelligence-agent": {
+          "in": 2,
+          "out": 0,
+          "total": 2
+        },
+        "contract-manager-agent": {
+          "in": 3,
+          "out": 4,
+          "total": 7
+        },
+        "deal-negotiator-agent": {
+          "in": 4,
+          "out": 4,
+          "total": 8
+        },
+        "email-marketing-automation-agent": {
+          "in": 0,
+          "out": 2,
+          "total": 2
+        },
+        "financial-manager-agent": {
+          "in": 3,
+          "out": 2,
+          "total": 5
+        },
+        "influencer-media-kit-agent": {
+          "in": 3,
+          "out": 0,
+          "total": 3
+        },
+        "influencer-niche-agent": {
+          "in": 2,
+          "out": 2,
+          "total": 4
+        },
+        "personal-brand-architect-agent": {
+          "in": 4,
+          "out": 1,
+          "total": 5
+        },
+        "platform-selection-agent": {
+          "in": 3,
+          "out": 1,
+          "total": 4
+        },
+        "reputation-management-agent": {
+          "in": 1,
+          "out": 2,
+          "total": 3
+        },
+        "talent-manager-agent": {
+          "in": 0,
+          "out": 0,
+          "total": 0
+        },
+        "yt-content-strategy-agent": {
+          "in": 3,
+          "out": 0,
+          "total": 3
+        },
+        "legal-compliance-agent": {
+          "in": 4,
+          "out": 0,
+          "total": 4
+        }
+      }
+    },
+    {
+      "graph_file": "agent-relationship-funnel-subgraph.json",
+      "domain": "funnel",
+      "node_count": 25,
+      "edge_count": 36,
+      "top_degree": [
+        {
+          "id": "cro-process-agent",
+          "score": 9.0
+        },
+        {
+          "id": "task-agent-router",
+          "score": 7.0
+        },
+        {
+          "id": "ab-testing-optimizer-agent",
+          "score": 6.0
+        },
+        {
+          "id": "analytics-and-reporting-agent",
+          "score": 6.0
+        },
+        {
+          "id": "cognitive-bias-optimizer-agent",
+          "score": 6.0
+        }
+      ],
+      "top_betweenness": [
+        {
+          "id": "task-agent-router",
+          "score": 0.488527
+        },
+        {
+          "id": "cro-process-agent",
+          "score": 0.422705
+        },
+        {
+          "id": "analytics-and-reporting-agent",
+          "score": 0.24215
+        },
+        {
+          "id": "lead-magnet-funnel-agent",
+          "score": 0.205314
+        },
+        {
+          "id": "ethical-bias-auditor-agent",
+          "score": 0.198068
+        }
+      ],
+      "top_closeness": [
+        {
+          "id": "cro-process-agent",
+          "score": 0.406532
+        },
+        {
+          "id": "task-agent-router",
+          "score": 0.36687
+        },
+        {
+          "id": "analytics-and-reporting-agent",
+          "score": 0.358135
+        },
+        {
+          "id": "funnel-economics-analyst-agent",
+          "score": 0.349806
+        },
+        {
+          "id": "cognitive-bias-optimizer-agent",
+          "score": 0.341856
+        }
+      ],
+      "top_eigenvector": [
+        {
+          "id": "cro-process-agent",
+          "score": 0.461401
+        },
+        {
+          "id": "ab-testing-optimizer-agent",
+          "score": 0.358346
+        },
+        {
+          "id": "cognitive-bias-optimizer-agent",
+          "score": 0.350929
+        },
+        {
+          "id": "analytics-and-reporting-agent",
+          "score": 0.309651
+        },
+        {
+          "id": "task-agent-router",
+          "score": 0.288415
+        }
+      ],
+      "communities": [
+        {
+          "community_id": 1,
+          "size": 15,
+          "members": [
+            "ab-testing-optimizer-agent",
+            "affiliate-link-manager-agent",
+            "analytics-and-reporting-agent",
+            "cognitive-bias-optimizer-agent",
+            "cro-process-agent",
+            "customer-journey-map-agent",
+            "ethical-bias-auditor-agent",
+            "funnel-economics-analyst-agent",
+            "lead-capture-agent",
+            "lead-magnet-funnel-agent",
+            "oto-sequence-architect-agent",
+            "personalized-content-recommendation-agent",
+            "sales-funnel-architect-agent",
+            "value-ladder-architect-agent",
+            "visual-asset-creator-agent"
+          ]
+        },
+        {
+          "community_id": 2,
+          "size": 5,
+          "members": [
+            "audio-recording-agent",
+            "ecom-platform-manager-agent",
+            "master-of-taxonomies",
+            "orchestrator-agent",
+            "task-agent-router"
+          ]
+        },
+        {
+          "community_id": 3,
+          "size": 1,
+          "members": [
+            "code-fossil-investigator"
+          ]
+        },
+        {
+          "community_id": 4,
+          "size": 1,
+          "members": [
+            "equipment-recommendation-agent"
+          ]
+        },
+        {
+          "community_id": 5,
+          "size": 1,
+          "members": [
+            "information-retrieval-agent"
+          ]
+        },
+        {
+          "community_id": 6,
+          "size": 1,
+          "members": [
+            "monetization-strategy-agent"
+          ]
+        },
+        {
+          "community_id": 7,
+          "size": 1,
+          "members": [
+            "niche-analyst-agent"
+          ]
         }
       ],
       "degree_detail": {
@@ -776,679 +1640,477 @@
           "out": 6,
           "total": 7
         },
-        "content-writer-agent": {
-          "in": 2,
+        "analytics-and-reporting-agent": {
+          "in": 5,
           "out": 1,
+          "total": 6
+        },
+        "ab-testing-optimizer-agent": {
+          "in": 3,
+          "out": 3,
+          "total": 6
+        },
+        "affiliate-link-manager-agent": {
+          "in": 1,
+          "out": 1,
+          "total": 2
+        },
+        "audio-recording-agent": {
+          "in": 1,
+          "out": 0,
+          "total": 1
+        },
+        "code-fossil-investigator": {
+          "in": 0,
+          "out": 0,
+          "total": 0
+        },
+        "cognitive-bias-optimizer-agent": {
+          "in": 3,
+          "out": 3,
+          "total": 6
+        },
+        "cro-process-agent": {
+          "in": 2,
+          "out": 7,
+          "total": 9
+        },
+        "customer-journey-map-agent": {
+          "in": 1,
+          "out": 2,
           "total": 3
         },
-        "content-calendar-agent": {
+        "ecom-platform-manager-agent": {
+          "in": 1,
+          "out": 0,
+          "total": 1
+        },
+        "equipment-recommendation-agent": {
+          "in": 0,
+          "out": 0,
+          "total": 0
+        },
+        "ethical-bias-auditor-agent": {
+          "in": 1,
+          "out": 2,
+          "total": 3
+        },
+        "funnel-economics-analyst-agent": {
+          "in": 2,
+          "out": 2,
+          "total": 4
+        },
+        "information-retrieval-agent": {
+          "in": 0,
+          "out": 0,
+          "total": 0
+        },
+        "lead-capture-agent": {
+          "in": 1,
+          "out": 2,
+          "total": 3
+        },
+        "lead-magnet-funnel-agent": {
           "in": 3,
           "out": 1,
           "total": 4
         },
-        "content-calendar-orchestrator-agent": {
+        "master-of-taxonomies": {
           "in": 1,
-          "out": 1,
-          "total": 2
-        },
-        "keyword-research-agent": {
-          "in": 2,
-          "out": 1,
-          "total": 3
-        },
-        "seo-optimizer-agent": {
-          "in": 2,
-          "out": 1,
-          "total": 3
-        },
-        "technical-seo-auditor-agent": {
-          "in": 2,
-          "out": 1,
-          "total": 3
-        },
-        "link-building-agent": {
-          "in": 0,
           "out": 0,
-          "total": 0
-        }
-      }
-    },
-    {
-      "graph_file": "agent-relationship-brand-subgraph.json",
-      "domain": "brand",
-      "node_count": 10,
-      "edge_count": 8,
-      "top_degree": [
-        {
-          "id": "campaign-execution-agent",
-          "score": 3.0
-        },
-        {
-          "id": "task-agent-router",
-          "score": 3.0
-        },
-        {
-          "id": "brand-outreach-agent",
-          "score": 2.0
-        },
-        {
-          "id": "contract-manager-agent",
-          "score": 2.0
-        },
-        {
-          "id": "deal-negotiator-agent",
-          "score": 2.0
-        }
-      ],
-      "top_betweenness": [
-        {
-          "id": "campaign-execution-agent",
-          "score": 1.055556
-        },
-        {
-          "id": "contract-manager-agent",
-          "score": 0.833333
-        },
-        {
-          "id": "task-agent-router",
-          "score": 0.722222
-        },
-        {
-          "id": "deal-negotiator-agent",
-          "score": 0.666667
-        },
-        {
-          "id": "brand-outreach-agent",
-          "score": 0.388889
-        }
-      ],
-      "top_closeness": [
-        {
-          "id": "campaign-execution-agent",
-          "score": 0.444444
-        },
-        {
-          "id": "contract-manager-agent",
-          "score": 0.418301
-        },
-        {
-          "id": "task-agent-router",
-          "score": 0.374269
-        },
-        {
-          "id": "deal-negotiator-agent",
-          "score": 0.355556
-        },
-        {
-          "id": "campaign-reporting-agent",
-          "score": 0.309179
-        }
-      ],
-      "top_eigenvector": [
-        {
-          "id": "campaign-execution-agent",
-          "score": 0.565955
-        },
-        {
-          "id": "task-agent-router",
-          "score": 0.483119
-        },
-        {
-          "id": "contract-manager-agent",
-          "score": 0.388158
-        },
-        {
-          "id": "deal-negotiator-agent",
-          "score": 0.276916
-        },
-        {
-          "id": "campaign-reporting-agent",
-          "score": 0.260633
-        }
-      ],
-      "communities": [
-        {
-          "community_id": 1,
-          "size": 6,
-          "members": [
-            "brand-outreach-agent",
-            "brand-prospecting-agent",
-            "campaign-execution-agent",
-            "campaign-reporting-agent",
-            "contract-manager-agent",
-            "deal-negotiator-agent"
-          ]
-        },
-        {
-          "community_id": 2,
-          "size": 3,
-          "members": [
-            "legal-compliance-agent",
-            "orchestrator-agent",
-            "task-agent-router"
-          ]
-        },
-        {
-          "community_id": 3,
-          "size": 1,
-          "members": ["brand-identity-agent"]
-        }
-      ],
-      "degree_detail": {
-        "orchestrator-agent": {
-          "in": 0,
-          "out": 1,
           "total": 1
         },
-        "task-agent-router": {
-          "in": 1,
-          "out": 2,
-          "total": 3
-        },
-        "brand-identity-agent": {
+        "monetization-strategy-agent": {
           "in": 0,
           "out": 0,
           "total": 0
         },
-        "brand-prospecting-agent": {
+        "niche-analyst-agent": {
           "in": 0,
-          "out": 1,
-          "total": 1
+          "out": 0,
+          "total": 0
         },
-        "brand-outreach-agent": {
-          "in": 1,
-          "out": 1,
-          "total": 2
-        },
-        "deal-negotiator-agent": {
-          "in": 1,
-          "out": 1,
-          "total": 2
-        },
-        "contract-manager-agent": {
-          "in": 1,
-          "out": 1,
-          "total": 2
-        },
-        "campaign-execution-agent": {
+        "oto-sequence-architect-agent": {
           "in": 2,
           "out": 1,
           "total": 3
         },
-        "campaign-reporting-agent": {
+        "personalized-content-recommendation-agent": {
           "in": 1,
           "out": 0,
           "total": 1
-        },
-        "legal-compliance-agent": {
-          "in": 1,
-          "out": 0,
-          "total": 1
-        }
-      }
-    },
-    {
-      "graph_file": "agent-relationship-funnel-subgraph.json",
-      "domain": "funnel",
-      "node_count": 8,
-      "edge_count": 6,
-      "top_degree": [
-        {
-          "id": "cro-process-agent",
-          "score": 3.0
-        },
-        {
-          "id": "ab-testing-optimizer-agent",
-          "score": 2.0
-        },
-        {
-          "id": "analytics-and-reporting-agent",
-          "score": 2.0
-        },
-        {
-          "id": "cognitive-bias-optimizer-agent",
-          "score": 2.0
-        },
-        {
-          "id": "task-agent-router",
-          "score": 2.0
-        }
-      ],
-      "top_betweenness": [
-        {
-          "id": "cro-process-agent",
-          "score": 0.619048
-        },
-        {
-          "id": "task-agent-router",
-          "score": 0.380952
-        },
-        {
-          "id": "ab-testing-optimizer-agent",
-          "score": 0.142857
-        },
-        {
-          "id": "cognitive-bias-optimizer-agent",
-          "score": 0.142857
-        },
-        {
-          "id": "analytics-and-reporting-agent",
-          "score": 0.047619
-        }
-      ],
-      "top_closeness": [
-        {
-          "id": "cro-process-agent",
-          "score": 0.510204
-        },
-        {
-          "id": "ab-testing-optimizer-agent",
-          "score": 0.396825
-        },
-        {
-          "id": "cognitive-bias-optimizer-agent",
-          "score": 0.396825
-        },
-        {
-          "id": "task-agent-router",
-          "score": 0.396825
-        },
-        {
-          "id": "analytics-and-reporting-agent",
-          "score": 0.324675
-        }
-      ],
-      "top_eigenvector": [
-        {
-          "id": "cro-process-agent",
-          "score": 0.533789
-        },
-        {
-          "id": "ab-testing-optimizer-agent",
-          "score": 0.462275
-        },
-        {
-          "id": "cognitive-bias-optimizer-agent",
-          "score": 0.462275
-        },
-        {
-          "id": "analytics-and-reporting-agent",
-          "score": 0.390761
-        },
-        {
-          "id": "task-agent-router",
-          "score": 0.338409
-        }
-      ],
-      "communities": [
-        {
-          "community_id": 1,
-          "size": 6,
-          "members": [
-            "ab-testing-optimizer-agent",
-            "analytics-and-reporting-agent",
-            "cognitive-bias-optimizer-agent",
-            "cro-process-agent",
-            "orchestrator-agent",
-            "task-agent-router"
-          ]
-        },
-        {
-          "community_id": 2,
-          "size": 1,
-          "members": ["sales-funnel-architect-agent"]
-        },
-        {
-          "community_id": 3,
-          "size": 1,
-          "members": ["value-ladder-architect-agent"]
-        }
-      ],
-      "degree_detail": {
-        "orchestrator-agent": {
-          "in": 0,
-          "out": 1,
-          "total": 1
-        },
-        "task-agent-router": {
-          "in": 1,
-          "out": 1,
-          "total": 2
         },
         "sales-funnel-architect-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "cro-process-agent": {
           "in": 1,
           "out": 2,
           "total": 3
         },
-        "ab-testing-optimizer-agent": {
-          "in": 1,
-          "out": 1,
-          "total": 2
-        },
-        "cognitive-bias-optimizer-agent": {
-          "in": 1,
-          "out": 1,
-          "total": 2
-        },
         "value-ladder-architect-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
+          "in": 4,
+          "out": 1,
+          "total": 5
         },
-        "analytics-and-reporting-agent": {
+        "visual-asset-creator-agent": {
           "in": 2,
-          "out": 0,
-          "total": 2
+          "out": 1,
+          "total": 3
         }
       }
     },
     {
       "graph_file": "agent-relationship-social-subgraph.json",
       "domain": "social",
-      "node_count": 8,
-      "edge_count": 2,
+      "node_count": 18,
+      "edge_count": 26,
       "top_degree": [
         {
+          "id": "community-manager-agent",
+          "score": 5.0
+        },
+        {
+          "id": "instagram-strategy-agent",
+          "score": 5.0
+        },
+        {
           "id": "task-agent-router",
-          "score": 2.0
+          "score": 5.0
         },
         {
-          "id": "content-calendar-orchestrator-agent",
-          "score": 1.0
-        },
-        {
-          "id": "orchestrator-agent",
-          "score": 1.0
-        },
-        {
-          "id": "audience-growth-agent",
-          "score": 0.0
+          "id": "tiktok-strategy-agent",
+          "score": 5.0
         },
         {
           "id": "facebook-strategy-agent",
-          "score": 0.0
+          "score": 4.0
         }
       ],
       "top_betweenness": [
         {
           "id": "task-agent-router",
-          "score": 0.095238
+          "score": 0.580882
         },
         {
-          "id": "audience-growth-agent",
-          "score": 0.0
+          "id": "community-manager-agent",
+          "score": 0.419293
         },
         {
-          "id": "content-calendar-orchestrator-agent",
-          "score": 0.0
+          "id": "community-engagement-agent",
+          "score": 0.419118
         },
         {
-          "id": "facebook-strategy-agent",
-          "score": 0.0
+          "id": "tiktok-strategy-agent",
+          "score": 0.322829
         },
         {
-          "id": "instagram-strategy-agent",
-          "score": 0.0
+          "id": "social-selling-agent",
+          "score": 0.212885
         }
       ],
       "top_closeness": [
         {
+          "id": "community-engagement-agent",
+          "score": 0.456389
+        },
+        {
+          "id": "community-manager-agent",
+          "score": 0.456389
+        },
+        {
+          "id": "instagram-strategy-agent",
+          "score": 0.456389
+        },
+        {
+          "id": "tiktok-strategy-agent",
+          "score": 0.456389
+        },
+        {
           "id": "task-agent-router",
-          "score": 0.285714
-        },
-        {
-          "id": "content-calendar-orchestrator-agent",
-          "score": 0.190476
-        },
-        {
-          "id": "orchestrator-agent",
-          "score": 0.190476
-        },
-        {
-          "id": "audience-growth-agent",
-          "score": 0.0
-        },
-        {
-          "id": "facebook-strategy-agent",
-          "score": 0.0
+          "score": 0.40107
         }
       ],
       "top_eigenvector": [
         {
-          "id": "content-calendar-orchestrator-agent",
-          "score": 0.57735
+          "id": "instagram-strategy-agent",
+          "score": 0.439512
         },
         {
-          "id": "orchestrator-agent",
-          "score": 0.57735
+          "id": "tiktok-strategy-agent",
+          "score": 0.372535
         },
         {
-          "id": "task-agent-router",
-          "score": 0.57735
+          "id": "community-manager-agent",
+          "score": 0.365973
         },
         {
-          "id": "audience-growth-agent",
-          "score": 0.0
+          "id": "x-strategy-agent",
+          "score": 0.346541
         },
         {
           "id": "facebook-strategy-agent",
-          "score": 0.0
+          "score": 0.338674
         }
       ],
       "communities": [
         {
           "community_id": 1,
-          "size": 3,
+          "size": 12,
           "members": [
+            "audience-growth-agent",
+            "community-engagement-agent",
+            "community-manager-agent",
+            "content-repurposing-agent",
+            "facebook-strategy-agent",
+            "instagram-strategy-agent",
+            "scout-llm-opportunities",
+            "scriptwriter-agent",
+            "social-selling-agent",
+            "tiktok-strategy-agent",
+            "traffic-generation-agent",
+            "x-strategy-agent"
+          ]
+        },
+        {
+          "community_id": 2,
+          "size": 4,
+          "members": [
+            "audience-segmentation-agent",
             "content-calendar-orchestrator-agent",
             "orchestrator-agent",
             "task-agent-router"
           ]
         },
         {
-          "community_id": 2,
-          "size": 1,
-          "members": ["audience-growth-agent"]
-        },
-        {
           "community_id": 3,
           "size": 1,
-          "members": ["facebook-strategy-agent"]
+          "members": [
+            "algorithm-adaptation-agent"
+          ]
         },
         {
           "community_id": 4,
           "size": 1,
-          "members": ["instagram-strategy-agent"]
-        },
-        {
-          "community_id": 5,
-          "size": 1,
-          "members": ["tiktok-strategy-agent"]
-        },
-        {
-          "community_id": 6,
-          "size": 1,
-          "members": ["x-strategy-agent"]
+          "members": [
+            "audience-persona-architect-agent"
+          ]
         }
       ],
       "degree_detail": {
+        "content-calendar-orchestrator-agent": {
+          "in": 3,
+          "out": 0,
+          "total": 3
+        },
         "orchestrator-agent": {
           "in": 0,
-          "out": 1,
-          "total": 1
+          "out": 3,
+          "total": 3
         },
         "task-agent-router": {
           "in": 1,
-          "out": 1,
-          "total": 2
+          "out": 4,
+          "total": 5
         },
-        "content-calendar-orchestrator-agent": {
-          "in": 1,
-          "out": 0,
-          "total": 1
-        },
-        "instagram-strategy-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "tiktok-strategy-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "x-strategy-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "facebook-strategy-agent": {
+        "algorithm-adaptation-agent": {
           "in": 0,
           "out": 0,
           "total": 0
         },
         "audience-growth-agent": {
+          "in": 1,
+          "out": 2,
+          "total": 3
+        },
+        "audience-persona-architect-agent": {
           "in": 0,
           "out": 0,
           "total": 0
+        },
+        "audience-segmentation-agent": {
+          "in": 1,
+          "out": 0,
+          "total": 1
+        },
+        "community-engagement-agent": {
+          "in": 1,
+          "out": 2,
+          "total": 3
+        },
+        "community-manager-agent": {
+          "in": 3,
+          "out": 2,
+          "total": 5
+        },
+        "content-repurposing-agent": {
+          "in": 1,
+          "out": 1,
+          "total": 2
+        },
+        "facebook-strategy-agent": {
+          "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "instagram-strategy-agent": {
+          "in": 2,
+          "out": 3,
+          "total": 5
+        },
+        "scout-llm-opportunities": {
+          "in": 0,
+          "out": 1,
+          "total": 1
+        },
+        "scriptwriter-agent": {
+          "in": 1,
+          "out": 1,
+          "total": 2
+        },
+        "social-selling-agent": {
+          "in": 3,
+          "out": 0,
+          "total": 3
+        },
+        "tiktok-strategy-agent": {
+          "in": 4,
+          "out": 1,
+          "total": 5
+        },
+        "traffic-generation-agent": {
+          "in": 1,
+          "out": 2,
+          "total": 3
+        },
+        "x-strategy-agent": {
+          "in": 3,
+          "out": 1,
+          "total": 4
         }
       }
     },
     {
       "graph_file": "agent-relationship-ops-subgraph.json",
       "domain": "ops",
-      "node_count": 11,
-      "edge_count": 5,
+      "node_count": 13,
+      "edge_count": 19,
       "top_degree": [
         {
+          "id": "asset-sourcer-agent",
+          "score": 6.0
+        },
+        {
           "id": "legal-compliance-agent",
+          "score": 6.0
+        },
+        {
+          "id": "productivity-and-burnout-prevention-agent",
+          "score": 4.0
+        },
+        {
+          "id": "notes-ledger-investigator",
           "score": 3.0
         },
         {
-          "id": "asset-sourcer-agent",
-          "score": 2.0
-        },
-        {
           "id": "task-agent-router",
-          "score": 2.0
-        },
-        {
-          "id": "affiliate-link-manager-agent",
-          "score": 1.0
-        },
-        {
-          "id": "orchestrator-agent",
-          "score": 1.0
+          "score": 3.0
         }
       ],
       "top_betweenness": [
         {
-          "id": "legal-compliance-agent",
-          "score": 0.355556
+          "id": "productivity-and-burnout-prevention-agent",
+          "score": 1.363636
         },
         {
           "id": "asset-sourcer-agent",
-          "score": 0.177778
+          "score": 0.969697
         },
         {
-          "id": "task-agent-router",
-          "score": 0.177778
+          "id": "digital-asset-manager-agent",
+          "score": 0.969697
         },
         {
-          "id": "affiliate-link-manager-agent",
-          "score": 0.0
+          "id": "auth-blocker-sentinel",
+          "score": 0.818182
         },
         {
-          "id": "analytics-and-reporting-agent",
-          "score": 0.0
+          "id": "legal-compliance-agent",
+          "score": 0.606061
         }
       ],
       "top_closeness": [
         {
-          "id": "legal-compliance-agent",
-          "score": 0.357143
+          "id": "productivity-and-burnout-prevention-agent",
+          "score": 0.428571
         },
         {
           "id": "asset-sourcer-agent",
-          "score": 0.277778
+          "score": 0.387097
         },
         {
-          "id": "task-agent-router",
-          "score": 0.277778
+          "id": "digital-asset-manager-agent",
+          "score": 0.387097
         },
         {
-          "id": "affiliate-link-manager-agent",
-          "score": 0.227273
+          "id": "auth-blocker-sentinel",
+          "score": 0.333333
         },
         {
-          "id": "orchestrator-agent",
-          "score": 0.192308
+          "id": "legal-compliance-agent",
+          "score": 0.324324
         }
       ],
       "top_eigenvector": [
         {
-          "id": "legal-compliance-agent",
-          "score": 0.592838
+          "id": "productivity-and-burnout-prevention-agent",
+          "score": 0.509921
         },
         {
           "id": "asset-sourcer-agent",
-          "score": 0.467557
+          "score": 0.447052
         },
         {
-          "id": "task-agent-router",
-          "score": 0.467557
+          "id": "legal-compliance-agent",
+          "score": 0.349219
         },
         {
-          "id": "affiliate-link-manager-agent",
-          "score": 0.342275
+          "id": "local-ai-claude-code-cli",
+          "score": 0.317623
         },
         {
-          "id": "orchestrator-agent",
-          "score": 0.216994
+          "id": "local-ai-gemini-cli",
+          "score": 0.317623
         }
       ],
       "communities": [
         {
           "community_id": 1,
-          "size": 6,
+          "size": 5,
           "members": [
-            "affiliate-link-manager-agent",
-            "asset-sourcer-agent",
-            "legal-compliance-agent",
-            "orchestrator-agent",
-            "task-agent-router",
-            "visual-asset-creator-agent"
+            "auth-blocker-sentinel",
+            "digital-asset-manager-agent",
+            "notes-ledger-investigator",
+            "repo-lineage-investigator",
+            "timeline-synthesis-investigator"
           ]
         },
         {
           "community_id": 2,
-          "size": 1,
-          "members": ["analytics-and-reporting-agent"]
+          "size": 5,
+          "members": [
+            "asset-sourcer-agent",
+            "legal-compliance-agent",
+            "orchestrator-agent",
+            "task-agent-router",
+            "tax-compliance-agent"
+          ]
         },
         {
           "community_id": 3,
-          "size": 1,
-          "members": ["financial-manager-agent"]
-        },
-        {
-          "community_id": 4,
-          "size": 1,
-          "members": ["productivity-and-burnout-prevention-agent"]
-        },
-        {
-          "community_id": 5,
-          "size": 1,
-          "members": ["reputation-management-agent"]
-        },
-        {
-          "community_id": 6,
-          "size": 1,
-          "members": ["tax-compliance-agent"]
+          "size": 3,
+          "members": [
+            "local-ai-claude-code-cli",
+            "local-ai-gemini-cli",
+            "productivity-and-burnout-prevention-agent"
+          ]
         }
       ],
       "degree_detail": {
@@ -1459,172 +2121,195 @@
         },
         "task-agent-router": {
           "in": 1,
+          "out": 2,
+          "total": 3
+        },
+        "asset-sourcer-agent": {
+          "in": 3,
+          "out": 3,
+          "total": 6
+        },
+        "auth-blocker-sentinel": {
+          "in": 1,
+          "out": 1,
+          "total": 2
+        },
+        "digital-asset-manager-agent": {
+          "in": 1,
           "out": 1,
           "total": 2
         },
         "legal-compliance-agent": {
-          "in": 1,
+          "in": 3,
+          "out": 3,
+          "total": 6
+        },
+        "local-ai-claude-code-cli": {
+          "in": 0,
           "out": 2,
-          "total": 3
+          "total": 2
         },
-        "financial-manager-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "tax-compliance-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "reputation-management-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "productivity-and-burnout-prevention-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "analytics-and-reporting-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "affiliate-link-manager-agent": {
-          "in": 1,
-          "out": 0,
-          "total": 1
-        },
-        "asset-sourcer-agent": {
+        "local-ai-gemini-cli": {
           "in": 1,
           "out": 1,
           "total": 2
         },
-        "visual-asset-creator-agent": {
+        "notes-ledger-investigator": {
           "in": 1,
+          "out": 2,
+          "total": 3
+        },
+        "productivity-and-burnout-prevention-agent": {
+          "in": 3,
+          "out": 1,
+          "total": 4
+        },
+        "repo-lineage-investigator": {
+          "in": 1,
+          "out": 1,
+          "total": 2
+        },
+        "tax-compliance-agent": {
+          "in": 2,
+          "out": 1,
+          "total": 3
+        },
+        "timeline-synthesis-investigator": {
+          "in": 2,
           "out": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
     {
       "graph_file": "agent-relationship-content-subgraph.json",
       "domain": "content",
-      "node_count": 9,
-      "edge_count": 10,
+      "node_count": 18,
+      "edge_count": 27,
       "top_degree": [
+        {
+          "id": "content-writer-agent",
+          "score": 7.0
+        },
+        {
+          "id": "seo-optimizer-agent",
+          "score": 6.0
+        },
         {
           "id": "task-agent-router",
           "score": 6.0
         },
         {
-          "id": "content-calendar-agent",
-          "score": 3.0
-        },
-        {
-          "id": "content-writer-agent",
-          "score": 3.0
-        },
-        {
           "id": "keyword-research-agent",
-          "score": 3.0
+          "score": 5.0
         },
         {
-          "id": "content-calendar-orchestrator-agent",
-          "score": 2.0
+          "id": "ad-network-manager-agent",
+          "score": 4.0
         }
       ],
       "top_betweenness": [
         {
-          "id": "task-agent-router",
-          "score": 0.678571
+          "id": "digital-product-creator-agent",
+          "score": 0.748529
         },
         {
-          "id": "content-calendar-agent",
-          "score": 0.035714
-        },
-        {
-          "id": "content-writer-agent",
-          "score": 0.035714
+          "id": "video-editor-agent",
+          "score": 0.617647
         },
         {
           "id": "keyword-research-agent",
-          "score": 0.035714
+          "score": 0.616176
         },
         {
-          "id": "content-calendar-orchestrator-agent",
-          "score": 0.0
+          "id": "task-agent-router",
+          "score": 0.351471
+        },
+        {
+          "id": "content-writer-agent",
+          "score": 0.334314
         }
       ],
       "top_closeness": [
         {
-          "id": "task-agent-router",
-          "score": 0.75
-        },
-        {
-          "id": "content-calendar-agent",
-          "score": 0.5
+          "id": "keyword-research-agent",
+          "score": 0.430252
         },
         {
           "id": "content-writer-agent",
-          "score": 0.5
+          "score": 0.418301
         },
         {
-          "id": "keyword-research-agent",
-          "score": 0.5
+          "id": "task-agent-router",
+          "score": 0.406995
         },
         {
-          "id": "content-calendar-orchestrator-agent",
-          "score": 0.45
+          "id": "digital-product-creator-agent",
+          "score": 0.396285
+        },
+        {
+          "id": "seo-optimizer-agent",
+          "score": 0.396285
         }
       ],
       "top_eigenvector": [
         {
+          "id": "content-writer-agent",
+          "score": 0.47304
+        },
+        {
           "id": "task-agent-router",
-          "score": 0.581731
+          "score": 0.43595
+        },
+        {
+          "id": "seo-optimizer-agent",
+          "score": 0.367898
         },
         {
           "id": "keyword-research-agent",
-          "score": 0.406691
+          "score": 0.363748
         },
         {
-          "id": "content-calendar-agent",
-          "score": 0.384933
-        },
-        {
-          "id": "content-writer-agent",
-          "score": 0.384933
-        },
-        {
-          "id": "content-calendar-orchestrator-agent",
-          "score": 0.290866
+          "id": "analytics-and-reporting-agent",
+          "score": 0.359651
         }
       ],
       "communities": [
         {
           "community_id": 1,
-          "size": 7,
+          "size": 13,
           "members": [
-            "content-calendar-agent",
-            "content-calendar-orchestrator-agent",
+            "ad-network-manager-agent",
+            "analytics-and-reporting-agent",
             "content-writer-agent",
+            "digital-product-creator-agent",
+            "digital-product-factory-agent",
             "keyword-research-agent",
+            "media-evidence-investigator",
             "orchestrator-agent",
             "seo-optimizer-agent",
-            "task-agent-router"
+            "task-agent-router",
+            "technical-setup-agent",
+            "user-feedback-analysis-agent",
+            "yt-niche-strategy-agent"
           ]
         },
         {
           "community_id": 2,
-          "size": 1,
-          "members": ["content-refresh-agent"]
+          "size": 4,
+          "members": [
+            "fan-funding-agent",
+            "live-stream-manager-agent",
+            "storyboard-artist-agent",
+            "video-editor-agent"
+          ]
         },
         {
           "community_id": 3,
           "size": 1,
-          "members": ["content-repurposing-agent"]
+          "members": [
+            "twip-orchestration-bridge"
+          ]
         }
       ],
       "degree_detail": {
@@ -1638,40 +2323,85 @@
           "out": 5,
           "total": 6
         },
+        "ad-network-manager-agent": {
+          "in": 1,
+          "out": 3,
+          "total": 4
+        },
+        "analytics-and-reporting-agent": {
+          "in": 2,
+          "out": 2,
+          "total": 4
+        },
         "content-writer-agent": {
-          "in": 2,
-          "out": 1,
+          "in": 3,
+          "out": 4,
+          "total": 7
+        },
+        "digital-product-creator-agent": {
+          "in": 1,
+          "out": 2,
           "total": 3
         },
-        "content-calendar-agent": {
-          "in": 2,
-          "out": 1,
+        "digital-product-factory-agent": {
+          "in": 1,
+          "out": 2,
           "total": 3
         },
-        "content-calendar-orchestrator-agent": {
+        "fan-funding-agent": {
+          "in": 1,
+          "out": 0,
+          "total": 1
+        },
+        "live-stream-manager-agent": {
+          "in": 0,
+          "out": 1,
+          "total": 1
+        },
+        "media-evidence-investigator": {
           "in": 1,
           "out": 1,
           "total": 2
         },
-        "content-refresh-agent": {
+        "storyboard-artist-agent": {
           "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "content-repurposing-agent": {
-          "in": 0,
-          "out": 0,
-          "total": 0
-        },
-        "keyword-research-agent": {
-          "in": 2,
           "out": 1,
+          "total": 1
+        },
+        "technical-setup-agent": {
+          "in": 0,
+          "out": 1,
+          "total": 1
+        },
+        "twip-orchestration-bridge": {
+          "in": 0,
+          "out": 0,
+          "total": 0
+        },
+        "user-feedback-analysis-agent": {
+          "in": 3,
+          "out": 0,
           "total": 3
         },
-        "seo-optimizer-agent": {
-          "in": 2,
-          "out": 0,
+        "video-editor-agent": {
+          "in": 3,
+          "out": 1,
+          "total": 4
+        },
+        "yt-niche-strategy-agent": {
+          "in": 1,
+          "out": 1,
           "total": 2
+        },
+        "keyword-research-agent": {
+          "in": 3,
+          "out": 2,
+          "total": 5
+        },
+        "seo-optimizer-agent": {
+          "in": 6,
+          "out": 0,
+          "total": 6
         }
       }
     }

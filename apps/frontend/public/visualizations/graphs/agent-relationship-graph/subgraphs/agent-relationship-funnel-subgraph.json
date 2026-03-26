@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-03",
+  "generated_at": "2026-03-26",
   "domain": "funnel",
   "nodes": [
     {
@@ -13,8 +13,33 @@
       "cluster": "orchestration"
     },
     {
-      "id": "sales-funnel-architect-agent",
+      "id": "analytics-and-reporting-agent",
+      "kind": "primary",
+      "cluster": "content"
+    },
+    {
+      "id": "ab-testing-optimizer-agent",
+      "kind": "primary",
+      "cluster": "funnel"
+    },
+    {
+      "id": "affiliate-link-manager-agent",
+      "kind": "primary",
+      "cluster": "funnel"
+    },
+    {
+      "id": "audio-recording-agent",
       "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "code-fossil-investigator",
+      "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "cognitive-bias-optimizer-agent",
+      "kind": "primary",
       "cluster": "funnel"
     },
     {
@@ -23,13 +48,73 @@
       "cluster": "funnel"
     },
     {
-      "id": "ab-testing-optimizer-agent",
+      "id": "customer-journey-map-agent",
       "kind": "sub",
       "cluster": "funnel"
     },
     {
-      "id": "cognitive-bias-optimizer-agent",
+      "id": "ecom-platform-manager-agent",
       "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "equipment-recommendation-agent",
+      "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "ethical-bias-auditor-agent",
+      "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "funnel-economics-analyst-agent",
+      "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "information-retrieval-agent",
+      "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "lead-capture-agent",
+      "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "lead-magnet-funnel-agent",
+      "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "master-of-taxonomies",
+      "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "monetization-strategy-agent",
+      "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "niche-analyst-agent",
+      "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "oto-sequence-architect-agent",
+      "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "personalized-content-recommendation-agent",
+      "kind": "sub",
+      "cluster": "funnel"
+    },
+    {
+      "id": "sales-funnel-architect-agent",
+      "kind": "primary",
       "cluster": "funnel"
     },
     {
@@ -38,47 +123,286 @@
       "cluster": "funnel"
     },
     {
-      "id": "analytics-and-reporting-agent",
+      "id": "visual-asset-creator-agent",
       "kind": "primary",
-      "cluster": "ops"
+      "cluster": "funnel"
     }
   ],
   "edges": [
     {
-      "source": "orchestrator-agent",
-      "target": "task-agent-router",
-      "type": "delegates",
-      "strength": 0.98
-    },
-    {
-      "source": "task-agent-router",
-      "target": "cro-process-agent",
-      "type": "routes_to",
-      "strength": 0.77
-    },
-    {
-      "source": "cro-process-agent",
-      "target": "ab-testing-optimizer-agent",
-      "type": "orchestrates",
-      "strength": 0.92
-    },
-    {
-      "source": "cro-process-agent",
-      "target": "cognitive-bias-optimizer-agent",
-      "type": "orchestrates",
-      "strength": 0.83
+      "source": "ab-testing-optimizer-agent",
+      "target": "analytics-and-reporting-agent",
+      "type": "depends_on",
+      "strength": 0.89,
+      "origin": "chain"
     },
     {
       "source": "ab-testing-optimizer-agent",
       "target": "analytics-and-reporting-agent",
       "type": "measured_by",
-      "strength": 0.89
+      "strength": 0.89,
+      "origin": "seed"
+    },
+    {
+      "source": "ab-testing-optimizer-agent",
+      "target": "cognitive-bias-optimizer-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "affiliate-link-manager-agent",
+      "target": "ab-testing-optimizer-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "analytics-and-reporting-agent",
+      "target": "ethical-bias-auditor-agent",
+      "type": "depends_on",
+      "strength": 0.68,
+      "origin": "registry"
+    },
+    {
+      "source": "cognitive-bias-optimizer-agent",
+      "target": "analytics-and-reporting-agent",
+      "type": "depends_on",
+      "strength": 0.82,
+      "origin": "chain"
     },
     {
       "source": "cognitive-bias-optimizer-agent",
       "target": "analytics-and-reporting-agent",
       "type": "measured_by",
-      "strength": 0.82
+      "strength": 0.82,
+      "origin": "seed"
+    },
+    {
+      "source": "cognitive-bias-optimizer-agent",
+      "target": "visual-asset-creator-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "cro-process-agent",
+      "target": "ab-testing-optimizer-agent",
+      "type": "delegates",
+      "strength": 0.92,
+      "origin": "chain"
+    },
+    {
+      "source": "cro-process-agent",
+      "target": "ab-testing-optimizer-agent",
+      "type": "orchestrates",
+      "strength": 0.92,
+      "origin": "seed"
+    },
+    {
+      "source": "cro-process-agent",
+      "target": "affiliate-link-manager-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "cro-process-agent",
+      "target": "cognitive-bias-optimizer-agent",
+      "type": "delegates",
+      "strength": 0.83,
+      "origin": "chain"
+    },
+    {
+      "source": "cro-process-agent",
+      "target": "cognitive-bias-optimizer-agent",
+      "type": "orchestrates",
+      "strength": 0.83,
+      "origin": "seed"
+    },
+    {
+      "source": "cro-process-agent",
+      "target": "customer-journey-map-agent",
+      "type": "fallback",
+      "strength": 0.56,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "cro-process-agent",
+      "target": "funnel-economics-analyst-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "customer-journey-map-agent",
+      "target": "funnel-economics-analyst-agent",
+      "type": "fallback",
+      "strength": 0.56,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "customer-journey-map-agent",
+      "target": "value-ladder-architect-agent",
+      "type": "fallback",
+      "strength": 0.54,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "ethical-bias-auditor-agent",
+      "target": "lead-magnet-funnel-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "ethical-bias-auditor-agent",
+      "target": "visual-asset-creator-agent",
+      "type": "fallback",
+      "strength": 0.62,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "funnel-economics-analyst-agent",
+      "target": "lead-capture-agent",
+      "type": "fallback",
+      "strength": 0.56,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "funnel-economics-analyst-agent",
+      "target": "oto-sequence-architect-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "lead-capture-agent",
+      "target": "lead-magnet-funnel-agent",
+      "type": "fallback",
+      "strength": 0.64,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "lead-capture-agent",
+      "target": "oto-sequence-architect-agent",
+      "type": "fallback",
+      "strength": 0.56,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "lead-magnet-funnel-agent",
+      "target": "personalized-content-recommendation-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "orchestrator-agent",
+      "target": "task-agent-router",
+      "type": "delegates",
+      "strength": 0.98,
+      "origin": "seed"
+    },
+    {
+      "source": "oto-sequence-architect-agent",
+      "target": "value-ladder-architect-agent",
+      "type": "fallback",
+      "strength": 0.84,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "sales-funnel-architect-agent",
+      "target": "lead-magnet-funnel-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "sales-funnel-architect-agent",
+      "target": "value-ladder-architect-agent",
+      "type": "fallback",
+      "strength": 0.62,
+      "origin": "registry",
+      "risk": "capability_overlap"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "analytics-and-reporting-agent",
+      "type": "delegates",
+      "strength": 0.82,
+      "origin": "scaffold"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "audio-recording-agent",
+      "type": "delegates",
+      "strength": 0.57,
+      "origin": "backstop",
+      "risk": "routing_backstop"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "cro-process-agent",
+      "type": "delegates",
+      "strength": 0.82,
+      "origin": "scaffold"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "cro-process-agent",
+      "type": "routes_to",
+      "strength": 0.77,
+      "origin": "seed"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "ecom-platform-manager-agent",
+      "type": "delegates",
+      "strength": 0.57,
+      "origin": "backstop",
+      "risk": "routing_backstop"
+    },
+    {
+      "source": "task-agent-router",
+      "target": "master-of-taxonomies",
+      "type": "delegates",
+      "strength": 0.57,
+      "origin": "backstop",
+      "risk": "routing_backstop"
+    },
+    {
+      "source": "value-ladder-architect-agent",
+      "target": "sales-funnel-architect-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "visual-asset-creator-agent",
+      "target": "value-ladder-architect-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
     }
   ]
 }
