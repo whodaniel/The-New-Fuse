@@ -4,6 +4,7 @@
     "module": "NodeNext",
     "outDir": "./dist",
     "rootDir": "./",
+    "isolatedModules": true,
     "types": ["node", "jest"],
     "paths": {
       "@/*": ["./src/*"]
