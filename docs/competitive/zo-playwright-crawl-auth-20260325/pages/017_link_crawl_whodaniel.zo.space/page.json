@@ -1,0 +1,128 @@
+{
+  "capturedAt": "2026-03-25T10:43:19.441Z",
+  "url": "https://whodaniel.zo.space/",
+  "title": "whodaniel | Zo Space",
+  "links": [
+    {
+      "text": "Features",
+      "href": "https://whodaniel.zo.space/#features",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Pricing",
+      "href": "https://whodaniel.zo.space/#pricing",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Dashboard",
+      "href": "https://whodaniel.zo.space/dashboard",
+      "rel": "",
+      "target": ""
+    }
+  ],
+  "buttons": [
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Get Started",
+      "classes": "bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg font-medium transition"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Start Free Trial",
+      "classes": "bg-purple-600 hover:bg-purple-700 px-6 py-4 rounded-xl font-semibold transition whitespace-nowrap"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Enrich Lead",
+      "classes": "w-full bg-purple-600 hover:bg-purple-700 py-4 rounded-xl font-semibold transition"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Start 14-Day Free Trial",
+      "classes": "w-full bg-white text-purple-600 font-bold py-3 rounded-xl hover:bg-zinc-100 transition"
+    }
+  ],
+  "inputs": [
+    {
+      "tag": "input",
+      "id": "",
+      "name": "",
+      "type": "email",
+      "placeholder": "Enter your work email",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "",
+      "type": "text",
+      "placeholder": "acme.com",
+      "ariaLabel": ""
+    },
+    {
+      "tag": "input",
+      "id": "",
+      "name": "",
+      "type": "email",
+      "placeholder": "john@acme.com",
+      "ariaLabel": ""
+    }
+  ],
+  "headings": [
+    {
+      "level": "h1",
+      "text": "Find, Enrich & Close More B2B Leads"
+    },
+    {
+      "level": "h2",
+      "text": "Try It Now — Enrich a Lead"
+    },
+    {
+      "level": "h2",
+      "text": "Close More Deals with Intelligence"
+    },
+    {
+      "level": "h3",
+      "text": "Instant Enrichment"
+    },
+    {
+      "level": "h3",
+      "text": "AI Lead Scoring"
+    },
+    {
+      "level": "h3",
+      "text": "Personalization Tips"
+    },
+    {
+      "level": "h3",
+      "text": "CRM Integration"
+    },
+    {
+      "level": "h3",
+      "text": "Intent Signals"
+    },
+    {
+      "level": "h3",
+      "text": "Real-Time Updates"
+    },
+    {
+      "level": "h2",
+      "text": "Simple, Scalable Pricing"
+    }
+  ],
+  "bodyText": "LP LeadPulse Features Pricing Dashboard Get Started B2B Lead Intelligence Find, Enrich & Close More B2B Leads AI-powered lead enrichment that tells you everything about your prospects — funding, tech stack, news, and exactly how to personalize your outreach. Start Free Trial No credit card required • 14-day free trial Try It Now — Enrich a Lead Enter a company domain or email to see LeadPulse in action Company Domain Email (optional) Enrich Lead Sample output: Company Acme Corp Funding $50M Series B Tech Stack React, AWS, Stripe Lead Score 85/100 — High Intent Close More Deals with Intelligence 🔍 Instant Enrichment Enter any company domain or email and instantly get funding data, tech stack, recent news, and decision-maker info. 🎯 AI Lead Scoring Our AI scores each lead 0-100 based on intent signals, company stage, and funding activity. ✍️ Personalization Tips Get AI-generated specific talking points for each lead — recent news, funding, product launches. 📊 CRM Integration Sync enriched data directly to HubSpot, Salesforce, or Pipedrive with one click. 📈 Intent Signals Know when a prospect is actively shopping — job postings, new hires, tech changes signal buying intent. 🔄 Real-Time Updates Data refreshes automatically when we detect changes in funding, leadership, or news. Simple, Scalable Pricing Pay per seat. No per-lead fees. Enrich as many prospects as you want. PRO PLAN $30/mo Per seat • Unlimited enrichments ✓ Unlimited lead enrichment ✓ AI lead scoring (0-100) ✓ Personalization talking points ✓ Intent signal detection ✓ CRM integrations ✓ Chrome extension ✓ Priority support Start 14-Day Free Trial No credit card required LP LeadPulse © 2026 LeadPulse. All rights reserved."
+}

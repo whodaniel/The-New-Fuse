@@ -1,11 +1,13 @@
-import { ContextPackage } from "../types/events";
-import { renderPromptFromPackage } from "../templates/context-package";
-import { MiniOmniClient } from "./llm-backends/mini-omni-client";
+import { renderPromptFromPackage } from '../templates/context-package';
+import { ContextPackage, LlmBatchResult } from '../types/events';
+import { MiniOmniClient } from './llm-backends/mini-omni-client';
 
 export class LlmBatcher {
   private readonly queue: ContextPackage[] = [];
   private readonly dedupe = new Set<string>();
   private flushTimer: NodeJS.Timeout | null = null;
+  private flushing = false;
+  private resultHandler: ((result: LlmBatchResult) => void) | null = null;
 
   constructor(
     private readonly llmClient: MiniOmniClient,
@@ -43,16 +45,42 @@ export class LlmBatcher {
     }
   }
 
+  setResultHandler(handler: (result: LlmBatchResult) => void): void {
+    this.resultHandler = handler;
+  }
+
+  getQueueDepth(): number {
+    return this.queue.length;
+  }
+
   async flush(): Promise<void> {
-    if (this.queue.length === 0) {
+    if (this.flushing || this.queue.length === 0) {
       return;
     }
 
-    const batch = this.queue.splice(0, this.maxItems);
-    for (const pkg of batch) {
-      const prompt = renderPromptFromPackage(pkg);
-      const result = await this.llmClient.complete(prompt, pkg);
-      console.log(`[mini-omni] rule=${pkg.rule_id} stream=${pkg.stream_id} response=${result.slice(0, 180)}`);
+    this.flushing = true;
+    try {
+      while (this.queue.length > 0) {
+        const batch = this.queue.splice(0, this.maxItems);
+        for (const pkg of batch) {
+          const prompt = renderPromptFromPackage(pkg);
+          const response = await this.llmClient.complete(prompt, pkg);
+          const result: LlmBatchResult = {
+            pkgId: pkg.pkg_id,
+            ruleId: pkg.rule_id,
+            streamId: pkg.stream_id,
+            ok: !response.includes('request error') && !response.includes('failed: HTTP'),
+            responsePreview: response.slice(0, 180),
+            completedAt: new Date().toISOString(),
+          };
+          this.resultHandler?.(result);
+          console.log(
+            `[mini-omni] rule=${pkg.rule_id} stream=${pkg.stream_id} response=${result.responsePreview}`
+          );
+        }
+      }
+    } finally {
+      this.flushing = false;
     }
   }
 }

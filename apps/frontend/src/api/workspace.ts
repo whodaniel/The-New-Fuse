@@ -22,6 +22,40 @@ export interface WorkspaceProject {
   updatedAt?: string;
 }
 
+export interface WorkspaceHostMariaTaskItem {
+  id: string;
+  title: string;
+  description?: string | null;
+  status: string;
+  priority: string;
+  updatedAt?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface WorkspaceHostMariaSyncResponse {
+  workspaceId: string;
+  ownerEmail: string;
+  project: WorkspaceProject;
+  tasks: {
+    total: number;
+    created: number;
+    updated: number;
+    items: WorkspaceHostMariaTaskItem[];
+  };
+  unifiedLedger: {
+    created: number;
+    updated: number;
+  };
+  telemetry: {
+    configPath: string;
+    reportPath: string;
+    archivePath: string;
+    targetCount: number;
+    targets: string[];
+    latestReportStatus: string;
+  };
+}
+
 export interface WorkspaceSubAccessMember {
   userId: string;
   email: string | null;
@@ -229,6 +263,25 @@ export class WorkspaceApiService {
         success: false,
         error: this.toApiError(error, 'NETWORK_ERROR'),
         message: `Failed to fetch projects for workspace ${workspaceId}`,
+      };
+    }
+  }
+
+  async syncWorkspaceHostMariaOps(
+    workspaceId: string
+  ): Promise<ApiResponse<WorkspaceHostMariaSyncResponse>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${workspaceId}/hostmaria/sync`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        credentials: 'include',
+      });
+      return this.handleResponse<WorkspaceHostMariaSyncResponse>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: this.toApiError(error, 'NETWORK_ERROR'),
+        message: `Failed to sync HostMaria operations for workspace ${workspaceId}`,
       };
     }
   }

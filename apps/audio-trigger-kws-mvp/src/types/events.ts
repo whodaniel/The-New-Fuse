@@ -22,11 +22,11 @@ export interface HitEvent {
   groupId: string;
   confidence: number;
   audioOffsetMs?: number;
-  source: "kws";
+  source: 'kws';
 }
 
 export interface TriggerConditionHit {
-  kind: "hit";
+  kind: 'hit';
   groupId: string;
   minConf: number;
   count: number;
@@ -34,7 +34,7 @@ export interface TriggerConditionHit {
 }
 
 export interface TriggerConditionSequence {
-  kind: "sequence";
+  kind: 'sequence';
   groupIds: string[];
   maxGapMs: number;
   ordered: boolean;
@@ -54,7 +54,7 @@ export interface TriggerRule {
   any?: TriggerCondition[];
   none?: TriggerCondition[];
   action: {
-    type: "enqueue_llm" | "emit" | "webhook";
+    type: 'enqueue_llm' | 'emit' | 'webhook';
     templateId: string;
     target?: string;
   };
@@ -68,7 +68,7 @@ export interface RuleFireEvent {
   confidence: number;
   matchedEventIds: string[];
   matchedGroups: string[];
-  action: TriggerRule["action"];
+  action: TriggerRule['action'];
 }
 
 export interface ContextEvidence {
@@ -95,3 +95,11 @@ export interface ContextPackage {
   created_at: string;
 }
 
+export interface LlmBatchResult {
+  pkgId: string;
+  ruleId: string;
+  streamId: string;
+  ok: boolean;
+  responsePreview: string;
+  completedAt: string;
+}

@@ -1,6 +1,20 @@
 # Audio Trigger KWS + LLM MVP Plan
 
-This app folder stores the implementation plan for a trigger-first audio intelligence pipeline that avoids expensive LLM calls until high-confidence word/phrase patterns are detected.
+This app folder stores the implementation plan for a trigger-first audio
+intelligence pipeline that avoids expensive LLM calls until high-confidence
+word/phrase patterns are detected.
+
+## Readiness
+
+This app is now **pilot-ready** for real use with live mini-omni integration.
+
+- Real HTTP API service is available (`src/server.ts`).
+- Trigger pipeline runs continuously in-memory.
+- mini-omni native `/chat` integration is active.
+- Recent rule/package/LLM results are queryable via API.
+
+It is not yet fully production hardened (HA, durable queues, persistent DB,
+auth).
 
 ## Goal
 
@@ -22,33 +36,40 @@ Build a low-latency pipeline that:
 ## System Architecture
 
 1. `audio-gateway`
+
 - Ingest PCM audio (16kHz mono).
 - Maintain rolling buffer (15-30s).
 - Publish 20ms frames.
 
 2. `vad-gate`
+
 - Speech/non-speech filtering.
 - Drops silence/background early.
 
 3. `kws-engine`
+
 - Streaming phoneme/subword posteriors.
 - Large lexicon matcher (WFST or weighted trie).
 - Lexicon artifact precompiled from master vocabulary.
 
 4. `grouping-filter`
+
 - Maps term hits to canonical groups.
 - Supports synonyms and phrase variants.
 
 5. `rule-engine`
+
 - Evaluates boolean/combo/sequence trigger DSL.
 - Applies windowing, confidence gates, cooldown.
 
 6. `enricher`
+
 - Normalizes entities/facts.
 - Writes to vector DB + knowledge graph.
 - Builds provenance-rich context packages.
 
 7. `llm-batcher`
+
 - Dedupes and micro-batches packages.
 - Renders prompt template and calls LLM.
 
@@ -78,9 +99,16 @@ The default backend mode is native mini-omni voice endpoint:
    `cd /Users/<owner>/mini-omni && python3 server.py --ip 0.0.0.0 --port 60808 --device cpu`
 3. Run `pnpm --filter @the-new-fuse/audio-trigger-kws-mvp demo`.
 
+To run as an API service instead of demo mode:
+
+1. Start mini-omni server.
+2. Run `pnpm --filter @the-new-fuse/audio-trigger-kws-mvp serve`.
+3. Call `POST /v1/ingest/text` with `streamId` and `utterance`.
+
 Backend modes:
 
-- `MINI_OMNI_MODE=native_chat` (default): calls mini-omni `/chat` and stores returned WAV output.
+- `MINI_OMNI_MODE=native_chat` (default): calls mini-omni `/chat` and stores
+  returned WAV output.
 - `MINI_OMNI_MODE=openai_compat`: calls OpenAI-style `/v1/chat/completions`.
 
 Config keys:
@@ -97,6 +125,59 @@ Config keys:
 - `MINI_OMNI_MAX_TOKENS`
 - `MINI_OMNI_SAMPLE_WAV`
 - `MINI_OMNI_OUTPUT_WAV_DIR`
+- `APP_HOST`
+- `APP_PORT`
+- `MAX_RECENT_RULE_FIRES`
+- `MAX_RECENT_PACKAGES`
+- `MAX_RECENT_LLM_RESULTS`
+
+If `MINI_OMNI_SAMPLE_WAV` is not set (common in cloud), the service now
+generates a short synthetic WAV input automatically for native `/chat` calls.
+
+## API Endpoints
+
+- `GET /healthz`
+- `POST /v1/ingest/text`
+- `POST /v1/flush`
+- `GET /v1/events/rules`
+- `GET /v1/events/packages`
+- `GET /v1/events/llm-results`
+
+Example:
+
+```bash
+curl -sS -X POST http://127.0.0.1:43110/v1/ingest/text \
+  -H 'content-type: application/json' \
+  -d '{"streamId":"prod_stream_01","utterance":"aspirin 200 mg please"}'
+```
+
+## Cloud Deployment
+
+Yes, this can be part of production deployment with this split:
+
+1. Deploy `audio-trigger-kws-mvp` API service as stateless Node app.
+2. Deploy mini-omni as a dedicated model service (GPU/CPU VM/container).
+3. Point `MINI_OMNI_API_URL` from API service to model service `/chat`.
+4. Add managed persistence for packages/events (Postgres + vector + graph).
+
+Notes:
+
+- Cloudflare Workers are not suitable for running mini-omni model inference
+  directly.
+- You can still run this API on cloud containers and call a separate model host.
+
+Detailed runbook:
+
+- `docs/railway-cloudflare-production.md`
+- `cloudflare/worker.example.ts`
+- `cloudflare/wrangler.toml`
+- `cloudflare/src/index.ts`
+- `railway.toml`
+- `Dockerfile`
+
+Quickest live test commands:
+
+- `docs/railway-cloudflare-production.md` -> `Run Now`
 
 ## Suggested Repository Structure
 
@@ -141,25 +222,30 @@ apps/audio-trigger-kws-mvp/
 ## Rollout Plan
 
 ### Phase 1 (Weeks 1-2)
+
 - Audio ingest, VAD, KWS event stream.
 - No LLM calls yet.
 - Validate hit precision/recall on curated audio set.
 
 ### Phase 2 (Weeks 3-4)
+
 - Grouping filter and rule engine (DSL + evaluator).
 - Add alerting and metrics dashboard.
 
 ### Phase 3 (Weeks 5-6)
+
 - Enricher + vector DB + KG writes.
 - Context package generation with provenance fields.
 
 ### Phase 4 (Week 7)
+
 - LLM micro-batching and template rendering.
 - Tune thresholds and cooldowns from live telemetry.
 
 ## Open Decisions
 
-1. Runtime language split (Go/Rust realtime, Python enrichment, or single stack).
+1. Runtime language split (Go/Rust realtime, Python enrichment, or single
+   stack).
 2. Initial target domain taxonomy (medical, support, security, etc.).
 3. Storage stack choices (Postgres+pgvector+Neo4j, or managed equivalents).
 4. Privacy requirements for raw audio retention and redaction.

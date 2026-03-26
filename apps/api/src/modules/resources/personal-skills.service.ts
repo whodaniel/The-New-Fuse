@@ -1,12 +1,16 @@
-import { randomUUID } from 'crypto';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { and, desc, eq, sql } from '@the-new-fuse/database';
-import { DatabaseService } from '@the-new-fuse/database/drizzle';
-import { personalSkills } from '@the-new-fuse/database/drizzle/schema';
+import {
+  DatabaseService,
+  and,
+  desc,
+  eq,
+  personalSkills,
+  sql,
+} from '@the-new-fuse/database/drizzle';
+import { randomUUID } from 'crypto';
 import { CreatePersonalSkillDto, UpdatePersonalSkillDto } from './dto/personal-skill.dto';
 
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const MAX_NAME_LENGTH = 160;
 const MAX_DESCRIPTION_LENGTH = 1500;
 const MAX_INSTRUCTIONS_LENGTH = 32000;
@@ -224,7 +228,11 @@ export class PersonalSkillsService {
     return row ?? null;
   }
 
-  private async ensureUniqueSlug(userId: string, seedSlug: string, ignoreId?: string): Promise<string> {
+  private async ensureUniqueSlug(
+    userId: string,
+    seedSlug: string,
+    ignoreId?: string
+  ): Promise<string> {
     const baseSlug = seedSlug || `skill-${Date.now()}`;
     let candidate = baseSlug;
     let suffix = 2;

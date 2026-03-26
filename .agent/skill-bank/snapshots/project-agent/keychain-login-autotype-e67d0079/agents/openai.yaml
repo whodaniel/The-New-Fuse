@@ -1,0 +1,4 @@
+interface:
+  display_name: "Keychain Login Autotype"
+  short_description: "Type website creds from Keychain safely"
+  default_prompt: "Use $keychain-login-autotype to set up or run profile-based login autotype for an authorized account."

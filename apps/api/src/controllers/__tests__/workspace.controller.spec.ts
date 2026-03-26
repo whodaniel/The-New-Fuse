@@ -1,5 +1,5 @@
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { describe, expect, it, jest, beforeEach } from '@jest/globals';
 import { promises as dns } from 'dns';
 import { WorkspaceController } from '../workspace.controller';
 
@@ -16,6 +16,7 @@ describe('WorkspaceController domain/bookmark flows', () => {
           createdAt: new Date('2026-01-01T00:00:00Z'),
           owner: { email: 'owner@example.com' },
         }),
+        findAllWithOwner: jest.fn().mockResolvedValue([]),
       },
       workspaceMembers: {
         findMembership: jest.fn().mockResolvedValue(null),
@@ -180,12 +181,7 @@ describe('WorkspaceController domain/bookmark flows', () => {
     });
 
     await expect(
-      controller.updateWorkspaceBookmark(
-        'ws_1',
-        'wb_1',
-        { url: 'taken.example.com' },
-        'user_1'
-      )
+      controller.updateWorkspaceBookmark('ws_1', 'wb_1', { url: 'taken.example.com' }, 'user_1')
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
@@ -214,15 +210,19 @@ describe('WorkspaceController domain/bookmark flows', () => {
   it('removes bookmark and returns ids', async () => {
     const response = await controller.removeWorkspaceBookmark('ws_1', 'wb_1', 'user_1');
     expect(response).toEqual({ workspaceId: 'ws_1', bookmarkId: 'wb_1' });
-    expect(db.workspaceBookmarks.removeBookmarkForUser).toHaveBeenCalledWith('ws_1', 'wb_1', 'user_1');
+    expect(db.workspaceBookmarks.removeBookmarkForUser).toHaveBeenCalledWith(
+      'ws_1',
+      'wb_1',
+      'user_1'
+    );
   });
 
   it('does not allow removing another user bookmark', async () => {
     db.workspaceBookmarks.removeBookmarkForUser.mockResolvedValueOnce(false);
 
-    await expect(controller.removeWorkspaceBookmark('ws_1', 'wb_other', 'user_1')).rejects.toBeInstanceOf(
-      NotFoundException
-    );
+    await expect(
+      controller.removeWorkspaceBookmark('ws_1', 'wb_other', 'user_1')
+    ).rejects.toBeInstanceOf(NotFoundException);
   });
 
   it('verifies domain using DNS records and updates status', async () => {
@@ -243,5 +243,359 @@ describe('WorkspaceController domain/bookmark flows', () => {
     cnameSpy.mockRestore();
     resolve4Spy.mockRestore();
     resolve6Spy.mockRestore();
+  });
+
+  it('syncs HostMaria ops for bizsynth owner account', async () => {
+    db.workspaces.findByIdWithOwner.mockResolvedValueOnce({
+      id: 'ws_1',
+      ownerId: 'user_1',
+      createdAt: new Date('2026-01-01T00:00:00Z'),
+      owner: { email: 'owner@example.com' },
+    });
+
+    const inputs = {
+      configPath: '/Users/<owner>/.tnf/hostmaria/projects.txt',
+      reportPath: '/Users/<owner>/.tnf/hostmaria/reports/hostmaria-preservation-latest.json',
+      archivePath: '/Users/<owner>/.tnf/hostmaria/archive/latest-archive-summary.json',
+      targets: ['hostmaria.com'],
+      latestReport: { status: 'ok' },
+      latestArchive: { archivedAt: '2026-03-25T11:27:14.485Z' },
+    };
+
+    const readInputsSpy = jest
+      .spyOn(controller as any, 'readHostMariaSyncInputs')
+      .mockResolvedValue(inputs);
+    const projectSpy = jest.spyOn(controller as any, 'upsertHostMariaProject').mockResolvedValue({
+      id: 'prj_hostmaria',
+      name: 'HostMaria Legacy Ops',
+      description: 'Legacy ops project',
+      updatedAt: new Date('2026-03-25T00:00:00Z'),
+    });
+    const taskSpy = jest.spyOn(controller as any, 'upsertHostMariaTasks').mockResolvedValue({
+      created: 2,
+      updated: 1,
+      items: [{ id: 'task_1', title: 'HostMaria Preservation Monitor' }],
+    });
+    const ledgerSpy = jest
+      .spyOn(controller as any, 'upsertHostMariaLedgerTasks')
+      .mockResolvedValue({
+        created: 1,
+        updated: 0,
+      });
+
+    const response = await controller.syncWorkspaceHostMariaOps('ws_1', {
+      id: 'user_1',
+      email: 'owner@example.com',
+    });
+
+    expect(response.workspaceId).toBe('ws_1');
+    expect(response.project.id).toBe('prj_hostmaria');
+    expect(response.tasks.created).toBe(2);
+    expect(readInputsSpy).toHaveBeenCalledTimes(1);
+    expect(projectSpy).toHaveBeenCalledTimes(1);
+    expect(taskSpy).toHaveBeenCalledTimes(1);
+    expect(ledgerSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('allows delegated agent member to sync HostMaria ops into owner account', async () => {
+    db.workspaces.findByIdWithOwner.mockResolvedValueOnce({
+      id: 'ws_1',
+      ownerId: 'user_owner',
+      createdAt: new Date('2026-01-01T00:00:00Z'),
+      owner: { email: 'owner@example.com' },
+    });
+    db.workspaceMembers.findMembership.mockResolvedValueOnce({
+      workspaceId: 'ws_1',
+      userId: 'agent_user',
+      role: 'admin',
+      addedByUserId: 'user_owner',
+    });
+
+    const inputs = {
+      configPath: '/Users/<owner>/.tnf/hostmaria/projects.txt',
+      reportPath: '/Users/<owner>/.tnf/hostmaria/reports/hostmaria-preservation-latest.json',
+      archivePath: '/Users/<owner>/.tnf/hostmaria/archive/latest-archive-summary.json',
+      targets: ['hostmaria.com'],
+      latestReport: { status: 'warning' },
+      latestArchive: { archivedAt: '2026-03-25T11:27:14.485Z' },
+    };
+
+    jest.spyOn(controller as any, 'readHostMariaSyncInputs').mockResolvedValue(inputs);
+    jest.spyOn(controller as any, 'upsertHostMariaProject').mockResolvedValue({
+      id: 'prj_hostmaria',
+      name: 'HostMaria Legacy Ops',
+      description: 'Legacy ops project',
+      updatedAt: new Date('2026-03-25T00:00:00Z'),
+    });
+    const taskSpy = jest.spyOn(controller as any, 'upsertHostMariaTasks').mockResolvedValue({
+      created: 1,
+      updated: 0,
+      items: [{ id: 'task_1', title: 'HostMaria Preservation Monitor' }],
+    });
+    jest.spyOn(controller as any, 'upsertHostMariaLedgerTasks').mockResolvedValue({
+      created: 1,
+      updated: 0,
+    });
+
+    const response = await controller.syncWorkspaceHostMariaOps('ws_1', {
+      id: 'agent_user',
+      email: 'agent-user@example.com',
+    });
+
+    expect(taskSpy).toHaveBeenCalledWith(
+      'user_owner',
+      'ws_1',
+      'prj_hostmaria',
+      'owner@example.com',
+      inputs
+    );
+    expect(response.ownerEmail).toBe('owner@example.com');
+  });
+
+  it('blocks HostMaria sync for non-owner accounts', async () => {
+    db.workspaces.findByIdWithOwner.mockResolvedValueOnce({
+      id: 'ws_1',
+      ownerId: 'user_1',
+      createdAt: new Date('2026-01-01T00:00:00Z'),
+      owner: { email: 'owner@example.com' },
+    });
+
+    await expect(
+      controller.syncWorkspaceHostMariaOps('ws_1', {
+        id: 'user_1',
+        email: 'someone@example.com',
+      })
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('blocks HostMaria sync when workspace owner is not in configured owner list', async () => {
+    db.workspaces.findByIdWithOwner.mockResolvedValueOnce({
+      id: 'ws_1',
+      ownerId: 'user_1',
+      createdAt: new Date('2026-01-01T00:00:00Z'),
+      owner: { email: 'owner@example.com' },
+    });
+
+    await expect(
+      controller.syncWorkspaceHostMariaOps('ws_1', {
+        id: 'user_1',
+        email: 'owner@example.com',
+      })
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('filters HostMaria projects for unauthorized workspace members', async () => {
+    db.workspaces.findByIdWithOwner.mockResolvedValueOnce({
+      id: 'ws_1',
+      ownerId: 'owner_user',
+      createdAt: new Date('2026-01-01T00:00:00Z'),
+      owner: { email: 'owner@example.com' },
+    });
+    db.workspaceMembers.findMembership.mockResolvedValueOnce({
+      workspaceId: 'ws_1',
+      userId: 'viewer_user',
+      role: 'viewer',
+      addedByUserId: 'owner_user',
+    });
+    db.workspaces.findByIdWithProjects = jest.fn().mockResolvedValue({
+      id: 'ws_1',
+      projects: [
+        {
+          id: 'prj_hostmaria',
+          name: 'HostMaria Legacy Ops',
+          settings: { hostMariaOps: true },
+        },
+        {
+          id: 'prj_general',
+          name: 'General Workspace Project',
+          settings: {},
+        },
+      ],
+    });
+
+    const projects = await controller.getWorkspaceProjects('ws_1', {
+      id: 'viewer_user',
+      email: 'viewer@example.com',
+    });
+
+    expect(projects).toHaveLength(1);
+    expect(projects[0].id).toBe('prj_general');
+  });
+
+  it('returns HostMaria projects for delegated agent members', async () => {
+    db.workspaces.findByIdWithOwner.mockResolvedValueOnce({
+      id: 'ws_1',
+      ownerId: 'owner_user',
+      createdAt: new Date('2026-01-01T00:00:00Z'),
+      owner: { email: 'owner@example.com' },
+    });
+    db.workspaceMembers.findMembership.mockResolvedValueOnce({
+      workspaceId: 'ws_1',
+      userId: 'agent_user',
+      role: 'member',
+      addedByUserId: 'owner_user',
+    });
+    db.workspaces.findByIdWithProjects = jest.fn().mockResolvedValue({
+      id: 'ws_1',
+      projects: [
+        {
+          id: 'prj_hostmaria',
+          name: 'HostMaria Legacy Ops',
+          settings: { hostMariaOps: true },
+        },
+      ],
+    });
+
+    const projects = await controller.getWorkspaceProjects('ws_1', {
+      id: 'agent_user',
+      email: 'agent@example.com',
+    });
+
+    expect(projects).toHaveLength(1);
+    expect(projects[0].id).toBe('prj_hostmaria');
+  });
+
+  it('falls back to legacy HostMaria task schema when modern schema columns are missing', async () => {
+    const inputs = {
+      configPath: '/Users/<owner>/.tnf/hostmaria/projects.txt',
+      reportPath: '/Users/<owner>/.tnf/hostmaria/reports/hostmaria-preservation-latest.json',
+      archivePath: '/Users/<owner>/.tnf/hostmaria/archive/latest-archive-summary.json',
+      targets: ['hostmaria.com'],
+      latestReport: { status: 'ok' },
+      latestArchive: { archivedAt: '2026-03-25T11:27:14.485Z' },
+    };
+
+    const modernSpy = jest
+      .spyOn(controller as any, 'upsertHostMariaTasksModern')
+      .mockRejectedValue(new Error('column "data" does not exist'));
+    const legacySpy = jest
+      .spyOn(controller as any, 'upsertHostMariaTasksLegacy')
+      .mockResolvedValue({
+        created: 1,
+        updated: 0,
+        items: [{ id: 'legacy_task_1', metadata: { hostMariaSyncKey: 'hostmaria:monitor' } }],
+      });
+
+    const result = await (controller as any).upsertHostMariaTasks(
+      'user_1',
+      'ws_1',
+      'prj_hostmaria',
+      'owner@example.com',
+      inputs
+    );
+
+    expect(modernSpy).toHaveBeenCalledTimes(1);
+    expect(legacySpy).toHaveBeenCalledTimes(1);
+    expect(result.created).toBe(1);
+    expect(result.items).toHaveLength(1);
+  });
+
+  it('rethrows HostMaria task errors that are not legacy schema mismatches', async () => {
+    const inputs = {
+      configPath: '/Users/<owner>/.tnf/hostmaria/projects.txt',
+      reportPath: '/Users/<owner>/.tnf/hostmaria/reports/hostmaria-preservation-latest.json',
+      archivePath: '/Users/<owner>/.tnf/hostmaria/archive/latest-archive-summary.json',
+      targets: ['hostmaria.com'],
+      latestReport: { status: 'ok' },
+      latestArchive: { archivedAt: '2026-03-25T11:27:14.485Z' },
+    };
+
+    const modernSpy = jest
+      .spyOn(controller as any, 'upsertHostMariaTasksModern')
+      .mockRejectedValue(new Error('permission denied'));
+    const legacySpy = jest.spyOn(controller as any, 'upsertHostMariaTasksLegacy');
+
+    await expect(
+      (controller as any).upsertHostMariaTasks(
+        'user_1',
+        'ws_1',
+        'prj_hostmaria',
+        'owner@example.com',
+        inputs
+      )
+    ).rejects.toThrow('permission denied');
+
+    expect(modernSpy).toHaveBeenCalledTimes(1);
+    expect(legacySpy).not.toHaveBeenCalled();
+  });
+
+  it('auto-sync cycle processes only owner-eligible workspaces', async () => {
+    db.workspaces.findAllWithOwner.mockResolvedValueOnce([
+      {
+        id: 'ws_owner',
+        ownerId: 'user_owner',
+        owner: { email: 'owner@example.com' },
+      },
+      {
+        id: 'ws_other',
+        ownerId: 'user_other',
+        owner: { email: 'other@example.com' },
+      },
+    ]);
+
+    const inputs = {
+      configPath: '/Users/<owner>/.tnf/hostmaria/projects.txt',
+      reportPath: '/Users/<owner>/.tnf/hostmaria/reports/hostmaria-preservation-latest.json',
+      archivePath: '/Users/<owner>/.tnf/hostmaria/archive/latest-archive-summary.json',
+      targets: ['hostmaria.com'],
+      latestReport: { status: 'ok' },
+      latestArchive: { archivedAt: '2026-03-25T11:27:14.485Z' },
+    };
+
+    jest.spyOn(controller as any, 'readHostMariaSyncInputs').mockResolvedValue(inputs);
+    const projectSpy = jest.spyOn(controller as any, 'upsertHostMariaProject').mockResolvedValue({
+      id: 'prj_hostmaria',
+      name: 'HostMaria Legacy Ops',
+      description: 'Legacy ops project',
+      updatedAt: new Date('2026-03-25T00:00:00Z'),
+    });
+    const taskSpy = jest.spyOn(controller as any, 'upsertHostMariaTasks').mockResolvedValue({
+      created: 1,
+      updated: 0,
+      items: [{ id: 'task_1' }],
+    });
+    const ledgerSpy = jest
+      .spyOn(controller as any, 'upsertHostMariaLedgerTasks')
+      .mockResolvedValue({
+        created: 1,
+        updated: 0,
+      });
+
+    await (controller as any).runHostMariaAutoSyncCycle('manual');
+
+    expect(projectSpy).toHaveBeenCalledTimes(1);
+    expect(projectSpy).toHaveBeenCalledWith('ws_owner', 'owner@example.com', inputs);
+    expect(taskSpy).toHaveBeenCalledWith(
+      'user_owner',
+      'ws_owner',
+      'prj_hostmaria',
+      'owner@example.com',
+      inputs
+    );
+    expect(ledgerSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('auto-sync cycle skips when no hostmaria artifacts are available', async () => {
+    db.workspaces.findAllWithOwner.mockResolvedValueOnce([
+      {
+        id: 'ws_owner',
+        ownerId: 'user_owner',
+        owner: { email: 'owner@example.com' },
+      },
+    ]);
+
+    jest.spyOn(controller as any, 'readHostMariaSyncInputs').mockResolvedValue({
+      configPath: '/Users/<owner>/.tnf/hostmaria/projects.txt',
+      reportPath: '/Users/<owner>/.tnf/hostmaria/reports/hostmaria-preservation-latest.json',
+      archivePath: '/Users/<owner>/.tnf/hostmaria/archive/latest-archive-summary.json',
+      targets: [],
+      latestReport: null,
+      latestArchive: null,
+    });
+    const projectSpy = jest.spyOn(controller as any, 'upsertHostMariaProject');
+
+    await (controller as any).runHostMariaAutoSyncCycle('manual');
+
+    expect(projectSpy).not.toHaveBeenCalled();
   });
 });

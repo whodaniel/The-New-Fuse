@@ -7,7 +7,11 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Logger,
   NotFoundException,
+  OnModuleDestroy,
+  OnModuleInit,
+  Optional,
   Param,
   Patch,
   Post,
@@ -15,10 +19,24 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { DatabaseService } from '@the-new-fuse/database';
+import {
+  and,
+  DatabaseService,
+  desc,
+  drizzleSchema,
+  eq,
+  isNull,
+  sql,
+  tasks,
+} from '@the-new-fuse/database';
+import { randomUUID } from 'crypto';
 import { promises as dns } from 'dns';
+import { promises as fs } from 'fs';
+import * as os from 'os';
+import * as path from 'path';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../decorators/current-user.decorator';
+import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service';
 
 type WorkspaceAccessRole = 'owner' | 'admin' | 'member' | 'viewer';
 type WorkspaceManageableRole = Exclude<WorkspaceAccessRole, 'owner'>;
@@ -79,6 +97,56 @@ interface WorkspaceMemberView {
   joinedAt: Date;
 }
 
+interface WorkspaceMembership {
+  workspaceId: string;
+  userId: string;
+  role: WorkspaceAccessRole;
+  addedByUserId?: string | null;
+}
+
+interface WorkspaceAccessContext {
+  workspace: WorkspaceWithOwner;
+  membership: WorkspaceMembership | null;
+  isOwner: boolean;
+  isAdmin: boolean;
+}
+
+interface WorkspaceActor {
+  id?: string;
+  sub?: string;
+  email?: string | null;
+  role?: string | null;
+  roles?: string[] | null;
+}
+
+interface HostMariaSyncInputs {
+  configPath: string;
+  reportPath: string;
+  archivePath: string;
+  targets: string[];
+  latestReport: Record<string, unknown> | null;
+  latestArchive: Record<string, unknown> | null;
+}
+
+type HostMariaTaskStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
+type HostMariaTaskPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+
+interface HostMariaTaskBlueprint {
+  syncKey: string;
+  title: string;
+  description: string;
+  status: HostMariaTaskStatus;
+  priority: HostMariaTaskPriority;
+  data: Record<string, unknown>;
+  metadata: Record<string, unknown>;
+}
+
+interface HostMariaTaskSyncResult {
+  created: number;
+  updated: number;
+  items: Array<Record<string, unknown>>;
+}
+
 type WorkspaceDomainStatus = 'pending' | 'verified' | 'error';
 
 export class CreateWorkspaceDomainDto {
@@ -103,8 +171,959 @@ export class UpdateWorkspaceBookmarkDto {
 @ApiBearerAuth()
 @Controller('workspaces')
 @UseGuards(JwtAuthGuard)
-export class WorkspaceController {
-  constructor(private readonly db: DatabaseService) {}
+export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(WorkspaceController.name);
+  private readonly hostMariaOwnerEmails = new Set(
+    (process.env.HOSTMARIA_OWNER_EMAILS || 'owner@example.com')
+      .split(',')
+      .map((email) => email.trim().toLowerCase())
+      .filter((email) => email.length > 0)
+  );
+  private hostMariaAutoSyncTimer: NodeJS.Timeout | null = null;
+  private hostMariaAutoSyncRunning = false;
+
+  constructor(
+    private readonly db: DatabaseService,
+    @Optional() private readonly unifiedLedger?: UnifiedLedgerService
+  ) {}
+
+  onModuleInit(): void {
+    if (!this.isHostMariaAutoSyncEnabled()) {
+      return;
+    }
+
+    const intervalMs = this.getHostMariaAutoSyncIntervalMs();
+    const runOnStart = this.shouldRunHostMariaAutoSyncOnStart();
+
+    this.logger.log(
+      `HostMaria workspace auto-sync enabled (interval=${intervalMs}ms, runOnStart=${runOnStart})`
+    );
+
+    if (runOnStart) {
+      void this.runHostMariaAutoSyncCycle('startup');
+    }
+
+    this.hostMariaAutoSyncTimer = setInterval(() => {
+      void this.runHostMariaAutoSyncCycle('interval');
+    }, intervalMs);
+  }
+
+  onModuleDestroy(): void {
+    if (this.hostMariaAutoSyncTimer) {
+      clearInterval(this.hostMariaAutoSyncTimer);
+      this.hostMariaAutoSyncTimer = null;
+    }
+  }
+
+  private isHostMariaAutoSyncEnabled(): boolean {
+    const raw = String(process.env.HOSTMARIA_AUTO_SYNC_ENABLED || '')
+      .trim()
+      .toLowerCase();
+    if (!raw) {
+      return true;
+    }
+    return raw === '1' || raw === 'true' || raw === 'yes' || raw === 'on';
+  }
+
+  private shouldRunHostMariaAutoSyncOnStart(): boolean {
+    const raw = String(process.env.HOSTMARIA_AUTO_SYNC_RUN_ON_START || '')
+      .trim()
+      .toLowerCase();
+    if (!raw) return true;
+    return raw === '1' || raw === 'true' || raw === 'yes' || raw === 'on';
+  }
+
+  private getHostMariaAutoSyncIntervalMs(): number {
+    const fromEnv = Number.parseInt(process.env.HOSTMARIA_AUTO_SYNC_INTERVAL_MS || '', 10);
+    if (Number.isFinite(fromEnv) && fromEnv >= 60_000) {
+      return fromEnv;
+    }
+    return 10 * 60 * 1000;
+  }
+
+  private async runHostMariaAutoSyncCycle(
+    trigger: 'startup' | 'interval' | 'manual'
+  ): Promise<void> {
+    if (this.hostMariaAutoSyncRunning) {
+      return;
+    }
+    this.hostMariaAutoSyncRunning = true;
+
+    try {
+      const inputs = await this.readHostMariaSyncInputs();
+      const noSignals =
+        inputs.targets.length === 0 && !inputs.latestReport && !inputs.latestArchive;
+      if (noSignals) {
+        this.logger.warn(
+          'HostMaria auto-sync skipped: no targets or latest report/archive artifacts detected'
+        );
+        return;
+      }
+
+      const allWorkspaces = await this.db.workspaces.findAllWithOwner();
+      const eligible = allWorkspaces.filter((workspace) =>
+        this.isHostMariaOwnerEmail(String(workspace.owner?.email || ''))
+      );
+
+      if (eligible.length === 0) {
+        return;
+      }
+
+      let syncedWorkspaces = 0;
+      let tasksCreated = 0;
+      let tasksUpdated = 0;
+      let ledgerCreated = 0;
+      let ledgerUpdated = 0;
+
+      for (const workspace of eligible) {
+        try {
+          const ownerEmail = String(workspace.owner?.email || '')
+            .trim()
+            .toLowerCase();
+          const project = await this.upsertHostMariaProject(workspace.id, ownerEmail, inputs);
+          const taskSync = await this.upsertHostMariaTasks(
+            workspace.ownerId,
+            workspace.id,
+            project.id,
+            ownerEmail,
+            inputs
+          );
+          const ledgerSync = await this.upsertHostMariaLedgerTasks(
+            workspace.ownerId,
+            workspace.id,
+            taskSync.items
+          );
+
+          syncedWorkspaces += 1;
+          tasksCreated += taskSync.created;
+          tasksUpdated += taskSync.updated;
+          ledgerCreated += ledgerSync.created;
+          ledgerUpdated += ledgerSync.updated;
+        } catch (error) {
+          this.logger.error(
+            `HostMaria auto-sync failed for workspace ${workspace.id}`,
+            error as Error
+          );
+        }
+      }
+
+      if (syncedWorkspaces > 0) {
+        this.logger.log(
+          `HostMaria auto-sync (${trigger}) completed: workspaces=${syncedWorkspaces}, tasks=+${tasksCreated}/~${tasksUpdated}, ledger=+${ledgerCreated}/~${ledgerUpdated}`
+        );
+      }
+    } catch (error) {
+      this.logger.error('HostMaria auto-sync cycle failed', error as Error);
+    } finally {
+      this.hostMariaAutoSyncRunning = false;
+    }
+  }
+
+  private requireActor(user: WorkspaceActor): { userId: string; email: string } {
+    const userId = user.id || user.sub;
+    if (!userId) {
+      throw new ForbiddenException('Authenticated user id is required');
+    }
+
+    const email = String(user.email || '')
+      .trim()
+      .toLowerCase();
+    if (!email) {
+      throw new ForbiddenException('Authenticated user email is required');
+    }
+
+    return { userId, email };
+  }
+
+  private isHostMariaOwnerEmail(email: string): boolean {
+    return this.hostMariaOwnerEmails.has(
+      String(email || '')
+        .trim()
+        .toLowerCase()
+    );
+  }
+
+  private isHostMariaProject(project: unknown): boolean {
+    const payload = this.asObject(project);
+    const name = String(payload.name || '')
+      .trim()
+      .toLowerCase();
+    const settings = this.asObject(payload.settings);
+    return settings.hostMariaOps === true || name === 'hostmaria legacy ops';
+  }
+
+  private canAccessHostMariaWorkspace(
+    access: WorkspaceAccessContext,
+    actorEmail: string,
+    mode: 'read' | 'write'
+  ): boolean {
+    const ownerEmail = String(access.workspace.owner?.email || '')
+      .trim()
+      .toLowerCase();
+    if (!this.isHostMariaOwnerEmail(ownerEmail)) {
+      return false;
+    }
+
+    if (this.isHostMariaOwnerEmail(actorEmail)) {
+      return true;
+    }
+
+    const membership = access.membership;
+    if (!membership) {
+      return false;
+    }
+
+    const delegatedByOwner = membership.addedByUserId === access.workspace.ownerId;
+    if (!delegatedByOwner) {
+      return false;
+    }
+
+    if (mode === 'write') {
+      return membership.role === 'admin' || membership.role === 'member';
+    }
+
+    return membership.role !== 'viewer';
+  }
+
+  private async ensureHostMariaWorkspaceAccess(
+    workspaceId: string,
+    user: WorkspaceActor,
+    mode: 'read' | 'write'
+  ): Promise<{ actor: { userId: string; email: string }; access: WorkspaceAccessContext }> {
+    const actor = this.requireActor(user);
+    const access =
+      mode === 'write'
+        ? await this.ensureWorkspaceMemberManagement(workspaceId, actor.userId)
+        : await this.ensureWorkspaceAccess(workspaceId, actor.userId);
+
+    if (!this.canAccessHostMariaWorkspace(access, actor.email, mode)) {
+      throw new ForbiddenException(
+        `HostMaria operations are restricted to account owner (${Array.from(this.hostMariaOwnerEmails).join(', ')}) and delegated agents.`
+      );
+    }
+
+    return { actor, access };
+  }
+
+  private resolveHostMariaPaths() {
+    const homeDir = os.homedir();
+    return {
+      configPath:
+        process.env.HOSTMARIA_PROJECTS_FILE ||
+        path.join(homeDir, '.tnf', 'hostmaria', 'projects.txt'),
+      reportPath:
+        process.env.HOSTMARIA_LATEST_REPORT_FILE ||
+        path.join(homeDir, '.tnf', 'hostmaria', 'reports', 'hostmaria-preservation-latest.json'),
+      archivePath:
+        process.env.HOSTMARIA_LATEST_ARCHIVE_FILE ||
+        path.join(homeDir, '.tnf', 'hostmaria', 'archive', 'latest-archive-summary.json'),
+    };
+  }
+
+  private sanitizeSyncKey(value: string): string {
+    return value
+      .toLowerCase()
+      .replace(/[^a-z0-9:_-]+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80);
+  }
+
+  private normalizeHostMariaTarget(input: unknown): string | null {
+    const raw = String(input || '').trim();
+    if (!raw || raw.startsWith('#')) return null;
+
+    const withScheme = /^[a-zA-Z][a-zA-Z\d+.-]*:\/\//.test(raw) ? raw : `https://${raw}`;
+    try {
+      const parsed = new URL(withScheme);
+      const host = parsed.hostname.trim().toLowerCase();
+      return host || null;
+    } catch {
+      return null;
+    }
+  }
+
+  private normalizeHostMariaSeverity(value: unknown): 'ok' | 'warning' | 'critical' {
+    const normalized = String(value || '')
+      .trim()
+      .toLowerCase();
+    if (normalized === 'critical') return 'critical';
+    if (normalized === 'warning') return 'warning';
+    return 'ok';
+  }
+
+  private asObject(value: unknown): Record<string, unknown> {
+    return value && typeof value === 'object' && !Array.isArray(value)
+      ? (value as Record<string, unknown>)
+      : {};
+  }
+
+  private asStringArray(value: unknown): string[] {
+    if (!Array.isArray(value)) return [];
+    return value.map((item) => String(item || '').trim()).filter((item) => item.length > 0);
+  }
+
+  private async readJsonObject(filePath: string): Promise<Record<string, unknown> | null> {
+    try {
+      const raw = await fs.readFile(filePath, 'utf8');
+      const parsed: unknown = JSON.parse(raw);
+      const payload = this.asObject(parsed);
+      return Object.keys(payload).length > 0 ? payload : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private async readHostMariaSyncInputs(): Promise<HostMariaSyncInputs> {
+    const { configPath, reportPath, archivePath } = this.resolveHostMariaPaths();
+
+    let targets: string[] = [];
+    try {
+      const raw = await fs.readFile(configPath, 'utf8');
+      targets = Array.from(
+        new Set(
+          raw
+            .split('\n')
+            .map((line) => this.normalizeHostMariaTarget(line))
+            .filter((line): line is string => Boolean(line))
+        )
+      );
+    } catch {
+      targets = [];
+    }
+
+    const [latestReport, latestArchive] = await Promise.all([
+      this.readJsonObject(reportPath),
+      this.readJsonObject(archivePath),
+    ]);
+
+    return {
+      configPath,
+      reportPath,
+      archivePath,
+      targets,
+      latestReport,
+      latestArchive,
+    };
+  }
+
+  private mapSeverityToTaskStatus(severity: 'ok' | 'warning' | 'critical'): HostMariaTaskStatus {
+    if (severity === 'critical') return 'FAILED';
+    if (severity === 'warning') return 'IN_PROGRESS';
+    return 'COMPLETED';
+  }
+
+  private mapSeverityToTaskPriority(
+    severity: 'ok' | 'warning' | 'critical'
+  ): HostMariaTaskPriority {
+    if (severity === 'critical') return 'URGENT';
+    if (severity === 'warning') return 'HIGH';
+    return 'MEDIUM';
+  }
+
+  private mapTaskStatusToLedgerStatus(
+    status: string
+  ): 'submitted' | 'in_progress' | 'completed' | 'failed' | 'rejected' {
+    if (status === 'COMPLETED') return 'completed';
+    if (status === 'IN_PROGRESS') return 'in_progress';
+    if (status === 'FAILED') return 'failed';
+    if (status === 'CANCELLED') return 'rejected';
+    return 'submitted';
+  }
+
+  private mapTaskPriorityToLedgerPriority(
+    priority: string
+  ): 'low' | 'medium' | 'high' | 'critical' | 'urgent' {
+    if (priority === 'URGENT') return 'urgent';
+    if (priority === 'HIGH') return 'high';
+    if (priority === 'LOW') return 'low';
+    return 'medium';
+  }
+
+  private formatTargetStatusSummary(check: Record<string, unknown> | null): string {
+    if (!check) return 'No live check data available yet.';
+
+    const http = this.asObject(check.http);
+    const tls = this.asObject(check.tls);
+    const statusCode = Number(http.statusCode || 0);
+    const daysRemaining = Number(tls.daysRemaining || 0);
+    const httpSummary = statusCode > 0 ? `HTTP ${statusCode}` : 'HTTP unavailable';
+    const tlsSummary =
+      Number.isFinite(daysRemaining) && daysRemaining > 0
+        ? `TLS ${daysRemaining} days remaining`
+        : 'TLS unavailable';
+    return `${httpSummary} | ${tlsSummary}`;
+  }
+
+  private buildHostMariaTaskBlueprints(
+    workspaceId: string,
+    projectId: string,
+    actorEmail: string,
+    inputs: HostMariaSyncInputs
+  ): HostMariaTaskBlueprint[] {
+    const latestReport = this.asObject(inputs.latestReport);
+    const summary = this.asObject(latestReport.summary);
+    const reportChecksRaw = Array.isArray(latestReport.checks) ? latestReport.checks : [];
+    const reportChecks = reportChecksRaw.map((item) => this.asObject(item));
+    const checksByTarget = new Map<string, Record<string, unknown>>();
+    for (const check of reportChecks) {
+      const normalizedTarget = this.normalizeHostMariaTarget(check.target);
+      if (normalizedTarget) {
+        checksByTarget.set(normalizedTarget, check);
+      }
+    }
+
+    const reportSeverity = this.normalizeHostMariaSeverity(latestReport.status);
+    const generatedAt = String(latestReport.generatedAt || 'unknown');
+    const targetCount = inputs.targets.length;
+    const okCount = Number(summary.ok || 0);
+    const warningCount = Number(summary.warning || 0);
+    const criticalCount = Number(summary.critical || 0);
+
+    const sharedMetadata = {
+      hostMariaOps: true,
+      workspaceId,
+      projectId,
+      ownerEmail: actorEmail,
+      configPath: inputs.configPath,
+      reportPath: inputs.reportPath,
+      archivePath: inputs.archivePath,
+      targetCount,
+      reportGeneratedAt: generatedAt,
+      reportSeverity,
+    };
+
+    const blueprints: HostMariaTaskBlueprint[] = [
+      {
+        syncKey: 'hostmaria:monitor',
+        title: 'HostMaria Preservation Monitor',
+        description: `Track legacy site health every 10 minutes. Last report: ${generatedAt}. ok=${okCount}, warning=${warningCount}, critical=${criticalCount}.`,
+        status: reportSeverity === 'critical' ? 'FAILED' : 'IN_PROGRESS',
+        priority: reportSeverity === 'critical' ? 'URGENT' : 'HIGH',
+        data: {
+          command:
+            'node scripts/runtime/hostmaria-preservation-check.cjs --config ~/.tnf/hostmaria/projects.txt --out-dir ~/.tnf/hostmaria/reports',
+          latestReport: latestReport || null,
+        },
+        metadata: {
+          ...sharedMetadata,
+          hostMariaSyncKey: 'hostmaria:monitor',
+          schedule: '*/10 * * * *',
+        },
+      },
+      {
+        syncKey: 'hostmaria:archive',
+        title: 'HostMaria Daily Archive Snapshot',
+        description: `Capture homepage/robots/sitemap snapshots daily for ${Math.max(targetCount, 1)} target(s).`,
+        status: inputs.latestArchive ? 'IN_PROGRESS' : 'PENDING',
+        priority: 'MEDIUM',
+        data: {
+          command:
+            'node scripts/runtime/hostmaria-daily-archive.cjs --config ~/.tnf/hostmaria/projects.txt --out-dir ~/.tnf/hostmaria/archive',
+          latestArchive: inputs.latestArchive || null,
+        },
+        metadata: {
+          ...sharedMetadata,
+          hostMariaSyncKey: 'hostmaria:archive',
+          schedule: '17 2 * * *',
+        },
+      },
+    ];
+
+    for (const target of inputs.targets) {
+      const check = checksByTarget.get(target) || null;
+      const severity = this.normalizeHostMariaSeverity(check?.severity);
+      const reasons = this.asStringArray(check?.reasons);
+      blueprints.push({
+        syncKey: `hostmaria:target:${this.sanitizeSyncKey(target)}`,
+        title: `Preserve ${target}`,
+        description:
+          reasons.length > 0
+            ? `${reasons.join(' | ')} (${this.formatTargetStatusSummary(check)})`
+            : this.formatTargetStatusSummary(check),
+        status: this.mapSeverityToTaskStatus(severity),
+        priority: this.mapSeverityToTaskPriority(severity),
+        data: {
+          target,
+          check,
+        },
+        metadata: {
+          ...sharedMetadata,
+          hostMariaSyncKey: `hostmaria:target:${this.sanitizeSyncKey(target)}`,
+          target,
+          severity,
+          reasons,
+        },
+      });
+    }
+
+    return blueprints;
+  }
+
+  private async upsertHostMariaProject(
+    workspaceId: string,
+    actorEmail: string,
+    inputs: HostMariaSyncInputs
+  ) {
+    const [existingProject] = await this.db.client
+      .select()
+      .from(drizzleSchema.projects)
+      .where(
+        and(
+          eq(drizzleSchema.projects.workspaceId, workspaceId),
+          eq(drizzleSchema.projects.name, 'HostMaria Legacy Ops')
+        )
+      )
+      .orderBy(desc(drizzleSchema.projects.updatedAt))
+      .limit(1);
+
+    const report = this.asObject(inputs.latestReport);
+    const reportSummary = this.asObject(report.summary);
+    const description = `Legacy preservation + archive automation for ${Math.max(inputs.targets.length, 1)} target(s). Last report status: ${String(report.status || 'unknown')}.`;
+    const settings = {
+      hostMariaOps: true,
+      ownerEmail: actorEmail,
+      configPath: inputs.configPath,
+      reportPath: inputs.reportPath,
+      archivePath: inputs.archivePath,
+      targets: inputs.targets,
+      reportStatus: report.status || 'unknown',
+      reportSummary,
+      syncedAt: new Date().toISOString(),
+    };
+
+    if (existingProject) {
+      const [updatedProject] = await this.db.client
+        .update(drizzleSchema.projects)
+        .set({
+          description,
+          settings,
+          customInstructions:
+            'Keep HostMaria legacy properties healthy with 10-minute checks and daily archival snapshots.',
+          updatedAt: new Date(),
+        })
+        .where(eq(drizzleSchema.projects.id, existingProject.id))
+        .returning();
+      return updatedProject || existingProject;
+    }
+
+    const [createdProject] = await this.db.client
+      .insert(drizzleSchema.projects)
+      .values({
+        id: `prj_${randomUUID().replace(/-/g, '').slice(0, 16)}`,
+        name: 'HostMaria Legacy Ops',
+        description,
+        workspaceId,
+        customInstructions:
+          'Keep HostMaria legacy properties healthy with 10-minute checks and daily archival snapshots.',
+        settings,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+
+    return createdProject;
+  }
+
+  private async upsertHostMariaTasks(
+    userId: string,
+    workspaceId: string,
+    projectId: string,
+    actorEmail: string,
+    inputs: HostMariaSyncInputs
+  ): Promise<HostMariaTaskSyncResult> {
+    try {
+      return await this.upsertHostMariaTasksModern(
+        userId,
+        workspaceId,
+        projectId,
+        actorEmail,
+        inputs
+      );
+    } catch (error) {
+      if (!this.isHostMariaLegacyTaskSchemaError(error)) {
+        throw error;
+      }
+      this.logger.warn(
+        'HostMaria task sync detected legacy tasks schema; applying compatibility upsert path.'
+      );
+      return this.upsertHostMariaTasksLegacy(userId, workspaceId, projectId, actorEmail, inputs);
+    }
+  }
+
+  private async upsertHostMariaTasksModern(
+    userId: string,
+    workspaceId: string,
+    projectId: string,
+    actorEmail: string,
+    inputs: HostMariaSyncInputs
+  ): Promise<HostMariaTaskSyncResult> {
+    const blueprints = this.buildHostMariaTaskBlueprints(
+      workspaceId,
+      projectId,
+      actorEmail,
+      inputs
+    );
+    const existingTasks = await this.db.client
+      .select()
+      .from(tasks)
+      .where(
+        and(
+          eq(tasks.userId, userId),
+          eq(tasks.type, 'HOSTMARIA_LEGACY_OPS'),
+          isNull(tasks.deletedAt)
+        )
+      );
+
+    const bySyncKey = new Map<string, (typeof existingTasks)[number]>();
+    for (const taskRow of existingTasks) {
+      const metadata = this.asObject(taskRow.metadata);
+      const syncKey = String(metadata.hostMariaSyncKey || '');
+      if (syncKey) bySyncKey.set(syncKey, taskRow);
+    }
+
+    let created = 0;
+    let updated = 0;
+    const items: Array<Record<string, unknown>> = [];
+
+    for (const blueprint of blueprints) {
+      const existing = bySyncKey.get(blueprint.syncKey);
+      if (existing) {
+        const [updatedTask] = await this.db.client
+          .update(tasks)
+          .set({
+            title: blueprint.title,
+            description: blueprint.description,
+            status: blueprint.status,
+            priority: blueprint.priority,
+            data: blueprint.data,
+            metadata: blueprint.metadata,
+            updatedAt: new Date(),
+            deletedAt: null,
+          })
+          .where(eq(tasks.id, existing.id))
+          .returning();
+
+        if (updatedTask) {
+          updated += 1;
+          items.push({
+            id: updatedTask.id,
+            title: updatedTask.title,
+            description: updatedTask.description,
+            status: updatedTask.status,
+            priority: updatedTask.priority,
+            updatedAt: updatedTask.updatedAt,
+            metadata: updatedTask.metadata,
+          });
+        }
+        continue;
+      }
+
+      const [createdTask] = await this.db.client
+        .insert(tasks)
+        .values({
+          type: 'HOSTMARIA_LEGACY_OPS',
+          title: blueprint.title,
+          description: blueprint.description,
+          status: blueprint.status,
+          priority: blueprint.priority,
+          data: blueprint.data,
+          metadata: blueprint.metadata,
+          userId,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .returning();
+
+      if (createdTask) {
+        created += 1;
+        items.push({
+          id: createdTask.id,
+          title: createdTask.title,
+          description: createdTask.description,
+          status: createdTask.status,
+          priority: createdTask.priority,
+          updatedAt: createdTask.updatedAt,
+          metadata: createdTask.metadata,
+        });
+      }
+    }
+
+    const liveSyncKeys = new Set(blueprints.map((blueprint) => blueprint.syncKey));
+    for (const existing of existingTasks) {
+      const metadata = this.asObject(existing.metadata);
+      const syncKey = String(metadata.hostMariaSyncKey || '');
+      if (!syncKey || liveSyncKeys.has(syncKey)) continue;
+
+      const [cancelledTask] = await this.db.client
+        .update(tasks)
+        .set({
+          status: 'CANCELLED',
+          updatedAt: new Date(),
+          metadata: {
+            ...metadata,
+            active: false,
+            archivedAt: new Date().toISOString(),
+          },
+        })
+        .where(eq(tasks.id, existing.id))
+        .returning();
+
+      if (cancelledTask) {
+        updated += 1;
+      }
+    }
+
+    return { created, updated, items };
+  }
+
+  private normalizeSqlRows(result: unknown): Array<Record<string, unknown>> {
+    if (Array.isArray(result)) {
+      return result.map((row) => this.asObject(row));
+    }
+
+    const payload = this.asObject(result);
+    if (Array.isArray(payload.rows)) {
+      return payload.rows.map((row) => this.asObject(row));
+    }
+
+    return [];
+  }
+
+  private isHostMariaLegacyTaskSchemaError(error: unknown): boolean {
+    const message = String((error as Error | undefined)?.message || '').toLowerCase();
+    return (
+      message.includes('column "data" does not exist') ||
+      message.includes('column "user_id" does not exist') ||
+      message.includes('column "deleted_at" does not exist') ||
+      message.includes('column "updated_at" does not exist') ||
+      message.includes('column "created_at" does not exist')
+    );
+  }
+
+  private async upsertHostMariaTasksLegacy(
+    userId: string,
+    workspaceId: string,
+    projectId: string,
+    actorEmail: string,
+    inputs: HostMariaSyncInputs
+  ): Promise<HostMariaTaskSyncResult> {
+    const blueprints = this.buildHostMariaTaskBlueprints(
+      workspaceId,
+      projectId,
+      actorEmail,
+      inputs
+    );
+    const existingRaw = await this.db.client.execute(sql`
+      SELECT
+        "id",
+        "title",
+        "description",
+        "status",
+        "priority",
+        "metadata",
+        "updatedAt"
+      FROM "tasks"
+      WHERE "createdBy" = ${userId}
+        AND "type" = 'HOSTMARIA_LEGACY_OPS'
+    `);
+    const existingTasks = this.normalizeSqlRows(existingRaw);
+
+    const bySyncKey = new Map<string, Record<string, unknown>>();
+    for (const taskRow of existingTasks) {
+      const metadata = this.asObject(taskRow.metadata);
+      const syncKey = String(metadata.hostMariaSyncKey || '');
+      if (syncKey) bySyncKey.set(syncKey, taskRow);
+    }
+
+    let created = 0;
+    let updated = 0;
+    const items: Array<Record<string, unknown>> = [];
+
+    for (const blueprint of blueprints) {
+      const existing = bySyncKey.get(blueprint.syncKey);
+      const now = new Date();
+      const nowIso = now.toISOString();
+      const completedAt = blueprint.status === 'COMPLETED' ? nowIso : null;
+      const errorText = blueprint.status === 'FAILED' ? blueprint.description : null;
+      const metadataJson = JSON.stringify(blueprint.metadata || {});
+
+      if (existing) {
+        const taskId = String(existing.id || '');
+        if (!taskId) continue;
+
+        const updatedRows = this.normalizeSqlRows(
+          await this.db.client.execute(sql`
+            UPDATE "tasks"
+            SET
+              "title" = ${blueprint.title},
+              "description" = ${blueprint.description},
+              "status" = ${blueprint.status},
+              "priority" = ${blueprint.priority},
+              "metadata" = ${metadataJson}::jsonb,
+              "updatedAt" = ${nowIso},
+              "completedAt" = ${completedAt},
+              "error" = ${errorText}
+            WHERE "id" = ${taskId}
+            RETURNING
+              "id",
+              "title",
+              "description",
+              "status",
+              "priority",
+              "metadata",
+              "updatedAt"
+          `)
+        );
+        const updatedTask = updatedRows[0];
+        if (updatedTask) {
+          updated += 1;
+          items.push({
+            id: updatedTask.id,
+            title: updatedTask.title,
+            description: updatedTask.description,
+            status: updatedTask.status,
+            priority: updatedTask.priority,
+            updatedAt: updatedTask.updatedAt,
+            metadata: this.asObject(updatedTask.metadata),
+          });
+        }
+        continue;
+      }
+
+      const taskId = `task_${randomUUID().replace(/-/g, '').slice(0, 24)}`;
+      const createdRows = this.normalizeSqlRows(
+        await this.db.client.execute(sql`
+          INSERT INTO "tasks" (
+            "id",
+            "title",
+            "description",
+            "status",
+            "priority",
+            "type",
+            "updatedAt",
+            "createdBy",
+            "metadata",
+            "completedAt",
+            "error"
+          )
+          VALUES (
+            ${taskId},
+            ${blueprint.title},
+            ${blueprint.description},
+            ${blueprint.status},
+            ${blueprint.priority},
+            'HOSTMARIA_LEGACY_OPS',
+            ${nowIso},
+            ${userId},
+            ${metadataJson}::jsonb,
+            ${completedAt},
+            ${errorText}
+          )
+          RETURNING
+            "id",
+            "title",
+            "description",
+            "status",
+            "priority",
+            "metadata",
+            "updatedAt"
+        `)
+      );
+      const createdTask = createdRows[0];
+      if (createdTask) {
+        created += 1;
+        items.push({
+          id: createdTask.id,
+          title: createdTask.title,
+          description: createdTask.description,
+          status: createdTask.status,
+          priority: createdTask.priority,
+          updatedAt: createdTask.updatedAt,
+          metadata: this.asObject(createdTask.metadata),
+        });
+      }
+    }
+
+    const liveSyncKeys = new Set(blueprints.map((blueprint) => blueprint.syncKey));
+    for (const existing of existingTasks) {
+      const metadata = this.asObject(existing.metadata);
+      const syncKey = String(metadata.hostMariaSyncKey || '');
+      const taskId = String(existing.id || '');
+      if (!taskId || !syncKey || liveSyncKeys.has(syncKey)) continue;
+
+      await this.db.client.execute(sql`
+        UPDATE "tasks"
+        SET
+          "status" = 'CANCELLED',
+          "updatedAt" = ${new Date().toISOString()},
+          "metadata" = ${JSON.stringify({
+            ...metadata,
+            active: false,
+            archivedAt: new Date().toISOString(),
+          })}::jsonb
+        WHERE "id" = ${taskId}
+      `);
+      updated += 1;
+    }
+
+    return { created, updated, items };
+  }
+
+  private async upsertHostMariaLedgerTasks(
+    userId: string,
+    workspaceId: string,
+    taskItems: Array<Record<string, unknown>>
+  ): Promise<{ created: number; updated: number }> {
+    if (!this.unifiedLedger) {
+      return { created: 0, updated: 0 };
+    }
+
+    let created = 0;
+    let updated = 0;
+
+    for (const taskItem of taskItems) {
+      const metadata = this.asObject(taskItem.metadata);
+      const syncKey = String(metadata.hostMariaSyncKey || '');
+      if (!syncKey) continue;
+
+      const ledgerId =
+        `hostmaria_${this.sanitizeSyncKey(workspaceId)}_${this.sanitizeSyncKey(syncKey)}`.slice(
+          0,
+          120
+        );
+      const existing = await this.unifiedLedger.getRecord(ledgerId, userId);
+
+      const payload = {
+        title: String(taskItem.title || 'HostMaria Task'),
+        description: String(taskItem.description || ''),
+        status: this.mapTaskStatusToLedgerStatus(String(taskItem.status || 'PENDING')),
+        priority: this.mapTaskPriorityToLedgerPriority(String(taskItem.priority || 'MEDIUM')),
+        owner: userId,
+        tags: ['hostmaria', 'legacy', `workspace:${workspaceId}`],
+        metadata: {
+          ...(metadata || {}),
+          sourceTaskId: taskItem.id,
+          workspaceId,
+        },
+        source: 'orchestrator' as const,
+      };
+
+      if (existing) {
+        await this.unifiedLedger.updateRecord(ledgerId, payload, userId);
+        updated += 1;
+      } else {
+        await this.unifiedLedger.createRecord({
+          id: ledgerId,
+          kind: 'task',
+          ...payload,
+        });
+        created += 1;
+      }
+    }
+
+    return { created, updated };
+  }
 
   private normalizeDomain(value: string): string {
     const trimmed = value.trim().toLowerCase();
@@ -209,7 +1228,10 @@ export class WorkspaceController {
     ];
   }
 
-  private async ensureWorkspaceAccess(workspaceId: string, userId: string) {
+  private async ensureWorkspaceAccess(
+    workspaceId: string,
+    userId: string
+  ): Promise<WorkspaceAccessContext> {
     const workspace = (await this.db.workspaces.findByIdWithOwner(
       workspaceId
     )) as WorkspaceWithOwner;
@@ -217,7 +1239,10 @@ export class WorkspaceController {
       throw new NotFoundException('Workspace not found');
     }
 
-    const membership = await this.db.workspaceMembers.findMembership(workspaceId, userId);
+    const membership = (await this.db.workspaceMembers.findMembership(
+      workspaceId,
+      userId
+    )) as WorkspaceMembership | null;
     const isOwner = workspace.ownerId === userId;
     const isAdmin = membership?.role === 'admin' || membership?.role === 'owner';
     if (!isOwner && !membership) {
@@ -227,7 +1252,10 @@ export class WorkspaceController {
     return { workspace, membership, isOwner, isAdmin };
   }
 
-  private async ensureWorkspaceMemberManagement(workspaceId: string, userId: string) {
+  private async ensureWorkspaceMemberManagement(
+    workspaceId: string,
+    userId: string
+  ): Promise<WorkspaceAccessContext> {
     const access = await this.ensureWorkspaceAccess(workspaceId, userId);
     if (!access.isOwner && !access.isAdmin) {
       throw new ForbiddenException('Only workspace owners or admins can manage members');
@@ -797,12 +1825,17 @@ export class WorkspaceController {
 
     const existing = await this.db.workspaceBookmarks.findByUrlForUser(id, normalizedUrl, userId);
     if (existing) {
-      const updated = await this.db.workspaceBookmarks.updateBookmarkForUser(id, existing.id, userId, {
-        title,
-        tags,
-        note,
-        url: normalizedUrl,
-      });
+      const updated = await this.db.workspaceBookmarks.updateBookmarkForUser(
+        id,
+        existing.id,
+        userId,
+        {
+          title,
+          tags,
+          note,
+          url: normalizedUrl,
+        }
+      );
       return { workspaceId: id, item: updated || existing };
     }
 
@@ -853,11 +1886,13 @@ export class WorkspaceController {
     const tags =
       payload.tags === undefined
         ? existing.tags || []
-        : payload.tags
-            .map((tag) => String(tag || '').trim())
-            .filter((tag) => tag.length > 0);
+        : payload.tags.map((tag) => String(tag || '').trim()).filter((tag) => tag.length > 0);
     const note =
-      payload.note === undefined ? existing.note : typeof payload.note === 'string' ? payload.note.trim() : null;
+      payload.note === undefined
+        ? existing.note
+        : typeof payload.note === 'string'
+          ? payload.note.trim()
+          : null;
 
     if (nextUrl !== existing.url) {
       const conflicting = await this.db.workspaceBookmarks.findByUrlForUser(id, nextUrl, userId);
@@ -906,9 +1941,67 @@ export class WorkspaceController {
   @ApiResponse({ status: 200, description: 'List of projects in the workspace' })
   @ApiResponse({ status: 404, description: 'Workspace not found' })
   @ApiResponse({ status: 403, description: 'Access denied' })
-  async getWorkspaceProjects(@Param('id') id: string, @CurrentUser('id') userId: string) {
-    await this.ensureWorkspaceAccess(id, userId);
+  async getWorkspaceProjects(@Param('id') id: string, @CurrentUser() user: WorkspaceActor) {
+    const actor = this.requireActor(user);
+    const access = await this.ensureWorkspaceAccess(id, actor.userId);
     const workspaceWithProjects = await this.db.workspaces.findByIdWithProjects(id);
-    return workspaceWithProjects?.projects || [];
+    const projects = workspaceWithProjects?.projects || [];
+    if (this.canAccessHostMariaWorkspace(access, actor.email, 'read')) {
+      return projects;
+    }
+    return projects.filter((project) => !this.isHostMariaProject(project));
+  }
+
+  /**
+   * Sync HostMaria legacy automation artifacts into workspace project and tasks.
+   * Restricted to configured owner email(s), defaulting to owner@example.com.
+   */
+  @Post(':id/hostmaria/sync')
+  @ApiOperation({ summary: 'Sync HostMaria legacy ops into workspace project + tasks' })
+  @ApiResponse({ status: 200, description: 'HostMaria workspace sync complete' })
+  @ApiResponse({ status: 403, description: 'Restricted to configured HostMaria owner account(s)' })
+  async syncWorkspaceHostMariaOps(@Param('id') id: string, @CurrentUser() user: WorkspaceActor) {
+    const { actor, access } = await this.ensureHostMariaWorkspaceAccess(id, user, 'write');
+    const ownerEmail = String(access.workspace.owner?.email || actor.email)
+      .trim()
+      .toLowerCase();
+    const ownerUserId = access.workspace.ownerId;
+
+    const inputs = await this.readHostMariaSyncInputs();
+    const project = await this.upsertHostMariaProject(id, ownerEmail, inputs);
+    const taskSync = await this.upsertHostMariaTasks(
+      ownerUserId,
+      id,
+      project.id,
+      ownerEmail,
+      inputs
+    );
+    const ledgerSync = await this.upsertHostMariaLedgerTasks(ownerUserId, id, taskSync.items);
+
+    return {
+      workspaceId: id,
+      ownerEmail,
+      project: {
+        id: project.id,
+        name: project.name,
+        description: project.description,
+        updatedAt: project.updatedAt,
+      },
+      tasks: {
+        total: taskSync.items.length,
+        created: taskSync.created,
+        updated: taskSync.updated,
+        items: taskSync.items,
+      },
+      unifiedLedger: ledgerSync,
+      telemetry: {
+        configPath: inputs.configPath,
+        reportPath: inputs.reportPath,
+        archivePath: inputs.archivePath,
+        targetCount: inputs.targets.length,
+        targets: inputs.targets,
+        latestReportStatus: inputs.latestReport?.status || 'unknown',
+      },
+    };
   }
 }

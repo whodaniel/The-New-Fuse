@@ -8,7 +8,14 @@
     "build": "tsc -p tsconfig.build.json --skipLibCheck",
     "type-check": "tsc --noEmit",
     "dev": "tsx src/index.ts",
-    "start": "node dist/index.js",
-    "demo": "tsx src/index.ts --demo"
+    "serve": "tsx src/server.ts",
+    "start": "node dist/server.js",
+    "demo": "tsx src/index.ts --demo",
+    "demo:full": "tsx src/index.ts --demo --demo-full"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.13",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.3"
   }
 }

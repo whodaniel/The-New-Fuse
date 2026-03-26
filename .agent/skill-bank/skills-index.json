@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-25T00:18:40.111Z",
+  "generatedAt": "2026-03-25T11:12:56.474Z",
   "repoRoot": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
   "sourceRoots": [
     "/Users/<owner>/.codex/skills",
@@ -15,14 +15,14 @@
   ],
   "totals": {
     "scannedSources": 10,
-    "discoveredSkillFiles": 715,
-    "uniqueSkills": 474,
+    "discoveredSkillFiles": 720,
+    "uniqueSkills": 476,
     "byLlm": {
-      "codex": 178,
-      "project-agent": 505,
+      "codex": 179,
+      "project-agent": 507,
       "openclaw": 7,
       "picoclaw": 13,
-      "claude": 10,
+      "claude": 12,
       "gemini": 1,
       "kilo": 1
     }
@@ -1126,9 +1126,7 @@
     {
       "id": "api-gateway",
       "canonicalName": "api-gateway",
-      "descriptions": [
-        "|"
-      ],
+      "descriptions": ["|"],
       "variants": [
         {
           "id": "api-gateway",
@@ -2312,6 +2310,71 @@
       }
     },
     {
+      "id": "browser-session-auth-bridge",
+      "canonicalName": "browser-session-auth-bridge",
+      "descriptions": [
+        "Reuse an existing signed-in local browser session to authenticate terminal automation without interactive login forms. Use when Codex must access a web app in Playwright or CLI tools but terminal login is blocked, SSO/captcha is difficult, or a user asks for \"terminal auth without browser login.\" Supports exporting browser cookies into Playwright storageState for any website/domain."
+      ],
+      "variants": [
+        {
+          "id": "browser-session-auth-bridge",
+          "name": "browser-session-auth-bridge",
+          "description": "Reuse an existing signed-in local browser session to authenticate terminal automation without interactive login forms. Use when Codex must access a web app in Playwright or CLI tools but terminal login is blocked, SSO/captcha is difficult, or a user asks for \"terminal auth without browser login.\" Supports exporting browser cookies into Playwright storageState for any website/domain.",
+          "path": "/Users/<owner>/.codex/skills/browser-session-auth-bridge",
+          "pathFromRepo": null,
+          "llm": "codex",
+          "scope": "global",
+          "hash": "939a81e41355994345350a2e83cca743c616c161d9d531896ea4a0dce2dc7a88",
+          "hasAgents": true,
+          "hasReferences": true,
+          "hasScripts": true,
+          "hasAssets": false,
+          "format": "folder",
+          "updatedAt": "2026-03-25T10:49:21.686Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/codex/browser-session-auth-bridge-939a81e4"
+        },
+        {
+          "id": "browser-session-auth-bridge",
+          "name": "browser-session-auth-bridge",
+          "description": "Reuse an existing signed-in local browser session to authenticate terminal automation without interactive login forms. Use when Codex must access a web app in Playwright or CLI tools but terminal login is blocked, SSO/captcha is difficult, or a user asks for \"terminal auth without browser login.\" Supports exporting browser cookies into Playwright storageState for any website/domain.",
+          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/browser-session-auth-bridge",
+          "pathFromRepo": ".agent/skills/browser-session-auth-bridge",
+          "llm": "project-agent",
+          "scope": "project",
+          "hash": "939a81e41355994345350a2e83cca743c616c161d9d531896ea4a0dce2dc7a88",
+          "hasAgents": true,
+          "hasReferences": true,
+          "hasScripts": true,
+          "hasAssets": false,
+          "format": "folder",
+          "updatedAt": "2026-03-25T10:56:15.024Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/browser-session-auth-bridge-939a81e4"
+        },
+        {
+          "id": "browser-session-auth-bridge",
+          "name": "browser-session-auth-bridge",
+          "description": "",
+          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/browser-session-auth-bridge.md",
+          "pathFromRepo": ".claude/skills/browser-session-auth-bridge.md",
+          "llm": "claude",
+          "scope": "project",
+          "hash": "d3a6fd5211a6f5553849b9131d8459f53a05b7bb63f0d7fb94d272ec4323d911",
+          "hasAgents": false,
+          "hasReferences": false,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "flat",
+          "updatedAt": "2026-03-25T10:56:22.858Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/claude/browser-session-auth-bridge-d3a6fd52"
+        }
+      ],
+      "llms": {
+        "codex": 1,
+        "project-agent": 1,
+        "claude": 1
+      }
+    },
+    {
       "id": "bullmq-specialist",
       "canonicalName": "bullmq-specialist",
       "descriptions": [
@@ -2454,7 +2517,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-24T22:21:08.000Z",
+          "updatedAt": "2026-03-25T10:32:32.385Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/business-law-specialist-agent-9b2c3119"
         }
       ],
@@ -2682,9 +2745,7 @@
     {
       "id": "cc-skill-continuous-learning",
       "canonicalName": "cc-skill-continuous-learning",
-      "descriptions": [
-        "Development skill from everything-claude-code"
-      ],
+      "descriptions": ["Development skill from everything-claude-code"],
       "variants": [
         {
           "id": "cc-skill-continuous-learning",
@@ -2711,9 +2772,7 @@
     {
       "id": "cc-skill-project-guidelines-example",
       "canonicalName": "cc-skill-project-guidelines-example",
-      "descriptions": [
-        "Project Guidelines Skill (Example)"
-      ],
+      "descriptions": ["Project Guidelines Skill (Example)"],
       "variants": [
         {
           "id": "cc-skill-project-guidelines-example",
@@ -2740,9 +2799,7 @@
     {
       "id": "cc-skill-strategic-compact",
       "canonicalName": "cc-skill-strategic-compact",
-      "descriptions": [
-        "Development skill from everything-claude-code"
-      ],
+      "descriptions": ["Development skill from everything-claude-code"],
       "variants": [
         {
           "id": "cc-skill-strategic-compact",
@@ -3764,9 +3821,7 @@
     {
       "id": "context-frontloader",
       "canonicalName": "context-frontloader",
-      "descriptions": [
-        "|"
-      ],
+      "descriptions": ["|"],
       "variants": [
         {
           "id": "context-frontloader",
@@ -6825,9 +6880,7 @@
     {
       "id": "gmail",
       "canonicalName": "gmail",
-      "descriptions": [
-        "|"
-      ],
+      "descriptions": ["|"],
       "variants": [
         {
           "id": "gmail",
@@ -7053,9 +7106,7 @@
     {
       "id": "hardware",
       "canonicalName": "hardware",
-      "descriptions": [
-        "|"
-      ],
+      "descriptions": ["|"],
       "variants": [
         {
           "id": "hardware",
@@ -7216,9 +7267,7 @@
     {
       "id": "humanizer",
       "canonicalName": "humanizer",
-      "descriptions": [
-        "|"
-      ],
+      "descriptions": ["|"],
       "variants": [
         {
           "id": "humanizer",
@@ -8021,6 +8070,53 @@
       ],
       "llms": {
         "project-agent": 1
+      }
+    },
+    {
+      "id": "keychain-login-autotype",
+      "canonicalName": "keychain-login-autotype",
+      "descriptions": [
+        "Automate secure website login typing from macOS Keychain without printing secrets to logs. Use when an agent needs to fill username/password prompts in local UI flows, long-running browser automation, or account access tasks where credentials must stay out of chat/terminal output."
+      ],
+      "variants": [
+        {
+          "id": "keychain-login-autotype",
+          "name": "keychain-login-autotype",
+          "description": "Automate secure website login typing from macOS Keychain without printing secrets to logs. Use when an agent needs to fill username/password prompts in local UI flows, long-running browser automation, or account access tasks where credentials must stay out of chat/terminal output.",
+          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/keychain-login-autotype",
+          "pathFromRepo": ".agent/skills/keychain-login-autotype",
+          "llm": "project-agent",
+          "scope": "project",
+          "hash": "e67d0079bce5d1793c9fbb22da2c152224302b8cc8dd2bfe5b42087931aa0fd7",
+          "hasAgents": true,
+          "hasReferences": false,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "folder",
+          "updatedAt": "2026-03-25T11:12:34.399Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/keychain-login-autotype-e67d0079"
+        },
+        {
+          "id": "keychain-login-autotype",
+          "name": "keychain-login-autotype",
+          "description": "",
+          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/keychain-login-autotype.md",
+          "pathFromRepo": ".claude/skills/keychain-login-autotype.md",
+          "llm": "claude",
+          "scope": "project",
+          "hash": "5698b900caeb51e2ebe5c9649aee4bd6cb4ccdb218046e37eace8bbfcdc13ce4",
+          "hasAgents": false,
+          "hasReferences": false,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "flat",
+          "updatedAt": "2026-03-25T11:12:44.634Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/claude/keychain-login-autotype-5698b900"
+        }
+      ],
+      "llms": {
+        "project-agent": 1,
+        "claude": 1
       }
     },
     {
@@ -8864,7 +8960,7 @@
           "hasScripts": true,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-24T22:18:27.000Z",
+          "updatedAt": "2026-03-25T10:32:32.642Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/long-range-business-plan-architect-d504547c"
         }
       ],
@@ -10755,9 +10851,7 @@
     {
       "id": "overwatch",
       "canonicalName": "overwatch",
-      "descriptions": [
-        "|"
-      ],
+      "descriptions": ["|"],
       "variants": [
         {
           "id": "overwatch",
@@ -13020,9 +13114,7 @@
     {
       "id": "remotion-best-practices",
       "canonicalName": "remotion-best-practices",
-      "descriptions": [
-        "Best practices for Remotion - Video creation in React"
-      ],
+      "descriptions": ["Best practices for Remotion - Video creation in React"],
       "variants": [
         {
           "id": "remotion-best-practices",
@@ -13096,9 +13188,7 @@
     {
       "id": "report-lifecycle",
       "canonicalName": "report-lifecycle",
-      "descriptions": [
-        ">"
-      ],
+      "descriptions": [">"],
       "variants": [
         {
           "id": "report-lifecycle",
@@ -14113,9 +14203,7 @@
     {
       "id": "shopify-development",
       "canonicalName": "shopify-development",
-      "descriptions": [
-        "|"
-      ],
+      "descriptions": ["|"],
       "variants": [
         {
           "id": "shopify-development",
@@ -14171,9 +14259,7 @@
     {
       "id": "skill-bank-operations",
       "canonicalName": "skill-bank-operations",
-      "descriptions": [
-        "|"
-      ],
+      "descriptions": ["|"],
       "variants": [
         {
           "id": "skill-bank-operations",
@@ -15718,9 +15804,7 @@
     {
       "id": "template-skill",
       "canonicalName": "template-skill",
-      "descriptions": [
-        "|"
-      ],
+      "descriptions": ["|"],
       "variants": [
         {
           "id": "template-skill",
@@ -16030,9 +16114,7 @@
     {
       "id": "tmux",
       "canonicalName": "tmux",
-      "descriptions": [
-        "|"
-      ],
+      "descriptions": ["|"],
       "variants": [
         {
           "id": "tmux",
@@ -16535,9 +16617,7 @@
     {
       "id": "typescript-expert",
       "canonicalName": "typescript-expert",
-      "descriptions": [
-        ">-"
-      ],
+      "descriptions": [">-"],
       "variants": [
         {
           "id": "typescript-expert",
@@ -17822,9 +17902,7 @@
     {
       "id": "youtube",
       "canonicalName": "youtube",
-      "descriptions": [
-        "|"
-      ],
+      "descriptions": ["|"],
       "variants": [
         {
           "id": "youtube",

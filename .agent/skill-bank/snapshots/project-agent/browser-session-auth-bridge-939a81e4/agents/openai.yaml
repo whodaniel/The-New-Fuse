@@ -1,0 +1,4 @@
+interface:
+  display_name: "Browser Session Auth Bridge"
+  short_description: "Reuse signed-in browser auth for terminal Playwright"
+  default_prompt: "Use $browser-session-auth-bridge to export browser session cookies into Playwright storage state and open a target URL without interactive login."

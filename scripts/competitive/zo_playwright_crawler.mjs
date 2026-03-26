@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import fs from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { chromium } from 'playwright';
@@ -32,6 +33,7 @@ function parseArgs(argv) {
     maxPages: DEFAULT_MAX_PAGES,
     headed: false,
     navLabels: DEFAULT_NAV_LABELS,
+    stateFile: null,
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -49,11 +51,16 @@ function parseArgs(argv) {
         .split(',')
         .map((label) => label.trim())
         .filter(Boolean);
+    } else if (arg === '--state-file' && argv[i + 1]) {
+      options.stateFile = argv[++i];
     }
   }
 
   if (!options.outputDir) {
     throw new Error('--output-dir is required');
+  }
+  if (options.stateFile && !existsSync(path.resolve(options.stateFile))) {
+    throw new Error(`--state-file does not exist: ${options.stateFile}`);
   }
 
   return options;
@@ -245,6 +252,7 @@ async function run() {
 
   const context = await browser.newContext({
     viewport: { width: 1720, height: 980 },
+    storageState: options.stateFile ? path.resolve(options.stateFile) : undefined,
   });
   const page = await context.newPage();
 

@@ -1,0 +1,17 @@
+name = "tnf-audio-trigger-kws-gateway"
+main = "src/index.ts"
+compatibility_date = "2026-03-25"
+
+account_id = "db1d3832768b2bbad4c5c5d9dbc63f8b"
+workers_dev = true
+preview_urls = false
+
+[vars]
+ENVIRONMENT = "prod"
+KWS_API_ORIGIN = "https://kws-api-production.up.railway.app"
+
+# Set EDGE_API_KEY as a secret:
+# wrangler secret put EDGE_API_KEY
+
+# Optional custom route:
+# routes = ["audio-api.yourdomain.com/*"]

@@ -1,8 +1,10 @@
+import { WorkspaceApiService, type WorkspaceHostMariaSyncResponse } from '@/api/workspace';
 import OpsPageHeader from '@/components/ops/OpsPageHeader';
 import { Badge } from '@/components/ui/badge';
 import { GlassCard, PremiumButton, PremiumInput, StatsCard } from '@/components/ui/premium';
-import { useWorkspaceDomains } from '@/hooks/useWorkspaceDomains';
 import { useWorkspace } from '@/hooks/useWorkspace';
+import { useWorkspaceDomains } from '@/hooks/useWorkspaceDomains';
+import { useAuth } from '@/providers/AuthProvider';
 import {
   Activity,
   Boxes,
@@ -45,7 +47,23 @@ const formatDate = (value?: string): string => {
   return parsed.toLocaleString();
 };
 
+const HOSTMARIA_OWNER_EMAILS = (import.meta.env.VITE_HOSTMARIA_OWNER_EMAILS || 'owner@example.com')
+  .split(',')
+  .map((email: string) => email.trim().toLowerCase())
+  .filter((email: string) => email.length > 0);
+
+const HOSTMARIA_AGENT_EMAILS = (import.meta.env.VITE_HOSTMARIA_AGENT_EMAILS || '')
+  .split(',')
+  .map((email: string) => email.trim().toLowerCase())
+  .filter((email: string) => email.length > 0);
+
+const HOSTMARIA_OPERATOR_EMAILS = Array.from(
+  new Set([...HOSTMARIA_OWNER_EMAILS, ...HOSTMARIA_AGENT_EMAILS])
+);
+
 export default function HostingControlCenter() {
+  const workspaceApi = useMemo(() => new WorkspaceApiService(), []);
+  const { user } = useAuth();
   const {
     loading,
     error,
@@ -58,6 +76,10 @@ export default function HostingControlCenter() {
   const [creating, setCreating] = useState(false);
   const [domainInput, setDomainInput] = useState('');
   const [addingDomain, setAddingDomain] = useState(false);
+  const [syncingHostMaria, setSyncingHostMaria] = useState(false);
+  const [hostMariaByWorkspace, setHostMariaByWorkspace] = useState<
+    Record<string, WorkspaceHostMariaSyncResponse>
+  >({});
   const {
     syncState,
     totalDomains,
@@ -66,8 +88,7 @@ export default function HostingControlCenter() {
     removeDomain,
     verifyDomain,
     refreshDomains,
-  } =
-    useWorkspaceDomains();
+  } = useWorkspaceDomains();
 
   const workspaceRows = useMemo(
     () =>
@@ -91,8 +112,22 @@ export default function HostingControlCenter() {
   }, [workspaceRows]);
 
   const selectedWorkspace =
-    workspaceRows.find((workspace) => workspace.id === currentWorkspace?.id) || workspaceRows[0] || null;
+    workspaceRows.find((workspace) => workspace.id === currentWorkspace?.id) ||
+    workspaceRows[0] ||
+    null;
   const selectedDomains = selectedWorkspace ? getDomainsForWorkspace(selectedWorkspace.id) : [];
+  const selectedHostMariaSync = selectedWorkspace
+    ? hostMariaByWorkspace[selectedWorkspace.id]
+    : undefined;
+  const isHostMariaOperator = useMemo(
+    () =>
+      HOSTMARIA_OPERATOR_EMAILS.includes(
+        String(user?.email || '')
+          .trim()
+          .toLowerCase()
+      ),
+    [user?.email]
+  );
 
   const hostingChecklist: Array<{ label: string; status: 'live' | 'in-progress'; hint: string }> = [
     {
@@ -128,6 +163,35 @@ export default function HostingControlCenter() {
       await createWorkspace();
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleSyncHostMaria = async () => {
+    if (!selectedWorkspace) return;
+    setSyncingHostMaria(true);
+    try {
+      const response = await workspaceApi.syncWorkspaceHostMariaOps(selectedWorkspace.id);
+      if (!response.success) {
+        const message =
+          typeof response.error === 'string'
+            ? response.error
+            : response.error?.message || 'Failed to sync HostMaria operations';
+        throw new Error(message);
+      }
+      const payload = response.data;
+      if (!payload) throw new Error('Failed to sync HostMaria operations');
+
+      setHostMariaByWorkspace((previous) => ({
+        ...previous,
+        [selectedWorkspace.id]: payload,
+      }));
+      toast.success(
+        `HostMaria synced: ${payload.tasks.total} task${payload.tasks.total === 1 ? '' : 's'} active`
+      );
+    } catch (error) {
+      toast.error((error as Error).message || 'Failed to sync HostMaria operations');
+    } finally {
+      setSyncingHostMaria(false);
     }
   };
 
@@ -183,18 +247,8 @@ export default function HostingControlCenter() {
           icon={ServerCog}
           gradient="blue"
         />
-        <StatsCard
-          label="Custom Domains"
-          value={totalDomains}
-          icon={Link2}
-          gradient="purple"
-        />
-        <StatsCard
-          label="Healthy Targets"
-          value={summary.healthy}
-          icon={Rocket}
-          gradient="green"
-        />
+        <StatsCard label="Custom Domains" value={totalDomains} icon={Link2} gradient="purple" />
+        <StatsCard label="Healthy Targets" value={summary.healthy} icon={Rocket} gradient="green" />
         <StatsCard
           label="Needs Attention"
           value={summary.watch + summary.stale}
@@ -392,7 +446,9 @@ export default function HostingControlCenter() {
                                   await verifyDomain(selectedWorkspace.id, domain.id);
                                   toast.success('Domain verification updated');
                                 } catch (error) {
-                                  toast.error((error as Error).message || 'Failed to verify domain');
+                                  toast.error(
+                                    (error as Error).message || 'Failed to verify domain'
+                                  );
                                 }
                               }}
                             >
@@ -415,6 +471,92 @@ export default function HostingControlCenter() {
                     )}
                   </div>
                 </div>
+
+                {isHostMariaOperator ? (
+                  <div className="rounded-md border border-cyan-500/20 bg-cyan-500/5 p-3 space-y-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm text-white font-medium">HostMaria Legacy Ops Sync</p>
+                        <p className="text-xs text-slate-300 mt-1">
+                          Syncs <code>~/.tnf/hostmaria</code> artifacts into this workspace project
+                          and task queue.
+                        </p>
+                      </div>
+                      <PremiumButton
+                        size="sm"
+                        variant="gradient"
+                        disabled={syncingHostMaria}
+                        onClick={handleSyncHostMaria}
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                        {syncingHostMaria ? 'Syncing...' : 'Sync HostMaria'}
+                      </PremiumButton>
+                    </div>
+
+                    {selectedHostMariaSync ? (
+                      <>
+                        <div className="flex flex-wrap gap-2 text-xs">
+                          <Badge className="bg-cyan-500/10 text-cyan-300 border-cyan-500/20">
+                            Project: {selectedHostMariaSync.project.name}
+                          </Badge>
+                          <Badge variant="secondary">
+                            {selectedHostMariaSync.tasks.total} tasks
+                          </Badge>
+                          <Badge variant="secondary">
+                            +{selectedHostMariaSync.tasks.created} created / ~
+                            {selectedHostMariaSync.tasks.updated} updated
+                          </Badge>
+                          <Badge variant="outline">
+                            Report: {selectedHostMariaSync.telemetry.latestReportStatus}
+                          </Badge>
+                        </div>
+                        <div className="text-xs text-slate-300">
+                          Targets: {selectedHostMariaSync.telemetry.targets.join(', ') || 'none'}
+                        </div>
+                        <div className="space-y-2">
+                          {selectedHostMariaSync.tasks.items.slice(0, 6).map((task) => (
+                            <div
+                              key={task.id}
+                              className="rounded-md border border-white/10 bg-black/30 px-3 py-2 flex items-center justify-between gap-3"
+                            >
+                              <div className="min-w-0">
+                                <p className="text-sm text-white truncate">{task.title}</p>
+                                <p className="text-xs text-slate-400 truncate">
+                                  {task.description || 'No task description'}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline">{task.priority}</Badge>
+                                <Badge
+                                  className={
+                                    task.status === 'COMPLETED'
+                                      ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20'
+                                      : task.status === 'FAILED'
+                                        ? 'bg-rose-500/10 text-rose-300 border-rose-500/20'
+                                        : 'bg-amber-500/10 text-amber-300 border-amber-500/20'
+                                  }
+                                >
+                                  {task.status}
+                                </Badge>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex justify-end">
+                          <Link to="/tasks">
+                            <PremiumButton size="sm" variant="outline">
+                              Open Tasks
+                            </PremiumButton>
+                          </Link>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-xs text-slate-400">
+                        No HostMaria sync has been run for this workspace yet.
+                      </p>
+                    )}
+                  </div>
+                ) : null}
               </>
             ) : (
               <p className="text-slate-400 text-sm">
@@ -427,7 +569,10 @@ export default function HostingControlCenter() {
             <h3 className="text-white text-base font-semibold">Hosting Rail Coverage</h3>
             <ul className="space-y-2">
               {hostingChecklist.map((item) => (
-                <li key={item.label} className="rounded-md border border-white/10 bg-black/20 px-3 py-2">
+                <li
+                  key={item.label}
+                  className="rounded-md border border-white/10 bg-black/20 px-3 py-2"
+                >
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm text-white font-medium">{item.label}</p>
                     <Badge
