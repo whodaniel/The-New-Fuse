@@ -1,6 +1,6 @@
 # All Routes Semantic Audit
 
-Generated: 2026-03-26T10:49:30.193Z Base URL: https://thenewfuse.com
+Generated: 2026-03-26T10:59:43.383Z Base URL: https://thenewfuse.com
 
 ## Summary
 

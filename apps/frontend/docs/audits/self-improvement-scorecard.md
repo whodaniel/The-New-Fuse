@@ -1,12 +1,12 @@
 # TNF Self-Improvement Scorecard
 
-- Generated: 2026-03-26T10:52:51.687Z
+- Generated: 2026-03-26T10:59:55.047Z
 - Overall: PASS
 - Required audits present: yes
 
 ## Live Link Crawl
 
-- checked: 51
+- checked: 49
 - broken: 0
 - semantic broken: 0
 - passed: true
