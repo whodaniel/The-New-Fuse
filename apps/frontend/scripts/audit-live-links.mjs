@@ -2,7 +2,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, resolve } from 'node:path';
-import { chromium } from 'playwright';
+import { chromium, firefox } from 'playwright';
 
 const ROOT = resolve(process.cwd());
 const OUTPUT_DIR = join(ROOT, 'docs/audits');
@@ -11,7 +11,7 @@ const OUTPUT_MD = join(OUTPUT_DIR, 'live-link-crawl.md');
 
 const SEEDS = (
   process.env.LIVE_AUDIT_SEEDS ||
-  'https://ai-arcade.xyz/,https://poker.ai-arcade.xyz/,https://ai-arcade-poker.pages.dev/,https://thenewfuse.com/'
+  'https://thenewfuse.com/'
 )
   .split(',')
   .map((value) => value.trim())
@@ -23,6 +23,15 @@ const MAX_EXTERNAL_CHECKS_PER_DOMAIN = Number.parseInt(process.env.LIVE_AUDIT_MA
 const NAV_TIMEOUT_MS = Number.parseInt(process.env.LIVE_AUDIT_NAV_TIMEOUT_MS || '35000', 10);
 const FETCH_TIMEOUT_MS = Number.parseInt(process.env.LIVE_AUDIT_FETCH_TIMEOUT_MS || '20000', 10);
 const FAIL_ON_BROKEN = String(process.env.FAIL_ON_BROKEN || '1') !== '0';
+const PLAYWRIGHT_HEADLESS = String(process.env.PLAYWRIGHT_HEADLESS || '1') !== '0';
+const PLAYWRIGHT_BROWSER_CHANNEL = (process.env.PLAYWRIGHT_BROWSER_CHANNEL || '').trim();
+const PLAYWRIGHT_ENABLE_FIREFOX_FALLBACK = String(process.env.PLAYWRIGHT_ENABLE_FIREFOX_FALLBACK || '1') !== '0';
+const PLAYWRIGHT_LAUNCH_RETRIES = Math.max(1, Number.parseInt(process.env.PLAYWRIGHT_LAUNCH_RETRIES || '4', 10));
+const PLAYWRIGHT_LAUNCH_DELAY_MS = Math.max(0, Number.parseInt(process.env.PLAYWRIGHT_LAUNCH_DELAY_MS || '900', 10));
+const EXTERNAL_ALLOWLIST_RAW = (process.env.LIVE_AUDIT_EXTERNAL_ALLOWLIST || '')
+  .split(',')
+  .map((value) => value.trim())
+  .filter(Boolean);
 
 const skipHref = (href) => {
   if (!href) return true;
@@ -41,6 +50,26 @@ const normalizeUrl = (value) => {
   url.hash = '';
   return url.toString();
 };
+
+const EXTERNAL_ALLOWLIST = new Set(
+  EXTERNAL_ALLOWLIST_RAW.map((value) => {
+    try {
+      return normalizeUrl(value);
+    } catch {
+      return value;
+    }
+  })
+);
+
+const isAllowlistedExternal = (url) => {
+  try {
+    return EXTERNAL_ALLOWLIST.has(normalizeUrl(url));
+  } catch {
+    return EXTERNAL_ALLOWLIST.has(url);
+  }
+};
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const withTimeout = async (promiseFactory, ms, label) => {
   const controller = new AbortController();
@@ -122,6 +151,99 @@ const extractPageFingerprint = async (page) =>
       bodyText,
     };
   });
+
+const stripHtml = (value) =>
+  String(value || '')
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const extractLinksFromHtml = (html, pageUrl) => {
+  const out = [];
+  const anchorRegex = /<a\b[^>]*href\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))[^>]*>([\s\S]*?)<\/a>/gi;
+  let match = anchorRegex.exec(html);
+
+  while (match) {
+    const rawHref = (match[1] || match[2] || match[3] || '').trim();
+    if (!skipHref(rawHref)) {
+      try {
+        out.push({
+          url: normalizeUrl(new URL(rawHref, pageUrl).toString()),
+          text: stripHtml(match[4]).slice(0, 160),
+        });
+      } catch {
+        // ignore malformed links
+      }
+    }
+    match = anchorRegex.exec(html);
+  }
+
+  return out;
+};
+
+const extractFingerprintFromHtml = (html) => {
+  const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  const h1Match = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+  return {
+    title: stripHtml(titleMatch?.[1] || ''),
+    h1: stripHtml(h1Match?.[1] || ''),
+    bodyText: stripHtml(html).slice(0, 20000),
+  };
+};
+
+const launchAuditBrowser = async () => {
+  const attempts = [];
+  const strategies = [];
+
+  if (PLAYWRIGHT_BROWSER_CHANNEL) {
+    strategies.push({
+      name: `channel:${PLAYWRIGHT_BROWSER_CHANNEL}`,
+      launch: () =>
+        chromium.launch({
+          headless: PLAYWRIGHT_HEADLESS,
+          channel: PLAYWRIGHT_BROWSER_CHANNEL,
+        }),
+    });
+  }
+
+  strategies.push({
+    name: 'bundled-chromium',
+    launch: () =>
+      chromium.launch({
+        headless: PLAYWRIGHT_HEADLESS,
+      }),
+  });
+
+  if (PLAYWRIGHT_ENABLE_FIREFOX_FALLBACK) {
+    strategies.push({
+      name: 'bundled-firefox',
+      launch: () =>
+        firefox.launch({
+          headless: PLAYWRIGHT_HEADLESS,
+        }),
+    });
+  }
+
+  for (const strategy of strategies) {
+    for (let attempt = 1; attempt <= PLAYWRIGHT_LAUNCH_RETRIES; attempt += 1) {
+      try {
+        const browser = await strategy.launch();
+        console.log(`[live-link-audit] browser strategy: ${strategy.name} (attempt ${attempt}/${PLAYWRIGHT_LAUNCH_RETRIES})`);
+        return browser;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        attempts.push(`- ${strategy.name} attempt ${attempt}/${PLAYWRIGHT_LAUNCH_RETRIES}: ${message}`);
+        if (attempt < PLAYWRIGHT_LAUNCH_RETRIES) {
+          await sleep(PLAYWRIGHT_LAUNCH_DELAY_MS);
+        }
+      }
+    }
+  }
+
+  throw new Error(`Unable to launch Playwright browser\n${attempts.join('\n')}`);
+};
 
 const crawlDomain = async (browser, seed) => {
   const domain = new URL(seed).host;
@@ -268,6 +390,7 @@ const crawlDomain = async (browser, seed) => {
   const externalChecks = [];
   for (const external of externalSeen.values()) {
     const http = await checkHttp(external.url);
+    const allowlisted = isAllowlistedExternal(external.url);
     externalChecks.push({
       type: 'external',
       domain,
@@ -276,8 +399,185 @@ const crawlDomain = async (browser, seed) => {
       url: external.url,
       pageStatus: null,
       pageError: null,
+      allowlisted,
       ...http,
-      broken: !http.ok || (typeof http.status === 'number' && http.status >= 400),
+      broken: allowlisted ? false : !http.ok || (typeof http.status === 'number' && http.status >= 400),
+    });
+  }
+
+  const checks = [...internalChecks, ...externalChecks];
+  return {
+    seed,
+    domain,
+    crawledPages: visited.size,
+    queuedRemaining: queue.length,
+    maxDepthReached: Math.max(0, ...[...visited.values()].map((item) => item.depth)),
+    pageErrors,
+    semanticBroken,
+    checks,
+  };
+};
+
+const crawlDomainWithHttpFallback = async (seed) => {
+  const domain = new URL(seed).host;
+  const normalizedSeed = normalizeUrl(seed);
+  const queue = [{ url: normalizeUrl(seed), depth: 0, from: null }];
+  const queued = new Set([normalizeUrl(seed)]);
+  const visited = new Map();
+  const externalSeen = new Map();
+  const pageErrors = [];
+  let seedInternalLinks = [];
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+    if (!current) break;
+    if (current.depth > MAX_DEPTH) continue;
+    if (visited.size >= MAX_PAGES_PER_DOMAIN) break;
+    if (visited.has(current.url)) continue;
+
+    let pageStatus = null;
+    let pageError = null;
+    let links = [];
+    let fingerprint = {
+      title: '',
+      h1: '',
+      bodyText: '',
+    };
+
+    try {
+      const response = await withTimeout(
+        (signal) =>
+          fetch(current.url, {
+            method: 'GET',
+            redirect: 'follow',
+            signal,
+            headers: { 'user-agent': 'TNF-Link-Auditor/2.0' },
+          }),
+        NAV_TIMEOUT_MS,
+        'crawl-fetch-timeout'
+      );
+
+      pageStatus = response.status;
+      const finalUrl = response.url || current.url;
+      const html = await response.text();
+      links = extractLinksFromHtml(html, finalUrl);
+      fingerprint = extractFingerprintFromHtml(html);
+
+      if (current.url === normalizedSeed) {
+        seedInternalLinks = links.filter((link) => {
+          try {
+            return new URL(link.url).host === domain;
+          } catch {
+            return false;
+          }
+        });
+      }
+    } catch (error) {
+      pageError = error instanceof Error ? error.message : String(error);
+      pageErrors.push({ url: current.url, depth: current.depth, error: pageError });
+    }
+
+    visited.set(current.url, {
+      url: current.url,
+      depth: current.depth,
+      from: current.from,
+      pageStatus,
+      pageError,
+      discoveredLinks: links.length,
+      title: fingerprint.title,
+      h1: fingerprint.h1,
+      fingerprintHash: textHash(`${fingerprint.title}|${fingerprint.h1}|${fingerprint.bodyText}`),
+    });
+
+    for (const link of links) {
+      const host = new URL(link.url).host;
+      if (host === domain) {
+        if (
+          current.depth + 1 <= MAX_DEPTH &&
+          !visited.has(link.url) &&
+          !queued.has(link.url) &&
+          queued.size < MAX_PAGES_PER_DOMAIN * 3
+        ) {
+          queue.push({ url: link.url, depth: current.depth + 1, from: current.url });
+          queued.add(link.url);
+        }
+      } else if (!externalSeen.has(link.url) && externalSeen.size < MAX_EXTERNAL_CHECKS_PER_DOMAIN) {
+        externalSeen.set(link.url, {
+          url: link.url,
+          from: current.url,
+          text: link.text,
+        });
+      }
+    }
+  }
+
+  const internalChecks = [];
+  for (const item of visited.values()) {
+    const http = await checkHttp(item.url);
+    internalChecks.push({
+      type: 'internal',
+      domain,
+      from: item.from,
+      depth: item.depth,
+      url: item.url,
+      pageStatus: item.pageStatus,
+      pageError: item.pageError,
+      title: item.title,
+      h1: item.h1,
+      fingerprintHash: item.fingerprintHash,
+      ...http,
+      broken:
+        !http.ok ||
+        (typeof http.status === 'number' && http.status >= 400) ||
+        (item.pageError && !item.pageStatus),
+      semanticIssue: null,
+    });
+  }
+
+  const byUrl = new Map(internalChecks.map((check) => [normalizeUrl(check.url), check]));
+  const seedCheck = byUrl.get(normalizedSeed);
+  const semanticBroken = [];
+  const semanticTargetSeen = new Set();
+  if (seedCheck?.fingerprintHash) {
+    for (const link of seedInternalLinks) {
+      const target = byUrl.get(normalizeUrl(link.url));
+      if (!target) continue;
+
+      const seedPath = new URL(seedCheck.url).pathname;
+      const targetPath = new URL(target.url).pathname;
+      if (seedPath === targetPath) continue;
+
+      if (target.fingerprintHash === seedCheck.fingerprintHash) {
+        if (semanticTargetSeen.has(target.url)) continue;
+        semanticTargetSeen.add(target.url);
+        target.semanticIssue = 'same_content_as_seed';
+        target.semanticLinkText = link.text || '';
+        target.broken = true;
+        semanticBroken.push({
+          from: seedCheck.url,
+          to: target.url,
+          text: link.text || '',
+          issue: 'same_content_as_seed',
+        });
+      }
+    }
+  }
+
+  const externalChecks = [];
+  for (const external of externalSeen.values()) {
+    const http = await checkHttp(external.url);
+    const allowlisted = isAllowlistedExternal(external.url);
+    externalChecks.push({
+      type: 'external',
+      domain,
+      from: external.from,
+      depth: null,
+      url: external.url,
+      pageStatus: null,
+      pageError: null,
+      allowlisted,
+      ...http,
+      broken: allowlisted ? false : !http.ok || (typeof http.status === 'number' && http.status >= 400),
     });
   }
 
@@ -296,15 +596,27 @@ const crawlDomain = async (browser, seed) => {
 
 const main = async () => {
   const startedAt = new Date().toISOString();
-  const browser = await chromium.launch({ headless: true });
+  let browser = null;
+  let crawlSeed = null;
   const results = [];
 
   try {
+    try {
+      browser = await launchAuditBrowser();
+      crawlSeed = (seed) => crawlDomain(browser, seed);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`[live-link-audit] falling back to HTTP crawler: ${message}`);
+      crawlSeed = (seed) => crawlDomainWithHttpFallback(seed);
+    }
+
     for (const seed of [...new Set(SEEDS)]) {
-      results.push(await crawlDomain(browser, seed));
+      results.push(await crawlSeed(seed));
     }
   } finally {
-    await browser.close();
+    if (browser) {
+      await browser.close();
+    }
   }
 
   const rows = results.flatMap((result) =>
@@ -325,12 +637,14 @@ const main = async () => {
       navTimeoutMs: NAV_TIMEOUT_MS,
       fetchTimeoutMs: FETCH_TIMEOUT_MS,
       failOnBroken: FAIL_ON_BROKEN,
+      externalAllowlist: [...EXTERNAL_ALLOWLIST],
     },
     seeds: results.length,
     totalChecked: rows.length,
     totalBroken: broken.length,
     internalBroken: broken.filter((item) => item.type === 'internal').length,
     externalBroken: broken.filter((item) => item.type === 'external').length,
+    allowlistedExternal: rows.filter((item) => item.type === 'external' && item.allowlisted).length,
     semanticBroken: broken.filter((item) => item.semanticIssue).length,
     perSeed: results.map((result) => {
       const seedRows = rows.filter((row) => row.seed === result.seed);

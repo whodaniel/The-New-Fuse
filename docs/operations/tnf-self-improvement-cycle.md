@@ -81,3 +81,109 @@ Master clock cron governance is now protocolized with:
    - `node scripts/protocols/agent-self-edit-gate.cjs --request <request.json>`
 4. Cron ownership/scope gate checks run via:
    - `node scripts/protocols/cron-governance-gate.cjs --request <request.json>`
+
+## Latest Run (2026-03-26 UTC, Post-Deploy No-Allowlist)
+
+### Evidence Snapshot
+
+- `apps/frontend/docs/audits/live-link-crawl.json` generated at
+  `2026-03-26T10:15:47.170Z`
+  - `totalChecked=51`, `totalBroken=0`, `allowlistedExternal=0`.
+- `apps/frontend/docs/audits/all-routes-semantic-audit.json` generated at
+  `2026-03-26T10:20:37.527Z`
+  - `totalRoutes=190`, `hardBroken=0`, `networkBroken=0`, `sameAsRoot=0`.
+- `apps/frontend/docs/audits/auth-path-audit.json` generated at
+  `2026-03-26T10:20:39.608Z`
+  - `total=4`, `passed=4`, `failed=0`.
+- `apps/frontend/docs/audits/self-improvement-scorecard.json` generated at
+  `2026-03-26T10:20:40.848Z`
+  - `overall.passed=true`, `requiredAuditsPresent=true`.
+
+### Deployment Context
+
+- Target frontend service: `TheNewFuse` (Railway production).
+- Deployment id: `3d4db2f6-1e56-43af-a243-f300e25f87d2` (`SUCCESS`).
+- Verification loop ran after deploy with no `LIVE_AUDIT_EXTERNAL_ALLOWLIST`.
+
+## Prior Run (2026-03-26 UTC, Host Strict with Temporary Allowlist)
+
+### Evidence Snapshot
+
+- `apps/frontend/docs/audits/live-link-crawl.json` generated at
+  `2026-03-26T09:52:17.850Z`
+  - `totalChecked=52`, `totalBroken=0`, `allowlistedExternal=2`.
+  - Seed crawl: `https://thenewfuse.com/` with `crawledPages=46`,
+    `maxDepthReached=4`.
+- `apps/frontend/docs/audits/all-routes-semantic-audit.json` generated at
+  `2026-03-26T09:57:11.896Z`
+  - `totalRoutes=190`, `hardBroken=0`, `networkBroken=0`, `sameAsRoot=0`.
+- `apps/frontend/docs/audits/auth-path-audit.json` generated at
+  `2026-03-26T09:57:17.050Z`
+  - `total=4`, `passed=4`, `failed=0`.
+- `apps/frontend/docs/audits/self-improvement-scorecard.json` generated at
+  `2026-03-26T09:57:41.188Z`
+  - `overall.passed=true`, `requiredAuditsPresent=true`.
+- `docs/architecture/tnf-master-framework.mmd` regenerated during this run.
+
+### Notes
+
+- Strict loop completed end-to-end on host environment with live endpoints:
+  - `https://thenewfuse.com`
+  - `https://api.thenewfuse.com`
+- `LIVE_AUDIT_EXTERNAL_ALLOWLIST` was used for two known GitHub 404 URLs:
+  - `https://github.com/whodaniel/fuse`
+  - `https://github.com/whodaniel/The-New-Fuse`
+
+## Previous Blocked Run (2026-03-26 UTC, Sandbox)
+
+### Evidence Snapshot
+
+- `apps/frontend/docs/audits/live-link-crawl.json` generated at
+  `2026-03-26T09:16:00.535Z`
+  - `totalChecked=4`, `totalBroken=4`, all failures were `fetch failed` on seed
+    URLs.
+- `apps/frontend/docs/audits/all-routes-semantic-audit.json` generated at
+  `2026-03-26T09:16:11.805Z`
+  - `totalRoutes=190`, `networkBroken=190`, `sameAsRoot=189` (all from
+    unreachable fetches).
+- `apps/frontend/docs/audits/auth-path-audit.json` generated at
+  `2026-03-26T09:16:13.317Z`
+  - `total=4`, `passed=0`, each check returned `TypeError: fetch failed`.
+- `apps/frontend/docs/audits/self-improvement-scorecard.json` generated at
+  `2026-03-26T09:16:14.661Z`
+  - `overall.passed=false`, `requiredAuditsPresent=true`.
+- `docs/architecture/tnf-master-framework.mmd` regenerated at
+  `2026-03-26T09:16Z`.
+
+### Platform Blockers Captured
+
+- Playwright browser launch failed repeatedly for both:
+  - system Chrome (`channel:chrome`) with `SIGABRT`.
+  - bundled Chromium headless shell with `SIGTRAP`.
+- Crash diagnostics from the translated macOS crash report:
+  - Process: `Google Chrome 146.0.7680.165`
+  - Exception: `EXC_CRASH (SIGABRT)`
+  - Frame chain includes `HIServices::_RegisterApplication` and
+    `TransformProcessType`.
+- Direct fetches to live URLs in this run context consistently returned
+  `fetch failed`, preventing live endpoint verification.
+
+### Hardening Added During This Run
+
+- Added launch retry logic in:
+  - `apps/frontend/scripts/audit-live-links.mjs`
+  - `apps/frontend/scripts/audit-all-routes-semantic.mjs`
+- Added non-Playwright HTTP fallback paths for both audits to preserve artifact
+  generation when browser launch fails.
+- Added explicit external URL allowlist support to `audit-live-links` via
+  `LIVE_AUDIT_EXTERNAL_ALLOWLIST`.
+
+### Required Next Strict Run
+
+Run the same audit set in an execution context where:
+
+1. Playwright can start a compatible browser binary on the host OS.
+2. Network egress to `https://thenewfuse.com` and `https://api.thenewfuse.com`
+   is available.
+3. `FAIL_ON_BROKEN=1`, `FAIL_ON_SEMANTIC_ISSUES=1`, and `FAIL_ON_AUTH_ISSUES=1`
+   remain enabled.

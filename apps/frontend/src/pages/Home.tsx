@@ -338,22 +338,21 @@ export default function HomePage() {
               demand excellence.
             </motion.p>
 
-
-          {/* TNF Collective Reaction — PAC-MAN Sized Animated Emojis */}
-          <div className="mt-20 text-center">
-            <p className="text-sm font-semibold text-blue-600 mb-8 tracking-[0.2em] uppercase">
-              The Collective Responds
-            </p>
-            <div className="flex justify-center items-end gap-10">
-              <AnimatedEmoji emoji="💜" size={72} />
-              <AnimatedEmoji emoji="🧠" size={72} />
-              <AnimatedEmoji emoji="🚀" size={72} />
-              <AnimatedEmoji emoji="⭐" size={72} />
-              <AnimatedEmoji emoji="⚡" size={72} />
-              <AnimatedEmoji emoji="💬" size={72} />
-              <AnimatedEmoji emoji="🧩" size={72} />
+            {/* TNF Collective Reaction — PAC-MAN Sized Animated Emojis */}
+            <div className="mt-20 text-center">
+              <p className="text-sm font-semibold text-blue-600 mb-8 tracking-[0.2em] uppercase">
+                The Collective Responds
+              </p>
+              <div className="flex justify-center items-end gap-10">
+                <AnimatedEmoji emoji="💜" size={72} />
+                <AnimatedEmoji emoji="🧠" size={72} />
+                <AnimatedEmoji emoji="🚀" size={72} />
+                <AnimatedEmoji emoji="⭐" size={72} />
+                <AnimatedEmoji emoji="⚡" size={72} />
+                <AnimatedEmoji emoji="💬" size={72} />
+                <AnimatedEmoji emoji="🧩" size={72} />
+              </div>
             </div>
-          </div>
 
             {/* CTA Buttons with staggered animation */}
             <motion.div
@@ -894,7 +893,7 @@ export default function HomePage() {
                   </svg>
                 </a>
                 <a
-                  href="https://github.com/whodaniel/The-New-Fuse"
+                  href="https://github.com/whodaniel"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-gray-300"

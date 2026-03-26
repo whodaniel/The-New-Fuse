@@ -1,13 +1,13 @@
 {
   "summary": {
-    "startedAt": "2026-03-09T08:20:02.555Z",
-    "generatedAt": "2026-03-09T08:23:28.751Z",
+    "startedAt": "2026-03-26T10:15:49.617Z",
+    "generatedAt": "2026-03-26T10:20:37.527Z",
     "baseUrl": "https://thenewfuse.com",
     "totalRoutes": 190,
     "hardBroken": 0,
     "networkBroken": 0,
     "sameAsRoot": 0,
-    "duplicateFingerprintGroups": 14
+    "duplicateFingerprintGroups": 15
   },
   "rows": [
     {
@@ -43,8 +43,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/about",
@@ -235,8 +235,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/admin/onboarding",
@@ -367,8 +367,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/agency/onboard",
@@ -379,8 +379,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/agent-builder",
@@ -391,8 +391,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/agent-management",
@@ -403,8 +403,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/agents",
@@ -415,8 +415,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/agents/new",
@@ -427,8 +427,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/agents/nft-marketplace",
@@ -439,8 +439,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/agents/onboard",
@@ -463,8 +463,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/agents/unified-creator",
@@ -475,8 +475,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/ai-agent-portal",
@@ -487,8 +487,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/ai-agents",
@@ -499,8 +499,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/ai-command-center",
@@ -523,8 +523,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/all-pages",
@@ -547,8 +547,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/app.html",
@@ -559,8 +559,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/audit-logs",
@@ -589,8 +589,8 @@
     {
       "route": "/auth/callback",
       "url": "https://thenewfuse.com/auth/callback",
-      "finalUrl": "https://thenewfuse.com/auth/callback",
-      "finalPath": "/auth/callback",
+      "finalUrl": "https://thenewfuse.com/auth/oauth-callback",
+      "finalPath": "/auth/oauth-callback",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
@@ -613,26 +613,26 @@
     {
       "route": "/auth/google-callback",
       "url": "https://thenewfuse.com/auth/google-callback",
-      "finalUrl": "https://thenewfuse.com/auth/login?error=auth_failed",
-      "finalPath": "/auth/login",
+      "finalUrl": "https://thenewfuse.com/auth/google-callback",
+      "finalPath": "/auth/google-callback",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "h1": "",
+      "fingerprint": "373f832a5a572ab94c0181ea00cccfbb15fdf2c5",
+      "textPreview": "processing authentication... <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requires javascript to run. please enable javascript in your browser settings. <"
     },
     {
       "route": "/auth/google/callback",
       "url": "https://thenewfuse.com/auth/google/callback",
-      "finalUrl": "https://thenewfuse.com/auth/login?error=auth_failed",
-      "finalPath": "/auth/login",
+      "finalUrl": "https://thenewfuse.com/auth/google-callback",
+      "finalPath": "/auth/google-callback",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "h1": "",
+      "fingerprint": "373f832a5a572ab94c0181ea00cccfbb15fdf2c5",
+      "textPreview": "processing authentication... <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requires javascript to run. please enable javascript in your browser settings. <"
     },
     {
       "route": "/auth/login",
@@ -643,8 +643,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/auth/oauth-callback",
@@ -667,8 +667,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Create account",
-      "fingerprint": "b8e1108002b6409b0348d02c58825001d87cde26",
-      "textPreview": "create accountfresh register flow for cloudflare authnameemailpasswordconfirm passwordcreate accountcontinue with googlealready have an account? sign in <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>ja"
+      "fingerprint": "7fcfa405ebae245e32833f37dc93362dcd45ae69",
+      "textPreview": "create accountfresh register flow for cloudflare authcanonical identity (exacting tracking)user_..._[timestamp]your unique protocol identifier for strict attribution and mesh sovereignty.nameemailpasswordconfirm password"
     },
     {
       "route": "/auth/reset-password",
@@ -739,7 +739,7 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
-      "fingerprint": "4b579ea0414367ef6be6ca08136209178cba5c9c",
+      "fingerprint": "ede881e01c42b8a19f697c4f4fa170e0d02f1fde",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
@@ -763,8 +763,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/chat-page",
@@ -775,8 +775,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/command-center",
@@ -799,8 +799,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
-      "fingerprint": "5669d4e0090d26804948b1e08f33e00ae63c2a66",
-      "textPreview": "community hubconnect, share, and learn with the ai communitynew post1,230members94active today3posts24commentsfilters11pinnedhelp & supporthow are you handling staged deploy rollbacks?looking for practical rollback patte"
+      "fingerprint": "bcf869a597c3b9226b7e56319981c6611bea2e69",
+      "textPreview": "community hubconnect, share, and learn with the ai communitynew postcommunity endpoints are unavailable. no synthetic community posts are shown.filtersno live community posts available.load more posts"
     },
     {
       "route": "/components",
@@ -811,8 +811,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/components-nav",
@@ -823,8 +823,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/components-showcase",
@@ -847,8 +847,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/connect",
@@ -883,8 +883,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/dashboard",
@@ -895,8 +895,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/dashboard/agents",
@@ -907,8 +907,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/dashboard/agents/new",
@@ -919,8 +919,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/dashboard/analytics",
@@ -931,8 +931,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/dashboard/architecture",
@@ -943,8 +943,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/dashboard/logs",
@@ -955,8 +955,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/dashboard/observability",
@@ -967,8 +967,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/dashboard/settings",
@@ -979,8 +979,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/debug",
@@ -1075,8 +1075,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/general-settings/community-hub",
@@ -1087,8 +1087,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/general-settings/embedding",
@@ -1099,8 +1099,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/goals",
@@ -1111,8 +1111,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/graph-demo",
@@ -1123,8 +1123,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/help/community",
@@ -1135,8 +1135,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
-      "fingerprint": "5669d4e0090d26804948b1e08f33e00ae63c2a66",
-      "textPreview": "community hubconnect, share, and learn with the ai communitynew post1,230members94active today3posts24commentsfilters11pinnedhelp & supporthow are you handling staged deploy rollbacks?looking for practical rollback patte"
+      "fingerprint": "bcf869a597c3b9226b7e56319981c6611bea2e69",
+      "textPreview": "community hubconnect, share, and learn with the ai communitynew postcommunity endpoints are unavailable. no synthetic community posts are shown.filtersno live community posts available.load more posts"
     },
     {
       "route": "/help/documentation",
@@ -1279,8 +1279,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/ide",
@@ -1327,8 +1327,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/landing",
@@ -1405,14 +1405,14 @@
     {
       "route": "/login",
       "url": "https://thenewfuse.com/login",
-      "finalUrl": "https://thenewfuse.com/login",
-      "finalPath": "/login",
+      "finalUrl": "https://thenewfuse.com/auth/login",
+      "finalPath": "/auth/login",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/logs",
@@ -1435,8 +1435,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/marketplace",
@@ -1447,7 +1447,7 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
-      "fingerprint": "4b579ea0414367ef6be6ca08136209178cba5c9c",
+      "fingerprint": "ede881e01c42b8a19f697c4f4fa170e0d02f1fde",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
@@ -1459,8 +1459,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/membership",
@@ -1471,7 +1471,7 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "TNF MembershipLive access to AI-ARCADE & the Protocol",
-      "fingerprint": "142f5336e7105f4a603a9469d23de778992e4277",
+      "fingerprint": "876d84c5fb0e6ca5a194fb1fef9f7595d8c40bd6",
       "textPreview": "membership billingtnf membershiplive access to ai-arcade & the protocoltnf membership is $30/month. paypal remains the default subscription rail, with stripe available as an additional checkout option when enabled. once "
     },
     {
@@ -1483,8 +1483,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/multi-agent-chat-demo",
@@ -1579,8 +1579,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/package/agents",
@@ -1639,8 +1639,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/platform",
@@ -1651,7 +1651,7 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
-      "fingerprint": "4b579ea0414367ef6be6ca08136209178cba5c9c",
+      "fingerprint": "ede881e01c42b8a19f697c4f4fa170e0d02f1fde",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
@@ -1663,8 +1663,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "",
-      "fingerprint": "305bae8efa624a4571c4de22e0d8f950944ce23c",
-      "textPreview": "loading onboarding preview..."
+      "fingerprint": "6070a1037352fdc4bafe417ab3f24db91aa97163",
+      "textPreview": "something went wrongusewizard must be used within a wizardprovidertry again (3 attempts left)reload page <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requ"
     },
     {
       "route": "/pricing",
@@ -1699,7 +1699,7 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
-      "fingerprint": "4b579ea0414367ef6be6ca08136209178cba5c9c",
+      "fingerprint": "ede881e01c42b8a19f697c4f4fa170e0d02f1fde",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
@@ -1711,20 +1711,20 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/register",
       "url": "https://thenewfuse.com/register",
-      "finalUrl": "https://thenewfuse.com/register",
-      "finalPath": "/register",
+      "finalUrl": "https://thenewfuse.com/auth/register",
+      "finalPath": "/auth/register",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Create account",
-      "fingerprint": "b8e1108002b6409b0348d02c58825001d87cde26",
-      "textPreview": "create accountfresh register flow for cloudflare authnameemailpasswordconfirm passwordcreate accountcontinue with googlealready have an account? sign in <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>ja"
+      "fingerprint": "7fcfa405ebae245e32833f37dc93362dcd45ae69",
+      "textPreview": "create accountfresh register flow for cloudflare authcanonical identity (exacting tracking)user_..._[timestamp]your unique protocol identifier for strict attribution and mesh sovereignty.nameemailpasswordconfirm password"
     },
     {
       "route": "/resources",
@@ -1735,8 +1735,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/sessions",
@@ -1747,8 +1747,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/settings",
@@ -1759,8 +1759,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/settings/api",
@@ -1771,8 +1771,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/settings/appearance",
@@ -1783,8 +1783,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/settings/general",
@@ -1795,8 +1795,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/settings/notifications",
@@ -1807,8 +1807,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/settings/security",
@@ -1819,8 +1819,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/simple-landing",
@@ -1855,8 +1855,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/sophisticated-hub",
@@ -1867,8 +1867,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/suggestions",
@@ -1879,8 +1879,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/suggestions/new",
@@ -1891,8 +1891,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/support",
@@ -1915,8 +1915,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/tasks-page",
@@ -1927,8 +1927,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/tasks/new",
@@ -1939,8 +1939,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/team",
@@ -1951,8 +1951,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/terms",
@@ -1987,8 +1987,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/timeline-demo",
@@ -1999,8 +1999,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/tnf-hub",
@@ -2011,8 +2011,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/unauthorized",
@@ -2035,8 +2035,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/user/profile",
@@ -2047,8 +2047,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workflows",
@@ -2059,8 +2059,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workflows-enhanced",
@@ -2071,8 +2071,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workflows/advanced-builder",
@@ -2083,8 +2083,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workflows/builder",
@@ -2095,8 +2095,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workflows/console",
@@ -2107,8 +2107,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workflows/detail",
@@ -2119,8 +2119,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workflows/execution",
@@ -2131,8 +2131,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workflows/executions",
@@ -2143,8 +2143,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workflows/templates",
@@ -2155,8 +2155,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workspace",
@@ -2167,8 +2167,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workspace-chat",
@@ -2179,8 +2179,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workspace-settings/agent-model",
@@ -2191,8 +2191,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workspace-settings/chat-model",
@@ -2203,8 +2203,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workspace-settings/llm-selection",
@@ -2215,8 +2215,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workspace/analytics",
@@ -2227,8 +2227,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workspace/chat",
@@ -2239,8 +2239,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workspace/layout",
@@ -2251,8 +2251,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workspace/members",
@@ -2263,8 +2263,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workspace/overview",
@@ -2275,8 +2275,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     },
     {
       "route": "/workspace/settings",
@@ -2287,8 +2287,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
     }
   ],
   "hardBroken": [],
@@ -2308,7 +2308,7 @@
       ]
     },
     {
-      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
       "routes": [
         "/a2a-control",
         "/admin/marketplace",
@@ -2326,8 +2326,6 @@
         "/ai-portal",
         "/analytics",
         "/app.html",
-        "/auth/google-callback",
-        "/auth/google/callback",
         "/auth/login",
         "/chat",
         "/chat-page",
@@ -2474,15 +2472,19 @@
       "routes": ["/auth/forgot-password", "/forgot-password"]
     },
     {
-      "fingerprint": "b8e1108002b6409b0348d02c58825001d87cde26",
+      "fingerprint": "373f832a5a572ab94c0181ea00cccfbb15fdf2c5",
+      "routes": ["/auth/google-callback", "/auth/google/callback"]
+    },
+    {
+      "fingerprint": "7fcfa405ebae245e32833f37dc93362dcd45ae69",
       "routes": ["/auth/register", "/register"]
     },
     {
-      "fingerprint": "4b579ea0414367ef6be6ca08136209178cba5c9c",
+      "fingerprint": "ede881e01c42b8a19f697c4f4fa170e0d02f1fde",
       "routes": ["/capabilities", "/marketplace", "/platform", "/product-map"]
     },
     {
-      "fingerprint": "5669d4e0090d26804948b1e08f33e00ae63c2a66",
+      "fingerprint": "bcf869a597c3b9226b7e56319981c6611bea2e69",
       "routes": ["/community", "/help/community"]
     },
     {

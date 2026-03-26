@@ -33,7 +33,7 @@ export const SiteFooter = () => {
                 </svg>
               </a>
               <a
-                href="https://github.com/whodaniel/The-New-Fuse"
+                href="https://github.com/whodaniel"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition-colors"
@@ -78,7 +78,7 @@ export const SiteFooter = () => {
               </li>
               <li>
                 <a
-                  href="https://github.com/whodaniel/The-New-Fuse"
+                  href="https://github.com/whodaniel"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-white transition-colors"
