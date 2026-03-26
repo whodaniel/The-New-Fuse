@@ -1,0 +1,98 @@
+#!/bin/bash
+set -euo pipefail
+
+TARGET_JSON="$HOME/.openclaw/voice_target.json"
+TARGET_TTY_FILE="$HOME/.openclaw/voice_target_tty"
+
+delay_seconds=3
+press_enter=0
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --delay)
+      delay_seconds="${2:-}"
+      if [[ -z "$delay_seconds" ]]; then
+        echo "Missing value for --delay" >&2
+        exit 1
+      fi
+      shift 2
+      ;;
+    --enter)
+      press_enter=1
+      shift
+      ;;
+    --no-enter)
+      press_enter=0
+      shift
+      ;;
+    *)
+      echo "Usage: voice-target-pick [--delay N] [--enter|--no-enter]" >&2
+      exit 1
+      ;;
+  esac
+done
+
+if ! [[ "$delay_seconds" =~ ^[0-9]+$ ]]; then
+  echo "--delay must be an integer number of seconds" >&2
+  exit 1
+fi
+
+echo "🎯 Focus the target app/window now. Capturing in ${delay_seconds}s..."
+sleep "$delay_seconds"
+
+front_info="$(osascript <<'APPLESCRIPT'
+tell application "System Events"
+  set frontProc to first process whose frontmost is true
+  set appName to name of frontProc
+  set winTitle to ""
+  try
+    set winTitle to name of front window of frontProc
+  end try
+end tell
+return appName & linefeed & winTitle
+APPLESCRIPT
+)"
+
+app_name="$(printf '%s\n' "$front_info" | sed -n '1p')"
+window_name="$(printf '%s\n' "$front_info" | sed -n '2p')"
+
+if [[ -z "$app_name" ]]; then
+  echo "❌ Could not detect frontmost app." >&2
+  exit 1
+fi
+
+mkdir -p "$HOME/.openclaw"
+rm -f "$TARGET_TTY_FILE"
+
+APP_NAME="$app_name" WINDOW_NAME="$window_name" PRESS_ENTER="$press_enter" TARGET_JSON="$TARGET_JSON" python3 - <<'PY'
+import json
+import os
+import time
+
+target_json = os.environ["TARGET_JSON"]
+app_name = os.environ["APP_NAME"]
+window_name = os.environ.get("WINDOW_NAME", "")
+press_enter = os.environ.get("PRESS_ENTER", "0") == "1"
+
+payload = {
+    "kind": "app",
+    "app": app_name,
+    "window": window_name,
+    "press_enter": press_enter,
+    "updated_at": int(time.time()),
+}
+
+with open(target_json, "w", encoding="utf-8") as f:
+    json.dump(payload, f, indent=2)
+PY
+
+enter_label="OFF"
+if [[ "$press_enter" -eq 1 ]]; then
+  enter_label="ON"
+fi
+
+if [[ -n "$window_name" ]]; then
+  echo "🎯 Transcription destination locked to app: $app_name | window: $window_name (Enter: $enter_label)"
+else
+  echo "🎯 Transcription destination locked to app: $app_name (Enter: $enter_label)"
+fi

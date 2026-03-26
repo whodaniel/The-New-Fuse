@@ -1,0 +1,121 @@
+#!/bin/bash
+# voice: Start invisible background voice link
+
+# 1. Set the window title so the server can find us
+echo -ne "\033]0;GEMINI_ORCHESTRATOR\007"
+echo "📡 Window title set to: GEMINI_ORCHESTRATOR"
+
+TARGET_TTY=""
+RESPONSE_AUDIO_FLAG="$HOME/.openclaw/voice_response_audio_enabled"
+
+# Default lock: current terminal tab
+if command -v "$HOME/bin/voice-target-here" >/dev/null 2>&1; then
+    TARGET_TTY="$("$HOME/bin/voice-target-here" --quiet 2>/dev/null || true)"
+    if [[ -n "$TARGET_TTY" ]]; then
+        echo "🎯 Destination lock set to terminal: $TARGET_TTY"
+    fi
+fi
+
+# 2. Verify Python deps
+if ! python3 - <<'PY' >/dev/null 2>&1
+import flask  # noqa: F401
+PY
+then
+    echo "❌ Missing Python dependency: flask"
+    echo "Install with: python3 -m pip install --user --break-system-packages flask"
+    exit 1
+fi
+
+# 3. Start the server
+echo "🚀 Starting Invisible Voice Server..."
+pkill -f "voice_server.py" >/dev/null 2>&1 || true
+nohup python3 ~/bin/voice_server.py > /tmp/voice_server.log 2>&1 &
+SERVER_PID=$!
+
+# Wait for server health
+READY=0
+for _ in {1..30}; do
+    if curl -fsS "http://127.0.0.1:50005/" >/dev/null 2>&1; then
+        READY=1
+        break
+    fi
+    sleep 0.2
+done
+
+if [ "$READY" -ne 1 ]; then
+    echo "❌ Voice server failed to start. See: /tmp/voice_server.log"
+    tail -n 60 /tmp/voice_server.log 2>/dev/null || true
+    exit 1
+fi
+
+# 4. Restart bridge to avoid stale watcher behavior
+echo "🧵 Restarting stream bridge..."
+pkill -f "stream_watch.py" >/dev/null 2>&1 || true
+nohup python3 -u "$HOME/bin/stream_watch.py" --target-tty "${TARGET_TTY:-}" > /tmp/stream_watch.log 2>&1 &
+BRIDGE_PID=$!
+
+# 4b. Start global click-anchor daemon (Cmd+Option+Click)
+CLICK_DAEMON_BIN="$HOME/bin/voice-target-click-daemon"
+CLICK_DAEMON_CMD=(swift "$HOME/bin/voice-target-click-daemon.swift")
+if [[ -x "$CLICK_DAEMON_BIN" ]]; then
+    CLICK_DAEMON_CMD=("$CLICK_DAEMON_BIN")
+fi
+
+if ! pgrep -f "voice-target-click-daemon" >/dev/null 2>&1; then
+    echo "🖱️ Starting click-anchor daemon..."
+    nohup "${CLICK_DAEMON_CMD[@]}" > /tmp/voice_target_click.log 2>&1 &
+    CLICK_DAEMON_PID=$!
+else
+    CLICK_DAEMON_PID=""
+    echo "🖱️ Click-anchor daemon already running."
+fi
+
+# 4c. Start optional AI response audio watcher (toggle controls speech on/off)
+if [[ -f "$HOME/bin/voice-response-audio-watch.py" ]]; then
+    echo "🔊 Starting response-audio watcher..."
+    pkill -f "voice-response-audio-watch.py" >/dev/null 2>&1 || true
+    nohup python3 -u "$HOME/bin/voice-response-audio-watch.py" --target-tty "${TARGET_TTY:-}" > /tmp/voice_response_audio.log 2>&1 &
+    AUDIO_WATCH_PID=$!
+else
+    AUDIO_WATCH_PID=""
+    echo "⚠️ response-audio watcher not installed; run Install Voice Bridge.command to refresh tools."
+fi
+
+# 5. Open the browser
+echo "🌐 Opening Beam Controller..."
+sleep 1
+open "http://localhost:50005"
+
+echo ""
+echo "🏔️  INVISIBLE VOICE LINK ACTIVE."
+echo "1. Click 'ACTIVATE BEAM' in the browser."
+echo "2. You can now use your Mac for anything else!"
+echo "3. Talk naturally. Your words will beam here automatically."
+echo ""
+echo "Controls:"
+echo "- Hold Cmd+Option and click target field to anchor destination."
+echo "- Lock destination to this terminal tab: voice-target-here"
+echo "- Lock destination to any app/window:    voice-target-pick --delay 3"
+echo "- Show current destination lock:          voice-target-show"
+echo "- Clear destination lock:                 voice-target-clear"
+echo "- Toggle mic on/off:                      voice-mic-toggle"
+echo "- Toggle AI response audio on/off:        voice-response-audio-toggle"
+echo ""
+if [[ -f "$RESPONSE_AUDIO_FLAG" ]]; then
+    echo "AI response audio: ON"
+else
+    echo "AI response audio: OFF"
+fi
+echo ""
+echo "Press Ctrl+C to stop the link."
+
+# Cleanup on exit
+cleanup() {
+    kill "$SERVER_PID" >/dev/null 2>&1 || true
+    [ -n "${BRIDGE_PID:-}" ] && kill "$BRIDGE_PID" >/dev/null 2>&1 || true
+    [ -n "${CLICK_DAEMON_PID:-}" ] && kill "$CLICK_DAEMON_PID" >/dev/null 2>&1 || true
+    [ -n "${AUDIO_WATCH_PID:-}" ] && kill "$AUDIO_WATCH_PID" >/dev/null 2>&1 || true
+    echo "👋 Voice link stopped."
+}
+trap "cleanup; exit" SIGINT SIGTERM
+wait
