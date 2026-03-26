@@ -37,3 +37,52 @@
   passed. Scorecard overall passed.
 - Branch: main
 - Commit: fb60e2353
+
+## 2026-03-26 10:37:27 UTC
+
+- Note: Executed TNF stack self-improvement loop against
+  thenewfuse.com/api.thenewfuse.com; build + link + semantic + auth + scorecard
+  passed; regenerated master mermaid artifacts.
+- Branch: chore/tnf-self-improvement-loop-20260326
+- Commit: 3683e00d2
+
+## 2026-03-26 10:48:22 UTC
+
+- Note: Resolved deterministic build blocker (ENOTEMPTY in
+  apps/frontend/dist/assets) by pre-clearing stale dist output, reran full loop,
+  and produced clean audit artifacts + scorecard pass.
+- Branch: chore/tnf-self-improvement-loop-20260326
+- Commit: 3683e00d2
+
+## 2026-03-26 10:48:27 UTC
+
+- Note: Stabilized frontend build loop by excluding JSON from
+  vite-plugin-compression and hardening route-fallback app-shell resolution;
+  reran loop to green with live-link, semantic-route, auth-path, and scorecard
+  artifacts regenerated.
+- Branch: chore/tnf-self-improvement-loop-20260326
+- Commit: 3683e00d2
+
+## 2026-03-26 10:48:30 UTC
+
+- Note: Loop run on 2026-03-26: build + live-link + semantic(190 routes) +
+  auth(4/4) + scorecard all passed; regenerated master mermaid and verified
+  required output artifacts present.
+- Branch: chore/tnf-self-improvement-loop-20260326
+- Commit: 3683e00d2
+
+## 2026-03-26 10:49:57 UTC
+
+- Note: Validated loop output consistency by re-running semantic audit directly
+  to refresh stale timestamp; regenerated self-improvement scorecard with
+  semantic generatedAt=2026-03-26T10:49:30.193Z.
+- Branch: chore/tnf-self-improvement-loop-20260326
+- Commit: 3683e00d2
+
+## 2026-03-26 10:52:56 UTC
+
+- Note: Refreshed live-link crawl and regenerated self-improvement scorecard
+  after successful full loop run to keep evidence timestamps aligned (all checks
+  remained green).
+- Branch: chore/tnf-self-improvement-loop-20260326
+- Commit: 3683e00d2

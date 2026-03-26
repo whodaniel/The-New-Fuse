@@ -1,6 +1,6 @@
 # Auth Path Audit
 
-- Generated: 2026-03-26T10:20:39.611Z
+- Generated: 2026-03-26T10:47:57.081Z
 - Public base: https://thenewfuse.com
 - API base: https://api.thenewfuse.com
 - Total checks: 4
