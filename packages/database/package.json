@@ -46,6 +46,7 @@
   "dependencies": {
     "@nestjs/common": "^11.1.16",
     "@nestjs/config": "^4.0.2",
+    "@the-new-fuse/infrastructure": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "drizzle-orm": "^0.38.3",
     "pg": "^8.16.3",

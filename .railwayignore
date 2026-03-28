@@ -35,3 +35,22 @@ apps/casin8-games/.data-tests/
 /apps/poker-room/
 /apps/casin8-games/
 /apps/electron-desktop/
+
+# Additional large directories found during audit
+/ui-build/
+/ui-html-css/
+/ui-package/
+/web-assets/
+/voice-bridge-package-20260325/
+/standalone-react/
+/scraper/
+/cloudflare-sharedstate/
+/cloudflare-worker/
+/cloudflare-zeroclaw-relay/
+/apps/nexus-orchestrator/
+/apps/audio-trigger-kws-mvp/
+/apps/ai-arcade/
+/apps/backend/
+/apps/frontend/
+/apps/relay-server/
+/apps/vscode-extension/

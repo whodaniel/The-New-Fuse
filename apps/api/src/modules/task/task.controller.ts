@@ -39,7 +39,10 @@ export class TaskController {
   }
 
   @Get()
-  async listTasks(@CurrentUser() user: { id?: string; sub?: string }, @Query() query: ListTasksQueryDto) {
+  async listTasks(
+    @CurrentUser() user: { id?: string; sub?: string },
+    @Query() query: ListTasksQueryDto
+  ) {
     const userId = this.requireUserId(user);
 
     const { tasks, total } = await this.taskService.listTasks(userId, {
@@ -80,7 +83,10 @@ export class TaskController {
   }
 
   @Get(':taskId')
-  async getTask(@CurrentUser() user: { id?: string; sub?: string }, @Param('taskId') taskId: string) {
+  async getTask(
+    @CurrentUser() user: { id?: string; sub?: string },
+    @Param('taskId') taskId: string
+  ) {
     const userId = this.requireUserId(user);
 
     const task = await this.taskService.getTaskByIdForUser(taskId, userId);
@@ -148,6 +154,7 @@ export class TaskController {
     const logEntry = await this.taskService.appendExecutionLog(taskId, dto);
 
     await this.unifiedLedgerService.createTimelineEvent({
+      userId,
       eventType: 'historical_event',
       actor: dto.actor,
       payload: {
