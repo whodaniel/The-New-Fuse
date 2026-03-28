@@ -54,6 +54,8 @@ async function bootstrap() {
 
   // Compatibility rewrites for legacy no-version endpoints that now map to v1 routes.
   const legacyPathMap: Record<string, string> = {
+    '/api/workspaces': '/api/v1/workspaces',
+    '/api/agents': '/api/v1/agents',
     '/api/system/mesh-health': '/api/v1/system/mesh-health',
     '/api/system/master-clock': '/api/v1/system/master-clock',
     '/api/system/health': '/api/v1/system/health',
@@ -67,10 +69,42 @@ async function bootstrap() {
   };
   app.use((req, _res, next) => {
     const [pathname, query = ''] = req.url.split('?');
+
+    // Check for exact matches in legacy map first
     const mapped = legacyPathMap[pathname];
     if (mapped) {
       req.url = query ? `${mapped}?${query}` : mapped;
+      return next();
     }
+
+    // Generic rewrite for unversioned resource paths: /api/resource -> /api/v1/resource
+    // This handles subpaths like /api/workspaces/current which aren't in the exact map.
+    if (pathname.startsWith('/api/') && !pathname.startsWith('/api/v')) {
+      const parts = pathname.split('/');
+      const resource = parts[2];
+      const versionableResources = [
+        'workspaces',
+        'agents',
+        'chat',
+        'marketplace',
+        'poker',
+        'system',
+        'analytics',
+        'mcp',
+        'sgp',
+        'terminals',
+        'webhooks',
+        'ide',
+        'visualizations',
+        'orchestrator',
+        'health',
+      ];
+
+      if (resource && versionableResources.includes(resource)) {
+        req.url = req.url.replace('/api/', '/api/v1/');
+      }
+    }
+
     next();
   });
 

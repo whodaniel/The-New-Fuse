@@ -18,6 +18,7 @@ import { SgpGatewayModule } from './gateway/sgp-gateway.module';
 import { SystemGatewayModule } from './gateway/system-gateway.module';
 import { TerminalsGatewayModule } from './gateway/terminals-gateway.module';
 import { WebhookGatewayModule } from './gateway/webhook-gateway.module';
+import { WorkspaceGatewayModule } from './gateway/workspace-gateway.module';
 import { ProxyModule } from './proxy/proxy.module';
 
 @Module({
@@ -46,6 +47,7 @@ import { ProxyModule } from './proxy/proxy.module';
     SgpGatewayModule,
     SystemGatewayModule,
     TerminalsGatewayModule,
+    WorkspaceGatewayModule,
   ],
 })
 export class AppModule {}
