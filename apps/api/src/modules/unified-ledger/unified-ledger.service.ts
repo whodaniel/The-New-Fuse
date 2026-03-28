@@ -93,6 +93,11 @@ export class UnifiedLedgerService implements OnModuleInit {
       priority: input.priority || 'medium',
       owner: input.owner || 'system',
       assignee: input.assignee,
+      color: input.color,
+      startTime: input.startTime,
+      endTime: input.endTime,
+      todos: input.todos || [],
+      comments: input.comments || [],
       tags: input.tags || [],
       votes: input.votes || { up: 0, down: 0 },
       traits: {

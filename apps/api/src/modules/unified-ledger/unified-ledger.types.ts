@@ -102,6 +102,11 @@ export interface UnifiedTaskRecord {
   priority: UnifiedRecordPriority;
   owner: string;
   assignee?: string;
+  color?: string;
+  startTime?: string;
+  endTime?: string;
+  todos?: Array<{ id: string; text: string; completed: boolean }>;
+  comments?: Array<{ id: string; actor: string; text: string; timestamp: string }>;
   tags: string[];
   votes: UnifiedVotes;
   traits: TraitSlots;
