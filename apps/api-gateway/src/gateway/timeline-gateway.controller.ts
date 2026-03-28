@@ -8,8 +8,6 @@ import {
   Query,
   Req,
   Res,
-  VERSION_NEUTRAL,
-  Version,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
@@ -20,7 +18,6 @@ import { ProxyService } from '../proxy/proxy.service';
 export class TimelineGatewayController {
   constructor(private readonly proxyService: ProxyService) {}
 
-  @Version(VERSION_NEUTRAL)
   @Get('macro')
   @ApiOperation({ summary: 'Compatibility endpoint for timeline macro view' })
   async getTimelineMacroView(
@@ -47,8 +44,6 @@ export class TimelineGatewayController {
     }
   }
 
-  @Version(VERSION_NEUTRAL)
-  @All()
   @All('*path')
   @ApiOperation({ summary: 'Proxy timeline requests to the API service' })
   async proxyTimelineRequest(
