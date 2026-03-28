@@ -95,3 +95,20 @@
   current run.
 - Branch: chore/tnf-self-improvement-loop-20260326
 - Commit: 6025b9339
+
+## 2026-03-26 12:52:48 UTC
+
+- Note: Self-improvement loop run passed: live-link(0 broken), semantic(0
+  hard/network), auth(4/4), scorecard(required audits present). Added
+  schema-first workflow contract for limitation handling around OAuth-provider
+  scale and audit handoff reliability.
+- Branch: chore/tnf-self-improvement-loop-20260326
+- Commit: 4584c0797
+
+## 2026-03-26 13:00:54 UTC
+
+- Note: Recovered Railway zeroclaw runtime by hardening API key fallback in
+  entrypoint, deployed Cloudflare relay route-compat fallback (/api/chat ->
+  /webhook), and reran full TNF self-improvement loop with clean scorecard.
+- Branch: chore/tnf-self-improvement-loop-20260326
+- Commit: 4584c0797

@@ -34,6 +34,8 @@ pathways, and architecture visibility stay synchronized over time.
 - `apps/frontend/docs/audits/auth-path-audit.json`
 - `apps/frontend/docs/audits/self-improvement-scorecard.json`
 - `docs/architecture/tnf-master-framework.mmd`
+- `docs/operations/tnf-self-improvement-workflow-contract.json`
+- `docs/operations/tnf-self-improvement-schema-loop.md`
 
 ## Specialist Agent Audit Coverage
 
@@ -83,6 +85,39 @@ Master clock cron governance is now protocolized with:
    - `node scripts/protocols/cron-governance-gate.cjs --request <request.json>`
 
 ## Latest Run (2026-03-26 UTC, Post-Deploy No-Allowlist)
+
+### Current Run (2026-03-26T12:52Z, Schema-First Loop)
+
+- Trigger: combined execution of `limitation-challenge-schema-loop` and
+  `tnf-stack-self-improvement-loop`.
+- Framing:
+  - "This is the limitation I ran up against. So, this is the challenge we will
+    overcome!"
+  - "Map out the specific data schemas these nodes will use to pass the parsed
+    content back and forth."
+- Limitation/challenge contract written to:
+  - `docs/operations/tnf-self-improvement-workflow-contract.json`
+  - `docs/operations/tnf-self-improvement-schema-loop.md`
+
+Evidence snapshot from this run:
+
+- `apps/frontend/docs/audits/live-link-crawl.json` generated at
+  `2026-03-26T12:47:36.039Z`
+  - `totalChecked=51`, `totalBroken=0`, `allowlistedExternal=0`
+  - `crawledPages=46`, `maxDepthReached=4`
+- `apps/frontend/docs/audits/all-routes-semantic-audit.json` generated at
+  `2026-03-26T12:52:25.966Z`
+  - `totalRoutes=190`, `hardBroken=0`, `networkBroken=0`, `sameAsRoot=0`
+  - `duplicateFingerprintGroups=15` (observational, non-failing)
+- `apps/frontend/docs/audits/auth-path-audit.json` generated at
+  `2026-03-26T12:52:28.705Z`
+  - `total=4`, `passed=4`, `failed=0`
+- `apps/frontend/docs/audits/self-improvement-scorecard.json` generated at
+  `2026-03-26T12:52:30.415Z`
+  - `overall.passed=true`, `requiredAuditsPresent=true`
+- `docs/architecture/tnf-master-framework.mmd` regenerated in loop step `[6/6]`.
+- Run note appended to:
+  - `docs/operations/tnf-self-improvement-run-log.md`
 
 ### Most Recent Skill-Triggered Run (2026-03-26 UTC, Live Production Audit)
 

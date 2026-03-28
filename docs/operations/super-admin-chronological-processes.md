@@ -52,3 +52,64 @@ Base: `/api/admin/metrics`
 1. This interface is designed to coexist with visual orchestration graphs.
 2. Visualizers remain diagnostic; this control plane is the operational source
    for schedule mutation and run-now operations.
+
+## Master Clock Sync Verification
+
+Run the cron-sync contract audit to verify cadence/SLA mapping, trigger payload
+contracts, idempotency lock behavior, and escalation thresholds:
+
+```bash
+pnpm run validate:master-clock-sync
+```
+
+Latest artifacts are written to:
+
+- `reports/protocols/master-clock-sync/master-clock-sync-latest.json`
+- `reports/protocols/master-clock-sync/master-clock-sync-latest.md`
+
+## Don't Die Supervisor
+
+Run deterministic stale-process remediation with before/after audit evidence:
+
+```bash
+node scripts/protocols/dont-die-supervisor.cjs --json
+```
+
+Latest artifacts are written to:
+
+- `reports/protocols/dont-die-supervisor/dont-die-latest.json`
+- `reports/protocols/dont-die-supervisor/dont-die-latest.md`
+
+## StaffOps Schedule Sync
+
+Install recurring StaffOps schedules (staff coordination, staffing architecture,
+staff review) into local cron with deterministic process runner commands:
+
+```bash
+node scripts/protocols/staffops-schedule-sync.cjs install --json
+```
+
+Install growth-blocker audit into the same deterministic runner path:
+
+```bash
+node scripts/protocols/staffops-schedule-sync.cjs install --process-id tnf-growth-blocker-audit --json
+```
+
+Check installed StaffOps schedule lines:
+
+```bash
+node scripts/protocols/staffops-schedule-sync.cjs status --json
+```
+
+Uninstall StaffOps managed schedule lines:
+
+```bash
+node scripts/protocols/staffops-schedule-sync.cjs uninstall --json
+```
+
+Run role cycles manually:
+
+```bash
+node .skills/tnf-staffing-director-agent/scripts/run_staffing_director_cycle.cjs --json
+node .skills/tnf-staff-review-agent/scripts/run_staff_review_cycle.cjs --json
+```

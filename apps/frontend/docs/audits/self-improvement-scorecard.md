@@ -1,12 +1,12 @@
 # TNF Self-Improvement Scorecard
 
-- Generated: 2026-03-26T10:59:55.047Z
+- Generated: 2026-03-27T19:14:30.626Z
 - Overall: PASS
 - Required audits present: yes
 
 ## Live Link Crawl
 
-- checked: 49
+- checked: 13
 - broken: 0
 - semantic broken: 0
 - passed: true
@@ -17,7 +17,7 @@
 - hard broken: 0
 - network broken: 0
 - same as root: 0
-- duplicate groups: 15
+- duplicate groups: 1
 - passed: true
 
 ## Auth Path Audit

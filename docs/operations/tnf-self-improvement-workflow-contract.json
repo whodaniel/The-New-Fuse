@@ -1,0 +1,681 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-03-26T12:43:16.412454+00:00",
+  "principles": {
+    "framing": "This is the limitation I ran up against. So, this is the challenge we will overcome!",
+    "schema_directive": "Map out the specific data schemas these nodes will use to pass the parsed content back and forth."
+  },
+  "problem": {
+    "limitation": "Self-improvement runs can drift when large OAuth provider matrices and intermittent CLI stalls create ambiguous handoffs between audit, auth validation, and remediation steps.",
+    "challenge": "Create a resilient TNF self-improvement workflow with schema-validated node handoffs, explicit fallback routes, and deterministic artifact validation."
+  },
+  "workflow": {
+    "nodes": [
+      {
+        "id": "ingest-context",
+        "purpose": "Execute the 'ingest_context' step",
+        "input_schema": {
+          "type": "object",
+          "required": ["trace_id", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "payload": {
+              "type": "object"
+            },
+            "context": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": true
+        },
+        "output_schema": {
+          "type": "object",
+          "required": ["trace_id", "node_id", "status", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "node_id": {
+              "type": "string",
+              "const": "ingest-context"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["ok", "partial", "blocked"]
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "raw": {
+                  "type": "object"
+                },
+                "normalized": {
+                  "type": "object"
+                },
+                "signals": {
+                  "type": "array"
+                }
+              },
+              "additionalProperties": true
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["code", "message"],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "retryable": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "next_action": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "handoff_to": "classify-limitation"
+      },
+      {
+        "id": "classify-limitation",
+        "purpose": "Execute the 'classify_limitation' step",
+        "input_schema": {
+          "type": "object",
+          "required": ["trace_id", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "payload": {
+              "type": "object"
+            },
+            "context": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": true
+        },
+        "output_schema": {
+          "type": "object",
+          "required": ["trace_id", "node_id", "status", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "node_id": {
+              "type": "string",
+              "const": "classify-limitation"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["ok", "partial", "blocked"]
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "raw": {
+                  "type": "object"
+                },
+                "normalized": {
+                  "type": "object"
+                },
+                "signals": {
+                  "type": "array"
+                }
+              },
+              "additionalProperties": true
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["code", "message"],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "retryable": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "next_action": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "handoff_to": "map-audits"
+      },
+      {
+        "id": "map-audits",
+        "purpose": "Execute the 'map_audits' step",
+        "input_schema": {
+          "type": "object",
+          "required": ["trace_id", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "payload": {
+              "type": "object"
+            },
+            "context": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": true
+        },
+        "output_schema": {
+          "type": "object",
+          "required": ["trace_id", "node_id", "status", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "node_id": {
+              "type": "string",
+              "const": "map-audits"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["ok", "partial", "blocked"]
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "raw": {
+                  "type": "object"
+                },
+                "normalized": {
+                  "type": "object"
+                },
+                "signals": {
+                  "type": "array"
+                }
+              },
+              "additionalProperties": true
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["code", "message"],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "retryable": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "next_action": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "handoff_to": "run-deterministic-audits"
+      },
+      {
+        "id": "run-deterministic-audits",
+        "purpose": "Execute the 'run_deterministic_audits' step",
+        "input_schema": {
+          "type": "object",
+          "required": ["trace_id", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "payload": {
+              "type": "object"
+            },
+            "context": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": true
+        },
+        "output_schema": {
+          "type": "object",
+          "required": ["trace_id", "node_id", "status", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "node_id": {
+              "type": "string",
+              "const": "run-deterministic-audits"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["ok", "partial", "blocked"]
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "raw": {
+                  "type": "object"
+                },
+                "normalized": {
+                  "type": "object"
+                },
+                "signals": {
+                  "type": "array"
+                }
+              },
+              "additionalProperties": true
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["code", "message"],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "retryable": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "next_action": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "handoff_to": "score-and-route"
+      },
+      {
+        "id": "score-and-route",
+        "purpose": "Execute the 'score_and_route' step",
+        "input_schema": {
+          "type": "object",
+          "required": ["trace_id", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "payload": {
+              "type": "object"
+            },
+            "context": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": true
+        },
+        "output_schema": {
+          "type": "object",
+          "required": ["trace_id", "node_id", "status", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "node_id": {
+              "type": "string",
+              "const": "score-and-route"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["ok", "partial", "blocked"]
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "raw": {
+                  "type": "object"
+                },
+                "normalized": {
+                  "type": "object"
+                },
+                "signals": {
+                  "type": "array"
+                }
+              },
+              "additionalProperties": true
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["code", "message"],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "retryable": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "next_action": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "handoff_to": "remediate"
+      },
+      {
+        "id": "remediate",
+        "purpose": "Execute the 'remediate' step",
+        "input_schema": {
+          "type": "object",
+          "required": ["trace_id", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "payload": {
+              "type": "object"
+            },
+            "context": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": true
+        },
+        "output_schema": {
+          "type": "object",
+          "required": ["trace_id", "node_id", "status", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "node_id": {
+              "type": "string",
+              "const": "remediate"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["ok", "partial", "blocked"]
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "raw": {
+                  "type": "object"
+                },
+                "normalized": {
+                  "type": "object"
+                },
+                "signals": {
+                  "type": "array"
+                }
+              },
+              "additionalProperties": true
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["code", "message"],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "retryable": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "next_action": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "handoff_to": "rerun-and-verify"
+      },
+      {
+        "id": "rerun-and-verify",
+        "purpose": "Execute the 'rerun_and_verify' step",
+        "input_schema": {
+          "type": "object",
+          "required": ["trace_id", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "payload": {
+              "type": "object"
+            },
+            "context": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": true
+        },
+        "output_schema": {
+          "type": "object",
+          "required": ["trace_id", "node_id", "status", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "node_id": {
+              "type": "string",
+              "const": "rerun-and-verify"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["ok", "partial", "blocked"]
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "raw": {
+                  "type": "object"
+                },
+                "normalized": {
+                  "type": "object"
+                },
+                "signals": {
+                  "type": "array"
+                }
+              },
+              "additionalProperties": true
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["code", "message"],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "retryable": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "next_action": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "handoff_to": "publish-evidence"
+      },
+      {
+        "id": "publish-evidence",
+        "purpose": "Execute the 'publish_evidence' step",
+        "input_schema": {
+          "type": "object",
+          "required": ["trace_id", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "payload": {
+              "type": "object"
+            },
+            "context": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": true
+        },
+        "output_schema": {
+          "type": "object",
+          "required": ["trace_id", "node_id", "status", "payload"],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "node_id": {
+              "type": "string",
+              "const": "publish-evidence"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["ok", "partial", "blocked"]
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "raw": {
+                  "type": "object"
+                },
+                "normalized": {
+                  "type": "object"
+                },
+                "signals": {
+                  "type": "array"
+                }
+              },
+              "additionalProperties": true
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["code", "message"],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "retryable": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "next_action": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "handoff_to": null
+      }
+    ],
+    "example_trace": {
+      "trace_id": "trace-example-001",
+      "node_id": "ingest-context",
+      "status": "ok",
+      "confidence": 0.92,
+      "payload": {
+        "raw": {
+          "input": "example"
+        },
+        "normalized": {
+          "intent": "example-intent"
+        },
+        "signals": ["schema-aligned", "handoff-ready"]
+      },
+      "errors": [],
+      "next_action": "continue"
+    }
+  }
+}
