@@ -731,6 +731,32 @@ export class UnifiedLedgerService implements OnModuleInit {
     return plan;
   }
 
+  async listMacroView(owner?: string): Promise<{
+    plans: Array<ProjectPlanRecord & { records: UnifiedTaskRecord[] }>;
+    unlinkedRecords: UnifiedTaskRecord[];
+  }> {
+    await this.ensureLoaded();
+    const plans = await this.listPlans({ owner });
+    const records = await this.listRecords({ owner });
+
+    const linkedRecordIds = new Set<string>();
+    const plansWithRecords = plans.map((plan) => {
+      const planRecords = records.filter((r) => plan.linkedRecordIds.includes(r.id));
+      planRecords.forEach((r) => linkedRecordIds.add(r.id));
+      return {
+        ...plan,
+        records: planRecords,
+      };
+    });
+
+    const unlinkedRecords = records.filter((r) => !linkedRecordIds.has(r.id));
+
+    return {
+      plans: plansWithRecords,
+      unlinkedRecords,
+    };
+  }
+
   async getRecordConnections(
     recordId: string,
     owner?: string

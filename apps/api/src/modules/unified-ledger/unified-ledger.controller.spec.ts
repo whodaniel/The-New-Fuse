@@ -19,12 +19,20 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
     updateTimelineEvent: jest.fn(),
     deleteTimelineEvent: jest.fn(),
     bootstrapPersonalTimeline: jest.fn(),
+    listMacroView: jest.fn(),
   } as any;
 
   const controller = new UnifiedLedgerController(ledger);
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('gets macro view scoped to authenticated user', async () => {
+    ledger.listMacroView.mockResolvedValue({ plans: [], unlinkedRecords: [] });
+    const result = await controller.getMacroView({ id: 'user-macro' });
+    expect(result).toEqual({ plans: [], unlinkedRecords: [] });
+    expect(ledger.listMacroView).toHaveBeenCalledWith('user-macro');
   });
 
   it('lists timeline events scoped to authenticated id', async () => {

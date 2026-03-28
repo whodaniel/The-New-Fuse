@@ -301,4 +301,45 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
     delete process.env.UNIFIED_LEDGER_STORE_PATH;
     await fs.rm(tmpStorePath, { force: true });
   });
+
+  it('provides a macro view of plans and records', async () => {
+    const tmpStorePath = path.join(
+      '/tmp',
+      `tnf-unified-ledger-macro-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`
+    );
+    process.env.UNIFIED_LEDGER_STORE_PATH = tmpStorePath;
+
+    const service = new UnifiedLedgerService();
+    await service.onModuleInit();
+
+    const record1 = await service.createRecord({
+      title: 'Linked Record',
+      description: 'Part of a plan',
+      owner: 'user-macro',
+    });
+    const record2 = await service.createRecord({
+      title: 'Unlinked Record',
+      description: 'Not in any plan',
+      owner: 'user-macro',
+    });
+
+    const plan = await service.createPlan({
+      name: 'Test Plan',
+      objective: 'Verify macro view',
+      owner: 'user-macro',
+      linkedRecordIds: [record1.id],
+    });
+
+    const macro = await service.listMacroView('user-macro');
+
+    expect(macro.plans.length).toBe(1);
+    expect(macro.plans[0].id).toBe(plan.id);
+    expect(macro.plans[0].records.length).toBe(1);
+    expect(macro.plans[0].records[0].id).toBe(record1.id);
+    expect(macro.unlinkedRecords.length).toBe(1);
+    expect(macro.unlinkedRecords[0].id).toBe(record2.id);
+
+    delete process.env.UNIFIED_LEDGER_STORE_PATH;
+    await fs.rm(tmpStorePath, { force: true });
+  });
 });

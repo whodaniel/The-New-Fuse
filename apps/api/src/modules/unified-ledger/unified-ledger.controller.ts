@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -142,7 +143,15 @@ export class UnifiedLedgerController {
   @Get('timeline/events/:id')
   async timelineEvent(@CurrentUser() user: { id?: string; sub?: string }, @Param('id') id: string) {
     const userId = this.requireUserId(user);
-    return this.ledger.getTimelineEvent(id, userId);
+    const event = await this.ledger.getTimelineEvent(id, userId);
+    if (!event) throw new NotFoundException('Timeline event not found');
+    return event;
+  }
+
+  @Get('timeline/macro')
+  async getMacroView(@CurrentUser() user: { id?: string; sub?: string }) {
+    const userId = this.requireUserId(user);
+    return this.ledger.listMacroView(userId);
   }
 
   @Post('timeline/events')
