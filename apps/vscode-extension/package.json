@@ -2,7 +2,7 @@
   "name": "the-new-fuse",
   "displayName": "The New Fuse",
   "description": "AI-Powered Development Assistant with Multi-Provider LLM Support, A2A Protocol, MCP Integration & Agent Federation",
-  "version": "9.1.0",
+  "version": "9.1.1",
   "publisher": "TheNewFuse",
   "license": "MIT",
   "repository": {
@@ -846,7 +846,10 @@
     "lru-cache": "^11.2.4",
     "tiktoken": "^1.0.22",
     "zod": "^4.3.5",
-    "zod-to-json-schema": "^3.25.1"
+    "zod-to-json-schema": "^3.25.1",
+    "@the-new-fuse/infrastructure": "workspace:*",
+    "@the-new-fuse/auth": "workspace:*",
+    "@the-new-fuse/data": "workspace:*"
   },
   "optionalDependencies": {
     "electron": "^35.7.5"

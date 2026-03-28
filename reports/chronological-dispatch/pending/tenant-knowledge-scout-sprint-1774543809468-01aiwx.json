@@ -1,0 +1,31 @@
+{
+  "targetQueue": "tnf:master:tasks:planning",
+  "queueItem": {
+    "id": "tenant-knowledge-scout-sprint-1774543809468-01aiwx",
+    "title": "Knowledge Scout Sprint",
+    "description": "Run the knowledge scout sprint. Gather high-signal updates, summarize what changed, and create actionable follow-up tasks or notes for TNF decision-makers without leaking private material.",
+    "priority": "medium",
+    "status": "queued",
+    "votes": {
+      "up": 0,
+      "down": 0
+    },
+    "source": "chronological-dispatch",
+    "processId": "tenant-knowledge-scout-sprint",
+    "kind": "agent-turn",
+    "createdAt": "2026-03-26T16:50:09.468Z",
+    "itinerary": {
+      "lane": "directive",
+      "horizon": "medium_term",
+      "coordinationMode": "brokered",
+      "signalSources": ["redis", "master-clock"],
+      "clockSource": "master-clock"
+    },
+    "metadata": {
+      "scheduledProcessId": "tenant-knowledge-scout-sprint",
+      "dispatchSource": "master-clock",
+      "importedFromLegacyCron": true
+    }
+  },
+  "createdAt": "2026-03-26T16:50:09.469Z"
+}

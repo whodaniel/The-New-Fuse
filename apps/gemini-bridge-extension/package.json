@@ -45,7 +45,8 @@
     "ajv-keywords": "^5.1.0",
     "dompurify": "^3.3.2",
     "highlight.js": "^11.11.1",
-    "pako": "^2.1.0"
+    "pako": "^2.1.0",
+    "@the-new-fuse/infrastructure": "workspace:*"
   },
   "overrides": {
     "serialize-javascript": "7.0.3"

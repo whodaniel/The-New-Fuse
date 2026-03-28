@@ -407,10 +407,26 @@ function evaluateFederationPacket(request: any) {
   };
 }
 
-function authorized(req: Request, env: Env) {
-  // Hardening: Fail closed unless strictly in 'dev' environment
+function isLocalEnvironment(value: string | undefined): boolean {
+  const normalized = String(value || '')
+    .trim()
+    .toLowerCase();
+  return ['local', 'localhost', 'devlocal', 'test'].includes(normalized);
+}
+
+function isLocalRuntimeRequest(req: Request, env: Env): boolean {
+  if (isLocalEnvironment(env.ENVIRONMENT)) return true;
+  try {
+    const hostname = new URL(req.url).hostname.toLowerCase();
+    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
+  } catch {
+    return false;
+  }
+}
+
+function authorized(req: Request, env: Env, localRuntime: boolean) {
   if (!env.SHAREDSTATE_AUTH_TOKEN) {
-    return env.ENVIRONMENT === 'dev';
+    return localRuntime;
   }
   const token = req.headers.get('x-auth-token');
   return token === env.SHAREDSTATE_AUTH_TOKEN;
@@ -587,16 +603,35 @@ async function appendReceipt(env: Env, receipt: Receipt) {
 export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
+    const localRuntime = isLocalRuntimeRequest(req, env);
+    const authConfigured = Boolean(env.SHAREDSTATE_AUTH_TOKEN);
 
     if (url.pathname === '/health') {
-      return json({
-        ok: true,
-        env: env.ENVIRONMENT,
-        authConfigured: Boolean(env.SHAREDSTATE_AUTH_TOKEN),
-      });
+      const healthy = authConfigured || localRuntime;
+      return json(
+        {
+          ok: healthy,
+          env: env.ENVIRONMENT,
+          localRuntime,
+          authConfigured,
+          authRequired: !localRuntime,
+        },
+        { status: healthy ? 200 : 503 }
+      );
     }
 
-    if (!authorized(req, env)) {
+    if (!authConfigured && !localRuntime) {
+      return json(
+        {
+          ok: false,
+          error: 'MISCONFIGURED_MISSING_SECRET',
+          missing: ['SHAREDSTATE_AUTH_TOKEN'],
+        },
+        { status: 503 }
+      );
+    }
+
+    if (!authorized(req, env, localRuntime)) {
       return json({ ok: false, error: 'UNAUTHORIZED' }, { status: 401 });
     }
 

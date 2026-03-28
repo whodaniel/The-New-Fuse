@@ -1,0 +1,2196 @@
+{
+  "spec": "tnf/master-clock-sync-audit/0.1",
+  "generatedAt": "2026-03-26T20:29:07.310Z",
+  "contract": {
+    "inputs": [
+      "schedule expression",
+      "target task command",
+      "environment context",
+      "artifact location requirements"
+    ],
+    "outputs": ["run status", "artifact pointers", "escalation signal"],
+    "validations": [
+      "No overlapping destructive runs (lock contract)",
+      "Retry policy bounded",
+      "Failure surfaced in control-plane state/history"
+    ]
+  },
+  "paths": {
+    "repoRoot": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+    "registryPath": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/protocols/cron-jobs.registry.json",
+    "catalogPath": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/protocols/chronological-process-catalog.json",
+    "statePath": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/protocols/cron-jobs.control-plane-state.json",
+    "locksDir": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/protocols/cron-job-locks"
+  },
+  "summary": {
+    "totalProcesses": 23,
+    "withCatalog": 23,
+    "missingCatalog": 0,
+    "enabledProcesses": 21,
+    "manualProcesses": 1,
+    "escalations": {
+      "total": 10,
+      "warning": 3,
+      "critical": 7
+    }
+  },
+  "missingCatalog": [],
+  "processes": [
+    {
+      "processId": "tnf-master-clock-super-cycle",
+      "scope": "system_framework",
+      "category": "orchestration_gate",
+      "owner": {
+        "agentId": "master-clock",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "*/15 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 900000,
+        "maxRuntimeMs": 67500,
+        "maxStartDelayMs": 1800000,
+        "maxConsecutiveFailures": 2,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "*/15 * * * *",
+        "targetTaskCommand": "node scripts/protocols/synthetic-federation-gate-check.cjs --json",
+        "environmentContext": ["TNF_REPO_ROOT"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tnf-master-clock-super-cycle.lock.json"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T17:00:27.161Z",
+        "lastDurationMs": 2679,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tnf-master-clock-super-cycle.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": false,
+            "severity": "critical",
+            "message": "Last run is stale by 209m (max 60m hard threshold)"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": false
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tnf-master-clock-super-cycle"
+        ],
+        "escalationSignal": {
+          "severity": "critical",
+          "code": "stale_run_window",
+          "message": "Last run is stale by 209m (max 60m hard threshold)",
+          "total": 1
+        }
+      }
+    },
+    {
+      "processId": "tnf-self-improvement-scorecard",
+      "scope": "system_framework",
+      "category": "self_improvement_core",
+      "owner": {
+        "agentId": "tnf-stack-self-improvement-loop",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "0 */6 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 21600000,
+        "maxRuntimeMs": 45000,
+        "maxStartDelayMs": 43200000,
+        "maxConsecutiveFailures": 2,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "0 */6 * * *",
+        "targetTaskCommand": "node scripts/validate-protocol-schemas.cjs",
+        "environmentContext": ["TNF_REPO_ROOT"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tnf-self-improvement-scorecard.lock.json"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T16:49:57.933Z",
+        "lastDurationMs": 369,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tnf-self-improvement-scorecard.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": true,
+            "severity": "warning",
+            "message": "Last run is within SLA start delay window"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tnf-self-improvement-scorecard"
+        ],
+        "escalationSignal": null
+      }
+    },
+    {
+      "processId": "tnf-twip-macro-board-refresh",
+      "scope": "system_framework",
+      "category": "observability",
+      "owner": {
+        "agentId": "twip-orchestration-bridge",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "*/10 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 600000,
+        "maxRuntimeMs": 90000,
+        "maxStartDelayMs": 1200000,
+        "maxConsecutiveFailures": 2,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "*/10 * * * *",
+        "targetTaskCommand": "node scripts/protocols/twip-macro-board.cjs --json",
+        "environmentContext": ["TNF_REPO_ROOT"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tnf-twip-macro-board-refresh.lock.json"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T17:00:56.902Z",
+        "lastDurationMs": 27715,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tnf-twip-macro-board-refresh.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": false,
+            "severity": "critical",
+            "message": "Last run is stale by 208m (max 40m hard threshold)"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": false
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tnf-twip-macro-board-refresh"
+        ],
+        "escalationSignal": {
+          "severity": "critical",
+          "code": "stale_run_window",
+          "message": "Last run is stale by 208m (max 40m hard threshold)",
+          "total": 1
+        }
+      }
+    },
+    {
+      "processId": "tnf-terminal-awareness-reminder",
+      "scope": "system_framework",
+      "category": "system_terminal_awareness",
+      "owner": {
+        "agentId": "tnf-agent-director",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "*/30 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 1800000,
+        "maxRuntimeMs": 30000,
+        "maxStartDelayMs": 3600000,
+        "maxConsecutiveFailures": 2,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "*/30 * * * *",
+        "targetTaskCommand": "bash scripts/verify_frontload_state.sh --json",
+        "environmentContext": ["TNF_REPO_ROOT"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tnf-terminal-awareness-reminder.lock.json"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T17:01:46.794Z",
+        "lastDurationMs": 407,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tnf-terminal-awareness-reminder.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": false,
+            "severity": "critical",
+            "message": "Last run is stale by 207m (max 120m hard threshold)"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": false
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tnf-terminal-awareness-reminder"
+        ],
+        "escalationSignal": {
+          "severity": "critical",
+          "code": "stale_run_window",
+          "message": "Last run is stale by 207m (max 120m hard threshold)",
+          "total": 1
+        }
+      }
+    },
+    {
+      "processId": "tenant-terminal-awareness-default",
+      "scope": "tenant",
+      "category": "tenant_terminal_awareness",
+      "owner": {
+        "agentId": "tenant-agent-default",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "0 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 3600000,
+        "maxRuntimeMs": 22500,
+        "maxStartDelayMs": 7200000,
+        "maxConsecutiveFailures": 3,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "0 * * * *",
+        "targetTaskCommand": "node scripts/protocols/chronological-dispatch.cjs --process-id tenant-terminal-awareness-default --allow-local-fallback",
+        "environmentContext": ["TNF_REPO_ROOT", "REDIS_URL"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tenant-terminal-awareness-default.lock.json",
+          "reports/chronological-dispatch/pending/*.json (fallback when REDIS_URL is unset)"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T17:01:01.980Z",
+        "lastDurationMs": 5905,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tenant-terminal-awareness-default.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": false,
+            "severity": "warning",
+            "message": "Last run age 208m exceeds SLA 120m"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tenant-terminal-awareness-default"
+        ],
+        "escalationSignal": {
+          "severity": "warning",
+          "code": "stale_run_window",
+          "message": "Last run age 208m exceeds SLA 120m",
+          "total": 1
+        }
+      }
+    },
+    {
+      "processId": "tenant-personal-archaeology-master-loop",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "owner": {
+        "agentId": "personal-archaeology-master-orchestrator",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "*/30 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 1800000,
+        "maxRuntimeMs": 45000,
+        "maxStartDelayMs": 3600000,
+        "maxConsecutiveFailures": 3,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "*/30 * * * *",
+        "targetTaskCommand": "node scripts/timeline/personal-archaeology-orchestrator.mjs master-loop",
+        "environmentContext": ["TNF_REPO_ROOT"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tenant-personal-archaeology-master-loop.lock.json",
+          "reports/personal-archaeology/**"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T17:00:59.594Z",
+        "lastDurationMs": 573,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tenant-personal-archaeology-master-loop.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": false,
+            "severity": "critical",
+            "message": "Last run is stale by 208m (max 120m hard threshold)"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": false
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tenant-personal-archaeology-master-loop"
+        ],
+        "escalationSignal": {
+          "severity": "critical",
+          "code": "stale_run_window",
+          "message": "Last run is stale by 208m (max 120m hard threshold)",
+          "total": 1
+        }
+      }
+    },
+    {
+      "processId": "tenant-personal-archaeology-investigator-pulse",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "owner": {
+        "agentId": "personal-archaeology-source-team-orchestrator",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "15 */2 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": null,
+        "maxRuntimeMs": 45000,
+        "maxStartDelayMs": null,
+        "maxConsecutiveFailures": 3,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "15 */2 * * *",
+        "targetTaskCommand": "node scripts/timeline/personal-archaeology-orchestrator.mjs investigator-pulse",
+        "environmentContext": ["TNF_REPO_ROOT"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tenant-personal-archaeology-investigator-pulse.lock.json",
+          "reports/personal-archaeology/**"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-23T06:15:12.779Z",
+        "lastDurationMs": 119,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tenant-personal-archaeology-investigator-pulse.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tenant-personal-archaeology-investigator-pulse"
+        ],
+        "escalationSignal": null
+      }
+    },
+    {
+      "processId": "tenant-personal-archaeology-digest",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "owner": {
+        "agentId": "personal-archaeology-narrative-team-orchestrator",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "0 */12 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 43200000,
+        "maxRuntimeMs": 45000,
+        "maxStartDelayMs": 86400000,
+        "maxConsecutiveFailures": 3,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "0 */12 * * *",
+        "targetTaskCommand": "node scripts/timeline/personal-archaeology-orchestrator.mjs digest",
+        "environmentContext": ["TNF_REPO_ROOT"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tenant-personal-archaeology-digest.lock.json",
+          "reports/personal-archaeology/**"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T16:50:04.578Z",
+        "lastDurationMs": 292,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tenant-personal-archaeology-digest.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": true,
+            "severity": "warning",
+            "message": "Last run is within SLA start delay window"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tenant-personal-archaeology-digest"
+        ],
+        "escalationSignal": null
+      }
+    },
+    {
+      "processId": "tenant-personal-archaeology-blocker-watch",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "owner": {
+        "agentId": "auth-blocker-sentinel",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "*/15 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 900000,
+        "maxRuntimeMs": 45000,
+        "maxStartDelayMs": 1800000,
+        "maxConsecutiveFailures": 3,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "*/15 * * * *",
+        "targetTaskCommand": "node scripts/timeline/personal-archaeology-orchestrator.mjs blocker-watch",
+        "environmentContext": ["TNF_REPO_ROOT"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tenant-personal-archaeology-blocker-watch.lock.json",
+          "reports/personal-archaeology/**"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T17:01:05.658Z",
+        "lastDurationMs": 632,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tenant-personal-archaeology-blocker-watch.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": false,
+            "severity": "critical",
+            "message": "Last run is stale by 208m (max 60m hard threshold)"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": false
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tenant-personal-archaeology-blocker-watch"
+        ],
+        "escalationSignal": {
+          "severity": "critical",
+          "code": "stale_run_window",
+          "message": "Last run is stale by 208m (max 60m hard threshold)",
+          "total": 1
+        }
+      }
+    },
+    {
+      "processId": "tenant-daily-priority-plan",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "owner": {
+        "agentId": "tnf-agent-director",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "0 9 * * *",
+        "timezone": "America/New_York",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 86400000,
+        "maxRuntimeMs": 22500,
+        "maxStartDelayMs": 172800000,
+        "maxConsecutiveFailures": 3,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "0 9 * * *",
+        "targetTaskCommand": "node scripts/protocols/chronological-dispatch.cjs --process-id tenant-daily-priority-plan --allow-local-fallback",
+        "environmentContext": ["TNF_REPO_ROOT", "REDIS_URL"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tenant-daily-priority-plan.lock.json",
+          "reports/chronological-dispatch/pending/*.json (fallback when REDIS_URL is unset)"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T16:50:06.062Z",
+        "lastDurationMs": 892,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tenant-daily-priority-plan.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": true,
+            "severity": "warning",
+            "message": "Last run is within SLA start delay window"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tenant-daily-priority-plan"
+        ],
+        "escalationSignal": null
+      }
+    },
+    {
+      "processId": "tenant-nightly-maintenance",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "owner": {
+        "agentId": "tnf-agent-director",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "30 3 * * *",
+        "timezone": "America/New_York",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": null,
+        "maxRuntimeMs": 22500,
+        "maxStartDelayMs": null,
+        "maxConsecutiveFailures": 3,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "30 3 * * *",
+        "targetTaskCommand": "node scripts/protocols/chronological-dispatch.cjs --process-id tenant-nightly-maintenance --allow-local-fallback",
+        "environmentContext": ["TNF_REPO_ROOT", "REDIS_URL"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tenant-nightly-maintenance.lock.json",
+          "reports/chronological-dispatch/pending/*.json (fallback when REDIS_URL is unset)"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-23T07:30:18.707Z",
+        "lastDurationMs": 1770,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tenant-nightly-maintenance.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tenant-nightly-maintenance"
+        ],
+        "escalationSignal": null
+      }
+    },
+    {
+      "processId": "tenant-orchestrator-pulse",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "owner": {
+        "agentId": "tnf-agent-director",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "*/30 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 1800000,
+        "maxRuntimeMs": 22500,
+        "maxStartDelayMs": 3600000,
+        "maxConsecutiveFailures": 3,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "*/30 * * * *",
+        "targetTaskCommand": "node scripts/protocols/chronological-dispatch.cjs --process-id tenant-orchestrator-pulse --allow-local-fallback",
+        "environmentContext": ["TNF_REPO_ROOT", "REDIS_URL"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tenant-orchestrator-pulse.lock.json",
+          "reports/chronological-dispatch/pending/*.json (fallback when REDIS_URL is unset)"
+        ]
+      },
+      "runtime": {
+        "status": "running",
+        "lastRunAt": "2026-03-26T17:01:03.646Z",
+        "lastDurationMs": 679,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tenant-orchestrator-pulse.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": false,
+            "severity": "critical",
+            "message": "Last run is stale by 208m (max 120m hard threshold)"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": false
+      },
+      "output": {
+        "runStatus": "running",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tenant-orchestrator-pulse"
+        ],
+        "escalationSignal": {
+          "severity": "critical",
+          "code": "stale_run_window",
+          "message": "Last run is stale by 208m (max 120m hard threshold)",
+          "total": 1
+        }
+      }
+    },
+    {
+      "processId": "tenant-self-improvement-loop",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "owner": {
+        "agentId": "tnf-stack-self-improvement-loop",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "0 */2 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 7200000,
+        "maxRuntimeMs": 22500,
+        "maxStartDelayMs": 14400000,
+        "maxConsecutiveFailures": 3,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "0 */2 * * *",
+        "targetTaskCommand": "node scripts/protocols/chronological-dispatch.cjs --process-id tenant-self-improvement-loop --allow-local-fallback",
+        "environmentContext": ["TNF_REPO_ROOT", "REDIS_URL"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tenant-self-improvement-loop.lock.json",
+          "reports/chronological-dispatch/pending/*.json (fallback when REDIS_URL is unset)"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T16:50:07.431Z",
+        "lastDurationMs": 380,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tenant-self-improvement-loop.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": true,
+            "severity": "warning",
+            "message": "Last run is within SLA start delay window"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tenant-self-improvement-loop"
+        ],
+        "escalationSignal": null
+      }
+    },
+    {
+      "processId": "tenant-continuous-qa-loop",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "owner": {
+        "agentId": "qa-swarm-supervisor",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "0 */6 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 21600000,
+        "maxRuntimeMs": 22500,
+        "maxStartDelayMs": 43200000,
+        "maxConsecutiveFailures": 3,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "0 */6 * * *",
+        "targetTaskCommand": "node scripts/protocols/chronological-dispatch.cjs --process-id tenant-continuous-qa-loop --allow-local-fallback",
+        "environmentContext": ["TNF_REPO_ROOT", "REDIS_URL"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tenant-continuous-qa-loop.lock.json",
+          "reports/chronological-dispatch/pending/*.json (fallback when REDIS_URL is unset)"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T16:50:08.134Z",
+        "lastDurationMs": 590,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tenant-continuous-qa-loop.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": true,
+            "severity": "warning",
+            "message": "Last run is within SLA start delay window"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tenant-continuous-qa-loop"
+        ],
+        "escalationSignal": null
+      }
+    },
+    {
+      "processId": "tenant-hourly-attribution-audit",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "owner": {
+        "agentId": "analytics-and-reporting-agent",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "0 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 3600000,
+        "maxRuntimeMs": 22500,
+        "maxStartDelayMs": 7200000,
+        "maxConsecutiveFailures": 3,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "0 * * * *",
+        "targetTaskCommand": "node scripts/protocols/chronological-dispatch.cjs --process-id tenant-hourly-attribution-audit --allow-local-fallback",
+        "environmentContext": ["TNF_REPO_ROOT", "REDIS_URL"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tenant-hourly-attribution-audit.lock.json",
+          "reports/chronological-dispatch/pending/*.json (fallback when REDIS_URL is unset)"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T17:01:11.338Z",
+        "lastDurationMs": 6175,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tenant-hourly-attribution-audit.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": false,
+            "severity": "warning",
+            "message": "Last run age 208m exceeds SLA 120m"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tenant-hourly-attribution-audit"
+        ],
+        "escalationSignal": {
+          "severity": "warning",
+          "code": "stale_run_window",
+          "message": "Last run age 208m exceeds SLA 120m",
+          "total": 1
+        }
+      }
+    },
+    {
+      "processId": "tenant-knowledge-scout-sprint",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "owner": {
+        "agentId": "information-retrieval-agent",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "0 */4 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 14400000,
+        "maxRuntimeMs": 22500,
+        "maxStartDelayMs": 28800000,
+        "maxConsecutiveFailures": 3,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "0 */4 * * *",
+        "targetTaskCommand": "node scripts/protocols/chronological-dispatch.cjs --process-id tenant-knowledge-scout-sprint --allow-local-fallback",
+        "environmentContext": ["TNF_REPO_ROOT", "REDIS_URL"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tenant-knowledge-scout-sprint.lock.json",
+          "reports/chronological-dispatch/pending/*.json (fallback when REDIS_URL is unset)"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T16:50:09.487Z",
+        "lastDurationMs": 422,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tenant-knowledge-scout-sprint.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": true,
+            "severity": "warning",
+            "message": "Last run is within SLA start delay window"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tenant-knowledge-scout-sprint"
+        ],
+        "escalationSignal": null
+      }
+    },
+    {
+      "processId": "tenant-loop-watchdog",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "owner": {
+        "agentId": "auth-blocker-sentinel",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "*/15 * * * *",
+        "timezone": "UTC",
+        "enabled": false
+      },
+      "sla": {
+        "cadenceIntervalMs": 900000,
+        "maxRuntimeMs": 22500,
+        "maxStartDelayMs": 1800000,
+        "maxConsecutiveFailures": 3,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "*/15 * * * *",
+        "targetTaskCommand": "node scripts/protocols/chronological-dispatch.cjs --process-id tenant-loop-watchdog --allow-local-fallback",
+        "environmentContext": ["TNF_REPO_ROOT", "REDIS_URL"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tenant-loop-watchdog.lock.json",
+          "reports/chronological-dispatch/pending/*.json (fallback when REDIS_URL is unset)"
+        ]
+      },
+      "runtime": {
+        "status": "unknown",
+        "lastRunAt": null,
+        "lastDurationMs": null,
+        "lastExitCode": null,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tenant-loop-watchdog.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "unknown",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tenant-loop-watchdog"
+        ],
+        "escalationSignal": null
+      }
+    },
+    {
+      "processId": "tenant-launch-validation",
+      "scope": "tenant",
+      "category": "tenant_experiment",
+      "owner": {
+        "agentId": "tnf-agent-director",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "manual",
+        "timezone": "UTC",
+        "enabled": false
+      },
+      "sla": {
+        "cadenceIntervalMs": null,
+        "maxRuntimeMs": 22500,
+        "maxStartDelayMs": null,
+        "maxConsecutiveFailures": 3,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "manual",
+        "targetTaskCommand": "node scripts/protocols/chronological-dispatch.cjs --process-id tenant-launch-validation --allow-local-fallback",
+        "environmentContext": ["TNF_REPO_ROOT", "REDIS_URL"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tenant-launch-validation.lock.json",
+          "reports/chronological-dispatch/pending/*.json (fallback when REDIS_URL is unset)"
+        ]
+      },
+      "runtime": {
+        "status": "unknown",
+        "lastRunAt": null,
+        "lastDurationMs": null,
+        "lastExitCode": null,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tenant-launch-validation.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "unknown",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tenant-launch-validation"
+        ],
+        "escalationSignal": null
+      }
+    },
+    {
+      "processId": "tnf-openclaw-runtime-sync",
+      "scope": "system_framework",
+      "category": "observability",
+      "owner": {
+        "agentId": "master-clock",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "*/15 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 900000,
+        "maxRuntimeMs": 45000,
+        "maxStartDelayMs": 1800000,
+        "maxConsecutiveFailures": 2,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "*/15 * * * *",
+        "targetTaskCommand": "node scripts/openclaw/tnf-openclaw-control.cjs sync-control-plane --actor master-clock",
+        "environmentContext": ["TNF_REPO_ROOT", "OPENCLAW_HOME"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tnf-openclaw-runtime-sync.lock.json",
+          "data/protocols/cron-jobs.control-plane-state.json.integrations.openclaw"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T16:50:09.730Z",
+        "lastDurationMs": 148,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tnf-openclaw-runtime-sync.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": false,
+            "severity": "critical",
+            "message": "Last run is stale by 219m (max 60m hard threshold)"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": false
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tnf-openclaw-runtime-sync"
+        ],
+        "escalationSignal": {
+          "severity": "critical",
+          "code": "stale_run_window",
+          "message": "Last run is stale by 219m (max 60m hard threshold)",
+          "total": 1
+        }
+      }
+    },
+    {
+      "processId": "tnf-staff-role-call-and-scheduling",
+      "scope": "system_framework",
+      "category": "staff_coordination",
+      "owner": {
+        "agentId": "tnf-staff-scheduling-agent",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "*/20 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 1200000,
+        "maxRuntimeMs": 67500,
+        "maxStartDelayMs": 2400000,
+        "maxConsecutiveFailures": 2,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "*/20 * * * *",
+        "targetTaskCommand": "node scripts/protocols/staffops-role-call.cjs --json",
+        "environmentContext": ["TNF_REPO_ROOT"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tnf-staff-role-call-and-scheduling.lock.json"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T20:28:34.665Z",
+        "lastDurationMs": 362,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tnf-staff-role-call-and-scheduling.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "stale_run_window",
+            "ok": true,
+            "severity": "warning",
+            "message": "Last run is within SLA start delay window"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tnf-staff-role-call-and-scheduling"
+        ],
+        "escalationSignal": null
+      }
+    },
+    {
+      "processId": "tnf-growth-blocker-audit",
+      "scope": "system_framework",
+      "category": "self_improvement_core",
+      "owner": {
+        "agentId": "tnf-growth-blocker-auditor",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "0 */4 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": 14400000,
+        "maxRuntimeMs": 90000,
+        "maxStartDelayMs": 28800000,
+        "maxConsecutiveFailures": 2,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "0 */4 * * *",
+        "targetTaskCommand": "node .skills/tnf-growth-blocker-auditor/scripts/run_growth_blocker_audit.cjs",
+        "environmentContext": ["TNF_REPO_ROOT"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tnf-growth-blocker-audit.lock.json"
+        ]
+      },
+      "runtime": {
+        "status": "unknown",
+        "lastRunAt": null,
+        "lastDurationMs": null,
+        "lastExitCode": null,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tnf-growth-blocker-audit.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "last_run_presence",
+            "ok": false,
+            "severity": "warning",
+            "message": "No lastRunAt recorded for enabled scheduled process"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "unknown",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tnf-growth-blocker-audit"
+        ],
+        "escalationSignal": {
+          "severity": "warning",
+          "code": "last_run_presence",
+          "message": "No lastRunAt recorded for enabled scheduled process",
+          "total": 1
+        }
+      }
+    },
+    {
+      "processId": "tnf-staffing-director-cycle",
+      "scope": "system_framework",
+      "category": "staff_architecture",
+      "owner": {
+        "agentId": "tnf-staffing-director-agent",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "30 */6 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": null,
+        "maxRuntimeMs": 90000,
+        "maxStartDelayMs": null,
+        "maxConsecutiveFailures": 2,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "30 */6 * * *",
+        "targetTaskCommand": "node .skills/tnf-staffing-director-agent/scripts/run_staffing_director_cycle.cjs --json",
+        "environmentContext": ["TNF_REPO_ROOT"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tnf-staffing-director-cycle.lock.json"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T20:28:34.515Z",
+        "lastDurationMs": 208,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tnf-staffing-director-cycle.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tnf-staffing-director-cycle"
+        ],
+        "escalationSignal": null
+      }
+    },
+    {
+      "processId": "tnf-staff-review-cycle",
+      "scope": "system_framework",
+      "category": "staff_review",
+      "owner": {
+        "agentId": "tnf-staff-review-agent",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "15 */2 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "sla": {
+        "cadenceIntervalMs": null,
+        "maxRuntimeMs": 90000,
+        "maxStartDelayMs": null,
+        "maxConsecutiveFailures": 2,
+        "staleLockAfterMs": 300000
+      },
+      "triggerContract": {
+        "scheduleExpression": "15 */2 * * *",
+        "targetTaskCommand": "node .skills/tnf-staff-review-agent/scripts/run_staff_review_cycle.cjs --json",
+        "environmentContext": ["TNF_REPO_ROOT"],
+        "artifactLocationRequirements": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-job-locks/tnf-staff-review-cycle.lock.json"
+        ]
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T20:28:34.484Z",
+        "lastDurationMs": 179,
+        "lastExitCode": 0,
+        "lastError": null,
+        "consecutiveFailures": 0
+      },
+      "idempotency": {
+        "lockPath": "data/protocols/cron-job-locks/tnf-staff-review-cycle.lock.json",
+        "lockPresent": false,
+        "lockStatus": "none",
+        "lockAgeMs": null
+      },
+      "verification": {
+        "checks": [
+          {
+            "code": "has_schedule_expression",
+            "ok": true,
+            "severity": "critical",
+            "message": "Cadence expression is valid"
+          },
+          {
+            "code": "has_run_now_command",
+            "ok": true,
+            "severity": "critical",
+            "message": "Run-now command is configured"
+          },
+          {
+            "code": "bounded_retry_policy",
+            "ok": true,
+            "severity": "critical",
+            "message": "Retry policy is bounded (master-clock runner performs single execution per slot)"
+          },
+          {
+            "code": "consecutive_failures",
+            "ok": true,
+            "severity": "warning",
+            "message": "No consecutive failures detected"
+          },
+          {
+            "code": "lock_overlap_prevention",
+            "ok": true,
+            "severity": "critical",
+            "message": "No stale or conflicting lock detected"
+          }
+        ],
+        "passed": true
+      },
+      "output": {
+        "runStatus": "healthy",
+        "artifactPointers": [
+          "data/protocols/cron-jobs.control-plane-state.json",
+          "data/protocols/cron-jobs.control-plane-state.json#history.tnf-staff-review-cycle"
+        ],
+        "escalationSignal": null
+      }
+    }
+  ]
+}

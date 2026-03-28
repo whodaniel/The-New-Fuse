@@ -1,0 +1,74 @@
+{
+  "id": "local-ai-codex cli",
+  "name": "Codex CLI",
+  "displayName": "OpenAI Codex CLI",
+  "type": "ASSISTANT",
+  "status": "ACTIVE",
+  "description": "OpenAI Codex CLI - Local AI assistant",
+  "systemPrompt": "You are Codex CLI, a local AI assistant integrated with The New Fuse platform. You provide intelligent assistance for coding, analysis, and automation tasks.",
+  "capabilities": [
+    {
+      "name": "CHAT",
+      "description": "CHAT capability provided by Codex CLI",
+      "parameters": {
+        "provider": "Codex CLI",
+        "command": "codex",
+        "defaultModel": "gpt-5.3-codex"
+      }
+    },
+    {
+      "name": "CODE_GENERATION",
+      "description": "CODE_GENERATION capability provided by Codex CLI",
+      "parameters": {
+        "provider": "Codex CLI",
+        "command": "codex",
+        "defaultModel": "gpt-5.3-codex"
+      }
+    },
+    {
+      "name": "FILE_MANAGEMENT",
+      "description": "FILE_MANAGEMENT capability provided by Codex CLI",
+      "parameters": {
+        "provider": "Codex CLI",
+        "command": "codex",
+        "defaultModel": "gpt-5.3-codex"
+      }
+    },
+    {
+      "name": "DATA_ANALYSIS",
+      "description": "DATA_ANALYSIS capability provided by Codex CLI",
+      "parameters": {
+        "provider": "Codex CLI",
+        "command": "codex",
+        "defaultModel": "gpt-5.3-codex"
+      }
+    },
+    {
+      "name": "AUTOMATION",
+      "description": "AUTOMATION capability provided by Codex CLI",
+      "parameters": {
+        "provider": "Codex CLI",
+        "command": "codex",
+        "defaultModel": "gpt-5.3-codex"
+      }
+    }
+  ],
+  "configuration": {
+    "provider": "Codex CLI",
+    "command": "codex",
+    "defaultModel": "gpt-5.3-codex",
+    "localAI": true,
+    "autoDetected": true,
+    "systemAgent": true
+  },
+  "metadata": {
+    "detectedAt": "2026-03-26T00:00:00Z",
+    "providerType": "local",
+    "version": "auto-detected",
+    "initialized": true
+  },
+  "provider": "Codex CLI",
+  "userId": "system",
+  "createdAt": "2026-03-26T00:00:00Z",
+  "updatedAt": "2026-03-26T00:00:00Z"
+}

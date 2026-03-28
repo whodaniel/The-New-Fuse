@@ -1,0 +1,31 @@
+{
+  "targetQueue": "tnf:master:tasks:realtime",
+  "queueItem": {
+    "id": "tenant-terminal-awareness-default-1774543877096-k6hugs",
+    "title": "Tenant Terminal Awareness Default",
+    "description": "Run tenant terminal-awareness continuity checks. Verify frontload context visibility, shell-start context hygiene, and stale heartbeat signals. Emit concise remediation tasks with evidence when continuity breaks.",
+    "priority": "high",
+    "status": "queued",
+    "votes": {
+      "up": 0,
+      "down": 0
+    },
+    "source": "chronological-dispatch",
+    "processId": "tenant-terminal-awareness-default",
+    "kind": "agent-turn",
+    "createdAt": "2026-03-26T16:51:17.096Z",
+    "itinerary": {
+      "lane": "realtime_broker_routing",
+      "horizon": "realtime",
+      "coordinationMode": "brokered",
+      "signalSources": ["redis", "master-clock"],
+      "clockSource": "master-clock"
+    },
+    "metadata": {
+      "scheduledProcessId": "tenant-terminal-awareness-default",
+      "dispatchSource": "master-clock",
+      "importedFromLegacyCron": true
+    }
+  },
+  "createdAt": "2026-03-26T16:51:17.097Z"
+}

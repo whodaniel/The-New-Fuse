@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "tnf-staffops-llm-provider-catalog/v1",
+  "visibility": "staffops-only",
+  "ownerTeam": "TNF-DOC",
+  "lastUpdated": "2026-03-26T00:00:00Z",
+  "selectionPolicy": {
+    "defaultOrder": ["free-oauth", "approved-paid"],
+    "quotaHandoffThresholdPercent": 10,
+    "requireProviderHealthCheck": true,
+    "maxConsecutiveFailuresBeforeDemotion": 3
+  },
+  "providers": [
+    {
+      "providerId": "openai-codex-oauth",
+      "tier": "free-oauth",
+      "enabled": true,
+      "priority": 10,
+      "health": "unknown",
+      "models": ["gpt-5.2-codex", "gpt-5.1-codex", "gpt-5-mini"],
+      "source": "openclaw-oauth-sync"
+    },
+    {
+      "providerId": "google-antigravity",
+      "tier": "free-oauth",
+      "enabled": true,
+      "priority": 20,
+      "health": "unknown",
+      "models": ["gemini-2.0-flash-exp"],
+      "source": "openclaw-oauth-sync"
+    },
+    {
+      "providerId": "anthropic",
+      "tier": "approved-paid",
+      "enabled": true,
+      "priority": 100,
+      "health": "unknown",
+      "models": ["claude-sonnet-4-5"],
+      "source": "staffops-manual"
+    }
+  ]
+}

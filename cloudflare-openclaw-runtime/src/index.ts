@@ -31,6 +31,43 @@ interface TelegramUpdate {
   };
 }
 
+function isLocalEnvironment(value: string | undefined): boolean {
+  const normalized = String(value || '')
+    .trim()
+    .toLowerCase();
+  return ['local', 'localhost', 'devlocal', 'test'].includes(normalized);
+}
+
+function isLocalRuntimeRequest(req: Request, env: Env): boolean {
+  if (isLocalEnvironment(env.ENVIRONMENT)) return true;
+  try {
+    const hostname = new URL(req.url).hostname.toLowerCase();
+    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
+  } catch {
+    return false;
+  }
+}
+
+function missingRequiredConfig(env: Env, localRuntime: boolean): string[] {
+  const missing: string[] = [];
+  if (!env.SHAREDSTATE_API_BASE) missing.push('SHAREDSTATE_API_BASE');
+  if (!env.SHAREDSTATE_AUTH_TOKEN && !localRuntime) missing.push('SHAREDSTATE_AUTH_TOKEN');
+  if (!env.TELEGRAM_WEBHOOK_SECRET_TOKEN && !localRuntime) {
+    missing.push('TELEGRAM_WEBHOOK_SECRET_TOKEN');
+  }
+  if (!env.TELEGRAM_BOT_TOKEN && !localRuntime) missing.push('TELEGRAM_BOT_TOKEN');
+
+  const hasGatewayService = Boolean(env.OPENCLAW_GATEWAY_SERVICE);
+  const hasGatewayUrl = Boolean(env.OPENCLAW_GATEWAY_URL);
+  if (!hasGatewayService && !hasGatewayUrl)
+    missing.push('OPENCLAW_GATEWAY_SERVICE|OPENCLAW_GATEWAY_URL');
+  if (hasGatewayUrl && !env.OPENCLAW_GATEWAY_AUTH_TOKEN && !localRuntime) {
+    missing.push('OPENCLAW_GATEWAY_AUTH_TOKEN');
+  }
+
+  return missing;
+}
+
 function json(data: unknown, init: ResponseInit = {}) {
   return new Response(JSON.stringify(data, null, 2), {
     ...init,
@@ -138,12 +175,13 @@ async function callGateway(env: Env, update: unknown, requestId: string) {
 
 function verifyTelegramSecret(
   req: Request,
-  env: Env
+  env: Env,
+  localRuntime: boolean
 ): { ok: boolean; got: string; expectedSet: boolean } {
   const expected = env.TELEGRAM_WEBHOOK_SECRET_TOKEN;
   const got = req.headers.get('x-telegram-bot-api-secret-token') || '';
   if (!expected) {
-    return { ok: true, got, expectedSet: false }; // allow if not configured
+    return { ok: localRuntime, got, expectedSet: false };
   }
   return { ok: got === expected, got, expectedSet: true };
 }
@@ -151,20 +189,47 @@ function verifyTelegramSecret(
 const worker = {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
+    const localRuntime = isLocalRuntimeRequest(req, env);
+    const missingConfig = missingRequiredConfig(env, localRuntime);
 
     if (url.pathname === '/health') {
-      return json({
-        ok: true,
-        env: env.ENVIRONMENT,
-        sharedstate: env.SHAREDSTATE_API_BASE,
-        gatewayConfigured: Boolean(env.OPENCLAW_GATEWAY_URL),
-      });
+      const healthy = missingConfig.length === 0;
+      return json(
+        {
+          ok: healthy,
+          env: env.ENVIRONMENT,
+          localRuntime,
+          sharedstate: env.SHAREDSTATE_API_BASE,
+          gatewayConfigured: Boolean(env.OPENCLAW_GATEWAY_URL),
+          gatewayServiceBound: Boolean(env.OPENCLAW_GATEWAY_SERVICE),
+          authConfigured: {
+            sharedstate: Boolean(env.SHAREDSTATE_AUTH_TOKEN),
+            telegramWebhook: Boolean(env.TELEGRAM_WEBHOOK_SECRET_TOKEN),
+            gateway: Boolean(env.OPENCLAW_GATEWAY_AUTH_TOKEN),
+            telegramBot: Boolean(env.TELEGRAM_BOT_TOKEN),
+          },
+          missingConfig,
+        },
+        { status: healthy ? 200 : 503 }
+      );
+    }
+
+    if (missingConfig.length > 0) {
+      return json(
+        {
+          ok: false,
+          error: 'MISCONFIGURED_MISSING_CONFIG',
+          missing: missingConfig,
+        },
+        { status: 503 }
+      );
     }
 
     if (url.pathname === '/webhooks/telegram' && req.method === 'POST') {
-      const v = verifyTelegramSecret(req, env);
-      // DO NOT hard-fail webhook delivery — Telegram may disable webhooks on repeated 401s.
-      // Instead, record verification status in receipts.
+      const v = verifyTelegramSecret(req, env, localRuntime);
+      if (!v.ok) {
+        return json({ ok: false, error: 'UNAUTHORIZED_WEBHOOK' }, { status: 401 });
+      }
 
       const update = await req.json<TelegramUpdate>().catch(() => null);
       if (!update) {

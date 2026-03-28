@@ -1,0 +1,403 @@
+{
+  "capturedAt": "2026-03-25T00:35:19.908Z",
+  "url": "https://www.zo.computer/integrations",
+  "title": "Integrations | Zo Computer",
+  "links": [
+    {
+      "text": "MiniMax 2.7 & Kimi K2.5 are free on Zo",
+      "href": "https://www.zo.computer/signup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo",
+      "href": "https://www.zo.computer/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Get started",
+      "href": "https://www.zo.computer/signup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo",
+      "href": "https://www.zo.computer/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Pricing",
+      "href": "https://www.zo.computer/pricing",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "About",
+      "href": "https://www.zo.computer/about",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Newsletter",
+      "href": "https://www.zo.computer/newsletter",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Blog",
+      "href": "https://www.zo.computer/blog",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Download",
+      "href": "https://github.com/zocomputer/Zo/releases/latest/download/Zo.dmg",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Get started",
+      "href": "https://www.zo.computer/signup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Gmail Read, send, and manage emails and drafts in Gmail. Automate email workflows, search your inbox, and draft responses with AI assistance.",
+      "href": "https://www.zo.computer/integrations/gmail",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Google Calendar View and manage events in Google Calendar. Schedule meetings, check availability, and coordinate your calendar with AI assistance.",
+      "href": "https://www.zo.computer/integrations/google-calendar",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Google Drive Access files in Google Drive, including Docs, Sheets, Slides, and Forms. Import, search, and work with your cloud documents.",
+      "href": "https://www.zo.computer/integrations/google-drive",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Linear Manage issues, projects, and teams in Linear. Track work, create tickets, and streamline your development workflow.",
+      "href": "https://www.zo.computer/integrations/linear",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Notion Access and manage pages, databases, and workspaces in Notion. Import content, query databases, and keep your knowledge base in sync.",
+      "href": "https://www.zo.computer/integrations/notion",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Spotify Search, play, and manage playlists and library in Spotify. Control playback, discover music, and curate playlists with AI.",
+      "href": "https://www.zo.computer/integrations/spotify",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Telegram Connect Telegram as a communication channel for your Zo. Send and receive messages, get notifications, and interact with your AI from Telegram.",
+      "href": "https://www.zo.computer/integrations/telegram",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "X (Twitter) Use your X account with Zo. Post tweets, monitor your timeline, and automate your social media presence.",
+      "href": "https://www.zo.computer/integrations/x",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "LinkedIn Use your LinkedIn account with Zo. Research profiles, draft posts, and manage your professional network.",
+      "href": "https://www.zo.computer/integrations/linkedin",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Dropbox Access and manage files in your Dropbox account. Import documents, sync files, and organize your cloud storage.",
+      "href": "https://www.zo.computer/integrations/dropbox",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Airtable Access and manage bases, tables, and records in Airtable. Query data, create entries, and automate database workflows.",
+      "href": "https://www.zo.computer/integrations/airtable",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "GitHub Connect your GitHub account for version control and repository access. Manage repos, issues, and pull requests.",
+      "href": "https://www.zo.computer/integrations/github",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Slack Connect Slack to your Zo for team communication. Send messages, search channels, and automate notifications.",
+      "href": "https://www.zo.computer/integrations/slack",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "n8n Connect n8n workflow automation to your Zo. Build powerful multi-step automations that bridge your tools together.",
+      "href": "https://www.zo.computer/integrations/n8n",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "VS Code Access VS Code on your Zo for a full cloud development environment. Edit code, run terminals, and develop from anywhere.",
+      "href": "https://www.zo.computer/integrations/vscode",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Google Docs Work with Google Docs through your Zo. Create, edit, and export documents in your Google Workspace.",
+      "href": "https://www.zo.computer/integrations/google-docs",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Google Sheets Access and manipulate Google Sheets data. Query spreadsheets, update cells, and analyze data with AI.",
+      "href": "https://www.zo.computer/integrations/google-sheets",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "OneDrive Access and manage files in Microsoft OneDrive. Import documents and sync your Microsoft cloud storage.",
+      "href": "https://www.zo.computer/integrations/onedrive",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Microsoft Outlook Read, send, and manage emails, drafts, and calendar events in Microsoft Outlook. Automate email workflows and search your inbox with AI assistance.",
+      "href": "https://www.zo.computer/integrations/microsoft-outlook",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Figma Connect Figma to your Zo for design workflows. Reference designs, extract assets, and bridge design and development.",
+      "href": "https://www.zo.computer/integrations/figma",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Reddit Research and monitor Reddit communities. Search posts, track discussions, and gather insights from subreddits.",
+      "href": "https://www.zo.computer/integrations/reddit",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Documentation",
+      "href": "https://docs.zocomputer.com/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Blog",
+      "href": "https://www.zo.computer/blog",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Newsletter",
+      "href": "https://www.zo.computer/newsletter",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Comparisons",
+      "href": "https://www.zo.computer/comparisons",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Pricing",
+      "href": "https://www.zo.computer/pricing",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Skills",
+      "href": "https://www.zo.computer/skills",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Integrations",
+      "href": "https://www.zo.computer/integrations",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Channels",
+      "href": "https://www.zo.computer/channels",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Models",
+      "href": "https://www.zo.computer/models",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Product Updates",
+      "href": "https://www.zo.computer/updates",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "FAQ",
+      "href": "https://www.zo.computer/faq",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Careers",
+      "href": "https://www.zo.computer/careers",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Brand",
+      "href": "https://www.zo.computer/brand",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Terms",
+      "href": "https://docs.zocomputer.com/information/terms",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Privacy",
+      "href": "https://docs.zocomputer.com/information/privacy-policy",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Help Center",
+      "href": "https://support.zocomputer.com/",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Contact",
+      "href": "https://docs.zocomputer.com/information/contact",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Security",
+      "href": "https://docs.zocomputer.com/information/security",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Discord",
+      "href": "https://discord.gg/invite/zocomputer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "LinkedIn",
+      "href": "https://www.linkedin.com/company/zocomputer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "X @zocomputer",
+      "href": "https://x.com/zocomputer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "YouTube",
+      "href": "https://www.youtube.com/@zo-computer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Testimonials",
+      "href": "https://www.zo.computer/testimonials",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Ambassadors",
+      "href": "https://www.zo.computer/ambassador",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Merch",
+      "href": "https://zo-computer.canarycanary.com/store",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Zo Computer Company",
+      "href": "https://www.zo.computer/about",
+      "rel": "",
+      "target": ""
+    }
+  ],
+  "buttons": [
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Personalization",
+      "text": "",
+      "classes": "inline-flex h-9 w-9 items-center justify-center rounded-md border border-border/50 hover:bg-accent/50 text-foreground transition-colors"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Menu",
+      "text": "",
+      "classes": "zo-btn aspect-square !px-2.5 !py-2 flex items-center justify-center border border-border bg-background/80 text-foreground transition-[background-color,border-color,transform] duration-0 hover:bg-muted/70 hover:border-border hover:duration-150 hover:[transition-timing-function:cubic-bezier(0.23,1,0.32,1)] active:bg-muted/60 active:scale-[0.97] active:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background touch-manipulation transform-gpu"
+    },
+    {
+      "tag": "button",
+      "id": "radix-_R_2rneitb_",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Resources",
+      "classes": "px-3 py-2 text-[0.9375rem] text-muted-foreground rounded transition-colors duration-0 hover:text-foreground hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 inline-flex items-center gap-1.5"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Personalization",
+      "text": "",
+      "classes": "inline-flex h-9 w-9 items-center justify-center rounded-md border border-border/50 hover:bg-accent/50 text-foreground transition-colors"
+    }
+  ],
+  "inputs": [],
+  "headings": [
+    {
+      "level": "h1",
+      "text": "Integrations"
+    },
+    {
+      "level": "h3",
+      "text": "PRODUCT"
+    },
+    {
+      "level": "h3",
+      "text": "INFORMATION"
+    },
+    {
+      "level": "h3",
+      "text": "COMMUNITY"
+    }
+  ],
+  "bodyText": "MiniMax 2.7 & Kimi K2.5 are free on Zo Zo · Pricing About Newsletter Blog Resources Download Get started Integrations Connect your favorite tools and services to Zo. Automate workflows, sync data, and extend your AI with powerful integrations. Gmail Read, send, and manage emails and drafts in Gmail. Automate email workflows, search your inbox, and draft responses with AI assistance. Google Calendar View and manage events in Google Calendar. Schedule meetings, check availability, and coordinate your calendar with AI assistance. Google Drive Access files in Google Drive, including Docs, Sheets, Slides, and Forms. Import, search, and work with your cloud documents. Linear Manage issues, projects, and teams in Linear. Track work, create tickets, and streamline your development workflow. Notion Access and manage pages, databases, and workspaces in Notion. Import content, query databases, and keep your knowledge base in sync. Spotify Search, play, and manage playlists and library in Spotify. Control playback, discover music, and curate playlists with AI. Telegram Connect Telegram as a communication channel for your Zo. Send and receive messages, get notifications, and interact with your AI from Telegram. X (Twitter) Use your X account with Zo. Post tweets, monitor your timeline, and automate your social media presence. LinkedIn Use your LinkedIn account with Zo. Research profiles, draft posts, and manage your professional network. Dropbox Access and manage files in your Dropbox account. Import documents, sync files, and organize your cloud storage. Airtable Access and manage bases, tables, and records in Airtable. Query data, create entries, and automate database workflows. GitHub Connect your GitHub account for version control and repository access. Manage repos, issues, and pull requests. Slack Connect Slack to your Zo for team communication. Send messages, search channels, and automate notifications. n8n Connect n8n workflow automation to your Zo. Build powerful multi-step automations that bridge your tools together. VS Code Access VS Code on your Zo for a full cloud development environment. Edit code, run terminals, and develop from anywhere. Google Docs Work with Google Docs through your Zo. Create, edit, and export documents in your Google Workspace. Google Sheets Access and manipulate Google Sheets data. Query spreadsheets, update cells, and analyze data with AI. OneDrive Access and manage files in Microsoft OneDrive. Import documents and sync your Microsoft cloud storage. Microsoft Outlook Read, send, and manage emails, drafts, and calendar events in Microsoft Outlook. Automate email workflows and search your inbox with AI assistance. Figma Connect Figma to your Zo for design workflows. Reference designs, extract assets, and bridge design and development. Reddit Research and monitor Reddit communities. Search posts, track discussions, and gather insights from subreddits. PRODUCT Documentation Blog Newsletter Comparisons Pricing Skills Integrations Channels Models Product Updates INFORMATION FAQ Careers Brand Terms Privacy Help Center Contact Security COMMUNITY Discord LinkedIn X @zocomputer YouTube Testimonials Ambassadors Merch Zo Computer Company"
+}

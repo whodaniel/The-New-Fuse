@@ -5,6 +5,7 @@ const path = require("node:path");
 const net = require("node:net");
 const { spawnSync } = require("node:child_process");
 const dotenv = require("dotenv");
+const WebSocket = require("ws");
 
 const ROOT = process.cwd();
 
@@ -218,6 +219,50 @@ async function checkHttp(url, timeoutMs = 2500) {
   }
 }
 
+async function checkRelayPing(port = 3000) {
+  return new Promise((resolve) => {
+    const url = `ws://127.0.0.1:${port}/ws`;
+    const ws = new WebSocket(url);
+    let done = false;
+
+    const finish = (ok) => {
+      if (done) return;
+      done = true;
+      ws.terminate();
+      resolve(ok);
+    };
+
+    const timer = setTimeout(() => finish(false), 2000);
+
+    ws.on("open", () => {
+      ws.send(
+        JSON.stringify({
+          type: "AGENT_REGISTER",
+          source: "doctor-ping",
+          payload: { agent: { id: "doctor-ping", name: "Doctor Ping" } },
+        })
+      );
+      setTimeout(() => {
+        ws.send(
+          JSON.stringify({
+            type: "MESSAGE_SEND",
+            source: "doctor-ping",
+            payload: {
+              to: "broadcast",
+              content: "DOCTOR PING " + Date.now(),
+              messageType: "text",
+            },
+          })
+        );
+        clearTimeout(timer);
+        finish(true);
+      }, 500);
+    });
+
+    ws.on("error", () => finish(false));
+  });
+}
+
 async function main() {
   let parsed;
   try {
@@ -403,6 +448,20 @@ async function main() {
     const ok = exists(script);
     if (!ok) hardFail = true;
     console.log(`- ${ok ? "OK" : "MISSING"} ${script}`);
+  }
+
+  console.log("\n[10] Relay Server WebSocket Ping");
+  if (await checkPort(3000)) {
+    try {
+      const ok = await checkRelayPing(3000);
+      if (!ok) hardFail = true;
+      console.log(`- ${ok ? "OK" : "FAIL"} WebSocket ping (ws://127.0.0.1:3000/ws)`);
+    } catch (err) {
+      hardFail = true;
+      console.log(`- FAIL WebSocket ping error: ${err.message}`);
+    }
+  } else {
+    console.log("- SKIP Relay Server is not running on :3000");
   }
 
   console.log(`\nDoctor result: ${hardFail ? "FAIL" : "PASS"}`);

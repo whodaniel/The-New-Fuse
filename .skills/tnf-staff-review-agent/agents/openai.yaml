@@ -1,0 +1,4 @@
+interface:
+  display_name: "TNF Staff Review"
+  short_description: "Review recent StaffOps work and propose improvements"
+  default_prompt: "Run the TNF staff review cycle and return prioritized improvement recommendations with suggested owners."

@@ -6,6 +6,7 @@
  */
 
 import * as vscode from 'vscode';
+import { RedisAgentClient } from '../../../../../packages/tnf-cli/src/RedisAgentClient';
 import { log } from '../../utils/logger';
 
 interface ConnectedAgent {
@@ -25,6 +26,7 @@ export class RelayServerService {
   private static instance: RelayServerService | null = null;
   private context: vscode.ExtensionContext;
   private agents: Map<string, ConnectedAgent> = new Map();
+  private redisClient: RedisAgentClient | null = null;
   private statusBarItem: vscode.StatusBarItem | undefined;
   private connected: boolean = false;
   private statusCheckInterval: NodeJS.Timeout | undefined;
@@ -62,39 +64,41 @@ export class RelayServerService {
     const relayEndpoint = endpoint || 'ws://localhost:3000';
 
     try {
-      log.info(`Connecting to Relay server at ${relayEndpoint}`);
+      log.info(`Connecting to Relay via RedisAgentClient`);
 
-      // Simulate connection
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      if (!this.redisClient) {
+        this.redisClient = new RedisAgentClient();
+      }
+
+      await this.redisClient.initialize();
+      await this.redisClient.register('VSCode-Extension', 'participant', 'vscode', [
+        'ide_integration',
+        'chat',
+      ]);
 
       this.connected = true;
       this.updateStatusBar();
 
-      // Add demo agents
-      this.agents.set('agent-1', {
-        id: 'agent-1',
-        name: 'Composer',
-        status: 'online',
-        role: 'orchestrator',
-        lastSeen: new Date().toISOString(),
-      });
-      this.agents.set('agent-2', {
-        id: 'agent-2',
-        name: 'Roo Coder',
-        status: 'online',
-        role: 'coder',
-        lastSeen: new Date().toISOString(),
-      });
+      // Start periodic agent list refresh
+      this.statusCheckInterval = setInterval(() => this.loadAgents(), 10000);
+      await this.loadAgents();
 
-      vscode.window.showInformationMessage('Connected to Relay server');
+      vscode.window.showInformationMessage('Connected to TNF Relay Swarm');
       return true;
     } catch (error) {
-      log.error('Failed to connect to Relay server', error);
+      log.error('Failed to connect to TNF Relay', error);
       return false;
     }
   }
 
   async disconnect(): Promise<void> {
+    if (this.redisClient) {
+      await this.redisClient.cleanup();
+      this.redisClient = null;
+    }
+    if (this.statusCheckInterval) {
+      clearInterval(this.statusCheckInterval);
+    }
     this.connected = false;
     this.updateStatusBar();
     log.info('Disconnected from Relay server');
@@ -221,11 +225,31 @@ export class RelayServerService {
   }
 
   private async loadAgents(): Promise<void> {
-    const cached = this.context.workspaceState.get<ConnectedAgent[]>('relay.agents');
-    if (cached) {
-      for (const agent of cached) {
-        this.agents.set(agent.id, agent);
+    if (!this.redisClient || !this.connected) return;
+
+    try {
+      const liveAgents = await this.redisClient.listAgents();
+
+      // Update local map
+      const currentIds = new Set(liveAgents.map((a) => a.id));
+
+      // Clear agents no longer online
+      for (const id of this.agents.keys()) {
+        if (!currentIds.has(id)) this.agents.delete(id);
       }
+
+      // Add or update online agents
+      for (const agent of liveAgents) {
+        this.agents.set(agent.id, {
+          id: agent.id,
+          name: agent.name,
+          status: agent.isOnline ? 'online' : 'offline',
+          role: agent.role,
+          lastSeen: agent.lastSeen,
+        });
+      }
+    } catch (error) {
+      log.error('Failed to load live agents from Redis', error);
     }
   }
 

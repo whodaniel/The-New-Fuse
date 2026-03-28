@@ -7,18 +7,16 @@
     "rootDir": "./src",
     "declaration": true,
     "composite": true,
-    
+
     "types": ["node"],
-    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "paths": {
+      "@the-new-fuse/infrastructure": ["../../packages/infrastructure/dist"],
+      "@the-new-fuse/database": ["../../packages/database/dist"],
+      "@the-new-fuse/types": ["../../packages/types/dist"]
+    }
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "references": []
 }

@@ -1,30 +1,28 @@
 import {
   Activity,
-  BarChart3,
   Bot,
   Boxes,
   ChevronDown,
   ClipboardList,
-  Compass,
   Database,
+  Eye,
+  FolderOpen,
   Globe,
   Layout,
   Lightbulb,
   LogOut,
-  Menu,
   Network,
   Package,
-  Plus,
   Settings,
   Shield,
   SquareTerminal,
-  User,
+  Users,
   Workflow,
   Zap,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { EXPERIENCE_SURFACES } from '../config/experienceArchitecture';
+import { EXPERIENCE_DOMAIN_LABELS, EXPERIENCE_SURFACES } from '../config/experienceArchitecture';
 
 import { useAuth } from '../hooks/useAuth';
 import { useAuthorization } from '../hooks/useAuthorization';
@@ -34,6 +32,7 @@ interface DomainMenuItem {
   label: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
+  requiredRoles?: string[];
 }
 
 interface DomainMenu {
@@ -45,16 +44,18 @@ interface DomainMenu {
   items: DomainMenuItem[];
 }
 
-// Smart Navigation Component that adapts based on authentication status and user role
+// Smart Navigation Component refined for logical grouping and full feature parity.
 function SmartNavigation() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
-  const { isSuperAdmin, isAdmin: isAnyAdmin } = useAuthorization();
+  const { isSuperAdmin, isAdmin: isAnyAdmin, hasRole } = useAuthorization();
   const navRef = useRef<HTMLDivElement>(null);
 
-  // Check if user has admin role
-  const isAdmin = isAnyAdmin || user?.role === 'admin' || user?.role === 'administrator';
+  // Check roles for menu gating
+  const isAdmin = isAnyAdmin || user?.role === 'admin';
+  const isAgencyRole = hasRole(['AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER']);
+
   const isPublicPage =
     [
       '/',
@@ -79,7 +80,7 @@ function SmartNavigation() {
   const domainMenus: DomainMenu[] = [
     {
       key: 'operate',
-      label: 'Operate',
+      label: EXPERIENCE_DOMAIN_LABELS.operate,
       icon: SquareTerminal,
       activeClassName: 'bg-blue-500/10 text-blue-400',
       matchPrefixes: ['/dashboard', '/agents', '/tasks', '/timeline'],
@@ -87,119 +88,135 @@ function SmartNavigation() {
         {
           to: '/dashboard',
           label: 'Operations Dashboard',
-          description: 'Current system health and priorities',
+          description: 'System-wide health and execution metrics',
           icon: Activity,
         },
         {
           to: '/agents',
           label: 'Agent Fleet',
-          description: 'Manage autonomous swarms',
+          description: 'Monitor and manage active autonomous swarms',
           icon: Bot,
         },
         {
           to: '/tasks',
           label: 'Task Operations',
-          description: 'Track and execute work',
+          description: 'Live task queue and execution status',
           icon: ClipboardList,
         },
         {
           to: '/timeline',
           label: 'Unified Timeline',
-          description: 'Chronological execution events',
+          description: 'Chronological platform events and logs',
           icon: Activity,
         },
       ],
     },
     {
-      key: 'automate',
-      label: 'Automate',
+      key: 'intelligence',
+      label: EXPERIENCE_DOMAIN_LABELS.intelligence,
       icon: Workflow,
       activeClassName: 'bg-purple-500/10 text-purple-400',
-      matchPrefixes: ['/workflows'],
+      matchPrefixes: ['/workflows', '/mcp-hub', '/knowledge-hub'],
       items: [
         {
           to: '/workflows',
-          label: 'Workflow Operations',
-          description: 'Orchestrate automation flows',
+          label: 'Workflow Engine',
+          description: 'Design and orchestrate complex automations',
           icon: Workflow,
         },
         {
-          to: '/workflows/builder',
-          label: 'Workflow Builder',
-          description: 'Design and edit orchestration graphs',
-          icon: Plus,
+          to: '/mcp-hub',
+          label: 'MCP Tool Hub',
+          description: 'Manage Model Context Protocol capabilities',
+          icon: Boxes,
         },
         {
-          to: '/workflows/executions',
-          label: 'Execution Monitor',
-          description: 'Inspect active and historical runs',
-          icon: BarChart3,
+          to: '/knowledge-hub',
+          label: 'Knowledge & Memory',
+          description: 'Shared agent memory and RAG repositories',
+          icon: Database,
         },
       ],
     },
     {
-      key: 'observe',
-      label: 'Observe',
-      icon: Compass,
-      activeClassName: 'bg-cyan-500/10 text-cyan-400',
-      matchPrefixes: ['/analytics', '/observatory', '/live-view', '/suggestions'],
+      key: 'collaboration',
+      label: EXPERIENCE_DOMAIN_LABELS.collaboration,
+      icon: Users,
+      activeClassName: 'bg-indigo-500/10 text-indigo-400',
+      matchPrefixes: ['/chat', '/workspace', '/spaces'],
       items: [
         {
-          to: '/analytics',
-          label: 'Analytics',
-          description: 'Operational KPIs and outcomes',
-          icon: BarChart3,
+          to: '/chat',
+          label: 'Universal Chat',
+          description: 'Multi-agent threaded conversation interface',
+          icon: MessageSquare,
         },
         {
-          to: '/observatory',
-          label: 'System Observatory',
-          description: 'Platform telemetry and health',
-          icon: Network,
+          to: '/workspace/overview',
+          label: 'Workspace Home',
+          description: 'Collaborative team environment and tools',
+          icon: Layout,
         },
         {
-          to: '/live-view',
-          label: 'Live Viewer',
-          description: 'Real-time cloud sandbox activity',
+          to: '/spaces',
+          label: 'Project Spaces',
+          description: 'Isolated project visualizations and domains',
           icon: Globe,
         },
+      ],
+    },
+    {
+      key: 'assets',
+      label: EXPERIENCE_DOMAIN_LABELS.assets,
+      icon: FolderOpen,
+      activeClassName: 'bg-emerald-500/10 text-emerald-400',
+      matchPrefixes: ['/files', '/datasets', '/bookmarks'],
+      items: [
         {
-          to: '/suggestions',
-          label: 'Ideation Layer',
-          description: 'AI-driven opportunity suggestions',
+          to: '/files',
+          label: 'File Manager',
+          description: 'Centralized asset storage and search',
+          icon: FolderOpen,
+        },
+        {
+          to: '/datasets',
+          label: 'Data Workbench',
+          description: 'Manage and inspect agent training data',
+          icon: Database,
+        },
+        {
+          to: '/bookmarks',
+          label: 'Resource Bookmarks',
+          description: 'Quick access to critical platform assets',
           icon: Lightbulb,
         },
       ],
     },
     {
       key: 'ecosystem',
-      label: 'Ecosystem',
-      icon: Layout,
-      activeClassName: 'bg-emerald-500/10 text-emerald-400',
-      matchPrefixes: ['/hub', '/sophisticated-hub', '/mcp-hub', '/marketplace', '/knowledge-hub'],
+      label: EXPERIENCE_DOMAIN_LABELS.ecosystem,
+      icon: Network,
+      activeClassName: 'bg-cyan-500/10 text-cyan-400',
+      matchPrefixes: ['/marketplace', '/hub', '/agency'],
       items: [
         {
-          to: '/hub',
-          label: 'TNF Hub',
-          description: 'Primary ecosystem entry point',
-          icon: Layout,
-        },
-        {
-          to: '/mcp-hub',
-          label: 'MCP Protocol Hub',
-          description: 'Model context and integrations',
-          icon: Boxes,
-        },
-        {
           to: '/marketplace',
-          label: 'Platform',
-          description: 'Marketplace and ecosystem surface',
+          label: 'Platform Marketplace',
+          description: 'Discover and deploy external capabilities',
           icon: Package,
         },
         {
-          to: '/knowledge-hub',
-          label: 'Knowledge Hub',
-          description: 'Shared memory and references',
-          icon: Database,
+          to: '/hub',
+          label: 'TNF Hub',
+          description: 'Community and ecosystem entry point',
+          icon: Network,
+        },
+        {
+          to: '/agency/dashboard',
+          label: 'Agency Dashboard',
+          description: 'White-label management and tenant controls',
+          icon: Shield,
+          requiredRoles: ['AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER'],
         },
       ],
     },
@@ -224,79 +241,81 @@ function SmartNavigation() {
     setActiveDropdown(null);
   }, [location.pathname]);
 
-  // Public Navigation (for non-authenticated users) - Premium Dark Theme
+  // Render logic for menu items with role gating
+  const renderMenuItem = (item: DomainMenuItem) => {
+    const lifecycle = lifecycleByPath.get(item.to);
+    const ItemIcon = item.icon;
+
+    // Check if user has required roles for this specific menu item
+    if (item.requiredRoles && !hasRole(item.requiredRoles)) {
+      return null;
+    }
+
+    return (
+      <Link
+        key={item.to}
+        to={item.to}
+        className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-md group"
+      >
+        <ItemIcon className="w-4 h-4 text-slate-400 group-hover:text-white" />
+        <div className="min-w-0">
+          <div className="text-sm font-medium text-slate-200 flex items-center gap-2">
+            <span>{item.label}</span>
+            {lifecycle && lifecycle !== 'production' && (
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 uppercase tracking-wide">
+                {lifecycle}
+              </span>
+            )}
+          </div>
+          <div className="text-[10px] text-slate-500 truncate">{item.description}</div>
+        </div>
+      </Link>
+    );
+  };
+
+  // Public Navigation (for non-authenticated users)
   if (!isAuthenticated || isPublicPage) {
     return (
       <nav
         ref={navRef}
-        className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-white/10 transition-all duration-300"
+        className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-white/10 transition-all duration-300"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-3 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
               <Link to="/" className="shrink-0 flex items-center group">
-                <img
-                  src="/assets/brand/logo-monogram-neon.png"
-                  alt="The New Fuse Logo"
-                  className="h-10 w-10 rounded-md shadow-none group-hover:scale-105 transition-transform object-cover"
-                />
-                <h1 className="ml-3 text-xl font-bold text-white tracking-tight group-hover:opacity-90 transition-opacity">
-                  The New Fuse
-                </h1>
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-md flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-white" />
+                </div>
+                <h1 className="ml-3 text-lg font-bold text-white tracking-tight">THE NEW FUSE</h1>
               </Link>
             </div>
 
-            {/* Public Navigation Links */}
             <div className="hidden md:flex items-center space-x-8">
-              <Link
-                to="/#features"
-                className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
-              >
+              <Link to="/#features" className="text-sm font-medium text-slate-400 hover:text-white">
                 Features
               </Link>
-              <Link
-                to="/agents"
-                className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
-              >
-                AI Agents
+              <Link to="/agents" className="text-sm font-medium text-slate-400 hover:text-white">
+                Fleet
               </Link>
-              <Link
-                to="/workflows"
-                className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
-              >
-                Workflows
+              <Link to="/workflows" className="text-sm font-medium text-slate-400 hover:text-white">
+                Automation
               </Link>
               <Link
                 to="/marketplace"
-                className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                className="text-sm font-medium text-slate-400 hover:text-white"
               >
                 Platform
               </Link>
-              <Link
-                to="/pricing"
-                className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
-              >
-                Pricing
-              </Link>
-              <Link
-                to="/all-pages"
-                className="text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/30"
-              >
-                📂 All Pages
-              </Link>
             </div>
 
-            {/* Auth Buttons */}
             <div className="flex items-center space-x-4">
-              <Link
-                to="/login"
-                className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
-              >
+              <Link to="/login" className="text-sm font-medium text-slate-400 hover:text-white">
                 Sign In
               </Link>
               <Link
                 to="/register"
-                className="bg-transparent text-gray-900 hover:bg-muted/30 px-5 py-2 rounded-full font-bold text-sm transition-all transform hover:scale-105 shadow-glow-sm"
+                className="bg-white text-slate-950 px-5 py-2 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors"
               >
                 Get Started
               </Link>
@@ -307,36 +326,23 @@ function SmartNavigation() {
     );
   }
 
-  // Authenticated User Navigation - Premium Obsidian Theme
+  // Authenticated User Navigation
   return (
     <nav
       ref={navRef}
-      className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-white/10"
+      className="fixed top-0 left-0 right-0 z-50 bg-slate-950/90 backdrop-blur-xl border-b border-white/10"
     >
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center gap-4">
             <Link to="/dashboard" className="flex items-center group">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-md flex items-center justify-center shadow-none group-hover:scale-110 transition-transform">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-md flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                 <Zap className="w-5 h-5 text-white" />
               </div>
-              <span className="ml-3 text-lg font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-                THE NEW FUSE
-              </span>
+              <span className="ml-3 text-lg font-bold text-white">TNF</span>
             </Link>
 
             <div className="hidden lg:flex items-center gap-1">
-              <Link
-                to="/dashboard"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  location.pathname === '/dashboard'
-                    ? 'bg-transparent/10 text-white'
-                    : 'text-slate-400 hover:text-white hover:bg-transparent/5'
-                }`}
-              >
-                Dashboard
-              </Link>
-
               {domainMenus.map((menu) => {
                 const Icon = menu.icon;
                 const isActive =
@@ -347,11 +353,10 @@ function SmartNavigation() {
                   <div key={menu.key} className="relative">
                     <button
                       onClick={() => toggleDropdown(menu.key)}
-                      aria-expanded={activeDropdown === menu.key}
                       className={`px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors ${
                         isActive
                           ? menu.activeClassName
-                          : 'text-slate-400 hover:text-white hover:bg-transparent/5'
+                          : 'text-slate-400 hover:text-white hover:bg-white/5'
                       }`}
                     >
                       <Icon className="w-4 h-4" />
@@ -361,34 +366,8 @@ function SmartNavigation() {
                       />
                     </button>
                     {activeDropdown === menu.key && (
-                      <div className="absolute top-full left-0 mt-2 w-72 bg-slate-900 border border-white/10 rounded-md shadow-none p-2 z-50">
-                        {menu.items.map((item) => {
-                          const ItemIcon = item.icon;
-                          const lifecycle = lifecycleByPath.get(item.to);
-
-                          return (
-                            <Link
-                              key={item.to}
-                              to={item.to}
-                              className="flex items-center gap-3 px-3 py-2 hover:bg-transparent/5 rounded-md group"
-                            >
-                              <ItemIcon className="w-4 h-4 text-slate-300 group-hover:text-white" />
-                              <div className="min-w-0">
-                                <div className="text-sm font-medium text-slate-200 flex items-center gap-2">
-                                  <span>{item.label}</span>
-                                  {lifecycle && lifecycle !== 'production' && (
-                                    <span className="text-[9px] px-1.5 py-0.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 uppercase tracking-wide">
-                                      {lifecycle}
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="text-[10px] text-slate-500 truncate">
-                                  {item.description}
-                                </div>
-                              </div>
-                            </Link>
-                          );
-                        })}
+                      <div className="absolute top-full left-0 mt-2 w-72 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 z-50">
+                        {menu.items.map(renderMenuItem)}
                       </div>
                     )}
                   </div>
@@ -398,43 +377,39 @@ function SmartNavigation() {
           </div>
 
           <div className="flex items-center gap-3">
-            {isAdmin && (
+            {isSuperAdmin && (
               <div className="relative">
                 <button
                   onClick={() => toggleDropdown('admin')}
-                  aria-label="Admin Menu"
-                  aria-expanded={activeDropdown === 'admin'}
-                  className="w-10 h-10 flex items-center justify-center rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20"
+                  className="w-10 h-10 flex items-center justify-center rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20"
                 >
                   <Shield className="w-5 h-5" />
                 </button>
                 {activeDropdown === 'admin' && (
-                  <div className="absolute top-full right-0 mt-2 w-64 bg-slate-900 border border-white/10 rounded-md shadow-none p-2 z-50">
+                  <div className="absolute top-full right-0 mt-2 w-64 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 z-50">
                     <div className="px-3 py-2 text-[10px] font-bold text-red-500 uppercase tracking-widest">
-                      System Administration
+                      Platform Governance
                     </div>
-                    {isSuperAdmin && (
-                      <Link
-                        to="/admin/control-panel"
-                        className="flex items-center gap-3 px-3 py-2 hover:bg-transparent/5 rounded-md text-red-400 font-bold border-b border-white/5 mb-1"
-                      >
-                        <Zap className="w-4 h-4" />
-                        MASTER CONTROL
-                      </Link>
-                    )}
                     <Link
-                      to="/admin/dashboard"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-transparent/5 rounded-md"
+                      to="/admin/control-panel"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-md text-red-400 font-bold"
                     >
-                      <BarChart3 className="w-4 h-4 text-slate-400" />
-                      <span className="text-sm">Admin Analytics</span>
+                      <Zap className="w-4 h-4" />
+                      MASTER CONTROL
+                    </Link>
+                    <Link
+                      to="/observatory"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-md"
+                    >
+                      <Eye className="w-4 h-4 text-slate-400" />
+                      <span className="text-sm">System Observatory</span>
                     </Link>
                     <Link
                       to="/admin/users"
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-transparent/5 rounded-md"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-md"
                     >
-                      <User className="w-4 h-4 text-slate-400" />
-                      <span className="text-sm">Identity Management</span>
+                      <Users className="w-4 h-4 text-slate-400" />
+                      <span className="text-sm">User & Tenant Ops</span>
                     </Link>
                   </div>
                 )}
@@ -444,37 +419,35 @@ function SmartNavigation() {
             <div className="relative">
               <button
                 onClick={() => toggleDropdown('user')}
-                aria-label="User Menu"
-                aria-expanded={activeDropdown === 'user'}
-                className="flex items-center gap-2 p-1.5 rounded-md bg-transparent/5 border border-white/10 hover:bg-transparent/10 transition-colors"
+                className="flex items-center gap-2 p-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
               >
-                <div className="w-7 h-7 bg-blue-500 rounded-md flex items-center justify-center text-[10px] font-bold">
+                <div className="w-7 h-7 bg-blue-600 rounded flex items-center justify-center text-[10px] font-bold text-white">
                   {user?.name?.substring(0, 2).toUpperCase() || 'BS'}
                 </div>
                 <ChevronDown className="w-3 h-3 text-slate-500" />
               </button>
               {activeDropdown === 'user' && (
-                <div className="absolute top-full right-0 mt-2 w-56 bg-slate-900 border border-white/10 rounded-md shadow-none p-2 z-50">
+                <div className="absolute top-full right-0 mt-2 w-56 bg-slate-900 border border-white/10 rounded-xl shadow-2xl p-2 z-50">
                   <div className="px-3 py-2">
                     <div className="text-sm font-medium text-white">{user?.name}</div>
                     <div className="text-[10px] text-slate-500 truncate">{user?.email}</div>
                   </div>
-                  <div className="my-1 border-t border-white/10" />
-                  <Link
-                    to="/profile"
-                    className="flex items-center gap-3 px-3 py-2 hover:bg-transparent/5 rounded-md"
-                  >
-                    <User className="w-4 h-4 text-slate-400" />
-                    <span className="text-sm">Profile</span>
-                  </Link>
+                  <div className="my-1 border-t border-white/5" />
                   <Link
                     to="/settings"
-                    className="flex items-center gap-3 px-3 py-2 hover:bg-transparent/5 rounded-md"
+                    className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-md"
                   >
                     <Settings className="w-4 h-4 text-slate-400" />
                     <span className="text-sm">Account Settings</span>
                   </Link>
-                  <div className="my-1 border-t border-white/10" />
+                  <Link
+                    to="/billing"
+                    className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-md"
+                  >
+                    <CreditCard className="w-4 h-4 text-slate-400" />
+                    <span className="text-sm">Membership & Billing</span>
+                  </Link>
+                  <div className="my-1 border-t border-white/5" />
                   <button
                     onClick={() => logout()}
                     className="w-full flex items-center gap-3 px-3 py-2 hover:bg-red-500/10 rounded-md text-red-400 transition-colors"
@@ -485,10 +458,6 @@ function SmartNavigation() {
                 </div>
               )}
             </div>
-
-            <button aria-label="Open mobile menu" className="lg:hidden w-10 h-10 flex items-center justify-center rounded-md bg-transparent/5 text-slate-400 hover:text-white transition-colors">
-              <Menu className="w-6 h-6" />
-            </button>
           </div>
         </div>
       </div>

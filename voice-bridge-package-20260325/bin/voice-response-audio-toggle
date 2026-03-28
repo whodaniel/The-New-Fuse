@@ -1,37 +1,86 @@
 #!/bin/bash
 set -euo pipefail
 
-STATE_FILE="$HOME/.openclaw/voice_response_audio_enabled"
-mkdir -p "$HOME/.openclaw"
+if [[ -f "$HOME/bin/voicebridge-paths.sh" ]]; then
+  # shellcheck disable=SC1090
+  source "$HOME/bin/voicebridge-paths.sh"
+fi
+profile="${VOICEBRIDGE_PROFILE:-main}"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --profile)
+      profile="${2:-}"
+      if [[ -z "$profile" ]]; then
+        echo "Missing value for --profile" >&2
+        exit 1
+      fi
+      shift 2
+      ;;
+    --profile=*)
+      profile="${1#--profile=}"
+      if [[ -z "$profile" ]]; then
+        echo "Missing value for --profile" >&2
+        exit 1
+      fi
+      shift
+      ;;
+    --on|--off|--status)
+      break
+      ;;
+    toggle)
+      break
+      ;;
+    *)
+      echo "Usage: voice-response-audio-toggle [--profile A|B|...] [--on|--off|--status]" >&2
+      exit 1
+      ;;
+  esac
+done
+
+if command -v voicebridge_use_profile >/dev/null 2>&1; then
+  voicebridge_use_profile "$profile"
+fi
+VOICEBRIDGE_STATE_DIR="${VOICEBRIDGE_STATE_DIR:-$HOME/.voicebridge}"
+mkdir -p "$VOICEBRIDGE_STATE_DIR"
+if command -v voicebridge_init_state >/dev/null 2>&1; then
+  voicebridge_init_state
+fi
+
+if command -v voicebridge_state_file >/dev/null 2>&1; then
+  STATE_FILE="$(voicebridge_state_file "voice_response_audio_enabled")"
+else
+  STATE_FILE="$VOICEBRIDGE_STATE_DIR/voice_response_audio_enabled"
+fi
 
 usage() {
-  echo "Usage: voice-response-audio-toggle [--on|--off|--status]"
+  echo "Usage: voice-response-audio-toggle [--profile A|B|...] [--on|--off|--status]"
 }
 
 mode="${1:-toggle}"
 case "$mode" in
   --on)
     touch "$STATE_FILE"
-    echo "🔊 AI response audio: ON"
+    echo "🔊 [${VOICEBRIDGE_PROFILE}] AI response audio: ON"
     ;;
   --off)
     rm -f "$STATE_FILE"
-    echo "🔈 AI response audio: OFF"
+    echo "🔈 [${VOICEBRIDGE_PROFILE}] AI response audio: OFF"
     ;;
   --status)
     if [[ -f "$STATE_FILE" ]]; then
-      echo "🔊 AI response audio: ON"
+      echo "🔊 [${VOICEBRIDGE_PROFILE}] AI response audio: ON"
     else
-      echo "🔈 AI response audio: OFF"
+      echo "🔈 [${VOICEBRIDGE_PROFILE}] AI response audio: OFF"
     fi
     ;;
   toggle)
     if [[ -f "$STATE_FILE" ]]; then
       rm -f "$STATE_FILE"
-      echo "🔈 AI response audio: OFF"
+      echo "🔈 [${VOICEBRIDGE_PROFILE}] AI response audio: OFF"
     else
       touch "$STATE_FILE"
-      echo "🔊 AI response audio: ON"
+      echo "🔊 [${VOICEBRIDGE_PROFILE}] AI response audio: ON"
     fi
     ;;
   *)

@@ -13,8 +13,9 @@
  * 6. Bridge subscribes and forwards back to Relay
  */
 
+import { createStandaloneRedisClient } from '@the-new-fuse/infrastructure';
 import { EventEmitter } from 'events';
-import { createClient, RedisClientType } from 'redis';
+import Redis, { Cluster } from 'ioredis';
 import { createAgentIdentityRecord } from './contracts/identity';
 import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from './protocol/tnf-envelope';
 
@@ -26,8 +27,8 @@ export interface RedisRelayBridgeConfig {
 }
 
 export class RedisRelayBridge extends EventEmitter {
-  private redisClient: RedisClientType;
-  private redisSubscriber: RedisClientType;
+  private redisClient: Redis | Cluster;
+  private redisSubscriber: Redis | Cluster;
   private config: RedisRelayBridgeConfig;
   private connected: boolean = false;
 
@@ -41,9 +42,16 @@ export class RedisRelayBridge extends EventEmitter {
       enableLegacyShim: config.enableLegacyShim ?? true,
     };
 
-    // Create Redis clients
-    this.redisClient = createClient({ url: this.config.redisUrl });
-    this.redisSubscriber = createClient({ url: this.config.redisUrl });
+    // Create Redis clients using unified standalone utility
+    this.redisClient = createStandaloneRedisClient({
+      redisUrl: this.config.redisUrl,
+      lazyConnect: true,
+    } as any);
+
+    this.redisSubscriber = createStandaloneRedisClient({
+      redisUrl: this.config.redisUrl,
+      lazyConnect: true,
+    } as any);
 
     this.setupErrorHandlers();
   }
@@ -65,10 +73,12 @@ export class RedisRelayBridge extends EventEmitter {
    */
   async connect(): Promise<void> {
     try {
-      await this.redisClient.connect();
-      await this.redisSubscriber.connect();
+      // ioredis connects automatically or via .connect() if lazyConnect is true
+      if (this.redisClient instanceof Redis) await (this.redisClient as Redis).connect();
+      if (this.redisSubscriber instanceof Redis) await (this.redisSubscriber as Redis).connect();
+
       this.connected = true;
-      console.log('[Redis-Bridge] Connected to Redis');
+      console.log('[Redis-Bridge] Connected to Redis (ioredis)');
       this.emit('connected');
     } catch (error) {
       console.error('[Redis-Bridge] Connection failed:', error);
@@ -141,14 +151,18 @@ export class RedisRelayBridge extends EventEmitter {
   ): Promise<void> {
     const channel = `${this.config.egressChannelPrefix}:${agentId}`;
 
-    await this.redisSubscriber.subscribe(channel, (message: string) => {
-      try {
-        const envelope = validateTNFEnvelope(JSON.parse(message));
-        console.log(`[Redis-Bridge] Received from ${channel}:`, envelope.id);
-        callback(envelope);
-        this.emit('egress', envelope);
-      } catch (error) {
-        console.error('[Redis-Bridge] Invalid egress message:', error);
+    await this.redisSubscriber.subscribe(channel);
+
+    this.redisSubscriber.on('message', (ch: string, message: string) => {
+      if (ch === channel) {
+        try {
+          const envelope = validateTNFEnvelope(JSON.parse(message));
+          console.log(`[Redis-Bridge] Received from ${channel}:`, envelope.id);
+          callback(envelope);
+          this.emit('egress', envelope);
+        } catch (error) {
+          console.error('[Redis-Bridge] Invalid egress message:', error);
+        }
       }
     });
 

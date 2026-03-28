@@ -4,6 +4,7 @@ ab-testing-optimizer-agent,analytics-and-reporting-agent,MEASURED_BY,0.89,,unidi
 ab-testing-optimizer-agent,audience-growth-agent,DEPENDS_ON,0.61,,unidirectional
 ab-testing-optimizer-agent,cognitive-bias-optimizer-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 ab-testing-optimizer-agent,email-marketing-automation-agent,DEPENDS_ON,0.68,,unidirectional
+ab-testing-optimizer-agent,lead-magnet-funnel-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 ab-testing-optimizer-agent,traffic-generation-agent,DEPENDS_ON,0.64,,unidirectional
 ad-network-manager-agent,analytics-and-reporting-agent,FALLBACK,0.68,capability_overlap,unidirectional
 ad-network-manager-agent,ethical-bias-auditor-agent,DEPENDS_ON,0.68,,unidirectional
@@ -27,6 +28,7 @@ analytics-and-reporting-agent,content-refresh-agent,DEPENDS_ON,0.73,,unidirectio
 analytics-and-reporting-agent,content-writer-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 analytics-and-reporting-agent,ethical-bias-auditor-agent,DEPENDS_ON,0.68,,unidirectional
 analytics-and-reporting-agent,user-feedback-analysis-agent,FALLBACK,0.68,capability_overlap,unidirectional
+asset-sourcer-agent,auth-blocker-sentinel,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 asset-sourcer-agent,legal-compliance-agent,FALLBACK,0.64,capability_overlap,unidirectional
 asset-sourcer-agent,link-building-agent,DEPENDS_ON,0.64,,unidirectional
 asset-sourcer-agent,productivity-and-burnout-prevention-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
@@ -34,6 +36,7 @@ asset-sourcer-agent,tax-compliance-agent,FALLBACK,0.64,capability_overlap,unidir
 asset-sourcer-agent,visual-asset-creator-agent,FEEDS,0.82,,unidirectional
 asset-sourcer-agent,visual-asset-creator-agent,SUPPLIES,0.82,,unidirectional
 audience-growth-agent,campaign-reporting-agent,DEPENDS_ON,0.77,,unidirectional
+audience-growth-agent,community-engagement-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 audience-growth-agent,community-manager-agent,FALLBACK,0.73,capability_overlap,unidirectional
 audience-growth-agent,competitive-intelligence-agent,DEPENDS_ON,0.68,,unidirectional
 audience-growth-agent,facebook-strategy-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
@@ -84,6 +87,7 @@ cognitive-bias-optimizer-agent,email-marketing-automation-agent,DEPENDS_ON,0.62,
 cognitive-bias-optimizer-agent,financial-manager-agent,DEPENDS_ON,0.62,,unidirectional
 cognitive-bias-optimizer-agent,influencer-media-kit-agent,DEPENDS_ON,0.62,,unidirectional
 cognitive-bias-optimizer-agent,visual-asset-creator-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
+community-engagement-agent,algorithm-adaptation-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 community-engagement-agent,community-manager-agent,FALLBACK,0.73,capability_overlap,unidirectional
 community-engagement-agent,competitive-intelligence-agent,DEPENDS_ON,0.68,,unidirectional
 community-engagement-agent,instagram-strategy-agent,FALLBACK,0.68,capability_overlap,unidirectional
@@ -91,6 +95,7 @@ community-manager-agent,podcast-promotion-agent,DEPENDS_ON,0.64,,unidirectional
 community-manager-agent,social-selling-agent,FALLBACK,0.68,capability_overlap,unidirectional
 community-manager-agent,traffic-generation-agent,FALLBACK,0.64,capability_overlap,unidirectional
 competitive-intelligence-agent,monetization-strategy-agent,DEPENDS_ON,0.71,,unidirectional
+competitive-intelligence-agent,talent-manager-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 competitive-intelligence-agent,traffic-generation-agent,DEPENDS_ON,0.71,,unidirectional
 competitive-intelligence-agent,yt-niche-strategy-agent,DEPENDS_ON,0.79,,unidirectional
 content-calendar-agent,content-writer-agent,DEPENDS_ON,0.58,,unidirectional
@@ -108,6 +113,7 @@ content-refresh-agent,niche-analyst-agent,DEPENDS_ON,0.64,,unidirectional
 content-refresh-agent,podcast-seo-agent,DEPENDS_ON,0.77,,unidirectional
 content-refresh-agent,yt-seo-optimizer-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 content-repurposing-agent,live-stream-manager-agent,DEPENDS_ON,0.68,,unidirectional
+content-repurposing-agent,scriptwriter-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 content-repurposing-agent,tiktok-strategy-agent,FALLBACK,0.71,capability_overlap,unidirectional
 content-repurposing-agent,yt-seo-optimizer-agent,DEPENDS_ON,0.71,,unidirectional
 content-writer-agent,ad-network-manager-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
@@ -141,6 +147,7 @@ digital-asset-manager-agent,auth-blocker-sentinel,FALLBACK,0.58,intra_cluster_fa
 digital-asset-manager-agent,fan-funding-agent,DEPENDS_ON,0.68,,unidirectional
 digital-asset-manager-agent,podcast-ad-network-agent,DEPENDS_ON,0.68,,unidirectional
 digital-asset-manager-agent,podcast-audio-editor-agent,DEPENDS_ON,0.68,,unidirectional
+digital-asset-manager-agent,tax-compliance-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 digital-product-creator-agent,keyword-research-agent,DEPENDS_ON,0.73,,unidirectional
 digital-product-creator-agent,link-building-agent,DEPENDS_ON,0.68,,unidirectional
 digital-product-creator-agent,niche-analyst-agent,DEPENDS_ON,0.68,,unidirectional
@@ -172,6 +179,7 @@ fan-funding-agent,podcast-ad-network-agent,DEPENDS_ON,0.68,,unidirectional
 fan-funding-agent,podcast-audio-editor-agent,DEPENDS_ON,0.68,,unidirectional
 fan-funding-agent,podcast-hosting-setup-agent,DEPENDS_ON,0.68,,unidirectional
 financial-manager-agent,brand-identity-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
+financial-manager-agent,competitive-intelligence-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 financial-manager-agent,funnel-economics-analyst-agent,DEPENDS_ON,0.62,,unidirectional
 financial-manager-agent,influencer-media-kit-agent,FALLBACK,0.68,capability_overlap,unidirectional
 financial-manager-agent,oto-sequence-architect-agent,DEPENDS_ON,0.62,,unidirectional
@@ -208,6 +216,7 @@ keyword-research-agent,niche-analyst-agent,DEPENDS_ON,0.84,,unidirectional
 keyword-research-agent,podcast-seo-agent,DEPENDS_ON,0.68,,unidirectional
 keyword-research-agent,seo-optimizer-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 lead-capture-agent,lead-magnet-funnel-agent,FALLBACK,0.64,capability_overlap,unidirectional
+lead-capture-agent,niche-analyst-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 lead-capture-agent,oto-sequence-architect-agent,FALLBACK,0.56,capability_overlap,unidirectional
 lead-capture-agent,sponsorship-outreach-agent,DEPENDS_ON,0.61,,unidirectional
 lead-magnet-funnel-agent,personalized-content-recommendation-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
@@ -217,6 +226,7 @@ legal-compliance-agent,affiliate-link-manager-agent,DELEGATES,0.9,,unidirectiona
 legal-compliance-agent,affiliate-link-manager-agent,GOVERNS,0.9,,unidirectional
 legal-compliance-agent,asset-sourcer-agent,DELEGATES,0.89,,unidirectional
 legal-compliance-agent,asset-sourcer-agent,GOVERNS,0.89,,unidirectional
+legal-compliance-agent,digital-asset-manager-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 legal-compliance-agent,link-building-agent,DEPENDS_ON,0.64,,unidirectional
 legal-compliance-agent,tax-compliance-agent,FALLBACK,0.64,capability_overlap,unidirectional
 legal-compliance-agent,yt-niche-strategy-agent,DEPENDS_ON,0.75,,unidirectional
@@ -237,9 +247,11 @@ media-evidence-investigator,digital-product-creator-agent,FALLBACK,0.58,intra_cl
 media-evidence-investigator,notes-ledger-investigator,DEPENDS_ON,0.81,,unidirectional
 media-evidence-investigator,repo-lineage-investigator,DEPENDS_ON,0.81,,unidirectional
 media-evidence-investigator,timeline-synthesis-investigator,DEPENDS_ON,0.81,,unidirectional
+monetization-strategy-agent,lead-capture-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 monetization-strategy-agent,platform-selection-agent,DEPENDS_ON,0.81,,unidirectional
 monetization-strategy-agent,scriptwriter-agent,FEEDS,0.84,,unidirectional
 monetization-strategy-agent,yt-content-strategy-agent,DEPENDS_ON,0.81,,unidirectional
+niche-analyst-agent,code-fossil-investigator,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 niche-analyst-agent,podcast-seo-agent,DEPENDS_ON,0.64,,unidirectional
 niche-analyst-agent,seo-optimizer-agent,FEEDS,0.62,,unidirectional
 niche-analyst-agent,yt-niche-strategy-agent,DEPENDS_ON,0.64,,unidirectional
@@ -260,6 +272,7 @@ orchestrator-agent,personal-archaeology-integrity-team-orchestrator,DELEGATES,0.
 orchestrator-agent,personal-archaeology-master-orchestrator,DELEGATES,0.86,,unidirectional
 orchestrator-agent,personal-archaeology-narrative-team-orchestrator,DELEGATES,0.86,,unidirectional
 orchestrator-agent,personal-archaeology-source-team-orchestrator,DELEGATES,0.86,,unidirectional
+orchestrator-agent,personal-archaeology-source-team-orchestrator,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 orchestrator-agent,personal-historical-archaeologist,DELEGATES,0.86,,unidirectional
 orchestrator-agent,print-on-demand-manager-agent,DELEGATES,0.86,,unidirectional
 orchestrator-agent,task-agent-router,DELEGATES,0.98,,unidirectional
@@ -268,12 +281,14 @@ oto-sequence-architect-agent,value-ladder-architect-agent,FALLBACK,0.84,capabili
 personal-archaeology-integrity-team-orchestrator,personal-archaeology-master-orchestrator,DELEGATES,0.77,,unidirectional
 personal-archaeology-integrity-team-orchestrator,personal-archaeology-narrative-team-orchestrator,DELEGATES,0.75,,unidirectional
 personal-archaeology-integrity-team-orchestrator,personal-archaeology-source-team-orchestrator,DELEGATES,0.71,,unidirectional
+personal-archaeology-master-orchestrator,personal-archaeology-integrity-team-orchestrator,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 personal-archaeology-master-orchestrator,personal-archaeology-narrative-team-orchestrator,DELEGATES,0.77,,unidirectional
 personal-archaeology-master-orchestrator,personal-archaeology-source-team-orchestrator,DELEGATES,0.72,,unidirectional
 personal-archaeology-master-orchestrator,personal-historical-archaeologist,DELEGATES,0.72,,unidirectional
 personal-archaeology-narrative-team-orchestrator,personal-archaeology-source-team-orchestrator,DELEGATES,0.71,,unidirectional
 personal-archaeology-narrative-team-orchestrator,personal-historical-archaeologist,DELEGATES,0.66,,unidirectional
 personal-archaeology-narrative-team-orchestrator,repo-lineage-investigator,DELEGATES,0.64,,unidirectional
+personal-archaeology-source-team-orchestrator,personal-archaeology-master-orchestrator,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 personal-archaeology-source-team-orchestrator,personal-historical-archaeologist,DELEGATES,0.64,,unidirectional
 personal-archaeology-source-team-orchestrator,repo-lineage-investigator,DELEGATES,0.61,,unidirectional
 personal-archaeology-source-team-orchestrator,timeline-synthesis-investigator,DELEGATES,0.61,,unidirectional
@@ -282,6 +297,7 @@ personal-brand-architect-agent,podcast-affiliate-agent,DEPENDS_ON,0.68,,unidirec
 personal-brand-architect-agent,podcast-monetization-strategy-agent,DEPENDS_ON,0.77,,unidirectional
 personal-historical-archaeologist,repo-lineage-investigator,DELEGATES,0.61,,unidirectional
 personal-historical-archaeologist,timeline-synthesis-investigator,DELEGATES,0.61,,unidirectional
+personalized-content-recommendation-agent,monetization-strategy-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 personalized-content-recommendation-agent,podcast-analytics-agent,DEPENDS_ON,0.64,,unidirectional
 personalized-content-recommendation-agent,podcast-seo-agent,DEPENDS_ON,0.64,,unidirectional
 personalized-content-recommendation-agent,tiktok-strategy-agent,DEPENDS_ON,0.64,,unidirectional
@@ -292,10 +308,12 @@ podcast-ad-network-agent,podcast-hosting-setup-agent,FALLBACK,0.68,capability_ov
 podcast-ad-network-agent,storyboard-artist-agent,DEPENDS_ON,0.68,,unidirectional
 podcast-affiliate-agent,podcast-monetization-strategy-agent,FALLBACK,0.81,capability_overlap,unidirectional
 podcast-affiliate-agent,podcast-niche-analyst-agent,FALLBACK,0.84,capability_overlap,unidirectional
+podcast-affiliate-agent,podcast-video-editor-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 podcast-affiliate-agent,sponsorship-outreach-agent,FALLBACK,0.77,capability_overlap,unidirectional
 podcast-analytics-agent,podcast-hosting-setup-agent,FALLBACK,0.73,capability_overlap,unidirectional
 podcast-analytics-agent,podcast-niche-analyst-agent,FALLBACK,0.64,capability_overlap,unidirectional
 podcast-analytics-agent,podcast-video-editor-agent,FALLBACK,0.68,capability_overlap,unidirectional
+podcast-analytics-agent,sponsorship-outreach-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 podcast-audio-editor-agent,podcast-hosting-setup-agent,FALLBACK,0.68,capability_overlap,unidirectional
 podcast-audio-editor-agent,storyboard-artist-agent,DEPENDS_ON,0.68,,unidirectional
 podcast-audio-editor-agent,video-editor-agent,DEPENDS_ON,0.62,,unidirectional
@@ -320,17 +338,21 @@ podcast-monetization-strategy-agent,podcast-niche-analyst-agent,FALLBACK,0.73,ca
 podcast-monetization-strategy-agent,scriptwriter-agent,FEEDS,0.73,,unidirectional
 podcast-niche-analyst-agent,podcast-format-designer-agent,FEEDS,0.85,,unidirectional
 podcast-niche-analyst-agent,podcast-hosting-setup-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
+podcast-niche-analyst-agent,podcast-seo-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 podcast-niche-analyst-agent,podcast-video-editor-agent,FEEDS,0.68,,unidirectional
 podcast-niche-analyst-agent,scriptwriter-agent,FEEDS,0.64,,unidirectional
 podcast-niche-analyst-agent,sponsorship-outreach-agent,FALLBACK,0.71,capability_overlap,unidirectional
+podcast-promotion-agent,guest-relationship-manager-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 podcast-promotion-agent,podcast-analytics-agent,DEPENDS_ON,0.84,,unidirectional
 podcast-promotion-agent,podcast-analytics-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 podcast-promotion-agent,podcast-analytics-agent,MEASURED_BY,0.84,,unidirectional
 podcast-promotion-agent,reputation-management-agent,DEPENDS_ON,0.58,,unidirectional
 podcast-promotion-agent,sponsorship-outreach-agent,FALLBACK,0.64,capability_overlap,unidirectional
 podcast-promotion-agent,traffic-generation-agent,DEPENDS_ON,0.62,,unidirectional
+podcast-seo-agent,podcast-affiliate-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 podcast-seo-agent,tiktok-strategy-agent,DEPENDS_ON,0.64,,unidirectional
 podcast-seo-agent,yt-seo-optimizer-agent,DEPENDS_ON,0.64,,unidirectional
+podcast-video-editor-agent,episode-planner-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 podcast-video-editor-agent,sponsorship-outreach-agent,FALLBACK,0.64,capability_overlap,unidirectional
 podcast-video-editor-agent,video-editor-agent,DEPENDS_ON,0.73,,unidirectional
 productivity-and-burnout-prevention-agent,digital-asset-manager-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
@@ -350,10 +372,12 @@ seo-optimizer-agent,content-calendar-agent,FALLBACK,0.58,intra_cluster_fallback,
 seo-optimizer-agent,technical-seo-auditor-agent,DEPENDS_ON,0.79,,unidirectional
 seo-optimizer-agent,technical-seo-auditor-agent,VALIDATED_BY,0.79,,unidirectional
 social-selling-agent,tax-compliance-agent,DEPENDS_ON,0.58,,unidirectional
+sponsorship-outreach-agent,podcast-niche-analyst-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 sponsorship-outreach-agent,podcast-seo-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 sponsorship-outreach-agent,talent-manager-agent,DEPENDS_ON,0.68,,unidirectional
 storyboard-artist-agent,video-editor-agent,FALLBACK,0.62,capability_overlap,unidirectional
 storyboard-artist-agent,visual-asset-creator-agent,DEPENDS_ON,0.62,,unidirectional
+talent-manager-agent,brand-identity-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 task-agent-router,agent-registry-manager,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 task-agent-router,analytics-and-reporting-agent,DELEGATES,0.82,,unidirectional
 task-agent-router,audience-segmentation-agent,DELEGATES,0.57,routing_backstop,unidirectional
@@ -361,6 +385,7 @@ task-agent-router,audio-recording-agent,DELEGATES,0.57,routing_backstop,unidirec
 task-agent-router,campaign-execution-agent,DELEGATES,0.82,,unidirectional
 task-agent-router,campaign-execution-agent,ROUTES_TO,0.75,,unidirectional
 task-agent-router,community-engagement-agent,DELEGATES,0.57,routing_backstop,unidirectional
+task-agent-router,community-manager-agent,DELEGATES,0.82,,unidirectional
 task-agent-router,content-calendar-agent,ROUTES_TO,0.74,,unidirectional
 task-agent-router,content-calendar-orchestrator-agent,ROUTES_TO,0.8,,unidirectional
 task-agent-router,content-repurposing-agent,DELEGATES,0.82,,unidirectional
@@ -383,10 +408,13 @@ tax-compliance-agent,value-ladder-architect-agent,DEPENDS_ON,0.54,,unidirectiona
 technical-seo-auditor-agent,content-calendar-agent,FEEDBACK,0.71,,unidirectional
 technical-seo-auditor-agent,link-building-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 technical-seo-auditor-agent,technical-setup-agent,DEPENDS_ON,0.52,,unidirectional
+technical-seo-auditor-agent,yt-seo-optimizer-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 technical-setup-agent,user-feedback-analysis-agent,FALLBACK,0.58,capability_overlap,unidirectional
 technical-setup-agent,visual-asset-creator-agent,FEEDS,0.56,,unidirectional
 tiktok-strategy-agent,x-strategy-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 tiktok-strategy-agent,yt-seo-optimizer-agent,FEEDS,0.77,,unidirectional
+timeline-synthesis-investigator,local-ai-gemini-cli,FALLBACK,0.58,intra_cluster_fallback,unidirectional
+traffic-generation-agent,content-repurposing-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 traffic-generation-agent,scriptwriter-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 traffic-generation-agent,x-strategy-agent,FALLBACK,0.68,capability_overlap,unidirectional
 traffic-generation-agent,yt-content-strategy-agent,DEPENDS_ON,0.64,,unidirectional
@@ -398,5 +426,7 @@ x-strategy-agent,audience-growth-agent,FALLBACK,0.58,intra_cluster_fallback,unid
 x-strategy-agent,yt-content-strategy-agent,DEPENDS_ON,0.73,,unidirectional
 x-strategy-agent,yt-niche-strategy-agent,DEPENDS_ON,0.64,,unidirectional
 x-strategy-agent,yt-seo-optimizer-agent,FEEDS,0.64,,unidirectional
+yt-content-strategy-agent,contract-manager-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 yt-niche-strategy-agent,digital-product-factory-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional
 yt-niche-strategy-agent,yt-seo-optimizer-agent,FEEDS,0.64,,unidirectional
+yt-seo-optimizer-agent,link-building-agent,FALLBACK,0.58,intra_cluster_fallback,unidirectional

@@ -1,14 +1,24 @@
 #!/bin/bash
 set -euo pipefail
 
-TARGET_JSON="$HOME/.openclaw/voice_target.json"
-TARGET_TTY_FILE="$HOME/.openclaw/voice_target_tty"
-
+if [[ -f "$HOME/bin/voicebridge-paths.sh" ]]; then
+  # shellcheck disable=SC1090
+  source "$HOME/bin/voicebridge-paths.sh"
+fi
 press_enter=1
 quiet=0
+profile="${VOICEBRIDGE_PROFILE:-main}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --profile)
+      profile="${2:-}"
+      if [[ -z "$profile" ]]; then
+        echo "Missing value for --profile" >&2
+        exit 1
+      fi
+      shift 2
+      ;;
     --enter)
       press_enter=1
       shift
@@ -22,11 +32,28 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     *)
-      echo "Usage: voice-target-here [--enter|--no-enter] [--quiet]" >&2
+      echo "Usage: voice-target-here [--profile A|B|...] [--enter|--no-enter] [--quiet]" >&2
       exit 1
       ;;
   esac
 done
+
+if command -v voicebridge_use_profile >/dev/null 2>&1; then
+  voicebridge_use_profile "$profile"
+fi
+VOICEBRIDGE_STATE_DIR="${VOICEBRIDGE_STATE_DIR:-$HOME/.voicebridge}"
+mkdir -p "$VOICEBRIDGE_STATE_DIR"
+if command -v voicebridge_init_state >/dev/null 2>&1; then
+  voicebridge_init_state
+fi
+
+if command -v voicebridge_state_file >/dev/null 2>&1; then
+  TARGET_JSON="$(voicebridge_state_file "voice_target.json")"
+  TARGET_TTY_FILE="$(voicebridge_state_file "voice_target_tty")"
+else
+  TARGET_JSON="$VOICEBRIDGE_STATE_DIR/voice_target.json"
+  TARGET_TTY_FILE="$VOICEBRIDGE_STATE_DIR/voice_target_tty"
+fi
 
 tty_val="$(tty 2>/dev/null || true)"
 if [[ -z "$tty_val" || "$tty_val" == "not a tty" ]]; then
@@ -35,7 +62,6 @@ if [[ -z "$tty_val" || "$tty_val" == "not a tty" ]]; then
 fi
 
 target_tty="${tty_val#/dev/}"
-mkdir -p "$HOME/.openclaw"
 printf '%s\n' "$target_tty" > "$TARGET_TTY_FILE"
 
 TTY_VALUE="$target_tty" PRESS_ENTER="$press_enter" TARGET_JSON="$TARGET_JSON" python3 - <<'PY'
@@ -68,4 +94,4 @@ if [[ "$press_enter" -eq 0 ]]; then
   enter_label="OFF"
 fi
 
-echo "🎯 Transcription destination locked to terminal: $target_tty (Enter: $enter_label)"
+echo "🎯 [${VOICEBRIDGE_PROFILE}] Transcription destination locked to terminal: $target_tty (Enter: $enter_label)"

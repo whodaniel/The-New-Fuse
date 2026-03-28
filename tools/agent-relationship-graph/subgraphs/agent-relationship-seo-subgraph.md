@@ -34,4 +34,6 @@ graph TD
   task_agent_router [task-agent-router] --> technical_seo_auditor_agent [technical-seo-auditor-agent]
   technical_seo_auditor_agent [technical-seo-auditor-agent] --> content_calendar_agent [content-calendar-agent]
   technical_seo_auditor_agent [technical-seo-auditor-agent] --> link_building_agent [link-building-agent]
+  technical_seo_auditor_agent [technical-seo-auditor-agent] --> yt_seo_optimizer_agent [yt-seo-optimizer-agent]
+  yt_seo_optimizer_agent [yt-seo-optimizer-agent] --> link_building_agent [link-building-agent]
 ```

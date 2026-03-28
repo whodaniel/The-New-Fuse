@@ -9,13 +9,124 @@ import re
 import subprocess
 import sys
 import time
+import glob
 
-STREAM_FILE = os.path.expanduser("~/.openclaw/voice_stream.txt")
-TARGET_JSON_FILE = os.path.expanduser("~/.openclaw/voice_target.json")
-LEGACY_TTY_FILE = os.path.expanduser("~/.openclaw/voice_target_tty")
+def normalize_profile(raw: str | None) -> str:
+    profile = (raw or "main").strip().lower()
+    profile = re.sub(r"[^a-z0-9_-]+", "_", profile).strip("_")
+    return profile or "main"
+
+
+def profile_from_argv(default: str) -> str:
+    args = sys.argv[1:]
+    i = 0
+    while i < len(args):
+        token = args[i]
+        if token == "--profile":
+            if i + 1 < len(args):
+                return args[i + 1]
+            return default
+        if token.startswith("--profile="):
+            return token.split("=", 1)[1]
+        i += 1
+    return default
+
+
+def is_default_profile(profile: str) -> bool:
+    return profile in {"main", "default", "primary"}
+
+
+def profile_suffix(profile: str) -> str:
+    return "" if is_default_profile(profile) else f"_{profile}"
+
+
+VOICEBRIDGE_PROFILE = normalize_profile(
+    profile_from_argv(os.environ.get("VOICEBRIDGE_PROFILE", "main"))
+)
+os.environ["VOICEBRIDGE_PROFILE"] = VOICEBRIDGE_PROFILE
+
+
+def state_file_name(name: str) -> str:
+    suffix = profile_suffix(VOICEBRIDGE_PROFILE)
+    if not suffix:
+        return name
+    if "." in name:
+        stem, ext = name.rsplit(".", 1)
+        return f"{stem}{suffix}.{ext}"
+    return f"{name}{suffix}"
+
+
+def resolve_state_dir() -> str:
+    explicit = os.environ.get("VOICEBRIDGE_STATE_DIR", "").strip()
+    if explicit:
+        return os.path.expanduser(explicit)
+
+    env_root = os.environ.get("VOICEBRIDGE_PROJECT_ROOT", "").strip() or os.environ.get("THE_NEW_FUSE_HOME", "").strip()
+    if env_root:
+        root = os.path.expanduser(env_root)
+        if os.path.isdir(root):
+            return os.path.join(root, ".voicebridge")
+
+    cur = os.getcwd()
+    while cur and cur != "/":
+        if os.path.basename(cur) == "The-New-Fuse" and os.path.isdir(os.path.join(cur, "apps")):
+            return os.path.join(cur, ".voicebridge")
+        parent = os.path.dirname(cur)
+        if parent == cur:
+            break
+        cur = parent
+
+    for candidate in (
+        os.path.expanduser("~/The-New-Fuse"),
+        os.path.expanduser("~/Desktop/The-New-Fuse"),
+        os.path.expanduser("~/Projects/The-New-Fuse"),
+    ):
+        if os.path.isdir(candidate):
+            return os.path.join(candidate, ".voicebridge")
+
+    for pattern in (
+        "~/Desktop/*/The-New-Fuse",
+        "~/Projects/*/The-New-Fuse",
+        "~/*/The-New-Fuse",
+    ):
+        for candidate in glob.glob(os.path.expanduser(pattern)):
+            if os.path.isdir(os.path.join(candidate, "apps")):
+                return os.path.join(candidate, ".voicebridge")
+
+    return os.path.expanduser("~/.local/share/The-New-Fuse/.voicebridge")
+
+
+STATE_DIR = resolve_state_dir()
+LEGACY_STATE_DIR = os.path.expanduser("~/.openclaw")
+os.makedirs(STATE_DIR, exist_ok=True)
+for name in (
+    "voice_stream.txt",
+    "voice_target.json",
+    "voice_target_tty",
+    "voice_mic_paused",
+    "voice_response_audio_enabled",
+    "voice_bridge_cloud.env",
+):
+    src = os.path.join(LEGACY_STATE_DIR, name)
+    dst = os.path.join(STATE_DIR, state_file_name(name))
+    if os.path.exists(src) and not os.path.exists(dst):
+        try:
+            subprocess.run(["cp", src, dst], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except Exception:
+            pass
+
+STREAM_FILE = os.path.join(STATE_DIR, state_file_name("voice_stream.txt"))
+TARGET_JSON_FILE = os.path.join(STATE_DIR, state_file_name("voice_target.json"))
+LEGACY_TTY_FILE = os.path.join(STATE_DIR, state_file_name("voice_target_tty"))
 POLL_INTERVAL_SECONDS = 0.15
 IDLE_FLUSH_SECONDS = float(os.environ.get("VOICE_IDLE_FLUSH_SECONDS", "1.4"))
 MAX_FLUSH_SECONDS = float(os.environ.get("VOICE_MAX_FLUSH_SECONDS", "6.0"))
+TERMINAL_PRE_ESCAPE = os.environ.get("VOICE_TERMINAL_PRE_ESCAPE", "1").strip().lower() not in {
+    "0",
+    "false",
+    "no",
+    "off",
+}
 
 
 def applescript_quote(text: str) -> str:
@@ -43,6 +154,24 @@ def run_applescript(script: str) -> tuple[int, str, str]:
     return proc.returncode, proc.stdout.strip(), proc.stderr.strip()
 
 
+def frontmost_terminal_tty() -> str:
+    script = """
+    tell application "Terminal"
+        try
+            return tty of selected tab of front window
+        end try
+    end tell
+    return ""
+    """
+    rc, out, _ = run_applescript(script)
+    if rc != 0:
+        return ""
+    tty = out.strip()
+    if tty.startswith("/dev/"):
+        tty = tty[len("/dev/") :]
+    return tty
+
+
 def ensure_stream_file() -> None:
     if not os.path.exists(STREAM_FILE):
         os.makedirs(os.path.dirname(STREAM_FILE), exist_ok=True)
@@ -51,7 +180,12 @@ def ensure_stream_file() -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Watch ~/.openclaw/voice_stream.txt and inject into locked destination."
+        description="Watch voice stream file and inject into locked destination."
+    )
+    parser.add_argument(
+        "--profile",
+        default=VOICEBRIDGE_PROFILE,
+        help="Voice bridge profile name (default: main).",
     )
     parser.add_argument(
         "--target-tty",
@@ -59,6 +193,48 @@ def parse_args() -> argparse.Namespace:
         help="Startup fallback tty (e.g. ttys009).",
     )
     return parser.parse_args()
+
+
+def persist_anchor_tty_if_missing(tty: str) -> None:
+    if not tty:
+        return
+
+    normalized_tty = os.path.basename(tty.strip())
+    if not normalized_tty:
+        return
+
+    try:
+        if not os.path.exists(TARGET_JSON_FILE):
+            return
+        with open(TARGET_JSON_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        kind = str(data.get("kind", ""))
+        app_name = str(data.get("app", ""))
+        bundle_id = str(data.get("bundle_id", ""))
+        if kind not in {"point", "app"}:
+            return
+        if not is_terminal_like(app_name, bundle_id):
+            return
+
+        existing = os.path.basename(str(data.get("tty", "")).strip()) if data.get("tty") else ""
+        if existing:
+            return
+
+        data["tty"] = normalized_tty
+        data["updated_at"] = int(time.time())
+        with open(TARGET_JSON_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+
+        try:
+            with open(LEGACY_TTY_FILE, "w", encoding="utf-8") as f:
+                f.write(normalized_tty + "\n")
+        except Exception:
+            pass
+
+        print(f"🔒 Anchor enriched with tty: {normalized_tty}")
+    except Exception:
+        return
 
 
 def normalize_terminal_target(tty: str | None, press_enter: bool = True) -> dict | None:
@@ -88,6 +264,7 @@ def load_target(startup_tty: str | None) -> dict | None:
                     "kind": "app",
                     "app": str(data.get("app")),
                     "window": str(data.get("window", "")),
+                    "tty": os.path.basename(str(data.get("tty", ""))).strip() if data.get("tty") else "",
                     "press_enter": bool(data.get("press_enter", False)),
                 }
             if kind == "point" and data.get("x") is not None and data.get("y") is not None:
@@ -103,6 +280,7 @@ def load_target(startup_tty: str | None) -> dict | None:
                         "y": y,
                         "app": str(data.get("app", "")),
                         "bundle_id": str(data.get("bundle_id", "")),
+                        "tty": os.path.basename(str(data.get("tty", ""))).strip() if data.get("tty") else "",
                         "press_enter": bool(data.get("press_enter", False)),
                     }
     except Exception:
@@ -129,22 +307,43 @@ def target_label(target: dict | None) -> str:
         return f"terminal:{target.get('tty')} (enter {enter})"
     if target.get("kind") == "app":
         enter = "on" if target.get("press_enter", False) else "off"
+        tty = target.get("tty", "")
         window = target.get("window", "")
+        if window and tty:
+            return f"app:{target.get('app')} window:{window} tty:{tty} (enter {enter})"
         if window:
             return f"app:{target.get('app')} window:{window} (enter {enter})"
+        if tty:
+            return f"app:{target.get('app')} tty:{tty} (enter {enter})"
         return f"app:{target.get('app')} (enter {enter})"
     if target.get("kind") == "point":
         enter = "on" if target.get("press_enter", False) else "off"
         app = target.get("app", "")
+        tty = target.get("tty", "")
+        if app and tty:
+            return f"point:{target.get('x')},{target.get('y')} app:{app} tty:{tty} (enter {enter})"
         if app:
             return f"point:{target.get('x')},{target.get('y')} app:{app} (enter {enter})"
+        if tty:
+            return f"point:{target.get('x')},{target.get('y')} tty:{tty} (enter {enter})"
         return f"point:{target.get('x')},{target.get('y')} (enter {enter})"
     return "unknown"
 
 
+def is_terminal_like(app_name: str, bundle_id: str) -> bool:
+    app = (app_name or "").strip().lower()
+    bundle = (bundle_id or "").strip().lower()
+    if "terminal" in app or "iterm" in app:
+        return True
+    if "com.apple.terminal" in bundle or "iterm" in bundle:
+        return True
+    return False
+
+
 def inject_into_terminal(text: str, tty: str, press_enter: bool) -> tuple[int, str]:
     q_text = applescript_quote(text)
-    enter_stmt = "key code 36" if press_enter else ""
+    enter_stmt = "delay 0.06\nkey code 36" if press_enter else ""
+    pre_escape_stmt = "key code 53\ndelay 0.02" if TERMINAL_PRE_ESCAPE else ""
     script = f"""
     tell application "System Events"
         set priorApp to ""
@@ -154,12 +353,18 @@ def inject_into_terminal(text: str, tty: str, press_enter: bool) -> tuple[int, s
     end tell
 
     tell application "Terminal"
-        set targetTTY to "{tty}"
+        set targetTTYRaw to "{tty}"
+        if targetTTYRaw starts with "/dev/" then
+            set targetTTYDev to targetTTYRaw
+        else
+            set targetTTYDev to "/dev/" & targetTTYRaw
+        end if
         set foundTab to missing value
         set foundWindow to missing value
         repeat with w in windows
             repeat with t in tabs of w
-                if tty of t is targetTTY then
+                set tabTTY to tty of t
+                if tabTTY is targetTTYRaw or tabTTY is targetTTYDev then
                     set foundTab to t
                     set foundWindow to w
                     exit repeat
@@ -172,14 +377,15 @@ def inject_into_terminal(text: str, tty: str, press_enter: bool) -> tuple[int, s
             set selected of foundTab to true
             set index of foundWindow to 1
         else
-            activate
+            error "TTY_NOT_FOUND"
         end if
         activate
     end tell
 
-    delay 0.03
     set the clipboard to {q_text}
     tell application "System Events"
+        delay 0.03
+        {pre_escape_stmt}
         keystroke "v" using command down
         {enter_stmt}
     end tell
@@ -200,7 +406,9 @@ def inject_into_app(text: str, app_name: str, window_name: str, press_enter: boo
     q_text = applescript_quote(text)
     q_app = applescript_quote(app_name)
     q_window = applescript_quote(window_name)
-    enter_stmt = "key code 36" if press_enter else ""
+    enter_stmt = ""
+    if press_enter:
+        enter_stmt = "key code 36\ndelay 0.03\nkey code 76"
 
     script = f"""
     tell application "System Events"
@@ -259,7 +467,9 @@ def inject_into_point(
     q_text = applescript_quote(text)
     q_app = applescript_quote(app_name)
     q_bundle = applescript_quote(bundle_id)
-    enter_stmt = "key code 36" if press_enter else ""
+    enter_stmt = ""
+    if press_enter:
+        enter_stmt = "key code 36\ndelay 0.03\nkey code 76"
 
     script = f"""
     tell application "System Events"
@@ -337,37 +547,82 @@ def inject_text(text: str, target: dict | None) -> None:
 
     kind = target.get("kind")
     if kind == "terminal":
+        tty = str(target.get("tty", "")).strip()
+        if not tty:
+            print("❌ Terminal target missing tty. Re-anchor with voice-target-here or Cmd+Option+Click.")
+            return
         rc, msg = inject_into_terminal(
             single_line,
-            tty=str(target.get("tty", "")),
+            tty=tty,
             press_enter=bool(target.get("press_enter", True)),
         )
         if rc != 0:
             print(f"❌ Terminal injection failed: {msg}")
+        else:
+            print("✅ Terminal injection succeeded.")
         return
 
     if kind == "app":
+        app_name = str(target.get("app", ""))
+        if is_terminal_like(app_name, ""):
+            tty = str(target.get("tty", "")).strip()
+            if not tty:
+                print("❌ Terminal app target missing tty. Re-anchor with voice-target-here or Cmd+Option+Click.")
+                return
+            rc, msg = inject_into_terminal(
+                single_line,
+                tty=tty,
+                press_enter=True,
+            )
+            if rc != 0:
+                print(f"❌ Terminal(app) injection failed: {msg}")
+            else:
+                print(f"✅ Terminal(app) injection succeeded via tty {tty}.")
+                persist_anchor_tty_if_missing(tty)
+            return
         rc, msg = inject_into_app(
             single_line,
-            app_name=str(target.get("app", "")),
+            app_name=app_name,
             window_name=str(target.get("window", "")),
             press_enter=bool(target.get("press_enter", False)),
         )
         if rc != 0:
             print(f"❌ App injection failed: {msg}")
+        else:
+            print("✅ App injection succeeded.")
         return
 
     if kind == "point":
+        app_name = str(target.get("app", ""))
+        bundle_id = str(target.get("bundle_id", ""))
+        if is_terminal_like(app_name, bundle_id):
+            tty = str(target.get("tty", "")).strip()
+            if not tty:
+                print("❌ Terminal point target missing tty. Re-anchor with voice-target-here or Cmd+Option+Click.")
+                return
+            rc, msg = inject_into_terminal(
+                single_line,
+                tty=tty,
+                press_enter=True,
+            )
+            if rc != 0:
+                print(f"❌ Terminal(point) injection failed: {msg}")
+            else:
+                print(f"✅ Terminal(point) injection succeeded via tty {tty}.")
+                persist_anchor_tty_if_missing(tty)
+            return
         rc, msg = inject_into_point(
             single_line,
             x=int(target.get("x", 0)),
             y=int(target.get("y", 0)),
             press_enter=bool(target.get("press_enter", False)),
-            app_name=str(target.get("app", "")),
-            bundle_id=str(target.get("bundle_id", "")),
+            app_name=app_name,
+            bundle_id=bundle_id,
         )
         if rc != 0:
             print(f"❌ Point injection failed: {msg}")
+        else:
+            print("✅ Point injection succeeded.")
         return
 
     print(f"❌ Unknown target kind: {kind}")
@@ -375,15 +630,21 @@ def inject_text(text: str, target: dict | None) -> None:
 
 def main() -> None:
     args = parse_args()
+    arg_profile = normalize_profile(args.profile)
+    if arg_profile != VOICEBRIDGE_PROFILE:
+        print(
+            f"⚠️ Profile mismatch resolved to [{VOICEBRIDGE_PROFILE}] from argv/environment; "
+            f"requested [{arg_profile}]",
+        )
     startup_tty = args.target_tty.strip() or detect_current_tty()
     if startup_tty:
         startup_tty = os.path.basename(startup_tty)
 
     ensure_stream_file()
-    print(f"🔍 Monitoring {STREAM_FILE}...")
+    print(f"🔍 [{VOICEBRIDGE_PROFILE}] Monitoring {STREAM_FILE}...")
 
     active_target = load_target(startup_tty)
-    print(f"🎯 Active target: {target_label(active_target)}")
+    print(f"🎯 [{VOICEBRIDGE_PROFILE}] Active target: {target_label(active_target)}")
 
     pending_chunks: list[str] = []
     first_chunk_at: float | None = None
@@ -414,7 +675,7 @@ def main() -> None:
                 if latest_target != active_target:
                     flush_pending("retarget")
                     active_target = latest_target
-                    print(f"🎯 Retargeted: {target_label(active_target)}")
+                    print(f"🎯 [{VOICEBRIDGE_PROFILE}] Retargeted: {target_label(active_target)}")
 
                 line = file_handle.readline()
                 if not line:

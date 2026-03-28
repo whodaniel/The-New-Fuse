@@ -126,6 +126,8 @@ Notes:
 - The watcher starts with `voice`, but only speaks when the toggle is ON.
 - Speech uses macOS `say` and sets `/tmp/ai_is_speaking` during playback for
   echo suppression compatibility with the existing voice bridge flow.
+- Source selection defaults to `target` mode so response audio stays tied to the
+  same explicit destination lock and avoids cross-tab drift.
 
 Optional tuning env vars:
 
@@ -133,4 +135,6 @@ Optional tuning env vars:
 export VOICE_RESPONSE_AUDIO_VOICE='Daniel'
 export VOICE_RESPONSE_AUDIO_POLL_SECONDS='0.9'
 export VOICE_RESPONSE_AUDIO_MAX_SPEAK_CHARS='420'
+export VOICE_RESPONSE_AUDIO_SOURCE_MODE='target'   # target|frontmost|auto|hybrid
+export VOICE_NO_FOCUS_STEAL='1'                    # 1=skip injection when target app not frontmost
 ```

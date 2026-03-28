@@ -1,0 +1,31 @@
+{
+  "targetQueue": "tnf:master:tasks:planning",
+  "queueItem": {
+    "id": "tenant-hourly-attribution-audit-1774543808825-nqx1jn",
+    "title": "Hourly Attribution Audit",
+    "description": "Run the hourly attribution audit. Check active campaign and funnel attribution signals, identify missing tags or broken reporting paths, and emit concise remediation findings with evidence.",
+    "priority": "medium",
+    "status": "queued",
+    "votes": {
+      "up": 0,
+      "down": 0
+    },
+    "source": "chronological-dispatch",
+    "processId": "tenant-hourly-attribution-audit",
+    "kind": "agent-turn",
+    "createdAt": "2026-03-26T16:50:08.825Z",
+    "itinerary": {
+      "lane": "directive",
+      "horizon": "short_term",
+      "coordinationMode": "brokered",
+      "signalSources": ["redis", "master-clock"],
+      "clockSource": "master-clock"
+    },
+    "metadata": {
+      "scheduledProcessId": "tenant-hourly-attribution-audit",
+      "dispatchSource": "master-clock",
+      "importedFromLegacyCron": true
+    }
+  },
+  "createdAt": "2026-03-26T16:50:08.828Z"
+}

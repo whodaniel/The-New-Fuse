@@ -40,6 +40,8 @@ const voiceTestHtml = `<!doctype html>
     <button id="listenBtn">Start Listening</button>
     <button id="stopBtn">Stop</button>
     <button id="sendBtn">Send To Pipeline</button>
+    <button id="voiceBtn">Voice Transcript</button>
+    <button id="voiceStopBtn">Stop Voice</button>
     <span id="status" class="muted">idle</span>
   </div>
 
@@ -62,13 +64,25 @@ const voiceTestHtml = `<!doctype html>
     const listenBtn = document.getElementById("listenBtn");
     const stopBtn = document.getElementById("stopBtn");
     const sendBtn = document.getElementById("sendBtn");
+    const voiceBtn = document.getElementById("voiceBtn");
+    const voiceStopBtn = document.getElementById("voiceStopBtn");
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
+    let finalChunks = [];
+    let lastFinalChunk = "";
+    let speaking = false;
 
     const setStatus = (text) => { statusEl.textContent = text; };
     const print = (value) => { outputEl.textContent = JSON.stringify(value, null, 2); };
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    const normalizeTranscript = (input) =>
+      input.replace(/\\s+/g, " ").trim();
+
+    const renderTranscript = (interimText = "") => {
+      const composed = [...finalChunks, interimText].join(" ");
+      transcriptEl.value = normalizeTranscript(composed);
+    };
 
     if (!SpeechRecognition) {
       setStatus("SpeechRecognition API unavailable. Use Chrome/Edge.");
@@ -78,20 +92,40 @@ const voiceTestHtml = `<!doctype html>
 
     listenBtn.addEventListener("click", () => {
       if (!SpeechRecognition) return;
+      if (recognition) {
+        try {
+          recognition.stop();
+        } catch (error) {
+          // ignore stale recognizer stop errors
+        }
+      }
+      finalChunks = [];
+      lastFinalChunk = "";
+      renderTranscript();
       recognition = new SpeechRecognition();
       recognition.lang = "en-US";
-      recognition.continuous = false;
+      recognition.continuous = true;
       recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
 
       recognition.onstart = () => setStatus("listening...");
       recognition.onerror = (event) => setStatus("error: " + event.error);
       recognition.onend = () => setStatus("idle");
       recognition.onresult = (event) => {
-        let finalText = "";
-        for (let i = 0; i < event.results.length; i += 1) {
-          finalText += event.results[i][0].transcript + " ";
+        let interimText = "";
+        for (let i = event.resultIndex; i < event.results.length; i += 1) {
+          const chunk = normalizeTranscript(event.results[i][0].transcript || "");
+          if (!chunk) continue;
+          if (event.results[i].isFinal) {
+            if (chunk !== lastFinalChunk) {
+              finalChunks.push(chunk);
+              lastFinalChunk = chunk;
+            }
+            continue;
+          }
+          interimText += chunk + " ";
         }
-        transcriptEl.value = finalText.trim();
+        renderTranscript(interimText);
       };
       recognition.start();
     });
@@ -100,6 +134,41 @@ const voiceTestHtml = `<!doctype html>
       if (recognition) {
         recognition.stop();
       }
+    });
+
+    voiceBtn.addEventListener("click", () => {
+      const text = normalizeTranscript(transcriptEl.value);
+      if (!text) {
+        alert("Transcript is empty.");
+        return;
+      }
+      if (!("speechSynthesis" in window) || typeof window.SpeechSynthesisUtterance !== "function") {
+        alert("Speech synthesis is not supported in this browser.");
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utterance = new window.SpeechSynthesisUtterance(text);
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      speaking = true;
+      setStatus("speaking...");
+      utterance.onend = () => {
+        speaking = false;
+        setStatus("idle");
+      };
+      utterance.onerror = () => {
+        speaking = false;
+        setStatus("voice error");
+      };
+      window.speechSynthesis.speak(utterance);
+    });
+
+    voiceStopBtn.addEventListener("click", () => {
+      if (!("speechSynthesis" in window)) return;
+      if (!speaking && !window.speechSynthesis.speaking) return;
+      window.speechSynthesis.cancel();
+      speaking = false;
+      setStatus("idle");
     });
 
     sendBtn.addEventListener("click", async () => {

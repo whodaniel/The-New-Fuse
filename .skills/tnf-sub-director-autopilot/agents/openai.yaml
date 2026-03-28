@@ -1,0 +1,3 @@
+interface:
+  display_name: "Tnf Sub Director Autopilot"
+  short_description: "Operate Local Sub-Director with deterministic runtime loops"

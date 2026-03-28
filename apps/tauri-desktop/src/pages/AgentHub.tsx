@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { FederatedAgent, relaySwarmService } from '../services/RelaySwarmService';
 import { useAgentStore } from '../stores/agentStore';
 import type { Agent } from '../types';
 
@@ -12,9 +13,18 @@ const AgentHub: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [filter, setFilter] = useState<'all' | 'active' | 'idle' | 'error'>('all');
+  const [federatedAgents, setFederatedAgents] = useState<FederatedAgent[]>([]);
 
   useEffect(() => {
     fetchAgents();
+
+    // Connect to Federated Swarm
+    relaySwarmService.connect();
+    const unsubscribe = relaySwarmService.subscribe((list) => {
+      setFederatedAgents(list);
+    });
+
+    return () => unsubscribe();
   }, [fetchAgents]);
 
   const filteredAgents = agents.filter((agent) => {
@@ -104,7 +114,45 @@ const AgentHub: React.FC = () => {
         </div>
       </div>
 
-      {/* Agent Grid */}
+      {/* Federated Swarm Section */}
+      {federatedAgents.length > 0 && (
+        <section className="federated-swarm">
+          <h2 className="section-title">📡 Federated Swarm (Live)</h2>
+          <div className="agent-grid">
+            {federatedAgents.map((agent) => (
+              <div key={agent.id} className="agent-card federated">
+                <div className="agent-header">
+                  <span className="agent-type-icon">🌐</span>
+                  <div
+                    className="agent-status-indicator online"
+                    style={{ backgroundColor: '#10b981' }}
+                  />
+                </div>
+                <h3 className="agent-name">{agent.name}</h3>
+                <div className="agent-meta">
+                  <span className="agent-type">{agent.platform}</span>
+                  <span className="agent-role">{agent.role}</span>
+                </div>
+                <div className="agent-capabilities">
+                  {agent.capabilities.map((cap) => (
+                    <span key={cap} className="capability-tag">
+                      {cap}
+                    </span>
+                  ))}
+                </div>
+                <div className="agent-footer">
+                  <span className="last-active">
+                    Seen: {new Date(agent.lastSeen).toLocaleTimeString()}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Local Agent Grid */}
+      <h2 className="section-title">🏠 Local Agents</h2>
       {loading ? (
         <div className="loading-state">Loading agents...</div>
       ) : (
@@ -498,6 +546,29 @@ const AgentHub: React.FC = () => {
           text-align: center;
           padding: 60px;
           color: var(--tnf-text-muted);
+        }
+
+        .section-title {
+          font-family: 'Outfit', sans-serif;
+          font-size: 18px;
+          font-weight: 600;
+          margin: 32px 0 16px;
+          color: #f8fafc;
+          opacity: 0.9;
+          letter-spacing: 0.5px;
+        }
+
+        .agent-card.federated {
+          border-left: 3px solid var(--tnf-primary);
+          background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.7));
+        }
+
+        .agent-role {
+          background: rgba(255, 255, 255, 0.05);
+          padding: 2px 8px;
+          border-radius: 4px;
+          font-size: 11px;
+          text-transform: uppercase;
         }
       `}</style>
     </div>

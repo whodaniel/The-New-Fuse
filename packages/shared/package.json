@@ -25,7 +25,8 @@
   "dependencies": {
     "@the-new-fuse/types": "workspace:*",
     "react": "^19.2.3",
-    "react-hot-toast": "^2.4.1"
+    "react-hot-toast": "^2.4.1",
+    "@the-new-fuse/infrastructure": "workspace:*"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

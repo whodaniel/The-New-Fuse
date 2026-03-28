@@ -386,22 +386,26 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   },
   { name: 'Blog', path: '/blog', description: 'Marketing blog page' },
   { name: 'Brand', path: '/brand', description: 'Brand identity page' },
-  { name: 'FAQ Alias', path: '/faq', description: 'Zo-compatible FAQ alias to TNF docs' },
+  { name: 'FAQ Alias', path: '/faq', description: 'Universal compatibility FAQ alias to TNF docs' },
   {
     name: 'Comparisons Alias',
     path: '/comparisons',
-    description: 'Zo-compatible comparisons alias to TNF product map',
+    description: 'Universal compatibility comparisons alias to TNF product map',
   },
-  { name: 'Careers Alias', path: '/careers', description: 'Zo-compatible careers alias to TNF community' },
+  {
+    name: 'Careers Alias',
+    path: '/careers',
+    description: 'Universal compatibility careers alias to TNF community',
+  },
   {
     name: 'Ambassador Alias',
     path: '/ambassador',
-    description: 'Zo-compatible ambassador alias to TNF community',
+    description: 'Universal compatibility ambassador alias to TNF community',
   },
   {
     name: 'Testimonials Alias',
     path: '/testimonials',
-    description: 'Zo-compatible testimonials alias to TNF landing testimonials section',
+    description: 'Universal compatibility testimonials alias to TNF landing testimonials section',
   },
   { name: 'Command Center', path: '/command-center', description: 'TNF command center' },
   { name: 'Community', path: '/community', description: 'Community hub page' },
@@ -436,24 +440,28 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   {
     name: 'Tools Alias',
     path: '/tools',
-    description: 'Zo-compatible tools alias mapped to TNF resources workspace',
+    description: 'Universal compatibility tools alias mapped to TNF resources workspace',
   },
   {
     name: 'Integrations Alias',
     path: '/integrations',
-    description: 'Zo-compatible integrations alias mapped to TNF resources workspace',
+    description: 'Universal compatibility integrations alias mapped to TNF resources workspace',
   },
   {
     name: 'Channels Alias',
     path: '/channels',
-    description: 'Zo-compatible channels alias mapped to TNF chat workspace',
+    description: 'Universal compatibility channels alias mapped to TNF chat workspace',
   },
   {
     name: 'Models Alias',
     path: '/models',
-    description: 'Zo-compatible models alias mapped to TNF API/model settings',
+    description: 'Universal compatibility models alias mapped to TNF API/model settings',
   },
-  { name: 'Skills Alias', path: '/skills', description: 'Zo-compatible skills surface alias' },
+  {
+    name: 'Skills Alias',
+    path: '/skills',
+    description: 'Universal compatibility skills surface alias',
+  },
   {
     name: 'Datasets Workbench',
     path: '/datasets',
@@ -462,9 +470,9 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   {
     name: 'Automations Alias',
     path: '/automations',
-    description: 'Zo-compatible automation surface alias',
+    description: 'Universal compatibility automation surface alias',
   },
-  { name: 'Chats Alias', path: '/chats', description: 'Zo-compatible chats alias route' },
+  { name: 'Chats Alias', path: '/chats', description: 'Universal compatibility chats alias route' },
   {
     name: 'Space Alias',
     path: '/space',
@@ -478,23 +486,27 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   {
     name: 'Terminal Alias',
     path: '/terminal',
-    description: 'Zo-compatible terminal alias route',
+    description: 'Universal compatibility terminal alias route',
   },
-  { name: 'Billing Alias', path: '/billing', description: 'Zo-compatible billing alias route' },
+  {
+    name: 'Billing Alias',
+    path: '/billing',
+    description: 'Universal compatibility billing alias route',
+  },
   {
     name: 'Bookmarks',
     path: '/bookmarks',
     description: 'Workspace-aware bookmark management with database-backed workspace APIs',
   },
   {
-    name: 'Zo Parity Dashboard',
-    path: '/zo-parity',
-    description: 'Competitive parity tracker for Zo feature coverage',
+    name: 'Platform Parity Dashboard',
+    path: '/platform-parity',
+    description: 'Competitive parity tracker for platform feature coverage',
   },
   {
     name: 'System Alias',
     path: '/system',
-    description: 'Zo-compatible system health alias route',
+    description: 'Universal compatibility system health alias route',
   },
   { name: 'Support', path: '/support', description: 'Support page' },
   {

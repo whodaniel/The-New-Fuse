@@ -24,7 +24,8 @@
     "class-validator": "^0.14.3",
     "react": "^19.2.3",
     "reflect-metadata": "^0.2.2",
-    "zod": "^4.2.0"
+    "zod": "^4.2.0",
+    "@the-new-fuse/infrastructure": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

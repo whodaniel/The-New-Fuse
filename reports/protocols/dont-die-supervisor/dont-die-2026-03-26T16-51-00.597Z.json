@@ -1,0 +1,82 @@
+{
+  "spec": "tnf/dont-die-supervisor-report/0.1",
+  "generatedAt": "2026-03-26T16:51:00.597Z",
+  "repoRoot": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+  "options": {
+    "actorId": "tnf-dont-die-supervisor",
+    "maxRuns": 25,
+    "includeWarnings": false,
+    "processIds": [],
+    "dryRun": false,
+    "allowLocalDispatchFallback": true,
+    "lockSweep": true,
+    "now": null
+  },
+  "bridgeContract": {
+    "sourceSkills": ["tnf-stack-self-improvement-loop", "tnf-skill-bridging"],
+    "sourceArtifacts": [
+      "reports/protocols/master-clock-sync/master-clock-sync-latest.json",
+      "data/protocols/cron-jobs.control-plane-state.json"
+    ],
+    "handoffSchema": {
+      "processId": "string",
+      "severity": "critical|warning",
+      "targetTaskCommand": "string|null",
+      "lockStatus": "none|active|stale|invalid"
+    },
+    "validation": [
+      "Before/after escalation counters are captured for same repo state window",
+      "Each attempted remediation emits run result from run-chronological-process",
+      "Missing run-now commands are surfaced in unresolved list"
+    ],
+    "failureHandling": [
+      "Stale locks are swept before retry when configured",
+      "Failed process executions remain in report with error payload",
+      "Command exits non-zero when critical escalations remain unless --warn-only is set"
+    ]
+  },
+  "before": {
+    "ok": true,
+    "summary": {
+      "totalProcesses": 19,
+      "withCatalog": 19,
+      "missingCatalog": 0,
+      "enabledProcesses": 17,
+      "manualProcesses": 1,
+      "escalations": {
+        "total": 1,
+        "warning": 1,
+        "critical": 0
+      }
+    }
+  },
+  "remediation": {
+    "considered": 0,
+    "attemptedCap": 25,
+    "skippedDueToCap": 0,
+    "attempts": [],
+    "unresolved": [],
+    "skipped": [],
+    "totals": {
+      "attempted": 0,
+      "successful": 0,
+      "failed": 0,
+      "locksSwept": 0
+    }
+  },
+  "after": {
+    "ok": true,
+    "summary": {
+      "totalProcesses": 19,
+      "withCatalog": 19,
+      "missingCatalog": 0,
+      "enabledProcesses": 17,
+      "manualProcesses": 1,
+      "escalations": {
+        "total": 1,
+        "warning": 1,
+        "critical": 0
+      }
+    }
+  }
+}

@@ -14,27 +14,30 @@ UNWIND [
   {id:"community-engagement-agent",kind:"sub",cluster:"social"},
   {id:"community-manager-agent",kind:"primary",cluster:"social"},
   {id:"content-repurposing-agent",kind:"primary",cluster:"social"},
-  {id:"facebook-strategy-agent",kind:"primary",cluster:"social"},
-  {id:"instagram-strategy-agent",kind:"primary",cluster:"social"},
+  {id:"facebook-strategy-agent",kind:"sub",cluster:"social"},
+  {id:"instagram-strategy-agent",kind:"sub",cluster:"social"},
   {id:"scout-llm-opportunities",kind:"sub",cluster:"social"},
-  {id:"scriptwriter-agent",kind:"sub",cluster:"social"},
+  {id:"scriptwriter-agent",kind:"primary",cluster:"social"},
   {id:"social-selling-agent",kind:"sub",cluster:"social"},
   {id:"tiktok-strategy-agent",kind:"primary",cluster:"social"},
-  {id:"traffic-generation-agent",kind:"sub",cluster:"social"},
+  {id:"traffic-generation-agent",kind:"primary",cluster:"social"},
   {id:"x-strategy-agent",kind:"primary",cluster:"social"}
 ] AS row
 MERGE (a:Agent {id: row.id})
 SET a.kind = row.kind,
     a.cluster = row.cluster,
-    a.updatedAt = datetime('2026-03-26T06:38:20Z');
+    a.updatedAt = datetime('2026-03-26T09:23:34Z');
 
 UNWIND [
+  {s:"audience-growth-agent",t:"community-engagement-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"audience-growth-agent",t:"community-manager-agent",rel:"FALLBACK",strength:0.73,risk:"capability_overlap"},
   {s:"audience-growth-agent",t:"facebook-strategy-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
+  {s:"community-engagement-agent",t:"algorithm-adaptation-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"community-engagement-agent",t:"community-manager-agent",rel:"FALLBACK",strength:0.73,risk:"capability_overlap"},
   {s:"community-engagement-agent",t:"instagram-strategy-agent",rel:"FALLBACK",strength:0.68,risk:"capability_overlap"},
   {s:"community-manager-agent",t:"social-selling-agent",rel:"FALLBACK",strength:0.68,risk:"capability_overlap"},
   {s:"community-manager-agent",t:"traffic-generation-agent",rel:"FALLBACK",strength:0.64,risk:"capability_overlap"},
+  {s:"content-repurposing-agent",t:"scriptwriter-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"content-repurposing-agent",t:"tiktok-strategy-agent",rel:"FALLBACK",strength:0.71,risk:"capability_overlap"},
   {s:"facebook-strategy-agent",t:"instagram-strategy-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"facebook-strategy-agent",t:"social-selling-agent",rel:"FALLBACK",strength:0.81,risk:"capability_overlap"},
@@ -49,9 +52,11 @@ UNWIND [
   {s:"scriptwriter-agent",t:"tiktok-strategy-agent",rel:"FALLBACK",strength:0.64,risk:"capability_overlap"},
   {s:"task-agent-router",t:"audience-segmentation-agent",rel:"DELEGATES",strength:0.57,risk:"routing_backstop"},
   {s:"task-agent-router",t:"community-engagement-agent",rel:"DELEGATES",strength:0.57,risk:"routing_backstop"},
+  {s:"task-agent-router",t:"community-manager-agent",rel:"DELEGATES",strength:0.82,risk:""},
   {s:"task-agent-router",t:"content-calendar-orchestrator-agent",rel:"ROUTES_TO",strength:0.8,risk:""},
   {s:"task-agent-router",t:"content-repurposing-agent",rel:"DELEGATES",strength:0.82,risk:""},
   {s:"tiktok-strategy-agent",t:"x-strategy-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
+  {s:"traffic-generation-agent",t:"content-repurposing-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"traffic-generation-agent",t:"scriptwriter-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"traffic-generation-agent",t:"x-strategy-agent",rel:"FALLBACK",strength:0.68,risk:"capability_overlap"},
   {s:"x-strategy-agent",t:"audience-growth-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"}

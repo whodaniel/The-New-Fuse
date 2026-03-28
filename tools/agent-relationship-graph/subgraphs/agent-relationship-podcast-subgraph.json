@@ -39,7 +39,7 @@
     },
     {
       "id": "podcast-affiliate-agent",
-      "kind": "sub",
+      "kind": "primary",
       "cluster": "podcast"
     },
     {
@@ -54,7 +54,7 @@
     },
     {
       "id": "podcast-distribution-agent",
-      "kind": "primary",
+      "kind": "sub",
       "cluster": "podcast"
     },
     {
@@ -64,12 +64,12 @@
     },
     {
       "id": "podcast-format-designer-agent",
-      "kind": "primary",
+      "kind": "sub",
       "cluster": "podcast"
     },
     {
       "id": "podcast-hosting-setup-agent",
-      "kind": "primary",
+      "kind": "sub",
       "cluster": "podcast"
     },
     {
@@ -89,7 +89,7 @@
     },
     {
       "id": "podcast-seo-agent",
-      "kind": "sub",
+      "kind": "primary",
       "cluster": "podcast"
     },
     {
@@ -99,7 +99,7 @@
     },
     {
       "id": "sponsorship-outreach-agent",
-      "kind": "sub",
+      "kind": "primary",
       "cluster": "podcast"
     }
   ],
@@ -109,7 +109,7 @@
       "target": "podcast-equipment-agent",
       "type": "fallback",
       "strength": 0.77,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -117,14 +117,14 @@
       "target": "guest-relationship-manager-agent",
       "type": "feeds",
       "strength": 0.61,
-      "origin": "registry"
+      "origin": "seed"
     },
     {
       "source": "guest-booking-agent",
       "target": "sponsorship-outreach-agent",
       "type": "fallback",
       "strength": 0.68,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -132,7 +132,7 @@
       "target": "podcast-analytics-agent",
       "type": "fallback",
       "strength": 0.64,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -140,7 +140,7 @@
       "target": "podcast-distribution-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -155,7 +155,7 @@
       "target": "podcast-audio-editor-agent",
       "type": "fallback",
       "strength": 0.68,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -163,7 +163,7 @@
       "target": "podcast-hosting-setup-agent",
       "type": "fallback",
       "strength": 0.68,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -171,7 +171,7 @@
       "target": "podcast-monetization-strategy-agent",
       "type": "fallback",
       "strength": 0.81,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -179,15 +179,23 @@
       "target": "podcast-niche-analyst-agent",
       "type": "fallback",
       "strength": 0.84,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
+    },
+    {
+      "source": "podcast-affiliate-agent",
+      "target": "podcast-video-editor-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
     },
     {
       "source": "podcast-affiliate-agent",
       "target": "sponsorship-outreach-agent",
       "type": "fallback",
       "strength": 0.77,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -195,7 +203,7 @@
       "target": "podcast-hosting-setup-agent",
       "type": "fallback",
       "strength": 0.73,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -203,7 +211,7 @@
       "target": "podcast-niche-analyst-agent",
       "type": "fallback",
       "strength": 0.64,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -211,15 +219,23 @@
       "target": "podcast-video-editor-agent",
       "type": "fallback",
       "strength": 0.68,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
+    },
+    {
+      "source": "podcast-analytics-agent",
+      "target": "sponsorship-outreach-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
     },
     {
       "source": "podcast-audio-editor-agent",
       "target": "podcast-hosting-setup-agent",
       "type": "fallback",
       "strength": 0.68,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -234,14 +250,14 @@
       "target": "podcast-promotion-agent",
       "type": "feeds",
       "strength": 0.87,
-      "origin": "chain"
+      "origin": "seed"
     },
     {
       "source": "podcast-distribution-agent",
       "target": "sponsorship-outreach-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -249,7 +265,7 @@
       "target": "podcast-format-designer-agent",
       "type": "fallback",
       "strength": 0.68,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -257,7 +273,7 @@
       "target": "podcast-monetization-strategy-agent",
       "type": "fallback",
       "strength": 0.77,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -265,7 +281,7 @@
       "target": "guest-relationship-manager-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -273,7 +289,7 @@
       "target": "podcast-hosting-setup-agent",
       "type": "feeds",
       "strength": 0.81,
-      "origin": "chain"
+      "origin": "seed"
     },
     {
       "source": "podcast-format-designer-agent",
@@ -287,7 +303,7 @@
       "target": "podcast-distribution-agent",
       "type": "feeds",
       "strength": 0.93,
-      "origin": "chain"
+      "origin": "seed"
     },
     {
       "source": "podcast-hosting-setup-agent",
@@ -301,7 +317,7 @@
       "target": "podcast-format-designer-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -309,7 +325,7 @@
       "target": "podcast-niche-analyst-agent",
       "type": "fallback",
       "strength": 0.73,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -324,7 +340,15 @@
       "target": "podcast-hosting-setup-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "podcast-niche-analyst-agent",
+      "target": "podcast-seo-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -332,29 +356,37 @@
       "target": "podcast-video-editor-agent",
       "type": "feeds",
       "strength": 0.68,
-      "origin": "registry"
+      "origin": "seed"
     },
     {
       "source": "podcast-niche-analyst-agent",
       "target": "sponsorship-outreach-agent",
       "type": "fallback",
       "strength": 0.71,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
+    },
+    {
+      "source": "podcast-promotion-agent",
+      "target": "guest-relationship-manager-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
     },
     {
       "source": "podcast-promotion-agent",
       "target": "podcast-analytics-agent",
       "type": "depends_on",
       "strength": 0.84,
-      "origin": "chain"
+      "origin": "seed"
     },
     {
       "source": "podcast-promotion-agent",
       "target": "podcast-analytics-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -369,23 +401,47 @@
       "target": "sponsorship-outreach-agent",
       "type": "fallback",
       "strength": 0.64,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
+    },
+    {
+      "source": "podcast-seo-agent",
+      "target": "podcast-affiliate-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "podcast-video-editor-agent",
+      "target": "episode-planner-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
     },
     {
       "source": "podcast-video-editor-agent",
       "target": "sponsorship-outreach-agent",
       "type": "fallback",
       "strength": 0.64,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
+    },
+    {
+      "source": "sponsorship-outreach-agent",
+      "target": "podcast-niche-analyst-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
     },
     {
       "source": "sponsorship-outreach-agent",
       "target": "podcast-seo-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -393,14 +449,14 @@
       "target": "analytics-and-reporting-agent",
       "type": "delegates",
       "strength": 0.82,
-      "origin": "scaffold"
+      "origin": "seed"
     },
     {
       "source": "task-agent-router",
       "target": "guest-booking-agent",
       "type": "delegates",
       "strength": 0.57,
-      "origin": "backstop",
+      "origin": "seed",
       "risk": "routing_backstop"
     },
     {
@@ -408,7 +464,7 @@
       "target": "podcast-promotion-agent",
       "type": "delegates",
       "strength": 0.82,
-      "origin": "scaffold"
+      "origin": "seed"
     },
     {
       "source": "task-agent-router",

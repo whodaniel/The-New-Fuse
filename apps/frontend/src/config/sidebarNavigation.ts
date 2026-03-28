@@ -418,7 +418,6 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     children: [
       { name: 'General', href: '/settings', icon: Settings, access: 'authenticated' },
       { name: 'Billing', href: '/billing', icon: CreditCard, access: 'authenticated' },
-      { name: 'Zo Parity', href: '/zo-parity', icon: Eye, access: 'authenticated' },
       {
         name: 'Debug',
         href: '/debug',

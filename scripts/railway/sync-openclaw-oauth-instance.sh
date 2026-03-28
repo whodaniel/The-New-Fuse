@@ -6,7 +6,7 @@ SERVICE="${OPENCLAW_RAILWAY_SERVICE:-openclaw-cloud}"
 PROVIDER="${OPENCLAW_OAUTH_PROVIDER:-openai-codex}"
 AUTH_FILE="${OPENCLAW_OAUTH_AUTH_FILE:-$HOME/.codex/auth.json}"
 PRIMARY_MODEL="${OPENCLAW_MODEL_PRIMARY_OVERRIDE:-openai-codex/gpt-5.3-codex}"
-FALLBACK_MODELS="${OPENCLAW_MODEL_FALLBACKS_OVERRIDE:-openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini}"
+FALLBACK_MODELS="${OPENCLAW_MODEL_FALLBACKS_OVERRIDE:-openai-codex/gpt-5.2-codex}"
 INSTANCE_ID="${OPENCLAW_INSTANCE_ID:-}"
 INSTANCE_NAME="${OPENCLAW_INSTANCE_NAME:-}"
 MAX_SET_RETRIES="${MAX_SET_RETRIES:-20}"
@@ -314,17 +314,35 @@ if [ "$WAIT_FOR_SUCCESS" = true ]; then
 fi
 
 if [ -n "$PUBLIC_DOMAIN" ]; then
-  OVERVIEW_URL="https://${PUBLIC_DOMAIN}/overview"
+  skip_overview="${OPENCLAW_SKIP_OVERVIEW_CHECK:-false}"
+  if [[ "$PUBLIC_DOMAIN" == *"openclaw-sandbox-cloud"* ]]; then
+    skip_overview=true
+  fi
+
+  if [ "$skip_overview" != "true" ]; then
+    OVERVIEW_URL="https://${PUBLIC_DOMAIN}/overview"
+    for attempt in $(seq 1 20); do
+      code="$(curl -sS -o /dev/null -w "%{http_code}" "$OVERVIEW_URL" || true)"
+      echo "Overview check attempt=$attempt status=$code"
+      if [ "$code" = "200" ]; then
+        echo "Done: $OVERVIEW_URL is healthy."
+        exit 0
+      fi
+      sleep 2
+    done
+  fi
+
+  HEALTH_URL="https://${PUBLIC_DOMAIN}/health"
   for attempt in $(seq 1 20); do
-    code="$(curl -sS -o /dev/null -w "%{http_code}" "$OVERVIEW_URL" || true)"
-    echo "Overview check attempt=$attempt status=$code"
+    code="$(curl -sS -o /dev/null -w "%{http_code}" "$HEALTH_URL" || true)"
+    echo "Health check attempt=$attempt status=$code"
     if [ "$code" = "200" ]; then
-      echo "Done: $OVERVIEW_URL is healthy."
+      echo "Done: $HEALTH_URL is healthy."
       exit 0
     fi
     sleep 2
   done
-  echo "WARN: overview endpoint did not return 200 yet."
+  echo "WARN: overview and health endpoints did not return 200 yet."
   exit 5
 fi
 

@@ -1,0 +1,31 @@
+{
+  "targetQueue": "tnf:master:tasks:realtime",
+  "queueItem": {
+    "id": "tenant-continuous-qa-loop-1774543808104-xodj57",
+    "title": "Continuous QA Loop",
+    "description": "Run the continuous QA loop. Probe the current TNF user-facing surfaces, identify regressions, and create or update concrete remediation tasks with evidence. Favor deterministic verification and privacy-safe reporting.",
+    "priority": "high",
+    "status": "queued",
+    "votes": {
+      "up": 0,
+      "down": 0
+    },
+    "source": "chronological-dispatch",
+    "processId": "tenant-continuous-qa-loop",
+    "kind": "agent-turn",
+    "createdAt": "2026-03-26T16:50:08.104Z",
+    "itinerary": {
+      "lane": "realtime_broker_routing",
+      "horizon": "realtime",
+      "coordinationMode": "brokered",
+      "signalSources": ["redis", "master-clock"],
+      "clockSource": "master-clock"
+    },
+    "metadata": {
+      "scheduledProcessId": "tenant-continuous-qa-loop",
+      "dispatchSource": "master-clock",
+      "importedFromLegacyCron": true
+    }
+  },
+  "createdAt": "2026-03-26T16:50:08.112Z"
+}

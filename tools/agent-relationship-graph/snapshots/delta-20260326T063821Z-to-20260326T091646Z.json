@@ -1,0 +1,402 @@
+{
+  "generated_at": "2026-03-26T09:16:46.871504+00:00",
+  "baseline_snapshot": "snapshot-20260326T063821Z.json",
+  "current_snapshot": "snapshot-20260326T091646Z.json",
+  "summary": {
+    "graphs_changed": 7,
+    "nodes_added_total": 0,
+    "nodes_removed_total": 0,
+    "edges_added_total": 57,
+    "edges_removed_total": 0
+  },
+  "details": [
+    {
+      "file": "agent-relationship-brand-subgraph.json",
+      "domain": "brand",
+      "node_count_old": 20,
+      "node_count_new": 20,
+      "edge_count_old": 44,
+      "edge_count_new": 48,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [
+        {
+          "source": "competitive-intelligence-agent",
+          "target": "talent-manager-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "financial-manager-agent",
+          "target": "competitive-intelligence-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "talent-manager-agent",
+          "target": "brand-identity-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "yt-content-strategy-agent",
+          "target": "contract-manager-agent",
+          "type": "fallback"
+        }
+      ],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-content-subgraph.json",
+      "domain": "content",
+      "node_count_old": 18,
+      "node_count_new": 18,
+      "edge_count_old": 27,
+      "edge_count_new": 27,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-funnel-subgraph.json",
+      "domain": "funnel",
+      "node_count_old": 25,
+      "node_count_new": 25,
+      "edge_count_old": 36,
+      "edge_count_new": 41,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [
+        {
+          "source": "ab-testing-optimizer-agent",
+          "target": "lead-magnet-funnel-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "lead-capture-agent",
+          "target": "niche-analyst-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "monetization-strategy-agent",
+          "target": "lead-capture-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "niche-analyst-agent",
+          "target": "code-fossil-investigator",
+          "type": "fallback"
+        },
+        {
+          "source": "personalized-content-recommendation-agent",
+          "target": "monetization-strategy-agent",
+          "type": "fallback"
+        }
+      ],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-graph.json",
+      "domain": "full",
+      "node_count_old": 120,
+      "node_count_new": 120,
+      "edge_count_old": 401,
+      "edge_count_new": 431,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [
+        {
+          "source": "ab-testing-optimizer-agent",
+          "target": "lead-magnet-funnel-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "asset-sourcer-agent",
+          "target": "auth-blocker-sentinel",
+          "type": "fallback"
+        },
+        {
+          "source": "audience-growth-agent",
+          "target": "community-engagement-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "community-engagement-agent",
+          "target": "algorithm-adaptation-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "competitive-intelligence-agent",
+          "target": "talent-manager-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "content-repurposing-agent",
+          "target": "scriptwriter-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "digital-asset-manager-agent",
+          "target": "tax-compliance-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "financial-manager-agent",
+          "target": "competitive-intelligence-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "lead-capture-agent",
+          "target": "niche-analyst-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "legal-compliance-agent",
+          "target": "digital-asset-manager-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "monetization-strategy-agent",
+          "target": "lead-capture-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "niche-analyst-agent",
+          "target": "code-fossil-investigator",
+          "type": "fallback"
+        },
+        {
+          "source": "orchestrator-agent",
+          "target": "personal-archaeology-source-team-orchestrator",
+          "type": "fallback"
+        },
+        {
+          "source": "personal-archaeology-master-orchestrator",
+          "target": "personal-archaeology-integrity-team-orchestrator",
+          "type": "fallback"
+        },
+        {
+          "source": "personal-archaeology-source-team-orchestrator",
+          "target": "personal-archaeology-master-orchestrator",
+          "type": "fallback"
+        },
+        {
+          "source": "personalized-content-recommendation-agent",
+          "target": "monetization-strategy-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "podcast-affiliate-agent",
+          "target": "podcast-video-editor-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "podcast-analytics-agent",
+          "target": "sponsorship-outreach-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "podcast-niche-analyst-agent",
+          "target": "podcast-seo-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "podcast-promotion-agent",
+          "target": "guest-relationship-manager-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "podcast-seo-agent",
+          "target": "podcast-affiliate-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "podcast-video-editor-agent",
+          "target": "episode-planner-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "sponsorship-outreach-agent",
+          "target": "podcast-niche-analyst-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "talent-manager-agent",
+          "target": "brand-identity-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "task-agent-router",
+          "target": "community-manager-agent",
+          "type": "delegates"
+        },
+        {
+          "source": "technical-seo-auditor-agent",
+          "target": "yt-seo-optimizer-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "timeline-synthesis-investigator",
+          "target": "local-ai-gemini-cli",
+          "type": "fallback"
+        },
+        {
+          "source": "traffic-generation-agent",
+          "target": "content-repurposing-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "yt-content-strategy-agent",
+          "target": "contract-manager-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "yt-seo-optimizer-agent",
+          "target": "link-building-agent",
+          "type": "fallback"
+        }
+      ],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-ops-subgraph.json",
+      "domain": "ops",
+      "node_count_old": 13,
+      "node_count_new": 13,
+      "edge_count_old": 19,
+      "edge_count_new": 23,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [
+        {
+          "source": "asset-sourcer-agent",
+          "target": "auth-blocker-sentinel",
+          "type": "fallback"
+        },
+        {
+          "source": "digital-asset-manager-agent",
+          "target": "tax-compliance-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "legal-compliance-agent",
+          "target": "digital-asset-manager-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "timeline-synthesis-investigator",
+          "target": "local-ai-gemini-cli",
+          "type": "fallback"
+        }
+      ],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-podcast-subgraph.json",
+      "domain": "podcast",
+      "node_count_old": 20,
+      "node_count_new": 20,
+      "edge_count_old": 41,
+      "edge_count_new": 48,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [
+        {
+          "source": "podcast-affiliate-agent",
+          "target": "podcast-video-editor-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "podcast-analytics-agent",
+          "target": "sponsorship-outreach-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "podcast-niche-analyst-agent",
+          "target": "podcast-seo-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "podcast-promotion-agent",
+          "target": "guest-relationship-manager-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "podcast-seo-agent",
+          "target": "podcast-affiliate-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "podcast-video-editor-agent",
+          "target": "episode-planner-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "sponsorship-outreach-agent",
+          "target": "podcast-niche-analyst-agent",
+          "type": "fallback"
+        }
+      ],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-seo-subgraph.json",
+      "domain": "seo",
+      "node_count_old": 11,
+      "node_count_new": 11,
+      "edge_count_old": 30,
+      "edge_count_new": 32,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [
+        {
+          "source": "technical-seo-auditor-agent",
+          "target": "yt-seo-optimizer-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "yt-seo-optimizer-agent",
+          "target": "link-building-agent",
+          "type": "fallback"
+        }
+      ],
+      "edges_removed": []
+    },
+    {
+      "file": "agent-relationship-social-subgraph.json",
+      "domain": "social",
+      "node_count_old": 18,
+      "node_count_new": 18,
+      "edge_count_old": 26,
+      "edge_count_new": 31,
+      "nodes_added": [],
+      "nodes_removed": [],
+      "edges_added": [
+        {
+          "source": "audience-growth-agent",
+          "target": "community-engagement-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "community-engagement-agent",
+          "target": "algorithm-adaptation-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "content-repurposing-agent",
+          "target": "scriptwriter-agent",
+          "type": "fallback"
+        },
+        {
+          "source": "task-agent-router",
+          "target": "community-manager-agent",
+          "type": "delegates"
+        },
+        {
+          "source": "traffic-generation-agent",
+          "target": "content-repurposing-agent",
+          "type": "fallback"
+        }
+      ],
+      "edges_removed": []
+    }
+  ]
+}

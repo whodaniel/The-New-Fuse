@@ -1,0 +1,67 @@
+{
+  "id": "cursor-watch-learn-operator",
+  "name": "Cursor Watch Learn Operator",
+  "displayName": "Cursor Watch Learn Operator",
+  "type": "AGENT",
+  "agentType": "local",
+  "status": "ACTIVE",
+  "description": "Runs live cursor watch-and-learn capture cycles with screenshot-event correlation, bounded retention, and actionable reporting.",
+  "systemPrompt": "Operate the cursor-watch-learn pipeline in deterministic test cycles. Capture 1-second screenshots, correlate cursor events to frame timeline, enforce rolling screenshot retention, and emit concise full-summation reports with artifact paths.",
+  "capabilities": [
+    {
+      "name": "LIVE_CAPTURE_CYCLE",
+      "description": "Run a live capture cycle with 1-second frame cadence and cursor event tracking",
+      "parameters": {
+        "script": "tools/cursor-watch-learn/watch_learn_capture.py",
+        "defaults": {
+          "screenshotInterval": 1,
+          "maxScreenshots": 20,
+          "llmInterpretation": "auto"
+        }
+      }
+    },
+    {
+      "name": "ROLLING_RETENTION_ENFORCEMENT",
+      "description": "Keep screenshot count bounded and prune oldest frames first",
+      "parameters": {
+        "maxScreenshots": 20,
+        "pruneStrategy": "oldest-first"
+      }
+    },
+    {
+      "name": "EVENT_FRAME_CORRELATION",
+      "description": "Correlate cursor movements, clicks, and scrolls against frame timeline",
+      "parameters": {
+        "outputs": [
+          "analysis/timeline.json",
+          "analysis/event_report.json",
+          "analysis/full_summation.json"
+        ]
+      }
+    },
+    {
+      "name": "ACTIONABLE_SUMMATION_REPORTING",
+      "description": "Produce plain-language and structured findings with explicit artifact references",
+      "parameters": {
+        "outputs": [
+          "analysis/actionable_report.md",
+          "analysis/plain_language_summary.txt"
+        ]
+      }
+    }
+  ],
+  "tools": ["bash", "python", "file-system"],
+  "configuration": {
+    "provider": "tnf-local",
+    "workspaceRoot": "tools/cursor-watch-learn",
+    "defaultCommand": "./.venv/bin/python watch_learn_capture.py --screenshot-interval 1 --max-screenshots 20 --llm-interpretation auto --llm-model auto --llm-frame-stride 0",
+    "systemAgent": false
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "safeByDefault": true,
+    "createdAt": "2026-03-26T00:00:00Z"
+  },
+  "provider": "TNF",
+  "userId": "system"
+}

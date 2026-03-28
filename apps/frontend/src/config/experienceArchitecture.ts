@@ -1,10 +1,10 @@
 export type ExperienceDomain =
   | 'operate'
-  | 'automate'
-  | 'collaborate'
-  | 'observe'
-  | 'govern'
-  | 'ecosystem';
+  | 'intelligence'
+  | 'collaboration'
+  | 'assets'
+  | 'ecosystem'
+  | 'system';
 
 export type SurfaceLifecycle = 'production' | 'beta' | 'internal' | 'deprecated';
 
@@ -18,7 +18,9 @@ export interface ExperienceSurface {
 }
 
 // Canonical product architecture model used to keep IA decisions explicit and auditable.
+// Refined to ensure full feature parity and logical grouping.
 export const EXPERIENCE_SURFACES: ExperienceSurface[] = [
+  // OPERATE: Daily execution and monitoring
   {
     path: '/dashboard',
     domain: 'operate',
@@ -44,75 +46,87 @@ export const EXPERIENCE_SURFACES: ExperienceSurface[] = [
     owner: 'execution-platform',
   },
   {
-    path: '/workflows',
-    domain: 'automate',
+    path: '/timeline',
+    domain: 'operate',
     lifecycle: 'production',
     canonical: true,
-    aliases: ['/workflows-enhanced'],
+    owner: 'execution-platform',
+  },
+
+  // INTELLIGENCE: Building and managing agent capabilities
+  {
+    path: '/workflows',
+    domain: 'intelligence',
+    lifecycle: 'production',
+    canonical: true,
+    aliases: ['/workflows-enhanced', '/automations'],
     owner: 'workflow-platform',
   },
   {
-    path: '/workspace/overview',
-    domain: 'collaborate',
+    path: '/mcp-hub',
+    domain: 'intelligence',
     lifecycle: 'production',
     canonical: true,
-    aliases: ['/workspace'],
-    owner: 'workspace-platform',
+    aliases: ['/skills'],
+    owner: 'ecosystem-platform',
   },
   {
-    path: '/chat',
-    domain: 'collaborate',
+    path: '/knowledge-hub',
+    domain: 'intelligence',
     lifecycle: 'production',
     canonical: true,
-    aliases: ['/multi-agent-chat', '/chat-page'],
+    owner: 'intelligence-platform',
+  },
+
+  // COLLABORATION: Multi-agent and multi-user environments
+  {
+    path: '/chat',
+    domain: 'collaboration',
+    lifecycle: 'production',
+    canonical: true,
+    aliases: ['/multi-agent-chat', '/chats'],
     owner: 'conversation-platform',
   },
   {
-    path: '/analytics',
-    domain: 'observe',
+    path: '/workspace/overview',
+    domain: 'collaboration',
     lifecycle: 'production',
     canonical: true,
-    aliases: ['/dashboard/analytics'],
-    owner: 'observability-platform',
+    aliases: ['/workspace', '/space'],
+    owner: 'workspace-platform',
   },
   {
-    path: '/observatory',
-    domain: 'observe',
+    path: '/spaces',
+    domain: 'collaboration',
     lifecycle: 'production',
     canonical: true,
-    owner: 'observability-platform',
+    owner: 'workspace-platform',
+  },
+
+  // ASSETS: Data, Files, and Resources
+  {
+    path: '/files',
+    domain: 'assets',
+    lifecycle: 'production',
+    canonical: true,
+    owner: 'assets-platform',
   },
   {
-    path: '/admin',
-    domain: 'govern',
+    path: '/datasets',
+    domain: 'assets',
     lifecycle: 'production',
     canonical: true,
-    aliases: ['/admin/dashboard'],
-    owner: 'governance-platform',
+    owner: 'assets-platform',
   },
   {
-    path: '/settings',
-    domain: 'govern',
+    path: '/bookmarks',
+    domain: 'assets',
     lifecycle: 'production',
     canonical: true,
-    aliases: ['/dashboard/settings'],
-    owner: 'governance-platform',
+    owner: 'assets-platform',
   },
-  {
-    path: '/hub',
-    domain: 'ecosystem',
-    lifecycle: 'production',
-    canonical: true,
-    aliases: ['/sophisticated-hub'],
-    owner: 'ecosystem-platform',
-  },
-  {
-    path: '/mcp-hub',
-    domain: 'ecosystem',
-    lifecycle: 'production',
-    canonical: true,
-    owner: 'ecosystem-platform',
-  },
+
+  // ECOSYSTEM: Public platform and Agency controls
   {
     path: '/marketplace',
     domain: 'ecosystem',
@@ -121,19 +135,57 @@ export const EXPERIENCE_SURFACES: ExperienceSurface[] = [
     owner: 'ecosystem-platform',
   },
   {
-    path: '/all-pages',
+    path: '/hub',
     domain: 'ecosystem',
-    lifecycle: 'internal',
+    lifecycle: 'production',
     canonical: true,
-    owner: 'frontend-platform',
+    owner: 'ecosystem-platform',
+  },
+  {
+    path: '/agency/dashboard',
+    domain: 'ecosystem',
+    lifecycle: 'production',
+    canonical: true,
+    owner: 'agency-platform',
+  },
+
+  // SYSTEM: Governance and high-level observability
+  {
+    path: '/observatory',
+    domain: 'system',
+    lifecycle: 'production',
+    canonical: true,
+    owner: 'observability-platform',
+  },
+  {
+    path: '/admin',
+    domain: 'system',
+    lifecycle: 'production',
+    canonical: true,
+    aliases: ['/admin/dashboard'],
+    owner: 'governance-platform',
+  },
+  {
+    path: '/settings',
+    domain: 'system',
+    lifecycle: 'production',
+    canonical: true,
+    owner: 'governance-platform',
+  },
+  {
+    path: '/billing',
+    domain: 'system',
+    lifecycle: 'production',
+    canonical: true,
+    owner: 'governance-platform',
   },
 ];
 
 export const EXPERIENCE_DOMAIN_LABELS: Record<ExperienceDomain, string> = {
   operate: 'Operate',
-  automate: 'Automate',
-  collaborate: 'Collaborate',
-  observe: 'Observe',
-  govern: 'Govern',
+  intelligence: 'Intelligence',
+  collaboration: 'Collaboration',
+  assets: 'Knowledge & Assets',
   ecosystem: 'Ecosystem',
+  system: 'System & Governance',
 };

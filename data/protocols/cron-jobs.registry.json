@@ -67,6 +67,24 @@
       "scope": "tenant",
       "description": "Tenant-level terminal context reminders for user and tenant-agent workflows.",
       "requires_approval": false
+    },
+    {
+      "category": "staff_coordination",
+      "scope": "system_framework",
+      "description": "Corporation-wide staff role call, scheduling alignment, and lane coordination governance.",
+      "requires_approval": true
+    },
+    {
+      "category": "staff_architecture",
+      "scope": "system_framework",
+      "description": "Staffing architecture and role-gap discovery loops for StaffOps governance.",
+      "requires_approval": true
+    },
+    {
+      "category": "staff_review",
+      "scope": "system_framework",
+      "description": "Periodic staff work review loops that publish improvement recommendations.",
+      "requires_approval": true
     }
   ],
   "jobs": [
@@ -219,6 +237,38 @@
       "scope": "system_framework",
       "category": "observability",
       "owner_agent_id": "master-clock",
+      "owner_user_id": "super-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tnf-staff-role-call-and-scheduling",
+      "scope": "system_framework",
+      "category": "staff_coordination",
+      "owner_agent_id": "tnf-staff-scheduling-agent",
+      "owner_user_id": "super-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tnf-growth-blocker-audit",
+      "scope": "system_framework",
+      "category": "self_improvement_core",
+      "owner_agent_id": "tnf-growth-blocker-auditor",
+      "owner_user_id": "super-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tnf-staffing-director-cycle",
+      "scope": "system_framework",
+      "category": "staff_architecture",
+      "owner_agent_id": "tnf-staffing-director-agent",
+      "owner_user_id": "super-admin",
+      "locked": false
+    },
+    {
+      "schedule_id": "tnf-staff-review-cycle",
+      "scope": "system_framework",
+      "category": "staff_review",
+      "owner_agent_id": "tnf-staff-review-agent",
       "owner_user_id": "super-admin",
       "locked": false
     }

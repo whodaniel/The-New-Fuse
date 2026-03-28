@@ -252,6 +252,13 @@
     "strengthScore": 0.67
   },
   {
+    "id": "a1a8d432-a4b2-fe13-f157-2f43fce259fd",
+    "agentId": "community-manager-agent",
+    "relatedAgentId": "local-ai-codex-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
     "id": "03f25124-b682-0092-249b-e039b7d4fe81",
     "agentId": "content-refresh-agent",
     "relatedAgentId": "podcast-seo-agent",
@@ -297,6 +304,13 @@
     "id": "b6a9fe74-31e4-4200-58af-655830b6d629",
     "agentId": "influencer-niche-agent",
     "relatedAgentId": "personal-brand-architect-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.67
+  },
+  {
+    "id": "2d69adeb-834a-7f1c-810f-2afbafc35052",
+    "agentId": "local-ai-codex-cli",
+    "relatedAgentId": "social-selling-agent",
     "relationshipType": "similar",
     "strengthScore": 0.67
   },
@@ -1197,6 +1211,13 @@
     "strengthScore": 0.5
   },
   {
+    "id": "d08ded00-9e31-6af4-3b41-160b7aff277c",
+    "agentId": "facebook-strategy-agent",
+    "relatedAgentId": "local-ai-codex-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
     "id": "531f17f3-4a80-3bc4-e606-abcf5496443c",
     "agentId": "facebook-strategy-agent",
     "relatedAgentId": "tiktok-strategy-agent",
@@ -1281,9 +1302,23 @@
     "strengthScore": 0.5
   },
   {
+    "id": "6c2281e6-1d9f-3fdc-3e93-8cf10c4901a2",
+    "agentId": "information-retrieval-agent",
+    "relatedAgentId": "local-ai-codex-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
     "id": "243e8b24-fc45-c6e2-2010-98ba5aef9344",
     "agentId": "information-retrieval-agent",
     "relatedAgentId": "yt-niche-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "f112967d-645c-4956-4b67-344782615287",
+    "agentId": "instagram-strategy-agent",
+    "relatedAgentId": "local-ai-codex-cli",
     "relationshipType": "similar",
     "strengthScore": 0.5
   },
@@ -1344,9 +1379,30 @@
     "strengthScore": 0.5
   },
   {
+    "id": "8b2c6569-eb62-b0c0-c59d-4917005ef8d7",
+    "agentId": "local-ai-claude-code-cli",
+    "relatedAgentId": "local-ai-codex-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
     "id": "a08a8deb-343a-bd05-d6af-6a81841105b3",
     "agentId": "local-ai-claude-code-cli",
     "relatedAgentId": "productivity-and-burnout-prevention-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "2104b129-ddb2-baab-38b0-93418f230a93",
+    "agentId": "local-ai-codex-cli",
+    "relatedAgentId": "local-ai-gemini-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.5
+  },
+  {
+    "id": "4cf1c889-6c59-4c91-6acc-219e0d11fb55",
+    "agentId": "local-ai-codex-cli",
+    "relatedAgentId": "logical-reasoning-agent",
     "relationshipType": "similar",
     "strengthScore": 0.5
   },
@@ -2114,6 +2170,13 @@
     "strengthScore": 0.4
   },
   {
+    "id": "f955f591-0e9a-d427-d2a6-a0c390a7dde9",
+    "agentId": "audience-growth-agent",
+    "relatedAgentId": "local-ai-codex-cli",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
     "id": "439ea1f9-941a-bf7b-7504-21163280b674",
     "agentId": "audio-recording-agent",
     "relatedAgentId": "facebook-strategy-agent",
@@ -2198,13 +2261,6 @@
     "strengthScore": 0.4
   },
   {
-    "id": "8c718aa8-1fb5-c8ac-fb63-dcb8f0850644",
-    "agentId": "community-manager-agent",
-    "relatedAgentId": "instagram-strategy-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.4
-  },
-  {
     "id": "3e584bef-ea82-467b-5672-047c5f119daa",
     "agentId": "digital-asset-manager-agent",
     "relatedAgentId": "facebook-strategy-agent",
@@ -2257,13 +2313,6 @@
     "id": "62764c9b-3314-6b66-6788-68f59d3cbccb",
     "agentId": "facebook-strategy-agent",
     "relatedAgentId": "fan-funding-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.4
-  },
-  {
-    "id": "148992b8-d0a9-fffd-909d-7eef444eae4e",
-    "agentId": "facebook-strategy-agent",
-    "relatedAgentId": "podcast-ad-network-agent",
     "relationshipType": "similar",
     "strengthScore": 0.4
   },
@@ -2334,6 +2383,13 @@
     "id": "3e9edf1a-d812-da2f-560d-4421110e6800",
     "agentId": "information-retrieval-agent",
     "relatedAgentId": "talent-manager-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.4
+  },
+  {
+    "id": "d5e6de34-78fb-efb0-8f5c-fa9fbf88c58a",
+    "agentId": "local-ai-codex-cli",
+    "relatedAgentId": "reputation-management-agent",
     "relationshipType": "similar",
     "strengthScore": 0.4
   },
@@ -2569,6 +2625,13 @@
     "strengthScore": 0.38
   },
   {
+    "id": "0000e51f-f190-2056-b812-9025f8412521",
+    "agentId": "staff-review-agent",
+    "relatedAgentId": "staffing-director-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.36
+  },
+  {
     "id": "554b8e3b-579b-9267-6f64-d038a7fccb25",
     "agentId": "auth-blocker-sentinel",
     "relatedAgentId": "personal-archaeology-integrity-team-orchestrator",
@@ -2656,13 +2719,6 @@
     "id": "6e01ca58-f4fd-48da-0d79-e84f35a9f195",
     "agentId": "asset-sourcer-agent",
     "relatedAgentId": "user-feedback-analysis-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.33
-  },
-  {
-    "id": "58e17790-7358-a992-95e2-2192051c22b3",
-    "agentId": "audience-growth-agent",
-    "relatedAgentId": "email-marketing-automation-agent",
     "relationshipType": "similar",
     "strengthScore": 0.33
   },
@@ -2849,6 +2905,13 @@
     "strengthScore": 0.33
   },
   {
+    "id": "c5886c35-6ab6-1b9e-1d11-0200da8608cc",
+    "agentId": "deal-negotiator-agent",
+    "relatedAgentId": "email-marketing-automation-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
     "id": "dcef4be2-8003-6353-5ea2-d4c6f7781d12",
     "agentId": "deal-negotiator-agent",
     "relatedAgentId": "financial-manager-agent",
@@ -2873,13 +2936,6 @@
     "id": "a743eb95-8b63-c4c8-00ea-57bfd68eed46",
     "agentId": "deal-negotiator-agent",
     "relatedAgentId": "platform-selection-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.33
-  },
-  {
-    "id": "5732f9a9-2080-f0c3-0449-10c1fb66b22b",
-    "agentId": "deal-negotiator-agent",
-    "relatedAgentId": "yt-content-strategy-agent",
     "relationshipType": "similar",
     "strengthScore": 0.33
   },
@@ -3024,13 +3080,6 @@
     "strengthScore": 0.33
   },
   {
-    "id": "7a0822f1-3b5c-d761-1be6-527a20e2ef6b",
-    "agentId": "interoperability-protocol-agent",
-    "relatedAgentId": "local-ai-claude-code-cli",
-    "relationshipType": "similar",
-    "strengthScore": 0.33
-  },
-  {
     "id": "17076191-ef15-9ae8-c47b-c0e325cd0c7e",
     "agentId": "interoperability-protocol-agent",
     "relatedAgentId": "local-ai-gemini-cli",
@@ -3073,13 +3122,6 @@
     "strengthScore": 0.33
   },
   {
-    "id": "5a3644f4-dc93-7e07-a6bc-8214baec3a4b",
-    "agentId": "local-ai-gemini-cli",
-    "relatedAgentId": "talent-manager-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.33
-  },
-  {
     "id": "7f73a539-f87a-001d-897b-75483de071b3",
     "agentId": "logical-reasoning-agent",
     "relatedAgentId": "platform-selection-agent",
@@ -3118,6 +3160,13 @@
     "id": "9c306ef0-42ff-58d1-7826-1ff5fd55a210",
     "agentId": "personalized-content-recommendation-agent",
     "relatedAgentId": "podcast-ad-network-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.33
+  },
+  {
+    "id": "5be4873b-3166-26ca-c2d9-1fa2db688bbd",
+    "agentId": "podcast-ad-network-agent",
+    "relatedAgentId": "podcast-format-designer-agent",
     "relationshipType": "similar",
     "strengthScore": 0.33
   },
@@ -3246,13 +3295,6 @@
     "relatedAgentId": "podcast-promotion-agent",
     "relationshipType": "similar",
     "strengthScore": 0.3
-  },
-  {
-    "id": "8ccac5d8-6a07-5d87-62e7-0b66647957e7",
-    "agentId": "ab-testing-optimizer-agent",
-    "relatedAgentId": "social-selling-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.29
   },
   {
     "id": "42f936e2-303d-5578-1f36-aa15fec4cbda",
@@ -3409,23 +3451,9 @@
     "strengthScore": 0.29
   },
   {
-    "id": "c855c04f-fd32-a6a4-e85a-fa15c0e841ff",
-    "agentId": "information-retrieval-agent",
-    "relatedAgentId": "tax-compliance-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.29
-  },
-  {
     "id": "9e0fdb9b-e440-630b-bbe4-c998ce276f61",
     "agentId": "lead-capture-agent",
     "relatedAgentId": "oto-sequence-architect-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.29
-  },
-  {
-    "id": "a6625662-812b-6f88-d197-f9879cace092",
-    "agentId": "oto-sequence-architect-agent",
-    "relatedAgentId": "reputation-management-agent",
     "relationshipType": "similar",
     "strengthScore": 0.29
   },
@@ -3451,9 +3479,30 @@
     "strengthScore": 0.27
   },
   {
+    "id": "b3f4ad67-295e-84de-ee57-9618b5d567c3",
+    "agentId": "marketing-agent",
+    "relatedAgentId": "yt-content-strategy-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.27
+  },
+  {
     "id": "10c5ebfb-9c44-1121-e1d3-27c244ff8ddb",
     "agentId": "master-of-taxonomies",
     "relatedAgentId": "personal-historical-archaeologist",
+    "relationshipType": "similar",
+    "strengthScore": 0.26
+  },
+  {
+    "id": "17cf7841-9171-dabe-71d9-51420b9f8fb5",
+    "agentId": "master-of-taxonomies",
+    "relatedAgentId": "staff-review-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.26
+  },
+  {
+    "id": "3b349748-ab5f-aaf8-ba09-d654fb959450",
+    "agentId": "master-of-taxonomies",
+    "relatedAgentId": "staffing-director-agent",
     "relationshipType": "similar",
     "strengthScore": 0.26
   },
@@ -3468,6 +3517,13 @@
     "id": "10f048e4-343f-7f1e-2c3a-6a5f3d22fc32",
     "agentId": "ab-testing-optimizer-agent",
     "relatedAgentId": "cognitive-bias-optimizer-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "1d348472-ac6c-a5f1-8f95-0dafe4f69120",
+    "agentId": "ab-testing-optimizer-agent",
+    "relatedAgentId": "oto-sequence-architect-agent",
     "relationshipType": "similar",
     "strengthScore": 0.25
   },
@@ -3661,6 +3717,20 @@
     "strengthScore": 0.25
   },
   {
+    "id": "36ab2196-31ed-e23e-0a0c-2d05819f1d43",
+    "agentId": "staff-review-agent",
+    "relatedAgentId": "temporal-agent-reclassifier",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
+    "id": "1f4f93ed-7467-47de-25a0-b76625939731",
+    "agentId": "staffing-director-agent",
+    "relatedAgentId": "temporal-agent-reclassifier",
+    "relationshipType": "similar",
+    "strengthScore": 0.25
+  },
+  {
     "id": "f0392fbb-e0ac-3d78-6e36-d744254be0e9",
     "agentId": "tax-compliance-agent",
     "relatedAgentId": "value-ladder-architect-agent",
@@ -3673,6 +3743,13 @@
     "relatedAgentId": "zeroclaw-sandbox",
     "relationshipType": "similar",
     "strengthScore": 0.25
+  },
+  {
+    "id": "b9531198-9479-9f85-f49e-ce7b4072dfca",
+    "agentId": "audience-segmentation-agent",
+    "relatedAgentId": "tax-compliance-agent",
+    "relationshipType": "similar",
+    "strengthScore": 0.22
   },
   {
     "id": "93549084-1d7e-e089-3f3f-a515c4a60491",

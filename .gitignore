@@ -231,3 +231,4 @@ apps/chrome-extension/dist*
 
 # Casin8 runtime state and secrets
 apps/casin8-games/.data/
+.venv_crawler312/

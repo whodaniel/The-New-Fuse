@@ -10,7 +10,15 @@
   "scripts": {
     "start": "node mcp-config-manager-server.js"
   },
-  "keywords": ["mcp", "model-context-protocol", "config", "manager"],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "config",
+    "manager"
+  ],
   "author": "The New Fuse",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@the-new-fuse/infrastructure": "workspace:*"
+  }
 }

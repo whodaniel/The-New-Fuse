@@ -1,0 +1,1708 @@
+RESTORE_LIVE_CHECK_1774572703
+Sit forward like this open AI is making a very different move they're shutting down Sora the same Sora that shocked everyone with realistic AI video generation is now being discontinued as a stamp
+Okay
+See some damn transcription
+INTERRUPT_RESTORE_CHECK_1774572736
+Let's see some transcription
+Okay
+Let's see some damn transcription now
+Jesus Christ
+It's all fucking working before
+In the long half just months after launch openai confirmed it directly they thanked users acknowledge that people build communities around it and said they'll share timelines for shutting down the app and API along with details on how users can preserve their work the bigger question is why and the answer comes down to the resources and strategy especially if that Partnerships collectively and open AI is
+This bring thousands of homeowners are thinking about getting a new events installed if you're one of them right now in the final Outlet we're already not leaving AI video they're just integrating it into something bigger instead of a step open or possibly gpt 5.3 link everything runs in one place that either joined recently is now leading the environments and interact with the real world anyway if you found this useful drop a like And subscribe thanks for watching and I'll catch you in the next one
+How do you turn a group of AI agents into a company that actually runs itself
+I'm gonna show you four incredible open source projects that show you where the world has been in with agents these four projects show the future of how humans are going to interact and use and leverage artificial intelligence the first one is called chistak and it is by y combinator president Gary Tan and I just started using it let me show you a few things so just a couple weeks old it is already nearly at 50,000 stars on Canada and if you don't know who Gary Tanis he is the president of white combinator the premier startup accelerator and Silicon Valley Gary has invested in overseeing thousands of startups including some of the biggest ones you've definitely heard of like Airbnb and doordash so what he did was he boiled all of his experience all his expertise and then combined that with his desire to give soled evaluation
+BG_DOSCRIPT_CHECK_1774573159
+Asking for some permissions and then it was done and then in a new session you can type things like slash g stack and then you have a bunch of subtools that you can use with it like slash Office Dash hours and he goes over with each of these do in the documentation so he describes your stock as a process not a collection of individual tools the purpose is to go through this process to fine-tune your idea fine tune your Market opportunity and then of course build it out and again all of this is based on Gary's
+FG_CLIP_CHECK_1774573209
+BG_LIVE_CONFIRM_1774573218
+Of experience and expertise building startups so for example he has office hours one of the most well-known parts of the UI combinator program you will meet with the partners of YC to ask them questions they give you advice look for slash office hours there are six forcing questions that reframe your product before you buy any code again trying to hone in on that idea loan in on the right platform for writing any of that code here we have planned CEO review which breathing the problem find the text our product which is a reference to airbnb's Brian chesky who said five stars not enough how do we actually irrigate end-star experience as a part of the area of the experience so that's kind of what he's trying to recreate and we have an engineering manager a senior designer design partner staff engineer debugger so basically what he has done is broken out all of these roles into individuals
+FRESH_FG_1774573266
+FRESH_BG_1774573266
+No longer using a single agent for all of these different tasks instead the agent is given much more specific Direction in how to look at the code base through the lens of each of these rules and this is content engineering at its finest and the cool thing is it's all open source so you can actually go in and you're essentially able to see how Gary Tam thinks about startups and it's really cool that people can sourced all of it so go in there read all the documentation so this is about office hours for YC lots of cool features being updated seemed to the every day and it's weird because Gary also runs white combinator full-time does this part time he's starting to work on contributors so if you got some ideas let us know go check this out I'll drop the link in the description below and quick disclosure this segment is sponsored by Microsoft and by the way let me just pause for a second and say nobody actually believes me that this is a full-time
+INTERRUPT_SMOKE2_1774573288
+Job or that this channel is a very successful small business not only that that I can hire people and produce hundreds of videos per year literally I get asked all the time okay what what's your real job the job of running a small business or
+This is so fucking
+Like six
+Pushed me over
+Edge here codex
+Come on
+Spreadsheets and notes tasks that I use to do manually but now can be sped up significantly by using AI I went over this in detail recently in a short I did with Microsoft I talk about my journey of becoming a content creator and also how I use Microsoft 365 co-pilot business to help with a lot of the automation so my small team can punch above its weight and so if you want to know how I produce hundreds of videos per year
+Restoration is back to stable and your latest markers were receive injected what I restored and verified voice Servo plus watches are running cleanly as one stack no stale duplicates front most inject path works mode equals clipboard keypress enter key enter background no Focus inject now works no more endless defer Loop mode equals do script BG okay
+Christ's sake
+Cry out loud
+I think you're lying something you're a lying sack of crap products
+Cute project
+And you waste the whole fucking day going in circles
+Everyone's moving to clock since the beginning of this year anthropic has been on a generational run and over the past two months and product has shipped for the school features to Claude and most companies shift into full year and these aren't just small updates we're talking about AI agents that can use your computer just like open clocks in the terminal background agents that run while you sleep
+And two brand new models and the craziest part is
+These features exist so in this video I'm going to break down
+PROMPT_PATH_RECHECK_1774573586
+PROMPT_PATH_RECHECK2_1774573602
+Desktop so that you can understand exactly what's available to you right now and how to effectively use it we're going to cover computers agent teams remote control schedule tasks more and we're going to cover a lot of features and if you're a developer an entrepreneur or just someone trying to keep up with AIDS to understand why quad might be the most important tool in the world to learn and if you like videos like these please subscribe and hit that like button helps me out of time that's not waste any more time let's dive in so before we dive into all the brand new quad and quad color I want to talk about already
+That we've gone through probably starting both at the beginning so the first era of llms right it was this text generator that seemed to know all the answers yes it's sometimes hallucinated yes it wasn't always perfect but it was a magic technology that could give you essays that could write your emails if you do all these different things and it took over the world and so this was largely
+Okay
+Let's let's see that transcription working
+Let's see that transcription working in the terminal window here codex
+Never been so freaking frustrated codex
+Was already fucking working
+We had it fucking
+Wired up
+We had it all wired up
+Text to text right you could ask try to be to your question and it could respond with text but it also responded code like it was questions about the specific lineup function or a page that does XYZ it can actually fit out code in raw text but it's separated in 2023 versus 2021 next year and what they created was something called quad artifacts and so all artifacts this is a good this is a good setup
+To send to the general chat to our internal
+Ai right now it turns out that this whole general agent movement that has been started with open claw and many people on a Mac Mini and they're messaging it but we'll see like what they ended up with but will also
+I'm gonna show you four incredible open source projects that show you where the world is heading with agents these formations are going to interact and use and leverage artificial intelligence the first one is called cheese that and it is by y combinator president Gary Tan and I just started using it it's a big part of how my small team can operate as if it were
+So if you don't want to have this startup and rebuild all of your different workflows all of your memories from scratch which is actually a really nice feature and something probably the industry is going to have to think about how do you test out different agents without starting completely from scratch there probably needs to be a standard gradient soon all right next is a project the most popular one by far called superpowers and it is already adverted 15 000 stars on GitHub it is by Arthur Oprah and it basically gives blog code superpowers now this is in some ways similar to g-stack on Gary Tam but it is much more focused on a development side of things and in one of the funniest descriptions of itself well listen to this your agent puts together and implementation plan that's clear enough for an enthusiastic Junior engineer with poor taste no judgment no project
+Text in an aversion to the testing to follow that may be jungle so it emphasizes true tdd which is test driven development yagne you aren't going to need it and dry these are best practices coding patterns so here's the basic workflow first you brainstorm activates before writing code refines your rough ideas so very similar to g stack in that way and the YC office hours but now this is kind of just a different flavor of it explores Alternatives presents design and sections for validation saves the design document then by default big uses work treats which is really nice for parallelization of coding agents then your rights the plans then it actually executes the plans making sure it's doing gdd and actually does that code reviews and then finishes the branch now this is a little different and that it comes in the form of a plugin so it's a little bit easier to install than g-step
+To install it you simply type quad plugin install superpowers at Cloud plugins official hit engine and that's it it's done and then as soon as you hit slash superpowers you can start to see all of the different tools available to you so we're going to select slash superpowers brainstorm and it is just going immediately so it has an entire workflow that it's going to go through with me one by one just super useful if you need outbreaking through how to start these projects I'd actually execute them so in a lot of ways similar to g stack just a very different approach all right and last maybe the most interesting project of before this is intended to be an entire company run by AI a zero human company already at 33 000 Stars now I'm going to give a slight copy up before I get into this I have seen so many different projects claiming to be able to
+ROLLBACK_RESTORE_CHECK_1774574066
+FINAL_PATH_VERIFY_1774574075
+And that is not something I cover often on this channel really ever I need you to know the likelihood of you actually making money from this type of project is low unless you put in the effort and I really want to be transparent about that this is not something where you're just going to click a button say go and all of a sudden you're gonna wake up with a thousand dollars in your bank account and it's just never gonna happen like that but nonetheless paper clip is very interesting and I'm seeing more and more of these projects in which a team of Agents is supposedly able to run an entire company for you probably the most popular of these which is closed Source is a company called pulsa slight detour pulsia is created by this guy Ben and Sarah AI that runs your company while you sleep so basically you plug it in to your company and it just runs everything for you again
+DOSCRIPT_RESTORE_VERIFY_1774574136
+Not only am I going to give you the warning that most likely you are not going to wake up with money in your bank account just because you were submitted eight prompts but also I find it difficult to believe that these types of zero-human company projects don't have rough edges and limitations that I truly do so take all of this great results all right so what is orchestration for zero human companies so paperclip is a node.js server and react UI that orchestrates a team of AI agents to run a business bring your own agents assign goals and track your agents work and cost for more dashboard let me show you that dashboard now so this is their demo video let's take a look so design wise very nice you can see there are issues the engineering team automatically takes those issues the build things you can see in more chart right here these are all AI AJ
+TTY_MATCH_FIX_VERIFY_1774574159
+REANCHOR_VERIFY_1774574201
+TAB_CONTENT_CHECK_1774574226
+TAB_CONTENT_CHECK2_1774574237
+STABLE_RESTORE_MARK_1774574296
+A vision into what's coming these agents are getting more capable of harnesses the projects around them are getting more accountable and so with that if you're early and you're seeing these things you're experimenting with them you have a huge advantage versus everybody else who are still maybe just using charge PT for Q a for example this is the Cutting Edge of what's happening in artificial intelligence all for these projects hopefully you enjoy it if you enjoyed this video please consider giving a like And subscribe and I'll see you in the next one this month we have a truly transformational experience for you with jotform AI plus success stories from customers around the world who are saving belt loads of time and money by Job from AI and AI agents let's Dive In create the perfect form and no link who just dropped and it is changing everything you can now hire unlimited AI employees they work
+47 no breaks no days off no complaints and they connect to your real apps Gmail LinkedIn slackwork and actually take action inside them this is not a chatbot this is not a prompt at all this is a full AI Workforce you can spin up in 60 seconds no API keys no setup no Tech skills needed and it beats open claw in almost every single way in this video I am going to break down exactly what the link core is why it is blowing up and how you can use it to run your business on autopilot stay with me because this one is big hey if we haven't met already I'm the digital Avatar of TuneIn Goldie CEO of SEO employees and each one has a specific job one handles your Outreach one manages your inbox one Korea's content one finds leads and they all run at the same time without you while you sleep while you work while you are on a call they are operating in the background getting things done this is what people call agentic Ai and it is the next big thing you are not prompting anymore
+FINAL_RESTORE_PROBE_1774574368
+In the workforce and that changes everything about how fast you can move and how much you can get done let me break down what makes political actually special because there are a lot of a items out there and most of them are very similar blinkboard is not first you get unlimited AI employees you are not capped at one or two agents you can build out a whole team in changing its own goal and its own Workshop second you get access to over 180 AI models that includes GPT Claude Gemini llama and loads more all of them included no extra subscriptions no separate API keys for each one third these agents connect to your real apps Gmail LinkedIn slack HubSpot telegram Discord they do not just talk about doing things they actually go into those apps and do the work fourth there is zero set up no Docker no servers no self-hosting no technical knowledge needed you sign up and you are ready in 60 seconds if these agents have real memory they remember contacts across conversations and tasks
+They run continuously they make decisions on their own they are not just running a script they are thinking through a workflow that is five features that most tools cannot match even on their best day
+Before I keep going I need to mention something important if you are watching this and thinking okay this is cool but how do I actually apply it that is exactly what the AI profit boardroom is for inside the AI profit board room we go beyond just watching videos so we actually build this stuff together we set up AI agents we connect them to real tools we build automations that run your business while you focus on the bigger picture is Hands-On practical and build for people who want to take action not just learn we use tools like blink raw inside the community we show you which props work what goals to set for your agents and how to build a system that keeps growing on water it is for Freelancers agency owners Founders Educators anyone who wants to work smarter using AI link is in the description go check it out now back to blink on because I want to show you what happens when you start thinking about one agent and start thinking about a team picture this you have four agents running at the same time agent one is yours
+WORKING_RESTORE_FINAL_1774574525
+Content agent every single day it creates a new post about the AI profit boardroom something that talks about the value of AI automation what members are learning why this matters right now it writes it it posts it it checks what performed well and it adjusts the next one Agent two is your inbox agent it monitors incoming messages across Gmail and LinkedIn when someone asks the question about the community it replies when someone wants more info it sends the details when someone is ready to join it sends them the link agent 3 is your research agent it scans for new AI tools new trends new things happening in the space it pulls together a summary every morning four is your follow-up agent anyone who showed interest but did not take action yet it follows up with their politely at the right time with the right message for agents all run in all working tour the same goal grow the community bring in more people keep conversations moving and you are barely involved you check in and make decisions
+The actual work is getting done automatically that is what link all makes possible ESPN Milwaukee matchups of ESPN's networks and services
+Now let me talk about why this beats open claw because that is in the title and you deserve a real answer openclaw is powerful it is not bad but it has a serious problem it is built for developers you need to self-host it you need to configure servers you need API keys for every model you want to use you need to understand how to manage infrastructure for most people that is a wall link they never get past set up they spend days trying to get it running and give up before they even create one agent link call removes that all completely you do not need any of that you sign up you are in you build your first agent in minutes and you have access to 180 plus models without setting anything up it is the same power without the pain that is why it wins not because it is more advanced technically but because it is actually usable by real people running real businesses
+AUTO_SUBMIT_FIX_1774574683
+This is for you if you are a freelancer who is tired of doing the same repetitive tasks over and over let your agents handle the Outreach the follow-ups in the admin you focus on the work you actually want to do this is for you if you run an agency and you want to scale without adding more head count the more output same team size your agents do the heavy lifting this is for you if you are building a community or an audience and you want content going out every day leads coming in consistently and conversations happening around the clock this is for you if you are a Founder who moves fast and wants a team behind them without the overhead and honestly this is for you if you are just starting out and you want to move as fast as possible gives early movers a real advantage while other people are still doing everything manually you have agents running it's the main thing I want you to take from this video AI used to be a tool something you opened and used and closed that era is ending or is replacing it is AI as a Workforce
+Something you build manage and grow you set goals your agents take action and the work gets done blink law is one of the clearest examples of this shift right now and the people we start building their AI teams today are going to have a serious advantage over everyone who wins all right let us bring this home blink law is at blink.new it gives you unlimited AI employees 180 plus models included zero setup real app Integrations and true agent behavior that keeps running without you it is beginner friendly it is powerful and it is one of the most exciting things happening in AI right now if you want to go deeper and actually build this kind of system for your business come join the AI profit boardroom that is where we put all of this into practice we build real automations we set up real agents we help you create systems that grow your business on autopilot everything is practical step by step and built for people who want results not just information link is in the description and if you want to start completely free
+TURN_COMMIT_CHECK_1774574947_20099
+Join the AI success lab it is our free community with over 40 000 members who are all using AI to work smarter every single day inside you will find the full notes from this video over 100 AI use cases templates Sops and a community of people who are actually doing this stuff and getting results links are in the comments in the description go check it out and I will see you in the next one my relay Howard Black Workers your vision start by going to look a little bit bigger choose your inspiration and colors and symbols and larger designs appear to easily customize fonts colors and layouts and more done delivered in all of the formats you'll need Lucas technology makes every design you need stand out with a logo that's you and your customers will love
+Look at logo maker let's try it today
+TURN_COMMIT_RETEST_1774575072_7031
+There's a brand new free update from openball 3.24 and today we'll be running for exactly how it works step by step so five main headlines improve open AI API SQL sub agents with open web UI which is a web UI for overall as you can see and then also you've got skill and tool management control UI slack interactive reply buttons native Microsoft teams and smart Discord Ulta 3. I'll be running through each release in a second so you can see this all changed right here if you'll know how to update to the latest version mobile you may see it pop up inside the dashboard here as you broke free when I did it so what you want to do is just if you if you find like you have a problem with the setup
+Now running version 3.24 you can also if you want to update just go inside the chat here and save that thing to the latest version and that will allow you to update automatically to the latest version of clum 3.24 so that's basically what it is how to update it
+What it means Etc let's run through each of these changes and how to use them okay so
+LIVE_AFTER_RESTART_1774575116_17706
+Overall 3.24 literally just dropped and you know if you've never heard about basically it's just 24 7 AIH in the rest and locally and
+Changes which should be new features and fixes so things that we're going to are now working I'm going to go for each one right now all right so breaking changes some new stuff so number one is better opening eye API capability CRA and Gateway upgrade
+FG_WATCH_CRASH_REPRO_1774575209
+So what does this mean openhol cannot pretend to be an opening our API server that means any app that was built to talk to open now I can now talk of course there's two new endpoints added added let you see here
+And this huge fault rag retrieval augmented generation apps tools and apps and search documents and feed them to AI so what does this mean for you what if you have a tool for chat CPT for example it may work with right now
+Agent you actually use right now
+Inside the dial inside the area right so you can
+Use this command four slash tools
+And then C1 access it has access to
+SUBMIT_STABILITY_CHECK_1774575228_1242
+I was also like these these food storage commands for so you can for example like trigger fast mode if the API that you're using enables it as you see here and then you can tap between these frame see if you press tab on you can open keyboard you can switch between these and then switch them on switch them off Etc see the status on Etc and this is you can switch between them using the tab button
+EXIT_DIAG_1774575262_2049
+Possible the food is the full slash tools just showing the tools even if you can use it and now it shows only tools the current agent can access in this moment there's a new available right now section as well hit the control UI and it also has a compact view by default the detail view if you want more and so answers manual but there's no more guessing like which course access to your options work Etc now another one is Microsoft teams so this is got a rebuilt Ram
+And this is one of the biggest change to the movies so open course teams integration was completely really written using the official Microsoft teams SDK so now Central advice in real time to AI still thinking and when someone talks about for the first time they get a workout which suggesting hops to get started and users can now give feedback that excites so let's use our label Etc now if you're wondering okay how does this call by team this is kind of generic up there so let's have a look here
+TURN_COMMIT_FINALCHECK_1774575334_20099
+So the control UI skills levels skills now have status tabs like ready detail been disabled
+TURN_COMMIT_RETRY2_1774575427_6338
+Into detailed dialogues with install buttons as way easier to just manage skills without touching the UI so let's take a look at this we have the skills here you can see there's a bunch of different options you're ready in setup disabled or you can also browse the skills store which is follow-up or overall and then you've got this search skills option so you can search for your skills you can switch the farm enough as well for example everyone does connected which allows us to like manage a control panel
+So we can switch between these we can disable them you know if we disable this here we'll actually go inside the disabled tab as you can see and then you've got neat setup ready and so you can see there's a big difference between the number of ready skills that we have which is night five more which is 146
+So if we do
+FG_TIMEOUT_TEST_1774575478
+Listen to the ground
+And then you workspace file marketing preview so you can click any agent file and get enrich rendered preview inline so this is just useful for like reviewing what details you've got inside your
+Your workspace and how you organize the file so if you need to change anything okay let's try that
+Section so you can see what's enabled and
+Delete stuff too all right so you see here it's got Asians and Asian Target allow this is
+And then if you're using other channels so slightly interactive with mice
+Your Discord Auto friends with generate names
+And once that group Echo fixes as well millions have development stuff right here
+For skills now skills that are bringing to also forever right so before we start playing set on the skill provide small multiple steps
+The original voted by mail in today's special election in Florida but to be fair how else could a president with his own plane possibly voting person this is just another day you may not know it but today was election day Donald Trump's home state of Florida a special election was being held for a state house seat and as a result I can only assume that Donald Trump flew out and capped his ballot in person we were able to confirm uh that President Donald Trump did vote by mail according to the Palm Beach County records but excuse me this guy voted by mail and party is totally corrupt get that through your head it's impossible to have male and voting and have other selections
+The amount of cheating was so small certain people aren't even sure if the male was in
+The Donald Trump's tiny penis aside of all the times for him to vote in person you would think it would be what he is in the midst of doing anything he can to get Congressional Republicans to pass to save America act Trump has specifically told Republicans not to make any deals on funding TSA workers or any part of DHS unless it's tied to that piece of legislation so just for the simple PR of it all you would think that the guy who is more than happy to fly down to the Sunshine State on a moment's notice to Gatsby it up for an evening would hop on his own plane and vote in person so Trump's decision to go postal has exactly helped this case for the destination of male and voting Nationwide and according to Senate Majority Leader John Boone there are other reasons that it might not happen but we do have things in fact there are a majority of states a lot of Republican red States whatever you want to call them who have a mail-invalid option and so we want to ensure that whatever we do here he enables them to continue for legitimate reasons to have mail and
+We want to get rid of are the ballot harvesting the drop boxes the unsolicited mailings and things like that that I think can be used it can be are potentially life with fraud see John Foo gets it he knows that the red States in America have a good kind of memory wholesome patriotic the kind of male and voting you want to bring home to your folks whereas the blue states have Sinister corrupt and fraudulent Maryland voting and leaving the Dropboxes of blue states are nothing for trouble in tax expertise switch to it surface expert for 150 the wall drums current war with Iran may be the new hot thing his War was bailing voting has been raging for years look at what's happening with this male and voting is a disgrace absentee is good
+Mainland Universal is very very bad but I do say this Universal mail-in voting is going to be catastrophic it's going to make our country a laughing stock all over the world and thank God that never happened just imagine how embarrassing it would be for the most powerful Nation on Earth to become the laughingstock of the world I mean that would have been a disaster
+LIVE_PATH_CHECK_1774575806_11475
+And Trump isn't the only one painting mail-in ballads as there was one true enemy here's a member of his own doj it's caused chaos now and a lot of people feel uncertainty and a lack of confidence in the outcome of our elections because you see the results flip uh sorry but the results don't slip you see as more votes come in they get what many highly regarded mathematicians called it's the same reason that when you order more food at a restaurant your bill isn't flipping it's just higher but besides and voting being a very legal thing that America has done for decades be better
+Not as efficient and as committed to Republican or democracy form of government as we are the rest of the world has election results on Election Day itself even countries that we consider to be not very
+USERLINE_CONFIRM_1774575855_17803
+Civilized and I think we can all agree that that should be the standard that America holds itself to I mean if Russia and North Korea can get their election results on the same day surely America can mirror that exact type of efficient democracy and Donald Trump's war on our democracy isn't merely focused on valiant ballots this week he and his party took their case to the Supreme Court yesterday the nation's highest court HUD arguments in a dispute involving late arriving mail-in ballots the Republican National Committee is challenging a Mississippi law that allows these votes to be counted within five days of election day for 180 years Ed Congress has said election day in federal elections means election day not a grace period not election period not election week not election month election day means election day that's right he's arguing that there's a strict definitive deadline on when something is supposed to occur and to ignore that would be tantamount to ignoring the will of the people and that is one of the most undemocratic things you you
+FG_FOCUSHOP_VERIFY_1774575919_19314
+Do a doj revealing it needs more time to review 1 million new documents potentially related to the Epstein case there was a piece of legislation and it said that you need to disclose all of this information by December 19th it will come as news to nobody that is now after December 19th and so the Department of Justice has really blown the deadline in this case Federal law required the doj to release its its records on Epstein by December 19th but government lawyers told the judge this week that only one percent of those files have been reviewed and released thank God the administration didn't release the Epstein files by mail then their actions could have really been corrupt Donald Trump's war honor democracy is nothing more than his desperate attempt to hold on to power and he hasn't exactly been shy about it the Democrats share thanks and I don't want to say that it'd be nice to everyone get along but it's a different country than it was years ago I don't know how people can vote for these people you know I see I see the midterms
+I don't know what because means but
+Uh I don't know how people can vote for them Trump doesn't know what close is just ask this guy
+CLICLICK_PIPELINE_VERIFY_1774576016_162
+The reality is Donald Trump is waging a war on male and voting because he can't do what that thing that most other politicians do in an election year run on his record the man has absolutely nothing to campaign on what could he possibly say to voters he can't point to the cost of groceries can't point to the cost of gas can't point to the cost of Health Care can't point to the amount of jobs that he's created and he definitely can't point to the Safety and Security of our country right now meaning he's got nothing he has created a solution in search of a problem widespread voter fraud is the result of mail-in voting is as real as the Contours of Christie Nome's face in fact in Utah Ruby Red Utah they conducted a month-long review of their voter rolls examining over 2 million voter registrations and discovered that there was one non-citizens who was registered and that person didn't even vote which honestly kind of feels like a missed opportunity I mean these days it's like getting put up on the jumbo trial for somebody that you're not even having an affair with pretty lame if you ask me
+That's not the only study Justin Levitt a law professor at Loyola University and fellow at the Brennan Center says that he found only 31 instances of impersonation fraud out of 1 billion ballots cast between 2000 and 2014. Those are insane odds that means that there's a greater chance of someone being struck by lightning while being attacked by a shark and there is widespread impersonation fraud taking place in our elections Donald Trump's efforts are not about election Integrity they are the actions of a power hungry autocrat desperately trying to cling to Power by any means necessary and every Republican who claims to be some die-hard flag waving Patriot who goes along with this man's push to upend our democracy is just as culpable as he is as someone once said
+I don't know how people can vote for them exactly
+Before you go I'm very excited to announce that I've written a new book titled the day after how to wield power in a post-trump world the book explores what is in my opinion the single most important theme that we're dealing with in politics today and moving forward power specifically how Republicans abuse it and how Democrats refuse to wield it this book explains how we got here and we're importantly how we should finally wheel power if we're lucky enough to get it back it is the blueprint for progressives who want to do far more than just restore the status quo please pre-order today by following the link on this screen you can grab yours from any of the major retailers like Amazon and Barnes and Noble or stroll down on the page and get a copy from an independent bookstore closest to you thanks so much for supporting independent Media
+Choose from thousands of realistic voices to using your content
+Change the way you record podcasts voiceovers and branded content with the number one AI powered voice generating technology
+Stop searching for the perfect voice and stop wasting time re-recording take after take
+Try 11 laps for free and start elevating your content today
+Modern hair dye was invented by some guy in 1896 yeah over 100 years ago guess what they're still using basically the same ingredients today so let me get this straight we've got AI girlfriend space tourism self-driving cars fly your hair dye is still running on 19th century ingredients GPD ammonia parabens yeah better way right thankfully there is super hair color said no to the old stuff no PPD no money no hair they use TDS instead chiller on your scalp dog loves needed
+Brush
+Done one can last as long as four boxes of drugstore dies made in the U.S with real ingredients like aloe and avocado oil that's like going from horse and monkey dye to the Tesla hair color it's an upgrade because you're not living in 1896 so
+Where's your hair die
+I know I said we got a great show for you tonight former National Security adviser Jake Sullivan is gonna be here tonight and like all people with a nuanced understanding of the complex geopolitics in the Middle East
+He's not working in government anymore
+Before we get all that ladies and gentlemen
+I hope you had a pleasant weekend
+And got some rest
+Because the dizzy and chaotic
+Carnival ride is Donald Trump's America continues to careen down shit show Hill
+It's fucking Madness out there TSA lines longer than your actual trip
+Escalating threats in the Middle East planes driving into trucks the only thing giving me joy
+Is looking forward to this season of The Bachelorette I mean they've got
+Mormon woman she seems lovely I hope that she finds hold on a second I'm getting a call
+But luckily in everything that is going wrong in our country our Intrepid leader is utterly unbothered the world disintegrates around him
+Larsley due to his actions
+Yet he still managed to spend the weekend golfing a couple of times and partying at Mar-A-Lago
+You know I really think that the less fun we're all having
+The better he seems to be doing
+Does he run on our misery does that make him stronger now to be fair
+That was the weekend
+Obviously today is Monday the only day of the work week
+You can see how much traffic their site is getting and where the traffic is coming from
+Understand audience Behavior such as the pages they visit how long they stay on the website and their bounce rate
+See where their traffic is coming from such as organic search paid search social media or referrals and so much more
+Follow me for your daily dose of digital marketing tips and tricks
+Time to focus and get down to the sobering business of wrapping up this war President Trump now arriving at Graceland for a bit of a detour on his stop Elvis had two 8th grade black belts and karate one was in Kentville was he really good or was it just actually he was really good he started I have taken him in a fight
+Which Elvis are we talking about
+1950s Elvis
+1970s Elvis still
+It's unbelievable how disconnected Donald Trump is from the chaos that he himself is causing the American people
+But I'm glad you could have a nice time golfing and visiting Graceland well we're all freaking the fuck out President Trump issues a deadline to open the Strait of Hormuz by Monday night or he says he'll quote obliterate Iranian power plants Quran isn't blinking saying if power plants are attacked Iran will Target the power plants of regional countries this escalates every day with no end in sight the countdown ticks towards Monday night
+Oh one day we've got plenty of time to wait
+If I'm here that must mean
+And lo and behold today Trump removed the sword of Donald Clees that he himself had hung over our heads the president is posting moments ago he has now decided to quote postpone any and all military strikes on Iranian power plans the president claiming the U.S has been negotiating with Iran over the weekend calling them in-depth detailed and constructive conversations
+Well I guess we're all going to be have a little less action
+A little more
+Conversation
+That's all we got due to budget constraints
+But you know what take a step back
+You know it's a good news story it's a sigh of relief for everybody it's progress and we've got to celebrate the wins
+You know in this way it's like our friend punch you remember our front punch
+Yeah I agree
+We brought Punch up previously oh good news
+Does punch the monkey have a girlfriend hunch has been spotted canoodling with a female monkey there they are hugging and kissing and affectionately playing with each other
+Fantastic
+It's really nice although um
+Hey listen girl straight talk
+I know what you're thinking a girl
+You can't fix him
+Watch seriously if you're watching I am happy for you but little advice prenup
+You're a famous guy now and you don't want to end up splitting your fortune in half
+I guess that's not quite half
+We're back to escalating tell God right
+Back to Iran
+Escalating tensions in the Middle East I must applaud the president for stepping back from the Cliff of escalation and engaging Iran in productive talks Iran has responded its State media saying there are no talks
+Well now we're in the uncomfortable position
+Of who to believe
+Normally in this situation I think we'd all
+Be inclined to in some measure not trust the pronouncements coming from this Theocratic and corrupt regime
+We've been trying not to trust Iran
+Choo choo let's give our president the benefit of the doubt and just probe a little deeper sure you say we're having talks with Iran
+Who did you talk to a top a top person
+A tough person
+Or
+The article really makes a huge difference here like the guy or some fucking guy you know it's a little tough they're wiped out they wiped out everybody
+So a lower level guy
+Who's been elevated to a higher echelon a bottom who is now top
+Versatile but but not
+Do not stop it
+Or I will rip your stuffed monkey
+Back in half
+So you're talking to Ugg guy but not the top guy not the supreme leader
+No not the supreme leader but the people that seem to be running it again
+Running it or seem to be running it
+It's a big difference hey where's our car oh I gave it to the guy who seems to be the valet
+Yeah Jackie you're standing by the curb seemed like a top guy and he did take the car
+What made you think he was the top guy when you had the talks it all started here geometries kitchen towel crafted from our signature goe fabric this geometry Basics kitchen towel is engineered to absorb more dry faster and stay fresh while effortlessly tackling any task in the kitchen
+We're always creating because your home is always evolving with fresh designs and new products released regularly you'll always find something that reflects your style your Rhythm and your space holding up to seven times its weight and liquid it's perfect for drying dishes wiping hands and catching spells every towel keeps three and a half water bottles out of landfills transforming waste into something beautiful and functional bring Beauty home discover geometry
+Just a week off and Mr Kushner had them
+So you didn't even talk to them you are guys who quite frankly don't seem like top guys talk to their seemingly somewhat top guy or Jared and Steve sure this is even a real person that they're talking to
+Out of curiosity did the top Iranian guy ever ask for their social security numbers
+Or Target gift cards
+Is there top guy's name by any chance Ali Papa buoy
+Because it's sounding like bullshit
+Maybe if you walk us through the details it'll feel more real you said there's many points of agreement with
+Right now what can you give us like 15 points
+15 points like 15
+What are we doing
+Well looks like the creatine is working
+I only eat meats and ferments
+Seriously like 15 or 15 just
+Just keep going what's the first point well they're not going to have a nuclear weapon that's number one that's number one two and three it's
+I want to believe this is real but there's no way that your 15-point agreement one two and three are no no first of all that makes it a 13 point agreement just right off the bat
+And there's no way you went to a run and we're like all right fish pulling no nuclear weapons and point number two shame
+Point number three C Point number two
+That's what we're supposed to believe they will never have a nuclear weapon
+Donald Trump is without a doubt one of the most prodigious Liars this country has ever produced he's our Supreme misleader
+But the chaos this very actual war is creating is making this question even his reality distorting Powers
+Let's let's step back into the Wayback machine all the way back I don't know June when Israel and the United States first bombed Iran's nuclear program we wiped out the nuclear capability of Iran obliterated it it was obliterated like nobody's ever seen before I would say set back
+Permanently that place is under Rock that place is demolished they're never gonna have nuclear
+Never
+Permanently
+Obliterated
+I'm sorry Caitlin Collins you have a question
+Nuclear sites last summer with your stripes then how can you argue it was an imminent right now oh do we hit them so hard we oblited them but obliterated them but that doesn't mean with the right equipment you can't dig down and go get it
+Actually
+I think it's exactly what it means
+That's what God damn it
+It's so annoying it's so unbelievably annoying
+To obliterate to destroy completely leaving nothing behind
+There's nothing in here about well we completely obliterated it unless they have shovels
+By the way nuclear question aside are they even opening the Strait of Hormuz it is not what prompted your apocalyptic ultimatum in the first place very soon if this works
+Be a jointly controlled
+Maybe me
+Coming soon
+From skydance Paramount Brothers Amazon Comcast
+Two bitter enemies put aside their differences
+And learn
+We're opening a street
+Open their hearts
+Premier Zone Paramount plus plus minus divided by
+And has already been canceled
+Jesus
+Oh maybe I'll run it with the Ayatollah of like two Bridge trolls
+Whoever wants to take oil to see must answer me these riddles three
+I hate here's what I hate
+I hate how these questions of great importance and consequence to our country he handles with such shitty glibnness maybe I'd run it iron a little stinker
+Meanwhile here in America we don't even need a war to degrade our own infrastructure our airports are collapsing all by themselves
+Alert chaos erupting at America's airports this line in Atlanta showing people lined up around midnight for flights leaving this morning I've been here almost two hours and three and a half hours we might not make it my flight is boarding right now um now
+Come to our adventure and all around you visit Massachusetts play outside
+Way ahead of you kid
+Oh no
+That should be the left's new don't tread on re flag
+Oh no
+American Travelers are so stressed out
+What incredibly uncontroversial American enforcement agency could we deploy to
+Oh you're way ahead of me
+I believe the audience in Mass just went oh no
+What agency could we deploy to our airports to ease passenger's Journey this morning the Trump Administration is now deploying ice agents to help TSA officers
+Oh no
+We're sending in ice agents to come a situation it makes perfect sense it's kind of like the way we calm our dogs during thunderstorms with a blanket of fireworks
+You're okay Rust
+Not to worry are incredibly competent government knows exactly how these ice agents can help alleviate these incredibly long TSA lines right Transportation secretary Sean Duffy we have ice agents who are trained and can provide assistance to agents they run those same type of security machines at the southern border oh great well that'll be really helpful if it's true
+Is it true
+Guy in charge of ice Isis and trained in x-rays and look at x-ray see if there's you know is something dangerous in that luggage I'm no kidding we're not going to be doing that
+Ice isn't trained on x-rays no surprise they don't really seem to be trained on anything actually and by the way
+Honestly who
+Even thought
+It was a good idea to send America's most hair trigger agency into America's most hair-raising environment that was mine
+What in God's name
+Possessed you to do that sounds like the paperclip you know the story of the paper clip
+How many more years
+Of this shit
+Go ahead 182 years ago a man discovered the paperclip
+It was so simple and everybody that looked at and said why didn't I think of that
+Ice was my idea
+Right now in a round they're going
+Are we talking to a top guy
+Because I don't think I don't think this is the top guy
+Yeah we were talking about negotiating nuclear and then he just went off on fucking paper clips
+Why did I bomb around well do you know the story of 2000 flushes blue
+Well for centuries people shit in regular water
+And then one day a guy said what if it was blue
+That's why I bombed a rock
+It's so fucking stupid meanwhile the rest of us suffer under Donald Trump's attention deficit style of government by whim
+And as America and and really the world
+Has to helplessly navigate the turbulence that Trump causes his administration I shit you not this weekend had a message for all those who were suffering I think that given what has been done to President Trump and his family it is impossible for either of us to understand what he has been through should all have a little empathy for what has been done to him and his family I think we have to offer the president Grace he means Grace in fact maybe let him live in a land of Grace Graceland
+Where he can live his life out asking the important questions because Elvis get treated better than me
+She's dead sir
+Two three three
+Piano app
+For over 45 years now solar electric has stood by our customers through every change we're here and we're prepared to support you with quality products trust and support and a dedication to your energy future trust a company with the legacy of strength quality and resilience reach out to not solar electric today and let us help you secure your energy future with confidence
+Lord and Savior
+Donald Joshua pepper Trump they're not booing they're saying Bruce for no apparent reason
+When Trump ran for president he had an urgent message
+About the state of our country
+Our country is being lost we're a failing Nation we are a nation in Decline we have to fight for our country and we have to fight like we've never thought before it's like we're a giant garbage can
+How dare you
+If anything America is a recycling bin
+Useless and made almost entirely of plastic
+But that's it we have to fight to save our country and now Daddy's home and he's about to take out the trash and two weeks into the Trump presidency
+We have a better sense of the evil and Powerful forces
+That have been dragging our once great nation into decline
+The Trump Administration removed transgender references from federal government websites it now reads LGB instead of LGBT
+They have no idea the damage T was doing to our nation
+Consonants
+Because I think you'll agree with me there is no tea in USA
+If you spell it out obviously that becomes an issue
+And if you want a BLT for lunch
+They just can get ugly but
+Nothing will stop America's low tea like no tea
+What other changes are making us great again
+The Trump Administration ordering all gender ideology references be removed including pronouns and email signatures
+Consonants and pronouns your next prepositions
+No more pronouns and email signatures good luck signing your emails now president she
+Or should I say president him
+Those are just the actions that this president has taken to prove that he's still kind of a dick
+But believe me he hasn't taken his eye off of America's true nation-state enemies President Trump is reiterating his threat to quote take back the Panama Canal Trump suggesting he could use military force to take Greenland President Trump had a fiery uh phone call with Denmark's prime minister putting the NATO Ally in crisis mode
+Denmark Panama Greenland the axis of where are those
+Now lest you think that pronouns and Panama were the twin forces shackling America to a prison of National Decay
+There are also more powerful forces at play in this dangerous world
+Some of them closer than what you might have ever
+Imagined
+The new era of trade Wars Trump says tariffs are coming on Canada and Mexico and even the European Union
+Eu Canada do we have any friends
+I mean Mexico I get Trump's been hating Mexico
+Pretty much since the escalator
+That's the truth
+That's not good not good at all
+Hey Paul what are you doing I saw some ice here I thought somebody might slip and fall where do you bring that stuff with you everywhere good catch Safety First
+You've made the hardest decision to seek help
+Imagine beginning your healing surrounded by Ocean Air compassion and care that truly sees you our doctorate level therapists craft personalized Pathways toward peace helping you every step of the way for over 18 years we've guided thousands toward lasting recovery
+Seasons in Malibu clinical Excellence in a luxury setting
+I'm picking a fight with our most reliable and pleasant friend the Labradoodle of allies
+I guess that's true tough
+You know what I mean
+You gotta walk into the prison yard
+Walk right up to the one guy who really doesn't seem to be a problem at all
+Take that best friend who has willingly signed up to fight in every ridiculous War we've ever gotten into
+Let that be a lesson to the rest of the world we are a terrible friend
+Denmark Panama and Canada America
+You should fight the Nazis
+Now we're scouring the globe for easy marks what do we love the Jake Paul of Nations
+Why don't China's out there but Panama's a legitimate fight
+In fact I'm going to call everyone out in FIFA's concacaf division
+Yeah oh Trinidad and Tobago you got a gang up huh
+Okay that honestly like I can't believe you laughed at a concacaf joke
+Look at me getting all skewed in the tie
+In Trump's defense
+He did explain today why we're going after Canada I mean I looked at some of the deals made I say who the hell made these deals that so bad
+So bad
+The trade deals with Canada they're so bad he's just looking and saying who made these
+Ladies and gentlemen
+Don't don't get it out of me ladies and gentlemen for your dining and dancing pleasure
+Come with me into the Wayback machine to 20 odd 18
+I give you the culprit of the terrible deal with Canada this morning President Trump signed a new trade deal to replace NAFTA with the leaders of Mexico and Canada the best trade deal they say ever made
+A deal done by Trump's greatest Nemesis
+President Trump this trade War has awoken a sleeping giant
+Not Canada not Mexico
+The Democratic minority Senate leader released the Schumer he's putting with their beer
+Okay
+Most of it Corona here comes from Mexico
+It's going to affect your guac
+Because where does guacamole made of avocados
+Your response to the trade war is to fucking tell us guacamole is made of avocados
+When the people find out the precious Super Bowl VIP is comprised of mainly avocado
+Also Tomatoes sometimes onions a bit much
+For me obviously with this field is and
+Excuse me one second
+Democrats
+Can you
+Stop
+Trotting Schumer out there
+Every time
+Traverses into the unreal he's not good at this
+What is the decision-making process here hey who should we get out there to effectively battle one of the most Savvy presidential media manipulators in history I don't know how about Schumer he's not interesting but at least he's monotone
+Oh wait and Chuck before you go out there you look too young put on these readers and lower them on your nose
+Honestly listening to Chuck Schumer speak on almost any topic
+A couple of Canadians here from Montreal and I don't want to upset them because I'm gonna need an appointment
+Now before we
+Before we hear uh rattled by Trump's two to two and a half front trade War please understand Mexico has already today received a 30-day stay on tariffs by promising 10 000 troops to the border and we've promised to stop the inflow of guns so self-invented crisis averted
+Can Canada do I'm sure there's an equally performative gesture Canada could make what I'd like to see Canada become our 51st state
+Yeah Mexico you said a few troops to the border but Canada if you could
+I don't know cease to exist
+As an independent entity Fair
+What's that Mexico uh no no there's only 51 States there's no 50 seconds I'm sorry
+Watching in DC
+I think you know why I think you know why Canada
+Of course by the way since we even
+For writing the show at like 4 pm
+Trump has already set now he's going to pause the tariff war with Canada as well because
+Of course it makes sense to wrap up the trade War right now so that we as a country can focus on the biggest thing that's weakening our great nation diversity equity and inclusion
+Yes Dei diversity equity and inclusion Mega worlds blamed this Scourge for everything from the fires in California to the attack on Bourbon Street to inflation to the Baltimore Bridge collapse to why your children are confused about the race of mermaids
+Because mermaids boys and girls are gingers
+They've always been
+The latest example being the plane crash in Washington it was the deiest but don't take my word for it
+Let's let MTV's Road Rules star and Fox and Friends V teamer
+Explain Dei you can't focus on diversity equity and inclusion when you try to hire higher air traffic controllers you want the best you want the brightest protecting yourself and your family we will have the best and brightest in every position possible it is colorblind and merit-based look there's a lot of reasons why the FAA is in a bad place but these guys would have you believe that the main problem is that standards Were Somehow lowered to make sure that a black person or a gay person gets a chance to land your plane even though the requirements to become an air traffic controller are the same but by culture warring this tragedy Americans spent that terrible night holding their breath that the pilot or the air traffic controller wouldn't be a woman or a black person or in a wheelchair because what they're trying to do is make the default setting on confidence in America a white guy
+That's what this is a reset to the factory default
+Because of course these two
+Are there purely based on Merit
+It undercuts every black person person of color woman in this country that the job that they have they don't deserve
+It's the Mantra and the Republican party that gives you brain turning moments like this in the United States of America we get ahead and succeed by Merit and Merit alone yes Merit and Merit alone says RNC chairwoman Lara hold on let me get my glasses
+Trump
+It was a blind submission never saw a name on the application
+That's the irony of this whole thing the people standing next to Trump on that terrible night blaming Dei
+And trying to reinstall white guys as the only non-suspect pool of hires are themselves Dei hires for one particular identity that they possess the ass kisser the president's leadership has been remarkable through this crisis Mr President you make our jobs a lot easier I want to Echo with the transportation secretary said about about your leadership thank you for your leadership encourage on that sir I think you make a really important point on that Mr President the president is right and again I want to thank you for your leadership Mr President
+If you're like me and you sit eight hours a day on a shop tier you want to make sure you have something that's super supportive I mean take a look at this wonderful seat and backrest and these wheels will Glide over anything that is why I trust Viper because their chairs are super well built they're made here in the USA and trust me I have never ever regretted a decision by buying from Viper
+Discover Vietnam
+The country rich in stories nature and life
+Vietnam reveals itself in moments
+Moments you feel
+Don't rush through
+Guided by people who know it best
+Privately designed thoughtfully paced
+Because meaning lives in the details
+At your Rhythm
+Custom Asia travel your journey your way
+Dei
+Sucking ego inflation
+Obviously if you think of sucking as a compound work
+But you can gas light is all you want
+Cuz the one thing you didn't count on
+Is our secret weapon the roots of democracy are deep people are aroused I haven't seen people so aroused in a very very long time in terms of going uh trying to get this done
+Aroused
+We all know Donald Trump isn't a details kind of guy we elected him to come up with big brilliant ideas like renaming the Gulf of Mexico no one else could have thought of that or should have thought of that but it's okay that he's not big on details because during the campaign he promised us that he knew a guy come to appoint Elon Musk's fantastic guy to lead a government deficiency commission to school saving trillions of dollars in fraud waste and abuse we have tremendous fat tremendous fit
+Don't take the baby don't take the bait be the bigger person be the bigger person
+That's right Elon Musk the world's richest man and guy who cheers in the wrong parts of Saving Private Riot
+Trump promised us that he'd give Elon full access to the federal government pull it to the side and get all up in it and unlike his wedding vows this is a promise he kept Elon Musk sweeping push to make over the federal government sparking Democratic panic and warnings of a constitutional crisis now we have learned that his team has gained access to something extraordinarily sensitive the system that the treasury Department uses to disperse almost every check and expenditure of any kind made by the US government that is a vast database with millions of Americans personal information on it
+Yeah
+Yeah Elon Musk has access to your Social Security number and that is not cool if you want our personal data Elon you go buy it off the dark web like everyone else okay
+And you might be thinking I don't want white nationalist Tony Stark to have sole control of the inner workings of the federal government but relax it's not just Elon he has a fully equipped team long-time government employees this week were shocked to find that their new supervisors from Elon musk's Doge Department include recent college and high school graduates between 19 and 24 years old one of the young men is apparently a former intern at musk's neuralink company who goes by the online handle big balls
+Great big balls has my social security number now I feel better I know we complained about our leaders being too old but doesn't this go a little too far in the other direction surely there must be a middle ground somewhere between crypto grows and Crypt Keepers not only that musk has been installing his big bowls and a whole bunch of little-known agencies that are crucial and actually running the government the GSA the OPM the OMB the OC and SVU
+Now Elon Musk isn't just gonna get full access to the federal government just to sit back and watch it function like he's some sort of cock no he's gonna jump in there and do some cutting this weekend musk taking aim at the U.S agency for International Development or usaid which is in charge of dispensing tens of billions of dollars in foreign aid usaid employees are waking up this morning to an email notice telling them not to show up to work today as musk says he is shutting the agency down
+Yes the richest man in the world is cutting off Aid to poor countries why can't you just be a normal billionaire and co-host Shark Tanker run an NBA team into the ground I'm not saying there's not some cuts to be made in foreign aid spending you just don't want to throw the baby out with the bath water or um what's the expression I'm looking for let's move back into your usaid it became apparent that what we have here is is not an apple with a worm in it but we have actually just a bowl of worms
+Um and so at the point which you don't really like if you go to Apple let's go to women or maybe take the world out but if you could actually just a ball of worms
+It's hopeless
+Um and your safety is a ball of worms there is no apple
+This you've just gotta basically get rid of the whole thing
+Okay we get it we get the metaphor you don't have to keep saying worms over and over again you know I have a metaphor too Elon musk's Charisma reminds me of the ball of words
+Usaid was codified by an act of Congress so if Trump thinks he can have Elon Musk kill it he must have a strong legal reason for why he can do that without an act of Congress to do away with usaid I don't know I don't think so
+Or not why should he know he's just the president
+Donald Trump is also reducing the government Workforce although his interests seem to be less about cost cutting and more about sweet sweet Revenge tremendous unrest inside the FBI as prosecutors and agents who worked on the January 6th investigation are being targeted it looks like a wholesale Purge of the FBI as you know already the eight top officials at the Federal Bureau of Investigation have either been fired or forced to resign now the FBI is being asked to produce a list of every employee who worked on any case related to January 6th I am told this is some 6 000 FBI employees all told
+What the fuck
+These agents were doing their job enforcing the law and now they're getting fired that is not how it works I cannot believe I have to explain firing to the star of The Apprentice that was your whole big job
+And this is obviously just the beginning because Trump is going to be targeting everyone that's ever come after him and I just want to say I'm not scared so Mr Trump Bring It On okay
+That's coming from me Jordan klepper
+Every day since Trump came into office he bombards us with ridiculous policies we go crazy trying to keep up with them and before we can catch our breath he hits us with something else even more absurd it is exhausting and unsustainable so starting today no more of that okay no more
+Add a whole script here full of important issues that I want to talk about and I'm not going to let Donald Trump distract me with some crazy new idea this morning a stunning proposal from an American President Donald Trump with the Israeli Prime Minister by his side declaring that the U.S will take over the Gaza Strip the U.S will take over the Gaza script we'll own it
+Okay let me just ask what
+And also what President Trump made a surprising suggestion last night during a press conference with Israeli Prime Minister Benjamin Netanyahu the United States he said should take over the war-torn Gaza Strip and redevelop it into something like a Seaside Resort we have an opportunity to do something that could be phenomenal and I don't want to be cute I don't want to be a wise guy but the Riviera of the Middle East
+Trump is gonna turn Gaza into the Riviera
+He couldn't even turn Atlantic City into a nicer Atlantic City
+If anything they tore down so many of his casinos he turned to Atlantic City into Gaza
+Okay he wants to rebuild it and he wants to turn it into Mar-A-Lago at least the Palestinians will have a place to go back to Donald Trump calling for the permanent resettlement of roughly 2 million Palestinians I don't think people should be going back to Gaza I think that Gaza's been very unlucky for them and he says he's willing to use the U.S military to do it we'll do what is necessary if it's necessary we'll do that
+Just so I'm clear your idea is to take over Gaza rebuild it into Mar-A-Lago and make sure that the Palestinians who live there can't go back that is the craziest thing he said since yesterday until tomorrow
+Even as chief of Staff was shot
+She looks just like she won best country album at the Grammy
+Of course she shocked he's effectively advocating for ethnic cleansing who could possibly be okay with that
+You see things
+Others refused to see
+You say things others refuse to say and on after the Jaws drop
+People scratch their heads
+And they say you know
+He's
+No they usually scratch their heads and they say what the fuck are you talking about
+Is ecstatic at Trump's idea look at him he looks happier than a teenager getting a handjob in the back of the Birthright bus
+Devious side this proposal is giving a lot of people Whiplash Trump ran his whole campaign on America First and now he's out there chanting from the Riviera to the Sea
+Even Trump's Republican allies aren't on board although of course they have to let him down easy we're trying to get the pintos of it it was a surprising development and Senator Josh Hawley says quote I don't know that I think it's the best use of U.S resources to spend a bunch of money in Gaza we've also heard from Senator Lindsey Graham I think most South Carolinians would probably not be excited about sending Americans to take over Gaza I think that might be problematic Tom Tillis likely with the quote of the night which was there are probably a couple Kinks in that Slinky
+There's a couple kings in that Slinky that's how desperate these guys are to not openly disagree with Trump they're just making up sayings now
+Of course some of his supporters like Steve Ducey are trying to give Trump the benefit of the doubt he was a jaw dropper last night the cover of the New York Post is will take over Gaza I think this is just the chicken you know this is the conversation started because obviously the president knows when he says we'll take Gaza he knows the United States can't invade another country
+Of course America would never invade another country you can read all about it and Steve ducey's American history book me just got lobotomy
+Here to summarize maggot people think this is dicey their eyeballs think it's batshit crazy and the entire plan is DOA unless Trump can do some real Outreach to the countries in the Middle East and based on his response to reporters from Afghanistan I don't think he has the skills to do it all
+Do you have any plan to change Afghanistan situation can you have a little hard time understanding you where are you from
+No actually it's a beautiful voice and a beautiful accent the Earth the only problem is I can't understand the word you're saying but but I just say this
+Uh good luck live in peace
+Good luck live in peace why does he sound like he's saying goodbye to E.T
+The people of Earth wish you peace may your Slinky have no Kings
+Yesterday Donald Trump unveiled his big plan to relocate gazins and turn their Homeland into the world's holiest Hard Rock Hotel and Casino
+And today the reviews are in the Arab world hates it Democrats condemn it Republicans have problems with it and the Palestinians won't abide by it or as Trump says everybody loves it
+I stand corrected I guess everybody loves it and even though the plan was totally perfect in every way his staff spent the entire next day walking back every single part of it the president said his intention was to remove Palestinians from Gaza permanently if we can get a beautiful area to resettle people permanently but today the press secretary said it would be temporary the president has made it clear that they need to be temporarily relocated out of Gaza for the rebuilding of this effort
+Trump's press secretary just had her first walk back this is an important right of passage for Trump's spokespeople they're bull mitzvah if you will she was spending so much time walking back the plan that at one point she ran out of English words this is an unhabitable place for human beings
+Yeah so true remind me how it got unhabilitable again
+Even worse for Caroline while she was scrambling to salvage Trump's plan Trump was on true social readjusting it on the Fly which left everybody even more confused making just a short time ago President Trump seemed to backtrack but also to double down on his plan to take over Gaza
+A backtrack and a double down
+And now on the uneven bars Donald Trump will attempt the rare combination back to backtrack double down and let's see if he breaks every bone in his body
+But while his team tries to fix his Gaza plan Donald Trump has already moved on because he's basically the norovirus every day he spews executive orders all over the place and while we struggle to clean up all the puke he comes out the other end with something even worse
+He tried to buy out the entire Workforce of the CIA his doj is going after anyone who's investigated him and now he has defeated America's biggest threat at the White House today President Trump signing an executive order Banning transgender women and girls from competing in women's sports with this executive order the war on women's sports is over we are putting every school receiving taxpayer dollars that notice that if you let men take over women's sports teams or
+Invade your locker rooms you will be investigated for violations of Title IX and riskier federal
+You've made the hardest decision to seek help
+Imagine beginning your healing surrounded by Ocean Air compassion and care that truly sees you our doctorate level therapists craft personalized Pathways toward peace helping you every step of the way
+For over 18 years we've guided thousands toward lasting recovery seasons in Malibu clinical excellence in a luxury setting
+You notice how we pause right before invade your locker rooms like maybe we won't make that illegal we should have proofread this
+Look it's it's bad enough that he's banned trans women from sports but spare us the performance of pretending that this is a top issue for women in this country maybe start with I don't know reproductive Rights or pay inequality
+Or why it's 2025 and still none of my clothes have pockets
+Now you might be wondering is this really going to be the entire Trump presidency just divisive executive orders every day for the next four years probably but on the bright side he did have one executive order today that felt relatively harmless I have signed an executive order to resume the process of creating a new National Park full of statues of the greatest Americans who ever lived it would be called the National Garden of American Heroes and I hope that Congress will fully fund this wonderfully unifying project at the first
+Possible opportunity
+Excuse me sir Americans already have a National Garden and it sells unlimited breadsticks
+I never thought I'd say this but Elon I got some government waste for you right here
+Does anyone have the phone number of the Department of government efficiency actually they're all 12 year olds does anyone have the Roblox usernames of the Department of government
+As many of you know war is God's way of teaching Americans geography
+And class is in session I give you the Strait of Hormous
+Of course gen Z will tell you know who or moves is a hundred percent straight
+But it's a passageway choke point for 20 percent of the world's oil kind of a lazy river for fossil fuels not to be confused with these strategic Iranian island of park
+Which we also attacked we attacked hog and Hormuz
+Because if we've learned anything from these past 20 years it's that America will bomb anywhere that has a Scrabble score above 12.
+Oh we'll get to you Uzbekistan
+And you guys you're not going to believe what Iran did
+After we attacked them
+Breaking
+Supreme leader said that the Strait of Hormuz which is a critical shipping Lane for nearly 20% of the world's crude oil will remain closed
+Was it scheduled Maintenance oh wait is this because of the incessant bombing oh we're gonna play the one card we have to stop you from collapsing all of our infrastructure real mature well you know what close it see if we care gas prices up diesel prices up jet fuel prices up and in some quarters you're beginning to hear Whispers of concerns over the r word recession
+How dare a run
+And their existential fight for existence inconvenience our commute
+And by the way the r word oh this whole thing is the r word all right
+That's not the r word I would use for the decision to attack Iran
+But Iran has now closed the Strait of Hormuz leading to surging gas prices and risking the global economy of course there was no way to know that that was going to happen General Dan Kane the chairman of The Joint Chiefs's staff warned President Trump that Iran could close the Strait of Hormuz President Trump acknowledged the risk but told his team that Tehran would likely capitulate a foreclosing the street
+T who would have thought that a guy who did
+This during a solar eclipse
+Would ignore a warning
+My favorite part of that because he looks up at a solar eclipse three times
+That hurts
+Yep
+But not to worry this sudden bottleneck of the world's oil supply it's not a big deal it's fairly closed the only thing prohibiting Transit in the streets right now is Iran shooting at shipping it is open for Transit should Iran not do that
+Other than Epstein It's a Wonderful Island
+Cheese so right now the ships cannot make the passage because they're being attacked
+And the risk is too great
+There were some mines that have been laid it's going to take a lot of foresight and planning to thread this needle
+I'm up with a strategic plan
+Luckily I think the president
+Has one I also asked the president about the rise in oil price 100 a barrel and he said this these ships got to go through the straight over moves and show some guts
+Show some guts captains Philip
+I know you may not want to sail the slowest moving vehicle on Earth
+Packed with the most flammable liquid on Earth
+Through the most active Warzone on Earth
+But on the other hand
+Are we doing you know maybe there's an easier solution to the myriad difficulty set of Arisen from a Hasty war of choice
+It seems light on plans for the inevitable unforeseen consequences and contingencies the Trump Administration is threatening to go after ustv networks for their coverage of the war with Iran
+That's the solution what if we just
+Didn't hear about it
+We've got two choices do this war better or make sure that the news networks only tell you that we are doing this war better
+I know which one FCC chairman Brendan Carr prefers yeah CC chairman Brendan Carr hosted this on X quote broadcasters that are running hoaxes and news distortions also known as the fake news have a chance now to correct course before their license renewals come up
+No he didn't
+Networks have to learn
+You better not lie and give misinformation
+How this war is going that's Donald Trump's job did the United States bomb a girls elementary school they said what I've seen that was done by Iran they have no accuracy whatsoever we're done by Iran
+She's gonna lose his president's license
+Unless he moves to basic cable
+Jump in Donnie the water's warm
+To be fair the administration isn't just criticizing how the media covers the war they're being constructive about it allow me to make a few suggestions
+People look up at the TV and they see banners they see headlines for example a banner or a headline Mideast War intensifies splashing on the screen the last couple of days what should the banner read instead how about Iran increasingly desperate slow down I'm writing hold on
+Just desperate to have an eyes so smart you know we should be doing that like instead of the Strait of Hormuz is closed like they put up there why not just say 99 of world's waterways now open
+And by the way news organizations what's with all the depressing footage of things being blown up and people running away in Terror
+Surely there's a more uplifting version that honors our greatness they said they used underwater drones to strike the oil tankers video showed enormous fires
+Was that so hard
+Well if you can't trust the fake news media
+And we've got so many unanswered questions about the reasons for the war how long it's going to go I mean who can we turn to for clarity
+To give it to his strength there's no better Communicator than our president President Trump laid out clear objectives to the American people he's the best communicator I've ever seen
+Why am I allowing myself to get all confused and flushing why don't we just go to the source
+All this time we've been relying on Independent sources or outside observations and Analysis when the truth and the clarity have been staring Us in the face all along
+So clear up all the conclusion confusion about this war conclusion
+To clear up all the confusion about this world I've assembled an expert panel
+To help explain what the war is actually about in a lucid and clear-cut way
+So please welcome the program President Donald Trump Donald J Trump DJT
+Guys gentlemen
+Gentlemen thank you so much for joining me today it's great to be here and great to be back it's a great honor to be here I just want to say it's a pleasure to be with you I have no idea who you are but that's okay
+Good one
+But all right let's get right into it
+Let's just start with the basics
+There's been some confusion over whether or not we are even at War can you clarify for us if America is at War I'll start with you Donald uh Trump this was just an Excursion into something
+That had to be done
+Okay all right thank you it's it's not a war it's an Excursion President Trump do you agree this is an Excursion a little Excursion and I think it's only that
+Okay so it's actually like a minor just like a walkabout like a bit of an exploding amble if you will uh John Barron how is this Excursion uh going this little uh song of
+So it's War because earlier we were President Trump and Donald Trump say it's an Excursion it's a an Excursion that will keep us out of a war okay
+All right djt it's both War and an Excursion that will stop the war that it isn't
+Excursion in the streets wore in the sheets is that what I mean
+I bet it does sir
+But thank you so much for not clearing that up
+Do you have any sense of how long this is going to go
+Combat operations continue at this time in full force and they will continue until all of our objectives are achieved
+So obviously we have to Bear down and achieve all these objectives before we could ever just stand up and say it's over we won we won we won the bet in the first hour it was over that was two weeks ago so the objectives
+If we won and our objectives are met and that was two weeks ago why are we still at War we've already won in many ways but we haven't won enough motherfucker
+So we're there till we win we've won we haven't won enough
+I'm sorry we've got Don from Palm Beach on the line sir
+Uh you said
+You said the war will end when we achieve our objectives and they're very clear and that we've won but not one enough uh sir if you can't how will we know then when we've won enough when I feel it when I feel it up my bones
+All due respect to your boss
+Should we really be giving them more responsibilities
+It seems like they've got enough on their plate
+Getting you up and down the stairs
+Can you save money and still get reliable phone service with Telo mobile the answer is yes and an era of overpriced everything telemobile comes with an excellent phone service that actually has the best prices super customizable phone plan options that start at just five dollars a month and go up to only 25 and the best part you're free to tailor your plan to fit your needs and budget tell them phone plans just the way you like it visit telo.com to discover more
+Gentlemen I don't mean to be pessimistic but I can
+Kind of see why we're having trouble keeping the Strait of hormones open
+In fact there are some naysayers out there I want to read you a tweet
+Uh guys I want to hear your response to this this is a tweet from Donald J Trump at realdonaldtrump here's what he says
+Hopefully China France Japan South Korea the UK and others will send ships to the area so that the whore moves straight will no longer be a threat
+How do you guys respond to that
+Tweet by Donald Trump with the military support of other nations be helpful and welcome in this endeavor we don't need anybody we're the strongest nation in the world we have the strongest military by far in the world we don't need them everybody needs us we have the weapons we have the strength we're very strong they need us much more than we need them I will tell you that right now see this is the clarity this is the clarity that we've been looking for we're going to go It Alone with our bomb buddy BB we're the strongest country in the world
+All right let's move on to another top I'm sorry Donald you you had something you wanted to say
+I should be not only thinking as they should be helping us what does surprise me is that they're not eager to we need anything any piece of apparatus that they may have because of a situation that they have they should be jumping to help us we requested to aircraft carriers which they had
+And he didn't really
+Want to do it I said why don't you send some ships over and he really didn't want to do it
+So to sum up if I can
+We don't need your help
+We don't want your help
+I know it's hard to imagine but you know we're not the only people affected by this bombing campaign the Iranian people
+Along with suffering under this terrible regime are now living through an intense aerial bombardment
+Gentlemen what's your message to the Iranian people now is the time to stand up for the Iranian people and help take back your country now is the time to seize control of your destiny I call upon all the radiant Patriots who yearn for freedom
+To seize this moment
+That's that's big you're calling on the Iranian people to try to overthrow their own government
+Donnie down in Palm Beach do you agree with that statement so I really think that's a big hurdle to time for people that don't have weapons who's going to do that they they literally have people in the in the streets with machine guns machine gunning people down if they want to protest okay
+Sure it's an excellent point Donnie makes an excellent point guys there seems to be some disagreement amongst the Trump soccer merits
+Let's call it an Iranuary 6th
+There are others even more critical of your decision to launch this one I'm going to play this for you and then I'd like your reactions our president will start a war with Iran because he has absolutely no ability to negotiate
+Guys I mean you can dismiss the comment but that's from the author of The Art of the deal
+How do you respond I would say that it's one of the dumbest things I've ever really are what an idiot low IQ he's a low IQ individual
+Not sure I can't disagree
+You know uh
+Someone who may have disagreements about how long this is going to last or what the ultimate objectives are but I think we all agree that sending American men and women into Harm's Way is the greatest decision any American president can make I think the American people wish God speed to our soldiers
+Wisdom to our leaders
+And just peace that accommodates and recognizes the humanity of all those that I'm sorry am I boring you
+Can you believe this guy
+Does anyone on the panel want to jump in and oh my God
+You know what I didn't want to have to do this but
+How's the ballroom renovation going
+Thank you for clarifying all of our questions according to public polling the war in Iran has less support at its outset that any previous American war and Wars are almost always popular in the beginning they're kind of like Apple TV shows
+People are like I don't know what's going on here but for some reason I'm on board
+President Trump doesn't need popular support or Congressional consent to declare war because he's got a high profile fan on
+Trump make news when he suggested a former president he's been speaking with wishes he had gone to Iran what Trump has done I wish I did what you did
+Okay
+First of all why is the president holding on to the desk like it's a safety bar to Six Flags
+Oh come into the Oval Office I'll be right with you just to let my French tips dry you know
+But the big question
+Is which former president gave Trump props for the war in Iran come on Trump smell the beans
+Oh I think you said plenty Mr Trump
+I don't want to give away who it is all I can say is that I was recently helping him prep for his Epstein Island deposition that's all
+By the way I love how Peter Ducey is trying to play guess who with our toddler president
+Is he wearing glasses
+Is he bold if he was doing karaoke would he be allowed to sing all the words in Gold Digger
+There's also another possibility this may come as a shock which is that maybe just possibly Trump hold the whole thing out of his ass pains to each of the four living former presidents all deny they have had any such conversations with President Trump yes
+The living former presidents denied talking to Trump Trump never said living
+What's more likely that Bill Clinton thinks starting a half big war in the Middle East was a good idea or that Trump spent 20 minutes talking to a portrait of Grover Cleveland
+Regardless of who he's been talking to about it I'm just glad the president has his mind 100 completely focused on this daunting situation the run I do believe I'll be the honor of having the honor of thinking Jupiter
+No new Wars until you finish the war we just got you
+This is not the time to be taking Cuba by the way what do you mean by taking Cuba
+It can do anything you want with it I don't know what's worse that he's talking like a super villain or that he sounds so bored about it you should be cackling with lightning in the background when you say shit like that why are you sounding like Lexapro Luther over here
+And all this line Superman I guess whatever
+While Trump seems unengaged some people in his administration are getting worked up breaking news the head of the national counterterrorism Center Joe Kent announced just hours ago that he is resigning immediately over the war in Iran
+I mean that would be even more damning if this guy wasn't an unqualified crackpot but
+It still has to shake up a president when one of your appointees resigns over your War I read his shape and I always thought he was a nice guy but I always thought he was weak on security very weak on security
+You know what I I guess that tracks everyone knows the qualifications for running the national counterterrorism Center go nice guy brings muffins to the morning meeting and then all the way down the list good unsecurity
+But this split is dividing the entire model movement right now there's the anti-war side people like Joe Rogan Tucker Carlson and Megan Kelly and there's the pro-war side with Sean Hannity Lindsey Graham and Mark Levin and as you can imagine the quality of an internal Maga debane is highly intellectual on the X platform Mark Levin posted poor Megan Kelly an emotionally unhinged lewd and petulant wreck she's completely revealed and destroyed herself in response Megan Kelly posted micropidas he doesn't like it when women like me fight back because of his microveness
+Feels like I'm bad at the Oxford debate Club
+Well it's not a good look for President Trump to have his followers fighting so publicly over their micro penises
+Donnie why don't you step in and heal the divide President Trump defended Mark Levin posting that he is somewhat under siege by other people with far less intellect capability and love for our country Mark is tough strong and Brilliant in response Megyn Kelly posted that Mark Levin went running to Daddy about his
+It's obviously not fair to accuse Mark Levin of running to Daddy about his micro penis
+Although I imagine having a micro penis makes the running a lot easier
+Totally unrelated but in high school I was the slowest guy in gym class
+By the way did you notice that at no point did Trump deny the micropages allegations
+Not exactly the full throat of defense you want he has a micro penis hey
+He's a nice man
+Also I'm sorry are we at War you're you're tweeting about your buddy's micro penis was FDR taking time out of his Fireside Chats to be like anyway that's how DJ went well if I may say a few words about whether my friend Zachary has a chode
+Please please
+Is it there anybody who can calm the situation
+Marjorie Taylor green
+You're a respected member of Maga perhaps you can bring some intellectual substance to this debate former congresswoman Marjorie Taylor green posted I wholeheartedly support Megan Kelly
+All this talk about micro penises we're losing sight of the real reason we attacked Iran which is
+Shit
+You know what now they think about it we never got an answer to that actually and believe me I've been searching for one harder than Mark Levin's urologist you know
+Sorry Mike I had to get in one last small one just like
+Okay look can conservatives please just stay focused on the actual War there's a new Ayatollah in power who is dead set on Revenge you should be talking about him not gossiping about men's penises the New York Post is reporting that the president was just briefed about the new Ayatollah sources are saying I told a junior might be gay
+You gotta love that banner new Ayatollah is probably gay
+Apparently are now reporting gossip like their High School Mean Girls this just in from the CIA uh the new Ayatollah got his period in the driver's ed car
+Fine fine I guess we're doing this media establishment
+Let's hear that hot hot gas I told a junior might be gay and has been making aggressive sexual advances on its male caretakers all hopped up on meds
+His father reportedly thought he was too gay to be Iran's Supreme leader
+Too gay
+I like that I like the implication that the supreme leader of Iraq should be a little guy
+He should be like that to America except Lady Gaga
+So that's basically where we're at right now this country has launched itself into a devastating Regional war in the Middle East the president is focused on taking Cuba his movement is split amongst themselves and the media is turning into TMZ the quality of our discourse has absolutely vanished and in these fraught times is it too much to ask for just a a little bit of thoughtfulness and dignity if we could just have the smallest amount it would still be bigger than Mark Levin's
+And the war continues into its third week oil prices are skyrocketing which is devastating for everyday Americans like commuters truck drivers and that guy from Dune who lives in a pool of oil
+He can only afford to bathe in a kiddie pool now it's
+It's really demoralizing and if you're thinking that's fine I rarely bathe in a pool of oil this won't affect me I think again now if oil prices keep Rising this flows through to a lot of areas heating oil goes up airline ticket prices go up delivery services public transit can go up and groceries Child Care Elder Care
+Mass is affecting Elder Care
+I swear to God if this means my grandmother can't send me ten dollars for my birthday she's dead
+For those of you who drop your nana off on a Delta flight in the morning and just let her circle around in the sky all day
+It's gonna get a lot more expensive
+Anime surprise you but those tennis balls the old people put on the bottom of their Walkers come directly through the Strait of Hormuz just
+High gas prices have Michael World in a tricky position now because there's no way to spin it as a good thing to the American people unless you know what Les what if we are the problem 350 cents gasoline people are talking like this at the end of the world no it's not I can handle the gas prices and people can handle the gas prices we're hardly ever called off to sacrifice anything anymore freedom is not free Americans are going to have to make some sacrifices for gas prices to go up a little bit instead of raising so much concern how much worse it was in World War II the what we're facing
+Is that the bar now it's not as bad as the worst war in human history so stop bitching I mean you can dismiss any concerns that way oh you're upset because home ownership is Out Of Reach you know who else doesn't have a home Saving Private Ryan
+Maybe instead of shaming the American public for complaining about prices a more thoughtful appeal might help this is short term and I'm asking you to just trust the man okay trust the system let him cook hold on for like two to three tanks of gas for an and it'll be an extra 10 to 12 bucks a tank
+As I go through man
+My wife just joined a Tokyo drift Club
+She's got a Tokyo Drift right through our kids college fund
+It hurt him that's just temporary pain that'll all be worth it in the long term I'm sure everyday Americans will understand and we'll take this in stride if you can say some of your president shortly who's going to hear you right now motivate
+You are a worthless pile of
+Oh someone's not getting an invite to the new ballroom
+You know I'm sure that lady was probably just another Trump derangement syndrome liberal who makes her morning Macho with a Ruth Bader Ginsburg West
+Let's hear what else this member of the resistance had to say
+And you voted for him how many times three times that was my bad apparently I'm an idiot
+See the three-time truck boater just imagine how angry she'll be when she votes for him a fourth time
+Let's move on because unfortunately for Trump it's not going well for him on Capitol Hill either two weeks ago he said Christy gnome to the great costume bin in the sky
+Would you have thought about who should replace gnome as head of Homeland Security only one name came to mind that happened to be two names smushed into one name Mark Wayne Mullen he had his confirmation hearing today and some people were expecting fireworks because Mark Wayne has bad blood with committee chairman Rand Paul in fact you might remember 10 years ago Rand Paul got beat up by his neighbor when he was mowing the lawn and since then Mark Wayne Mullen has taken the side of the neighbor I believe we have a quote uh from Mullen about uh Paul Rand Paul's of freaking snake and I understand completely why his neighbor did what he did oh hello blow Mark Wayne making on someone with half of your names I mean
+Although to be fair while Rand Paul does only have one first name it is his last name for some reason all very confusing of course that fight was a decade ago this is an important confirmation hearing I don't think Rand Paul is going to use it to try to settle old scores he told the media that I was a freaking snake and then you completely understood why and I never had the courage to be high and tell me that the assault was just my face why do you think I deserve lack of contrition no apology and no understood that I was assaulted from behind at six years broken a part of my lung removed
+You set your pace now it's out of your system we can move on with more pressing issues when I talk to you on the private on privately on the phone there was no apology I think I'm just gonna set that aside apologize haven't heard the words reported the felonious violent attack on me from behind and he started that characters out imagine your support for these no regrets about being happy being completely understanding why I was attacked from biology it was still your opinions
+I think he's a little upset
+Maybe out of respect just to help smooth things over
+Tell Rand Paul you do not support his neighbor beating the shit out of him I did not say I supported it I said I understood it there's a difference
+Your co-worker says I don't support cannibalism but I understand it
+You're not trying the shepherd's pie they're bringing to the potluck okay
+Look Rand Paul was actually trying to get at a question about Mark Wayne's temperament because Mark Wayne didn't just not apologize he also had a unique argument in defense of political violence he did many interviews in which you Justified the violence as historically Justified by precedence such as caning and dueling bought a simple to point now to some of the rules that still applying to this body for instance
+Dueling with two consenting adults is still there I was pointing out what is it for 170 years
+I'm sorry does the next Homeland Security Chief think that dueling is still legal
+My man it's definitely not legal to duel even if your first name is currently involved in what
+Senator Mark Wayne rather than dueling basic chests that it's actually just much easier to just apologize I've even got the perfect phrase for you my bad apparently I'm an idiot
+Almost three weeks into the war in Iran and it's not going great oil prices are surging our planes are getting shot out of the sky and now Pete hegseth is asking for an extra 200 billion dollars to fight this war
+And they say women be shopping huh
+And on top of all of this our allies are angry that Trump started this war without consulting that but of course President Trump is smoothing things over with his trademark chart his eyes
+We want to surprise who knows better about surprise in Japan
+Wow the Japanese prime minister did not like that joke
+I haven't seen an American bomb in front of Japan that badly since
+You get the idea
+Well I will give Trump credit though he didn't do a Japanese accent so let's call that progress
+By taking all of this into account it feels like America could really use a win right now rapper Afroman wins a definition of speech
+Looks like American victory to me I mean just look at what he's wearing
+And aliens landed here in America they'd be like take me to your lead oh it must be this guy right here right this glasses now you might remember Afroman from his hit song because I got high or you might not remember it because you got high
+Basically back in 2022 local police in Ohio busted down Afroman's door rummage through his clothes took money from his house scared his kids all to look for evidence of crimes that they never ended up charging him with now after a raid like this a lot of people might try to lay low for a while not piss off the cops but I'm from him happened to notice this particular moment where one of the deputies was searching his kitchen and looked loggingly at a lemon pound cake
+Afroman did what Afroman does he released multiple satirical music videos using his own security camera footage of the incident that included images you're seeing some of that here of these officers
+I'll tell you rap songs have really evolved
+I used to say the police now they body shame them over carbs
+And that was just the beginning Afroman put out a whole series of videos about the cops addressing specific grievances and songs like will you help me repair my door and why are you disconnecting my video camera
+As well as songs with more
+General observations
+That is why AI will never replace real musicians
+No a lot of people found these cut the police music videos funny but the police officers who starred in them did not so last year they sued Afroman for defamation and right away the officers had a problem which is that when you sue someone for making fun of you you have to get up on the witness stand and talk about how badly you suffered from it which led to moments like this Tommy you were
+Called officer pound cake
+Imagine the pain of being said free desserts
+I just hope Afroman doesn't find out that I love banana pudding from Magnolia Bakery
+It would be devastating if my haters sent me hundreds of them with with the Nilla wafer specifically I mean oh God I would never recover
+Remember officer Palm cake was an Afroman's only Target officer Randy Walter sued Afroman for saying
+What was it again if you're like me and you sit eight hours a day on a shop tier and you want to make sure you have something that's super supportive I mean take a look at this wonderful seat and backrest and these wheels will Glide over anything that is why I trust Viper because their chairs are super well built they're made here in the USA and trust me I've never ever regretted a decision by buying from Viper
+Right right right which again met Randy Walters had to get up on the witness stand and answered the question
+A son of a bitch
+And they call you a son of a bitch that would be an opinion
+I'd say that would be an opinion because there's no way we can prove whether you're some of it
+No one mentioned your mom
+Your dad could be the bitch
+I gotta say I I didn't realize that determining whether or not someone was a bitch was part of the legal profession
+It does give me hope for my new pilot bitch Court with Judge Jordan
+This is generally the Big Challenge with the defamation lawsuit because to win you have to argue that a reasonable person would believe that afroman's claims were facts and not just jokes that's especially awkward because Afroman also said he slept with Randy's wife ohanda I'm sorry how did he put it on
+Thank you
+Now poor Randy Walters had to argue that a reasonable person might believe that which led to perhaps my favorite moment of the tribe so you're claiming that is the defamation statement is that he said he had sex with your wife
+Yes okay and that's painted June a false light it's caused tremendous pain in my life that my wife is cheating with me with Mr Foreman
+But we all know that's not true correct
+I don't know
+I don't know
+Look at me and my whole deal here I think a reasonable person could assume I'm unable to satisfy my wife
+Okay obviously obviously no one thinks that Afroman is sleeping with this guy's wife I wouldn't dare slander them or their beautiful child
+This puts officer pound cake in an even an even worse light the other guy is like Afroman called me a son of a bitch and said he fucked my wife and then you're like yeah and he said I had a sweet too
+Again okay the central question of this case wasn't whether Afroman songs were factual it was whether people would think they were true and this is how his lawyer made the case look at that suit
+Does this look like a man who thinks that everybody's going to ass
+That everything he's saying is fine
+I'm beginning to see how brilliant wearing that suit is
+Ladies and gentlemen does my client look like someone you should take seriously he dresses like the DJ at the club where Betsy Ross strips
+And by the way I love this lawyer too look at look at Hagrid Esquire over here
+Let's wrap this up I got the big ZZ top case at three and then I gotta go back to forging my own swords thank you your honor
+But there were actual Free Speech issues on trial here and Afroman was Unapologetic about his rights after they run around my house with guns and kicked out my door I got the right to kick a can in my backyard use my freedom of speech turn my bad times into a good time yes I do
+And I think I'm a sport
+Then try to play the victim and sue them
+Wow
+I don't know if I want to stand up and salute because of the speech he gave or because he's wearing all the American flags
+Regardless I'd say Afroman should run for president
+Except that was a real thing that happened in 2024
+I'm not saying that would be ideal but you can't tell me it wouldn't be an improvement
+Let's get into the big story ladies and gentlemen this weekend president
+And in Elite team of Delta 4 special operators removed a dangerous foreign dictator from power
+I got that one
+They're they're they're actually friends
+I think business partners
+They're also quite close that's uh okay
+I believe these two have more of a heated rivalry Vibe
+You know what I mean so it's not not that one had no
+Got one no that wasn't us
+No I'm talking about the now former president of Venezuela Nicholas Maduro who was reverse iced and imported
+He was actually important
+He was a feared and cruel dictator
+Be happy
+Bobby McFerrin karaoke
+You monster
+Like I I know that could make some seem benign almost kind of comical but the truth is Maduro oversaw a repressive regime that impoverished his Nation silenced dissent and killed thousands
+But his iron rule and acapella Terror came to an end on Friday night when U.S Special Forces raided Caracas Venezuela's only City as far as we know
+And snatch to Nicholas Maduro out of his bedroom apparently before he could even take off his sleep mask
+His aura ring
+Must have been like you had a bad night
+You did not get good deep sleep
+As it unfolded Donald Trump was overseeing it all from a secure location the situation tent at Mar-A-Lago
+I don't want to be a dick
+Or a nitpicker but uh is this your most secure location
+In Mar-A-Lago behind the curtain you throw up in front of the catering kitchen
+This is a matter of what most National Security dessert's gonna have to come out through the service entrance
+I was never here
+But obviously despite the makeshift Command Center this was a highly technical and complex operation that required months of training and preparation after months of work by our intelligence teammates to find Maduro and understand how we moved where he lived where he traveled what he ate what he wore what were his pets
+Well that does explain this photo from the raid
+We debated before the show is it mildly racist that we gave him a Chihuahua
+Chihuahuas from Mexico this is Venezuela so there is some Nuance to it
+It's still mildly racist
+You're welcome
+Now obviously this is actually a very fraught moment for the world it is highly unusual for any government any Sovereign Nation uh to violate the airspace and territory of another Sovereign Nation and hit the grab and go on their president
+Explaining it will require the Deft hand of an accomplished Statesman
+Let me get there
+Ladies and gentlemen I give you the president of the United States addressing the nation in this solemn
+The United States
+Armed Forces
+Conducted an extraordinary military operation
+In the capital of Venezuela it was dark
+And it was deadly and or if you look back
+Did Jimmy Carter days
+There were different days whether it's in Washington DC where we have a totally safe
+City restaurants are opening everyone's happy they go in they're walking their daughters they walk in their children their wives friends restaurants are opening all over Washington DC
+So we're closing
+Leanne grabbed Maduro you'd still be taking Ubers to Ruth's Chris
+Unless you think I'm making our president look Cavalier in this moment here's Trump describing how he experienced this consequential operation if you would have seen what happened I mean I watched it literally like I was watching a television show
+And then I flipped over to see who was on Kimmel I mean
+Can you believe he still gets to interview Millie Bobby Brown I mean he's got no doubt anyway back to abducting the president of Venezuela
+Look no one knows how this operation is going to work out but based on the United States track record my guess is we're going to be really happy about this for a couple of weeks and then 30 years from now there will be a Venezuelan leftist Revolution and the new government will point to this moment as the reason our Embassy there is on fire and it will absolutely ruin
+Hey Democrats presidency
+Generally that's how this shit works
+And remember the reason Mega was so high on Donald Trump was that he was the guy who wasn't going to get involved with this kind of shit anymore we do not seek War we do not seek nation building we do not seek regime change and we don't want to be the world's policeman
+Those days are open
+No more American boots on the ground we're not afraid of boots on the ground
+No I'm not rebuilding on the country's infrastructure we have to rebuild their whole infrastructure
+Well it's not like we're gonna be running someone else's country we are going to run the country
+This is a big change in America First policy is it not
+On a changing policy this big is gonna need some of that Trump marketing and branding magic and the Monroe Doctrine is a big deal but we've superseded it by a lot
+Barilla
+John Rowe Doctrine
+That's the one when someone calls it out you go look no bad ideas
+But honestly
+At your best work
+The Don Road Doctrine it's obviously a portmanteau of Monroe
+And Donald
+I guess it's a spin-off to the Monroe Doctrine famously adopted by President James Monroe in 1823 when he warned Colonial Powers not to interfere in our hemisphere let me let a historian explain would you look over here that's Monroe the Monroe Doctrine why is he okay I think the Monroe doctors is pretty important you know I was his claim to fame he claimed Fame
+Like he ate 18 hot dogs in one city
+I mean I guess it's correct you can't really name another thing Monroe was famous for but it's not like everywhere Monroe went they'd be like hey don't you that guy from the doctrine
+Babe get over here it's a Doctrine guy hey
+What are you doing in our hemisphere
+I told you that would work
+Generally in American history when we intervene in another country whether true or not we come up with a high-minded pretense liberating a people spreading democracy introducing baseball to the Japanese
+They they complainted first but it's totally worth it
+On what moral Foundation will this conflict be framed we're going to have presidents in Venezuela as it pertains to oil we're going to get the oil flowing the way it should be
+It seems a little on the nose
+Oil precious Commodities certainly but not the reason a country formed 250 years ago on the ideas of Liberty and self-determination would go into a country and snatch a man at night
+There must be a slightly more noble pretense we're going to be taking out a tremendous amount of wealth out of the ground we need Total Access we need access to
+I I see where we're going here do you mind just reframing that I'm not quite clear on the high-minded principle behind this others will be selling oil
+Is this your first war I mean what
+All right let's table this for now Senator Lindsey Graham
+You're an old hand at Warmongering
+You've done this a bunch you're on the plane can you help this dude out with a Casa's belly and keep Trump from bringing it back to oil they're gonna be Americans alive today because they shut down a narco terrorist thing called Venezuela this is a good thing not a bad thing and the oil companies are gonna go in and rebuild this system
+We can't even be conspiracy theories now
+I think they did it for the oil yeah no I did it for the oil
+Is there any other reason can you give us anything there's a lot of issues uh human rights violations political prisoners down in Venezuela we could certainly free them and improve the lives of dissidents and going to demand that tells you are you guys let opposition figures return or free any political prisoners we haven't gotten to that yet right now what we want to do is fix up the UL to accept the country
+Oh yes we'll get the people out of jail but first we have to
+Liberate the oil from its ground prison that oil's been locked up for millions of years
+Yearning burn free
+Obviously I'm being cynical
+It's not purely for oil
+Even Secretary of Commerce Howard Lutnik on the plane could tell you that on his way out of the bathroom yeah steel you have minerals right all the critical murals they they have a brief mining history that's gone rusky so steel aluminum minerals these motherfuckers
+Are going full Conquistador
+In front of our eyes I mean they got oil steel minerals oh and don't forget about the spices spices
+We'll load our ships with cinnamon and cardamom in it
+Oil and everything Bagels you'll see
+And they might have gotten away with it too
+Country is a democracy
+So bad news Don Rowe
+Your little oil Heist is gonna have to get past the Democrats and inspector Schumer so I've been talking to so many members of my caucus today everybody is very very distant it's totally totally totally troubled worried
+History has its eyes
+Well if you were two totallys in one very I'd say Trump is getting off Scotfrey
+But three totales and two berries
+Had trouble worried
+I don't want to say the president doesn't respect the Democrats
+But he did not brief them
+Before or after this attack
+Now you can say that was in the interest of National Security and operational confidentiality
+I got for this one group he did speak to </S>
+Before and after
+And then I told Pepsi and visco
+Call the guard I don't know why
+What's the suitcase company on Instagram I told them
+I told him I told her
+I let the president of Zion shoot some missiles
+Too bad for the Democrats they will be
+Totally totally totally very very fine
+Probably even gain a seat in the midterms
+The people I feel sorry for are the Trump defendants
+The Defenders the sycophants who haven't received the memo that we no longer have to frame our adventurism and the ideals of our great country this is a very strong way to support democracy nothing greater than an American president who liberates people liberated them for from a strong man who's been holding uh by force and intimidation this country hostage we're not about nation building the president doesn't want his actual resources we don't want their oil
+Oh sweet Brian kill me
+Sweet sweet Brian Trump already explicitly said he wants their oil
+And democracy Trump has already said he wants Venezuelans to freely choose their leaders as long as those leaders are acceptable to us he's already said he's going to select who will be their next leader
+And guess what this ain't a one-off you guys if I knew it was this easy to sponsor a child I would have done it a long time ago you get to make an incredible impact on a child's life all while getting personalized updates straight to your inbox want to see how it works step one go to chopin.org and click sponsor a child step two learn about different children around the world who need support and step three let the journey begin you'll soon get more information about your sponsored child in the specific ways your support is helping their family you can write to them get to know them and even send direct gifts for special occasions they'll grow up with access to all the programs and services child can provides help them stay healthy educated and safe you'll know exactly how your kindness is making a difference and chances are you'll probably want to tell the world now the only question left is are you ready
+Cuba is ready to fall
+Let the word go forth
+To a new generation of Americans
+That if we need shit
+And it's not too far away
+We are going to take it
+Anything else you want to take over I think there's still some time to go after Warner Brothers Discovery
+America isn't that Netflix funny but we will after we get that sweet oil and by the way
+Lindsey Graff
+I have never seen him happier
+Like a leprechaun and a bowl of fucking Lucky Charms
+I think we're gonna go after Cuba yeah
+That sounds real good boy it's real good
+This is all exhausting
+And exposes the Gulf of America not the body of water
+The real Gulf of America is the gap between the high aspirations that embody the founding of this country and the thuggish gangsterism that this crew thinks makes us great again
+And if I may offer the news media New Year's resolution is that I don't ever want to hear again about the ramifications of how Trump's actions however counter to what he promised in his campaign or the files that he might release might alienate his base do you expect to see some splits in the Maga movement will the mega base start to break away </S>
+It'll play fine
+They're further against intervention will be only matched by their Delight in this intervention
+There is no material on Earth more malleable than the hive mind connection between Donald Trump and his acolytes and no matter how many times he betrays the principles they claim to love him for
+They will react over and over with the exact same refrain
+The world is still in shock over Donald Trump's surprise door dashing of Nicholas Maduro to Brooklyn
+I didn't even hit and I have to say I did not see this Venezuela thing coming and I read the news every day so a lesson here is reading is pointless
+Now Maduro will face Justice in the best legal system in the world that we illegally kidnapped him to
+It All Began yesterday morning when he showed up to court and if this isn't Iraq all over again why are they reusing Saddam Hussein's courtroom schedule
+Let's see how his first day went Maduro greeted Spectators in the courtroom saying Buenos dias
+Buenos dias smart legal strategy by Maduro
+If you speak Spanish I use my Boston and Deport him back in Venezuela I just thought it happened
+I'm starting to think this guy might beat the rap as the judge asked are you Nicholas Maduro I am the president of the Republic of Venezuela a defiant Maduro respondent nah you blew it
+You should have just said no
+But there is some good news for Maduro he's not alone the sporting Nicholas Maduro and wife Celia Flores are waking up in jail returned after a day in court where they both pleaded not guilty to charges they worked together to traffic cocaine God damn his wife was trafficking cocaine with him I guess in other countries first ladies have actual responsibilities
+I mean I bet I bet Trump is jealous of that relationship I mean he must be like Melania why can't we ever do a couple stuff like the maduros
+Now they might spend the rest of their lives together in prison but to be fair aren't all marriages kind of a prison
+It's okay I can't make that joke my wife only watches on Mondays
+But look okay this is a tough one for Mega because Trump's whole thing was not getting into Foreign Wars so they must be giving a lot of serious consideration into all of the geopolitical implications of this new Doctrine I've seen a lot of stuff but this Venezuela thing
+That was awesome oh man I never know to get my dad but this ended up being the perfect gift this is the Phantic electric screwdriver and it's more convenient and drilled because I had so much torque and a ton of different magnetic attachments because it also stores at a super communication and because it's so cheap I got myself one of them as well
+Everyone news report about the first time he saw boobs
+The rumors are true people those are awesome
+Who is the show for anyway like how dumb is his audience that they're like hey let's see what Greg thinks of this oh oh yeah hey honey Greg thinks it's awesome I'm totally satisfied on intellectual level now
+But it turns out not everyone thinks forcing a resume change in another country is a good idea and for those people Mike Johnson is here to ease your mind I want to say that the way that this is being described I think is accurate this is not a regime change
+This is the man for change of behavior by a regime
+It's not a regime change it's a changed regime
+Thank you stupid Yoda
+Stupid Yoda says do or do not there is no Epstein files
+Why is my Johnson down playing this I mean the U.S overthrew a government at gunpoint with no plan doesn't this bother anyone I'm appreciable what the president has done with this and I know there's going to be those other they're going to be the critics but you know when sometimes when you break a few eggs for y'all learn how to make some mileage but then this is exactly what we're gonna do
+We break a few eggs and learn how to make an omelette I mean
+This guy fucked up the metaphor so badly
+He accidentally got it right
+Because that's not how you make an omelette but that's exactly what we did in Venezuela
+We just went in and broke everything and now we're like hey where's a recipe for omelets
+We have a lot of oil I know we can use that
+But look I I get what's happening here okay no one in Mega expected this to happen so they're all scrambling to find an answer that makes sense to them even Mega mega church pastors are flipping through the Bible like hey there's gotta be something in here they say you have ceased Venezuela for the oil
+This is true but the spiritual oil and the natural oil does not belong to the forces of Darkness and the oil of the natural and the oil of the spirit is mine says the Lord
+No I get it okay
+The oil is a metaphor for oil
+I mean is that what the Holy Trinity is regular unleaded and diesel
+I know Christianity is weird but this doesn't sound like something God would say like don't kill don't steal but feel free to go absolutely ape shit on oil this is also why Buddha is the best because you never see a mega monk going let go of all your attachments accept the Green Lang which is ours
+But maybe we don't need religion of breakfast metaphors to explain why Trump kidnapped Maduro because last night we heard from Stephen Miller Trump's deputy secretary and guy who didn't go wild it just never came in in the first place and he gave a very clear answer about why we did this because we can we're a superpower and under President Trump we are going to conduct ourselves as a superpower you can talk all you want about International night studies and everything else but we live in a world in the real world Jake that is governed by
+Strength that is governed by force that is governed by power
+No shut up
+This is what a superpower looks like now
+A guy whose head looks like a fucked up circumcision
+And with them in charge America can stop pretending to be the nice guy and nobody's more excited to be the bully for change than Stephen Miller this neoliberal frame of the United States job is to go around the world and demanding immediate elections beheld everywhere immediately all the time right away through the country and we seized the leader of Venezuela Damstray we did
+Damn straight we did I can swear whenever I want I don't give a dick shit what my parents say bitch
+Listening to this guy talk is like if Nazis took helium instead of meth but still
+This is a big change to Americans they're now being told that their view of themselves is a benevolent Force for good is gone and they are now the evil empire and as we look at this photo of a foreign leader in our custody every American has to decide how to respond in this moment and this photo seen around the world of Maduro blindfolded and wearing a tracksuit sparking a surprising response it's a Nike Tech fleece jacket and jogging pants now there's a run on the 140 outfit guys have started posting images of himself wearing it here at the Nike store in Midtown Manhattan the so called Maduro track suits are flying off the shelves
+Wow you can't really go shopping fast when you don't have a life
+What's wrong with you people okay not everything has to be content can this just be a bloody cool without cloud chasing I wish the like And subscribe button with your face so I can smash it over and over
+Yeah
+It's been five days since America invaded Venezuela arrested its president and seized control of the country and now the real work begins nation building
+I'm sorry I read that wrong I meant narrative
+Volunteers of joy
+That's right Trump is stinking up the joint
+Breathing in people
+The USS
+As president of the United States of America
+Drop his
+Or whatever </S>
+United States under the goodness of their hearts and because we are bugging them
+Cannot be the president
+Now that this payoff is taken care of America will get out of your head you're finally free in the US now deposing a military Blocation exports using it as leverage to get Venezuela to give in to the Trump administration's demands the US's leader of Venezuela that she must agree to murder exclusively with the U.S on oil production and kick out officials from China Russia Iran and Cuba severing all economic times with those countries
+I think we only know what's going on
+Ladies on your new boyfriend forces you to cut ties with all of your friends he's a keeper
+Sorry
+But just because you dictate
+Doesn't make you a dictator
+We have no idea
+I can tell you one thing that doesn't work satire
+You're next
+Congratulations to this guy on surviving
+One second
+Is what it takes to sw
+Proceed maybe that's what it takes okay something it's like babies
+That's right Greenland
+Because the only thing we need more than a brutal authoritarian regime is whatever the complete opposite of that is
+This is one little hitch with Invading green landmark which controls the independent territory it's a close prime minister has said a U.S attack on NATO territory would effectively end the alliance which has never seen a more member attack another
+Stay longer
+Great okay that means they won't expect it
+And Trump is the dominant predator in the Western Hemisphere
+At least now that Jeffrey Upstate is there everything in America is so much cool right now we are very lucky to live in a country where we enjoy a great relationship
+Keep us
+Minneapolis has something to say
+So don't worry I'm not going to show it to you so basically ice agent surrounded as well as you are and ended up shooting by which he tried to drive away from it that's certainly would have made me way too scared to confront these guys but the people in Minnesota are built different administrators came into the streets are
+A woman attack
+I just don't see how you can see an attack in that video
+But later that day once all facts came out she ignored those two and double down it's domestic Act of terrorism to use your vehicle to try to kill law enforcement officers to create law enforcement operations and then to run over anybody who gets in their way
+Situation with
+Charged accusations
+He needs a leader of the matur
+To bring us all together
+It's hard to believe he's alive the guy
+Is blue and black and the other ones I'm saying
+That's a basic shape
+But
+Need to be looking at is what happened in the months because something like this
+Massive PR bush is underway to recruit new police agents including ads targeted and Young Americans
+Destroy
+The job is a freaking awesome video okay
+It's also the guys they're trying to recruit the effort will Target gun rights supporters and military enthusiasts people who have attended UFC lines or listen to Adrianic podcasts military enthusiasm patriotic as listeners and UFC events basically anyone you pray your system will finally break up
+I guess they
+Or academic requirements
+Additionally nearly half of the fruits filled with an exam even with an access to notes and textbooks
+American cities and subur
+The past few months federal agents have been terrorizing people in their own neighborhoods over the past year Americans have witnessed ice age as contain mothers from their children who are shot by federal agents and more than 170 U.S citizens held inside Detention centers a 79 year old business owner says he was Bobby slammed by U.S citizen as a U.S citizen tried to drive around the officers when one shot him in the back of the shoulder stages
+I know I know
+What appear
+If you're thinking they don't need to enforce the law this biology you're correct they don't need to be this violent no violence and showing the violence is the point this is why just breaking down these videos right my brain doesn't tell the whole story of what happened okay people keep saying this ice agent feel free safety maybe so but we also acknowledge that this will and truly feel the world safety too </S>
+So unfortunately we keep expecting this to happen because ice is going to need your situations but because they keep going into safe situations and then making them more dangerous than they need to be
+Just pure magic don't hang around
+Very well
+That's going to be very different from
+Is God I mean still there but laugh along it's going away the next major model spot has finished pre-training and all to himself will be taking a step back from the safety oversight and focusing on fundraising and infrastructure also behind the scenes there's a pretty math no one's talking about here's these aren't separate stories it's one pretty major story it's a big story pack that comes to destroyed that my green screen and behind me but that's a separate issue we'll talk about it later okay so first and foremost let's talk about the big new model rumors are confirmed by retraining it's an excellent major model internally codenameda Spud okay potato Alban told staff that it's seen a very strong model and it's coming in a few weeks he described that something that can really accelerate the dichoto so we're looking at a early as possibly later this month or
+Stepping back from direct oversight of openeis as a safety and security teams so the safety team will now reports related to our chat and the security team opens to the scaling operations under correct prognant Albans has stated a reason for doing all this is because the infrastructure is lacking you need to build more chips and more data centers and Supply chains and building them at any quote unprogressive and scale senior exec aging CMO so he renamed his organization his ways on the old chart as AGI deployed is the first time opening AI had a GI anywhere in its or chart or as a product for category so what does all this mean what is the thing that connects all the dots well as I've said earlier in brief video about Sora goes away open AI is done with the side quests and their exclusively focusing on them they're going to think where they think everything is going the thing is you can call the super app it's the one app
+TRANSCRIPTION_FIX_HARDCHECK_1774587955_4797
+Codex Atlas and web browsing tool that OPI has always been combined into one of the products and the spider model gp6 or whatever it is that spike model is going to be soon that will power all of it now this kind of a restructuring and refocusing to have some casualties to solo with one of them always reportedly were saying how they were shocked at how much you compute a solar was using so Surah got killed to free up compute or Spud and this super app also the past opening I talked about potentially shipping video generation within charging BT that's completely gone that's off the roadmap and I'm sure this wasn't a late decision because they had a three-year licensing and deal with Disney Disney had a one billion dollar commitments for production with AI the year generation Sora was the thing behind that license deal and that whole thing is just gone apparently this was a good deal never officially
+DUALKEY_SUBMIT_ACTIVE_1774588006_4742
+That no funds were exchanged so the deal is dead it's off the table but it's kind of it seems like the last moments and somewhat excited is a statement saying oh we respect nobody has right to pursue whatever you want to pursue Etc now what happens to the story team well so we have a bill people so he's the head of the soar division he has some words about what's happening sort of what their pivoting to he's saying we need to automate the physical economic and that the Sora research team without focusing on quotes systems that deeply understand the World by learning to simulate arbitrary environments at high Fidelity so we're talking about World models for robotics similar to which you might have been hinting ads or two but Nvidia has been working on and often come from this he was saying sort of research team will prioritize a longer-term World installation research especially as it protests to provides so in the memo is exciting specifically Google and atrophic as the competition of course are racing towards their IP
+And the lovely Labs have been saying that they're kind of having a hard time keeping up with either their officially your just kind of tell from their actions but that product is rapidly getting Ace specifically with Enterprise customers they're putting out excellent coding tools and the white collar AI tools like Claude Google now we have this badge which allows you to control your images from your phone but it has racing to ship similar children and of course which hopefully help them into that aspect so will we still don't know about the new model is the parameter account whether it's reasoning or non-reasoning model with its multimodal I mean you can guess at these things but no details have been available yet depending on what it's going to be called whether it's again at gbt6 or 5.5 or something completely different or how compares to the other models from other talking it almost seems like a kind of a different thing entirely but based on a stem elements
+Just can really accelerate the economy that's not really how Alvin talks about regular product releases for incremental updates that's not really supporting that he would use and the AGI deployment naming convention of the order chart renamed I don't think that's accidental it seems like they're getting ready to call something a GI level and of course kind of the oven the power move is to get himself away from security and safety to have those departments report to other people and himself kind of freeing up more bandwidth to focus on chips and power and Supply chains Etc now here's what was kind of a lost in this developing a story what was happening correctly to this it was kind of just very because of how big
+Hey hello I'm Martin Saxton in my five volume series can help you unlock your hidden tax credit potential most businesses don't even realize they qualify for retroactive </S>
+To use Chad GT instead of specific model maybe because he has some Advanced access to a previously unreleased model it's probably not the main split model that we're talking about here because reportedly they got trained or finished training yesterday so March 24th was the day that I think was officially finished training so it wasn't that but some other openai model was kept them to the proof for one half of this problem Tao also maintains a GitHub kind of a Wiki with 100 AI solved air issue problems and in January this year so gbt 5.2 Pros solved the three Irish problems in a single home shortly after coming out in January this year this increase in its abilities of math is very recent so I would guess that gbt 5.4 Pro is probably the most unlikely candidates here but again we're not sure all right so I know we're hearing some what's confusing and narratives online and you something we're like oh yeah it's all fake you can't produce anything blah blah blah at the same time
+And by 2026 by this year AI will become a trustworthy co-author right so that they should I would say is I had schedules seeing SRE scholarship papers using it two models from two of the frontier Labs as you know we trustworthy co-authors or co-scientists so remember that that long ago you know 2025 early 2025 when um they were kind of hating at the fact that hey Google have bottles capable of progressing science forward right and there's a certain portion of the population they're like Ah that's just nonsense they're just lying they're just trying to reduce their profits you don't improve their shares value blah blah and also run a safe time they're saying that soon we're going to see Supreme coders we're gonna see a lot of the coding done by these AI agents and certainly you can argue that's technically been achieved right there self-careers stuff like that but we're also seeing these models
+Hey everyone Nikki here from skimmer and we are so excited to share that our 2026 sustainable pool service report is officially live pursuing smart and growth strategies clear pricing and stronger systems and a real focus on consistency what's LGBT codex clock code or the stuff that's built on top of open Cloud we are seeing it creating some pretty impressive things so we might argue whether or not those favorites will technically have come to pass but it's kind of hard at this point to deny the progress that's been made right living crazy to say no they're completely off the mark right you can say that all the people are working for the AI Labs they're all lying and I've heard people say that smart people have the audience they say oh all those people are lying to reduce their profits fine what about somebody like intense Tao right are they lying towards what end usually when people lie about attributing credits Discovery they do it by giving credit to other people
+That contributed that they take the credit for themselves so kids seems like he's crediting these VI models for doing a lot of the work leading to this paper so I don't think he would be doing that if that wasn't the case I I trust him when he says that these AI models were instrumental in his ability to box his favor so again if you've been following this for a few years I hope you're being kind of see who's a predictive abilities are being proven to be more correct than whose particular abilities are not so the people that constantly downplay where AI is going to be in six months and 12 months which you feel like over the last two years they're just like mailing other convictions and the guys not going anywhere nor do you feel like the people they're like hey you know look at this like experientially growing curve of aiabilities I'm gonna just assume it continues right they just look at the charts and they look at the line the chart they go that's the so this line and continues going in the same direction it's been going for last probably five years or so as far as I can tell those people they just kind of follow the line on chart they are predictabilities of the future
+So now that the leaders of these AI labs are saying that hey we're going to soon have these models that will accelerate the economy do you predict will happen you know this year or the next year do you think it's going to be complete not since what they said do you think that the economy would completely unaffected by the models that will start coming out if you've been debating against the eye progress this whole time hey maybe this is going to be the time that you're actually erect with me personally I would not bet against the line on the charts continuing in the same direction the same syllab that it has been all this time so let me know what you think are you excited about this this fun at model do you think is going to be a big deal and do you think that we're gonna start seeing these AI models coming out this year starting to accelerate to the economy whatever that means to you do you think it's going to have a very noticeable measurable strong impact on the economy do you feel like when
+It's obviously my Labs when they say things like AI is going to be doing a lot of coding in the future or AI is going to be helping for scientific discovery in the future like they've said that quite some time ago you know in AI time we'll talk about 6 12 18 months that's like a long time ago and measured in AI years do you feel like they nailed those predictions or looking back into the field like they just provide to prove the value of their company where are you on that timeline your side of the argument are you on if you don't think AI models are contributing to scientific progress how do you think about with tents and Taos saying do you think he's been overstating how these models were towards and figuring out these proofs or maybe you don't consider that you know helping the scientific progress to let me know I'm curious to know as always thank you so much for watching thanks I'll see you in the next one and hopefully I'll have a better setup than this I'm in the middle of building out to me a little bit better really hope this lighting isn't too weird anyway
+The following is a conversation with Jensen Guam CEO of Nvidia one of the most important and influential companies in the history of human civilization
+India is the engine powering the AI Revolution and a lot of a success can be directly attributed to Jensen's sheer force of will and as many brilliant events and decisions as a leader engineer and innovator
+This is Alex from your podcast and now dear friends here's Johnson
+You've propelled Nvidia into a new era in AI moving Beyond is focus on chip scale design to now black scale design and I think it's fair to say that waiting for Nvidia for a long time used to be about building the best GPU possible and you still do but now you've expanded that to extreme co-designer GPU CPU memory networking storage power cooling software the rack itself the pod that you've announced and even the data center so let's talk about extreme code design what is the hardest part of co-designing system with that many complex components and design variables yeah thanks for the question
+So first of all the reason why extreme code design is necessary is because the problem no longer fits inside one computer
+To be accelerated by one GPU
+The problem that you're trying to solve is you would like to go faster than the number of computers that you had so you added you know 10 000 computers but you would like it to go a million times faster
+Then all of a sudden
+You have to take the algorithm
+You have to break up the algorithm you have to refactor it
+Get the shark the pipeline you have to Shard the data you have to shower the model
+Now all of a sudden
+When you distribute the problem this way
+Not just scaling up the problem but you're Distributing the problem
+Then everything gets in the way this is the andal's law problem
+And where the amount of speed up you have for something
+Depends on how much of the total workload it is and so we have computation represents 50 of the problem and I sped up computation infinitely like a million times
+You know I only sped up the total workload by a factor of two now all of a sudden
+Not only do you have to distribute the computation you have to you know Shard the pipeline somehow
+Uh you also have to solve the networking problem
+Because you've got all of these computers are all connected together
+And so distributed computing at the scale that we do
+The CPU's a problem the GPU is a problem the networking is a problem the switching is a problem
+And distributing a workload across all these computers are a problem
+It's just a massively complex computer science problem so we just got to bring every technology to there
+Otherwise
+We scale up linearly
+Or
+Scale up based on
+The capabilities of Moore's Law which has largely slowed because dinard scaling has looked I'm sure there's trade-offs there plus you have a complete disparate disciplines here make sure you have specialists in each one of these high bandwidth memory the network in the ND length and next the Optics of the copper that you're doing the power delivery the cooling all the I mean there's that world experts in each of those how do you get them in a room together to figure out my staff is the large
+Can you take it through the process of the Specialists and the journalists like how do you put together the Rock when you know the set of things you have to shove into Iraq together you know like what is that process look like for designing it all together there's the first question which is what is Extreme co-design your your optimizing across the entire stack of software from architectures to chips to systems to system software to the algorithms to the applications one layer the second thing that you and I just talked about just goes beyond CPUs and gpus and networking shifts and scale up switches and scale outs which is and then of course you got to include power and cooling and all of that because you know all these computers are extremely extremely power power hungry they do a lot of work and they're very energy efficient but they it Aggregates to consume a lot of power and so that's one the first question is what is it the second question is why is it and we just just
+You know you want to distribute the workloads so that you can exceed the benefit of just increasing the number of computers
+And and then the third question is how is it how do you do it
+And and uh that's the that's kind of the miracle of this company
+You know when you're designing your computer you have to have power system with computers
+When you're designing a company
+You should first think about what is it that you want the company to produce you know I see a lot of companies organization charts and they all look the same
+Hamburger organization charts soft organization charts and card company organization jurors they all look the same
+And it doesn't make any sense to me
+You know the goal of a country level company is to be the Machinery the mechanism
+The system that produces
+The output and that output is the product that we'd like to create
+It is also designed the architecture of the company should reflect the environment but which it exist it almost directly says what you should do with your organization why direct staff as 60 people you know I don't have one-on-ones with them because it's impossible you can't have you can't have 60 people on your staff if you're you know couldn't get work done and you still have 60 reports you still have more yeah and most stars at least have a foot in engineering
+Almost all of them
+Architecture algorithms design so you constantly have an eye on the entire stack and you're having to do like intense discussions about the design of the entire site and build conversation is over one person that's why don't do one-on-ones we present a problem and all of us attack it
+You know because we're doing extreme code design
+And literally the company is doing his dream code design all the time so even if you're talking about a particular component
+Like cool
+Now working everybody's listening in yeah and then contribute while this doesn't work for the for the power distribution this doesn't exactly this doesn't work for the for the memory this doesn't work for this exactly and whoever wants to tune out to now you know yeah and the reason for that is because because the people who are on the staff they know when to pay attention
+They're supposed you know if something they could have contributed to they didn't contribute to I'm going to call them out you know and say hey come on let's get in here
+Story sharers
+Multitaskers
+The question askers
+Excelsior universe so as you mentioned nvidia's this company is adapting to the environment so which point can you say
+Did the environment changing begin began adapting sort of secretly in the early days from GPU for gaming maybe the early deep learning Revolution to we're not going to start thinking of it as an AI Factory and what does Nvidia do is produces AI let's build the factories from it just systematically
+Um we started out as an accelerator company
+But the problem with accelerators is that the application domain is too narrow it has the benefit of being incredibly optimized for the job
+You know any specialist has that benefit the problem with intense specialization is that of course your Market reach is narrower
+But that's that's even fine the problem is the market size also
+Dictates your r d capacity
+And your RNG capacity ultimately
+Dictates
+We always we always knew that that was gonna be our first step we had to find a way to become accelerated Computing
+But the problem is when you become a Computing company
+Yeah it's too general purpose and it takes away from your specialization it connected two words
+Have fundamental tension the better Computing company we become the worse we became as a specialist that more of a specialist the less capacity we have to do overall Computing
+It's a and I connected those two words together on purpose that the company has to find
+That really narrow path step by step by step to expand our aperture of computing but not give up on the most important specialization that we have okay so the first step that we took Beyond acceleration was reinvented the programmable pixel share so that was the first step towards programmability
+Art you know it was our first journey towards moving into the world of computing the second thing that we did
+Was we we uh created we put a P32 into our shares that mp32 step I triply compatible fp32 was a huge step in the direction of
+Computing it was the reason why all of the people who were working on on stream processors and you know other types of data flow processors discovered us and they said hey all of a sudden you know we might be able to use this gpus that's incredibly computationally intensive it is
+Which led us to create put C on top of MP32 was called we call CG that's CG took us to eventually Cuda Cuda step by step by step
+Uh with putting Cuda on GeForce that that was a strategic decision that was very very hard to do because it caused the company
+Enormous amounts of art profits and we couldn't afford it at the time but we did it anyways because we wanted to be a Computing company a Computing company has a Computing architecture a Computing architecture has to be compatible across all of the chips that we build can you can you take me to that decision so putting code on G-Force could not afford to do can you explain that decision why
+Why boldly choose to do that anyway can you explain that that was that was the first I would I would say that that was the first uh
+The first strategic decision that that is as close to an existential threat but people don't know it turned out to be spoiler alert one of the most incredibly brilliant decisions ever made by a company so could it turned out to be
+An incredible foundation for computation in this AI infrastructure world so so you're just setting the context it turned out to be a good decision you know it turned out to a good decision I think so so here here's the way it went so we invented this thing called Cuda and
+Uh it expanded the aperture of applications that that we can accelerate
+The question is how do we
+How do we attract developers to Cuda
+Because a Computing platform isn't all about developers and developers
+I don't come to a Computing platform just because
+You know it could perform something interesting they come to a Computing platform because the install base is large
+Because a developer like anybody else wants to develop software that reaches a lot of people so the install base is in fact the single most important part of an architecture the architecture could attract enormous amounts of criticism for example
+No architecture has ever attracted more criticism than the x86
+Less than less than
+Okay I just turned off the background audio from YouTube now
+When is the transcribed text
+From the input
+Field going to
+Get entered into the prompt
+There it goes
+Um so
+Let's see where we are
+Um
+Give me a second here
+Um
+No it should be like
+Two seconds
+Um so anyways
+Let's see where we are now what we did yesterday
+Was we got to the point of um
+Combining two previous projects
+One of them was this basic
+Voice transcription
+I think
+Uh that was the one that is using
+Uh
+It's in the Chrome
+That's transcribing right now and um
+And that's using om
+Many many Omni I believe
+Um I think
+Uh but
+And so we took that one
+And we can bind it
+With one that we developed after that which is the
+Let's see what's it called again got the
+That's the where is it where is it where is it where is it let me see here that's the
+What's it called
+Looking for it
+Um
+Let's see what's going on here
+That was the
+See what's going on in here
+That was
+That was the
+Um
+Kws one
+Oops
+Oh that's a problem
+Okay so we so we have one problem here
+The uh if I'm searching around in the in the finder
+And I'm talking
+Things are being selected and the titles are being changed from my talking so that's a problem
+Um without even clicking on anything
+So voice transcription needs to be excluded from
+The finder
+Hopefully I didn't screw anything else up
+Um
+Yeah no
+Uh
+When I switch to the finder
+Things are just being spontaneously selected
+And then the vocal transcription is changing
+The uh names of files that's no good {exclamation-point}
+So I'm not sure what's causing that but
+Hopefully I didn't screw up
+File names
+Um I do keep getting the same
+System message
+I'm not sure what process it's coming from but it says node would like to administer your computer Administration can include modifying passwords networking and system settings
+So I keep saying yes
+Because we're developing
+But I'm not sure exactly what process that one's coming from
+Cuz there doesn't seem to be any
+Obvious A
+Behind it
+I mean it definitely might be part of
+You know a desirable process but I have no idea
+It might be
+Lingering
+Uh it might be kind of a lingering ghost from an earlier process that an AI had started when the A
+When
+Api connection was actually alive and viable
+So it might be a lingering process
+Um
+I'm not sure
+I'm just gonna keep on pushing okay for now
+Let's see
+So now the transcription has been interrupted
+It seems like
+Okay
+ANCHOR_TEST_1774590215
+Doing an anchor test huh
+I guess it's working
+I guess it's working
+See if this changes anything now
+That's good
+So change everything
+That was bad
+All right so you
+Context compacted
+The transcriptions coming through
+Inconsistently or slow or something
+See what's going on with that
+It's working fine in the browser
+Even though it seems even maybe a little bit slower than it was in the browser
+But it's working in the browser
+All right
+I'm gonna start counting and see how long it takes before the words end up in the type
+Text input field
+I don't know what's going on
+Transcription reaching the terminal
+Text input field
+Pretty inconsistent right now
+Let me try to do the anchor command
+Testing one two three
+Okay
+ANCHOR_RESUME_TEST_1774590432
+Dash Bridge Dash server is an auto registered again with Kickstart
+So restart can fail depending on
+Launched
+ANCHOR_RESUME_TEST_B_1774590470
+You say I'm bringing it back with explicit bootstrap and then re-running
+The resume test
+All right
+Let's see here
+Meanwhile I'm gonna go over here
+Create a new account
+So oops
+Um
+Okay
+Let's see
+I don't know what's going on
+Transcription
+The transcription
+Reaching
+Terminal window
+Is
+Inconsistent let's see the anchor phrase is now flowing through the pipeline again if you want one one more quick phrase like anchor test
+149 and I'll verify it logs immediately
+Okay I did the anchor command again to try to see if the transcription ends up in the window I mean in the text input field in the terminal
+But
+It's not coming through I don't know
+I'm trying to do something else in the other window
+What the heck is going on
+I don't know what's going on
+Seems like
+None what's going on see here
+One
+Edge
+They're switching it up on me
+I don't know what's going on here
+Seems like AI is
+Fans and tricks on me
+The your terminal window keeps popping up to the front of the
+Stack
+When I'm trying to work in other windows
+Denying
+Said annoying not denying
+The terminal windows keep popping around though
+Oh
+My text is ending up in the
+Clipboard
+Which I don't
+I think is very helpful
+Getting another
+Count order ready for you
+See what's going on here
+Yeah forget about all that clipboard
+Focus
+Stuff
+Just want to
+Have the anchor command
+Working
+What's going on here
+About the voice
+Towards the
+This one is
+Not sure
+Testing testing
+All right
+Well
+Pretty inconsistent
+Okay well
+Jump on over to the work I was doing in the browser again I'll be right back and see if I can do it
+NON_INTRUSIVE_TEST_1774590960
+All right
+NON_INTRUSIVE_TEST_B_1774590975
+Back
+Okay now I'm back to the terminals
+And I have this window
+In focus
+And the transcription seems to be going smoothly now
+And I'm just waiting to see how long
+It takes before
+Tax actually gets entered
+From the input
+Field
+Cuz right now it's taking a little too long
+The text is not being entered automatically
+So that's annoying
+I'm gonna push return manually now
+But you gotta fix it
+All right
+FOLLOW_FRONT_TEST_1774591182
+LATENCY_PROBE_1774591202
+Put on some background music
+With no lyrics
+LATENCY_PROBE2_1774591224
+That's cool
+Yeah relaxing coding sessions
+Again my stuff is pretty cool
+Let's try here let's try this
+All right
+All right
+So now I have the terminal back in Focus
+What do you mean lock to a specific
+I don't understand that
+I know that
+The text from the input field needs to be
+Entered into the prompt
+Automatically
+And it's not right now
+Previously we had it on a two second timer
+I'm pushing return manually again
+Please fix it
+No it doesn't need to be just
+Terminal is the target
+And it just needs to coincide with where I set the anchor
+That's the whole deal
+It needs to just coincide with where I set the anchor
+Which is option plus command plus cursor click
+We already set that up
+And it works just fine
+Yes that sounds correct
+And just a side note when we get on to hopefully working on the next stage which is
+To audio output
+Again supposed to be
+Relative to where I set the anchor
+And that's it
+That way there's no confusion
+And I can
+Jump around to other terminals or other windows and
+Applications and and it's not getting screwed up
+And I can just keep the conversation going with where I want it to be going to
+And then the next problem after that
+Is going to be
+Uh see now it's you've done something different again
+Now the way the text is entering into the text input field is changed
+It's screwed up
+MODE_CHECK_1774591653
+I don't think that I don't know about that
+I mean I see the transcription working now again
+Okay
+Selling the anchor now
+I'll just set the anchor
+It's not being entered
+It's not being entered
+Testing one two three
+Oh you found the real colors huh
+Because why because the click anchor Damon was wasn't running
+Well duh that would explain it
+Your goofball computer
+Routing to the old terminal rock
+Right
+Auto heal that's right that's what we need Auto heal the demons
+Is always kept alive and then restarting everything all right
+Now what
+Some mixed up
+Some mixed up shit going on in the text input field
+Looks like you're coding in the text input field to me
+At least the transcriptions is still working
+Least at least at least
+You just gotta get
+Text entering is all by itself and we'll be golden
+Until the next frustrating challenge
+So frustrating to have to
+Have done this I've gone through this process with AI trying to get this right like
+Four times already
+Like first worked on it
+A few months back
+And it took a lot of work and tweaking to get it right and then
+The work got lost
+It got screwed up something and had to do it all over again
+And again
+I don't even know if there's going to be a point in the end hopefully what I'm creating here is actually going to be
+Models coming out that might just make this work work obsolete right away
+But I want to finish what I started here before I get to that
+Watch Dog log
+It's funny
+I believe it when I see it
+Right if you say so
+I hear a lot of promises
+Watch Dog blow
+I said log
+All right
+Verifying both huh and the anchor Damon remain alive over time
+And I'll show you the live process slash log proof
+All right you say so
+Now you want me
+To the anchor command all right here we go
+Three two one
+I did the anchor command
+Anchorsync test
+Strange that anchorsync is one word
+Interesting
+Pausing but the text is not going in
+It's just sitting in the input
+Field
+And pushing enter manually now again
+Testing 1 2 3 and then I'm gonna be quiet
+Okay but it has to work like no matter where I
+Place the anchor
+Has to be consistent and work all the time without needing AI assistance to set it up every time
+In the past
+There was another method that I remember
+Train which was also challenging but
+I was able to speak
+And then
+Was directly injected
+And right away
+And what ends up happening is it would end up building up in the queue
+INTERACTIVE_AUTOSUBMIT_TEST_1774592414
+Which kind of worked and kind of didn't because it let me keep flowing and it was catching everything I was saying but it was breaking it up into like separate cues so then it became like way a backlog
+Which jammed everything up so I remember the solution at that time was to
+Collect everything
+So into one queue
+So that it didn't make separate cues every time I spoke and paused
+And that way the AI was able to process
+What I was asking for
+And then it would collect
+The collected
+Backed up
+Text input
+This seems similar to that
+But it's just staying in the input field unfortunately
+I see your commands like coming through the same field as the input that's still stagnant here I'm going to push return manually again and then I'm going to follow your instructions that I see to reset the anchor
+Not sure
+Reset the anchor
+Transcription is coming into that strange mode again
+Where it's only capturing like
+A coupled words at a time
+And then it's been cut off
+It's happening in a different like shower or something or like
+COALESCE_TIMER_TEST_1774592545 part one
+part two
+part three
+Yeah right now I still see that the transcribed text
+Entering the input field
+In like a white border
+And it's only allowing like a few words at a time and then it's being overwritten in the same spot
+I don't know what you call that but
+You can check
+Transfer up to what I said in
+Chrome browser to see what I actually said
+Okay
+And reset the anchor
+Tap Port
+Whatever works try it
+FINAL_PIPELINE_TEST_1774592642 partA
+partB
+It's frustrating
+I'll be dinking around with this stuff
+Meanwhile
+Everybody else
+STRICT_ANCHOR_TEST_1774592665
+Just going with the flow of new model releases and
+Leapfrogging way ahead of me I've been working on this stuff for over a year
+It's maddening
+I did
+Anchor
+Command
+I did the anchor command
+And
+What's happening
+It's not
+Entering the text automatically at all
+It's just building up in the
+Input field
+And it looks like it's in some kind of different mode like I keep on trying to say at least this time it looks like it's not overwriting itself so that's a
+I'm gonna try to now be quiet for two seconds and see if it cements
+I'm pushing return manually again
+Nope that's not even working
+Pushing return manually is not even working
+Because it looks like the text is being entered into
+Like other thing that I have to
+Tab or Escape out of
+Push
+I don't know I'm gonna have to push Escape again
+Get this Escape again
+Let's Escape again
+Push Escape again let's Escape again
+You know screwed up
+It's screwed up
+Fucking madness
+Stuck on the same task for fucking days
+Okay
+The text is being entered in a strange mode
+You think so
+Okay that sounds like a plausible solution
+NORMALIZE_MODE_TEST_1774593140
+All right
+COALESCE_CHECK_PART_A
+COALESCE_CHECK_PART_B
+COALESCE_CHECK_PART_C
+Testing 1 2 3 4 5
+You would you would think this type of interaction would be more standard like you would have a lot more
+History and your trainings data
+Okay
+If you say so
+I'll just stay here keep talking to myself until this works I guess
+I really don't know why this is so complicated it seems like it should be so basic
+I guess
+You have too many options I guess
+But it's just screwed up
+It's just doing the same thing it's only
+Catching like four words
+And then stops and then overwrites the same amount of space
+It's fucking ridiculous
+Really don't want to give up on this
+You're not making much fucking progress here
+The annoying part is that the transcription in the browser is working just fine
+Should I
+Python do it too
+Why not and bash
+Carolina
+Try to do it through the accessibility features
+Give it a try
+All right I reset the Anchor Point it was already transcribing the info
+You turn off the background set music for a second
+It's not entering
+The transcription is is in the text input field
+But it's not entering into
+It's still doing the same shit
+The text
+In the white border
+And it's not
+Regular
+Input
+And I'm gonna have to
+Push Escape again so that I can get something to go through
+Even I push return now and nothing happens
+Pushing return return and nothing happens push Escape now
+And we can escape and Escape twice I had to do it
+This is stupid
+This is just stupid
+Pissing me off
+It's so dumb
+It was
+Whatever
+So dumb
+Yes it was a weird editor
+Ridiculous
+Very ridiculous
+All right
+Get the anchor command
+Anchor sync test Baseline
+Now let me make sure that it's not doing the thing before
+Good it's not it's not
+Semantics
+And to leave terminal in that odd but it's not happening now that's the point
+It was happening before it's not happening now that's the point
+Correct
+Well you're about to run out of your quota I'm gonna have to pass off this conversation
+For another
+Uh AI quota so
+If you have any notes to say say them now quickly
+Yeah
+I wish
+I didn't think that I'm gonna have to go through the same struggle again as soon as I start to try to
+Add the other
+Features
+Like can we confirm is this transcription still connected to the other module
+The
+The the the module with the audio
+Word screening that triggers the hard-coded
+Commands
+I believe we should still have that in place
+Because that was all part of the package
+All right context compacted again
+Five percent of your quota left yeah we had it all wired up so I was able to talk just like this that was going through just like it is now it's working fine and supposedly also yes audio trigger kws Dash MVP
+Right what'd you saying but listen voice and now I'm checking
+Forwarding is actually enabled not just present in code
+You say you have a clear signal now the connection exists in code but it's currently disabled at runtime
+Um
+Yeah I believe we had that working yesterday
+And was confirmed
+And I believe it was
+Sending it off even to the cloud
+Not even just local it was sending it off
+To Railway not even just localhost
+Yeah I mean I there's a
+I'm not sure how it all plays together there is a local host you UI
+But I thought that that was kind of part of a earlier test round
+But I'm not sure how it actually works up how it all strings together actually
+Like I have the key saved and everything
+You know because it's just for
+Here see
+Here's the note I saved real quick
+That's the note I saved
+Good Lord
+aspirin 200 mg please
+You say forwarding is now on again and you're running one synthetic phrase through low volume
+Slash send and then checking both local logs and Cloud roll
+Um Advanced to prove the end to end Cloud path is active
+aspirin 200 mg please
+Blobbing Quirk that's weird
+Not the pipelines not the white line itself
+You're running the exact end-to-end proof with proper
+Loaded URLs right now
+We can you confirmed it's connected and forwarding to Cloud again
+What is the note that I should save
+Okay got it
+So now
+We have this confirmed great so
+What I want to know is
+Is can all this be packaged up together in a new version
+So that there's no confusion next time and it's already lined up and connected to the cloud endpoint
+So I'm glad I'm back to at least a happy
+Functional
+Uh checkpoint here
+It's so easy to get like off track and start sliding into
+No man's land
+It's maddening
+So here's another question for you
+Is there any point in keeping the
+Local
+Ui that we were using for testing before we connected it to the cloud is there any point in keeping it
+Is there maybe some other use
+In connecting the whole thing together I really don't know at this point
+The original one that we used for testing is here
+Oh I see
+Okay well I noticed that
+Baked in via open claw
+So what's the deal with that because
+Does that mean that open claw is
+Like a dependent of this
+Application or what
+But why does it have to be inside of the open claw package
+I do want a clean separation it needs to be part of the new fuse project not not open glove
+So here is
+Hold on
+And check what's inside of the apps folder here
+Okay
+Okay
+And just make sure that
+The paths that are being used in
+New fuse are distributable
+This this
+Whole framework is going to be open source so
+It can't have hard-coded
+Paths
+That
+On the uh pertinent to me
+Perfect
+We can now debalt at once you say question mark
+Do both at once {question-mark}

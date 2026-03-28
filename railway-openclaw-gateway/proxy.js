@@ -13,6 +13,21 @@ const { spawn } = require('child_process');
 const PUBLIC_PORT = parseInt(process.env.PORT || '8080', 10);
 const TARGET_HOST = process.env.OPENCLAW_PROXY_TARGET_HOST || '127.0.0.1';
 const TARGET_PORT = parseInt(process.env.OPENCLAW_INTERNAL_PORT || '19001', 10);
+const ENVIRONMENT = String(process.env.ENVIRONMENT || process.env.NODE_ENV || '')
+  .trim()
+  .toLowerCase();
+
+function isLocalEnvironment() {
+  return ['local', 'localhost', 'devlocal', 'test', 'development'].includes(ENVIRONMENT);
+}
+
+function missingRequiredConfig() {
+  const missing = [];
+  if (!process.env.OPENCLAW_GATEWAY_TOKEN && !isLocalEnvironment()) {
+    missing.push('OPENCLAW_GATEWAY_TOKEN');
+  }
+  return missing;
+}
 
 function isHealthPath(url) {
   if (!url) return false;
@@ -88,19 +103,23 @@ function proxyWebSocket(req, socket, head) {
 }
 
 function startGateway() {
-  // Ensure token auth works (Control UI expects a token when gateway auth is enabled).
-  // If no token is provided via env, generate one and log it so you can paste it into the UI.
+  const missing = missingRequiredConfig();
+  if (missing.length > 0) {
+    console.error(`Missing required config: ${missing.join(', ')}`);
+    process.exit(1);
+  }
+
+  // Local/dev convenience only: keep production non-local strict.
   if (!process.env.OPENCLAW_GATEWAY_TOKEN) {
     const crypto = require('crypto');
     const token = crypto.randomBytes(24).toString('hex'); // 48 chars
     process.env.OPENCLAW_GATEWAY_TOKEN = token;
-    console.log(`Generated OPENCLAW_GATEWAY_TOKEN=${token}`);
+    console.warn('Generated ephemeral OPENCLAW_GATEWAY_TOKEN for local runtime');
   }
 
   const args = [
     'gateway',
     'run',
-    '--allow-unconfigured',
     '--port',
     String(TARGET_PORT),
     '--token',
@@ -124,9 +143,14 @@ function startGateway() {
 
 const server = http.createServer((req, res) => {
   if (isHealthPath(req.url)) {
+    const missing = missingRequiredConfig();
+    const healthy = missing.length === 0;
     res.statusCode = 200;
     res.setHeader('content-type', 'application/json');
-    res.end(JSON.stringify({ ok: true, status: 'healthy' }));
+    res.statusCode = healthy ? 200 : 503;
+    res.end(
+      JSON.stringify({ ok: healthy, status: healthy ? 'healthy' : 'misconfigured', missing })
+    );
     return;
   }
   proxyHttp(req, res);

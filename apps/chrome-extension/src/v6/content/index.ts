@@ -819,9 +819,14 @@ class FuseConnectContentScript {
       'monitor_idle',
       'page_agent_registered',
       'agent_registered',
-      'heartbeat',
+      // 'heartbeat', // HEARTBEAT RECOVERY: allow heartbeats to be injected
     ]);
     if (blockedEventTypes.has(eventType)) return false;
+
+    // Explicitly allow heartbeats even if eventType check above was modified
+    if (lower.includes('tnf heartbeat') || msg?.metadata?.isRecoveryAttempt) {
+      return true;
+    }
 
     if (
       lower.startsWith('[activity]') ||

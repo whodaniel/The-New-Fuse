@@ -18,6 +18,10 @@
     "resolveJsonModule": true,
     "moduleResolution": "node",
     "types": ["node", "jest", "supertest"],
+    "paths": {
+      "@the-new-fuse/infrastructure": ["../../packages/infrastructure/dist"],
+      "@the-new-fuse/database": ["../../packages/database/dist"]
+    },
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,

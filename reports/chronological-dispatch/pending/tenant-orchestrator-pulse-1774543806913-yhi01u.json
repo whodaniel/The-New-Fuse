@@ -1,0 +1,31 @@
+{
+  "targetQueue": "tnf:master:tasks:planning",
+  "queueItem": {
+    "id": "tenant-orchestrator-pulse-1774543806913-yhi01u",
+    "title": "Orchestrator Pulse",
+    "description": "Run a portfolio orchestration pulse. Read AGENTS.md, USER.md, PROJECTS.md, HEARTBEAT.md and latest memory notes. Identify the highest-impact unblocked next action across active projects. If action is user-facing, send one concise proactive nudge with project, why now, and recommended next action. Enforce privacy defaults.",
+    "priority": "high",
+    "status": "queued",
+    "votes": {
+      "up": 0,
+      "down": 0
+    },
+    "source": "chronological-dispatch",
+    "processId": "tenant-orchestrator-pulse",
+    "kind": "agent-turn",
+    "createdAt": "2026-03-26T16:50:06.913Z",
+    "itinerary": {
+      "lane": "directive",
+      "horizon": "realtime",
+      "coordinationMode": "brokered",
+      "signalSources": ["redis", "master-clock"],
+      "clockSource": "master-clock"
+    },
+    "metadata": {
+      "scheduledProcessId": "tenant-orchestrator-pulse",
+      "dispatchSource": "master-clock",
+      "importedFromLegacyCron": true
+    }
+  },
+  "createdAt": "2026-03-26T16:50:06.914Z"
+}

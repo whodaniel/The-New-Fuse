@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { spawn, spawnSync } from 'child_process';
 import { Command } from 'commander';
+import { createHash } from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
@@ -72,6 +73,643 @@ function requireSuperAdmin(
       `Super Admin authentication required for '${commandLabel}'. Provide --super-admin-token or ${SUPER_ADMIN_INPUT_ENV_KEY}.`
     );
   }
+}
+
+function isExecutableFile(filePath: string): boolean {
+  try {
+    const stats = fs.statSync(filePath);
+    if (!stats.isFile()) return false;
+    if (process.platform === 'win32') return true;
+    return (stats.mode & 0o111) !== 0;
+  } catch {
+    return false;
+  }
+}
+
+function findExecutableOnPath(commandName: string): string | null {
+  const pathEnv = process.env.PATH || '';
+  for (const directory of pathEnv.split(path.delimiter)) {
+    if (!directory) continue;
+    const candidate = path.join(directory, commandName);
+    if (isExecutableFile(candidate)) return candidate;
+  }
+  return null;
+}
+
+function resolveVoiceBridgeCommand(commandName: string): string {
+  const overrideEnvKey = `TNF_VOICE_${commandName.replace(/[^a-zA-Z0-9]/g, '_').toUpperCase()}_CMD`;
+  const override = process.env[overrideEnvKey];
+  if (override) {
+    const expanded = override.startsWith('~')
+      ? path.join(process.env.HOME || '', override.slice(1))
+      : override;
+    if (!isExecutableFile(expanded)) {
+      throw new Error(
+        `${overrideEnvKey} is set but does not point to an executable file: ${expanded}`
+      );
+    }
+    return expanded;
+  }
+
+  const onPath = findExecutableOnPath(commandName);
+  if (onPath) return onPath;
+
+  const homeBin = process.env.HOME ? path.join(process.env.HOME, 'bin', commandName) : '';
+  if (homeBin && isExecutableFile(homeBin)) return homeBin;
+
+  throw new Error(
+    `Voice Bridge command '${commandName}' not found. Install Voice Bridge and ensure '${commandName}' is on PATH, or set ${overrideEnvKey}.`
+  );
+}
+
+async function runVoiceBridgeCommand(commandName: string, args: string[] = []): Promise<void> {
+  const executable = resolveVoiceBridgeCommand(commandName);
+  await runCommand(executable, args, { cwd: process.cwd() });
+}
+
+function normalizeVoiceProfile(raw?: string): string {
+  const profile = (raw || 'main')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+  return profile || 'main';
+}
+
+function isDefaultVoiceProfile(profile: string): boolean {
+  return profile === 'main' || profile === 'default' || profile === 'primary';
+}
+
+function inferVoiceBridgePort(profileInput?: string, explicitPort?: string): number {
+  if (explicitPort) {
+    const port = Number.parseInt(explicitPort, 10);
+    if (!Number.isFinite(port) || port <= 0) {
+      throw new Error(`Invalid --port value: ${explicitPort}`);
+    }
+    return port;
+  }
+
+  const envPort = process.env.VOICEBRIDGE_PORT;
+  if (envPort) {
+    const port = Number.parseInt(envPort, 10);
+    if (Number.isFinite(port) && port > 0) return port;
+  }
+
+  const profile = normalizeVoiceProfile(profileInput);
+  if (isDefaultVoiceProfile(profile)) return 50005;
+
+  const cksum = spawnSync('cksum', {
+    input: profile,
+    encoding: 'utf8',
+    env: process.env,
+  });
+
+  if (cksum.status === 0) {
+    const token = (cksum.stdout || '').trim().split(/\s+/)[0];
+    const hash = Number.parseInt(token || '', 10);
+    if (Number.isFinite(hash)) {
+      return 50005 + (hash % 400) + 1;
+    }
+  }
+
+  let fallbackHash = 0;
+  for (const char of profile) fallbackHash = (fallbackHash * 33 + char.charCodeAt(0)) >>> 0;
+  return 50005 + (fallbackHash % 400) + 1;
+}
+
+function readVoiceBridgeJson(
+  pathname: string,
+  method: 'GET' | 'POST' = 'GET',
+  port = 50005
+): unknown {
+  const url = `http://127.0.0.1:${port}${pathname}`;
+  const args = ['-fsS', url];
+  if (method === 'POST') args.unshift('-X', 'POST');
+  const result = spawnSync('curl', args, {
+    encoding: 'utf8',
+    env: process.env,
+  });
+  if (result.status !== 0) {
+    const stderr = (result.stderr || '').trim();
+    throw new Error(
+      `Voice Bridge API call failed for ${method} ${pathname} on 127.0.0.1:${port}. ${
+        stderr || `Is voice server running on 127.0.0.1:${port}?`
+      }`
+    );
+  }
+
+  const body = (result.stdout || '').trim();
+  if (!body) return {};
+  try {
+    return JSON.parse(body);
+  } catch {
+    throw new Error(`Voice Bridge API returned non-JSON for ${method} ${pathname}: ${body}`);
+  }
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function resolveVoiceBridgeStateDir(): string {
+  const explicit = (process.env.VOICEBRIDGE_STATE_DIR || '').trim();
+  if (explicit) return explicit;
+  if (repoRoot && fs.existsSync(repoRoot)) return path.join(repoRoot, '.voicebridge');
+  return path.join(process.env.HOME || process.cwd(), '.voicebridge');
+}
+
+type VoiceSessionState = {
+  profile: string;
+  port: number;
+  voicePid?: number;
+  listenPid?: number;
+  startedAt: string;
+};
+
+function voiceSessionFile(profileInput?: string): string {
+  const profile = normalizeVoiceProfile(profileInput);
+  const stateDir = resolveVoiceBridgeStateDir();
+  fs.mkdirSync(stateDir, { recursive: true });
+  return path.join(stateDir, `tnf_voice_session_${profile}.json`);
+}
+
+function writeVoiceSession(session: VoiceSessionState): void {
+  const file = voiceSessionFile(session.profile);
+  fs.writeFileSync(file, `${JSON.stringify(session, null, 2)}\n`, 'utf8');
+}
+
+function readVoiceSession(profileInput?: string): VoiceSessionState | null {
+  const file = voiceSessionFile(profileInput);
+  if (!fs.existsSync(file)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(file, 'utf8')) as VoiceSessionState;
+  } catch {
+    return null;
+  }
+}
+
+function removeVoiceSession(profileInput?: string): void {
+  const file = voiceSessionFile(profileInput);
+  if (fs.existsSync(file)) fs.rmSync(file, { force: true });
+}
+
+function parseProcessTable(): Array<{ pid: number; cmd: string }> {
+  const result = spawnSync('ps', ['-Ao', 'pid=,command='], {
+    encoding: 'utf8',
+    env: process.env,
+  });
+  if (result.status !== 0) return [];
+  return (result.stdout || '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const firstWhitespace = line.search(/\s/);
+      if (firstWhitespace <= 0) return { pid: Number.NaN, cmd: '' };
+      const pidText = line.slice(0, firstWhitespace).trim();
+      const cmd = line.slice(firstWhitespace).trim();
+      const pid = Number.parseInt(pidText, 10);
+      return { pid, cmd };
+    })
+    .filter((entry) => Number.isFinite(entry.pid) && entry.pid > 0 && entry.cmd.length > 0);
+}
+
+function matchesVoiceProfileProcess(cmd: string, profileInput?: string): boolean {
+  const profile = normalizeVoiceProfile(profileInput);
+  const isDefault = isDefaultVoiceProfile(profile);
+  const profilePattern = new RegExp(
+    `(?:^|\\s)--profile(?:=|\\s+)${escapeRegExp(profile)}(?:\\s|$)`,
+    'i'
+  );
+  const hasProfileFlag = /(?:^|\s)--profile(?:=|\s+)/i.test(cmd);
+  const argv0 = (cmd.trim().split(/\s+/)[0] || '').toLowerCase();
+  const argv0Base = path.basename(argv0);
+  const cmdLower = cmd.toLowerCase();
+
+  const isVoiceWrapper = argv0Base === 'voice';
+  const isListenWrapper = argv0Base === 'listen';
+  const isProfiledPythonWorker =
+    cmdLower.includes('voice_server.py') ||
+    cmdLower.includes('stream_watch.py') ||
+    cmdLower.includes('voice-response-audio-watch.py');
+
+  if (profilePattern.test(cmd)) {
+    if (isVoiceWrapper || isListenWrapper || isProfiledPythonWorker) return true;
+  }
+
+  if (!isDefault || hasProfileFlag) return false;
+
+  if (isVoiceWrapper || isListenWrapper || isProfiledPythonWorker) return true;
+  return false;
+}
+
+function findVoiceProfilePids(profileInput?: string): number[] {
+  return parseProcessTable()
+    .filter((entry) => matchesVoiceProfileProcess(entry.cmd, profileInput))
+    .map((entry) => entry.pid);
+}
+
+function findMainProfileInterferencePids(activeProfiles: string[]): number[] {
+  const normalizedActive = new Set(activeProfiles.map((p) => normalizeVoiceProfile(p)));
+  for (const profile of normalizedActive) {
+    if (isDefaultVoiceProfile(profile)) return [];
+  }
+  return findVoiceProfilePids('main');
+}
+
+function isPidAlive(pid: number): boolean {
+  if (!Number.isFinite(pid) || pid <= 0) return false;
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function terminatePids(
+  pids: number[],
+  options: { graceMs?: number; killMs?: number } = {}
+): Promise<{ stopped: number[]; notFound: number[]; forceKilled: number[] }> {
+  const graceMs = options.graceMs ?? 1800;
+  const killMs = options.killMs ?? 1200;
+  const unique = Array.from(new Set(pids.filter((pid) => Number.isFinite(pid) && pid > 0)));
+  const notFound: number[] = [];
+  const stopped: number[] = [];
+  const forceKilled: number[] = [];
+
+  for (const pid of unique) {
+    if (!isPidAlive(pid)) {
+      notFound.push(pid);
+      continue;
+    }
+    try {
+      process.kill(pid, 'SIGTERM');
+    } catch {
+      notFound.push(pid);
+    }
+  }
+
+  const waitUntil = Date.now() + graceMs;
+  while (Date.now() < waitUntil) {
+    const alive = unique.filter((pid) => isPidAlive(pid));
+    if (alive.length === 0) break;
+    await sleep(120);
+  }
+
+  const stillAlive = unique.filter((pid) => isPidAlive(pid));
+  if (stillAlive.length > 0) {
+    for (const pid of stillAlive) {
+      try {
+        process.kill(pid, 'SIGKILL');
+        forceKilled.push(pid);
+      } catch {
+        // ignore
+      }
+    }
+    await sleep(killMs);
+  }
+
+  for (const pid of unique) {
+    if (!isPidAlive(pid)) stopped.push(pid);
+  }
+
+  return { stopped, notFound, forceKilled };
+}
+
+function spawnDetachedVoiceCommand(
+  commandName: string,
+  args: string[],
+  env: NodeJS.ProcessEnv
+): number {
+  const executable = resolveVoiceBridgeCommand(commandName);
+  const child = spawn(executable, args, {
+    cwd: process.cwd(),
+    env,
+    detached: true,
+    stdio: 'ignore',
+  });
+  child.unref();
+  if (!child.pid) throw new Error(`Failed to start detached command: ${commandName}`);
+  return child.pid;
+}
+
+async function waitForVoiceServer(port: number, timeoutMs = 12000): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const probe = spawnSync('curl', ['-fsS', `http://127.0.0.1:${port}/`], {
+      encoding: 'utf8',
+      env: process.env,
+    });
+    if (probe.status === 0) return true;
+    await sleep(220);
+  }
+  return false;
+}
+
+function voiceProfileSuffix(profileInput?: string): string {
+  const profile = normalizeVoiceProfile(profileInput);
+  return isDefaultVoiceProfile(profile) ? '' : `_${profile}`;
+}
+
+function voiceProfileLastInputFiles(profileInput?: string): { tsPath: string; textPath: string } {
+  const suffix = voiceProfileSuffix(profileInput);
+  return {
+    tsPath: `/tmp/voice_last_user_input_ts${suffix}`,
+    textPath: `/tmp/voice_last_user_input_text${suffix}`,
+  };
+}
+
+function normalizeRelayText(raw: string): string {
+  return (raw || '').replace(/\s+/g, ' ').trim();
+}
+
+function relayTextHash(text: string): string {
+  return createHash('sha1').update(text).digest('hex');
+}
+
+function isRelayControlSignal(text: string): boolean {
+  const normalized = normalizeRelayText(text).toLowerCase();
+  if (!normalized) return true;
+  if (normalized.startsWith('hb ')) return true;
+  if (/\bheartbeat\b/.test(normalized)) return true;
+  if (/\bkeep polling\b/.test(normalized)) return true;
+  if (/\bcontinue polling\b/.test(normalized)) return true;
+  return false;
+}
+
+function postVoiceSend(port: number, text: string): { ok: boolean; body: string; error?: string } {
+  const payload = JSON.stringify({ text });
+  const result = spawnSync(
+    'curl',
+    [
+      '-fsS',
+      '--max-time',
+      '2',
+      '-X',
+      'POST',
+      `http://127.0.0.1:${port}/send`,
+      '-H',
+      'Content-Type: application/json',
+      '--data',
+      payload,
+    ],
+    {
+      encoding: 'utf8',
+      env: process.env,
+    }
+  );
+  if (result.status !== 0) {
+    return {
+      ok: false,
+      body: '',
+      error: (result.stderr || '').trim() || `curl exit ${result.status}`,
+    };
+  }
+  return { ok: true, body: (result.stdout || '').trim() };
+}
+
+function postVoiceActivate(port: number): { ok: boolean; body: string; error?: string } {
+  const result = spawnSync(
+    'curl',
+    ['-fsS', '--max-time', '2', '-X', 'POST', `http://127.0.0.1:${port}/activate`],
+    {
+      encoding: 'utf8',
+      env: process.env,
+    }
+  );
+  if (result.status !== 0) {
+    return {
+      ok: false,
+      body: '',
+      error: (result.stderr || '').trim() || `curl exit ${result.status}`,
+    };
+  }
+  return { ok: true, body: (result.stdout || '').trim() };
+}
+
+type RelayDirectionState = {
+  id: string;
+  fromProfile: string;
+  toProfile: string;
+  fromPort: number;
+  toPort: number;
+  forwarded: number;
+  acked: number;
+  skippedEcho: number;
+  skippedControl: number;
+  sendFailed: number;
+};
+
+type RelayPendingDelivery = {
+  msgId: string;
+  hash: string;
+  fromProfile: string;
+  toProfile: string;
+  at: number;
+};
+
+function relayDirection(
+  fromProfile: string,
+  toProfile: string,
+  fromPort: number,
+  toPort: number
+): RelayDirectionState {
+  return {
+    id: `${fromProfile}->${toProfile}`,
+    fromProfile: normalizeVoiceProfile(fromProfile),
+    toProfile: normalizeVoiceProfile(toProfile),
+    fromPort,
+    toPort,
+    forwarded: 0,
+    acked: 0,
+    skippedEcho: 0,
+    skippedControl: 0,
+    sendFailed: 0,
+  };
+}
+
+function readVoiceProfileLastInput(
+  profileInput?: string
+): { ts: number; text: string; hash: string } | null {
+  const { tsPath, textPath } = voiceProfileLastInputFiles(profileInput);
+  if (!fs.existsSync(tsPath) || !fs.existsSync(textPath)) return null;
+
+  let ts = Number.NaN;
+  let text = '';
+  try {
+    ts = Number.parseFloat((fs.readFileSync(tsPath, 'utf8') || '').trim());
+    text = normalizeRelayText(fs.readFileSync(textPath, 'utf8') || '');
+  } catch {
+    return null;
+  }
+
+  if (!Number.isFinite(ts) || ts <= 0 || !text) return null;
+  return { ts, text, hash: relayTextHash(text) };
+}
+
+function voiceProfileLastAssistantOutputFiles(profileInput?: string): {
+  tsPath: string;
+  textPath: string;
+} {
+  const suffix = voiceProfileSuffix(profileInput);
+  return {
+    tsPath: `/tmp/voice_last_assistant_output_ts${suffix}`,
+    textPath: `/tmp/voice_last_assistant_output_text${suffix}`,
+  };
+}
+
+function readVoiceProfileLastAssistantOutput(
+  profileInput?: string
+): { ts: number; text: string; hash: string } | null {
+  const { tsPath, textPath } = voiceProfileLastAssistantOutputFiles(profileInput);
+  if (!fs.existsSync(tsPath) || !fs.existsSync(textPath)) return null;
+
+  let ts = Number.NaN;
+  let text = '';
+  try {
+    ts = Number.parseFloat((fs.readFileSync(tsPath, 'utf8') || '').trim());
+    text = normalizeRelayText(fs.readFileSync(textPath, 'utf8') || '');
+  } catch {
+    return null;
+  }
+
+  if (!Number.isFinite(ts) || ts <= 0 || !text) return null;
+  return { ts, text, hash: relayTextHash(text) };
+}
+
+function clipProtocolText(raw: string, maxChars = 96): string {
+  const text = normalizeRelayText(raw);
+  if (!text) return '';
+  if (text.length <= maxChars) return text;
+  return `${text.slice(0, maxChars - 1)}…`;
+}
+
+function ageMsFromUnixTs(ts?: number | null): number | null {
+  if (!ts || !Number.isFinite(ts) || ts <= 0) return null;
+  const nowMs = Date.now();
+  const tsMs = Math.round(ts * 1000);
+  const age = nowMs - tsMs;
+  return age >= 0 ? age : 0;
+}
+
+function formatAgeMs(ageMs?: number | null): string {
+  if (ageMs === null || typeof ageMs === 'undefined') return 'n/a';
+  if (ageMs < 1000) return `${ageMs}ms`;
+  const seconds = Math.floor(ageMs / 1000);
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  const remSeconds = seconds % 60;
+  if (minutes < 60) return `${minutes}m ${remSeconds}s`;
+  const hours = Math.floor(minutes / 60);
+  const remMinutes = minutes % 60;
+  return `${hours}h ${remMinutes}m`;
+}
+
+function findProfilePythonWorkerPids(profileInput: string, scriptName: string): number[] {
+  const profile = normalizeVoiceProfile(profileInput);
+  const profilePattern = new RegExp(
+    `(?:^|\\s)--profile(?:=|\\s+)${escapeRegExp(profile)}(?:\\s|$)`,
+    'i'
+  );
+
+  return parseProcessTable()
+    .filter((entry) => {
+      const cmd = entry.cmd;
+      if (!cmd.toLowerCase().includes(scriptName.toLowerCase())) return false;
+      const argv0 = (cmd.trim().split(/\s+/)[0] || '').toLowerCase();
+      if (!path.basename(argv0).includes('python')) return false;
+      return profilePattern.test(cmd);
+    })
+    .map((entry) => entry.pid);
+}
+
+function findVoiceRelayPids(fromProfileInput: string, toProfileInput: string): number[] {
+  const fromProfile = normalizeVoiceProfile(fromProfileInput);
+  const toProfile = normalizeVoiceProfile(toProfileInput);
+  const fromPattern = new RegExp(
+    `(?:^|\\s)--from(?:=|\\s+)${escapeRegExp(fromProfile)}(?:\\s|$)`,
+    'i'
+  );
+  const toPattern = new RegExp(`(?:^|\\s)--to(?:=|\\s+)${escapeRegExp(toProfile)}(?:\\s|$)`, 'i');
+
+  return parseProcessTable()
+    .filter((entry) => {
+      const cmd = entry.cmd;
+      if (!/(?:^|\s)voice\s+relay(?:\s|$)/i.test(cmd)) return false;
+      return fromPattern.test(cmd) && toPattern.test(cmd);
+    })
+    .map((entry) => entry.pid);
+}
+
+function relayLogPath(fromProfileInput: string, toProfileInput: string): string {
+  const fromProfile = normalizeVoiceProfile(fromProfileInput);
+  const toProfile = normalizeVoiceProfile(toProfileInput);
+  return `/tmp/voice_relay_${fromProfile}_${toProfile}.log`;
+}
+
+function readLastHeartbeatLine(
+  fromProfileInput: string,
+  toProfileInput: string
+): { line: string; tsIso: string | null; ageMs: number | null } | null {
+  const logPath = relayLogPath(fromProfileInput, toProfileInput);
+  if (!fs.existsSync(logPath)) return null;
+
+  let body = '';
+  try {
+    body = fs.readFileSync(logPath, 'utf8');
+  } catch {
+    return null;
+  }
+  if (!body) return null;
+
+  const lines = body.split('\n');
+  for (let i = lines.length - 1; i >= 0; i -= 1) {
+    const line = lines[i].trim();
+    if (!line.startsWith('HB ')) continue;
+    const match = line.match(/^HB\s+([0-9]{4}-[0-9]{2}-[0-9]{2}T[^ ]+)/);
+    const tsIso = match ? match[1] : null;
+    let ageMs: number | null = null;
+    if (tsIso) {
+      const parsed = Date.parse(tsIso);
+      if (Number.isFinite(parsed)) {
+        ageMs = Math.max(0, Date.now() - parsed);
+      }
+    }
+    return { line, tsIso, ageMs };
+  }
+  return null;
+}
+
+type VoiceProtocolSnapshot = {
+  profile: string;
+  port: number;
+  serverUp: boolean;
+  streamWatchPids: number[];
+  responseAudioPids: number[];
+  lastUserInput: { ts: number; text: string; hash: string } | null;
+  lastAssistantOutput: { ts: number; text: string; hash: string } | null;
+};
+
+async function collectVoiceProtocolSnapshot(
+  profileInput: string,
+  port: number
+): Promise<VoiceProtocolSnapshot> {
+  const profile = normalizeVoiceProfile(profileInput);
+  const serverUp = await waitForVoiceServer(port, 450);
+  return {
+    profile,
+    port,
+    serverUp,
+    streamWatchPids: findProfilePythonWorkerPids(profile, 'stream_watch.py'),
+    responseAudioPids: findProfilePythonWorkerPids(profile, 'voice-response-audio-watch.py'),
+    lastUserInput: readVoiceProfileLastInput(profile),
+    lastAssistantOutput: readVoiceProfileLastAssistantOutput(profile),
+  };
 }
 
 type RootScriptEntry = { name: string; command: string };
@@ -499,6 +1137,22 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
       entries: [
         { path: 'tnf onboard', description: 'Run TNF frontload onboarding' },
         { path: 'tnf doctor', description: 'Run TNF diagnostics' },
+        { path: 'tnf voice start', description: 'Start Voice Bridge server + injection bridge' },
+        {
+          path: 'tnf voice up',
+          description: 'Start profile-scoped Voice Bridge background runtime',
+        },
+        {
+          path: 'tnf voice down',
+          description: 'Stop profile-scoped Voice Bridge background runtime',
+        },
+        { path: 'tnf voice relay', description: 'Relay transcribed text between voice profiles' },
+        { path: 'tnf voice listen', description: 'Start microphone transcription loop' },
+        {
+          path: 'tnf voice activate',
+          description: 'Auto-heal and activate local Voice Bridge daemons',
+        },
+        { path: 'tnf voice status', description: 'Show local Voice Bridge status' },
         { path: 'tnf scripts list', description: 'List runnable scripts and package commands' },
         {
           path: 'tnf scripts run <target> [args...]',
@@ -1860,6 +2514,1123 @@ scriptsCommand
     }
   });
 
+const voiceBridgeCommand = program
+  .command('voice')
+  .description('Voice Bridge commands (listen, anchor target, and response audio)');
+
+function appendVoiceProfileArg(args: string[], profile?: string): string[] {
+  if (!profile) return args;
+  return [...args, '--profile', normalizeVoiceProfile(profile)];
+}
+
+voiceBridgeCommand
+  .command('up')
+  .description('Start profile-scoped Voice Bridge background runtime')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .option('--with-listen', 'Also start listen sidecar in background')
+  .option('--port <number>', 'Voice Bridge port override')
+  .option('--open', 'Open Voice Bridge browser UI')
+  .option('--json', 'Output machine-readable JSON')
+  .action(
+    async (
+      options: {
+        profile?: string;
+        withListen?: boolean;
+        port?: string;
+        open?: boolean;
+        json?: boolean;
+      } = {}
+    ) => {
+      try {
+        const profile = normalizeVoiceProfile(options.profile);
+        const port = inferVoiceBridgePort(profile, options.port);
+
+        const existing = findVoiceProfilePids(profile);
+        const preStop = existing.length > 0 ? await terminatePids(existing) : null;
+
+        const sharedEnv: NodeJS.ProcessEnv = {
+          ...process.env,
+          VOICEBRIDGE_PROFILE: profile,
+          VOICEBRIDGE_PORT: String(port),
+        };
+
+        const voiceArgs = ['--profile', profile];
+        if (options.port) voiceArgs.push('--port', options.port);
+        if (!options.open) voiceArgs.push('--no-open');
+        const voicePid = spawnDetachedVoiceCommand('voice', voiceArgs, sharedEnv);
+
+        let listenPid: number | undefined;
+        if (options.withListen) {
+          listenPid = spawnDetachedVoiceCommand('listen', ['--profile', profile], {
+            ...sharedEnv,
+            LISTEN_DELIVERY_MODE: process.env.LISTEN_DELIVERY_MODE || 'auto',
+          });
+        }
+
+        writeVoiceSession({
+          profile,
+          port,
+          voicePid,
+          listenPid,
+          startedAt: new Date().toISOString(),
+        });
+
+        const serverReady = await waitForVoiceServer(port, 12000);
+        const payload = {
+          ok: true,
+          profile,
+          port,
+          serverReady,
+          voicePid,
+          listenPid: listenPid ?? null,
+          preStoppedPids: preStop?.stopped ?? [],
+        };
+
+        if (options.json) {
+          console.log(JSON.stringify(payload, null, 2));
+          return;
+        }
+
+        console.log(chalk.green(`✅ Voice Bridge up for profile '${profile}'`));
+        console.log(`Port: ${chalk.cyan(String(port))}`);
+        console.log(`Voice PID: ${chalk.cyan(String(voicePid))}`);
+        if (typeof listenPid === 'number') {
+          console.log(`Listen PID: ${chalk.cyan(String(listenPid))}`);
+        }
+        if (preStop && preStop.stopped.length > 0) {
+          console.log(
+            chalk.dim(`Stopped existing profile processes: ${preStop.stopped.join(', ')}`)
+          );
+        }
+        if (serverReady) {
+          console.log(chalk.green(`Server reachable at http://127.0.0.1:${port}`));
+        } else {
+          console.log(
+            chalk.yellow(
+              `Server not reachable yet on 127.0.0.1:${port} (startup still warming or failed).`
+            )
+          );
+        }
+        console.log(
+          chalk.dim(`Use 'tnf voice down --profile ${profile}' to stop this profile runtime.`)
+        );
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+voiceBridgeCommand
+  .command('down')
+  .description('Stop profile-scoped Voice Bridge background runtime')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .option('--json', 'Output machine-readable JSON')
+  .action(async (options: { profile?: string; json?: boolean } = {}) => {
+    try {
+      const profile = normalizeVoiceProfile(options.profile);
+      const session = readVoiceSession(profile);
+      const pids = new Set<number>();
+
+      if (session?.voicePid) pids.add(session.voicePid);
+      if (session?.listenPid) pids.add(session.listenPid);
+      for (const pid of findVoiceProfilePids(profile)) pids.add(pid);
+
+      const result = await terminatePids(Array.from(pids));
+      removeVoiceSession(profile);
+
+      const payload = {
+        ok: true,
+        profile,
+        requestedPids: Array.from(pids),
+        stoppedPids: result.stopped,
+        notFoundPids: result.notFound,
+        forceKilledPids: result.forceKilled,
+      };
+
+      if (options.json) {
+        console.log(JSON.stringify(payload, null, 2));
+        return;
+      }
+
+      console.log(chalk.green(`✅ Voice Bridge down for profile '${profile}'`));
+      if (result.stopped.length > 0) {
+        console.log(`Stopped: ${chalk.cyan(result.stopped.join(', '))}`);
+      } else {
+        console.log(chalk.dim('No live profile processes were found.'));
+      }
+      if (result.forceKilled.length > 0) {
+        console.log(chalk.yellow(`Force-killed: ${result.forceKilled.join(', ')}`));
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+voiceBridgeCommand
+  .command('relay')
+  .description('Relay transcribed input between Voice Bridge profiles')
+  .requiredOption('--from <profile>', 'Source profile')
+  .requiredOption('--to <profile>', 'Target profile')
+  .option('--bidirectional', 'Enable reverse relay path (to -> from)')
+  .option('--require-live', 'Fail fast if either relay endpoint is down at startup')
+  .option('--keep-main', 'Do not auto-stop stray main profile runtime during non-main relay')
+  .option('--from-port <number>', 'Source profile port override')
+  .option('--to-port <number>', 'Target profile port override')
+  .option('--interval-ms <number>', 'Poll interval in ms', '200')
+  .option('--ack-window-ms <number>', 'ACK guard window in ms', '15000')
+  .option('--dedupe-window-ms <number>', 'Route dedupe window in ms', '8000')
+  .option(
+    '--heartbeat-ms <number>',
+    'Heartbeat poll + auto-heal interval in ms (0 disables)',
+    '5000'
+  )
+  .option('--heartbeat-log-ms <number>', 'Heartbeat status log cadence in ms', '15000')
+  .option('--no-heartbeat-heal', 'Disable heartbeat /activate auto-heal calls')
+  .action(
+    async (
+      options: {
+        from: string;
+        to: string;
+        bidirectional?: boolean;
+        requireLive?: boolean;
+        keepMain?: boolean;
+        fromPort?: string;
+        toPort?: string;
+        intervalMs?: string;
+        ackWindowMs?: string;
+        dedupeWindowMs?: string;
+        heartbeatMs?: string;
+        heartbeatLogMs?: string;
+        heartbeatHeal?: boolean;
+      } = {} as {
+        from: string;
+        to: string;
+        bidirectional?: boolean;
+        requireLive?: boolean;
+        keepMain?: boolean;
+        fromPort?: string;
+        toPort?: string;
+        intervalMs?: string;
+        ackWindowMs?: string;
+        dedupeWindowMs?: string;
+        heartbeatMs?: string;
+        heartbeatLogMs?: string;
+        heartbeatHeal?: boolean;
+      }
+    ) => {
+      const parsePositiveInt = (
+        value: string | undefined,
+        fallback: number,
+        label: string
+      ): number => {
+        if (typeof value === 'undefined') return fallback;
+        const parsed = Number.parseInt(value, 10);
+        if (!Number.isFinite(parsed) || parsed <= 0) {
+          throw new Error(`Invalid ${label}: ${value}`);
+        }
+        return parsed;
+      };
+      const parseNonNegativeInt = (
+        value: string | undefined,
+        fallback: number,
+        label: string
+      ): number => {
+        if (typeof value === 'undefined') return fallback;
+        const parsed = Number.parseInt(value, 10);
+        if (!Number.isFinite(parsed) || parsed < 0) {
+          throw new Error(`Invalid ${label}: ${value}`);
+        }
+        return parsed;
+      };
+
+      try {
+        const fromProfile = normalizeVoiceProfile(options.from);
+        const toProfile = normalizeVoiceProfile(options.to);
+        if (fromProfile === toProfile) {
+          throw new Error('--from and --to must be different profiles');
+        }
+
+        const intervalMs = parsePositiveInt(options.intervalMs, 200, '--interval-ms');
+        const ackWindowMs = parsePositiveInt(options.ackWindowMs, 15000, '--ack-window-ms');
+        const dedupeWindowMs = parsePositiveInt(options.dedupeWindowMs, 8000, '--dedupe-window-ms');
+        const heartbeatMs = parseNonNegativeInt(options.heartbeatMs, 5000, '--heartbeat-ms');
+        const heartbeatLogMs = parsePositiveInt(
+          options.heartbeatLogMs,
+          15000,
+          '--heartbeat-log-ms'
+        );
+        const heartbeatHeal = options.heartbeatHeal !== false;
+        const fromPort = inferVoiceBridgePort(fromProfile, options.fromPort);
+        const toPort = inferVoiceBridgePort(toProfile, options.toPort);
+
+        const mainInterferencePids = findMainProfileInterferencePids([fromProfile, toProfile]);
+        if (mainInterferencePids.length > 0) {
+          if (options.keepMain) {
+            console.log(
+              chalk.yellow(
+                `⚠️ main-profile runtime still active (${mainInterferencePids.join(
+                  ', '
+                )}); overlap risk remains because --keep-main was set.`
+              )
+            );
+          } else {
+            const stoppedMain = await terminatePids(mainInterferencePids);
+            removeVoiceSession('main');
+            const stoppedList =
+              stoppedMain.stopped.length > 0 ? stoppedMain.stopped.join(', ') : 'none';
+            console.log(
+              chalk.yellow(
+                `Isolated relay pair by stopping main-profile runtime pids: ${stoppedList}`
+              )
+            );
+          }
+        }
+
+        type RelayRuntimeDirection = RelayDirectionState & {
+          lastSignalTs: number;
+          lastSignalHash: string;
+        };
+
+        const directions: RelayRuntimeDirection[] = [
+          {
+            ...relayDirection(fromProfile, toProfile, fromPort, toPort),
+            lastSignalTs: 0,
+            lastSignalHash: '',
+          },
+        ];
+        if (options.bidirectional) {
+          directions.push({
+            ...relayDirection(toProfile, fromProfile, toPort, fromPort),
+            lastSignalTs: 0,
+            lastSignalHash: '',
+          });
+        }
+
+        const pendingByTarget = new Map<string, Map<string, RelayPendingDelivery>>();
+        const recentRouteHashes = new Map<string, number>();
+        const ackedMsgIds = new Set<string>();
+        const endpointByProfile = new Map<string, number>([
+          [fromProfile, fromPort],
+          [toProfile, toPort],
+        ]);
+        const heartbeatMisses = new Map<string, number>();
+        heartbeatMisses.set(fromProfile, 0);
+        heartbeatMisses.set(toProfile, 0);
+        let lastHeartbeatAt = 0;
+        let lastHeartbeatLogAt = 0;
+
+        const getPendingMap = (profile: string): Map<string, RelayPendingDelivery> => {
+          const normalized = normalizeVoiceProfile(profile);
+          if (!pendingByTarget.has(normalized)) {
+            pendingByTarget.set(normalized, new Map<string, RelayPendingDelivery>());
+          }
+          return pendingByTarget.get(normalized)!;
+        };
+
+        const nowMs = () => Date.now();
+
+        const cleanupAgingState = () => {
+          const now = nowMs();
+          for (const [, deliveries] of pendingByTarget) {
+            for (const [hash, delivery] of deliveries) {
+              if (now - delivery.at > ackWindowMs) deliveries.delete(hash);
+            }
+          }
+          for (const [key, at] of recentRouteHashes) {
+            if (now - at > dedupeWindowMs) recentRouteHashes.delete(key);
+          }
+        };
+
+        const fromReady = await waitForVoiceServer(fromPort, 1000);
+        const toReady = await waitForVoiceServer(toPort, 1000);
+        if (options.requireLive && (!fromReady || !toReady)) {
+          const down: string[] = [];
+          if (!fromReady) down.push(`${fromProfile}:${fromPort}`);
+          if (!toReady) down.push(`${toProfile}:${toPort}`);
+          throw new Error(
+            `Relay endpoints not live at startup: ${down.join(', ')}. Start runtimes with 'tnf voice up --profile <name>' first, or rerun relay without --require-live to wait.`
+          );
+        }
+        console.log(chalk.bold('\nVoice Relay'));
+        console.log(
+          `Path: ${chalk.cyan(fromProfile)}:${fromPort} -> ${chalk.cyan(toProfile)}:${toPort}`
+        );
+        console.log(
+          `Bidirectional: ${options.bidirectional ? chalk.green('ON') : chalk.yellow('OFF')}`
+        );
+        console.log(`Source signal: /tmp/voice_last_user_input_* (profile-scoped)`);
+        console.log(
+          `Endpoints: from=${fromReady ? chalk.green('UP') : chalk.yellow('DOWN')} | to=${
+            toReady ? chalk.green('UP') : chalk.yellow('DOWN')
+          }`
+        );
+        console.log(chalk.dim('Loop guards active: msg_id + ACK + hash dedupe'));
+        console.log(
+          chalk.dim(
+            `Heartbeat: ${
+              heartbeatMs > 0
+                ? `${heartbeatMs}ms (${heartbeatHeal ? '/activate auto-heal ON' : '/activate auto-heal OFF'})`
+                : 'OFF'
+            }`
+          )
+        );
+        console.log(chalk.dim('Press Ctrl+C to stop relay.\n'));
+
+        let running = true;
+        const handleSignal = (signal: NodeJS.Signals) => {
+          if (!running) return;
+          running = false;
+          console.log(chalk.yellow(`\nReceived ${signal}. Stopping relay...`));
+        };
+        process.once('SIGINT', handleSignal);
+        process.once('SIGTERM', handleSignal);
+
+        while (running) {
+          cleanupAgingState();
+          const now = nowMs();
+
+          if (heartbeatMs > 0 && now - lastHeartbeatAt >= heartbeatMs) {
+            lastHeartbeatAt = now;
+            const up: string[] = [];
+            const down: string[] = [];
+            const healed: string[] = [];
+            const healFailed: string[] = [];
+
+            for (const [profile, port] of endpointByProfile.entries()) {
+              const live = await waitForVoiceServer(port, 450);
+              if (live) {
+                heartbeatMisses.set(profile, 0);
+                up.push(`${profile}:${port}`);
+              } else {
+                const misses = (heartbeatMisses.get(profile) || 0) + 1;
+                heartbeatMisses.set(profile, misses);
+                down.push(`${profile}:${port}#${misses}`);
+              }
+
+              if (heartbeatHeal) {
+                const activateResult = postVoiceActivate(port);
+                if (activateResult.ok) {
+                  healed.push(profile);
+                } else {
+                  healFailed.push(profile);
+                }
+              }
+            }
+
+            const shouldLogHeartbeat =
+              down.length > 0 || now - lastHeartbeatLogAt >= Math.max(heartbeatLogMs, heartbeatMs);
+            if (shouldLogHeartbeat) {
+              lastHeartbeatLogAt = now;
+              const statusChunk =
+                down.length > 0
+                  ? chalk.yellow(`down=[${down.join(', ')}]`)
+                  : chalk.green(`up=[${up.join(', ')}]`);
+              const healChunk = heartbeatHeal
+                ? ` heal=${healFailed.length > 0 ? `partial(ok:${healed.join(',') || '-'} fail:${healFailed.join(',')})` : `ok(${healed.join(',') || '-'})`}`
+                : '';
+              console.log(
+                chalk.dim(`HB ${new Date(now).toISOString()} ${statusChunk}${healChunk}`)
+              );
+            }
+          }
+
+          for (const direction of directions) {
+            const input = readVoiceProfileLastInput(direction.fromProfile);
+            if (!input) continue;
+            if (input.ts <= direction.lastSignalTs) continue;
+            direction.lastSignalTs = input.ts;
+
+            // Guard against repeated identical source signals at same timestamp cadence.
+            if (direction.lastSignalHash === input.hash) {
+              continue;
+            }
+            direction.lastSignalHash = input.hash;
+
+            // ACK guard: if this hash was recently delivered into this source profile,
+            // treat the observed signal as acknowledgment and do not forward.
+            const pendingForSource = getPendingMap(direction.fromProfile);
+            const ackCandidate = pendingForSource.get(input.hash);
+            if (ackCandidate && now - ackCandidate.at <= ackWindowMs) {
+              if (!ackedMsgIds.has(ackCandidate.msgId)) {
+                ackedMsgIds.add(ackCandidate.msgId);
+                direction.acked += 1;
+                console.log(
+                  chalk.dim(
+                    `ACK ${ackCandidate.msgId} (${direction.fromProfile} observed relay-return hash)`
+                  )
+                );
+              }
+              pendingForSource.delete(input.hash);
+              continue;
+            }
+
+            const routeKey = `${direction.id}:${input.hash}`;
+            const recentForwardAt = recentRouteHashes.get(routeKey) || 0;
+            if (recentForwardAt && now - recentForwardAt <= dedupeWindowMs) {
+              direction.skippedEcho += 1;
+              continue;
+            }
+
+            const pendingForTarget = getPendingMap(direction.toProfile);
+            const pendingEcho = pendingForTarget.get(input.hash);
+            if (pendingEcho && now - pendingEcho.at <= dedupeWindowMs) {
+              direction.skippedEcho += 1;
+              continue;
+            }
+
+            if (isRelayControlSignal(input.text)) {
+              direction.skippedControl += 1;
+              continue;
+            }
+
+            const msgId = `${direction.fromProfile}_${direction.toProfile}_${now.toString(36)}_${input.hash.slice(0, 8)}`;
+            const sendResult = postVoiceSend(direction.toPort, input.text);
+            if (!sendResult.ok) {
+              direction.sendFailed += 1;
+              console.log(
+                chalk.yellow(
+                  `SEND_FAIL ${msgId} ${direction.id} (${sendResult.error || 'unknown send error'})`
+                )
+              );
+              continue;
+            }
+
+            direction.forwarded += 1;
+            recentRouteHashes.set(routeKey, now);
+            pendingForTarget.set(input.hash, {
+              msgId,
+              hash: input.hash,
+              fromProfile: direction.fromProfile,
+              toProfile: direction.toProfile,
+              at: now,
+            });
+
+            console.log(chalk.green(`FWD ${msgId} ${direction.id} :: ${input.text}`));
+          }
+
+          await sleep(intervalMs);
+        }
+
+        process.removeListener('SIGINT', handleSignal);
+        process.removeListener('SIGTERM', handleSignal);
+
+        const summary = directions.map((d) => ({
+          path: d.id,
+          forwarded: d.forwarded,
+          acked: d.acked,
+          skippedEcho: d.skippedEcho,
+          skippedControl: d.skippedControl,
+          sendFailed: d.sendFailed,
+        }));
+        console.log(chalk.bold('\nRelay summary'));
+        for (const item of summary) {
+          console.log(
+            `${chalk.cyan(item.path)} forwarded=${item.forwarded} acked=${item.acked} ` +
+              `skippedEcho=${item.skippedEcho} skippedControl=${item.skippedControl} sendFailed=${item.sendFailed}`
+          );
+        }
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+voiceBridgeCommand
+  .command('start')
+  .description('Start Voice Bridge server + injection bridge (wrapper around `voice`)')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .option('--port <number>', 'Voice Bridge port override')
+  .option('--no-open', 'Do not open Voice Bridge browser UI')
+  .argument('[args...]', 'Arguments forwarded to voice command')
+  .action(
+    async (
+      args: string[] = [],
+      options: { profile?: string; port?: string; open?: boolean } = {}
+    ) => {
+      try {
+        let forwarded = [...args];
+        if (options.profile) forwarded = appendVoiceProfileArg(forwarded, options.profile);
+        if (options.port) forwarded.push('--port', options.port);
+        if (options.open === false) forwarded.push('--no-open');
+        await runVoiceBridgeCommand('voice', forwarded);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+voiceBridgeCommand
+  .command('listen')
+  .description('Start microphone transcription loop (wrapper around `listen`)')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .argument('[args...]', 'Arguments forwarded to listen command')
+  .action(async (args: string[] = [], options: { profile?: string } = {}) => {
+    try {
+      let forwarded = [...args];
+      if (options.profile) forwarded = appendVoiceProfileArg(forwarded, options.profile);
+      await runVoiceBridgeCommand('listen', forwarded);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+voiceBridgeCommand
+  .command('activate')
+  .description('Call local Voice Bridge /activate to auto-heal watcher daemons')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .option('--port <number>', 'Voice Bridge API port override')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { profile?: string; port?: string; json?: boolean }) => {
+    try {
+      const port = inferVoiceBridgePort(options.profile, options.port);
+      const payload = readVoiceBridgeJson('/activate', 'POST', port) as Record<string, unknown>;
+      const started = Array.isArray(payload.started) ? payload.started.map(String) : [];
+      if (options.json) {
+        console.log(
+          JSON.stringify(
+            { ok: true, profile: normalizeVoiceProfile(options.profile), port, started },
+            null,
+            2
+          )
+        );
+        return;
+      }
+      if (started.length === 0) {
+        console.log(chalk.green('✅ Voice Bridge activate succeeded (nothing needed to start).'));
+      } else {
+        console.log(
+          chalk.green(`✅ Voice Bridge activate succeeded. Started: ${started.join(', ')}`)
+        );
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+voiceBridgeCommand
+  .command('status')
+  .description('Show local Voice Bridge server + command availability')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .option('--port <number>', 'Voice Bridge API port override')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { profile?: string; port?: string; json?: boolean }) => {
+    try {
+      const profile = normalizeVoiceProfile(options.profile);
+      const port = inferVoiceBridgePort(profile, options.port);
+      const knownCommands = [
+        'voice',
+        'listen',
+        'voice-target-here',
+        'voice-target-pick',
+        'voice-target-show',
+        'voice-target-clear',
+        'voice-mic-toggle',
+        'voice-response-audio-toggle',
+      ];
+
+      const commandStatus = knownCommands.map((name) => {
+        try {
+          return { name, available: true, path: resolveVoiceBridgeCommand(name) };
+        } catch {
+          return { name, available: false, path: null };
+        }
+      });
+
+      const healthProbe = spawnSync('curl', ['-fsS', `http://127.0.0.1:${port}/`], {
+        encoding: 'utf8',
+        env: process.env,
+      });
+      const serverReachable = healthProbe.status === 0;
+
+      let micState: Record<string, unknown> | null = null;
+      let kwsState: Record<string, unknown> | null = null;
+      if (serverReachable) {
+        micState = readVoiceBridgeJson('/mic_state', 'GET', port) as Record<string, unknown>;
+        kwsState = readVoiceBridgeJson('/kws_state', 'GET', port) as Record<string, unknown>;
+      }
+
+      const payload = {
+        profile,
+        port,
+        serverReachable,
+        micState,
+        kwsState,
+        commands: commandStatus,
+      };
+
+      if (options.json) {
+        console.log(JSON.stringify(payload, null, 2));
+        return;
+      }
+
+      console.log(chalk.bold('\nVoice Bridge status\n'));
+      console.log(`Profile: ${chalk.cyan(profile)} | Port: ${chalk.cyan(String(port))}`);
+      console.log(
+        `Server: ${serverReachable ? chalk.green('UP') : chalk.red('DOWN')} (127.0.0.1:${port})`
+      );
+      if (serverReachable) {
+        const paused = micState?.paused === true;
+        const kwsEnabled = kwsState?.enabled === true;
+        const ingestUrl = typeof kwsState?.ingest_url === 'string' ? kwsState.ingest_url : '';
+        console.log(`Mic: ${paused ? chalk.yellow('PAUSED') : chalk.green('ACTIVE')}`);
+        console.log(`Cloud forwarding: ${kwsEnabled ? chalk.green('ON') : chalk.yellow('OFF')}`);
+        if (ingestUrl) {
+          console.log(`Ingest URL: ${chalk.dim(ingestUrl)}`);
+        }
+      } else {
+        console.log(
+          chalk.dim(
+            `Run \`tnf voice start --profile ${profile}\` to bring up Voice Bridge for this profile.`
+          )
+        );
+      }
+
+      console.log('\nCommands:');
+      for (const command of commandStatus) {
+        const status = command.available ? chalk.green('available') : chalk.red('missing');
+        const details = command.path ? chalk.dim(command.path) : '';
+        console.log(`- ${command.name}: ${status}${details ? ` (${details})` : ''}`);
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const voiceProtocolCommand = voiceBridgeCommand
+  .command('protocol')
+  .description('Observe and watch multi-profile voice cooperation protocol health');
+
+voiceProtocolCommand
+  .command('status')
+  .description('Show current relay + watcher + signal health for a profile pair')
+  .option('--from <profile>', 'Source profile (default: a)', 'a')
+  .option('--to <profile>', 'Target profile (default: b)', 'b')
+  .option('--from-port <number>', 'Source profile port override')
+  .option('--to-port <number>', 'Target profile port override')
+  .option('--json', 'Output machine-readable JSON')
+  .action(
+    async (
+      options: {
+        from?: string;
+        to?: string;
+        fromPort?: string;
+        toPort?: string;
+        json?: boolean;
+      } = {}
+    ) => {
+      try {
+        const fromProfile = normalizeVoiceProfile(options.from);
+        const toProfile = normalizeVoiceProfile(options.to);
+        if (fromProfile === toProfile) {
+          throw new Error('--from and --to must be different profiles');
+        }
+
+        const fromPort = inferVoiceBridgePort(fromProfile, options.fromPort);
+        const toPort = inferVoiceBridgePort(toProfile, options.toPort);
+
+        const [fromSnapshot, toSnapshot] = await Promise.all([
+          collectVoiceProtocolSnapshot(fromProfile, fromPort),
+          collectVoiceProtocolSnapshot(toProfile, toPort),
+        ]);
+        const relayPids = findVoiceRelayPids(fromProfile, toProfile);
+        const relayHeartbeat = readLastHeartbeatLine(fromProfile, toProfile);
+        const relayLog = relayLogPath(fromProfile, toProfile);
+        const mainInterferencePids = findMainProfileInterferencePids([fromProfile, toProfile]);
+
+        const payload = {
+          pair: {
+            from: fromProfile,
+            to: toProfile,
+            fromPort,
+            toPort,
+          },
+          relay: {
+            running: relayPids.length > 0,
+            pids: relayPids,
+            logPath: relayLog,
+            heartbeat: relayHeartbeat,
+          },
+          interference: {
+            mainProfilePids: mainInterferencePids,
+          },
+          profiles: {
+            [fromProfile]: fromSnapshot,
+            [toProfile]: toSnapshot,
+          },
+        };
+
+        if (options.json) {
+          console.log(JSON.stringify(payload, null, 2));
+          return;
+        }
+
+        console.log(chalk.bold('\nVoice Protocol Status\n'));
+        console.log(
+          `Pair: ${chalk.cyan(fromProfile)}:${fromPort} <-> ${chalk.cyan(toProfile)}:${toPort}`
+        );
+        console.log(
+          `Relay: ${
+            relayPids.length > 0
+              ? chalk.green(`RUNNING (${relayPids.join(', ')})`)
+              : chalk.yellow('NOT RUNNING')
+          }`
+        );
+        if (relayHeartbeat) {
+          console.log(
+            `Heartbeat: ${chalk.dim(relayHeartbeat.line)} (age ${formatAgeMs(relayHeartbeat.ageMs)})`
+          );
+        } else {
+          console.log(`Heartbeat: ${chalk.yellow('none observed yet')} (${chalk.dim(relayLog)})`);
+        }
+        if (mainInterferencePids.length > 0) {
+          console.log(
+            chalk.yellow(
+              `Interference: main-profile runtime active (${mainInterferencePids.join(
+                ', '
+              )}). Run 'tnf voice down --profile main' to isolate this pair.`
+            )
+          );
+        }
+
+        const printProfile = (snapshot: VoiceProtocolSnapshot) => {
+          const userAge = formatAgeMs(ageMsFromUnixTs(snapshot.lastUserInput?.ts ?? null));
+          const outAge = formatAgeMs(ageMsFromUnixTs(snapshot.lastAssistantOutput?.ts ?? null));
+          console.log(
+            `\n[${snapshot.profile}] server=${snapshot.serverUp ? chalk.green('UP') : chalk.red('DOWN')} ` +
+              `stream_watch=${snapshot.streamWatchPids.length} response_audio=${snapshot.responseAudioPids.length}`
+          );
+          console.log(
+            `last_user_input: ${chalk.cyan(userAge)} ${
+              snapshot.lastUserInput
+                ? chalk.dim(clipProtocolText(snapshot.lastUserInput.text))
+                : chalk.dim('n/a')
+            }`
+          );
+          console.log(
+            `last_assistant_output: ${chalk.cyan(outAge)} ${
+              snapshot.lastAssistantOutput
+                ? chalk.dim(clipProtocolText(snapshot.lastAssistantOutput.text))
+                : chalk.dim('n/a')
+            }`
+          );
+        };
+
+        printProfile(fromSnapshot);
+        printProfile(toSnapshot);
+        console.log('');
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+voiceProtocolCommand
+  .command('watch')
+  .description('Continuously poll and report cooperation protocol health')
+  .option('--from <profile>', 'Source profile (default: a)', 'a')
+  .option('--to <profile>', 'Target profile (default: b)', 'b')
+  .option('--from-port <number>', 'Source profile port override')
+  .option('--to-port <number>', 'Target profile port override')
+  .option('--interval-ms <number>', 'Polling interval in ms', '5000')
+  .option('--no-heal', 'Disable /activate auto-heal pulse on each poll')
+  .option('--once', 'Print one snapshot and exit')
+  .option('--json', 'Emit one JSON object per poll line')
+  .action(
+    async (
+      options: {
+        from?: string;
+        to?: string;
+        fromPort?: string;
+        toPort?: string;
+        intervalMs?: string;
+        heal?: boolean;
+        once?: boolean;
+        json?: boolean;
+      } = {}
+    ) => {
+      const parsePositiveInt = (
+        value: string | undefined,
+        fallback: number,
+        label: string
+      ): number => {
+        if (typeof value === 'undefined') return fallback;
+        const parsed = Number.parseInt(value, 10);
+        if (!Number.isFinite(parsed) || parsed <= 0) {
+          throw new Error(`Invalid ${label}: ${value}`);
+        }
+        return parsed;
+      };
+
+      try {
+        const fromProfile = normalizeVoiceProfile(options.from);
+        const toProfile = normalizeVoiceProfile(options.to);
+        if (fromProfile === toProfile) {
+          throw new Error('--from and --to must be different profiles');
+        }
+        const fromPort = inferVoiceBridgePort(fromProfile, options.fromPort);
+        const toPort = inferVoiceBridgePort(toProfile, options.toPort);
+        const intervalMs = parsePositiveInt(options.intervalMs, 5000, '--interval-ms');
+        const heal = options.heal !== false;
+
+        if (!options.json) {
+          console.log(chalk.bold('\nVoice Protocol Watch'));
+          console.log(
+            `Pair: ${chalk.cyan(fromProfile)}:${fromPort} <-> ${chalk.cyan(toProfile)}:${toPort}`
+          );
+          console.log(`Poll interval: ${chalk.cyan(String(intervalMs))}ms`);
+          console.log(`Auto-heal pulse: ${heal ? chalk.green('ON') : chalk.yellow('OFF')}`);
+          console.log(chalk.dim('Press Ctrl+C to stop.\n'));
+        }
+
+        let running = true;
+        const handleSignal = (signal: NodeJS.Signals) => {
+          if (!running) return;
+          running = false;
+          if (!options.json) {
+            console.log(chalk.yellow(`\nReceived ${signal}. Stopping protocol watch...`));
+          }
+        };
+        process.once('SIGINT', handleSignal);
+        process.once('SIGTERM', handleSignal);
+
+        while (running) {
+          const [fromSnapshot, toSnapshot] = await Promise.all([
+            collectVoiceProtocolSnapshot(fromProfile, fromPort),
+            collectVoiceProtocolSnapshot(toProfile, toPort),
+          ]);
+
+          const healResults: Array<{ profile: string; ok: boolean }> = [];
+          if (heal) {
+            for (const snapshot of [fromSnapshot, toSnapshot]) {
+              if (!snapshot.serverUp) {
+                healResults.push({ profile: snapshot.profile, ok: false });
+                continue;
+              }
+              const result = postVoiceActivate(snapshot.port);
+              healResults.push({ profile: snapshot.profile, ok: result.ok });
+            }
+          }
+
+          const relayPids = findVoiceRelayPids(fromProfile, toProfile);
+          const relayHeartbeat = readLastHeartbeatLine(fromProfile, toProfile);
+          const mainInterferencePids = findMainProfileInterferencePids([fromProfile, toProfile]);
+          const nowIso = new Date().toISOString();
+          const linePayload = {
+            now: nowIso,
+            pair: {
+              from: fromProfile,
+              to: toProfile,
+              fromPort,
+              toPort,
+            },
+            relay: {
+              running: relayPids.length > 0,
+              pids: relayPids,
+              heartbeat: relayHeartbeat,
+            },
+            interference: {
+              mainProfilePids: mainInterferencePids,
+            },
+            heal: {
+              enabled: heal,
+              results: healResults,
+            },
+            profiles: {
+              [fromProfile]: fromSnapshot,
+              [toProfile]: toSnapshot,
+            },
+          };
+
+          if (options.json) {
+            console.log(JSON.stringify(linePayload));
+          } else {
+            const summarize = (snapshot: VoiceProtocolSnapshot) =>
+              `${snapshot.profile}{srv:${snapshot.serverUp ? 'up' : 'down'} sw:${snapshot.streamWatchPids.length} ra:${snapshot.responseAudioPids.length}` +
+              ` in:${formatAgeMs(ageMsFromUnixTs(snapshot.lastUserInput?.ts ?? null))}` +
+              ` out:${formatAgeMs(ageMsFromUnixTs(snapshot.lastAssistantOutput?.ts ?? null))}}`;
+            const hbAge = relayHeartbeat ? formatAgeMs(relayHeartbeat.ageMs) : 'n/a';
+            const healSummary = heal
+              ? ` heal=${healResults.map((r) => `${r.profile}:${r.ok ? 'ok' : 'fail'}`).join(',')}`
+              : '';
+            const interferenceSummary =
+              mainInterferencePids.length > 0
+                ? ` main=${chalk.yellow(`active(${mainInterferencePids.length})`)}`
+                : ` main=${chalk.green('clear')}`;
+            console.log(
+              `${chalk.dim(nowIso)} relay:${relayPids.length > 0 ? chalk.green('up') : chalk.red('down')} ` +
+                `hb:${chalk.cyan(hbAge)} ${summarize(fromSnapshot)} ${summarize(toSnapshot)}${interferenceSummary}${healSummary}`
+            );
+          }
+
+          if (options.once) break;
+          await sleep(intervalMs);
+        }
+
+        process.removeListener('SIGINT', handleSignal);
+        process.removeListener('SIGTERM', handleSignal);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+const voiceTargetCommand = voiceBridgeCommand
+  .command('target')
+  .description('Manage destination anchor for transcribed text');
+
+voiceTargetCommand
+  .command('here')
+  .description('Anchor transcription destination to current terminal tab')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .argument('[args...]', 'Arguments forwarded to voice-target-here')
+  .action(async (args: string[] = [], options: { profile?: string } = {}) => {
+    try {
+      let forwarded = [...args];
+      if (options.profile) forwarded = appendVoiceProfileArg(forwarded, options.profile);
+      await runVoiceBridgeCommand('voice-target-here', forwarded);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+voiceTargetCommand
+  .command('pick')
+  .description('Anchor destination to currently focused app/window after delay')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .argument('[args...]', 'Arguments forwarded to voice-target-pick')
+  .action(async (args: string[] = [], options: { profile?: string } = {}) => {
+    try {
+      let forwarded = [...args];
+      if (options.profile) forwarded = appendVoiceProfileArg(forwarded, options.profile);
+      await runVoiceBridgeCommand('voice-target-pick', forwarded);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+voiceTargetCommand
+  .command('show')
+  .description('Show current transcription destination anchor')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .action(async (options: { profile?: string } = {}) => {
+    try {
+      const forwarded = options.profile ? appendVoiceProfileArg([], options.profile) : [];
+      await runVoiceBridgeCommand('voice-target-show', forwarded);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+voiceTargetCommand
+  .command('clear')
+  .description('Clear destination anchor')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .action(async (options: { profile?: string } = {}) => {
+    try {
+      const forwarded = options.profile ? appendVoiceProfileArg([], options.profile) : [];
+      await runVoiceBridgeCommand('voice-target-clear', forwarded);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const voiceMicCommand = voiceBridgeCommand
+  .command('mic')
+  .description('Microphone capture controls');
+voiceMicCommand
+  .command('toggle')
+  .description('Toggle microphone capture on/off')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .action(async (options: { profile?: string } = {}) => {
+    try {
+      const forwarded = options.profile ? appendVoiceProfileArg([], options.profile) : [];
+      await runVoiceBridgeCommand('voice-mic-toggle', forwarded);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const voiceResponseAudioCommand = voiceBridgeCommand
+  .command('response-audio')
+  .description('AI response audio playback controls');
+
+voiceResponseAudioCommand
+  .command('toggle')
+  .description('Toggle AI response audio on/off')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .action(async (options: { profile?: string } = {}) => {
+    try {
+      const forwarded = options.profile ? appendVoiceProfileArg([], options.profile) : [];
+      await runVoiceBridgeCommand('voice-response-audio-toggle', forwarded);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+voiceResponseAudioCommand
+  .command('on')
+  .description('Enable AI response audio')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .action(async (options: { profile?: string } = {}) => {
+    try {
+      const forwarded = options.profile
+        ? ['--profile', normalizeVoiceProfile(options.profile), '--on']
+        : ['--on'];
+      await runVoiceBridgeCommand('voice-response-audio-toggle', forwarded);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+voiceResponseAudioCommand
+  .command('off')
+  .description('Disable AI response audio')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .action(async (options: { profile?: string } = {}) => {
+    try {
+      const forwarded = options.profile
+        ? ['--profile', normalizeVoiceProfile(options.profile), '--off']
+        : ['--off'];
+      await runVoiceBridgeCommand('voice-response-audio-toggle', forwarded);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+voiceResponseAudioCommand
+  .command('status')
+  .description('Show AI response audio state')
+  .option('--profile <name>', 'Voice Bridge profile (default: main)')
+  .action(async (options: { profile?: string } = {}) => {
+    try {
+      const forwarded = options.profile
+        ? ['--profile', normalizeVoiceProfile(options.profile), '--status']
+        : ['--status'];
+      await runVoiceBridgeCommand('voice-response-audio-toggle', forwarded);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
 program
   .command('menu')
   .description('Show an organized TNF command menu')
@@ -2491,6 +4262,50 @@ async function main(): Promise<void> {
   }
   await program.parseAsync(process.argv);
 }
+
+program
+  .command('orchestrate [script]')
+  .description('Run an orchestration script from the registry')
+  .action(async (scriptName) => {
+    const registryDir = path.join(repoRoot, 'scripts/registry/orchestrator');
+    if (!scriptName) {
+      console.log(chalk.bold('\nAvailable Orchestration Scripts:'));
+      if (fs.existsSync(registryDir)) {
+        fs.readdirSync(registryDir).forEach((file) => {
+          if (file.endsWith('.js')) console.log(`- ${file.replace('.js', '')}`);
+        });
+      }
+      return;
+    }
+    const scriptPath = path.join(registryDir, `${scriptName}.js`);
+    if (fs.existsSync(scriptPath)) {
+      await runCommand('node', [scriptPath]);
+    } else {
+      console.error(chalk.red(`Script not found: ${scriptName}`));
+    }
+  });
+
+program
+  .command('diag [script]')
+  .description('Run a diagnostic script from the registry')
+  .action(async (scriptName) => {
+    const registryDir = path.join(repoRoot, 'scripts/registry/diagnostics');
+    if (!scriptName) {
+      console.log(chalk.bold('\nAvailable Diagnostic Scripts:'));
+      if (fs.existsSync(registryDir)) {
+        fs.readdirSync(registryDir).forEach((file) => {
+          if (file.endsWith('.js')) console.log(`- ${file.replace('.js', '')}`);
+        });
+      }
+      return;
+    }
+    const scriptPath = path.join(registryDir, `${scriptName}.js`);
+    if (fs.existsSync(scriptPath)) {
+      await runCommand('node', [scriptPath]);
+    } else {
+      console.error(chalk.red(`Script not found: ${scriptName}`));
+    }
+  });
 
 main().catch((err: Error) => {
   console.error(chalk.red(`Error: ${err.message}`));

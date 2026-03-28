@@ -3,6 +3,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 NODE_BIN="${TNF_AGENT_POLL_NODE_BIN:-$(command -v node)}"
+WORK_DIR="${TNF_AGENT_POLL_WORKDIR:-$ROOT_DIR}"
+PULSE_SCRIPT="${TNF_AGENT_POLL_PULSE_SCRIPT:-$ROOT_DIR/scripts/runtime/agent-poll-pulse.cjs}"
 SCHEDULE_DEFAULT="${TNF_AGENT_POLL_CRON_SCHEDULE:-* * * * *}"
 BASE_BACKOFF_DEFAULT="${TNF_AGENT_POLL_BASE_BACKOFF_SEC:-30}"
 MAX_BACKOFF_DEFAULT="${TNF_AGENT_POLL_MAX_BACKOFF_SEC:-1800}"
@@ -26,6 +28,10 @@ Options:
   --jitter-sec <sec>          Random startup jitter (default: 5)
   --lock-stale-sec <sec>      Stale lock recovery threshold (default: 300)
   --timeout-sec <sec>         Command timeout (default: 900)
+
+Env overrides:
+  TNF_AGENT_POLL_WORKDIR        Working directory used by cron before execution
+  TNF_AGENT_POLL_PULSE_SCRIPT   Path to agent-poll-pulse.cjs (default: repo-local)
 USAGE
 }
 
@@ -46,12 +52,12 @@ build_cron_line() {
   local log_file="$HOME/.tnf/poll-jobs/${job}/cron.log"
   mkdir -p "$(dirname "$log_file")"
 
-  printf '%s cd "%s" && PATH="%s:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" "%s" "%s/scripts/runtime/agent-poll-pulse.cjs" --job "%s" --command-b64 "%s" --base-backoff-sec "%s" --max-backoff-sec "%s" --jitter-sec "%s" --lock-stale-sec "%s" --timeout-sec "%s" >> "%s" 2>&1 %s\n' \
+  printf '%s cd "%s" && PATH="%s:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" "%s" "%s" --job "%s" --command-b64 "%s" --base-backoff-sec "%s" --max-backoff-sec "%s" --jitter-sec "%s" --lock-stale-sec "%s" --timeout-sec "%s" >> "%s" 2>&1 %s\n' \
     "$schedule" \
-    "$ROOT_DIR" \
+    "$WORK_DIR" \
     "$(dirname "$NODE_BIN")" \
     "$NODE_BIN" \
-    "$ROOT_DIR" \
+    "$PULSE_SCRIPT" \
     "$job" \
     "$command_b64" \
     "$base_backoff" \
@@ -141,6 +147,14 @@ case "${ACTION}" in
     SAFE_JOB="$(sanitize_job "$JOB")"
     if [[ -z "${SAFE_JOB}" ]]; then
       echo "Invalid --job value." >&2
+      exit 1
+    fi
+    if [[ ! -d "$WORK_DIR" ]]; then
+      echo "WORKDIR does not exist: $WORK_DIR" >&2
+      exit 1
+    fi
+    if [[ ! -r "$PULSE_SCRIPT" ]]; then
+      echo "Pulse script is not readable: $PULSE_SCRIPT" >&2
       exit 1
     fi
 

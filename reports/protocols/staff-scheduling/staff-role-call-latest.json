@@ -1,0 +1,100 @@
+{
+  "spec": "tnf/staff-role-call-scheduling/0.1",
+  "generatedAt": "2026-03-26T20:32:29.778Z",
+  "sources": {
+    "identityRegistryPath": "/Users/<owner>/.tnf/session-discovery/terminal-identity-registry.json",
+    "roleMapPath": "/Users/<owner>/.tnf/session-discovery/terminal-role-map.json",
+    "calendarPath": "data/protocols/tnf-staff-master-calendar.json",
+    "growthAuditPath": "reports/protocols/growth-blocker-audit/growth-blocker-audit-latest.json"
+  },
+  "staffPresence": {
+    "totalSessions": 10,
+    "ownerSessions": 1,
+    "ownerAgentId": "tnf-local-terminal-ttys007",
+    "staffTaggedSessions": 1,
+    "roleTagCounts": [
+      {
+        "tag": "local-subdirector-owner",
+        "count": 1
+      },
+      {
+        "tag": "coordination",
+        "count": 1
+      },
+      {
+        "tag": "heartbeat-sidecar",
+        "count": 1
+      }
+    ]
+  },
+  "scheduleCoverage": {
+    "totalSchedules": 23,
+    "enabledSchedules": 21,
+    "disabledSchedules": 2,
+    "highPriorityBlockers": 9
+  },
+  "highPriorityBlockers": [
+    {
+      "severity": "high",
+      "type": "stale-run-window",
+      "scheduleId": "tenant-hourly-attribution-audit",
+      "message": "tenant-hourly-attribution-audit has stale-run-window warning."
+    },
+    {
+      "severity": "high",
+      "type": "stale-run-window",
+      "scheduleId": "tenant-orchestrator-pulse",
+      "message": "tenant-orchestrator-pulse has stale-run-window warning."
+    },
+    {
+      "severity": "high",
+      "type": "stale-run-window",
+      "scheduleId": "tenant-personal-archaeology-blocker-watch",
+      "message": "tenant-personal-archaeology-blocker-watch has stale-run-window warning."
+    },
+    {
+      "severity": "high",
+      "type": "stale-run-window",
+      "scheduleId": "tenant-personal-archaeology-master-loop",
+      "message": "tenant-personal-archaeology-master-loop has stale-run-window warning."
+    },
+    {
+      "severity": "high",
+      "type": "stale-run-window",
+      "scheduleId": "tenant-terminal-awareness-default",
+      "message": "tenant-terminal-awareness-default has stale-run-window warning."
+    },
+    {
+      "severity": "high",
+      "type": "stale-run-window",
+      "scheduleId": "tnf-master-clock-super-cycle",
+      "message": "tnf-master-clock-super-cycle has stale-run-window warning."
+    },
+    {
+      "severity": "high",
+      "type": "stale-run-window",
+      "scheduleId": "tnf-openclaw-runtime-sync",
+      "message": "tnf-openclaw-runtime-sync has stale-run-window warning."
+    },
+    {
+      "severity": "high",
+      "type": "stale-run-window",
+      "scheduleId": "tnf-terminal-awareness-reminder",
+      "message": "tnf-terminal-awareness-reminder has stale-run-window warning."
+    },
+    {
+      "severity": "high",
+      "type": "stale-run-window",
+      "scheduleId": "tnf-twip-macro-board-refresh",
+      "message": "tnf-twip-macro-board-refresh has stale-run-window warning."
+    }
+  ],
+  "recommendedActions": [
+    "Confirm Local Sub-Director owner remains tnf-local-terminal-ttys007.",
+    "Resolve 9 critical/high growth blocker findings before adding new automation.",
+    "Ensure every core schedule has owner + runbook + protocol links before next cycle.",
+    "Require downstream processes to emit attribution evidence in run artifacts.",
+    "Reinforce frontload logging + prompt-handoff protocol checks in recurring StaffOps reviews.",
+    "Design per-agent tenant frontload and inter-agent handoff pipeline mapping as a tracked roadmap item."
+  ]
+}

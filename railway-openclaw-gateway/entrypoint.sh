@@ -20,6 +20,21 @@ else
   echo ">>> ANTHROPIC_OAUTH_ACCESS_TOKEN is unset" >&2
 fi
 
+ENV_CONTEXT="$(printf '%s' "${OPENCLAW_ENVIRONMENT:-${ENVIRONMENT:-${NODE_ENV:-${RAILWAY_ENVIRONMENT:-unknown}}}}" | tr '[:upper:]' '[:lower:]')"
+case "${ENV_CONTEXT}" in
+  local|localhost|devlocal|development|dev|test)
+    IS_LOCAL_ENV=1
+    ;;
+  *)
+    IS_LOCAL_ENV=0
+    ;;
+esac
+
+if [ "${IS_LOCAL_ENV}" -eq 0 ] && [ -z "${OPENCLAW_GATEWAY_TOKEN:-}" ]; then
+  echo ">>> FATAL: OPENCLAW_GATEWAY_TOKEN is required in non-local environment (${ENV_CONTEXT})" >&2
+  exit 1
+fi
+
 # Seed runtime config from image defaults if missing.
 mkdir -p "$(dirname "${CONFIG_PATH}")" "$(dirname "${AUTH_PROFILES_PATH}")"
 if [ ! -f "${CONFIG_PATH}" ] && [ -f "${ROOT_CONFIG_PATH}" ]; then
@@ -345,7 +360,11 @@ GATEWAY_PORT="${PORT:-8080}"
 
 echo ">>> VERIFYING AUTH FILE..." >&2
 ls -la "${AUTH_PROFILES_PATH}" || echo "AUTH FILE NOT FOUND" >&2
-cat "${AUTH_PROFILES_PATH}" || echo "CANNOT READ AUTH FILE" >&2
+if [ -r "${AUTH_PROFILES_PATH}" ]; then
+  echo ">>> AUTH FILE READABLE (contents redacted)" >&2
+else
+  echo ">>> CANNOT READ AUTH FILE" >&2
+fi
 
 echo "Starting OpenClaw gateway on bind=all port=${GATEWAY_PORT}..." >&2
 export OPENCLAW_CONFIG_PATH="${CONFIG_PATH}"

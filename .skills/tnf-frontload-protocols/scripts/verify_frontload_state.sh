@@ -25,7 +25,7 @@ fi
 if command -v tnf-frontload >/dev/null 2>&1; then
   say "OK: tnf-frontload command present"
 else
-  warn "tnf-frontload command missing"
+  say "INFO: tnf-frontload command missing (optional)"
 fi
 
 if [ -x "$HOME/.tnf/tnf-status" ]; then

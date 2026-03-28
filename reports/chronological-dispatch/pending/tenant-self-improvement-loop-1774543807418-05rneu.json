@@ -1,0 +1,31 @@
+{
+  "targetQueue": "tnf:master:tasks:planning",
+  "queueItem": {
+    "id": "tenant-self-improvement-loop-1774543807418-05rneu",
+    "title": "Self Improvement Loop",
+    "description": "Run the self-improvement cycle. Review latest handoff notes, recent failures and blockers, and MEMORY.md. Propose one concrete process improvement. If safe and clearly beneficial, update MEMORY.md or AGENTS.md with the improvement. Respect privacy defaults.",
+    "priority": "medium",
+    "status": "queued",
+    "votes": {
+      "up": 0,
+      "down": 0
+    },
+    "source": "chronological-dispatch",
+    "processId": "tenant-self-improvement-loop",
+    "kind": "agent-turn",
+    "createdAt": "2026-03-26T16:50:07.418Z",
+    "itinerary": {
+      "lane": "directive",
+      "horizon": "short_term",
+      "coordinationMode": "brokered",
+      "signalSources": ["redis", "master-clock"],
+      "clockSource": "master-clock"
+    },
+    "metadata": {
+      "scheduledProcessId": "tenant-self-improvement-loop",
+      "dispatchSource": "master-clock",
+      "importedFromLegacyCron": true
+    }
+  },
+  "createdAt": "2026-03-26T16:50:07.420Z"
+}

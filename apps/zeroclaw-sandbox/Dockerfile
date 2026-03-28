@@ -4,7 +4,7 @@
 # syntax=docker/dockerfile:1.7
 
 # ── Stage 1: Build the zeroclaw binary ───────────────────────
-FROM rust:1.81-slim AS builder
+FROM rust:1.88-slim AS builder
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Clone zeroclaw source
-ARG ZEROCLAW_VERSION=main
+ARG ZEROCLAW_VERSION=master
 RUN git clone --depth 1 --branch ${ZEROCLAW_VERSION} \
         https://github.com/zeroclaw-labs/zeroclaw.git .
 

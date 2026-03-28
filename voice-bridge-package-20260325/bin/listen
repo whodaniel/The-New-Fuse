@@ -1,0 +1,313 @@
+#!/bin/bash
+# listen: Record audio and transcribe with whisper.cpp.
+# Optimized for Sidecar usage in a separate terminal window.
+
+set -euo pipefail
+
+if [[ -f "$HOME/bin/voicebridge-paths.sh" ]]; then
+    # shellcheck disable=SC1090
+    source "$HOME/bin/voicebridge-paths.sh"
+fi
+usage() {
+    echo "Usage: listen [--profile A|B|...]"
+}
+
+profile="${VOICEBRIDGE_PROFILE:-main}"
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --profile)
+            profile="${2:-}"
+            if [[ -z "$profile" ]]; then
+                echo "Missing value for --profile" >&2
+                exit 1
+            fi
+            shift 2
+            ;;
+        --profile=*)
+            profile="${1#--profile=}"
+            if [[ -z "$profile" ]]; then
+                echo "Missing value for --profile" >&2
+                exit 1
+            fi
+            shift
+            ;;
+        --help|-h)
+            usage
+            exit 0
+            ;;
+        *)
+            usage >&2
+            exit 1
+            ;;
+    esac
+done
+
+if command -v voicebridge_use_profile >/dev/null 2>&1; then
+    voicebridge_use_profile "$profile"
+fi
+VOICEBRIDGE_STATE_DIR="${VOICEBRIDGE_STATE_DIR:-$HOME/.voicebridge}"
+mkdir -p "$VOICEBRIDGE_STATE_DIR"
+if command -v voicebridge_init_state >/dev/null 2>&1; then
+    voicebridge_init_state
+fi
+export VOICEBRIDGE_STATE_DIR
+export VOICEBRIDGE_PROFILE
+
+MODEL_DIR="${LISTEN_MODEL_DIR:-$HOME/.whisper-models}"
+AUDIO_FILE="${LISTEN_AUDIO_FILE:-/tmp/whisper_record.wav}"
+WHISPER_THREADS="${LISTEN_WHISPER_THREADS:-4}"
+WHISPER_LANG="${LISTEN_WHISPER_LANG:-en}"
+WHISPER_PROMPT_DEFAULT="AI, NVIDIA, Jensen Huang, algorithm, refactor, shard, pipeline, data, model, GPU"
+WHISPER_PROMPT="${LISTEN_WHISPER_PROMPT:-$WHISPER_PROMPT_DEFAULT}"
+LISTEN_DELIVERY_MODE="${LISTEN_DELIVERY_MODE:-auto}"  # auto|stream|keystroke
+if [[ -z "${LISTEN_STREAM_FILE:-}" ]] && command -v voicebridge_state_file >/dev/null 2>&1; then
+    LISTEN_STREAM_FILE="$(voicebridge_state_file "voice_stream.txt")"
+else
+    LISTEN_STREAM_FILE="${LISTEN_STREAM_FILE:-$VOICEBRIDGE_STATE_DIR/voice_stream.txt}"
+fi
+LISTEN_PRESS_ENTER="${LISTEN_PRESS_ENTER:-1}"
+MODEL_CANDIDATES=(
+  "${LISTEN_WHISPER_MODEL:-}"
+  "$MODEL_DIR/ggml-large-v3-turbo.bin"
+  "$MODEL_DIR/ggml-medium.en.bin"
+  "$MODEL_DIR/ggml-small.en.bin"
+  "$MODEL_DIR/ggml-base.en.bin"
+)
+
+resolve_whisper_cmd() {
+    local candidates=("whisper-cli" "whisper-cpp" "whisper.cli" "whisper.cpp")
+    local cmd
+    for cmd in "${candidates[@]}"; do
+        if command -v "$cmd" >/dev/null 2>&1; then
+            printf '%s\n' "$cmd"
+            return 0
+        fi
+    done
+    return 1
+}
+
+resolve_model_path() {
+    local candidate
+    for candidate in "${MODEL_CANDIDATES[@]}"; do
+        [[ -z "$candidate" ]] && continue
+        if [[ -f "$candidate" ]]; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
+has_flag() {
+    local flag="$1"
+    [[ " $WHISPER_HELP_TEXT " == *" $flag "* ]]
+}
+
+
+frontmost_app_name() {
+    osascript -e 'tell application "System Events" to get name of first process whose frontmost is true' 2>/dev/null || true
+}
+
+should_block_frontmost_app() {
+    local app_name
+    app_name="$(frontmost_app_name)"
+    if [[ -z "$app_name" ]]; then
+        return 1
+    fi
+
+    # Safety rail: never inject into Finder unless explicitly allowed.
+    if [[ "${LISTEN_ALLOW_FINDER:-0}" != "1" && "$app_name" == "Finder" ]]; then
+        echo "⚠️ Finder is frontmost. Blocking auto-injection to prevent accidental file edits."
+        return 0
+    fi
+
+    return 1
+}
+
+require_deps() {
+    if ! command -v rec >/dev/null 2>&1; then
+        echo "❌ Missing dependency: rec (SoX). Install with: brew install sox"
+        exit 1
+    fi
+
+    if ! WHISPER_CMD="$(resolve_whisper_cmd)"; then
+        echo "❌ Missing dependency: whisper CLI binary."
+        echo "   Install with: brew install whisper-cpp"
+        exit 1
+    fi
+
+    if ! MODEL_PATH="$(resolve_model_path)"; then
+        echo "❌ Missing Whisper model in: $MODEL_DIR"
+        echo "   Download one (example medium.en):"
+        echo "   mkdir -p ~/.whisper-models"
+        echo "   curl -L -o ~/.whisper-models/ggml-medium.en.bin \\"
+        echo "     https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-medium.en.bin"
+        exit 1
+    fi
+
+    WHISPER_HELP_TEXT="$($WHISPER_CMD -h 2>&1 || true)"
+}
+
+normalize_transcript() {
+    local text="$1"
+    text="$(printf '%s' "$text" | tr '\n' ' ' | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//')"
+
+    # Common technical phrase corrections for dictation-heavy AI discussions.
+    text="$(printf '%s' "$text" | sed -E \
+      -e 's/[Ss]hark the pipeline/shard the pipeline/g' \
+      -e 's/[Ss]hower the model/shard the model/g' \
+      -e 's/[Cc]ode design/co-design/g' \
+      -e 's/[Jj]ensen Guam/Jensen Huang/g')"
+
+    printf '%s\n' "$text"
+}
+
+stream_bridge_active() {
+    python3 - "$VOICEBRIDGE_PROFILE" <<'PY'
+import os
+import re
+import subprocess
+import sys
+
+requested = (sys.argv[1] if len(sys.argv) > 1 else "main").strip().lower() or "main"
+
+def normalize_profile(raw: str) -> str:
+    value = re.sub(r"[^a-z0-9_-]+", "_", (raw or "").strip().lower()).strip("_")
+    return value or "main"
+
+profile = normalize_profile(requested)
+default_profiles = {"main", "default", "primary"}
+
+try:
+    out = subprocess.check_output(
+        ["ps", "-Ao", "pid=,command="],
+        text=True,
+        stderr=subprocess.DEVNULL,
+    )
+except Exception:
+    raise SystemExit(1)
+
+pattern = re.compile(r"(?:^|\s)--profile(?:=|\s+)([A-Za-z0-9_-]+)")
+
+for raw in out.splitlines():
+    line = raw.strip()
+    if not line:
+        continue
+    parts = line.split(None, 1)
+    if len(parts) != 2:
+        continue
+    _, cmd = parts
+    cmd_lower = cmd.lower()
+    if "stream_watch.py" not in cmd_lower:
+        continue
+    argv0 = os.path.basename(cmd.split()[0]).lower() if cmd.split() else ""
+    if "python" not in argv0:
+        continue
+
+    match = pattern.search(cmd)
+    cmd_profile = normalize_profile(match.group(1)) if match else "main"
+    if profile in default_profiles:
+        if cmd_profile in default_profiles:
+            raise SystemExit(0)
+    elif cmd_profile == profile:
+        raise SystemExit(0)
+
+raise SystemExit(1)
+PY
+}
+
+append_to_stream() {
+    local text="$1"
+    local mode
+    mode="$(printf '%s' "$LISTEN_DELIVERY_MODE" | tr '[:upper:]' '[:lower:]')"
+
+    if [[ "$mode" == "keystroke" ]]; then
+        return 1
+    fi
+
+    if [[ "$mode" == "stream" || "$mode" == "auto" ]]; then
+        if [[ "$mode" == "stream" || -f "$LISTEN_STREAM_FILE" || stream_bridge_active ]]; then
+            mkdir -p "$(dirname "$LISTEN_STREAM_FILE")"
+            printf '%s\n' "$text" >> "$LISTEN_STREAM_FILE"
+            echo "✅ DONE (stream): $text"
+            return 0
+        fi
+    fi
+
+    return 1
+}
+
+inject_keystroke_fallback() {
+    local text="$1"
+
+    if should_block_frontmost_app; then
+        echo "🛡️ Skipping keystroke injection while Finder is frontmost."
+        return 0
+    fi
+
+    local apple_text="$text"
+    apple_text="${apple_text//\\/\\\\}"
+    apple_text="${apple_text//\"/\\\"}"
+
+    if [[ "$LISTEN_PRESS_ENTER" == "0" ]]; then
+        osascript -e "tell application \"System Events\" to keystroke \"$apple_text\"" &
+    else
+        osascript \
+            -e "tell application \"System Events\" to keystroke \"$apple_text\"" \
+            -e "tell application \"System Events\" to key code 36" &
+    fi
+    echo "✅ DONE (keystroke): $text"
+}
+
+run_once() {
+    local args output text
+
+    echo ""
+    echo "🎙️  LISTENING... (Speak now, then pause for 2 seconds)"
+    rec -q -c 1 -r 16000 "$AUDIO_FILE" silence 1 0.1 3% 1 2.0 3% 2>/dev/null
+
+    if [[ ! -s "$AUDIO_FILE" ]]; then
+        sleep 0.25
+        return
+    fi
+
+    echo "🧠 TRANSCRIBING..."
+    args=(-m "$MODEL_PATH" -f "$AUDIO_FILE" -t "$WHISPER_THREADS")
+
+    if has_flag "-l"; then
+        args+=( -l "$WHISPER_LANG" )
+    fi
+    if has_flag "-nt"; then
+        args+=( -nt )
+    fi
+    if has_flag "-np"; then
+        args+=( -np )
+    fi
+    if has_flag "--prompt" && [[ -n "$WHISPER_PROMPT" ]]; then
+        args+=( --prompt "$WHISPER_PROMPT" )
+    fi
+
+    output="$($WHISPER_CMD "${args[@]}" 2>/dev/null || true)"
+    text="$(printf '%s' "$output" | sed -E 's/\[[^]]*\]//g')"
+    text="$(normalize_transcript "$text")"
+    rm -f "$AUDIO_FILE"
+
+    if [[ -n "$text" ]]; then
+        if ! append_to_stream "$text"; then
+            echo "⚠️ Stream bridge unavailable, falling back to direct keystroke injection."
+            echo "⏳ 1s to CLICK back to your target window..."
+            sleep 1
+            inject_keystroke_fallback "$text"
+        fi
+    fi
+}
+
+require_deps
+
+echo "🏔️  Voice Bridge Sidecar Active."
+echo "Profile: $VOICEBRIDGE_PROFILE"
+echo "Stream file: $LISTEN_STREAM_FILE"
+echo "Using model: $MODEL_PATH"
+while true; do
+    run_once
+done

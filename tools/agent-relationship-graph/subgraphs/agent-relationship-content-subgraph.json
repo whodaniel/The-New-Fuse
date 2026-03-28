@@ -99,7 +99,7 @@
       "target": "analytics-and-reporting-agent",
       "type": "fallback",
       "strength": 0.68,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -107,7 +107,7 @@
       "target": "user-feedback-analysis-agent",
       "type": "fallback",
       "strength": 0.68,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -115,7 +115,7 @@
       "target": "yt-niche-strategy-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -123,7 +123,7 @@
       "target": "content-writer-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -131,7 +131,7 @@
       "target": "user-feedback-analysis-agent",
       "type": "fallback",
       "strength": 0.68,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -139,7 +139,7 @@
       "target": "ad-network-manager-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -147,14 +147,14 @@
       "target": "seo-optimizer-agent",
       "type": "depends_on",
       "strength": 0.77,
-      "origin": "registry"
+      "origin": "seed"
     },
     {
       "source": "content-writer-agent",
       "target": "seo-optimizer-agent",
       "type": "feeds",
       "strength": 0.91,
-      "origin": "chain"
+      "origin": "seed"
     },
     {
       "source": "content-writer-agent",
@@ -168,14 +168,14 @@
       "target": "keyword-research-agent",
       "type": "depends_on",
       "strength": 0.73,
-      "origin": "registry"
+      "origin": "seed"
     },
     {
       "source": "digital-product-creator-agent",
       "target": "video-editor-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -183,7 +183,7 @@
       "target": "media-evidence-investigator",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -191,7 +191,7 @@
       "target": "seo-optimizer-agent",
       "type": "depends_on",
       "strength": 0.58,
-      "origin": "registry"
+      "origin": "seed"
     },
     {
       "source": "keyword-research-agent",
@@ -205,7 +205,7 @@
       "target": "seo-optimizer-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -213,7 +213,7 @@
       "target": "video-editor-agent",
       "type": "fallback",
       "strength": 0.54,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -221,7 +221,7 @@
       "target": "digital-product-creator-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -236,7 +236,7 @@
       "target": "video-editor-agent",
       "type": "fallback",
       "strength": 0.62,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -244,7 +244,7 @@
       "target": "analytics-and-reporting-agent",
       "type": "delegates",
       "strength": 0.82,
-      "origin": "scaffold"
+      "origin": "seed"
     },
     {
       "source": "task-agent-router",
@@ -258,7 +258,7 @@
       "target": "keyword-research-agent",
       "type": "delegates",
       "strength": 0.82,
-      "origin": "scaffold"
+      "origin": "seed"
     },
     {
       "source": "task-agent-router",
@@ -279,7 +279,7 @@
       "target": "user-feedback-analysis-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -287,7 +287,7 @@
       "target": "fan-funding-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -295,7 +295,7 @@
       "target": "digital-product-factory-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     }
   ]

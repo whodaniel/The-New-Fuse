@@ -116,7 +116,8 @@
     "truncate": "^3.0.0",
     "uuid": "^13.0.0",
     "zod": "^4.2.0",
-    "zustand": "^4.5.5"
+    "zustand": "^4.5.5",
+    "@the-new-fuse/infrastructure": "workspace:*"
   },
   "peerDependencies": {
     "monaco-editor": "^0.39.0 || ^0.54.0"

@@ -1,4 +1,6 @@
-// Redis Infrastructure
+// Infrastructure Services
+export * from './database';
+export * from './logging';
 export * from './redis';
 
 // Future infrastructure services will be exported here

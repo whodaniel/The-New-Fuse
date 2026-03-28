@@ -18,11 +18,11 @@
  *   LAUNCHPAD_DRY_RUN — If "true", only prints what it would do
  */
 
-import { readFileSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { existsSync, readFileSync } from 'fs';
+import { join } from 'path';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+// @ts-ignore
+const __dirname = typeof __dirname !== 'undefined' ? __dirname : join(process.cwd(), 'src');
 
 // ============================================================================
 // CONFIG
@@ -118,7 +118,7 @@ function getLastLaunched(): string | null {
 function getNextItems(): typeof LAUNCH_BACKLOG {
   const lastLaunched = getLastLaunched();
   const lastIndex = lastLaunched
-    ? LAUNCH_BACKLOG.findIndex(item => item.id === lastLaunched)
+    ? LAUNCH_BACKLOG.findIndex((item) => item.id === lastLaunched)
     : -1;
   return LAUNCH_BACKLOG.slice(lastIndex + 1, lastIndex + 1 + CONFIG.MAX_SPAWN_PER_RUN);
 }
@@ -135,7 +135,7 @@ interface SpawnResult {
   taskId?: string;
 }
 
-async function spawnItem(item: typeof LAUNCH_BACKLOG[0]): Promise<SpawnResult> {
+async function spawnItem(item: (typeof LAUNCH_BACKLOG)[0]): Promise<SpawnResult> {
   const taskId = `launch-${item.id}-${Date.now()}`;
 
   if (CONFIG.DRY_RUN) {

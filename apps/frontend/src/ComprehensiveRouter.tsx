@@ -138,7 +138,7 @@ const MembershipPage = lazy(() => import('./pages/Membership'));
 const VisualizationsPage = lazy(() => import('./pages/Visualizations'));
 const TerminalGraphPage = lazy(() => import('./pages/TerminalGraph'));
 const BookmarksPage = lazy(() => import('./pages/Bookmarks'));
-const ZoParityDashboardPage = lazy(() => import('./pages/Parity/ZoParityDashboard'));
+const PlatformParityDashboardPage = lazy(() => import('./pages/Parity/PlatformParityDashboard'));
 
 // AI Agent Onboarding - Critical for autonomous agent self-registration
 const AIAgentOnboardingPage = lazy(() =>
@@ -1027,10 +1027,7 @@ export default function ComprehensiveRouter() {
                   </RequireMemberAccess>
                 }
               />
-              <Route
-                path="/billing"
-                element={<MembershipPage />}
-              />
+              <Route path="/billing" element={<MembershipPage />} />
               <Route
                 path="/bookmarks"
                 element={
@@ -1040,10 +1037,10 @@ export default function ComprehensiveRouter() {
                 }
               />
               <Route
-                path="/zo-parity"
+                path="/platform-parity"
                 element={
                   <RequireMemberAccess>
-                    <ZoParityDashboardPage />
+                    <PlatformParityDashboardPage />
                   </RequireMemberAccess>
                 }
               />

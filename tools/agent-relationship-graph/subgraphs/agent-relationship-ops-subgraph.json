@@ -49,12 +49,12 @@
     },
     {
       "id": "productivity-and-burnout-prevention-agent",
-      "kind": "primary",
+      "kind": "sub",
       "cluster": "ops"
     },
     {
       "id": "repo-lineage-investigator",
-      "kind": "sub",
+      "kind": "primary",
       "cluster": "ops"
     },
     {
@@ -71,10 +71,18 @@
   "edges": [
     {
       "source": "asset-sourcer-agent",
+      "target": "auth-blocker-sentinel",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "asset-sourcer-agent",
       "target": "legal-compliance-agent",
       "type": "fallback",
       "strength": 0.64,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -82,7 +90,7 @@
       "target": "productivity-and-burnout-prevention-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -90,7 +98,7 @@
       "target": "tax-compliance-agent",
       "type": "fallback",
       "strength": 0.64,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -98,7 +106,7 @@
       "target": "notes-ledger-investigator",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -106,7 +114,15 @@
       "target": "auth-blocker-sentinel",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "digital-asset-manager-agent",
+      "target": "tax-compliance-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -114,7 +130,7 @@
       "target": "asset-sourcer-agent",
       "type": "delegates",
       "strength": 0.89,
-      "origin": "chain"
+      "origin": "seed"
     },
     {
       "source": "legal-compliance-agent",
@@ -125,10 +141,18 @@
     },
     {
       "source": "legal-compliance-agent",
+      "target": "digital-asset-manager-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "legal-compliance-agent",
       "target": "tax-compliance-agent",
       "type": "fallback",
       "strength": 0.64,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -136,7 +160,7 @@
       "target": "local-ai-gemini-cli",
       "type": "fallback",
       "strength": 0.95,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -144,7 +168,7 @@
       "target": "productivity-and-burnout-prevention-agent",
       "type": "fallback",
       "strength": 0.68,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -152,7 +176,7 @@
       "target": "productivity-and-burnout-prevention-agent",
       "type": "fallback",
       "strength": 0.68,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -160,7 +184,7 @@
       "target": "repo-lineage-investigator",
       "type": "fallback",
       "strength": 0.95,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -168,7 +192,7 @@
       "target": "timeline-synthesis-investigator",
       "type": "fallback",
       "strength": 0.95,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -183,7 +207,7 @@
       "target": "digital-asset-manager-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -191,7 +215,7 @@
       "target": "timeline-synthesis-investigator",
       "type": "fallback",
       "strength": 0.95,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -199,7 +223,7 @@
       "target": "legal-compliance-agent",
       "type": "delegates",
       "strength": 0.82,
-      "origin": "scaffold"
+      "origin": "seed"
     },
     {
       "source": "task-agent-router",
@@ -213,7 +237,15 @@
       "target": "asset-sourcer-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "timeline-synthesis-investigator",
+      "target": "local-ai-gemini-cli",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     }
   ]

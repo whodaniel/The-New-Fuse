@@ -1,0 +1,1892 @@
+{
+  "snapshot_tag": "20260326T091646Z",
+  "generated_at": "2026-03-26T09:16:46.862447+00:00",
+  "graphs": [
+    {
+      "file": "agent-relationship-graph.json",
+      "domain": "full",
+      "nodes": [
+        "ab-testing-optimizer-agent",
+        "ad-network-manager-agent",
+        "affiliate-link-manager-agent",
+        "agent-registry-manager",
+        "agent-relationship-grapher",
+        "agent-search-engine",
+        "agent-tagger",
+        "algorithm-adaptation-agent",
+        "analytics-and-reporting-agent",
+        "asset-sourcer-agent",
+        "audience-growth-agent",
+        "audience-persona-architect-agent",
+        "audience-segmentation-agent",
+        "audio-recording-agent",
+        "auth-blocker-sentinel",
+        "brand-identity-agent",
+        "brand-outreach-agent",
+        "brand-prospecting-agent",
+        "campaign-execution-agent",
+        "campaign-reporting-agent",
+        "code-fossil-investigator",
+        "cognitive-bias-optimizer-agent",
+        "community-engagement-agent",
+        "community-manager-agent",
+        "competitive-intelligence-agent",
+        "content-calendar-agent",
+        "content-calendar-orchestrator-agent",
+        "content-refresh-agent",
+        "content-repurposing-agent",
+        "content-writer-agent",
+        "contract-manager-agent",
+        "cro-process-agent",
+        "customer-journey-map-agent",
+        "deal-negotiator-agent",
+        "digital-asset-manager-agent",
+        "digital-product-creator-agent",
+        "digital-product-factory-agent",
+        "ecom-platform-manager-agent",
+        "email-marketing-automation-agent",
+        "episode-planner-agent",
+        "equipment-recommendation-agent",
+        "ethical-bias-auditor-agent",
+        "facebook-strategy-agent",
+        "fan-funding-agent",
+        "financial-manager-agent",
+        "funnel-economics-analyst-agent",
+        "gemini",
+        "guest-booking-agent",
+        "guest-relationship-manager-agent",
+        "influencer-media-kit-agent",
+        "influencer-niche-agent",
+        "information-retrieval-agent",
+        "instagram-strategy-agent",
+        "inter-agentic-workflow-definer",
+        "interoperability-protocol-agent",
+        "keyword-research-agent",
+        "lead-capture-agent",
+        "lead-magnet-funnel-agent",
+        "legal-compliance-agent",
+        "link-building-agent",
+        "live-stream-manager-agent",
+        "local-ai-claude-code-cli",
+        "local-ai-gemini-cli",
+        "master-of-taxonomies",
+        "media-evidence-investigator",
+        "monetization-strategy-agent",
+        "niche-analyst-agent",
+        "notes-ledger-investigator",
+        "orchestrator-agent",
+        "orchestrator-agent-copy",
+        "oto-sequence-architect-agent",
+        "personal-archaeology-integrity-team-orchestrator",
+        "personal-archaeology-master-orchestrator",
+        "personal-archaeology-narrative-team-orchestrator",
+        "personal-archaeology-source-team-orchestrator",
+        "personal-brand-architect-agent",
+        "personal-historical-archaeologist",
+        "personalized-content-recommendation-agent",
+        "platform-selection-agent",
+        "podcast-ad-network-agent",
+        "podcast-affiliate-agent",
+        "podcast-analytics-agent",
+        "podcast-audio-editor-agent",
+        "podcast-distribution-agent",
+        "podcast-equipment-agent",
+        "podcast-format-designer-agent",
+        "podcast-hosting-setup-agent",
+        "podcast-monetization-strategy-agent",
+        "podcast-niche-analyst-agent",
+        "podcast-promotion-agent",
+        "podcast-seo-agent",
+        "podcast-video-editor-agent",
+        "print-on-demand-manager-agent",
+        "productivity-and-burnout-prevention-agent",
+        "repo-lineage-investigator",
+        "reputation-management-agent",
+        "sales-funnel-architect-agent",
+        "scout-llm-opportunities",
+        "scriptwriter-agent",
+        "seo-optimizer-agent",
+        "social-selling-agent",
+        "sponsorship-outreach-agent",
+        "storyboard-artist-agent",
+        "talent-manager-agent",
+        "task-agent-router",
+        "tax-compliance-agent",
+        "technical-seo-auditor-agent",
+        "technical-setup-agent",
+        "tiktok-strategy-agent",
+        "timeline-synthesis-investigator",
+        "traffic-generation-agent",
+        "twip-orchestration-bridge",
+        "user-feedback-analysis-agent",
+        "value-ladder-architect-agent",
+        "video-editor-agent",
+        "visual-asset-creator-agent",
+        "x-strategy-agent",
+        "yt-content-strategy-agent",
+        "yt-niche-strategy-agent",
+        "yt-seo-optimizer-agent"
+      ],
+      "edges": [
+        [
+          "ab-testing-optimizer-agent",
+          "analytics-and-reporting-agent",
+          "depends_on"
+        ],
+        [
+          "ab-testing-optimizer-agent",
+          "analytics-and-reporting-agent",
+          "measured_by"
+        ],
+        ["ab-testing-optimizer-agent", "audience-growth-agent", "depends_on"],
+        [
+          "ab-testing-optimizer-agent",
+          "cognitive-bias-optimizer-agent",
+          "fallback"
+        ],
+        [
+          "ab-testing-optimizer-agent",
+          "email-marketing-automation-agent",
+          "depends_on"
+        ],
+        ["ab-testing-optimizer-agent", "lead-magnet-funnel-agent", "fallback"],
+        [
+          "ab-testing-optimizer-agent",
+          "traffic-generation-agent",
+          "depends_on"
+        ],
+        [
+          "ad-network-manager-agent",
+          "analytics-and-reporting-agent",
+          "fallback"
+        ],
+        [
+          "ad-network-manager-agent",
+          "ethical-bias-auditor-agent",
+          "depends_on"
+        ],
+        [
+          "ad-network-manager-agent",
+          "user-feedback-analysis-agent",
+          "fallback"
+        ],
+        ["ad-network-manager-agent", "yt-niche-strategy-agent", "fallback"],
+        [
+          "affiliate-link-manager-agent",
+          "ab-testing-optimizer-agent",
+          "fallback"
+        ],
+        [
+          "affiliate-link-manager-agent",
+          "algorithm-adaptation-agent",
+          "depends_on"
+        ],
+        [
+          "affiliate-link-manager-agent",
+          "audience-persona-architect-agent",
+          "depends_on"
+        ],
+        ["affiliate-link-manager-agent", "brand-identity-agent", "depends_on"],
+        ["agent-registry-manager", "agent-search-engine", "indexes_for"],
+        ["agent-registry-manager", "agent-tagger", "fallback"],
+        [
+          "agent-relationship-grapher",
+          "inter-agentic-workflow-definer",
+          "fallback"
+        ],
+        ["agent-relationship-grapher", "orchestrator-agent", "analyzes"],
+        ["agent-search-engine", "orchestrator-agent", "fallback"],
+        ["agent-tagger", "agent-search-engine", "enriches"],
+        ["agent-tagger", "interoperability-protocol-agent", "fallback"],
+        [
+          "algorithm-adaptation-agent",
+          "digital-product-creator-agent",
+          "depends_on"
+        ],
+        [
+          "algorithm-adaptation-agent",
+          "information-retrieval-agent",
+          "depends_on"
+        ],
+        ["algorithm-adaptation-agent", "yt-niche-strategy-agent", "depends_on"],
+        [
+          "analytics-and-reporting-agent",
+          "content-refresh-agent",
+          "depends_on"
+        ],
+        ["analytics-and-reporting-agent", "content-writer-agent", "fallback"],
+        [
+          "analytics-and-reporting-agent",
+          "ethical-bias-auditor-agent",
+          "depends_on"
+        ],
+        [
+          "analytics-and-reporting-agent",
+          "user-feedback-analysis-agent",
+          "fallback"
+        ],
+        ["asset-sourcer-agent", "auth-blocker-sentinel", "fallback"],
+        ["asset-sourcer-agent", "legal-compliance-agent", "fallback"],
+        ["asset-sourcer-agent", "link-building-agent", "depends_on"],
+        [
+          "asset-sourcer-agent",
+          "productivity-and-burnout-prevention-agent",
+          "fallback"
+        ],
+        ["asset-sourcer-agent", "tax-compliance-agent", "fallback"],
+        ["asset-sourcer-agent", "visual-asset-creator-agent", "feeds"],
+        ["asset-sourcer-agent", "visual-asset-creator-agent", "supplies"],
+        ["audience-growth-agent", "campaign-reporting-agent", "depends_on"],
+        ["audience-growth-agent", "community-engagement-agent", "fallback"],
+        ["audience-growth-agent", "community-manager-agent", "fallback"],
+        [
+          "audience-growth-agent",
+          "competitive-intelligence-agent",
+          "depends_on"
+        ],
+        ["audience-growth-agent", "facebook-strategy-agent", "fallback"],
+        [
+          "audience-persona-architect-agent",
+          "brand-identity-agent",
+          "depends_on"
+        ],
+        [
+          "audience-persona-architect-agent",
+          "brand-outreach-agent",
+          "depends_on"
+        ],
+        [
+          "audience-persona-architect-agent",
+          "monetization-strategy-agent",
+          "depends_on"
+        ],
+        [
+          "audience-segmentation-agent",
+          "customer-journey-map-agent",
+          "depends_on"
+        ],
+        [
+          "audience-segmentation-agent",
+          "funnel-economics-analyst-agent",
+          "depends_on"
+        ],
+        [
+          "audience-segmentation-agent",
+          "value-ladder-architect-agent",
+          "depends_on"
+        ],
+        ["audio-recording-agent", "digital-asset-manager-agent", "depends_on"],
+        ["audio-recording-agent", "fan-funding-agent", "depends_on"],
+        ["audio-recording-agent", "podcast-ad-network-agent", "depends_on"],
+        ["auth-blocker-sentinel", "code-fossil-investigator", "depends_on"],
+        ["auth-blocker-sentinel", "media-evidence-investigator", "depends_on"],
+        ["auth-blocker-sentinel", "notes-ledger-investigator", "fallback"],
+        [
+          "auth-blocker-sentinel",
+          "personal-archaeology-master-orchestrator",
+          "depends_on"
+        ],
+        ["brand-identity-agent", "campaign-reporting-agent", "fallback"],
+        ["brand-identity-agent", "competitive-intelligence-agent", "fallback"],
+        ["brand-identity-agent", "digital-product-creator-agent", "depends_on"],
+        ["brand-identity-agent", "keyword-research-agent", "depends_on"],
+        ["brand-outreach-agent", "brand-prospecting-agent", "fallback"],
+        ["brand-outreach-agent", "deal-negotiator-agent", "feeds"],
+        ["brand-outreach-agent", "deal-negotiator-agent", "handoff"],
+        ["brand-outreach-agent", "influencer-niche-agent", "fallback"],
+        ["brand-outreach-agent", "personal-brand-architect-agent", "fallback"],
+        ["brand-prospecting-agent", "brand-outreach-agent", "feeds"],
+        ["brand-prospecting-agent", "deal-negotiator-agent", "fallback"],
+        ["brand-prospecting-agent", "influencer-niche-agent", "fallback"],
+        [
+          "brand-prospecting-agent",
+          "personal-brand-architect-agent",
+          "fallback"
+        ],
+        ["brand-prospecting-agent", "platform-selection-agent", "fallback"],
+        ["campaign-execution-agent", "campaign-reporting-agent", "feeds"],
+        ["campaign-execution-agent", "campaign-reporting-agent", "handoff"],
+        ["campaign-execution-agent", "content-calendar-agent", "depends_on"],
+        ["campaign-execution-agent", "deal-negotiator-agent", "fallback"],
+        ["campaign-execution-agent", "financial-manager-agent", "fallback"],
+        ["campaign-execution-agent", "legal-compliance-agent", "depends_on"],
+        ["campaign-execution-agent", "yt-content-strategy-agent", "fallback"],
+        ["campaign-reporting-agent", "community-manager-agent", "depends_on"],
+        [
+          "campaign-reporting-agent",
+          "competitive-intelligence-agent",
+          "fallback"
+        ],
+        ["campaign-reporting-agent", "influencer-media-kit-agent", "fallback"],
+        ["campaign-reporting-agent", "reputation-management-agent", "fallback"],
+        [
+          "code-fossil-investigator",
+          "media-evidence-investigator",
+          "depends_on"
+        ],
+        ["code-fossil-investigator", "notes-ledger-investigator", "depends_on"],
+        ["code-fossil-investigator", "repo-lineage-investigator", "depends_on"],
+        [
+          "cognitive-bias-optimizer-agent",
+          "analytics-and-reporting-agent",
+          "depends_on"
+        ],
+        [
+          "cognitive-bias-optimizer-agent",
+          "analytics-and-reporting-agent",
+          "measured_by"
+        ],
+        [
+          "cognitive-bias-optimizer-agent",
+          "email-marketing-automation-agent",
+          "depends_on"
+        ],
+        [
+          "cognitive-bias-optimizer-agent",
+          "financial-manager-agent",
+          "depends_on"
+        ],
+        [
+          "cognitive-bias-optimizer-agent",
+          "influencer-media-kit-agent",
+          "depends_on"
+        ],
+        [
+          "cognitive-bias-optimizer-agent",
+          "visual-asset-creator-agent",
+          "fallback"
+        ],
+        [
+          "community-engagement-agent",
+          "algorithm-adaptation-agent",
+          "fallback"
+        ],
+        ["community-engagement-agent", "community-manager-agent", "fallback"],
+        [
+          "community-engagement-agent",
+          "competitive-intelligence-agent",
+          "depends_on"
+        ],
+        ["community-engagement-agent", "instagram-strategy-agent", "fallback"],
+        ["community-manager-agent", "podcast-promotion-agent", "depends_on"],
+        ["community-manager-agent", "social-selling-agent", "fallback"],
+        ["community-manager-agent", "traffic-generation-agent", "fallback"],
+        [
+          "competitive-intelligence-agent",
+          "monetization-strategy-agent",
+          "depends_on"
+        ],
+        ["competitive-intelligence-agent", "talent-manager-agent", "fallback"],
+        [
+          "competitive-intelligence-agent",
+          "traffic-generation-agent",
+          "depends_on"
+        ],
+        [
+          "competitive-intelligence-agent",
+          "yt-niche-strategy-agent",
+          "depends_on"
+        ],
+        ["content-calendar-agent", "content-writer-agent", "depends_on"],
+        ["content-calendar-agent", "episode-planner-agent", "depends_on"],
+        ["content-calendar-agent", "keyword-research-agent", "depends_on"],
+        ["content-calendar-agent", "seo-optimizer-agent", "fallback"],
+        ["content-calendar-agent", "technical-seo-auditor-agent", "fallback"],
+        [
+          "content-calendar-orchestrator-agent",
+          "agent-relationship-grapher",
+          "fallback"
+        ],
+        [
+          "content-calendar-orchestrator-agent",
+          "content-calendar-agent",
+          "overlaps_with"
+        ],
+        [
+          "content-calendar-orchestrator-agent",
+          "ethical-bias-auditor-agent",
+          "delegates"
+        ],
+        [
+          "content-calendar-orchestrator-agent",
+          "guest-relationship-manager-agent",
+          "delegates"
+        ],
+        [
+          "content-calendar-orchestrator-agent",
+          "orchestrator-agent-copy",
+          "delegates"
+        ],
+        ["content-refresh-agent", "keyword-research-agent", "fallback"],
+        ["content-refresh-agent", "niche-analyst-agent", "depends_on"],
+        ["content-refresh-agent", "podcast-seo-agent", "depends_on"],
+        ["content-refresh-agent", "yt-seo-optimizer-agent", "fallback"],
+        [
+          "content-repurposing-agent",
+          "live-stream-manager-agent",
+          "depends_on"
+        ],
+        ["content-repurposing-agent", "scriptwriter-agent", "fallback"],
+        ["content-repurposing-agent", "tiktok-strategy-agent", "fallback"],
+        ["content-repurposing-agent", "yt-seo-optimizer-agent", "depends_on"],
+        ["content-writer-agent", "ad-network-manager-agent", "fallback"],
+        ["content-writer-agent", "episode-planner-agent", "depends_on"],
+        ["content-writer-agent", "link-building-agent", "depends_on"],
+        ["content-writer-agent", "seo-optimizer-agent", "depends_on"],
+        ["content-writer-agent", "seo-optimizer-agent", "feeds"],
+        ["content-writer-agent", "seo-optimizer-agent", "handoff"],
+        ["contract-manager-agent", "brand-outreach-agent", "fallback"],
+        ["contract-manager-agent", "campaign-execution-agent", "depends_on"],
+        ["contract-manager-agent", "campaign-execution-agent", "gates"],
+        ["contract-manager-agent", "customer-journey-map-agent", "depends_on"],
+        ["contract-manager-agent", "legal-compliance-agent", "depends_on"],
+        ["contract-manager-agent", "tax-compliance-agent", "depends_on"],
+        ["cro-process-agent", "ab-testing-optimizer-agent", "delegates"],
+        ["cro-process-agent", "ab-testing-optimizer-agent", "orchestrates"],
+        ["cro-process-agent", "affiliate-link-manager-agent", "fallback"],
+        ["cro-process-agent", "cognitive-bias-optimizer-agent", "delegates"],
+        ["cro-process-agent", "cognitive-bias-optimizer-agent", "orchestrates"],
+        ["cro-process-agent", "customer-journey-map-agent", "fallback"],
+        ["cro-process-agent", "funnel-economics-analyst-agent", "fallback"],
+        [
+          "customer-journey-map-agent",
+          "funnel-economics-analyst-agent",
+          "fallback"
+        ],
+        ["customer-journey-map-agent", "tax-compliance-agent", "depends_on"],
+        [
+          "customer-journey-map-agent",
+          "value-ladder-architect-agent",
+          "fallback"
+        ],
+        ["deal-negotiator-agent", "contract-manager-agent", "depends_on"],
+        ["deal-negotiator-agent", "contract-manager-agent", "requires"],
+        ["deal-negotiator-agent", "financial-manager-agent", "fallback"],
+        ["deal-negotiator-agent", "personal-brand-architect-agent", "fallback"],
+        ["deal-negotiator-agent", "sales-funnel-architect-agent", "depends_on"],
+        ["digital-asset-manager-agent", "auth-blocker-sentinel", "fallback"],
+        ["digital-asset-manager-agent", "fan-funding-agent", "depends_on"],
+        [
+          "digital-asset-manager-agent",
+          "podcast-ad-network-agent",
+          "depends_on"
+        ],
+        [
+          "digital-asset-manager-agent",
+          "podcast-audio-editor-agent",
+          "depends_on"
+        ],
+        ["digital-asset-manager-agent", "tax-compliance-agent", "fallback"],
+        [
+          "digital-product-creator-agent",
+          "keyword-research-agent",
+          "depends_on"
+        ],
+        ["digital-product-creator-agent", "link-building-agent", "depends_on"],
+        ["digital-product-creator-agent", "niche-analyst-agent", "depends_on"],
+        ["digital-product-creator-agent", "video-editor-agent", "fallback"],
+        [
+          "digital-product-factory-agent",
+          "media-evidence-investigator",
+          "fallback"
+        ],
+        ["digital-product-factory-agent", "niche-analyst-agent", "depends_on"],
+        ["digital-product-factory-agent", "seo-optimizer-agent", "depends_on"],
+        [
+          "digital-product-factory-agent",
+          "sponsorship-outreach-agent",
+          "depends_on"
+        ],
+        [
+          "ecom-platform-manager-agent",
+          "local-ai-claude-code-cli",
+          "depends_on"
+        ],
+        ["ecom-platform-manager-agent", "local-ai-gemini-cli", "depends_on"],
+        [
+          "ecom-platform-manager-agent",
+          "print-on-demand-manager-agent",
+          "depends_on"
+        ],
+        [
+          "email-marketing-automation-agent",
+          "financial-manager-agent",
+          "fallback"
+        ],
+        [
+          "email-marketing-automation-agent",
+          "influencer-media-kit-agent",
+          "fallback"
+        ],
+        [
+          "email-marketing-automation-agent",
+          "lead-capture-agent",
+          "depends_on"
+        ],
+        [
+          "episode-planner-agent",
+          "equipment-recommendation-agent",
+          "depends_on"
+        ],
+        ["episode-planner-agent", "podcast-equipment-agent", "fallback"],
+        ["episode-planner-agent", "seo-optimizer-agent", "feeds"],
+        [
+          "equipment-recommendation-agent",
+          "podcast-equipment-agent",
+          "depends_on"
+        ],
+        ["equipment-recommendation-agent", "scriptwriter-agent", "depends_on"],
+        ["equipment-recommendation-agent", "seo-optimizer-agent", "depends_on"],
+        ["ethical-bias-auditor-agent", "lead-magnet-funnel-agent", "fallback"],
+        [
+          "ethical-bias-auditor-agent",
+          "user-feedback-analysis-agent",
+          "depends_on"
+        ],
+        [
+          "ethical-bias-auditor-agent",
+          "visual-asset-creator-agent",
+          "fallback"
+        ],
+        ["facebook-strategy-agent", "instagram-strategy-agent", "fallback"],
+        ["facebook-strategy-agent", "social-selling-agent", "fallback"],
+        ["facebook-strategy-agent", "tiktok-strategy-agent", "fallback"],
+        ["facebook-strategy-agent", "yt-seo-optimizer-agent", "feeds"],
+        ["fan-funding-agent", "podcast-ad-network-agent", "depends_on"],
+        ["fan-funding-agent", "podcast-audio-editor-agent", "depends_on"],
+        ["fan-funding-agent", "podcast-hosting-setup-agent", "depends_on"],
+        ["financial-manager-agent", "brand-identity-agent", "fallback"],
+        [
+          "financial-manager-agent",
+          "competitive-intelligence-agent",
+          "fallback"
+        ],
+        [
+          "financial-manager-agent",
+          "funnel-economics-analyst-agent",
+          "depends_on"
+        ],
+        ["financial-manager-agent", "influencer-media-kit-agent", "fallback"],
+        [
+          "financial-manager-agent",
+          "oto-sequence-architect-agent",
+          "depends_on"
+        ],
+        [
+          "funnel-economics-analyst-agent",
+          "influencer-media-kit-agent",
+          "depends_on"
+        ],
+        ["funnel-economics-analyst-agent", "lead-capture-agent", "fallback"],
+        [
+          "funnel-economics-analyst-agent",
+          "oto-sequence-architect-agent",
+          "fallback"
+        ],
+        ["guest-booking-agent", "guest-relationship-manager-agent", "feeds"],
+        ["guest-booking-agent", "sponsorship-outreach-agent", "fallback"],
+        ["guest-booking-agent", "talent-manager-agent", "feeds"],
+        [
+          "guest-relationship-manager-agent",
+          "link-building-agent",
+          "depends_on"
+        ],
+        [
+          "guest-relationship-manager-agent",
+          "personalized-content-recommendation-agent",
+          "depends_on"
+        ],
+        [
+          "guest-relationship-manager-agent",
+          "podcast-analytics-agent",
+          "fallback"
+        ],
+        [
+          "guest-relationship-manager-agent",
+          "podcast-distribution-agent",
+          "fallback"
+        ],
+        ["influencer-media-kit-agent", "lead-capture-agent", "depends_on"],
+        [
+          "influencer-media-kit-agent",
+          "oto-sequence-architect-agent",
+          "depends_on"
+        ],
+        [
+          "influencer-media-kit-agent",
+          "sponsorship-outreach-agent",
+          "depends_on"
+        ],
+        [
+          "influencer-niche-agent",
+          "personal-brand-architect-agent",
+          "fallback"
+        ],
+        ["influencer-niche-agent", "platform-selection-agent", "fallback"],
+        [
+          "influencer-niche-agent",
+          "podcast-monetization-strategy-agent",
+          "depends_on"
+        ],
+        [
+          "information-retrieval-agent",
+          "platform-selection-agent",
+          "depends_on"
+        ],
+        ["information-retrieval-agent", "social-selling-agent", "depends_on"],
+        [
+          "information-retrieval-agent",
+          "yt-niche-strategy-agent",
+          "depends_on"
+        ],
+        ["instagram-strategy-agent", "community-manager-agent", "fallback"],
+        ["instagram-strategy-agent", "tiktok-strategy-agent", "fallback"],
+        ["instagram-strategy-agent", "x-strategy-agent", "fallback"],
+        ["instagram-strategy-agent", "yt-niche-strategy-agent", "depends_on"],
+        ["interoperability-protocol-agent", "agent-search-engine", "fallback"],
+        [
+          "interoperability-protocol-agent",
+          "local-ai-claude-code-cli",
+          "delegates"
+        ],
+        ["interoperability-protocol-agent", "local-ai-gemini-cli", "delegates"],
+        [
+          "interoperability-protocol-agent",
+          "productivity-and-burnout-prevention-agent",
+          "delegates"
+        ],
+        ["keyword-research-agent", "content-writer-agent", "feeds"],
+        ["keyword-research-agent", "link-building-agent", "fallback"],
+        ["keyword-research-agent", "niche-analyst-agent", "depends_on"],
+        ["keyword-research-agent", "podcast-seo-agent", "depends_on"],
+        ["keyword-research-agent", "seo-optimizer-agent", "fallback"],
+        ["lead-capture-agent", "lead-magnet-funnel-agent", "fallback"],
+        ["lead-capture-agent", "niche-analyst-agent", "fallback"],
+        ["lead-capture-agent", "oto-sequence-architect-agent", "fallback"],
+        ["lead-capture-agent", "sponsorship-outreach-agent", "depends_on"],
+        [
+          "lead-magnet-funnel-agent",
+          "personalized-content-recommendation-agent",
+          "fallback"
+        ],
+        ["lead-magnet-funnel-agent", "podcast-analytics-agent", "depends_on"],
+        ["lead-magnet-funnel-agent", "x-strategy-agent", "depends_on"],
+        ["legal-compliance-agent", "affiliate-link-manager-agent", "delegates"],
+        ["legal-compliance-agent", "affiliate-link-manager-agent", "governs"],
+        ["legal-compliance-agent", "asset-sourcer-agent", "delegates"],
+        ["legal-compliance-agent", "asset-sourcer-agent", "governs"],
+        ["legal-compliance-agent", "digital-asset-manager-agent", "fallback"],
+        ["legal-compliance-agent", "link-building-agent", "depends_on"],
+        ["legal-compliance-agent", "tax-compliance-agent", "fallback"],
+        ["legal-compliance-agent", "yt-niche-strategy-agent", "depends_on"],
+        ["link-building-agent", "content-refresh-agent", "fallback"],
+        ["link-building-agent", "niche-analyst-agent", "depends_on"],
+        ["link-building-agent", "talent-manager-agent", "depends_on"],
+        [
+          "live-stream-manager-agent",
+          "personalized-content-recommendation-agent",
+          "depends_on"
+        ],
+        ["live-stream-manager-agent", "video-editor-agent", "fallback"],
+        ["live-stream-manager-agent", "yt-seo-optimizer-agent", "depends_on"],
+        ["local-ai-claude-code-cli", "local-ai-gemini-cli", "fallback"],
+        [
+          "local-ai-claude-code-cli",
+          "productivity-and-burnout-prevention-agent",
+          "fallback"
+        ],
+        ["local-ai-gemini-cli", "podcast-ad-network-agent", "depends_on"],
+        ["local-ai-gemini-cli", "podcast-audio-editor-agent", "depends_on"],
+        [
+          "local-ai-gemini-cli",
+          "productivity-and-burnout-prevention-agent",
+          "fallback"
+        ],
+        [
+          "master-of-taxonomies",
+          "personal-archaeology-source-team-orchestrator",
+          "depends_on"
+        ],
+        [
+          "master-of-taxonomies",
+          "personal-historical-archaeologist",
+          "depends_on"
+        ],
+        [
+          "media-evidence-investigator",
+          "digital-product-creator-agent",
+          "fallback"
+        ],
+        [
+          "media-evidence-investigator",
+          "notes-ledger-investigator",
+          "depends_on"
+        ],
+        [
+          "media-evidence-investigator",
+          "repo-lineage-investigator",
+          "depends_on"
+        ],
+        [
+          "media-evidence-investigator",
+          "timeline-synthesis-investigator",
+          "depends_on"
+        ],
+        ["monetization-strategy-agent", "lead-capture-agent", "fallback"],
+        [
+          "monetization-strategy-agent",
+          "platform-selection-agent",
+          "depends_on"
+        ],
+        ["monetization-strategy-agent", "scriptwriter-agent", "feeds"],
+        [
+          "monetization-strategy-agent",
+          "yt-content-strategy-agent",
+          "depends_on"
+        ],
+        ["niche-analyst-agent", "code-fossil-investigator", "fallback"],
+        ["niche-analyst-agent", "podcast-seo-agent", "depends_on"],
+        ["niche-analyst-agent", "seo-optimizer-agent", "feeds"],
+        ["niche-analyst-agent", "yt-niche-strategy-agent", "depends_on"],
+        [
+          "notes-ledger-investigator",
+          "personal-archaeology-master-orchestrator",
+          "depends_on"
+        ],
+        ["notes-ledger-investigator", "repo-lineage-investigator", "fallback"],
+        [
+          "notes-ledger-investigator",
+          "timeline-synthesis-investigator",
+          "fallback"
+        ],
+        ["orchestrator-agent", "agent-registry-manager", "delegates"],
+        ["orchestrator-agent", "agent-relationship-grapher", "delegates"],
+        ["orchestrator-agent", "agent-search-engine", "delegates"],
+        ["orchestrator-agent", "agent-tagger", "delegates"],
+        [
+          "orchestrator-agent",
+          "content-calendar-orchestrator-agent",
+          "delegates"
+        ],
+        [
+          "orchestrator-agent",
+          "content-calendar-orchestrator-agent",
+          "fallback"
+        ],
+        ["orchestrator-agent", "gemini", "delegates"],
+        ["orchestrator-agent", "inter-agentic-workflow-definer", "delegates"],
+        ["orchestrator-agent", "interoperability-protocol-agent", "delegates"],
+        ["orchestrator-agent", "orchestrator-agent-copy", "delegates"],
+        [
+          "orchestrator-agent",
+          "personal-archaeology-integrity-team-orchestrator",
+          "delegates"
+        ],
+        [
+          "orchestrator-agent",
+          "personal-archaeology-master-orchestrator",
+          "delegates"
+        ],
+        [
+          "orchestrator-agent",
+          "personal-archaeology-narrative-team-orchestrator",
+          "delegates"
+        ],
+        [
+          "orchestrator-agent",
+          "personal-archaeology-source-team-orchestrator",
+          "delegates"
+        ],
+        [
+          "orchestrator-agent",
+          "personal-archaeology-source-team-orchestrator",
+          "fallback"
+        ],
+        [
+          "orchestrator-agent",
+          "personal-historical-archaeologist",
+          "delegates"
+        ],
+        ["orchestrator-agent", "print-on-demand-manager-agent", "delegates"],
+        ["orchestrator-agent", "task-agent-router", "delegates"],
+        [
+          "oto-sequence-architect-agent",
+          "reputation-management-agent",
+          "depends_on"
+        ],
+        [
+          "oto-sequence-architect-agent",
+          "value-ladder-architect-agent",
+          "fallback"
+        ],
+        [
+          "personal-archaeology-integrity-team-orchestrator",
+          "personal-archaeology-master-orchestrator",
+          "delegates"
+        ],
+        [
+          "personal-archaeology-integrity-team-orchestrator",
+          "personal-archaeology-narrative-team-orchestrator",
+          "delegates"
+        ],
+        [
+          "personal-archaeology-integrity-team-orchestrator",
+          "personal-archaeology-source-team-orchestrator",
+          "delegates"
+        ],
+        [
+          "personal-archaeology-master-orchestrator",
+          "personal-archaeology-integrity-team-orchestrator",
+          "fallback"
+        ],
+        [
+          "personal-archaeology-master-orchestrator",
+          "personal-archaeology-narrative-team-orchestrator",
+          "delegates"
+        ],
+        [
+          "personal-archaeology-master-orchestrator",
+          "personal-archaeology-source-team-orchestrator",
+          "delegates"
+        ],
+        [
+          "personal-archaeology-master-orchestrator",
+          "personal-historical-archaeologist",
+          "delegates"
+        ],
+        [
+          "personal-archaeology-narrative-team-orchestrator",
+          "personal-archaeology-source-team-orchestrator",
+          "delegates"
+        ],
+        [
+          "personal-archaeology-narrative-team-orchestrator",
+          "personal-historical-archaeologist",
+          "delegates"
+        ],
+        [
+          "personal-archaeology-narrative-team-orchestrator",
+          "repo-lineage-investigator",
+          "delegates"
+        ],
+        [
+          "personal-archaeology-source-team-orchestrator",
+          "personal-archaeology-master-orchestrator",
+          "fallback"
+        ],
+        [
+          "personal-archaeology-source-team-orchestrator",
+          "personal-historical-archaeologist",
+          "delegates"
+        ],
+        [
+          "personal-archaeology-source-team-orchestrator",
+          "repo-lineage-investigator",
+          "delegates"
+        ],
+        [
+          "personal-archaeology-source-team-orchestrator",
+          "timeline-synthesis-investigator",
+          "delegates"
+        ],
+        [
+          "personal-brand-architect-agent",
+          "platform-selection-agent",
+          "fallback"
+        ],
+        [
+          "personal-brand-architect-agent",
+          "podcast-affiliate-agent",
+          "depends_on"
+        ],
+        [
+          "personal-brand-architect-agent",
+          "podcast-monetization-strategy-agent",
+          "depends_on"
+        ],
+        [
+          "personal-historical-archaeologist",
+          "repo-lineage-investigator",
+          "delegates"
+        ],
+        [
+          "personal-historical-archaeologist",
+          "timeline-synthesis-investigator",
+          "delegates"
+        ],
+        [
+          "personalized-content-recommendation-agent",
+          "monetization-strategy-agent",
+          "fallback"
+        ],
+        [
+          "personalized-content-recommendation-agent",
+          "podcast-analytics-agent",
+          "depends_on"
+        ],
+        [
+          "personalized-content-recommendation-agent",
+          "podcast-seo-agent",
+          "depends_on"
+        ],
+        [
+          "personalized-content-recommendation-agent",
+          "tiktok-strategy-agent",
+          "depends_on"
+        ],
+        ["platform-selection-agent", "scriptwriter-agent", "depends_on"],
+        ["platform-selection-agent", "yt-content-strategy-agent", "fallback"],
+        ["podcast-ad-network-agent", "podcast-audio-editor-agent", "fallback"],
+        ["podcast-ad-network-agent", "podcast-hosting-setup-agent", "fallback"],
+        ["podcast-ad-network-agent", "storyboard-artist-agent", "depends_on"],
+        [
+          "podcast-affiliate-agent",
+          "podcast-monetization-strategy-agent",
+          "fallback"
+        ],
+        ["podcast-affiliate-agent", "podcast-niche-analyst-agent", "fallback"],
+        ["podcast-affiliate-agent", "podcast-video-editor-agent", "fallback"],
+        ["podcast-affiliate-agent", "sponsorship-outreach-agent", "fallback"],
+        ["podcast-analytics-agent", "podcast-hosting-setup-agent", "fallback"],
+        ["podcast-analytics-agent", "podcast-niche-analyst-agent", "fallback"],
+        ["podcast-analytics-agent", "podcast-video-editor-agent", "fallback"],
+        ["podcast-analytics-agent", "sponsorship-outreach-agent", "fallback"],
+        [
+          "podcast-audio-editor-agent",
+          "podcast-hosting-setup-agent",
+          "fallback"
+        ],
+        ["podcast-audio-editor-agent", "storyboard-artist-agent", "depends_on"],
+        ["podcast-audio-editor-agent", "video-editor-agent", "depends_on"],
+        ["podcast-distribution-agent", "podcast-promotion-agent", "enables"],
+        ["podcast-distribution-agent", "podcast-promotion-agent", "feeds"],
+        ["podcast-distribution-agent", "scout-llm-opportunities", "depends_on"],
+        [
+          "podcast-distribution-agent",
+          "sponsorship-outreach-agent",
+          "fallback"
+        ],
+        [
+          "podcast-equipment-agent",
+          "podcast-format-designer-agent",
+          "fallback"
+        ],
+        [
+          "podcast-equipment-agent",
+          "podcast-monetization-strategy-agent",
+          "fallback"
+        ],
+        ["podcast-equipment-agent", "twip-orchestration-bridge", "depends_on"],
+        [
+          "podcast-format-designer-agent",
+          "guest-relationship-manager-agent",
+          "fallback"
+        ],
+        [
+          "podcast-format-designer-agent",
+          "podcast-hosting-setup-agent",
+          "feeds"
+        ],
+        [
+          "podcast-format-designer-agent",
+          "podcast-hosting-setup-agent",
+          "handoff"
+        ],
+        [
+          "podcast-format-designer-agent",
+          "storyboard-artist-agent",
+          "depends_on"
+        ],
+        [
+          "podcast-format-designer-agent",
+          "twip-orchestration-bridge",
+          "depends_on"
+        ],
+        ["podcast-hosting-setup-agent", "podcast-distribution-agent", "feeds"],
+        [
+          "podcast-hosting-setup-agent",
+          "podcast-distribution-agent",
+          "handoff"
+        ],
+        [
+          "podcast-hosting-setup-agent",
+          "podcast-format-designer-agent",
+          "fallback"
+        ],
+        [
+          "podcast-hosting-setup-agent",
+          "storyboard-artist-agent",
+          "depends_on"
+        ],
+        ["podcast-hosting-setup-agent", "video-editor-agent", "feeds"],
+        [
+          "podcast-monetization-strategy-agent",
+          "podcast-niche-analyst-agent",
+          "fallback"
+        ],
+        ["podcast-monetization-strategy-agent", "scriptwriter-agent", "feeds"],
+        [
+          "podcast-niche-analyst-agent",
+          "podcast-format-designer-agent",
+          "feeds"
+        ],
+        [
+          "podcast-niche-analyst-agent",
+          "podcast-hosting-setup-agent",
+          "fallback"
+        ],
+        ["podcast-niche-analyst-agent", "podcast-seo-agent", "fallback"],
+        ["podcast-niche-analyst-agent", "podcast-video-editor-agent", "feeds"],
+        ["podcast-niche-analyst-agent", "scriptwriter-agent", "feeds"],
+        [
+          "podcast-niche-analyst-agent",
+          "sponsorship-outreach-agent",
+          "fallback"
+        ],
+        [
+          "podcast-promotion-agent",
+          "guest-relationship-manager-agent",
+          "fallback"
+        ],
+        ["podcast-promotion-agent", "podcast-analytics-agent", "depends_on"],
+        ["podcast-promotion-agent", "podcast-analytics-agent", "fallback"],
+        ["podcast-promotion-agent", "podcast-analytics-agent", "measured_by"],
+        [
+          "podcast-promotion-agent",
+          "reputation-management-agent",
+          "depends_on"
+        ],
+        ["podcast-promotion-agent", "sponsorship-outreach-agent", "fallback"],
+        ["podcast-promotion-agent", "traffic-generation-agent", "depends_on"],
+        ["podcast-seo-agent", "podcast-affiliate-agent", "fallback"],
+        ["podcast-seo-agent", "tiktok-strategy-agent", "depends_on"],
+        ["podcast-seo-agent", "yt-seo-optimizer-agent", "depends_on"],
+        ["podcast-video-editor-agent", "episode-planner-agent", "fallback"],
+        [
+          "podcast-video-editor-agent",
+          "sponsorship-outreach-agent",
+          "fallback"
+        ],
+        ["podcast-video-editor-agent", "video-editor-agent", "depends_on"],
+        [
+          "productivity-and-burnout-prevention-agent",
+          "digital-asset-manager-agent",
+          "fallback"
+        ],
+        [
+          "productivity-and-burnout-prevention-agent",
+          "talent-manager-agent",
+          "depends_on"
+        ],
+        [
+          "repo-lineage-investigator",
+          "timeline-synthesis-investigator",
+          "fallback"
+        ],
+        ["reputation-management-agent", "contract-manager-agent", "fallback"],
+        ["reputation-management-agent", "social-selling-agent", "depends_on"],
+        ["reputation-management-agent", "x-strategy-agent", "depends_on"],
+        [
+          "reputation-management-agent",
+          "yt-content-strategy-agent",
+          "fallback"
+        ],
+        [
+          "sales-funnel-architect-agent",
+          "lead-magnet-funnel-agent",
+          "fallback"
+        ],
+        [
+          "sales-funnel-architect-agent",
+          "value-ladder-architect-agent",
+          "fallback"
+        ],
+        ["scout-llm-opportunities", "social-selling-agent", "fallback"],
+        ["scout-llm-opportunities", "tax-compliance-agent", "depends_on"],
+        ["scriptwriter-agent", "tiktok-strategy-agent", "fallback"],
+        ["scriptwriter-agent", "yt-content-strategy-agent", "depends_on"],
+        ["seo-optimizer-agent", "content-calendar-agent", "fallback"],
+        ["seo-optimizer-agent", "technical-seo-auditor-agent", "depends_on"],
+        ["seo-optimizer-agent", "technical-seo-auditor-agent", "validated_by"],
+        ["social-selling-agent", "tax-compliance-agent", "depends_on"],
+        [
+          "sponsorship-outreach-agent",
+          "podcast-niche-analyst-agent",
+          "fallback"
+        ],
+        ["sponsorship-outreach-agent", "podcast-seo-agent", "fallback"],
+        ["sponsorship-outreach-agent", "talent-manager-agent", "depends_on"],
+        ["storyboard-artist-agent", "video-editor-agent", "fallback"],
+        ["storyboard-artist-agent", "visual-asset-creator-agent", "depends_on"],
+        ["talent-manager-agent", "brand-identity-agent", "fallback"],
+        ["task-agent-router", "agent-registry-manager", "fallback"],
+        ["task-agent-router", "analytics-and-reporting-agent", "delegates"],
+        ["task-agent-router", "audience-segmentation-agent", "delegates"],
+        ["task-agent-router", "audio-recording-agent", "delegates"],
+        ["task-agent-router", "campaign-execution-agent", "delegates"],
+        ["task-agent-router", "campaign-execution-agent", "routes_to"],
+        ["task-agent-router", "community-engagement-agent", "delegates"],
+        ["task-agent-router", "community-manager-agent", "delegates"],
+        ["task-agent-router", "content-calendar-agent", "routes_to"],
+        [
+          "task-agent-router",
+          "content-calendar-orchestrator-agent",
+          "routes_to"
+        ],
+        ["task-agent-router", "content-repurposing-agent", "delegates"],
+        ["task-agent-router", "content-writer-agent", "routes_to"],
+        ["task-agent-router", "cro-process-agent", "delegates"],
+        ["task-agent-router", "cro-process-agent", "routes_to"],
+        ["task-agent-router", "ecom-platform-manager-agent", "delegates"],
+        ["task-agent-router", "guest-booking-agent", "delegates"],
+        ["task-agent-router", "keyword-research-agent", "delegates"],
+        ["task-agent-router", "keyword-research-agent", "routes_to"],
+        ["task-agent-router", "legal-compliance-agent", "delegates"],
+        ["task-agent-router", "legal-compliance-agent", "routes_to"],
+        ["task-agent-router", "master-of-taxonomies", "delegates"],
+        ["task-agent-router", "podcast-promotion-agent", "delegates"],
+        ["task-agent-router", "podcast-promotion-agent", "routes_to"],
+        ["task-agent-router", "seo-optimizer-agent", "routes_to"],
+        ["task-agent-router", "technical-seo-auditor-agent", "routes_to"],
+        ["tax-compliance-agent", "asset-sourcer-agent", "fallback"],
+        ["tax-compliance-agent", "value-ladder-architect-agent", "depends_on"],
+        ["technical-seo-auditor-agent", "content-calendar-agent", "feedback"],
+        ["technical-seo-auditor-agent", "link-building-agent", "fallback"],
+        ["technical-seo-auditor-agent", "technical-setup-agent", "depends_on"],
+        ["technical-seo-auditor-agent", "yt-seo-optimizer-agent", "fallback"],
+        ["technical-setup-agent", "user-feedback-analysis-agent", "fallback"],
+        ["technical-setup-agent", "visual-asset-creator-agent", "feeds"],
+        ["tiktok-strategy-agent", "x-strategy-agent", "fallback"],
+        ["tiktok-strategy-agent", "yt-seo-optimizer-agent", "feeds"],
+        ["timeline-synthesis-investigator", "local-ai-gemini-cli", "fallback"],
+        ["traffic-generation-agent", "content-repurposing-agent", "fallback"],
+        ["traffic-generation-agent", "scriptwriter-agent", "fallback"],
+        ["traffic-generation-agent", "x-strategy-agent", "fallback"],
+        ["traffic-generation-agent", "yt-content-strategy-agent", "depends_on"],
+        [
+          "user-feedback-analysis-agent",
+          "visual-asset-creator-agent",
+          "depends_on"
+        ],
+        [
+          "value-ladder-architect-agent",
+          "sales-funnel-architect-agent",
+          "fallback"
+        ],
+        ["video-editor-agent", "fan-funding-agent", "fallback"],
+        [
+          "visual-asset-creator-agent",
+          "value-ladder-architect-agent",
+          "fallback"
+        ],
+        ["x-strategy-agent", "audience-growth-agent", "fallback"],
+        ["x-strategy-agent", "yt-content-strategy-agent", "depends_on"],
+        ["x-strategy-agent", "yt-niche-strategy-agent", "depends_on"],
+        ["x-strategy-agent", "yt-seo-optimizer-agent", "feeds"],
+        ["yt-content-strategy-agent", "contract-manager-agent", "fallback"],
+        [
+          "yt-niche-strategy-agent",
+          "digital-product-factory-agent",
+          "fallback"
+        ],
+        ["yt-niche-strategy-agent", "yt-seo-optimizer-agent", "feeds"],
+        ["yt-seo-optimizer-agent", "link-building-agent", "fallback"]
+      ]
+    },
+    {
+      "file": "agent-relationship-podcast-subgraph.json",
+      "domain": "podcast",
+      "nodes": [
+        "analytics-and-reporting-agent",
+        "episode-planner-agent",
+        "guest-booking-agent",
+        "guest-relationship-manager-agent",
+        "orchestrator-agent",
+        "podcast-ad-network-agent",
+        "podcast-affiliate-agent",
+        "podcast-analytics-agent",
+        "podcast-audio-editor-agent",
+        "podcast-distribution-agent",
+        "podcast-equipment-agent",
+        "podcast-format-designer-agent",
+        "podcast-hosting-setup-agent",
+        "podcast-monetization-strategy-agent",
+        "podcast-niche-analyst-agent",
+        "podcast-promotion-agent",
+        "podcast-seo-agent",
+        "podcast-video-editor-agent",
+        "sponsorship-outreach-agent",
+        "task-agent-router"
+      ],
+      "edges": [
+        ["episode-planner-agent", "podcast-equipment-agent", "fallback"],
+        ["guest-booking-agent", "guest-relationship-manager-agent", "feeds"],
+        ["guest-booking-agent", "sponsorship-outreach-agent", "fallback"],
+        [
+          "guest-relationship-manager-agent",
+          "podcast-analytics-agent",
+          "fallback"
+        ],
+        [
+          "guest-relationship-manager-agent",
+          "podcast-distribution-agent",
+          "fallback"
+        ],
+        ["orchestrator-agent", "task-agent-router", "delegates"],
+        ["podcast-ad-network-agent", "podcast-audio-editor-agent", "fallback"],
+        ["podcast-ad-network-agent", "podcast-hosting-setup-agent", "fallback"],
+        [
+          "podcast-affiliate-agent",
+          "podcast-monetization-strategy-agent",
+          "fallback"
+        ],
+        ["podcast-affiliate-agent", "podcast-niche-analyst-agent", "fallback"],
+        ["podcast-affiliate-agent", "podcast-video-editor-agent", "fallback"],
+        ["podcast-affiliate-agent", "sponsorship-outreach-agent", "fallback"],
+        ["podcast-analytics-agent", "podcast-hosting-setup-agent", "fallback"],
+        ["podcast-analytics-agent", "podcast-niche-analyst-agent", "fallback"],
+        ["podcast-analytics-agent", "podcast-video-editor-agent", "fallback"],
+        ["podcast-analytics-agent", "sponsorship-outreach-agent", "fallback"],
+        [
+          "podcast-audio-editor-agent",
+          "podcast-hosting-setup-agent",
+          "fallback"
+        ],
+        ["podcast-distribution-agent", "podcast-promotion-agent", "enables"],
+        ["podcast-distribution-agent", "podcast-promotion-agent", "feeds"],
+        [
+          "podcast-distribution-agent",
+          "sponsorship-outreach-agent",
+          "fallback"
+        ],
+        [
+          "podcast-equipment-agent",
+          "podcast-format-designer-agent",
+          "fallback"
+        ],
+        [
+          "podcast-equipment-agent",
+          "podcast-monetization-strategy-agent",
+          "fallback"
+        ],
+        [
+          "podcast-format-designer-agent",
+          "guest-relationship-manager-agent",
+          "fallback"
+        ],
+        [
+          "podcast-format-designer-agent",
+          "podcast-hosting-setup-agent",
+          "feeds"
+        ],
+        [
+          "podcast-format-designer-agent",
+          "podcast-hosting-setup-agent",
+          "handoff"
+        ],
+        ["podcast-hosting-setup-agent", "podcast-distribution-agent", "feeds"],
+        [
+          "podcast-hosting-setup-agent",
+          "podcast-distribution-agent",
+          "handoff"
+        ],
+        [
+          "podcast-hosting-setup-agent",
+          "podcast-format-designer-agent",
+          "fallback"
+        ],
+        [
+          "podcast-monetization-strategy-agent",
+          "podcast-niche-analyst-agent",
+          "fallback"
+        ],
+        [
+          "podcast-niche-analyst-agent",
+          "podcast-format-designer-agent",
+          "feeds"
+        ],
+        [
+          "podcast-niche-analyst-agent",
+          "podcast-hosting-setup-agent",
+          "fallback"
+        ],
+        ["podcast-niche-analyst-agent", "podcast-seo-agent", "fallback"],
+        ["podcast-niche-analyst-agent", "podcast-video-editor-agent", "feeds"],
+        [
+          "podcast-niche-analyst-agent",
+          "sponsorship-outreach-agent",
+          "fallback"
+        ],
+        [
+          "podcast-promotion-agent",
+          "guest-relationship-manager-agent",
+          "fallback"
+        ],
+        ["podcast-promotion-agent", "podcast-analytics-agent", "depends_on"],
+        ["podcast-promotion-agent", "podcast-analytics-agent", "fallback"],
+        ["podcast-promotion-agent", "podcast-analytics-agent", "measured_by"],
+        ["podcast-promotion-agent", "sponsorship-outreach-agent", "fallback"],
+        ["podcast-seo-agent", "podcast-affiliate-agent", "fallback"],
+        ["podcast-video-editor-agent", "episode-planner-agent", "fallback"],
+        [
+          "podcast-video-editor-agent",
+          "sponsorship-outreach-agent",
+          "fallback"
+        ],
+        [
+          "sponsorship-outreach-agent",
+          "podcast-niche-analyst-agent",
+          "fallback"
+        ],
+        ["sponsorship-outreach-agent", "podcast-seo-agent", "fallback"],
+        ["task-agent-router", "analytics-and-reporting-agent", "delegates"],
+        ["task-agent-router", "guest-booking-agent", "delegates"],
+        ["task-agent-router", "podcast-promotion-agent", "delegates"],
+        ["task-agent-router", "podcast-promotion-agent", "routes_to"]
+      ]
+    },
+    {
+      "file": "agent-relationship-seo-subgraph.json",
+      "domain": "seo",
+      "nodes": [
+        "content-calendar-agent",
+        "content-calendar-orchestrator-agent",
+        "content-refresh-agent",
+        "content-writer-agent",
+        "keyword-research-agent",
+        "link-building-agent",
+        "orchestrator-agent",
+        "seo-optimizer-agent",
+        "task-agent-router",
+        "technical-seo-auditor-agent",
+        "yt-seo-optimizer-agent"
+      ],
+      "edges": [
+        ["content-calendar-agent", "content-writer-agent", "depends_on"],
+        ["content-calendar-agent", "keyword-research-agent", "depends_on"],
+        ["content-calendar-agent", "seo-optimizer-agent", "fallback"],
+        ["content-calendar-agent", "technical-seo-auditor-agent", "fallback"],
+        [
+          "content-calendar-orchestrator-agent",
+          "content-calendar-agent",
+          "overlaps_with"
+        ],
+        ["content-refresh-agent", "keyword-research-agent", "fallback"],
+        ["content-refresh-agent", "yt-seo-optimizer-agent", "fallback"],
+        ["content-writer-agent", "link-building-agent", "depends_on"],
+        ["content-writer-agent", "seo-optimizer-agent", "depends_on"],
+        ["content-writer-agent", "seo-optimizer-agent", "feeds"],
+        ["content-writer-agent", "seo-optimizer-agent", "handoff"],
+        ["keyword-research-agent", "content-writer-agent", "feeds"],
+        ["keyword-research-agent", "link-building-agent", "fallback"],
+        ["keyword-research-agent", "seo-optimizer-agent", "fallback"],
+        ["link-building-agent", "content-refresh-agent", "fallback"],
+        [
+          "orchestrator-agent",
+          "content-calendar-orchestrator-agent",
+          "delegates"
+        ],
+        [
+          "orchestrator-agent",
+          "content-calendar-orchestrator-agent",
+          "fallback"
+        ],
+        ["orchestrator-agent", "task-agent-router", "delegates"],
+        ["seo-optimizer-agent", "content-calendar-agent", "fallback"],
+        ["seo-optimizer-agent", "technical-seo-auditor-agent", "depends_on"],
+        ["seo-optimizer-agent", "technical-seo-auditor-agent", "validated_by"],
+        ["task-agent-router", "content-calendar-agent", "routes_to"],
+        [
+          "task-agent-router",
+          "content-calendar-orchestrator-agent",
+          "routes_to"
+        ],
+        ["task-agent-router", "content-writer-agent", "routes_to"],
+        ["task-agent-router", "keyword-research-agent", "delegates"],
+        ["task-agent-router", "keyword-research-agent", "routes_to"],
+        ["task-agent-router", "seo-optimizer-agent", "routes_to"],
+        ["task-agent-router", "technical-seo-auditor-agent", "routes_to"],
+        ["technical-seo-auditor-agent", "content-calendar-agent", "feedback"],
+        ["technical-seo-auditor-agent", "link-building-agent", "fallback"],
+        ["technical-seo-auditor-agent", "yt-seo-optimizer-agent", "fallback"],
+        ["yt-seo-optimizer-agent", "link-building-agent", "fallback"]
+      ]
+    },
+    {
+      "file": "agent-relationship-brand-subgraph.json",
+      "domain": "brand",
+      "nodes": [
+        "brand-identity-agent",
+        "brand-outreach-agent",
+        "brand-prospecting-agent",
+        "campaign-execution-agent",
+        "campaign-reporting-agent",
+        "competitive-intelligence-agent",
+        "contract-manager-agent",
+        "deal-negotiator-agent",
+        "email-marketing-automation-agent",
+        "financial-manager-agent",
+        "influencer-media-kit-agent",
+        "influencer-niche-agent",
+        "legal-compliance-agent",
+        "orchestrator-agent",
+        "personal-brand-architect-agent",
+        "platform-selection-agent",
+        "reputation-management-agent",
+        "talent-manager-agent",
+        "task-agent-router",
+        "yt-content-strategy-agent"
+      ],
+      "edges": [
+        ["brand-identity-agent", "campaign-reporting-agent", "fallback"],
+        ["brand-identity-agent", "competitive-intelligence-agent", "fallback"],
+        ["brand-outreach-agent", "brand-prospecting-agent", "fallback"],
+        ["brand-outreach-agent", "deal-negotiator-agent", "feeds"],
+        ["brand-outreach-agent", "deal-negotiator-agent", "handoff"],
+        ["brand-outreach-agent", "influencer-niche-agent", "fallback"],
+        ["brand-outreach-agent", "personal-brand-architect-agent", "fallback"],
+        ["brand-prospecting-agent", "brand-outreach-agent", "feeds"],
+        ["brand-prospecting-agent", "deal-negotiator-agent", "fallback"],
+        ["brand-prospecting-agent", "influencer-niche-agent", "fallback"],
+        [
+          "brand-prospecting-agent",
+          "personal-brand-architect-agent",
+          "fallback"
+        ],
+        ["brand-prospecting-agent", "platform-selection-agent", "fallback"],
+        ["campaign-execution-agent", "campaign-reporting-agent", "feeds"],
+        ["campaign-execution-agent", "campaign-reporting-agent", "handoff"],
+        ["campaign-execution-agent", "deal-negotiator-agent", "fallback"],
+        ["campaign-execution-agent", "financial-manager-agent", "fallback"],
+        ["campaign-execution-agent", "legal-compliance-agent", "depends_on"],
+        ["campaign-execution-agent", "yt-content-strategy-agent", "fallback"],
+        [
+          "campaign-reporting-agent",
+          "competitive-intelligence-agent",
+          "fallback"
+        ],
+        ["campaign-reporting-agent", "influencer-media-kit-agent", "fallback"],
+        ["campaign-reporting-agent", "reputation-management-agent", "fallback"],
+        ["competitive-intelligence-agent", "talent-manager-agent", "fallback"],
+        ["contract-manager-agent", "brand-outreach-agent", "fallback"],
+        ["contract-manager-agent", "campaign-execution-agent", "depends_on"],
+        ["contract-manager-agent", "campaign-execution-agent", "gates"],
+        ["contract-manager-agent", "legal-compliance-agent", "depends_on"],
+        ["deal-negotiator-agent", "contract-manager-agent", "depends_on"],
+        ["deal-negotiator-agent", "contract-manager-agent", "requires"],
+        ["deal-negotiator-agent", "financial-manager-agent", "fallback"],
+        ["deal-negotiator-agent", "personal-brand-architect-agent", "fallback"],
+        [
+          "email-marketing-automation-agent",
+          "financial-manager-agent",
+          "fallback"
+        ],
+        [
+          "email-marketing-automation-agent",
+          "influencer-media-kit-agent",
+          "fallback"
+        ],
+        ["financial-manager-agent", "brand-identity-agent", "fallback"],
+        [
+          "financial-manager-agent",
+          "competitive-intelligence-agent",
+          "fallback"
+        ],
+        ["financial-manager-agent", "influencer-media-kit-agent", "fallback"],
+        [
+          "influencer-niche-agent",
+          "personal-brand-architect-agent",
+          "fallback"
+        ],
+        ["influencer-niche-agent", "platform-selection-agent", "fallback"],
+        ["orchestrator-agent", "task-agent-router", "delegates"],
+        [
+          "personal-brand-architect-agent",
+          "platform-selection-agent",
+          "fallback"
+        ],
+        ["platform-selection-agent", "yt-content-strategy-agent", "fallback"],
+        ["reputation-management-agent", "contract-manager-agent", "fallback"],
+        [
+          "reputation-management-agent",
+          "yt-content-strategy-agent",
+          "fallback"
+        ],
+        ["talent-manager-agent", "brand-identity-agent", "fallback"],
+        ["task-agent-router", "campaign-execution-agent", "delegates"],
+        ["task-agent-router", "campaign-execution-agent", "routes_to"],
+        ["task-agent-router", "legal-compliance-agent", "delegates"],
+        ["task-agent-router", "legal-compliance-agent", "routes_to"],
+        ["yt-content-strategy-agent", "contract-manager-agent", "fallback"]
+      ]
+    },
+    {
+      "file": "agent-relationship-funnel-subgraph.json",
+      "domain": "funnel",
+      "nodes": [
+        "ab-testing-optimizer-agent",
+        "affiliate-link-manager-agent",
+        "analytics-and-reporting-agent",
+        "audio-recording-agent",
+        "code-fossil-investigator",
+        "cognitive-bias-optimizer-agent",
+        "cro-process-agent",
+        "customer-journey-map-agent",
+        "ecom-platform-manager-agent",
+        "equipment-recommendation-agent",
+        "ethical-bias-auditor-agent",
+        "funnel-economics-analyst-agent",
+        "information-retrieval-agent",
+        "lead-capture-agent",
+        "lead-magnet-funnel-agent",
+        "master-of-taxonomies",
+        "monetization-strategy-agent",
+        "niche-analyst-agent",
+        "orchestrator-agent",
+        "oto-sequence-architect-agent",
+        "personalized-content-recommendation-agent",
+        "sales-funnel-architect-agent",
+        "task-agent-router",
+        "value-ladder-architect-agent",
+        "visual-asset-creator-agent"
+      ],
+      "edges": [
+        [
+          "ab-testing-optimizer-agent",
+          "analytics-and-reporting-agent",
+          "depends_on"
+        ],
+        [
+          "ab-testing-optimizer-agent",
+          "analytics-and-reporting-agent",
+          "measured_by"
+        ],
+        [
+          "ab-testing-optimizer-agent",
+          "cognitive-bias-optimizer-agent",
+          "fallback"
+        ],
+        ["ab-testing-optimizer-agent", "lead-magnet-funnel-agent", "fallback"],
+        [
+          "affiliate-link-manager-agent",
+          "ab-testing-optimizer-agent",
+          "fallback"
+        ],
+        [
+          "analytics-and-reporting-agent",
+          "ethical-bias-auditor-agent",
+          "depends_on"
+        ],
+        [
+          "cognitive-bias-optimizer-agent",
+          "analytics-and-reporting-agent",
+          "depends_on"
+        ],
+        [
+          "cognitive-bias-optimizer-agent",
+          "analytics-and-reporting-agent",
+          "measured_by"
+        ],
+        [
+          "cognitive-bias-optimizer-agent",
+          "visual-asset-creator-agent",
+          "fallback"
+        ],
+        ["cro-process-agent", "ab-testing-optimizer-agent", "delegates"],
+        ["cro-process-agent", "ab-testing-optimizer-agent", "orchestrates"],
+        ["cro-process-agent", "affiliate-link-manager-agent", "fallback"],
+        ["cro-process-agent", "cognitive-bias-optimizer-agent", "delegates"],
+        ["cro-process-agent", "cognitive-bias-optimizer-agent", "orchestrates"],
+        ["cro-process-agent", "customer-journey-map-agent", "fallback"],
+        ["cro-process-agent", "funnel-economics-analyst-agent", "fallback"],
+        [
+          "customer-journey-map-agent",
+          "funnel-economics-analyst-agent",
+          "fallback"
+        ],
+        [
+          "customer-journey-map-agent",
+          "value-ladder-architect-agent",
+          "fallback"
+        ],
+        ["ethical-bias-auditor-agent", "lead-magnet-funnel-agent", "fallback"],
+        [
+          "ethical-bias-auditor-agent",
+          "visual-asset-creator-agent",
+          "fallback"
+        ],
+        ["funnel-economics-analyst-agent", "lead-capture-agent", "fallback"],
+        [
+          "funnel-economics-analyst-agent",
+          "oto-sequence-architect-agent",
+          "fallback"
+        ],
+        ["lead-capture-agent", "lead-magnet-funnel-agent", "fallback"],
+        ["lead-capture-agent", "niche-analyst-agent", "fallback"],
+        ["lead-capture-agent", "oto-sequence-architect-agent", "fallback"],
+        [
+          "lead-magnet-funnel-agent",
+          "personalized-content-recommendation-agent",
+          "fallback"
+        ],
+        ["monetization-strategy-agent", "lead-capture-agent", "fallback"],
+        ["niche-analyst-agent", "code-fossil-investigator", "fallback"],
+        ["orchestrator-agent", "task-agent-router", "delegates"],
+        [
+          "oto-sequence-architect-agent",
+          "value-ladder-architect-agent",
+          "fallback"
+        ],
+        [
+          "personalized-content-recommendation-agent",
+          "monetization-strategy-agent",
+          "fallback"
+        ],
+        [
+          "sales-funnel-architect-agent",
+          "lead-magnet-funnel-agent",
+          "fallback"
+        ],
+        [
+          "sales-funnel-architect-agent",
+          "value-ladder-architect-agent",
+          "fallback"
+        ],
+        ["task-agent-router", "analytics-and-reporting-agent", "delegates"],
+        ["task-agent-router", "audio-recording-agent", "delegates"],
+        ["task-agent-router", "cro-process-agent", "delegates"],
+        ["task-agent-router", "cro-process-agent", "routes_to"],
+        ["task-agent-router", "ecom-platform-manager-agent", "delegates"],
+        ["task-agent-router", "master-of-taxonomies", "delegates"],
+        [
+          "value-ladder-architect-agent",
+          "sales-funnel-architect-agent",
+          "fallback"
+        ],
+        [
+          "visual-asset-creator-agent",
+          "value-ladder-architect-agent",
+          "fallback"
+        ]
+      ]
+    },
+    {
+      "file": "agent-relationship-social-subgraph.json",
+      "domain": "social",
+      "nodes": [
+        "algorithm-adaptation-agent",
+        "audience-growth-agent",
+        "audience-persona-architect-agent",
+        "audience-segmentation-agent",
+        "community-engagement-agent",
+        "community-manager-agent",
+        "content-calendar-orchestrator-agent",
+        "content-repurposing-agent",
+        "facebook-strategy-agent",
+        "instagram-strategy-agent",
+        "orchestrator-agent",
+        "scout-llm-opportunities",
+        "scriptwriter-agent",
+        "social-selling-agent",
+        "task-agent-router",
+        "tiktok-strategy-agent",
+        "traffic-generation-agent",
+        "x-strategy-agent"
+      ],
+      "edges": [
+        ["audience-growth-agent", "community-engagement-agent", "fallback"],
+        ["audience-growth-agent", "community-manager-agent", "fallback"],
+        ["audience-growth-agent", "facebook-strategy-agent", "fallback"],
+        [
+          "community-engagement-agent",
+          "algorithm-adaptation-agent",
+          "fallback"
+        ],
+        ["community-engagement-agent", "community-manager-agent", "fallback"],
+        ["community-engagement-agent", "instagram-strategy-agent", "fallback"],
+        ["community-manager-agent", "social-selling-agent", "fallback"],
+        ["community-manager-agent", "traffic-generation-agent", "fallback"],
+        ["content-repurposing-agent", "scriptwriter-agent", "fallback"],
+        ["content-repurposing-agent", "tiktok-strategy-agent", "fallback"],
+        ["facebook-strategy-agent", "instagram-strategy-agent", "fallback"],
+        ["facebook-strategy-agent", "social-selling-agent", "fallback"],
+        ["facebook-strategy-agent", "tiktok-strategy-agent", "fallback"],
+        ["instagram-strategy-agent", "community-manager-agent", "fallback"],
+        ["instagram-strategy-agent", "tiktok-strategy-agent", "fallback"],
+        ["instagram-strategy-agent", "x-strategy-agent", "fallback"],
+        [
+          "orchestrator-agent",
+          "content-calendar-orchestrator-agent",
+          "delegates"
+        ],
+        [
+          "orchestrator-agent",
+          "content-calendar-orchestrator-agent",
+          "fallback"
+        ],
+        ["orchestrator-agent", "task-agent-router", "delegates"],
+        ["scout-llm-opportunities", "social-selling-agent", "fallback"],
+        ["scriptwriter-agent", "tiktok-strategy-agent", "fallback"],
+        ["task-agent-router", "audience-segmentation-agent", "delegates"],
+        ["task-agent-router", "community-engagement-agent", "delegates"],
+        ["task-agent-router", "community-manager-agent", "delegates"],
+        [
+          "task-agent-router",
+          "content-calendar-orchestrator-agent",
+          "routes_to"
+        ],
+        ["task-agent-router", "content-repurposing-agent", "delegates"],
+        ["tiktok-strategy-agent", "x-strategy-agent", "fallback"],
+        ["traffic-generation-agent", "content-repurposing-agent", "fallback"],
+        ["traffic-generation-agent", "scriptwriter-agent", "fallback"],
+        ["traffic-generation-agent", "x-strategy-agent", "fallback"],
+        ["x-strategy-agent", "audience-growth-agent", "fallback"]
+      ]
+    },
+    {
+      "file": "agent-relationship-ops-subgraph.json",
+      "domain": "ops",
+      "nodes": [
+        "asset-sourcer-agent",
+        "auth-blocker-sentinel",
+        "digital-asset-manager-agent",
+        "legal-compliance-agent",
+        "local-ai-claude-code-cli",
+        "local-ai-gemini-cli",
+        "notes-ledger-investigator",
+        "orchestrator-agent",
+        "productivity-and-burnout-prevention-agent",
+        "repo-lineage-investigator",
+        "task-agent-router",
+        "tax-compliance-agent",
+        "timeline-synthesis-investigator"
+      ],
+      "edges": [
+        ["asset-sourcer-agent", "auth-blocker-sentinel", "fallback"],
+        ["asset-sourcer-agent", "legal-compliance-agent", "fallback"],
+        [
+          "asset-sourcer-agent",
+          "productivity-and-burnout-prevention-agent",
+          "fallback"
+        ],
+        ["asset-sourcer-agent", "tax-compliance-agent", "fallback"],
+        ["auth-blocker-sentinel", "notes-ledger-investigator", "fallback"],
+        ["digital-asset-manager-agent", "auth-blocker-sentinel", "fallback"],
+        ["digital-asset-manager-agent", "tax-compliance-agent", "fallback"],
+        ["legal-compliance-agent", "asset-sourcer-agent", "delegates"],
+        ["legal-compliance-agent", "asset-sourcer-agent", "governs"],
+        ["legal-compliance-agent", "digital-asset-manager-agent", "fallback"],
+        ["legal-compliance-agent", "tax-compliance-agent", "fallback"],
+        ["local-ai-claude-code-cli", "local-ai-gemini-cli", "fallback"],
+        [
+          "local-ai-claude-code-cli",
+          "productivity-and-burnout-prevention-agent",
+          "fallback"
+        ],
+        [
+          "local-ai-gemini-cli",
+          "productivity-and-burnout-prevention-agent",
+          "fallback"
+        ],
+        ["notes-ledger-investigator", "repo-lineage-investigator", "fallback"],
+        [
+          "notes-ledger-investigator",
+          "timeline-synthesis-investigator",
+          "fallback"
+        ],
+        ["orchestrator-agent", "task-agent-router", "delegates"],
+        [
+          "productivity-and-burnout-prevention-agent",
+          "digital-asset-manager-agent",
+          "fallback"
+        ],
+        [
+          "repo-lineage-investigator",
+          "timeline-synthesis-investigator",
+          "fallback"
+        ],
+        ["task-agent-router", "legal-compliance-agent", "delegates"],
+        ["task-agent-router", "legal-compliance-agent", "routes_to"],
+        ["tax-compliance-agent", "asset-sourcer-agent", "fallback"],
+        ["timeline-synthesis-investigator", "local-ai-gemini-cli", "fallback"]
+      ]
+    },
+    {
+      "file": "agent-relationship-content-subgraph.json",
+      "domain": "content",
+      "nodes": [
+        "ad-network-manager-agent",
+        "analytics-and-reporting-agent",
+        "content-writer-agent",
+        "digital-product-creator-agent",
+        "digital-product-factory-agent",
+        "fan-funding-agent",
+        "keyword-research-agent",
+        "live-stream-manager-agent",
+        "media-evidence-investigator",
+        "orchestrator-agent",
+        "seo-optimizer-agent",
+        "storyboard-artist-agent",
+        "task-agent-router",
+        "technical-setup-agent",
+        "twip-orchestration-bridge",
+        "user-feedback-analysis-agent",
+        "video-editor-agent",
+        "yt-niche-strategy-agent"
+      ],
+      "edges": [
+        [
+          "ad-network-manager-agent",
+          "analytics-and-reporting-agent",
+          "fallback"
+        ],
+        [
+          "ad-network-manager-agent",
+          "user-feedback-analysis-agent",
+          "fallback"
+        ],
+        ["ad-network-manager-agent", "yt-niche-strategy-agent", "fallback"],
+        ["analytics-and-reporting-agent", "content-writer-agent", "fallback"],
+        [
+          "analytics-and-reporting-agent",
+          "user-feedback-analysis-agent",
+          "fallback"
+        ],
+        ["content-writer-agent", "ad-network-manager-agent", "fallback"],
+        ["content-writer-agent", "seo-optimizer-agent", "depends_on"],
+        ["content-writer-agent", "seo-optimizer-agent", "feeds"],
+        ["content-writer-agent", "seo-optimizer-agent", "handoff"],
+        [
+          "digital-product-creator-agent",
+          "keyword-research-agent",
+          "depends_on"
+        ],
+        ["digital-product-creator-agent", "video-editor-agent", "fallback"],
+        [
+          "digital-product-factory-agent",
+          "media-evidence-investigator",
+          "fallback"
+        ],
+        ["digital-product-factory-agent", "seo-optimizer-agent", "depends_on"],
+        ["keyword-research-agent", "content-writer-agent", "feeds"],
+        ["keyword-research-agent", "seo-optimizer-agent", "fallback"],
+        ["live-stream-manager-agent", "video-editor-agent", "fallback"],
+        [
+          "media-evidence-investigator",
+          "digital-product-creator-agent",
+          "fallback"
+        ],
+        ["orchestrator-agent", "task-agent-router", "delegates"],
+        ["storyboard-artist-agent", "video-editor-agent", "fallback"],
+        ["task-agent-router", "analytics-and-reporting-agent", "delegates"],
+        ["task-agent-router", "content-writer-agent", "routes_to"],
+        ["task-agent-router", "keyword-research-agent", "delegates"],
+        ["task-agent-router", "keyword-research-agent", "routes_to"],
+        ["task-agent-router", "seo-optimizer-agent", "routes_to"],
+        ["technical-setup-agent", "user-feedback-analysis-agent", "fallback"],
+        ["video-editor-agent", "fan-funding-agent", "fallback"],
+        ["yt-niche-strategy-agent", "digital-product-factory-agent", "fallback"]
+      ]
+    }
+  ]
+}

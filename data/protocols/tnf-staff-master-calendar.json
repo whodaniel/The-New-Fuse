@@ -1,0 +1,1516 @@
+{
+  "spec": "tnf/staff-master-calendar/0.1",
+  "generatedAt": "2026-03-26T20:32:40.466Z",
+  "sources": {
+    "registryPath": "data/protocols/cron-jobs.registry.json",
+    "catalogPath": "data/protocols/chronological-process-catalog.json",
+    "statePath": "data/protocols/cron-jobs.control-plane-state.json",
+    "syncAuditPath": "reports/protocols/master-clock-sync/master-clock-sync-latest.json"
+  },
+  "summary": {
+    "totalSchedules": 23,
+    "enabledSchedules": 21,
+    "disabledSchedules": 2,
+    "lockedSchedules": 2,
+    "staleRunWarnings": 9,
+    "interrelationshipEdges": 96
+  },
+  "scheduleRows": [
+    {
+      "scheduleId": "tnf-twip-macro-board-refresh",
+      "scope": "system_framework",
+      "category": "observability",
+      "categoryDescription": "Read-only telemetry and health scan loops.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "twip-orchestration-bridge",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "*/10 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T17:00:56.902Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": true,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/protocols/twip-macro-board.cjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/twip-terminal-macro-board.md",
+        "runbook": "docs/protocols/reports/twip-terminal-context-capture-2026-03-19.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tenant-personal-archaeology-blocker-watch",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "categoryDescription": "Tenant-level agent reminder and follow-up loops.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "auth-blocker-sentinel",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "*/15 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T17:01:05.658Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": true,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/timeline/personal-archaeology-orchestrator.mjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-personal-archaeology-orchestration.yml",
+        "runbook": "docs/operations/tnf-personal-archaeology-runbook.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tnf-master-clock-super-cycle",
+      "scope": "system_framework",
+      "category": "orchestration_gate",
+      "categoryDescription": "Network-wide orchestration gate checks and enforcement loops.",
+      "requiresApproval": true,
+      "owner": {
+        "agentId": "master-clock",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "*/15 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T17:00:27.161Z",
+        "lastExitCode": 0
+      },
+      "locked": true,
+      "staleRunWarning": true,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/protocols/synthetic-federation-gate-check.cjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/tnf-cron-governance-protocol-v0.1.md",
+        "runbook": "docs/operations/TNF_FEDERATED_DIRECTOR_ORCHESTRATION_RUNBOOK_2026-03-18.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tnf-openclaw-runtime-sync",
+      "scope": "system_framework",
+      "category": "observability",
+      "categoryDescription": "Read-only telemetry and health scan loops.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "master-clock",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "*/15 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T16:50:09.730Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": true,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/openclaw/tnf-openclaw-control.cjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-command-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tenant-orchestrator-pulse",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "categoryDescription": "Tenant-level agent reminder and follow-up loops.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "tnf-agent-director",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "*/30 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "running",
+        "lastRunAt": "2026-03-26T17:01:03.646Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": true,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/protocols/chronological-dispatch.cjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tenant-personal-archaeology-master-loop",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "categoryDescription": "Tenant-level agent reminder and follow-up loops.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "personal-archaeology-master-orchestrator",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "*/30 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T17:00:59.594Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": true,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/timeline/personal-archaeology-orchestrator.mjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-personal-archaeology-orchestration.yml",
+        "runbook": "docs/operations/tnf-personal-archaeology-runbook.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tnf-terminal-awareness-reminder",
+      "scope": "system_framework",
+      "category": "system_terminal_awareness",
+      "categoryDescription": "System-level reminders and scans that keep Director context aligned with active terminals.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "tnf-agent-director",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "*/30 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T17:01:46.794Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": true,
+      "runNow": {
+        "command": "bash",
+        "script": "scripts/verify_frontload_state.sh"
+      },
+      "docs": {
+        "protocol": "docs/TNF_SESSION_ONBOARDING.md",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tenant-continuous-qa-loop",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "categoryDescription": "Tenant-owned recurring automation jobs.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "qa-swarm-supervisor",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "0 */6 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T16:50:08.134Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": false,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/protocols/chronological-dispatch.cjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tenant-hourly-attribution-audit",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "categoryDescription": "Tenant-owned recurring automation jobs.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "analytics-and-reporting-agent",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "0 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T17:01:11.338Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": true,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/protocols/chronological-dispatch.cjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tenant-knowledge-scout-sprint",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "categoryDescription": "Tenant-owned recurring automation jobs.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "information-retrieval-agent",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "0 */4 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T16:50:09.487Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": false,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/protocols/chronological-dispatch.cjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tenant-personal-archaeology-digest",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "categoryDescription": "Tenant-owned recurring automation jobs.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "personal-archaeology-narrative-team-orchestrator",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "0 */12 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T16:50:04.578Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": false,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/timeline/personal-archaeology-orchestrator.mjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-personal-archaeology-orchestration.yml",
+        "runbook": "docs/operations/tnf-personal-archaeology-runbook.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tenant-self-improvement-loop",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "categoryDescription": "Tenant-level agent reminder and follow-up loops.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "tnf-stack-self-improvement-loop",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "0 */2 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T16:50:07.431Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": false,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/protocols/chronological-dispatch.cjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tenant-terminal-awareness-default",
+      "scope": "tenant",
+      "category": "tenant_terminal_awareness",
+      "categoryDescription": "Tenant-level terminal context reminders for user and tenant-agent workflows.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "tenant-agent-default",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "0 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T17:01:01.980Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": true,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/protocols/chronological-dispatch.cjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/tnf-cron-governance-protocol-v0.1.md",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tnf-growth-blocker-audit",
+      "scope": "system_framework",
+      "category": "self_improvement_core",
+      "categoryDescription": "Global self-improvement loops managed by platform governance.",
+      "requiresApproval": true,
+      "owner": {
+        "agentId": "tnf-growth-blocker-auditor",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "0 */4 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T20:31:40.542Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": false,
+      "runNow": {
+        "command": "node",
+        "script": ".skills/tnf-growth-blocker-auditor/scripts/run_growth_blocker_audit.cjs"
+      },
+      "docs": {
+        "protocol": "docs/operations/TNF_CORPORATE_CHAIN_OF_COMMAND_AND_ORDER_OF_OPERATIONS_MANUAL.md",
+        "runbook": "reports/protocols/growth-blocker-audit/growth-blocker-audit-latest.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tnf-self-improvement-scorecard",
+      "scope": "system_framework",
+      "category": "self_improvement_core",
+      "categoryDescription": "Global self-improvement loops managed by platform governance.",
+      "requiresApproval": true,
+      "owner": {
+        "agentId": "tnf-stack-self-improvement-loop",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "0 */6 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T16:49:57.933Z",
+        "lastExitCode": 0
+      },
+      "locked": true,
+      "staleRunWarning": false,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/validate-protocol-schemas.cjs"
+      },
+      "docs": {
+        "protocol": "docs/operations/tnf-self-improvement-cycle.md",
+        "runbook": "docs/protocols/reports/cron-governance-review-2026-03-18.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tenant-personal-archaeology-investigator-pulse",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "categoryDescription": "Tenant-level agent reminder and follow-up loops.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "personal-archaeology-source-team-orchestrator",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "15 */2 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-23T06:15:12.779Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": false,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/timeline/personal-archaeology-orchestrator.mjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-personal-archaeology-orchestration.yml",
+        "runbook": "docs/operations/tnf-personal-archaeology-runbook.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tnf-staff-review-cycle",
+      "scope": "system_framework",
+      "category": "staff_review",
+      "categoryDescription": "Periodic staff work review loops that publish improvement recommendations.",
+      "requiresApproval": true,
+      "owner": {
+        "agentId": "tnf-staff-review-agent",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "15 */2 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T20:32:29.667Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": false,
+      "runNow": {
+        "command": "node",
+        "script": ".skills/tnf-staff-review-agent/scripts/run_staff_review_cycle.cjs"
+      },
+      "docs": {
+        "protocol": "docs/operations/TNF_CORPORATE_CHAIN_OF_COMMAND_AND_ORDER_OF_OPERATIONS_MANUAL.md",
+        "runbook": "reports/protocols/staff-review/staff-review-latest.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tnf-staff-role-call-and-scheduling",
+      "scope": "system_framework",
+      "category": "staff_coordination",
+      "categoryDescription": "Corporation-wide staff role call, scheduling alignment, and lane coordination governance.",
+      "requiresApproval": true,
+      "owner": {
+        "agentId": "tnf-staff-scheduling-agent",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "*/20 * * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T20:32:29.791Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": false,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/protocols/staffops-role-call.cjs"
+      },
+      "docs": {
+        "protocol": "docs/operations/TNF_CORPORATE_CHAIN_OF_COMMAND_AND_ORDER_OF_OPERATIONS_MANUAL.md",
+        "runbook": "docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tnf-staffing-director-cycle",
+      "scope": "system_framework",
+      "category": "staff_architecture",
+      "categoryDescription": "Staffing architecture and role-gap discovery loops for StaffOps governance.",
+      "requiresApproval": true,
+      "owner": {
+        "agentId": "tnf-staffing-director-agent",
+        "userId": "super-admin"
+      },
+      "schedule": {
+        "cadence": "30 */6 * * *",
+        "timezone": "UTC",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "running",
+        "lastRunAt": "2026-03-26T20:32:29.527Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": false,
+      "runNow": {
+        "command": "node",
+        "script": ".skills/tnf-staffing-director-agent/scripts/run_staffing_director_cycle.cjs"
+      },
+      "docs": {
+        "protocol": "docs/operations/TNF_CORPORATE_CHAIN_OF_COMMAND_AND_ORDER_OF_OPERATIONS_MANUAL.md",
+        "runbook": "reports/protocols/staffing-director/staffing-director-latest.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tenant-daily-priority-plan",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "categoryDescription": "Tenant-owned recurring automation jobs.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "tnf-agent-director",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "0 9 * * *",
+        "timezone": "America/New_York",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-26T16:50:06.062Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": false,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/protocols/chronological-dispatch.cjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tenant-nightly-maintenance",
+      "scope": "tenant",
+      "category": "tenant_automation",
+      "categoryDescription": "Tenant-owned recurring automation jobs.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "tnf-agent-director",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "30 3 * * *",
+        "timezone": "America/New_York",
+        "enabled": true
+      },
+      "runtime": {
+        "status": "healthy",
+        "lastRunAt": "2026-03-23T07:30:18.707Z",
+        "lastExitCode": 0
+      },
+      "locked": false,
+      "staleRunWarning": false,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/protocols/chronological-dispatch.cjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "notes": null
+    },
+    {
+      "scheduleId": "tenant-loop-watchdog",
+      "scope": "tenant",
+      "category": "tenant_agent_loop",
+      "categoryDescription": "Tenant-level agent reminder and follow-up loops.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "auth-blocker-sentinel",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "*/15 * * * *",
+        "timezone": "UTC",
+        "enabled": false
+      },
+      "runtime": {
+        "status": "unknown",
+        "lastRunAt": null,
+        "lastExitCode": null
+      },
+      "locked": false,
+      "staleRunWarning": false,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/protocols/chronological-dispatch.cjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "notes": "Imported from legacy OpenClaw cron as disabled to preserve previous operator intent."
+    },
+    {
+      "scheduleId": "tenant-launch-validation",
+      "scope": "tenant",
+      "category": "tenant_experiment",
+      "categoryDescription": "Tenant experimentation schedules with bounded blast radius.",
+      "requiresApproval": false,
+      "owner": {
+        "agentId": "tnf-agent-director",
+        "userId": "tenant-admin"
+      },
+      "schedule": {
+        "cadence": "manual",
+        "timezone": "UTC",
+        "enabled": false
+      },
+      "runtime": {
+        "status": "unknown",
+        "lastRunAt": null,
+        "lastExitCode": null
+      },
+      "locked": false,
+      "staleRunWarning": false,
+      "runNow": {
+        "command": "node",
+        "script": "scripts/protocols/chronological-dispatch.cjs"
+      },
+      "docs": {
+        "protocol": "docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      },
+      "notes": "Imported from legacy OpenClaw one-shot launch validation jobs as manual-only until explicitly re-enabled."
+    }
+  ],
+  "interrelationships": [
+    {
+      "type": "shared-owner",
+      "from": "tenant-loop-watchdog",
+      "to": "tenant-personal-archaeology-blocker-watch",
+      "key": "auth-blocker-sentinel",
+      "reason": "Shared owner: auth-blocker-sentinel"
+    },
+    {
+      "type": "shared-owner",
+      "from": "tnf-master-clock-super-cycle",
+      "to": "tnf-openclaw-runtime-sync",
+      "key": "master-clock",
+      "reason": "Shared owner: master-clock"
+    },
+    {
+      "type": "shared-owner",
+      "from": "tenant-daily-priority-plan",
+      "to": "tenant-launch-validation",
+      "key": "tnf-agent-director",
+      "reason": "Shared owner: tnf-agent-director"
+    },
+    {
+      "type": "shared-owner",
+      "from": "tenant-daily-priority-plan",
+      "to": "tenant-nightly-maintenance",
+      "key": "tnf-agent-director",
+      "reason": "Shared owner: tnf-agent-director"
+    },
+    {
+      "type": "shared-owner",
+      "from": "tenant-daily-priority-plan",
+      "to": "tenant-orchestrator-pulse",
+      "key": "tnf-agent-director",
+      "reason": "Shared owner: tnf-agent-director"
+    },
+    {
+      "type": "shared-owner",
+      "from": "tenant-daily-priority-plan",
+      "to": "tnf-terminal-awareness-reminder",
+      "key": "tnf-agent-director",
+      "reason": "Shared owner: tnf-agent-director"
+    },
+    {
+      "type": "shared-owner",
+      "from": "tenant-launch-validation",
+      "to": "tenant-nightly-maintenance",
+      "key": "tnf-agent-director",
+      "reason": "Shared owner: tnf-agent-director"
+    },
+    {
+      "type": "shared-owner",
+      "from": "tenant-launch-validation",
+      "to": "tenant-orchestrator-pulse",
+      "key": "tnf-agent-director",
+      "reason": "Shared owner: tnf-agent-director"
+    },
+    {
+      "type": "shared-owner",
+      "from": "tenant-launch-validation",
+      "to": "tnf-terminal-awareness-reminder",
+      "key": "tnf-agent-director",
+      "reason": "Shared owner: tnf-agent-director"
+    },
+    {
+      "type": "shared-owner",
+      "from": "tenant-nightly-maintenance",
+      "to": "tenant-orchestrator-pulse",
+      "key": "tnf-agent-director",
+      "reason": "Shared owner: tnf-agent-director"
+    },
+    {
+      "type": "shared-owner",
+      "from": "tenant-nightly-maintenance",
+      "to": "tnf-terminal-awareness-reminder",
+      "key": "tnf-agent-director",
+      "reason": "Shared owner: tnf-agent-director"
+    },
+    {
+      "type": "shared-owner",
+      "from": "tenant-orchestrator-pulse",
+      "to": "tnf-terminal-awareness-reminder",
+      "key": "tnf-agent-director",
+      "reason": "Shared owner: tnf-agent-director"
+    },
+    {
+      "type": "shared-owner",
+      "from": "tenant-self-improvement-loop",
+      "to": "tnf-self-improvement-scorecard",
+      "key": "tnf-stack-self-improvement-loop",
+      "reason": "Shared owner: tnf-stack-self-improvement-loop"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-personal-archaeology-blocker-watch",
+      "to": "tenant-personal-archaeology-digest",
+      "key": "scripts/timeline/personal-archaeology-orchestrator.mjs",
+      "reason": "Shared subroutine: scripts/timeline/personal-archaeology-orchestrator.mjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-personal-archaeology-blocker-watch",
+      "to": "tenant-personal-archaeology-investigator-pulse",
+      "key": "scripts/timeline/personal-archaeology-orchestrator.mjs",
+      "reason": "Shared subroutine: scripts/timeline/personal-archaeology-orchestrator.mjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-personal-archaeology-blocker-watch",
+      "to": "tenant-personal-archaeology-master-loop",
+      "key": "scripts/timeline/personal-archaeology-orchestrator.mjs",
+      "reason": "Shared subroutine: scripts/timeline/personal-archaeology-orchestrator.mjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-personal-archaeology-digest",
+      "to": "tenant-personal-archaeology-investigator-pulse",
+      "key": "scripts/timeline/personal-archaeology-orchestrator.mjs",
+      "reason": "Shared subroutine: scripts/timeline/personal-archaeology-orchestrator.mjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-personal-archaeology-digest",
+      "to": "tenant-personal-archaeology-master-loop",
+      "key": "scripts/timeline/personal-archaeology-orchestrator.mjs",
+      "reason": "Shared subroutine: scripts/timeline/personal-archaeology-orchestrator.mjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-personal-archaeology-investigator-pulse",
+      "to": "tenant-personal-archaeology-master-loop",
+      "key": "scripts/timeline/personal-archaeology-orchestrator.mjs",
+      "reason": "Shared subroutine: scripts/timeline/personal-archaeology-orchestrator.mjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-continuous-qa-loop",
+      "to": "tenant-daily-priority-plan",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-continuous-qa-loop",
+      "to": "tenant-hourly-attribution-audit",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-continuous-qa-loop",
+      "to": "tenant-knowledge-scout-sprint",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-continuous-qa-loop",
+      "to": "tenant-launch-validation",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-continuous-qa-loop",
+      "to": "tenant-loop-watchdog",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-continuous-qa-loop",
+      "to": "tenant-nightly-maintenance",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-continuous-qa-loop",
+      "to": "tenant-orchestrator-pulse",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-continuous-qa-loop",
+      "to": "tenant-self-improvement-loop",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-continuous-qa-loop",
+      "to": "tenant-terminal-awareness-default",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-daily-priority-plan",
+      "to": "tenant-hourly-attribution-audit",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-daily-priority-plan",
+      "to": "tenant-knowledge-scout-sprint",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-daily-priority-plan",
+      "to": "tenant-launch-validation",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-daily-priority-plan",
+      "to": "tenant-loop-watchdog",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-daily-priority-plan",
+      "to": "tenant-nightly-maintenance",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-daily-priority-plan",
+      "to": "tenant-orchestrator-pulse",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-daily-priority-plan",
+      "to": "tenant-self-improvement-loop",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-daily-priority-plan",
+      "to": "tenant-terminal-awareness-default",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-hourly-attribution-audit",
+      "to": "tenant-knowledge-scout-sprint",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-hourly-attribution-audit",
+      "to": "tenant-launch-validation",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-hourly-attribution-audit",
+      "to": "tenant-loop-watchdog",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-hourly-attribution-audit",
+      "to": "tenant-nightly-maintenance",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-hourly-attribution-audit",
+      "to": "tenant-orchestrator-pulse",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-hourly-attribution-audit",
+      "to": "tenant-self-improvement-loop",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-hourly-attribution-audit",
+      "to": "tenant-terminal-awareness-default",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-knowledge-scout-sprint",
+      "to": "tenant-launch-validation",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-knowledge-scout-sprint",
+      "to": "tenant-loop-watchdog",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-knowledge-scout-sprint",
+      "to": "tenant-nightly-maintenance",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-knowledge-scout-sprint",
+      "to": "tenant-orchestrator-pulse",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-knowledge-scout-sprint",
+      "to": "tenant-self-improvement-loop",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-knowledge-scout-sprint",
+      "to": "tenant-terminal-awareness-default",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-launch-validation",
+      "to": "tenant-loop-watchdog",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-launch-validation",
+      "to": "tenant-nightly-maintenance",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-launch-validation",
+      "to": "tenant-orchestrator-pulse",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-launch-validation",
+      "to": "tenant-self-improvement-loop",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-launch-validation",
+      "to": "tenant-terminal-awareness-default",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-loop-watchdog",
+      "to": "tenant-nightly-maintenance",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-loop-watchdog",
+      "to": "tenant-orchestrator-pulse",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-loop-watchdog",
+      "to": "tenant-self-improvement-loop",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-loop-watchdog",
+      "to": "tenant-terminal-awareness-default",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-nightly-maintenance",
+      "to": "tenant-orchestrator-pulse",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-nightly-maintenance",
+      "to": "tenant-self-improvement-loop",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-nightly-maintenance",
+      "to": "tenant-terminal-awareness-default",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-orchestrator-pulse",
+      "to": "tenant-self-improvement-loop",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-orchestrator-pulse",
+      "to": "tenant-terminal-awareness-default",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-subroutine",
+      "from": "tenant-self-improvement-loop",
+      "to": "tenant-terminal-awareness-default",
+      "key": "scripts/protocols/chronological-dispatch.cjs",
+      "reason": "Shared subroutine: scripts/protocols/chronological-dispatch.cjs"
+    },
+    {
+      "type": "shared-category",
+      "from": "tnf-openclaw-runtime-sync",
+      "to": "tnf-twip-macro-board-refresh",
+      "key": "observability",
+      "reason": "Shared category: observability"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-loop-watchdog",
+      "to": "tenant-orchestrator-pulse",
+      "key": "tenant_agent_loop",
+      "reason": "Shared category: tenant_agent_loop"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-loop-watchdog",
+      "to": "tenant-personal-archaeology-blocker-watch",
+      "key": "tenant_agent_loop",
+      "reason": "Shared category: tenant_agent_loop"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-loop-watchdog",
+      "to": "tenant-personal-archaeology-investigator-pulse",
+      "key": "tenant_agent_loop",
+      "reason": "Shared category: tenant_agent_loop"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-loop-watchdog",
+      "to": "tenant-personal-archaeology-master-loop",
+      "key": "tenant_agent_loop",
+      "reason": "Shared category: tenant_agent_loop"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-loop-watchdog",
+      "to": "tenant-self-improvement-loop",
+      "key": "tenant_agent_loop",
+      "reason": "Shared category: tenant_agent_loop"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-orchestrator-pulse",
+      "to": "tenant-personal-archaeology-blocker-watch",
+      "key": "tenant_agent_loop",
+      "reason": "Shared category: tenant_agent_loop"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-orchestrator-pulse",
+      "to": "tenant-personal-archaeology-investigator-pulse",
+      "key": "tenant_agent_loop",
+      "reason": "Shared category: tenant_agent_loop"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-orchestrator-pulse",
+      "to": "tenant-personal-archaeology-master-loop",
+      "key": "tenant_agent_loop",
+      "reason": "Shared category: tenant_agent_loop"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-orchestrator-pulse",
+      "to": "tenant-self-improvement-loop",
+      "key": "tenant_agent_loop",
+      "reason": "Shared category: tenant_agent_loop"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-personal-archaeology-blocker-watch",
+      "to": "tenant-personal-archaeology-investigator-pulse",
+      "key": "tenant_agent_loop",
+      "reason": "Shared category: tenant_agent_loop"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-personal-archaeology-blocker-watch",
+      "to": "tenant-personal-archaeology-master-loop",
+      "key": "tenant_agent_loop",
+      "reason": "Shared category: tenant_agent_loop"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-personal-archaeology-blocker-watch",
+      "to": "tenant-self-improvement-loop",
+      "key": "tenant_agent_loop",
+      "reason": "Shared category: tenant_agent_loop"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-personal-archaeology-investigator-pulse",
+      "to": "tenant-personal-archaeology-master-loop",
+      "key": "tenant_agent_loop",
+      "reason": "Shared category: tenant_agent_loop"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-personal-archaeology-investigator-pulse",
+      "to": "tenant-self-improvement-loop",
+      "key": "tenant_agent_loop",
+      "reason": "Shared category: tenant_agent_loop"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-personal-archaeology-master-loop",
+      "to": "tenant-self-improvement-loop",
+      "key": "tenant_agent_loop",
+      "reason": "Shared category: tenant_agent_loop"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-continuous-qa-loop",
+      "to": "tenant-daily-priority-plan",
+      "key": "tenant_automation",
+      "reason": "Shared category: tenant_automation"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-continuous-qa-loop",
+      "to": "tenant-hourly-attribution-audit",
+      "key": "tenant_automation",
+      "reason": "Shared category: tenant_automation"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-continuous-qa-loop",
+      "to": "tenant-knowledge-scout-sprint",
+      "key": "tenant_automation",
+      "reason": "Shared category: tenant_automation"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-continuous-qa-loop",
+      "to": "tenant-nightly-maintenance",
+      "key": "tenant_automation",
+      "reason": "Shared category: tenant_automation"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-continuous-qa-loop",
+      "to": "tenant-personal-archaeology-digest",
+      "key": "tenant_automation",
+      "reason": "Shared category: tenant_automation"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-daily-priority-plan",
+      "to": "tenant-hourly-attribution-audit",
+      "key": "tenant_automation",
+      "reason": "Shared category: tenant_automation"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-daily-priority-plan",
+      "to": "tenant-knowledge-scout-sprint",
+      "key": "tenant_automation",
+      "reason": "Shared category: tenant_automation"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-daily-priority-plan",
+      "to": "tenant-nightly-maintenance",
+      "key": "tenant_automation",
+      "reason": "Shared category: tenant_automation"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-daily-priority-plan",
+      "to": "tenant-personal-archaeology-digest",
+      "key": "tenant_automation",
+      "reason": "Shared category: tenant_automation"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-hourly-attribution-audit",
+      "to": "tenant-knowledge-scout-sprint",
+      "key": "tenant_automation",
+      "reason": "Shared category: tenant_automation"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-hourly-attribution-audit",
+      "to": "tenant-nightly-maintenance",
+      "key": "tenant_automation",
+      "reason": "Shared category: tenant_automation"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-hourly-attribution-audit",
+      "to": "tenant-personal-archaeology-digest",
+      "key": "tenant_automation",
+      "reason": "Shared category: tenant_automation"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-knowledge-scout-sprint",
+      "to": "tenant-nightly-maintenance",
+      "key": "tenant_automation",
+      "reason": "Shared category: tenant_automation"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-knowledge-scout-sprint",
+      "to": "tenant-personal-archaeology-digest",
+      "key": "tenant_automation",
+      "reason": "Shared category: tenant_automation"
+    },
+    {
+      "type": "shared-category",
+      "from": "tenant-nightly-maintenance",
+      "to": "tenant-personal-archaeology-digest",
+      "key": "tenant_automation",
+      "reason": "Shared category: tenant_automation"
+    },
+    {
+      "type": "shared-category",
+      "from": "tnf-growth-blocker-audit",
+      "to": "tnf-self-improvement-scorecard",
+      "key": "self_improvement_core",
+      "reason": "Shared category: self_improvement_core"
+    }
+  ],
+  "growthLimitCandidates": [
+    {
+      "scheduleId": "tnf-twip-macro-board-refresh",
+      "reason": "stale-run-window",
+      "enabled": true,
+      "locked": false,
+      "runtimeStatus": "healthy"
+    },
+    {
+      "scheduleId": "tenant-personal-archaeology-blocker-watch",
+      "reason": "stale-run-window",
+      "enabled": true,
+      "locked": false,
+      "runtimeStatus": "healthy"
+    },
+    {
+      "scheduleId": "tnf-master-clock-super-cycle",
+      "reason": "stale-run-window",
+      "enabled": true,
+      "locked": true,
+      "runtimeStatus": "healthy"
+    },
+    {
+      "scheduleId": "tnf-openclaw-runtime-sync",
+      "reason": "stale-run-window",
+      "enabled": true,
+      "locked": false,
+      "runtimeStatus": "healthy"
+    },
+    {
+      "scheduleId": "tenant-orchestrator-pulse",
+      "reason": "stale-run-window",
+      "enabled": true,
+      "locked": false,
+      "runtimeStatus": "running"
+    },
+    {
+      "scheduleId": "tenant-personal-archaeology-master-loop",
+      "reason": "stale-run-window",
+      "enabled": true,
+      "locked": false,
+      "runtimeStatus": "healthy"
+    },
+    {
+      "scheduleId": "tnf-terminal-awareness-reminder",
+      "reason": "stale-run-window",
+      "enabled": true,
+      "locked": false,
+      "runtimeStatus": "healthy"
+    },
+    {
+      "scheduleId": "tenant-hourly-attribution-audit",
+      "reason": "stale-run-window",
+      "enabled": true,
+      "locked": false,
+      "runtimeStatus": "healthy"
+    },
+    {
+      "scheduleId": "tenant-terminal-awareness-default",
+      "reason": "stale-run-window",
+      "enabled": true,
+      "locked": false,
+      "runtimeStatus": "healthy"
+    },
+    {
+      "scheduleId": "tnf-self-improvement-scorecard",
+      "reason": "system-lock-review",
+      "enabled": true,
+      "locked": true,
+      "runtimeStatus": "healthy"
+    },
+    {
+      "scheduleId": "tenant-loop-watchdog",
+      "reason": "disabled-schedule",
+      "enabled": false,
+      "locked": false,
+      "runtimeStatus": "unknown"
+    },
+    {
+      "scheduleId": "tenant-launch-validation",
+      "reason": "disabled-schedule",
+      "enabled": false,
+      "locked": false,
+      "runtimeStatus": "unknown"
+    }
+  ]
+}

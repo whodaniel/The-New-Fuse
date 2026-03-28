@@ -20,6 +20,21 @@ else
   echo ">>> ANTHROPIC_OAUTH_ACCESS_TOKEN is unset" >&2
 fi
 
+ENV_CONTEXT="$(printf '%s' "${OPENCLAW_ENVIRONMENT:-${ENVIRONMENT:-${NODE_ENV:-${RAILWAY_ENVIRONMENT:-unknown}}}}" | tr '[:upper:]' '[:lower:]')"
+case "${ENV_CONTEXT}" in
+  local|localhost|devlocal|development|dev|test)
+    IS_LOCAL_ENV=1
+    ;;
+  *)
+    IS_LOCAL_ENV=0
+    ;;
+esac
+
+if [ "${IS_LOCAL_ENV}" -eq 0 ] && [ -z "${OPENCLAW_GATEWAY_TOKEN:-}" ]; then
+  echo ">>> FATAL: OPENCLAW_GATEWAY_TOKEN is required in non-local environment (${ENV_CONTEXT})" >&2
+  exit 1
+fi
+
 # Seed runtime config from image defaults if missing.
 mkdir -p "$(dirname "${CONFIG_PATH}")" "$(dirname "${AUTH_PROFILES_PATH}")"
 if [ ! -f "${CONFIG_PATH}" ] && [ -f "${ROOT_CONFIG_PATH}" ]; then
@@ -68,6 +83,9 @@ node -e "
       if (!cfg.gateway) cfg.gateway = {};
       cfg.gateway.mode = process.env.OPENCLAW_GATEWAY_MODE || 'local';
       // Don't set bind in config - let CLI flag handle it (proxy.js passes --bind all)
+      if (Object.prototype.hasOwnProperty.call(cfg.gateway, 'bind')) {
+        delete cfg.gateway.bind;
+      }
 
       // Kilo API Key
       if (process.env.KILO_API_KEY) {
@@ -87,8 +105,8 @@ node -e "
         if (!cfg.agents.defaults) cfg.agents.defaults = {};
         if (!cfg.agents.defaults.model) cfg.agents.defaults.model = {};
 
-        const primaryModel = process.env.OPENCLAW_MODEL_PRIMARY || 'copilot-proxy/gpt-5.2-codex';
-        const fallbackModels = (process.env.OPENCLAW_MODEL_FALLBACKS || 'copilot-proxy/gpt-5.1-codex,copilot-proxy/gpt-5-mini')
+        const primaryModel = process.env.OPENCLAW_MODEL_PRIMARY || 'openai-codex/gpt-5.2-codex';
+        const fallbackModels = (process.env.OPENCLAW_MODEL_FALLBACKS || 'openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini')
           .split(',')
           .map((m) => m.trim())
           .filter(Boolean);
@@ -122,15 +140,20 @@ node -e "
         console.error('Configured Discord channel');
       }
 
-      // Telegram Channel
-      if (process.env.OPENCLAW_CHANNELS_TELEGRAM_TOKEN || process.env.OPENCLAW_CHANNELS_TELEGRAM_BOT_TOKEN) {
-        if (!cfg.channels) cfg.channels = {};
-        if (!cfg.channels.telegram) cfg.channels.telegram = {};
-        cfg.channels.telegram.enabled = true;
-        cfg.channels.telegram.token = process.env.OPENCLAW_CHANNELS_TELEGRAM_TOKEN || process.env.OPENCLAW_CHANNELS_TELEGRAM_BOT_TOKEN;
-        cfg.channels.telegram.groupPolicy = process.env.OPENCLAW_CHANNELS_TELEGRAM_POLICY || 'allowlist';
-        if (!cfg.channels.telegram.dm) cfg.channels.telegram.dm = { policy: 'pairing' };
-        console.error('Configured Telegram channel');
+      // Telegram compatibility cleanup:
+      // newer OpenClaw schema rejects legacy keys used in older bootstrap scripts.
+      if (cfg.channels && cfg.channels.telegram) {
+        const validPolicies = new Set(['open', 'disabled', 'allowlist']);
+        if (!validPolicies.has(cfg.channels.telegram.groupPolicy)) {
+          cfg.channels.telegram.groupPolicy = 'allowlist';
+        }
+        if (Object.prototype.hasOwnProperty.call(cfg.channels.telegram, 'token')) {
+          delete cfg.channels.telegram.token;
+        }
+        if (Object.prototype.hasOwnProperty.call(cfg.channels.telegram, 'dm')) {
+          delete cfg.channels.telegram.dm;
+        }
+        console.error('Sanitized Telegram channel config for current OpenClaw schema');
       }
 
       fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2));
@@ -356,7 +379,11 @@ GATEWAY_PORT="${PORT:-8080}"
 
 echo ">>> VERIFYING AUTH FILE..." >&2
 ls -la "${AUTH_PROFILES_PATH}" || echo "AUTH FILE NOT FOUND" >&2
-cat "${AUTH_PROFILES_PATH}" || echo "CANNOT READ AUTH FILE" >&2
+if [ -r "${AUTH_PROFILES_PATH}" ]; then
+  echo ">>> AUTH FILE READABLE (contents redacted)" >&2
+else
+  echo ">>> CANNOT READ AUTH FILE" >&2
+fi
 
 echo "Starting OpenClaw gateway on bind=all port=${GATEWAY_PORT}..." >&2
 export OPENCLAW_CONFIG_PATH="${CONFIG_PATH}"

@@ -1001,8 +1001,11 @@ class SimpleChatBridge {
         bubbles: true,
         cancelable: true,
       };
+
       input.dispatchEvent(new KeyboardEvent('keydown', enterKeyInit));
+      await this.delay(50); // Small delay between key events
       input.dispatchEvent(new KeyboardEvent('keypress', enterKeyInit));
+      await this.delay(50);
       input.dispatchEvent(new KeyboardEvent('keyup', enterKeyInit));
       console.log('[SimpleChatBridge] Dispatched Enter key sequence on input');
 
@@ -1016,10 +1019,10 @@ class SimpleChatBridge {
       }
 
       // Wait and check if it worked - INCREASED DELAY to prevent double-sending
-      await this.delay(500);
+      await this.delay(1000);
 
-      const wasCleared = inputWasCleared();
-      const isNowStreaming = this.isStreaming();
+      let wasCleared = inputWasCleared();
+      let isNowStreaming = this.isStreaming();
 
       if (wasCleared || isNowStreaming) {
         console.log('[SimpleChatBridge] Message sent via Enter key', {
@@ -1032,11 +1035,18 @@ class SimpleChatBridge {
 
       // Method 2: Direct button click (if Enter didn't work)
       if (sendButton) {
+        // Focus button first to simulate real click
+        sendButton.focus();
+        await this.delay(100);
         sendButton.click();
         console.log('[SimpleChatBridge] Clicked send button directly');
         // Check again with increased delay
-        await this.delay(500);
-        if (inputWasCleared() || this.isStreaming()) {
+        await this.delay(1000);
+
+        wasCleared = inputWasCleared();
+        isNowStreaming = this.isStreaming();
+
+        if (wasCleared || isNowStreaming) {
           console.log('[SimpleChatBridge] Message sent via button click');
           this.startWatchingForResponse(responsesBefore);
           return true;
@@ -1045,16 +1055,20 @@ class SimpleChatBridge {
 
       // Method 3: Dispatch synthetic MouseEvent on button
       if (sendButton) {
-        sendButton.dispatchEvent(
-          new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window,
-          })
-        );
-        console.log('[SimpleChatBridge] Dispatched MouseEvent click on button');
-        await this.delay(150);
-        if (inputWasCleared()) {
+        const mouseEventInit = {
+          bubbles: true,
+          cancelable: true,
+          view: window,
+          buttons: 1,
+        };
+        sendButton.dispatchEvent(new MouseEvent('mousedown', mouseEventInit));
+        await this.delay(50);
+        sendButton.dispatchEvent(new MouseEvent('mouseup', mouseEventInit));
+        sendButton.dispatchEvent(new MouseEvent('click', mouseEventInit));
+
+        console.log('[SimpleChatBridge] Dispatched MouseEvent click sequence on button');
+        await this.delay(500);
+        if (inputWasCleared() || this.isStreaming()) {
           console.log('[SimpleChatBridge] Message sent via MouseEvent');
           this.startWatchingForResponse(responsesBefore);
           return true;

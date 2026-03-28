@@ -1,0 +1,7 @@
+{
+  "schemaVersion": "tnf-staffops-llm-provider-test-results/v1",
+  "visibility": "staffops-only",
+  "generatedAt": "2026-03-26T00:00:00Z",
+  "generatedBy": "tnf-staffops-provider-test-harness-01",
+  "records": []
+}

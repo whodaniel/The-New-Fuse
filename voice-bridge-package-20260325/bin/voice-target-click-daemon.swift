@@ -4,7 +4,64 @@ import AppKit
 import ApplicationServices
 import Foundation
 
-let targetPath = NSString(string: "~/.openclaw/voice_target.json").expandingTildeInPath
+let env = ProcessInfo.processInfo.environment
+
+func normalizeProfile(_ raw: String) -> String {
+    let lower = raw.lowercased()
+    let allowed = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_-")
+    let cleanedScalars = lower.unicodeScalars.map { allowed.contains($0) ? Character($0) : "_" }
+    let cleaned = String(cleanedScalars).trimmingCharacters(in: CharacterSet(charactersIn: "_"))
+    return cleaned.isEmpty ? "main" : cleaned
+}
+
+func profileSuffix(_ profile: String) -> String {
+    switch profile {
+    case "main", "default", "primary":
+        return ""
+    default:
+        return "_\(profile)"
+    }
+}
+
+func stateFileName(_ name: String, profile: String) -> String {
+    let suffix = profileSuffix(profile)
+    if suffix.isEmpty {
+        return name
+    }
+    if let dot = name.lastIndex(of: ".") {
+        let stem = name[..<dot]
+        let ext = name[dot...]
+        return "\(stem)\(suffix)\(ext)"
+    }
+    return "\(name)\(suffix)"
+}
+
+func resolveStateDir() -> String {
+    if let explicit = env["VOICEBRIDGE_STATE_DIR"], !explicit.isEmpty {
+        return NSString(string: explicit).expandingTildeInPath
+    }
+
+    let candidates = [
+        "~/The-New-Fuse/.voicebridge",
+        "~/Desktop/The-New-Fuse/.voicebridge",
+        "~/Projects/The-New-Fuse/.voicebridge",
+    ].map { NSString(string: $0).expandingTildeInPath }
+
+    for candidate in candidates {
+        let parent = NSString(string: candidate).deletingLastPathComponent
+        if FileManager.default.fileExists(atPath: parent) {
+            return candidate
+        }
+    }
+
+    return NSString(string: "~/.local/share/The-New-Fuse/.voicebridge").expandingTildeInPath
+}
+
+let profile = normalizeProfile(env["VOICEBRIDGE_PROFILE"] ?? "main")
+let stateDirPath = resolveStateDir()
+let targetFile = stateFileName("voice_target.json", profile: profile)
+let targetPath = URL(fileURLWithPath: stateDirPath).appendingPathComponent(targetFile).path
+let legacyTargetPath = NSString(string: "~/.openclaw/voice_target.json").expandingTildeInPath
 let cliclickPath = "/usr/local/bin/cliclick"
 let comboLabel = "Cmd+Option+Click"
 
@@ -48,15 +105,37 @@ func frontmostAppInfo() -> (String, String) {
     return (name, bundleId)
 }
 
-func writePointTarget(x: Int, y: Int, appName: String, bundleId: String) {
+func isTerminalLike(appName: String, bundleId: String) -> Bool {
+    let lowerName = appName.lowercased()
+    let lowerBundle = bundleId.lowercased()
+    return lowerName.contains("terminal") || lowerName.contains("iterm") || lowerBundle.contains("terminal") || lowerBundle.contains("iterm")
+}
+
+func frontmostTerminalTTY() -> String {
+    let script = """
+    tell application "Terminal"
+        try
+            return tty of selected tab of front window
+        end try
+    end tell
+    return ""
+    """
+    guard let raw = shellOutput("/usr/bin/osascript", ["-e", script]), !raw.isEmpty else {
+        return ""
+    }
+    if raw.hasPrefix("/dev/") {
+        return String(raw.dropFirst(5))
+    }
+    return raw
+}
+
+func writePointTarget(x: Int, y: Int, appName: String, bundleId: String, tty: String) {
     let parent = URL(fileURLWithPath: targetPath).deletingLastPathComponent()
     try? FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true)
 
-    let lowerName = appName.lowercased()
-    let lowerBundle = bundleId.lowercased()
-    let pressEnter = lowerName.contains("terminal") || lowerName.contains("iterm") || lowerBundle.contains("terminal") || lowerBundle.contains("iterm")
+    let pressEnter = isTerminalLike(appName: appName, bundleId: bundleId)
 
-    let payload: [String: Any] = [
+    var payload: [String: Any] = [
         "kind": "point",
         "x": x,
         "y": y,
@@ -65,13 +144,20 @@ func writePointTarget(x: Int, y: Int, appName: String, bundleId: String) {
         "press_enter": pressEnter,
         "updated_at": Int(Date().timeIntervalSince1970),
     ]
+    if !tty.isEmpty {
+        payload["tty"] = tty
+    }
 
     do {
         let data = try JSONSerialization.data(withJSONObject: payload, options: [.prettyPrinted])
         try data.write(to: URL(fileURLWithPath: targetPath), options: .atomic)
         let appLabel = appName.isEmpty ? "unknown-app" : appName
         let enterMode = pressEnter ? "ON" : "OFF"
-        print("🎯 Anchor set: \(x),\(y) in \(appLabel) (Enter: \(enterMode))")
+        if !tty.isEmpty {
+            print("🎯 Anchor set: \(x),\(y) in \(appLabel) (tty: \(tty), Enter: \(enterMode))")
+        } else {
+            print("🎯 Anchor set: \(x),\(y) in \(appLabel) (Enter: \(enterMode))")
+        }
         fflush(stdout)
     } catch {
         print("❌ Failed writing target file: \(error)")
@@ -86,6 +172,14 @@ func hasAnchorModifiers(_ flags: CGEventFlags) -> Bool {
 if !FileManager.default.fileExists(atPath: cliclickPath) {
     fputs("❌ Missing dependency: \(cliclickPath)\n", stderr)
     exit(1)
+}
+
+if profileSuffix(profile).isEmpty &&
+    !FileManager.default.fileExists(atPath: targetPath) &&
+    FileManager.default.fileExists(atPath: legacyTargetPath) {
+    let parent = URL(fileURLWithPath: targetPath).deletingLastPathComponent()
+    try? FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true)
+    try? FileManager.default.copyItem(atPath: legacyTargetPath, toPath: targetPath)
 }
 
 let trusted = AXIsProcessTrusted()
@@ -110,7 +204,8 @@ let callback: CGEventTapCallBack = { _, type, event, _ in
     }
 
     let (name, bundleId) = frontmostAppInfo()
-    writePointTarget(x: x, y: y, appName: name, bundleId: bundleId)
+    let tty = isTerminalLike(appName: name, bundleId: bundleId) ? frontmostTerminalTTY() : ""
+    writePointTarget(x: x, y: y, appName: name, bundleId: bundleId, tty: tty)
     return Unmanaged.passUnretained(event)
 }
 
@@ -135,7 +230,7 @@ guard let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0) el
 CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes)
 CGEvent.tapEnable(tap: tap, enable: true)
 
-print("🖱️ Voice click anchor daemon active.")
+print("🖱️ Voice click anchor daemon active (profile: \(profile)).")
 print("Hold \(comboLabel) anywhere to set transcription destination.")
 print("Target file: \(targetPath)")
 fflush(stdout)

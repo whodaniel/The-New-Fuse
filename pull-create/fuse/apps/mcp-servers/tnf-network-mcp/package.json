@@ -12,7 +12,8 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
     "@the-new-fuse/tnf-cli": "workspace:*",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "@the-new-fuse/infrastructure": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.11.16",

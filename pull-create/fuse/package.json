@@ -295,7 +295,8 @@
     "tsx": "^4.20.3",
     "url-parse": "^1.5.10",
     "vitest": "^4.0.17",
-    "ws": "^8.18.3"
+    "ws": "^8.18.3",
+    "@the-new-fuse/infrastructure": "workspace:*"
   },
   "workspaces": [
     "apps/*",

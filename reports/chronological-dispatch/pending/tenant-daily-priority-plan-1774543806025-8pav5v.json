@@ -1,0 +1,31 @@
+{
+  "targetQueue": "tnf:master:tasks:planning",
+  "queueItem": {
+    "id": "tenant-daily-priority-plan-1774543806025-8pav5v",
+    "title": "Daily Priority Plan",
+    "description": "Create the daily priority plan from PROJECTS.md: top 3 priorities, top blocker, and first executable step. Keep output concise and actionable. Enforce privacy gates for private projects.",
+    "priority": "high",
+    "status": "queued",
+    "votes": {
+      "up": 0,
+      "down": 0
+    },
+    "source": "chronological-dispatch",
+    "processId": "tenant-daily-priority-plan",
+    "kind": "agent-turn",
+    "createdAt": "2026-03-26T16:50:06.025Z",
+    "itinerary": {
+      "lane": "directive",
+      "horizon": "short_term",
+      "coordinationMode": "brokered",
+      "signalSources": ["redis", "master-clock"],
+      "clockSource": "master-clock"
+    },
+    "metadata": {
+      "scheduledProcessId": "tenant-daily-priority-plan",
+      "dispatchSource": "master-clock",
+      "importedFromLegacyCron": true
+    }
+  },
+  "createdAt": "2026-03-26T16:50:06.029Z"
+}

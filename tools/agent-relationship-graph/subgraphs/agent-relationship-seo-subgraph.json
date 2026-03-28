@@ -64,7 +64,7 @@
       "target": "content-writer-agent",
       "type": "depends_on",
       "strength": 0.58,
-      "origin": "registry"
+      "origin": "seed"
     },
     {
       "source": "content-calendar-agent",
@@ -78,7 +78,7 @@
       "target": "seo-optimizer-agent",
       "type": "fallback",
       "strength": 0.68,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -86,7 +86,7 @@
       "target": "technical-seo-auditor-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -102,7 +102,7 @@
       "target": "keyword-research-agent",
       "type": "fallback",
       "strength": 0.68,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -110,7 +110,7 @@
       "target": "yt-seo-optimizer-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -118,21 +118,21 @@
       "target": "link-building-agent",
       "type": "depends_on",
       "strength": 0.73,
-      "origin": "registry"
+      "origin": "seed"
     },
     {
       "source": "content-writer-agent",
       "target": "seo-optimizer-agent",
       "type": "depends_on",
       "strength": 0.77,
-      "origin": "registry"
+      "origin": "seed"
     },
     {
       "source": "content-writer-agent",
       "target": "seo-optimizer-agent",
       "type": "feeds",
       "strength": 0.91,
-      "origin": "chain"
+      "origin": "seed"
     },
     {
       "source": "content-writer-agent",
@@ -153,7 +153,7 @@
       "target": "link-building-agent",
       "type": "fallback",
       "strength": 0.68,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -161,7 +161,7 @@
       "target": "seo-optimizer-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -169,7 +169,7 @@
       "target": "content-refresh-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -177,14 +177,14 @@
       "target": "content-calendar-orchestrator-agent",
       "type": "delegates",
       "strength": 0.86,
-      "origin": "scaffold"
+      "origin": "seed"
     },
     {
       "source": "orchestrator-agent",
       "target": "content-calendar-orchestrator-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -199,7 +199,7 @@
       "target": "content-calendar-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -207,7 +207,7 @@
       "target": "technical-seo-auditor-agent",
       "type": "depends_on",
       "strength": 0.79,
-      "origin": "chain"
+      "origin": "seed"
     },
     {
       "source": "seo-optimizer-agent",
@@ -242,7 +242,7 @@
       "target": "keyword-research-agent",
       "type": "delegates",
       "strength": 0.82,
-      "origin": "scaffold"
+      "origin": "seed"
     },
     {
       "source": "task-agent-router",
@@ -277,7 +277,23 @@
       "target": "link-building-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "technical-seo-auditor-agent",
+      "target": "yt-seo-optimizer-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "yt-seo-optimizer-agent",
+      "target": "link-building-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     }
   ]

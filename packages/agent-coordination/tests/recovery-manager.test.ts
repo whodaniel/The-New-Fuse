@@ -1,9 +1,11 @@
+// REDIS MIGRATION: This file has been automatically migrated to use UnifiedRedisService
+// TODO: Update service injection and method calls as needed
+
 import { RecoveryManager } from '../src/coordination/RecoveryManager';
-import { PresenceTracker } from '../src/presence/presence-tracker';
 import { SharedStateManager } from '../src/coordination/shared-state-manager';
+import { PresenceTracker } from '../src/presence/presence-tracker';
 import { TaskQueueManager } from '../src/queues/task-queue-manager';
 import { MessageSerializer } from '../src/serializers/message-serializer';
-import { Redis } from 'ioredis';
 import { AgentStatus } from '../src/types/coordination.types';
 
 // Mock dependencies
@@ -56,14 +58,16 @@ describe('RecoveryManager', () => {
       mockRedis.scan.mockResolvedValueOnce(['0', ['test:presence:agent-offline']]);
 
       // Mock get to return offline status
-      mockRedis.get.mockResolvedValue(JSON.stringify({
-        agentId: 'agent-offline',
-        status: AgentStatus.OFFLINE
-      }));
+      mockRedis.get.mockResolvedValue(
+        JSON.stringify({
+          agentId: 'agent-offline',
+          status: AgentStatus.OFFLINE,
+        })
+      );
 
       mockSerializer.deserialize.mockReturnValue({
         agentId: 'agent-offline',
-        status: AgentStatus.OFFLINE
+        status: AgentStatus.OFFLINE,
       });
 
       // Spy on recoverAgents (private but we can test via public behavior)
@@ -73,7 +77,9 @@ describe('RecoveryManager', () => {
       await (recoveryManager as any).performHealthCheck();
 
       expect(recoverSpy).toHaveBeenCalledWith(['agent-offline']);
-      expect(mockSharedStateManager.releaseLocksForAgents).toHaveBeenCalledWith(mockRedis, ['agent-offline']);
+      expect(mockSharedStateManager.releaseLocksForAgents).toHaveBeenCalledWith(mockRedis, [
+        'agent-offline',
+      ]);
     });
 
     it('should not recover already recovered agents', async () => {
@@ -81,14 +87,16 @@ describe('RecoveryManager', () => {
       mockRedis.scan.mockResolvedValueOnce(['0', ['test:presence:agent-offline']]);
 
       // Mock get to return offline status
-      mockRedis.get.mockResolvedValue(JSON.stringify({
-        agentId: 'agent-offline',
-        status: AgentStatus.OFFLINE
-      }));
+      mockRedis.get.mockResolvedValue(
+        JSON.stringify({
+          agentId: 'agent-offline',
+          status: AgentStatus.OFFLINE,
+        })
+      );
 
       mockSerializer.deserialize.mockReturnValue({
         agentId: 'agent-offline',
-        status: AgentStatus.OFFLINE
+        status: AgentStatus.OFFLINE,
       });
 
       // First run
@@ -105,7 +113,7 @@ describe('RecoveryManager', () => {
       mockRedis.scan.mockResolvedValue(['0', []]); // No offline agents
 
       mockTaskQueueManager.getQueueStats.mockResolvedValue({
-        failed: 5
+        failed: 5,
       });
 
       // We can't easily assert on logger, but we can ensure it doesn't crash

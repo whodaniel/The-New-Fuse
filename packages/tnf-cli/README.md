@@ -81,6 +81,86 @@ tnf openclaw status
 tnf claw channels login
 tnf scripts list
 tnf scripts run <target> [args...]
+tnf voice up --profile main
+tnf voice down --profile main
+tnf voice relay --from a --to b
+tnf voice start --profile main
+tnf voice listen --profile main
+tnf voice activate --profile main
+tnf voice status --profile main
+tnf voice protocol status --from a --to b
+```
+
+### Voice Bridge quickstart
+
+```bash
+# One command (voice runtime only)
+tnf voice up --profile a
+
+# Add local listen sidecar too
+tnf voice up --profile a --with-listen
+
+# Stop both cleanly
+tnf voice down --profile a
+
+# Relay user transcribed input from profile a to profile b
+tnf voice relay --from a --to b
+
+# Relay both directions
+tnf voice relay --from a --to b --bidirectional
+
+# By default, relay auto-isolates the pair by stopping stray "main" runtime workers.
+# Use --keep-main only if you intentionally want main running at the same time.
+tnf voice relay --from a --to b --bidirectional --keep-main
+
+# Optional fail-fast (errors if either endpoint is not live at startup)
+tnf voice relay --from a --to b --bidirectional --require-live
+
+# Keep relay actively polled and auto-healed with heartbeat
+tnf voice relay --from a --to b --bidirectional --require-live --heartbeat-ms 5000
+
+# Disable heartbeat auto-heal if you only want passive health polling
+tnf voice relay --from a --to b --bidirectional --heartbeat-ms 5000 --no-heartbeat-heal
+
+# Heartbeat/control traffic is non-vocalized by default in the profile watchers
+# (only conversational A2A payloads are spoken).
+
+# One-shot protocol health snapshot (relay, watchers, last tx/rx)
+tnf voice protocol status --from a --to b
+
+# Continuous protocol watch loop with optional auto-heal pulse
+tnf voice protocol watch --from a --to b --interval-ms 5000
+```
+
+Useful controls:
+
+```bash
+tnf voice target here --profile a
+tnf voice target pick --profile a --delay 3
+tnf voice target show --profile a
+tnf voice target clear --profile a
+tnf voice mic toggle --profile a
+tnf voice response-audio toggle --profile a
+tnf voice response-audio status --profile a
+```
+
+Profile notes:
+
+```bash
+# Default profile is "main" (port 50005)
+tnf voice status --profile main
+
+# Non-default profiles use deterministic ports; you can override if needed
+tnf voice status --profile b
+tnf voice status --profile b --port 50123
+```
+
+Protocol notes:
+
+```bash
+# Heartbeat is protocol-level only; it is not spoken into A2A audio by default.
+# To preserve clean prompts, A2A control/heartbeat lines are audio-only and
+# not injected as terminal text.
 ```
 
 ### Existing direct commands (still supported)

@@ -11,7 +11,7 @@ UNWIND [
   {id:"affiliate-link-manager-agent",kind:"primary",cluster:"funnel"},
   {id:"audio-recording-agent",kind:"sub",cluster:"funnel"},
   {id:"code-fossil-investigator",kind:"sub",cluster:"funnel"},
-  {id:"cognitive-bias-optimizer-agent",kind:"primary",cluster:"funnel"},
+  {id:"cognitive-bias-optimizer-agent",kind:"sub",cluster:"funnel"},
   {id:"cro-process-agent",kind:"primary",cluster:"funnel"},
   {id:"customer-journey-map-agent",kind:"sub",cluster:"funnel"},
   {id:"ecom-platform-manager-agent",kind:"sub",cluster:"funnel"},
@@ -19,26 +19,27 @@ UNWIND [
   {id:"ethical-bias-auditor-agent",kind:"sub",cluster:"funnel"},
   {id:"funnel-economics-analyst-agent",kind:"sub",cluster:"funnel"},
   {id:"information-retrieval-agent",kind:"sub",cluster:"funnel"},
-  {id:"lead-capture-agent",kind:"sub",cluster:"funnel"},
-  {id:"lead-magnet-funnel-agent",kind:"sub",cluster:"funnel"},
+  {id:"lead-capture-agent",kind:"primary",cluster:"funnel"},
+  {id:"lead-magnet-funnel-agent",kind:"primary",cluster:"funnel"},
   {id:"master-of-taxonomies",kind:"sub",cluster:"funnel"},
-  {id:"monetization-strategy-agent",kind:"sub",cluster:"funnel"},
+  {id:"monetization-strategy-agent",kind:"primary",cluster:"funnel"},
   {id:"niche-analyst-agent",kind:"sub",cluster:"funnel"},
   {id:"oto-sequence-architect-agent",kind:"sub",cluster:"funnel"},
-  {id:"personalized-content-recommendation-agent",kind:"sub",cluster:"funnel"},
-  {id:"sales-funnel-architect-agent",kind:"primary",cluster:"funnel"},
+  {id:"personalized-content-recommendation-agent",kind:"primary",cluster:"funnel"},
+  {id:"sales-funnel-architect-agent",kind:"sub",cluster:"funnel"},
   {id:"value-ladder-architect-agent",kind:"primary",cluster:"funnel"},
-  {id:"visual-asset-creator-agent",kind:"primary",cluster:"funnel"}
+  {id:"visual-asset-creator-agent",kind:"sub",cluster:"funnel"}
 ] AS row
 MERGE (a:Agent {id: row.id})
 SET a.kind = row.kind,
     a.cluster = row.cluster,
-    a.updatedAt = datetime('2026-03-26T06:38:20Z');
+    a.updatedAt = datetime('2026-03-26T09:23:34Z');
 
 UNWIND [
   {s:"ab-testing-optimizer-agent",t:"analytics-and-reporting-agent",rel:"DEPENDS_ON",strength:0.89,risk:""},
   {s:"ab-testing-optimizer-agent",t:"analytics-and-reporting-agent",rel:"MEASURED_BY",strength:0.89,risk:""},
   {s:"ab-testing-optimizer-agent",t:"cognitive-bias-optimizer-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
+  {s:"ab-testing-optimizer-agent",t:"lead-magnet-funnel-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"affiliate-link-manager-agent",t:"ab-testing-optimizer-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"analytics-and-reporting-agent",t:"ethical-bias-auditor-agent",rel:"DEPENDS_ON",strength:0.68,risk:""},
   {s:"cognitive-bias-optimizer-agent",t:"analytics-and-reporting-agent",rel:"DEPENDS_ON",strength:0.82,risk:""},
@@ -58,10 +59,14 @@ UNWIND [
   {s:"funnel-economics-analyst-agent",t:"lead-capture-agent",rel:"FALLBACK",strength:0.56,risk:"capability_overlap"},
   {s:"funnel-economics-analyst-agent",t:"oto-sequence-architect-agent",rel:"FALLBACK",strength:0.58,risk:"capability_overlap"},
   {s:"lead-capture-agent",t:"lead-magnet-funnel-agent",rel:"FALLBACK",strength:0.64,risk:"capability_overlap"},
+  {s:"lead-capture-agent",t:"niche-analyst-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"lead-capture-agent",t:"oto-sequence-architect-agent",rel:"FALLBACK",strength:0.56,risk:"capability_overlap"},
   {s:"lead-magnet-funnel-agent",t:"personalized-content-recommendation-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
+  {s:"monetization-strategy-agent",t:"lead-capture-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
+  {s:"niche-analyst-agent",t:"code-fossil-investigator",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"orchestrator-agent",t:"task-agent-router",rel:"DELEGATES",strength:0.98,risk:""},
   {s:"oto-sequence-architect-agent",t:"value-ladder-architect-agent",rel:"FALLBACK",strength:0.84,risk:"capability_overlap"},
+  {s:"personalized-content-recommendation-agent",t:"monetization-strategy-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"sales-funnel-architect-agent",t:"lead-magnet-funnel-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"sales-funnel-architect-agent",t:"value-ladder-architect-agent",rel:"FALLBACK",strength:0.62,risk:"capability_overlap"},
   {s:"task-agent-router",t:"analytics-and-reporting-agent",rel:"DELEGATES",strength:0.82,risk:""},

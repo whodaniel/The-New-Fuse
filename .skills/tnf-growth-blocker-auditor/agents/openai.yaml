@@ -1,0 +1,4 @@
+interface:
+  display_name: "TNF Growth Blocker Auditor"
+  short_description: "Audit TNF schedules for blocker drift"
+  default_prompt: "Run a growth blocker audit and return prioritized remediation actions for coordination, policy, and attribution gaps."

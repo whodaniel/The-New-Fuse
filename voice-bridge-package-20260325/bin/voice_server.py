@@ -2,19 +2,151 @@ from flask import Flask, request
 import json
 import os
 import re
+import signal
 import subprocess
 import sys
 import threading
 import time
 import urllib.error
 import urllib.request
+import glob
 
 app = Flask(__name__)
 
-STREAM_FILE = os.path.expanduser("~/.openclaw/voice_stream.txt")
-MIC_PAUSE_FILE = os.path.expanduser("~/.openclaw/voice_mic_paused")
-STREAM_WATCH_LOG = "/tmp/stream_watch.log"
+def normalize_profile(raw: str | None) -> str:
+    profile = (raw or "main").strip().lower()
+    profile = re.sub(r"[^a-z0-9_-]+", "_", profile).strip("_")
+    return profile or "main"
+
+
+def profile_from_argv(default: str) -> str:
+    args = sys.argv[1:]
+    i = 0
+    while i < len(args):
+        token = args[i]
+        if token == "--profile":
+            if i + 1 < len(args):
+                return args[i + 1]
+            return default
+        if token.startswith("--profile="):
+            return token.split("=", 1)[1]
+        i += 1
+    return default
+
+
+def port_from_argv(default: int) -> int:
+    args = sys.argv[1:]
+    i = 0
+    while i < len(args):
+        token = args[i]
+        candidate = None
+        if token == "--port":
+            if i + 1 < len(args):
+                candidate = args[i + 1]
+        elif token.startswith("--port="):
+            candidate = token.split("=", 1)[1]
+
+        if candidate is not None:
+            try:
+                return int(candidate)
+            except Exception:
+                return default
+        i += 1
+    return default
+
+
+def is_default_profile(profile: str) -> bool:
+    return profile in {"main", "default", "primary"}
+
+
+def profile_suffix(profile: str) -> str:
+    return "" if is_default_profile(profile) else f"_{profile}"
+
+
+VOICEBRIDGE_PROFILE = normalize_profile(
+    profile_from_argv(os.environ.get("VOICEBRIDGE_PROFILE", "main"))
+)
+os.environ["VOICEBRIDGE_PROFILE"] = VOICEBRIDGE_PROFILE
+PROFILE_SUFFIX = profile_suffix(VOICEBRIDGE_PROFILE)
+
+default_port = int(os.environ.get("VOICEBRIDGE_PORT", "50005"))
+VOICEBRIDGE_PORT = port_from_argv(default_port)
+os.environ["VOICEBRIDGE_PORT"] = str(VOICEBRIDGE_PORT)
+
+
+def state_file_name(name: str) -> str:
+    if not PROFILE_SUFFIX:
+        return name
+    if "." in name:
+        stem, ext = name.rsplit(".", 1)
+        return f"{stem}{PROFILE_SUFFIX}.{ext}"
+    return f"{name}{PROFILE_SUFFIX}"
+
+
+def resolve_state_dir() -> str:
+    explicit = os.environ.get("VOICEBRIDGE_STATE_DIR", "").strip()
+    if explicit:
+        return os.path.expanduser(explicit)
+
+    env_root = os.environ.get("VOICEBRIDGE_PROJECT_ROOT", "").strip() or os.environ.get("THE_NEW_FUSE_HOME", "").strip()
+    if env_root:
+        root = os.path.expanduser(env_root)
+        if os.path.isdir(root):
+            return os.path.join(root, ".voicebridge")
+
+    cur = os.getcwd()
+    while cur and cur != "/":
+        if os.path.basename(cur) == "The-New-Fuse" and os.path.isdir(os.path.join(cur, "apps")):
+            return os.path.join(cur, ".voicebridge")
+        parent = os.path.dirname(cur)
+        if parent == cur:
+            break
+        cur = parent
+
+    for candidate in (
+        os.path.expanduser("~/The-New-Fuse"),
+        os.path.expanduser("~/Desktop/The-New-Fuse"),
+        os.path.expanduser("~/Projects/The-New-Fuse"),
+    ):
+        if os.path.isdir(candidate):
+            return os.path.join(candidate, ".voicebridge")
+
+    for pattern in (
+        "~/Desktop/*/The-New-Fuse",
+        "~/Projects/*/The-New-Fuse",
+        "~/*/The-New-Fuse",
+    ):
+        for candidate in glob.glob(os.path.expanduser(pattern)):
+            if os.path.isdir(os.path.join(candidate, "apps")):
+                return os.path.join(candidate, ".voicebridge")
+
+    return os.path.expanduser("~/.local/share/The-New-Fuse/.voicebridge")
+
+
+STATE_DIR = resolve_state_dir()
+LEGACY_STATE_DIR = os.path.expanduser("~/.openclaw")
+os.makedirs(STATE_DIR, exist_ok=True)
+for name in (
+    "voice_stream.txt",
+    "voice_target.json",
+    "voice_target_tty",
+    "voice_mic_paused",
+    "voice_response_audio_enabled",
+    "voice_bridge_cloud.env",
+):
+    src = os.path.join(LEGACY_STATE_DIR, name)
+    dst = os.path.join(STATE_DIR, state_file_name(name))
+    if os.path.exists(src) and not os.path.exists(dst):
+        try:
+            subprocess.run(["cp", src, dst], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except Exception:
+            pass
+
+STREAM_FILE = os.path.join(STATE_DIR, state_file_name("voice_stream.txt"))
+MIC_PAUSE_FILE = os.path.join(STATE_DIR, state_file_name("voice_mic_paused"))
+STREAM_WATCH_LOG = f"/tmp/stream_watch{PROFILE_SUFFIX}.log"
 CLICK_DAEMON_LOG = "/tmp/voice_target_click.log"
+RESPONSE_AUDIO_LOG = f"/tmp/voice_response_audio{PROFILE_SUFFIX}.log"
 EVENT_LOG = []
 KWS_INGEST_URL = os.environ.get("VOICE_KWS_INGEST_URL", "").strip()
 KWS_FLUSH_URL = os.environ.get("VOICE_KWS_FLUSH_URL", "").strip()
@@ -29,6 +161,25 @@ KWS_FLUSH_INTERVAL_SECONDS = float(os.environ.get("VOICE_KWS_FLUSH_INTERVAL_SECO
 KWS_STREAM_ID = os.environ.get("VOICE_KWS_STREAM_ID", "").strip()
 KWS_LAST_FLUSH_TS = 0.0
 KWS_LOCK = threading.Lock()
+BRIDGE_LOCK = threading.Lock()
+BRIDGE_WATCH_INTERVAL_SECONDS = float(os.environ.get("VOICE_BRIDGE_WATCH_INTERVAL_SECONDS", "5.0"))
+LAST_USER_INPUT_TS_FILE = f"/tmp/voice_last_user_input_ts{PROFILE_SUFFIX}"
+LAST_USER_INPUT_TEXT_FILE = f"/tmp/voice_last_user_input_text{PROFILE_SUFFIX}"
+LAST_AI_SPEECH_TS_FILE = f"/tmp/voice_last_ai_speech_ts{PROFILE_SUFFIX}"
+AI_SPEAKING_FLAG = f"/tmp/ai_is_speaking{PROFILE_SUFFIX}"
+AI_POST_SPEECH_SUPPRESS_SECONDS = float(
+    os.environ.get("VOICE_AI_POST_SPEECH_SUPPRESS_SECONDS", "1.6")
+)
+RESPONSE_AUDIO_AUTO_HEAL = os.environ.get("VOICE_RESPONSE_AUDIO_AUTO_HEAL", "1").strip().lower() not in {
+    "0",
+    "false",
+    "no",
+    "off",
+}
+INTERRUPT_PHRASE_RE = re.compile(
+    r"\b(stop|pause|wait|interrupt|hold on|quiet|be quiet|shut up|enough|cancel)\b",
+    re.IGNORECASE,
+)
 
 if not KWS_STREAM_ID:
     host = os.uname().nodename if hasattr(os, "uname") else "host"
@@ -36,16 +187,98 @@ if not KWS_STREAM_ID:
     KWS_STREAM_ID = f"voice_bridge_{normalized_host}_{os.getpid()}"
 
 
-def is_process_running(pattern):
-    return (
-        subprocess.run(
-            ["pgrep", "-f", pattern],
-            stdout=subprocess.DEVNULL,
+def _read_process_commands():
+    try:
+        out = subprocess.check_output(
+            ["ps", "-Ao", "pid=,command="],
+            text=True,
             stderr=subprocess.DEVNULL,
-            check=False,
-        ).returncode
-        == 0
-    )
+        )
+        return out
+    except Exception:
+        return ""
+
+
+PROFILE_ARG_RE = re.compile(r"(?:^|\s)--profile(?:=|\s+)([A-Za-z0-9_-]+)")
+
+
+def command_profile(cmd: str) -> str:
+    match = PROFILE_ARG_RE.search(cmd)
+    if match:
+        return normalize_profile(match.group(1))
+    return "main"
+
+
+def python_script_pids(script_name: str, profile: str):
+    pids = []
+    out = _read_process_commands()
+    if not out:
+        return []
+    for line in out.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        parts = line.split(None, 1)
+        if len(parts) != 2:
+            continue
+        pid_text, cmd = parts
+        cmd_lower = cmd.lower()
+        if "voice_server.py" in cmd_lower:
+            continue
+        if "python" not in os.path.basename(cmd.split()[0]).lower():
+            continue
+        if script_name.lower() not in cmd_lower:
+            continue
+        if command_profile(cmd) != normalize_profile(profile):
+            continue
+        try:
+            pids.append(int(pid_text))
+        except ValueError:
+            continue
+    return sorted(set(pids))
+
+
+def click_daemon_pids():
+    pids = []
+    out = _read_process_commands()
+    if not out:
+        return []
+    daemon_bin = os.path.expanduser("~/bin/voice-target-click-daemon")
+    daemon_swift = os.path.expanduser("~/bin/voice-target-click-daemon.swift")
+    for line in out.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        parts = line.split(None, 1)
+        if len(parts) != 2:
+            continue
+        pid_text, cmd = parts
+        cmd_lower = cmd.lower()
+        if cmd.startswith(daemon_bin) or ("swift" in cmd_lower and daemon_swift in cmd):
+            try:
+                pids.append(int(pid_text))
+            except ValueError:
+                continue
+    return sorted(set(pids))
+
+
+def prune_duplicate_pids(pids):
+    if len(pids) <= 1:
+        return pids, []
+
+    keep = min(pids)
+    killed = []
+    for pid in pids:
+        if pid == keep:
+            continue
+        try:
+            os.kill(pid, signal.SIGTERM)
+            killed.append(pid)
+        except ProcessLookupError:
+            continue
+        except Exception:
+            continue
+    return [keep], killed
 
 
 def spawn_background_process(cmd, log_path):
@@ -60,34 +293,128 @@ def spawn_background_process(cmd, log_path):
 
 def ensure_background_bridge():
     started = []
+    deduped = []
 
-    if not is_process_running(r"stream_watch.py"):
-        spawn_background_process(
-            ["python3", "-u", os.path.expanduser("~/bin/stream_watch.py")],
-            STREAM_WATCH_LOG,
+    with BRIDGE_LOCK:
+        stream_pids, killed_stream = prune_duplicate_pids(
+            python_script_pids("stream_watch.py", VOICEBRIDGE_PROFILE)
         )
-        started.append("stream_watch")
+        if killed_stream:
+            deduped.append(f"stream_watch(-{len(killed_stream)})")
+        if not stream_pids:
+            spawn_background_process(
+                [
+                    "python3",
+                    "-u",
+                    os.path.expanduser("~/bin/stream_watch.py"),
+                    "--profile",
+                    VOICEBRIDGE_PROFILE,
+                ],
+                STREAM_WATCH_LOG,
+            )
+            started.append("stream_watch")
 
-    if not is_process_running(r"voice-target-click-daemon"):
-        daemon_bin = os.path.expanduser("~/bin/voice-target-click-daemon")
-        daemon_script = os.path.expanduser("~/bin/voice-target-click-daemon.swift")
-        cmd = [daemon_bin] if os.path.exists(daemon_bin) else ["swift", daemon_script]
-        spawn_background_process(cmd, CLICK_DAEMON_LOG)
-        started.append("click_anchor_daemon")
+        click_pids, killed_click = prune_duplicate_pids(click_daemon_pids())
+        if killed_click:
+            deduped.append(f"click_anchor_daemon(-{len(killed_click)})")
+        if not click_pids:
+            daemon_bin = os.path.expanduser("~/bin/voice-target-click-daemon")
+            daemon_script = os.path.expanduser("~/bin/voice-target-click-daemon.swift")
+            cmd = [daemon_bin] if os.path.exists(daemon_bin) else ["swift", daemon_script]
+            spawn_background_process(cmd, CLICK_DAEMON_LOG)
+            started.append("click_anchor_daemon")
+
+        if RESPONSE_AUDIO_AUTO_HEAL:
+            response_watcher_script = os.path.expanduser("~/bin/voice-response-audio-watch.py")
+            if os.path.exists(response_watcher_script):
+                response_pids, killed_response = prune_duplicate_pids(
+                    python_script_pids("voice-response-audio-watch.py", VOICEBRIDGE_PROFILE)
+                )
+                if killed_response:
+                    deduped.append(f"response_audio_watcher(-{len(killed_response)})")
+                if not response_pids:
+                    spawn_background_process(
+                        [
+                            "python3",
+                            "-u",
+                            response_watcher_script,
+                            "--profile",
+                            VOICEBRIDGE_PROFILE,
+                        ],
+                        RESPONSE_AUDIO_LOG,
+                    )
+                    started.append("response_audio_watcher")
+
+    if deduped:
+        log_event("DEDUPE", ", ".join(deduped))
 
     return started
+
+
+def bridge_watchdog_loop():
+    while True:
+        try:
+            started = ensure_background_bridge()
+            if started:
+                log_event("AUTO_HEAL", f"Restarted: {', '.join(started)}")
+        except Exception as err:
+            log_event("AUTO_HEAL_ERR", str(err)[:180])
+        time.sleep(BRIDGE_WATCH_INTERVAL_SECONDS)
+
+
+def start_bridge_watchdog():
+    if BRIDGE_WATCH_INTERVAL_SECONDS <= 0:
+        return None
+    worker = threading.Thread(
+        target=bridge_watchdog_loop,
+        daemon=True,
+        name=f"voice-bridge-watchdog-{VOICEBRIDGE_PROFILE}",
+    )
+    worker.start()
+    return worker
 
 def log_event(event_type, detail):
     timestamp = time.time()
     entry = {"time": timestamp, "type": event_type, "detail": detail}
     EVENT_LOG.append(entry)
     if len(EVENT_LOG) > 50: EVENT_LOG.pop(0)
-    print(f"📊 [{time.strftime('%H:%M:%S', time.localtime(timestamp))}] {event_type}: {detail}")
+    print(
+        f"📊 [{time.strftime('%H:%M:%S', time.localtime(timestamp))}] "
+        f"[{VOICEBRIDGE_PROFILE}] {event_type}: {detail}"
+    )
     sys.stdout.flush()
 
 
 def is_mic_paused():
     return os.path.exists(MIC_PAUSE_FILE)
+
+
+def is_interrupt_phrase(text: str) -> bool:
+    if not text:
+        return False
+    return bool(INTERRUPT_PHRASE_RE.search(text))
+
+
+def mark_user_input(text: str) -> None:
+    now = time.time()
+    try:
+        with open(LAST_USER_INPUT_TS_FILE, "w", encoding="utf-8") as f:
+            f.write(f"{now:.6f}\n")
+    except Exception:
+        pass
+    try:
+        with open(LAST_USER_INPUT_TEXT_FILE, "w", encoding="utf-8") as f:
+            f.write(text)
+    except Exception:
+        pass
+
+
+def read_last_ai_speech_ts() -> float:
+    try:
+        with open(LAST_AI_SPEECH_TS_FILE, "r", encoding="utf-8") as f:
+            return float(f.read().strip() or "0")
+    except Exception:
+        return 0.0
 
 
 def post_json(url, payload, timeout_seconds):
@@ -205,10 +532,20 @@ HTML_TEMPLATE = """
         const activateBtn = document.getElementById('activate-btn');
 
         let isSpeaking = false;
+        let wasSpeaking = false;
+        let lastAiStopAtMs = 0;
         let micPaused = false;
         let userActivated = false;
         let recognition = null;
         let recognitionActive = false;
+        let lastSentText = '';
+        let lastSentAtMs = 0;
+        let lastInterruptAtMs = 0;
+        const POST_AI_SUPPRESS_MS = 900;
+        const INTERRUPT_COOLDOWN_MS = 350;
+        const POST_INTERRUPT_TRANSCRIPT_SUPPRESS_MS = 1600;
+        const MIN_BARGE_CHARS = 4;
+        const INTERRUPT_RE = /\b(stop|pause|wait|interrupt|hold on|quiet|be quiet|shut up|enough|cancel)\b/i;
 
         async function checkAiStatus() {
             try {
@@ -219,8 +556,12 @@ HTML_TEMPLATE = """
                     isSpeaking = true;
                 } else {
                     aiStatus.style.display = 'none';
+                    if (wasSpeaking) {
+                        lastAiStopAtMs = Date.now();
+                    }
                     isSpeaking = false;
                 }
+                wasSpeaking = isSpeaking;
             } catch (e) {}
             setTimeout(checkAiStatus, 500);
         }
@@ -260,7 +601,14 @@ HTML_TEMPLATE = """
             } catch (e) {}
 
             const context = new (window.AudioContext || window.webkitAudioContext)();
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true,
+                    channelCount: 1
+                }
+            });
             const analyser = context.createAnalyser();
             analyser.fftSize = 256;
             const microphone = context.createMediaStreamSource(stream);
@@ -295,16 +643,51 @@ HTML_TEMPLATE = """
                 if (micPaused) return;
 
                 let finalTranscript = '';
+                let interimTranscript = '';
                 for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    const chunk = (event.results[i][0].transcript || '').trim();
+                    if (!chunk) continue;
                     if (event.results[i].isFinal) {
-                        finalTranscript += event.results[i][0].transcript + ' ';
+                        finalTranscript += chunk + ' ';
+                    } else {
+                        interimTranscript += chunk + ' ';
                     }
+                }
+
+                const now = Date.now();
+                if (isSpeaking) {
+                    const bargeCandidate = (finalTranscript + ' ' + interimTranscript).trim();
+                    if (!bargeCandidate) return;
+                    const compactLen = bargeCandidate.replace(/[^a-z0-9]/gi, '').length;
+                    const shouldInterrupt = INTERRUPT_RE.test(bargeCandidate) || compactLen >= MIN_BARGE_CHARS;
+                    if (shouldInterrupt && (now - lastInterruptAtMs) >= INTERRUPT_COOLDOWN_MS) {
+                        addCacheItem('[interrupt] ' + bargeCandidate.slice(0, 80));
+                        sendInterrupt(bargeCandidate);
+                        lastInterruptAtMs = now;
+                        lastSentText = bargeCandidate;
+                        lastSentAtMs = now;
+                    }
+                    return;
+                }
+
+                if ((now - lastInterruptAtMs) < POST_INTERRUPT_TRANSCRIPT_SUPPRESS_MS) {
+                    return;
                 }
 
                 if (finalTranscript) {
                     const cleaned = finalTranscript.trim();
+                    if (!cleaned) return;
+                    if ((now - lastAiStopAtMs) < POST_AI_SUPPRESS_MS) {
+                        return;
+                    }
+
+                    if (cleaned === lastSentText && (now - lastSentAtMs) < 3000) {
+                        return;
+                    }
                     addCacheItem(cleaned);
                     sendText(cleaned);
+                    lastSentText = cleaned;
+                    lastSentAtMs = now;
                 }
             };
 
@@ -343,6 +726,14 @@ HTML_TEMPLATE = """
             });
         }
 
+        function sendInterrupt(text) {
+            fetch('/interrupt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reason: text || 'voice-interrupt' })
+            });
+        }
+
         function clearStream() {
             cacheList.innerHTML = '';
         }
@@ -368,7 +759,7 @@ def index():
 
 @app.route('/is_ai_speaking')
 def is_ai_speaking():
-    return {'speaking': os.path.exists("/tmp/ai_is_speaking")}
+    return {'speaking': os.path.exists(AI_SPEAKING_FLAG)}
 
 @app.route('/mic_state')
 def mic_state():
@@ -403,17 +794,29 @@ def send():
 
     if is_mic_paused():
         return 'MIC_PAUSED'
+
+    started = ensure_background_bridge()
+    if started:
+        log_event("AUTO_HEAL", f"Started during send: {', '.join(started)}")
     
-    # Active Interruption: If user speaks, KILL the AI's audio immediately
-    if os.path.exists("/tmp/ai_is_speaking"):
-        log_event("INTERRUPT", "User is speaking over AI. Killing audio.")
+    now_ts = time.time()
+    last_ai_ts = read_last_ai_speech_ts()
+    ai_recent = last_ai_ts > 0 and (now_ts - last_ai_ts) < AI_POST_SPEECH_SUPPRESS_SECONDS
+    ai_speaking = os.path.exists(AI_SPEAKING_FLAG) or ai_recent
+    if ai_speaking and text:
+        log_event("INTERRUPT", f"Voice barge-in via /send: {text[:60]}")
         os.system("pkill -9 afplay")
         os.system("pkill -9 say")
-        if os.path.exists("/tmp/ai_is_speaking"):
-            os.remove("/tmp/ai_is_speaking")
+        try:
+            os.remove(AI_SPEAKING_FLAG)
+        except FileNotFoundError:
+            pass
+        # During AI speech, any detected user speech acts as interrupt only.
+        return 'INTERRUPT_OK'
         
     if text:
         log_event("WRITING", text[:30])
+        mark_user_input(text)
         # Append to the unbreakable stream file
         with open(STREAM_FILE, "a") as f:
             f.write(text + "\n")
@@ -422,8 +825,22 @@ def send():
 
 @app.route('/interrupt', methods=['POST'])
 def interrupt():
-    # Simple volume pulse endpoint - no killing, just data
-    return 'OK'
+    payload = request.get_json(silent=True) or {}
+    reason = " ".join(str(payload.get("reason", "")).split())[:160]
+    stopped = False
+    if os.path.exists(AI_SPEAKING_FLAG):
+        os.system("pkill -9 afplay")
+        os.system("pkill -9 say")
+        try:
+            os.remove(AI_SPEAKING_FLAG)
+        except FileNotFoundError:
+            pass
+        stopped = True
+    if reason:
+        log_event("INTERRUPT", f"Voice interrupt: {reason[:60]}")
+    else:
+        log_event("INTERRUPT", "Voice interrupt")
+    return {'ok': True, 'stopped': stopped}
 
 @app.route('/ai_speaking', methods=['POST'])
 def ai_speaking():
@@ -432,6 +849,11 @@ def ai_speaking():
 
 if __name__ == '__main__':
     os.makedirs(os.path.dirname(STREAM_FILE), exist_ok=True)
+    print(f"🎛️ Voice server profile={VOICEBRIDGE_PROFILE} port={VOICEBRIDGE_PORT}")
+    started = ensure_background_bridge()
+    if started:
+        log_event("BOOTSTRAP", f"Started: {', '.join(started)}")
+    start_bridge_watchdog()
     if KWS_INGEST_URL:
         print(f"🔌 KWS forward enabled: stream_id={KWS_STREAM_ID}")
         print(f"   ingest={KWS_INGEST_URL} (timeout={KWS_INGEST_TIMEOUT_SECONDS:.1f}s)")
@@ -440,4 +862,4 @@ if __name__ == '__main__':
                 f"   flush={KWS_FLUSH_URL} every {KWS_FLUSH_INTERVAL_SECONDS:.1f}s "
                 f"(timeout={KWS_FLUSH_TIMEOUT_SECONDS:.1f}s)"
             )
-    app.run(host='127.0.0.1', port=50005)
+    app.run(host='127.0.0.1', port=VOICEBRIDGE_PORT)

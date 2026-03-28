@@ -32,6 +32,14 @@ Notes
 - If click-anchor does not set target, enable Terminal in:
   System Settings -> Privacy & Security -> Accessibility
 - AI response audio is optional and starts OFF by default
+- Target lock is preserved across `voice` restarts (no auto-reset drift)
+- AI response audio follows the same locked target context
+- Focus-steal prevention is ON by default (`VOICE_NO_FOCUS_STEAL=1`), so
+  Terminal target injection is skipped while another app (for example Finder)
+  is frontmost.
+- Cmd+Option-click in Terminal now captures a terminal tty lock (not only a
+  screen point), improving deterministic routing for both transcription and
+  response audio.
 
 Optional: Forward transcripts to Audio Trigger KWS pipeline
 - Set env vars before running `voice`:

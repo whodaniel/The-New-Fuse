@@ -1,0 +1,34 @@
+{
+  "saved": [
+    {
+      "chatId": "con_RCdRy4CKUl4VpXCf",
+      "ok": false,
+      "url": "https://whodaniel.zo.computer/?chat=con_RCdRy4CKUl4VpXCf&t=chats",
+      "chars": 753
+    },
+    {
+      "chatId": "con_aneP1PvS9Aoign4g",
+      "ok": true,
+      "url": "https://whodaniel.zo.computer/?chat=con_aneP1PvS9Aoign4g&t=chats",
+      "chars": 3454
+    },
+    {
+      "chatId": "con_oufZZUQqSxYfOhoh",
+      "ok": false,
+      "url": "https://whodaniel.zo.computer/?chat=con_oufZZUQqSxYfOhoh&t=chats",
+      "chars": 735
+    },
+    {
+      "chatId": "con_sIMh0yqQoQ1Uz197",
+      "ok": true,
+      "url": "https://whodaniel.zo.computer/?chat=con_sIMh0yqQoQ1Uz197&t=chats",
+      "chars": 3488
+    }
+  ],
+  "errors": [
+    {
+      "chatId": "con_oufZZUQqSxYfOhoh",
+      "error": "osascript failed"
+    }
+  ]
+}

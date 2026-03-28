@@ -1,0 +1,28 @@
+name: tnf-dont-die-remediation
+from:
+  - skill: tnf-stack-self-improvement-loop
+    output: reports/protocols/master-clock-sync/master-clock-sync-latest.json
+  - skill: tnf-skill-bridging
+    output: normalized remediation handoff schema
+  - skill: tnf-master-clock-sync
+    output: data/protocols/cron-jobs.control-plane-state.json
+to:
+  - skill: run-chronological-process
+    input: process_id list + actor_id + lock contract
+  - skill: chronological-dispatch
+    input: dispatch profile command with local fallback compatibility
+  - skill: tnf-execution-audit-trail
+    input: per-run result records + before/after escalation deltas
+validate:
+  - source audit exists and includes process-level escalation signals
+  - each selected process has schedule.enabled=true
+  - run-now command exists before remediation attempt
+  - stale locks are swept before retry when lock status is stale
+  - after-audit is generated and compared against before-audit counters
+fail:
+  - if run-now command is missing, mark process unresolved and keep escalation visible
+  - if process execution fails, keep failure evidence in supervisor report and runtime history
+  - if critical escalations remain, exit non-zero unless warn-only mode is enabled
+log:
+  - reports/protocols/dont-die-supervisor/dont-die-latest.json
+  - reports/protocols/dont-die-supervisor/dont-die-latest.md

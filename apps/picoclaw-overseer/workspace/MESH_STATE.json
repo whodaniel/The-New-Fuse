@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-16T22:29:33Z",
+  "last_updated": "2026-03-26T13:02:00Z",
   "active_sessions": [],
   "pending_tasks": [],
   "completed_tasks": [],
@@ -8,5 +8,6 @@
     "provider": "kilo",
     "primary_model": "z-ai/glm-5:free",
     "is_free_tier": true
-  }
+  },
+  "gateway_status": "offline"
 }

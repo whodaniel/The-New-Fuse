@@ -104,11 +104,15 @@ export default defineConfig(({ mode }) => {
         compression({
           algorithm: 'gzip',
           ext: '.gz',
+          // Keep compression deterministic and avoid JSON artifact edge cases.
+          filter: /\.(js|mjs|css|html|svg)$/i,
         }),
       enableBuildCompression &&
         compression({
           algorithm: 'brotliCompress',
           ext: '.br',
+          // Keep compression deterministic and avoid JSON artifact edge cases.
+          filter: /\.(js|mjs|css|html|svg)$/i,
         }),
     ].filter(Boolean),
     resolve: {

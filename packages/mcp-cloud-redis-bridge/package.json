@@ -16,7 +16,8 @@
     "redis": "^5.11.0",
     "tweetnacl": "^1.0.3",
     "tweetnacl-util": "^0.15.1",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "@the-new-fuse/infrastructure": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",

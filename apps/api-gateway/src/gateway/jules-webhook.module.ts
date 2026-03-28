@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DatabaseService } from '@the-new-fuse/database';
-import { Redis } from 'ioredis';
+import { RedisModule } from '@the-new-fuse/infrastructure';
 import { JulesWebhookController } from './jules-webhook.controller';
 
 // Placeholder for the JulesUsageTracker
@@ -21,6 +21,7 @@ class NoopJulesWebhookHandler {
 }
 
 @Module({
+  imports: [RedisModule],
   controllers: [JulesWebhookController],
   providers: [
     {
@@ -30,16 +31,6 @@ class NoopJulesWebhookHandler {
     {
       provide: DatabaseService,
       useClass: DatabaseService,
-    },
-    {
-      provide: 'REDIS_CLIENT',
-      useFactory: () => {
-        return new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
-      },
-    },
-    {
-      provide: Redis,
-      useExisting: 'REDIS_CLIENT',
     },
     {
       provide: JulesUsageTracker,

@@ -17,7 +17,8 @@
     "ws": "^8.14.2",
     "cors": "^2.8.5",
     "@modelcontextprotocol/sdk": "^1.26.0",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "@the-new-fuse/infrastructure": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.0.0"

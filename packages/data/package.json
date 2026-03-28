@@ -1,0 +1,22 @@
+{
+  "name": "@the-new-fuse/data",
+  "version": "1.0.0",
+  "description": "Unified data stack for The New Fuse framework",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@the-new-fuse/database": "workspace:*",
+    "@the-new-fuse/core-vector-db": "workspace:*",
+    "@the-new-fuse/infrastructure": "workspace:*"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.3"
+  }
+}

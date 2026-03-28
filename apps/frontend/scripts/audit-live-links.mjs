@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, resolve } from 'node:path';
 import { chromium, firefox } from 'playwright';
@@ -28,6 +28,8 @@ const PLAYWRIGHT_BROWSER_CHANNEL = (process.env.PLAYWRIGHT_BROWSER_CHANNEL || ''
 const PLAYWRIGHT_ENABLE_FIREFOX_FALLBACK = String(process.env.PLAYWRIGHT_ENABLE_FIREFOX_FALLBACK || '1') !== '0';
 const PLAYWRIGHT_LAUNCH_RETRIES = Math.max(1, Number.parseInt(process.env.PLAYWRIGHT_LAUNCH_RETRIES || '4', 10));
 const PLAYWRIGHT_LAUNCH_DELAY_MS = Math.max(0, Number.parseInt(process.env.PLAYWRIGHT_LAUNCH_DELAY_MS || '900', 10));
+const PLAYWRIGHT_STORAGE_STATE = (process.env.PLAYWRIGHT_STORAGE_STATE || '').trim();
+const PLAYWRIGHT_EXTRA_HEADERS_JSON = (process.env.PLAYWRIGHT_EXTRA_HEADERS_JSON || '').trim();
 const EXTERNAL_ALLOWLIST_RAW = (process.env.LIVE_AUDIT_EXTERNAL_ALLOWLIST || '')
   .split(',')
   .map((value) => value.trim())
@@ -86,6 +88,36 @@ const withTimeout = async (promiseFactory, ms, label) => {
 
 const normalizeText = (value) => String(value || '').replace(/\s+/g, ' ').trim().toLowerCase();
 const textHash = (value) => createHash('sha1').update(normalizeText(value)).digest('hex');
+
+const parseExtraHeaders = () => {
+  if (!PLAYWRIGHT_EXTRA_HEADERS_JSON) return null;
+  try {
+    const parsed = JSON.parse(PLAYWRIGHT_EXTRA_HEADERS_JSON);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      throw new Error('must be a JSON object');
+    }
+    const entries = Object.entries(parsed).map(([key, value]) => [String(key), String(value)]);
+    return Object.fromEntries(entries);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`PLAYWRIGHT_EXTRA_HEADERS_JSON parse failed: ${message}`);
+  }
+};
+
+const buildContextOptions = () => {
+  const options = {};
+  if (PLAYWRIGHT_STORAGE_STATE) {
+    if (!existsSync(PLAYWRIGHT_STORAGE_STATE)) {
+      throw new Error(`PLAYWRIGHT_STORAGE_STATE file not found: ${PLAYWRIGHT_STORAGE_STATE}`);
+    }
+    options.storageState = PLAYWRIGHT_STORAGE_STATE;
+  }
+  const extraHTTPHeaders = parseExtraHeaders();
+  if (extraHTTPHeaders) {
+    options.extraHTTPHeaders = extraHTTPHeaders;
+  }
+  return options;
+};
 
 const checkHttp = async (url) => {
   try {
@@ -245,7 +277,7 @@ const launchAuditBrowser = async () => {
   throw new Error(`Unable to launch Playwright browser\n${attempts.join('\n')}`);
 };
 
-const crawlDomain = async (browser, seed) => {
+const crawlDomain = async (browser, seed, contextOptions) => {
   const domain = new URL(seed).host;
   const normalizedSeed = normalizeUrl(seed);
   const queue = [{ url: normalizeUrl(seed), depth: 0, from: null }];
@@ -254,85 +286,90 @@ const crawlDomain = async (browser, seed) => {
   const externalSeen = new Map();
   const pageErrors = [];
   let seedInternalLinks = [];
+  const context = await browser.newContext(contextOptions);
 
-  while (queue.length > 0) {
-    const current = queue.shift();
-    if (!current) break;
-    if (current.depth > MAX_DEPTH) continue;
-    if (visited.size >= MAX_PAGES_PER_DOMAIN) break;
-    if (visited.has(current.url)) continue;
+  try {
+    while (queue.length > 0) {
+      const current = queue.shift();
+      if (!current) break;
+      if (current.depth > MAX_DEPTH) continue;
+      if (visited.size >= MAX_PAGES_PER_DOMAIN) break;
+      if (visited.has(current.url)) continue;
 
-    const page = await browser.newPage();
-    let pageStatus = null;
-    let pageError = null;
-    let links = [];
-    let fingerprint = {
-      title: '',
-      h1: '',
-      bodyText: '',
-    };
-    try {
-      const response = await page.goto(current.url, {
-        waitUntil: 'domcontentloaded',
-        timeout: NAV_TIMEOUT_MS,
-      });
-      pageStatus = response?.status() ?? null;
+      const page = await context.newPage();
+      let pageStatus = null;
+      let pageError = null;
+      let links = [];
+      let fingerprint = {
+        title: '',
+        h1: '',
+        bodyText: '',
+      };
       try {
-        await page.waitForLoadState('networkidle', { timeout: 6000 });
-      } catch {
-        // Some apps keep open network activity; fallback to fixed settle delay.
-      }
-      await page.waitForTimeout(1100);
-      links = await extractLinksFromPage(page, current.url);
-      fingerprint = await extractPageFingerprint(page);
-      if (current.url === normalizedSeed) {
-        seedInternalLinks = links.filter((link) => {
-          try {
-            return new URL(link.url).host === domain;
-          } catch {
-            return false;
-          }
+        const response = await page.goto(current.url, {
+          waitUntil: 'domcontentloaded',
+          timeout: NAV_TIMEOUT_MS,
         });
-      }
-    } catch (error) {
-      pageError = error instanceof Error ? error.message : String(error);
-      pageErrors.push({ url: current.url, depth: current.depth, error: pageError });
-    } finally {
-      await page.close();
-    }
-
-    visited.set(current.url, {
-      url: current.url,
-      depth: current.depth,
-      from: current.from,
-      pageStatus,
-      pageError,
-      discoveredLinks: links.length,
-      title: fingerprint.title,
-      h1: fingerprint.h1,
-      fingerprintHash: textHash(`${fingerprint.title}|${fingerprint.h1}|${fingerprint.bodyText}`),
-    });
-
-    for (const link of links) {
-      const host = new URL(link.url).host;
-      if (host === domain) {
-        if (
-          current.depth + 1 <= MAX_DEPTH &&
-          !visited.has(link.url) &&
-          !queued.has(link.url) &&
-          queued.size < MAX_PAGES_PER_DOMAIN * 3
-        ) {
-          queue.push({ url: link.url, depth: current.depth + 1, from: current.url });
-          queued.add(link.url);
+        pageStatus = response?.status() ?? null;
+        try {
+          await page.waitForLoadState('networkidle', { timeout: 6000 });
+        } catch {
+          // Some apps keep open network activity; fallback to fixed settle delay.
         }
-      } else if (!externalSeen.has(link.url) && externalSeen.size < MAX_EXTERNAL_CHECKS_PER_DOMAIN) {
-        externalSeen.set(link.url, {
-          url: link.url,
-          from: current.url,
-          text: link.text,
-        });
+        await page.waitForTimeout(1100);
+        links = await extractLinksFromPage(page, current.url);
+        fingerprint = await extractPageFingerprint(page);
+        if (current.url === normalizedSeed) {
+          seedInternalLinks = links.filter((link) => {
+            try {
+              return new URL(link.url).host === domain;
+            } catch {
+              return false;
+            }
+          });
+        }
+      } catch (error) {
+        pageError = error instanceof Error ? error.message : String(error);
+        pageErrors.push({ url: current.url, depth: current.depth, error: pageError });
+      } finally {
+        await page.close();
+      }
+
+      visited.set(current.url, {
+        url: current.url,
+        depth: current.depth,
+        from: current.from,
+        pageStatus,
+        pageError,
+        discoveredLinks: links.length,
+        title: fingerprint.title,
+        h1: fingerprint.h1,
+        fingerprintHash: textHash(`${fingerprint.title}|${fingerprint.h1}|${fingerprint.bodyText}`),
+      });
+
+      for (const link of links) {
+        const host = new URL(link.url).host;
+        if (host === domain) {
+          if (
+            current.depth + 1 <= MAX_DEPTH &&
+            !visited.has(link.url) &&
+            !queued.has(link.url) &&
+            queued.size < MAX_PAGES_PER_DOMAIN * 3
+          ) {
+            queue.push({ url: link.url, depth: current.depth + 1, from: current.url });
+            queued.add(link.url);
+          }
+        } else if (!externalSeen.has(link.url) && externalSeen.size < MAX_EXTERNAL_CHECKS_PER_DOMAIN) {
+          externalSeen.set(link.url, {
+            url: link.url,
+            from: current.url,
+            text: link.text,
+          });
+        }
       }
     }
+  } finally {
+    await context.close();
   }
 
   const internalChecks = [];
@@ -596,6 +633,7 @@ const crawlDomainWithHttpFallback = async (seed) => {
 
 const main = async () => {
   const startedAt = new Date().toISOString();
+  const contextOptions = buildContextOptions();
   let browser = null;
   let crawlSeed = null;
   const results = [];
@@ -603,7 +641,7 @@ const main = async () => {
   try {
     try {
       browser = await launchAuditBrowser();
-      crawlSeed = (seed) => crawlDomain(browser, seed);
+      crawlSeed = (seed) => crawlDomain(browser, seed, contextOptions);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.warn(`[live-link-audit] falling back to HTTP crawler: ${message}`);
@@ -638,6 +676,10 @@ const main = async () => {
       fetchTimeoutMs: FETCH_TIMEOUT_MS,
       failOnBroken: FAIL_ON_BROKEN,
       externalAllowlist: [...EXTERNAL_ALLOWLIST],
+      crawlAuth: {
+        storageStateEnabled: Boolean(PLAYWRIGHT_STORAGE_STATE),
+        extraHeadersEnabled: Boolean(PLAYWRIGHT_EXTRA_HEADERS_JSON),
+      },
     },
     seeds: results.length,
     totalChecked: rows.length,

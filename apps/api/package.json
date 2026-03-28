@@ -71,7 +71,8 @@
     "viem": "^2.45.2",
     "winston": "^3.19.0",
     "winston-daily-rotate-file": "^5.0.0",
-    "yargs": "^18.0.0"
+    "yargs": "^18.0.0",
+    "@the-new-fuse/infrastructure": "workspace:*"
   },
   "scripts": {
     "prebuild": "pnpm --filter @the-new-fuse/database build",

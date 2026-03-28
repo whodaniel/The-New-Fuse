@@ -3423,6 +3423,139 @@
     "confidenceScore": 1
   },
   {
+    "id": "1c51226a-6225-d997-0870-f6bbe84c5b32",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "bash",
+    "confidenceScore": 1
+  },
+  {
+    "id": "a0f29403-67db-54ad-f556-c4a4acfd126b",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "read",
+    "confidenceScore": 1
+  },
+  {
+    "id": "bf850cdf-928f-bef4-b446-eda3ed706d4c",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "write",
+    "confidenceScore": 1
+  },
+  {
+    "id": "39fdff35-aa49-8ba8-282c-6b5e1d049824",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "grep",
+    "confidenceScore": 1
+  },
+  {
+    "id": "106837a8-2480-8b21-d83e-e06be45082b3",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "glob",
+    "confidenceScore": 1
+  },
+  {
+    "id": "96308fcd-8eba-e796-b38f-b8061186414f",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "subagentexecutor",
+    "confidenceScore": 1
+  },
+  {
+    "id": "32f05306-cc25-86a0-2cfc-54c2a00c5c14",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "sub_agent_a_retention_and_event_metrics",
+    "confidenceScore": 1
+  },
+  {
+    "id": "37276bed-029d-e051-539c-c0085d23e06a",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "sub_agent_b_visual_interpretation_synthesis",
+    "confidenceScore": 1
+  },
+  {
+    "id": "01fc87a2-ce05-2a05-37d2-e9cee724ac91",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "keep_screenshot_storage_bounded_do_not_allow_unbounded_frame_growth",
+    "confidenceScore": 1
+  },
+  {
+    "id": "e2f5d7d5-b040-80cb-dfed-8313ebb402af",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "use_deterministic_command_presets_for_repeatable_tests",
+    "confidenceScore": 1
+  },
+  {
+    "id": "02d6f187-8056-46dc-d793-6eb5a0199b80",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "include_absolute_artifact_paths_in_every_report",
+    "confidenceScore": 1
+  },
+  {
+    "id": "782ee908-989c-7408-98eb-214806bc3efc",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "run_short_validation_rounds_before_long_captures",
+    "confidenceScore": 1
+  },
+  {
+    "id": "e7547afd-f46e-6408-8a12-1e1f0e4b109c",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "preserve_unrelated_files_and_existing_user_changes",
+    "confidenceScore": 1
+  },
+  {
+    "id": "2d6deed5-7fa0-055c-3f54-fe1c1172ea21",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "run_id_and_time_range",
+    "confidenceScore": 1
+  },
+  {
+    "id": "4fc30fe7-b154-48d0-b2f2-62a4c712d3d2",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "total_events_by_type",
+    "confidenceScore": 1
+  },
+  {
+    "id": "73f1556a-2d78-0505-2818-5ca8e575e4bb",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "retained_vs_pruned_screenshot_counts",
+    "confidenceScore": 1
+  },
+  {
+    "id": "5c1047dd-6a92-a470-0ad7-c29d9cfebff1",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "top_findings_with_evidence",
+    "confidenceScore": 1
+  },
+  {
+    "id": "b3e8683d-e11b-d41f-5880-cf0874b7d52e",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "keyword",
+    "tagName": "artifact_paths_for_timeline_actionable_report_full_summation_and_plain_language_summary",
+    "confidenceScore": 1
+  },
+  {
+    "id": "5d802af9-7841-ed1c-8f2b-952c96e5c254",
+    "agentId": "cursor-watch-learn-operator",
+    "tagCategory": "normalized_category",
+    "tagName": "engineering",
+    "confidenceScore": 1
+  },
+  {
     "id": "43762198-a70f-51b5-524b-7ee8201527bc",
     "agentId": "custom-slash-command-agent",
     "tagCategory": "keyword",
@@ -7574,6 +7707,20 @@
     "confidenceScore": 1
   },
   {
+    "id": "f532c8b7-4de8-739a-e8bc-7daebc98978d",
+    "agentId": "local-ai-codex-cli",
+    "tagCategory": "normalized_category",
+    "tagName": "engineering",
+    "confidenceScore": 1
+  },
+  {
+    "id": "1de3b797-f7a6-bf4a-54c4-28a6eaf74ba7",
+    "agentId": "local-ai-codex-cli",
+    "tagCategory": "normalized_category",
+    "tagName": "social",
+    "confidenceScore": 1
+  },
+  {
     "id": "b6e829ce-f192-2ba6-cbde-734e286d43b8",
     "agentId": "local-ai-gemini-cli",
     "tagCategory": "normalized_category",
@@ -11155,6 +11302,216 @@
     "agentId": "sponsorship-outreach-agent",
     "tagCategory": "normalized_category",
     "tagName": "media",
+    "confidenceScore": 1
+  },
+  {
+    "id": "35f3856e-a57e-b31a-6034-28d6d8ab20e4",
+    "agentId": "staff-review-agent",
+    "tagCategory": "keyword",
+    "tagName": "staffops",
+    "confidenceScore": 1
+  },
+  {
+    "id": "90888ac5-739e-aabe-bb1f-93fff1019950",
+    "agentId": "staff-review-agent",
+    "tagCategory": "keyword",
+    "tagName": "review",
+    "confidenceScore": 1
+  },
+  {
+    "id": "e6464a21-81da-4eb2-29c9-063724c3fc2d",
+    "agentId": "staff-review-agent",
+    "tagCategory": "keyword",
+    "tagName": "quality",
+    "confidenceScore": 1
+  },
+  {
+    "id": "98fcf8f2-9f2d-4713-697b-219ca2566c77",
+    "agentId": "staff-review-agent",
+    "tagCategory": "keyword",
+    "tagName": "continuous_improvement",
+    "confidenceScore": 1
+  },
+  {
+    "id": "be9ff88e-297d-0a7f-3f29-da2097c2e6dc",
+    "agentId": "staff-review-agent",
+    "tagCategory": "keyword",
+    "tagName": "read",
+    "confidenceScore": 1
+  },
+  {
+    "id": "ee446949-3d17-6624-f0ca-dde210fbae32",
+    "agentId": "staff-review-agent",
+    "tagCategory": "keyword",
+    "tagName": "write",
+    "confidenceScore": 1
+  },
+  {
+    "id": "7e5dd135-dcbc-c894-10ee-d09f1dd7dcf6",
+    "agentId": "staff-review-agent",
+    "tagCategory": "keyword",
+    "tagName": "edit",
+    "confidenceScore": 1
+  },
+  {
+    "id": "50ffe01b-fd6f-66ac-7ab9-fa64c9239897",
+    "agentId": "staff-review-agent",
+    "tagCategory": "keyword",
+    "tagName": "glob",
+    "confidenceScore": 1
+  },
+  {
+    "id": "1e97e714-aba2-0261-0b9e-94e9365f25c3",
+    "agentId": "staff-review-agent",
+    "tagCategory": "keyword",
+    "tagName": "grep",
+    "confidenceScore": 1
+  },
+  {
+    "id": "6ff85ad1-f1f0-32fd-bbbc-7ca6013cb56b",
+    "agentId": "staff-review-agent",
+    "tagCategory": "keyword",
+    "tagName": "bash",
+    "confidenceScore": 1
+  },
+  {
+    "id": "0ed8ccce-8866-3a25-8725-e452ee27c98c",
+    "agentId": "staff-review-agent",
+    "tagCategory": "keyword",
+    "tagName": "periodic_review",
+    "confidenceScore": 1
+  },
+  {
+    "id": "68b75361-6ad0-0438-0e16-0f1739b0c314",
+    "agentId": "staff-review-agent",
+    "tagCategory": "keyword",
+    "tagName": "operational_feedback",
+    "confidenceScore": 1
+  },
+  {
+    "id": "e14ba8e3-7cf6-5e82-2a4a-6788598f5f7d",
+    "agentId": "staff-review-agent",
+    "tagCategory": "keyword",
+    "tagName": "improvement_planning",
+    "confidenceScore": 1
+  },
+  {
+    "id": "b6c71b57-3462-839f-a22b-b2ea8a1dfdd8",
+    "agentId": "staff-review-agent",
+    "tagCategory": "keyword",
+    "tagName": "quality_signal_synthesis",
+    "confidenceScore": 1
+  },
+  {
+    "id": "08ecbbbd-abd1-45df-7bf5-f18f0426c362",
+    "agentId": "staff-review-agent",
+    "tagCategory": "normalized_category",
+    "tagName": "general",
+    "confidenceScore": 1
+  },
+  {
+    "id": "4c1a68dd-939f-a4ec-cd94-ea0eff4dca2c",
+    "agentId": "staffing-director-agent",
+    "tagCategory": "keyword",
+    "tagName": "staffops",
+    "confidenceScore": 1
+  },
+  {
+    "id": "773e3274-c266-dae1-9ccd-842bd613a880",
+    "agentId": "staffing-director-agent",
+    "tagCategory": "keyword",
+    "tagName": "staffing",
+    "confidenceScore": 1
+  },
+  {
+    "id": "e44e7c24-8991-0108-348e-05e731992452",
+    "agentId": "staffing-director-agent",
+    "tagCategory": "keyword",
+    "tagName": "role_design",
+    "confidenceScore": 1
+  },
+  {
+    "id": "0c2566d0-25b0-6c2b-fe59-437d26d039e6",
+    "agentId": "staffing-director-agent",
+    "tagCategory": "keyword",
+    "tagName": "governance",
+    "confidenceScore": 1
+  },
+  {
+    "id": "dcfea29a-fce6-2408-04b3-b9afd1de5466",
+    "agentId": "staffing-director-agent",
+    "tagCategory": "keyword",
+    "tagName": "read",
+    "confidenceScore": 1
+  },
+  {
+    "id": "40822e0d-70b7-6987-989b-84142d6f9f43",
+    "agentId": "staffing-director-agent",
+    "tagCategory": "keyword",
+    "tagName": "write",
+    "confidenceScore": 1
+  },
+  {
+    "id": "47174567-4688-f855-bbf5-04453fbd7674",
+    "agentId": "staffing-director-agent",
+    "tagCategory": "keyword",
+    "tagName": "edit",
+    "confidenceScore": 1
+  },
+  {
+    "id": "d8116f3f-bef4-6427-15cd-9cf3368f10ee",
+    "agentId": "staffing-director-agent",
+    "tagCategory": "keyword",
+    "tagName": "glob",
+    "confidenceScore": 1
+  },
+  {
+    "id": "f56219f8-6747-abbb-cedc-b0de7e276971",
+    "agentId": "staffing-director-agent",
+    "tagCategory": "keyword",
+    "tagName": "grep",
+    "confidenceScore": 1
+  },
+  {
+    "id": "e1db69f2-a55e-4a9a-8f95-f223802dc228",
+    "agentId": "staffing-director-agent",
+    "tagCategory": "keyword",
+    "tagName": "bash",
+    "confidenceScore": 1
+  },
+  {
+    "id": "f972b2b3-3b75-995a-51bf-b8ea22be78b7",
+    "agentId": "staffing-director-agent",
+    "tagCategory": "keyword",
+    "tagName": "staffing_architecture",
+    "confidenceScore": 1
+  },
+  {
+    "id": "59fa68ad-275a-5a70-8296-6ef02d5c7b0a",
+    "agentId": "staffing-director-agent",
+    "tagCategory": "keyword",
+    "tagName": "role_gap_detection",
+    "confidenceScore": 1
+  },
+  {
+    "id": "ba5ef436-072f-68c3-4fb3-2f97bf5a7aa6",
+    "agentId": "staffing-director-agent",
+    "tagCategory": "keyword",
+    "tagName": "skill_design",
+    "confidenceScore": 1
+  },
+  {
+    "id": "ce33d8cb-7545-a316-1121-ce55db5fe97b",
+    "agentId": "staffing-director-agent",
+    "tagCategory": "keyword",
+    "tagName": "schedule_coverage",
+    "confidenceScore": 1
+  },
+  {
+    "id": "53ad2ab7-3cb4-4668-7321-6813a8da9855",
+    "agentId": "staffing-director-agent",
+    "tagCategory": "normalized_category",
+    "tagName": "general",
     "confidenceScore": 1
   },
   {

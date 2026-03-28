@@ -243,6 +243,14 @@
     "validate:protocol-schemas": "node scripts/validate-protocol-schemas.cjs",
     "validate:federation-gate:synthetic": "node scripts/protocols/synthetic-federation-gate-check.cjs --json",
     "validate:twip:conformance": "node scripts/protocols/twip-conformance.cjs",
+    "validate:master-clock-sync": "node scripts/protocols/master-clock-sync-audit.cjs",
+    "validate:dont-die": "node scripts/protocols/dont-die-supervisor.cjs --warn-only",
+    "tnf:dont-die:run": "node scripts/protocols/dont-die-supervisor.cjs --json",
+    "tnf:staffing:cycle": "node .skills/tnf-staffing-director-agent/scripts/run_staffing_director_cycle.cjs --json",
+    "tnf:staff-review:cycle": "node .skills/tnf-staff-review-agent/scripts/run_staff_review_cycle.cjs --json",
+    "tnf:staffops:cron:install": "node scripts/protocols/staffops-schedule-sync.cjs install --json",
+    "tnf:staffops:cron:status": "node scripts/protocols/staffops-schedule-sync.cjs status --json",
+    "tnf:staffops:cron:uninstall": "node scripts/protocols/staffops-schedule-sync.cjs uninstall --json",
     "openapi:snapshot": "node scripts/openapi/snapshot-api-docs-json.mjs",
     "openapi:check": "node scripts/openapi/check-api-docs-drift.mjs",
     "twip:sign": "node scripts/protocols/twip-sign-envelope.cjs",
@@ -348,7 +356,8 @@
     "tsx": "^4.20.3",
     "url-parse": "^1.5.10",
     "vitest": "^4.1.0",
-    "ws": "^8.18.3"
+    "ws": "^8.18.3",
+    "@the-new-fuse/infrastructure": "workspace:*"
   },
   "workspaces": [
     "apps/*",

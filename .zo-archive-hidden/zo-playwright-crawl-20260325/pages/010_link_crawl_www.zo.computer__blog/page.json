@@ -1,0 +1,969 @@
+{
+  "capturedAt": "2026-03-25T00:35:14.515Z",
+  "url": "https://www.zo.computer/blog",
+  "title": "Blog | Zo Computer",
+  "links": [
+    {
+      "text": "MiniMax 2.7 & Kimi K2.5 are free on Zo",
+      "href": "https://www.zo.computer/signup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo",
+      "href": "https://www.zo.computer/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Get started",
+      "href": "https://www.zo.computer/signup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo",
+      "href": "https://www.zo.computer/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Pricing",
+      "href": "https://www.zo.computer/pricing",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "About",
+      "href": "https://www.zo.computer/about",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Newsletter",
+      "href": "https://www.zo.computer/newsletter",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Blog",
+      "href": "https://www.zo.computer/blog",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Download",
+      "href": "https://github.com/zocomputer/Zo/releases/latest/download/Zo.dmg",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Get started",
+      "href": "https://www.zo.computer/signup",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Marketing How to Automate Social Media Posting Let Zo draft, schedule, and post content across your social platforms automatically. LinkedIn X",
+      "href": "https://www.zo.computer/blog/automate-social-media-posting",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Productivity How to Connect Telegram to Zo Chat with Zo on Telegram — get updates, send commands, and receive agent outputs on the go. Telegram",
+      "href": "https://www.zo.computer/blog/connect-telegram",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Productivity Includes video walkthrough Create a Persona in Zo Make Zo talk and think the way you want — create custom personas for any use case.",
+      "href": "https://www.zo.computer/blog/create-a-persona",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Productivity Create Your First Agent Automation Set up a scheduled AI agent that runs tasks for you on autopilot — just by chatting with Zo.",
+      "href": "https://www.zo.computer/blog/create-your-first-agent",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Data Analysis How to Make a Daily News Digest Automation Wake up to a personalized news briefing delivered to your inbox, texts, or Telegram every morning.",
+      "href": "https://www.zo.computer/blog/daily-news-digest",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Productivity How to Use Gmail Integration with Zo Search, read, organize, and respond to your emails without ever leaving Zo. Gmail",
+      "href": "https://www.zo.computer/blog/gmail-integration",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Project Management How to Use Google Calendar with Zo View, create, and manage your calendar events by just talking to Zo. Google Calendar",
+      "href": "https://www.zo.computer/blog/google-calendar",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Productivity How to Use Google Drive with Zo Search, read, and manage your Google Drive files directly from Zo. Google Drive",
+      "href": "https://www.zo.computer/blog/google-drive",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Productivity Includes video walkthrough How to Text Zo Text Zo from your phone like a friend — get answers, run tasks, and manage your life over SMS.",
+      "href": "https://www.zo.computer/blog/how-to-text-zo",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Project Management How to Use Linear with Zo Manage your tasks, issues, and projects in Linear directly from Zo. Linear",
+      "href": "https://www.zo.computer/blog/linear-integration",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Marketing How to Make a Portfolio Build and publish a personal portfolio site on zo.space — live in minutes, no hosting setup needed.",
+      "href": "https://www.zo.computer/blog/make-a-portfolio",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Productivity How to Make Rules Teach Zo your preferences so it behaves the way you want — every time.",
+      "href": "https://www.zo.computer/blog/make-rules",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Project Management How to Use Notion with Zo Search, read, and manage your Notion workspace through natural conversation. Google Calendar Linear Notion",
+      "href": "https://www.zo.computer/blog/notion-integration",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Productivity Includes video walkthrough Organize Your Zo Workspace Keep your Zo workspace clean and organized — just ask Zo to do it for you.",
+      "href": "https://www.zo.computer/blog/organize-workspace",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Productivity How to Send Emails with Zo Compose, review, and send emails directly from your Zo workspace. Gmail",
+      "href": "https://www.zo.computer/blog/send-emails",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Content Creation How to Use Spotify with Zo Control your music, discover new tracks, and manage playlists through Zo. Spotify",
+      "href": "https://www.zo.computer/blog/spotify-integration",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Marketing How to Use LinkedIn with Zo Search profiles, check messages, and manage your LinkedIn activity through Zo. LinkedIn",
+      "href": "https://www.zo.computer/blog/use-linkedin",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "SMB Includes video walkthrough Build Your Personal Corner of the Internet Learn how to use your Zo Space to create your own personal webpages and APIs.",
+      "href": "https://www.zo.computer/blog/your-space",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Productivity How to Run OpenClaw on Zo Run OpenClaw on Zo Computer — install, configure Tailscale access, connect 50+ tools, and get your AI agent live on Telegram, Discord, or WhatsApp.",
+      "href": "https://www.zo.computer/blog/how-to-run-openclaw-on-zo",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "SMB Building How to Build an API with Zo Create and deploy API endpoints on zo.space — live instantly, no server setup needed.",
+      "href": "https://www.zo.computer/blog/build-an-api",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Content Creation How to Turn Any Music Article into a Spotify Playlist Read a blog post, extract the songs, create a Spotify playlist—all with one AI command. Works with Pitchfork, NME, or any music article. Spotify",
+      "href": "https://www.zo.computer/blog/how-to-turn-any-music-article-into-a-spotify-playlist",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "SMB How to Self-Host n8n Self-host n8n free on Zo Computer—no Docker required. n8n Cloud costs $24/mo, self-hosting costs $0. Get a public URL and webhooks working in 5 minutes. n8n",
+      "href": "https://www.zo.computer/blog/how-to-self-host-n8n",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Productivity How to Set Up a Plain-Text Flashcard System Set up hashcards, a plain-text spaced repetition system, on your own cloud server. Learn faster with flashcards stored as simple markdown files.",
+      "href": "https://www.zo.computer/blog/how-to-set-up-a-plain-text-flashcard-system",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Productivity How to Run VS Code in Your Browser Set up VS Code Server on your own cloud server and access your development environment from any browser. A self-hosted alternative to GitHub Codespaces and Gitpod. VS Code",
+      "href": "https://www.zo.computer/blog/how-to-run-vs-code-in-your-browser",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Productivity How to Connect Your IDE to a Remote Server Set up SSH access to your Zo Computer and connect VS Code, Cursor, or any IDE for remote development. Code on a powerful server from anywhere.",
+      "href": "https://www.zo.computer/blog/how-to-connect-your-ide-to-a-remote-server",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Data Analysis How to Save a Webpage as PDF Save any webpage as a clean PDF with Zo Computer. One command to read, convert, and save — no browser extensions needed.",
+      "href": "https://www.zo.computer/blog/how-to-save-a-webpage-as-pdf",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "View all",
+      "href": "https://www.zo.computer/comparisons",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs ChatGPT, Claude, Gemini, and Perplexity ChatGPT is a chat. Zo is a computer—it runs tasks while you sleep, texts you updates, keeps your files, and hosts services. Compare ChatGPT agent mode to Zo agents.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-chatgpt",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "What are some alternatives to Zapier? Looking for Zapier alternatives? Compare Zo Computer, n8n, Make, and other automation tools, and see when Zo is the better fit.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-zapier",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "What are some alternatives to n8n? Looking for n8n alternatives? Compare Zo Computer, n8n, Zapier, and other automation tools, and see when AI-native automation is a better fit.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-n8n",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs Cursor and Claude Code Comparing Cursor, Copilot, and Claude Code? Zo runs Claude Opus, GPT-5.2, or any model on your own server with persistent files. Not just a coding tool, a full cloud computer.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-claude-code",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Is a personal cloud better than a VPS? Is a personal cloud better than a VPS? Compare Zo Computer to a self-managed Linux VPS or Nextcloud on Hetzner for setup, maintenance, and flexibility.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-self-hosted",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "What are some alternatives to Lovable? Looking for Lovable alternatives? Compare Zo Computer to Lovable and other AI app builders, and see when a personal cloud is the better fit.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-lovable",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "What are some alternatives to Replit? Looking for Replit alternatives? Compare Zo Computer to Replit for AI coding, deployment, persistent projects, and personal cloud development.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-replit",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs Notion AI: The Self-Hosted Alternative Looking for a Notion alternative? Compare Zo Computer to Notion AI. Self-hosted personal knowledge management with AI. See Notion AI pricing comparison.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-notion",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "What are some alternatives to NotebookLM? Looking for NotebookLM alternatives? Compare Zo Computer to NotebookLM for research workflows, file support, AI actions, and what happens after the summary.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-notebooklm",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "What are some alternatives to Perplexity? Looking for Perplexity alternatives? Compare Zo Computer to Perplexity for web research, persistent context, actions, and turning answers into real work.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-perplexity",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs Obsidian Looking for an Obsidian alternative or Obsidian sync alternative? Compare Zo Computer to Obsidian. Cloud vault with AI that syncs your markdown notes.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-obsidian",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs Dia, Comet, and AI Browsers Looking for a browser use alternative? Compare Zo Computer's agentic browser to AI browsers like Dia and Comet. Secure browser automation on your own server.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-comet",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "What are alternatives to Manus AI? Looking for a Manus AI alternative? Compare Zo Computer to Manus for autonomous work, persistent context, real code execution, and control.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-manus",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs Fabric How Zo Computer compares to Fabric.so for AI-powered knowledge management and personal computing.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-fabric",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs Mem.ai Looking for the best AI note taking app? Compare Zo Computer to Mem.ai for AI-powered knowledge management. Notes that integrate with code and automation.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-mem",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs MyMind How Zo Computer compares to MyMind for saving articles, bookmarks, and building a personal knowledge archive.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-mymind",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs Matter How Zo Computer compares to Matter for saving articles – caching vs true ownership, and what Pocket's shutdown teaches us.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-matter",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs Readwise Reader Looking for a Readwise alternative? Compare Zo Computer to Readwise Reader. Save articles as files you own forever, with AI and spaced repetition.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-readwise",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs Genspark How Zo Computer compares to Genspark – AI task completion vs owning your own computer.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-genspark",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs Julius AI How Zo Computer compares to Julius AI for data analysis – managed analysis vs owning your data infrastructure.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-julius",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs Cluely How Zo Computer compares to Cluely – transparent AI assistance vs real-time meeting prompts.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-cluely",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs Poke How Zo Computer compares to Poke – both let you text an AI, but Zo gives you a computer you own.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-poke",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs Cofounder How Zo Computer compares to Cofounder – autonomous business agents vs owning your own computer.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-cofounder",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs Poly How Zo Computer compares to Poly – intelligent file browsing vs owning a full computer.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-poly",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Zo vs Motion How Zo Computer compares to Motion – AI calendar optimization vs owning your own computer.",
+      "href": "https://www.zo.computer/comparisons/zo-vs-motion",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Documentation",
+      "href": "https://docs.zocomputer.com/",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Blog",
+      "href": "https://www.zo.computer/blog",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Newsletter",
+      "href": "https://www.zo.computer/newsletter",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Comparisons",
+      "href": "https://www.zo.computer/comparisons",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Pricing",
+      "href": "https://www.zo.computer/pricing",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Skills",
+      "href": "https://www.zo.computer/skills",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Integrations",
+      "href": "https://www.zo.computer/integrations",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Channels",
+      "href": "https://www.zo.computer/channels",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Models",
+      "href": "https://www.zo.computer/models",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Product Updates",
+      "href": "https://www.zo.computer/updates",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "FAQ",
+      "href": "https://www.zo.computer/faq",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Careers",
+      "href": "https://www.zo.computer/careers",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Brand",
+      "href": "https://www.zo.computer/brand",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Terms",
+      "href": "https://docs.zocomputer.com/information/terms",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Privacy",
+      "href": "https://docs.zocomputer.com/information/privacy-policy",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Help Center",
+      "href": "https://support.zocomputer.com/",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Contact",
+      "href": "https://docs.zocomputer.com/information/contact",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Security",
+      "href": "https://docs.zocomputer.com/information/security",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Discord",
+      "href": "https://discord.gg/invite/zocomputer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "LinkedIn",
+      "href": "https://www.linkedin.com/company/zocomputer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "X @zocomputer",
+      "href": "https://x.com/zocomputer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "YouTube",
+      "href": "https://www.youtube.com/@zo-computer",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Testimonials",
+      "href": "https://www.zo.computer/testimonials",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Ambassadors",
+      "href": "https://www.zo.computer/ambassador",
+      "rel": "",
+      "target": ""
+    },
+    {
+      "text": "Merch",
+      "href": "https://zo-computer.canarycanary.com/store",
+      "rel": "noopener noreferrer",
+      "target": "_blank"
+    },
+    {
+      "text": "Zo Computer Company",
+      "href": "https://www.zo.computer/about",
+      "rel": "",
+      "target": ""
+    }
+  ],
+  "buttons": [
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Personalization",
+      "text": "",
+      "classes": "inline-flex h-9 w-9 items-center justify-center rounded-md border border-border/50 hover:bg-accent/50 text-foreground transition-colors"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Menu",
+      "text": "",
+      "classes": "zo-btn aspect-square !px-2.5 !py-2 flex items-center justify-center border border-border bg-background/80 text-foreground transition-[background-color,border-color,transform] duration-0 hover:bg-muted/70 hover:border-border hover:duration-150 hover:[transition-timing-function:cubic-bezier(0.23,1,0.32,1)] active:bg-muted/60 active:scale-[0.97] active:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background touch-manipulation transform-gpu"
+    },
+    {
+      "tag": "button",
+      "id": "radix-_R_2rneitb_",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Resources",
+      "classes": "px-3 py-2 text-[0.9375rem] text-muted-foreground rounded transition-colors duration-0 hover:text-foreground hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 inline-flex items-center gap-1.5"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Personalization",
+      "text": "",
+      "classes": "inline-flex h-9 w-9 items-center justify-center rounded-md border border-border/50 hover:bg-accent/50 text-foreground transition-colors"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Marketing 3 blog posts",
+      "classes": "rounded-xl px-3 py-2.5 text-left text-sm transition-colors text-muted-foreground hover:bg-background/70 hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Finance 0 blog posts",
+      "classes": "rounded-xl px-3 py-2.5 text-left text-sm transition-colors text-muted-foreground hover:bg-background/70 hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "SMB 3 blog posts",
+      "classes": "rounded-xl px-3 py-2.5 text-left text-sm transition-colors text-muted-foreground hover:bg-background/70 hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Travel 0 blog posts",
+      "classes": "rounded-xl px-3 py-2.5 text-left text-sm transition-colors text-muted-foreground hover:bg-background/70 hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "E-commerce 0 blog posts",
+      "classes": "rounded-xl px-3 py-2.5 text-left text-sm transition-colors text-muted-foreground hover:bg-background/70 hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Content Creation 2 blog posts",
+      "classes": "rounded-xl px-3 py-2.5 text-left text-sm transition-colors text-muted-foreground hover:bg-background/70 hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Data Analysis 2 blog posts",
+      "classes": "rounded-xl px-3 py-2.5 text-left text-sm transition-colors text-muted-foreground hover:bg-background/70 hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Project Management 3 blog posts",
+      "classes": "rounded-xl px-3 py-2.5 text-left text-sm transition-colors text-muted-foreground hover:bg-background/70 hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Productivity 13 blog posts",
+      "classes": "rounded-xl px-3 py-2.5 text-left text-sm transition-colors text-muted-foreground hover:bg-background/70 hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Fitness & Health 0 blog posts",
+      "classes": "rounded-xl px-3 py-2.5 text-left text-sm transition-colors text-muted-foreground hover:bg-background/70 hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Gmail",
+      "text": "",
+      "classes": "inline-flex aspect-square items-center justify-center rounded-2xl border bg-background/90 p-3 transition-colors border-border/60 text-muted-foreground hover:border-border hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Google Calendar",
+      "text": "",
+      "classes": "inline-flex aspect-square items-center justify-center rounded-2xl border bg-background/90 p-3 transition-colors border-border/60 text-muted-foreground hover:border-border hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Google Drive",
+      "text": "",
+      "classes": "inline-flex aspect-square items-center justify-center rounded-2xl border bg-background/90 p-3 transition-colors border-border/60 text-muted-foreground hover:border-border hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Linear",
+      "text": "",
+      "classes": "inline-flex aspect-square items-center justify-center rounded-2xl border bg-background/90 p-3 transition-colors border-border/60 text-muted-foreground hover:border-border hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "LinkedIn",
+      "text": "",
+      "classes": "inline-flex aspect-square items-center justify-center rounded-2xl border bg-background/90 p-3 transition-colors border-border/60 text-muted-foreground hover:border-border hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "n8n",
+      "text": "",
+      "classes": "inline-flex aspect-square items-center justify-center rounded-2xl border bg-background/90 p-3 transition-colors border-border/60 text-muted-foreground hover:border-border hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Notion",
+      "text": "",
+      "classes": "inline-flex aspect-square items-center justify-center rounded-2xl border bg-background/90 p-3 transition-colors border-border/60 text-muted-foreground hover:border-border hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Spotify",
+      "text": "",
+      "classes": "inline-flex aspect-square items-center justify-center rounded-2xl border bg-background/90 p-3 transition-colors border-border/60 text-muted-foreground hover:border-border hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "Telegram",
+      "text": "",
+      "classes": "inline-flex aspect-square items-center justify-center rounded-2xl border bg-background/90 p-3 transition-colors border-border/60 text-muted-foreground hover:border-border hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "VS Code",
+      "text": "",
+      "classes": "inline-flex aspect-square items-center justify-center rounded-2xl border bg-background/90 p-3 transition-colors border-border/60 text-muted-foreground hover:border-border hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "X",
+      "text": "",
+      "classes": "inline-flex aspect-square items-center justify-center rounded-2xl border bg-background/90 p-3 transition-colors border-border/60 text-muted-foreground hover:border-border hover:text-foreground"
+    },
+    {
+      "tag": "button",
+      "id": "",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Filters",
+      "classes": "inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+    }
+  ],
+  "inputs": [],
+  "headings": [
+    {
+      "level": "h1",
+      "text": "Blog"
+    },
+    {
+      "level": "h3",
+      "text": "How to Automate Social Media Posting"
+    },
+    {
+      "level": "h3",
+      "text": "How to Connect Telegram to Zo"
+    },
+    {
+      "level": "h3",
+      "text": "Create a Persona in Zo"
+    },
+    {
+      "level": "h3",
+      "text": "Create Your First Agent Automation"
+    },
+    {
+      "level": "h3",
+      "text": "How to Make a Daily News Digest Automation"
+    },
+    {
+      "level": "h3",
+      "text": "How to Use Gmail Integration with Zo"
+    },
+    {
+      "level": "h3",
+      "text": "How to Use Google Calendar with Zo"
+    },
+    {
+      "level": "h3",
+      "text": "How to Use Google Drive with Zo"
+    },
+    {
+      "level": "h3",
+      "text": "How to Text Zo"
+    },
+    {
+      "level": "h3",
+      "text": "How to Use Linear with Zo"
+    },
+    {
+      "level": "h3",
+      "text": "How to Make a Portfolio"
+    },
+    {
+      "level": "h3",
+      "text": "How to Make Rules"
+    },
+    {
+      "level": "h3",
+      "text": "How to Use Notion with Zo"
+    },
+    {
+      "level": "h3",
+      "text": "Organize Your Zo Workspace"
+    },
+    {
+      "level": "h3",
+      "text": "How to Send Emails with Zo"
+    },
+    {
+      "level": "h3",
+      "text": "How to Use Spotify with Zo"
+    },
+    {
+      "level": "h3",
+      "text": "How to Use LinkedIn with Zo"
+    },
+    {
+      "level": "h3",
+      "text": "Build Your Personal Corner of the Internet"
+    },
+    {
+      "level": "h3",
+      "text": "How to Run OpenClaw on Zo"
+    },
+    {
+      "level": "h3",
+      "text": "How to Build an API with Zo"
+    },
+    {
+      "level": "h3",
+      "text": "How to Turn Any Music Article into a Spotify Playlist"
+    },
+    {
+      "level": "h3",
+      "text": "How to Self-Host n8n"
+    },
+    {
+      "level": "h3",
+      "text": "How to Set Up a Plain-Text Flashcard System"
+    },
+    {
+      "level": "h3",
+      "text": "How to Run VS Code in Your Browser"
+    },
+    {
+      "level": "h3",
+      "text": "How to Connect Your IDE to a Remote Server"
+    },
+    {
+      "level": "h3",
+      "text": "How to Save a Webpage as PDF"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs ChatGPT, Claude, Gemini, and Perplexity"
+    },
+    {
+      "level": "h3",
+      "text": "What are some alternatives to Zapier?"
+    },
+    {
+      "level": "h3",
+      "text": "What are some alternatives to n8n?"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs Cursor and Claude Code"
+    },
+    {
+      "level": "h3",
+      "text": "Is a personal cloud better than a VPS?"
+    },
+    {
+      "level": "h3",
+      "text": "What are some alternatives to Lovable?"
+    },
+    {
+      "level": "h3",
+      "text": "What are some alternatives to Replit?"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs Notion AI: The Self-Hosted Alternative"
+    },
+    {
+      "level": "h3",
+      "text": "What are some alternatives to NotebookLM?"
+    },
+    {
+      "level": "h3",
+      "text": "What are some alternatives to Perplexity?"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs Obsidian"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs Dia, Comet, and AI Browsers"
+    },
+    {
+      "level": "h3",
+      "text": "What are alternatives to Manus AI?"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs Fabric"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs Mem.ai"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs MyMind"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs Matter"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs Readwise Reader"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs Genspark"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs Julius AI"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs Cluely"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs Poke"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs Cofounder"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs Poly"
+    },
+    {
+      "level": "h3",
+      "text": "Zo vs Motion"
+    },
+    {
+      "level": "h3",
+      "text": "PRODUCT"
+    },
+    {
+      "level": "h3",
+      "text": "INFORMATION"
+    },
+    {
+      "level": "h3",
+      "text": "COMMUNITY"
+    }
+  ],
+  "bodyText": "MiniMax 2.7 & Kimi K2.5 are free on Zo Zo · Pricing About Newsletter Blog Resources Download Get started Blog Guides, walkthroughs, and practical posts on building workflows and automating tasks with Zo Computer. CATEGORY Marketing 3 blog posts Finance 0 blog posts SMB 3 blog posts Travel 0 blog posts E-commerce 0 blog posts Content Creation 2 blog posts Data Analysis 2 blog posts Project Management 3 blog posts Productivity 13 blog posts Fitness & Health 0 blog posts INTEGRATION Marketing How to Automate Social Media Posting Let Zo draft, schedule, and post content across your social platforms automatically. LinkedIn X Productivity How to Connect Telegram to Zo Chat with Zo on Telegram — get updates, send commands, and receive agent outputs on the go. Telegram Productivity Includes video walkthrough Create a Persona in Zo Make Zo talk and think the way you want — create custom personas for any use case. Productivity Create Your First Agent Automation Set up a scheduled AI agent that runs tasks for you on autopilot — just by chatting with Zo. Data Analysis How to Make a Daily News Digest Automation Wake up to a personalized news briefing delivered to your inbox, texts, or Telegram every morning. Productivity How to Use Gmail Integration with Zo Search, read, organize, and respond to your emails without ever leaving Zo. Gmail Project Management How to Use Google Calendar with Zo View, create, and manage your calendar events by just talking to Zo. Google Calendar Productivity How to Use Google Drive with Zo Search, read, and manage your Google Drive files directly from Zo. Google Drive Productivity Includes video walkthrough How to Text Zo Text Zo from your phone like a friend — get answers, run tasks, and manage your life over SMS. Project Management How to Use Linear with Zo Manage your tasks, issues, and projects in Linear directly from Zo. Linear Marketing How to Make a Portfolio Build and publish a personal portfolio site on zo.space — live in minutes, no hosting setup needed. Productivity How to Make Rules Teach Zo your preferences so it behaves the way you want — every time. Project Management How to Use Notion with Zo Search, read, and manage your Notion workspace through natural conversation. Google Calendar Linear Notion Productivity Includes video walkthrough Organize Your Zo Workspace Keep your Zo workspace clean and organized — just ask Zo to do it for you. Productivity How to Send Emails with Zo Compose, review, and send emails directly from your Zo workspace. Gmail Content Creation How to Use Spotify with Zo Control your music, discover new tracks, and manage playlists through Zo. Spotify Marketing How to Use LinkedIn with Zo Search profiles, check messages, and manage your LinkedIn activity through Zo. LinkedIn SMB Includes video walkthrough Build Your Personal Corner of the Internet Learn how to use your Zo Space to create your own personal webpages and APIs. Productivity How to Run OpenClaw on Zo Run OpenClaw on Zo Computer — install, configure Tailscale access, connect 50+ tools, and get your AI agent live on Telegram, Discord, or WhatsApp. SMB Building How to Build an API with Zo Create and deploy API endpoints on zo.space — live instantly, no server setup needed. Content Creation How to Turn Any Music Article into a Spotify Playlist Read a blog post, extract the songs, create a Spotify playlist—all with one AI command. Works with Pitchfork, NME, or any music article. Spotify SMB How to Self-Host n8n Self-host n8n free on Zo Computer—no Docker required. n8n Cloud costs $24/mo, self-hosting costs $0. Get a public URL and webhooks working in 5 minutes. n8n Productivity How to Set Up a Plain-Text Flashcard System Set up hashcards, a plain-text spaced repetition system, on your own cloud server. Learn faster with flashcards stored as simple markdown files. Productivity How to Run VS Code in Your Browser Set up VS Code Server on your own cloud server and access your development environment from any browser. A self-hosted alternative to GitHub Codespaces and Gitpod. VS Code Productivity How to Connect Your IDE to a Remote Server Set up SSH access to your Zo Computer and connect VS Code, Cursor, or any IDE for remote development. Code on a powerful server from anywhere. Data Analysis How to Save a Webpage as PDF Save any webpage as a clean PDF with Zo Computer. One command to read, convert, and save — no browser extensions needed. COMPARISONS View all Zo vs ChatGPT, Claude, Gemini, and Perplexity ChatGPT is a chat. Zo is a computer—it runs tasks while you sleep, texts you updates, keeps your files, and hosts services. Compare ChatGPT agent mode to Zo agents. What are some alternatives to Zapier? Looking for Zapier alternatives? Compare Zo Computer, n8n, Make, and other automation tools, and see when Zo is the better fit. What are some alternatives to n8n? Looking for n8n alternatives? Compare Zo Computer, n8n, Zapier, and other automation tools, and see when AI-native automation is a better fit. Zo vs Cursor and Claude Code Comparing Cursor, Copilot, and Claude Code? Zo runs Claude Opus, GPT-5.2, or any model on your own server with persistent files. Not just a coding tool, a full cloud computer. Is a personal cloud better than a VPS? Is a personal cloud better than a VPS? Compare Zo Computer to a self-managed Linux VPS or Nextcloud on Hetzner for setup, maintenance, and flexibility. What are some alternatives to Lovable? Looking for Lovable alternatives? Compare Zo Computer to Lovable and other AI app builders, and see when a personal cloud is the better fit. What are some alternatives to Replit? Looking for Replit alternatives? Compare Zo Computer to Replit for AI coding, deployment, persistent projects, and personal cloud development. Zo vs Notion AI: The Self-Hosted Alternative Looking for a Notion alternative? Compare Zo Computer to Notion AI. Self-hosted personal knowledge management with AI. See Notion AI pricing comparison. What are some alternatives to NotebookLM? Looking for NotebookLM alternatives? Compare Zo Computer to NotebookLM for research workflows, file support, AI actions, and what happens after the summary. What are some alternatives to Perplexity? Looking for Perplexity alternatives? Compare Zo Computer to Perplexity for web research, persistent context, actions, and turning answers into real work. Zo vs Obsidian Looking for an Obsidian alternative or Obsidian sync alternative? Compare Zo Computer to Obsidian. Cloud vault with AI that syncs your markdown notes. Zo vs Dia, Comet, and AI Browsers Looking for a browser use alternative? Compare Zo Computer's agentic browser to AI browsers like Dia and Comet. Secure browser automation on your own server. What are alternatives to Manus AI? Looking for a Manus AI alternative? Compare Zo Computer to Manus for autonomous work, persistent context, real code execution, and control. Zo vs Fabric How Zo Computer compares to Fabric.so for AI-powered knowledge management and personal computing. Zo vs Mem.ai Looking for the best AI note taking app? Compare Zo Computer to Mem.ai for AI-powered knowledge management. Notes that integrate with code and automation. Zo vs MyMind How Zo Computer compares to MyMind for saving articles, bookmarks, and building a personal knowledge archive. Zo vs Matter How Zo Computer compares to Matter for saving articles – caching vs true ownership, and what Pocket's shutdown teaches us. Zo vs Readwise Reader Looking for a Readwise alternative? Compare Zo Computer to Readwise Reader. Save articles as files you own forever, with AI and spaced repetition. Zo vs Genspark How Zo Computer compares to Genspark – AI task completion vs owning your own computer. Zo vs Julius AI How Zo Computer compares to Julius AI for data analysis – managed analysis vs owning your data infrastructure. Zo vs Cluely How Zo Computer compares to Cluely – transparent AI assistance vs real-time meeting prompts. Zo vs Poke How Zo Computer compares to Poke – both let you text an AI, but Zo gives you a computer you own. Zo vs Cofounder How Zo Computer compares to Cofounder – autonomous business agents vs owning your own computer. Zo vs Poly How Zo Computer compares to Poly – intelligent file browsing vs owning a full computer. Zo vs Motion How Zo Computer compares to Motion – AI calendar optimization vs owning your own computer. PRODUCT Documentation Blog Newsletter Comparisons Pricing Skills Integrations Channels Models Product Updates INFORMATION FAQ Careers Brand Terms Privacy Help Center Contact Security COMMUNITY Discord LinkedIn X @zocomputer YouTube Testimonials Ambassadors Merch Zo Computer Company"
+}

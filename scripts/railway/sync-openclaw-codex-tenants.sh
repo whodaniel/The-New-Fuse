@@ -17,7 +17,7 @@ Usage:
 Config format:
 {
   "modelPrimary": "openai-codex/gpt-5.3-codex",
-  "modelFallbacks": "openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
+  "modelFallbacks": "openai-codex/gpt-5.2-codex",
   "tenants": [
     {
       "name": "tenant-a",
@@ -78,7 +78,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
 fi
 
 MODEL_PRIMARY="$(jq -r '.modelPrimary // "openai-codex/gpt-5.3-codex"' "$CONFIG_FILE")"
-MODEL_FALLBACKS="$(jq -r '.modelFallbacks // "openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini"' "$CONFIG_FILE")"
+MODEL_FALLBACKS="$(jq -r '.modelFallbacks // "openai-codex/gpt-5.2-codex"' "$CONFIG_FILE")"
 TENANT_COUNT="$(jq -r '.tenants | length' "$CONFIG_FILE")"
 
 if [ "$TENANT_COUNT" -lt 1 ]; then

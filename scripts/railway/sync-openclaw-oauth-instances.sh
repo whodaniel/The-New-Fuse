@@ -23,7 +23,7 @@ Config format:
       "provider": "openai-codex",
       "authFile": "~/.codex-tenants/tenant-a/auth.json",
       "primaryModel": "openai-codex/gpt-5.3-codex",
-      "fallbackModels": "openai-codex/gpt-5.2-codex,openai-codex/gpt-5.1-codex,openai-codex/gpt-5-mini",
+      "fallbackModels": "openai-codex/gpt-5.2-codex",
       "paths": {
         "access": ".tokens.access_token",
         "refresh": ".tokens.refresh_token",

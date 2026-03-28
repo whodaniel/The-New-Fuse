@@ -124,6 +124,16 @@ if [ "${ENABLE_KILO_FALLBACK}" = "true" ]; then
   API_KEY="${API_KEY:-${ZEROCLAW_API_KEY:-${KILOCODE_API_KEY:-${KILO_API_KEY:-}}}}"
 fi
 
+# If centralized routing picked OpenRouter but no OpenRouter key is available,
+# force provider fallback to Kilo gateway so webhook traffic remains serviceable.
+if [ "${RAW_PROVIDER_LC}" = "openrouter" ] || [ "${RAW_PROVIDER_LC}" = "openrouterai" ]; then
+  if [ -z "${OPENROUTER_API_KEY:-}" ] && [ -n "${KILOCODE_API_KEY:-${KILO_API_KEY:-}}" ]; then
+    RESOLVED_PROVIDER="custom:https://api.kilo.ai/api/gateway"
+    API_KEY="${API_KEY:-${KILOCODE_API_KEY:-${KILO_API_KEY:-}}}"
+    echo "OpenRouter API key missing; falling back to '${RESOLVED_PROVIDER}'"
+  fi
+fi
+
 if [ -z "${ZEROCLAW_MODEL}" ]; then
   echo "WARN: ZEROCLAW_MODEL is not set. Configure model centrally or via Railway env vars." >&2
 fi
@@ -416,6 +426,9 @@ echo "Internal port:   ${INTERNAL_GATEWAY_PORT} (zeroclaw gateway)"
 echo "Provider:        ${RESOLVED_PROVIDER}"
 echo "Model:           ${ZEROCLAW_MODEL:-<unset>}"
 echo "TNF Agent ID:    ${TNF_AGENT_ID:-zeroclaw-railway-01}"
+
+# Ensure custom provider credential resolution sees a concrete key.
+export ZEROCLAW_API_KEY="${ZEROCLAW_API_KEY:-${API_KEY:-${KILOCODE_API_KEY:-${KILO_API_KEY:-}}}}"
 
 # ── TNF Agent Heartbeat ──────────────────────────────────────
 AGENT_ID="${TNF_AGENT_ID:-zeroclaw-railway-01}"

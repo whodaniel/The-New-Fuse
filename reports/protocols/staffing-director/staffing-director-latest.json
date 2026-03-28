@@ -1,0 +1,44 @@
+{
+  "spec": "tnf/staffing-director-report/0.1",
+  "generatedAt": "2026-03-26T20:32:29.639Z",
+  "sources": {
+    "registryPath": "data/protocols/cron-jobs.registry.json",
+    "growthAuditPath": "reports/protocols/growth-blocker-audit/growth-blocker-audit-latest.json"
+  },
+  "summary": {
+    "registeredAgents": 117,
+    "registeredSkills": 101,
+    "totalSchedules": 23,
+    "staffCoordinationSchedules": 1,
+    "staffArchitectureSchedules": 1,
+    "staffReviewSchedules": 1,
+    "highPriorityBlockers": 9,
+    "nicheGapCount": 1
+  },
+  "nicheGaps": [
+    {
+      "severity": "medium",
+      "code": "blocker_driven_staffing_pressure",
+      "message": "9 critical/high blocker findings indicate potential staffing specialization gaps."
+    }
+  ],
+  "roleSkillProposals": [
+    {
+      "roleId": "tnf-staffops-staffing-director-01",
+      "skillName": "tnf-staffing-director-agent",
+      "status": "implemented",
+      "rationale": "Maintains corporation-wide staffing architecture and proposes new role+skill packages for uncovered niches."
+    },
+    {
+      "roleId": "tnf-staffops-staff-review-01",
+      "skillName": "tnf-staff-review-agent",
+      "status": "implemented",
+      "rationale": "Runs periodic review of recent staff outputs and publishes ranked improvement recommendations."
+    }
+  ],
+  "nextActions": [
+    "Ensure Staffing Director and Staff Review schedules are enabled in cron governance control plane.",
+    "Require each proposed niche role to include an associated skill and runbook reference before activation.",
+    "Route high-severity blocker findings into staffing proposals when ownership gaps repeat across cycles."
+  ]
+}

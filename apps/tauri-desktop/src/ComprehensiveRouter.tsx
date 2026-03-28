@@ -13,6 +13,7 @@ const Analytics = lazy(() => import('./pages/Analytics'));
 const Settings = lazy(() => import('./pages/Settings'));
 const WebBrowser = lazy(() => import('./pages/WebBrowser'));
 const OAGIHub = lazy(() => import('./pages/OAGIHub'));
+const SwarmTerminal = lazy(() => import('./pages/SwarmTerminal'));
 
 /**
  * The New Fuse Tauri Desktop - Comprehensive Router
@@ -25,6 +26,7 @@ const ComprehensiveRouter: React.FC = () => {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠', route: '/dashboard', section: 'main' },
     { id: 'agents', label: 'Agent Hub', icon: '🤖', route: '/agents', section: 'main' },
+    { id: 'terminal', label: 'Swarm Terminal', icon: '📟', route: '/terminal', section: 'main' },
     { id: 'oagi', label: 'OAGI Hub', icon: '🖥️', route: '/oagi', section: 'main' },
     { id: 'antigravity', label: 'Antigravity', icon: '🔮', route: '/antigravity', section: 'main' },
     { id: 'chat', label: 'Chat', icon: '💬', route: '/chat', section: 'main' },
@@ -47,6 +49,8 @@ const ComprehensiveRouter: React.FC = () => {
         return <AntigravityHub />;
       case '/oagi':
         return <OAGIHub />;
+      case '/terminal':
+        return <SwarmTerminal />;
       case '/chat':
         return <MultiAgentChat />;
       case '/workflows':

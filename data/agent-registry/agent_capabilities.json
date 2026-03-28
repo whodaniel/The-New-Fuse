@@ -2723,6 +2723,125 @@
     "capabilityLevel": "intermediate"
   },
   {
+    "id": "e0daa4ff-e575-379f-0e72-caae6e608a3d",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "Sub-agent A: retention and event metrics.",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "a8fba409-b387-108c-dfc2-315ca5fbd561",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "Sub-agent B: visual interpretation synthesis.",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "dc09ef00-7662-0fb5-741b-f64d86696799",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "Keep screenshot storage bounded; do not allow unbounded frame growth.",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "8c5df16b-b116-87fc-15bb-ff1a4b5a59ac",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "Use deterministic command presets for repeatable tests.",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "edcc8526-b11d-3331-68cd-dc9a351e8936",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "Include absolute artifact paths in every report.",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "a452b675-3f51-7dd4-30ba-07bd57d62d95",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "Run short validation rounds before long captures.",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "e7952c72-eafc-8d03-bc0a-6fe16ebf5edb",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "Preserve unrelated files and existing user changes.",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "5f6ea34d-7f47-f898-0414-e86999874de9",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "run id and time range,",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "49cb5100-1757-3c77-2c46-3cb1d7d4f20d",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "total events by type,",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "297929a9-37b1-02e5-05ae-6efb5b788a48",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "retained vs pruned screenshot counts,",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "5eab2729-4c84-7964-86fa-cbe6eca21c03",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "top findings with evidence,",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "4d8a776f-2c6a-d699-8e36-e73772ab990c",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "artifact paths for timeline, actionable report, full summation, and plain-language summary.",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "ade4d3e3-d878-8b7c-90c4-4d04de997d30",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "LIVE_CAPTURE_CYCLE",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "2370066a-c2a3-3be1-5725-59d7cf2b0025",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "ROLLING_RETENTION_ENFORCEMENT",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "3a49358e-f22b-defd-cbe6-fdd4819eee18",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "EVENT_FRAME_CORRELATION",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "45a628e4-643b-6143-d7b8-4e30f8121a1e",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "explicit",
+    "capabilityName": "ACTIONABLE_SUMMATION_REPORTING",
+    "capabilityLevel": "advanced"
+  },
+  {
+    "id": "5b906a2c-d511-3d51-22f6-fa6369e4d6d2",
+    "agentId": "cursor-watch-learn-operator",
+    "capabilityType": "domain",
+    "capabilityName": "engineering",
+    "capabilityLevel": "intermediate"
+  },
+  {
     "id": "fe755978-394d-934a-e656-8e8db46d06b7",
     "agentId": "custom-slash-command-agent",
     "capabilityType": "explicit",
@@ -6069,6 +6188,55 @@
     "capabilityLevel": "intermediate"
   },
   {
+    "id": "df08f4b8-3cb3-1965-8608-8e4db0800f3b",
+    "agentId": "local-ai-codex-cli",
+    "capabilityType": "explicit",
+    "capabilityName": "CHAT",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "ffb99b67-706f-f443-539a-f35b99ad0c4c",
+    "agentId": "local-ai-codex-cli",
+    "capabilityType": "explicit",
+    "capabilityName": "CODE_GENERATION",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "546575e6-fc36-029a-9d62-b0e7a79188e3",
+    "agentId": "local-ai-codex-cli",
+    "capabilityType": "explicit",
+    "capabilityName": "FILE_MANAGEMENT",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "d9fae695-45f8-af8c-3c82-a96952e638b4",
+    "agentId": "local-ai-codex-cli",
+    "capabilityType": "explicit",
+    "capabilityName": "DATA_ANALYSIS",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "86ae5c46-4de7-b838-f2d5-fed6ea7f09c3",
+    "agentId": "local-ai-codex-cli",
+    "capabilityType": "explicit",
+    "capabilityName": "AUTOMATION",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "d2ba03ca-9878-4e6a-9771-a518bbdf20b1",
+    "agentId": "local-ai-codex-cli",
+    "capabilityType": "domain",
+    "capabilityName": "engineering",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "cae5eb3a-936f-55d5-ae85-ab3e58b1d938",
+    "agentId": "local-ai-codex-cli",
+    "capabilityType": "domain",
+    "capabilityName": "social",
+    "capabilityLevel": "intermediate"
+  },
+  {
     "id": "00c7f403-a004-99a8-e5a0-cc269f41b195",
     "agentId": "local-ai-gemini-cli",
     "capabilityType": "explicit",
@@ -8572,6 +8740,76 @@
     "agentId": "sponsorship-outreach-agent",
     "capabilityType": "domain",
     "capabilityName": "media",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "78da4d15-e74d-4410-2a19-d4a11927bdec",
+    "agentId": "staff-review-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "periodic_review",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "5665b4a4-a959-f06e-a667-203feced4ea9",
+    "agentId": "staff-review-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "operational_feedback",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "ae663cc9-41e8-4701-c122-6892f9f3cc83",
+    "agentId": "staff-review-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "improvement_planning",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "b3c6121f-9434-3048-c1dd-0e74f84325dc",
+    "agentId": "staff-review-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "quality_signal_synthesis",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "37951ee7-62be-a230-b41c-e5a5c5c005ec",
+    "agentId": "staff-review-agent",
+    "capabilityType": "domain",
+    "capabilityName": "general",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "fe8531ae-efab-6fb1-3c75-d1074745c076",
+    "agentId": "staffing-director-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "staffing_architecture",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "2a266c2a-7a9d-0c63-7abf-e196f76911a2",
+    "agentId": "staffing-director-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "role_gap_detection",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "4e081fca-817f-26ac-c078-a218c15d569c",
+    "agentId": "staffing-director-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "skill_design",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "8f44ee4b-5070-a7ae-77b1-c94119200128",
+    "agentId": "staffing-director-agent",
+    "capabilityType": "explicit",
+    "capabilityName": "schedule_coverage",
+    "capabilityLevel": "intermediate"
+  },
+  {
+    "id": "402a9cb8-07a0-4c7b-07bc-da43db6988e4",
+    "agentId": "staffing-director-agent",
+    "capabilityType": "domain",
+    "capabilityName": "general",
     "capabilityLevel": "intermediate"
   },
   {

@@ -127,6 +127,20 @@
         "signalSources": ["redis", "master-clock"],
         "clockSource": "master-clock"
       }
+    },
+    "tenant-terminal-awareness-default": {
+      "kind": "agent-turn",
+      "title": "Tenant Terminal Awareness Default",
+      "priority": "high",
+      "targetQueue": "tnf:master:tasks:realtime",
+      "instruction": "Run tenant terminal-awareness continuity checks. Verify frontload context visibility, shell-start context hygiene, and stale heartbeat signals. Emit concise remediation tasks with evidence when continuity breaks.",
+      "itinerary": {
+        "lane": "realtime_broker_routing",
+        "horizon": "realtime",
+        "coordinationMode": "brokered",
+        "signalSources": ["redis", "master-clock"],
+        "clockSource": "master-clock"
+      }
     }
   }
 }

@@ -10,6 +10,18 @@ const appRoot = path.resolve(__dirname, '..');
 const distDir = path.join(appRoot, 'dist');
 const routerPath = path.join(appRoot, 'src', 'ComprehensiveRouter.tsx');
 
+async function readFirstExistingFile(paths) {
+  for (const filePath of paths) {
+    try {
+      return await readFile(filePath, 'utf8');
+    } catch (error) {
+      if (error && error.code === 'ENOENT') continue;
+      throw error;
+    }
+  }
+  throw new Error(`No app shell found. Tried: ${paths.join(', ')}`);
+}
+
 function isStaticAppRoute(routePath) {
   if (!routePath.startsWith('/')) return false;
   if (routePath === '/') return false;
@@ -29,9 +41,12 @@ function toDistRouteDir(routePath) {
 async function main() {
   const [routerSource, appShell] = await Promise.all([
     readFile(routerPath, 'utf8'),
-    readFile(path.join(distDir, 'app.html'), 'utf8').catch(async () =>
-      readFile(path.join(distDir, 'index.html'), 'utf8')
-    ),
+    readFirstExistingFile([
+      path.join(distDir, 'app.html'),
+      path.join(distDir, 'index.html'),
+      path.join(appRoot, 'app.html'),
+      path.join(appRoot, 'index.html'),
+    ]),
   ]);
 
   const matches = [...routerSource.matchAll(/path="([^"]+)"/g)].map((match) => match[1]);

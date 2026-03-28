@@ -1,38 +1,38 @@
 {
-  "generatedAt": "2026-03-26T06:50:09.185Z",
+  "generatedAt": "2026-03-27T20:35:14.454Z",
   "schemaVersion": "2.0.0",
   "totals": {
-    "agents": 178,
-    "variants": 290,
-    "capabilities": 1377,
-    "relationships": 532,
-    "tags": 1803,
-    "collisions": 111,
+    "agents": 182,
+    "variants": 296,
+    "capabilities": 1411,
+    "relationships": 543,
+    "tags": 1854,
+    "collisions": 112,
     "parseErrors": 0,
     "skippedByClassification": 2,
     "byType": {
       "api": 86,
-      "external": 16,
-      "local": 72,
+      "external": 17,
+      "local": 75,
       "mcp": 4
     },
     "byCategory": {
-      "engineering": 125,
-      "social": 52,
+      "engineering": 127,
+      "social": 53,
       "marketing": 44,
       "content": 59,
       "orchestration": 29,
       "security": 28,
       "operations": 18,
-      "general": 9,
+      "general": 11,
       "media": 36,
       "external-llm": 3,
       "development-automation": 1
     },
     "bySource": {
-      "tnf_agents_md": 166,
-      "claude_agents_md": 114,
-      "tnf_ai_agents_json": 5,
+      "tnf_agents_md": 167,
+      "claude_agents_md": 117,
+      "tnf_ai_agents_json": 7,
       "legacy_agents_json": 5
     }
   },
@@ -44,27 +44,27 @@
       },
       {
         "value": "bash",
-        "count": 27
+        "count": 30
       },
       {
         "value": "read",
-        "count": 24
+        "count": 27
       },
       {
         "value": "write",
-        "count": 24
+        "count": 27
       },
       {
         "value": "grep",
-        "count": 23
+        "count": 26
       },
       {
         "value": "glob",
-        "count": 22
+        "count": 25
       },
       {
         "value": "edit",
-        "count": 16
+        "count": 18
       },
       {
         "value": "read_grep_glob_bash_edit_write",
@@ -131,6 +131,10 @@
         "count": 3
       },
       {
+        "value": "subagentexecutor",
+        "count": 3
+      },
+      {
         "value": "context_frontloader",
         "count": 3
       },
@@ -156,6 +160,10 @@
       },
       {
         "value": "code_generation",
+        "count": 2
+      },
+      {
+        "value": "quality",
         "count": 2
       },
       {
@@ -203,10 +211,6 @@
         "count": 2
       },
       {
-        "value": "subagentexecutor",
-        "count": 2
-      },
-      {
         "value": "funnelmappingtool",
         "count": 2
       },
@@ -228,6 +232,10 @@
       },
       {
         "value": "videoeditingsoftwareapi",
+        "count": 2
+      },
+      {
+        "value": "staffops",
         "count": 2
       },
       {
@@ -1099,10 +1107,6 @@
         "count": 1
       },
       {
-        "value": "quality",
-        "count": 1
-      },
-      {
         "value": "test_coverage_analysis_identify_areas_lacking_tests",
         "count": 1
       },
@@ -1408,6 +1412,54 @@
       },
       {
         "value": "received_agent_id_assignment_from_master_clock",
+        "count": 1
+      },
+      {
+        "value": "sub_agent_a_retention_and_event_metrics",
+        "count": 1
+      },
+      {
+        "value": "sub_agent_b_visual_interpretation_synthesis",
+        "count": 1
+      },
+      {
+        "value": "keep_screenshot_storage_bounded_do_not_allow_unbounded_frame_growth",
+        "count": 1
+      },
+      {
+        "value": "use_deterministic_command_presets_for_repeatable_tests",
+        "count": 1
+      },
+      {
+        "value": "include_absolute_artifact_paths_in_every_report",
+        "count": 1
+      },
+      {
+        "value": "run_short_validation_rounds_before_long_captures",
+        "count": 1
+      },
+      {
+        "value": "preserve_unrelated_files_and_existing_user_changes",
+        "count": 1
+      },
+      {
+        "value": "run_id_and_time_range",
+        "count": 1
+      },
+      {
+        "value": "total_events_by_type",
+        "count": 1
+      },
+      {
+        "value": "retained_vs_pruned_screenshot_counts",
+        "count": 1
+      },
+      {
+        "value": "top_findings_with_evidence",
+        "count": 1
+      },
+      {
+        "value": "artifact_paths_for_timeline_actionable_report_full_summation_and_plain_language_summary",
         "count": 1
       },
       {
@@ -4075,6 +4127,58 @@
         "count": 1
       },
       {
+        "value": "review",
+        "count": 1
+      },
+      {
+        "value": "continuous_improvement",
+        "count": 1
+      },
+      {
+        "value": "periodic_review",
+        "count": 1
+      },
+      {
+        "value": "operational_feedback",
+        "count": 1
+      },
+      {
+        "value": "improvement_planning",
+        "count": 1
+      },
+      {
+        "value": "quality_signal_synthesis",
+        "count": 1
+      },
+      {
+        "value": "staffing",
+        "count": 1
+      },
+      {
+        "value": "role_design",
+        "count": 1
+      },
+      {
+        "value": "governance",
+        "count": 1
+      },
+      {
+        "value": "staffing_architecture",
+        "count": 1
+      },
+      {
+        "value": "role_gap_detection",
+        "count": 1
+      },
+      {
+        "value": "skill_design",
+        "count": 1
+      },
+      {
+        "value": "schedule_coverage",
+        "count": 1
+      },
+      {
         "value": "local",
         "count": 1
       },
@@ -4940,6 +5044,23 @@
         {
           "sourceId": "claude_agents_md",
           "sourceFile": ".claude/agents/cro-process-agent.md"
+        }
+      ]
+    },
+    {
+      "id": "cursor-watch-learn-operator",
+      "variants": [
+        {
+          "sourceId": "tnf_agents_md",
+          "sourceFile": ".agent/agents/cursor-watch-learn-operator.md"
+        },
+        {
+          "sourceId": "claude_agents_md",
+          "sourceFile": ".claude/agents/cursor-watch-learn-operator.md"
+        },
+        {
+          "sourceId": "tnf_ai_agents_json",
+          "sourceFile": "config/ai-agents/cursor-watch-learn-operator.json"
         }
       ]
     },

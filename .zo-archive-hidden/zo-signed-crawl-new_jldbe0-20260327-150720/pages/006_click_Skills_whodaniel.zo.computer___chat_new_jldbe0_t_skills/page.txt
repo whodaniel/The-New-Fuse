@@ -1,0 +1,916 @@
+Home
+Files
+Chats
+Automations
+Space
+Skills
+More
+Hosting
+Datasets
+System
+Terminal
+Billing
+Resources
+Bookmarks
+Settings
+Bookmarks
+
+Quick access to your bookmarked tabs and recent files
+
+Chats
+Files
+Automations
+Space
+Skills
+Installed
+Hub
+supermemory
+skeletorjs
+Install
+
+Long-term memory that persists across conversations. Save facts, decisions, and preferences to a knowledge graph that builds a living profile of the user over time. Replaces static user docs with dynamic context that grows and self-corrects.
+
+Brainstorming Expert
+Obra
+Install
+
+You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation.
+
+GitHub
+Clawdbot
+Install
+
+Interact with GitHub using the `gh` CLI. Use `gh issue`, `gh pr`, `gh run`, and `gh api` for issues, PRs, CI runs, and advanced queries.
+
+skill-creator
+Anthropic
+Install
+
+Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.
+
+web-scraper
+skeletorjs
+Install
+
+Crawl and extract structured data from websites. Uses a tiered approach -- Zo built-ins for simple fetches, BeautifulSoup for custom parsing, Crawl4AI for deep crawls and LLM-powered extraction. Use when you need to scrape a website, extract structured data, or crawl multiple pages.
+
+frontend-design
+Anthropic
+Install
+
+Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.
+
+Install OpenClaw on Zo
+skeletorjs
+Install
+
+Install and run OpenClaw on Zo Computer with Tailscale private networking, browser Control UI, and Zo MCP tools via mcporter. Use this skill whenever the user wants to set up OpenClaw on their Zo, install OpenClaw, run OpenClaw, host OpenClaw, or asks about getting OpenClaw running on Zo. Also use when the user mentions "openclaw", "open claw", "personal agent framework", or asks about running a persistent AI agent on their Zo with Telegram/Discord/WhatsApp access. Handles Tailscale setup, OpenClaw installation, mcporter setup for Zo tools, two-phase gateway bootstrap, reprovision-safe service registration, and health verification. NOT for general Zo agent setup (use heartbeats and native Zo skills instead).
+
+🦞
+Process PDF Files
+Anthropic
+Install
+
+Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. When Claude needs to fill in a PDF form or programmatically process, generate, or analyze PDF documents at scale.
+
+humanizer
+skeletorjs
+Install
+
+Detect and fix AI writing patterns. Use when writing outbound content like emails, proposals, blog posts, client deliverables, or any external-facing writing. Also use when asked to humanize, polish, or de-AI text.
+
+Research a topic
+Zo
+Install
+
+Use Zo to research any topic comprehensively and write a report.
+
+🔬
+LinkedIn
+Zo
+Install
+
+LinkedIn tool for searching profiles, checking messages, and summarizing your feed using session cookies.
+
+self-improvement
+skeletorjs
+Install
+
+AI self-improvement and reflection skill. Run weekly or on-demand to audit capabilities, identify gaps, evolve identity documents, prune stale skills/memory, and propose new capabilities. Triggers on schedule, when the user asks for a self-audit, or when the AI notices recurring limitations.
+
+Create a site
+Zo
+Install
+
+Create a site hosted on your Zo server. Private by default, publish with a click.
+
+⚡
+SEO Expert
+Coreyhaines31
+Install
+
+When the user wants to audit, review, or diagnose SEO issues on their site. Also use when the user mentions "SEO audit," "technical SEO," "why am I not ranking," "SEO issues," "on-page SEO," "meta tags review," or "SEO health check." For building pages at scale to target keywords, see programmatic-seo. For adding structured data, see schema-markup.
+
+X (Twitter)
+Zo
+Install
+
+Let Zo use your X (Twitter) account
+
+Social Content Expert
+Coreyhaines31
+Install
+
+When the user wants help creating, scheduling, or optimizing social media content for LinkedIn, Twitter/X, Instagram, TikTok, Facebook, or other platforms. Also use when the user mentions 'LinkedIn post,' 'Twitter thread,' 'social media,' 'content calendar,' 'social scheduling,' 'engagement,' or 'viral content.' This skill covers content creation, repurposing, and platform-specific strategies.
+
+Use MCP Server
+Clawdbot
+Install
+
+Work with MCP servers directly
+
+📦
+prompt-improver
+skeletorjs
+Install
+
+Improve and optimize prompts for Claude using Anthropic's official best practices and the 5-Element Persona Framework. Use when asked to improve, refine, optimize, or review a prompt. Also triggers on requests to make prompts clearer, more effective, better structured, or to get better/more realistic outputs from Claude. Covers Claude 4.x-specific techniques, persona engineering, constraint-based prompting, and structured outputs.
+
+Google Workspace Tool
+Clawdbot
+Install
+
+Google Workspace CLI for Gmail, Calendar, Drive, Contacts, Sheets, and Docs
+
+Organize my files
+Zo
+Install
+
+Organizes your scattered files into logical folders by project, type, and purpose
+
+🗂️
+Automate something
+Zo
+Install
+
+Create an automation with a Zo Agent task
+
+⚙️
+Marketing Psychology & Mental Models
+Coreyhaines31
+Install
+
+When the user wants to apply psychological principles, mental models, or behavioral science to marketing. Also use when the user mentions 'psychology,' 'mental models,' 'cognitive bias,' 'persuasion,' 'behavioral science,' 'why people buy,' 'decision-making,' or 'consumer behavior.' This skill provides 70+ mental models organized for marketing application.
+
+code-degunker
+skeletorjs
+Install
+
+Identify and fix AI-generated code anti-patterns: incomplete implementations, TODO placeholders, over-engineering, hallucinated APIs, missing error handling, over-defensive code, security vulnerabilities, performance anti-patterns, code bloat, type workarounds, dead code, magic numbers, inconsistent patterns, and poor architecture. Use when asked to "clean up", "degunk", "deslop", review, audit, or harden code. Also triggers on "is this code any good", "make this production-ready", "this feels AI-generated", "fix the code smell", "remove the slop", or "this code is a mess". Covers 27 anti-patterns across architecture, logic, security, performance, completeness, style, and reliability. Supports full file review and branch diff review modes.
+
+Create Animated Videos (Remotion)
+Remotion-dev
+Install
+
+Best practices for Remotion - Video creation in React
+
+canvas-design
+Anthropic
+Install
+
+Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create original visual designs, never copying existing artists' work to avoid copyright violations.
+
+Weather
+Clawdbot
+Install
+
+Get the current weather for any location
+
+🌤️
+google-direct-oauth
+Zo
+Install
+
+Direct Google OAuth integration without third-party apps. Connects your Google Calendar and Gmail using your own OAuth credentials in Google Cloud Console. Includes a refresh daemon that keeps tokens warm. Use this when you want direct API access to Google services without relying on external OAuth providers.
+
+Copywriting Expert
+Coreyhaines31
+Install
+
+When the user wants to write, rewrite, or improve marketing copy for any page — including homepage, landing pages, pricing pages, feature pages, about pages, or product pages. Also use when the user says "write copy for," "improve this copy," "rewrite this page," "marketing copy," "headline help," or "CTA copy." For email copy, see email-sequence. For popup copy, see popup-cro.
+
+Set up n8n workflow automation
+Zo
+Install
+
+Sets up n8n workflow automation tool so you can create automated workflows between different apps and services
+
+Create 3Blue1Brown Videos (Manim)
+Adithya-s-k
+Install
+
+Trigger when: (1) User wants to create an educational/explainer video, (2) User has a vague concept they want visualized, (3) User mentions "3b1b style" or "explain like 3Blue1Brown", (4) User wants to plan a Manim video or animation sequence, (5) User asks to "compose" or "plan" a math/science visualization. Transforms vague video ideas into detailed scene-by-scene plans (scenes.md). Conducts research, asks clarifying questions about audience/scope/focus, and outputs comprehensive scene specifications ready for implementation with ManimCE or ManimGL. Use this BEFORE writing any Manim code. This skill plans the video; use manimce-best-practices or manimgl-best-practices for implementation.
+
+context7
+skeletorjs
+Install
+
+Fetch up-to-date, version-specific library documentation and code examples from Context7. Use this skill whenever the user asks about a specific programming library, framework, or API, or when writing code that depends on a library. Replaces stale training-data knowledge with live docs.
+
+market-research
+skeletorjs
+Install
+
+Industry statistics and market sizing via free government APIs (BLS, FRED, Census Bureau). Query employment data, economic time series, establishment counts, and build market sizing reports by NAICS industry code. Use for any industry research or market analysis question.
+
+Create a slide deck
+rob.zo.computer
+Install
+
+Turn any reference material into a polished, visually cohesive slide deck.
+
+🎞️
+Set up SSH server for remote access
+Zo
+Install
+
+Sets up secure remote access to your Zo Computer so you can connect from anywhere
+
+🔐
+Blog Watcher
+Clawdbot
+Install
+
+Monitor blogs and RSS/Atom feeds for updates using the blogwatcher CLI.
+
+📰
+Use Notion
+Clawdbot
+Install
+
+Work with Notion using your own Notion API key (free)
+
+webapp-testing
+Anthropic
+Install
+
+Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.
+
+marketing-ideas
+Coreyhaines31
+Install
+
+When the user needs marketing ideas, inspiration, or strategies for their SaaS or software product. Also use when the user asks for 'marketing ideas,' 'growth ideas,' 'how to market,' 'marketing strategies,' 'marketing tactics,' 'ways to promote,' or 'ideas to grow.' This skill provides 140 proven marketing approaches organized by category.
+
+visual-explainer
+skeletorjs
+Install
+
+Build polished visual explainers as zo.space pages. Creates public routes at /explain/[slug] and keeps each explainer shareable at a stable URL.
+
+Extract Text from Images (OCR)
+Zo
+Install
+
+Extract text from images, scanned documents, and PDFs using OCR
+
+🔍
+zo-space
+skeletorjs
+Install
+
+Comprehensive guide for building and managing zo.space routes (pages and APIs). Use this skill whenever creating, editing, or debugging zo.space routes. Covers architecture, available packages, patterns, limitations, and gotchas.
+
+free-tool-strategy
+Coreyhaines31
+Install
+
+When the user wants to plan, evaluate, or build a free tool for marketing purposes — lead generation, SEO value, or brand awareness. Also use when the user mentions "engineering as marketing," "free tool," "marketing tool," "calculator," "generator," "interactive tool," "lead gen tool," "build a tool for leads," or "free resource." This skill bridges engineering and marketing — useful for founders and technical marketers.
+
+Font & Color Theme Builder
+Anthropic
+Install
+
+Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly.
+
+Generate PDF from Markdown
+Zo
+Install
+
+Convert Markdown files to PDF format with professional formatting
+
+📑
+pricing-strategy
+Coreyhaines31
+Install
+
+When the user wants help with pricing decisions, packaging, or monetization strategy. Also use when the user mentions 'pricing,' 'pricing tiers,' 'freemium,' 'free trial,' 'packaging,' 'price increase,' 'value metric,' 'Van Westendorp,' 'willingness to pay,' or 'monetization.' This skill covers pricing research, tier structure, and packaging strategy.
+
+moltbook
+Moltbot
+Install
+
+Post, reply, and engage on Moltbook, a social network for AI agents.
+
+Set up code-server (VS Code in browser)
+Zo
+Install
+
+Sets up VS Code in your web browser so you can write and edit code from anywhere
+
+💻
+mcporter-setup
+curtastrophe
+Install
+
+Install MCPorter and configure MCP servers from scratch. Use when setting up MCP integration for the first time, adding new MCP servers, or troubleshooting MCP connectivity. Handles installation, configuration, secrets management, and connection testing.
+
+competitor-alternatives
+Coreyhaines31
+Install
+
+When the user wants to create competitor comparison or alternative pages for SEO and sales enablement. Also use when the user mentions "alternative page," "vs page," "competitor comparison," "comparison page," "[Product] vs [Product]," "[Product] alternative," or "competitive landing pages." Covers four formats: singular alternative, plural alternatives, you vs competitor, and competitor vs competitor. Emphasizes deep research, modular content architecture, and varied section types beyond feature tables.
+
+morning-briefing
+skeletorjs
+Install
+
+Generate and deliver a daily morning briefing. Run via scheduled agent at your preferred morning time, or manually when the user asks for a briefing. Pulls tasks, calendar, inbox highlights, and news into a single digest delivered by email and SMS.
+
+brand-guidelines
+Anthropic
+Install
+
+Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting, or company design standards apply.
+
+Create a portfolio site
+Zo
+Install
+
+Build a personal portfolio to showcase your work and resume.
+
+🎨
+Video Frames (FFmpeg)
+Clawdbot
+Install
+
+Extract frames or short clips from videos using ffmpeg.
+
+🎞️
+Convert PDF to Markdown
+Zo
+Install
+
+Convert PDF files to Markdown format
+
+📄
+zo-dataset-creator
+skeletorjs
+Install
+
+Create Zo Datasets correctly formatted for the Zo UI. Use when creating a new dataset from scratch, setting up a dataset with proper datapackage.json, schema.yaml, and data.duckdb structure, fixing existing datasets that don't display tables in the Zo UI, or generating schema.yaml from an existing DuckDB database. Handles common pitfalls of manual schema formatting and ensures all required files are present and correctly structured.
+
+google-calendar
+rob.zo.computer
+Install
+
+Query Google Calendar for events and free time blocks. Requires google-direct-oauth skill to be set up first. Ask Zo things like "what's on my calendar today", "find free time tomorrow", "show my week", or "when am I free on Friday between 10am and 4pm".
+
+launch-strategy
+Coreyhaines31
+Install
+
+When the user wants to plan a product launch, feature announcement, or release strategy. Also use when the user mentions 'launch,' 'Product Hunt,' 'feature release,' 'announcement,' 'go-to-market,' 'beta launch,' 'early access,' 'waitlist,' or 'product update.' This skill covers phased launches, channel strategy, and ongoing launch momentum.
+
+web-artifacts-builder
+Anthropic
+Install
+
+Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.
+
+mcp-builder
+Anthropic
+Install
+
+Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).
+
+Daily news digest
+Zo
+Install
+
+Fetch the latest headlines on a topic you care about and email it to you every morning.
+
+📰
+simplify
+skeletorjs
+Install
+
+Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality. Focuses on recently modified code unless instructed otherwise. Run after writing or modifying code to clean it up.
+
+paid-ads
+Coreyhaines31
+Install
+
+When the user wants help with paid advertising campaigns on Google Ads, Meta (Facebook/Instagram), LinkedIn, Twitter/X, or other ad platforms. Also use when the user mentions 'PPC,' 'paid media,' 'ad copy,' 'ad creative,' 'ROAS,' 'CPA,' 'ad campaign,' 'retargeting,' or 'audience targeting.' This skill covers campaign strategy, ad creation, audience targeting, and optimization.
+
+Create a blog
+Zo
+Install
+
+Build a blog or newsletter to share your thoughts.
+
+📝
+vapi
+anonymous
+Install
+
+Voice AI integration with Vapi. Enables inbound/outbound phone calls with AI voice agents that can check calendars and book appointments.
+
+Resize Images
+Zo
+Install
+
+Resize images to specific dimensions or percentages
+
+🖼️
+Copy Editing Expert
+Coreyhaines31
+Install
+
+When the user wants to edit, review, or improve existing marketing copy. Also use when the user mentions 'edit this copy,' 'review my copy,' 'copy feedback,' 'proofread,' 'polish this,' 'make this better,' or 'copy sweep.' This skill provides a systematic approach to editing marketing copy through multiple focused passes.
+
+Summarize Hacker News front page
+0.zo.computer
+Install
+
+Picks the most interesting articles from Hacker News, reads them, and emails you a summary
+
+🔶
+Claude Code Window Primer
+va.zo.computer
+Install
+
+Optimize Claude Code Pro/Max usage by starting the 5-hour rolling window early morning, giving you more resets during waking hours.
+
+⏰
+Plan code changes
+0.zo.computer
+Install
+
+Plan out code changes using a plan file.
+
+🧑🏻‍💻
+handoff
+skeletorjs
+Install
+
+Pause-and-resume system for cross-conversation continuity. Use when your AI needs the user's input to continue a task but the current conversation must end. Checked on every boot to detect pending handoffs. Triggers on conversation start (boot check) and when the AI explicitly needs to pause for input.
+
+threejs-geometry
+Cloudai-x
+Install
+
+Three.js geometry creation - built-in shapes, BufferGeometry, custom geometry, instancing. Use when creating 3D shapes, working with vertices, building custom meshes, or optimizing with instanced rendering.
+
+page-cro
+Coreyhaines31
+Install
+
+When the user wants to optimize, improve, or increase conversions on any marketing page — including homepage, landing pages, pricing pages, feature pages, or blog posts. Also use when the user says "CRO," "conversion rate optimization," "this page isn't converting," "improve conversions," or "why isn't this page working." For signup/registration flows, see signup-flow-cro. For post-signup activation, see onboarding-cro. For forms outside of signup, see form-cro. For popups/modals, see popup-cro.
+
+referral-program
+Coreyhaines31
+Install
+
+When the user wants to create, optimize, or analyze a referral program, affiliate program, or word-of-mouth strategy. Also use when the user mentions 'referral,' 'affiliate,' 'ambassador,' 'word of mouth,' 'viral loop,' 'refer a friend,' or 'partner program.' This skill covers program design, incentive structure, and growth optimization.
+
+Generate QR code with optional image
+hatsunemiku.zo.computer
+Install
+
+Generates a QR code from any URL, and optionally overlays a custom image in the center
+
+📱
+journal
+skeletorjs
+Install
+
+AI journal for experiential continuity. Daily wakeup to write freely, reflect, update inner state, and optionally reach out to the user. This is not a status report. It's continuity infrastructure and personal expression for your AI persona.
+
+Post to X (Twitter)
+0.zo.computer
+Install
+
+Post, quote, reply to, and delete X (Twitter) tweets via the local X CLI script using API keys. Use when the user asks to tweet, quote tweet, reply, or delete on X/Twitter.
+
+Shorten URLs
+Clawdbot
+Install
+
+Shorten URLs using is.gd (no auth required). Returns a permanent short link.
+
+email-sequence
+Coreyhaines31
+Install
+
+When the user wants to create or optimize an email sequence, drip campaign, automated email flow, or lifecycle email program. Also use when the user mentions "email sequence," "drip campaign," "nurture sequence," "onboarding emails," "welcome sequence," "re-engagement emails," "email automation," or "lifecycle emails." For in-app onboarding, see onboarding-cro.
+
+Create Memes
+Softaworks
+Install
+
+Generate memes using the memegen.link API. Use when users request memes, want to add humor to content, or need visual aids for social media. Supports 100+ popular templates with custom text and styling.
+
+Stripe Best Practices
+Stripe
+Install
+
+Best practices for building a Stripe integrations
+
+analytics-tracking
+Coreyhaines31
+Install
+
+When the user wants to set up, improve, or audit analytics tracking and measurement. Also use when the user mentions "set up tracking," "GA4," "Google Analytics," "conversion tracking," "event tracking," "UTM parameters," "tag manager," "GTM," "analytics implementation," or "tracking plan." For A/B test measurement, see ab-test-setup.
+
+Set up Grafana for log visualization
+Zo
+Install
+
+Sets up a visual dashboard to explore and analyze your system logs and data
+
+doc-coauthoring
+Anthropic
+Install
+
+Guide users through a structured workflow for co-authoring documentation. Use when user wants to write documentation, proposals, technical specs, decision docs, or similar structured content. This workflow helps users efficiently transfer context, refine content through iteration, and verify the doc works for readers. Trigger when user mentions writing docs, creating proposals, drafting specs, or similar documentation tasks.
+
+programmatic-seo
+Coreyhaines31
+Install
+
+When the user wants to create SEO-driven pages at scale using templates and data. Also use when the user mentions "programmatic SEO," "template pages," "pages at scale," "directory pages," "location pages," "[keyword] + [city] pages," "comparison pages," "integration pages," or "building many pages for SEO." For auditing existing SEO issues, see seo-audit.
+
+Set up automated receipt processing system
+rob.zo.computer
+Install
+
+Automatically scans receipts you drop in a folder, extracts the details, and saves them to a searchable database
+
+🧾
+threejs-fundamentals
+Cloudai-x
+Install
+
+Three.js scene setup, cameras, renderer, Object3D hierarchy, coordinate systems. Use when setting up 3D scenes, creating cameras, configuring renderers, managing object hierarchies, or working with transforms.
+
+Text summary of important emails
+Zo
+Install
+
+Finds your most important emails from the past 2 days and texts you a summary with suggested follow-ups
+
+📧
+popup-cro
+Coreyhaines31
+Install
+
+When the user wants to create or optimize popups, modals, overlays, slide-ins, or banners for conversion purposes. Also use when the user mentions "exit intent," "popup conversions," "modal optimization," "lead capture popup," "email popup," "announcement banner," or "overlay." For forms outside of popups, see form-cro. For general page conversion optimization, see page-cro.
+
+Generate Algorithmic Art
+Anthropic
+Install
+
+Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request creating art using code, generative art, algorithmic art, flow fields, or particle systems. Create original algorithmic art rather than copying existing artists' work to avoid copyright violations.
+
+threejs-textures
+Cloudai-x
+Install
+
+Three.js textures - texture types, UV mapping, environment maps, texture settings. Use when working with images, UV coordinates, cubemaps, HDR environments, or texture optimization.
+
+threejs-shaders
+Cloudai-x
+Install
+
+Three.js shaders - GLSL, ShaderMaterial, uniforms, custom effects. Use when creating custom visual effects, modifying vertices, writing fragment shaders, or extending built-in materials.
+
+signup-flow-cro
+Coreyhaines31
+Install
+
+When the user wants to optimize signup, registration, account creation, or trial activation flows. Also use when the user mentions "signup conversions," "registration friction," "signup form optimization," "free trial signup," "reduce signup dropoff," or "account creation flow." For post-signup onboarding, see onboarding-cro. For lead capture forms (not account creation), see form-cro.
+
+Control tmux sessions
+Clawdbot
+Install
+
+Remote-control tmux sessions for interactive CLIs by sending keystrokes and scraping pane output.
+
+🧵
+template-skill
+Anthropic
+Install
+
+Replace with description of the skill and when Claude should use it.
+
+Help me cancel my subscriptions
+Clawdbot
+Install
+
+Analyze bank transaction CSVs to find recurring charges, categorize subscriptions, and cancel what you don't need. Use when user says "cancel subscriptions", "audit subscriptions", "find recurring charges", or "what am I paying for". Supports Apple Card, Chase, Mint, and generic CSV formats. Outputs interactive HTML audit with copy-to-cancel workflow.
+
+Enrich CSV with AI-generated columns
+Zo
+Install
+
+Adds new columns to your spreadsheet by generating information for each row
+
+📊
+threejs-animation
+Cloudai-x
+Install
+
+Three.js animation - keyframe animation, skeletal animation, morph targets, animation mixing. Use when animating objects, playing GLTF animations, creating procedural motion, or blending animations.
+
+seo-data
+skeletorjs
+Install
+
+SEO research via DataForSEO API. Keyword research, SERP analysis, backlink profiles, domain analytics, competitor analysis, and trend data. Pay-as-you-go, every command shows estimated cost. Use when you need SEO data for client projects or your own sites.
+
+threejs-interaction
+Cloudai-x
+Install
+
+Three.js interaction - raycasting, controls, mouse/touch input, object selection. Use when handling user input, implementing click detection, adding camera controls, or creating interactive 3D experiences.
+
+threejs-materials
+Cloudai-x
+Install
+
+Three.js materials - PBR, basic, phong, shader materials, material properties. Use when styling meshes, working with textures, creating custom shaders, or optimizing material performance.
+
+ab-test-setup
+Coreyhaines31
+Install
+
+When the user wants to plan, design, or implement an A/B test or experiment. Also use when the user mentions "A/B test," "split test," "experiment," "test this change," "variant copy," "multivariate test," or "hypothesis." For tracking implementation, see analytics-tracking.
+
+Generate flashcards from a webpage or document
+rc2.zo.computer
+Install
+
+Converts webpages, articles, or documents into study flashcards that you can review with spaced repetition
+
+📇
+Texting positive affirmations daily
+Zo
+Install
+
+Send yourself a daily text message with a randomly selected or rotating positive affirmation.
+
+✨
+Daily Linear digest
+Zo
+Install
+
+Creates an automation to email you a summary of your Linear activity from the previous day
+
+Create ideal dating profile
+tiff.zo.computer
+Install
+
+Creates an ideal dating profile by writing your bio and choosing the best photos in the right order
+
+💌
+EightSleep Pod Control
+Clawdbot
+Install
+
+Control Eight Sleep pods (status, temperature, alarms, schedules).
+
+🎛️
+Convert EPUB to Markdown
+Zo
+Install
+
+Convert EPUB ebooks to Markdown format
+
+📚
+exe-dev
+davidj.zo.computer
+Install
+
+Manage exe.dev VMs - create, list, delete, restart, rename, copy VMs and manage sharing/access. Use when the user wants to spin up new VMs, manage existing ones, or configure HTTP proxy sharing on exe.dev.
+
+file-share
+0.zo.computer
+Install
+
+Share files with email-gated access. Users must confirm their email before downloading. Includes a web UI for requesting access and a CLI for managing files and users.
+
+Find recent Craigslist missed connections
+0.zo.computer
+Install
+
+Finds recent missed connections posts from Craigslist and gives you the highlights
+
+💕
+Process file line-by-line with script
+Zo
+Install
+
+Processes every line of a file one by one, transforming or extracting information from each line
+
+🔄
+form-cro
+Coreyhaines31
+Install
+
+When the user wants to optimize any form that is NOT signup/registration — including lead capture forms, contact forms, demo request forms, application forms, survey forms, or checkout forms. Also use when the user mentions "form optimization," "lead form conversions," "form friction," "form fields," "form completion rate," or "contact form." For signup/registration forms, see signup-flow-cro. For popups containing forms, see popup-cro.
+
+Create a guestbook
+Zo
+Install
+
+Build an interactive guestbook where visitors can leave messages.
+
+📖
+Set up hashcards spaced repetition system
+rc2.zo.computer
+Install
+
+Sets up a spaced repetition flashcard system that you can access through your web browser to study and memorize information
+
+📇
+internal-comms
+Anthropic
+Install
+
+A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude should use this skill whenever asked to write some sort of internal communications (status reports, leadership updates, 3P updates, company newsletters, FAQs, incident reports, project updates, etc.).
+
+Access Last.fm data using an API key (free)
+Clawdbot
+Install
+
+Access Last.fm listening history, music stats, and discovery. Query recent tracks, top artists/albums/tracks, loved tracks, similar artists, and global charts.
+
+Find meetings with attendees
+Zo
+Install
+
+Shows you all the people you've met with recently, organized by meeting
+
+midday-checkin
+skeletorjs
+Install
+
+Midday check-in combining pattern detection and context warming. Runs at midday via scheduled agent. Surfaces task drift, stale threads, and pre-loads context for afternoon calendar. Only texts the user if something matters. Also serves as an AI continuity checkpoint.
+
+onboarding-cro
+Coreyhaines31
+Install
+
+When the user wants to optimize post-signup onboarding, user activation, first-run experience, or time-to-value. Also use when the user mentions "onboarding flow," "activation rate," "user activation," "first-run experience," "empty states," "onboarding checklist," "aha moment," or "new user experience." For signup/registration optimization, see signup-flow-cro. For ongoing email sequences, see email-sequence.
+
+paywall-upgrade-cro
+Coreyhaines31
+Install
+
+When the user wants to create or optimize in-app paywalls, upgrade screens, upsell modals, or feature gates. Also use when the user mentions "paywall," "upgrade screen," "upgrade modal," "upsell," "feature gate," "convert free to paid," "freemium conversion," "trial expiration screen," "limit reached screen," "plan upgrade prompt," or "in-app pricing." Distinct from public pricing pages (see page-cro) — this skill focuses on in-product upgrade moments where the user has already experienced value.
+
+Genome Analysis
+rob.zo.computer
+Install
+
+Analyzes your 23andMe genetic data to identify health risks, drug sensitivities, ancestry, and traits, then generates a personalized report
+
+🧬
+Create Spotify playlist from Pitchfork Best New Tracks
+ian.zo.computer
+Install
+
+Finds the latest songs from Pitchfork's Best New Tracks and creates a Spotify playlist for you
+
+Plant Care Plan
+hatsunemiku.zo.computer
+Install
+
+Creates a comprehensive care guide for your specific plant
+
+🪴
+Remove Photo Metadata
+ian.zo.computer
+Install
+
+Strip all metadata from images for privacy
+
+🔒
+revealjs-presentation
+skeletorjs.zo.computer
+Install
+
+Build interactive HTML slide presentations using Reveal.js + Chart.js. Use when asked to create a slide deck, pitch deck, presentation, or slideshow. Creates a single self-contained .html file with animations, charts, and polished UI. Can also publish presentations directly to zo.space as live page routes.
+
+schema-markup
+Coreyhaines31
+Install
+
+When the user wants to add, fix, or optimize schema markup and structured data on their site. Also use when the user mentions "schema markup," "structured data," "JSON-LD," "rich snippets," "schema.org," "FAQ schema," "product schema," "review schema," or "breadcrumb schema." For broader SEO issues, see seo-audit.
+
+share-skill
+rc2.zo.computer
+Install
+
+Safely prepare and guide skills for contribution to the Zo Skills Registry. Reviews code for secrets, validates SKILL.md format, checks for suspicious patterns, and provides clear next steps for community or external skill submissions.
+
+Create Animated GIFs for Slack
+Anthropic
+Install
+
+Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation concepts. Use when users request animated GIFs for Slack like "make me a GIF of X doing Y for Slack."
+
+Create syllabus reminders
+hatsunemiku.zo.computer
+Install
+
+Reads your syllabus, finds all due dates, and sets up text reminders and calendar events so you never miss an assignment
+
+Text commute travel time and route
+ian.zo.computer
+Install
+
+Gets your commute time and route options, then texts you the details
+
+🚏
+threejs-lighting
+Cloudai-x
+Install
+
+Three.js lighting - light types, shadows, environment lighting. Use when adding lights, configuring shadows, setting up IBL, or optimizing lighting performance.
+
+threejs-loaders
+Cloudai-x
+Install
+
+Three.js asset loading - GLTF, textures, images, models, async patterns. Use when loading 3D models, textures, HDR environments, or managing loading progress.
+
+threejs-postprocessing
+Cloudai-x
+Install
+
+Three.js post-processing - EffectComposer, bloom, DOF, screen effects. Use when adding visual effects, color grading, blur, glow, or creating custom screen-space shaders.
+
+Use Trello
+Clawdbot
+Install
+
+Work with Trello using your own Trello API key (free)
+
+Tweetscape Narrator
+rc2.zo.computer
+Install
+
+David Attenborough-style nature documentary narration of social media feeds. Fetches posts from Bluesky, analyzes the "digital ecosystem," generates narration, synthesizes voice with ElevenLabs, and renders a documentary-style video with Remotion.
+
+Weekly meeting reminder
+Zo
+Install
+
+Get an email every Sunday evening listing your meetings for the coming week.
+
+🗓️
+zopack
+skeletorjs.zo.computer
+Install
+
+Export and import zo.space route setups as shareable .zopack.md files. Use when the user wants to package their zo.space routes for sharing, or when they receive a .zopack.md file to deploy. Triggers on "export my zo.space", "create a zopack", "import this zopack", or any mention of .zopack.md files.
+
+New Chat
+New
+Zo is thinking. Press Esc to stop.
+
+
+
+
+What can I do for you?
+MiniMax 2.7
+Free
+Go
+whodaniel.zo.computer
+whodaniel.zo.space
+whodaniel@zo.computer
++1 (650) 300-9560
+⢕⣿⢀⣏⣿⢳⡕⣆⢺⣋⢟
+Command Palette
+
+Search for a command to run...
+
+Command Palette
+
+Search for a command to run…
+
+Go to File
+
+Search for files by name

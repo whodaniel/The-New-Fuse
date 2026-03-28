@@ -19,7 +19,7 @@
 import { EventEmitter } from 'events';
 import http from 'http';
 
-import { createClient, type RedisClientType } from 'redis';
+import Redis, { Cluster } from 'ioredis';
 import WebSocket, { WebSocketServer } from 'ws';
 
 import { createAuthService } from './auth/JWTAuthService';
@@ -179,7 +179,7 @@ export class TNFRelayServer extends EventEmitter {
   private logger: Logger;
   private conversationManagers: Map<string, ConversationStateMachine> = new Map();
   private subscriptionRegistry: SubscriptionRegistry;
-  private activityRedis: RedisClientType | null = null;
+  private activityRedis: Redis | Cluster | null = null;
   private activityRedisConnectPromise: Promise<void> | null = null;
   private activityPersistenceEnabled: boolean;
   private activityPersistenceRequired: boolean;
@@ -280,24 +280,13 @@ export class TNFRelayServer extends EventEmitter {
       this.bridge = null;
     });
 
-    if (this.activityPersistenceEnabled) {
-      this.activityRedis = createClient({
-        url: process.env.ACTIVITY_REDIS_URL || process.env.REDIS_URL || 'redis://localhost:6379',
-      });
+    if (this.activityPersistenceEnabled && this.activityRedis) {
       this.activityRedis.on('error', (err: Error) => {
         console.error('[Relay] Activity Redis client error:', err.message);
       });
-      this.activityRedisConnectPromise = this.activityRedis
-        .connect()
-        .then(() => {
-          fmt.activityPersistenceEnabled(this.activityStreamKey);
-        })
-        .catch((err: Error) => {
-          console.error('[Relay] Failed to connect activity Redis:', err.message);
-          this.activityPersistenceEnabled = false;
-          this.activityRedis = null;
-          throw err;
-        });
+      // ioredis handles connection automatically, but we can wrap it in a promise if needed
+      this.activityRedisConnectPromise = Promise.resolve();
+      fmt.activityPersistenceEnabled(this.activityStreamKey);
     }
   }
 
@@ -539,11 +528,18 @@ export class TNFRelayServer extends EventEmitter {
       : this.activityStreamKey;
 
     try {
-      const entries = await this.activityRedis.xRevRange(streamKey, '+', '-', { COUNT: count });
-      const events = entries.map((entry) => ({
-        streamId: entry.id,
-        ...this.parseActivityFields(entry.message as Record<string, string>),
-      }));
+      const entries = await this.activityRedis.xrevrange(streamKey, '+', '-', 'COUNT', count);
+      const events = (entries as any[]).map((entry) => {
+        const [streamId, flatFields] = entry;
+        const fields: Record<string, string> = {};
+        for (let i = 0; i < flatFields.length; i += 2) {
+          fields[flatFields[i]] = flatFields[i + 1];
+        }
+        return {
+          streamId,
+          ...this.parseActivityFields(fields),
+        };
+      });
       res.writeHead(200);
       res.end(
         JSON.stringify({
@@ -1171,27 +1167,25 @@ export class TNFRelayServer extends EventEmitter {
     }
 
     try {
-      const streamId = await this.activityRedis.xAdd(this.activityStreamKey, '*', fields, {
-        TRIM: {
-          strategy: 'MAXLEN',
-          strategyModifier: '~',
-          threshold: this.activityMaxLen,
-        },
-      });
-      event.streamId = streamId;
+      const flatFields = Object.entries(fields).flat();
+      const streamId = await this.activityRedis.xadd(
+        this.activityStreamKey,
+        'MAXLEN',
+        '~',
+        this.activityMaxLen,
+        '*',
+        ...flatFields
+      );
+      event.streamId = streamId || '';
 
       if (resolvedChannel) {
-        await this.activityRedis.xAdd(
+        await this.activityRedis.xadd(
           `${this.activityChannelPrefix}${resolvedChannel}`,
+          'MAXLEN',
+          '~',
+          this.activityMaxLen,
           '*',
-          fields,
-          {
-            TRIM: {
-              strategy: 'MAXLEN',
-              strategyModifier: '~',
-              threshold: this.activityMaxLen,
-            },
-          }
+          ...flatFields
         );
       }
     } catch (err) {
@@ -1948,6 +1942,7 @@ export class TNFRelayServer extends EventEmitter {
           ...metadata,
           isSystemMessage: true,
           isRecoveryAttempt: true,
+          forceInject: true, // Ensure this reaches the chat input field
         },
         {
           source: 'standalone-relay',

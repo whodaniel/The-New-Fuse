@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { createHash } from 'node:crypto';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { chromium, firefox } from 'playwright';
 
@@ -17,10 +17,42 @@ const PLAYWRIGHT_BROWSER_CHANNEL = (process.env.PLAYWRIGHT_BROWSER_CHANNEL || ''
 const PLAYWRIGHT_ENABLE_FIREFOX_FALLBACK = String(process.env.PLAYWRIGHT_ENABLE_FIREFOX_FALLBACK || '1') !== '0';
 const PLAYWRIGHT_LAUNCH_RETRIES = Math.max(1, Number.parseInt(process.env.PLAYWRIGHT_LAUNCH_RETRIES || '4', 10));
 const PLAYWRIGHT_LAUNCH_DELAY_MS = Math.max(0, Number.parseInt(process.env.PLAYWRIGHT_LAUNCH_DELAY_MS || '900', 10));
+const PLAYWRIGHT_STORAGE_STATE = (process.env.PLAYWRIGHT_STORAGE_STATE || '').trim();
+const PLAYWRIGHT_EXTRA_HEADERS_JSON = (process.env.PLAYWRIGHT_EXTRA_HEADERS_JSON || '').trim();
 
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const normalizeText = (value) => String(value || '').replace(/\s+/g, ' ').trim().toLowerCase();
 const hashText = (value) => createHash('sha1').update(normalizeText(value)).digest('hex');
+
+const parseExtraHeaders = () => {
+  if (!PLAYWRIGHT_EXTRA_HEADERS_JSON) return null;
+  try {
+    const parsed = JSON.parse(PLAYWRIGHT_EXTRA_HEADERS_JSON);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      throw new Error('must be a JSON object');
+    }
+    const entries = Object.entries(parsed).map(([key, value]) => [String(key), String(value)]);
+    return Object.fromEntries(entries);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`PLAYWRIGHT_EXTRA_HEADERS_JSON parse failed: ${message}`);
+  }
+};
+
+const buildContextOptions = () => {
+  const options = {};
+  if (PLAYWRIGHT_STORAGE_STATE) {
+    if (!existsSync(PLAYWRIGHT_STORAGE_STATE)) {
+      throw new Error(`PLAYWRIGHT_STORAGE_STATE file not found: ${PLAYWRIGHT_STORAGE_STATE}`);
+    }
+    options.storageState = PLAYWRIGHT_STORAGE_STATE;
+  }
+  const extraHTTPHeaders = parseExtraHeaders();
+  if (extraHTTPHeaders) {
+    options.extraHTTPHeaders = extraHTTPHeaders;
+  }
+  return options;
+};
 
 const isTestableRoute = (path) => {
   if (!path || !path.startsWith('/')) return false;
@@ -227,10 +259,11 @@ const main = async () => {
   let context = null;
   let page = null;
   let visit = null;
+  const contextOptions = buildContextOptions();
 
   try {
     browser = await launchAuditBrowser();
-    context = await browser.newContext();
+    context = await browser.newContext(contextOptions);
     page = await context.newPage();
     visit = (route) => visitRoute(page, route);
   } catch (error) {
@@ -277,6 +310,10 @@ const main = async () => {
     startedAt,
     generatedAt: new Date().toISOString(),
     baseUrl: BASE_URL,
+    crawlAuth: {
+      storageStateEnabled: Boolean(PLAYWRIGHT_STORAGE_STATE),
+      extraHeadersEnabled: Boolean(PLAYWRIGHT_EXTRA_HEADERS_JSON),
+    },
     totalRoutes: rows.length,
     hardBroken: hardBroken.length,
     networkBroken: networkBroken.length,

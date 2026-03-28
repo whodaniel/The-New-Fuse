@@ -2,7 +2,6 @@
   "gateway": {
     "port": 8080,
     "mode": "cloud",
-    "bind": "0.0.0.0",
     "auth": {
       "token": "452b920d31ac"
     }
