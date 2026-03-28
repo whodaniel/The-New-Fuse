@@ -11,6 +11,7 @@ export const TimelineModule: React.FC = () => {
     branches,
     workflows,
     currentBranchId,
+    currentEventId,
     loading,
     error,
     handleBranchSelect,
@@ -38,7 +39,7 @@ export const TimelineModule: React.FC = () => {
       />
       <TimelineSlider
         events={events}
-        currentEventId={currentBranchId}
+        currentEventId={currentEventId}
         onEventChange={handleEventClick}
       />
     </div>

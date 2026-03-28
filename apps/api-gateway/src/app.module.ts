@@ -17,6 +17,7 @@ import { PokerGatewayModule } from './gateway/poker-gateway.module';
 import { SgpGatewayModule } from './gateway/sgp-gateway.module';
 import { SystemGatewayModule } from './gateway/system-gateway.module';
 import { TerminalsGatewayModule } from './gateway/terminals-gateway.module';
+import { TimelineGatewayModule } from './gateway/timeline-gateway.module';
 import { WebhookGatewayModule } from './gateway/webhook-gateway.module';
 import { WorkspaceGatewayModule } from './gateway/workspace-gateway.module';
 import { ProxyModule } from './proxy/proxy.module';
@@ -47,6 +48,7 @@ import { ProxyModule } from './proxy/proxy.module';
     SgpGatewayModule,
     SystemGatewayModule,
     TerminalsGatewayModule,
+    TimelineGatewayModule,
     WorkspaceGatewayModule,
   ],
 })

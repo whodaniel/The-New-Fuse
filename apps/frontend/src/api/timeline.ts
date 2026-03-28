@@ -1,14 +1,13 @@
-import axios from 'axios';
-import { API_BASE_URL } from '../config';
+import api from '../services/api';
 
 export const timelineApi = {
   getMacroView: async () => {
-    const response = await axios.get(`${API_BASE_URL}/timeline/macro`);
+    const response = await api.get('/timeline/events');
     return response.data;
   },
 
   getPlanTimeline: async (planId: string) => {
-    const response = await axios.get(`${API_BASE_URL}/plans/${planId}`);
+    const response = await api.get(`/plans/${planId}`);
     return response.data;
   },
 
@@ -16,12 +15,12 @@ export const timelineApi = {
     recordId: string,
     data: { startTime?: string; endTime?: string; color?: string }
   ) => {
-    const response = await axios.patch(`${API_BASE_URL}/unified-ledger/records/${recordId}`, data);
+    const response = await api.patch(`/unified-ledger/records/${recordId}`, data);
     return response.data;
   },
 
   linkRecordToPlan: async (planId: string, recordId: string) => {
-    const response = await axios.post(`${API_BASE_URL}/plans/${planId}/link`, { recordId });
+    const response = await api.post(`/plans/${planId}/link`, { recordId });
     return response.data;
   },
 };
