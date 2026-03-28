@@ -27,7 +27,7 @@ export class TimelineGatewayController {
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
-        'api',
+        'agents',
         '/api/timeline/events',
         'GET',
         headers,
@@ -68,7 +68,7 @@ export class TimelineGatewayController {
 
     try {
       const response = await this.proxyService.proxyRequest(
-        'api',
+        'agents',
         targetPath,
         req.method,
         headers,

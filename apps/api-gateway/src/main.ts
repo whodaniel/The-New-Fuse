@@ -93,6 +93,7 @@ async function bootstrap() {
         'mcp',
         'sgp',
         'terminals',
+        'timeline',
         'webhooks',
         'ide',
         'visualizations',
