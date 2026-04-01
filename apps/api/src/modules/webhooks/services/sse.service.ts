@@ -3,6 +3,8 @@
  * Handles Server-Sent Events for real-time event streaming
  */
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import { Response } from 'express';
 

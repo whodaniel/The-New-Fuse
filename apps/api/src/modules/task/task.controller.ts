@@ -10,6 +10,8 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
 import type { NewTask } from '@the-new-fuse/database';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../../decorators/current-user.decorator';

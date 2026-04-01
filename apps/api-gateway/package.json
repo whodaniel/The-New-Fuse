@@ -24,7 +24,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "type-check": "tsc --noEmit",
-    "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo"
+    "clean": "rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",
@@ -33,19 +33,22 @@
     "@nestjs/swagger": "^11.2.6",
     "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
+    "@the-new-fuse/infrastructure": "workspace:*",
     "@the-new-fuse/jules-integration": "workspace:*",
     "@the-new-fuse/relay-core": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
+    "@types/bcrypt": "^6.0.0",
     "@types/jest": "^30.0.0",
     "axios": "^1.13.5",
+    "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "express": "^5.2.1",
     "ioredis": "^5.9.2",
+    "postgres": "^3.4.8",
     "redis": "^4.7.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2",
-    "@the-new-fuse/infrastructure": "workspace:*"
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.16",

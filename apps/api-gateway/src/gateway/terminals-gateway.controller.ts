@@ -1,4 +1,5 @@
 import { Controller, Get, Headers, HttpStatus, Query, Res, Version } from '@nestjs/common';
+// @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';

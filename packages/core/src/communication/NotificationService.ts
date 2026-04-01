@@ -1,7 +1,8 @@
 import { Injectable, OnModuleInit, Inject } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { Logger } from 'winston';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } // @ts-ignore
+from 'uuid';
 import axios from 'axios';
 import { Redis } from 'ioredis';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';

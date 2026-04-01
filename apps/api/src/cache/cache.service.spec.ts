@@ -106,7 +106,7 @@ describe('CacheService', () => {
   });
 
   it('should fallback to individual env vars if REDIS_URL is missing', () => {
-    mockConfigService.get.mockImplementation((key) => {
+    mockConfigService.get.mockImplementation((key: any) => {
       if (key === 'REDIS_URL') return undefined;
       if (key === 'REDIS_HOST') return 'localhost';
       if (key === 'REDIS_PORT') return 6379;

@@ -10,7 +10,9 @@ import {
   CallHandler,
   Logger,
 } from '@nestjs/common';
+// @ts-ignore
 import { Observable } from 'rxjs';
+// @ts-ignore
 import { tap } from 'rxjs/operators';
 import { Request, Response } from 'express';
 

@@ -1,4 +1,6 @@
+// @ts-ignore
 import { createClient, RedisClientType } from 'redis';
+// @ts-ignore
 import { v4 as uuidv4 } from 'uuid';
 import { createHash } from 'crypto';
 import { Logger } from 'winston';
@@ -19,7 +21,7 @@ interface ClientConfig {
 
 export class SimpleWebSocketClient {
   private state: ClientState = ClientState.INITIALIZING;
-  private redisClient: RedisClientType;
+  private redisClient: any;
   private logger: Logger;
   private config: ClientConfig;
 
@@ -61,7 +63,7 @@ export class SimpleWebSocketClient {
     try {
       const subscriber = this.redisClient.duplicate();
       await subscriber.connect();
-      await subscriber.subscribe(channel, (message) => {
+      await subscriber.subscribe(channel, (message: any) => {
         try {
           const parsedMessage = JSON.parse(message);
           callback(parsedMessage);

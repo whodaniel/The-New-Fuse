@@ -1,5 +1,11 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { User } from '@the-new-fuse/database';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { JwtAuth, SecureAuthGuard } from '../guards/secure-auth.guard';

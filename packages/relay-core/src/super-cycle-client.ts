@@ -6,6 +6,7 @@
  * master clock can treat cron/automation loops as first-class participants.
  */
 
+// @ts-ignore
 import { createClient } from 'redis';
 
 type Action = 'register' | 'heartbeat' | 'unregister' | 'status' | 'self-prompts';
@@ -143,7 +144,7 @@ async function main() {
       }
       console.log(
         JSON.stringify(
-          rows.map((row) => JSON.parse(row)),
+          rows.map((row: any) => JSON.parse(row)),
           null,
           2
         )

@@ -55,7 +55,7 @@ export class CallbackHandlerRegistry {
       this.logger.log(`Executing ${taskHandlers.length} handlers for parent task ${parentTaskId}`);
       await Promise.all(
         taskHandlers.map((handler) =>
-          handler(event).catch((error) =>
+          handler(event).catch((error: any) =>
             this.logger.error(`Error executing handler for parent task ${parentTaskId}:`, error),
           ),
         ),

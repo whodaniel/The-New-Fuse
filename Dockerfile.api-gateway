@@ -1,0 +1,60 @@
+# Robust build for TNF API Gateway
+ARG NODE_VERSION=22
+
+FROM node:${NODE_VERSION}-alpine AS builder
+
+ENV CI=true
+ENV NODE_ENV=development
+
+RUN apk add --no-cache python3 make g++ pkgconfig pixman-dev cairo-dev pango-dev libjpeg-turbo-dev giflib-dev
+RUN corepack enable && corepack prepare pnpm@10.22.0 --activate
+
+WORKDIR /app
+
+# Copy workspace configuration
+COPY pnpm-workspace.yaml package.json tsconfig.json tsconfig.base.json tsconfig.standard.json turbo.json .pnpmfile.cjs ./
+COPY scripts ./scripts
+COPY packages ./packages
+COPY apps/api-gateway ./apps/api-gateway
+
+# Install ALL dependencies
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
+
+# Build internal dependencies
+RUN pnpm --filter @the-new-fuse/types build
+RUN pnpm --filter @the-new-fuse/utils build
+RUN pnpm --filter @the-new-fuse/infrastructure build
+
+# Force build database with subdirectories
+WORKDIR /app/packages/database
+RUN ../../node_modules/.bin/tsc --build --force
+WORKDIR /app
+
+RUN pnpm --filter @the-new-fuse/relay-core build
+RUN pnpm --filter @the-new-fuse/ap2-protocol build
+RUN pnpm --filter @the-new-fuse/a2a-core build
+RUN pnpm --filter @the-new-fuse/core build
+RUN pnpm --filter @the-new-fuse/api-types build
+RUN pnpm --filter @the-new-fuse/security build
+RUN pnpm --filter @the-new-fuse/n8n-workflows build
+
+# Build the specific service
+WORKDIR /app/apps/api-gateway
+RUN npm install -g @nestjs/cli
+RUN nest build
+
+FROM node:${NODE_VERSION}-alpine AS runner
+
+WORKDIR /app
+
+# Copy the entire workspace from builder
+COPY --from=builder /app ./
+
+ENV NODE_ENV=production
+ENV PORT=8080
+
+EXPOSE 8080
+
+# Run from the app directory
+WORKDIR /app/apps/api-gateway
+CMD ["node", "dist/main"]

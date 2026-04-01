@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 
+// @ts-ignore
 import { createClient, type RedisClientType } from 'redis';
 
 import {

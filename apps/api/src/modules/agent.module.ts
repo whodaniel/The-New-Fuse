@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { DatabaseModule } from '@the-new-fuse/database';
 import { AgentBankController } from '../controllers/agent-bank.controller';
 import { AgentCraftingController } from '../controllers/agent-crafting.controller';

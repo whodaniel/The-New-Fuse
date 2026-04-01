@@ -50,7 +50,7 @@ function main() {
   const hardcodedColors = content.match(/#[0-9a-fA-F]{6}/g) || [];
   const nonBrandColors = hardcodedColors.filter(
     (c) =>
-      !Object.values(TNF_BRAND).some((b) => b.toLowerCase() === c.toLowerCase()) &&
+      !Object.values(TNF_BRAND).some((b: any) => b.toLowerCase() === c.toLowerCase()) &&
       ![
         '#ffffff',
         '#000000',

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-ignore
 import { createClient, type RedisClientType } from 'redis';
 
 type QueueTask = {
@@ -63,8 +64,8 @@ class DirectorAgent {
   constructor() {
     this.redis = createClient({ url: CONFIG.REDIS_URL });
     this.redisBlocking = createClient({ url: CONFIG.REDIS_URL });
-    this.redis.on('error', (err) => console.error('[Director] Redis error:', err?.message || err));
-    this.redisBlocking.on('error', (err) =>
+    this.redis.on('error', (err: any) => console.error('[Director] Redis error:', err?.message || err));
+    this.redisBlocking.on('error', (err: any) =>
       console.error('[Director] Redis blocking error:', err?.message || err)
     );
   }

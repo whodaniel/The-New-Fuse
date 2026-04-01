@@ -1,4 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } // @ts-ignore
+from 'uuid';
 export enum ContentType {
   TEXT = 'text',
   CODE = 'code',

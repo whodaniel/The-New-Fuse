@@ -124,7 +124,7 @@ export class SecurityValidationMiddleware implements NestMiddleware {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map((item) => this.sanitizeObject(item, options));
+      return obj.map((item: any) => this.sanitizeObject(item, options));
     }
 
     if (typeof obj === 'object') {

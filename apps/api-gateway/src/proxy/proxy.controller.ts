@@ -4,6 +4,7 @@
  */
 
 import { Controller, Get } from '@nestjs/common';
+// @ts-ignore
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ProxyService } from './proxy.service';
 

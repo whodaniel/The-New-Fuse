@@ -158,7 +158,7 @@ export class OpenClawRuntimeService {
       const stdout = String(execError.stdout || '').trim();
       const errorPayload = [stderr, stdout]
         .filter(Boolean)
-        .map((value) => {
+        .map((value: any) => {
           try {
             const parsed = JSON.parse(value);
             return String(parsed.error || parsed.message || value);

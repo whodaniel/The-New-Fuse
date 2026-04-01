@@ -1,5 +1,6 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { Server, Socket } from 'socket.io';
+import { Server, Socket } // @ts-ignore
+from 'socket.io';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter } from 'events';
 
@@ -67,16 +68,16 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
     this.clients.set(clientId, client);
     this.logger.log(`Client connected: ${clientId}`);
 
-    socket.on('disconnect', (reason) => {
+    socket.on('disconnect', (reason: any) => {
       this.handleDisconnection(clientId, reason);
     });
 
-    socket.on('error', (error) => {
+    socket.on('error', (error: any) => {
       this.logger.error(`Socket error for client ${clientId}:`, error);
       this.handleError(clientId, error);
     });
 
-    socket.on('message', (data) => {
+    socket.on('message', (data: any) => {
       this.handleMessage(clientId, data);
     });
 

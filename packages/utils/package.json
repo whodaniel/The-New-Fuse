@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/utils",
+  "files": ["dist"],
   "version": "1.0.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -15,7 +16,7 @@
     }
   },
   "scripts": {
-    "build": "rimraf dist && tsc --project tsconfig.build.json",
+    "build": "rm -rf dist && tsc --project tsconfig.build.json",
     "build:watch": "tsc --watch --project tsconfig.build.json",
     "dev": "tsc --watch --project tsconfig.build.json",
     "test": "echo \"No tests configured for this package\"",
@@ -26,7 +27,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "type-check": "tsc --noEmit",
-    "clean": "rimraf dist .tsbuildinfo tsconfig.tsbuildinfo"
+    "clean": "rm -rf dist .tsbuildinfo tsconfig.tsbuildinfo"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.913.0",
@@ -36,7 +37,9 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/jwt": "^11.0.2",
     "@octokit/rest": "^22.0.0",
+    "@the-new-fuse/infrastructure": "workspace:*",
     "bcryptjs": "^3.0.2",
+    "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
@@ -47,8 +50,8 @@
     "react-router-dom": "^7.13.1",
     "reflect-metadata": "0.2.2",
     "rxjs": "^7.8.2",
-    "winston": "^3.18.3",
-    "@the-new-fuse/infrastructure": "workspace:*"
+    "tailwind-merge": "^3.5.0",
+    "winston": "^3.18.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",

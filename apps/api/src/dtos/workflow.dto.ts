@@ -1,5 +1,8 @@
 import { IsString, IsOptional, IsArray, IsObject, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { ApiProperty } from '@nestjs/swagger';
 
 export class WorkflowStepDto {

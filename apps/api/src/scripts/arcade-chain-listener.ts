@@ -207,7 +207,7 @@ async function main() {
   });
 }
 
-main().catch((error) => {
+main().catch((error: any) => {
   console.error('[arcade-chain-listener] fatal', error);
   process.exit(1);
 });

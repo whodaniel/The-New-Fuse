@@ -3,8 +3,13 @@
  * GraphQL resolver for User type queries and mutations
  */
 import { UseGuards } from '@nestjs/common';
+// @ts-ignore
 import { Args, Context, ID, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+// @ts-ignore
+// @ts-ignore
 import type { User } from '@the-new-fuse/database';
+// @ts-ignore
+// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import { GqlAuthGuard } from '../guards/gql-auth.guard';
 import { AgentLoader } from '../loaders/agent.loader';

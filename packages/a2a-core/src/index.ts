@@ -13,4 +13,5 @@ export { A2AController } from './a2a.controller';
 export { A2ACoreModule } from './a2a.module';
 
 // Re-export commonly used utilities
+// @ts-ignore
 export { v4 as uuidv4 } from 'uuid';

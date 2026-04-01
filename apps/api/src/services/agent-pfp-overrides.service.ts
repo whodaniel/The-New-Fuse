@@ -1,5 +1,8 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
+// @ts-ignore
+import { StorageService } from '@the-new-fuse/infrastructure';
 import { randomUUID } from 'crypto';
 import { PayPalService } from '../modules/billing/paypal.service';
 
@@ -35,14 +38,15 @@ export class AgentPfpOverridesService {
 
   constructor(
     private readonly db: DatabaseService,
-    private readonly payPalService: PayPalService
+    private readonly payPalService: PayPalService,
+    private readonly storageService: StorageService
   ) {}
 
   async getCloudAccess(userId: string): Promise<{
     canSave: boolean;
     tier: 'STARTER' | 'PRO' | 'ENTERPRISE';
     active: boolean;
-    storageBackend: 'cloudflare-images' | 'inline';
+    storageBackend: 'gcs' | 'cloudflare-images' | 'inline';
   }> {
     await this.ensureSchema();
     const membership = await this.payPalService.getMembershipForUser(userId);
@@ -240,7 +244,8 @@ export class AgentPfpOverridesService {
     return normalized || 'global';
   }
 
-  private getStorageBackend(): 'cloudflare-images' | 'inline' {
+  private getStorageBackend(): 'gcs' | 'cloudflare-images' | 'inline' {
+    if (process.env.GCS_BUCKET) return 'gcs';
     if (this.hasCloudflareImagesConfig()) return 'cloudflare-images';
     return 'inline';
   }
@@ -276,7 +281,8 @@ export class AgentPfpOverridesService {
       return normalized;
     }
 
-    if (!this.hasCloudflareImagesConfig()) {
+    const backend = this.getStorageBackend();
+    if (backend === 'inline') {
       return normalized;
     }
 
@@ -286,6 +292,23 @@ export class AgentPfpOverridesService {
     }
 
     try {
+      if (backend === 'gcs') {
+        const fileExt = this.extensionForMimeType(parsed.mimeType);
+        const filename = `pfps/${userId}/${this.normalizeNamespace(namespace)}_${agentId}_${Date.now()}.${fileExt}`;
+        
+        const uploaded = await this.storageService.upload(filename, parsed.buffer, {
+          contentType: parsed.mimeType,
+          isPublic: true,
+          metadata: {
+            userId,
+            namespace: this.normalizeNamespace(namespace),
+            agentId,
+          },
+        });
+        
+        return uploaded.publicUrl || normalized;
+      }
+
       const uploaded = await this.uploadToCloudflareImages({
         userId,
         namespace,
@@ -295,7 +318,7 @@ export class AgentPfpOverridesService {
       });
       return uploaded || normalized;
     } catch (error) {
-      this.logger.warn(`Cloudflare image upload failed; storing inline image: ${String(error)}`);
+      this.logger.warn(`${backend} storage upload failed; storing inline image: ${String(error)}`);
       return normalized;
     }
   }

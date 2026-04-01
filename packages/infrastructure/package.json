@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/infrastructure",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Unified infrastructure services for The New Fuse framework",
   "main": "dist/index.js",
@@ -17,6 +18,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.19.0",
     "@nestjs/common": "^11.1.16",
     "@nestjs/config": "^4.0.2",
     "ioredis": "^5.8.1",

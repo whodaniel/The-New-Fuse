@@ -1,3 +1,6 @@
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,

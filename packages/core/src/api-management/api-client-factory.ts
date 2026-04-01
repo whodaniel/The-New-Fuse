@@ -46,7 +46,7 @@ export class ApiClientFactory {
         });
         return config;
       },
-      (error) => {
+      (error: any) => {
         this.logger.error('Request interceptor error', error);
         return Promise.reject(error);
       }
@@ -61,7 +61,7 @@ export class ApiClientFactory {
         });
         return response;
       },
-      (error) => {
+      (error: any) => {
         this.logger.error('API Error', {
           message: error.message,
           status: error.response?.status,
@@ -80,7 +80,7 @@ export class ApiClientFactory {
     // Add retry logic
     client.interceptors.response.use(
       (response) => response,
-      async (error) => {
+      async (error: any) => {
         const config = error.config;
         if (!config.retry) {
           config.retry = 0;

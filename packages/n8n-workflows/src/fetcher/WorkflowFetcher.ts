@@ -3,7 +3,9 @@
  * Fetches n8n workflows from GitHub repositories
  */
 
-import simpleGit, { SimpleGit } from 'simple-git';
+// Use require to bypass resolution issues in some environments
+const simpleGit = require('simple-git');
+type SimpleGit = any;
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { glob } from 'glob';
@@ -152,11 +154,11 @@ export class WorkflowFetcher {
 
     for (const pattern of patterns) {
       try {
-        const files = await glob(pattern, {
+        const files = (await (glob as any)(pattern, {
           cwd: repoPath,
           absolute: true,
           ignore: ['**/node_modules/**', '**/package.json', '**/package-lock.json'],
-        });
+        })) as string[];
 
         console.log(`Found ${files.length} files matching ${pattern} in ${repo.source}`);
 

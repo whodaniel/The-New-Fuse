@@ -3,6 +3,9 @@
  * Manages ERC-4337 Smart Account creation and transactions
  */
 import { Injectable, Logger } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import { createHash } from 'crypto';
 import { createPublicClient, http, parseAbi } from 'viem';

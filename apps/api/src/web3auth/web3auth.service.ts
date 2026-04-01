@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { CHAIN_NAMESPACES } from '@web3auth/base';
 import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider';

@@ -41,12 +41,12 @@ export class UserService {
 
   async getUserByEmail(email: string): Promise<User | null> {
     // Mock implementation
-    return Array.from(this.users.values()).find((user) => user.email === email) || null;
+    return Array.from(this.users.values()).find((user: any) => user.email === email) || null;
   }
 
   async getUserByUsername(username: string): Promise<User | null> {
     // Mock implementation
-    return Array.from(this.users.values()).find((user) => user.username === username) || null;
+    return Array.from(this.users.values()).find((user: any) => user.username === username) || null;
   }
 
   async updateUser(id: string, updates: Partial<User>): Promise<User | null> {
@@ -72,10 +72,10 @@ export class UserService {
     // Mock implementation
     let users = Array.from(this.users.values());
     if (filters?.role) {
-      users = users.filter((user) => user.role === filters.role);
+      users = users.filter((user: any) => user.role === filters.role);
     }
     if (filters?.isActive !== undefined) {
-      users = users.filter((user) => user.isActive === filters.isActive);
+      users = users.filter((user: any) => user.isActive === filters.isActive);
     }
     return users;
   }

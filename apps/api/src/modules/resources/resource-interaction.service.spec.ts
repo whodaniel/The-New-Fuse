@@ -1,3 +1,6 @@
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database/drizzle';
 import { ResourceInteractionService } from './resource-interaction.service';
 

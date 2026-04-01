@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { DatabaseModule } from '@the-new-fuse/database';
 import { WorkflowTemplatesController } from '../controllers/workflow-templates.controller';
 import { WorkflowTemplatesService } from '../services/workflow-templates.service';

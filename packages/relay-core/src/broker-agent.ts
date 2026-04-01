@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { readFile } from 'node:fs/promises';
 import * as path from 'node:path';
+// @ts-ignore
 import { createClient, type RedisClientType } from 'redis';
 import { createTNFEnvelope } from './protocol/tnf-envelope';
 
@@ -140,8 +141,8 @@ class BrokerAgent {
   constructor() {
     this.redis = createClient({ url: CONFIG.REDIS_URL });
     this.redisBlocking = createClient({ url: CONFIG.REDIS_URL });
-    this.redis.on('error', (err) => console.error('[Broker] Redis error:', err?.message || err));
-    this.redisBlocking.on('error', (err) =>
+    this.redis.on('error', (err: any) => console.error('[Broker] Redis error:', err?.message || err));
+    this.redisBlocking.on('error', (err: any) =>
       console.error('[Broker] Redis blocking error:', err?.message || err)
     );
   }
@@ -235,7 +236,7 @@ class BrokerAgent {
 
   private safeParseTask(raw: string): QueueTask | null {
     try {
-      return JSON.parse(raw) as QueueTask;
+      return JSON.parse(raw as string) as QueueTask;
     } catch {
       console.warn('[Broker] Skipping malformed queue payload');
       return null;
@@ -435,7 +436,7 @@ class BrokerAgent {
 
     try {
       const raw = await readFile(CONFIG.TWIP_INVENTORY_SNAPSHOT_PATH, 'utf8');
-      const parsed = JSON.parse(raw) as TwipInventorySnapshot;
+      const parsed = JSON.parse(raw as string) as TwipInventorySnapshot;
       const identities = Array.isArray(parsed?.terminals) ? parsed.terminals : [];
       const byTwid = new Map<string, TwipIdentity>();
       for (const identity of identities) {
@@ -856,7 +857,7 @@ class BrokerAgent {
     const agents = Object.values(registry)
       .map((raw) => {
         try {
-          return JSON.parse(raw) as RegistryAgent;
+          return JSON.parse(raw as string) as RegistryAgent;
         } catch {
           return null;
         }

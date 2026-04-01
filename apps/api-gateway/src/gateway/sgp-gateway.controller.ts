@@ -1,4 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
+// @ts-ignore
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IsObject, IsOptional } from 'class-validator';
 import { SgpEnvelopeDefaults, SgpNestjsTranslationService } from './sgp-nestjs-translation.service';

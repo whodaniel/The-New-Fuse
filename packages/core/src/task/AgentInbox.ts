@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import Redis from 'ioredis';
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } // @ts-ignore
+from 'uuid';
 import { Task, TaskQueueOptions } from './TaskQueue';
 
 export interface AgentTask extends Task {

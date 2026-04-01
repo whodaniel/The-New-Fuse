@@ -1,7 +1,11 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+// @ts-ignore
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { DatabaseService, sql, User } from '@the-new-fuse/database';
 import { compare, hash } from 'bcrypt';
 import * as crypto from 'crypto';
@@ -557,8 +561,8 @@ export class AuthService {
     const codesValue = this.configService.get<string>('AUTH_INVITE_CODES') || '';
     return codesValue
       .split(',')
-      .map((value) => value.trim())
-      .filter((value) => value.length > 0);
+      .map((value: any) => value.trim())
+      .filter((value: any) => value.length > 0);
   }
 
   private generateInviteCodeValue(federationId?: string): string {

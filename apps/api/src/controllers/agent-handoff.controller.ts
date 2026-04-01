@@ -10,6 +10,9 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
 

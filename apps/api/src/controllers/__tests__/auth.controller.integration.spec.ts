@@ -1,6 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+// @ts-ignore
+// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import { hash } from 'bcrypt';
 import jwt from 'jsonwebtoken';

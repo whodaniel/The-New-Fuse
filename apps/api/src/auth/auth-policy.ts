@@ -272,8 +272,8 @@ function parseCodes(raw: string | undefined): string[] {
       if (Array.isArray(parsed)) {
         return parsed
           .filter((item): item is string => typeof item === 'string')
-          .map((item) => item.trim())
-          .filter((item) => item.length > 0);
+          .map((item: any) => item.trim())
+          .filter((item: any) => item.length > 0);
       }
     } catch {
       // Fallback to delimiter parsing below.
@@ -297,7 +297,7 @@ function readConfigValue(config: ConfigReader | undefined, key: string): string 
 }
 
 export function resolveInvitePolicy(config?: ConfigReader): InvitePolicy {
-  const enabled = INVITE_ONLY_KEYS.some((key) => parseBoolean(readConfigValue(config, key)));
+  const enabled = INVITE_ONLY_KEYS.some((key: any) => parseBoolean(readConfigValue(config, key)));
   const codes = new Set<string>();
 
   for (const key of INVITE_CODE_KEYS) {

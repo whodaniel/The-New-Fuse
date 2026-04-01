@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/ap2-protocol",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "AP2 Protocol Integration",
   "main": "dist/index.js",
@@ -21,6 +22,7 @@
     "@nestjs/common": "^11.1.16",
     "@nestjs/config": "^4.0.2",
     "axios": "^1.13.5",
+    "rxjs": "^7.8.2",
     "zod": "^4.1.12"
   },
   "devDependencies": {

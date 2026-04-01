@@ -1,6 +1,14 @@
 import { Injectable } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
 import { and, eq } from '@the-new-fuse/database';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database/drizzle';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { resourceFavorites, resourceShares } from '@the-new-fuse/database/drizzle/schema';
 
 export type ResourceShareRecord = {

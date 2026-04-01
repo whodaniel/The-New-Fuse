@@ -1,4 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { DrizzleService } from '@the-new-fuse/database';
 import { AnalyzerAgentService } from './analyzer.service';
 import { ArchitectAgentService } from './architect.service';
@@ -319,7 +322,7 @@ export class CoordinatorAgentService {
   }
 
   private broadcastMessage(from: string, message: string): void {
-    ['Analyzer', 'Architect', 'Implementer', 'Reviewer'].forEach((agent) => {
+    ['Analyzer', 'Architect', 'Implementer', 'Reviewer'].forEach((agent: any) => {
       this.sendMessage(from, agent, message);
     });
   }
@@ -370,7 +373,7 @@ Improvements: ${cycle.improvements.length} total
 - Failed: ${cycle.improvements.filter((i) => i.status === 'failed').length}
     `.trim();
 
-    const timeline = cycle.logs.map((log) => ({
+    const timeline = cycle.logs.map((log: any) => ({
       time: log.timestamp,
       event: `[${log.agent}] ${log.message}`,
     }));

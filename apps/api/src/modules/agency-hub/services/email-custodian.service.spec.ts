@@ -1,5 +1,7 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { ConfigService } from '@nestjs/config';
+// @ts-ignore
+// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import { EmailCustodianService } from './email-custodian.service';
 

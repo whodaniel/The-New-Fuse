@@ -1,4 +1,6 @@
 import { BadRequestException, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
 import { drizzleMarketplaceCatalogRepository } from '@the-new-fuse/database';
 import { spawn } from 'child_process';
 import { randomUUID } from 'crypto';

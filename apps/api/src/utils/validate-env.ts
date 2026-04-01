@@ -405,7 +405,7 @@ export function validateEnvironmentOrExit(): void {
   // Print errors and exit if validation failed
   if (!result.isValid) {
     console.error('❌ Environment validation failed!\n');
-    result.errors.forEach((error) => console.error(error));
+    result.errors.forEach((error: any) => console.error(error));
     console.error('\n💡 Tip: Copy .env.example to .env and fill in the required values.\n');
     process.exit(1);
   }

@@ -1,3 +1,6 @@
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {

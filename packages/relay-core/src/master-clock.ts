@@ -62,6 +62,7 @@ import { randomUUID } from 'crypto';
 import { existsSync, promises as fs } from 'fs';
 import { execFile } from 'node:child_process';
 import path from 'path';
+// @ts-ignore
 import { createClient } from 'redis';
 import { promisify } from 'util';
 import WebSocket from 'ws';

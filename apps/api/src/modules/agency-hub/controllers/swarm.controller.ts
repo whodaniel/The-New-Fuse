@@ -11,7 +11,10 @@ import {
   Sse,
   UseGuards,
 } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+// @ts-ignore
 import { Observable } from 'rxjs';
 import { Roles } from '../../../decorators/roles.decorator';
 import { AuthGuard } from '../../../guards/auth.guard';

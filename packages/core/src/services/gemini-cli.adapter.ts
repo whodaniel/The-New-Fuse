@@ -21,11 +21,11 @@ export class GeminiCLIAdapter {
       const geminiProcess = spawn('gemini', [command], { stdio: 'pipe', shell: true });
 
       let output = '';
-      geminiProcess.stdout.on('data', (data) => {
+      geminiProcess.stdout.on('data', (data: any) => {
         output += data.toString();
       });
 
-      geminiProcess.stderr.on('data', (data) => {
+      geminiProcess.stderr.on('data', (data: any) => {
         reject(data.toString());
       });
 

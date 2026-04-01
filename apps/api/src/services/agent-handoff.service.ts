@@ -103,7 +103,7 @@ export class AgentHandoffService implements OnModuleDestroy {
     Array<{ packet: HandoffPacket; ack: { status: string; note?: string; ackedAt: string } | null }>
   > {
     const rows = await this.store.listForAgent(agentId, options);
-    return rows.filter((row) => row.packet.scope.tenantId === tenantId);
+    return rows.filter((row: any) => row.packet.scope.tenantId === tenantId);
   }
 
   async acknowledgeForTenant(input: unknown, tenantId: string): Promise<HandoffAck> {

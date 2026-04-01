@@ -4,9 +4,13 @@
     "module": "NodeNext",
     "outDir": "./dist",
     "rootDir": "./src",
+    "baseUrl": ".",
     "types": ["node", "jest"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@the-new-fuse/database/drizzle/*": ["../../packages/database/drizzle/*"],
+      "@the-new-fuse/database/drizzle": ["../../packages/database/drizzle/index"],
+      "@the-new-fuse/*": ["../../packages/*/dist"]
     }
   },
   "include": ["src/**/*"],
@@ -18,11 +22,5 @@
     "src/scripts/**/*",
     "src/modules/agent-tracking/**/*",
     "src/middleware/agent-tracking.middleware.ts"
-  ],
-  "references": [
-    { "path": "../../packages/types" },
-
-    { "path": "../../packages/database" },
-    { "path": "../../packages/utils" }
   ]
 }

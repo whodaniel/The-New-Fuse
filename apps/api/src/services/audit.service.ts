@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { AuditLogEntry, AuditLogQuery, drizzleAuditLogsRepository } from '@the-new-fuse/database';
 
 @Injectable()

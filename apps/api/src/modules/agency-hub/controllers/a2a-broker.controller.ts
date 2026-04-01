@@ -1,4 +1,6 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthLevel, RequireAuthLevel } from '../../../guards/secure-auth.guard';
 import {

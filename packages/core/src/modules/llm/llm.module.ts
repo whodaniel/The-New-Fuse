@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { LlmConfigService } from '../../services/llm-config.service';
+// @ts-ignore
 import { DrizzleModule } from '@the-new-fuse/database';
 
 @Module({

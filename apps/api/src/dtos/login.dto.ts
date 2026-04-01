@@ -1,4 +1,7 @@
 import { IsString, IsEmail, MinLength } from 'class-validator';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginDto {

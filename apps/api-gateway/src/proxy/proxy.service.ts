@@ -7,6 +7,7 @@ import { HttpService } from '@nestjs/axios';
 import { BadGatewayException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
+// @ts-ignore
 import { firstValueFrom } from 'rxjs';
 
 export interface ServiceConfig {

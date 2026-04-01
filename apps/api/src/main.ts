@@ -1,15 +1,22 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+// @ts-ignore
+// @ts-ignore
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import 'dotenv/config';
+import * as dotenv from 'dotenv';
+dotenv.config();
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
 import { AppModule } from './app.module';
+import { validateGcpEnvironment } from './config/gcp.config';
 
 const logger = new Logger('Bootstrap');
 
 async function bootstrap(): Promise<void> {
+  // Validate GCP environment variables
+  validateGcpEnvironment();
+
   const app = await NestFactory.create(AppModule, {
     rawBody: true,
     // Enable CORS with strict configuration

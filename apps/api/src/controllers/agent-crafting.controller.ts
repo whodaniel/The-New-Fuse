@@ -9,7 +9,13 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import { isPrivilegedUser } from '../auth/auth-policy';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';

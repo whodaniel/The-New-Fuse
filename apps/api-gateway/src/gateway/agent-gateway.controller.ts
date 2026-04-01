@@ -16,6 +16,7 @@ import {
   Query,
   Res,
 } from '@nestjs/common';
+// @ts-ignore
 import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';

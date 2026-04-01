@@ -1,0 +1,24 @@
+# Pre-built production runner for TNF API Server
+ARG NODE_VERSION=22
+FROM node:${NODE_VERSION}-alpine AS runner
+
+WORKDIR /app
+
+# Copy workspace configuration
+COPY pnpm-workspace.yaml package.json tsconfig.json tsconfig.base.json tsconfig.standard.json turbo.json .pnpmfile.cjs ./
+COPY scripts ./scripts
+
+# Copy the PRE-BUILT packages and apps
+COPY packages ./packages
+COPY apps/api ./apps/api
+
+# Install only production dependencies
+RUN corepack enable && corepack prepare pnpm@10.22.0 --activate
+RUN pnpm install --prod --no-frozen-lockfile --ignore-scripts
+
+ENV NODE_ENV=production
+ENV PORT=8080
+EXPOSE 8080
+
+WORKDIR /app/apps/api
+CMD ["node", "dist/main"]

@@ -8,7 +8,9 @@
 
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger.js';
+// @ts-ignore
 import type { AgentType } from '@the-new-fuse/database';
+// @ts-ignore
 import type { DrizzleClient } from '@the-new-fuse/database';
 import { ethers, BigNumberish } from 'ethers';
 import { BlockchainService } from './shared/BlockchainService.js';

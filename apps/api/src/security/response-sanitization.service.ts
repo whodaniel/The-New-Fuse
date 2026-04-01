@@ -129,7 +129,7 @@ export class ResponseSanitizationService {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map((item) => this.sanitizeObject(item, options, depth + 1));
+      return obj.map((item: any) => this.sanitizeObject(item, options, depth + 1));
     }
 
     if (typeof obj === 'object') {

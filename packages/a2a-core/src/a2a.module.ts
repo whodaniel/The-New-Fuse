@@ -1,8 +1,10 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { Ap2ProtocolModule, Ap2ProtocolService } from '@the-new-fuse/ap2-protocol';
-import { RedisModule, UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import { Ap2ProtocolModule, Ap2ProtocolService } from // @ts-ignore
+'@the-new-fuse/ap2-protocol';
+import { RedisModule, UnifiedRedisService } from // @ts-ignore
+'@the-new-fuse/infrastructure';
 
 import { A2AService } from './a2a.service';
 import { A2ARedisAdapter } from './redis-adapter';

@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { DatabaseModule } from '@the-new-fuse/database';
 import { PromptTemplatesController } from '../controllers/prompt-templates.controller';
 import { PromptTemplatesService } from '../services/prompt-templates.service';

@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+// @ts-ignore
 import { AgentInfo, RedisAgentClient } from '../../../tnf-cli/src/RedisAgentClient';
 import { Logger } from '../utils/Logger';
 
@@ -50,7 +51,7 @@ export class TerminalFederationBridge extends EventEmitter {
         this.emit('command', msg);
       });
     } catch (error) {
-      this.logger.error(`[Federation] Failed to federate terminal ${this.config.tty}:`, error);
+      this.logger.error(`[Federation] Failed to federate terminal ${this.config.tty}: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }

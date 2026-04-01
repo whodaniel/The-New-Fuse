@@ -44,7 +44,7 @@ export class DatabaseService extends EventEmitter {
   constructor() {
     super();
     this.redisClient = new Redis();
-    this.redisClient.on('error', (err) => {
+    this.redisClient.on('error', (err: any) => {
       logger.error('Redis connection error:', err);
       this.emit('error', new ConnectionError('Redis connection failed'));
     });

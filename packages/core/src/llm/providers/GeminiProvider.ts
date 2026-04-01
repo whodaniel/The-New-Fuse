@@ -5,6 +5,7 @@ import {
   HarmCategory,
   HarmBlockThreshold,
   Part,
+// @ts-ignore
 } from '@google/generative-ai';
 import { LLMProvider } from '../LLMProvider';
 import { LLMMessage, LLMResponse, LLMConfig } from '@the-new-fuse/types';

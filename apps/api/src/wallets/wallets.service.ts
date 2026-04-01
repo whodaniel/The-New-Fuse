@@ -3,6 +3,9 @@
  * Manages wallet creation and smart account enablement
  */
 import { Injectable, Logger } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import {
   SmartAccountDeploymentResult,

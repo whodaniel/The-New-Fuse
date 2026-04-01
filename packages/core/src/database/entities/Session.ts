@@ -8,6 +8,7 @@ import {
   BeforeInsert
 } from 'typeorm';
 import { User } from './User';
+// @ts-ignore
 import { v4 as uuidv4 } from 'uuid';
 
 @Entity('sessions')

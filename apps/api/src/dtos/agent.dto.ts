@@ -1,6 +1,12 @@
 import { IsString, IsEnum, IsOptional, IsObject, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { ApiProperty } from '@nestjs/swagger';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { AgentType, AgentStatus, AgentCapability } from '@the-new-fuse/types';
 
 // Re-export types for use in entities

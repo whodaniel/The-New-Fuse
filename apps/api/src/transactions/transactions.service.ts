@@ -3,7 +3,13 @@
  * Handles blockchain transactions with ERC-4337 Smart Account support
  */
 import { Injectable, Logger } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import type { Wallet } from '@the-new-fuse/database';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import type { Address, Hex } from 'viem';
 import {

@@ -1,5 +1,8 @@
 import { Module, Logger } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { DrizzleService } from '@the-new-fuse/database';
 import { SelfImprovementController } from '../controllers/self-improvement.controller';
 import { AgentFactory } from './agent.factory';

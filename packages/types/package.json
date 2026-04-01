@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/types",
+  "files": ["dist"],
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,7 +13,7 @@
   "scripts": {
     "build": "tsc --build",
     "dev": "tsc --build --watch",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "prebuild": "rm -rf dist tsconfig.tsbuildinfo 2>/dev/null || true",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",

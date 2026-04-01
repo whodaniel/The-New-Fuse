@@ -1,5 +1,7 @@
 {
   "name": "@the-new-fuse/a2a-core",
+  "files": ["dist"],
+  "files": ["dist"],
   "version": "0.3.0",
   "description": "Agent-to-Agent (A2A) Protocol v0.3.0 Core Library - Official Linux Foundation Specification",
   "main": "dist/index.js",
@@ -17,7 +19,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "type-check": "tsc --noEmit",
-    "clean": "rimraf dist .tsbuildinfo tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist .tsbuildinfo tsconfig.tsbuildinfo",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

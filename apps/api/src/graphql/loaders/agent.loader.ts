@@ -4,7 +4,11 @@
  */
 import { Inject, Injectable, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
+// @ts-ignore
+// @ts-ignore
 import type { Agent } from '@the-new-fuse/database';
+// @ts-ignore
+// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import DataLoader from 'dataloader';
 

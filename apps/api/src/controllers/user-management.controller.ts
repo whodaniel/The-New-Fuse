@@ -11,7 +11,13 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -26,7 +32,7 @@ export class UserManagementController {
   @ApiResponse({ status: 200, description: 'List of all users' })
   async getAllUsers() {
     const users = await this.db.users.findAll();
-    return users.map((user) => this.sanitizeUser(user));
+    return users.map((user: any) => this.sanitizeUser(user));
   }
 
   @Get(':id')

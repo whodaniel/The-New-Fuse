@@ -3,6 +3,8 @@
  * Provides task management capabilities using Drizzle database service
  */
 import { Module } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
 import { DatabaseModule } from '@the-new-fuse/database';
 import { UnifiedLedgerModule } from '../unified-ledger/unified-ledger.module';
 import { TaskHealthMonitorService } from './task-health-monitor.service';

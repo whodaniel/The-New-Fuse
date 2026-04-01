@@ -34,7 +34,7 @@ export class MonitoringService implements OnModuleDestroy {
       host: process.env.REDIS_HOST || 'localhost',
       port: parseInt(process.env.REDIS_PORT || '6379', 10),
     });
-    this.redis.on('error', (err) => this.logger.error('Redis Error', err));
+    this.redis.on('error', (err: any) => this.logger.error('Redis Error', err));
   }
 
   onModuleDestroy() {

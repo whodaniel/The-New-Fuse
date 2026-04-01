@@ -165,7 +165,7 @@ async function main() {
   await mongo.close();
 }
 
-main().catch((error) => {
+main().catch((error: any) => {
   console.error('[arcade-chain-sweeper] fatal', error);
   process.exit(1);
 });

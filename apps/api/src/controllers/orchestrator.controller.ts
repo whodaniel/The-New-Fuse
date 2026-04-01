@@ -44,7 +44,7 @@ export class OrchestratorController {
   @RequireAuthLevel(AuthLevel.PUBLIC)
   @SetRateLimitTier(RateLimitTier.HEALTH)
   async getAgents() {
-    const agents = this.swarm.getAgents().map((agent) => ({
+    const agents = this.swarm.getAgents().map((agent: any) => ({
       agentId: agent.id,
       id: agent.id,
       name: agent.name,

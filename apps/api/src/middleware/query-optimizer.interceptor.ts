@@ -1,5 +1,7 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from '@nestjs/common';
+// @ts-ignore
 import { Observable } from 'rxjs';
+// @ts-ignore
 import { tap } from 'rxjs/operators';
 
 /**
@@ -44,7 +46,7 @@ export class QueryOptimizerInterceptor implements NestInterceptor {
         next: () => {
           this.logQueryStats(requestId, request, startTime);
         },
-        error: (error) => {
+        error: (error: any) => {
           this.logQueryStats(requestId, request, startTime, error);
         },
         complete: () => {

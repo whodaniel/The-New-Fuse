@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+// @ts-ignore
+// @ts-ignore
 import type { ResourceSearchRequest } from '@the-new-fuse/types';
 import axios from 'axios';
 import { ResourceSearchPolicyService, SearchableResource } from './resource-search-policy.service';

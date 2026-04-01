@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/database",
+  "files": ["dist"],
   "version": "0.1.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -37,7 +38,7 @@
     "test:coverage": "jest --coverage",
     "test:verbose": "jest --verbose",
     "lint": "eslint src",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",

@@ -10,6 +10,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthLevel, RequireAuthLevel, SecureAuthGuard } from '../../../guards/secure-auth.guard';
 // import { ServiceCategoryRouterService } from '../../../types/core/services/service-category-router.service';

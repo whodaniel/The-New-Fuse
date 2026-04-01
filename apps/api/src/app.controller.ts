@@ -1,4 +1,6 @@
 import { Controller, Get, Redirect } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('app')

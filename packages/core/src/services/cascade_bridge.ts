@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import Redis from 'ioredis';
 import { ConfigService } from '@nestjs/config';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } // @ts-ignore
+from 'uuid';
 import { createLogger, transports, format } from 'winston';
 
 const logger = createLogger({
@@ -26,12 +27,12 @@ export class CascadeBridge {
     this.redisClient = new Redis(redisOptions);
     this.pubsub = new Redis(redisOptions);
 
-    this.redisClient.on('error', (err) => logger.error('Redis Client Error', err));
-    this.pubsub.on('error', (err) => logger.error('Redis PubSub Error', err));
+    this.redisClient.on('error', (err: any) => logger.error('Redis Client Error', err));
+    this.pubsub.on('error', (err: any) => logger.error('Redis PubSub Error', err));
   }
 
   async start(): Promise<void> {
-    await this.pubsub.subscribe('cascade-in', (err) => {
+    await this.pubsub.subscribe('cascade-in', (err: any) => {
       if (err) {
         logger.error('Failed to subscribe to cascade-in', err);
         return;

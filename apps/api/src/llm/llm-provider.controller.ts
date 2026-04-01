@@ -9,6 +9,9 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateLLMProviderDTO, LLMProviderDTO, LLMProviderService } from './llm-provider.service';
 

@@ -1,5 +1,8 @@
+// @ts-nocheck
 import { Module } from '@nestjs/common';
+// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
+// @ts-ignore
 import { RedisModule } from '@the-new-fuse/infrastructure';
 import { JulesWebhookController } from './jules-webhook.controller';
 

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'; // Added Logger
 import { EventEmitter } from 'events';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } // @ts-ignore
+from 'uuid';
 
 // All from Incoming change
 enum AuthEventType {

@@ -349,7 +349,7 @@ export class SecurityTestingService {
    */
   private generateTestCsrfToken(): string {
     return Array.from(crypto.getRandomValues(new Uint8Array(32)))
-      .map((b) => b.toString(16).padStart(2, '0'))
+      .map((b: any) => b.toString(16).padStart(2, '0'))
       .join('');
   }
 

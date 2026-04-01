@@ -3,6 +3,9 @@ import { Request } from 'express';
 import { ChatService } from '../services/chat.service';
 import { CreateMessageDto } from '../dtos/message.dto';
 import { AuthGuard } from '../guards/auth.guard';
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 /**

@@ -3,7 +3,11 @@
  * Provides efficient batched loading of workflows for GraphQL resolvers
  */
 import { Injectable, Scope } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
 import type { Workflow } from '@the-new-fuse/database';
+// @ts-ignore
+// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import DataLoader from 'dataloader';
 

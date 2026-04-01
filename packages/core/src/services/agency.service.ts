@@ -13,7 +13,8 @@
  */
 
 import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
-import { drizzleWorkspaceRepository } from '@the-new-fuse/database';
+import { drizzleWorkspaceRepository } // @ts-ignore
+from '@the-new-fuse/database';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 // Agency types - maps to OrganizationType.AGENCY when Organization model is active

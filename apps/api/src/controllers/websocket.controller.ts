@@ -42,9 +42,10 @@
  * // Client connection and subscription
  * const socket = io('ws://localhost:3001');
  * socket.emit('workflow:subscribe', 'workflow-123');
- * socket.on('workflow:update', (data) => console.log(data));
+ * socket.on('workflow:update', (data: any) => console.log(data));
  */
 import { Request, Response } from 'express';
+// @ts-ignore
 import { Server as SocketIOServer } from 'socket.io';
 import { createServer } from 'http';
 import { Controller, Logger } from '@nestjs/common';
@@ -287,7 +288,7 @@ export class WebSocketController {
   private setupEventHandlers(): void {
     if (!this.io) return;
 
-    this.io.on('connection', (socket) => {
+    this.io.on('connection', (socket: any) => {
       this.logger.log(`Client connected: ${socket.id}`);
 
       // Send welcome message to newly connected client
@@ -298,31 +299,31 @@ export class WebSocketController {
       });
 
       // Handle workflow events - subscribe to workflow updates
-      socket.on('workflow:subscribe', (workflowId) => {
+      socket.on('workflow:subscribe', (workflowId: any) => {
         socket.join(`workflow:${workflowId}`);
         this.logger.log(`Client ${socket.id} subscribed to workflow ${workflowId}`);
       });
 
       // Handle workflow unsubscribe events
-      socket.on('workflow:unsubscribe', (workflowId) => {
+      socket.on('workflow:unsubscribe', (workflowId: any) => {
         socket.leave(`workflow:${workflowId}`);
         this.logger.log(`Client ${socket.id} unsubscribed from workflow ${workflowId}`);
       });
 
       // Handle execution events - subscribe to execution updates
-      socket.on('execution:subscribe', (executionId) => {
+      socket.on('execution:subscribe', (executionId: any) => {
         socket.join(`execution:${executionId}`);
         this.logger.log(`Client ${socket.id} subscribed to execution ${executionId}`);
       });
 
       // Handle execution unsubscribe events
-      socket.on('execution:unsubscribe', (executionId) => {
+      socket.on('execution:unsubscribe', (executionId: any) => {
         socket.leave(`execution:${executionId}`);
         this.logger.log(`Client ${socket.id} unsubscribed from execution ${executionId}`);
       });
 
       // Handle agent events - subscribe to agent updates
-      socket.on('agent:subscribe', (agentId) => {
+      socket.on('agent:subscribe', (agentId: any) => {
         socket.join(`agent:${agentId}`);
         this.logger.log(`Client ${socket.id} subscribed to agent ${agentId}`);
       });
@@ -339,7 +340,7 @@ export class WebSocketController {
       });
 
       // Handle connection errors
-      socket.on('error', (error) => {
+      socket.on('error', (error: any) => {
         this.logger.error(`Socket error for client ${socket.id}:`, error);
       });
     });

@@ -4,6 +4,8 @@
  */
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+// @ts-ignore
+// @ts-ignore
 import { DatabaseModule } from '@the-new-fuse/database';
 import { BusinessEventService } from './services/business-event.service';
 import { IntegrationService } from './services/integration.service';

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { faker } from '@faker-js/faker';
+import { faker } // @ts-ignore
+from '@faker-js/faker';
 
 @Injectable()
 export class TestDataGenerator {

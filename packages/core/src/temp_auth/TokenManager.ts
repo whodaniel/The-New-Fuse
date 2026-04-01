@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'; // From Current
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } // @ts-ignore
+from 'uuid';
 
 // Interface from Incoming
 interface Token {

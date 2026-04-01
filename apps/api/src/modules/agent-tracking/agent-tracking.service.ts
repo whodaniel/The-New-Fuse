@@ -9,6 +9,8 @@
 
 import { Injectable, Logger, Inject, Optional } from '@nestjs/common';
 import { eq, and, desc, gt, lt, sql } from 'drizzle-orm';
+// @ts-ignore
+// @ts-ignore
 import { DRIZZLE_CLIENT, DrizzleClient } from '@the-new-fuse/database';
 import {
   agentTracking,

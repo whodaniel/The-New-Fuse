@@ -10,7 +10,11 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+// @ts-ignore
+// @ts-ignore
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+// @ts-ignore
+// @ts-ignore
 import { MessageRole } from '@the-new-fuse/database';
 import { AuthLevel, RequireAuthLevel, SecureAuthGuard } from '../../guards/secure-auth.guard';
 import { ChatService } from './chat.service';

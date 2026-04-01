@@ -91,7 +91,7 @@ export function validateRailwayEnvironment() {
 
   if (errors.length > 0) {
     console.error('❌ Railway environment validation failed!');
-    errors.forEach((error) => console.error(error));
+    errors.forEach((error: any) => console.error(error));
     console.error(
       '\\n💡 Tip: Ensure all Railway services are properly linked and environment variables are set.'
     );

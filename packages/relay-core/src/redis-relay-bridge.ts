@@ -13,6 +13,7 @@
  * 6. Bridge subscribes and forwards back to Relay
  */
 
+// @ts-ignore
 import { createStandaloneRedisClient } from '@the-new-fuse/infrastructure';
 import { EventEmitter } from 'events';
 import Redis, { Cluster } from 'ioredis';

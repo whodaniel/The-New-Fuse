@@ -1,5 +1,6 @@
 import { AsyncLocalStorage } from 'async_hooks';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } // @ts-ignore
+from 'uuid';
 
 export class CorrelationIdService {
   private static asyncLocalStorage = new AsyncLocalStorage<string>();

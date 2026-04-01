@@ -7,8 +7,11 @@
  */
 
 import { EventEmitter } from 'events';
+// @ts-ignore
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+// @ts-ignore
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+// @ts-ignore
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { Transport, RelayMessage } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
@@ -95,7 +98,7 @@ export class MCPTransport extends EventEmitter implements Transport {
       return { tools: [] };
     });
 
-    this.mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
+    this.mcpServer.setRequestHandler(CallToolRequestSchema, async (request: any) => {
       const { name, arguments: args } = request.params;
 
       const message: RelayMessage = {

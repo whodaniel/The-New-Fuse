@@ -1,6 +1,10 @@
 import { BadRequestException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+// @ts-ignore
+// @ts-ignore
 import { GooseCliBridgeService } from '@the-new-fuse/relay-core/dist/services/GooseCliBridgeService.js';
+// @ts-ignore
+// @ts-ignore
 import { LogLevel, Logger as RelayLogger } from '@the-new-fuse/relay-core/dist/utils/Logger.js';
 import * as path from 'path';
 
