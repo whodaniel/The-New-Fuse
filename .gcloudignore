@@ -1,35 +1,7 @@
+.git
 node_modules
 **/node_modules
-.git
-.gitignore
+**/dist
+**/.next
+**/.venv*
 **/*.log
-.env*
-! .env.production
-# WHITELIST ROOT FILES
-!package.json
-!pnpm-workspace.yaml
-!pnpm-lock.yaml
-!tsconfig*.json
-!turbo.json
-!Dockerfile*
-!.pnpmfile.cjs
-!scripts
-!scripts/**
-
-# WHITELIST ALL FOLDERS IN PACKAGES AND APPS (STRUCTURE ONLY)
-!packages
-!packages/*
-!packages/*/dist
-!packages/*/dist/**
-!packages/*/package.json
-
-!apps
-!apps/api
-!apps/api/dist
-!apps/api/dist/**
-!apps/api/package.json
-
-!apps/api-gateway
-!apps/api-gateway/dist
-!apps/api-gateway/dist/**
-!apps/api-gateway/package.json
