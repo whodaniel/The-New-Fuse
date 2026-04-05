@@ -89,11 +89,10 @@ export class WebVitalsMonitor {
 
     try {
       // Dynamic import to avoid issues in non-browser environments
-      const { onCLS, onFID, onFCP, onLCP, onTTFB, onINP } = await import('web-vitals');
+      const { onCLS, onFCP, onLCP, onTTFB, onINP } = await import('web-vitals');
 
       // Track Core Web Vitals
       onCLS(this.handleMetric.bind(this), { reportAllChanges: this.config.reportAllChanges });
-      onFID(this.handleMetric.bind(this), { reportAllChanges: this.config.reportAllChanges });
       onFCP(this.handleMetric.bind(this), { reportAllChanges: this.config.reportAllChanges });
       onLCP(this.handleMetric.bind(this), { reportAllChanges: this.config.reportAllChanges });
       onTTFB(this.handleMetric.bind(this), { reportAllChanges: this.config.reportAllChanges });

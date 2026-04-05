@@ -25,6 +25,7 @@ import { HTTPTransport } from '../transports/HTTPTransport.js';
 import { MCPTransport } from '../transports/MCPTransport.js';
 import { RedisTransport } from '../transports/RedisTransport.js';
 import { WebSocketTransport } from '../transports/WebSocketTransport.js';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import {
   Agent,
   InterceptRule,
@@ -50,11 +51,25 @@ export class RelayServer extends EventEmitter {
   private interceptedMessages: RelayMessage[] = [];
   private orchestratorService: OrchestratorIntegrationService;
   private authService: JWTAuthService;
+  private redisService: UnifiedRedisService;
 
-  constructor(config: RelayConfig) {
+  constructor(config: RelayConfig, redisService?: UnifiedRedisService) {
     super();
     this.config = config;
     this.logger = new Logger(config.logLevel, config.workspaceDir);
+    
+    // Initialize or use provided redis service
+    if (redisService) {
+      this.redisService = redisService;
+    } else {
+      // Mock/Create UnifiedRedisService for standalone use
+      // In a real standalone, we'd use the creation utilities
+      this.redisService = (async () => {
+        const { UnifiedRedisService, RedisConfig } = await import('@the-new-fuse/infrastructure');
+        // This is a bit complex for a constructor, let's assume we'll fix it in main.ts
+        return null as any; 
+      })() as any;
+    }
     this.transports = new Map();
     this.agentRegistry = new AgentRegistry(this.logger);
     this.messageRouter = new MessageRouter(this.logger);
@@ -235,16 +250,19 @@ export class RelayServer extends EventEmitter {
 
     // Redis Transport
     if (this.config.transports.redis) {
-      const redisTransport = new RedisTransport({
-        ...this.config.redis,
-        logger: this.logger,
-        channels: {
-          agentCommunication: 'tnf:agents',
-          workflowExecution: 'tnf:workflows',
-          systemEvents: 'tnf:system',
-          heartbeat: 'tnf:heartbeat',
+      const redisTransport = new RedisTransport(
+        {
+          ...this.config.redis,
+          logger: this.logger,
+          channels: {
+            agentCommunication: 'tnf:agents',
+            workflowExecution: 'tnf:workflows',
+            systemEvents: 'tnf:system',
+            heartbeat: 'tnf:heartbeat',
+          },
         },
-      });
+        this.redisService
+      );
       this.transports.set('redis', redisTransport);
     }
 

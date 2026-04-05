@@ -1,12 +1,13 @@
 {
   "name": "@the-new-fuse/feature-suggestions",
+  "files": ["dist"],
   "version": "1.0.0",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc -b",
     "dev": "tsc -w",
-    "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "test": "echo \"Tests temporarily disabled for this package\"",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/web-scraping",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Web scraping and proxy tools for AI agents",
   "main": "dist/index.js",
@@ -11,7 +12,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --passWithNoTests",
     "lint": "eslint src/**/*.ts",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",

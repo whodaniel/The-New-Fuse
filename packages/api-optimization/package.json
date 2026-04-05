@@ -1,13 +1,14 @@
 {
   "name": "@the-new-fuse/api-optimization",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Comprehensive API optimization with rate limiting, caching, CDN, and performance features",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "build": "rm -rf dist && tsc",
     "dev": "tsc --watch",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "test": "jest --passWithNoTests",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",

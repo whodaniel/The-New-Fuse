@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as AWS from 'aws-sdk';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+// @ts-ignore
 import { v4 as uuidv4 } from 'uuid';
 
 export interface UploadOptions {
@@ -12,14 +13,17 @@ export interface UploadOptions {
 @Injectable()
 export class StorageService {
   private readonly logger = new Logger(StorageService.name);
-  private s3: AWS.S3;
+  private supabase: SupabaseClient;
 
   constructor() {
-    this.s3 = new AWS.S3({
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      region: process.env.AWS_REGION || 'us-east-1',
-    });
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseKey) {
+      this.logger.warn('Supabase configuration missing. Storage service will fail.');
+    }
+    
+    this.supabase = createClient(supabaseUrl || '', supabaseKey || '');
   }
 
   async uploadFile(
@@ -31,40 +35,44 @@ export class StorageService {
       const bucket = options.bucket || process.env.S3_BUCKET_NAME || 'the-new-fuse-uploads';
       const key = options.key || `${uuidv4()}-${filename}`;
       
-      const uploadParams = {
-        Bucket: bucket,
-        Key: key,
-        Body: file,
-        ContentType: options.contentType || 'application/octet-stream',
-        ACL: options.acl || 'public-read',
-      };
+      const { data, error } = await this.supabase.storage
+        .from(bucket)
+        .upload(key, file, {
+          contentType: options.contentType || 'application/octet-stream',
+          upsert: true
+        });
 
-      const result = await this.s3.upload(uploadParams).promise();
+      if (error) throw error;
       
-      this.logger.log(`File uploaded successfully: ${result.Location}`);
+      const { data: { publicUrl } } = this.supabase.storage
+        .from(bucket)
+        .getPublicUrl(key);
+      
+      this.logger.log(`File uploaded successfully to Supabase: ${publicUrl}`);
       
       return {
-        url: result.Location,
-        key: result.Key,
+        url: publicUrl,
+        key: data.path,
       };
     } catch (error) {
-      this.logger.error('Failed to upload file:', error);
+      this.logger.error('Failed to upload file to Supabase:', error);
       throw error;
     }
   }
 
   async deleteFile(key: string, bucket?: string): Promise<void> {
     try {
-      const deleteParams = {
-        Bucket: bucket || process.env.S3_BUCKET_NAME || 'the-new-fuse-uploads',
-        Key: key,
-      };
-
-      await this.s3.deleteObject(deleteParams).promise();
+      const targetBucket = bucket || process.env.S3_BUCKET_NAME || 'the-new-fuse-uploads';
       
-      this.logger.log(`File deleted successfully: ${key}`);
+      const { error } = await this.supabase.storage
+        .from(targetBucket)
+        .remove([key]);
+
+      if (error) throw error;
+      
+      this.logger.log(`File deleted successfully from Supabase: ${key}`);
     } catch (error) {
-      this.logger.error('Failed to delete file:', error);
+      this.logger.error('Failed to delete file from Supabase:', error);
       throw error;
     }
   }
@@ -75,15 +83,17 @@ export class StorageService {
     bucket?: string
   ): Promise<string> {
     try {
-      const params = {
-        Bucket: bucket || process.env.S3_BUCKET_NAME || 'the-new-fuse-uploads',
-        Key: key,
-        Expires: expiresIn,
-      };
+      const targetBucket = bucket || process.env.S3_BUCKET_NAME || 'the-new-fuse-uploads';
+      
+      const { data, error } = await this.supabase.storage
+        .from(targetBucket)
+        .createSignedUrl(key, expiresIn);
 
-      return this.s3.getSignedUrl('getObject', params);
+      if (error) throw error;
+      
+      return data.signedUrl;
     } catch (error) {
-      this.logger.error('Failed to get signed URL:', error);
+      this.logger.error('Failed to get signed URL from Supabase:', error);
       throw error;
     }
   }

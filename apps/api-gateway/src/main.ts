@@ -22,6 +22,7 @@ async function bootstrap() {
   // In dev: always allow, including file:// and electron origins (no Origin header)
   const prodAllowedOrigins = new Set([
     'https://thenewfuse.com',
+    'https://www.thenewfuse.com',
     'https://app.thenewfuse.com',
     'https://poker.ai-arcade.xyz',
   ]);

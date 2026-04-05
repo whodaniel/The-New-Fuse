@@ -2,7 +2,7 @@
   "services": [
     {
       "name": "main-service",
-      "url": "https://the-new-fuse-production-e929.up.railway.app",
+      "url": "https://TheNewFuse-241337102384.us-central1.run.app",
       "healthEndpoint": "/health",
       "expectedStatus": 200,
       "timeout": 10000

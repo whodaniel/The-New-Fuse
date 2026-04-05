@@ -26,6 +26,13 @@ export class DirectorService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     this.logger.log('🔮 Initializing Director Service...');
+    
+    const isEnabled = this.configService.get<string>('DIRECTOR_ENABLED') !== 'false';
+    if (!isEnabled) {
+      this.logger.log('⏹️ Director Service is DISABLED via configuration');
+      return;
+    }
+
     await this.start();
   }
 

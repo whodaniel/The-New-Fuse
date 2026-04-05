@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { Redis } from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { AgentTask, TaskStatus } from '../types/coordination.types';
 
 export interface AgentMetrics {
@@ -24,23 +24,14 @@ export class PersistentMetricsCollector {
   private readonly keyPrefix: string;
 
   constructor(
-    private readonly redis: Redis,
+    private readonly redisService: UnifiedRedisService,
     keyPrefix: string = 'agent-coord:metrics:'
   ) {
     this.keyPrefix = keyPrefix;
   }
 
-  /**
-   * Record task creation
-   */
   async recordTaskCreated(task: AgentTask): Promise<void> {
-    const pipe = this.redis.pipeline();
     const timestamp = Date.now();
-
-    // Increment total tasks created
-    pipe.incr(`${this.keyPrefix}tasks:created`);
-
-    // Add to recent tasks list (keep last 1000)
     const taskData = JSON.stringify({
       id: task.id,
       type: task.type,
@@ -48,23 +39,28 @@ export class PersistentMetricsCollector {
       timestamp,
       status: 'created'
     });
+    const minuteBucket = Math.floor(timestamp / 60000);
+
+    // Using pipeline for efficiency
+    const pipe = await this.redisService.pipeline();
+    
+    // Increment total tasks created
+    pipe.incr(`${this.keyPrefix}tasks:created`);
+
+    // Add to recent tasks list (keep last 1000)
     pipe.lpush(`${this.keyPrefix}tasks:recent`, taskData);
     pipe.ltrim(`${this.keyPrefix}tasks:recent`, 0, 999);
 
     // Record throughput (tasks per minute bucket)
-    const minuteBucket = Math.floor(timestamp / 60000);
     pipe.incr(`${this.keyPrefix}throughput:${minuteBucket}`);
     pipe.expire(`${this.keyPrefix}throughput:${minuteBucket}`, 3600); // Keep for 1 hour
 
     await pipe.exec();
   }
 
-  /**
-   * Record task completion
-   */
   async recordTaskCompleted(task: AgentTask, duration: number): Promise<void> {
-    const pipe = this.redis.pipeline();
     const timestamp = Date.now();
+    const pipe = await this.redisService.pipeline();
 
     // Increment total tasks completed
     pipe.incr(`${this.keyPrefix}tasks:completed`);
@@ -75,9 +71,8 @@ export class PersistentMetricsCollector {
       pipe.hincrby(agentKey, 'completed', 1);
 
       // Update running average execution time for agent
-      // We store total time and count to calculate average on read or update incrementally
       pipe.hincrby(agentKey, 'totalTime', Math.round(duration));
-      pipe.hset(agentKey, 'lastActive', timestamp);
+      pipe.hset(agentKey, { 'lastActive': timestamp.toString() });
     }
 
     // Update global average execution time
@@ -87,12 +82,9 @@ export class PersistentMetricsCollector {
     await pipe.exec();
   }
 
-  /**
-   * Record task failure
-   */
   async recordTaskFailed(task: AgentTask, error: string): Promise<void> {
-    const pipe = this.redis.pipeline();
     const timestamp = Date.now();
+    const pipe = await this.redisService.pipeline();
 
     // Increment total tasks failed
     pipe.incr(`${this.keyPrefix}tasks:failed`);
@@ -101,15 +93,12 @@ export class PersistentMetricsCollector {
     if (task.assignedTo) {
       const agentKey = `${this.keyPrefix}agent:${task.assignedTo}`;
       pipe.hincrby(agentKey, 'failed', 1);
-      pipe.hset(agentKey, 'lastActive', timestamp);
+      pipe.hset(agentKey, { 'lastActive': timestamp.toString() });
     }
 
     await pipe.exec();
   }
 
-  /**
-   * Get system-wide metrics
-   */
   async getSystemMetrics(): Promise<SystemMetrics> {
     const [
       created,
@@ -118,11 +107,11 @@ export class PersistentMetricsCollector {
       execCount,
       execTotalTime
     ] = await Promise.all([
-      this.redis.get(`${this.keyPrefix}tasks:created`),
-      this.redis.get(`${this.keyPrefix}tasks:completed`),
-      this.redis.get(`${this.keyPrefix}tasks:failed`),
-      this.redis.get(`${this.keyPrefix}execution:count`),
-      this.redis.get(`${this.keyPrefix}execution:totalTime`)
+      this.redisService.get(`${this.keyPrefix}tasks:created`),
+      this.redisService.get(`${this.keyPrefix}tasks:completed`),
+      this.redisService.get(`${this.keyPrefix}tasks:failed`),
+      this.redisService.get(`${this.keyPrefix}execution:count`),
+      this.redisService.get(`${this.keyPrefix}execution:totalTime`)
     ]);
 
     // Calculate tasks per minute (last 5 minutes average)
@@ -132,7 +121,7 @@ export class PersistentMetricsCollector {
       tpmKeys.push(`${this.keyPrefix}throughput:${currentMinute - i}`);
     }
 
-    const tpmValues = await this.redis.mget(...tpmKeys);
+    const tpmValues = await this.redisService.mget(...tpmKeys);
     const totalTpm = tpmValues.reduce((sum, val) => sum + (parseInt(val || '0', 10)), 0);
     const avgTpm = totalTpm / 5;
 
@@ -154,12 +143,9 @@ export class PersistentMetricsCollector {
     };
   }
 
-  /**
-   * Get metrics for a specific agent
-   */
   async getAgentMetrics(agentId: string): Promise<AgentMetrics | null> {
     const key = `${this.keyPrefix}agent:${agentId}`;
-    const data = await this.redis.hgetall(key);
+    const data = await this.redisService.hgetall(key);
 
     if (!data || Object.keys(data).length === 0) {
       return null;
@@ -183,13 +169,10 @@ export class PersistentMetricsCollector {
     };
   }
 
-  /**
-   * Reset all metrics
-   */
   async clearMetrics(): Promise<void> {
-    const keys = await this.redis.keys(`${this.keyPrefix}*`);
+    const keys = await this.redisService.keys(`${this.keyPrefix}*`);
     if (keys.length > 0) {
-      await this.redis.del(...keys);
+      await Promise.all(keys.map(key => this.redisService.del(key)));
     }
   }
 }

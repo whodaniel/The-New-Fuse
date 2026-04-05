@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/core-error-handling",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Unified error handling system for The New Fuse",
   "main": "dist/index.js",
@@ -15,7 +16,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "type-check": "tsc --noEmit",
-    "clean": "rimraf dist tsconfig.tsbuildinfo"
+    "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
     "events": "^3.3.0"

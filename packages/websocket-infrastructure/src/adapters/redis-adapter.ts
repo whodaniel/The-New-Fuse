@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import Redis from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { WebSocketAdapter, WebSocketMetrics } from '../types';
 import { Server } from 'socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
@@ -15,8 +15,8 @@ interface RedisConfig {
 @Injectable()
 export class RedisWebSocketAdapter implements WebSocketAdapter, OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(RedisWebSocketAdapter.name);
-  private pubClient?: Redis;
-  private subClient?: Redis;
+  private pubClient?: any;
+  private subClient?: any;
   private io?: Server;
   private readonly config: RedisConfig;
   private metrics: WebSocketMetrics = {
@@ -30,7 +30,7 @@ export class RedisWebSocketAdapter implements WebSocketAdapter, OnModuleInit, On
   };
   private metricsInterval?: NodeJS.Timeout;
 
-  constructor(config: RedisConfig) {
+  constructor(config: RedisConfig, private readonly redisService: UnifiedRedisService) {
     this.config = {
       keyPrefix: 'ws:',
       ...config,
@@ -39,48 +39,13 @@ export class RedisWebSocketAdapter implements WebSocketAdapter, OnModuleInit, On
 
   async initialize(): Promise<void> {
     try {
-      // Create Redis clients for pub/sub
-      this.pubClient = new Redis({
-        host: this.config.host,
-        port: this.config.port,
-        password: this.config.password,
-        db: this.config.db,
-        retryStrategy: (times: number) => {
-          const delay = Math.min(times * 50, 2000);
-          this.logger.warn(`Retrying Redis connection (${times}), delay: ${delay}ms`);
-          return delay;
-        },
-      });
+      // Use raw clients for Socket.IO adapter compatibility
+      this.pubClient = this.redisService.getClient();
+      this.subClient = (this.pubClient as any).duplicate ? (this.pubClient as any).duplicate() : this.pubClient;
 
-      this.subClient = this.pubClient.duplicate();
-
-      // Setup error handlers
-      this.pubClient.on('error', (err) => {
-        this.logger.error(`Redis pub client error: ${err.message}`);
-        this.metrics.errors++;
-      });
-
-      this.subClient.on('error', (err) => {
-        this.logger.error(`Redis sub client error: ${err.message}`);
-        this.metrics.errors++;
-      });
-
-      // Setup reconnect handlers
-      this.pubClient.on('reconnecting', () => {
-        this.logger.log('Redis pub client reconnecting...');
-        this.metrics.reconnections++;
-      });
-
-      this.subClient.on('reconnecting', () => {
-        this.logger.log('Redis sub client reconnecting...');
-        this.metrics.reconnections++;
-      });
-
-      // Wait for connections
-      await Promise.all([
-        this.waitForConnection(this.pubClient, 'pub'),
-        this.waitForConnection(this.subClient, 'sub'),
-      ]);
+      if (this.subClient.connect && this.subClient.status !== 'ready') {
+        await this.subClient.connect().catch(() => {});
+      }
 
       this.logger.log('Redis adapter initialized successfully');
       this.startMetricsCollection();
@@ -170,12 +135,8 @@ export class RedisWebSocketAdapter implements WebSocketAdapter, OnModuleInit, On
    * Publish message to Redis channel
    */
   async publish(channel: string, message: any): Promise<void> {
-    if (!this.pubClient) {
-      throw new Error('Redis pub client not initialized');
-    }
-
     const data = JSON.stringify(message);
-    await this.pubClient.publish(`${this.config.keyPrefix}${channel}`, data);
+    await this.redisService.publish(`${this.config.keyPrefix}${channel}`, data);
     this.metrics.totalMessages++;
   }
 
@@ -183,21 +144,14 @@ export class RedisWebSocketAdapter implements WebSocketAdapter, OnModuleInit, On
    * Subscribe to Redis channel
    */
   async subscribe(channel: string, handler: (message: any) => void): Promise<void> {
-    if (!this.subClient) {
-      throw new Error('Redis sub client not initialized');
-    }
-
-    await this.subClient.subscribe(`${this.config.keyPrefix}${channel}`);
-
-    this.subClient.on('message', (ch: string, message: string) => {
-      if (ch === `${this.config.keyPrefix}${channel}`) {
-        try {
-          const data = JSON.parse(message);
-          handler(data);
-        } catch (error) {
-          this.logger.error(`Error parsing message from ${channel}: ${error}`);
-          this.metrics.errors++;
-        }
+    const fullChannel = `${this.config.keyPrefix}${channel}`;
+    await this.redisService.subscribe(fullChannel, (message) => {
+      try {
+        const data = JSON.parse(message.message);
+        handler(data);
+      } catch (error) {
+        this.logger.error(`Error parsing message from ${channel}: ${error}`);
+        this.metrics.errors++;
       }
     });
 
@@ -208,11 +162,7 @@ export class RedisWebSocketAdapter implements WebSocketAdapter, OnModuleInit, On
    * Unsubscribe from Redis channel
    */
   async unsubscribe(channel: string): Promise<void> {
-    if (!this.subClient) {
-      throw new Error('Redis sub client not initialized');
-    }
-
-    await this.subClient.unsubscribe(`${this.config.keyPrefix}${channel}`);
+    await this.redisService.unsubscribe(`${this.config.keyPrefix}${channel}`);
     this.logger.log(`Unsubscribed from Redis channel: ${channel}`);
   }
 
@@ -220,29 +170,16 @@ export class RedisWebSocketAdapter implements WebSocketAdapter, OnModuleInit, On
    * Store data in Redis
    */
   async set(key: string, value: any, ttl?: number): Promise<void> {
-    if (!this.pubClient) {
-      throw new Error('Redis pub client not initialized');
-    }
-
     const data = JSON.stringify(value);
     const fullKey = `${this.config.keyPrefix}${key}`;
-
-    if (ttl) {
-      await this.pubClient.setex(fullKey, ttl, data);
-    } else {
-      await this.pubClient.set(fullKey, data);
-    }
+    await this.redisService.set(fullKey, data, ttl);
   }
 
   /**
    * Get data from Redis
    */
   async get(key: string): Promise<any | null> {
-    if (!this.pubClient) {
-      throw new Error('Redis pub client not initialized');
-    }
-
-    const data = await this.pubClient.get(`${this.config.keyPrefix}${key}`);
+    const data = await this.redisService.get(`${this.config.keyPrefix}${key}`);
     return data ? JSON.parse(data) : null;
   }
 
@@ -250,11 +187,7 @@ export class RedisWebSocketAdapter implements WebSocketAdapter, OnModuleInit, On
    * Delete data from Redis
    */
   async delete(key: string): Promise<void> {
-    if (!this.pubClient) {
-      throw new Error('Redis pub client not initialized');
-    }
-
-    await this.pubClient.del(`${this.config.keyPrefix}${key}`);
+    await this.redisService.del(`${this.config.keyPrefix}${key}`);
   }
 
   /**
@@ -298,11 +231,7 @@ export class RedisWebSocketAdapter implements WebSocketAdapter, OnModuleInit, On
       clearInterval(this.metricsInterval);
     }
 
-    if (this.pubClient) {
-      await this.pubClient.quit();
-    }
-
-    if (this.subClient) {
+    if (this.subClient && this.subClient.quit) {
       await this.subClient.quit();
     }
 

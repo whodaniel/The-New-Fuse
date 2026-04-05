@@ -1,5 +1,6 @@
 import * as fs from 'fs-extra';
 import { Redis } from 'ioredis';
+// @ts-ignore
 import { v4 as uuidv4 } from 'uuid';
 import * as winston from 'winston';
 

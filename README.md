@@ -74,41 +74,40 @@ Additional operations docs:
 ## Architecture
 
 ```
-Browser/Chrome Ext ──> Relay Server (WS:3000) <──> Redis (6380) <──> Relay
+Browser/Chrome Ext ──> Cloudflare Relay (Edge) <──> Upstash (REST) <──> SharedState
 VSCode Extension  ──/                                                  │
-                                                              API Server (3001)
-Frontend (3000) ──> API Gateway (3005) ──> API Server (3001) ──> Drizzle ──> PostgreSQL (5433)
-                                       ──> Backend (3004)
+                                                              Supabase (pgvector)
+Frontend (Cloudflare) ──> GCP API Gateway ──> API Server (GCP) ──> Drizzle ──> Supabase
+                                       ──> Backend (GCP)
 
 API Server <── TNF MCP Module <── Claude / other MCP clients
            <── A2A Protocol   <── Cross-agent messages
 
-OpenClaw Mesh (cloud) <──> Anthropic Claude Pro (OAuth)
-PicoClaw Fleet (cloud) <── Lightweight edge agents
+OpenClaw Mesh (Cloudflare) <──> Anthropic Claude Pro (OAuth)
+PicoClaw Fleet (Edge) <── Lightweight edge agents
 ```
 
 ### Core Services
 
-| Service          | Port      | Tech         | Purpose                                                                |
-| ---------------- | --------- | ------------ | ---------------------------------------------------------------------- |
-| **Frontend**     | 3000      | React + Vite | SPA: dashboard, workflow builder, agent management, chat, admin        |
-| **API Server**   | 3001      | NestJS       | Main backend: agents, chat, LLM routing, MCP, workflows, GraphQL, Web3 |
-| **API Gateway**  | 3005      | NestJS       | Single ingress proxy, auth, API versioning                             |
-| **Backend**      | 3004      | NestJS       | Secondary service: AG-UI protocol, job queues, Prometheus metrics      |
-| **Relay Server** | 3000 (WS) | Node.js      | WebSocket hub connecting all agents across tabs/processes              |
-| **PostgreSQL**   | 5433      | Docker       | Primary database via Drizzle ORM                                       |
-| **Redis**        | 6380      | Docker       | Pub/sub, caching, job queues                                           |
+| Service          | Platform      | Tech         | Purpose                                                                |
+| ---------------- | ------------- | ------------ | ---------------------------------------------------------------------- |
+| **Frontend**     | Cloudflare    | React + Vite | SPA: dashboard, workflow builder, agent management, chat, admin        |
+| **API Server**   | GCP Cloud Run | NestJS       | Main backend: agents, chat, LLM routing, MCP, workflows, GraphQL       |
+| **API Gateway**  | GCP           | NestJS       | Single ingress proxy, auth, API versioning                             |
+| **Relay Server** | Cloudflare    | Node.js      | WebSocket hub connecting all agents across tabs/processes              |
+| **Database**     | Supabase      | PostgreSQL   | Primary database via Drizzle ORM (with pgvector)                       |
+| **Redis**        | Upstash       | Serverless   | Global Pub/sub, caching, job queues via UnifiedRedisService            |
 
 ### Message Flow
 
-1. **Frontend -> API Gateway (3005) -> API Server (3001)** — REST/GraphQL
-2. **Agent -> Relay Server (WS) -> Redis Pub/Sub -> Other Agents** — Agent mesh
-3. **Chrome Extension -> Relay Server (WS)** — Browser AI automation relay
-4. **VSCode Extension -> Relay Server -> API** — IDE integration
+1. **Frontend -> GCP Gateway -> API Server** — REST/GraphQL
+2. **Agent -> Cloudflare Relay -> Upstash REST -> Other Agents** — Agent mesh
+3. **Chrome Extension -> Cloudflare Relay** — Browser AI automation relay
+4. **VSCode Extension -> Cloudflare Relay -> API** — IDE integration
 5. **Any Agent -> MCP Server (embedded in API)** — Tool invocation via Model
    Context Protocol
 6. **A2A Messages**: TNFEnvelope format (Zod-validated), carried over WebSocket
-   or Redis
+   (Edge) or Upstash (REST)
 
 ## Apps
 
@@ -414,34 +413,34 @@ pnpm run clean:full         # Full clean + remove node_modules
 
 ## Deployment
 
-Deployed on **Railway** with 15+ services defined in `railway.toml`.
+The project has migrated from Railway to a modern, edge-ready stack:
+
+- **Cloudflare Workers**: Edge substrate for relay, shared state, and frontend.
+- **Google Cloud Platform (GCP)**: Scalable backend hosting via Cloud Run.
+- **Supabase**: Managed PostgreSQL with native vector support.
+- **Upstash**: Serverless Redis providing a unified REST + TCP substrate.
 
 ```bash
-# Deploy all via Railway CLI
-railway up --service TheNewFuse --environment production
+# Deploy Cloudflare components
+pnpm run deploy:cloudflare
 
-# Or deploy individual services
-railway up --service api-gateway --environment production
+# Deploy GCP components
+pnpm run deploy:gcp
 ```
-
-Key Railway services: `TheNewFuse` (frontend), `api-gateway`, `api`, `backend`,
-`openclaw-cloud`, `openclaw-primary`, `openclaw-sandbox-cloud`,
-`picoclaw-tester`, `picoclaw-subject`, `picoclaw-perplexity`, `core-vector-db`,
-`tnf-cloud-sandbox`
 
 ## Technology Stack
 
 | Layer        | Technologies                                                                                                  |
 | ------------ | ------------------------------------------------------------------------------------------------------------- |
 | Frontend     | React 19, Vite 7, TypeScript, ReactFlow, Monaco Editor, Three.js, TanStack Query, Redux Toolkit, Firebase SDK |
-| Backend      | NestJS, TypeScript, Drizzle ORM, GraphQL (Apollo), Bull (job queues), Swagger                                 |
-| Database     | PostgreSQL 14, Redis 6                                                                                        |
-| Protocols    | MCP, A2A v0.3.0, AG-UI, TNF Envelope, WebSocket                                                               |
-| AI Providers | Anthropic, OpenAI, Google (Gemini)                                                                            |
+| Backend      | NestJS, TypeScript, Drizzle ORM, GraphQL (Apollo), BullMQ (job queues), Swagger                               |
+| Database     | Supabase (PostgreSQL 15 + pgvector), Upstash (Serverless Redis)                                               |
+| Protocols    | MCP, A2A v0.3.0, AG-UI, TNF Envelope, WebSocket (Edge)                                                        |
+| AI Providers | Anthropic, OpenAI, Google (Gemini / GenKit)                                                                   |
 | Desktop      | Electron, Tauri                                                                                               |
 | Build        | pnpm, Turborepo, Docker, tsup                                                                                 |
-| Deployment   | Railway, Nixpacks, GitHub Actions                                                                             |
-| Edge AI      | PicoClaw (Go), OpenClaw (Claude Pro OAuth)                                                                    |
+| Deployment   | Cloudflare Workers, GCP Cloud Run, GitHub Actions                                                             |
+| Edge AI      | PicoClaw (Go), OpenClaw (Cloudflare Edge)                                                                     |
 
 ## Documentation
 

@@ -158,7 +158,7 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
       pricePerRun: 0,
       status: 'online',
       publicationStatus: 'published',
-      launchUrl: 'https://open-audio-deck-production.up.railway.app',
+      launchUrl: 'https://open-audio-deck-241337102384.us-central1.run.app',
       createdBy: 'tnf-core',
       createdAt: NOW,
       updatedAt: NOW,

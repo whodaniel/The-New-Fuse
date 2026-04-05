@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/testing",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "E2E testing framework for The New Fuse platform",
   "main": "dist/index.js",
@@ -9,7 +10,7 @@
     "test": "echo \"Tests temporarily disabled for this package\"",
     "test:perf": "jest --config=jest.performance.config.js",
     "test:perf:ci": "jest --config=jest.performance.config.js --ci --reporters=default --reporters=jest-junit",
-    "clean": "rimraf dist coverage test-results playwright-report tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist coverage test-results playwright-report tsconfig.tsbuildinfo",
     "test:contracts": "jest --testPathPatterns=src/contract",
     "watch": "tsc -w",
     "test:e2e": "playwright test",

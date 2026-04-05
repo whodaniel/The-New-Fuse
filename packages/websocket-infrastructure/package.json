@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/websocket-infrastructure",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Production-ready WebSocket infrastructure with connection pooling, Redis pub/sub, and horizontal scaling",
   "main": "dist/index.js",
@@ -15,7 +16,7 @@
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "type-check": "tsc --noEmit",
-    "clean": "rimraf dist tsconfig.tsbuildinfo"
+    "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.16",

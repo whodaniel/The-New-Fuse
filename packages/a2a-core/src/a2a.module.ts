@@ -65,9 +65,12 @@ export class A2ACoreModule {
         },
         {
           provide: A2AService,
-          useFactory: (configService: ConfigService, ap2ProtocolService: Ap2ProtocolService) =>
-            new A2AService(configService, ap2ProtocolService),
-          inject: [ConfigService, Ap2ProtocolService],
+          useFactory: (
+            configService: ConfigService,
+            ap2ProtocolService: Ap2ProtocolService,
+            redisService: UnifiedRedisService
+          ) => new A2AService(configService, ap2ProtocolService, redisService),
+          inject: [ConfigService, Ap2ProtocolService, UnifiedRedisService],
         },
       ],
       exports: [A2AService, A2ARedisAdapter, A2AWebSocketAdapter, 'A2A_CONFIG'],
@@ -103,9 +106,12 @@ export class A2ACoreModule {
         },
         {
           provide: A2AService,
-          useFactory: (configService: ConfigService, ap2ProtocolService: Ap2ProtocolService) =>
-            new A2AService(configService, ap2ProtocolService),
-          inject: [ConfigService, Ap2ProtocolService],
+          useFactory: (
+            configService: ConfigService,
+            ap2ProtocolService: Ap2ProtocolService,
+            redisService: UnifiedRedisService
+          ) => new A2AService(configService, ap2ProtocolService, redisService),
+          inject: [ConfigService, Ap2ProtocolService, UnifiedRedisService],
         },
       ],
       exports: [A2AService, A2ARedisAdapter, A2AWebSocketAdapter, 'A2A_CONFIG'],

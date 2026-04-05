@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/api-client",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "API client for The New Fuse",
   "type": "module",
@@ -7,7 +8,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -b",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "dev": "tsc -b --watch",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",

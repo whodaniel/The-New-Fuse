@@ -1,0 +1,33 @@
+# Single-stage build for TNF Relay Server
+ARG NODE_VERSION=22
+FROM node:${NODE_VERSION}-alpine
+
+ENV CI=true
+ENV NODE_ENV=production
+ENV PORT=8080
+
+RUN corepack enable && corepack prepare pnpm@10.22.0 --activate
+
+WORKDIR /app
+
+# Copy workspace configuration
+COPY pnpm-workspace.yaml package.json tsconfig.json tsconfig.base.json tsconfig.standard.json turbo.json .pnpmfile.cjs ./
+COPY scripts ./scripts
+COPY packages ./packages
+COPY apps/relay-server ./apps/relay-server
+
+# Install ALL dependencies
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
+
+# Build internal dependencies in order
+RUN pnpm --filter @the-new-fuse/types build
+RUN pnpm --filter @the-new-fuse/utils build
+RUN pnpm --filter @the-new-fuse/core-monitoring build
+RUN pnpm --filter @the-new-fuse/infrastructure build
+RUN pnpm --filter @the-new-fuse/relay-core build
+
+EXPOSE 8080
+
+WORKDIR /app/apps/relay-server
+# Ensure it uses the PORT environment variable
+CMD ["node", "src/comprehensive-tnf-relay.js", "start"]

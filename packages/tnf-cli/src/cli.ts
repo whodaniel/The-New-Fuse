@@ -8,7 +8,6 @@ import readline from 'readline';
 import { fileURLToPath } from 'url';
 import type { AgentMessage } from './RedisAgentClient.js';
 import { RedisAgentClient } from './RedisAgentClient.js';
-import { Orchestrator } from './orchestration.js';
 
 const program = new Command();
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
@@ -3818,16 +3817,7 @@ agents
     if (options.name) args.push('--name', options.name);
     await runSelfCliWithExit(args);
   });
-agents
-  .command('orchestrate')
-  .description('Alias for `tnf orchestrate`')
-  .argument('<workflow>', 'Workflow name')
-  .option('-p, --path <path>', 'Target path for code-review')
-  .action(async (workflow: string, options: { path?: string } = {}) => {
-    const args = ['orchestrate', workflow];
-    if (options.path) args.push('--path', options.path);
-    await runSelfCliWithExit(args);
-  });
+
 agents
   .command('convo')
   .description('Alias for `tnf convo`')
@@ -3901,32 +3891,6 @@ program
     } catch (err: any) {
       if (isRedisUnavailable(err)) {
         logRedisUnavailable('./tnf send <message>');
-      }
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    } finally {
-      await client.cleanup();
-    }
-  });
-
-program
-  .command('orchestrate')
-  .description('Execute an orchestrated multi-agent workflow')
-  .argument('<workflow>', 'Workflow name (health-check, code-review, self-improvement)')
-  .option('-p, --path <path>', 'Target path for code-review')
-  .action(async (workflow, options) => {
-    const client = new RedisAgentClient();
-    try {
-      await client.initialize();
-      await client.register('orchestrator-cli', 'orchestrator', 'vscode');
-      const orchestrator = new Orchestrator(client);
-      await orchestrator.executeWorkflow(workflow, options);
-
-      // Wait for any immediate feedback
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-    } catch (err: any) {
-      if (isRedisUnavailable(err)) {
-        logRedisUnavailable('./tnf orchestrate <workflow>');
       }
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);

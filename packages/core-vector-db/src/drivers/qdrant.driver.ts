@@ -1,4 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+// @ts-ignore
 import { QdrantClient } from '@qdrant/js-client-rest';
 import type {
   CollectionConfig,
@@ -79,7 +80,7 @@ export class QdrantDriver implements IVectorDatabase {
   async listCollections(): Promise<string[]> {
     try {
       const response = await this.client.getCollections();
-      return response.collections.map((collection) => collection.name);
+      return response.collections.map((collection: any) => collection.name);
     } catch (error) {
       this.logger.error('Failed to list collections', error);
       throw error;
@@ -224,7 +225,7 @@ export class QdrantDriver implements IVectorDatabase {
 
       const response = await this.client.search(collection, searchParams);
 
-      return response.map((point) => ({
+      return response.map((point: any) => ({
         id: point.id as string,
         content: point.payload?.content as string,
         metadata: point.payload?.metadata as Record<string, any>,

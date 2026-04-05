@@ -10,7 +10,7 @@ import { UsersService } from '../users/users.service';
 import { AgentJwtStrategy } from './agent-jwt.strategy';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { FirebaseAuthGuard } from './firebase-auth.guard';
+import { SupabaseAuthGuard } from './supabase-auth.guard';
 import { GitHubStrategy } from './github.strategy';
 import { GoogleStrategy } from './google.strategy';
 import { RolesGuard } from './guards/roles.guard';
@@ -43,7 +43,7 @@ import { TokenBlacklistService } from './token-blacklist.service';
     LoggingService,
     EventBus,
     RolesGuard,
-    FirebaseAuthGuard,
+    SupabaseAuthGuard,
     AgentJwtStrategy,
     GoogleStrategy,
     GitHubStrategy,
@@ -52,6 +52,6 @@ import { TokenBlacklistService } from './token-blacklist.service';
     TokenBlacklistService,
   ],
   controllers: [AuthController],
-  exports: [AuthService, RolesGuard, FirebaseAuthGuard, AgentJwtStrategy, TokenBlacklistService],
+  exports: [AuthService, RolesGuard, SupabaseAuthGuard, AgentJwtStrategy, TokenBlacklistService],
 })
 export class AuthModule {}

@@ -1,9 +1,23 @@
+import { Redis } from '@upstash/redis/cloudflare';
+
 export interface Env {
   ENVIRONMENT: string;
   SHAREDSTATE_BUCKET: R2Bucket;
   SHAREDSTATE_DB: D1Database;
   RECEIPT_SEQ: DurableObjectNamespace;
   SHAREDSTATE_AUTH_TOKEN?: string;
+  UPSTASH_REDIS_REST_URL?: string;
+  UPSTASH_REDIS_REST_TOKEN?: string;
+}
+
+function getRedis(env: Env): Redis | null {
+  if (env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN) {
+    return new Redis({
+      url: env.UPSTASH_REDIS_REST_URL,
+      token: env.UPSTASH_REDIS_REST_TOKEN,
+    });
+  }
+  return null;
 }
 
 type ReceiptType =
@@ -608,6 +622,7 @@ export default {
 
     if (url.pathname === '/health') {
       const healthy = authConfigured || localRuntime;
+      const redis = getRedis(env);
       return json(
         {
           ok: healthy,
@@ -615,6 +630,7 @@ export default {
           localRuntime,
           authConfigured,
           authRequired: !localRuntime,
+          redisConfigured: !!redis,
         },
         { status: healthy ? 200 : 503 }
       );

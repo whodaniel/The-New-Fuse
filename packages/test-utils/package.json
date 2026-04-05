@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/test-utils",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Testing utilities for The New Fuse",
   "main": "dist/index.js",
@@ -13,7 +14,7 @@
   "scripts": {
     "build": "pnpm tsc",
     "test": "echo \"No tests for @the-new-fuse/test-utils\"",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",

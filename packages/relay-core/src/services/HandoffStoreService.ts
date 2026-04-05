@@ -1,7 +1,12 @@
 import crypto from 'crypto';
 
 // @ts-ignore
-import { createClient, type RedisClientType } from 'redis';
+import {
+  createStandaloneRedisClient,
+  createUpstashRestClient,
+} from '@the-new-fuse/infrastructure';
+import { Redis as UpstashRedis } from '@upstash/redis';
+import Redis, { Cluster } from 'ioredis';
 
 import {
   HandoffAck,
@@ -39,7 +44,8 @@ const DEFAULT_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days
 const DEFAULT_MAX_INBOX_ITEMS = 2000;
 
 export class HandoffStoreService {
-  private readonly client: RedisClientType;
+  private client: Redis | Cluster | null = null;
+  private upstash: UpstashRedis | null = null;
   private readonly keyPrefix: string;
   private readonly defaultTtlSeconds: number;
   private readonly maxInboxItemsPerAgent: number;
@@ -47,7 +53,6 @@ export class HandoffStoreService {
   private connected = false;
 
   constructor(options: HandoffStoreOptions = {}) {
-    this.client = createClient(options.redisUrl ? { url: options.redisUrl } : undefined);
     this.keyPrefix = options.keyPrefix ?? 'tnf:handoff:v1';
     this.defaultTtlSeconds = options.defaultTtlSeconds ?? DEFAULT_TTL_SECONDS;
     this.maxInboxItemsPerAgent = options.maxInboxItemsPerAgent ?? DEFAULT_MAX_INBOX_ITEMS;
@@ -58,7 +63,14 @@ export class HandoffStoreService {
     if (this.connected) {
       return;
     }
-    await this.client.connect();
+    
+    this.client = createStandaloneRedisClient({ lazyConnect: true } as any);
+    this.upstash = createUpstashRestClient();
+
+    if (this.client instanceof Redis) {
+      await this.client.connect().catch(() => {});
+    }
+
     this.connected = true;
   }
 
@@ -66,7 +78,8 @@ export class HandoffStoreService {
     if (!this.connected) {
       return;
     }
-    await this.client.quit();
+    if (this.client) await this.client.quit();
+    this.upstash = null;
     this.connected = false;
   }
 
@@ -87,34 +100,61 @@ export class HandoffStoreService {
     });
 
     const ttlSeconds = this.computeTtlSeconds(packet.expiresAt);
-    const multi = this.client.multi();
-
     const packetKey = this.packetKey(packet.id);
-    multi.set(packetKey, JSON.stringify(packet));
-    multi.expire(packetKey, ttlSeconds);
 
-    for (const agentId of packet.targets.agentIds) {
-      const inboxKey = this.agentInboxKey(agentId);
-      multi.lPush(inboxKey, packet.id);
-      multi.lTrim(inboxKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
-      multi.expire(inboxKey, ttlSeconds);
+    if (this.upstash) {
+      const pipeline = this.upstash.pipeline();
+      pipeline.set(packetKey, JSON.stringify(packet), { ex: ttlSeconds });
+
+      for (const agentId of packet.targets.agentIds) {
+        const inboxKey = this.agentInboxKey(agentId);
+        pipeline.lpush(inboxKey, packet.id);
+        pipeline.ltrim(inboxKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
+        pipeline.expire(inboxKey, ttlSeconds);
+      }
+
+      if (packet.scope.sessionKey) {
+        const sessionKey = this.sessionIndexKey(packet.scope.sessionKey);
+        pipeline.lpush(sessionKey, packet.id);
+        pipeline.ltrim(sessionKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
+        pipeline.expire(sessionKey, ttlSeconds);
+      }
+
+      await pipeline.exec();
+    } else if (this.client) {
+      const multi = (this.client as any).multi();
+      multi.set(packetKey, JSON.stringify(packet), 'EX', ttlSeconds);
+
+      for (const agentId of packet.targets.agentIds) {
+        const inboxKey = this.agentInboxKey(agentId);
+        multi.lpush(inboxKey, packet.id);
+        multi.ltrim(inboxKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
+        multi.expire(inboxKey, ttlSeconds);
+      }
+
+      if (packet.scope.sessionKey) {
+        const sessionKey = this.sessionIndexKey(packet.scope.sessionKey);
+        multi.lpush(sessionKey, packet.id);
+        multi.ltrim(sessionKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
+        multi.expire(sessionKey, ttlSeconds);
+      }
+
+      await multi.exec();
     }
 
-    if (packet.scope.sessionKey) {
-      const sessionKey = this.sessionIndexKey(packet.scope.sessionKey);
-      multi.lPush(sessionKey, packet.id);
-      multi.lTrim(sessionKey, 0, Math.max(this.maxInboxItemsPerAgent - 1, 0));
-      multi.expire(sessionKey, ttlSeconds);
-    }
-
-    await multi.exec();
     return packet;
   }
 
   async getPacket(packetId: string): Promise<HandoffPacketType | null> {
     await this.connect();
 
-    const raw = await this.client.get(this.packetKey(packetId));
+    let raw: string | null = null;
+    if (this.upstash) {
+      raw = await this.upstash.get<string>(this.packetKey(packetId));
+    } else if (this.client) {
+      raw = await this.client.get(this.packetKey(packetId));
+    }
+
     if (!raw) {
       return null;
     }
@@ -132,20 +172,21 @@ export class HandoffStoreService {
     const includeAcknowledged = options.includeAcknowledged ?? false;
     const result: AgentHandoffView[] = [];
 
-    // Overscan to account for expired/invalid/acked packets while returning `limit` results.
-    const candidateIds = await this.client.lRange(this.agentInboxKey(agentId), 0, limit * 10 - 1);
+    const inboxKey = this.agentInboxKey(agentId);
+    let candidateIds: string[] = [];
+
+    if (this.upstash) {
+      candidateIds = await this.upstash.lrange(inboxKey, 0, limit * 10 - 1);
+    } else if (this.client) {
+      candidateIds = await this.client.lrange(inboxKey, 0, limit * 10 - 1);
+    }
 
     for (const packetId of candidateIds) {
       if (result.length >= limit) {
         break;
       }
 
-      const rawPacket = await this.client.get(this.packetKey(packetId));
-      if (!rawPacket) {
-        continue;
-      }
-
-      const packet = this.parsePacket(rawPacket);
+      const packet = await this.getPacket(packetId);
       if (!packet) {
         continue;
       }
@@ -183,8 +224,15 @@ export class HandoffStoreService {
     }
 
     const ackKey = this.ackKey(ack.packetId);
-    await this.client.hSet(ackKey, ack.agentId, JSON.stringify(ack));
-    await this.client.expire(ackKey, this.computeTtlSeconds(packet.expiresAt));
+    const ttlSeconds = this.computeTtlSeconds(packet.expiresAt);
+
+    if (this.upstash) {
+      await this.upstash.hset(ackKey, { [ack.agentId]: JSON.stringify(ack) });
+      await this.upstash.expire(ackKey, ttlSeconds);
+    } else if (this.client) {
+      await this.client.hset(ackKey, ack.agentId, JSON.stringify(ack));
+      await this.client.expire(ackKey, ttlSeconds);
+    }
 
     return ack;
   }
@@ -192,11 +240,15 @@ export class HandoffStoreService {
   async listBySession(sessionKey: string, limit = 50): Promise<HandoffPacketType[]> {
     await this.connect();
 
-    const ids = await this.client.lRange(
-      this.sessionIndexKey(sessionKey),
-      0,
-      Math.max(limit, 1) - 1
-    );
+    const key = this.sessionIndexKey(sessionKey);
+    let ids: string[] = [];
+
+    if (this.upstash) {
+      ids = await this.upstash.lrange(key, 0, Math.max(limit, 1) - 1);
+    } else if (this.client) {
+      ids = await this.client.lrange(key, 0, Math.max(limit, 1) - 1);
+    }
+
     const packets: HandoffPacketType[] = [];
 
     for (const id of ids) {
@@ -217,7 +269,15 @@ export class HandoffStoreService {
     note?: string;
     ackedAt: string;
   } | null> {
-    const raw = await this.client.hGet(this.ackKey(packetId), agentId);
+    let raw: string | null = null;
+    const key = this.ackKey(packetId);
+
+    if (this.upstash) {
+      raw = await this.upstash.hget<string>(key, agentId);
+    } else if (this.client) {
+      raw = await this.client.hget(key, agentId);
+    }
+
     if (!raw) {
       return null;
     }

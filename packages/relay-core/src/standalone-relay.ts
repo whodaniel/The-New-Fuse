@@ -19,8 +19,12 @@
 import { EventEmitter } from 'events';
 import http from 'http';
 
-import Redis, { Cluster } from 'ioredis';
+import { Redis, Cluster } from 'ioredis';
+import { Redis as UpstashRedis } from '@upstash/redis';
 import WebSocket, { WebSocketServer } from 'ws';
+
+// @ts-ignore
+import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 
 import { createAuthService } from './auth/JWTAuthService';
 import { attachAuditTrace } from './contracts/audit';
@@ -180,6 +184,7 @@ export class TNFRelayServer extends EventEmitter {
   private conversationManagers: Map<string, ConversationStateMachine> = new Map();
   private subscriptionRegistry: SubscriptionRegistry;
   private activityRedis: Redis | Cluster | null = null;
+  private activityUpstash: UpstashRedis | null = null;
   private activityRedisConnectPromise: Promise<void> | null = null;
   private activityPersistenceEnabled: boolean;
   private activityPersistenceRequired: boolean;
@@ -204,6 +209,21 @@ export class TNFRelayServer extends EventEmitter {
     this.activityChannelPrefix =
       process.env.ACTIVITY_CHANNEL_STREAM_PREFIX || 'tnf:activity:channel:';
     this.activityMaxLen = parseInt(process.env.ACTIVITY_STREAM_MAXLEN || '100000', 10);
+
+    // Initialize activity persistence clients
+    if (this.activityPersistenceEnabled) {
+      this.activityRedis = createStandaloneRedisClient({ lazyConnect: true });
+      this.activityUpstash = createUpstashRestClient();
+      this.activityRedisConnectPromise = (async () => {
+        if (this.activityRedis instanceof Redis) {
+          try {
+            await this.activityRedis.connect();
+          } catch (err) {
+            console.warn('[Relay] Failed to connect activity Redis (TCP):', err);
+          }
+        }
+      })();
+    }
 
     // Create logger
     this.logger = new Logger(
@@ -1105,7 +1125,7 @@ export class TNFRelayServer extends EventEmitter {
     rawMessage: ProtocolMessage,
     msg: Message & { metadata?: Record<string, unknown> }
   ): Promise<void> {
-    if (!this.activityPersistenceEnabled || !this.activityRedis) {
+    if (!this.activityPersistenceEnabled || (!this.activityRedis && !this.activityUpstash)) {
       return;
     }
     if (!this.shouldPersistActivityMessage(rawMessage, msg)) {
@@ -1167,26 +1187,46 @@ export class TNFRelayServer extends EventEmitter {
     }
 
     try {
-      const flatFields = Object.entries(fields).flat();
-      const streamId = await this.activityRedis.xadd(
-        this.activityStreamKey,
-        'MAXLEN',
-        '~',
-        this.activityMaxLen,
-        '*',
-        ...flatFields
-      );
-      event.streamId = streamId || '';
+      if (this.activityUpstash) {
+        // Upstash REST doesn't support streams (XADD) natively via the main API in some versions,
+        // but we can use simple HSET/LPUSH. For simplicity and breadth, we use LPUSH for history.
+        const payloadStr = JSON.stringify(fields);
+        await this.activityUpstash.lpush(this.activityStreamKey, payloadStr);
+        await this.activityUpstash.ltrim(this.activityStreamKey, 0, this.activityMaxLen);
 
-      if (resolvedChannel) {
-        await this.activityRedis.xadd(
-          `${this.activityChannelPrefix}${resolvedChannel}`,
+        if (resolvedChannel) {
+          await this.activityUpstash.lpush(
+            `${this.activityChannelPrefix}${resolvedChannel}`,
+            payloadStr
+          );
+          await this.activityUpstash.ltrim(
+            `${this.activityChannelPrefix}${resolvedChannel}`,
+            0,
+            this.activityMaxLen
+          );
+        }
+      } else if (this.activityRedis) {
+        const flatFields = Object.entries(fields).flat();
+        const streamId = await this.activityRedis.xadd(
+          this.activityStreamKey,
           'MAXLEN',
           '~',
           this.activityMaxLen,
           '*',
           ...flatFields
         );
+        event.streamId = streamId || '';
+
+        if (resolvedChannel) {
+          await this.activityRedis.xadd(
+            `${this.activityChannelPrefix}${resolvedChannel}`,
+            'MAXLEN',
+            '~',
+            this.activityMaxLen,
+            '*',
+            ...flatFields
+          );
+        }
       }
     } catch (err) {
       console.error(
@@ -2049,6 +2089,8 @@ export class TNFRelayServer extends EventEmitter {
                 this.activityRedis = null;
               }
             }
+            // Upstash REST client doesn't need explicit closing as it is HTTP-based
+            this.activityUpstash = null;
             fmt.serverStopped();
             this.emit('stopped');
             resolve();

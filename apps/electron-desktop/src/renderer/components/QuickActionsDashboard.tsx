@@ -97,7 +97,7 @@ const ACTION_CATEGORIES = [
         label: 'Open Theia IDE',
         icon: '💻',
         description: 'Open the cloud-based Theia IDE',
-        url: 'https://tnf-theia-ide-production.up.railway.app',
+        url: 'https://backend-241337102384.us-central1.run.app/theia',
       },
       {
         id: 'open-website',

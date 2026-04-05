@@ -40,7 +40,7 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css}\"",
     "type-check": "tsc --noEmit",
     "clear-ports": "node scripts/clear-ports.js",
-    "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "perf:monitor": "node scripts/performance-monitor.js",
     "bundle:report": "pnpm build && echo 'Bundle analysis report generated at dist/bundle-analysis.html'"
   },

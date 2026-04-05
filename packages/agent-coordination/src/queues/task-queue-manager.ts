@@ -5,9 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { TaskStatus } from '../types/coordination.types';
 import { PersistentMetricsCollector } from '../monitoring/PersistentMetricsCollector';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 import type { Job } from 'bullmq';
-import type Redis from 'ioredis';
 import type { MessageSerializer } from '../serializers/message-serializer';
 import type { AgentTask, QueueConfig, TaskProcessor } from '../types/coordination.types';
 
@@ -21,16 +21,16 @@ export class TaskQueueManager extends EventEmitter {
   private readonly queueEvents: Map<string, QueueEvents> = new Map();
   private readonly processors: Map<string, TaskProcessor> = new Map();
   private readonly serializer: MessageSerializer;
-  private readonly redisConnection: Redis;
+  private readonly redisConnection: any;
 
   constructor(
-    redisConnection: Redis,
+    private readonly redisService: UnifiedRedisService,
     serializer: MessageSerializer,
     private readonly defaultConfig: Partial<QueueConfig> = {},
     private readonly metricsCollector?: PersistentMetricsCollector
   ) {
     super();
-    this.redisConnection = redisConnection;
+    this.redisConnection = redisService.getClient();
     this.serializer = serializer;
   }
 

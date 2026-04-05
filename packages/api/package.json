@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/api",
+  "files": ["dist"],
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,7 +14,7 @@
     "build:js-only": "./scripts/build-js-only.sh",
     "build:production": "NODE_ENV=production tsc --build",
     "build:watch": "tsc --build --watch",
-    "clean": "rimraf dist .turbo tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist .turbo tsconfig.tsbuildinfo",
     "type-check": "tsc --noEmit",
     "dev": "nest start --watch",
     "start": "nest start",

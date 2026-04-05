@@ -1,21 +1,15 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import Redis from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { performance } from 'perf_hooks';
 import * as os from 'os';
 
 @Injectable()
 export class MetricsCollectorService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(MetricsCollectorService.name);
-  private readonly redis: Redis;
   private collectionInterval: NodeJS.Timeout | null = null;
   private readonly retentionPeriod = 86400; // 24 hours in seconds
 
-  constructor() {
-    this.redis = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379', 10),
-    });
-  }
+  constructor(private readonly redisService: UnifiedRedisService) {}
 
   onModuleInit() {
     this.start();
@@ -51,7 +45,7 @@ export class MetricsCollectorService implements OnModuleInit, OnModuleDestroy {
       };
 
       const key = `metrics:${metrics.timestamp}`;
-      await this.redis.setex(key, this.retentionPeriod, JSON.stringify(metrics));
+      await this.redisService.set(key, JSON.stringify(metrics), this.retentionPeriod);
     } catch (error) {
       this.logger.error('Error collecting metrics', error);
     }

@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const redis_1 = require("redis");
+// @ts-ignore
+const infrastructure_1 = require("@the-new-fuse/infrastructure");
+const ioredis_1 = require("ioredis");
 const CONFIG = {
     REDIS_URL: process.env.REDIS_URL ||
         process.env.RAILWAY_REDIS_URL ||
@@ -30,20 +32,29 @@ const CONFIG = {
     APPROVE_CRITICAL_RISK: (process.env.DIRECTOR_APPROVE_CRITICAL_RISK || 'false') === 'true',
 };
 class DirectorAgent {
-    redis;
-    redisBlocking;
+    redis = null;
+    redisBlocking = null;
+    upstash = null;
     heartbeatInterval = null;
     running = false;
     directorId = process.env.DIRECTOR_ID || `DIRECTOR-${Date.now()}`;
     constructor() {
-        this.redis = (0, redis_1.createClient)({ url: CONFIG.REDIS_URL });
-        this.redisBlocking = (0, redis_1.createClient)({ url: CONFIG.REDIS_URL });
-        this.redis.on('error', (err) => console.error('[Director] Redis error:', err?.message || err));
-        this.redisBlocking.on('error', (err) => console.error('[Director] Redis blocking error:', err?.message || err));
+        // Use unified standalone utilities
+        this.redis = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
+        this.redisBlocking = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
+        this.upstash = (0, infrastructure_1.createUpstashRestClient)();
+        if (this.redis instanceof ioredis_1.Redis) {
+            this.redis.on('error', (err) => console.error('[Director] Redis error:', err?.message || err));
+        }
+        if (this.redisBlocking instanceof ioredis_1.Redis) {
+            this.redisBlocking.on('error', (err) => console.error('[Director] Redis blocking error:', err?.message || err));
+        }
     }
     async start() {
-        await this.redis.connect();
-        await this.redisBlocking.connect();
+        if (this.redis instanceof ioredis_1.Redis)
+            await this.redis.connect();
+        if (this.redisBlocking instanceof ioredis_1.Redis)
+            await this.redisBlocking.connect();
         this.running = true;
         await this.registerDirector();
         this.startHeartbeat();
@@ -64,18 +75,29 @@ class DirectorAgent {
             registeredAt: now,
             lastSeen: now,
         };
-        await this.redis.hSet(CONFIG.AGENT_REGISTRY_KEY, this.directorId, JSON.stringify(record));
+        if (this.upstash) {
+            await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, { [this.directorId]: JSON.stringify(record) });
+        }
+        else if (this.redis) {
+            await this.redis.hset(CONFIG.AGENT_REGISTRY_KEY, this.directorId, JSON.stringify(record));
+        }
     }
     startHeartbeat() {
         const sendHeartbeat = async () => {
             const nowIso = new Date().toISOString();
             try {
-                await this.redis.publish(CONFIG.HEARTBEAT_CHANNEL, JSON.stringify({
+                const payload = JSON.stringify({
                     type: 'heartbeat',
                     source: this.directorId,
                     role: 'director',
                     timestamp: nowIso,
-                }));
+                });
+                if (this.upstash) {
+                    await this.upstash.publish(CONFIG.HEARTBEAT_CHANNEL, payload);
+                }
+                else if (this.redis) {
+                    await this.redis.publish(CONFIG.HEARTBEAT_CHANNEL, payload);
+                }
             }
             catch (error) {
                 console.warn('[Director] Heartbeat failed:', error.message);
@@ -87,16 +109,20 @@ class DirectorAgent {
     async consumeLoop() {
         while (this.running) {
             try {
-                const result = (await this.redisBlocking.brPop(CONFIG.REVIEW_QUEUE, CONFIG.QUEUE_BLOCK_TIMEOUT_SEC));
-                if (!result?.element)
+                if (!this.redisBlocking)
+                    break;
+                // brpop is only available on TCP client (ioredis)
+                const result = (await this.redisBlocking.brpop(CONFIG.REVIEW_QUEUE, CONFIG.QUEUE_BLOCK_TIMEOUT_SEC));
+                if (!result || result.length < 2)
                     continue;
-                const envelope = this.safeParseReview(result.element);
+                const envelope = this.safeParseReview(result[1]);
                 if (!envelope?.task?.id)
                     continue;
                 await this.resolveReview(envelope);
             }
             catch (error) {
                 console.error('[Director] Consume loop error:', error.message);
+                await new Promise((r) => setTimeout(r, 1000));
             }
         }
     }
@@ -161,9 +187,14 @@ class DirectorAgent {
         const reviewedAt = new Date().toISOString();
         const targetQueue = this.targetQueueForTask(task);
         if (decision === 'approved') {
-            await this.redis.lPush(targetQueue, JSON.stringify(task));
-            // Backward compatibility mirror.
-            await this.redis.lPush(CONFIG.COMPAT_TASK_QUEUE, JSON.stringify(task));
+            if (this.upstash) {
+                await this.upstash.lpush(targetQueue, JSON.stringify(task));
+                await this.upstash.lpush(CONFIG.COMPAT_TASK_QUEUE, JSON.stringify(task));
+            }
+            else if (this.redis) {
+                await this.redis.lpush(targetQueue, JSON.stringify(task));
+                await this.redis.lpush(CONFIG.COMPAT_TASK_QUEUE, JSON.stringify(task));
+            }
         }
         const event = {
             directorId: this.directorId,
@@ -178,8 +209,15 @@ class DirectorAgent {
             sourceQueue: review.sourceQueue || CONFIG.REVIEW_QUEUE,
             itinerary: task.itinerary || {},
         };
-        await this.redis.publish(CONFIG.DECISION_CHANNEL, JSON.stringify(event));
-        await this.redis.publish(CONFIG.BROKER_DECISION_CHANNEL, JSON.stringify(event));
+        const eventPayload = JSON.stringify(event);
+        if (this.upstash) {
+            await this.upstash.publish(CONFIG.DECISION_CHANNEL, eventPayload);
+            await this.upstash.publish(CONFIG.BROKER_DECISION_CHANNEL, eventPayload);
+        }
+        else if (this.redis) {
+            await this.redis.publish(CONFIG.DECISION_CHANNEL, eventPayload);
+            await this.redis.publish(CONFIG.BROKER_DECISION_CHANNEL, eventPayload);
+        }
         const status = decision === 'approved' ? 'queued' : 'rejected';
         await this.persistDecision(task, status, event);
         console.log(`[Director] ${decision.toUpperCase()} ${task.id} (${rationale})`);
@@ -231,8 +269,11 @@ class DirectorAgent {
             clearInterval(this.heartbeatInterval);
             this.heartbeatInterval = null;
         }
-        await this.redisBlocking.quit();
-        await this.redis.quit();
+        if (this.redisBlocking)
+            await this.redisBlocking.quit();
+        if (this.redis)
+            await this.redis.quit();
+        this.upstash = null;
     }
 }
 const director = new DirectorAgent();

@@ -14,7 +14,7 @@ export default function LiveViewPage() {
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Cloud Sandbox URL - this should match your Railway deployment
-  const CLOUD_SANDBOX_URL = 'https://tnf-cloud-sandbox-v2-production.up.railway.app';
+  const CLOUD_SANDBOX_URL = 'https://api-gateway-241337102384.us-central1.run.app';
   /**
    * IMPORTANT: We use Socket.IO with polling as the primary transport because
    * Railway's edge proxy often drops or fails to upgrade WebSocket connections directly.

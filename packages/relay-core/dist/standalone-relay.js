@@ -55,9 +55,14 @@ exports.TNFRelayServer = void 0;
  */
 const events_1 = require("events");
 const http_1 = __importDefault(require("http"));
-const redis_1 = require("redis");
+const ioredis_1 = require("ioredis");
 const ws_1 = __importStar(require("ws"));
+// @ts-ignore
+const infrastructure_1 = require("@the-new-fuse/infrastructure");
 const JWTAuthService_1 = require("./auth/JWTAuthService");
+const audit_1 = require("./contracts/audit");
+const identity_1 = require("./contracts/identity");
+const lifecycle_1 = require("./contracts/lifecycle");
 const conversation_state_machine_1 = require("./orchestrator/conversation-state-machine");
 const subscription_registry_1 = require("./orchestrator/subscription-registry");
 const redis_relay_bridge_1 = require("./redis-relay-bridge");
@@ -68,6 +73,30 @@ const TerminalFormatter_1 = require("./utils/TerminalFormatter");
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const HEARTBEAT_INTERVAL = 30000;
 const AGENT_TIMEOUT = 60000;
+function buildRelayAgentIdentity(input) {
+    return (0, identity_1.createAgentIdentityRecord)({
+        canonicalEntityId: typeof input.canonicalEntityId === 'string' ? input.canonicalEntityId : undefined,
+        operationalHandle: typeof input.operationalHandle === 'string' && input.operationalHandle.trim()
+            ? input.operationalHandle
+            : input.id,
+        runtimeSessionId: typeof input.runtimeSessionId === 'string' && input.runtimeSessionId.trim()
+            ? input.runtimeSessionId
+            : input.id,
+        aliases: [input.id, ...(Array.isArray(input.aliases) ? input.aliases : [])],
+    });
+}
+function resolveRelayAgentStatus(input) {
+    return (0, lifecycle_1.normalizeAgentLifecycleStatus)(typeof input === 'string' ? input : null) || 'active';
+}
+function buildBridgeOperatorContext(req) {
+    const headerActor = req.headers['x-tnf-operator'];
+    const actor = typeof headerActor === 'string' && headerActor.trim() ? headerActor.trim() : 'relay-admin-http';
+    return {
+        actor,
+        remoteAddress: req.socket.remoteAddress || null,
+        userAgent: typeof req.headers['user-agent'] === 'string' ? req.headers['user-agent'] : null,
+    };
+}
 // Relay Server Class
 class TNFRelayServer extends events_1.EventEmitter {
     server;
@@ -89,6 +118,7 @@ class TNFRelayServer extends events_1.EventEmitter {
     conversationManagers = new Map();
     subscriptionRegistry;
     activityRedis = null;
+    activityUpstash = null;
     activityRedisConnectPromise = null;
     activityPersistenceEnabled;
     activityPersistenceRequired;
@@ -113,6 +143,21 @@ class TNFRelayServer extends events_1.EventEmitter {
         this.activityChannelPrefix =
             process.env.ACTIVITY_CHANNEL_STREAM_PREFIX || 'tnf:activity:channel:';
         this.activityMaxLen = parseInt(process.env.ACTIVITY_STREAM_MAXLEN || '100000', 10);
+        // Initialize activity persistence clients
+        if (this.activityPersistenceEnabled) {
+            this.activityRedis = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
+            this.activityUpstash = (0, infrastructure_1.createUpstashRestClient)();
+            this.activityRedisConnectPromise = (async () => {
+                if (this.activityRedis instanceof ioredis_1.Redis) {
+                    try {
+                        await this.activityRedis.connect();
+                    }
+                    catch (err) {
+                        console.warn('[Relay] Failed to connect activity Redis (TCP):', err);
+                    }
+                }
+            })();
+        }
         // Create logger
         this.logger = new Logger_1.Logger(process.env.LOG_LEVEL || 'info', process.env.WORKSPACE_DIR || process.cwd());
         // Create HTTP server
@@ -165,24 +210,13 @@ class TNFRelayServer extends events_1.EventEmitter {
             console.log('[Relay] Continuing without Redis bridge - local-only mode');
             this.bridge = null;
         });
-        if (this.activityPersistenceEnabled) {
-            this.activityRedis = (0, redis_1.createClient)({
-                url: process.env.ACTIVITY_REDIS_URL || process.env.REDIS_URL || 'redis://localhost:6379',
-            });
+        if (this.activityPersistenceEnabled && this.activityRedis) {
             this.activityRedis.on('error', (err) => {
                 console.error('[Relay] Activity Redis client error:', err.message);
             });
-            this.activityRedisConnectPromise = this.activityRedis
-                .connect()
-                .then(() => {
-                TerminalFormatter_1.relay.activityPersistenceEnabled(this.activityStreamKey);
-            })
-                .catch((err) => {
-                console.error('[Relay] Failed to connect activity Redis:', err.message);
-                this.activityPersistenceEnabled = false;
-                this.activityRedis = null;
-                throw err;
-            });
+            // ioredis handles connection automatically, but we can wrap it in a promise if needed
+            this.activityRedisConnectPromise = Promise.resolve();
+            TerminalFormatter_1.relay.activityPersistenceEnabled(this.activityStreamKey);
         }
     }
     handleHttpRequest(req, res) {
@@ -231,12 +265,151 @@ class TNFRelayServer extends events_1.EventEmitter {
                     agents: Array.from(this.agents.values()),
                     channels: Array.from(this.channels.values()),
                     connections: this.sockets.size,
+                    bridge: {
+                        connected: this.bridge?.isConnected() || false,
+                        gateEnabled: this.bridgeGateEnabled,
+                        pendingRequests: this.pendingBridgeAgents.size,
+                        approvedAgents: Array.from(this.approvedBridgeAgents),
+                    },
                 }));
+                break;
+            case '/bridge/pending':
+                res.writeHead(200);
+                res.end(JSON.stringify({
+                    pending: this.getPendingBridgeRequests(),
+                    gateEnabled: this.bridgeGateEnabled,
+                }));
+                break;
+            case '/bridge/approve':
+                if (req.method === 'POST') {
+                    this.handleBridgeApproveRequest(req, res);
+                }
+                else {
+                    res.writeHead(405);
+                    res.end(JSON.stringify({ error: 'Method not allowed' }));
+                }
+                break;
+            case '/bridge/deny':
+                if (req.method === 'POST') {
+                    this.handleBridgeDenyRequest(req, res);
+                }
+                else {
+                    res.writeHead(405);
+                    res.end(JSON.stringify({ error: 'Method not allowed' }));
+                }
+                break;
+            case '/bridge/toggle':
+                if (req.method === 'POST') {
+                    this.handleBridgeToggleRequest(req, res);
+                }
+                else {
+                    res.writeHead(405);
+                    res.end(JSON.stringify({ error: 'Method not allowed' }));
+                }
                 break;
             default:
                 res.writeHead(404);
                 res.end(JSON.stringify({ error: 'Not found' }));
         }
+    }
+    /**
+     * Handle POST /bridge/approve - Approve an agent for bridge access
+     */
+    handleBridgeApproveRequest(req, res) {
+        let body = '';
+        req.on('data', (chunk) => {
+            body += chunk.toString();
+        });
+        req.on('end', () => {
+            try {
+                const operator = buildBridgeOperatorContext(req);
+                const { agentId } = JSON.parse(body);
+                if (!agentId) {
+                    res.writeHead(400);
+                    res.end(JSON.stringify({ error: 'Missing agentId' }));
+                    return;
+                }
+                const success = this.approveBridgeAccess(agentId, operator);
+                res.writeHead(success ? 200 : 404);
+                res.end(JSON.stringify({
+                    success,
+                    agentId,
+                    approvedAgents: Array.from(this.approvedBridgeAgents),
+                    pending: this.getPendingBridgeRequests(),
+                }));
+            }
+            catch (err) {
+                res.writeHead(400);
+                res.end(JSON.stringify({ error: 'Invalid JSON', details: String(err) }));
+            }
+        });
+    }
+    /**
+     * Handle POST /bridge/deny - Deny an agent bridge access
+     */
+    handleBridgeDenyRequest(req, res) {
+        let body = '';
+        req.on('data', (chunk) => {
+            body += chunk.toString();
+        });
+        req.on('end', () => {
+            try {
+                const operator = buildBridgeOperatorContext(req);
+                const { agentId, reason } = JSON.parse(body);
+                if (!agentId) {
+                    res.writeHead(400);
+                    res.end(JSON.stringify({ error: 'Missing agentId' }));
+                    return;
+                }
+                const success = this.denyBridgeAccess(agentId, reason, {
+                    ...operator,
+                    reason: typeof reason === 'string' ? reason : null,
+                });
+                res.writeHead(success ? 200 : 404);
+                res.end(JSON.stringify({
+                    success,
+                    agentId,
+                    reason,
+                    pending: this.getPendingBridgeRequests(),
+                }));
+            }
+            catch (err) {
+                res.writeHead(400);
+                res.end(JSON.stringify({ error: 'Invalid JSON', details: String(err) }));
+            }
+        });
+    }
+    /**
+     * Handle POST /bridge/toggle - Toggle bridge gate on/off
+     */
+    handleBridgeToggleRequest(req, res) {
+        let body = '';
+        req.on('data', (chunk) => {
+            body += chunk.toString();
+        });
+        req.on('end', () => {
+            try {
+                const operator = buildBridgeOperatorContext(req);
+                const { enabled } = JSON.parse(body);
+                if (typeof enabled !== 'boolean') {
+                    res.writeHead(400);
+                    res.end(JSON.stringify({ error: 'Missing or invalid enabled field' }));
+                    return;
+                }
+                this.setBridgeGateEnabled(enabled, operator);
+                res.writeHead(200);
+                res.end(JSON.stringify({
+                    success: true,
+                    gateEnabled: this.bridgeGateEnabled,
+                    approvedAgents: Array.from(this.approvedBridgeAgents),
+                    pending: this.getPendingBridgeRequests(),
+                }));
+            }
+            catch (err) {
+                res.writeHead(400);
+                res.end(JSON.stringify({ error: 'Invalid JSON', details: String(err) }));
+            }
+        });
     }
     async handleActivityRecentEndpoint(parsedUrl, res) {
         if (!this.activityPersistenceEnabled || !this.activityRedis) {
@@ -254,11 +427,18 @@ class TNFRelayServer extends events_1.EventEmitter {
             ? `${this.activityChannelPrefix}${channelId}`
             : this.activityStreamKey;
         try {
-            const entries = await this.activityRedis.xRevRange(streamKey, '+', '-', { COUNT: count });
-            const events = entries.map((entry) => ({
-                streamId: entry.id,
-                ...this.parseActivityFields(entry.message),
-            }));
+            const entries = await this.activityRedis.xrevrange(streamKey, '+', '-', 'COUNT', count);
+            const events = entries.map((entry) => {
+                const [streamId, flatFields] = entry;
+                const fields = {};
+                for (let i = 0; i < flatFields.length; i += 2) {
+                    fields[flatFields[i]] = flatFields[i + 1];
+                }
+                return {
+                    streamId,
+                    ...this.parseActivityFields(fields),
+                };
+            });
             res.writeHead(200);
             res.end(JSON.stringify({
                 stream: streamKey,
@@ -364,6 +544,9 @@ class TNFRelayServer extends events_1.EventEmitter {
                 payload: {
                     agent: {
                         id: regId,
+                        operationalHandle: regId,
+                        runtimeSessionId: regId,
+                        aliases: [regId],
                         name: regName,
                         platform: regPayload.type || regPayload.clientType || 'unknown',
                         status: 'active',
@@ -400,19 +583,37 @@ class TNFRelayServer extends events_1.EventEmitter {
                 }
                 const agentData = payload?.agent || {};
                 const id = verifiedToken?.agentId || agentData.id || agentId || `agent-${Date.now()}`;
+                const identity = buildRelayAgentIdentity({
+                    id,
+                    canonicalEntityId: agentData.canonicalEntityId,
+                    operationalHandle: agentData.operationalHandle,
+                    runtimeSessionId: agentData.runtimeSessionId,
+                    aliases: agentData.aliases,
+                });
                 const agent = {
                     id,
+                    canonicalEntityId: identity.canonicalEntityId,
+                    operationalHandle: identity.operationalHandle,
+                    runtimeSessionId: identity.runtimeSessionId,
+                    aliases: identity.aliases,
                     name: verifiedToken?.name || agentData.name || 'Unknown Agent',
                     platform: verifiedToken?.platform || agentData.platform || 'unknown',
-                    status: 'active',
+                    status: resolveRelayAgentStatus(agentData.status),
                     capabilities: verifiedToken?.capabilities || agentData.capabilities || [],
                     channels: agentData.channels || [],
                     connectedAt: Date.now(),
                     lastSeen: Date.now(),
-                    metadata: {
+                    metadata: (0, audit_1.attachAuditTrace)({
                         ...agentData.metadata,
                         authenticated: !!verifiedToken,
-                    },
+                    }, {
+                        source: 'standalone-relay',
+                        actor: identity.operationalHandle,
+                        sessionId: identity.runtimeSessionId || id,
+                        canonicalEntityId: identity.canonicalEntityId,
+                        operationalHandle: identity.operationalHandle,
+                        runtimeSessionId: identity.runtimeSessionId,
+                    }),
                 };
                 this.agents.set(id, agent);
                 this.sockets.set(id, ws);
@@ -687,6 +888,7 @@ class TNFRelayServer extends events_1.EventEmitter {
                 const agent = agentId ? this.agents.get(agentId) : null;
                 if (agent) {
                     agent.lastSeen = Date.now();
+                    agent.status = resolveRelayAgentStatus('active');
                 }
                 break;
             }
@@ -713,7 +915,7 @@ class TNFRelayServer extends events_1.EventEmitter {
             typeof eventType === 'string');
     }
     async persistActivityMessage(rawMessage, msg) {
-        if (!this.activityPersistenceEnabled || !this.activityRedis) {
+        if (!this.activityPersistenceEnabled || (!this.activityRedis && !this.activityUpstash)) {
             return;
         }
         if (!this.shouldPersistActivityMessage(rawMessage, msg)) {
@@ -721,8 +923,18 @@ class TNFRelayServer extends events_1.EventEmitter {
         }
         const payload = (rawMessage.payload || {});
         const metadata = (msg.metadata || {});
-        const activityChannel = typeof metadata.activityChannel === 'string' && metadata.activityChannel
-            ? metadata.activityChannel
+        const agent = this.agents.get(msg.from);
+        const auditedMetadata = (0, audit_1.attachAuditTrace)(metadata, {
+            source: 'standalone-relay',
+            actor: agent?.operationalHandle || msg.from || 'unknown',
+            channelId: msg.channel,
+            sessionId: agent?.runtimeSessionId || msg.from || undefined,
+            canonicalEntityId: agent?.canonicalEntityId,
+            operationalHandle: agent?.operationalHandle || msg.from || undefined,
+            runtimeSessionId: agent?.runtimeSessionId || msg.from || undefined,
+        });
+        const activityChannel = typeof auditedMetadata.activityChannel === 'string' && auditedMetadata.activityChannel
+            ? auditedMetadata.activityChannel
             : undefined;
         const resolvedChannel = activityChannel || msg.channel;
         const event = {
@@ -734,12 +946,12 @@ class TNFRelayServer extends events_1.EventEmitter {
                     ? payload.timestamp
                     : undefined,
             type: msg.type,
-            eventType: typeof metadata.eventType === 'string' ? metadata.eventType : undefined,
+            eventType: typeof auditedMetadata.eventType === 'string' ? auditedMetadata.eventType : undefined,
             source: msg.from,
             channel: msg.channel,
             activityChannel: activityChannel,
             content: msg.content,
-            metadata,
+            metadata: auditedMetadata,
         };
         const fields = {
             id: event.id,
@@ -758,22 +970,24 @@ class TNFRelayServer extends events_1.EventEmitter {
             fields.eventType = event.eventType;
         }
         try {
-            const streamId = await this.activityRedis.xAdd(this.activityStreamKey, '*', fields, {
-                TRIM: {
-                    strategy: 'MAXLEN',
-                    strategyModifier: '~',
-                    threshold: this.activityMaxLen,
-                },
-            });
-            event.streamId = streamId;
-            if (resolvedChannel) {
-                await this.activityRedis.xAdd(`${this.activityChannelPrefix}${resolvedChannel}`, '*', fields, {
-                    TRIM: {
-                        strategy: 'MAXLEN',
-                        strategyModifier: '~',
-                        threshold: this.activityMaxLen,
-                    },
-                });
+            if (this.activityUpstash) {
+                // Upstash REST doesn't support streams (XADD) natively via the main API in some versions,
+                // but we can use simple HSET/LPUSH. For simplicity and breadth, we use LPUSH for history.
+                const payloadStr = JSON.stringify(fields);
+                await this.activityUpstash.lpush(this.activityStreamKey, payloadStr);
+                await this.activityUpstash.ltrim(this.activityStreamKey, 0, this.activityMaxLen);
+                if (resolvedChannel) {
+                    await this.activityUpstash.lpush(`${this.activityChannelPrefix}${resolvedChannel}`, payloadStr);
+                    await this.activityUpstash.ltrim(`${this.activityChannelPrefix}${resolvedChannel}`, 0, this.activityMaxLen);
+                }
+            }
+            else if (this.activityRedis) {
+                const flatFields = Object.entries(fields).flat();
+                const streamId = await this.activityRedis.xadd(this.activityStreamKey, 'MAXLEN', '~', this.activityMaxLen, '*', ...flatFields);
+                event.streamId = streamId || '';
+                if (resolvedChannel) {
+                    await this.activityRedis.xadd(`${this.activityChannelPrefix}${resolvedChannel}`, 'MAXLEN', '~', this.activityMaxLen, '*', ...flatFields);
+                }
             }
         }
         catch (err) {
@@ -855,7 +1069,15 @@ class TNFRelayServer extends events_1.EventEmitter {
         this.broadcast({
             type: 'AGENT_STATUS',
             payload: {
-                agent: { id: agentId, status: 'offline', name: agent?.name },
+                agent: {
+                    id: agentId,
+                    canonicalEntityId: agent?.canonicalEntityId,
+                    operationalHandle: agent?.operationalHandle,
+                    runtimeSessionId: agent?.runtimeSessionId,
+                    aliases: agent?.aliases,
+                    status: 'offline',
+                    name: agent?.name,
+                },
             },
         });
         this.emit('agent:disconnected', { agentId, agent });
@@ -871,6 +1093,12 @@ class TNFRelayServer extends events_1.EventEmitter {
     }
     handleBridgeEgress(envelope) {
         const payload = envelope.payload;
+        const payloadMetadata = typeof payload.metadata === 'object' && payload.metadata
+            ? payload.metadata
+            : {};
+        const envelopeMetadata = typeof envelope.metadata === 'object' && envelope.metadata
+            ? envelope.metadata
+            : undefined;
         const payloadChannel = typeof payload.channel === 'string'
             ? payload.channel
             : typeof payload.activityChannel === 'string'
@@ -896,8 +1124,17 @@ class TNFRelayServer extends events_1.EventEmitter {
             type: envelope.type === 'event' ? 'CHANNEL_MESSAGE' : 'MESSAGE_RECEIVE', // Map to existing types
             source: envelope.from.agentId,
             channel: channelId,
-            payload: envelope.payload,
+            payload: envelopeMetadata
+                ? {
+                    ...payload,
+                    metadata: {
+                        ...payloadMetadata,
+                        ...envelopeMetadata,
+                    },
+                }
+                : envelope.payload,
             timestamp: new Date(envelope.timestamp).getTime(),
+            metadata: envelopeMetadata,
         };
         // Determine routing
         if ('broadcast' in envelope.to && envelope.to.broadcast) {
@@ -983,12 +1220,18 @@ class TNFRelayServer extends events_1.EventEmitter {
         }
     }
     async persistTaskDispatch(task, channelId) {
-        const ingestUrl = process.env.LEDGER_INGEST_URL ||
-            'http://localhost:3001/api/unified-ledger/ingest/orchestration';
+        const ingestUrl = process.env.LEDGER_INTERNAL_INGEST_URL ||
+            process.env.LEDGER_INGEST_URL ||
+            'http://localhost:3001/api/unified-ledger/internal/ingest/orchestration';
+        const internalSecret = process.env.TNF_INTERNAL_INGEST_SECRET || process.env.UNIFIED_LEDGER_INTERNAL_SECRET;
+        const headers = { 'Content-Type': 'application/json' };
+        if (internalSecret) {
+            headers['x-tnf-internal-secret'] = internalSecret;
+        }
         try {
             await globalThis.fetch(ingestUrl, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify({
                     type: 'TASK_DISPATCH',
                     action: 'relay_dispatch',
@@ -1152,12 +1395,88 @@ class TNFRelayServer extends events_1.EventEmitter {
             console.error('[Relay] Failed to subscribe bridge egress for ' + agentId + ':', err instanceof Error ? err.message : String(err));
         });
     }
+    emitRelayActivityEvent(eventType, content, metadata, operator = { actor: 'relay-admin-http' }) {
+        const channelId = 'fuse-activity-log';
+        const timestamp = Date.now();
+        const auditedMetadata = (0, audit_1.attachAuditTrace)({
+            isSystemMessage: true,
+            source: 'RELAY',
+            eventType,
+            activityChannel: channelId,
+            ...metadata,
+        }, {
+            source: 'standalone-relay',
+            actor: operator.actor || 'relay-admin-http',
+            channelId,
+            sessionId: operator.actor || 'relay-admin-http',
+            operationalHandle: operator.actor || 'relay-admin-http',
+            runtimeSessionId: operator.actor || 'relay-admin-http',
+        });
+        const msg = {
+            id: `relay-activity-${timestamp}-${Math.random().toString(36).slice(2, 11)}`,
+            type: 'event',
+            from: 'relay-system',
+            to: 'broadcast',
+            content,
+            channel: channelId,
+            timestamp,
+            metadata: auditedMetadata,
+        };
+        const protocolMsg = {
+            id: msg.id,
+            type: 'CHANNEL_MESSAGE',
+            source: msg.from,
+            channel: channelId,
+            payload: msg,
+            timestamp,
+            metadata: auditedMetadata,
+        };
+        this.ensureChannelExists(channelId, {
+            createdBy: 'relay-system',
+            description: 'Relay activity log',
+        });
+        void this.persistActivityMessage(protocolMsg, msg);
+        void this.persistRelayActivityTimelineEvent(eventType, content, timestamp, auditedMetadata, operator);
+        this.broadcastToChannel(channelId, protocolMsg);
+    }
+    async persistRelayActivityTimelineEvent(eventType, content, timestamp, metadata, operator) {
+        const timelineUrl = process.env.LEDGER_INTERNAL_TIMELINE_URL ||
+            process.env.LEDGER_TIMELINE_URL ||
+            'http://localhost:3001/api/timeline/internal/events';
+        const internalSecret = process.env.TNF_INTERNAL_INGEST_SECRET || process.env.UNIFIED_LEDGER_INTERNAL_SECRET;
+        const headers = { 'Content-Type': 'application/json' };
+        if (internalSecret) {
+            headers['x-tnf-internal-secret'] = internalSecret;
+        }
+        try {
+            await globalThis.fetch(timelineUrl, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({
+                    userId: process.env.TNF_INTERNAL_TIMELINE_USER_ID,
+                    eventType: 'historical_event',
+                    actor: operator.actor || 'relay-admin-http',
+                    timestamp: new Date(timestamp).toISOString(),
+                    payload: {
+                        source: 'standalone-relay',
+                        relayEventType: eventType,
+                        content,
+                        metadata,
+                    },
+                }),
+            });
+        }
+        catch (error) {
+            console.warn('[Relay] Failed to persist relay activity timeline event:', error);
+        }
+    }
     /**
      * Approve an agent for bridge access (operator action)
      */
-    approveBridgeAccess(agentId) {
+    approveBridgeAccess(agentId, operator = { actor: 'relay-admin-http' }) {
         const pending = this.pendingBridgeAgents.get(agentId);
-        if (!pending && !this.agents.has(agentId)) {
+        const agent = pending?.agent || this.agents.get(agentId);
+        if (!pending && !agent) {
             console.warn('[Relay] Cannot approve unknown agent: ' + agentId);
             return false;
         }
@@ -1174,12 +1493,24 @@ class TNFRelayServer extends events_1.EventEmitter {
                 payload: { agentId, approvedAt: Date.now() },
             });
         }
+        this.emitRelayActivityEvent('bridge_access_approved', `Approved bridge access for ${agentId}`, {
+            bridgeDecision: 'approve',
+            agentId,
+            agentName: agent?.name || null,
+            platform: agent?.platform || null,
+            gateEnabled: this.bridgeGateEnabled,
+            pendingCount: this.pendingBridgeAgents.size,
+            approvedCount: this.approvedBridgeAgents.size,
+            remoteAddress: operator.remoteAddress || null,
+            userAgent: operator.userAgent || null,
+            operatorReason: operator.reason || null,
+        }, operator);
         return true;
     }
     /**
      * Deny an agent bridge access (operator action)
      */
-    denyBridgeAccess(agentId, reason) {
+    denyBridgeAccess(agentId, reason, operator = { actor: 'relay-admin-http' }) {
         const pending = this.pendingBridgeAgents.get(agentId);
         if (!pending) {
             console.warn('[Relay] No pending bridge request for agent: ' + agentId);
@@ -1195,6 +1526,22 @@ class TNFRelayServer extends events_1.EventEmitter {
                 payload: { agentId, reason: reason || 'Access denied by operator', deniedAt: Date.now() },
             });
         }
+        this.emitRelayActivityEvent('bridge_access_denied', `Denied bridge access for ${agentId}`, {
+            bridgeDecision: 'deny',
+            agentId,
+            agentName: pending.agent?.name || null,
+            platform: pending.agent?.platform || null,
+            gateEnabled: this.bridgeGateEnabled,
+            pendingCount: this.pendingBridgeAgents.size,
+            approvedCount: this.approvedBridgeAgents.size,
+            reason: reason || 'Access denied by operator',
+            remoteAddress: operator.remoteAddress || null,
+            userAgent: operator.userAgent || null,
+            operatorReason: operator.reason || null,
+        }, {
+            ...operator,
+            reason: reason || operator.reason || null,
+        });
         return true;
     }
     /**
@@ -1211,13 +1558,27 @@ class TNFRelayServer extends events_1.EventEmitter {
     /**
      * Toggle bridge gate on/off
      */
-    setBridgeGateEnabled(enabled) {
+    setBridgeGateEnabled(enabled, operator = { actor: 'relay-admin-http' }) {
+        const previousEnabled = this.bridgeGateEnabled;
         this.bridgeGateEnabled = enabled;
         console.log('[Relay] Bridge gate ' + (enabled ? 'ENABLED' : 'DISABLED'));
+        this.emitRelayActivityEvent('bridge_gate_toggled', `Bridge gate ${enabled ? 'enabled' : 'disabled'}`, {
+            bridgeDecision: 'toggle',
+            enabled,
+            previousEnabled,
+            pendingCount: this.pendingBridgeAgents.size,
+            approvedCount: this.approvedBridgeAgents.size,
+            remoteAddress: operator.remoteAddress || null,
+            userAgent: operator.userAgent || null,
+            operatorReason: operator.reason || null,
+        }, operator);
         // If disabling, auto-approve all pending
         if (!enabled) {
             for (const [agentId] of this.pendingBridgeAgents) {
-                this.approveBridgeAccess(agentId);
+                this.approveBridgeAccess(agentId, {
+                    ...operator,
+                    reason: operator.reason || 'gate_disabled_auto_approve',
+                });
             }
         }
     }
@@ -1238,11 +1599,18 @@ class TNFRelayServer extends events_1.EventEmitter {
             content: message,
             channel: channelId,
             timestamp: Date.now(),
-            metadata: {
+            metadata: (0, audit_1.attachAuditTrace)({
                 ...metadata,
                 isSystemMessage: true,
                 isRecoveryAttempt: true,
-            },
+                forceInject: true, // Ensure this reaches the chat input field
+            }, {
+                source: 'standalone-relay',
+                actor: 'stall-detector',
+                channelId,
+                operationalHandle: 'stall-detector',
+                runtimeSessionId: 'stall-detector',
+            }),
         };
         console.log(`[Relay] Sending recovery message to channel ${channelId}`);
         // Broadcast to all channel members
@@ -1330,6 +1698,8 @@ class TNFRelayServer extends events_1.EventEmitter {
                                 this.activityRedis = null;
                             }
                         }
+                        // Upstash REST client doesn't need explicit closing as it is HTTP-based
+                        this.activityUpstash = null;
                         TerminalFormatter_1.relay.serverStopped();
                         this.emit('stopped');
                         resolve();

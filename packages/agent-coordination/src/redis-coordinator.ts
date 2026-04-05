@@ -1,5 +1,4 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import Redis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 
 import { A2APriority, AgentStatus } from '@the-new-fuse/a2a-core';
@@ -64,8 +63,6 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
     averageMessageLatency: 0,
   };
 
-  private redisConnection!: Redis;
-
   constructor(
     private readonly redisService: UnifiedRedisService,
     private readonly config: RedisCoordinatorConfig = {}
@@ -91,22 +88,17 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
   async onModuleInit(): Promise<void> {
     this.logger.log('Initializing Redis Coordinator...');
 
-    this.redisConnection = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD,
-      db: parseInt(process.env.REDIS_DB || '0'),
-    });
+    const redisConnection = this.redisService.getClient();
 
     // Initialize metrics collector
     this.metricsCollector = new PersistentMetricsCollector(
-      this.redisConnection,
+      redisConnection,
       this.keyPrefix + 'metrics:'
     );
 
     // Initialize task queue manager
     const taskQueueManager = new TaskQueueManager(
-      this.redisConnection,
+      this.redisService,
       this.serializer,
       this.config.queueConfig,
       this.metricsCollector
@@ -121,7 +113,7 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
 
     // Initialize recovery manager
     this.recoveryManager = new RecoveryManager(
-      this.redisConnection,
+      this.redisService,
       this.presenceTracker,
       this.sharedStateManager,
       this.taskQueueManager,
@@ -144,7 +136,6 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
     this.recoveryManager.stopMonitoring();
     await this.broadcastManager.clearAll();
     await this.taskQueueManager.close();
-    await this.redisConnection.quit();
 
     this.logger.log('Redis Coordinator shut down complete');
   }

@@ -16,7 +16,7 @@ import { IsEmail, IsString } from 'class-validator';
 import { Request, Response } from 'express';
 import { RegisterDto } from '../dto/register.dto';
 import { AuthService } from './auth.service';
-import { FirebaseAuthGuard } from './firebase-auth.guard';
+import { SupabaseAuthGuard } from './supabase-auth.guard';
 
 class LoginDto {
   @IsEmail()
@@ -70,15 +70,15 @@ export class AuthController {
     return this.authService.login(user);
   }
 
-  @Post('login/firebase')
-  @UseGuards(FirebaseAuthGuard)
-  async loginWithFirebase(@Req() req: Request) {
-    const firebaseToken = req.headers.authorization?.split('Bearer ')[1];
-    return this.authService.authenticate(firebaseToken);
+  @Post('login/supabase')
+  @UseGuards(SupabaseAuthGuard)
+  async loginWithSupabase(@Req() req: Request) {
+    const supabaseToken = req.headers.authorization?.split('Bearer ')[1];
+    return this.authService.authenticate(supabaseToken);
   }
 
   @Post('logout')
-  @UseGuards(FirebaseAuthGuard)
+  @UseGuards(SupabaseAuthGuard)
   async logout(@Req() req: Request) {
     const token = req.headers.authorization?.split('Bearer ')[1];
     return this.authService.logout(token);

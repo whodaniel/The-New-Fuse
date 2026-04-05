@@ -23,6 +23,7 @@ export interface RedisRelayBridgeConfig {
 export declare class RedisRelayBridge extends EventEmitter {
     private redisClient;
     private redisSubscriber;
+    private upstashClient;
     private config;
     private connected;
     constructor(config?: Partial<RedisRelayBridgeConfig>);

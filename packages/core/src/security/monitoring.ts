@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
-import Redis from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { performance } from 'perf_hooks';
 
 export interface Metric {
@@ -27,18 +27,14 @@ export interface SystemHealth {
 @Injectable()
 export class MonitoringService implements OnModuleDestroy {
   private readonly logger = new Logger(MonitoringService.name);
-  private readonly redis: Redis;
+  private readonly redisService: UnifiedRedisService;
 
-  constructor() {
-    this.redis = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379', 10),
-    });
-    this.redis.on('error', (err: any) => this.logger.error('Redis Error', err));
+  constructor(redisService: UnifiedRedisService) {
+    this.redisService = redisService;
   }
 
   onModuleDestroy() {
-    this.redis.disconnect();
+    // Connection managed by UnifiedRedisService
   }
 
   /**
@@ -46,7 +42,7 @@ export class MonitoringService implements OnModuleDestroy {
    */
   async increment(key: string, labels: Record<string, string> = {}) {
     const serializedLabels = this.serializeLabels(labels);
-    await this.redis.hincrby('counters', `${key}:${serializedLabels}`, 1);
+    await this.redisService.hincrby('counters', `${key}:${serializedLabels}`, 1);
   }
 
   /**
@@ -59,7 +55,7 @@ export class MonitoringService implements OnModuleDestroy {
     } finally {
       const duration = performance.now() - start;
       const serializedLabels = this.serializeLabels(labels);
-      await this.redis.lpush(`timings:${key}:${serializedLabels}`, duration.toString());
+      await this.redisService.lpush(`timings:${key}:${serializedLabels}`, duration.toString());
     }
   }
 
@@ -81,7 +77,7 @@ export class MonitoringService implements OnModuleDestroy {
   }
 
   private async getTimingStats(key: string): Promise<{ avg: number; p95: number; p99: number }> {
-    const timings = await this.redis.lrange(`timings:${key}`, 0, -1);
+    const timings = await this.redisService.lrange(`timings:${key}`, 0, -1);
     const numbers = timings.map(Number).sort((a, b) => a - b);
     if (numbers.length === 0) return { avg: 0, p95: 0, p99: 0 };
 
@@ -94,7 +90,7 @@ export class MonitoringService implements OnModuleDestroy {
   }
 
   private async getCounterStats(keyPrefix: string): Promise<{ total: number; byType: Record<string, number> }> {
-    const counters = await this.redis.hgetall('counters');
+    const counters = await this.redisService.hgetall('counters');
     let total = 0;
     const byType: Record<string, number> = {};
 

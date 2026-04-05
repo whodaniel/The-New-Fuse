@@ -1,16 +1,16 @@
 import { EventEmitter } from 'events';
-import Redis from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 /**
  * Shared cache for agent collaboration
  */
 export class SharedCache extends EventEmitter {
-  private redis: Redis;
+  private redisService: UnifiedRedisService;
   private readonly prefix: string;
 
-  constructor(redisUrl: string = 'redis://localhost:6379', prefix: string = 'cache') {
+  constructor(redisService: UnifiedRedisService, prefix: string = 'cache') {
     super();
-    this.redis = new Redis(redisUrl);
+    this.redisService = redisService;
     this.prefix = prefix;
   }
 
@@ -19,7 +19,7 @@ export class SharedCache extends EventEmitter {
    */
   async get<T>(key: string): Promise<T | null> {
     const fullKey = this.getFullKey(key);
-    const value = await this.redis.get(fullKey);
+    const value = await this.redisService.get(fullKey);
 
     if (value === null) {
       return null;
@@ -40,9 +40,9 @@ export class SharedCache extends EventEmitter {
     const serialized = typeof value === 'string' ? value : JSON.stringify(value);
 
     if (ttl) {
-      await this.redis.setex(fullKey, Math.floor(ttl / 1000), serialized);
+      await this.redisService.set(fullKey, serialized, Math.floor(ttl / 1000));
     } else {
-      await this.redis.set(fullKey, serialized);
+      await this.redisService.set(fullKey, serialized);
     }
 
     this.emit('cache:set', key, value);
@@ -53,7 +53,7 @@ export class SharedCache extends EventEmitter {
    */
   async delete(key: string): Promise<boolean> {
     const fullKey = this.getFullKey(key);
-    const result = await this.redis.del(fullKey);
+    const result = await this.redisService.del(fullKey);
 
     if (result > 0) {
       this.emit('cache:delete', key);
@@ -68,8 +68,7 @@ export class SharedCache extends EventEmitter {
    */
   async exists(key: string): Promise<boolean> {
     const fullKey = this.getFullKey(key);
-    const result = await this.redis.exists(fullKey);
-    return result === 1;
+    return await this.redisService.exists(fullKey);
   }
 
   /**
@@ -79,7 +78,7 @@ export class SharedCache extends EventEmitter {
     if (keys.length === 0) return [];
 
     const fullKeys = keys.map((k) => this.getFullKey(k));
-    const values = await this.redis.mget(...fullKeys);
+    const values = await this.redisService.mget(...fullKeys);
 
     return values.map((value) => {
       if (value === null) return null;
@@ -95,15 +94,15 @@ export class SharedCache extends EventEmitter {
    * Set multiple values
    */
   async mset(entries: Record<string, any>): Promise<void> {
-    const pipeline = this.redis.pipeline();
+    const data: Record<string, string> = {};
 
     for (const [key, value] of Object.entries(entries)) {
       const fullKey = this.getFullKey(key);
       const serialized = typeof value === 'string' ? value : JSON.stringify(value);
-      pipeline.set(fullKey, serialized);
+      data[fullKey] = serialized;
     }
 
-    await pipeline.exec();
+    await this.redisService.mset(data);
     this.emit('cache:mset', Object.keys(entries));
   }
 
@@ -112,7 +111,7 @@ export class SharedCache extends EventEmitter {
    */
   async increment(key: string, amount: number = 1): Promise<number> {
     const fullKey = this.getFullKey(key);
-    const result = await this.redis.incrby(fullKey, amount);
+    const result = await this.redisService.incrby(fullKey, amount);
     this.emit('cache:increment', key, amount);
     return result;
   }
@@ -122,7 +121,7 @@ export class SharedCache extends EventEmitter {
    */
   async decrement(key: string, amount: number = 1): Promise<number> {
     const fullKey = this.getFullKey(key);
-    const result = await this.redis.decrby(fullKey, amount);
+    const result = await this.redisService.decrby(fullKey, amount);
     this.emit('cache:decrement', key, amount);
     return result;
   }
@@ -141,7 +140,7 @@ export class SharedCache extends EventEmitter {
       return value
     `;
 
-    const value = await this.redis.eval(script, 1, fullKey);
+    const value = await this.redisService.eval(script, [fullKey], []);
 
     if (value === null) return null;
 
@@ -157,7 +156,7 @@ export class SharedCache extends EventEmitter {
    */
   async addToSet(key: string, ...members: string[]): Promise<number> {
     const fullKey = this.getFullKey(key);
-    const result = await this.redis.sadd(fullKey, ...members);
+    const result = await this.redisService.sadd(fullKey, ...members);
     this.emit('cache:set:add', key, members);
     return result;
   }
@@ -167,7 +166,7 @@ export class SharedCache extends EventEmitter {
    */
   async removeFromSet(key: string, ...members: string[]): Promise<number> {
     const fullKey = this.getFullKey(key);
-    const result = await this.redis.srem(fullKey, ...members);
+    const result = await this.redisService.srem(fullKey, ...members);
     this.emit('cache:set:remove', key, members);
     return result;
   }
@@ -177,7 +176,7 @@ export class SharedCache extends EventEmitter {
    */
   async getSetMembers(key: string): Promise<string[]> {
     const fullKey = this.getFullKey(key);
-    return await this.redis.smembers(fullKey);
+    return await this.redisService.smembers(fullKey);
   }
 
   /**
@@ -185,8 +184,7 @@ export class SharedCache extends EventEmitter {
    */
   async isSetMember(key: string, member: string): Promise<boolean> {
     const fullKey = this.getFullKey(key);
-    const result = await this.redis.sismember(fullKey, member);
-    return result === 1;
+    return await this.redisService.sismember(fullKey, member);
   }
 
   /**
@@ -194,7 +192,7 @@ export class SharedCache extends EventEmitter {
    */
   async pushToList(key: string, ...values: string[]): Promise<number> {
     const fullKey = this.getFullKey(key);
-    const result = await this.redis.rpush(fullKey, ...values);
+    const result = await this.redisService.rpush(fullKey, ...values);
     this.emit('cache:list:push', key, values);
     return result;
   }
@@ -204,7 +202,7 @@ export class SharedCache extends EventEmitter {
    */
   async popFromList(key: string): Promise<string | null> {
     const fullKey = this.getFullKey(key);
-    return await this.redis.lpop(fullKey);
+    return await this.redisService.lpop(fullKey);
   }
 
   /**
@@ -212,7 +210,7 @@ export class SharedCache extends EventEmitter {
    */
   async getListLength(key: string): Promise<number> {
     const fullKey = this.getFullKey(key);
-    return await this.redis.llen(fullKey);
+    return await this.redisService.llen(fullKey);
   }
 
   /**
@@ -220,7 +218,7 @@ export class SharedCache extends EventEmitter {
    */
   async getListRange(key: string, start: number, end: number): Promise<string[]> {
     const fullKey = this.getFullKey(key);
-    return await this.redis.lrange(fullKey, start, end);
+    return await this.redisService.lrange(fullKey, start, end);
   }
 
   /**
@@ -229,7 +227,7 @@ export class SharedCache extends EventEmitter {
   async setHashField(key: string, field: string, value: any): Promise<void> {
     const fullKey = this.getFullKey(key);
     const serialized = typeof value === 'string' ? value : JSON.stringify(value);
-    await this.redis.hset(fullKey, field, serialized);
+    await this.redisService.hset(fullKey, field, serialized);
     this.emit('cache:hash:set', key, field);
   }
 
@@ -238,7 +236,7 @@ export class SharedCache extends EventEmitter {
    */
   async getHashField<T>(key: string, field: string): Promise<T | null> {
     const fullKey = this.getFullKey(key);
-    const value = await this.redis.hget(fullKey, field);
+    const value = await this.redisService.hget(fullKey, field);
 
     if (value === null) return null;
 
@@ -254,7 +252,7 @@ export class SharedCache extends EventEmitter {
    */
   async getHashAll<T>(key: string): Promise<Record<string, T>> {
     const fullKey = this.getFullKey(key);
-    const hash = await this.redis.hgetall(fullKey);
+    const hash = await this.redisService.hgetall(fullKey);
 
     const result: Record<string, T> = {};
     for (const [field, value] of Object.entries(hash)) {
@@ -273,7 +271,7 @@ export class SharedCache extends EventEmitter {
    */
   async deleteHashField(key: string, field: string): Promise<boolean> {
     const fullKey = this.getFullKey(key);
-    const result = await this.redis.hdel(fullKey, field);
+    const result = await this.redisService.hdel(fullKey, field);
     return result > 0;
   }
 
@@ -282,7 +280,7 @@ export class SharedCache extends EventEmitter {
    */
   async getKeys(pattern: string = '*'): Promise<string[]> {
     const fullPattern = this.getFullKey(pattern);
-    const keys = await this.redis.keys(fullPattern);
+    const keys = await this.redisService.keys(fullPattern);
 
     // Remove prefix from keys
     return keys.map((key) => key.substring(this.prefix.length + 1));
@@ -292,10 +290,11 @@ export class SharedCache extends EventEmitter {
    * Clear all cache entries with prefix
    */
   async clear(): Promise<void> {
-    const keys = await this.redis.keys(`${this.prefix}:*`);
+    const pattern = `${this.prefix}:*`;
+    const keys = await this.redisService.keys(pattern);
 
     if (keys.length > 0) {
-      await this.redis.del(...keys);
+      await Promise.all(keys.map((key) => this.redisService.del(key)));
     }
 
     this.emit('cache:cleared');
@@ -309,15 +308,14 @@ export class SharedCache extends EventEmitter {
     memoryUsed: string;
     hitRate?: number;
   }> {
-    const keys = await this.redis.keys(`${this.prefix}:*`);
-    const info = await this.redis.info('memory');
-
-    const memoryMatch = info.match(/used_memory_human:([^\r\n]+)/);
-    const memoryUsed = memoryMatch ? memoryMatch[1] : 'unknown';
-
+    const pattern = `${this.prefix}:*`;
+    const keys = await this.redisService.keys(pattern);
+    // Info('memory') is not yet in UnifiedRedisService, falling back to a dummy or extending it.
+    // For now, let's keep it simple or skip the memory info if not critical.
+    
     return {
       keyCount: keys.length,
-      memoryUsed,
+      memoryUsed: 'unknown (managed)',
     };
   }
 
@@ -329,10 +327,9 @@ export class SharedCache extends EventEmitter {
   }
 
   /**
-   * Close Redis connection
+   * Close connections and cleanup
    */
   async close(): Promise<void> {
-    await this.redis.quit();
     this.removeAllListeners();
   }
 }

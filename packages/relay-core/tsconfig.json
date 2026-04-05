@@ -10,10 +10,11 @@
 
     "types": ["node"],
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "baseUrl": ".",
     "paths": {
-      "@the-new-fuse/infrastructure": ["../../packages/infrastructure/dist"],
-      "@the-new-fuse/database": ["../../packages/database/dist"],
-      "@the-new-fuse/types": ["../../packages/types/dist"]
+      "@the-new-fuse/infrastructure": ["../infrastructure/dist"],
+      "@the-new-fuse/database": ["../database/dist"],
+      "@the-new-fuse/types": ["../types/dist"]
     }
   },
   "include": ["src/**/*"],

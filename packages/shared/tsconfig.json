@@ -16,8 +16,7 @@
     "jsx": "react-jsx",
     "paths": {
       "@the-new-fuse/*": ["../../packages/*/src"]
-    },
-    "types": []
+    }
   },
   "include": ["src/**/*"],
   "exclude": [

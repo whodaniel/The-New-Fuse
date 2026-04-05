@@ -1,12 +1,15 @@
 {
   "name": "@the-new-fuse/agent",
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc --build",
-    "clean": "rimraf dist .turbo .tsbuildinfo tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist .turbo .tsbuildinfo tsconfig.tsbuildinfo",
     "lint": "eslint src",
     "test": "jest --config jest.config.js",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
@@ -15,6 +18,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@jest/globals": "^30.3.0",
     "@nestjs/common": "^11.1.16",
     "@nestjs/core": "^11.1.16",
     "@nestjs/graphql": "13.2.4",
@@ -23,11 +27,12 @@
     "@the-new-fuse/mcp-core": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "@the-new-fuse/utils": "workspace:*",
+    "ajv-formats": "^3.0.1",
     "graphql": "^16.11.0",
     "ioredis": "^5.8.2",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "redis": "^5.10.0",
+    "redis": "^5.11.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "typeorm": "^0.3.27",

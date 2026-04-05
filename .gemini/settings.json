@@ -1,5 +1,15 @@
 {
   "general": {
     "vimMode": true
+  },
+  "mcpServers": {
+    "crawl4ai": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "crawl4ai-mcp-server",
+        "crawl4ai-mcp"
+      ]
+    }
   }
 }

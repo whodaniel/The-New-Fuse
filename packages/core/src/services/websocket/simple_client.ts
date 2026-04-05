@@ -1,5 +1,5 @@
 // @ts-ignore
-import { createClient, RedisClientType } from 'redis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 // @ts-ignore
 import { v4 as uuidv4 } from 'uuid';
 import { createHash } from 'crypto';
@@ -21,21 +21,18 @@ interface ClientConfig {
 
 export class SimpleWebSocketClient {
   private state: ClientState = ClientState.INITIALIZING;
-  private redisClient: any;
+  private redisService: UnifiedRedisService;
   private logger: Logger;
-  private config: ClientConfig;
+  private config: any;
 
-  constructor(config: ClientConfig, logger: Logger) {
+  constructor(config: any, logger: Logger, redisService: UnifiedRedisService) {
     this.config = config;
     this.logger = logger;
-    this.redisClient = createClient({
-      url: `redis://${config.redis.host}:${config.redis.port}/${config.redis.db}`,
-    });
+    this.redisService = redisService;
   }
 
   async initialize(): Promise<void> {
     try {
-      await this.redisClient.connect();
       this.state = ClientState.LISTENING;
       this.logger.info('WebSocket client initialized successfully');
     } catch (error) {
@@ -45,13 +42,8 @@ export class SimpleWebSocketClient {
   }
 
   async sendMessage(channel: string, message: any): Promise<void> {
-    if (!this.redisClient.isOpen) {
-      this.logger.error('Redis client not connected');
-      throw new Error('Redis client not connected');
-    }
-
     try {
-      await this.redisClient.publish(channel, JSON.stringify(message));
+      await this.redisService.publish(channel, JSON.stringify(message));
       this.logger.info('Message sent successfully', { channel });
     } catch (error) {
       this.logger.error('Failed to send message', { error, channel });
@@ -61,14 +53,13 @@ export class SimpleWebSocketClient {
 
   async subscribe(channel: string, callback: (message: any) => void): Promise<void> {
     try {
-      const subscriber = this.redisClient.duplicate();
-      await subscriber.connect();
-      await subscriber.subscribe(channel, (message: any) => {
+      await this.redisService.subscribe(channel, (message) => {
         try {
-          const parsedMessage = JSON.parse(message);
+        const messageStr = typeof message.message === 'string' ? message.message : JSON.stringify(message.message);
+        const parsedMessage = JSON.parse(messageStr);
           callback(parsedMessage);
         } catch (error) {
-          this.logger.error('Failed to parse message', { error, message });
+          this.logger.error('Failed to parse message', { error, message: message.message });
         }
       });
       this.logger.info('Subscribed to channel', { channel });
@@ -80,9 +71,6 @@ export class SimpleWebSocketClient {
 
   async disconnect(): Promise<void> {
     try {
-      if (this.redisClient.isOpen) {
-        await this.redisClient.quit();
-      }
       this.logger.info('WebSocket client disconnected');
     } catch (error) {
       this.logger.error('Error during disconnect', { error });

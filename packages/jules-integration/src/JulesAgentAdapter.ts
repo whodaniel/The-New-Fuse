@@ -1,7 +1,7 @@
-import { AgentMetadata, RedisAgentRegistry } from '@the-new-fuse/agent';
+import type { AgentMetadata, RedisAgentRegistry } from '@the-new-fuse/agent';
 import { DrizzleAgentRepository, DrizzleTaskRepository } from '@the-new-fuse/database';
 import { AgentStatus, AgentType, TaskStatus } from '@the-new-fuse/types';
-import { Redis } from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { v4 as uuidv4 } from 'uuid';
 import { JulesApiClient } from './JulesApiClient.js';
 import { toBase64Url } from './utils.js';
@@ -11,10 +11,10 @@ const TNF_WEBHOOK_BASE_URL =
 
 export class JulesAgentAdapter {
   constructor(
-    private agentRegistry: RedisAgentRegistry,
+    private agentRegistry: any,
     private agentRepo: InstanceType<typeof DrizzleAgentRepository>,
     private taskRepo: InstanceType<typeof DrizzleTaskRepository>,
-    private redis: Redis // Redis can be used for other things, like distributed locks
+    private redisService: UnifiedRedisService // Redis can be used for other things, like distributed locks
   ) {}
 
   /**
@@ -55,7 +55,7 @@ export class JulesAgentAdapter {
     }
 
     // Also register in the Redis registry for discovery
-    const agentMetadata: Omit<AgentMetadata, 'lastSeen'> = {
+    const agentMetadata: any = {
       id: agent.id,
       name: agent.name,
       status: 'online', // Redis registry uses 'online'/'offline'
@@ -151,7 +151,7 @@ export class JulesAgentAdapter {
     // Update in Redis registry
     const agent = await this.agentRepo.findById(agentId, tenantId);
     if (agent) {
-      const agentMetadata: Omit<AgentMetadata, 'lastSeen'> = {
+      const agentMetadata: any = {
         id: agent.id,
         name: agent.name,
         // Map DB status to a valid Redis registry status

@@ -1,4 +1,5 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+// @ts-ignore
 import { Observable } from 'rxjs';
 
 @Injectable()

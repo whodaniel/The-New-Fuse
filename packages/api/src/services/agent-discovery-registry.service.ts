@@ -6,7 +6,7 @@
  */
 
 import { EventEmitter } from 'events';
-import Redis from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import {
   AgentRegistration,
   AgentHeartbeat,
@@ -43,8 +43,7 @@ export interface DiscoveryRegistryOptions {
 }
 
 export class AgentDiscoveryRegistry extends EventEmitter {
-  private redis: Redis;
-  private subscriber?: Redis;
+  private redisService: UnifiedRedisService;
   private options: Required<DiscoveryRegistryOptions>;
   private cleanupInterval?: NodeJS.Timeout;
 
@@ -56,9 +55,13 @@ export class AgentDiscoveryRegistry extends EventEmitter {
   private readonly AGENT_CAPABILITY_INDEX: string;
   private readonly PUBSUB_CHANNEL: string;
 
-  constructor(options: DiscoveryRegistryOptions = {}) {
+  constructor(
+    redisService: UnifiedRedisService,
+    options: DiscoveryRegistryOptions = {}
+  ) {
     super();
 
+    this.redisService = redisService;
     this.options = {
       redis: options.redis || {},
       heartbeatInterval: options.heartbeatInterval || 30000,
@@ -75,18 +78,6 @@ export class AgentDiscoveryRegistry extends EventEmitter {
     this.AGENT_CAPABILITY_INDEX = `${this.options.keyPrefix}:capabilities`;
     this.PUBSUB_CHANNEL = `${this.options.keyPrefix}:events`;
 
-    // Initialize Redis
-    this.redis = new Redis({
-      host: this.options.redis.host || process.env.REDIS_HOST || 'localhost',
-      port: this.options.redis.port || parseInt(process.env.REDIS_PORT || '6379', 10),
-      password: this.options.redis.password || process.env.REDIS_PASSWORD,
-      db: this.options.redis.db || 0,
-      retryStrategy: (times) => {
-        const delay = Math.min(times * 50, 2000);
-        return delay;
-      },
-    });
-
     // Initialize pub/sub if enabled
     if (this.options.enablePubSub) {
       this.initializePubSub();
@@ -100,23 +91,12 @@ export class AgentDiscoveryRegistry extends EventEmitter {
    * Initialize pub/sub for real-time events
    */
   private initializePubSub(): void {
-    this.subscriber = new Redis({
-      host: this.options.redis.host || process.env.REDIS_HOST || 'localhost',
-      port: this.options.redis.port || parseInt(process.env.REDIS_PORT || '6379', 10),
-      password: this.options.redis.password || process.env.REDIS_PASSWORD,
-      db: this.options.redis.db || 0,
-    });
-
-    this.subscriber.subscribe(this.PUBSUB_CHANNEL);
-
-    this.subscriber.on('message', (channel, message) => {
-      if (channel === this.PUBSUB_CHANNEL) {
-        try {
-          const payload: DiscoveryEventPayload = JSON.parse(message);
-          this.emit(payload.event, payload);
-        } catch (error) {
-          console.error('Failed to parse pubsub message:', error);
-        }
+    this.redisService.subscribe(this.PUBSUB_CHANNEL, (message) => {
+      try {
+        const payload: DiscoveryEventPayload = JSON.parse(message.message);
+        this.emit(payload.event, payload);
+      } catch (error) {
+        console.error('Failed to parse pubsub message:', error);
       }
     });
   }
@@ -129,16 +109,20 @@ export class AgentDiscoveryRegistry extends EventEmitter {
     const heartbeatKey = this.AGENT_HEARTBEAT_PREFIX + registration.agentId;
 
     // Store agent registration
-    await this.redis.set(agentKey, JSON.stringify(registration));
+    await this.redisService.set(agentKey, JSON.stringify(registration));
 
     // Add to agent set
-    await this.redis.sadd(this.AGENT_SET_KEY, registration.agentId);
+    await this.redisService.sadd(this.AGENT_SET_KEY, registration.agentId);
 
     // Index capabilities for fast searching
     await this.indexCapabilities(registration);
 
     // Initialize heartbeat with current timestamp
-    await this.redis.set(heartbeatKey, Date.now().toString(), 'EX', Math.floor(this.options.heartbeatTimeout / 1000));
+    await this.redisService.set(
+      heartbeatKey,
+      Date.now().toString(),
+      Math.floor(this.options.heartbeatTimeout / 1000)
+    );
 
     // Publish registration event
     await this.publishEvent({
@@ -155,11 +139,9 @@ export class AgentDiscoveryRegistry extends EventEmitter {
    * Index agent capabilities for fast searching
    */
   private async indexCapabilities(registration: AgentRegistration): Promise<void> {
-    const pipeline = this.redis.pipeline();
-
     for (const capability of registration.capabilities) {
       // Index by capability name
-      pipeline.sadd(
+      await this.redisService.sadd(
         `${this.AGENT_CAPABILITY_INDEX}:${capability.name}`,
         registration.agentId
       );
@@ -167,7 +149,7 @@ export class AgentDiscoveryRegistry extends EventEmitter {
       // Index by languages
       if (capability.languages) {
         for (const lang of capability.languages) {
-          pipeline.sadd(
+          await this.redisService.sadd(
             `${this.AGENT_CAPABILITY_INDEX}:lang:${lang.toLowerCase()}`,
             registration.agentId
           );
@@ -177,7 +159,7 @@ export class AgentDiscoveryRegistry extends EventEmitter {
       // Index by frameworks
       if (capability.frameworks) {
         for (const framework of capability.frameworks) {
-          pipeline.sadd(
+          await this.redisService.sadd(
             `${this.AGENT_CAPABILITY_INDEX}:framework:${framework.toLowerCase()}`,
             registration.agentId
           );
@@ -188,7 +170,7 @@ export class AgentDiscoveryRegistry extends EventEmitter {
     // Index by groups
     if (registration.groups) {
       for (const group of registration.groups) {
-        pipeline.sadd(
+        await this.redisService.sadd(
           `${this.AGENT_CAPABILITY_INDEX}:group:${group.toLowerCase()}`,
           registration.agentId
         );
@@ -197,13 +179,11 @@ export class AgentDiscoveryRegistry extends EventEmitter {
 
     // Index by type
     if (registration.type) {
-      pipeline.sadd(
+      await this.redisService.sadd(
         `${this.AGENT_CAPABILITY_INDEX}:type:${registration.type.toLowerCase()}`,
         registration.agentId
       );
     }
-
-    await pipeline.exec();
   }
 
   /**
@@ -213,14 +193,20 @@ export class AgentDiscoveryRegistry extends EventEmitter {
     const heartbeatKey = this.AGENT_HEARTBEAT_PREFIX + heartbeat.agentId;
     const metricsKey = this.AGENT_METRICS_PREFIX + heartbeat.agentId;
 
+    const ttl = Math.floor(this.options.heartbeatTimeout / 1000);
+
     // Update heartbeat timestamp
-    await this.redis.set(heartbeatKey, Date.now().toString(), 'EX', Math.floor(this.options.heartbeatTimeout / 1000));
+    await this.redisService.set(heartbeatKey, Date.now().toString(), ttl);
 
     // Update metrics
-    await this.redis.set(metricsKey, JSON.stringify(heartbeat.metrics), 'EX', Math.floor(this.options.heartbeatTimeout / 1000));
+    await this.redisService.set(metricsKey, JSON.stringify(heartbeat.metrics), ttl);
 
     // Store status
-    await this.redis.set(`${this.AGENT_KEY_PREFIX}${heartbeat.agentId}:status`, heartbeat.status, 'EX', Math.floor(this.options.heartbeatTimeout / 1000));
+    await this.redisService.set(
+      `${this.AGENT_KEY_PREFIX}${heartbeat.agentId}:status`,
+      heartbeat.status,
+      ttl
+    );
 
     // Publish heartbeat event
     await this.publishEvent({
@@ -240,7 +226,7 @@ export class AgentDiscoveryRegistry extends EventEmitter {
     const metricsKey = this.AGENT_METRICS_PREFIX + agentId;
 
     // Get agent data before deletion
-    const agentData = await this.redis.get(agentKey);
+    const agentData = await this.redisService.get(agentKey);
     const registration: AgentRegistration | null = agentData ? JSON.parse(agentData) : null;
 
     // Remove from capability indexes
@@ -249,13 +235,13 @@ export class AgentDiscoveryRegistry extends EventEmitter {
     }
 
     // Remove agent data
-    await this.redis.del(agentKey);
-    await this.redis.del(heartbeatKey);
-    await this.redis.del(metricsKey);
-    await this.redis.del(`${agentKey}:status`);
+    await this.redisService.del(agentKey);
+    await this.redisService.del(heartbeatKey);
+    await this.redisService.del(metricsKey);
+    await this.redisService.del(`${agentKey}:status`);
 
     // Remove from agent set
-    await this.redis.srem(this.AGENT_SET_KEY, agentId);
+    await this.redisService.srem(this.AGENT_SET_KEY, agentId);
 
     // Publish deregistration event
     await this.publishEvent({
@@ -272,35 +258,46 @@ export class AgentDiscoveryRegistry extends EventEmitter {
    * Remove agent from capability indexes
    */
   private async removeCapabilityIndexes(registration: AgentRegistration): Promise<void> {
-    const pipeline = this.redis.pipeline();
-
     for (const capability of registration.capabilities) {
-      pipeline.srem(`${this.AGENT_CAPABILITY_INDEX}:${capability.name}`, registration.agentId);
+      await this.redisService.srem(
+        `${this.AGENT_CAPABILITY_INDEX}:${capability.name}`,
+        registration.agentId
+      );
 
       if (capability.languages) {
         for (const lang of capability.languages) {
-          pipeline.srem(`${this.AGENT_CAPABILITY_INDEX}:lang:${lang.toLowerCase()}`, registration.agentId);
+          await this.redisService.srem(
+            `${this.AGENT_CAPABILITY_INDEX}:lang:${lang.toLowerCase()}`,
+            registration.agentId
+          );
         }
       }
 
       if (capability.frameworks) {
         for (const framework of capability.frameworks) {
-          pipeline.srem(`${this.AGENT_CAPABILITY_INDEX}:framework:${framework.toLowerCase()}`, registration.agentId);
+          await this.redisService.srem(
+            `${this.AGENT_CAPABILITY_INDEX}:framework:${framework.toLowerCase()}`,
+            registration.agentId
+          );
         }
       }
     }
 
     if (registration.groups) {
       for (const group of registration.groups) {
-        pipeline.srem(`${this.AGENT_CAPABILITY_INDEX}:group:${group.toLowerCase()}`, registration.agentId);
+        await this.redisService.srem(
+          `${this.AGENT_CAPABILITY_INDEX}:group:${group.toLowerCase()}`,
+          registration.agentId
+        );
       }
     }
 
     if (registration.type) {
-      pipeline.srem(`${this.AGENT_CAPABILITY_INDEX}:type:${registration.type.toLowerCase()}`, registration.agentId);
+      await this.redisService.srem(
+        `${this.AGENT_CAPABILITY_INDEX}:type:${registration.type.toLowerCase()}`,
+        registration.agentId
+      );
     }
-
-    await pipeline.exec();
   }
 
   /**
@@ -312,13 +309,13 @@ export class AgentDiscoveryRegistry extends EventEmitter {
 
     // Get candidate agent IDs based on query
     if (query.capability) {
-      const capabilityAgents = await this.redis.smembers(
+      const capabilityAgents = await this.redisService.smembers(
         `${this.AGENT_CAPABILITY_INDEX}:${query.capability}`
       );
       agentIds = new Set(capabilityAgents);
     } else {
       // Get all agents
-      const allAgents = await this.redis.smembers(this.AGENT_SET_KEY);
+      const allAgents = await this.redisService.smembers(this.AGENT_SET_KEY);
       agentIds = new Set(allAgents);
     }
 
@@ -382,10 +379,10 @@ export class AgentDiscoveryRegistry extends EventEmitter {
     const metricsKey = this.AGENT_METRICS_PREFIX + agentId;
 
     const [agentData, heartbeatData, metricsData, statusData] = await Promise.all([
-      this.redis.get(agentKey),
-      this.redis.get(heartbeatKey),
-      this.redis.get(metricsKey),
-      this.redis.get(`${agentKey}:status`),
+      this.redisService.get(agentKey),
+      this.redisService.get(heartbeatKey),
+      this.redisService.get(metricsKey),
+      this.redisService.get(`${agentKey}:status`),
     ]);
 
     if (!agentData) {
@@ -449,7 +446,7 @@ export class AgentDiscoveryRegistry extends EventEmitter {
    */
   private async intersectWithLanguages(agentIds: Set<string>, languages: string[]): Promise<Set<string>> {
     const sets = languages.map((lang) => `${this.AGENT_CAPABILITY_INDEX}:lang:${lang.toLowerCase()}`);
-    const intersection = await this.redis.sinter(...sets);
+    const intersection = await this.redisService.sinter(...sets);
     return new Set(intersection.filter((id) => agentIds.has(id)));
   }
 
@@ -458,7 +455,7 @@ export class AgentDiscoveryRegistry extends EventEmitter {
    */
   private async intersectWithFrameworks(agentIds: Set<string>, frameworks: string[]): Promise<Set<string>> {
     const sets = frameworks.map((fw) => `${this.AGENT_CAPABILITY_INDEX}:framework:${fw.toLowerCase()}`);
-    const intersection = await this.redis.sinter(...sets);
+    const intersection = await this.redisService.sinter(...sets);
     return new Set(intersection.filter((id) => agentIds.has(id)));
   }
 
@@ -467,7 +464,7 @@ export class AgentDiscoveryRegistry extends EventEmitter {
    */
   private async intersectWithGroups(agentIds: Set<string>, groups: string[]): Promise<Set<string>> {
     const sets = groups.map((group) => `${this.AGENT_CAPABILITY_INDEX}:group:${group.toLowerCase()}`);
-    const intersection = await this.redis.sinter(...sets);
+    const intersection = await this.redisService.sinter(...sets);
     return new Set(intersection.filter((id) => agentIds.has(id)));
   }
 
@@ -476,7 +473,7 @@ export class AgentDiscoveryRegistry extends EventEmitter {
    */
   private async intersectWithTypes(agentIds: Set<string>, types: string[]): Promise<Set<string>> {
     const sets = types.map((type) => `${this.AGENT_CAPABILITY_INDEX}:type:${type.toLowerCase()}`);
-    const intersection = await this.redis.sinter(...sets);
+    const intersection = await this.redisService.sinter(...sets);
     return new Set(intersection.filter((id) => agentIds.has(id)));
   }
 
@@ -636,13 +633,13 @@ export class AgentDiscoveryRegistry extends EventEmitter {
    * Remove agents that haven't sent heartbeat within timeout period
    */
   private async cleanupStaleAgents(): Promise<void> {
-    const agentIds = await this.redis.smembers(this.AGENT_SET_KEY);
+    const agentIds = await this.redisService.smembers(this.AGENT_SET_KEY);
     const now = Date.now();
     const timeout = this.options.heartbeatTimeout;
 
     for (const agentId of agentIds) {
       const heartbeatKey = this.AGENT_HEARTBEAT_PREFIX + agentId;
-      const lastHeartbeat = await this.redis.get(heartbeatKey);
+      const lastHeartbeat = await this.redisService.get(heartbeatKey);
 
       if (!lastHeartbeat || now - parseInt(lastHeartbeat, 10) > timeout) {
         await this.deregisterAgent(agentId);
@@ -655,7 +652,7 @@ export class AgentDiscoveryRegistry extends EventEmitter {
    */
   private async publishEvent(payload: DiscoveryEventPayload): Promise<void> {
     if (this.options.enablePubSub) {
-      await this.redis.publish(this.PUBSUB_CHANNEL, JSON.stringify(payload));
+      await this.redisService.publish(this.PUBSUB_CHANNEL, JSON.stringify(payload));
     }
   }
 
@@ -663,7 +660,7 @@ export class AgentDiscoveryRegistry extends EventEmitter {
    * Get all registered agents
    */
   async getAllAgents(): Promise<DiscoveredAgent[]> {
-    const agentIds = await this.redis.smembers(this.AGENT_SET_KEY);
+    const agentIds = await this.redisService.smembers(this.AGENT_SET_KEY);
     const agents: DiscoveredAgent[] = [];
 
     for (const agentId of agentIds) {
@@ -689,12 +686,6 @@ export class AgentDiscoveryRegistry extends EventEmitter {
   async close(): Promise<void> {
     if (this.cleanupInterval) {
       clearInterval(this.cleanupInterval);
-    }
-
-    await this.redis.quit();
-
-    if (this.subscriber) {
-      await this.subscriber.quit();
     }
   }
 }

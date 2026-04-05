@@ -1,3 +1,0 @@
-[submodule "packages/ap2-protocol/ap2"]
-	path = packages/ap2-protocol/ap2
-	url = https://github.com/google-agentic-commerce/AP2

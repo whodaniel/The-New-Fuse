@@ -1,66 +1,95 @@
-import { createClient, RedisClientType } from 'redis';
 import { EventEmitter } from 'node:events';
+import {
+  createStandaloneRedisClient,
+  createUpstashRestClient,
+} from '@the-new-fuse/infrastructure';
+import { Redis as UpstashRedis } from '@upstash/redis';
+import Redis, { Cluster } from 'ioredis';
 
 export interface RedisConfig {
-  url: string;
-  ingressChannel: string;
-  egressPrefix: string;
-}
-
+...
 export class CloudRedisClient extends EventEmitter {
-  private publisher: RedisClientType;
-  private subscriber: RedisClientType;
+  private publisher: Redis | Cluster | null = null;
+  private subscriber: Redis | Cluster | null = null;
+  private upstash: UpstashRedis | null = null;
   private connected = false;
   private config: RedisConfig;
 
   constructor(config: Partial<RedisConfig> = {}) {
     super();
     this.config = {
-      url: process.env.CLOUD_REDIS_URL || 'redis://default:default@tramway.proxy.rlwy.net:13570',
+      url: process.env.CLOUD_REDIS_URL || process.env.REDIS_URL || 'redis://localhost:6379',
       ingressChannel: config.ingressChannel || 'tnf:bus:ingress',
       egressPrefix: config.egressPrefix || 'tnf:bus:egress',
     };
-
-    this.publisher = createClient({ url: this.config.url });
-    this.subscriber = createClient({ url: this.config.url });
-
-    this.publisher.on('error', (err) => this.emit('error', `Publisher: ${err.message}`));
-    this.subscriber.on('error', (err) => this.emit('error', `Subscriber: ${err.message}`));
   }
 
   async connect(): Promise<void> {
     if (this.connected) return;
-    await Promise.all([
-      this.publisher.connect(),
-      this.subscriber.connect()
-    ]);
-    this.connected = true;
-    this.emit('ready');
+
+    try {
+      this.publisher = createStandaloneRedisClient({ redisUrl: this.config.url, lazyConnect: true } as any);
+      this.subscriber = createStandaloneRedisClient({ redisUrl: this.config.url, lazyConnect: true } as any);
+      this.upstash = createUpstashRestClient();
+
+      if (this.publisher instanceof Redis) {
+        await this.publisher.connect().catch(() => {});
+      }
+      if (this.subscriber instanceof Redis) {
+        await this.subscriber.connect().catch(() => {});
+      }
+
+      this.connected = true;
+      this.emit('ready');
+    } catch (error: any) {
+      this.emit('error', `Initialization failed: ${error.message}`);
+    }
   }
 
   async disconnect(): Promise<void> {
     if (!this.connected) return;
-    await Promise.all([
-      this.publisher.quit(),
-      this.subscriber.quit()
-    ]);
+
+    if (this.publisher) await this.publisher.quit();
+    if (this.subscriber) await this.subscriber.quit();
+    this.upstash = null;
+
     this.connected = false;
   }
 
   async publish(channel: string, message: string): Promise<number> {
     await this.ensureConnected();
-    return await this.publisher.publish(channel, message);
+    if (this.upstash) {
+      return await this.upstash.publish(channel, message);
+    }
+    if (this.publisher) {
+      return await this.publisher.publish(channel, message);
+    }
+    return 0;
   }
 
   async subscribe(channel: string, callback: (message: string) => void): Promise<void> {
     await this.ensureConnected();
-    await this.subscriber.subscribe(channel, callback);
+    if (this.subscriber) {
+      await this.subscriber.subscribe(channel);
+      this.subscriber.on('message', (ch, msg) => {
+        if (ch === channel) callback(msg);
+      });
+    }
   }
 
   async hGetAll(key: string): Promise<Record<string, string>> {
     await this.ensureConnected();
-    return await this.publisher.hGetAll(key);
+    if (this.upstash) {
+      const result = await this.upstash.hgetall<Record<string, string>>(key);
+      return result || {};
+    }
+    if (this.publisher) {
+      return await this.publisher.hgetall(key);
+    }
+    return {};
   }
+...
+
 
   private async ensureConnected() {
     if (!this.connected) {

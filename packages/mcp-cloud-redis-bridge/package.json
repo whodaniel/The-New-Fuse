@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/mcp-cloud-redis-bridge",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "MCP Bridge for Cloud Redis & Super Director Trust Protocol",
   "type": "module",

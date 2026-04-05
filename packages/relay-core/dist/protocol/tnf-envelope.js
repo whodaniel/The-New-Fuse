@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TNFMessageBuilder = exports.BidPayload = exports.AuctionPayload = exports.ResponsePayload = exports.StateSyncPayload = exports.EventPayload = exports.TaskPayload = exports.TNFEnvelope = exports.MessageContext = exports.AgentIdentity = exports.MessageType = void 0;
+exports.getTNFEnvelopeAuditTrace = getTNFEnvelopeAuditTrace;
+exports.normalizeTNFEnvelope = normalizeTNFEnvelope;
 exports.createTNFEnvelope = createTNFEnvelope;
 exports.validateTNFEnvelope = validateTNFEnvelope;
 exports.isTaskMessage = isTaskMessage;
@@ -21,6 +23,8 @@ exports.isEventMessage = isEventMessage;
 exports.requiresResponse = requiresResponse;
 const crypto_1 = __importDefault(require("crypto"));
 const zod_1 = require("zod");
+const audit_1 = require("../contracts/audit");
+const identity_1 = require("../contracts/identity");
 const resource_protocol_1 = require("./resource-protocol");
 /**
  * Message Types
@@ -44,6 +48,10 @@ exports.MessageType = zod_1.z.enum([
  */
 exports.AgentIdentity = zod_1.z.object({
     agentId: zod_1.z.string().describe('Unique agent identifier'),
+    canonicalEntityId: zod_1.z.string().optional().describe('Canonical TNF identity for this agent'),
+    operationalHandle: zod_1.z.string().optional().describe('Operational routing handle for this agent'),
+    runtimeSessionId: zod_1.z.string().optional().describe('Runtime session identifier for this agent'),
+    aliases: zod_1.z.array(zod_1.z.string()).optional().describe('Known aliases for this agent'),
     role: zod_1.z.enum(['orchestrator', 'worker', 'coordinator', 'observer']).optional(),
     platform: zod_1.z.string().optional().describe('Platform (e.g., "gemini", "claude", "terminal")'),
     capabilities: zod_1.z.array(zod_1.z.string()).optional().describe('Agent capabilities'),
@@ -66,7 +74,7 @@ exports.TNFEnvelope = zod_1.z.object({
     // Core metadata
     id: zod_1.z.string().uuid().describe('Unique message ID'),
     version: zod_1.z.string().default('1.0').describe('Protocol version'),
-    traceId: zod_1.z.string().uuid().describe('Correlation ID for debugging/tracing'),
+    traceId: zod_1.z.string().min(1).describe('Correlation ID for debugging/tracing'),
     timestamp: zod_1.z.string().datetime().describe('ISO-8601 timestamp'),
     // Message classification
     type: exports.MessageType,
@@ -137,21 +145,106 @@ exports.BidPayload = zod_1.z.object({
 /**
  * Helper Functions
  */
-function createTNFEnvelope(type, from, to, payload, context) {
+function normalizeAgentIdentity(identity) {
+    const aliases = Array.isArray(identity.aliases) ? identity.aliases : [];
+    try {
+        const record = (0, identity_1.createAgentIdentityRecord)({
+            canonicalEntityId: identity.canonicalEntityId,
+            operationalHandle: identity.operationalHandle || identity.agentId,
+            runtimeSessionId: identity.runtimeSessionId || identity.agentId,
+            aliases: [...aliases, identity.agentId],
+        });
+        return {
+            ...identity,
+            canonicalEntityId: record.canonicalEntityId || undefined,
+            operationalHandle: record.operationalHandle,
+            runtimeSessionId: record.runtimeSessionId || undefined,
+            aliases: record.aliases,
+        };
+    }
+    catch {
+        return {
+            ...identity,
+            aliases: [...new Set([identity.agentId, ...aliases].map((alias) => alias.trim()).filter(Boolean))],
+        };
+    }
+}
+function normalizeRecipient(recipient) {
+    if ('broadcast' in recipient) {
+        return recipient;
+    }
+    return normalizeAgentIdentity(recipient);
+}
+function resolveEnvelopeAuditTrace(traceId, from, context, metadata, auditOverrides) {
+    const actor = auditOverrides?.actor || from.operationalHandle || from.agentId;
+    const source = auditOverrides?.source || from.platform || 'relay-core';
+    const existing = (0, audit_1.extractAuditTrace)(metadata?.audit);
+    return ((0, audit_1.mergeAuditTrace)(existing, auditOverrides, {
+        traceId,
+        source,
+        actor,
+        workflowId: context?.workflowId,
+        channelId: context?.channelId,
+        sessionId: context?.sessionId,
+        parentId: context?.parentMessageId,
+        canonicalEntityId: from.canonicalEntityId,
+        operationalHandle: from.operationalHandle || from.agentId,
+        runtimeSessionId: from.runtimeSessionId,
+    }) ||
+        (0, audit_1.createAuditTrace)({
+            traceId,
+            source,
+            actor,
+            workflowId: context?.workflowId,
+            channelId: context?.channelId,
+            sessionId: context?.sessionId,
+            parentId: context?.parentMessageId,
+            canonicalEntityId: from.canonicalEntityId,
+            operationalHandle: from.operationalHandle || from.agentId,
+            runtimeSessionId: from.runtimeSessionId,
+        }));
+}
+function getTNFEnvelopeAuditTrace(envelope) {
+    return resolveEnvelopeAuditTrace(envelope.traceId, normalizeAgentIdentity(envelope.from), envelope.context, envelope.metadata);
+}
+function normalizeTNFEnvelope(envelope) {
+    const from = normalizeAgentIdentity(envelope.from);
+    const to = normalizeRecipient(envelope.to);
+    const metadata = (0, audit_1.attachAuditTrace)(envelope.metadata, getTNFEnvelopeAuditTrace({
+        traceId: envelope.traceId,
+        from,
+        context: envelope.context,
+        metadata: envelope.metadata,
+    }));
+    return exports.TNFEnvelope.parse({
+        ...envelope,
+        from,
+        to,
+        metadata,
+    });
+}
+function createTNFEnvelope(type, from, to, payload, context, options) {
+    const normalizedFrom = normalizeAgentIdentity(from);
+    const normalizedTo = normalizeRecipient(to);
+    const traceId = options?.traceId ||
+        options?.audit?.traceId ||
+        (0, audit_1.extractAuditTrace)(options?.metadata?.audit)?.traceId ||
+        crypto_1.default.randomUUID();
     return {
         id: crypto_1.default.randomUUID(),
         version: '1.0',
-        traceId: crypto_1.default.randomUUID(),
+        traceId,
         timestamp: new Date().toISOString(),
         type,
-        from,
-        to,
+        from: normalizedFrom,
+        to: normalizedTo,
         payload,
         context,
+        metadata: (0, audit_1.attachAuditTrace)(options?.metadata, resolveEnvelopeAuditTrace(traceId, normalizedFrom, context, options?.metadata, options?.audit)),
     };
 }
 function validateTNFEnvelope(data) {
-    return exports.TNFEnvelope.parse(data);
+    return normalizeTNFEnvelope(exports.TNFEnvelope.parse(data));
 }
 function isTaskMessage(envelope) {
     return envelope.type === 'task';
@@ -201,7 +294,7 @@ class TNFMessageBuilder {
         return this;
     }
     build() {
-        return exports.TNFEnvelope.parse(this.envelope);
+        return validateTNFEnvelope(this.envelope);
     }
 }
 exports.TNFMessageBuilder = TNFMessageBuilder;

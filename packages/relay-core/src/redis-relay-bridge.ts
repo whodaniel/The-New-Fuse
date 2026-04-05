@@ -14,9 +14,10 @@
  */
 
 // @ts-ignore
-import { createStandaloneRedisClient } from '@the-new-fuse/infrastructure';
+import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 import { EventEmitter } from 'events';
 import Redis, { Cluster } from 'ioredis';
+import { Redis as UpstashRedis } from '@upstash/redis';
 import { createAgentIdentityRecord } from './contracts/identity';
 import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from './protocol/tnf-envelope';
 
@@ -30,6 +31,7 @@ export interface RedisRelayBridgeConfig {
 export class RedisRelayBridge extends EventEmitter {
   private redisClient: Redis | Cluster;
   private redisSubscriber: Redis | Cluster;
+  private upstashClient: UpstashRedis | null = null;
   private config: RedisRelayBridgeConfig;
   private connected: boolean = false;
 
@@ -53,6 +55,9 @@ export class RedisRelayBridge extends EventEmitter {
       redisUrl: this.config.redisUrl,
       lazyConnect: true,
     } as any);
+
+    // Create Upstash REST client if available
+    this.upstashClient = createUpstashRestClient();
 
     this.setupErrorHandlers();
   }
@@ -79,7 +84,11 @@ export class RedisRelayBridge extends EventEmitter {
       if (this.redisSubscriber instanceof Redis) await (this.redisSubscriber as Redis).connect();
 
       this.connected = true;
-      console.log('[Redis-Bridge] Connected to Redis (ioredis)');
+      if (this.upstashClient) {
+        console.log('[Redis-Bridge] Connected to Redis (Hybrid: Upstash REST + ioredis TCP)');
+      } else {
+        console.log('[Redis-Bridge] Connected to Redis (ioredis TCP)');
+      }
       this.emit('connected');
     } catch (error) {
       console.error('[Redis-Bridge] Connection failed:', error);
@@ -128,10 +137,14 @@ export class RedisRelayBridge extends EventEmitter {
     // Publish to ingress
     try {
       const normalizedEnvelope = validateTNFEnvelope(envelope);
-      await this.redisClient.publish(
-        this.config.ingressChannel,
-        JSON.stringify(normalizedEnvelope)
-      );
+      const payloadStr = JSON.stringify(normalizedEnvelope);
+
+      if (this.upstashClient) {
+        await this.upstashClient.publish(this.config.ingressChannel, payloadStr);
+      } else {
+        await this.redisClient.publish(this.config.ingressChannel, payloadStr);
+      }
+
       console.log(
         `[Redis-Bridge] Published to ${this.config.ingressChannel}:`,
         normalizedEnvelope.id
@@ -241,7 +254,14 @@ export class RedisRelayBridge extends EventEmitter {
     }
 
     const normalizedEnvelope = validateTNFEnvelope(envelope);
-    await this.redisClient.publish(this.config.ingressChannel, JSON.stringify(normalizedEnvelope));
+    const payloadStr = JSON.stringify(normalizedEnvelope);
+
+    if (this.upstashClient) {
+      await this.upstashClient.publish(this.config.ingressChannel, payloadStr);
+    } else {
+      await this.redisClient.publish(this.config.ingressChannel, payloadStr);
+    }
+
     console.log(`[Redis-Bridge] Published to ingress:`, normalizedEnvelope.id);
   }
 
@@ -255,7 +275,14 @@ export class RedisRelayBridge extends EventEmitter {
 
     const channel = `${this.config.egressChannelPrefix}:${agentId}`;
     const normalizedEnvelope = validateTNFEnvelope(envelope);
-    await this.redisClient.publish(channel, JSON.stringify(normalizedEnvelope));
+    const payloadStr = JSON.stringify(normalizedEnvelope);
+
+    if (this.upstashClient) {
+      await this.upstashClient.publish(channel, payloadStr);
+    } else {
+      await this.redisClient.publish(channel, payloadStr);
+    }
+
     console.log(`[Redis-Bridge] Published to ${channel}:`, normalizedEnvelope.id);
   }
 

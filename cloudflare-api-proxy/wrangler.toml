@@ -1,0 +1,17 @@
+name = "tnf-api-proxy"
+main = "src/index.ts"
+compatibility_date = "2026-04-04"
+
+account_id = "db1d3832768b2bbad4c5c5d9dbc63f8b"
+workers_dev = true
+
+[[routes]]
+pattern = "api.thenewfuse.com/*"
+zone_name = "thenewfuse.com"
+
+[[routes]]
+pattern = "api-gateway.thenewfuse.com/*"
+zone_name = "thenewfuse.com"
+
+[vars]
+GCP_API_URL = "https://api-gateway-241337102384.us-central1.run.app"

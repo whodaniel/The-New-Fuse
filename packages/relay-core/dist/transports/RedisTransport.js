@@ -5,88 +5,36 @@
  * Provides pub/sub messaging and distributed coordination
  * Based on existing Redis infrastructure in src/redis/
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RedisTransport = void 0;
 const events_1 = require("events");
-const ioredis_1 = __importDefault(require("ioredis"));
 class RedisTransport extends events_1.EventEmitter {
     name = 'redis';
     config;
-    publisher;
-    subscriber;
+    redisService;
     logger;
     _isConnected = false;
     messageHandlers = [];
     heartbeatInterval;
-    constructor(config) {
+    constructor(config, redisService) {
         super();
         this.config = config;
         this.logger = config.logger;
-        // Create Redis clients
-        const redisOptions = {
-            host: config.host || 'localhost',
-            port: config.port || 6380, // Using TNF's configured port
-            password: config.password,
-            db: config.db || 0,
-            keyPrefix: config.keyPrefix || 'tnf:',
-            retryStrategy: (times) => Math.min(times * 50, 2000),
-            maxRetriesPerRequest: 3,
-            lazyConnect: true,
-        };
-        this.publisher = new ioredis_1.default(redisOptions);
-        this.subscriber = new ioredis_1.default(redisOptions);
+        this.redisService = redisService;
         this.setupEventHandlers();
     }
     setupEventHandlers() {
-        // Publisher events
-        this.publisher.on('connect', () => {
-            this.logger.info('Redis publisher connected');
-        });
-        this.publisher.on('error', (error) => {
-            this.logger.error(`Redis publisher error: ${error instanceof Error ? error.message : String(error)}`);
-            this.emit('error', error);
-        });
-        // Subscriber events
-        this.subscriber.on('connect', () => {
-            this.logger.info('Redis subscriber connected');
-            this.setupChannelSubscriptions();
-        });
-        this.subscriber.on('error', (error) => {
-            this.logger.error(`Redis subscriber error: ${error instanceof Error ? error.message : String(error)}`);
-            this.emit('error', error);
-        });
-        this.subscriber.on('message', (channel, message) => {
-            this.handleRedisMessage(channel, message);
-        });
-        // Connection status tracking
-        this.publisher.on('ready', () => {
-            if (this.subscriber.status === 'ready') {
-                this._isConnected = true;
-                this.emit('connected');
-            }
-        });
-        this.subscriber.on('ready', () => {
-            if (this.publisher.status === 'ready') {
-                this._isConnected = true;
-                this.emit('connected');
-            }
-        });
-        this.publisher.on('close', () => {
-            this._isConnected = false;
-            this.emit('disconnected');
-        });
-        this.subscriber.on('close', () => {
-            this._isConnected = false;
-            this.emit('disconnected');
-        });
+        // Subscriptions are handled in start()
     }
     async setupChannelSubscriptions() {
         try {
             const channels = Object.values(this.config.channels);
-            await this.subscriber.subscribe(...channels);
+            for (const channel of channels) {
+                await this.redisService.subscribe(channel, (message) => {
+                    const payload = typeof message.message === 'string' ? message.message : JSON.stringify(message.message);
+                    this.handleRedisMessage(message.channel, payload);
+                });
+            }
             this.logger.info(`Subscribed to Redis channels: ${channels.join(', ')}`);
         }
         catch (error) {
@@ -122,13 +70,12 @@ class RedisTransport extends events_1.EventEmitter {
     async start() {
         try {
             this.logger.info('Starting Redis transport');
-            // Connect both clients
-            await Promise.all([
-                this.publisher.connect(),
-                this.subscriber.connect()
-            ]);
+            // Setup channel subscriptions
+            await this.setupChannelSubscriptions();
             // Start heartbeat
             this.startHeartbeat();
+            this._isConnected = true;
+            this.emit('connected');
             this.logger.info('Redis transport started successfully');
             return true;
         }
@@ -144,12 +91,8 @@ class RedisTransport extends events_1.EventEmitter {
             if (this.heartbeatInterval) {
                 clearInterval(this.heartbeatInterval);
             }
-            // Disconnect clients
-            await Promise.all([
-                this.publisher.quit(),
-                this.subscriber.quit()
-            ]);
             this._isConnected = false;
+            this.emit('disconnected');
             this.logger.info('Redis transport stopped');
         }
         catch (error) {
@@ -157,10 +100,6 @@ class RedisTransport extends events_1.EventEmitter {
         }
     }
     async send(message) {
-        if (!this.isConnected) {
-            this.logger.warn('Cannot send message - Redis not connected');
-            return false;
-        }
         try {
             // Determine channel based on message type
             const channel = this.getChannelForMessage(message);
@@ -174,7 +113,7 @@ class RedisTransport extends events_1.EventEmitter {
                     sentAt: new Date().toISOString()
                 }
             };
-            await this.publisher.publish(channel, JSON.stringify(enrichedMessage));
+            await this.redisService.publish(channel, JSON.stringify(enrichedMessage));
             this.logger.debug(`Sent message to Redis channel ${channel}: ${message.type}`);
             return true;
         }
@@ -213,10 +152,7 @@ class RedisTransport extends events_1.EventEmitter {
                 source: 'redis_transport',
                 payload: {
                     timestamp: new Date().toISOString(),
-                    connections: {
-                        publisher: this.publisher.status,
-                        subscriber: this.subscriber.status
-                    }
+                    status: 'online'
                 },
                 timestamp: new Date().toISOString()
             };
@@ -226,7 +162,7 @@ class RedisTransport extends events_1.EventEmitter {
     // Redis-specific methods for distributed coordination
     async setDistributedLock(key, value, ttlMs) {
         try {
-            const result = await this.publisher.set(key, value, 'PX', ttlMs, 'NX');
+            const result = await this.redisService.set(key, value, ttlMs, 'NX', 'PX');
             return result === 'OK';
         }
         catch (error) {
@@ -243,7 +179,7 @@ class RedisTransport extends events_1.EventEmitter {
           return 0
         end
       `;
-            const result = await this.publisher.eval(script, 1, key, value);
+            const result = await this.redisService.eval(script, [key], [value]);
             return result === 1;
         }
         catch (error) {
@@ -256,10 +192,10 @@ class RedisTransport extends events_1.EventEmitter {
             const key = `agent:state:${agentId}`;
             const stateString = JSON.stringify(state);
             if (ttlMs) {
-                await this.publisher.setex(key, Math.floor(ttlMs / 1000), stateString);
+                await this.redisService.set(key, stateString, ttlMs, undefined, 'PX');
             }
             else {
-                await this.publisher.set(key, stateString);
+                await this.redisService.set(key, stateString);
             }
             return true;
         }
@@ -271,7 +207,7 @@ class RedisTransport extends events_1.EventEmitter {
     async getAgentState(agentId) {
         try {
             const key = `agent:state:${agentId}`;
-            const stateString = await this.publisher.get(key);
+            const stateString = await this.redisService.get(key);
             return stateString ? JSON.parse(stateString) : null;
         }
         catch (error) {
@@ -282,7 +218,7 @@ class RedisTransport extends events_1.EventEmitter {
     async addToWorkflowQueue(workflowId, task) {
         try {
             const queueKey = `workflow:queue:${workflowId}`;
-            await this.publisher.lpush(queueKey, JSON.stringify(task));
+            await this.redisService.lpush(queueKey, JSON.stringify(task));
             return true;
         }
         catch (error) {
@@ -293,7 +229,7 @@ class RedisTransport extends events_1.EventEmitter {
     async getFromWorkflowQueue(workflowId) {
         try {
             const queueKey = `workflow:queue:${workflowId}`;
-            const taskString = await this.publisher.rpop(queueKey);
+            const taskString = await this.redisService.rpop(queueKey);
             return taskString ? JSON.parse(taskString) : null;
         }
         catch (error) {

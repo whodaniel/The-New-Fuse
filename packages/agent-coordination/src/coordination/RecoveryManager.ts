@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { Redis } from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { PresenceTracker } from '../presence/presence-tracker';
 import { SharedStateManager } from './shared-state-manager';
 import { TaskQueueManager } from '../queues/task-queue-manager';
@@ -12,7 +12,7 @@ export class RecoveryManager {
   private recoveredAgents: Set<string> = new Set();
 
   constructor(
-    private readonly redis: Redis,
+    private readonly redisService: UnifiedRedisService,
     private readonly presenceTracker: PresenceTracker,
     private readonly sharedStateManager: SharedStateManager,
     private readonly taskQueueManager: TaskQueueManager,
@@ -96,12 +96,12 @@ export class RecoveryManager {
     let cursor = '0';
 
     do {
-      const [nextCursor, keys] = await this.redis.scan(cursor, 'MATCH', presencePattern, 'COUNT', 100);
+      const [nextCursor, keys] = await this.redisService.scan(cursor, presencePattern, 100);
       cursor = nextCursor;
 
       for (const key of keys) {
         try {
-          const data = await this.redis.get(key);
+          const data = await this.redisService.get(key);
           if (data) {
             const presence = this.serializer.deserialize<AgentPresence>(data);
             if (presence && presence.status === AgentStatus.OFFLINE) {
@@ -133,7 +133,10 @@ export class RecoveryManager {
     this.logger.log(`Starting recovery for agents: ${agentIds.join(', ')}`);
 
     // 1. Release locks held by these agents
-    const releasedLocks = await this.sharedStateManager.releaseLocksForAgents(this.redis, agentIds);
+    const releasedLocks = await this.sharedStateManager.releaseLocksForAgents(
+      this.redisService,
+      agentIds
+    );
 
     if (releasedLocks > 0) {
       this.logger.log(`Released ${releasedLocks} locks held by offline agents`);

@@ -12,6 +12,7 @@ import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/commo
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Cron } from '@nestjs/schedule';
+// @ts-ignore
 import { LRUCache } from 'lru-cache';
 import * as crypto from 'crypto';
 

@@ -106,7 +106,7 @@ const DEFAULT_MESH_INSTANCES: MeshInstance[] = [
   {
     id: 'cloud-primary',
     name: 'Cloud Primary',
-    url: 'https://openclaw-cloud-production-934c.up.railway.app',
+    url: 'https://openclaw-master-241337102384.us-central1.run.app',
     status: 'offline',
     lastCheck: 0,
   },

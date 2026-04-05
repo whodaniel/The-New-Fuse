@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/integration-tests",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Comprehensive integration tests for The New Fuse unified framework",
   "private": true,
@@ -15,7 +16,7 @@
     "test:workflow-builder:coverage": "jest --testPathPatterns=workflow-builder --coverage",
     "test:all": "jest && pnpm run test:workflow-builder",
     "build": "tsc --skipLibCheck --noEmitOnError false || echo 'Integration tests build completed with warnings'",
-    "clean": "rimraf dist coverage tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist coverage tsconfig.tsbuildinfo",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",

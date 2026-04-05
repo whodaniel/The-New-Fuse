@@ -5,7 +5,13 @@
  * Stores agent metadata in Redis with TTL for presence
  */
 
-import { createClient, RedisClientType } from 'redis';
+// @ts-ignore
+import {
+  createStandaloneRedisClient,
+  createUpstashRestClient,
+} from '@the-new-fuse/infrastructure';
+import { Redis as UpstashRedis } from '@upstash/redis';
+import Redis, { Cluster } from 'ioredis';
 import { z } from 'zod';
 
 const AgentStatusSchema = z.enum(['online', 'offline', 'busy', 'error']);
@@ -38,7 +44,8 @@ export interface AgentRegistryConfig {
 }
 
 export class RedisAgentRegistry {
-  private redis: RedisClientType;
+  private redis: Redis | Cluster | null = null;
+  private upstash: UpstashRedis | null = null;
   private config: AgentRegistryConfig;
 
   constructor(config: Partial<AgentRegistryConfig> = {}) {
@@ -47,18 +54,20 @@ export class RedisAgentRegistry {
       prefix: config.prefix || 'tnf:registry:agents',
       ttl: config.ttl || 60,
     };
-
-    this.redis = createClient({ url: this.config.redisUrl });
-
-    this.redis.on('error', (err) => console.error('[AgentRegistry] Redis error:', err));
   }
 
   async connect(): Promise<void> {
-    await this.redis.connect();
+    this.redis = createStandaloneRedisClient({ redisUrl: this.config.redisUrl, lazyConnect: true } as any);
+    this.upstash = createUpstashRestClient();
+
+    if (this.redis instanceof Redis) {
+      await this.redis.connect().catch(() => {});
+    }
   }
 
   async disconnect(): Promise<void> {
-    await this.redis.quit();
+    if (this.redis) await this.redis.quit();
+    this.upstash = null;
   }
 
   /**
@@ -84,40 +93,56 @@ export class RedisAgentRegistry {
     };
 
     const newCapabilities = new Set(fullMetadata.capabilities?.map((c) => c.name) || []);
-
-    const multi = this.redis.multi();
-
-    // Store agent hash
-    multi.hSet(key, {
-      ...fullMetadata,
-      // Stringify complex types for Redis hash
-      capabilities: JSON.stringify(fullMetadata.capabilities),
-      metadata: JSON.stringify(fullMetadata.metadata),
-      healthScore: (fullMetadata.healthScore ?? 1.0).toString(),
-    });
-    multi.expire(key, this.config.ttl);
-
-    // Determine which capabilities to add and remove from sets
     const capabilitiesToAdd = [...newCapabilities].filter((c) => !oldCapabilities.has(c));
     const capabilitiesToRemove = [...oldCapabilities].filter((c) => !newCapabilities.has(c));
 
-    // Update capability sets
-    for (const cap of capabilitiesToAdd) {
-      multi.sAdd(`${this.config.prefix}:capability:${cap}`, agentId);
-    }
-    for (const cap of capabilitiesToRemove) {
-      multi.sRem(`${this.config.prefix}:capability:${cap}`, agentId);
-    }
+    if (this.upstash) {
+      const pipeline = this.upstash.pipeline();
+      const hashData = {
+        ...fullMetadata,
+        capabilities: JSON.stringify(fullMetadata.capabilities),
+        metadata: JSON.stringify(fullMetadata.metadata),
+        healthScore: (fullMetadata.healthScore ?? 1.0).toString(),
+      };
+      pipeline.hset(key, hashData);
+      pipeline.expire(key, this.config.ttl);
 
-    // Update health score sorted set
-    if (fullMetadata.healthScore) {
-      multi.zAdd(`${this.config.prefix}:health`, {
-        score: fullMetadata.healthScore,
-        value: agentId,
+      for (const cap of capabilitiesToAdd) {
+        pipeline.sadd(`${this.config.prefix}:capability:${cap}`, agentId);
+      }
+      for (const cap of capabilitiesToRemove) {
+        pipeline.srem(`${this.config.prefix}:capability:${cap}`, agentId);
+      }
+
+      if (fullMetadata.healthScore) {
+        pipeline.zadd(`${this.config.prefix}:health`, {
+          score: fullMetadata.healthScore,
+          member: agentId,
+        });
+      }
+      await pipeline.exec();
+    } else if (this.redis) {
+      const multi = (this.redis as any).multi();
+      multi.hset(key, {
+        ...fullMetadata,
+        capabilities: JSON.stringify(fullMetadata.capabilities),
+        metadata: JSON.stringify(fullMetadata.metadata),
+        healthScore: (fullMetadata.healthScore ?? 1.0).toString(),
       });
-    }
+      multi.expire(key, this.config.ttl);
 
-    await multi.exec();
+      for (const cap of capabilitiesToAdd) {
+        multi.sadd(`${this.config.prefix}:capability:${cap}`, agentId);
+      }
+      for (const cap of capabilitiesToRemove) {
+        multi.srem(`${this.config.prefix}:capability:${cap}`, agentId);
+      }
+
+      if (fullMetadata.healthScore) {
+        multi.zadd(`${this.config.prefix}:health`, fullMetadata.healthScore, agentId);
+      }
+      await multi.exec();
+    }
   }
 
   /**
@@ -126,12 +151,17 @@ export class RedisAgentRegistry {
   async updateHeartbeat(agentId: string): Promise<void> {
     const key = `${this.config.prefix}:${agentId}`;
 
-    // Use a transaction to update lastSeen and refresh TTL
-    const multi = this.redis.multi();
-    multi.hSet(key, 'lastSeen', Date.now());
-    multi.expire(key, this.config.ttl);
-
-    await multi.exec();
+    if (this.upstash) {
+      const pipeline = this.upstash.pipeline();
+      pipeline.hset(key, { lastSeen: Date.now().toString() });
+      pipeline.expire(key, this.config.ttl);
+      await pipeline.exec();
+    } else if (this.redis) {
+      const multi = (this.redis as any).multi();
+      multi.hset(key, 'lastSeen', Date.now());
+      multi.expire(key, this.config.ttl);
+      await multi.exec();
+    }
   }
 
   /**
@@ -142,22 +172,27 @@ export class RedisAgentRegistry {
     const agent = await this.getAgent(agentId);
     if (!agent) return;
 
-    const multi = this.redis.multi();
-
-    // Remove from capability sets
-    if (agent.capabilities) {
-      for (const cap of agent.capabilities) {
-        multi.sRem(`${this.config.prefix}:capability:${cap.name}`, agentId);
+    if (this.upstash) {
+      const pipeline = this.upstash.pipeline();
+      if (agent.capabilities) {
+        for (const cap of agent.capabilities) {
+          pipeline.srem(`${this.config.prefix}:capability:${cap.name}`, agentId);
+        }
       }
+      pipeline.del(key);
+      pipeline.zrem(`${this.config.prefix}:health`, agentId);
+      await pipeline.exec();
+    } else if (this.redis) {
+      const multi = (this.redis as any).multi();
+      if (agent.capabilities) {
+        for (const cap of agent.capabilities) {
+          multi.srem(`${this.config.prefix}:capability:${cap.name}`, agentId);
+        }
+      }
+      multi.del(key);
+      multi.zrem(`${this.config.prefix}:health`, agentId);
+      await multi.exec();
     }
-
-    // Delete agent hash
-    multi.del(key);
-
-    // Remove from health score sorted set
-    multi.zRem(`${this.config.prefix}:health`, agentId);
-
-    await multi.exec();
   }
 
   /**
@@ -165,7 +200,12 @@ export class RedisAgentRegistry {
    */
   async getAgent(agentId: string): Promise<AgentMetadata | null> {
     const key = `${this.config.prefix}:${agentId}`;
-    const data = await this.redis.hGetAll(key);
+    let data: Record<string, string> = {};
+    if (this.upstash) {
+      data = (await this.upstash.hgetall<Record<string, string>>(key)) || {};
+    } else if (this.redis) {
+      data = await this.redis.hgetall(key);
+    }
     return this.parseAgentData(data);
   }
 
@@ -193,21 +233,24 @@ export class RedisAgentRegistry {
    */
   async findAgentsByCapability(capability: string): Promise<AgentMetadata[]> {
     const capabilityKey = `${this.config.prefix}:capability:${capability}`;
-    const agentIds = await this.redis.sMembers(capabilityKey);
+    let agentIds: string[] = [];
+
+    if (this.upstash) {
+      agentIds = await this.upstash.smembers(capabilityKey);
+    } else if (this.redis) {
+      agentIds = await this.redis.smembers(capabilityKey);
+    }
 
     if (agentIds.length === 0) {
       return [];
     }
 
-    const multi = this.redis.multi();
-    agentIds.forEach((agentId) => {
-      multi.hGetAll(`${this.config.prefix}:${agentId}`);
-    });
-
-    const results = (await multi.exec()) as unknown as Record<string, string>[];
-    return results
-      .map((data) => this.parseAgentData(data))
-      .filter((agent): agent is AgentMetadata => agent !== null);
+    const agents: AgentMetadata[] = [];
+    for (const agentId of agentIds) {
+      const agent = await this.getAgent(agentId);
+      if (agent) agents.push(agent);
+    }
+    return agents;
   }
 
   /**
@@ -215,33 +258,30 @@ export class RedisAgentRegistry {
    */
   async listAgents(): Promise<AgentMetadata[]> {
     const agents: AgentMetadata[] = [];
+    const pattern = `${this.config.prefix}:*`;
     let cursor = '0';
 
     do {
-      const scanResult = await this.redis.scan(cursor as any, {
-        MATCH: `${this.config.prefix}:*`,
-        COUNT: 100,
-      });
+      let keys: string[] = [];
+      if (this.upstash) {
+        const [nextCursor, foundKeys] = await this.upstash.scan(Number(cursor), { match: pattern, count: 100 });
+        cursor = String(nextCursor);
+        keys = foundKeys;
+      } else if (this.redis) {
+        const [nextCursor, foundKeys] = await this.redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
+        cursor = nextCursor;
+        keys = foundKeys;
+      }
 
-      cursor = scanResult.cursor.toString();
-      const keys = scanResult.keys.filter(
-        (key) => !key.includes(':capability:') && !key.includes(':health')
+      const filteredKeys = keys.filter(
+        (key: any) => !key.includes(':capability:') && !key.includes(':health')
       );
 
-      if (keys.length > 0) {
-        const multi = this.redis.multi();
-        keys.forEach((key) => {
-          multi.hGetAll(key);
-        });
-
-        const results = (await multi.exec()) as unknown as Record<string, string>[];
-        for (const data of results) {
-          if (data && Object.keys(data).length > 0) {
-            const agent = this.parseAgentData(data);
-            if (agent) {
-              agents.push(agent);
-            }
-          }
+      for (const key of filteredKeys) {
+        const agentId = key.split(':').pop();
+        if (agentId) {
+          const agent = await this.getAgent(agentId);
+          if (agent) agents.push(agent);
         }
       }
     } while (cursor !== '0');
@@ -254,24 +294,24 @@ export class RedisAgentRegistry {
    */
   async getHealthyAgents(minScore = 0.9): Promise<AgentMetadata[]> {
     const healthKey = `${this.config.prefix}:health`;
-    const agentIds = await this.redis.zRangeByScore(
-      healthKey,
-      minScore,
-      1 // max score
-    );
+    let agentIds: string[] = [];
+
+    if (this.upstash) {
+      // Upstash zrange doesn't always support byScore directly in the same way, using generic approach
+      agentIds = await this.upstash.zrange(healthKey, minScore, 1, { byScore: true });
+    } else if (this.redis) {
+      agentIds = await (this.redis as any).zrangebyscore(healthKey, minScore, 1);
+    }
 
     if (agentIds.length === 0) {
       return [];
     }
 
-    const multi = this.redis.multi();
-    agentIds.forEach((agentId) => {
-      multi.hGetAll(`${this.config.prefix}:${agentId}`);
-    });
-
-    const results = (await multi.exec()) as unknown as Record<string, string>[];
-    return results
-      .map((data) => this.parseAgentData(data))
-      .filter((agent): agent is AgentMetadata => agent !== null);
+    const agents: AgentMetadata[] = [];
+    for (const agentId of agentIds) {
+      const agent = await this.getAgent(agentId);
+      if (agent) agents.push(agent);
+    }
+    return agents;
   }
 }

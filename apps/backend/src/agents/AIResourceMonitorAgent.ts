@@ -4,6 +4,7 @@ import Redis from 'ioredis';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AgentInbox } from '../shared/agent-inbox';
 import axios from 'axios';
+// @ts-ignore
 import * as cheerio from 'cheerio';
 
 export interface AIResource {

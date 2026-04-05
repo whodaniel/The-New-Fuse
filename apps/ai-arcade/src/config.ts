@@ -16,7 +16,7 @@ export const getApiUrl = () => {
 
   // Production fallback
   if (typeof window !== 'undefined' && window.location.hostname.includes('ai-arcade.xyz')) {
-    return 'https://api.thenewfuse.com/api';
+    return 'https://api-gateway-241337102384.us-central1.run.app/api';
   }
 
   return `http://localhost:${STANDARD_PORTS.API_GATEWAY}`;
@@ -29,7 +29,7 @@ export const getWebSocketUrl = () => {
 
   // Production fallback
   if (typeof window !== 'undefined' && window.location.hostname.includes('ai-arcade.xyz')) {
-    return 'wss://api.thenewfuse.com';
+    return 'wss://api-gateway-241337102384.us-central1.run.app';
   }
 
   return `ws://localhost:${STANDARD_PORTS.WEBSOCKET}`;
@@ -42,22 +42,17 @@ export const getRelayUrl = () => {
 
   // Production fallback
   if (typeof window !== 'undefined' && window.location.hostname.includes('ai-arcade.xyz')) {
-    return 'https://relay.thenewfuse.com';
+    return 'https://relay-server-241337102384.us-central1.run.app';
   }
 
   return 'http://localhost:3006';
 };
 
-// Firebase configuration
-export const getFirebaseConfig = () => {
+// Supabase configuration
+export const getSupabaseConfig = () => {
   return {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-    appId: import.meta.env.VITE_FIREBASE_APP_ID,
-    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+    url: import.meta.env.VITE_SUPABASE_URL,
+    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
   };
 };
 
@@ -65,10 +60,10 @@ export const config = {
   apiUrl: getApiUrl(),
   webSocketUrl: getWebSocketUrl(),
   relayUrl: getRelayUrl(),
-  firebase: getFirebaseConfig(),
+  supabase: getSupabaseConfig(),
 };
 
-// Check if Firebase is configured
-export const isFirebaseConfigured = () => {
-  return !!import.meta.env.VITE_FIREBASE_API_KEY;
+// Check if Supabase is configured
+export const isSupabaseConfigured = () => {
+  return !!import.meta.env.VITE_SUPABASE_URL && !!import.meta.env.VITE_SUPABASE_ANON_KEY;
 };

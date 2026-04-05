@@ -437,6 +437,7 @@ export class CommonHealthChecks {
 
       try {
         // Note: This requires 'check-disk-space' package
+        // @ts-ignore
         const checkDiskSpaceModule = await import('check-disk-space').catch(() => null);
 
         if (!checkDiskSpaceModule) {

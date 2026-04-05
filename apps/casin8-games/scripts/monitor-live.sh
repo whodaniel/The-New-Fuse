@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BASE_URL="${1:-https://casin8-games-production-b06e.up.railway.app}"
+BASE_URL="${1:-https://poker-room-241337102384.us-central1.run.app}"
 
 echo "BASE_URL=$BASE_URL"
 echo

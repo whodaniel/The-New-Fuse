@@ -1,19 +1,17 @@
-import { createClient } from 'redis';
-
-const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+// @ts-ignore
+import {
+  createStandaloneRedisClient,
+  createUpstashRestClient,
+} from '@the-new-fuse/infrastructure';
+import { Redis as UpstashRedis } from '@upstash/redis';
+import Redis, { Cluster } from 'ioredis';
 
 class RedisClient {
   private static instance: RedisClient;
-  private client;
+  private client: Redis | Cluster | null = null;
+  private upstash: UpstashRedis | null = null;
 
-  private constructor() {
-    this.client = createClient({
-      url: REDIS_URL,
-    });
-
-    this.client.on('error', (err) => console.error('Redis Client Error:', err));
-    this.client.on('connect', () => console.log('Redis Client Connected'));
-  }
+  private constructor() {}
 
   public static getInstance(): RedisClient {
     if (!RedisClient.instance) {
@@ -23,27 +21,54 @@ class RedisClient {
   }
 
   public async connect(): Promise<void> {
-    if (!this.client.isOpen) {
-      await this.client.connect();
+    if (!this.client && !this.upstash) {
+      this.client = createStandaloneRedisClient({ lazyConnect: true } as any);
+      this.upstash = createUpstashRestClient();
+
+      if (this.client instanceof Redis) {
+        this.client.on('error', (err: any) => console.error('Redis Client Error:', err));
+        await this.client.connect().catch(() => {});
+      }
     }
   }
 
   public async disconnect(): Promise<void> {
-    if (this.client.isOpen) {
-      await this.client.disconnect();
+    if (this.client) {
+      await this.client.quit();
+      this.client = null;
     }
+    this.upstash = null;
   }
 
   public async set(key: string, value: string): Promise<void> {
-    await this.client.set(key, value);
+    await this.connect();
+    if (this.upstash) {
+      await this.upstash.set(key, value);
+    } else if (this.client) {
+      await this.client.set(key, value);
+    }
   }
 
   public async get(key: string): Promise<string | null> {
-    return await this.client.get(key);
+    await this.connect();
+    if (this.upstash) {
+      return await this.upstash.get<string>(key);
+    }
+    if (this.client) {
+      return await this.client.get(key);
+    }
+    return null;
   }
 
   public async delete(key: string): Promise<number> {
-    return await this.client.del(key);
+    await this.connect();
+    if (this.upstash) {
+      return await this.upstash.del(key);
+    }
+    if (this.client) {
+      return await this.client.del(key);
+    }
+    return 0;
   }
 }
 

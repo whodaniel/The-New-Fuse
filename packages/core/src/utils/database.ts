@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import Redis from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 // Placeholder for a logger utility
 const logger = {
@@ -38,19 +38,12 @@ export interface DatabaseMetrics {
 }
 
 export class DatabaseService extends EventEmitter {
-  private redisClient: Redis;
+  private redisService: UnifiedRedisService;
   private metrics: Map<string, DatabaseMetrics> = new Map();
   
-  constructor() {
+  constructor(redisService: UnifiedRedisService) {
     super();
-    this.redisClient = new Redis();
-    this.redisClient.on('error', (err: any) => {
-      logger.error('Redis connection error:', err);
-      this.emit('error', new ConnectionError('Redis connection failed'));
-    });
-    this.redisClient.on('connect', () => {
-      logger.info('Connected to Redis');
-    });
+    this.redisService = redisService;
   }
 
   async initialize(): Promise<void> {
@@ -84,7 +77,7 @@ export class DatabaseService extends EventEmitter {
 
   async close(): Promise<void> {
     logger.info('Closing DatabaseService connections...');
-    await this.redisClient.quit();
+    this.removeAllListeners();
     logger.info('DatabaseService connections closed.');
   }
 

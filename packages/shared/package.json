@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/shared",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Shared utilities, hooks, and components for The New Fuse",
   "main": "./dist/index.js",
@@ -16,20 +17,22 @@
     "./browser-control/protocol": "./src/browser-control/protocol.ts"
   },
   "scripts": {
-    "build": "rimraf dist && tsc --build",
+    "build": "rm -rf dist && tsc --build",
     "test": "echo \"Tests temporarily disabled for this package\"",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --passWithNoTests",
-    "clean": "rimraf dist tsconfig.tsbuildinfo"
+    "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
+    "@the-new-fuse/infrastructure": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "react": "^19.2.3",
     "react-hot-toast": "^2.4.1",
-    "@the-new-fuse/infrastructure": "workspace:*"
+    "redis": "^5.11.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "@types/node": "^25.5.0",
     "@types/react": "^19.2.3",
     "jest": "^30.3.0",
     "ts-jest": "^29.4.6",

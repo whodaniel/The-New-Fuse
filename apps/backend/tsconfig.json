@@ -13,11 +13,14 @@
     "noImplicitAny": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "noEmitOnError": false,
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+    "types": ["node"],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -35,9 +38,7 @@
       "@the-new-fuse/mcp-core/*": ["../../packages/mcp-core/dist/*"],
       "@the-new-fuse/a2a-core": ["../../packages/a2a-core/dist"],
       "@the-new-fuse/a2a-react": ["../../packages/a2a-react/dist"],
-      "@the-new-fuse/infrastructure": ["../../packages/infrastructure/dist"],
-      "ox": ["../../node_modules/ox/_types/index.d.ts"],
-      "ox/*": ["../../node_modules/ox/_types/*"]
+      "@the-new-fuse/infrastructure": ["../../packages/infrastructure/dist"]
     }
   },
   "include": ["src/**/*"],

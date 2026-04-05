@@ -9,6 +9,7 @@
  * - message-bridge.js
  */
 import { EventEmitter } from 'events';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { Agent, InterceptRule, RelayConfig, RelayMessage, SystemStatus } from '../types/index.js';
 export declare class RelayServer extends EventEmitter {
     private config;
@@ -23,7 +24,8 @@ export declare class RelayServer extends EventEmitter {
     private interceptedMessages;
     private orchestratorService;
     private authService;
-    constructor(config: RelayConfig);
+    private redisService;
+    constructor(config: RelayConfig, redisService?: UnifiedRedisService);
     private setupEventHandlers;
     start(): Promise<boolean>;
     stop(): Promise<void>;

@@ -7,6 +7,6 @@ workers_dev = true
 preview_urls = false
 
 [vars]
-ENVIRONMENT = "dev"
+ENVIRONMENT = "prod"
 # Real inference executor target (TNF backend orchestrator endpoint)
-EXECUTOR_URL = "https://backend-production-5c20.up.railway.app/orchestrator/execute"
+EXECUTOR_URL = "https://backend-241337102384.us-central1.run.app/orchestrator/execute"

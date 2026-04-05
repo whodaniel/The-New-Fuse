@@ -2,7 +2,12 @@
 import { readFile } from 'node:fs/promises';
 import * as path from 'node:path';
 // @ts-ignore
-import { createClient, type RedisClientType } from 'redis';
+import {
+  createStandaloneRedisClient,
+  createUpstashRestClient,
+} from '@the-new-fuse/infrastructure';
+import { Redis as UpstashRedis } from '@upstash/redis';
+import { Redis, Cluster } from 'ioredis';
 import { createTNFEnvelope } from './protocol/tnf-envelope';
 
 type QueueTask = {
@@ -131,25 +136,33 @@ const REQUIRED_FEDERATION_GATES = [
 ] as const;
 
 class BrokerAgent {
-  private redis: RedisClientType;
-  private redisBlocking: RedisClientType;
+  private redis: Redis | Cluster | null = null;
+  private redisBlocking: Redis | Cluster | null = null;
+  private upstash: UpstashRedis | null = null;
   private heartbeatInterval: NodeJS.Timeout | null = null;
   private running = false;
   private readonly brokerId = process.env.BROKER_ID || `BROKER-${Date.now()}`;
   private twipSnapshotCache: { loadedAt: number; byTwid: Map<string, TwipIdentity> } | null = null;
 
   constructor() {
-    this.redis = createClient({ url: CONFIG.REDIS_URL });
-    this.redisBlocking = createClient({ url: CONFIG.REDIS_URL });
-    this.redis.on('error', (err: any) => console.error('[Broker] Redis error:', err?.message || err));
-    this.redisBlocking.on('error', (err: any) =>
-      console.error('[Broker] Redis blocking error:', err?.message || err)
-    );
+    // Use unified standalone utilities
+    this.redis = createStandaloneRedisClient({ lazyConnect: true });
+    this.redisBlocking = createStandaloneRedisClient({ lazyConnect: true });
+    this.upstash = createUpstashRestClient();
+
+    if (this.redis instanceof Redis) {
+      this.redis.on('error', (err: any) => console.error('[Broker] Redis error:', err?.message || err));
+    }
+    if (this.redisBlocking instanceof Redis) {
+      this.redisBlocking.on('error', (err: any) =>
+        console.error('[Broker] Redis blocking error:', err?.message || err)
+      );
+    }
   }
 
   async start(): Promise<void> {
-    await this.redis.connect();
-    await this.redisBlocking.connect();
+    if (this.redis instanceof Redis) await this.redis.connect();
+    if (this.redisBlocking instanceof Redis) await this.redisBlocking.connect();
     this.running = true;
 
     await this.registerBroker();
@@ -173,7 +186,12 @@ class BrokerAgent {
       registeredAt: now,
       lastSeen: now,
     };
-    await this.redis.hSet(CONFIG.AGENT_REGISTRY_KEY, this.brokerId, JSON.stringify(record));
+
+    if (this.upstash) {
+      await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, { [this.brokerId]: JSON.stringify(record) });
+    } else if (this.redis) {
+      await this.redis.hset(CONFIG.AGENT_REGISTRY_KEY, this.brokerId, JSON.stringify(record));
+    }
   }
 
   private startHeartbeat(): void {
@@ -187,21 +205,37 @@ class BrokerAgent {
       };
 
       try {
-        await this.redis.publish(CONFIG.HEARTBEAT_CHANNEL, JSON.stringify(heartbeat));
-        const existing = await this.redis.hGet(CONFIG.AGENT_REGISTRY_KEY, this.brokerId);
-        const parsed = existing ? (JSON.parse(existing) as RegistryAgent) : {};
-        await this.redis.hSet(
-          CONFIG.AGENT_REGISTRY_KEY,
-          this.brokerId,
-          JSON.stringify({
-            ...parsed,
-            id: this.brokerId,
-            role: 'broker',
-            status: 'active',
-            isOnline: true,
-            lastSeen: nowIso,
-          })
-        );
+        if (this.upstash) {
+          await this.upstash.publish(CONFIG.HEARTBEAT_CHANNEL, JSON.stringify(heartbeat));
+          const existing = await this.upstash.hget<string>(CONFIG.AGENT_REGISTRY_KEY, this.brokerId);
+          const parsed = existing ? (JSON.parse(existing) as RegistryAgent) : {};
+          await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, {
+            [this.brokerId]: JSON.stringify({
+              ...parsed,
+              id: this.brokerId,
+              role: 'broker',
+              status: 'active',
+              isOnline: true,
+              lastSeen: nowIso,
+            }),
+          });
+        } else if (this.redis) {
+          await this.redis.publish(CONFIG.HEARTBEAT_CHANNEL, JSON.stringify(heartbeat));
+          const existing = await this.redis.hget(CONFIG.AGENT_REGISTRY_KEY, this.brokerId);
+          const parsed = existing ? (JSON.parse(existing) as RegistryAgent) : {};
+          await this.redis.hset(
+            CONFIG.AGENT_REGISTRY_KEY,
+            this.brokerId,
+            JSON.stringify({
+              ...parsed,
+              id: this.brokerId,
+              role: 'broker',
+              status: 'active',
+              isOnline: true,
+              lastSeen: nowIso,
+            })
+          );
+        }
       } catch (error) {
         console.warn('[Broker] Heartbeat failed:', (error as Error).message);
       }
@@ -214,15 +248,19 @@ class BrokerAgent {
   private async consumeLoop(): Promise<void> {
     while (this.running) {
       try {
-        const result = (await this.redisBlocking.brPop(
+        if (!this.redisBlocking) break;
+
+        // brpop is only available on TCP client (ioredis)
+        const result = (await (this.redisBlocking as any).brpop(
           CONFIG.TASK_QUEUE_KEY,
           CONFIG.QUEUE_BLOCK_TIMEOUT_SEC
-        )) as { key: string; element: string } | null;
-        if (!result?.element) {
+        )) as [string, string] | null;
+
+        if (!result || result.length < 2) {
           continue;
         }
 
-        const task = this.safeParseTask(result.element);
+        const task = this.safeParseTask(result[1]);
         if (!task?.id) {
           continue;
         }
@@ -230,6 +268,7 @@ class BrokerAgent {
         await this.dispatchTask(task);
       } catch (error) {
         console.error('[Broker] Consume loop error:', (error as Error).message);
+        await new Promise((r) => setTimeout(r, 1000));
       }
     }
   }
@@ -853,7 +892,14 @@ class BrokerAgent {
   }
 
   private async selectTargetAgent(task: QueueTask): Promise<string | null> {
-    const registry = await this.redis.hGetAll(CONFIG.AGENT_REGISTRY_KEY);
+    let registry: Record<string, string> = {};
+
+    if (this.upstash) {
+      registry = (await this.upstash.hgetall<Record<string, string>>(CONFIG.AGENT_REGISTRY_KEY)) || {};
+    } else if (this.redis) {
+      registry = await this.redis.hgetall(CONFIG.AGENT_REGISTRY_KEY);
+    }
+
     const agents = Object.values(registry)
       .map((raw) => {
         try {
@@ -896,31 +942,39 @@ class BrokerAgent {
     policy: PolicyResult,
     targetAgentId: string | null
   ): Promise<void> {
-    await this.redis.publish(
-      CONFIG.DECISION_CHANNEL,
-      JSON.stringify({
-        brokerId: this.brokerId,
-        taskId: task.id,
-        policyDecision: policy.decision,
-        policyReason: policy.reason,
-        riskLevel: policy.riskLevel,
-        targetAgentId,
-        decidedAt: new Date().toISOString(),
-        itinerary: task.itinerary || {},
-      })
-    );
+    const payload = JSON.stringify({
+      brokerId: this.brokerId,
+      taskId: task.id,
+      policyDecision: policy.decision,
+      policyReason: policy.reason,
+      riskLevel: policy.riskLevel,
+      targetAgentId,
+      decidedAt: new Date().toISOString(),
+      itinerary: task.itinerary || {},
+    });
+
+    if (this.upstash) {
+      await this.upstash.publish(CONFIG.DECISION_CHANNEL, payload);
+    } else if (this.redis) {
+      await this.redis.publish(CONFIG.DECISION_CHANNEL, payload);
+    }
   }
 
   private async escalateToDirector(task: QueueTask, policy: PolicyResult): Promise<void> {
-    const payload = {
+    const payload = JSON.stringify({
       task,
       brokerId: this.brokerId,
       escalatedAt: new Date().toISOString(),
       reason: policy.reason,
       riskLevel: policy.riskLevel,
       sourceQueue: CONFIG.TASK_QUEUE_KEY,
-    };
-    await this.redis.lPush(CONFIG.DIRECTOR_REVIEW_QUEUE, JSON.stringify(payload));
+    });
+
+    if (this.upstash) {
+      await this.upstash.lpush(CONFIG.DIRECTOR_REVIEW_QUEUE, payload);
+    } else if (this.redis) {
+      await this.redis.lpush(CONFIG.DIRECTOR_REVIEW_QUEUE, payload);
+    }
   }
 
   private async dispatchTask(task: QueueTask): Promise<void> {
@@ -961,12 +1015,20 @@ class BrokerAgent {
     );
 
     if (targetAgentId) {
-      await this.redis.publish(
-        `${CONFIG.EGRESS_PREFIX}:${targetAgentId}`,
-        JSON.stringify(envelope)
-      );
+      const channel = `${CONFIG.EGRESS_PREFIX}:${targetAgentId}`;
+      const payload = JSON.stringify(envelope);
+      if (this.upstash) {
+        await this.upstash.publish(channel, payload);
+      } else if (this.redis) {
+        await this.redis.publish(channel, payload);
+      }
     } else {
-      await this.redis.publish(CONFIG.INGRESS_CHANNEL, JSON.stringify(envelope));
+      const payload = JSON.stringify(envelope);
+      if (this.upstash) {
+        await this.upstash.publish(CONFIG.INGRESS_CHANNEL, payload);
+      } else if (this.redis) {
+        await this.redis.publish(CONFIG.INGRESS_CHANNEL, payload);
+      }
     }
 
     await this.persistDecision(task, targetAgentId, policy, 'queued');
@@ -1075,39 +1137,76 @@ class BrokerAgent {
     }
 
     try {
-      const tx = this.redis.multi();
-      for (const key of keys) {
-        tx.hIncrBy(CONFIG.GATE_METRICS_HASH, key, 1);
+      if (this.upstash) {
+        const pipeline = this.upstash.pipeline();
+        for (const key of keys) {
+          pipeline.hincrby(CONFIG.GATE_METRICS_HASH, key, 1);
+        }
+        await pipeline.exec();
+
+        await this.upstash.publish(
+          CONFIG.DECISION_CHANNEL,
+          JSON.stringify({
+            type: 'federation_gate_telemetry',
+            brokerId: this.brokerId,
+            taskId: task.id,
+            tenantId,
+            stage,
+            mode,
+            outcome,
+            reasons,
+            twipContextSignal: {
+              terminalBound: contextSignal.terminalBound,
+              twid: contextSignal.twid,
+              available: contextSignal.available,
+              stale: contextSignal.stale,
+              ageMs: contextSignal.ageMs,
+              source: contextSignal.source,
+              riskLevel: contextSignal.riskLevel,
+              reasons: contextSignal.reasons,
+              redactionCount: contextSignal.redactionCount,
+              capturedAt: contextSignal.capturedAt,
+              preview: contextSignal.preview,
+            },
+            at: timestamp,
+            metricsHash: CONFIG.GATE_METRICS_HASH,
+          })
+        );
+      } else if (this.redis) {
+        const tx = (this.redis as any).multi();
+        for (const key of keys) {
+          tx.hincrby(CONFIG.GATE_METRICS_HASH, key, 1);
+        }
+        await tx.exec();
+        await this.redis.publish(
+          CONFIG.DECISION_CHANNEL,
+          JSON.stringify({
+            type: 'federation_gate_telemetry',
+            brokerId: this.brokerId,
+            taskId: task.id,
+            tenantId,
+            stage,
+            mode,
+            outcome,
+            reasons,
+            twipContextSignal: {
+              terminalBound: contextSignal.terminalBound,
+              twid: contextSignal.twid,
+              available: contextSignal.available,
+              stale: contextSignal.stale,
+              ageMs: contextSignal.ageMs,
+              source: contextSignal.source,
+              riskLevel: contextSignal.riskLevel,
+              reasons: contextSignal.reasons,
+              redactionCount: contextSignal.redactionCount,
+              capturedAt: contextSignal.capturedAt,
+              preview: contextSignal.preview,
+            },
+            at: timestamp,
+            metricsHash: CONFIG.GATE_METRICS_HASH,
+          })
+        );
       }
-      await tx.exec();
-      await this.redis.publish(
-        CONFIG.DECISION_CHANNEL,
-        JSON.stringify({
-          type: 'federation_gate_telemetry',
-          brokerId: this.brokerId,
-          taskId: task.id,
-          tenantId,
-          stage,
-          mode,
-          outcome,
-          reasons,
-          twipContextSignal: {
-            terminalBound: contextSignal.terminalBound,
-            twid: contextSignal.twid,
-            available: contextSignal.available,
-            stale: contextSignal.stale,
-            ageMs: contextSignal.ageMs,
-            source: contextSignal.source,
-            riskLevel: contextSignal.riskLevel,
-            reasons: contextSignal.reasons,
-            redactionCount: contextSignal.redactionCount,
-            capturedAt: contextSignal.capturedAt,
-            preview: contextSignal.preview,
-          },
-          at: timestamp,
-          metricsHash: CONFIG.GATE_METRICS_HASH,
-        })
-      );
     } catch (error) {
       console.warn(
         '[Broker] Failed to record federation gate telemetry:',
@@ -1158,25 +1257,42 @@ class BrokerAgent {
       this.heartbeatInterval = null;
     }
     try {
-      const existing = await this.redis.hGet(CONFIG.AGENT_REGISTRY_KEY, this.brokerId);
-      const parsed = existing ? (JSON.parse(existing) as RegistryAgent) : {};
-      await this.redis.hSet(
-        CONFIG.AGENT_REGISTRY_KEY,
-        this.brokerId,
-        JSON.stringify({
-          ...parsed,
-          id: this.brokerId,
-          role: 'broker',
-          status: 'offline',
-          isOnline: false,
-          lastSeen: new Date().toISOString(),
-        })
-      );
+      const nowIso = new Date().toISOString();
+      if (this.upstash) {
+        const existing = await this.upstash.hget<string>(CONFIG.AGENT_REGISTRY_KEY, this.brokerId);
+        const parsed = existing ? (JSON.parse(existing) as RegistryAgent) : {};
+        await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, {
+          [this.brokerId]: JSON.stringify({
+            ...parsed,
+            id: this.brokerId,
+            role: 'broker',
+            status: 'offline',
+            isOnline: false,
+            lastSeen: nowIso,
+          }),
+        });
+      } else if (this.redis) {
+        const existing = await this.redis.hget(CONFIG.AGENT_REGISTRY_KEY, this.brokerId);
+        const parsed = existing ? (JSON.parse(existing) as RegistryAgent) : {};
+        await this.redis.hset(
+          CONFIG.AGENT_REGISTRY_KEY,
+          this.brokerId,
+          JSON.stringify({
+            ...parsed,
+            id: this.brokerId,
+            role: 'broker',
+            status: 'offline',
+            isOnline: false,
+            lastSeen: nowIso,
+          })
+        );
+      }
     } catch {
       // best effort
     }
-    await this.redisBlocking.quit();
-    await this.redis.quit();
+    if (this.redisBlocking) await this.redisBlocking.quit();
+    if (this.redis) await this.redis.quit();
+    this.upstash = null;
   }
 }
 

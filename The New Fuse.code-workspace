@@ -314,5 +314,6 @@
       "port-manager",
     ],
     "git.ignoreLimitWarning": true,
+    "workbench.cloudChanges.autoResume": "off",
   },
 }

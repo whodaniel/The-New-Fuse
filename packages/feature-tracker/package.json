@@ -1,11 +1,12 @@
 {
   "name": "@the-new-fuse/feature-tracker",
+  "files": ["dist"],
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc --build",
-    "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "dev": "tsc --build --watch",
     "test": "jest",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",

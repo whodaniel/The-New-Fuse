@@ -65,11 +65,12 @@ export class ProxyService {
 
     // Explicit API service alias so controllers can fail over from specialized
     // agent endpoints to the core API service without assuming backend parity.
-    // Railway internal DNS: servicename.$PROJECTID.railway.internal
-    // railway.toml defines service as "api" → internal URL is http://api.railway.internal
     this.registerService({
       name: 'api',
-      baseUrl: process.env.API_SERVICE_URL || process.env.API_URL || 'http://api.railway.internal',
+      baseUrl:
+        process.env.API_SERVICE_URL ||
+        process.env.API_URL ||
+        'https://api-server-241337102384.us-central1.run.app',
       healthPath: '/health',
       timeout: 30000,
       retries: 3,
@@ -87,7 +88,7 @@ export class ProxyService {
       name: 'casin8',
       baseUrl: this.configService.get(
         'CASIN8_SERVICE_URL',
-        'https://casin8-games-production-b06e.up.railway.app'
+        'https://casin8-games-241337102384.us-central1.run.app'
       ),
       healthPath: '/health',
       timeout: 30000,

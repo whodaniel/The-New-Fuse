@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/jules-skill",
+  "files": ["dist"],
   "version": "0.1.0",
   "description": "Jules CLI integration skill for AI agent delegation - Enables agents to delegate coding tasks to Google Jules",
   "main": "dist/index.js",
@@ -7,7 +8,7 @@
   "private": true,
   "scripts": {
     "build": "tsc -b",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "lint": "eslint src",
     "type-check": "tsc --noEmit",
     "mcp:start": "node dist/mcp-server.js",

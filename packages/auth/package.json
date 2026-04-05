@@ -1,13 +1,14 @@
 {
   "name": "@the-new-fuse/auth",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Unified authentication and identity services for The New Fuse framework",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "build": "rm -rf dist && tsc",
     "dev": "tsc --watch",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

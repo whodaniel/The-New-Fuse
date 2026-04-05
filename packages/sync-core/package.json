@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/sync-core",
+  "files": ["dist"],
   "version": "0.1.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -7,7 +8,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint src",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "start": "node dist/server.js",
     "start:dev": "tsx watch src/server.ts",
     "test": "echo \"Tests temporarily disabled for this package\"",

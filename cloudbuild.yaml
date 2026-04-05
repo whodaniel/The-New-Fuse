@@ -7,13 +7,25 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/api-server:latest', '-f', 'Dockerfile.api-server', '.']
 
-  # 3. Push Images to Artifact Registry
+  # 3. Build Backend Image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/backend:latest', '-f', 'Dockerfile.backend', '.']
+
+  # 4. Build Relay Server Image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/relay-server:latest', '-f', 'Dockerfile.relay-server', '.']
+
+  # 5. Push Images to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/api-gateway:latest']
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/api-server:latest']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/backend:latest']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/relay-server:latest']
 
-  # 4. Deploy API Gateway
+  # 6. Deploy API Gateway
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
@@ -30,7 +42,7 @@ steps:
       - '--set-env-vars'
       - 'DATABASE_URL=postgresql://postgres.wslydgtgindrywldatbv:pFhgQGRK38GfHWk4@aws-0-us-west-2.pooler.supabase.com:6543/postgres?sslmode=disable,REDIS_URL=rediss://default:gQAAAAAAAVbSAAIncDI1MTE3NWRiODViMTA0ZWFjODY4OTE4OTEyNDUzZmIwN3AyODc3NjI@key-shark-87762.upstash.io:6379,GCP_PROJECT_ID=the-new-fuse-2025,GCS_BUCKET=the-new-fuse-2025-storage,JWT_SECRET=the-new-fuse-2025-secret-key-change-me,JWT_REFRESH_SECRET=the-new-fuse-2025-refresh-secret-key-change-me,NODE_ENV=production'
 
-  # 5. Deploy API Server
+  # 7. Deploy API Server
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
@@ -47,9 +59,45 @@ steps:
       - '--set-env-vars'
       - 'DATABASE_URL=postgresql://postgres.wslydgtgindrywldatbv:pFhgQGRK38GfHWk4@aws-0-us-west-2.pooler.supabase.com:6543/postgres?sslmode=disable,REDIS_URL=rediss://default:gQAAAAAAAVbSAAIncDI1MTE3NWRiODViMTA0ZWFjODY4OTE4OTEyNDUzZmIwN3AyODc3NjI@key-shark-87762.upstash.io:6379,GCP_PROJECT_ID=the-new-fuse-2025,GCS_BUCKET=the-new-fuse-2025-storage,JWT_SECRET=the-new-fuse-2025-secret-key-change-me,JWT_REFRESH_SECRET=the-new-fuse-2025-refresh-secret-key-change-me,NODE_ENV=production'
 
+  # 8. Deploy Backend
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'backend'
+      - '--image'
+      - 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/backend:latest'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'DATABASE_URL=postgresql://postgres.wslydgtgindrywldatbv:pFhgQGRK38GfHWk4@aws-0-us-west-2.pooler.supabase.com:6543/postgres?sslmode=disable,REDIS_URL=rediss://default:gQAAAAAAAVbSAAIncDI1MTE3NWRiODViMTA0ZWFjODY4OTE4OTEyNDUzZmIwN3AyODc3NjI@key-shark-87762.upstash.io:6379,GCP_PROJECT_ID=the-new-fuse-2025,GCS_BUCKET=the-new-fuse-2025-storage,JWT_SECRET=the-new-fuse-2025-secret-key-change-me,JWT_REFRESH_SECRET=the-new-fuse-2025-refresh-secret-key-change-me,NODE_ENV=production'
+
+  # 9. Deploy Relay Server
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'relay-server'
+      - '--image'
+      - 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/relay-server:latest'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'DATABASE_URL=postgresql://postgres.wslydgtgindrywldatbv:pFhgQGRK38GfHWk4@aws-0-us-west-2.pooler.supabase.com:6543/postgres?sslmode=disable,REDIS_URL=rediss://default:gQAAAAAAAVbSAAIncDI1MTE3NWRiODViMTA0ZWFjODY4OTE4OTEyNDUzZmIwN3AyODc3NjI@key-shark-87762.upstash.io:6379,GCP_PROJECT_ID=the-new-fuse-2025,GCS_BUCKET=the-new-fuse-2025-storage,JWT_SECRET=the-new-fuse-2025-secret-key-change-me,JWT_REFRESH_SECRET=the-new-fuse-2025-refresh-secret-key-change-me,NODE_ENV=production'
+
 images:
   - 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/api-gateway:latest'
   - 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/api-server:latest'
+  - 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/backend:latest'
+  - 'us-central1-docker.pkg.dev/the-new-fuse-2025/tnf-services/relay-server:latest'
 
 options:
   logging: CLOUD_LOGGING_ONLY

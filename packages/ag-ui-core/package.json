@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/ag-ui-core",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "AG-UI Protocol integration for The New Fuse - Connect AI agents to self-contained visualizations",
   "main": "dist/index.js",

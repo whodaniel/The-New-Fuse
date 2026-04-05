@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/fairtable-core",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Core types and constants for Fairtable functionality",
   "main": "dist/index.js",
@@ -7,7 +8,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "clean": "rimraf dist .tsbuildinfo tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist .tsbuildinfo tsconfig.tsbuildinfo",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",

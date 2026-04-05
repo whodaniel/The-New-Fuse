@@ -17,7 +17,7 @@ import {
 import { db } from '@the-new-fuse/database';
 import { workflows, workflowSteps } from '@the-new-fuse/database/drizzle/schema';
 import { eq } from 'drizzle-orm';
-import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
+import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';
 import { WorkflowExecutionService } from './workflow-execution.service';
 
 interface CreateWorkflowDto {
@@ -46,7 +46,7 @@ interface ExecuteWorkflowDto {
 }
 
 @Controller('workflows')
-@UseGuards(FirebaseAuthGuard)
+@UseGuards(SupabaseAuthGuard)
 export class WorkflowController {
   private logger = new Logger(WorkflowController.name);
 

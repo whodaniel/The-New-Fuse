@@ -7,6 +7,7 @@
 import { EventEmitter } from 'events';
 import { Transport, RelayMessage } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 export interface RedisTransportConfig {
     host?: string;
     port?: number;
@@ -24,13 +25,12 @@ export interface RedisTransportConfig {
 export declare class RedisTransport extends EventEmitter implements Transport {
     readonly name = "redis";
     private config;
-    private publisher;
-    private subscriber;
+    private redisService;
     private logger;
     private _isConnected;
     private messageHandlers;
     private heartbeatInterval?;
-    constructor(config: RedisTransportConfig);
+    constructor(config: RedisTransportConfig, redisService: UnifiedRedisService);
     private setupEventHandlers;
     private setupChannelSubscriptions;
     private handleRedisMessage;

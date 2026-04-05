@@ -1,22 +1,20 @@
-import { config, isFirebaseConfigured } from '../config';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { config } from '../config';
 import type { AuthResponse, LoginCredentials, RegisterCredentials, User } from '../types/auth';
 
 const TOKEN_KEY = 'ai_arcade_token';
 const USER_KEY = 'ai_arcade_user';
 
-// Firebase types (lazy loaded)
-let firebaseApp: any = null;
-let firebaseAuth: any = null;
-let firebaseSignInWithEmailAndPassword: any = null;
-let firebaseCreateUserWithEmailAndPassword: any = null;
-let firebaseSignOut: any = null;
-let firebaseOnAuthStateChanged: any = null;
-
 export class AuthService {
   private apiUrl: string;
+  private supabase: SupabaseClient;
 
   constructor(apiUrl: string) {
     this.apiUrl = apiUrl || config.apiUrl;
+    this.supabase = createClient(
+      process.env.VITE_SUPABASE_URL || '',
+      process.env.VITE_SUPABASE_ANON_KEY || ''
+    );
   }
 
   private getStorage(): Storage | null {
@@ -26,176 +24,73 @@ export class AuthService {
     return null;
   }
 
-  // Initialize Firebase if configured
-  private async initializeFirebase() {
-    if (!isFirebaseConfigured()) return null;
-
-    if (!firebaseApp) {
-      try {
-        const { initializeApp } = await import('firebase/app');
-        const {
-          getAuth,
-          signInWithEmailAndPassword,
-          createUserWithEmailAndPassword,
-          signOut,
-          onAuthStateChanged,
-        } = await import('firebase/auth');
-
-        firebaseApp = initializeApp(config.firebase);
-        firebaseAuth = getAuth(firebaseApp);
-        firebaseSignInWithEmailAndPassword = signInWithEmailAndPassword;
-        firebaseCreateUserWithEmailAndPassword = createUserWithEmailAndPassword;
-        firebaseSignOut = signOut;
-        firebaseOnAuthStateChanged = onAuthStateChanged;
-        return {
-          auth: firebaseAuth,
-          signInWithEmailAndPassword: firebaseSignInWithEmailAndPassword,
-          createUserWithEmailAndPassword: firebaseCreateUserWithEmailAndPassword,
-          signOut: firebaseSignOut,
-          onAuthStateChanged: firebaseOnAuthStateChanged,
-        };
-      } catch (error) {
-        console.warn('Firebase not available, falling back to mock auth:', error);
-        return null;
-      }
-    }
-    if (
-      !firebaseSignInWithEmailAndPassword ||
-      !firebaseCreateUserWithEmailAndPassword ||
-      !firebaseSignOut ||
-      !firebaseOnAuthStateChanged
-    ) {
-      return null;
-    }
-    return {
-      auth: firebaseAuth,
-      signInWithEmailAndPassword: firebaseSignInWithEmailAndPassword,
-      createUserWithEmailAndPassword: firebaseCreateUserWithEmailAndPassword,
-      signOut: firebaseSignOut,
-      onAuthStateChanged: firebaseOnAuthStateChanged,
-    };
-  }
-
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    // Try Firebase first if configured
-    const firebase = await this.initializeFirebase();
-
-    if (firebase) {
-      try {
-        const userCredential = await firebase.signInWithEmailAndPassword(
-          firebase.auth,
-          credentials.email,
-          credentials.password
-        );
-
-        const token = await userCredential.user.getIdToken();
-        const user = this.firebaseUserToUser(userCredential.user);
-
-        this.setSession(token, user);
-        return { success: true, user, token };
-      } catch (error: any) {
-        console.error('Firebase login error:', error);
-        return {
-          success: false,
-          message: this.getFirebaseErrorMessage(error.code),
-        };
-      }
-    }
-
-    // Fallback to API login
     try {
-      const response = await fetch(`${this.apiUrl}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
+      const { data, error } = await this.supabase.auth.signInWithPassword({
+        email: credentials.email,
+        password: credentials.password,
       });
 
-      const data = await response.json();
+      if (error) throw error;
 
-      if (response.ok && data.success) {
-        this.setSession(data.token, data.user);
-        return { success: true, user: data.user, token: data.token };
+      if (data.user && data.session) {
+        const user = this.supabaseUserToUser(data.user);
+        const token = data.session.access_token;
+        this.setSession(token, user);
+        return { success: true, user, token };
       }
 
-      return { success: false, message: data.message || 'Login failed' };
-    } catch (error) {
-      console.error('Login error:', error);
-      // For demo purposes, allow mock login
-      return this.mockLogin(credentials);
+      throw new Error('Login failed: No session returned');
+    } catch (error: any) {
+      console.error('Supabase login error:', error);
+      return {
+        success: false,
+        message: error.message || 'Authentication failed. Please try again.',
+      };
     }
   }
 
   async register(credentials: RegisterCredentials): Promise<AuthResponse> {
-    // Try Firebase first if configured
-    const firebase = await this.initializeFirebase();
-
-    if (firebase) {
-      try {
-        const userCredential = await firebase.createUserWithEmailAndPassword(
-          firebase.auth,
-          credentials.email,
-          credentials.password
-        );
-
-        const token = await userCredential.user.getIdToken();
-        const user = this.firebaseUserToUser(userCredential.user, credentials.username);
-
-        this.setSession(token, user);
-        return { success: true, user, token };
-      } catch (error: any) {
-        console.error('Firebase register error:', error);
-        return {
-          success: false,
-          message: this.getFirebaseErrorMessage(error.code),
-        };
-      }
-    }
-
-    // Fallback to API registration
     try {
-      const response = await fetch(`${this.apiUrl}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
+      const { data, error } = await this.supabase.auth.signUp({
+        email: credentials.email,
+        password: credentials.password,
+        options: {
+          data: {
+            username: credentials.username,
+          }
+        }
       });
 
-      const data = await response.json();
+      if (error) throw error;
 
-      if (response.ok && data.success) {
-        this.setSession(data.token, data.user);
-        return { success: true, user: data.user, token: data.token };
+      if (data.user && data.session) {
+        const user = this.supabaseUserToUser(data.user);
+        const token = data.session.access_token;
+        this.setSession(token, user);
+        return { success: true, user, token };
       }
-
-      return { success: false, message: data.message || 'Registration failed' };
-    } catch (error) {
-      console.error('Register error:', error);
-      // For demo purposes, allow mock registration
-      return this.mockRegister(credentials);
+      
+      return { 
+        success: true, 
+        user: data.user ? this.supabaseUserToUser(data.user) : (null as any), 
+        token: '',
+        message: 'Registration successful. Please check your email for verification.' 
+      };
+    } catch (error: any) {
+      console.error('Supabase register error:', error);
+      return {
+        success: false,
+        message: error.message || 'Registration failed. Please try again.',
+      };
     }
   }
 
   async logout(): Promise<void> {
-    const firebase = await this.initializeFirebase();
-
-    if (firebase && firebase.auth) {
-      try {
-        await firebase.signOut(firebase.auth);
-      } catch (error) {
-        console.error('Firebase logout error:', error);
-      }
-    }
-
     try {
-      await fetch(`${this.apiUrl}/auth/logout`, {
-        method: 'POST',
-        headers: this.getAuthHeaders(),
-      });
+      await this.supabase.auth.signOut();
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('Supabase logout error:', error);
     } finally {
       this.clearSession();
     }
@@ -210,20 +105,14 @@ export class AuthService {
       return JSON.parse(cachedUser);
     }
 
-    const token = this.getToken();
-    if (!token) return null;
-
     try {
-      const response = await fetch(`${this.apiUrl}/auth/me`, {
-        headers: this.getAuthHeaders(),
-      });
+      const { data: { user }, error } = await this.supabase.auth.getUser();
+      if (error) throw error;
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.user) {
-          storage.setItem(USER_KEY, JSON.stringify(data.user));
-          return data.user;
-        }
+      if (user) {
+        const tnfUser = this.supabaseUserToUser(user);
+        storage.setItem(USER_KEY, JSON.stringify(tnfUser));
+        return tnfUser;
       }
     } catch (error) {
       console.error('Get current user error:', error);
@@ -233,6 +122,7 @@ export class AuthService {
   }
 
   async updateTokens(amount: number): Promise<User | null> {
+    // This typically goes through your backend API to update credits securely
     try {
       const response = await fetch(`${this.apiUrl}/user/tokens`, {
         method: 'POST',
@@ -265,27 +155,15 @@ export class AuthService {
     return !!this.getToken();
   }
 
-  private firebaseUserToUser(firebaseUser: any, username?: string): User {
+  private supabaseUserToUser(supabaseUser: any): User {
     return {
-      id: firebaseUser.uid,
-      email: firebaseUser.email,
-      username: username || firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-      tokens: 500, // Default starting tokens
+      id: supabaseUser.id,
+      email: supabaseUser.email || '',
+      username: supabaseUser.user_metadata?.username || supabaseUser.email?.split('@')[0] || 'User',
+      tokens: supabaseUser.user_metadata?.tokens || 500,
       subscriptions: [],
-      createdAt: firebaseUser.metadata?.creationTime || new Date().toISOString(),
+      createdAt: supabaseUser.created_at,
     };
-  }
-
-  private getFirebaseErrorMessage(code: string): string {
-    const messages: Record<string, string> = {
-      'auth/user-not-found': 'No account found with this email',
-      'auth/wrong-password': 'Incorrect password',
-      'auth/email-already-in-use': 'An account with this email already exists',
-      'auth/weak-password': 'Password should be at least 6 characters',
-      'auth/invalid-email': 'Invalid email address',
-      'auth/too-many-requests': 'Too many failed attempts. Please try again later.',
-    };
-    return messages[code] || 'Authentication failed. Please try again.';
   }
 
   private setSession(token: string, user: User): void {
@@ -310,38 +188,5 @@ export class AuthService {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
-  }
-
-  // Mock methods for demo/development
-  private mockLogin(credentials: LoginCredentials): AuthResponse {
-    const mockUser: User = {
-      id: 'mock-user-' + Date.now(),
-      email: credentials.email,
-      username: credentials.email.split('@')[0],
-      tokens: 1000,
-      subscriptions: [],
-      createdAt: new Date().toISOString(),
-    };
-
-    const mockToken = 'mock-token-' + Date.now();
-    this.setSession(mockToken, mockUser);
-
-    return { success: true, user: mockUser, token: mockToken };
-  }
-
-  private mockRegister(credentials: RegisterCredentials): AuthResponse {
-    const mockUser: User = {
-      id: 'mock-user-' + Date.now(),
-      email: credentials.email,
-      username: credentials.username,
-      tokens: 500, // Starting tokens for new users
-      subscriptions: [],
-      createdAt: new Date().toISOString(),
-    };
-
-    const mockToken = 'mock-token-' + Date.now();
-    this.setSession(mockToken, mockUser);
-
-    return { success: true, user: mockUser, token: mockToken };
   }
 }

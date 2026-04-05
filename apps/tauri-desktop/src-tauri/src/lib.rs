@@ -28,7 +28,7 @@ impl Default for AppState {
     fn default() -> Self {
         Self {
             bridge_manager: Arc::new(Mutex::new(None)),
-            sandbox_url: Mutex::new(String::from("wss://tnf-cloud-sandbox-production.up.railway.app/ws")),
+            sandbox_url: Mutex::new(String::from("wss://api-gateway-241337102384.us-central1.run.app/ws")),
             antigravity_client: Arc::new(Mutex::new(AntigravityClient::new())),
         }
     }

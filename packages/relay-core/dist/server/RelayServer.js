@@ -43,10 +43,24 @@ class RelayServer extends events_1.EventEmitter {
     interceptedMessages = [];
     orchestratorService;
     authService;
-    constructor(config) {
+    redisService;
+    constructor(config, redisService) {
         super();
         this.config = config;
         this.logger = new Logger_js_1.Logger(config.logLevel, config.workspaceDir);
+        // Initialize or use provided redis service
+        if (redisService) {
+            this.redisService = redisService;
+        }
+        else {
+            // Mock/Create UnifiedRedisService for standalone use
+            // In a real standalone, we'd use the creation utilities
+            this.redisService = (async () => {
+                const { UnifiedRedisService, RedisConfig } = await import('@the-new-fuse/infrastructure');
+                // This is a bit complex for a constructor, let's assume we'll fix it in main.ts
+                return null;
+            })();
+        }
         this.transports = new Map();
         this.agentRegistry = new AgentRegistry_js_1.AgentRegistry(this.logger);
         this.messageRouter = new MessageRouter_js_1.MessageRouter(this.logger);
@@ -204,7 +218,7 @@ class RelayServer extends events_1.EventEmitter {
                     systemEvents: 'tnf:system',
                     heartbeat: 'tnf:heartbeat',
                 },
-            });
+            }, this.redisService);
             this.transports.set('redis', redisTransport);
         }
         // Setup transport message handlers

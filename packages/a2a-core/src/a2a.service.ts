@@ -2,7 +2,8 @@ import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/commo
 import { ConfigService } from '@nestjs/config';
 import { Ap2ProtocolService } from // @ts-ignore
 '@the-new-fuse/ap2-protocol';
-import { Redis } from 'ioredis';
+import { UnifiedRedisService } from // @ts-ignore
+'@the-new-fuse/infrastructure';
 import {
   A2AMessage,
   A2AMessageType,
@@ -55,44 +56,12 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
   private registryCleanupInterval?: NodeJS.Timeout;
   private metricsInterval?: NodeJS.Timeout;
 
-  private redis: Redis;
-  private redisConnected = false;
-
   constructor(
     private configService: ConfigService,
-    private ap2ProtocolService: Ap2ProtocolService
+    private ap2ProtocolService: Ap2ProtocolService,
+    private redisService: UnifiedRedisService
   ) {
     this.initializeDefaultRoutes();
-    this.redis = new Redis({
-      host: this.configService.get('REDIS_HOST') || 'localhost',
-      port: this.configService.get('REDIS_PORT') || 6379,
-      password: this.configService.get('REDIS_PASSWORD'),
-      db: this.configService.get('REDIS_DB') || 0,
-      lazyConnect: true, // Don't connect immediately - wait for first use
-      maxRetriesPerRequest: 1, // Limit retries to prevent blocking
-      retryStrategy: (times: number) => {
-        if (times > 3) {
-          this.logger.warn('Redis connection failed after 3 attempts - operating in degraded mode');
-          return null; // Stop retrying
-        }
-        return Math.min(times * 200, 2000); // Exponential backoff
-      },
-    });
-
-    // Handle Redis connection events
-    this.redis.on('connect', () => {
-      this.redisConnected = true;
-      this.logger.log('A2A Service Redis connected');
-    });
-
-    this.redis.on('error', (error: Error) => {
-      this.redisConnected = false;
-      this.logger.warn('A2A Service Redis error (degraded mode):', error.message);
-    });
-
-    this.redis.on('close', () => {
-      this.redisConnected = false;
-    });
   }
 
   async createPayment(paymentDetails: {
@@ -193,10 +162,10 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
       this.agentRegistry.set(registration.agentId, agentCapabilities);
 
       // Cache agent registration
-      await this.redis.setex(
+      await this.redisService.set(
         `agent:${registration.agentId}`,
-        3600, // 1 hour TTL
-        JSON.stringify(registration)
+        JSON.stringify(registration),
+        3600 // 1 hour TTL
       );
 
       // Announce agent capabilities to network
@@ -228,7 +197,7 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
         this.activeConnections.delete(agentId);
 
         // Update cache
-        await this.redis.setex(`agent:${agentId}`, 3600, JSON.stringify(agent));
+        await this.redisService.set(`agent:${agentId}`, JSON.stringify(agent), 3600);
 
         this.logger.log(`Agent unregistered: ${agentId}`);
         return true;
@@ -506,7 +475,7 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
     try {
       // Add to job queue for processing
       // Queue message for processing (simplified implementation)
-      await this.redis.lpush(
+      await this.redisService.lpush(
         'message_queue',
         JSON.stringify({
           id: message.id,
@@ -627,7 +596,11 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
       conversation.endedAt = Date.now();
 
       // Archive conversation
-      await this.redis.setex(`conversation:${conversationId}`, 86400, JSON.stringify(conversation));
+      await this.redisService.set(
+        `conversation:${conversationId}`,
+        JSON.stringify(conversation),
+        86400
+      );
       this.conversationContexts.delete(conversationId);
 
       this.metrics.activeConversations--;
@@ -754,10 +727,10 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
     this.agentRegistry.set(agentId, agent);
 
     // Update in Redis
-    await this.redis.setex(
+    await this.redisService.set(
       `agent:status:${agentId}`,
-      3600,
-      JSON.stringify({ status, timestamp: Date.now() })
+      JSON.stringify({ status, timestamp: Date.now() }),
+      3600
     );
 
     this.logger.log(`Agent status updated: ${agentId} -> ${status}`);
@@ -1018,10 +991,10 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
     this.agentRegistry.set(heartbeat.agentId, agent);
 
     // Store heartbeat in Redis
-    await this.redis.setex(
+    await this.redisService.set(
       `heartbeat:${heartbeat.agentId}`,
-      this.config.heartbeatInterval * 2,
-      JSON.stringify(heartbeat)
+      JSON.stringify(heartbeat),
+      (this.config.heartbeatInterval * 2) / 1000 // TTL in seconds
     );
 
     this.logger.debug(`Heartbeat received from ${heartbeat.agentId}`);

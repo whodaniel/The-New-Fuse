@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import Redis from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 export interface RateLimitConfig {
   points: number;           // Number of requests
@@ -35,7 +35,6 @@ export interface RateLimitTier {
 @Injectable()
 export class RedisRateLimiterService {
   private readonly logger = new Logger(RedisRateLimiterService.name);
-  private redis!: Redis;
 
   // Predefined rate limit tiers
   private readonly tiers: Record<string, RateLimitTier> = {
@@ -65,34 +64,10 @@ export class RedisRateLimiterService {
     }
   };
 
-  constructor(private configService: ConfigService) {
-    this.initializeRedis();
-  }
-
-  private initializeRedis(): void {
-    const redisHost = this.configService.get('REDIS_HOST', 'localhost');
-    const redisPort = this.configService.get('REDIS_PORT', 6379);
-    const redisPassword = this.configService.get('REDIS_PASSWORD');
-
-    this.redis = new Redis({
-      host: redisHost,
-      port: redisPort,
-      password: redisPassword,
-      retryStrategy: (times) => {
-        const delay = Math.min(times * 50, 2000);
-        return delay;
-      },
-      maxRetriesPerRequest: 3
-    });
-
-    this.redis.on('error', (error) => {
-      this.logger.error(`Redis connection error: ${error.message}`);
-    });
-
-    this.redis.on('connect', () => {
-      this.logger.log('Redis rate limiter connected successfully');
-    });
-  }
+  constructor(
+    private configService: ConfigService,
+    private redisService: UnifiedRedisService
+  ) {}
 
   /**
    * Check rate limit using sliding window algorithm
@@ -107,29 +82,19 @@ export class RedisRateLimiterService {
     const windowStart = now - (config.duration * 1000);
 
     try {
-      // Use Redis pipeline for atomic operations
-      const pipeline = this.redis.pipeline();
-
+      // Use individual operations since UnifiedRedisService doesn't support pipeline yet
       // Remove old entries outside the window
-      pipeline.zremrangebyscore(redisKey, 0, windowStart);
+      await this.redisService.zremrangebyscore(redisKey, 0, windowStart);
 
       // Count current requests in window
-      pipeline.zcard(redisKey);
+      const currentCount = await this.redisService.zcard(redisKey);
 
       // Add current request
-      pipeline.zadd(redisKey, now, `${now}-${Math.random()}`);
+      await this.redisService.zadd(redisKey, now, `${now}-${Math.random()}`);
 
       // Set expiry on the key
-      pipeline.expire(redisKey, config.duration);
+      await this.redisService.expire(redisKey, config.duration);
 
-      const results = await pipeline.exec();
-
-      if (!results) {
-        throw new Error('Pipeline execution failed');
-      }
-
-      // Get the count before adding current request
-      const currentCount = (results[1][1] as number) || 0;
       const totalHits = currentCount + 1;
       const remaining = Math.max(0, config.points - totalHits);
       const allowed = totalHits <= config.points;
@@ -139,10 +104,10 @@ export class RedisRateLimiterService {
 
       // If blocked, set block duration
       if (!allowed && config.blockDuration) {
-        await this.redis.setex(
+        await this.redisService.set(
           `${redisKey}:blocked`,
-          config.blockDuration,
-          '1'
+          '1',
+          config.blockDuration
         );
       }
 
@@ -170,7 +135,7 @@ export class RedisRateLimiterService {
    */
   async isBlocked(key: string, keyPrefix = 'ratelimit'): Promise<boolean> {
     try {
-      const blocked = await this.redis.get(`${keyPrefix}:${key}:blocked`);
+      const blocked = await this.redisService.get(`${keyPrefix}:${key}:blocked`);
       return blocked === '1';
     } catch (error) {
       this.logger.error(`Error checking block status for key ${key}:`, error);
@@ -207,7 +172,7 @@ export class RedisRateLimiterService {
 
     try {
       // Count requests in current window
-      const count = await this.redis.zcount(redisKey, windowStart, now);
+      const count = await this.redisService.zcount(redisKey, windowStart, now);
       return Math.max(0, config.points - count);
     } catch (error) {
       this.logger.error(`Error getting remaining points for key ${key}:`, error);
@@ -220,8 +185,8 @@ export class RedisRateLimiterService {
    */
   async reset(key: string, keyPrefix = 'ratelimit'): Promise<void> {
     try {
-      await this.redis.del(`${keyPrefix}:${key}`);
-      await this.redis.del(`${keyPrefix}:${key}:blocked`);
+      await this.redisService.del(`${keyPrefix}:${key}`);
+      await this.redisService.del(`${keyPrefix}:${key}:blocked`);
       this.logger.log(`Reset rate limit for key: ${key}`);
     } catch (error) {
       this.logger.error(`Error resetting rate limit for key ${key}:`, error);
@@ -238,20 +203,7 @@ export class RedisRateLimiterService {
   }> {
     try {
       // Scan for all rate limit keys
-      const keys: string[] = [];
-      let cursor = '0';
-
-      do {
-        const [nextCursor, foundKeys] = await this.redis.scan(
-          cursor,
-          'MATCH',
-          keyPattern,
-          'COUNT',
-          100
-        );
-        cursor = nextCursor;
-        keys.push(...foundKeys);
-      } while (cursor !== '0');
+      const keys = await this.redisService.keys(keyPattern);
 
       // Filter blocked keys
       const blockedKeys = keys.filter(k => k.endsWith(':blocked'));
@@ -261,7 +213,7 @@ export class RedisRateLimiterService {
       const regularKeys = keys.filter(k => !k.endsWith(':blocked'));
 
       for (const key of regularKeys.slice(0, 10)) {
-        const count = await this.redis.zcard(key);
+        const count = await this.redisService.zcard(key);
         topConsumers.push({ key, count });
       }
 
@@ -293,7 +245,7 @@ export class RedisRateLimiterService {
   ): Promise<void> {
     try {
       const redisKey = `${keyPrefix}:${key}:penalty`;
-      await this.redis.setex(redisKey, duration, penaltyPoints.toString());
+      await this.redisService.set(redisKey, penaltyPoints.toString(), duration);
       this.logger.warn(`Applied penalty of ${penaltyPoints} points to key: ${key}`);
     } catch (error) {
       this.logger.error(`Error applying penalty to key ${key}:`, error);
@@ -305,7 +257,7 @@ export class RedisRateLimiterService {
    */
   async getPenalty(key: string, keyPrefix = 'ratelimit'): Promise<number> {
     try {
-      const penalty = await this.redis.get(`${keyPrefix}:${key}:penalty`);
+      const penalty = await this.redisService.get(`${keyPrefix}:${key}:penalty`);
       return penalty ? parseInt(penalty, 10) : 0;
     } catch (error) {
       this.logger.error(`Error getting penalty for key ${key}:`, error);
@@ -317,25 +269,15 @@ export class RedisRateLimiterService {
    * Health check for Redis connection
    */
   async healthCheck(): Promise<{ status: string; latency: number }> {
-    const startTime = Date.now();
-
-    try {
-      await this.redis.ping();
-      return {
-        status: 'healthy',
-        latency: Date.now() - startTime
-      };
-    } catch (error) {
-      this.logger.error('Rate limiter health check failed:', error);
-      return {
-        status: 'unhealthy',
-        latency: Date.now() - startTime
-      };
-    }
+    const health = await this.redisService.getHealth();
+    return {
+      status: health.status,
+      latency: health.latency
+    };
   }
 
   async onModuleDestroy(): Promise<void> {
-    await this.redis.quit();
-    this.logger.log('Redis rate limiter disconnected');
+    // Connection management is handled by UnifiedRedisService
+    this.logger.log('Redis rate limiter service stopping');
   }
 }

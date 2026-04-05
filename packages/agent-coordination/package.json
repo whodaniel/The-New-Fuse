@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/agent-coordination",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Redis-based agent-to-agent communication and coordination system",
   "main": "dist/index.js",
@@ -17,7 +18,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "type-check": "tsc --noEmit",
-    "clean": "rimraf dist .tsbuildinfo tsconfig.tsbuildinfo"
+    "clean": "rm -rf dist .tsbuildinfo tsconfig.tsbuildinfo"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.16",

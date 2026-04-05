@@ -14,13 +14,13 @@ import { type TnfAuditTrace } from '../contracts/audit';
  * Message Types
  */
 export declare const MessageType: z.ZodEnum<{
+    query: "query";
+    task: "task";
     command: "command";
     event: "event";
-    task: "task";
     handoff: "handoff";
     "handoff-ack": "handoff-ack";
     "state-sync": "state-sync";
-    query: "query";
     response: "response";
     "resource-negotiate": "resource-negotiate";
     auction: "auction";
@@ -68,13 +68,13 @@ export declare const TNFEnvelope: z.ZodObject<{
     traceId: z.ZodString;
     timestamp: z.ZodString;
     type: z.ZodEnum<{
+        query: "query";
+        task: "task";
         command: "command";
         event: "event";
-        task: "task";
         handoff: "handoff";
         "handoff-ack": "handoff-ack";
         "state-sync": "state-sync";
-        query: "query";
         response: "response";
         "resource-negotiate": "resource-negotiate";
         auction: "auction";
@@ -165,10 +165,10 @@ export declare const TaskPayload: z.ZodObject<{
     parameters: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
     timeout: z.ZodOptional<z.ZodNumber>;
     priority: z.ZodDefault<z.ZodEnum<{
+        critical: "critical";
+        high: "high";
         low: "low";
         normal: "normal";
-        high: "high";
-        critical: "critical";
     }>>;
 }, z.core.$strip>;
 export type TaskPayload = z.infer<typeof TaskPayload>;
@@ -205,10 +205,10 @@ export declare const AuctionPayload: z.ZodObject<{
     taskType: z.ZodString;
     requirements: z.ZodArray<z.ZodString>;
     priority: z.ZodDefault<z.ZodEnum<{
+        critical: "critical";
+        high: "high";
         low: "low";
         normal: "normal";
-        high: "high";
-        critical: "critical";
     }>>;
     expiresAt: z.ZodNumber;
     metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;

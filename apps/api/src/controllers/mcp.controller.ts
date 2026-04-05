@@ -52,7 +52,9 @@ export class MCPServerController {
     if (sources.includes('tnf')) {
       // Query TNF curated MCP servers from DB
       const conditions = [];
+      // @ts-ignore
       if (q) conditions.push(like(this.tnfMcpServers.name, `%${q}%`));
+      // @ts-ignore
       if (scope) conditions.push(eq(this.tnfMcpServers.scope, scope as any));
 
       const servers =

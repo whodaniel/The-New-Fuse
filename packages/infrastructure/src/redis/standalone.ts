@@ -1,4 +1,5 @@
 import Redis, { Cluster, RedisOptions } from 'ioredis';
+import { Redis as UpstashRedis } from '@upstash/redis';
 
 export interface StandaloneRedisConfig {
   host: string;
@@ -12,6 +13,10 @@ export interface StandaloneRedisConfig {
   keyPrefix: string;
   clusterMode: boolean;
   clusterNodes: string[];
+  upstash?: {
+    restUrl?: string;
+    restToken?: string;
+  };
 }
 
 /**
@@ -60,6 +65,10 @@ export function loadStandaloneRedisConfig(): StandaloneRedisConfig {
       .split(',')
       .map((n) => n.trim())
       .filter(Boolean),
+    upstash: {
+      restUrl: process.env.UPSTASH_REDIS_REST_URL,
+      restToken: process.env.UPSTASH_REDIS_REST_TOKEN,
+    },
   };
 }
 
@@ -90,4 +99,24 @@ export function createStandaloneRedisClient(
   }
 
   return new Redis(redisOptions);
+}
+
+/**
+ * Create an Upstash REST client using standalone configuration
+ */
+export function createUpstashRestClient(
+  config?: { restUrl?: string; restToken?: string }
+): UpstashRedis | null {
+  const standaloneConfig = loadStandaloneRedisConfig();
+  const restUrl = config?.restUrl || standaloneConfig.upstash?.restUrl;
+  const restToken = config?.restToken || standaloneConfig.upstash?.restToken;
+
+  if (restUrl && restToken) {
+    return new UpstashRedis({
+      url: restUrl,
+      token: restToken,
+    });
+  }
+
+  return null;
 }

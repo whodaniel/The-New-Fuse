@@ -1,5 +1,6 @@
 {
   "name": "@tnf/build-optimization",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Memory-efficient build optimization tools for The New Fuse monorepo",
   "type": "module",
@@ -18,7 +19,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "type-check": "tsc --noEmit",
-    "clean": "rimraf dist tsconfig.tsbuildinfo"
+    "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
     "@types/node": "^24.8.1",

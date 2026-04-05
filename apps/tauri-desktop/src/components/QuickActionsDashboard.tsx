@@ -127,7 +127,7 @@ const ACTION_CATEGORIES: ActionCategory[] = [
         label: 'Open Theia IDE',
         icon: '💻',
         description: 'Open the cloud-based Theia IDE',
-        url: 'https://tnf-theia-ide-production.up.railway.app',
+        url: 'https://skideancer-ide-241337102384.us-central1.run.app',
       },
       {
         id: 'open-website',

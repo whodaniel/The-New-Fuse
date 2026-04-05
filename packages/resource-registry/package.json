@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/resource-registry",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Comprehensive resource management system for The New Fuse - AI agents and humans",
   "main": "dist/index.js",
@@ -39,7 +40,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "type-check": "tsc --noEmit",
-    "clean": "rimraf dist coverage test-results *.tsbuildinfo tsconfig.tsbuildinfo"
+    "clean": "rm -rf dist coverage test-results *.tsbuildinfo tsconfig.tsbuildinfo"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
@@ -96,6 +97,7 @@
   },
   "author": {
     "name": "The New Fuse Team",
+  "files": ["dist"],
     "url": "https://github.com/the-new-fuse"
   },
   "engines": {

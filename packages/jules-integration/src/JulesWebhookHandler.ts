@@ -1,6 +1,6 @@
 import { DatabaseService, type Task } from '@the-new-fuse/database';
 import { TNFEnvelope, TNFMessageBuilder } from '@the-new-fuse/relay-core';
-import type { RedisClientType } from 'redis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 // Placeholder for the JulesUsageTracker
 class JulesUsageTracker {
@@ -32,7 +32,7 @@ type JulesSessionStatus =
 export class JulesWebhookHandler {
   constructor(
     private db: InstanceType<typeof DatabaseService>,
-    private redis: RedisClientType,
+    private redisService: UnifiedRedisService,
     private julesUsageTracker: JulesUsageTracker
   ) {}
 
@@ -143,7 +143,7 @@ export class JulesWebhookHandler {
   private async publishToRelay(envelope: TNFEnvelope): Promise<void> {
     const channel = 'tnf:bus:ingress';
     try {
-      await this.redis.publish(channel, JSON.stringify(envelope));
+      await this.redisService.publish(channel, JSON.stringify(envelope));
     } catch (error) {
       console.error('Failed to publish to Redis:', error);
       // Implement retry logic here if necessary

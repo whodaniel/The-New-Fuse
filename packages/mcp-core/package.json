@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/mcp-core",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Model Context Protocol (MCP) core implementation for The New Fuse",
   "main": "dist/index.js",
@@ -66,7 +67,7 @@
     "build:types": "tsc --declaration --emitDeclarationOnly --outDir dist",
     "build:production": "NODE_ENV=production tsc",
     "dev": "tsc --watch",
-    "clean": "rimraf dist coverage test-results *.tsbuildinfo tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist coverage test-results *.tsbuildinfo tsconfig.tsbuildinfo",
     "type-check": "tsc --noEmit",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
@@ -147,6 +148,7 @@
   },
   "author": {
     "name": "The New Fuse Team",
+  "files": ["dist"],
     "url": "https://github.com/the-new-fuse"
   },
   "publishConfig": {

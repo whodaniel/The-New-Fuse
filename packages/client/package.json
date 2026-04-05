@@ -1,11 +1,12 @@
 {
   "name": "@the-new-fuse/client",
+  "files": ["dist"],
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "mkdir -p build && echo '<!DOCTYPE html><html><head><title>The New Fuse</title></head><body><h1>The New Fuse Client</h1></body></html>' > build/index.html",
-    "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",

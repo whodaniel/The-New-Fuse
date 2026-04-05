@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import Redis from 'ioredis';
 import { ConfigService } from '@nestjs/config';
-import { v4 as uuidv4 } // @ts-ignore
-from 'uuid';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import { v4 as uuidv4 } from 'uuid';
 import { createLogger, transports, format } from 'winston';
 
 const logger = createLogger({
@@ -13,38 +12,19 @@ const logger = createLogger({
 
 @Injectable()
 export class CascadeBridge {
-  private redisClient: Redis;
-  private pubsub: Redis;
+  private readonly nestLogger = new Logger(CascadeBridge.name);
 
-  constructor(private readonly configService: ConfigService) {
-    const redisOptions = {
-      host: this.configService.get('REDIS_HOST', 'localhost'),
-      port: this.configService.get('REDIS_PORT', 6379),
-      password: this.configService.get('REDIS_PASSWORD'),
-      db: this.configService.get('REDIS_DB', 0),
-      keyPrefix: 'fuse:bridge:',
-    };
-    this.redisClient = new Redis(redisOptions);
-    this.pubsub = new Redis(redisOptions);
-
-    this.redisClient.on('error', (err: any) => logger.error('Redis Client Error', err));
-    this.pubsub.on('error', (err: any) => logger.error('Redis PubSub Error', err));
-  }
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly redisService: UnifiedRedisService
+  ) {}
 
   async start(): Promise<void> {
-    await this.pubsub.subscribe('cascade-in', (err: any) => {
-      if (err) {
-        logger.error('Failed to subscribe to cascade-in', err);
-        return;
-      }
-      logger.info('Subscribed to cascade-in channel');
+    await this.redisService.subscribe('cascade-in', (message) => {
+      const messageStr = typeof message.message === 'string' ? message.message : JSON.stringify(message.message);
+      this.handleCascadeMessage(messageStr);
     });
-
-    this.pubsub.on('message', (channel, message) => {
-      if (channel === 'cascade-in') {
-        this.handleCascadeMessage(message);
-      }
-    });
+    logger.info('Subscribed to cascade-in channel');
   }
 
   private handleCascadeMessage(message: string): void {
@@ -52,7 +32,7 @@ export class CascadeBridge {
       const parsedMessage = JSON.parse(message);
       logger.info('Received cascade message:', parsedMessage);
       // Process the message and publish to cascade-out
-      this.redisClient.publish('cascade-out', JSON.stringify({ processed: true, ...parsedMessage }));
+      this.redisService.publish('cascade-out', JSON.stringify({ processed: true, ...parsedMessage }));
     } catch (err) {
       logger.error('Error handling cascade message', err);
     }

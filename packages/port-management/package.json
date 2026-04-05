@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/port-management",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Port management and configuration system for The New Fuse",
   "private": true,
@@ -8,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "lint": "eslint src",
     "test": "echo \"No tests found for @the-new-fuse/port-management\" && exit 0",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",

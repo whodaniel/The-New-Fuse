@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import Redis from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 export interface CommunicationRecord {
   id: string;
@@ -12,7 +12,7 @@ export interface CommunicationRecord {
 
 @Injectable()
 export class CommunicationTracker {
-  private redis: Redis;
+  private redisService: UnifiedRedisService;
   private recordsKey = 'communication:records';
   private blockchainKey = 'communication:blockchain';
   private modelKey = 'communication:model';
@@ -20,32 +20,29 @@ export class CommunicationTracker {
   private walletKey = 'communication:wallet';
   private resourceKey = 'communication:resource';
 
-  constructor() {
-    this.redis = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-    });
+  constructor(redisService: UnifiedRedisService) {
+    this.redisService = redisService;
   }
 
   async trackCommunication(record: CommunicationRecord): Promise<void> {
-    await this.redis.lpush(this.recordsKey, JSON.stringify(record));
-    await this.redis.expire(this.recordsKey, 86400); // 24 hours
+    await this.redisService.lpush(this.recordsKey, JSON.stringify(record));
+    await this.redisService.expire(this.recordsKey, 86400); // 24 hours
   }
 
   async getCommunicationHistory(agentId: string, limit: number = 100): Promise<CommunicationRecord[]> {
-    const records = await this.redis.lrange(this.recordsKey, 0, limit - 1);
+    const records = await this.redisService.lrange(this.recordsKey, 0, limit - 1);
     return records
       .map(r => JSON.parse(r) as CommunicationRecord)
       .filter(r => r.fromAgent === agentId || r.toAgent === agentId);
   }
 
   async getRecentCommunications(limit: number = 50): Promise<CommunicationRecord[]> {
-    const records = await this.redis.lrange(this.recordsKey, 0, limit - 1);
+    const records = await this.redisService.lrange(this.recordsKey, 0, limit - 1);
     return records.map(r => JSON.parse(r) as CommunicationRecord);
   }
 
   async clearHistory(): Promise<void> {
-    await this.redis.del(this.recordsKey);
+    await this.redisService.del(this.recordsKey);
   }
 
   async getMetrics(agentId: string): Promise<{

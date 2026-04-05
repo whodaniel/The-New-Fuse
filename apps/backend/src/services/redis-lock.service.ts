@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
+// @ts-ignore
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()

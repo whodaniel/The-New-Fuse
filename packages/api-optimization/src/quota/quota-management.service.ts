@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import Redis from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 export interface QuotaConfig {
   requests: number;        // Number of requests allowed
@@ -34,7 +34,6 @@ export interface QuotaUsage {
 @Injectable()
 export class QuotaManagementService {
   private readonly logger = new Logger(QuotaManagementService.name);
-  private redis!: Redis;
 
   // Predefined quota tiers
   private readonly tiers: Record<string, QuotaTier> = {
@@ -64,31 +63,10 @@ export class QuotaManagementService {
     }
   };
 
-  constructor(private configService: ConfigService) {
-    this.initializeRedis();
-  }
-
-  private initializeRedis(): void {
-    const redisHost = this.configService.get('REDIS_HOST', 'localhost');
-    const redisPort = this.configService.get('REDIS_PORT', 6379);
-    const redisPassword = this.configService.get('REDIS_PASSWORD');
-
-    this.redis = new Redis({
-      host: redisHost,
-      port: redisPort,
-      password: redisPassword,
-      retryStrategy: (times) => Math.min(times * 50, 2000),
-      maxRetriesPerRequest: 3
-    });
-
-    this.redis.on('error', (error) => {
-      this.logger.error(`Redis connection error: ${error.message}`);
-    });
-
-    this.redis.on('connect', () => {
-      this.logger.log('Quota management Redis connected');
-    });
-  }
+  constructor(
+    private configService: ConfigService,
+    private redisService: UnifiedRedisService
+  ) {}
 
   /**
    * Check and consume quota
@@ -202,14 +180,10 @@ export class QuotaManagementService {
   async resetQuota(userId: string, tier: string, period?: 'hourly' | 'daily' | 'monthly'): Promise<void> {
     const periods = period ? [period] : ['hourly', 'daily', 'monthly'] as const;
 
-    const pipeline = this.redis.pipeline();
-
     for (const p of periods) {
       const key = `quota:${tier}:${p}:${userId}`;
-      pipeline.del(key);
+      await this.redisService.del(key);
     }
-
-    await pipeline.exec();
 
     this.logger.log(`Reset quota for user ${userId}, tier ${tier}, periods: ${periods.join(', ')}`);
   }
@@ -245,21 +219,8 @@ export class QuotaManagementService {
     topUsers: Array<{ userId: string; tier: string; usage: number }>;
   }> {
     try {
-      let cursor = '0';
-      const keys: string[] = [];
-
       // Scan for all quota keys
-      do {
-        const [nextCursor, foundKeys] = await this.redis.scan(
-          cursor,
-          'MATCH',
-          'quota:*',
-          'COUNT',
-          100
-        );
-        cursor = nextCursor;
-        keys.push(...foundKeys);
-      } while (cursor !== '0');
+      const keys = await this.redisService.keys('quota:*');
 
       // Analyze keys
       const userSet = new Set<string>();
@@ -300,10 +261,10 @@ export class QuotaManagementService {
     const windowStart = now - (quota.period * 1000);
 
     // Remove old entries
-    await this.redis.zremrangebyscore(key, 0, windowStart);
+    await this.redisService.zremrangebyscore(key, 0, windowStart);
 
     // Count current requests
-    const count = await this.redis.zcard(key);
+    const count = await this.redisService.zcard(key);
 
     return {
       used: count,
@@ -319,7 +280,7 @@ export class QuotaManagementService {
     const currentPeriod = Math.floor(now / (quota.period * 1000));
     const periodKey = `${key}:${currentPeriod}`;
 
-    const count = await this.redis.get(periodKey);
+    const count = await this.redisService.get(periodKey);
     const used = count ? parseInt(count, 10) : 0;
 
     const resetTime = new Date((currentPeriod + 1) * quota.period * 1000);
@@ -330,30 +291,27 @@ export class QuotaManagementService {
   private async incrementUsage(userId: string, tier: string): Promise<void> {
     const quotaTier = this.tiers[tier];
     const now = Date.now();
-    const pipeline = this.redis.pipeline();
 
     // Increment hourly (rolling)
     const hourlyKey = `quota:${tier}:hourly:${userId}`;
-    pipeline.zadd(hourlyKey, now, `${now}-${Math.random()}`);
-    pipeline.expire(hourlyKey, quotaTier.quotas.hourly.period);
+    await this.redisService.zadd(hourlyKey, now, `${now}-${Math.random()}`);
+    await this.redisService.expire(hourlyKey, quotaTier.quotas.hourly.period);
 
     // Increment daily (fixed)
     const currentDay = Math.floor(now / (quotaTier.quotas.daily.period * 1000));
     const dailyKey = `quota:${tier}:daily:${userId}:${currentDay}`;
-    pipeline.incr(dailyKey);
-    pipeline.expire(dailyKey, quotaTier.quotas.daily.period);
+    await this.redisService.incr(dailyKey);
+    await this.redisService.expire(dailyKey, quotaTier.quotas.daily.period);
 
     // Increment monthly (fixed)
     const currentMonth = Math.floor(now / (quotaTier.quotas.monthly.period * 1000));
     const monthlyKey = `quota:${tier}:monthly:${userId}:${currentMonth}`;
-    pipeline.incr(monthlyKey);
-    pipeline.expire(monthlyKey, quotaTier.quotas.monthly.period);
-
-    await pipeline.exec();
+    await this.redisService.incr(monthlyKey);
+    await this.redisService.expire(monthlyKey, quotaTier.quotas.monthly.period);
   }
 
   async onModuleDestroy(): Promise<void> {
-    await this.redis.quit();
+    // Connection management is handled by UnifiedRedisService
     this.logger.log('Quota management service destroyed');
   }
 }

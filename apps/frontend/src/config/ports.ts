@@ -55,7 +55,7 @@ export const getWebSocketUrl = () => {
     }
 
     // Railway deployments
-    if (host.includes('railway.app')) {
+    if (host.includes('workers.dev') || host.includes('thenewfuse.com')) {
       return `${protocol}//${host}/ws`;
     }
   }

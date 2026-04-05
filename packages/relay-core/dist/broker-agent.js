@@ -36,7 +36,9 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const promises_1 = require("node:fs/promises");
 const path = __importStar(require("node:path"));
-const redis_1 = require("redis");
+// @ts-ignore
+const infrastructure_1 = require("@the-new-fuse/infrastructure");
+const ioredis_1 = require("ioredis");
 const tnf_envelope_1 = require("./protocol/tnf-envelope");
 const CONFIG = {
     REDIS_URL: process.env.REDIS_URL ||
@@ -82,21 +84,30 @@ const REQUIRED_FEDERATION_GATES = [
     'CHANNEL_MEMBERSHIP_GATE',
 ];
 class BrokerAgent {
-    redis;
-    redisBlocking;
+    redis = null;
+    redisBlocking = null;
+    upstash = null;
     heartbeatInterval = null;
     running = false;
     brokerId = process.env.BROKER_ID || `BROKER-${Date.now()}`;
     twipSnapshotCache = null;
     constructor() {
-        this.redis = (0, redis_1.createClient)({ url: CONFIG.REDIS_URL });
-        this.redisBlocking = (0, redis_1.createClient)({ url: CONFIG.REDIS_URL });
-        this.redis.on('error', (err) => console.error('[Broker] Redis error:', err?.message || err));
-        this.redisBlocking.on('error', (err) => console.error('[Broker] Redis blocking error:', err?.message || err));
+        // Use unified standalone utilities
+        this.redis = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
+        this.redisBlocking = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
+        this.upstash = (0, infrastructure_1.createUpstashRestClient)();
+        if (this.redis instanceof ioredis_1.Redis) {
+            this.redis.on('error', (err) => console.error('[Broker] Redis error:', err?.message || err));
+        }
+        if (this.redisBlocking instanceof ioredis_1.Redis) {
+            this.redisBlocking.on('error', (err) => console.error('[Broker] Redis blocking error:', err?.message || err));
+        }
     }
     async start() {
-        await this.redis.connect();
-        await this.redisBlocking.connect();
+        if (this.redis instanceof ioredis_1.Redis)
+            await this.redis.connect();
+        if (this.redisBlocking instanceof ioredis_1.Redis)
+            await this.redisBlocking.connect();
         this.running = true;
         await this.registerBroker();
         this.startHeartbeat();
@@ -117,7 +128,12 @@ class BrokerAgent {
             registeredAt: now,
             lastSeen: now,
         };
-        await this.redis.hSet(CONFIG.AGENT_REGISTRY_KEY, this.brokerId, JSON.stringify(record));
+        if (this.upstash) {
+            await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, { [this.brokerId]: JSON.stringify(record) });
+        }
+        else if (this.redis) {
+            await this.redis.hset(CONFIG.AGENT_REGISTRY_KEY, this.brokerId, JSON.stringify(record));
+        }
     }
     startHeartbeat() {
         const sendHeartbeat = async () => {
@@ -129,17 +145,34 @@ class BrokerAgent {
                 timestamp: nowIso,
             };
             try {
-                await this.redis.publish(CONFIG.HEARTBEAT_CHANNEL, JSON.stringify(heartbeat));
-                const existing = await this.redis.hGet(CONFIG.AGENT_REGISTRY_KEY, this.brokerId);
-                const parsed = existing ? JSON.parse(existing) : {};
-                await this.redis.hSet(CONFIG.AGENT_REGISTRY_KEY, this.brokerId, JSON.stringify({
-                    ...parsed,
-                    id: this.brokerId,
-                    role: 'broker',
-                    status: 'active',
-                    isOnline: true,
-                    lastSeen: nowIso,
-                }));
+                if (this.upstash) {
+                    await this.upstash.publish(CONFIG.HEARTBEAT_CHANNEL, JSON.stringify(heartbeat));
+                    const existing = await this.upstash.hget(CONFIG.AGENT_REGISTRY_KEY, this.brokerId);
+                    const parsed = existing ? JSON.parse(existing) : {};
+                    await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, {
+                        [this.brokerId]: JSON.stringify({
+                            ...parsed,
+                            id: this.brokerId,
+                            role: 'broker',
+                            status: 'active',
+                            isOnline: true,
+                            lastSeen: nowIso,
+                        }),
+                    });
+                }
+                else if (this.redis) {
+                    await this.redis.publish(CONFIG.HEARTBEAT_CHANNEL, JSON.stringify(heartbeat));
+                    const existing = await this.redis.hget(CONFIG.AGENT_REGISTRY_KEY, this.brokerId);
+                    const parsed = existing ? JSON.parse(existing) : {};
+                    await this.redis.hset(CONFIG.AGENT_REGISTRY_KEY, this.brokerId, JSON.stringify({
+                        ...parsed,
+                        id: this.brokerId,
+                        role: 'broker',
+                        status: 'active',
+                        isOnline: true,
+                        lastSeen: nowIso,
+                    }));
+                }
             }
             catch (error) {
                 console.warn('[Broker] Heartbeat failed:', error.message);
@@ -151,11 +184,14 @@ class BrokerAgent {
     async consumeLoop() {
         while (this.running) {
             try {
-                const result = (await this.redisBlocking.brPop(CONFIG.TASK_QUEUE_KEY, CONFIG.QUEUE_BLOCK_TIMEOUT_SEC));
-                if (!result?.element) {
+                if (!this.redisBlocking)
+                    break;
+                // brpop is only available on TCP client (ioredis)
+                const result = (await this.redisBlocking.brpop(CONFIG.TASK_QUEUE_KEY, CONFIG.QUEUE_BLOCK_TIMEOUT_SEC));
+                if (!result || result.length < 2) {
                     continue;
                 }
-                const task = this.safeParseTask(result.element);
+                const task = this.safeParseTask(result[1]);
                 if (!task?.id) {
                     continue;
                 }
@@ -163,6 +199,7 @@ class BrokerAgent {
             }
             catch (error) {
                 console.error('[Broker] Consume loop error:', error.message);
+                await new Promise((r) => setTimeout(r, 1000));
             }
         }
     }
@@ -551,13 +588,38 @@ class BrokerAgent {
                 body: JSON.stringify(payload),
             });
             const body = (await response.json().catch(() => null));
+            if (response.status >= 500) {
+                return {
+                    ok: true,
+                    reasons: [
+                        `external gate worker unavailable (HTTP ${response.status}); local fallback used`,
+                    ],
+                    fallbackUsed: true,
+                };
+            }
+            if (response.ok && body === null) {
+                return {
+                    ok: true,
+                    reasons: [
+                        `external gate worker returned invalid JSON (HTTP ${response.status}); local fallback used`,
+                    ],
+                    fallbackUsed: true,
+                };
+            }
             const reasons = Array.isArray(body?.reasons)
                 ? body.reasons.map((entry) => String(entry))
                 : [];
+            if (!response.ok && reasons.length === 0) {
+                reasons.push(`external gate returned HTTP ${response.status}`);
+            }
             return { ok: response.ok && body?.ok === true, reasons };
         }
         catch (error) {
-            return { ok: false, reasons: [`external gate check failed: ${error.message}`] };
+            return {
+                ok: true,
+                reasons: [`external gate check failed: ${error.message}; local fallback used`],
+                fallbackUsed: true,
+            };
         }
     }
     async evaluatePolicy(task, targetAgentId) {
@@ -602,7 +664,10 @@ class BrokerAgent {
                 console.warn(`[Broker] WARN ${task.id}: ${reason}`);
             }
             else {
-                await this.recordFederationGateTelemetry(task, 'external', gateMode, externalGate.reasons, contextSignal);
+                await this.recordFederationGateTelemetry(task, 'external', gateMode, externalGate.reasons, contextSignal, externalGate.fallbackUsed ? 'warn' : undefined);
+                if (externalGate.fallbackUsed && externalGate.reasons.length > 0) {
+                    console.warn(`[Broker] WARN ${task.id}: ${externalGate.reasons.join('; ')}`);
+                }
             }
         }
         if (!lane) {
@@ -666,7 +731,13 @@ class BrokerAgent {
         return agent.capabilities.map((cap) => String(cap).toLowerCase());
     }
     async selectTargetAgent(task) {
-        const registry = await this.redis.hGetAll(CONFIG.AGENT_REGISTRY_KEY);
+        let registry = {};
+        if (this.upstash) {
+            registry = (await this.upstash.hgetall(CONFIG.AGENT_REGISTRY_KEY)) || {};
+        }
+        else if (this.redis) {
+            registry = await this.redis.hgetall(CONFIG.AGENT_REGISTRY_KEY);
+        }
         const agents = Object.values(registry)
             .map((raw) => {
             try {
@@ -702,7 +773,7 @@ class BrokerAgent {
         return this.getAgentId(sorted[0]) || null;
     }
     async publishPolicyDecision(task, policy, targetAgentId) {
-        await this.redis.publish(CONFIG.DECISION_CHANNEL, JSON.stringify({
+        const payload = JSON.stringify({
             brokerId: this.brokerId,
             taskId: task.id,
             policyDecision: policy.decision,
@@ -711,18 +782,29 @@ class BrokerAgent {
             targetAgentId,
             decidedAt: new Date().toISOString(),
             itinerary: task.itinerary || {},
-        }));
+        });
+        if (this.upstash) {
+            await this.upstash.publish(CONFIG.DECISION_CHANNEL, payload);
+        }
+        else if (this.redis) {
+            await this.redis.publish(CONFIG.DECISION_CHANNEL, payload);
+        }
     }
     async escalateToDirector(task, policy) {
-        const payload = {
+        const payload = JSON.stringify({
             task,
             brokerId: this.brokerId,
             escalatedAt: new Date().toISOString(),
             reason: policy.reason,
             riskLevel: policy.riskLevel,
             sourceQueue: CONFIG.TASK_QUEUE_KEY,
-        };
-        await this.redis.lPush(CONFIG.DIRECTOR_REVIEW_QUEUE, JSON.stringify(payload));
+        });
+        if (this.upstash) {
+            await this.upstash.lpush(CONFIG.DIRECTOR_REVIEW_QUEUE, payload);
+        }
+        else if (this.redis) {
+            await this.redis.lpush(CONFIG.DIRECTOR_REVIEW_QUEUE, payload);
+        }
     }
     async dispatchTask(task) {
         const targetAgentId = await this.selectTargetAgent(task);
@@ -751,10 +833,23 @@ class BrokerAgent {
             sessionId: this.brokerId,
         });
         if (targetAgentId) {
-            await this.redis.publish(`${CONFIG.EGRESS_PREFIX}:${targetAgentId}`, JSON.stringify(envelope));
+            const channel = `${CONFIG.EGRESS_PREFIX}:${targetAgentId}`;
+            const payload = JSON.stringify(envelope);
+            if (this.upstash) {
+                await this.upstash.publish(channel, payload);
+            }
+            else if (this.redis) {
+                await this.redis.publish(channel, payload);
+            }
         }
         else {
-            await this.redis.publish(CONFIG.INGRESS_CHANNEL, JSON.stringify(envelope));
+            const payload = JSON.stringify(envelope);
+            if (this.upstash) {
+                await this.upstash.publish(CONFIG.INGRESS_CHANNEL, payload);
+            }
+            else if (this.redis) {
+                await this.redis.publish(CONFIG.INGRESS_CHANNEL, payload);
+            }
         }
         await this.persistDecision(task, targetAgentId, policy, 'queued');
         console.log(`[Broker] Dispatched ${task.id} -> ${targetAgentId || 'broadcast'} (${String(task.title || '')})`);
@@ -762,7 +857,14 @@ class BrokerAgent {
     async persistDecision(task, targetAgentId, policy, status) {
         const base = CONFIG.LEDGER_API_BASE.replace(/\/$/, '');
         const patchUrl = `${base}/api/unified-ledger/records/${encodeURIComponent(task.id)}`;
-        const ingestUrl = `${base}/api/unified-ledger/ingest/orchestration`;
+        const ingestUrl = process.env.LEDGER_INTERNAL_INGEST_URL ||
+            process.env.LEDGER_INGEST_URL ||
+            `${base}/api/unified-ledger/internal/ingest/orchestration`;
+        const internalSecret = process.env.TNF_INTERNAL_INGEST_SECRET || process.env.UNIFIED_LEDGER_INTERNAL_SECRET;
+        const ingestHeaders = { 'content-type': 'application/json' };
+        if (internalSecret) {
+            ingestHeaders['x-tnf-internal-secret'] = internalSecret;
+        }
         const patchPayload = {
             status,
             itinerary: task.itinerary || undefined,
@@ -793,7 +895,7 @@ class BrokerAgent {
         try {
             await fetch(ingestUrl, {
                 method: 'POST',
-                headers: { 'content-type': 'application/json' },
+                headers: ingestHeaders,
                 body: JSON.stringify({
                     type: 'TASK_DISPATCH',
                     action: status === 'queued' ? 'broker_dispatch' : 'broker_policy_gate',
@@ -813,10 +915,10 @@ class BrokerAgent {
             console.warn('[Broker] Failed to persist dispatch:', error.message);
         }
     }
-    async recordFederationGateTelemetry(task, stage, mode, reasons, contextSignal) {
+    async recordFederationGateTelemetry(task, stage, mode, reasons, contextSignal, outcomeOverride) {
         if (mode === 'off')
             return;
-        const outcome = reasons.length === 0 ? 'allow' : mode === 'enforce' ? 'deny' : 'warn';
+        const outcome = outcomeOverride || (reasons.length === 0 ? 'allow' : mode === 'enforce' ? 'deny' : 'warn');
         const tenantId = this.getScopeTenant(task) || 'unknown';
         const timestamp = new Date().toISOString();
         const keys = new Set([
@@ -836,36 +938,70 @@ class BrokerAgent {
                 keys.add(`reason:${reasonKey}`);
         }
         try {
-            const tx = this.redis.multi();
-            for (const key of keys) {
-                tx.hIncrBy(CONFIG.GATE_METRICS_HASH, key, 1);
+            if (this.upstash) {
+                const pipeline = this.upstash.pipeline();
+                for (const key of keys) {
+                    pipeline.hincrby(CONFIG.GATE_METRICS_HASH, key, 1);
+                }
+                await pipeline.exec();
+                await this.upstash.publish(CONFIG.DECISION_CHANNEL, JSON.stringify({
+                    type: 'federation_gate_telemetry',
+                    brokerId: this.brokerId,
+                    taskId: task.id,
+                    tenantId,
+                    stage,
+                    mode,
+                    outcome,
+                    reasons,
+                    twipContextSignal: {
+                        terminalBound: contextSignal.terminalBound,
+                        twid: contextSignal.twid,
+                        available: contextSignal.available,
+                        stale: contextSignal.stale,
+                        ageMs: contextSignal.ageMs,
+                        source: contextSignal.source,
+                        riskLevel: contextSignal.riskLevel,
+                        reasons: contextSignal.reasons,
+                        redactionCount: contextSignal.redactionCount,
+                        capturedAt: contextSignal.capturedAt,
+                        preview: contextSignal.preview,
+                    },
+                    at: timestamp,
+                    metricsHash: CONFIG.GATE_METRICS_HASH,
+                }));
             }
-            await tx.exec();
-            await this.redis.publish(CONFIG.DECISION_CHANNEL, JSON.stringify({
-                type: 'federation_gate_telemetry',
-                brokerId: this.brokerId,
-                taskId: task.id,
-                tenantId,
-                stage,
-                mode,
-                outcome,
-                reasons,
-                twipContextSignal: {
-                    terminalBound: contextSignal.terminalBound,
-                    twid: contextSignal.twid,
-                    available: contextSignal.available,
-                    stale: contextSignal.stale,
-                    ageMs: contextSignal.ageMs,
-                    source: contextSignal.source,
-                    riskLevel: contextSignal.riskLevel,
-                    reasons: contextSignal.reasons,
-                    redactionCount: contextSignal.redactionCount,
-                    capturedAt: contextSignal.capturedAt,
-                    preview: contextSignal.preview,
-                },
-                at: timestamp,
-                metricsHash: CONFIG.GATE_METRICS_HASH,
-            }));
+            else if (this.redis) {
+                const tx = this.redis.multi();
+                for (const key of keys) {
+                    tx.hincrby(CONFIG.GATE_METRICS_HASH, key, 1);
+                }
+                await tx.exec();
+                await this.redis.publish(CONFIG.DECISION_CHANNEL, JSON.stringify({
+                    type: 'federation_gate_telemetry',
+                    brokerId: this.brokerId,
+                    taskId: task.id,
+                    tenantId,
+                    stage,
+                    mode,
+                    outcome,
+                    reasons,
+                    twipContextSignal: {
+                        terminalBound: contextSignal.terminalBound,
+                        twid: contextSignal.twid,
+                        available: contextSignal.available,
+                        stale: contextSignal.stale,
+                        ageMs: contextSignal.ageMs,
+                        source: contextSignal.source,
+                        riskLevel: contextSignal.riskLevel,
+                        reasons: contextSignal.reasons,
+                        redactionCount: contextSignal.redactionCount,
+                        capturedAt: contextSignal.capturedAt,
+                        preview: contextSignal.preview,
+                    },
+                    at: timestamp,
+                    metricsHash: CONFIG.GATE_METRICS_HASH,
+                }));
+            }
         }
         catch (error) {
             console.warn('[Broker] Failed to record federation gate telemetry:', error.message);
@@ -890,6 +1026,16 @@ class BrokerAgent {
             return 'missing_cumulative_tenant';
         if (normalized.includes('missing twid'))
             return 'missing_twid';
+        if (normalized.includes('external gate worker unavailable')) {
+            return 'external_worker_unavailable';
+        }
+        if (normalized.includes('external gate worker returned invalid json')) {
+            return 'external_worker_invalid_json';
+        }
+        if (normalized.includes('external gate check failed'))
+            return 'external_worker_request_failed';
+        if (normalized.includes('external gate returned http'))
+            return 'external_worker_http_error';
         if (normalized.includes('twip context signal unavailable'))
             return 'twip_context_unavailable';
         if (normalized.includes('twip context stale'))
@@ -918,22 +1064,42 @@ class BrokerAgent {
             this.heartbeatInterval = null;
         }
         try {
-            const existing = await this.redis.hGet(CONFIG.AGENT_REGISTRY_KEY, this.brokerId);
-            const parsed = existing ? JSON.parse(existing) : {};
-            await this.redis.hSet(CONFIG.AGENT_REGISTRY_KEY, this.brokerId, JSON.stringify({
-                ...parsed,
-                id: this.brokerId,
-                role: 'broker',
-                status: 'offline',
-                isOnline: false,
-                lastSeen: new Date().toISOString(),
-            }));
+            const nowIso = new Date().toISOString();
+            if (this.upstash) {
+                const existing = await this.upstash.hget(CONFIG.AGENT_REGISTRY_KEY, this.brokerId);
+                const parsed = existing ? JSON.parse(existing) : {};
+                await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, {
+                    [this.brokerId]: JSON.stringify({
+                        ...parsed,
+                        id: this.brokerId,
+                        role: 'broker',
+                        status: 'offline',
+                        isOnline: false,
+                        lastSeen: nowIso,
+                    }),
+                });
+            }
+            else if (this.redis) {
+                const existing = await this.redis.hget(CONFIG.AGENT_REGISTRY_KEY, this.brokerId);
+                const parsed = existing ? JSON.parse(existing) : {};
+                await this.redis.hset(CONFIG.AGENT_REGISTRY_KEY, this.brokerId, JSON.stringify({
+                    ...parsed,
+                    id: this.brokerId,
+                    role: 'broker',
+                    status: 'offline',
+                    isOnline: false,
+                    lastSeen: nowIso,
+                }));
+            }
         }
         catch {
             // best effort
         }
-        await this.redisBlocking.quit();
-        await this.redis.quit();
+        if (this.redisBlocking)
+            await this.redisBlocking.quit();
+        if (this.redis)
+            await this.redis.quit();
+        this.upstash = null;
     }
 }
 const broker = new BrokerAgent();

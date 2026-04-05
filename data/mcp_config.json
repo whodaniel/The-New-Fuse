@@ -175,6 +175,26 @@
       "priority": 6,
       "tags": ["browser", "automation", "scraping", "testing"]
     },
+    "chrome-browser": {
+      "command": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "args": [
+        "--remote-debugging-port=9222",
+        "--headless",
+        "--disable-gpu",
+        "--no-sandbox"
+      ],
+      "description": "Chrome Browser MCP Server - provides direct Chrome browser control for web automation and testing",
+      "priority": 9,
+      "tags": ["browser", "chrome", "automation", "testing"],
+      "capabilities": [
+        "Browser navigation",
+        "DOM inspection",
+        "Element interaction",
+        "Screenshot capture",
+        "Console log retrieval",
+        "Network monitoring"
+      ]
+    },
     "sequential-thinking": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
@@ -254,7 +274,7 @@
   },
   "_readme": {
     "description": "The New Fuse MCP Configuration - Optimized for Google Antigravity IDE",
-    "last_updated": "2025-01-07",
+    "last_updated": "2026-04-03",
     "note": "Servers are prioritized by importance. Fill in API keys/tokens for services you want to use.",
     "required_api_keys": {
       "GITHUB_PERSONAL_ACCESS_TOKEN": "Get from https://github.com/settings/tokens",
@@ -290,6 +310,9 @@
       "stitch",
       "applescript_execute",
       "context7-server"
+    ],
+    "custom_servers": [
+      "chrome-browser"
     ]
   }
 }

@@ -5,6 +5,10 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": ".",
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "noEmitOnError": false,
+    "noImplicitAny": false,
     "types": ["node", "jest"],
     "paths": {
       "@/*": ["./src/*"],

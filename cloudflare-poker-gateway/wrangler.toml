@@ -8,4 +8,4 @@ routes = ["poker.ai-arcade.xyz/*"]
 
 [vars]
 FRONTEND_URL = "https://ai-arcade-poker.pages.dev"
-BACKEND_URL = "https://casin8-games-backend-production.up.railway.app"
+BACKEND_URL = "https://backend-241337102384.us-central1.run.app"

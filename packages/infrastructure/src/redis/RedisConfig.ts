@@ -76,6 +76,10 @@ export class RedisConfig {
       port,
       password,
       db,
+      upstash: {
+        restUrl: this.configService.get<string>('UPSTASH_REDIS_REST_URL'),
+        restToken: this.configService.get<string>('UPSTASH_REDIS_REST_TOKEN'),
+      },
       poolSize: this.configService.get<number>('REDIS_POOL_SIZE', 10),
       retryAttempts: this.configService.get<number>('REDIS_RETRY_ATTEMPTS', 3),
       retryDelay: this.configService.get<number>('REDIS_RETRY_DELAY', 1000),
@@ -88,6 +92,16 @@ export class RedisConfig {
         retryDelayOnFailover: this.configService.get<number>('REDIS_CLUSTER_RETRY_DELAY', 100),
       },
     };
+  }
+
+  getUpstashConfig(): { url: string; token: string } | null {
+    const restUrl = this.configService.get<string>('UPSTASH_REDIS_REST_URL');
+    const restToken = this.configService.get<string>('UPSTASH_REDIS_REST_TOKEN');
+
+    if (restUrl && restToken) {
+      return { url: restUrl, token: restToken };
+    }
+    return null;
   }
 
   getConnectionOptions(): {

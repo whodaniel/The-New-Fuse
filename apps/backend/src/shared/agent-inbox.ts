@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import Redis from 'ioredis';
+// @ts-ignore
 import { v4 as uuid } from 'uuid';
 
 export interface Task<T = any> {

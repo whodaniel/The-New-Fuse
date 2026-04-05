@@ -62,10 +62,18 @@ import { randomUUID } from 'crypto';
 import { existsSync, promises as fs } from 'fs';
 import { execFile } from 'node:child_process';
 import path from 'path';
-// @ts-ignore
-import { createClient } from 'redis';
 import { promisify } from 'util';
 import WebSocket from 'ws';
+
+// @ts-ignore
+import {
+  createStandaloneRedisClient,
+  createUpstashRestClient,
+} from '@the-new-fuse/infrastructure';
+
+import { Redis as UpstashRedis } from '@upstash/redis';
+import { Redis, Cluster } from 'ioredis';
+
 import { attachAuditTrace, type TnfAuditTrace } from './contracts/audit';
 import {
   buildCanonicalEntityId,
@@ -473,8 +481,9 @@ class MasterClock {
   orchestratorIdentity: TnfAgentIdentityRecord;
   registry: AgentRegistry;
   ws: WebSocket | null;
-  redis: ReturnType<typeof createClient> | null;
-  redisSub: ReturnType<typeof createClient> | null;
+  redis: Redis | Cluster | null;
+  redisSub: Redis | Cluster | null;
+  upstash: UpstashRedis | null;
   isRunning: boolean;
   heartbeatInterval: NodeJS.Timeout | null;
   stallCheckInterval: NodeJS.Timeout | null;
@@ -498,6 +507,7 @@ class MasterClock {
     this.ws = null;
     this.redis = null;
     this.redisSub = null;
+    this.upstash = null;
     this.isRunning = false;
     this.heartbeatInterval = null;
     this.stallCheckInterval = null;
@@ -561,28 +571,45 @@ class MasterClock {
   async connectRedis() {
     log('info', 'REDIS', 'Connecting to Redis for cloud coordination...');
 
-    this.redis = createClient({ url: CONFIG.REDIS_URL });
-    this.redisSub = createClient({ url: CONFIG.REDIS_URL });
+    try {
+      // Use unified standalone utilities
+      this.redis = createStandaloneRedisClient({ lazyConnect: true });
+      this.redisSub = createStandaloneRedisClient({ lazyConnect: true });
+      this.upstash = createUpstashRestClient();
 
-    this.redis.on('error', (err: any) => log('error', 'REDIS', `Client error: ${err.message}`));
-    this.redisSub.on('error', (err: any) =>
-      log('error', 'REDIS', `Subscriber error: ${err.message}`)
-    );
-
-    await this.redis.connect();
-    await this.redisSub.connect();
-
-    // Subscribe to ingress for messages from other components
-    await this.redisSub.subscribe(CONFIG.REDIS_KEYS.INGRESS, (message: string) => {
-      try {
-        const envelope = JSON.parse(message);
-        this.handleRedisMessage(envelope);
-      } catch (e) {
-        // Invalid message
+      if (this.redis instanceof Redis) {
+        this.redis.on('error', (err: any) => log('error', 'REDIS', `Client error: ${err.message}`));
+        await this.redis.connect().catch((err) => {
+          log('warn', 'REDIS', `Failed to connect primary client (TCP): ${err.message}`);
+        });
       }
-    });
 
-    log('info', 'REDIS', '✅ Connected to Redis cloud coordination');
+      if (this.redisSub instanceof Redis) {
+        this.redisSub.on('error', (err: any) =>
+          log('error', 'REDIS', `Subscriber error: ${err.message}`)
+        );
+        await this.redisSub.connect().catch((err) => {
+          log('warn', 'REDIS', `Failed to connect subscriber client (TCP): ${err.message}`);
+        });
+
+        // Subscribe to ingress for messages from other components
+        await this.redisSub.subscribe(CONFIG.REDIS_KEYS.INGRESS);
+        this.redisSub.on('message', (channel, message) => {
+          if (channel === CONFIG.REDIS_KEYS.INGRESS) {
+            try {
+              const envelope = JSON.parse(message);
+              this.handleRedisMessage(envelope);
+            } catch (e) {
+              // Invalid message
+            }
+          }
+        });
+      }
+
+      log('info', 'REDIS', '✅ Connected to Redis cloud coordination');
+    } catch (error: any) {
+      log('error', 'REDIS', `Failed to initialize Redis: ${error.message}`);
+    }
   }
 
   async connectRelay(): Promise<void> {
@@ -665,14 +692,23 @@ class MasterClock {
     const channelsToJoin = new Set(CONFIG.CHANNELS);
 
     // Load persisted channels from Redis
-    if (this.redis) {
+    if (this.upstash) {
       try {
-        const persistedChannels = await this.redis.sMembers(CONFIG.REDIS_KEYS.CHANNELS);
+        const persistedChannels = await this.upstash.smembers(CONFIG.REDIS_KEYS.CHANNELS);
         for (const ch of persistedChannels) {
           channelsToJoin.add(ch);
         }
       } catch (e) {
-        log('warn', 'REDIS', 'Failed to load persisted channels', e);
+        log('warn', 'REDIS', 'Failed to load persisted channels from Upstash', e);
+      }
+    } else if (this.redis) {
+      try {
+        const persistedChannels = await this.redis.smembers(CONFIG.REDIS_KEYS.CHANNELS);
+        for (const ch of persistedChannels) {
+          channelsToJoin.add(ch);
+        }
+      } catch (e) {
+        log('warn', 'REDIS', 'Failed to load persisted channels from Redis', e);
       }
     }
 
@@ -737,9 +773,23 @@ class MasterClock {
     });
 
     // Heartbeat to Redis (for cloud coordination)
-    if (this.redis) {
+    if (this.upstash) {
+      this.upstash
+        .hset(CONFIG.REDIS_KEYS.STATE, {
+          orchestrator: JSON.stringify({
+            sessionId: this.sessionId,
+            lastHeartbeat: now,
+            stats,
+            superCycle: superCycleStats,
+            isActive: true,
+          }),
+        })
+        .catch(() => {});
+
+      this.persistSuperCycleState(now).catch(() => {});
+    } else if (this.redis) {
       this.redis
-        .hSet(
+        .hset(
           CONFIG.REDIS_KEYS.STATE,
           'orchestrator',
           JSON.stringify({
@@ -785,7 +835,7 @@ class MasterClock {
   }
 
   startTaskPolling() {
-    if (!this.redis || this.taskPollingInterval) return;
+    if ((!this.redis && !this.upstash) || this.taskPollingInterval) return;
 
     log(
       'info',
@@ -905,7 +955,7 @@ class MasterClock {
   }
 
   private async pollAndQueueTasks(): Promise<void> {
-    if (!this.redis) return;
+    if (!this.redis && !this.upstash) return;
 
     const rows = await this.fetchLedgerTasks();
     this.taskPollFailureCount = 0;
@@ -968,9 +1018,17 @@ class MasterClock {
       };
 
       const targetQueue = this.targetQueueForTask(task);
-      await this.redis.lPush(targetQueue, JSON.stringify(queueItem));
-      // Backward compatibility for existing consumers.
-      await this.redis.lPush(CONFIG.REDIS_KEYS.TASKS, JSON.stringify(queueItem));
+      if (this.upstash) {
+        await this.upstash.lpush(targetQueue, JSON.stringify(queueItem));
+        // Backward compatibility for existing consumers.
+        await this.upstash.lpush(CONFIG.REDIS_KEYS.TASKS, JSON.stringify(queueItem));
+        await this.upstash.ltrim(CONFIG.REDIS_KEYS.TASKS, 0, 99);
+      } else if (this.redis) {
+        await this.redis.lpush(targetQueue, JSON.stringify(queueItem));
+        // Backward compatibility for existing consumers.
+        await this.redis.lpush(CONFIG.REDIS_KEYS.TASKS, JSON.stringify(queueItem));
+        await this.redis.ltrim(CONFIG.REDIS_KEYS.TASKS, 0, 99);
+      }
       this.recentQueuedTasks.set(taskId, now);
       this.metrics.tasksQueued += 1;
 
@@ -1021,19 +1079,23 @@ class MasterClock {
       },
     });
 
-    if (!this.redis) return;
+    if (!this.redis && !this.upstash) return;
     try {
-      await this.redis.lPush(
-        CONFIG.REDIS_KEYS.LOGS,
-        JSON.stringify({
-          timestamp: new Date().toISOString(),
-          sessionId: this.sessionId,
-          eventType,
-          content,
-          metadata: auditedMetadata,
-        })
-      );
-      await this.redis.lTrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
+      const logEntry = JSON.stringify({
+        timestamp: new Date().toISOString(),
+        sessionId: this.sessionId,
+        eventType,
+        content,
+        metadata: auditedMetadata,
+      });
+
+      if (this.upstash) {
+        await this.upstash.lpush(CONFIG.REDIS_KEYS.LOGS, logEntry);
+        await this.upstash.ltrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
+      } else if (this.redis) {
+        await this.redis.lpush(CONFIG.REDIS_KEYS.LOGS, logEntry);
+        await this.redis.ltrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
+      }
     } catch {
       // non-fatal
     }
@@ -1936,8 +1998,10 @@ class MasterClock {
       });
 
       // Persist to Redis
-      if (this.redis) {
-        await this.redis.sAdd(CONFIG.REDIS_KEYS.CHANNELS, channelName);
+      if (this.upstash) {
+        await this.upstash.sadd(CONFIG.REDIS_KEYS.CHANNELS, channelName);
+      } else if (this.redis) {
+        await this.redis.sadd(CONFIG.REDIS_KEYS.CHANNELS, channelName);
       }
 
       // Broadcast new channel existence
@@ -2133,7 +2197,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
     targetProcessId?: string;
     metadata?: Record<string, unknown>;
   }): Promise<void> {
-    if (!CONFIG.SELF_PROMPT_ENABLED || !this.redis) {
+    if (!CONFIG.SELF_PROMPT_ENABLED || (!this.redis && !this.upstash)) {
       return;
     }
 
@@ -2218,17 +2282,31 @@ Acknowledge by sending: [${agentId}] Ready for duty!
     );
 
     try {
-      await this.redis.publish(CONFIG.REDIS_KEYS.INGRESS, JSON.stringify(broadcastEnvelope));
-      await this.redis.lPush(
-        CONFIG.REDIS_KEYS.SELF_PROMPTS,
-        JSON.stringify({
-          sessionId: this.sessionId,
-          ...params,
-          cumulativeId,
-          issuedAt: now,
-        })
-      );
-      await this.redis.lTrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
+      if (this.upstash) {
+        await this.upstash.publish(CONFIG.REDIS_KEYS.INGRESS, JSON.stringify(broadcastEnvelope));
+        await this.upstash.lpush(
+          CONFIG.REDIS_KEYS.SELF_PROMPTS,
+          JSON.stringify({
+            sessionId: this.sessionId,
+            ...params,
+            cumulativeId,
+            issuedAt: now,
+          })
+        );
+        await this.upstash.ltrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
+      } else if (this.redis) {
+        await this.redis.publish(CONFIG.REDIS_KEYS.INGRESS, JSON.stringify(broadcastEnvelope));
+        await this.redis.lpush(
+          CONFIG.REDIS_KEYS.SELF_PROMPTS,
+          JSON.stringify({
+            sessionId: this.sessionId,
+            ...params,
+            cumulativeId,
+            issuedAt: now,
+          })
+        );
+        await this.redis.ltrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
+      }
     } catch (error: any) {
       log('warn', 'SELF-PROMPT', `Failed to publish self-prompt: ${error.message}`);
     }
@@ -2262,10 +2340,17 @@ Acknowledge by sending: [${agentId}] Ready for duty!
       );
 
       try {
-        await this.redis.publish(
-          `${CONFIG.REDIS_KEYS.EGRESS_PREFIX}:${params.targetSourceId}`,
-          JSON.stringify(directEnvelope)
-        );
+        if (this.upstash) {
+          await this.upstash.publish(
+            `${CONFIG.REDIS_KEYS.EGRESS_PREFIX}:${params.targetSourceId}`,
+            JSON.stringify(directEnvelope)
+          );
+        } else if (this.redis) {
+          await this.redis.publish(
+            `${CONFIG.REDIS_KEYS.EGRESS_PREFIX}:${params.targetSourceId}`,
+            JSON.stringify(directEnvelope)
+          );
+        }
       } catch (error: any) {
         log(
           'warn',
@@ -2351,31 +2436,40 @@ Acknowledge by sending: [${agentId}] Ready for duty!
   }
 
   async persistSuperCycleState(now: number) {
-    if (!this.redis) return;
+    if (!this.redis && !this.upstash) return;
 
     const processes = Array.from(this.scheduledProcesses.values()).sort((a, b) =>
       a.processId.localeCompare(b.processId)
     );
 
-    await this.redis.hSet(
-      CONFIG.REDIS_KEYS.STATE,
-      'superCycle',
-      JSON.stringify({
-        lastUpdated: now,
-        staleThresholdMs: CONFIG.SUPER_CYCLE_STALE_THRESHOLD,
-        stats: this.getSuperCycleStats(),
-        processes,
-      })
-    );
+    const statePayload = JSON.stringify({
+      lastUpdated: now,
+      staleThresholdMs: CONFIG.SUPER_CYCLE_STALE_THRESHOLD,
+      stats: this.getSuperCycleStats(),
+      processes,
+    });
+
+    if (this.upstash) {
+      await this.upstash.hset(CONFIG.REDIS_KEYS.STATE, { superCycle: statePayload });
+    } else if (this.redis) {
+      await this.redis.hset(CONFIG.REDIS_KEYS.STATE, 'superCycle', statePayload);
+    }
 
     const processState: Record<string, string> = {};
     for (const process of processes) {
       processState[process.processId] = JSON.stringify(process);
     }
 
-    await this.redis.del(CONFIG.REDIS_KEYS.SUPER_CYCLE);
-    if (Object.keys(processState).length > 0) {
-      await this.redis.hSet(CONFIG.REDIS_KEYS.SUPER_CYCLE, processState);
+    if (this.upstash) {
+      await this.upstash.del(CONFIG.REDIS_KEYS.SUPER_CYCLE);
+      if (Object.keys(processState).length > 0) {
+        await this.upstash.hset(CONFIG.REDIS_KEYS.SUPER_CYCLE, processState);
+      }
+    } else if (this.redis) {
+      await this.redis.del(CONFIG.REDIS_KEYS.SUPER_CYCLE);
+      if (Object.keys(processState).length > 0) {
+        await this.redis.hset(CONFIG.REDIS_KEYS.SUPER_CYCLE, processState);
+      }
     }
   }
 
@@ -2507,6 +2601,9 @@ Acknowledge by sending: [${agentId}] Ready for duty!
     if (this.redisSub) {
       await this.redisSub.quit();
     }
+
+    // Upstash client doesn't need explicit quit
+    this.upstash = null;
 
     log('info', 'MASTER', 'Master Clock shutdown complete.');
     log('info', 'MASTER', `Final metrics:`, this.metrics);

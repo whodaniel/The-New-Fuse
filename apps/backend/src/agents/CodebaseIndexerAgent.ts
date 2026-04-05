@@ -251,11 +251,12 @@ export class CodebaseIndexerAgent {
     const files: string[] = [];
 
     for (const pattern of patterns) {
-      const matches = await glob(pattern, {
+      const matches: any = await glob(pattern, {
         cwd: this.workspaceRoot,
         ignore,
       });
-      files.push(...matches.map((f) => path.join(this.workspaceRoot, f)));
+      // @ts-ignore
+      files.push(...matches.map((f: any) => path.join(this.workspaceRoot, f)));
     }
 
     return files;

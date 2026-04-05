@@ -63,12 +63,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const crypto_1 = require("crypto");
-const node_child_process_1 = require("node:child_process");
 const fs_1 = require("fs");
+const node_child_process_1 = require("node:child_process");
 const path_1 = __importDefault(require("path"));
-const redis_1 = require("redis");
 const util_1 = require("util");
 const ws_1 = __importDefault(require("ws"));
+// @ts-ignore
+const infrastructure_1 = require("@the-new-fuse/infrastructure");
+const ioredis_1 = require("ioredis");
+const audit_1 = require("./contracts/audit");
+const identity_1 = require("./contracts/identity");
+const lifecycle_1 = require("./contracts/lifecycle");
 const tnf_envelope_1 = require("./protocol/tnf-envelope");
 const execFileAsync = (0, util_1.promisify)(node_child_process_1.execFile);
 // ============================================================================
@@ -151,6 +156,53 @@ async function logToFile(entry) {
         // Silently fail - log file not critical
     }
 }
+function createMasterClockAgentIdentity(sourceId, info, agentId, ordinal) {
+    let canonicalEntityId = typeof info?.canonicalEntityId === 'string' ? info.canonicalEntityId : null;
+    if (!canonicalEntityId) {
+        try {
+            canonicalEntityId = (0, identity_1.buildCanonicalEntityId)({
+                category: 'AGENT',
+                provider: typeof info?.platform === 'string' && info.platform.trim() ? info.platform : 'unknown',
+                name: typeof info?.name === 'string' && info.name.trim() ? info.name : sourceId || agentId,
+                instance: ordinal,
+            });
+        }
+        catch {
+            canonicalEntityId = null;
+        }
+    }
+    return (0, identity_1.createAgentIdentityRecord)({
+        canonicalEntityId,
+        operationalHandle: agentId,
+        runtimeSessionId: sourceId,
+        aliases: [
+            sourceId,
+            typeof info?.name === 'string' ? info.name : null,
+            typeof info?.operationalHandle === 'string' ? info.operationalHandle : null,
+            ...(Array.isArray(info?.aliases) ? info.aliases : []),
+        ],
+    });
+}
+function createOrchestratorIdentity(sessionId) {
+    let canonicalEntityId = null;
+    try {
+        canonicalEntityId = (0, identity_1.buildCanonicalEntityId)({
+            category: 'AGENT',
+            provider: 'TNF',
+            name: 'MASTER_CLOCK',
+            instance: 1,
+        });
+    }
+    catch {
+        canonicalEntityId = null;
+    }
+    return (0, identity_1.createAgentIdentityRecord)({
+        canonicalEntityId,
+        operationalHandle: 'ORCHESTRATOR',
+        runtimeSessionId: sessionId,
+        aliases: [sessionId, 'master-clock', 'tnf-master-clock'],
+    });
+}
 class AgentRegistry {
     agents;
     nextAgentNumber;
@@ -170,16 +222,21 @@ class AgentRegistry {
         // Generate new ID
         const agentNum = String(this.nextAgentNumber++).padStart(2, '0');
         const agentId = `AGENT-${agentNum}`;
+        const identity = createMasterClockAgentIdentity(sourceId, info, agentId, this.nextAgentNumber - 1);
         const agent = {
             agentId,
             sourceId,
+            canonicalEntityId: identity.canonicalEntityId,
+            operationalHandle: identity.operationalHandle,
+            runtimeSessionId: identity.runtimeSessionId,
+            aliases: identity.aliases,
             platform: info.platform || 'unknown',
             name: info.name || `Agent ${agentNum}`,
             capabilities: info.capabilities || [],
             registeredAt: Date.now(),
             lastHeartbeat: Date.now(),
             lastActivity: Date.now(),
-            status: 'active',
+            status: (0, lifecycle_1.normalizeAgentLifecycleStatus)('active') || 'active',
             messageCount: 0,
             violations: 0,
             channel: info.channel || null,
@@ -195,7 +252,7 @@ class AgentRegistry {
         const agent = this.agents.get(agentId);
         if (agent) {
             agent.lastHeartbeat = Date.now();
-            agent.status = 'active';
+            agent.status = (0, lifecycle_1.normalizeAgentLifecycleStatus)('active') || 'active';
         }
     }
     recordActivity(agentId) {
@@ -203,7 +260,7 @@ class AgentRegistry {
         if (agent) {
             agent.lastActivity = Date.now();
             agent.messageCount++;
-            agent.status = 'active';
+            agent.status = (0, lifecycle_1.normalizeAgentLifecycleStatus)('active') || 'active';
         }
     }
     recordViolation(agentId, type) {
@@ -241,7 +298,7 @@ class AgentRegistry {
     markOffline(agentId) {
         const agent = this.agents.get(agentId);
         if (agent) {
-            agent.status = 'offline';
+            agent.status = (0, lifecycle_1.normalizeAgentLifecycleStatus)('offline') || 'offline';
             log('warn', 'REGISTRY', `Agent marked offline: ${agentId}`, { agentId });
         }
     }
@@ -260,10 +317,12 @@ class AgentRegistry {
 }
 class MasterClock {
     sessionId;
+    orchestratorIdentity;
     registry;
     ws;
     redis;
     redisSub;
+    upstash;
     isRunning;
     heartbeatInterval;
     stallCheckInterval;
@@ -281,10 +340,12 @@ class MasterClock {
     dtfCache;
     constructor() {
         this.sessionId = `ORCHESTRATOR-${Date.now()}`;
+        this.orchestratorIdentity = createOrchestratorIdentity(this.sessionId);
         this.registry = new AgentRegistry();
         this.ws = null;
         this.redis = null;
         this.redisSub = null;
+        this.upstash = null;
         this.isRunning = false;
         this.heartbeatInterval = null;
         this.stallCheckInterval = null;
@@ -340,23 +401,41 @@ class MasterClock {
     }
     async connectRedis() {
         log('info', 'REDIS', 'Connecting to Redis for cloud coordination...');
-        this.redis = (0, redis_1.createClient)({ url: CONFIG.REDIS_URL });
-        this.redisSub = (0, redis_1.createClient)({ url: CONFIG.REDIS_URL });
-        this.redis.on('error', (err) => log('error', 'REDIS', `Client error: ${err.message}`));
-        this.redisSub.on('error', (err) => log('error', 'REDIS', `Subscriber error: ${err.message}`));
-        await this.redis.connect();
-        await this.redisSub.connect();
-        // Subscribe to ingress for messages from other components
-        await this.redisSub.subscribe(CONFIG.REDIS_KEYS.INGRESS, (message) => {
-            try {
-                const envelope = JSON.parse(message);
-                this.handleRedisMessage(envelope);
+        try {
+            // Use unified standalone utilities
+            this.redis = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
+            this.redisSub = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
+            this.upstash = (0, infrastructure_1.createUpstashRestClient)();
+            if (this.redis instanceof ioredis_1.Redis) {
+                this.redis.on('error', (err) => log('error', 'REDIS', `Client error: ${err.message}`));
+                await this.redis.connect().catch((err) => {
+                    log('warn', 'REDIS', `Failed to connect primary client (TCP): ${err.message}`);
+                });
             }
-            catch (e) {
-                // Invalid message
+            if (this.redisSub instanceof ioredis_1.Redis) {
+                this.redisSub.on('error', (err) => log('error', 'REDIS', `Subscriber error: ${err.message}`));
+                await this.redisSub.connect().catch((err) => {
+                    log('warn', 'REDIS', `Failed to connect subscriber client (TCP): ${err.message}`);
+                });
+                // Subscribe to ingress for messages from other components
+                await this.redisSub.subscribe(CONFIG.REDIS_KEYS.INGRESS);
+                this.redisSub.on('message', (channel, message) => {
+                    if (channel === CONFIG.REDIS_KEYS.INGRESS) {
+                        try {
+                            const envelope = JSON.parse(message);
+                            this.handleRedisMessage(envelope);
+                        }
+                        catch (e) {
+                            // Invalid message
+                        }
+                    }
+                });
             }
-        });
-        log('info', 'REDIS', '✅ Connected to Redis cloud coordination');
+            log('info', 'REDIS', '✅ Connected to Redis cloud coordination');
+        }
+        catch (error) {
+            log('error', 'REDIS', `Failed to initialize Redis: ${error.message}`);
+        }
     }
     async connectRelay() {
         return new Promise((resolve, reject) => {
@@ -399,11 +478,16 @@ class MasterClock {
     // ORCHESTRATOR REGISTRATION
     // --------------------------------------------------------------------------
     registerAsOrchestrator() {
+        const orchestrator = this.getOrchestratorEnvelopeIdentity();
         this.send({
             type: 'AGENT_REGISTER',
             payload: {
                 agent: {
                     id: this.sessionId,
+                    canonicalEntityId: orchestrator.canonicalEntityId,
+                    operationalHandle: orchestrator.operationalHandle,
+                    runtimeSessionId: orchestrator.runtimeSessionId,
+                    aliases: orchestrator.aliases,
                     name: 'TNF Master Orchestrator',
                     platform: 'orchestrator',
                     role: 'ORCHESTRATOR',
@@ -422,15 +506,26 @@ class MasterClock {
     async joinAllChannels() {
         const channelsToJoin = new Set(CONFIG.CHANNELS);
         // Load persisted channels from Redis
-        if (this.redis) {
+        if (this.upstash) {
             try {
-                const persistedChannels = await this.redis.sMembers(CONFIG.REDIS_KEYS.CHANNELS);
+                const persistedChannels = await this.upstash.smembers(CONFIG.REDIS_KEYS.CHANNELS);
                 for (const ch of persistedChannels) {
                     channelsToJoin.add(ch);
                 }
             }
             catch (e) {
-                log('warn', 'REDIS', 'Failed to load persisted channels', e);
+                log('warn', 'REDIS', 'Failed to load persisted channels from Upstash', e);
+            }
+        }
+        else if (this.redis) {
+            try {
+                const persistedChannels = await this.redis.smembers(CONFIG.REDIS_KEYS.CHANNELS);
+                for (const ch of persistedChannels) {
+                    channelsToJoin.add(ch);
+                }
+            }
+            catch (e) {
+                log('warn', 'REDIS', 'Failed to load persisted channels from Redis', e);
             }
         }
         for (const channel of channelsToJoin) {
@@ -467,11 +562,15 @@ class MasterClock {
         const now = Date.now();
         const stats = this.registry.getStats();
         const superCycleStats = this.getSuperCycleStats();
+        const orchestrator = this.getOrchestratorEnvelopeIdentity();
         // Heartbeat to relay
         this.send({
             type: 'HEARTBEAT',
             payload: {
                 sessionId: this.sessionId,
+                canonicalEntityId: orchestrator.canonicalEntityId,
+                operationalHandle: orchestrator.operationalHandle,
+                runtimeSessionId: orchestrator.runtimeSessionId,
                 role: 'ORCHESTRATOR',
                 timestamp: now,
                 stats,
@@ -480,9 +579,23 @@ class MasterClock {
             },
         });
         // Heartbeat to Redis (for cloud coordination)
-        if (this.redis) {
+        if (this.upstash) {
+            this.upstash
+                .hset(CONFIG.REDIS_KEYS.STATE, {
+                orchestrator: JSON.stringify({
+                    sessionId: this.sessionId,
+                    lastHeartbeat: now,
+                    stats,
+                    superCycle: superCycleStats,
+                    isActive: true,
+                }),
+            })
+                .catch(() => { });
+            this.persistSuperCycleState(now).catch(() => { });
+        }
+        else if (this.redis) {
             this.redis
-                .hSet(CONFIG.REDIS_KEYS.STATE, 'orchestrator', JSON.stringify({
+                .hset(CONFIG.REDIS_KEYS.STATE, 'orchestrator', JSON.stringify({
                 sessionId: this.sessionId,
                 lastHeartbeat: now,
                 stats,
@@ -512,7 +625,7 @@ class MasterClock {
         }, checkInterval);
     }
     startTaskPolling() {
-        if (!this.redis || this.taskPollingInterval)
+        if ((!this.redis && !this.upstash) || this.taskPollingInterval)
             return;
         log('info', 'TASK-POLL', `Starting vote-aware task polling (every ${CONFIG.TASK_POLL_INTERVAL_MS}ms)`);
         const run = () => {
@@ -629,7 +742,7 @@ class MasterClock {
         throw new Error(`Ledger poll failed: ${lastError || 'unknown error'}`);
     }
     async pollAndQueueTasks() {
-        if (!this.redis)
+        if (!this.redis && !this.upstash)
             return;
         const rows = await this.fetchLedgerTasks();
         this.taskPollFailureCount = 0;
@@ -685,9 +798,18 @@ class MasterClock {
                 createdAt: task.createdAt || new Date().toISOString(),
             };
             const targetQueue = this.targetQueueForTask(task);
-            await this.redis.lPush(targetQueue, JSON.stringify(queueItem));
-            // Backward compatibility for existing consumers.
-            await this.redis.lPush(CONFIG.REDIS_KEYS.TASKS, JSON.stringify(queueItem));
+            if (this.upstash) {
+                await this.upstash.lpush(targetQueue, JSON.stringify(queueItem));
+                // Backward compatibility for existing consumers.
+                await this.upstash.lpush(CONFIG.REDIS_KEYS.TASKS, JSON.stringify(queueItem));
+                await this.upstash.ltrim(CONFIG.REDIS_KEYS.TASKS, 0, 99);
+            }
+            else if (this.redis) {
+                await this.redis.lpush(targetQueue, JSON.stringify(queueItem));
+                // Backward compatibility for existing consumers.
+                await this.redis.lpush(CONFIG.REDIS_KEYS.TASKS, JSON.stringify(queueItem));
+                await this.redis.ltrim(CONFIG.REDIS_KEYS.TASKS, 0, 99);
+            }
             this.recentQueuedTasks.set(taskId, now);
             this.metrics.tasksQueued += 1;
             await this.emitActivityEvent('task_queued_from_votes', `Queued task ${taskId} (${queueItem.title}) with score ${rankedTask.score}`, {
@@ -702,6 +824,17 @@ class MasterClock {
         }
     }
     async emitActivityEvent(eventType, content, metadata) {
+        const auditedMetadata = this.attachOrchestratorAudit({
+            isSystemMessage: true,
+            source: 'ORCHESTRATOR',
+            eventType,
+            activityChannel: 'General',
+            sessionId: this.sessionId,
+            ...metadata,
+        }, {
+            channelId: 'fuse-activity-log',
+            sessionId: this.sessionId,
+        });
         this.send({
             type: 'MESSAGE_SEND',
             channel: 'fuse-activity-log',
@@ -709,27 +842,27 @@ class MasterClock {
                 to: 'broadcast',
                 content,
                 messageType: 'event',
-                metadata: {
-                    isSystemMessage: true,
-                    source: 'ORCHESTRATOR',
-                    eventType,
-                    activityChannel: 'General',
-                    sessionId: this.sessionId,
-                    ...metadata,
-                },
+                metadata: auditedMetadata,
             },
         });
-        if (!this.redis)
+        if (!this.redis && !this.upstash)
             return;
         try {
-            await this.redis.lPush(CONFIG.REDIS_KEYS.LOGS, JSON.stringify({
+            const logEntry = JSON.stringify({
                 timestamp: new Date().toISOString(),
                 sessionId: this.sessionId,
                 eventType,
                 content,
-                metadata,
-            }));
-            await this.redis.lTrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
+                metadata: auditedMetadata,
+            });
+            if (this.upstash) {
+                await this.upstash.lpush(CONFIG.REDIS_KEYS.LOGS, logEntry);
+                await this.upstash.ltrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
+            }
+            else if (this.redis) {
+                await this.redis.lpush(CONFIG.REDIS_KEYS.LOGS, logEntry);
+                await this.redis.ltrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
+            }
         }
         catch {
             // non-fatal
@@ -1147,7 +1280,7 @@ class MasterClock {
             const attempts = this.recoveryAttempts.get(agent.agentId) || 0;
             if (agent.status === 'active') {
                 // First detection - mark as stalled
-                agent.status = 'stalled';
+                agent.status = (0, lifecycle_1.normalizeAgentLifecycleStatus)('stalled') || 'stalled';
                 this.metrics.stallsDetected++;
                 log('warn', 'WATCHDOG', `STALL DETECTED: ${agent.agentId} (idle: ${Math.round(idleTime / 1000)}s)`, { agentId: agent.agentId });
                 // Immediate recovery attempt
@@ -1277,6 +1410,7 @@ class MasterClock {
                 channel,
                 platform: this.detectPlatform(content),
                 capabilities: this.detectCapabilities(content),
+                aliases: [sourceId],
             });
             this.metrics.agentsOnboarded++;
             // Send assignment notification
@@ -1315,6 +1449,10 @@ class MasterClock {
         const sourceId = info.id || msg.source;
         if (sourceId && sourceId !== this.sessionId) {
             const agentId = this.registry.assignAgentId(sourceId, {
+                canonicalEntityId: info.canonicalEntityId,
+                operationalHandle: info.operationalHandle,
+                runtimeSessionId: info.runtimeSessionId,
+                aliases: info.aliases,
                 platform: info.platform,
                 name: info.name,
                 capabilities: info.capabilities,
@@ -1448,7 +1586,7 @@ class MasterClock {
             // Check if this agent needs onboarding
             const existingAgent = this.registry.getAgentBySource(agentId);
             if (!existingAgent && agentId !== this.sessionId) {
-                const newId = this.registry.assignAgentId(agentId, { channel });
+                const newId = this.registry.assignAgentId(agentId, { channel, aliases: [agentId] });
                 this.broadcastToChannel(channel, this.createAssignmentMessage(newId));
             }
         }
@@ -1473,8 +1611,11 @@ class MasterClock {
                 payload: { name: channelName },
             });
             // Persist to Redis
-            if (this.redis) {
-                await this.redis.sAdd(CONFIG.REDIS_KEYS.CHANNELS, channelName);
+            if (this.upstash) {
+                await this.upstash.sadd(CONFIG.REDIS_KEYS.CHANNELS, channelName);
+            }
+            else if (this.redis) {
+                await this.redis.sadd(CONFIG.REDIS_KEYS.CHANNELS, channelName);
             }
             // Broadcast new channel existence
             this.broadcastToChannel('General', `📢 New channel created: ${channelName}`);
@@ -1500,10 +1641,13 @@ class MasterClock {
                 to: 'broadcast',
                 content,
                 messageType: 'text',
-                metadata: {
+                metadata: this.attachOrchestratorAudit({
                     isSystemMessage: true,
                     source: 'ORCHESTRATOR',
-                },
+                }, {
+                    channelId: channel,
+                    sessionId: this.sessionId,
+                }),
             },
         });
     }
@@ -1638,7 +1782,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         }
     }
     async emitSelfPrompt(params) {
-        if (!CONFIG.SELF_PROMPT_ENABLED || !this.redis) {
+        if (!CONFIG.SELF_PROMPT_ENABLED || (!this.redis && !this.upstash)) {
             return;
         }
         const cooldownKey = `${params.kind}:${params.targetAgentId || params.targetProcessId || params.channel}`;
@@ -1694,7 +1838,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
                 },
             },
         };
-        const broadcastEnvelope = (0, tnf_envelope_1.createTNFEnvelope)('event', { agentId: this.sessionId, role: 'orchestrator', platform: 'master-clock' }, { broadcast: true }, {
+        const broadcastEnvelope = (0, tnf_envelope_1.createTNFEnvelope)('event', this.getOrchestratorEnvelopeIdentity(), { broadcast: true }, {
             eventType: 'SELF_PROMPT',
             data: {
                 ...params,
@@ -1705,22 +1849,39 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         }, {
             channelId: params.channel,
             sessionId: this.sessionId,
+        }, {
+            audit: this.getOrchestratorAudit({
+                channelId: params.channel,
+                sessionId: this.sessionId,
+            }),
         });
         try {
-            await this.redis.publish(CONFIG.REDIS_KEYS.INGRESS, JSON.stringify(broadcastEnvelope));
-            await this.redis.lPush(CONFIG.REDIS_KEYS.SELF_PROMPTS, JSON.stringify({
-                sessionId: this.sessionId,
-                ...params,
-                cumulativeId,
-                issuedAt: now,
-            }));
-            await this.redis.lTrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
+            if (this.upstash) {
+                await this.upstash.publish(CONFIG.REDIS_KEYS.INGRESS, JSON.stringify(broadcastEnvelope));
+                await this.upstash.lpush(CONFIG.REDIS_KEYS.SELF_PROMPTS, JSON.stringify({
+                    sessionId: this.sessionId,
+                    ...params,
+                    cumulativeId,
+                    issuedAt: now,
+                }));
+                await this.upstash.ltrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
+            }
+            else if (this.redis) {
+                await this.redis.publish(CONFIG.REDIS_KEYS.INGRESS, JSON.stringify(broadcastEnvelope));
+                await this.redis.lpush(CONFIG.REDIS_KEYS.SELF_PROMPTS, JSON.stringify({
+                    sessionId: this.sessionId,
+                    ...params,
+                    cumulativeId,
+                    issuedAt: now,
+                }));
+                await this.redis.ltrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
+            }
         }
         catch (error) {
             log('warn', 'SELF-PROMPT', `Failed to publish self-prompt: ${error.message}`);
         }
         if (params.targetSourceId) {
-            const directEnvelope = (0, tnf_envelope_1.createTNFEnvelope)('task', { agentId: this.sessionId, role: 'orchestrator', platform: 'master-clock' }, { agentId: params.targetSourceId, role: 'worker' }, {
+            const directEnvelope = (0, tnf_envelope_1.createTNFEnvelope)('task', this.getOrchestratorEnvelopeIdentity(), this.getAgentEnvelopeIdentity(params.targetSourceId), {
                 action: 'self_prompt_continue',
                 parameters: {
                     prompt: params.prompt,
@@ -1733,9 +1894,19 @@ Acknowledge by sending: [${agentId}] Ready for duty!
             }, {
                 channelId: params.channel,
                 sessionId: this.sessionId,
+            }, {
+                audit: this.getOrchestratorAudit({
+                    channelId: params.channel,
+                    sessionId: this.sessionId,
+                }),
             });
             try {
-                await this.redis.publish(`${CONFIG.REDIS_KEYS.EGRESS_PREFIX}:${params.targetSourceId}`, JSON.stringify(directEnvelope));
+                if (this.upstash) {
+                    await this.upstash.publish(`${CONFIG.REDIS_KEYS.EGRESS_PREFIX}:${params.targetSourceId}`, JSON.stringify(directEnvelope));
+                }
+                else if (this.redis) {
+                    await this.redis.publish(`${CONFIG.REDIS_KEYS.EGRESS_PREFIX}:${params.targetSourceId}`, JSON.stringify(directEnvelope));
+                }
             }
             catch (error) {
                 log('warn', 'SELF-PROMPT', `Failed targeted self-prompt publish for ${params.targetSourceId}: ${error.message}`);
@@ -1748,6 +1919,52 @@ Acknowledge by sending: [${agentId}] Ready for duty!
             reason: params.reason,
         });
     }
+    getOrchestratorAudit(overrides = {}) {
+        return {
+            source: 'master-clock',
+            actor: this.orchestratorIdentity.operationalHandle,
+            sessionId: this.sessionId,
+            canonicalEntityId: this.orchestratorIdentity.canonicalEntityId,
+            operationalHandle: this.orchestratorIdentity.operationalHandle,
+            runtimeSessionId: this.orchestratorIdentity.runtimeSessionId,
+            ...overrides,
+        };
+    }
+    attachOrchestratorAudit(metadata, overrides = {}) {
+        return (0, audit_1.attachAuditTrace)(metadata, this.getOrchestratorAudit(overrides));
+    }
+    getOrchestratorEnvelopeIdentity() {
+        return {
+            agentId: this.sessionId,
+            canonicalEntityId: this.orchestratorIdentity.canonicalEntityId || undefined,
+            operationalHandle: this.orchestratorIdentity.operationalHandle,
+            runtimeSessionId: this.orchestratorIdentity.runtimeSessionId || undefined,
+            aliases: this.orchestratorIdentity.aliases,
+            role: 'orchestrator',
+            platform: 'master-clock',
+        };
+    }
+    getAgentEnvelopeIdentity(sourceOrAgentId) {
+        const agent = this.registry.getAgent(sourceOrAgentId) || this.registry.getAgentBySource(sourceOrAgentId);
+        if (!agent) {
+            return {
+                agentId: sourceOrAgentId,
+                operationalHandle: sourceOrAgentId,
+                runtimeSessionId: sourceOrAgentId,
+                aliases: [sourceOrAgentId],
+                role: 'worker',
+            };
+        }
+        return {
+            agentId: agent.sourceId,
+            canonicalEntityId: agent.canonicalEntityId || undefined,
+            operationalHandle: agent.operationalHandle,
+            runtimeSessionId: agent.runtimeSessionId || undefined,
+            aliases: agent.aliases,
+            role: 'worker',
+            platform: agent.platform,
+        };
+    }
     getSuperCycleStats() {
         const processes = Array.from(this.scheduledProcesses.values());
         return {
@@ -1757,22 +1974,36 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         };
     }
     async persistSuperCycleState(now) {
-        if (!this.redis)
+        if (!this.redis && !this.upstash)
             return;
         const processes = Array.from(this.scheduledProcesses.values()).sort((a, b) => a.processId.localeCompare(b.processId));
-        await this.redis.hSet(CONFIG.REDIS_KEYS.STATE, 'superCycle', JSON.stringify({
+        const statePayload = JSON.stringify({
             lastUpdated: now,
             staleThresholdMs: CONFIG.SUPER_CYCLE_STALE_THRESHOLD,
             stats: this.getSuperCycleStats(),
             processes,
-        }));
+        });
+        if (this.upstash) {
+            await this.upstash.hset(CONFIG.REDIS_KEYS.STATE, { superCycle: statePayload });
+        }
+        else if (this.redis) {
+            await this.redis.hset(CONFIG.REDIS_KEYS.STATE, 'superCycle', statePayload);
+        }
         const processState = {};
         for (const process of processes) {
             processState[process.processId] = JSON.stringify(process);
         }
-        await this.redis.del(CONFIG.REDIS_KEYS.SUPER_CYCLE);
-        if (Object.keys(processState).length > 0) {
-            await this.redis.hSet(CONFIG.REDIS_KEYS.SUPER_CYCLE, processState);
+        if (this.upstash) {
+            await this.upstash.del(CONFIG.REDIS_KEYS.SUPER_CYCLE);
+            if (Object.keys(processState).length > 0) {
+                await this.upstash.hset(CONFIG.REDIS_KEYS.SUPER_CYCLE, processState);
+            }
+        }
+        else if (this.redis) {
+            await this.redis.del(CONFIG.REDIS_KEYS.SUPER_CYCLE);
+            if (Object.keys(processState).length > 0) {
+                await this.redis.hset(CONFIG.REDIS_KEYS.SUPER_CYCLE, processState);
+            }
         }
     }
     parseTimestampMs(value) {
@@ -1880,6 +2111,8 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         if (this.redisSub) {
             await this.redisSub.quit();
         }
+        // Upstash client doesn't need explicit quit
+        this.upstash = null;
         log('info', 'MASTER', 'Master Clock shutdown complete.');
         log('info', 'MASTER', `Final metrics:`, this.metrics);
     }

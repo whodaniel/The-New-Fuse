@@ -313,7 +313,7 @@ function renderBrowser(): string {
 function renderSkIDEancerIDE(): string {
   // Use production URL if deployed, otherwise fallback or user setting
   const ideUrl =
-    localStorage.getItem('ideUrl') || 'https://skideancer-ide-production.up.railway.app';
+    localStorage.getItem('ideUrl') || 'https://skideancer-ide-241337102384.us-central1.run.app';
 
   return `
     <div class="ide-container" style="height: 100%; display: flex; flex-direction: column;">
@@ -353,7 +353,7 @@ function renderSettings(): string {
         <h3>Cloud Connection</h3>
         <div class="setting-item">
           <label>Sandbox URL</label>
-          <input type="text" id="sandbox-url" value="wss://tnf-sandbox.up.railway.app/ws" />
+          <input type="text" id="sandbox-url" value="wss://api-gateway-241337102384.us-central1.run.app/ws" />
         </div>
         <button class="primary-btn" onclick="window.tnf.saveSandboxUrl()">Save</button>
       </div>

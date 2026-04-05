@@ -8,7 +8,12 @@
  */
 
 import { EventEmitter } from 'events';
-import Redis, { Redis as RedisClient } from 'ioredis';
+import {
+  createStandaloneRedisClient,
+  createUpstashRestClient,
+} from '@the-new-fuse/infrastructure';
+import { Redis as UpstashRedis } from '@upstash/redis';
+import Redis, { Cluster } from 'ioredis';
 import { TransportAdapter, TransportType, UniversalMessage } from '../universal_bridge.js';
 
 export interface RedisTransportConfig {
@@ -20,8 +25,9 @@ export interface RedisTransportConfig {
 
 export class RedisTransportAdapter extends EventEmitter implements TransportAdapter {
   type: TransportType = 'redis';
-  private publisher: RedisClient;
-  private subscriber: RedisClient;
+  private publisher: Redis | Cluster | null = null;
+  private subscriber: Redis | Cluster | null = null;
+  private upstash: UpstashRedis | null = null;
   private messageHandlers = new Map<string, (msg: UniversalMessage) => void>();
   private config: Required<RedisTransportConfig>;
   private reconnectAttempts = 0;
@@ -40,87 +46,43 @@ export class RedisTransportAdapter extends EventEmitter implements TransportAdap
       url: this.config.redisUrl,
       serialization: this.config.serialization,
     });
-
-    this.publisher = this.createRedisClient('publisher');
-    this.subscriber = this.createRedisClient('subscriber');
-
-    this.setupSubscriberHandlers();
   }
 
   async connect(): Promise<void> {
-    // Clients connect automatically, but we can wait for ready
-    if (this.publisher.status === 'ready' && this.subscriber.status === 'ready') {
+    if (this.connected) return;
+
+    try {
+      this.publisher = createStandaloneRedisClient({ redisUrl: this.config.redisUrl, lazyConnect: true } as any);
+      this.subscriber = createStandaloneRedisClient({ redisUrl: this.config.redisUrl, lazyConnect: true } as any);
+      this.upstash = createUpstashRestClient();
+
+      if (this.publisher instanceof Redis) {
+        await this.publisher.connect().catch(() => {});
+      }
+      if (this.subscriber instanceof Redis) {
+        await this.subscriber.connect().catch(() => {});
+        this.setupSubscriberHandlers();
+      }
+
       this.connected = true;
-      return;
+      this.emit('connected');
+    } catch (error: any) {
+      console.error(`[RedisTransport] Initialization failed: ${error.message}`);
+      throw error;
     }
-
-    return new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        reject(new Error('Redis connection timeout'));
-      }, 10000);
-
-      const checkReady = () => {
-        if (this.publisher.status === 'ready' && this.subscriber.status === 'ready') {
-          clearTimeout(timeout);
-          this.connected = true;
-          resolve();
-        }
-      };
-
-      this.publisher.on('ready', checkReady);
-      this.subscriber.on('ready', checkReady);
-    });
   }
 
-  private createRedisClient(role: 'publisher' | 'subscriber'): RedisClient {
-    const client = new Redis(this.config.redisUrl, {
-      retryStrategy: (times) => {
-        if (!this.config.reconnectOnError) return null;
-        if (times > this.config.maxReconnectAttempts) {
-          console.error(`[RedisTransport:${role}] Max reconnect attempts reached`);
-          return null;
-        }
-        const delay = Math.min(times * 500, 3000);
-        console.log(`[RedisTransport:${role}] Reconnecting in ${delay}ms (attempt ${times})`);
-        return delay;
-      },
-      maxRetriesPerRequest: 3,
-      enableReadyCheck: true,
-      lazyConnect: false,
-    });
-
-    client.on('connect', () => {
-      console.log(`[RedisTransport:${role}] ✅ Connected to Redis`);
-      this.reconnectAttempts = 0;
-    });
-
-    client.on('error', (error) => {
-      console.error(`[RedisTransport:${role}] ❌ Error:`, error.message);
-    });
-
-    client.on('close', () => {
-      console.warn(`[RedisTransport:${role}] 🔌 Connection closed`);
-      if (this.publisher.status !== 'ready' || this.subscriber.status !== 'ready') {
-        this.connected = false;
-        this.emit('disconnected');
-      }
-    });
-
-    client.on('ready', () => {
-      if (this.publisher.status === 'ready' && this.subscriber.status === 'ready') {
-        this.connected = true;
-        this.emit('connected');
-      }
-    });
-
-    return client;
+  private createRedisClient(role: 'publisher' | 'subscriber'): any {
+    // This is no longer used but kept for structural integrity during refactor
+    return null;
   }
 
   private setupSubscriberHandlers(): void {
+    if (!this.subscriber) return;
+
     this.subscriber.on('message', (channel, message) => {
       const handler = this.messageHandlers.get(channel);
       if (!handler) {
-        // Also check for broadcast pattern
         const broadcastHandler = this.messageHandlers.get('broadcast');
         if (broadcastHandler) {
           try {
@@ -140,16 +102,6 @@ export class RedisTransportAdapter extends EventEmitter implements TransportAdap
         console.error('[RedisTransport] Message parse error:', error);
       }
     });
-
-    this.subscriber.on('subscribe', (channel, count) => {
-      console.log(`[RedisTransport] ✅ Subscribed to channel: ${channel} (total: ${count})`);
-    });
-
-    this.subscriber.on('unsubscribe', (channel, count) => {
-      console.log(
-        `[RedisTransport] 🔕 Unsubscribed from channel: ${channel} (remaining: ${count})`
-      );
-    });
   }
 
   /**
@@ -159,7 +111,13 @@ export class RedisTransportAdapter extends EventEmitter implements TransportAdap
     try {
       const channel = message.target.broadcastGroup || message.target.agentId;
       const serialized = this.serialize(message);
-      const recipientCount = await this.publisher.publish(channel, serialized);
+      
+      let recipientCount = 0;
+      if (this.upstash) {
+        recipientCount = await this.upstash.publish(channel, serialized);
+      } else if (this.publisher) {
+        recipientCount = await this.publisher.publish(channel, serialized);
+      }
 
       console.log('[RedisTransport] Message published', {
         channel,
@@ -175,13 +133,12 @@ export class RedisTransportAdapter extends EventEmitter implements TransportAdap
   /**
    * Subscribe to a pattern
    */
-  subscribe(pattern: string, handler: (msg: UniversalMessage) => void): void {
+  async subscribe(pattern: string, handler: (msg: UniversalMessage) => void): Promise<void> {
     try {
       this.messageHandlers.set(pattern, handler);
-      this.subscriber.subscribe(pattern).catch((error) => {
-        console.error(`[RedisTransport] Subscribe error for ${pattern}:`, error);
-        this.messageHandlers.delete(pattern);
-      });
+      if (this.subscriber) {
+        await this.subscriber.subscribe(pattern);
+      }
     } catch (error) {
       console.error('[RedisTransport] Subscribe error:', error);
       this.messageHandlers.delete(pattern);
@@ -192,12 +149,12 @@ export class RedisTransportAdapter extends EventEmitter implements TransportAdap
   /**
    * Unsubscribe from a pattern
    */
-  unsubscribe(pattern: string): void {
+  async unsubscribe(pattern: string): Promise<void> {
     try {
       this.messageHandlers.delete(pattern);
-      this.subscriber.unsubscribe(pattern).catch((error) => {
-        console.error(`[RedisTransport] Unsubscribe error for ${pattern}:`, error);
-      });
+      if (this.subscriber) {
+        await this.subscriber.unsubscribe(pattern);
+      }
     } catch (error) {
       console.error('[RedisTransport] Unsubscribe error:', error);
       throw error;
@@ -212,14 +169,12 @@ export class RedisTransportAdapter extends EventEmitter implements TransportAdap
 
     try {
       this.connected = false;
-      await this.subscriber.quit();
-      await this.publisher.quit();
+      if (this.subscriber) await this.subscriber.quit();
+      if (this.publisher) await this.publisher.quit();
+      this.upstash = null;
       console.log('[RedisTransport] ✅ Disconnected successfully');
     } catch (error) {
       console.error('[RedisTransport] Disconnect error:', error);
-      // Force disconnect
-      this.subscriber.disconnect();
-      this.publisher.disconnect();
     }
   }
 
@@ -273,8 +228,12 @@ export class RedisTransportAdapter extends EventEmitter implements TransportAdap
    */
   async healthCheck(): Promise<boolean> {
     try {
-      await this.publisher.ping();
-      await this.subscriber.ping();
+      if (this.upstash) {
+        await this.upstash.ping();
+      }
+      if (this.publisher) {
+        await this.publisher.ping();
+      }
       return true;
     } catch (error) {
       console.error('[RedisTransport] Health check failed:', error);

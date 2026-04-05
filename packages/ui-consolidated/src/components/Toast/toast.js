@@ -1,0 +1,23 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import * as React from 'react';
+import { cn } from '../../lib/utils';
+const Toast = React.forwardRef(({ title, description, variant = 'default', duration = 3000, action, ...props }, ref) => {
+    // Define variant styles
+    const variantStyles = {
+        default: 'border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100',
+        success: 'border-green-500 bg-green-50 text-green-800 dark:border-green-700 dark:bg-green-900 dark:text-green-100',
+        error: 'border-red-500 bg-red-50 text-red-800 dark:border-red-700 dark:bg-red-900 dark:text-red-100',
+        warning: 'border-yellow-500 bg-yellow-50 text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900 dark:text-yellow-100',
+        destructive: 'border-red-500 bg-red-50 text-red-800 dark:border-red-700 dark:bg-red-900 dark:text-red-100',
+    };
+    // Ensure variant exists in our styles, default to 'default' if not
+    const toastVariant = variant in variantStyles ? variant : 'default';
+    return (_jsxs("div", { ref: ref, className: cn('rounded-lg border shadow-lg p-4', variantStyles[toastVariant] // Type assertion to help TypeScript
+        ), ...props, children: [title && _jsx("div", { className: "font-medium", children: title }), description && _jsx("div", { className: "mt-1 text-sm", children: description }), action && _jsx("div", { className: "mt-2 flex justify-end", children: action })] }));
+});
+Toast.displayName = 'Toast';
+// Create the Toaster component - this will be used to render toasts
+const Toaster = () => {
+    return _jsx("div", { id: "toast-container", className: "fixed top-0 right-0 z-50 p-4 space-y-4" });
+};
+export { Toast, Toaster };

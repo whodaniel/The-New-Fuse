@@ -1,4 +1,9 @@
-import { Redis } from 'ioredis';
+import {
+  createStandaloneRedisClient,
+  createUpstashRestClient,
+} from '@the-new-fuse/infrastructure';
+import { Redis as UpstashRedis } from '@upstash/redis';
+import { Redis, Cluster } from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface AgentInfo {
@@ -57,8 +62,9 @@ export const CONFIG = {
 };
 
 export class RedisAgentClient {
-  private publisher: Redis | null = null;
-  private subscriber: Redis | null = null;
+  private publisher: any = null;
+  private subscriber: any = null;
+  private upstash: any = null;
   private agentInfo: AgentInfo | null = null;
   private messageHandlers: Map<string, Array<(message: AgentMessage, channel: string) => void>> =
     new Map();
@@ -69,38 +75,37 @@ export class RedisAgentClient {
   constructor() {}
 
   async initialize() {
-    const redisConfig = {
-      host: CONFIG.redis.host,
-      port: CONFIG.redis.port,
-      password: CONFIG.redis.password,
-      retryStrategy: (times: number) => Math.min(times * 50, 2000),
-      maxRetriesPerRequest: 3,
-    };
-    const connectionLabel = CONFIG.redis.url || `${CONFIG.redis.host}:${CONFIG.redis.port}`;
-
-    this.publisher = CONFIG.redis.url
-      ? new Redis(CONFIG.redis.url, redisConfig)
-      : new Redis(redisConfig);
-    this.subscriber = CONFIG.redis.url
-      ? new Redis(CONFIG.redis.url, redisConfig)
-      : new Redis(redisConfig);
-
-    this.subscriber.on('message', (channel: string, message: string) => {
-      this.handleIncomingMessage(channel, message);
-    });
-    this.subscriber.on('pmessage', (_pattern: string, channel: string, message: string) => {
-      this.handleIncomingMessage(channel, message);
-    });
-
-    this.subscriber.on('error', (error: Error) => this.logRedisClientError('subscriber', error));
-
-    this.publisher.on('error', (error: Error) => this.logRedisClientError('publisher', error));
-
-    // Use ping to check connection
     try {
-      await this.publisher.ping();
-    } catch (err) {
-      console.warn(`⚠️ Could not connect to Redis at ${connectionLabel}`);
+      // Use unified standalone utilities
+      this.publisher = createStandaloneRedisClient({ lazyConnect: true } as any);
+      this.subscriber = createStandaloneRedisClient({ lazyConnect: true } as any);
+      this.upstash = createUpstashRestClient();
+
+      if (this.publisher instanceof Redis) {
+        this.publisher.on('error', (error: Error) => this.logRedisClientError('publisher', error));
+        await this.publisher.connect().catch(() => {});
+      }
+
+      if (this.subscriber instanceof Redis) {
+        this.subscriber.on('error', (error: Error) => this.logRedisClientError('subscriber', error));
+        await this.subscriber.connect().catch(() => {});
+
+        this.subscriber.on('message', (channel: string, message: string) => {
+          this.handleIncomingMessage(channel, message);
+        });
+        this.subscriber.on('pmessage', (_pattern: string, channel: string, message: string) => {
+          this.handleIncomingMessage(channel, message);
+        });
+      }
+
+      // Check connection
+      if (this.upstash) {
+        await this.upstash.ping();
+      } else if (this.publisher) {
+        await this.publisher.ping();
+      }
+    } catch (err: any) {
+      console.warn(`⚠️ Could not connect to Redis: ${err.message}`);
       throw err;
     }
   }
@@ -124,24 +129,30 @@ export class RedisAgentClient {
       lastSeen: new Date().toISOString(),
     };
 
-    if (!this.publisher || !this.subscriber) throw new Error('Client not initialized');
+    if (!this.publisher && !this.upstash) throw new Error('Client not initialized');
 
     // Store in Redis
-    await this.publisher.hset(
-      'tnf:agent-registry',
-      this.agentInfo.id,
-      JSON.stringify(this.agentInfo)
-    );
+    if (this.upstash) {
+      await this.upstash.hset('tnf:agent-registry', { [this.agentInfo.id]: JSON.stringify(this.agentInfo) });
+    } else if (this.publisher) {
+      await this.publisher.hset(
+        'tnf:agent-registry',
+        this.agentInfo.id,
+        JSON.stringify(this.agentInfo)
+      );
+    }
 
     // Subscribe to channels
-    await this.subscriber.subscribe(
-      CONFIG.channels.agents,
-      CONFIG.channels.conversations,
-      CONFIG.channels.orchestrator,
-      CONFIG.channels.broker,
-      'tnf:bus:ingress' // Listen to global ingress for auctions
-    );
-    await this.subscriber.psubscribe(`${CONFIG.channels.directPrefix}:*:${this.agentInfo.id}`);
+    if (this.subscriber instanceof Redis) {
+      await this.subscriber.subscribe(
+        CONFIG.channels.agents,
+        CONFIG.channels.conversations,
+        CONFIG.channels.orchestrator,
+        CONFIG.channels.broker,
+        'tnf:bus:ingress' // Listen to global ingress for auctions
+      );
+      await this.subscriber.psubscribe(`${CONFIG.channels.directPrefix}:*:${this.agentInfo.id}`);
+    }
 
     // Announce registration
     await this.broadcast({
@@ -169,7 +180,7 @@ export class RedisAgentClient {
    * Submit a bid for an auction
    */
   async submitBid(taskId: string, suitability: number, metadata: any = {}) {
-    if (!this.agentInfo || !this.publisher) throw new Error('Client not initialized');
+    if (!this.agentInfo || (!this.publisher && !this.upstash)) throw new Error('Client not initialized');
 
     const bid: AgentMessage = {
       id: uuidv4(),
@@ -193,7 +204,12 @@ export class RedisAgentClient {
     };
 
     // Publish bid to broker channel
-    await this.publisher.publish(CONFIG.channels.broker, JSON.stringify(bid));
+    const payload = JSON.stringify(bid);
+    if (this.upstash) {
+      await this.upstash.publish(CONFIG.channels.broker, payload);
+    } else if (this.publisher) {
+      await this.publisher.publish(CONFIG.channels.broker, payload);
+    }
     console.log(`[Agent] Submitted bid for task ${taskId} (Suitability: ${suitability})`);
   }
 
@@ -210,7 +226,7 @@ export class RedisAgentClient {
   }
 
   async send(content: string, options: any = {}) {
-    if (!this.agentInfo || !this.publisher) {
+    if (!this.agentInfo || (!this.publisher && !this.upstash)) {
       throw new Error('Agent not registered or publisher not initialized');
     }
 
@@ -236,7 +252,13 @@ export class RedisAgentClient {
     const channel = directAgentId
       ? `${CONFIG.channels.directPrefix}:${this.agentInfo.id}:${directAgentId}`
       : options.channel || CONFIG.channels.conversations;
-    await this.publisher.publish(channel, JSON.stringify(message));
+    
+    const payload = JSON.stringify(message);
+    if (this.upstash) {
+      await this.upstash.publish(channel, payload);
+    } else if (this.publisher) {
+      await this.publisher.publish(channel, payload);
+    }
 
     return message;
   }
@@ -296,30 +318,35 @@ export class RedisAgentClient {
 
   private startHeartbeat() {
     this.heartbeatTimer = setInterval(async () => {
-      if (this.agentInfo && this.publisher) {
+      if (this.agentInfo && (this.publisher || this.upstash)) {
         this.agentInfo.lastSeen = new Date().toISOString();
 
-        await this.publisher.hset(
-          'tnf:agent-registry',
-          this.agentInfo.id,
-          JSON.stringify(this.agentInfo)
-        );
+        const agentData = JSON.stringify(this.agentInfo);
+        const heartbeatData = JSON.stringify({
+          agentId: this.agentInfo.id,
+          agentName: this.agentInfo.name,
+          timestamp: this.agentInfo.lastSeen,
+        });
 
-        await this.publisher.publish(
-          CONFIG.channels.heartbeat,
-          JSON.stringify({
-            agentId: this.agentInfo.id,
-            agentName: this.agentInfo.name,
-            timestamp: this.agentInfo.lastSeen,
-          })
-        );
+        if (this.upstash) {
+          await this.upstash.hset('tnf:agent-registry', { [this.agentInfo.id]: agentData });
+          await this.upstash.publish(CONFIG.channels.heartbeat, heartbeatData);
+        } else if (this.publisher) {
+          await this.publisher.hset('tnf:agent-registry', this.agentInfo.id, agentData);
+          await this.publisher.publish(CONFIG.channels.heartbeat, heartbeatData);
+        }
       }
     }, CONFIG.heartbeatInterval);
   }
 
   async listAgents(): Promise<AgentInfo[]> {
-    if (!this.publisher) return [];
-    const agents = await this.publisher.hgetall('tnf:agent-registry');
+    let agents: Record<string, string> = {};
+    if (this.upstash) {
+      agents = (await this.upstash.hgetall('tnf:agent-registry')) || {};
+    } else if (this.publisher) {
+      agents = await this.publisher.hgetall('tnf:agent-registry');
+    }
+
     const agentList: AgentInfo[] = [];
 
     for (const [id, jsonStr] of Object.entries(agents)) {
@@ -341,18 +368,19 @@ export class RedisAgentClient {
   }
 
   async createChannel(channelName: string) {
-    if (!this.publisher) throw new Error('Client not initialized');
+    const payload = JSON.stringify({
+      type: 'CHANNEL_CREATE',
+      source: this.agentInfo?.id || 'unknown',
+      channel: channelName,
+      timestamp: Date.now(),
+      payload: { name: channelName },
+    });
 
-    await this.publisher.publish(
-      'tnf:bus:ingress',
-      JSON.stringify({
-        type: 'CHANNEL_CREATE',
-        source: this.agentInfo?.id || 'unknown',
-        channel: channelName,
-        timestamp: Date.now(),
-        payload: { name: channelName },
-      })
-    );
+    if (this.upstash) {
+      await this.upstash.publish('tnf:bus:ingress', payload);
+    } else if (this.publisher) {
+      await this.publisher.publish('tnf:bus:ingress', payload);
+    }
 
     return channelName;
   }
@@ -361,9 +389,7 @@ export class RedisAgentClient {
    * Log real-time activity to the swarm log
    */
   async logActivity(eventType: string, content: string, metadata: any = {}) {
-    if (!this.publisher) return;
-
-    const logEntry = {
+    const logEntry = JSON.stringify({
       timestamp: new Date().toISOString(),
       eventType,
       content,
@@ -372,22 +398,24 @@ export class RedisAgentClient {
         agentId: this.agentInfo?.id,
         ...metadata,
       },
-    };
+    });
 
-    await this.publisher.lpush('tnf:master:logs', JSON.stringify(logEntry));
-    await this.publisher.ltrim('tnf:master:logs', 0, 99); // Keep last 100
+    if (this.upstash) {
+      await this.upstash.lpush('tnf:master:logs', logEntry);
+      await this.upstash.ltrim('tnf:master:logs', 0, 99);
+    } else if (this.publisher) {
+      await this.publisher.lpush('tnf:master:logs', logEntry);
+      await this.publisher.ltrim('tnf:master:logs', 0, 99);
+    }
   }
 
   async getChannels(): Promise<string[]> {
-    if (!this.publisher) return [];
-
-    // Query Redis directly for channels
-    const channels = await this.publisher.smembers('tnf:master:channels');
-
-    // Also merge with static config if needed, but MasterClock persists static to Redis on startup?
-    // Wait, MasterClock::joinAllChannels adds them to Redis if persistent logic was fully correct,
-    // but in my previous edit I only read from Redis.
-    // I should probably just return what's in Redis + maybe hardcoded defaults if Redis is empty.
+    let channels: string[] = [];
+    if (this.upstash) {
+      channels = await this.upstash.smembers('tnf:master:channels');
+    } else if (this.publisher) {
+      channels = await this.publisher.smembers('tnf:master:channels');
+    }
 
     const defaultChannels = ['Green', 'Blue', 'Red', 'Yellow', 'Purple', 'General'];
     const allChannels = new Set([...defaultChannels, ...channels]);
@@ -400,13 +428,15 @@ export class RedisAgentClient {
       clearInterval(this.heartbeatTimer);
     }
 
-    if (this.agentInfo && this.publisher) {
+    if (this.agentInfo && (this.publisher || this.upstash)) {
       this.agentInfo.status = 'offline';
-      await this.publisher.hset(
-        'tnf:agent-registry',
-        this.agentInfo.id,
-        JSON.stringify(this.agentInfo)
-      );
+      const agentData = JSON.stringify(this.agentInfo);
+      
+      if (this.upstash) {
+        await this.upstash.hset('tnf:agent-registry', { [this.agentInfo.id]: agentData });
+      } else if (this.publisher) {
+        await this.publisher.hset('tnf:agent-registry', this.agentInfo.id, agentData);
+      }
 
       await this.broadcast({
         type: 'status',
@@ -417,5 +447,6 @@ export class RedisAgentClient {
 
     if (this.subscriber) await this.subscriber.quit();
     if (this.publisher) await this.publisher.quit();
+    this.upstash = null;
   }
 }

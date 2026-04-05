@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import Redis from 'ioredis';
 import { LRUCache } from 'lru-cache';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 export interface CacheOptions {
   ttl?: number;              // Time to live in seconds
@@ -32,7 +32,6 @@ export interface CacheEntry<T = any> {
 @Injectable()
 export class ResponseCacheService {
   private readonly logger = new Logger(ResponseCacheService.name);
-  private redis!: Redis;
   private memoryCache!: LRUCache<string, CacheEntry>;
 
   private stats = {
@@ -44,31 +43,11 @@ export class ResponseCacheService {
     redisHits: 0
   };
 
-  constructor(private configService: ConfigService) {
-    this.initializeRedis();
+  constructor(
+    private configService: ConfigService,
+    private redisService: UnifiedRedisService
+  ) {
     this.initializeMemoryCache();
-  }
-
-  private initializeRedis(): void {
-    const redisHost = this.configService.get('REDIS_HOST', 'localhost');
-    const redisPort = this.configService.get('REDIS_PORT', 6379);
-    const redisPassword = this.configService.get('REDIS_PASSWORD');
-
-    this.redis = new Redis({
-      host: redisHost,
-      port: redisPort,
-      password: redisPassword,
-      retryStrategy: (times) => Math.min(times * 50, 2000),
-      maxRetriesPerRequest: 3
-    });
-
-    this.redis.on('error', (error) => {
-      this.logger.error(`Redis connection error: ${error.message}`);
-    });
-
-    this.redis.on('connect', () => {
-      this.logger.log('Response cache Redis connected');
-    });
   }
 
   private initializeMemoryCache(): void {
@@ -114,7 +93,7 @@ export class ResponseCacheService {
       }
 
       // Check Redis (L2 cache)
-      const redisData = await this.redis.get(cacheKey);
+      const redisData = await this.redisService.get(cacheKey);
       if (redisData) {
         const entry: CacheEntry<T> = JSON.parse(redisData);
 
@@ -129,7 +108,7 @@ export class ResponseCacheService {
           return entry.data;
         } else {
           // Remove expired entry
-          await this.redis.del(cacheKey);
+          await this.redisService.del(cacheKey);
         }
       }
 
@@ -165,7 +144,7 @@ export class ResponseCacheService {
       };
 
       // Store in Redis
-      await this.redis.setex(cacheKey, ttl, JSON.stringify(entry));
+      await this.redisService.set(cacheKey, JSON.stringify(entry), ttl);
 
       // Store in memory cache
       this.memoryCache.set(cacheKey, entry, { ttl: ttl * 1000 });
@@ -193,7 +172,7 @@ export class ResponseCacheService {
     try {
       // Remove from both caches
       this.memoryCache.delete(cacheKey);
-      const deleted = await this.redis.del(cacheKey);
+      const deleted = await this.redisService.del(cacheKey);
 
       this.logger.debug(`Cache deleted for key: ${cacheKey}`);
       return deleted > 0;
@@ -209,21 +188,20 @@ export class ResponseCacheService {
   async invalidateByTag(tag: string): Promise<number> {
     try {
       const tagKey = `tag:${tag}`;
-      const keys = await this.redis.smembers(tagKey);
+      const keys = await this.redisService.smembers(tagKey);
 
       if (keys.length === 0) {
         return 0;
       }
 
       // Delete all keys associated with the tag
-      const pipeline = this.redis.pipeline();
-      keys.forEach(key => {
-        pipeline.del(key);
-        this.memoryCache.delete(key);
-      });
-      pipeline.del(tagKey);
-
-      await pipeline.exec();
+      await Promise.all(
+        keys.map((key) => {
+          this.memoryCache.delete(key);
+          return this.redisService.del(key);
+        })
+      );
+      await this.redisService.del(tagKey);
 
       this.stats.invalidations += keys.length;
       this.logger.log(`Invalidated ${keys.length} cache entries for tag: ${tag}`);
@@ -245,13 +223,7 @@ export class ResponseCacheService {
 
       // Scan for matching keys
       do {
-        const [nextCursor, foundKeys] = await this.redis.scan(
-          cursor,
-          'MATCH',
-          pattern,
-          'COUNT',
-          100
-        );
+        const [nextCursor, foundKeys] = await this.redisService.scan(cursor, pattern, 100);
         cursor = nextCursor;
         keys.push(...foundKeys);
       } while (cursor !== '0');
@@ -261,13 +233,12 @@ export class ResponseCacheService {
       }
 
       // Delete all matching keys
-      const pipeline = this.redis.pipeline();
-      keys.forEach(key => {
-        pipeline.del(key);
-        this.memoryCache.delete(key);
-      });
-
-      await pipeline.exec();
+      await Promise.all(
+        keys.map((key) => {
+          this.memoryCache.delete(key);
+          return this.redisService.del(key);
+        })
+      );
 
       this.stats.invalidations += keys.length;
       this.logger.log(`Invalidated ${keys.length} cache entries for pattern: ${pattern}`);
@@ -286,7 +257,7 @@ export class ResponseCacheService {
     const cacheKeys = keys.map(k => `${namespace}:${k}`);
 
     try {
-      const redisValues = await this.redis.mget(...cacheKeys);
+      const redisValues = await this.redisService.mget(...cacheKeys);
 
       return redisValues.map((value, index) => {
         if (!value) {
@@ -340,7 +311,7 @@ export class ResponseCacheService {
         this.memoryCache.clear();
 
         // Clear Redis cache
-        await this.redis.flushdb();
+        await this.redisService.flushdb();
       }
 
       this.logger.log('Cache cleared');
@@ -356,7 +327,7 @@ export class ResponseCacheService {
     const startTime = Date.now();
 
     try {
-      await this.redis.ping();
+      await this.redisService.ping();
       return {
         status: 'healthy',
         latency: Date.now() - startTime
@@ -374,15 +345,11 @@ export class ResponseCacheService {
 
   private async tagKey(key: string, tags: string[], ttl: number): Promise<void> {
     try {
-      const pipeline = this.redis.pipeline();
-
       for (const tag of tags) {
         const tagKey = `tag:${tag}`;
-        pipeline.sadd(tagKey, key);
-        pipeline.expire(tagKey, ttl + 60); // Keep tag slightly longer
+        await this.redisService.sadd(tagKey, key);
+        await this.redisService.expire(tagKey, ttl + 60); // Keep tag slightly longer
       }
-
-      await pipeline.exec();
     } catch (error) {
       this.logger.error('Error tagging key:', error);
     }
@@ -413,7 +380,6 @@ export class ResponseCacheService {
 
   async onModuleDestroy(): Promise<void> {
     this.memoryCache.clear();
-    await this.redis.quit();
     this.logger.log('Response cache service destroyed');
   }
 }

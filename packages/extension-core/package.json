@@ -1,12 +1,13 @@
 {
   "name": "@the-new-fuse/extension-core",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Shared core logic for TNF Chrome Extensions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rimraf dist && tsc",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "build": "rm -rf dist && tsc",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

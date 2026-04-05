@@ -1,5 +1,8 @@
 {
   "name": "@the-new-fuse/core-monitoring",
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Unified monitoring system for The New Fuse",
   "type": "commonjs",
@@ -19,25 +22,28 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "type-check": "tsc --noEmit",
-    "clean": "rimraf dist .tsbuildinfo tsconfig.tsbuildinfo"
+    "clean": "rm -rf dist .tsbuildinfo tsconfig.tsbuildinfo"
   },
   "dependencies": {
     "events": "^3.3.0"
   },
   "devDependencies": {
+    "@sentry/node": "^10.47.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.8.1",
+    "check-disk-space": "^3.4.0",
     "eslint": "^9.38.0",
     "jest": "^30.3.0",
     "ts-jest": "^29.4.6",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "web-vitals": "^5.2.0"
   },
   "peerDependencies": {
     "@sentry/node": "^8.0.0",
-    "winston": "^3.18.0",
-    "winston-daily-rotate-file": "^5.0.0",
     "prom-client": "^15.1.0",
-    "web-vitals": "^4.0.0"
+    "web-vitals": "^4.0.0",
+    "winston": "^3.18.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "peerDependenciesMeta": {
     "@sentry/node": {

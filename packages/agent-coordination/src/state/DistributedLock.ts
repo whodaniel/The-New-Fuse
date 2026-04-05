@@ -1,16 +1,16 @@
 import { EventEmitter } from 'events';
-import Redis from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 /**
  * Distributed lock implementation using Redis
  */
 export class DistributedLock extends EventEmitter {
-  private redis: Redis;
+  private redisService: UnifiedRedisService;
   private locks: Map<string, { token: string; expiresAt: number }> = new Map();
 
-  constructor(redisUrl: string = 'redis://localhost:6379') {
+  constructor(redisService: UnifiedRedisService) {
     super();
-    this.redis = new Redis(redisUrl);
+    this.redisService = redisService;
   }
 
   /**
@@ -52,7 +52,7 @@ export class DistributedLock extends EventEmitter {
 
     // SET NX: only set if key doesn't exist
     // PX: set expiry in milliseconds
-    const result = await this.redis.set(lockKey, token, 'PX', ttl, 'NX');
+    const result = await this.redisService.set(lockKey, token, ttl, 'NX', 'PX');
 
     return result === 'OK';
   }
@@ -72,7 +72,7 @@ export class DistributedLock extends EventEmitter {
       end
     `;
 
-    const result = await this.redis.eval(script, 1, lockKey, token);
+    const result = await this.redisService.eval(script, [lockKey], [token]);
 
     if (result === 1) {
       this.locks.delete(key);
@@ -98,7 +98,7 @@ export class DistributedLock extends EventEmitter {
       end
     `;
 
-    const result = await this.redis.eval(script, 1, lockKey, token, ttl);
+    const result = await this.redisService.eval(script, [lockKey], [token, ttl]);
 
     if (result === 1) {
       const lock = this.locks.get(key);
@@ -117,8 +117,7 @@ export class DistributedLock extends EventEmitter {
    */
   async isLocked(key: string): Promise<boolean> {
     const lockKey = `lock:${key}`;
-    const exists = await this.redis.exists(lockKey);
-    return exists === 1;
+    return await this.redisService.exists(lockKey);
   }
 
   /**
@@ -126,8 +125,7 @@ export class DistributedLock extends EventEmitter {
    */
   async getTTL(key: string): Promise<number> {
     const lockKey = `lock:${key}`;
-    const ttl = await this.redis.pttl(lockKey);
-    return ttl;
+    return await this.redisService.pttl(lockKey);
   }
 
   /**
@@ -185,11 +183,10 @@ export class DistributedLock extends EventEmitter {
   }
 
   /**
-   * Close Redis connection
+   * Close connections and cleanup
    */
   async close(): Promise<void> {
     this.locks.clear();
-    await this.redis.quit();
     this.removeAllListeners();
   }
 }

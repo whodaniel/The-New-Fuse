@@ -3,7 +3,7 @@
  * Provides performance monitoring and metrics aggregation
  */
 
-import { Redis } from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 export interface Metric {
   name: string;
@@ -209,14 +209,14 @@ export class MetricsRegistry {
 
 export class PerformanceMonitor {
   private agentId: string;
-  private redisClient?: Redis;
+  private redisService?: UnifiedRedisService;
   private metrics: MetricsRegistry;
   private isRunning: boolean = false;
   private intervalId?: ReturnType<typeof setInterval>;
 
-  constructor(agentId: string, redisClient?: Redis) {
+  constructor(agentId: string, redisService?: UnifiedRedisService) {
     this.agentId = agentId;
-    this.redisClient = redisClient;
+    this.redisService = redisService;
     this.metrics = new MetricsRegistry(agentId);
   }
 
@@ -290,7 +290,7 @@ export class PerformanceMonitor {
    * Publish metrics to Redis
    */
   private async publishMetrics(): Promise<void> {
-    if (!this.redisClient) {
+    if (!this.redisService) {
       return;
     }
 
@@ -298,10 +298,9 @@ export class PerformanceMonitor {
       const summary = this.metrics.getSummary();
       const key = `metrics:${this.agentId}`;
       
-      await this.redisClient.set(
+      await this.redisService.set(
         key,
         JSON.stringify(summary),
-        'EX',
         300 // 5 minutes TTL
       );
     } catch {

@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/infrastructure",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Unified infrastructure services for The New Fuse framework",
   "main": "dist/index.js",
@@ -21,6 +23,7 @@
     "@google-cloud/storage": "^7.19.0",
     "@nestjs/common": "^11.1.16",
     "@nestjs/config": "^4.0.2",
+    "@upstash/redis": "^1.37.0",
     "ioredis": "^5.8.1",
     "rxjs": "^7.8.2"
   },

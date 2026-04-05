@@ -44,8 +44,8 @@
         "https://poe.com/*",
         "http://localhost:*/*",
         "http://127.0.0.1:*/*",
-        "http://openclaw-cloud-production-934c.up.railway.app/*",
-        "https://openclaw-cloud-production-934c.up.railway.app/*",
+        "https://openclaw-gateway.workers.dev/*",
+        "https://*.workers.dev/*",
         "https://thenewfuse.com/*",
         "https://*.thenewfuse.com/*"
       ],

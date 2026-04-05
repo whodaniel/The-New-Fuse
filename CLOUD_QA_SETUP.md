@@ -98,7 +98,7 @@ work.
 **Check if it's running**:
 
 ```bash
-curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/browser/devtools
+curl https://backend-241337102384.us-central1.run.app/api/browser/devtools
 ```
 
 **Expected Response** (when working):
@@ -157,7 +157,7 @@ const QA_CONFIG = {
 Edit `scripts/run-cloud-qa.sh`:
 
 ```bash
-RAILWAY_SANDBOX_URL="https://tnf-cloud-sandbox-v2-production.up.railway.app"
+RAILWAY_SANDBOX_URL="https://backend-241337102384.us-central1.run.app"
 TARGET_SITE="https://thenewfuse.com"
 ```
 
@@ -224,7 +224,7 @@ document.querySelectorAll('.error').length"
 
 3. **Via API**:
    ```bash
-   curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/qa/status
+   curl https://backend-241337102384.us-central1.run.app/api/qa/status
    ```
 
 ### Report Contains:

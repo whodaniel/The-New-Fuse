@@ -230,6 +230,7 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 500,
       rollupOptions: {
         input: {
+          main: path.resolve(__dirname, 'index.html'),
           app: path.resolve(__dirname, 'app.html'),
         },
         // Optimize bundle size by eliminating unnecessary code
@@ -409,7 +410,7 @@ export default defineConfig(({ mode }) => {
       strictPort: false,
       hmr: getHMRConfig(),
       // Allow production domain for Railway deployment
-      allowedHosts: ['thenewfuse.com', 'www.thenewfuse.com', '.railway.app', 'localhost'],
+      allowedHosts: ['thenewfuse.com', 'www.thenewfuse.com', '.workers.dev', 'localhost'],
       proxy: isDev
         ? {
             '/api': {

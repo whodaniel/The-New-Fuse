@@ -3,6 +3,10 @@ export interface RedisConfiguration {
   port: number;
   password?: string;
   db: number;
+  upstash?: {
+    restUrl?: string;
+    restToken?: string;
+  };
   poolSize: number;
   retryAttempts: number;
   retryDelay: number;
@@ -66,6 +70,7 @@ export interface RedisMetrics {
     hset: number;
     lpush: number;
     rpop: number;
+    lrem: number;
     publish: number;
   };
   performance: {
@@ -86,14 +91,15 @@ export interface RedisMetrics {
 }
 
 export type RedisOperationType = 
-  | 'get' | 'set' | 'del' | 'exists' | 'expire'
-  | 'hget' | 'hset' | 'hgetall' | 'hdel'
-  | 'lpush' | 'rpop' | 'llen' | 'lrange' | 'ltrim' | 'lindex'
-  | 'zadd' | 'zrange' | 'zpopmax' | 'zrem'
-  | 'sadd' | 'srem' | 'smembers' | 'sismember'
+  | 'get' | 'set' | 'del' | 'exists' | 'expire' | 'pttl' | 'pexpire'
+  | 'hget' | 'hset' | 'hgetall' | 'hdel' | 'hincrby'
+  | 'lpush' | 'rpush' | 'rpop' | 'lpop' | 'llen' | 'lrange' | 'lrem' | 'ltrim' | 'lindex'
+  | 'zadd' | 'zrange' | 'zpopmax' | 'zrem' | 'zremrangebyscore' | 'zcard' | 'zcount'
+  | 'sadd' | 'srem' | 'smembers' | 'sismember' | 'sinter'
   | 'publish' | 'subscribe' | 'unsubscribe'
   | 'psubscribe' | 'punsubscribe'
-  | 'ping' | 'flushdb' | 'keys';
+  | 'ping' | 'flushdb' | 'keys' | 'scan' | 'incr' | 'incrby' | 'decrby'
+  | 'mget' | 'mset' | 'eval' | 'pipeline' | 'get_client';
 
 export interface RedisOperationLog {
   operation: RedisOperationType;

@@ -28,8 +28,8 @@ const ENV_CONFIG: Record<Exclude<Environment, 'custom'>, { api: string; ws: stri
     ws: 'ws://localhost:3001/ws',
   },
   sandbox: {
-    api: 'https://tnf-cloud-sandbox-production.up.railway.app',
-    ws: 'wss://tnf-cloud-sandbox-production.up.railway.app/ws', // Backend typically handles WS on the same port/domain
+    api: 'https://api-gateway-241337102384.us-central1.run.app',
+    ws: 'wss://api-gateway-241337102384.us-central1.run.app/ws', // Backend typically handles WS on the same port/domain
   },
   production: {
     api: 'https://thenewfuse.com/api',

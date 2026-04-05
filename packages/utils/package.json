@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/utils",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -30,7 +32,6 @@
     "clean": "rm -rf dist .tsbuildinfo tsconfig.tsbuildinfo"
   },
   "dependencies": {
-    "@aws-sdk/client-bedrock-runtime": "^3.913.0",
     "@mui/icons-material": "^7.3.4",
     "@mui/material": "^7.3.4",
     "@nestjs/common": "^11.1.16",

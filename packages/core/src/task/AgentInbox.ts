@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import Redis from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { v4 as uuid } // @ts-ignore
 from 'uuid';
 import { Task, TaskQueueOptions } from './TaskQueue';
@@ -51,18 +51,18 @@ export interface AgentNotification {
 export class AgentInbox {
   private readonly logger = new Logger(AgentInbox.name);
   private readonly agentId: string;
-  private redis: Redis;
+  private redisService: UnifiedRedisService;
   private eventEmitter: EventEmitter2;
   private options: TaskQueueOptions;
 
   constructor(
     agentId: string,
-    redis: Redis,
+    redisService: UnifiedRedisService,
     eventEmitter: EventEmitter2,
     options?: TaskQueueOptions
   ) {
     this.agentId = agentId;
-    this.redis = redis;
+    this.redisService = redisService;
     this.eventEmitter = eventEmitter;
     this.options = options || {};
     
@@ -92,15 +92,15 @@ export class AgentInbox {
 
     // Initialize with empty lists if they don't exist
     for (const key of keys) {
-      const exists = await this.redis.exists(key);
+      const exists = await this.redisService.exists(key);
       if (!exists) {
-        await this.redis.lpush(key, '__INIT__');
-        await this.redis.lrem(key, 1, '__INIT__');
+        await this.redisService.lpush(key, '__INIT__');
+        await this.redisService.lrem(key, '__INIT__', 1);
       }
     }
 
     // Set metadata
-    await this.redis.hset(`agent:${this.agentId}:metadata`, {
+    await this.redisService.hset(`agent:${this.agentId}:metadata`, {
       createdAt: new Date().toISOString(),
       status: 'active',
       version: '1.0',
@@ -118,7 +118,7 @@ export class AgentInbox {
    * Get all pending tasks
    */
   async getPendingTasks(): Promise<AgentTask[]> {
-    const tasks = await this.redis.lrange(
+    const tasks = await this.redisService.lrange(
       `agent:${this.agentId}:inbox:tasks:pending`,
       0,
       -1
@@ -130,14 +130,14 @@ export class AgentInbox {
    * Get count of pending tasks
    */
   async getPendingCount(): Promise<number> {
-    return await this.redis.llen(`agent:${this.agentId}:inbox:tasks:pending`);
+    return await this.redisService.llen(`agent:${this.agentId}:inbox:tasks:pending`);
   }
 
   /**
    * Get in-progress tasks
    */
   async getInProgressTasks(): Promise<AgentTask[]> {
-    const tasks = await this.redis.lrange(
+    const tasks = await this.redisService.lrange(
       `agent:${this.agentId}:inbox:tasks:in-progress`,
       0,
       -1
@@ -170,7 +170,7 @@ export class AgentInbox {
     );
 
     // Add to pending queue
-    await this.redis.lpush(
+    await this.redisService.lpush(
       `agent:${this.agentId}:inbox:tasks:pending`,
       JSON.stringify(agentTask)
     );
@@ -202,10 +202,10 @@ export class AgentInbox {
     }
 
     // Remove from pending
-    await this.redis.lrem(
+    await this.redisService.lrem(
       `agent:${this.agentId}:inbox:tasks:pending`,
-      1,
-      JSON.stringify(task)
+      JSON.stringify(task),
+      1
     );
 
     // Add to in-progress
@@ -215,7 +215,7 @@ export class AgentInbox {
       startedAt: new Date(),
     };
 
-    await this.redis.lpush(
+    await this.redisService.lpush(
       `agent:${this.agentId}:inbox:tasks:in-progress`,
       JSON.stringify(inProgressTask)
     );
@@ -243,10 +243,10 @@ export class AgentInbox {
     }
 
     // Remove from in-progress
-    await this.redis.lrem(
+    await this.redisService.lrem(
       `agent:${this.agentId}:inbox:tasks:in-progress`,
-      1,
-      JSON.stringify(task)
+      JSON.stringify(task),
+      1
     );
 
     // Add to completed
@@ -257,7 +257,7 @@ export class AgentInbox {
       result,
     };
 
-    await this.redis.lpush(
+    await this.redisService.lpush(
       `agent:${this.agentId}:inbox:tasks:completed`,
       JSON.stringify(completedTask)
     );
@@ -273,11 +273,11 @@ export class AgentInbox {
     await this.recordActivity('task_completed', { taskId, result });
 
     // Cleanup old completed tasks (keep last 100)
-    const completedCount = await this.redis.llen(
+    const completedCount = await this.redisService.llen(
       `agent:${this.agentId}:inbox:tasks:completed`
     );
     if (completedCount > 100) {
-      await this.redis.ltrim(`agent:${this.agentId}:inbox:tasks:completed`, 0, 99);
+      await this.redisService.ltrim(`agent:${this.agentId}:inbox:tasks:completed`, 0, 99);
     }
   }
 
@@ -295,10 +295,10 @@ export class AgentInbox {
     }
 
     // Remove from in-progress
-    await this.redis.lrem(
+    await this.redisService.lrem(
       `agent:${this.agentId}:inbox:tasks:in-progress`,
-      1,
-      JSON.stringify(task)
+      JSON.stringify(task),
+      1
     );
 
     // Add to failed
@@ -309,7 +309,7 @@ export class AgentInbox {
       error: error instanceof Error ? error.message : error,
     };
 
-    await this.redis.lpush(
+    await this.redisService.lpush(
       `agent:${this.agentId}:inbox:tasks:failed`,
       JSON.stringify(failedTask)
     );
@@ -353,14 +353,14 @@ export class AgentInbox {
     };
 
     // Remove from this agent's inbox
-    await this.redis.lrem(
+    await this.redisService.lrem(
       `agent:${this.agentId}:inbox:tasks:pending`,
-      1,
-      JSON.stringify(task)
+      JSON.stringify(task),
+      1
     );
 
     // Add to outbox/delegations
-    await this.redis.lpush(
+    await this.redisService.lpush(
       `agent:${this.agentId}:outbox:delegated`,
       JSON.stringify(delegatedTask)
     );
@@ -368,7 +368,7 @@ export class AgentInbox {
     // Send to target agent's inbox
     const targetInbox = new AgentInbox(
       targetAgentId,
-      this.redis,
+      this.redisService,
       this.eventEmitter,
       this.options
     );
@@ -404,7 +404,7 @@ export class AgentInbox {
       metadata: message.metadata,
     };
 
-    await this.redis.lpush(
+    await this.redisService.lpush(
       `agent:${this.agentId}:inbox:messages:unread`,
       JSON.stringify(agentMessage)
     );
@@ -428,7 +428,7 @@ export class AgentInbox {
    * Get unread messages
    */
   async getUnreadMessages(): Promise<AgentMessage[]> {
-    const messages = await this.redis.lrange(
+    const messages = await this.redisService.lrange(
       `agent:${this.agentId}:inbox:messages:unread`,
       0,
       -1
@@ -445,14 +445,14 @@ export class AgentInbox {
 
     if (message) {
       // Remove from unread
-      await this.redis.lrem(
+      await this.redisService.lrem(
         `agent:${this.agentId}:inbox:messages:unread`,
-        1,
-        JSON.stringify(message)
+        JSON.stringify(message),
+        1
       );
 
       // Add to read
-      await this.redis.lpush(
+      await this.redisService.lpush(
         `agent:${this.agentId}:inbox:messages:read`,
         JSON.stringify({ ...message, read: true, readAt: new Date() })
       );
@@ -478,7 +478,7 @@ export class AgentInbox {
       metadata: notification.metadata,
     };
 
-    await this.redis.lpush(
+    await this.redisService.lpush(
       `agent:${this.agentId}:inbox:notifications`,
       JSON.stringify(agentNotification)
     );
@@ -497,7 +497,7 @@ export class AgentInbox {
    * Get all notifications
    */
   async getNotifications(): Promise<AgentNotification[]> {
-    const notifications = await this.redis.lrange(
+    const notifications = await this.redisService.lrange(
       `agent:${this.agentId}:inbox:notifications`,
       0,
       -1
@@ -514,7 +514,7 @@ export class AgentInbox {
     activityType: string,
     metadata?: Record<string, unknown>
   ): Promise<void> {
-    await this.redis.publish(
+    await this.redisService.publish(
       'agent:activity',
       JSON.stringify({
         agentId: this.agentId,
@@ -529,7 +529,7 @@ export class AgentInbox {
    * Get current task (for heartbeat reporting)
    */
   async getCurrentTask(): Promise<string | undefined> {
-    const inProgress = await this.redis.lrange(
+    const inProgress = await this.redisService.lrange(
       `agent:${this.agentId}:inbox:tasks:in-progress`,
       0,
       0
@@ -554,12 +554,12 @@ export class AgentInbox {
   }> {
     const [pending, inProgress, completed, failed, unreadMessages, notifications] =
       await Promise.all([
-        this.redis.llen(`agent:${this.agentId}:inbox:tasks:pending`),
-        this.redis.llen(`agent:${this.agentId}:inbox:tasks:in-progress`),
-        this.redis.llen(`agent:${this.agentId}:inbox:tasks:completed`),
-        this.redis.llen(`agent:${this.agentId}:inbox:tasks:failed`),
-        this.redis.llen(`agent:${this.agentId}:inbox:messages:unread`),
-        this.redis.llen(`agent:${this.agentId}:inbox:notifications`),
+        this.redisService.llen(`agent:${this.agentId}:inbox:tasks:pending`),
+        this.redisService.llen(`agent:${this.agentId}:inbox:tasks:in-progress`),
+        this.redisService.llen(`agent:${this.agentId}:inbox:tasks:completed`),
+        this.redisService.llen(`agent:${this.agentId}:inbox:tasks:failed`),
+        this.redisService.llen(`agent:${this.agentId}:inbox:messages:unread`),
+        this.redisService.llen(`agent:${this.agentId}:inbox:notifications`),
       ]);
 
     return {
@@ -581,8 +581,8 @@ export class AgentInbox {
 
     // For now, just trim to last 100 items
     // TODO: Implement date-based cleanup
-    await this.redis.ltrim(`agent:${this.agentId}:inbox:tasks:completed`, 0, 99);
-    await this.redis.ltrim(`agent:${this.agentId}:inbox:tasks:failed`, 0, 99);
-    await this.redis.ltrim(`agent:${this.agentId}:inbox:messages:read`, 0, 99);
+    await this.redisService.ltrim(`agent:${this.agentId}:inbox:tasks:completed`, 0, 99);
+    await this.redisService.ltrim(`agent:${this.agentId}:inbox:tasks:failed`, 0, 99);
+    await this.redisService.ltrim(`agent:${this.agentId}:inbox:messages:read`, 0, 99);
   }
 }

@@ -8,8 +8,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MCPTransport = void 0;
 const events_1 = require("events");
+// @ts-ignore
 const index_js_1 = require("@modelcontextprotocol/sdk/server/index.js");
+// @ts-ignore
 const stdio_js_1 = require("@modelcontextprotocol/sdk/server/stdio.js");
+// @ts-ignore
 const types_js_1 = require("@modelcontextprotocol/sdk/types.js");
 class MCPTransport extends events_1.EventEmitter {
     name = 'mcp';

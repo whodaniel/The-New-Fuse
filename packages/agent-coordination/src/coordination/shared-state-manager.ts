@@ -3,7 +3,6 @@ import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { SharedState, StateLock } from '../types/coordination.types';
 import { MessageSerializer } from '../serializers/message-serializer';
 import { v4 as uuidv4 } from 'uuid';
-import { Redis } from 'ioredis';
 
 /**
  * Shared state manager for collaborative agent tasks
@@ -278,7 +277,10 @@ export class SharedStateManager {
    * Scans all locks and deletes them if they belong to any of the provided agents.
    * Uses Lua script to ensure atomicity.
    */
-  async releaseLocksForAgents(redis: Redis, agentIds: string[]): Promise<number> {
+  async releaseLocksForAgents(
+    redisService: UnifiedRedisService,
+    agentIds: string[]
+  ): Promise<number> {
     if (agentIds.length === 0) return 0;
 
     const agentsSet = new Set(agentIds);
@@ -287,13 +289,13 @@ export class SharedStateManager {
     let releasedCount = 0;
 
     do {
-      const [nextCursor, keys] = await redis.scan(cursor, 'MATCH', lockPattern, 'COUNT', 100);
+      const [nextCursor, keys] = await redisService.scan(cursor, lockPattern, 100);
       cursor = nextCursor;
 
       if (keys.length === 0) continue;
 
       // Get values for these keys
-      const values = await redis.mget(...keys);
+      const values = await redisService.mget(...keys);
 
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
@@ -315,7 +317,7 @@ export class SharedStateManager {
               end
             `;
 
-            const result = await redis.eval(script, 1, key, value);
+            const result = await redisService.eval(script, [key], [value]);
             if (result === 1) {
               releasedCount++;
               this.logger.debug(`Released lock ${key} held by offline agent ${lock.agentId}`);

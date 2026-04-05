@@ -96,7 +96,7 @@ export class HeartbeatClientService extends EventEmitter {
     }
 
     // Default to Railway production URL
-    return 'wss://tnf-cloud-sandbox-production.up.railway.app/ws/heartbeat';
+    return 'wss://api-gateway-241337102384.us-central1.run.app/ws/heartbeat';
   }
 
   /**

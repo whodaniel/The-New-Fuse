@@ -6,8 +6,13 @@
  * Publishes scheduled process lifecycle events into TNF ingress so the
  * master clock can treat cron/automation loops as first-class participants.
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const redis_1 = require("redis");
+// @ts-ignore
+const infrastructure_1 = require("@the-new-fuse/infrastructure");
+const ioredis_1 = __importDefault(require("ioredis"));
 const DEFAULTS = {
     redisUrl: process.env.REDIS_URL ||
         process.env.RAILWAY_REDIS_URL ||
@@ -85,20 +90,24 @@ function mapActionToType(action) {
 }
 async function main() {
     const args = parseArgs(process.argv.slice(2));
-    const redis = (0, redis_1.createClient)({
-        url: DEFAULTS.redisUrl,
-        socket: {
-            connectTimeout: 3000,
-            reconnectStrategy: () => false,
-        },
-    });
-    redis.on('error', (err) => {
-        console.error(`[super-cycle] redis error: ${err?.message || String(err)}`);
-    });
-    await redis.connect();
+    // Use unified standalone utilities
+    const redis = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
+    const upstash = (0, infrastructure_1.createUpstashRestClient)();
+    if (redis instanceof ioredis_1.default) {
+        redis.on('error', (err) => {
+            console.error(`[super-cycle] redis error: ${err?.message || String(err)}`);
+        });
+        await redis.connect().catch(() => { });
+    }
     try {
         if (args.action === 'status') {
-            const raw = await redis.hGet('tnf:master:state', 'superCycle');
+            let raw = null;
+            if (upstash) {
+                raw = await upstash.hget('tnf:master:state', 'superCycle');
+            }
+            else if (redis) {
+                raw = await redis.hget('tnf:master:state', 'superCycle');
+            }
             if (!raw) {
                 console.log('[super-cycle] no super-cycle state found');
                 return;
@@ -108,7 +117,13 @@ async function main() {
         }
         if (args.action === 'self-prompts') {
             const limit = Math.max(parseInt(process.env.SELF_PROMPT_STATUS_LIMIT || '20', 10), 1);
-            const rows = await redis.lRange(DEFAULTS.selfPromptKey, 0, limit - 1);
+            let rows = [];
+            if (upstash) {
+                rows = await upstash.lrange(DEFAULTS.selfPromptKey, 0, limit - 1);
+            }
+            else if (redis) {
+                rows = await redis.lrange(DEFAULTS.selfPromptKey, 0, limit - 1);
+            }
             if (!rows.length) {
                 console.log(`[super-cycle] no self-prompts found in ${DEFAULTS.selfPromptKey}`);
                 return;
@@ -148,11 +163,17 @@ async function main() {
                 metadata,
             },
         };
-        await redis.publish(DEFAULTS.ingress, JSON.stringify(event));
+        if (upstash) {
+            await upstash.publish(DEFAULTS.ingress, JSON.stringify(event));
+        }
+        else if (redis) {
+            await redis.publish(DEFAULTS.ingress, JSON.stringify(event));
+        }
         console.log(`[super-cycle] sent ${event.type} for ${args.processId}`);
     }
     finally {
-        await redis.quit();
+        if (redis instanceof ioredis_1.default)
+            await redis.quit();
     }
 }
 function parsePositiveNumber(value) {

@@ -8,7 +8,7 @@ preview_urls = false
 
 [vars]
 ENVIRONMENT = "prod"
-KWS_API_ORIGIN = "https://kws-api-production.up.railway.app"
+KWS_API_ORIGIN = "https://backend-241337102384.us-central1.run.app"
 
 # Set EDGE_API_KEY as a secret:
 # wrangler secret put EDGE_API_KEY

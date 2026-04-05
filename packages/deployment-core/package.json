@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/deployment-core",
+  "files": ["dist"],
   "version": "1.0.0",
   "description": "Core deployment and CI/CD pipeline functionality",
   "main": "dist/index.js",
@@ -13,7 +14,7 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "type-check": "tsc --noEmit",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\""
   },

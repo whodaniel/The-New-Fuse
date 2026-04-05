@@ -1,4 +1,5 @@
 import { Message, MessageType } from '@the-new-fuse/types';
+// @ts-ignore
 import addFormats from 'ajv-formats';
 import { BaseService } from '../core/BaseService';
 import { Logger } from '../types/core';

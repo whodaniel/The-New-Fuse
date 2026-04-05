@@ -1,5 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import Redis, { Cluster } from 'ioredis';
+import { Redis as UpstashRedis } from '@upstash/redis';
 import { RedisConfig } from './RedisConfig';
 import {
   CacheOptions,
@@ -18,6 +19,7 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
 
   private mainClient!: Redis | Cluster;
   private pubSubClient!: Redis | Cluster;
+  private upstashClient?: UpstashRedis;
   private subscribers: Map<string, Redis | Cluster> = new Map();
   private patternSubscribers: Map<string, Redis | Cluster> = new Map();
 
@@ -30,6 +32,7 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
       hset: 0,
       lpush: 0,
       rpop: 0,
+      lrem: 0,
       publish: 0,
     },
     performance: {
@@ -81,11 +84,25 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
 
   private async initializeConnections() {
     const config = this.redisConfig.getConnectionOptions();
+    const upstashConfig = this.redisConfig.getUpstashConfig();
 
-    // If Redis is disabled, skip initialization
+    // Setup Upstash REST client if available
+    if (upstashConfig) {
+      try {
+        this.upstashClient = new UpstashRedis({
+          url: upstashConfig.url,
+          token: upstashConfig.token,
+        });
+        this.logger.log('Upstash REST client initialized');
+      } catch (error) {
+        this.logger.error('Failed to initialize Upstash REST client', error);
+      }
+    }
+
+    // If Redis is disabled, skip initialization of standard clients
     if (!config) {
-      this.logger.warn('Redis is disabled - connections will not be initialized');
-      this._isConnected = false;
+      this.logger.warn('Redis TCP is disabled - connections will not be initialized');
+      this._isConnected = this.upstashClient !== undefined;
       return;
     }
 
@@ -232,25 +249,70 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
 
   // Core Redis Operations
   async get(key: string): Promise<string | null> {
-    return this.executeOperation('get', key, () => this.mainClient.get(key));
+    return this.executeOperation('get', key, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.get<string>(key);
+      }
+      return this.mainClient.get(key);
+    });
   }
 
-  async set(key: string, value: string, ttl?: number): Promise<void> {
-    await this.executeOperation('set', key, async () => {
+  async set(
+    key: string,
+    value: string,
+    ttl?: number,
+    mode?: 'NX' | 'XX',
+    ttlUnit: 'EX' | 'PX' = 'EX'
+  ): Promise<string | null> {
+    return this.executeOperation('set', key, async () => {
+      if (this.upstashClient) {
+        const options: any = {};
+        if (mode === 'NX') options.nx = true;
+        if (mode === 'XX') options.xx = true;
+        if (ttl) {
+          if (ttlUnit === 'EX') options.ex = ttl;
+          else options.px = ttl;
+        }
+        return this.upstashClient.set(key, value, options);
+      }
+
+      if (mode || ttlUnit === 'PX') {
+        const args: any[] = [key, value];
+        if (ttlUnit === 'PX') {
+          args.push('PX', ttl);
+        } else if (ttl) {
+          args.push('EX', ttl);
+        }
+        if (mode) {
+          args.push(mode);
+        }
+        return (this.mainClient as any).set(...args);
+      }
+
       if (ttl) {
         await this.mainClient.set(key, value, 'EX', ttl);
       } else {
         await this.mainClient.set(key, value);
       }
+      return 'OK';
     });
   }
 
   async del(key: string): Promise<number> {
-    return this.executeOperation('del', key, () => this.mainClient.del(key));
+    return this.executeOperation('del', key, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.del(key);
+      }
+      return this.mainClient.del(key);
+    });
   }
 
   async exists(key: string): Promise<boolean> {
     return this.executeOperation('exists', key, async () => {
+      if (this.upstashClient) {
+        const result = await this.upstashClient.exists(key);
+        return result === 1;
+      }
       const result = await this.mainClient.exists(key);
       return result === 1;
     });
@@ -258,8 +320,50 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
 
   async expire(key: string, ttl: number): Promise<boolean> {
     return this.executeOperation('expire', key, async () => {
+      if (this.upstashClient) {
+        const result = await this.upstashClient.expire(key, ttl);
+        return result === 1;
+      }
       const result = await this.mainClient.expire(key, ttl);
       return result === 1;
+    });
+  }
+
+  async pexpire(key: string, ttlMs: number): Promise<boolean> {
+    return this.executeOperation('pexpire', key, async () => {
+      if (this.upstashClient) {
+        const result = await this.upstashClient.pexpire(key, ttlMs);
+        return result === 1;
+      }
+      const result = await this.mainClient.pexpire(key, ttlMs);
+      return result === 1;
+    });
+  }
+
+  async pttl(key: string): Promise<number> {
+    return this.executeOperation('pttl', key, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.pttl(key);
+      }
+      return this.mainClient.pttl(key);
+    });
+  }
+
+  async incrby(key: string, increment: number): Promise<number> {
+    return this.executeOperation('incrby', key, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.incrby(key, increment);
+      }
+      return this.mainClient.incrby(key, increment);
+    });
+  }
+
+  async decrby(key: string, decrement: number): Promise<number> {
+    return this.executeOperation('decrby', key, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.decrby(key, decrement);
+      }
+      return this.mainClient.decrby(key, decrement);
     });
   }
 
@@ -272,6 +376,14 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
     value?: string
   ): Promise<void> {
     await this.executeOperation('hset', key, async () => {
+      if (this.upstashClient) {
+        if (typeof fieldOrData === 'string' && value !== undefined) {
+          await this.upstashClient.hset(key, { [fieldOrData]: value });
+        } else if (typeof fieldOrData === 'object') {
+          await this.upstashClient.hset(key, fieldOrData);
+        }
+        return;
+      }
       if (typeof fieldOrData === 'string' && value !== undefined) {
         await this.mainClient.hset(key, fieldOrData, value);
       } else if (typeof fieldOrData === 'object') {
@@ -283,24 +395,77 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
   }
 
   async hget(key: string, field: string): Promise<string | null> {
-    return this.executeOperation('hget', key, () => this.mainClient.hget(key, field));
+    return this.executeOperation('hget', key, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.hget<string>(key, field);
+      }
+      return this.mainClient.hget(key, field);
+    });
   }
 
   async hgetall(key: string): Promise<Record<string, string>> {
-    return this.executeOperation('hgetall', key, () => this.mainClient.hgetall(key));
+    return this.executeOperation('hgetall', key, async () => {
+      if (this.upstashClient) {
+        const result = await this.upstashClient.hgetall<Record<string, string>>(key);
+        return result || {};
+      }
+      return this.mainClient.hgetall(key);
+    });
   }
 
   async hdel(key: string, field: string): Promise<number> {
-    return this.executeOperation('hdel', key, () => this.mainClient.hdel(key, field));
+    return this.executeOperation('hdel', key, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.hdel(key, field);
+      }
+      return this.mainClient.hdel(key, field);
+    });
+  }
+
+  async hincrby(key: string, field: string, increment: number): Promise<number> {
+    return this.executeOperation('hincrby', key, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.hincrby(key, field, increment);
+      }
+      return this.mainClient.hincrby(key, field, increment);
+    });
   }
 
   // List Operations
   async lpush(key: string, ...values: string[]): Promise<number> {
-    return this.executeOperation('lpush', key, () => this.mainClient.lpush(key, ...values));
+    return this.executeOperation('lpush', key, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.lpush(key, ...values);
+      }
+      return this.mainClient.lpush(key, ...values);
+    });
+  }
+
+  async rpush(key: string, ...values: string[]): Promise<number> {
+    return this.executeOperation('rpush', key, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.rpush(key, ...values);
+      }
+      return this.mainClient.rpush(key, ...values);
+    });
   }
 
   async rpop(key: string): Promise<string | null> {
-    return this.executeOperation('rpop', key, () => this.mainClient.rpop(key));
+    return this.executeOperation('rpop', key, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.rpop<string>(key);
+      }
+      return this.mainClient.rpop(key);
+    });
+  }
+
+  async lpop(key: string): Promise<string | null> {
+    return this.executeOperation('lpop', key, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.lpop<string>(key);
+      }
+      return this.mainClient.lpop(key);
+    });
   }
 
   async llen(key: string): Promise<number> {
@@ -309,6 +474,51 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
 
   async lrange(key: string, start: number, stop: number): Promise<string[]> {
     return this.executeOperation('lrange', key, () => this.mainClient.lrange(key, start, stop));
+  }
+
+  async lrem(key: string, value: string, count: number = 0): Promise<number> {
+    return this.executeOperation('lrem', key, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.lrem(key, count, value);
+      }
+      return this.mainClient.lrem(key, count, value);
+    });
+  }
+
+  // Multi-key Operations
+  async mget(...keys: string[]): Promise<(string | null)[]> {
+    return this.executeOperation('mget', undefined, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.mget<string[]>(...keys);
+      }
+      return this.mainClient.mget(...keys);
+    });
+  }
+
+  async mset(data: Record<string, string>): Promise<void> {
+    await this.executeOperation('mset', undefined, async () => {
+      if (this.upstashClient) {
+        await this.upstashClient.mset(data);
+        return;
+      }
+      await this.mainClient.mset(data);
+    });
+  }
+
+  async zremrangebyscore(key: string, min: number | string, max: number | string): Promise<number> {
+    return this.executeOperation('zremrangebyscore', key, () => this.mainClient.zremrangebyscore(key, min, max));
+  }
+
+  async zcard(key: string): Promise<number> {
+    return this.executeOperation('zcard', key, () => this.mainClient.zcard(key));
+  }
+
+  async zcount(key: string, min: number | string, max: number | string): Promise<number> {
+    return this.executeOperation('zcount', key, () => this.mainClient.zcount(key, min, max));
+  }
+
+  async incr(key: string): Promise<number> {
+    return this.executeOperation('incr', key, () => this.mainClient.incr(key));
   }
 
   // Sorted Set Operations (for queue implementation)
@@ -349,7 +559,21 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
 
   async sismember(key: string, member: string): Promise<boolean> {
     return this.executeOperation('sismember', key, async () => {
+      if (this.upstashClient) {
+        const result = await this.upstashClient.sismember(key, member);
+        return result === 1;
+      }
       return (await this.mainClient.sismember(key, member)) === 1;
+    });
+  }
+
+  async sinter(...keys: string[]): Promise<string[]> {
+    return this.executeOperation('sinter', undefined, async () => {
+      if (this.upstashClient) {
+        // @ts-ignore - Argument spread issue in some versions of @upstash/redis
+        return this.upstashClient.sinter(...keys);
+      }
+      return this.mainClient.sinter(...keys);
     });
   }
 
@@ -368,8 +592,11 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
 
   // Pub/Sub Operations
   async publish(channel: string, message: string | object): Promise<number> {
-    return this.executeOperation('publish', channel, () => {
+    return this.executeOperation('publish', channel, async () => {
       const messageStr = typeof message === 'string' ? message : JSON.stringify(message);
+      if (this.upstashClient) {
+        return this.upstashClient.publish(channel, messageStr);
+      }
       return this.mainClient.publish(channel, messageStr);
     });
   }
@@ -486,7 +713,7 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
 
   async setWorkflowState(workflowId: string, state: any): Promise<void> {
     const key = `workflow:${workflowId}:state`;
-    return this.set(key, JSON.stringify(state));
+    await this.set(key, JSON.stringify(state));
   }
 
   async getWorkflowState<T = any>(workflowId: string): Promise<T | null> {
@@ -618,18 +845,68 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
 
   // Utility Methods
   async ping(): Promise<string> {
-    return this.executeOperation('ping', undefined, () => this.mainClient.ping());
+    return this.executeOperation('ping', undefined, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.ping();
+      }
+      return this.mainClient.ping();
+    });
   }
 
   async flushdb(): Promise<void> {
     await this.executeOperation('flushdb', undefined, async () => {
-      await this.mainClient.flushdb();
+      if (this.upstashClient) {
+        await this.upstashClient.flushdb();
+      } else {
+        await this.mainClient.flushdb();
+      }
       this.logger.log('Redis database flushed');
     });
   }
 
   async keys(pattern: string): Promise<string[]> {
-    return this.executeOperation('keys', pattern, () => this.mainClient.keys(pattern));
+    return this.executeOperation('keys', pattern, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.keys(pattern);
+      }
+      return this.mainClient.keys(pattern);
+    });
+  }
+
+  async scan(cursor: string, match?: string, count?: number): Promise<[string, string[]]> {
+    return this.executeOperation('scan', undefined, async () => {
+      if (this.upstashClient) {
+        const result = await this.upstashClient.scan(Number(cursor), { match, count });
+        return [String(result[0]), result[1]];
+      }
+      return this.mainClient.scan(cursor, 'MATCH', match || '*', 'COUNT', count || 10);
+    });
+  }
+
+  async eval(script: string, keys: string[], args: any[]): Promise<any> {
+    return this.executeOperation('eval', undefined, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.eval(script, keys, args);
+      }
+      return this.mainClient.eval(script, keys.length, ...keys, ...args);
+    });
+  }
+
+  async pipeline(): Promise<any> {
+    return this.executeOperation('pipeline', undefined, async () => {
+      if (this.upstashClient) {
+        return this.upstashClient.pipeline();
+      }
+      return this.mainClient.pipeline();
+    });
+  }
+
+  /**
+   * Get the underlying Redis client.
+   * WARNING: Bypasses the UnifiedRedisService abstraction. Use only when absolutely necessary (e.g. BullMQ).
+   */
+  getClient(): Redis | Cluster {
+    return this.mainClient;
   }
 
   // Health and Monitoring

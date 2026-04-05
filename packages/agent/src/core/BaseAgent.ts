@@ -1,4 +1,3 @@
-import { Redis } from 'ioredis';
 import { EventEmitter } from 'events';
 import { Logger } from '../types/core';
 
@@ -7,7 +6,7 @@ import { ContextManager, ContextType } from '../context/manager';
 import { ErrorRecovery, ErrorCategory, ErrorSeverity } from '../error/recovery';
 import { MetricsRegistry, PerformanceMonitor } from '../monitoring/metrics';
 import { AgentState, AgentConfig, Task } from '../interfaces/agent.interface';
-
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 // Create logger
 const logger = new Logger('BaseAgent');
@@ -29,7 +28,7 @@ export abstract class BaseAgent extends EventEmitter {
     constructor(
         config: AgentConfig,
         bridge?: BaseBridge,
-        redisClient?: Redis
+        redisService?: UnifiedRedisService
     ) {
         super();
         this.config = {
@@ -46,11 +45,11 @@ export abstract class BaseAgent extends EventEmitter {
         this.contextManager = new ContextManager(
             ContextType.AGENT,
             config.agentId,
-            redisClient
+            redisService
         );
 
         // Initialize monitoring
-        this.monitor = new PerformanceMonitor(config.agentId, redisClient);
+        this.monitor = new PerformanceMonitor(config.agentId, redisService);
 
         // Initialize remaining state
         this.metrics = new MetricsRegistry(config.agentId);

@@ -3,7 +3,7 @@
  * Handles context storage, retrieval, and synchronization
  */
 
-import { Redis } from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 export enum ContextType {
   AGENT = 'agent',
@@ -24,13 +24,13 @@ export interface ContextEntry {
 export class ContextManager {
   private contextType: ContextType;
   private entityId: string;
-  private redisClient?: Redis;
+  private redisService?: UnifiedRedisService;
   private localContext: Map<string, ContextEntry> = new Map();
 
-  constructor(contextType: ContextType, entityId: string, redisClient?: Redis) {
+  constructor(contextType: ContextType, entityId: string, redisService?: UnifiedRedisService) {
     this.contextType = contextType;
     this.entityId = entityId;
-    this.redisClient = redisClient;
+    this.redisService = redisService;
   }
 
   /**
@@ -49,11 +49,10 @@ export class ContextManager {
     this.localContext.set(key, entry);
 
     // Store in Redis if available
-    if (this.redisClient) {
-      await this.redisClient.set(
+    if (this.redisService) {
+      await this.redisService.set(
         entry.id,
         JSON.stringify(entry),
-        'EX',
         3600 // 1 hour TTL
       );
     }
@@ -70,9 +69,9 @@ export class ContextManager {
     }
 
     // Try Redis if available
-    if (this.redisClient) {
+    if (this.redisService) {
       const entryId = `${this.contextType}:${this.entityId}:${key}`;
-      const data = await this.redisClient.get(entryId);
+      const data = await this.redisService.get(entryId);
       if (data) {
         const parsedEntry = JSON.parse(data) as ContextEntry;
         // Cache locally
@@ -107,9 +106,9 @@ export class ContextManager {
   async remove(key: string): Promise<void> {
     this.localContext.delete(key);
     
-    if (this.redisClient) {
+    if (this.redisService) {
       const entryId = `${this.contextType}:${this.entityId}:${key}`;
-      await this.redisClient.del(entryId);
+      await this.redisService.del(entryId);
     }
   }
 
@@ -119,11 +118,11 @@ export class ContextManager {
   async clear(): Promise<void> {
     this.localContext.clear();
     
-    if (this.redisClient) {
+    if (this.redisService) {
       const pattern = `${this.contextType}:${this.entityId}:*`;
-      const keys = await this.redisClient.keys(pattern);
+      const keys = await this.redisService.keys(pattern);
       if (keys.length > 0) {
-        await this.redisClient.del(...keys);
+        await Promise.all(keys.map(key => this.redisService!.del(key)));
       }
     }
   }
@@ -134,9 +133,9 @@ export class ContextManager {
   async getKeys(): Promise<string[]> {
     const localKeys = Array.from(this.localContext.keys());
     
-    if (this.redisClient) {
+    if (this.redisService) {
       const pattern = `${this.contextType}:${this.entityId}:*`;
-      const redisKeys = await this.redisClient.keys(pattern);
+      const redisKeys = await this.redisService.keys(pattern);
       const parsedKeys = redisKeys.map(key => key.split(':').pop() || '');
       return Array.from(new Set([...localKeys, ...parsedKeys]));
     }

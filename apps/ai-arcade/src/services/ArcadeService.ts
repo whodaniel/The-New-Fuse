@@ -1,5 +1,5 @@
 const DEFAULT_MUSIC_APP_URL =
-  import.meta.env.VITE_MUSIC_APP_URL || 'https://open-audio-deck-production.up.railway.app';
+  import.meta.env.VITE_MUSIC_APP_URL || 'https://open-audio-deck-241337102384.us-central1.run.app';
 
 const DEFAULT_MERKABA_LAB_URL =
   import.meta.env.VITE_MERKABA_LAB_URL || 'https://ai-arcade.xyz/#merkaba-lab';
@@ -109,7 +109,7 @@ export class ArcadeService {
   private apiUrl: string;
 
   constructor(apiUrl: string) {
-    this.apiUrl = apiUrl || 'https://mcp-drs-api-production.up.railway.app/api';
+    this.apiUrl = apiUrl || 'https://api-gateway-241337102384.us-central1.run.app/api';
   }
 
   async getFeaturedAgents(): Promise<AgentListing[]> {

@@ -78,15 +78,18 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
    * Initialize Redis connections for streams and pub/sub
    */
   private async initializeRedisConnections(): Promise<void> {
-    // Check if we're using Railway Redis (doesn't support database selection)
+    // Check if we're using Cloud Redis (doesn't always support database selection)
     const redisUrl = this.configService.get<string>('REDIS_URL', '');
-    const isRailway = redisUrl.includes('railway.internal') || redisUrl.includes('railway.app');
+    const isCloudRedis =
+      redisUrl.includes('railway.internal') ||
+      redisUrl.includes('railway.app') ||
+      redisUrl.includes('upstash.io');
 
     // Safe parsing of database index
     const parseDbIndex = (): number | undefined => {
-      if (isRailway) {
+      if (isCloudRedis) {
         this.logger.log(
-          '🚂 Railway Redis detected in streams service - skipping database selection'
+          '☁️ Cloud Redis (Railway/Upstash) detected in streams service - skipping database selection'
         );
         return undefined;
       }

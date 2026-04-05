@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import WebSocket from 'ws';
 
-const WS_URL = 'wss://tnf-cloud-sandbox-production.up.railway.app/ws';
+const WS_URL = 'wss://backend-241337102384.us-central1.run.app/ws';
 
 console.log(`🔌 Connecting to Remote Sandbox: ${WS_URL}`);
 
