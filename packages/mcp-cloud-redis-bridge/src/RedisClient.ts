@@ -1,17 +1,16 @@
+import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 import { EventEmitter } from 'node:events';
-import {
-  createStandaloneRedisClient,
-  createUpstashRestClient,
-} from '@the-new-fuse/infrastructure';
-import { Redis as UpstashRedis } from '@upstash/redis';
-import Redis, { Cluster } from 'ioredis';
 
 export interface RedisConfig {
-...
+  url: string;
+  ingressChannel: string;
+  egressPrefix: string;
+}
+
 export class CloudRedisClient extends EventEmitter {
-  private publisher: Redis | Cluster | null = null;
-  private subscriber: Redis | Cluster | null = null;
-  private upstash: UpstashRedis | null = null;
+  private publisher: any = null;
+  private subscriber: any = null;
+  private upstash: any = null;
   private connected = false;
   private config: RedisConfig;
 
@@ -28,14 +27,20 @@ export class CloudRedisClient extends EventEmitter {
     if (this.connected) return;
 
     try {
-      this.publisher = createStandaloneRedisClient({ redisUrl: this.config.url, lazyConnect: true } as any);
-      this.subscriber = createStandaloneRedisClient({ redisUrl: this.config.url, lazyConnect: true } as any);
+      this.publisher = createStandaloneRedisClient({
+        redisUrl: this.config.url,
+        lazyConnect: true,
+      } as any);
+      this.subscriber = createStandaloneRedisClient({
+        redisUrl: this.config.url,
+        lazyConnect: true,
+      } as any);
       this.upstash = createUpstashRestClient();
 
-      if (this.publisher instanceof Redis) {
+      if (this.publisher && typeof this.publisher.connect === 'function') {
         await this.publisher.connect().catch(() => {});
       }
-      if (this.subscriber instanceof Redis) {
+      if (this.subscriber && typeof this.subscriber.connect === 'function') {
         await this.subscriber.connect().catch(() => {});
       }
 
@@ -71,7 +76,7 @@ export class CloudRedisClient extends EventEmitter {
     await this.ensureConnected();
     if (this.subscriber) {
       await this.subscriber.subscribe(channel);
-      this.subscriber.on('message', (ch, msg) => {
+      this.subscriber.on('message', (ch: string, msg: string) => {
         if (ch === channel) callback(msg);
       });
     }
@@ -80,16 +85,14 @@ export class CloudRedisClient extends EventEmitter {
   async hGetAll(key: string): Promise<Record<string, string>> {
     await this.ensureConnected();
     if (this.upstash) {
-      const result = await this.upstash.hgetall<Record<string, string>>(key);
-      return result || {};
+      const result = await this.upstash.hgetall(key);
+      return (result as Record<string, string>) || {};
     }
     if (this.publisher) {
       return await this.publisher.hgetall(key);
     }
     return {};
   }
-...
-
 
   private async ensureConnected() {
     if (!this.connected) {

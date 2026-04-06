@@ -22,6 +22,11 @@ import express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 
+// @ts-ignore
+import { WebScrapingMCPTools } from '@the-new-fuse/web-scraping';
+// @ts-ignore
+import { JulesClient } from '@the-new-fuse/jules-skill';
+
 // Mock services interface (will be replaced with actual services in production)
 interface ServiceInterface {
   agent?: any;
@@ -40,6 +45,8 @@ export class TheNewFuseMCPServer {
   private server: Server;
   private isRemote: boolean;
   private services: ServiceInterface = {};
+  private webScrapingTools: any;
+  private julesClient: any;
 
   constructor(isRemote: boolean = false) {
     this.isRemote = isRemote;
@@ -54,6 +61,10 @@ export class TheNewFuseMCPServer {
         },
       }
     );
+
+    // Initialize supplemental tool classes
+    this.webScrapingTools = new WebScrapingMCPTools();
+    this.julesClient = new JulesClient();
 
     this.setupToolHandlers();
   }
@@ -327,6 +338,93 @@ export class TheNewFuseMCPServer {
             required: ['action', 'resourceType'],
           },
         },
+
+        // Web Scraping Tools (from @the-new-fuse/web-scraping)
+        ...this.webScrapingTools.getTools().map((t: any) => ({
+          name: t.name,
+          description: t.description,
+          inputSchema: t.inputSchema,
+        })),
+
+        // Jules Coding Agent Tools (from @the-new-fuse/jules-skill)
+        {
+          name: 'jules_create_session',
+          description: `Create a new Jules coding session. Jules is Google's autonomous AI coding agent that can work on tasks asynchronously. Use this to delegate complex coding tasks like implementing features, fixing bugs, refactoring code, or writing tests.`,
+          inputSchema: {
+            type: 'object',
+            properties: {
+              task: {
+                type: 'string',
+                description:
+                  'The task description/instructions for Jules. Be specific about what you want done.',
+              },
+              repository: {
+                type: 'string',
+                description:
+                  'Optional: Repository in format "owner/repo". Defaults to current directory.',
+              },
+              workspace_context: {
+                type: 'string',
+                description:
+                  'Optional: Additional context about the workspace/codebase to help Jules.',
+              },
+              parallel: {
+                type: 'number',
+                description:
+                  'Optional: Number of parallel sessions to create (1-16). Default is 1.',
+              },
+            },
+            required: ['task'],
+          },
+        },
+        {
+          name: 'jules_list_sessions',
+          description:
+            'List all Jules sessions. Returns information about active and completed coding sessions.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              limit: {
+                type: 'number',
+                description: 'Maximum number of sessions to return. Default is 10.',
+              },
+            },
+          },
+        },
+        {
+          name: 'jules_get_session',
+          description: 'Get details of a specific Jules session by ID.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              session_id: {
+                type: 'string',
+                description: 'The session ID to retrieve.',
+              },
+            },
+            required: ['session_id'],
+          },
+        },
+        {
+          name: 'jules_pull_session',
+          description:
+            'Pull the results of a completed Jules session. Optionally apply the patch to the local repository.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              session_id: {
+                type: 'string',
+                description: 'The session ID to pull results from.',
+              },
+              apply_patch: {
+                type: 'boolean',
+                description:
+                  'Whether to apply the patch to the local repository. Default is false.',
+              },
+            },
+            required: ['session_id'],
+          },
+        },
       ] as Tool[],
     }));
 
@@ -385,6 +483,57 @@ export class TheNewFuseMCPServer {
           // Agent Knowledge Bank
           case 'get_agent_bank_resources':
             return await this.handleGetAgentBankResources(args);
+
+          // Web Scraping Tools
+          case 'scrape_website_crawl4ai':
+          case 'scrape_website_simple':
+          case 'scrape_website_full':
+          case 'scrape_website_auto':
+          case 'scrape_via_proxy':
+          case 'analyze_website_structure': {
+            const tool = this.webScrapingTools.getTools().find((t: any) => t.name === name);
+            if (!tool)
+              throw new McpError(ErrorCode.MethodNotFound, `Scraping tool not found: ${name}`);
+            return await tool.handler.execute(args);
+          }
+
+          // Jules Tools
+          case 'jules_create_session':
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: JSON.stringify(await this.julesClient.createSession(args), null, 2),
+                },
+              ],
+            };
+          case 'jules_list_sessions':
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: JSON.stringify(await this.julesClient.listSessions(args), null, 2),
+                },
+              ],
+            };
+          case 'jules_get_session':
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: JSON.stringify(await this.julesClient.getSession(args.session_id), null, 2),
+                },
+              ],
+            };
+          case 'jules_pull_session':
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: JSON.stringify(await this.julesClient.pullSession(args), null, 2),
+                },
+              ],
+            };
 
           default:
             throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);

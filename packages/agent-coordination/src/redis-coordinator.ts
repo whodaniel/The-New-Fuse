@@ -5,12 +5,12 @@ import { A2APriority, AgentStatus } from '@the-new-fuse/a2a-core';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 import { BroadcastManager } from './broadcast/broadcast-manager';
+import { RecoveryManager } from './coordination/RecoveryManager';
 import { SharedStateManager } from './coordination/shared-state-manager';
+import { PersistentMetricsCollector, SystemMetrics } from './monitoring/PersistentMetricsCollector';
 import { PresenceTracker } from './presence/presence-tracker';
 import { TaskQueueManager } from './queues/task-queue-manager';
 import { MessageSerializer } from './serializers/message-serializer';
-import { PersistentMetricsCollector, SystemMetrics } from './monitoring/PersistentMetricsCollector';
-import { RecoveryManager } from './coordination/RecoveryManager';
 import {
   AgentTask,
   CoordinationChannel,
@@ -88,11 +88,9 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
   async onModuleInit(): Promise<void> {
     this.logger.log('Initializing Redis Coordinator...');
 
-    const redisConnection = this.redisService.getClient();
-
     // Initialize metrics collector
     this.metricsCollector = new PersistentMetricsCollector(
-      redisConnection,
+      this.redisService,
       this.keyPrefix + 'metrics:'
     );
 
@@ -410,7 +408,7 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
       totalTasksFailed: 0,
       activeAgents: 0,
       averageExecutionTime: 0,
-      tasksPerMinute: 0
+      tasksPerMinute: 0,
     };
   }
 
@@ -468,7 +466,11 @@ export class RedisCoordinator implements OnModuleInit, OnModuleDestroy {
 
     try {
       // Fail tasks assigned to this agent
-      const failedCount = await this.taskQueueManager.failTasksForAgent('agent-tasks', agentId, 'Agent went offline');
+      const failedCount = await this.taskQueueManager.failTasksForAgent(
+        'agent-tasks',
+        agentId,
+        'Agent went offline'
+      );
 
       if (failedCount > 0) {
         this.logger.log(`Failed ${failedCount} tasks for offline agent ${agentId}`);

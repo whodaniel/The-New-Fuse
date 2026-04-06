@@ -3,6 +3,7 @@ import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { WebSocketAdapter, WebSocketMetrics } from '../types';
 import { Server } from 'socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
+import { Redis } from 'ioredis';
 
 interface RedisConfig {
   host: string;
@@ -30,7 +31,10 @@ export class RedisWebSocketAdapter implements WebSocketAdapter, OnModuleInit, On
   };
   private metricsInterval?: NodeJS.Timeout;
 
-  constructor(config: RedisConfig, private readonly redisService: UnifiedRedisService) {
+  constructor(
+    config: RedisConfig,
+    private readonly redisService: UnifiedRedisService
+  ) {
     this.config = {
       keyPrefix: 'ws:',
       ...config,
@@ -41,7 +45,9 @@ export class RedisWebSocketAdapter implements WebSocketAdapter, OnModuleInit, On
     try {
       // Use raw clients for Socket.IO adapter compatibility
       this.pubClient = this.redisService.getClient();
-      this.subClient = (this.pubClient as any).duplicate ? (this.pubClient as any).duplicate() : this.pubClient;
+      this.subClient = (this.pubClient as any).duplicate
+        ? (this.pubClient as any).duplicate()
+        : this.pubClient;
 
       if (this.subClient.connect && this.subClient.status !== 'ready') {
         await this.subClient.connect().catch(() => {});
@@ -55,7 +61,7 @@ export class RedisWebSocketAdapter implements WebSocketAdapter, OnModuleInit, On
     }
   }
 
-  private async waitForConnection(client: Redis, name: string): Promise<void> {
+  private async waitForConnection(client: any, name: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         reject(new Error(`Redis ${name} client connection timeout`));
@@ -147,7 +153,8 @@ export class RedisWebSocketAdapter implements WebSocketAdapter, OnModuleInit, On
     const fullChannel = `${this.config.keyPrefix}${channel}`;
     await this.redisService.subscribe(fullChannel, (message) => {
       try {
-        const data = JSON.parse(message.message);
+        const data =
+          typeof message.message === 'string' ? JSON.parse(message.message) : message.message;
         handler(data);
       } catch (error) {
         this.logger.error(`Error parsing message from ${channel}: ${error}`);

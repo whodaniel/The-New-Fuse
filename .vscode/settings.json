@@ -160,5 +160,8 @@
   "git.showUnpushedChangesButton": true,
   "scm.alwaysShowActions": true,
   "scm.alwaysShowRepositories": true,
-  "scm.defaultViewMode": "tree"
+  "scm.defaultViewMode": "tree",
+
+  // Python
+  "python.terminal.useEnvFile": true
 }

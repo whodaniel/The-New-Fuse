@@ -38,16 +38,16 @@ export class JulesClient {
 
       return {
         success: true,
-        stdout: result.stdout,
-        stderr: result.stderr,
+        stdout: String(result.stdout),
+        stderr: String(result.stderr),
         exitCode: result.exitCode ?? 0,
       };
     } catch (error) {
       const execaError = error as ExecaError;
       return {
         success: false,
-        stdout: execaError.stdout ?? '',
-        stderr: execaError.stderr ?? execaError.message,
+        stdout: String(execaError.stdout ?? ''),
+        stderr: String(execaError.stderr ?? execaError.message),
         exitCode: execaError.exitCode ?? 1,
       };
     }

@@ -94,7 +94,9 @@ const SuggestionDetailPage = lazy(() => import('./pages/Suggestions/Detail'));
 const GoalsPage = lazy(() => import('./pages/Goals'));
 const GoalDetailPage = lazy(() => import('./pages/Goals/Detail'));
 const PlansPage = lazy(() => import('./pages/Plans'));
-const PlanDetailPage = lazy(() => import('./pages/Plans/Detail'));
+const PlanDetailPage = ({ id }: { id?: string }) => (
+  <LazyPage name="Plan Detail" path={`/plans/${id}`} />
+);
 const TimelinePage = lazy(() => import('./pages/Timeline'));
 const MacroTimelinePage = lazy(() => import('./pages/Timeline/MacroTimelinePage'));
 const TimelineModulePage = lazy(() => import('./pages/Timeline/TimelineModulePage'));
@@ -224,33 +226,13 @@ const AICommandCenter = lazy(() => import('./pages/AICommandCenter'));
 // Restored Critical Components from Orphan Audit
 const TNFCommandCenter = lazy(() => import('./pages/TNFCommandCenter'));
 const FairtableDashboard = lazy(() => import('./pages/fairtable/FairtableDashboard'));
-const SecurityDashboard = lazy(() => import('./pages/Admin/SecurityDashboard'));
-const SystemMonitoring = lazy(() => import('./pages/Admin/SystemMonitoring'));
-const TheiaIDE = lazy(() => import('./pages/IDE/TheiaIDE'));
-const ProfileAtlas = lazy(() => import('./pages/Agents/ProfileAtlas'));
 const AgentTemplatesBrowser = lazy(() => import('./pages/Resources/AgentTemplatesBrowser'));
 const SkillsBrowser = lazy(() => import('./pages/Resources/SkillsBrowser'));
 const WorkflowBrowser = lazy(() => import('./pages/Resources/WorkflowBrowser'));
-const EnhancedWorkflowBuilder = lazy(
-  () => import('./pages/workflow-pages/EnhancedWorkflowBuilder')
-);
-const ModernBuilder = lazy(() => import('./pages/workflow-pages/ModernBuilder'));
-const WorkflowBuilderEnhanced = lazy(
-  () => import('./pages/workflow-pages/WorkflowBuilderEnhanced')
-);
 
 // Remaining Reconstructed Components
-const AdminUsers = lazy(() => import('./pages/Admin/Users'));
-const AdminWorkspaces = lazy(() => import('./pages/Admin/Workspaces'));
-const LlmRoutingControl = lazy(() => import('./pages/Admin/components/LlmRoutingControl'));
-const OAuthInstanceRotationControl = lazy(
-  () => import('./pages/Admin/components/OAuthInstanceRotationControl')
-);
-const RcloneMobilityControl = lazy(() => import('./pages/Admin/components/RcloneMobilityControl'));
 const TasksCalendar = lazy(() => import('./pages/Tasks/Calendar'));
 const CreateAgent = lazy(() => import('./pages/dashboard/CreateAgent'));
-const DashboardSettings = lazy(() => import('./pages/dashboard/DashboardSettings'));
-const WorkspaceLayout = lazy(() => import('./pages/workspace/WorkspaceLayout'));
 
 // Create fallback components for pages that might have import issues
 const LazyPage = ({ name, path }: { name: string; path: string }) => (
@@ -1664,23 +1646,10 @@ export default function ComprehensiveRouter() {
               />
 
               <Route
-                path="/admin/security-dashboard"
-                element={
-                  <RequirePermission roles={['SUPER_ADMIN']}>
-                    <Suspense fallback={<LoadingFallback name="Security Dashboard" />}>
-                      <SecurityDashboard />
-                    </Suspense>
-                  </RequirePermission>
-                }
-              />
-
-              <Route
                 path="/admin/system-monitoring"
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
-                    <Suspense fallback={<LoadingFallback name="System Monitoring" />}>
-                      <SystemMonitoring />
-                    </Suspense>
+                    <LazyPage name="System Monitoring" path="/admin/system-monitoring" />
                   </RequirePermission>
                 }
               />
@@ -1689,9 +1658,7 @@ export default function ComprehensiveRouter() {
                 path="/ide"
                 element={
                   <RequireMemberAccess>
-                    <Suspense fallback={<LoadingFallback name="Theia IDE" />}>
-                      <TheiaIDE />
-                    </Suspense>
+                    <LazyPage name="Theia IDE" path="/ide" />
                   </RequireMemberAccess>
                 }
               />
@@ -1700,9 +1667,7 @@ export default function ComprehensiveRouter() {
                 path="/agents/atlas"
                 element={
                   <RequireMemberAccess>
-                    <Suspense fallback={<LoadingFallback name="Profile Atlas" />}>
-                      <ProfileAtlas />
-                    </Suspense>
+                    <LazyPage name="Profile Atlas" path="/agents/atlas" />
                   </RequireMemberAccess>
                 }
               />
@@ -1744,9 +1709,7 @@ export default function ComprehensiveRouter() {
                 path="/workflows/enhanced-builder"
                 element={
                   <RequireMemberAccess>
-                    <Suspense fallback={<LoadingFallback name="Enhanced Workflow Builder" />}>
-                      <EnhancedWorkflowBuilder />
-                    </Suspense>
+                    <LazyPage name="Enhanced Workflow Builder" path="/workflows/enhanced-builder" />
                   </RequireMemberAccess>
                 }
               />
@@ -1755,9 +1718,7 @@ export default function ComprehensiveRouter() {
                 path="/workflows/modern-builder"
                 element={
                   <RequireMemberAccess>
-                    <Suspense fallback={<LoadingFallback name="Modern Builder" />}>
-                      <ModernBuilder />
-                    </Suspense>
+                    <LazyPage name="Modern Builder" path="/workflows/modern-builder" />
                   </RequireMemberAccess>
                 }
               />
@@ -1766,9 +1727,7 @@ export default function ComprehensiveRouter() {
                 path="/workflows/builder-enhanced"
                 element={
                   <RequireMemberAccess>
-                    <Suspense fallback={<LoadingFallback name="Workflow Builder Enhanced" />}>
-                      <WorkflowBuilderEnhanced />
-                    </Suspense>
+                    <LazyPage name="Workflow Builder Enhanced" path="/workflows/builder-enhanced" />
                   </RequireMemberAccess>
                 }
               />
@@ -1777,9 +1736,7 @@ export default function ComprehensiveRouter() {
                 path="/admin/users"
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
-                    <Suspense fallback={<LoadingFallback name="User Management" />}>
-                      <AdminUsers />
-                    </Suspense>
+                    <LazyPage name="User Management" path="/admin/users" />
                   </RequirePermission>
                 }
               />
@@ -1788,9 +1745,7 @@ export default function ComprehensiveRouter() {
                 path="/admin/workspaces"
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
-                    <Suspense fallback={<LoadingFallback name="Workspace Management" />}>
-                      <AdminWorkspaces />
-                    </Suspense>
+                    <LazyPage name="Workspace Management" path="/admin/workspaces" />
                   </RequirePermission>
                 }
               />
@@ -1799,9 +1754,7 @@ export default function ComprehensiveRouter() {
                 path="/admin/controls/llm"
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
-                    <Suspense fallback={<LoadingFallback name="LLM Routing Control" />}>
-                      <LlmRoutingControl />
-                    </Suspense>
+                    <LazyPage name="LLM Routing Control" path="/admin/controls/llm" />
                   </RequirePermission>
                 }
               />
@@ -1810,9 +1763,7 @@ export default function ComprehensiveRouter() {
                 path="/admin/controls/oauth"
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
-                    <Suspense fallback={<LoadingFallback name="OAuth Instance Rotation" />}>
-                      <OAuthInstanceRotationControl />
-                    </Suspense>
+                    <LazyPage name="OAuth Instance Rotation" path="/admin/controls/oauth" />
                   </RequirePermission>
                 }
               />
@@ -1821,9 +1772,7 @@ export default function ComprehensiveRouter() {
                 path="/admin/controls/mobility"
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
-                    <Suspense fallback={<LoadingFallback name="Rclone Mobility Control" />}>
-                      <RcloneMobilityControl />
-                    </Suspense>
+                    <LazyPage name="Rclone Mobility Control" path="/admin/controls/mobility" />
                   </RequirePermission>
                 }
               />
@@ -1854,9 +1803,7 @@ export default function ComprehensiveRouter() {
                 path="/dashboard/settings"
                 element={
                   <RequireMemberAccess>
-                    <Suspense fallback={<LoadingFallback name="Dashboard Settings" />}>
-                      <DashboardSettings />
-                    </Suspense>
+                    <LazyPage name="Dashboard Settings" path="/dashboard/settings" />
                   </RequireMemberAccess>
                 }
               />
@@ -1865,9 +1812,7 @@ export default function ComprehensiveRouter() {
                 path="/workspace/layout"
                 element={
                   <RequireMemberAccess>
-                    <Suspense fallback={<LoadingFallback name="Workspace Layout" />}>
-                      <WorkspaceLayout />
-                    </Suspense>
+                    <LazyPage name="Workspace Layout" path="/workspace/layout" />
                   </RequireMemberAccess>
                 }
               />

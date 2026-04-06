@@ -8,8 +8,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
 exports.loadStandaloneRedisConfig = loadStandaloneRedisConfig;
 exports.createStandaloneRedisClient = createStandaloneRedisClient;
 exports.createUpstashRestClient = createUpstashRestClient;
-const ioredis_1 = __importDefault(require('ioredis'));
 const redis_1 = require('@upstash/redis');
+const ioredis_1 = __importDefault(require('ioredis'));
 /**
  * Load Redis configuration from environment variables without NestJS dependencies
  */

@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/shared",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Shared utilities, hooks, and components for The New Fuse",
   "main": "./dist/index.js",
@@ -11,10 +13,10 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js"
     },
-    "./validation": "./src/validation/index.ts",
-    "./utils": "./src/utils/index.ts",
-    "./hooks": "./src/hooks/index.ts",
-    "./browser-control/protocol": "./src/browser-control/protocol.ts"
+    "./validation": "./dist/validation/index.js",
+    "./utils": "./dist/utils/index.js",
+    "./hooks": "./dist/hooks/index.js",
+    "./browser-control/protocol": "./dist/browser-control/protocol.js"
   },
   "scripts": {
     "build": "rm -rf dist && tsc --build",

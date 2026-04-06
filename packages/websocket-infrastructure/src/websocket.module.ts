@@ -1,4 +1,4 @@
-import { Module, DynamicModule, Provider } from '@nestjs/common';
+import { Module, DynamicModule, Provider, Global } from '@nestjs/common';
 import { WebSocketGateway } from './websocket.gateway';
 import { WebSocketConfig } from './types';
 import { ConnectionPool } from './connection/connection-pool';
@@ -6,6 +6,7 @@ import { ConnectionManager } from './connection/connection-manager';
 import { RedisWebSocketAdapter } from './adapters/redis-adapter';
 import { MessageQueue } from './queue/message-queue';
 import { WebSocketMonitoring } from './monitoring/websocket-metrics';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 @Module({})
 export class WebSocketInfrastructureModule {
@@ -22,7 +23,9 @@ export class WebSocketInfrastructureModule {
     if (config?.redis) {
       providers.push({
         provide: RedisWebSocketAdapter,
-        useFactory: () => new RedisWebSocketAdapter(config.redis!),
+        useFactory: (redisService: UnifiedRedisService) =>
+          new RedisWebSocketAdapter(config.redis!, redisService),
+        inject: [UnifiedRedisService],
       });
     }
 
@@ -44,6 +47,16 @@ export class WebSocketInfrastructureModule {
           provide: 'WEBSOCKET_CONFIG',
           useFactory: options.useFactory,
           inject: options.inject || [],
+        },
+        {
+          provide: RedisWebSocketAdapter,
+          useFactory: (config: WebSocketConfig, redisService: UnifiedRedisService) => {
+            if (config.redis) {
+              return new RedisWebSocketAdapter(config.redis, redisService);
+            }
+            return undefined;
+          },
+          inject: ['WEBSOCKET_CONFIG', UnifiedRedisService],
         },
         WebSocketGateway,
       ],

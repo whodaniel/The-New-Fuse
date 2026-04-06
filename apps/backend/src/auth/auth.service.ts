@@ -1,9 +1,13 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { drizzleUserRepository } from '@the-new-fuse/database';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { Address, Hex, verifyMessage } from 'viem';
+import { drizzleUserRepository } from '@the-new-fuse/database';
 // @ts-ignore
 import { SiweMessage } from 'siwe';
 import { EventBus } from '../events/event-bus.service';
@@ -27,7 +31,9 @@ export class AuthService {
   ) {
     this.supabase = createClient(
       this.configService.get<string>('SUPABASE_URL') || '',
-      this.configService.get<string>('SUPABASE_SERVICE_ROLE_KEY') || this.configService.get<string>('SUPABASE_ANON_KEY') || ''
+      this.configService.get<string>('SUPABASE_SERVICE_ROLE_KEY') ||
+        this.configService.get<string>('SUPABASE_ANON_KEY') ||
+        ''
     );
   }
 
@@ -136,10 +142,39 @@ export class AuthService {
     };
   }
 
+  async resendVerification(email: string) {
+    const user = await drizzleUserRepository.findByEmail(email);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    if (user.emailVerified) {
+      throw new BadRequestException('Email is already verified');
+    }
+
+    const verificationToken = this.generateVerificationToken();
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    await drizzleUserRepository.update(user.id, {
+      verificationToken,
+      verificationExpires,
+    } as any);
+
+    this.logger.log(`Verification email resent to: ${email}`);
+
+    return {
+      message: 'Verification email resent successfully.',
+      email,
+    };
+  }
+
   async validateSupabaseToken(token: string) {
     try {
-      const { data: { user: supabaseUser }, error } = await this.supabase.auth.getUser(token);
-      
+      const {
+        data: { user: supabaseUser },
+        error,
+      } = await this.supabase.auth.getUser(token);
+
       if (error || !supabaseUser) {
         throw error || new Error('User not found');
       }
@@ -207,8 +242,9 @@ export class AuthService {
     try {
       // 1. Try to verify as local JWT
       const decoded = this.jwtService.verify(token) as Record<string, any>;
-      const tokenEmail = typeof decoded.email === 'string' ? decoded.email.toLowerCase() : undefined;
-      
+      const tokenEmail =
+        typeof decoded.email === 'string' ? decoded.email.toLowerCase() : undefined;
+
       let user = tokenEmail ? await drizzleUserRepository.findByEmail(tokenEmail) : null;
       if (!user && decoded.sub) {
         user = await drizzleUserRepository.findById(decoded.sub);
@@ -240,13 +276,17 @@ export class AuthService {
     domain: string,
     walletAddress: string,
     message: string,
-    signature: string
+    signature: string,
+    walletType?: string
   ) {
     try {
       const siweMessage = new SiweMessage(message);
       const verificationResult = await siweMessage.verify({ signature });
 
-      if (!verificationResult.success || siweMessage.address.toLowerCase() !== walletAddress.toLowerCase()) {
+      if (
+        !verificationResult.success ||
+        siweMessage.address.toLowerCase() !== walletAddress.toLowerCase()
+      ) {
         throw new UnauthorizedException('Invalid signature or address mismatch');
       }
     } catch (error) {

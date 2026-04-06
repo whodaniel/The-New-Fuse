@@ -5,18 +5,18 @@
  * and dynamic capability registration.
  */
 
-import { EventEmitter } from 'events';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import { EventEmitter } from 'events';
 import {
-  AgentRegistration,
+  AgentHealthMetrics,
   AgentHeartbeat,
+  AgentRegistration,
   AgentStatus,
   DiscoveredAgent,
-  DiscoveryQuery,
-  DiscoveryQueryResult,
   DiscoveryEvent,
   DiscoveryEventPayload,
-  AgentHealthMetrics,
+  DiscoveryQuery,
+  DiscoveryQueryResult,
   LoadBalancingRecommendation,
 } from '../types/agent-discovery.types';
 
@@ -55,10 +55,7 @@ export class AgentDiscoveryRegistry extends EventEmitter {
   private readonly AGENT_CAPABILITY_INDEX: string;
   private readonly PUBSUB_CHANNEL: string;
 
-  constructor(
-    redisService: UnifiedRedisService,
-    options: DiscoveryRegistryOptions = {}
-  ) {
+  constructor(redisService: UnifiedRedisService, options: DiscoveryRegistryOptions = {}) {
     super();
 
     this.redisService = redisService;
@@ -93,7 +90,10 @@ export class AgentDiscoveryRegistry extends EventEmitter {
   private initializePubSub(): void {
     this.redisService.subscribe(this.PUBSUB_CHANNEL, (message) => {
       try {
-        const payload: DiscoveryEventPayload = JSON.parse(message.message);
+        const payload: DiscoveryEventPayload =
+          typeof message.message === 'string'
+            ? JSON.parse(message.message)
+            : (message.message as any);
         this.emit(payload.event, payload);
       } catch (error) {
         console.error('Failed to parse pubsub message:', error);
@@ -444,8 +444,13 @@ export class AgentDiscoveryRegistry extends EventEmitter {
   /**
    * Intersect agent IDs with language filter
    */
-  private async intersectWithLanguages(agentIds: Set<string>, languages: string[]): Promise<Set<string>> {
-    const sets = languages.map((lang) => `${this.AGENT_CAPABILITY_INDEX}:lang:${lang.toLowerCase()}`);
+  private async intersectWithLanguages(
+    agentIds: Set<string>,
+    languages: string[]
+  ): Promise<Set<string>> {
+    const sets = languages.map(
+      (lang) => `${this.AGENT_CAPABILITY_INDEX}:lang:${lang.toLowerCase()}`
+    );
     const intersection = await this.redisService.sinter(...sets);
     return new Set(intersection.filter((id) => agentIds.has(id)));
   }
@@ -453,8 +458,13 @@ export class AgentDiscoveryRegistry extends EventEmitter {
   /**
    * Intersect agent IDs with framework filter
    */
-  private async intersectWithFrameworks(agentIds: Set<string>, frameworks: string[]): Promise<Set<string>> {
-    const sets = frameworks.map((fw) => `${this.AGENT_CAPABILITY_INDEX}:framework:${fw.toLowerCase()}`);
+  private async intersectWithFrameworks(
+    agentIds: Set<string>,
+    frameworks: string[]
+  ): Promise<Set<string>> {
+    const sets = frameworks.map(
+      (fw) => `${this.AGENT_CAPABILITY_INDEX}:framework:${fw.toLowerCase()}`
+    );
     const intersection = await this.redisService.sinter(...sets);
     return new Set(intersection.filter((id) => agentIds.has(id)));
   }
@@ -463,7 +473,9 @@ export class AgentDiscoveryRegistry extends EventEmitter {
    * Intersect agent IDs with group filter
    */
   private async intersectWithGroups(agentIds: Set<string>, groups: string[]): Promise<Set<string>> {
-    const sets = groups.map((group) => `${this.AGENT_CAPABILITY_INDEX}:group:${group.toLowerCase()}`);
+    const sets = groups.map(
+      (group) => `${this.AGENT_CAPABILITY_INDEX}:group:${group.toLowerCase()}`
+    );
     const intersection = await this.redisService.sinter(...sets);
     return new Set(intersection.filter((id) => agentIds.has(id)));
   }
@@ -512,8 +524,7 @@ export class AgentDiscoveryRegistry extends EventEmitter {
 
     if (query.maxCost !== undefined) {
       const hasAffordableCapability = agent.registration.capabilities.some(
-        (cap) =>
-          !cap.pricing?.perInvocation || cap.pricing.perInvocation <= query.maxCost!
+        (cap) => !cap.pricing?.perInvocation || cap.pricing.perInvocation <= query.maxCost!
       );
       if (!hasAffordableCapability) {
         return false;

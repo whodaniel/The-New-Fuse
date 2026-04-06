@@ -8,7 +8,7 @@ import {
   MessageBody,
   ConnectedSocket,
 } from '@nestjs/websockets';
-import { Injectable, Logger, UseGuards } from '@nestjs/common';
+import { Injectable, Logger, UseGuards, Inject, Optional } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { AuthenticatedSocket, WebSocketConfig } from './types';
 import { ConnectionPool } from './connection/connection-pool';
@@ -33,12 +33,14 @@ export class WebSocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
   private readonly logger = new Logger(WebSocketGateway.name);
   private readonly connectionPool: ConnectionPool;
   private readonly connectionManager: ConnectionManager;
-  private readonly redisAdapter?: RedisWebSocketAdapter;
   private readonly messageQueue: MessageQueue;
   private readonly monitoring: WebSocketMonitoring;
   private readonly compressionMiddleware: CompressionMiddleware;
 
-  constructor(private readonly config?: WebSocketConfig) {
+  constructor(
+    @Inject('WEBSOCKET_CONFIG') private readonly config: WebSocketConfig,
+    @Optional() private readonly redisAdapter?: RedisWebSocketAdapter
+  ) {
     // Initialize connection pool
     this.connectionPool = new ConnectionPool(
       config?.connectionPool?.maxConnections ?? 10000,
@@ -51,11 +53,6 @@ export class WebSocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
       config?.heartbeat?.interval ?? 30000,
       config?.heartbeat?.timeout ?? 60000
     );
-
-    // Initialize Redis adapter if configured
-    if (config?.redis) {
-      this.redisAdapter = new RedisWebSocketAdapter(config.redis);
-    }
 
     // Initialize message queue
     this.messageQueue = new MessageQueue({
