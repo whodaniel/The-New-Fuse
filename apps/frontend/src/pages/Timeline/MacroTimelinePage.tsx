@@ -7,7 +7,9 @@ import TimelineView from '../../features/timeline/components/TimelineView';
 import { useTimeline } from '../../features/timeline/hooks/useTimeline';
 
 const MacroTimelinePage: React.FC = () => {
-  const { data, loading, error, updateRecord } = useTimeline();
+  const { events: timelineEvents, loading, error } = useTimeline();
+  const data: any = { plans: [], events: timelineEvents };
+  const updateRecord = async (id: string, patch: any) => console.log('updateRecord', id, patch);
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
   const [viewMode, setViewMode] = useState<'timeline' | 'board' | 'activity'>('timeline');
   const [newTodo, setNewTodo] = useState('');

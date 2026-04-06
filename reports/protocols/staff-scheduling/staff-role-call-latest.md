@@ -1,6 +1,6 @@
 # TNF Staff Role Call and Scheduling Report
 
-Generated: 2026-03-26T20:32:29.778Z
+Generated: 2026-04-06T04:20:16.156Z
 
 ## Common Purpose
 
@@ -9,7 +9,7 @@ Generated: 2026-03-26T20:32:29.778Z
 
 ## Staff Presence
 
-- Total known sessions: 10
+- Total known sessions: 21
 - Local Sub-Director owners: 1
 - Staff-tagged sessions: 1
 
@@ -24,12 +24,12 @@ Generated: 2026-03-26T20:32:29.778Z
 - Total schedules: 23
 - Enabled: 21
 - Disabled: 2
-- Critical/High growth blockers: 9
+- Critical/High growth blockers: 10
 
 ## Scheduling Actions
 
 - Confirm Local Sub-Director owner remains tnf-local-terminal-ttys007.
-- Resolve 9 critical/high growth blocker findings before adding new automation.
+- Resolve 10 critical/high growth blocker findings before adding new automation.
 - Ensure every core schedule has owner + runbook + protocol links before next
   cycle.
 - Require downstream processes to emit attribution evidence in run artifacts.

@@ -1,13 +1,13 @@
 {
   "spec": "tnf/growth-blocker-audit/0.1",
-  "generatedAt": "2026-03-26T20:31:40.527Z",
+  "generatedAt": "2026-04-06T04:00:37.234Z",
   "sources": {
     "calendarPath": "data/protocols/tnf-staff-master-calendar.json"
   },
   "summary": {
-    "totalFindings": 13,
+    "totalFindings": 14,
     "bySeverity": {
-      "critical": 0,
+      "critical": 1,
       "high": 9,
       "medium": 4,
       "low": 0
@@ -15,6 +15,12 @@
     "policySignalFiles": 20
   },
   "findings": [
+    {
+      "severity": "critical",
+      "type": "runtime-health",
+      "scheduleId": "tnf-master-clock-super-cycle",
+      "message": "tnf-master-clock-super-cycle runtime status is error."
+    },
     {
       "severity": "high",
       "type": "stale-run-window",
@@ -96,11 +102,6 @@
   ],
   "policySignalHotspots": [
     {
-      "file": "data/protocols/cron-jobs.control-plane-state.json",
-      "hits": 99,
-      "score": 10
-    },
-    {
       "file": "data/protocols/cron-jobs.registry.json",
       "hits": 36,
       "score": 8
@@ -116,6 +117,11 @@
       "score": 7
     },
     {
+      "file": "docs/protocols/bridges/reports/tnf-mini-omni-voice-loop.md",
+      "hits": 14,
+      "score": 6
+    },
+    {
       "file": "docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md",
       "hits": 6,
       "score": 6
@@ -126,12 +132,12 @@
       "score": 6
     },
     {
-      "file": "docs/operations/TNF_CORPORATE_CHAIN_OF_COMMAND_AND_ORDER_OF_OPERATIONS_MANUAL.md",
-      "hits": 5,
-      "score": 5
+      "file": "data/protocols/cron-jobs.control-plane-state.json",
+      "hits": 78,
+      "score": 6
     },
     {
-      "file": "data/protocols/twip-inventory.snapshot.json",
+      "file": "docs/operations/TNF_CORPORATE_CHAIN_OF_COMMAND_AND_ORDER_OF_OPERATIONS_MANUAL.md",
       "hits": 5,
       "score": 5
     },

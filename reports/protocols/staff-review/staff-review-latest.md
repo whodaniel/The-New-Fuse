@@ -1,13 +1,13 @@
 # TNF Staff Review Report
 
-Generated: 2026-03-26T20:32:29.639Z
+Generated: 2026-04-06T04:15:15.008Z
 
 ## Snapshot
 
 - Critical escalations: 0
 - Warning escalations: 0
 - Dont-die attempts failed: 0
-- High-priority blockers: 9
+- High-priority blockers: 10
 - Staff owner sessions: 1
 
 ## Recommendations

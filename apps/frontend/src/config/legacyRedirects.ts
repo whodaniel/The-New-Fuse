@@ -4,15 +4,16 @@ export interface LegacyRedirect {
 }
 
 // Compatibility redirects to preserve legacy entry points while consolidating IA.
+// IMPORTANT: Do NOT add redirects here for paths that have explicit Route definitions
+// in ComprehensiveRouter.tsx. React Router v6 may resolve ambiguously when both
+// a redirect Route and an explicit Route share the same path.
 export const LEGACY_REDIRECTS: LegacyRedirect[] = [
   // OpenClaw-style operational aliases
   { from: '/overview', to: '/dashboard' },
-  { from: '/channels', to: '/command-center' },
   { from: '/instances', to: '/observatory' },
   { from: '/sessions', to: '/multi-agent-chat' },
   { from: '/usage', to: '/analytics' },
   { from: '/cron-jobs', to: '/tasks' },
-  { from: '/skills', to: '/resources' },
   { from: '/nodes', to: '/observatory' },
   { from: '/config', to: '/settings' },
   { from: '/logs', to: '/admin/audit-logs' },
@@ -25,11 +26,11 @@ export const LEGACY_REDIRECTS: LegacyRedirect[] = [
   { from: '/agents/unified-creator', to: '/agents/new' },
   { from: '/workspace/chat', to: '/workspace-chat' },
   { from: '/workspace/layout', to: '/workspace/overview' },
-  { from: '/login', to: '/auth/login' },
-  { from: '/register', to: '/auth/register' },
+
+  // Auth redirects — explicit /login and /register routes exist,
+  // so only redirect deeper legacy auth paths.
   { from: '/auth/google/callback', to: '/auth/google-callback' },
-  { from: '/auth/callback', to: '/auth/oauth-callback' },
-  { from: '/integrations', to: '/connect' },
+
   { from: '/ide', to: '/command-center' },
   { from: '/privacy', to: '/legal/privacy' },
   { from: '/terms', to: '/legal/terms' },
@@ -45,11 +46,8 @@ export const LEGACY_REDIRECTS: LegacyRedirect[] = [
   { from: '/components-nav', to: '/components' },
   { from: '/tasks-page', to: '/tasks' },
   { from: '/chat-page', to: '/chat' },
-  { from: '/workflows/detail', to: '/workflows' },
-  { from: '/workflows/execution', to: '/workflows/executions' },
   { from: '/admin/dashboard', to: '/admin' },
   { from: '/admin/experimental-features', to: '/admin/feature-flags' },
   { from: '/admin/onboarding', to: '/admin' },
   { from: '/general-settings/community-hub', to: '/general-settings' },
-  { from: '/api/admin/features/:id/evaluate', to: '/api/admin/features' },
 ];

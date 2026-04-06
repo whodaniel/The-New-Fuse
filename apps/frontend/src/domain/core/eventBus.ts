@@ -1,28 +1,49 @@
-// @ts-nocheck
 import { EventEmitter } from 'events';
-import { LoggingService } from '../../services/logging';
+import { logger } from '../../utils/logger';
+
+export interface EventMetadata {
+  timestamp: number;
+  source?: string;
+  correlationId?: string;
+}
+
+export interface EventData<T = any> {
+  type: string;
+  payload: T;
+  metadata: EventMetadata;
+}
+
 export class EventBus extends EventEmitter {
-  constructor() {
+  private static instance: EventBus;
+  private eventHistory: EventData[] = [];
+  private maxHistorySize = 1000;
+
+  private constructor() {
     super();
-    this.eventHistory = [];
-    this.maxHistorySize = 1000;
-    this.logger = LoggingService.getInstance();
     this.setupErrorHandling();
   }
-  static getInstance() {
+
+  public static getInstance(): EventBus {
     if (!EventBus.instance) {
       EventBus.instance = new EventBus();
     }
     return EventBus.instance;
   }
-  setupErrorHandling() {
-    this.on('error', (error) => {
-      this.logger.error('EventBus error:', error);
+
+  private setupErrorHandling(): void {
+    this.on('error', (error: Error) => {
+      logger.error('EventBus error:', error);
     });
   }
-  emit(type, payload, source, correlationId) {
-    const eventData = {
-      type,
+
+  public emit(
+    type: string | symbol,
+    payload: any,
+    source?: string,
+    correlationId?: string
+  ): boolean {
+    const eventData: EventData = {
+      type: String(type),
       payload,
       metadata: {
         timestamp: Date.now(),
@@ -31,48 +52,46 @@ export class EventBus extends EventEmitter {
       },
     };
     this.addToHistory(eventData);
-    this.logger.debug(`Event emitted: ${type}`, { source, correlationId });
+    logger.debug(`Event emitted: ${String(type)}`, { source, correlationId });
     return super.emit(type, eventData);
   }
-  on(type, listener) {
-    return super.on(type, listener);
-  }
-  once(type, listener) {
-    return super.once(type, listener);
-  }
-  addToHistory(eventData) {
+
+  private addToHistory(eventData: EventData): void {
     this.eventHistory.push(eventData);
     if (this.eventHistory.length > this.maxHistorySize) {
       this.eventHistory.shift();
     }
   }
-  getEventHistory() {
+
+  public getEventHistory(): EventData[] {
     return [...this.eventHistory];
   }
-  getEventsByType(type) {
+
+  public getEventsByType(type: string): EventData[] {
     return this.eventHistory.filter((event) => event.type === type);
   }
-  getEventsByTimeRange(startTime, endTime) {
+
+  public getEventsByTimeRange(startTime: number, endTime: number): EventData[] {
     return this.eventHistory.filter(
       (event) => event.metadata.timestamp >= startTime && event.metadata.timestamp <= endTime
     );
   }
-  clearHistory() {
+
+  public clearHistory(): void {
     this.eventHistory = [];
-    this.logger.info('Event history cleared');
+    logger.info('Event history cleared');
   }
-  removeAllListeners(type) {
+
+  public removeAllListeners(type?: string | symbol): this {
     if (type) {
-      this.logger.debug(`Removing all listeners for event type: ${type}`);
+      logger.debug(`Removing all listeners for event type: ${String(type)}`);
     } else {
-      this.logger.debug('Removing all event listeners');
+      logger.debug('Removing all event listeners');
     }
     return super.removeAllListeners(type);
   }
-  listenerCount(type) {
-    return super.listenerCount(type);
-  }
-  getActiveEventTypes() {
+
+  public getActiveEventTypes(): (string | symbol)[] {
     return this.eventNames();
   }
 }

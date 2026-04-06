@@ -1,6 +1,6 @@
 # TNF Staffing Director Report
 
-Generated: 2026-03-26T20:32:29.639Z
+Generated: 2026-04-06T00:30:17.788Z
 
 ## Coverage Summary
 
@@ -10,11 +10,11 @@ Generated: 2026-03-26T20:32:29.639Z
 - Staff coordination schedules: 1
 - Staff architecture schedules: 1
 - Staff review schedules: 1
-- High-priority blocker findings: 9
+- High-priority blocker findings: 10
 
 ## Niche Gaps
 
-- [medium] blocker_driven_staffing_pressure: 9 critical/high blocker findings
+- [medium] blocker_driven_staffing_pressure: 10 critical/high blocker findings
   indicate potential staffing specialization gaps.
 
 ## Role + Skill Proposals

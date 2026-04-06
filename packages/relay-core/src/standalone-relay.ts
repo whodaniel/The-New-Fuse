@@ -19,8 +19,8 @@
 import { EventEmitter } from 'events';
 import http from 'http';
 
-import { Redis, Cluster } from 'ioredis';
 import { Redis as UpstashRedis } from '@upstash/redis';
+import { Cluster, Redis } from 'ioredis';
 import WebSocket, { WebSocketServer } from 'ws';
 
 // @ts-ignore
@@ -286,6 +286,13 @@ export class TNFRelayServer extends EventEmitter {
       console.log(
         '[Relay] Bridge connected - Agent gate:',
         this.bridgeGateEnabled ? 'ENABLED' : 'OPEN'
+      );
+    });
+
+    this.bridge.on('error', (err) => {
+      console.error(
+        '[Relay] Bridge error caught:',
+        err instanceof Error ? err.message : String(err)
       );
     });
 

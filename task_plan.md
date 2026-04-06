@@ -24,13 +24,13 @@ Phase 1 (Requirements & Discovery) - in progress
 
 ### Phase 1: Requirements & Discovery (ANALYSIS)
 
-- [ ] Confirm workflow builder scope and entry points (modern + legacy +
+- [x] Confirm workflow builder scope and entry points (modern + legacy +
       enhanced routes/components).
-- [ ] Identify all builder modules + their UI controls.
-- [ ] Map each module to backend endpoints/data models/execution paths.
-- [ ] Capture layout issues and missing wiring in `findings.md`.
+- [x] Identify all builder modules + their UI controls.
+- [x] Map each module to backend endpoints/data models/execution paths.
+- [x] Capture layout issues and missing wiring in `findings.md`.
 - [x] Capture MCP Tool server-list gap and marketplace integration requirement.
-- **Status:** in_progress
+- **Status:** completed
 - **Code Allowed:** ❌ NO
 
 ### Phase 2: Planning & Structure (PLANNING)

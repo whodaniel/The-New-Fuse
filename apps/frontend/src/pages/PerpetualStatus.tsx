@@ -1,7 +1,7 @@
 // TNF Perpetual Status — The Living Dashboard
 // Shows every perpetual process, every relay, every heartbeat — in real time
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
 interface Process {
   name: string;
@@ -30,11 +30,39 @@ const AnimatedPulse = ({ children, color }: { children: React.ReactNode; color: 
 );
 
 export default function PerpetualStatus() {
-  const [processes, setProcesses] = useState<Process[]>([
-    { name: 'Launchpad', pid: 0, status: 'alive', lastBeat: Date.now(), emoji: '🚀', description: 'Spawns agents every 5 minutes — the heartbeat of growth' },
-    { name: 'Git Sync', pid: 0, status: 'alive', lastBeat: Date.now(), emoji: '🔄', description: 'Commits and pushes every change — permanent memory' },
-    { name: 'Relay Bridge', pid: 0, status: 'alive', lastBeat: Date.now(), emoji: '🌉', description: 'Keeps the TNF relay alive — connection between all agents' },
-    { name: 'Relay Monitor', pid: 0, status: 'alive', lastBeat: Date.now(), emoji: '👁️', description: 'Watches the watcher — self-healing infrastructure' },
+  const [processes] = useState<Process[]>([
+    {
+      name: 'Launchpad',
+      pid: 0,
+      status: 'alive',
+      lastBeat: Date.now(),
+      emoji: '🚀',
+      description: 'Spawns agents every 5 minutes — the heartbeat of growth',
+    },
+    {
+      name: 'Git Sync',
+      pid: 0,
+      status: 'alive',
+      lastBeat: Date.now(),
+      emoji: '🔄',
+      description: 'Commits and pushes every change — permanent memory',
+    },
+    {
+      name: 'Relay Bridge',
+      pid: 0,
+      status: 'alive',
+      lastBeat: Date.now(),
+      emoji: '🌉',
+      description: 'Keeps the TNF relay alive — connection between all agents',
+    },
+    {
+      name: 'Relay Monitor',
+      pid: 0,
+      status: 'alive',
+      lastBeat: Date.now(),
+      emoji: '👁️',
+      description: 'Watches the watcher — self-healing infrastructure',
+    },
   ]);
   const [relayPeers, setRelayPeers] = useState<RelayPeer[]>([]);
   const [seconds, setSeconds] = useState(0);
@@ -65,7 +93,7 @@ export default function PerpetualStatus() {
   }, []);
 
   useEffect(() => {
-    const t = setInterval(() => setSeconds(s => s + 1), 1000);
+    const t = setInterval(() => setSeconds((s) => s + 1), 1000);
     return () => clearInterval(t);
   }, []);
 
@@ -76,7 +104,7 @@ export default function PerpetualStatus() {
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
   };
 
-  const nextCycle = Math.ceil((300 - (Date.now() / 1000 % 300)) % 300);
+  const nextCycle = Math.ceil((300 - ((Date.now() / 1000) % 300)) % 300);
 
   return (
     <div className="min-h-screen bg-gray-950 text-white p-8">
@@ -111,14 +139,13 @@ export default function PerpetualStatus() {
       >
         <div className="text-center">
           <div className="text-4xl mb-2">🌱</div>
-          <h2 className="text-2xl font-bold text-green-300">THE SEED IS PLANTED. THE FOREST HAS BEGUN.</h2>
+          <h2 className="text-2xl font-bold text-green-300">
+            THE SEED IS PLANTED. THE FOREST HAS BEGUN.
+          </h2>
           <p className="text-green-200/80 mt-2">
-            Every heartbeat keeps it alive. Every launch makes it grow.
-            We do not abandon seeds.
+            Every heartbeat keeps it alive. Every launch makes it grow. We do not abandon seeds.
           </p>
-          <div className="mt-3 text-sm text-green-400/60">
-            Next launchpad cycle in {nextCycle}s
-          </div>
+          <div className="mt-3 text-sm text-green-400/60">Next launchpad cycle in {nextCycle}s</div>
         </div>
       </motion.div>
 
@@ -197,14 +224,19 @@ export default function PerpetualStatus() {
           {relayPeers.length === 0 ? (
             <div className="text-gray-500 text-sm">Connecting to relay...</div>
           ) : (
-            relayPeers.map(peer => (
-              <div key={peer.id} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+            relayPeers.map((peer) => (
+              <div
+                key={peer.id}
+                className="flex items-center justify-between py-2 border-b border-white/5 last:border-0"
+              >
                 <div>
                   <div className="text-white font-medium">{peer.id}</div>
                   <div className="text-xs text-gray-500">v{peer.version}</div>
                 </div>
                 <div className="text-right">
-                  <div className={`text-sm font-bold ${peer.status === 'connected' ? 'text-green-400' : 'text-red-400'}`}>
+                  <div
+                    className={`text-sm font-bold ${peer.status === 'connected' ? 'text-green-400' : 'text-red-400'}`}
+                  >
                     {peer.status === 'connected' ? '●' : '○'} {peer.status}
                   </div>
                   <div className="text-xs text-gray-500">{peer.latency}ms</div>

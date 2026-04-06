@@ -1,6 +1,6 @@
 {
   "spec": "tnf/staff-role-call-scheduling/0.1",
-  "generatedAt": "2026-03-26T20:32:29.778Z",
+  "generatedAt": "2026-04-06T04:20:16.156Z",
   "sources": {
     "identityRegistryPath": "/Users/<owner>/.tnf/session-discovery/terminal-identity-registry.json",
     "roleMapPath": "/Users/<owner>/.tnf/session-discovery/terminal-role-map.json",
@@ -8,7 +8,7 @@
     "growthAuditPath": "reports/protocols/growth-blocker-audit/growth-blocker-audit-latest.json"
   },
   "staffPresence": {
-    "totalSessions": 10,
+    "totalSessions": 21,
     "ownerSessions": 1,
     "ownerAgentId": "tnf-local-terminal-ttys007",
     "staffTaggedSessions": 1,
@@ -31,9 +31,15 @@
     "totalSchedules": 23,
     "enabledSchedules": 21,
     "disabledSchedules": 2,
-    "highPriorityBlockers": 9
+    "highPriorityBlockers": 10
   },
   "highPriorityBlockers": [
+    {
+      "severity": "critical",
+      "type": "runtime-health",
+      "scheduleId": "tnf-master-clock-super-cycle",
+      "message": "tnf-master-clock-super-cycle runtime status is error."
+    },
     {
       "severity": "high",
       "type": "stale-run-window",
@@ -91,7 +97,7 @@
   ],
   "recommendedActions": [
     "Confirm Local Sub-Director owner remains tnf-local-terminal-ttys007.",
-    "Resolve 9 critical/high growth blocker findings before adding new automation.",
+    "Resolve 10 critical/high growth blocker findings before adding new automation.",
     "Ensure every core schedule has owner + runbook + protocol links before next cycle.",
     "Require downstream processes to emit attribution evidence in run artifacts.",
     "Reinforce frontload logging + prompt-handoff protocol checks in recurring StaffOps reviews.",

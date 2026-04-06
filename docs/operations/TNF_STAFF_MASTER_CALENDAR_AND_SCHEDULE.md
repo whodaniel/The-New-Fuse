@@ -1,6 +1,6 @@
 # TNF Staff Master Calendar and Master Schedule
 
-Generated: 2026-03-26T20:32:40.466Z
+Generated: 2026-04-06T04:20:16.014Z
 
 ## Summary
 
@@ -17,9 +17,9 @@ Generated: 2026-03-26T20:32:40.466Z
 | ---------------------------------------------- | ---------------- | ------------------------- | ------------------------------------------------ | --------------- | ---------------- | ------- | ------- | ------ | --------------------------------------------------------------------------- |
 | tnf-twip-macro-board-refresh                   | system_framework | observability             | twip-orchestration-bridge                        | _/10 _ \* \* \* | UTC              | yes     | healthy | open   | scripts/protocols/twip-macro-board.cjs                                      |
 | tenant-personal-archaeology-blocker-watch      | tenant           | tenant_agent_loop         | auth-blocker-sentinel                            | _/15 _ \* \* \* | UTC              | yes     | healthy | open   | scripts/timeline/personal-archaeology-orchestrator.mjs                      |
-| tnf-master-clock-super-cycle                   | system_framework | orchestration_gate        | master-clock                                     | _/15 _ \* \* \* | UTC              | yes     | healthy | locked | scripts/protocols/synthetic-federation-gate-check.cjs                       |
+| tnf-master-clock-super-cycle                   | system_framework | orchestration_gate        | master-clock                                     | _/15 _ \* \* \* | UTC              | yes     | error   | locked | scripts/protocols/synthetic-federation-gate-check.cjs                       |
 | tnf-openclaw-runtime-sync                      | system_framework | observability             | master-clock                                     | _/15 _ \* \* \* | UTC              | yes     | healthy | open   | scripts/openclaw/tnf-openclaw-control.cjs                                   |
-| tenant-orchestrator-pulse                      | tenant           | tenant_agent_loop         | tnf-agent-director                               | _/30 _ \* \* \* | UTC              | yes     | running | open   | scripts/protocols/chronological-dispatch.cjs                                |
+| tenant-orchestrator-pulse                      | tenant           | tenant_agent_loop         | tnf-agent-director                               | _/30 _ \* \* \* | UTC              | yes     | healthy | open   | scripts/protocols/chronological-dispatch.cjs                                |
 | tenant-personal-archaeology-master-loop        | tenant           | tenant_agent_loop         | personal-archaeology-master-orchestrator         | _/30 _ \* \* \* | UTC              | yes     | healthy | open   | scripts/timeline/personal-archaeology-orchestrator.mjs                      |
 | tnf-terminal-awareness-reminder                | system_framework | system_terminal_awareness | tnf-agent-director                               | _/30 _ \* \* \* | UTC              | yes     | healthy | open   | scripts/verify_frontload_state.sh                                           |
 | tenant-continuous-qa-loop                      | tenant           | tenant_automation         | qa-swarm-supervisor                              | 0 _/6 _ \* \*   | UTC              | yes     | healthy | open   | scripts/protocols/chronological-dispatch.cjs                                |
@@ -32,8 +32,8 @@ Generated: 2026-03-26T20:32:40.466Z
 | tnf-self-improvement-scorecard                 | system_framework | self_improvement_core     | tnf-stack-self-improvement-loop                  | 0 _/6 _ \* \*   | UTC              | yes     | healthy | locked | scripts/validate-protocol-schemas.cjs                                       |
 | tenant-personal-archaeology-investigator-pulse | tenant           | tenant_agent_loop         | personal-archaeology-source-team-orchestrator    | 15 _/2 _ \* \*  | UTC              | yes     | healthy | open   | scripts/timeline/personal-archaeology-orchestrator.mjs                      |
 | tnf-staff-review-cycle                         | system_framework | staff_review              | tnf-staff-review-agent                           | 15 _/2 _ \* \*  | UTC              | yes     | healthy | open   | .skills/tnf-staff-review-agent/scripts/run_staff_review_cycle.cjs           |
-| tnf-staff-role-call-and-scheduling             | system_framework | staff_coordination        | tnf-staff-scheduling-agent                       | _/20 _ \* \* \* | UTC              | yes     | healthy | open   | scripts/protocols/staffops-role-call.cjs                                    |
-| tnf-staffing-director-cycle                    | system_framework | staff_architecture        | tnf-staffing-director-agent                      | 30 _/6 _ \* \*  | UTC              | yes     | running | open   | .skills/tnf-staffing-director-agent/scripts/run_staffing_director_cycle.cjs |
+| tnf-staff-role-call-and-scheduling             | system_framework | staff_coordination        | tnf-staff-scheduling-agent                       | _/20 _ \* \* \* | UTC              | yes     | running | open   | scripts/protocols/staffops-role-call.cjs                                    |
+| tnf-staffing-director-cycle                    | system_framework | staff_architecture        | tnf-staffing-director-agent                      | 30 _/6 _ \* \*  | UTC              | yes     | healthy | open   | .skills/tnf-staffing-director-agent/scripts/run_staffing_director_cycle.cjs |
 | tenant-daily-priority-plan                     | tenant           | tenant_automation         | tnf-agent-director                               | 0 9 \* \* \*    | America/New_York | yes     | healthy | open   | scripts/protocols/chronological-dispatch.cjs                                |
 | tenant-nightly-maintenance                     | tenant           | tenant_automation         | tnf-agent-director                               | 30 3 \* \* \*   | America/New_York | yes     | healthy | open   | scripts/protocols/chronological-dispatch.cjs                                |
 | tenant-loop-watchdog                           | tenant           | tenant_agent_loop         | auth-blocker-sentinel                            | _/15 _ \* \* \* | UTC              | no      | unknown | open   | scripts/protocols/chronological-dispatch.cjs                                |
@@ -268,12 +268,12 @@ Generated: 2026-03-26T20:32:40.466Z
   runtime=healthy)
 - tenant-personal-archaeology-blocker-watch: stale-run-window (enabled=true,
   lock=false, runtime=healthy)
-- tnf-master-clock-super-cycle: stale-run-window (enabled=true, lock=true,
-  runtime=healthy)
+- tnf-master-clock-super-cycle: runtime-error (enabled=true, lock=true,
+  runtime=error)
 - tnf-openclaw-runtime-sync: stale-run-window (enabled=true, lock=false,
   runtime=healthy)
 - tenant-orchestrator-pulse: stale-run-window (enabled=true, lock=false,
-  runtime=running)
+  runtime=healthy)
 - tenant-personal-archaeology-master-loop: stale-run-window (enabled=true,
   lock=false, runtime=healthy)
 - tnf-terminal-awareness-reminder: stale-run-window (enabled=true, lock=false,

@@ -1,6 +1,6 @@
 // TNF Launchpad Dashboard — See every cycle, every item, every result
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
 const AnimatedEmoji = ({ emoji, size = 48 }: { emoji: string; size?: number }) => (
   <motion.span
@@ -124,7 +124,7 @@ export default function LaunchpadDashboard() {
             {isLive ? '🌱 ALIVE' : '💀'}
           </motion.div>
           <div className="text-xs text-gray-500 mt-1">
-            Next cycle in ~{300 - (Date.now() / 1000 % 300).toFixed(0)}s
+            Next cycle in ~{300 - Math.round((Date.now() / 1000) % 300)}s
           </div>
         </div>
       </div>
@@ -133,7 +133,11 @@ export default function LaunchpadDashboard() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
           { label: 'Cycles Run', value: cycles.length, emoji: '🔄' },
-          { label: 'Total Spawned', value: cycles.reduce((s, c) => s + c.launched, 0), emoji: '🧬' },
+          {
+            label: 'Total Spawned',
+            value: cycles.reduce((s, c) => s + c.launched, 0),
+            emoji: '🧬',
+          },
           { label: 'Backlog Items', value: launchBacklog.length, emoji: '📋' },
           { label: 'Uptime', value: '100%', emoji: '⚡' },
         ].map(({ label, value, emoji }) => (
@@ -171,15 +175,19 @@ export default function LaunchpadDashboard() {
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <span className="text-gray-400 text-sm">{new Date(cycle.timestamp).toLocaleString()}</span>
+                    <span className="text-gray-400 text-sm">
+                      {new Date(cycle.timestamp).toLocaleString()}
+                    </span>
                     <div className="text-white font-medium mt-1">
                       Launched: {cycle.launched} item{cycle.launched !== 1 ? 's' : ''}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
-                      {cycle.items?.map(item => item.name).join(', ') || 'standing by'}
+                      {cycle.items?.map((item) => item.name).join(', ') || 'standing by'}
                     </div>
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded ${cycle.dryRun ? 'bg-yellow-500/20 text-yellow-400' : 'bg-green-500/20 text-green-400'}`}>
+                  <span
+                    className={`text-xs px-2 py-1 rounded ${cycle.dryRun ? 'bg-yellow-500/20 text-yellow-400' : 'bg-green-500/20 text-green-400'}`}
+                  >
                     {cycle.dryRun ? 'DRY RUN' : 'LIVE'}
                   </span>
                 </div>
@@ -196,9 +204,8 @@ export default function LaunchpadDashboard() {
           Forest Growth
         </h2>
         <div className="text-green-200 text-lg leading-relaxed">
-          Every launch plants a seed. Every cycle waters it.
-          The forest does not grow by being impressive.
-          It grows by being USED.
+          Every launch plants a seed. Every cycle waters it. The forest does not grow by being
+          impressive. It grows by being USED.
           <div className="mt-2 text-sm text-green-400">
             Current seeds planted: {cycles.reduce((s, c) => s + c.launched, 0)}
           </div>

@@ -5,22 +5,29 @@ import {
   Bot,
   Boxes,
   Bug,
+  Building2,
   ClipboardList,
+  Compass,
   Cpu,
   CreditCard,
   Database,
   Eye,
   FolderOpen,
   Globe,
+  Grip,
   LayoutDashboard,
   Library,
   Lightbulb,
+  Map,
   MessageSquare,
   Network,
   Package,
+  Plug,
+  Rocket,
   ScrollText,
   Settings,
   Shield,
+  Target,
   Users,
   Workflow,
   Zap,
@@ -47,7 +54,9 @@ export interface SidebarNavItem {
 
 // Canonical sidebar source of truth for PremiumLayout surfaces.
 // IA: functional workspace grouping (work, build, knowledge, operations).
+// Every user-navigable route in ComprehensiveRouter MUST have an entry here.
 export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
+  // ─────────────────────────── WORKSPACE ───────────────────────────
   {
     name: 'Workspace',
     href: '/dashboard',
@@ -57,6 +66,7 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     children: [
       { name: 'Overview', href: '/dashboard', icon: LayoutDashboard, access: 'authenticated' },
       { name: 'Timeline', href: '/timeline', icon: Activity, access: 'authenticated' },
+      { name: 'Macro Timeline', href: '/macro-timeline', icon: Activity, access: 'authenticated' },
       { name: 'Analytics', href: '/analytics', icon: BarChart3, access: 'authenticated' },
       {
         name: 'Dashboard Analytics',
@@ -89,8 +99,22 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
         access: 'authenticated',
       },
       { name: 'Chat', href: '/chat', icon: MessageSquare, access: 'authenticated' },
+      {
+        name: 'Workspace Chat',
+        href: '/workspace-chat',
+        icon: MessageSquare,
+        access: 'authenticated',
+      },
+      {
+        name: 'Multi-Agent Chat',
+        href: '/multi-agent-chat',
+        icon: MessageSquare,
+        access: 'authenticated',
+      },
       { name: 'Tasks', href: '/tasks', icon: ClipboardList, access: 'authenticated' },
       { name: 'Suggestions', href: '/suggestions', icon: Lightbulb, access: 'authenticated' },
+      { name: 'Goals', href: '/goals', icon: Target, access: 'authenticated' },
+      { name: 'Plans', href: '/plans', icon: Map, access: 'authenticated' },
       {
         name: 'Dashboard Agents',
         href: '/dashboard/agents',
@@ -109,6 +133,12 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
         icon: Users,
         access: 'authenticated',
       },
+      {
+        name: 'Workspace Analytics',
+        href: '/workspace/analytics',
+        icon: BarChart3,
+        access: 'authenticated',
+      },
       { name: 'Members', href: '/workspace/members', icon: Users, access: 'authenticated' },
       { name: 'Files', href: '/files', icon: FolderOpen, access: 'authenticated' },
       { name: 'Bookmarks', href: '/bookmarks', icon: Bookmark, access: 'authenticated' },
@@ -121,6 +151,8 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
       },
     ],
   },
+
+  // ─────────────────────────── BUILD (FORGE) ───────────────────────────
   {
     name: 'Build',
     href: '/agents',
@@ -129,6 +161,12 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     access: 'authenticated',
     children: [
       { name: 'Agent Fleet', href: '/agents', icon: Bot, access: 'authenticated' },
+      {
+        name: 'Agent Builder',
+        href: '/agent-builder',
+        icon: Bot,
+        access: 'authenticated',
+      },
       {
         name: 'Agent Onboarding',
         href: '/agents/onboard',
@@ -192,20 +230,10 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
         icon: ScrollText,
         access: 'authenticated',
       },
-      {
-        name: 'Legacy PFP Studio',
-        href: '/agents/pfp-studio',
-        icon: Bot,
-        access: 'authenticated',
-      },
-      {
-        name: 'Legacy Prompt Catalog',
-        href: '/agents/pfp-prompts',
-        icon: ScrollText,
-        access: 'authenticated',
-      },
     ],
   },
+
+  // ─────────────────────────── KNOWLEDGE (NEXUS) ───────────────────────────
   {
     name: 'Knowledge',
     href: '/hub',
@@ -219,11 +247,45 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
       { name: 'Knowledge Hub', href: '/knowledge-hub', icon: Database, access: 'authenticated' },
       { name: 'MCP Hub', href: '/mcp-hub', icon: Boxes, access: 'authenticated' },
       { name: 'A2A Control', href: '/a2a-control', icon: Network, access: 'authenticated' },
-      { name: 'Terminal Graph', href: '/terminals', icon: Activity, access: 'public' },
+      { name: 'Terminal Graph', href: '/terminal', icon: Activity, access: 'authenticated' },
       { name: 'Docs', href: '/docs', icon: Library, access: 'public' },
       { name: 'Marketplace', href: '/marketplace', icon: Package, access: 'public' },
+      { name: 'Community', href: '/community', icon: Users, access: 'public' },
+      {
+        name: 'Connect Extension',
+        href: '/connect',
+        icon: Plug,
+        access: 'authenticated',
+      },
     ],
   },
+
+  // ─────────────────────────── AGENCY ───────────────────────────
+  {
+    name: 'Agency',
+    href: '/agency/dashboard',
+    icon: Building2,
+    section: 'apex',
+    access: 'authenticated',
+    requiredRoles: ['SUPER_ADMIN', 'AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER'],
+    children: [
+      {
+        name: 'Agency Dashboard',
+        href: '/agency/dashboard',
+        icon: LayoutDashboard,
+        access: 'authenticated',
+        requiredRoles: ['SUPER_ADMIN', 'AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER'],
+      },
+      {
+        name: 'Agency Onboarding',
+        href: '/agency/onboard',
+        icon: Rocket,
+        access: 'authenticated',
+      },
+    ],
+  },
+
+  // ─────────────────────────── CONTROL CENTER (APEX) ───────────────────────────
   {
     name: 'Control Center',
     href: '/command-center',
@@ -280,6 +342,13 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
         icon: Cpu,
         access: 'authenticated',
         requiredRoles: ['SUPER_ADMIN'],
+      },
+      {
+        name: 'Platform Parity',
+        href: '/platform-parity',
+        icon: Grip,
+        access: 'authenticated',
+        requiredRoles: ['SUPER_ADMIN', 'ADMIN'],
       },
       {
         name: 'Admin Dashboard',
@@ -409,6 +478,8 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
       },
     ],
   },
+
+  // ─────────────────────────── SETTINGS ───────────────────────────
   {
     name: 'Settings',
     href: '/settings',
@@ -417,7 +488,29 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     access: 'authenticated',
     children: [
       { name: 'General', href: '/settings', icon: Settings, access: 'authenticated' },
+      {
+        name: 'General Settings',
+        href: '/general-settings',
+        icon: Settings,
+        access: 'authenticated',
+      },
+      { name: 'Appearance', href: '/settings/appearance', icon: Compass, access: 'authenticated' },
+      {
+        name: 'Notifications',
+        href: '/settings/notifications',
+        icon: Activity,
+        access: 'authenticated',
+      },
+      { name: 'Security', href: '/settings/security', icon: Shield, access: 'authenticated' },
+      { name: 'API Keys', href: '/settings/api', icon: Zap, access: 'authenticated' },
       { name: 'Billing', href: '/billing', icon: CreditCard, access: 'authenticated' },
+      { name: 'Profile', href: '/user/profile', icon: Users, access: 'authenticated' },
+      {
+        name: 'LLM Selection',
+        href: '/workspace-settings/llm-selection',
+        icon: Cpu,
+        access: 'authenticated',
+      },
       {
         name: 'Debug',
         href: '/debug',
@@ -466,7 +559,7 @@ export const SIDEBAR_SECTION_GROUPS: SidebarSectionGroup[] = [
   {
     id: 'ops',
     label: 'Operations',
-    description: 'Governance, admin controls, and diagnostics',
+    description: 'Agency, governance, admin controls, and diagnostics',
     sections: ['apex', 'advanced'],
   },
 ];

@@ -1,5 +1,5 @@
-import Redis, { Cluster, RedisOptions } from 'ioredis';
 import { Redis as UpstashRedis } from '@upstash/redis';
+import Redis, { Cluster, RedisOptions } from 'ioredis';
 
 export interface StandaloneRedisConfig {
   host: string;
@@ -13,6 +13,7 @@ export interface StandaloneRedisConfig {
   keyPrefix: string;
   clusterMode: boolean;
   clusterNodes: string[];
+  tls?: any;
   upstash?: {
     restUrl?: string;
     restToken?: string;
@@ -28,6 +29,7 @@ export function loadStandaloneRedisConfig(): StandaloneRedisConfig {
   let port = parseInt(process.env.REDIS_PORT || '6379', 10);
   let password = process.env.REDIS_PASSWORD;
   let db = parseInt(process.env.REDIS_DB || '0', 10);
+  let tls: any = undefined;
 
   if (redisUrl) {
     try {
@@ -45,6 +47,9 @@ export function loadStandaloneRedisConfig(): StandaloneRedisConfig {
       const dbFromPath =
         url.pathname && url.pathname.length > 1 ? parseInt(url.pathname.slice(1), 10) : 0;
       db = !isNaN(dbFromPath) && dbFromPath >= 0 ? dbFromPath : 0;
+      if (url.protocol === 'rediss:') {
+        tls = {};
+      }
     } catch (error) {
       console.error('[Standalone-Redis] Failed to parse REDIS_URL, using defaults');
     }
@@ -55,6 +60,7 @@ export function loadStandaloneRedisConfig(): StandaloneRedisConfig {
     port,
     password,
     db,
+    tls,
     connectTimeout: parseInt(process.env.REDIS_CONNECT_TIMEOUT || '10000', 10),
     lazyConnect: process.env.REDIS_LAZY_CONNECT === 'true',
     maxRetriesPerRequest: parseInt(process.env.REDIS_MAX_RETRIES_PER_REQUEST || '3', 10),
@@ -85,6 +91,7 @@ export function createStandaloneRedisClient(
     port: fullConfig.port,
     password: fullConfig.password,
     db: fullConfig.db,
+    tls: fullConfig.tls,
     connectTimeout: fullConfig.connectTimeout,
     lazyConnect: fullConfig.lazyConnect,
     maxRetriesPerRequest: fullConfig.maxRetriesPerRequest,
@@ -104,9 +111,10 @@ export function createStandaloneRedisClient(
 /**
  * Create an Upstash REST client using standalone configuration
  */
-export function createUpstashRestClient(
-  config?: { restUrl?: string; restToken?: string }
-): UpstashRedis | null {
+export function createUpstashRestClient(config?: {
+  restUrl?: string;
+  restToken?: string;
+}): UpstashRedis | null {
   const standaloneConfig = loadStandaloneRedisConfig();
   const restUrl = config?.restUrl || standaloneConfig.upstash?.restUrl;
   const restToken = config?.restToken || standaloneConfig.upstash?.restToken;

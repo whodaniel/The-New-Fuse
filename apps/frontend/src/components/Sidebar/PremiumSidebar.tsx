@@ -35,7 +35,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
     [hasRole, isAuthenticated]
   );
 
-  const navigation = React.useMemo(
+  const navigation = React.useMemo<SidebarNavItem[]>(
     () =>
       SIDEBAR_NAVIGATION.map((item) => {
         const children = (item.children || []).filter((child) =>
@@ -51,7 +51,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
           ...item,
           href: itemAccessible ? item.href : children[0]?.href || item.href,
           children,
-        };
+        } as SidebarNavItem;
       }).filter((item): item is SidebarNavItem => item !== null),
     [hasAccess]
   );

@@ -1,14 +1,26 @@
-// @ts-nocheck
 import {
   createAgentService,
   createApiClient,
   createAuthService,
   createUserService,
   createWorkflowService,
+  type ApiClient,
 } from '@the-new-fuse/api-client';
 import { useCallback, useMemo, useState } from 'react';
 import { useAuth } from './useAuth';
 import { useToast } from './useToast';
+
+export interface UseApiReturn {
+  api: ApiClient;
+  authService: ReturnType<typeof createAuthService>;
+  userService: ReturnType<typeof createUserService>;
+  agentService: ReturnType<typeof createAgentService>;
+  workflowService: ReturnType<typeof createWorkflowService>;
+  isAuthenticated: boolean;
+  loading: boolean;
+  error: Error | null;
+  callApi: <T>(apiCall: () => Promise<T>) => Promise<T | null>;
+}
 
 /**
  * Hook for accessing API services
@@ -23,15 +35,19 @@ import { useToast } from './useToast';
  *   setAgents(data);
  * };
  */
-export function useApi() {
+export function useApi(): UseApiReturn {
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const configuredApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-  const apiBaseUrl = configuredApiUrl.endsWith('/api')
-    ? configuredApiUrl
-    : `${configuredApiUrl.replace(/\/$/, '')}/api`;
+
+  const apiBaseUrl = useMemo(() => {
+    const configuredApiUrl =
+      (import.meta.env.VITE_API_URL as string) || 'http://localhost:3001/api';
+    return configuredApiUrl.endsWith('/api')
+      ? configuredApiUrl
+      : `${configuredApiUrl.replace(/\/$/, '')}/api`;
+  }, []);
 
   // Create API client and services
   const api = useMemo(() => {
@@ -44,17 +60,14 @@ export function useApi() {
       },
       refreshToken: async () => {
         try {
-          const authService = createAuthService(
-            createApiClient({
-              baseURL: apiBaseUrl,
-            })
-          );
-          const newToken = await authService.refreshToken();
+          const tempClient = createApiClient({ baseURL: apiBaseUrl });
+          const auth = createAuthService(tempClient);
+          const newToken = await auth.refreshToken();
           localStorage.setItem('auth_token', newToken);
           return newToken;
-        } catch (error) {
+        } catch (err) {
           localStorage.removeItem('auth_token');
-          throw error;
+          throw err;
         }
       },
     });
@@ -76,12 +89,12 @@ export function useApi() {
         const result = await apiCall();
         return result;
       } catch (err) {
-        const error = err as Error;
-        setError(error);
+        const fetchError = err instanceof Error ? err : new Error(String(err));
+        setError(fetchError);
 
         toast({
           title: 'Error',
-          description: error.message,
+          description: fetchError.message,
           variant: 'destructive',
         });
 

@@ -50,6 +50,28 @@ export const EXPERIENCE_SURFACES: ExperienceSurface[] = [
     domain: 'operate',
     lifecycle: 'production',
     canonical: true,
+    aliases: ['/macro-timeline'],
+    owner: 'execution-platform',
+  },
+  {
+    path: '/goals',
+    domain: 'operate',
+    lifecycle: 'production',
+    canonical: true,
+    owner: 'execution-platform',
+  },
+  {
+    path: '/plans',
+    domain: 'operate',
+    lifecycle: 'production',
+    canonical: true,
+    owner: 'execution-platform',
+  },
+  {
+    path: '/suggestions',
+    domain: 'operate',
+    lifecycle: 'production',
+    canonical: true,
     owner: 'execution-platform',
   },
 
@@ -77,6 +99,22 @@ export const EXPERIENCE_SURFACES: ExperienceSurface[] = [
     canonical: true,
     owner: 'intelligence-platform',
   },
+  {
+    path: '/ai-portal',
+    domain: 'intelligence',
+    lifecycle: 'production',
+    canonical: true,
+    aliases: ['/ai-agents', '/ai-agent-portal'],
+    owner: 'agents-platform',
+  },
+  {
+    path: '/agent-builder',
+    domain: 'intelligence',
+    lifecycle: 'production',
+    canonical: true,
+    aliases: ['/agents/new'],
+    owner: 'agents-platform',
+  },
 
   // COLLABORATION: Multi-agent and multi-user environments
   {
@@ -84,7 +122,7 @@ export const EXPERIENCE_SURFACES: ExperienceSurface[] = [
     domain: 'collaboration',
     lifecycle: 'production',
     canonical: true,
-    aliases: ['/multi-agent-chat', '/chats'],
+    aliases: ['/multi-agent-chat', '/chats', '/channels'],
     owner: 'conversation-platform',
   },
   {
@@ -94,6 +132,13 @@ export const EXPERIENCE_SURFACES: ExperienceSurface[] = [
     canonical: true,
     aliases: ['/workspace', '/space'],
     owner: 'workspace-platform',
+  },
+  {
+    path: '/workspace-chat',
+    domain: 'collaboration',
+    lifecycle: 'production',
+    canonical: true,
+    owner: 'conversation-platform',
   },
   {
     path: '/spaces',
@@ -125,6 +170,21 @@ export const EXPERIENCE_SURFACES: ExperienceSurface[] = [
     canonical: true,
     owner: 'assets-platform',
   },
+  {
+    path: '/resources',
+    domain: 'assets',
+    lifecycle: 'production',
+    canonical: true,
+    aliases: ['/tools', '/integrations'],
+    owner: 'assets-platform',
+  },
+  {
+    path: '/hosting',
+    domain: 'assets',
+    lifecycle: 'production',
+    canonical: true,
+    owner: 'assets-platform',
+  },
 
   // ECOSYSTEM: Public platform and Agency controls
   {
@@ -148,10 +208,45 @@ export const EXPERIENCE_SURFACES: ExperienceSurface[] = [
     canonical: true,
     owner: 'agency-platform',
   },
+  {
+    path: '/connect',
+    domain: 'ecosystem',
+    lifecycle: 'production',
+    canonical: true,
+    owner: 'ecosystem-platform',
+  },
+  {
+    path: '/a2a-control',
+    domain: 'ecosystem',
+    lifecycle: 'production',
+    canonical: true,
+    owner: 'ecosystem-platform',
+  },
 
   // SYSTEM: Governance and high-level observability
   {
     path: '/observatory',
+    domain: 'system',
+    lifecycle: 'production',
+    canonical: true,
+    owner: 'observability-platform',
+  },
+  {
+    path: '/command-center',
+    domain: 'system',
+    lifecycle: 'production',
+    canonical: true,
+    owner: 'observability-platform',
+  },
+  {
+    path: '/live-view',
+    domain: 'system',
+    lifecycle: 'production',
+    canonical: true,
+    owner: 'observability-platform',
+  },
+  {
+    path: '/ai-command-center',
     domain: 'system',
     lifecycle: 'production',
     canonical: true,
@@ -170,12 +265,21 @@ export const EXPERIENCE_SURFACES: ExperienceSurface[] = [
     domain: 'system',
     lifecycle: 'production',
     canonical: true,
+    aliases: ['/general-settings'],
     owner: 'governance-platform',
   },
   {
     path: '/billing',
     domain: 'system',
     lifecycle: 'production',
+    canonical: true,
+    aliases: ['/membership'],
+    owner: 'governance-platform',
+  },
+  {
+    path: '/platform-parity',
+    domain: 'system',
+    lifecycle: 'internal',
     canonical: true,
     owner: 'governance-platform',
   },

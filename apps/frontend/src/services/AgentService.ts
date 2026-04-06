@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Agent Service - Production ready service for agent management
  * Dynamically fetches both active agent instances and system-defined agent templates.
@@ -64,6 +63,33 @@ export interface LocalAICapabilityStatus {
   endpoints?: Record<string, boolean>;
 }
 
+export interface HumanConnectionOption {
+  name: string;
+  url: string;
+  icon: string;
+  description: string;
+}
+
+export interface SwarmLog {
+  timestamp: string;
+  eventType?: string;
+  content?: string;
+  metadata?: {
+    source?: string;
+    actor?: string;
+    [key: string]: any;
+  };
+}
+
+export interface SwarmActivity {
+  id: string;
+  type: 'auction' | 'scan' | 'award';
+  title: string;
+  agent: string;
+  timestamp: Date;
+  status: 'completed' | 'active';
+}
+
 class AgentService {
   private baseUrl: string;
   private apiKey?: string;
@@ -75,9 +101,9 @@ class AgentService {
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...((options.headers as Record<string, string>) || {}),
     };
 
     if (this.apiKey) {
@@ -90,7 +116,6 @@ class AgentService {
         headers,
       });
 
-      // Check for HTML response (fallback from Vite/Proxy issues)
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('text/html')) {
         throw new Error('Received HTML instead of JSON (likely 404/Proxy error)');
@@ -112,22 +137,17 @@ class AgentService {
    */
   async getAgents(): Promise<Agent[]> {
     try {
-      // Fetch active instances and templates in parallel
-      const [instancesResponse, templatesResponse] = await Promise.allSettled([
+      const [instancesResult, templatesResult] = await Promise.allSettled([
         this.request<any[]>('/agents'),
         this.request<AgentTemplate[]>('/agents/bank/templates'),
       ]);
 
-      const instances = instancesResponse.status === 'fulfilled' ? instancesResponse.value : [];
-      const templates = templatesResponse.status === 'fulfilled' ? templatesResponse.value : [];
+      const instances = instancesResult.status === 'fulfilled' ? instancesResult.value : [];
+      const templates = templatesResult.status === 'fulfilled' ? templatesResult.value : [];
 
-      // Transform instances
       const activeAgents = instances.map((a) => this.transformAgent(a));
-
-      // Transform templates into "Standby" agents
       const systemAgents = templates.map((t) => this.transformTemplateToAgent(t));
 
-      // Merge and remove duplicates by name (prefer instances if they exist)
       const merged = [...activeAgents];
       for (const sa of systemAgents) {
         if (!merged.find((ma) => ma.name === sa.name)) {
@@ -145,20 +165,18 @@ class AgentService {
   async getAgentTemplates(): Promise<AgentTemplate[]> {
     try {
       return await this.request<AgentTemplate[]>('/agents/bank/templates');
-    } catch (error) {
+    } catch {
       return [];
     }
   }
 
   async getAgent(id: string): Promise<Agent> {
     try {
-      // If it looks like a template ID (contains a colon), handle differently or let backend handle
       const agent = await this.request<any>(`/agents/${id}`);
       return this.transformAgent(agent);
     } catch (error) {
-      // Fallback: try to find in templates if not in instances
-      const templates = await this.getAgentTemplates();
-      const template = templates.find((t) => t.id === id);
+      const templatesResult = await this.getAgentTemplates();
+      const template = templatesResult.find((t) => t.id === id);
       if (template) return this.transformTemplateToAgent(template);
       throw error;
     }
@@ -186,7 +204,6 @@ class AgentService {
     });
   }
 
-  // Agent Lifecycle
   async startAgent(id: string): Promise<Agent> {
     const agent = await this.request<any>(`/agents/${id}/start`, {
       method: 'POST',
@@ -201,7 +218,6 @@ class AgentService {
     return this.transformAgent(agent);
   }
 
-  // Agent execution
   async executeAgent(
     agentId: string,
     task: string,
@@ -226,10 +242,9 @@ class AgentService {
   async getExecutions(agentId?: string): Promise<AgentExecution[]> {
     const endpoint = agentId ? `/agents/${agentId}/executions` : '/agents/executions';
     const executions = await this.request<any[]>(endpoint);
-    return executions.map(this.transformExecution);
+    return executions.map((e) => this.transformExecution(e));
   }
 
-  // Agent capabilities
   async getCapabilities(): Promise<AgentCapability[]> {
     return await this.request<AgentCapability[]>('/agents/capabilities');
   }
@@ -238,7 +253,6 @@ class AgentService {
     return await this.request<AgentCapability[]>(`/agents/${agentId}/capabilities`);
   }
 
-  // Agent health and status
   async getAgentStatus(agentId: string): Promise<{ status: string; health: any }> {
     return await this.request<{ status: string; health: any }>(`/agents/${agentId}/status`);
   }
@@ -247,12 +261,11 @@ class AgentService {
     try {
       await this.request(`/agents/${agentId}/ping`);
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
 
-  // Agent configuration
   async getAgentConfig(agentId: string): Promise<Record<string, any>> {
     return await this.request<Record<string, any>>(`/agents/${agentId}/config`);
   }
@@ -267,10 +280,7 @@ class AgentService {
     });
   }
 
-  /**
-   * Get human-in-the-loop connection options
-   */
-  getHumanConnectionOptions() {
+  getHumanConnectionOptions(): HumanConnectionOption[] {
     return [
       {
         name: 'Telegram Bot',
@@ -293,17 +303,16 @@ class AgentService {
     ];
   }
 
-  /**
-   * Get real-time swarm activity from the autonomous system
-   */
-  async getSwarmActivity() {
+  async getSwarmActivity(): Promise<SwarmActivity[]> {
     try {
-      const response = await this.request<any>('/autonomous/swarm/logs');
+      const response = await this.request<{ success: boolean; data: SwarmLog[] }>(
+        '/autonomous/swarm/logs'
+      );
       if (!response.success || !Array.isArray(response.data)) return [];
 
-      return response.data.map((log: any, index: number) => ({
+      return response.data.map((log, index) => ({
         id: `${log.timestamp || 'no-ts'}:${log.eventType || 'event'}:${index}`,
-        type: this.mapLogTypeToActivity(log.eventType),
+        type: this.mapLogTypeToActivity(log.eventType || ''),
         title: log.content || 'System Event',
         agent: log.metadata?.source || log.metadata?.actor || 'System',
         timestamp: new Date(log.timestamp),
@@ -340,7 +349,6 @@ class AgentService {
     return 'scan';
   }
 
-  // Transform API responses to frontend types
   private transformAgent(apiAgent: any): Agent {
     return {
       ...apiAgent,
@@ -355,7 +363,7 @@ class AgentService {
       name: template.name,
       type: template.category || 'System',
       description: template.description || 'System-defined agent persona.',
-      capabilities: [], // We could parse these from markdown in the future
+      capabilities: [],
       status: 'standby',
       version: '1.0.0',
       configuration: {},
@@ -374,6 +382,5 @@ class AgentService {
   }
 }
 
-// Export singleton instance
 export const agentService = new AgentService();
 export default AgentService;

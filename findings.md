@@ -146,3 +146,28 @@ server listing
 
 **Commit:** `52cf3894e` — "feat(api): wire MCP controller to database and
 marketplace"
+
+## Frontend Implementation Status (2026-04-05)
+
+- ✅ MCPToolNode fully implemented in `ModernWorkflowBuilder.tsx:55`
+  - Source selector (TNF Curated / Official Registry)
+  - Reset button to default source
+  - Dynamic configuration schema rendering
+  - Official Registry badge for marketplace servers
+- ✅ `useMcpTools.ts` hook fully wired
+  - LocalStorage persistence for source preference
+  - API integration with `?source=` parameter
+  - `resetSource()` function implemented
+- ✅ ModernWorkflowBuilder MiniMap click-to-center implemented (line 876)
+  - Smooth 800ms pan animation
+  - Proper coordinate calculation using node bounding box
+  - Works with any number of nodes on canvas
+
+## Verification
+
+All requirements completed:
+
+- ✓ MCP Tool lists available TNF MCP servers
+- ✓ Allows selecting external MCP marketplace directory
+- ✓ Reset-to-default option available
+- ✓ End-to-end wiring: UI → API → Database/Marketplace

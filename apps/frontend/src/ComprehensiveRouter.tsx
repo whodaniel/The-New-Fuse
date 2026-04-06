@@ -221,6 +221,37 @@ const LiveViewPage = lazy(() => import('./pages/LiveView'));
 // AI Command Center - Multiple AI chat interfaces in one view
 const AICommandCenter = lazy(() => import('./pages/AICommandCenter'));
 
+// Restored Critical Components from Orphan Audit
+const TNFCommandCenter = lazy(() => import('./pages/TNFCommandCenter'));
+const FairtableDashboard = lazy(() => import('./pages/fairtable/FairtableDashboard'));
+const SecurityDashboard = lazy(() => import('./pages/Admin/SecurityDashboard'));
+const SystemMonitoring = lazy(() => import('./pages/Admin/SystemMonitoring'));
+const TheiaIDE = lazy(() => import('./pages/IDE/TheiaIDE'));
+const ProfileAtlas = lazy(() => import('./pages/Agents/ProfileAtlas'));
+const AgentTemplatesBrowser = lazy(() => import('./pages/Resources/AgentTemplatesBrowser'));
+const SkillsBrowser = lazy(() => import('./pages/Resources/SkillsBrowser'));
+const WorkflowBrowser = lazy(() => import('./pages/Resources/WorkflowBrowser'));
+const EnhancedWorkflowBuilder = lazy(
+  () => import('./pages/workflow-pages/EnhancedWorkflowBuilder')
+);
+const ModernBuilder = lazy(() => import('./pages/workflow-pages/ModernBuilder'));
+const WorkflowBuilderEnhanced = lazy(
+  () => import('./pages/workflow-pages/WorkflowBuilderEnhanced')
+);
+
+// Remaining Reconstructed Components
+const AdminUsers = lazy(() => import('./pages/Admin/Users'));
+const AdminWorkspaces = lazy(() => import('./pages/Admin/Workspaces'));
+const LlmRoutingControl = lazy(() => import('./pages/Admin/components/LlmRoutingControl'));
+const OAuthInstanceRotationControl = lazy(
+  () => import('./pages/Admin/components/OAuthInstanceRotationControl')
+);
+const RcloneMobilityControl = lazy(() => import('./pages/Admin/components/RcloneMobilityControl'));
+const TasksCalendar = lazy(() => import('./pages/Tasks/Calendar'));
+const CreateAgent = lazy(() => import('./pages/dashboard/CreateAgent'));
+const DashboardSettings = lazy(() => import('./pages/dashboard/DashboardSettings'));
+const WorkspaceLayout = lazy(() => import('./pages/workspace/WorkspaceLayout'));
+
 // Create fallback components for pages that might have import issues
 const LazyPage = ({ name, path }: { name: string; path: string }) => (
   <div className="p-8 max-w-4xl mx-auto">
@@ -234,6 +265,7 @@ const LazyPage = ({ name, path }: { name: string; path: string }) => (
 );
 
 const SmartNavigation = lazy(() => import('./components/SmartNavigation'));
+const OrphanAuditRouter = lazy(() => import('./routers/OrphanAuditRouter'));
 
 // Redirect component to force reload to static HTML pages
 const RedirectToStatic = ({ to }: { to: string }) => {
@@ -243,20 +275,28 @@ const RedirectToStatic = ({ to }: { to: string }) => {
   return null;
 };
 
+const LandingPage = lazy(() => import('./pages/Landing'));
+
 const MarketplaceRootRoute = () => {
   if (typeof window === 'undefined') {
-    return <RedirectToStatic to="/" />;
+    return <div className="p-8">Loading...</div>;
   }
 
   const host = window.location.hostname;
   const isMarketplaceHost = host === 'marketplace.thenewfuse.com';
 
-  return isMarketplaceHost ? (
-    <Suspense fallback={<LoadingFallback name="Marketplace" />}>
-      <MarketplacePublicPage />
+  if (isMarketplaceHost) {
+    return (
+      <Suspense fallback={<LoadingFallback name="Marketplace" />}>
+        <MarketplacePublicPage />
+      </Suspense>
+    );
+  }
+
+  return (
+    <Suspense fallback={<LoadingFallback name="Landing" />}>
+      <LandingPage />
     </Suspense>
-  ) : (
-    <RedirectToStatic to="/" />
   );
 };
 
@@ -290,14 +330,18 @@ export default function ComprehensiveRouter() {
       '/capabilities',
       '/design-system',
       '/app.html',
+      '/debug/orphans',
     ].includes(location.pathname) ||
+    location.pathname.startsWith('/debug/orphans') ||
     location.pathname.startsWith('/auth') ||
     location.pathname.startsWith('/legal') ||
     location.pathname.startsWith('/onboarding') ||
     location.pathname === '/404';
 
   // Routes that have their own complete layout and shouldn't be wrapped in PremiumLayout
-  const hasOwnLayout = ['/workflows/builder'].includes(location.pathname);
+  const hasOwnLayout =
+    location.pathname.startsWith('/workflows/builder') ||
+    location.pathname.startsWith('/debug/orphans');
 
   // Use PremiumLayout for authenticated routes, except those with their own layout
   let Layout: React.ComponentType<any> = PremiumLayout;
@@ -305,6 +349,7 @@ export default function ComprehensiveRouter() {
     isPublicRoute &&
     !location.pathname.startsWith('/auth') &&
     !location.pathname.startsWith('/onboarding') &&
+    !location.pathname.startsWith('/debug/orphans') &&
     !['/404', '/login', '/register'].includes(location.pathname)
   ) {
     Layout = PublicLayout;
@@ -318,6 +363,7 @@ export default function ComprehensiveRouter() {
       <Suspense fallback={<div className="h-16 bg-slate-950 border-b border-white/10" />}>
         {!location.pathname.startsWith('/auth') &&
           !location.pathname.startsWith('/onboarding') &&
+          !location.pathname.startsWith('/debug/orphans') &&
           !['/404', '/login', '/register'].includes(location.pathname) &&
           !hasOwnLayout &&
           isPublicRoute && <SmartNavigation />}
@@ -327,6 +373,9 @@ export default function ComprehensiveRouter() {
         <Layout>
           <Suspense fallback={<LoadingFallback name="Page" />}>
             <Routes>
+              {/* Dev Only Audit Routes */}
+              <Route path="/debug/orphans/*" element={<OrphanAuditRouter />} />
+
               {/* Core Routes - Root switches based on hostname (marketplace vs main landing) */}
               <Route path="/" element={<MarketplaceRootRoute />} />
               <Route path="/app.html" element={<Navigate to="/dashboard" replace />} />
@@ -380,7 +429,14 @@ export default function ComprehensiveRouter() {
                   </RequireMemberAccess>
                 }
               />
-              <Route path="/launchpad" element={<LaunchpadDashboard />} />
+              <Route
+                path="/launchpad"
+                element={
+                  <RequireMemberAccess>
+                    <LaunchpadDashboard />
+                  </RequireMemberAccess>
+                }
+              />
               <Route
                 path="/hub"
                 element={
@@ -954,7 +1010,14 @@ export default function ComprehensiveRouter() {
                   </RequirePermission>
                 }
               />
-              <Route path="/perpetual-status" element={<PerpetualStatus />} />
+              <Route
+                path="/perpetual-status"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <PerpetualStatus />
+                  </RequirePermission>
+                }
+              />
               <Route
                 path="/admin/workspaces"
                 element={
@@ -1027,7 +1090,14 @@ export default function ComprehensiveRouter() {
                   </RequireMemberAccess>
                 }
               />
-              <Route path="/billing" element={<MembershipPage />} />
+              <Route
+                path="/billing"
+                element={
+                  <RequireMemberAccess>
+                    <MembershipPage />
+                  </RequireMemberAccess>
+                }
+              />
               <Route
                 path="/bookmarks"
                 element={
@@ -1275,7 +1345,14 @@ export default function ComprehensiveRouter() {
               <Route path="/visualizations" element={<VisualizationsPage />} />
               <Route path="/visualizations/terminals" element={<TerminalGraphPage />} />
               <Route path="/terminals" element={<TerminalGraphPage />} />
-              <Route path="/connect" element={<ConnectExtensionPage />} />
+              <Route
+                path="/connect"
+                element={
+                  <RequireMemberAccess>
+                    <ConnectExtensionPage />
+                  </RequireMemberAccess>
+                }
+              />
               <Route path="/legal/privacy" element={<PrivacyPolicyPage />} />
               <Route path="/legal/terms" element={<TermsOfServicePage />} />
               {/* Brand Identity / Design System */}
@@ -1561,6 +1638,237 @@ export default function ComprehensiveRouter() {
                       <AICommandCenter />
                     </Suspense>
                   </RequirePermission>
+                }
+              />
+
+              <Route
+                path="/tnf-command-center"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <Suspense fallback={<LoadingFallback name="TNF Command Center" />}>
+                      <TNFCommandCenter />
+                    </Suspense>
+                  </RequirePermission>
+                }
+              />
+
+              <Route
+                path="/fairtable"
+                element={
+                  <RequireMemberAccess>
+                    <Suspense fallback={<LoadingFallback name="Fairtable Dashboard" />}>
+                      <FairtableDashboard />
+                    </Suspense>
+                  </RequireMemberAccess>
+                }
+              />
+
+              <Route
+                path="/admin/security-dashboard"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <Suspense fallback={<LoadingFallback name="Security Dashboard" />}>
+                      <SecurityDashboard />
+                    </Suspense>
+                  </RequirePermission>
+                }
+              />
+
+              <Route
+                path="/admin/system-monitoring"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <Suspense fallback={<LoadingFallback name="System Monitoring" />}>
+                      <SystemMonitoring />
+                    </Suspense>
+                  </RequirePermission>
+                }
+              />
+
+              <Route
+                path="/ide"
+                element={
+                  <RequireMemberAccess>
+                    <Suspense fallback={<LoadingFallback name="Theia IDE" />}>
+                      <TheiaIDE />
+                    </Suspense>
+                  </RequireMemberAccess>
+                }
+              />
+
+              <Route
+                path="/agents/atlas"
+                element={
+                  <RequireMemberAccess>
+                    <Suspense fallback={<LoadingFallback name="Profile Atlas" />}>
+                      <ProfileAtlas />
+                    </Suspense>
+                  </RequireMemberAccess>
+                }
+              />
+
+              <Route
+                path="/resources/templates"
+                element={
+                  <RequireMemberAccess>
+                    <Suspense fallback={<LoadingFallback name="Agent Templates Browser" />}>
+                      <AgentTemplatesBrowser />
+                    </Suspense>
+                  </RequireMemberAccess>
+                }
+              />
+
+              <Route
+                path="/resources/skills"
+                element={
+                  <RequireMemberAccess>
+                    <Suspense fallback={<LoadingFallback name="Skills Browser" />}>
+                      <SkillsBrowser />
+                    </Suspense>
+                  </RequireMemberAccess>
+                }
+              />
+
+              <Route
+                path="/resources/workflows"
+                element={
+                  <RequireMemberAccess>
+                    <Suspense fallback={<LoadingFallback name="Workflow Browser" />}>
+                      <WorkflowBrowser />
+                    </Suspense>
+                  </RequireMemberAccess>
+                }
+              />
+
+              <Route
+                path="/workflows/enhanced-builder"
+                element={
+                  <RequireMemberAccess>
+                    <Suspense fallback={<LoadingFallback name="Enhanced Workflow Builder" />}>
+                      <EnhancedWorkflowBuilder />
+                    </Suspense>
+                  </RequireMemberAccess>
+                }
+              />
+
+              <Route
+                path="/workflows/modern-builder"
+                element={
+                  <RequireMemberAccess>
+                    <Suspense fallback={<LoadingFallback name="Modern Builder" />}>
+                      <ModernBuilder />
+                    </Suspense>
+                  </RequireMemberAccess>
+                }
+              />
+
+              <Route
+                path="/workflows/builder-enhanced"
+                element={
+                  <RequireMemberAccess>
+                    <Suspense fallback={<LoadingFallback name="Workflow Builder Enhanced" />}>
+                      <WorkflowBuilderEnhanced />
+                    </Suspense>
+                  </RequireMemberAccess>
+                }
+              />
+
+              <Route
+                path="/admin/users"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <Suspense fallback={<LoadingFallback name="User Management" />}>
+                      <AdminUsers />
+                    </Suspense>
+                  </RequirePermission>
+                }
+              />
+
+              <Route
+                path="/admin/workspaces"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <Suspense fallback={<LoadingFallback name="Workspace Management" />}>
+                      <AdminWorkspaces />
+                    </Suspense>
+                  </RequirePermission>
+                }
+              />
+
+              <Route
+                path="/admin/controls/llm"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <Suspense fallback={<LoadingFallback name="LLM Routing Control" />}>
+                      <LlmRoutingControl />
+                    </Suspense>
+                  </RequirePermission>
+                }
+              />
+
+              <Route
+                path="/admin/controls/oauth"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <Suspense fallback={<LoadingFallback name="OAuth Instance Rotation" />}>
+                      <OAuthInstanceRotationControl />
+                    </Suspense>
+                  </RequirePermission>
+                }
+              />
+
+              <Route
+                path="/admin/controls/mobility"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <Suspense fallback={<LoadingFallback name="Rclone Mobility Control" />}>
+                      <RcloneMobilityControl />
+                    </Suspense>
+                  </RequirePermission>
+                }
+              />
+
+              <Route
+                path="/tasks/calendar"
+                element={
+                  <RequireMemberAccess>
+                    <Suspense fallback={<LoadingFallback name="Tasks Calendar" />}>
+                      <TasksCalendar />
+                    </Suspense>
+                  </RequireMemberAccess>
+                }
+              />
+
+              <Route
+                path="/dashboard/create-agent"
+                element={
+                  <RequireMemberAccess>
+                    <Suspense fallback={<LoadingFallback name="Create Agent" />}>
+                      <CreateAgent />
+                    </Suspense>
+                  </RequireMemberAccess>
+                }
+              />
+
+              <Route
+                path="/dashboard/settings"
+                element={
+                  <RequireMemberAccess>
+                    <Suspense fallback={<LoadingFallback name="Dashboard Settings" />}>
+                      <DashboardSettings />
+                    </Suspense>
+                  </RequireMemberAccess>
+                }
+              />
+
+              <Route
+                path="/workspace/layout"
+                element={
+                  <RequireMemberAccess>
+                    <Suspense fallback={<LoadingFallback name="Workspace Layout" />}>
+                      <WorkspaceLayout />
+                    </Suspense>
+                  </RequireMemberAccess>
                 }
               />
 

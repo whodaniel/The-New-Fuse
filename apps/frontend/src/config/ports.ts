@@ -34,7 +34,12 @@ export const getApiUrl = () => {
     return import.meta.env.VITE_API_URL;
   }
 
-  // Default to unified API Gateway
+  // Handle production proxying
+  if (typeof window !== 'undefined' && !window.location.host.startsWith('localhost')) {
+    return ''; // Relative to current origin
+  }
+
+  // Default to unified API Gateway for local development
   return `http://localhost:${STANDARD_PORTS.API_GATEWAY}`;
 };
 

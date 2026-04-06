@@ -1,6 +1,6 @@
 {
   "spec": "tnf/staffing-director-report/0.1",
-  "generatedAt": "2026-03-26T20:32:29.639Z",
+  "generatedAt": "2026-04-06T00:30:17.788Z",
   "sources": {
     "registryPath": "data/protocols/cron-jobs.registry.json",
     "growthAuditPath": "reports/protocols/growth-blocker-audit/growth-blocker-audit-latest.json"
@@ -12,14 +12,14 @@
     "staffCoordinationSchedules": 1,
     "staffArchitectureSchedules": 1,
     "staffReviewSchedules": 1,
-    "highPriorityBlockers": 9,
+    "highPriorityBlockers": 10,
     "nicheGapCount": 1
   },
   "nicheGaps": [
     {
       "severity": "medium",
       "code": "blocker_driven_staffing_pressure",
-      "message": "9 critical/high blocker findings indicate potential staffing specialization gaps."
+      "message": "10 critical/high blocker findings indicate potential staffing specialization gaps."
     }
   ],
   "roleSkillProposals": [

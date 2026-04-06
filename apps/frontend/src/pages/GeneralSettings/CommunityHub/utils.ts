@@ -1,5 +1,12 @@
-// @ts-nocheck
-export function readableType(type): any {
+export type HubItemType =
+  | 'agentSkill'
+  | 'agentSkills'
+  | 'systemPrompt'
+  | 'systemPrompts'
+  | 'slashCommand'
+  | 'slashCommands';
+
+export function readableType(type: HubItemType): string | undefined {
   switch (type) {
     case 'agentSkills':
     case 'agentSkill':
@@ -10,9 +17,12 @@ export function readableType(type): any {
     case 'slashCommand':
     case 'slashCommands':
       return 'Slash Commands';
+    default:
+      return undefined;
   }
 }
-export function typeToPath(type): any {
+
+export function typeToPath(type: HubItemType): string | undefined {
   switch (type) {
     case 'agentSkill':
     case 'agentSkills':
@@ -23,5 +33,7 @@ export function typeToPath(type): any {
     case 'slashCommand':
     case 'slashCommands':
       return 'slash-commands';
+    default:
+      return undefined;
   }
 }

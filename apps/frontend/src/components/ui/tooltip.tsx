@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Tooltip Component - Chakra-compatible Tooltip for The New Fuse
  */
@@ -63,7 +62,7 @@ export const Tooltip = ({
     return <>{children}</>;
   }
 
-  const arrowClasses = {
+  const arrowClasses: Record<'top' | 'bottom' | 'left' | 'right', string> = {
     top: 'bottom-[-4px] left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-b-transparent',
     bottom:
       'top-[-4px] left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-t-transparent',

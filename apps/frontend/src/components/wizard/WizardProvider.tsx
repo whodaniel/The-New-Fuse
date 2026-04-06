@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { createContext, ReactNode, useCallback, useContext, useReducer } from 'react';
 
 // Define types for the wizard state
@@ -8,16 +7,18 @@ export interface WizardSession {
   data: Record<string, any>;
 }
 
+export interface ConversationEntry {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  timestamp: Date;
+}
+
 export interface WizardState {
   isInitialized: boolean;
   currentStep: number;
   session: WizardSession | null;
   activeAgents: Map<string, boolean>;
-  conversationHistory: Array<{
-    role: 'user' | 'assistant' | 'system';
-    content: string;
-    timestamp: Date;
-  }>;
+  conversationHistory: ConversationEntry[];
   error: string | null;
 }
 
@@ -28,7 +29,7 @@ type WizardAction =
   | { type: 'UPDATE_AGENTS'; payload: Map<string, boolean> }
   | {
       type: 'ADD_CONVERSATION';
-      payload: { role: 'user' | 'assistant' | 'system'; content: string; timestamp: Date };
+      payload: ConversationEntry;
     }
   | { type: 'UPDATE_SESSION_DATA'; payload: Record<string, any> }
   | { type: 'SET_ERROR'; payload: string }
@@ -75,9 +76,10 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
         currentStep: action.payload,
       };
     case 'UPDATE_AGENTS':
+      // Return a new Map to ensure React state update
       return {
         ...state,
-        activeAgents: action.payload,
+        activeAgents: new Map(action.payload),
       };
     case 'ADD_CONVERSATION':
       return {
@@ -120,7 +122,7 @@ interface WizardProviderProps {
   children: ReactNode;
 }
 
-export function WizardProvider({ children }: WizardProviderProps): JSX.Element {
+export function WizardProvider({ children }: WizardProviderProps): React.ReactElement {
   const [state, dispatch] = useReducer(wizardReducer, initialState);
 
   const initializeSession = useCallback((session: WizardSession) => {
@@ -182,4 +184,3 @@ export function useWizard(): WizardContextType {
   }
   return context;
 }
-export {};

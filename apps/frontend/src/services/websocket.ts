@@ -1,43 +1,54 @@
-// @ts-nocheck
 import EventEmitter from 'events';
 
+interface WebSocketMessagePayload {
+  type: string;
+  payload: any;
+}
+
 class WebSocketService extends EventEmitter {
+  private socket: WebSocket | null = null;
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
+  private reconnectTimeout = 1000;
+  private wsUrl: string;
+
   constructor() {
     super();
-    this.socket = null;
-    this.reconnectAttempts = 0;
-    this.maxReconnectAttempts = 5;
-    this.reconnectTimeout = 1000;
     this.wsUrl = this.getWebSocketUrl();
     this.connect();
   }
 
-  getWebSocketUrl() {
+  private getWebSocketUrl(): string {
     return import.meta.env.VITE_WS_URL || 'ws://localhost:3001';
   }
 
-  connect() {
+  private connect(): void {
     try {
       console.log(`Connecting to WebSocket: ${this.wsUrl}`);
       this.socket = new WebSocket(this.wsUrl);
+
       this.socket.onopen = () => {
         this.reconnectAttempts = 0;
+        this.emit('connected');
       };
-      this.socket.onmessage = (event) => {
+
+      this.socket.onmessage = (event: MessageEvent) => {
         try {
-          const data = JSON.parse(event.data);
+          const data: WebSocketMessagePayload = JSON.parse(event.data);
           this.emit(data.type, data.payload);
         } catch (error) {
           console.error('Error parsing WebSocket message:', error);
         }
       };
-      this.socket.onclose = (event) => {
+
+      this.socket.onclose = (event: CloseEvent) => {
         this.emit('connection_closed', event);
         if (!event.wasClean) {
           this.handleReconnect();
         }
       };
-      this.socket.onerror = (error) => {
+
+      this.socket.onerror = (error: Event) => {
         this.emit('connection_error', error);
         this.handleReconnect();
       };
@@ -47,7 +58,7 @@ class WebSocketService extends EventEmitter {
     }
   }
 
-  handleReconnect() {
+  private handleReconnect(): void {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
       setTimeout(() => this.connect(), this.reconnectTimeout * this.reconnectAttempts);
@@ -56,11 +67,8 @@ class WebSocketService extends EventEmitter {
     }
   }
 
-  send(type, payload) {
-    var _a;
-    if (
-      ((_a = this.socket) === null || _a === void 0 ? void 0 : _a.readyState) === WebSocket.OPEN
-    ) {
+  public send(type: string, payload: any): void {
+    if (this.socket?.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify({ type, payload }));
     } else {
       console.error('WebSocket is not connected');

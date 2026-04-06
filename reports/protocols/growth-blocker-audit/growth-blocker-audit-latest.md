@@ -1,11 +1,11 @@
 # TNF Growth Blocker Protocol Audit
 
-Generated: 2026-03-26T20:31:40.527Z
+Generated: 2026-04-06T04:00:37.234Z
 
 ## Summary
 
-- Total findings: 13
-- Critical: 0
+- Total findings: 14
+- Critical: 1
 - High: 9
 - Medium: 4
 - Low: 0
@@ -13,6 +13,8 @@ Generated: 2026-03-26T20:31:40.527Z
 
 ## Priority Findings
 
+- [critical] runtime-health (tnf-master-clock-super-cycle):
+  tnf-master-clock-super-cycle runtime status is error.
 - [high] stale-run-window (tenant-hourly-attribution-audit):
   tenant-hourly-attribution-audit has stale-run-window warning.
 - [high] stale-run-window (tenant-orchestrator-pulse): tenant-orchestrator-pulse
@@ -44,15 +46,15 @@ Generated: 2026-03-26T20:31:40.527Z
 
 ## Policy Signal Hotspots
 
-- data/protocols/cron-jobs.control-plane-state.json: hits=99 score=10
 - data/protocols/cron-jobs.registry.json: hits=36 score=8
 - data/protocols/tnf-staff-master-calendar.json: hits=39 score=8
 - scripts/protocols/build-staff-master-calendar.cjs: hits=14 score=7
+- docs/protocols/bridges/reports/tnf-mini-omni-voice-loop.md: hits=14 score=6
 - docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md: hits=6 score=6
 - scripts/protocols/cron-governance-gate.cjs: hits=6 score=6
+- data/protocols/cron-jobs.control-plane-state.json: hits=78 score=6
 - docs/operations/TNF_CORPORATE_CHAIN_OF_COMMAND_AND_ORDER_OF_OPERATIONS_MANUAL.md:
   hits=5 score=5
-- data/protocols/twip-inventory.snapshot.json: hits=5 score=5
 - docs/protocols/bridges/tnf-openclaw-schedule-assimilation.yml: hits=4 score=4
 - docs/protocols/reports/federation-gate-api-integration-2026-03-18.md: hits=4
   score=4

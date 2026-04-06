@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 
 interface ToastProps {
@@ -11,7 +10,6 @@ interface ToastProps {
 }
 
 export const Toast: React.FC<ToastProps> = ({
-  id,
   title,
   description,
   type = 'default',
@@ -79,21 +77,22 @@ export const Toaster: React.FC<ToasterProps> = ({
   position = 'bottom-right',
   toastOptions = {},
 }) => {
-  // In a real implementation, this would manage a list of toasts
   const [toasts, setToasts] = useState<ToastProps[]>([]);
 
   const removeToast = (id: string) => {
-    setToasts(toasts.filter((toast) => toast.id !== id));
+    setToasts((currentToasts) => currentToasts.filter((toast) => toast.id !== id));
   };
 
-  const positionClasses = {
+  const positionMap: Record<string, string> = {
     'top-left': 'top-0 left-0',
     'top-right': 'top-0 right-0',
     'bottom-left': 'bottom-0 left-0',
     'bottom-right': 'bottom-0 right-0',
     'top-center': 'top-0 left-1/2 transform -translate-x-1/2',
     'bottom-center': 'bottom-0 left-1/2 transform -translate-x-1/2',
-  }[position];
+  };
+
+  const positionClasses = positionMap[position] || 'bottom-right';
 
   return (
     <div

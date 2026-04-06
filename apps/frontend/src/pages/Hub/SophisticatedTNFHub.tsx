@@ -86,7 +86,7 @@ interface HubWorkflowTemplate {
 
 export const SophisticatedTNFHub: React.FC = () => {
   const navigate = useNavigate();
-  const apiBase = (import.meta.env.VITE_API_URL as string) || 'http://localhost:3001';
+  const apiBase = (import.meta.env.VITE_API_URL as string) || '';
   const [activeTab, setActiveTab] = useState('dashboard');
   const [services, setServices] = useState<Record<string, ServiceStatus[]>>({
     'ai-services': [

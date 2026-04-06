@@ -122,7 +122,17 @@
   - `apps/api/src/controllers/mcp.controller.ts` — full rewrite
   - `apps/api/src/app.module.ts` — updated import to `MCPServerController`
 
-## 2026-03-23 — Session 2 (Continued)
+## 2026-04-05 — Kilo Agent Session
+
+### MCP Tool Node Implementation Status
+
+- ✅ **COMPLETED**: MCP Tool node fully wired end-to-end
+- ✅ TNF curated servers loaded from `/api/mcp/servers?source=tnf`
+- ✅ Official Registry marketplace integration via `source=registry`
+- ✅ Reset-to-default button implemented (resets to TNF curated)
+- ✅ Dynamic configuration schema rendering for registry servers
+- ✅ Proper JSON/object handling for server config values
+- ✅ ModernWorkflowBuilder MiniMap click-to-center implemented (line 876)
 
 ### Critical Fixes — API Gateway
 
