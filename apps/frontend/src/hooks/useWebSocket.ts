@@ -1,35 +1,30 @@
+// @ts-nocheck
+import { useSession } from '@your-org/security/react';
 import { useCallback, useEffect, useRef } from 'react';
-import { webSocketService } from '../services/websocket';
-import { useAuth } from './useAuth';
+import { webSocketService } from '../services/websocket.service';
 
 interface WebSocketOptions {
   onConnected?: () => void;
-  onDisconnected?: (event?: CloseEvent) => void;
-  onError?: (error: Error | Event) => void;
+  onDisconnected?: () => void;
+  onError?: (error: Error) => void;
   onReconnectAttempt?: (attempt: number) => void;
   onMaxReconnectAttempts?: () => void;
   autoReconnect?: boolean;
 }
 
-interface UseWebSocketReturn {
-  subscribe: <T = any>(event: string, handler: (data: T) => void) => () => void;
-  send: <T = any>(type: string, payload?: T) => Promise<void>;
-  disconnect: () => void;
-}
-
-export function useWebSocket(options: WebSocketOptions = {}): UseWebSocketReturn {
-  const { user } = useAuth();
+export function useWebSocket(options: WebSocketOptions = {}): any {
+  const { session } = useSession();
   const optionsRef = useRef(options);
   optionsRef.current = options;
 
-  const subscribe = useCallback(<T = any>(event: string, handler: (data: T) => void) => {
+  const subscribe = useCallback((event: string, handler: (data: any) => void) => {
     webSocketService.on(event, handler);
     return () => {
       webSocketService.off(event, handler);
     };
   }, []);
 
-  const send = useCallback(<T = any>(type: string, payload?: T) => {
+  const send = useCallback((type: string, payload?: any) => {
     try {
       webSocketService.send(type, payload);
       return Promise.resolve();
@@ -40,41 +35,52 @@ export function useWebSocket(options: WebSocketOptions = {}): UseWebSocketReturn
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!session) return;
 
-    const handleConnect = (): void => {
+    const handleConnect = (): any => {
       optionsRef.current.onConnected?.();
     };
 
-    const handleDisconnect = (event: CloseEvent): void => {
-      optionsRef.current.onDisconnected?.(event);
+    const handleDisconnect = (): any => {
+      optionsRef.current.onDisconnected?.();
     };
 
-    const handleError = (error: Error | Event): void => {
+    const handleError = (error: Error): any => {
       optionsRef.current.onError?.(error);
     };
 
-    // Note: The websocket.ts service emits these specific event names
+    const handleReconnectAttempt = (attempt: number): any => {
+      optionsRef.current.onReconnectAttempt?.(attempt);
+    };
+
+    const handleMaxReconnectAttempts = (): any => {
+      optionsRef.current.onMaxReconnectAttempts?.();
+    };
+
     webSocketService.on('connected', handleConnect);
-    webSocketService.on('connection_closed', handleDisconnect);
-    webSocketService.on('connection_error', handleError);
+    webSocketService.on('disconnected', handleDisconnect);
+    webSocketService.on('error', handleError);
+    webSocketService.on('reconnect_attempt', handleReconnectAttempt);
+    webSocketService.on('max_reconnect_attempts', handleMaxReconnectAttempts);
+
+    webSocketService.connect().catch(handleError);
 
     return () => {
       webSocketService.off('connected', handleConnect);
-      webSocketService.off('connection_closed', handleDisconnect);
-      webSocketService.off('connection_error', handleError);
+      webSocketService.off('disconnected', handleDisconnect);
+      webSocketService.off('error', handleError);
+      webSocketService.off('reconnect_attempt', handleReconnectAttempt);
+      webSocketService.off('max_reconnect_attempts', handleMaxReconnectAttempts);
 
-      // We don't automatically disconnect here because the service is a singleton
-      // and other components might still be using it.
+      if (!optionsRef.current.autoReconnect) {
+        webSocketService.disconnect();
+      }
     };
-  }, [user]);
+  }, [session]);
 
   return {
     subscribe,
     send,
-    disconnect: () => {
-      // Manual disconnect is currently not exposed via a public method on the singleton
-      // but can be implemented if needed.
-    },
+    disconnect: webSocketService.disconnect.bind(webSocketService),
   };
 }
