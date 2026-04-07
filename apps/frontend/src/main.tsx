@@ -79,7 +79,7 @@ console.log('About to render React app...');
 try {
   root.render(
     <React.StrictMode>
-      <BrowserRouter basename="/app">
+      <BrowserRouter>
         <AuthProvider>
           <ToastProvider>
             <App />

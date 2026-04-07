@@ -43,8 +43,8 @@ async function main() {
     readFile(routerPath, 'utf8'),
     readFirstExistingFile([
       path.join(distDir, 'app.html'),
-      path.join(distDir, 'index.html'),
       path.join(appRoot, 'app.html'),
+      path.join(distDir, 'index.html'),
       path.join(appRoot, 'index.html'),
     ]),
   ]);
