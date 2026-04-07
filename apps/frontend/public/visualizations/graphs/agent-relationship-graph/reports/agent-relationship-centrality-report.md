@@ -1,47 +1,47 @@
 # Agent Relationship Centrality Report
 
-Generated: 2026-03-26
+Generated: 2026-04-07
 
 ## full (agent-relationship-graph.json)
 
 - Nodes: 120
-- Edges: 401
+- Edges: 437
 - Communities: 3
 - Top degree hubs:
-  - task-agent-router: 25.0
-  - orchestrator-agent: 19.0
+  - task-agent-router: 26.0
+  - orchestrator-agent: 20.0
+  - legal-compliance-agent: 13.0
   - seo-optimizer-agent: 13.0
-  - legal-compliance-agent: 12.0
-  - podcast-hosting-setup-agent: 12.0
+  - sponsorship-outreach-agent: 13.0
 - Top betweenness hubs:
-  - task-agent-router: 0.588868
-  - orchestrator-agent: 0.296072
-  - sponsorship-outreach-agent: 0.145282
-  - campaign-execution-agent: 0.122701
-  - media-evidence-investigator: 0.102306
+  - task-agent-router: 0.534894
+  - orchestrator-agent: 0.260637
+  - sponsorship-outreach-agent: 0.097225
+  - legal-compliance-agent: 0.094218
+  - campaign-execution-agent: 0.091193
 
 ## podcast (agent-relationship-podcast-subgraph.json)
 
 - Nodes: 20
-- Edges: 41
+- Edges: 48
 - Communities: 1
 - Top degree hubs:
   - podcast-hosting-setup-agent: 9.0
-  - podcast-promotion-agent: 8.0
-  - podcast-analytics-agent: 7.0
-  - podcast-niche-analyst-agent: 7.0
-  - sponsorship-outreach-agent: 7.0
+  - podcast-niche-analyst-agent: 9.0
+  - podcast-promotion-agent: 9.0
+  - sponsorship-outreach-agent: 9.0
+  - podcast-analytics-agent: 8.0
 - Top betweenness hubs:
-  - sponsorship-outreach-agent: 0.482651
-  - podcast-hosting-setup-agent: 0.447693
-  - task-agent-router: 0.415205
-  - podcast-niche-analyst-agent: 0.383496
-  - podcast-format-designer-agent: 0.317934
+  - podcast-hosting-setup-agent: 0.428265
+  - sponsorship-outreach-agent: 0.415845
+  - task-agent-router: 0.413255
+  - podcast-promotion-agent: 0.381398
+  - podcast-niche-analyst-agent: 0.331217
 
 ## seo (agent-relationship-seo-subgraph.json)
 
 - Nodes: 11
-- Edges: 30
+- Edges: 32
 - Communities: 1
 - Top degree hubs:
   - seo-optimizer-agent: 9.0
@@ -50,83 +50,83 @@ Generated: 2026-03-26
   - content-writer-agent: 7.0
   - keyword-research-agent: 7.0
 - Top betweenness hubs:
-  - keyword-research-agent: 0.562963
   - task-agent-router: 0.511111
-  - content-refresh-agent: 0.4
+  - keyword-research-agent: 0.318519
+  - technical-seo-auditor-agent: 0.296296
   - content-calendar-agent: 0.177778
-  - link-building-agent: 0.155556
+  - link-building-agent: 0.133333
 
 ## brand (agent-relationship-brand-subgraph.json)
 
 - Nodes: 20
-- Edges: 44
-- Communities: 3
+- Edges: 51
+- Communities: 1
 - Top degree hubs:
   - campaign-execution-agent: 10.0
-  - deal-negotiator-agent: 8.0
+  - contract-manager-agent: 9.0
+  - deal-negotiator-agent: 9.0
   - brand-outreach-agent: 7.0
-  - contract-manager-agent: 7.0
   - brand-prospecting-agent: 6.0
 - Top betweenness hubs:
-  - campaign-execution-agent: 0.656809
-  - deal-negotiator-agent: 0.443052
-  - financial-manager-agent: 0.38499
-  - campaign-reporting-agent: 0.285575
-  - task-agent-router: 0.19883
+  - campaign-execution-agent: 0.592467
+  - deal-negotiator-agent: 0.493887
+  - financial-manager-agent: 0.417001
+  - contract-manager-agent: 0.27051
+  - campaign-reporting-agent: 0.231774
 
 ## funnel (agent-relationship-funnel-subgraph.json)
 
 - Nodes: 25
-- Edges: 36
-- Communities: 7
+- Edges: 41
+- Communities: 4
 - Top degree hubs:
   - cro-process-agent: 9.0
+  - ab-testing-optimizer-agent: 7.0
   - task-agent-router: 7.0
-  - ab-testing-optimizer-agent: 6.0
   - analytics-and-reporting-agent: 6.0
   - cognitive-bias-optimizer-agent: 6.0
 - Top betweenness hubs:
-  - task-agent-router: 0.488527
-  - cro-process-agent: 0.422705
-  - analytics-and-reporting-agent: 0.24215
-  - lead-magnet-funnel-agent: 0.205314
-  - ethical-bias-auditor-agent: 0.198068
+  - task-agent-router: 0.574948
+  - cro-process-agent: 0.542357
+  - lead-capture-agent: 0.44893
+  - lead-magnet-funnel-agent: 0.381539
+  - funnel-economics-analyst-agent: 0.300207
 
 ## social (agent-relationship-social-subgraph.json)
 
 - Nodes: 18
-- Edges: 26
-- Communities: 4
+- Edges: 31
+- Communities: 2
 - Top degree hubs:
-  - community-manager-agent: 5.0
+  - community-manager-agent: 6.0
+  - task-agent-router: 6.0
+  - community-engagement-agent: 5.0
   - instagram-strategy-agent: 5.0
-  - task-agent-router: 5.0
   - tiktok-strategy-agent: 5.0
-  - facebook-strategy-agent: 4.0
 - Top betweenness hubs:
-  - task-agent-router: 0.580882
-  - community-manager-agent: 0.419293
-  - community-engagement-agent: 0.419118
-  - tiktok-strategy-agent: 0.322829
-  - social-selling-agent: 0.212885
+  - task-agent-router: 0.664216
+  - community-manager-agent: 0.498862
+  - community-engagement-agent: 0.321954
+  - social-selling-agent: 0.237132
+  - content-repurposing-agent: 0.190214
 
 ## ops (agent-relationship-ops-subgraph.json)
 
 - Nodes: 13
-- Edges: 19
-- Communities: 3
+- Edges: 23
+- Communities: 1
 - Top degree hubs:
-  - asset-sourcer-agent: 6.0
-  - legal-compliance-agent: 6.0
+  - asset-sourcer-agent: 7.0
+  - legal-compliance-agent: 7.0
+  - digital-asset-manager-agent: 4.0
   - productivity-and-burnout-prevention-agent: 4.0
-  - notes-ledger-investigator: 3.0
-  - task-agent-router: 3.0
+  - tax-compliance-agent: 4.0
 - Top betweenness hubs:
-  - productivity-and-burnout-prevention-agent: 1.363636
-  - asset-sourcer-agent: 0.969697
-  - digital-asset-manager-agent: 0.969697
-  - auth-blocker-sentinel: 0.818182
-  - legal-compliance-agent: 0.606061
+  - legal-compliance-agent: 0.613636
+  - productivity-and-burnout-prevention-agent: 0.512626
+  - auth-blocker-sentinel: 0.482323
+  - asset-sourcer-agent: 0.474747
+  - digital-asset-manager-agent: 0.474747
 
 ## content (agent-relationship-content-subgraph.json)
 

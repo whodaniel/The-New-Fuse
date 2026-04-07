@@ -102,7 +102,7 @@ seo-optimizer-agent,primary,seo,content|seo
 social-selling-agent,sub,social,social
 sponsorship-outreach-agent,primary,podcast,podcast
 storyboard-artist-agent,sub,content,content
-talent-manager-agent,primary,brand,brand
+talent-manager-agent,sub,brand,brand
 task-agent-router,primary,orchestration,brand|content|funnel|ops|podcast|seo|social
 tax-compliance-agent,primary,ops,ops
 technical-seo-auditor-agent,primary,seo,seo
@@ -116,6 +116,6 @@ value-ladder-architect-agent,primary,funnel,funnel
 video-editor-agent,sub,content,content
 visual-asset-creator-agent,sub,funnel,funnel
 x-strategy-agent,primary,social,social
-yt-content-strategy-agent,sub,brand,brand
+yt-content-strategy-agent,primary,brand,brand
 yt-niche-strategy-agent,primary,content,content
 yt-seo-optimizer-agent,primary,seo,seo

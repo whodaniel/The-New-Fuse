@@ -1,6 +1,6 @@
 # Content Subgraph
 
-Generated: 2026-03-26
+Generated: 2026-04-07
 Source: `agent-relationship-graph.json`
 
 ```mermaid

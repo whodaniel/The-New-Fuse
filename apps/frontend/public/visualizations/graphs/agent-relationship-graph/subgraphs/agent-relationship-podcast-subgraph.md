@@ -1,6 +1,6 @@
 # Podcast Subgraph
 
-Generated: 2026-03-26
+Generated: 2026-04-07
 Source: `agent-relationship-graph.json`
 
 ```mermaid
@@ -15,10 +15,12 @@ graph TD
   podcast_ad_network_agent [podcast-ad-network-agent] --> podcast_hosting_setup_agent [podcast-hosting-setup-agent]
   podcast_affiliate_agent [podcast-affiliate-agent] --> podcast_monetization_strategy_agent [podcast-monetization-strategy-agent]
   podcast_affiliate_agent [podcast-affiliate-agent] --> podcast_niche_analyst_agent [podcast-niche-analyst-agent]
+  podcast_affiliate_agent [podcast-affiliate-agent] --> podcast_video_editor_agent [podcast-video-editor-agent]
   podcast_affiliate_agent [podcast-affiliate-agent] --> sponsorship_outreach_agent [sponsorship-outreach-agent]
   podcast_analytics_agent [podcast-analytics-agent] --> podcast_hosting_setup_agent [podcast-hosting-setup-agent]
   podcast_analytics_agent [podcast-analytics-agent] --> podcast_niche_analyst_agent [podcast-niche-analyst-agent]
   podcast_analytics_agent [podcast-analytics-agent] --> podcast_video_editor_agent [podcast-video-editor-agent]
+  podcast_analytics_agent [podcast-analytics-agent] --> sponsorship_outreach_agent [sponsorship-outreach-agent]
   podcast_audio_editor_agent [podcast-audio-editor-agent] --> podcast_hosting_setup_agent [podcast-hosting-setup-agent]
   podcast_distribution_agent [podcast-distribution-agent] --> podcast_promotion_agent [podcast-promotion-agent]
   podcast_distribution_agent [podcast-distribution-agent] --> podcast_promotion_agent [podcast-promotion-agent]
@@ -34,13 +36,18 @@ graph TD
   podcast_monetization_strategy_agent [podcast-monetization-strategy-agent] --> podcast_niche_analyst_agent [podcast-niche-analyst-agent]
   podcast_niche_analyst_agent [podcast-niche-analyst-agent] --> podcast_format_designer_agent [podcast-format-designer-agent]
   podcast_niche_analyst_agent [podcast-niche-analyst-agent] --> podcast_hosting_setup_agent [podcast-hosting-setup-agent]
+  podcast_niche_analyst_agent [podcast-niche-analyst-agent] --> podcast_seo_agent [podcast-seo-agent]
   podcast_niche_analyst_agent [podcast-niche-analyst-agent] --> podcast_video_editor_agent [podcast-video-editor-agent]
   podcast_niche_analyst_agent [podcast-niche-analyst-agent] --> sponsorship_outreach_agent [sponsorship-outreach-agent]
+  podcast_promotion_agent [podcast-promotion-agent] --> guest_relationship_manager_agent [guest-relationship-manager-agent]
   podcast_promotion_agent [podcast-promotion-agent] --> podcast_analytics_agent [podcast-analytics-agent]
   podcast_promotion_agent [podcast-promotion-agent] --> podcast_analytics_agent [podcast-analytics-agent]
   podcast_promotion_agent [podcast-promotion-agent] --> podcast_analytics_agent [podcast-analytics-agent]
   podcast_promotion_agent [podcast-promotion-agent] --> sponsorship_outreach_agent [sponsorship-outreach-agent]
+  podcast_seo_agent [podcast-seo-agent] --> podcast_affiliate_agent [podcast-affiliate-agent]
+  podcast_video_editor_agent [podcast-video-editor-agent] --> episode_planner_agent [episode-planner-agent]
   podcast_video_editor_agent [podcast-video-editor-agent] --> sponsorship_outreach_agent [sponsorship-outreach-agent]
+  sponsorship_outreach_agent [sponsorship-outreach-agent] --> podcast_niche_analyst_agent [podcast-niche-analyst-agent]
   sponsorship_outreach_agent [sponsorship-outreach-agent] --> podcast_seo_agent [podcast-seo-agent]
   task_agent_router [task-agent-router] --> analytics_and_reporting_agent [analytics-and-reporting-agent]
   task_agent_router [task-agent-router] --> guest_booking_agent [guest-booking-agent]

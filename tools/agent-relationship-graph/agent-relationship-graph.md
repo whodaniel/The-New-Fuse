@@ -1,13 +1,14 @@
 # Agent Relationship Graph
 
-Generated: 2026-03-26 Scope: registry-driven typed graph synthesis Method:
-curated seed relationships + similarity expansion + typed routing heuristics.
+Generated: 2026-04-07
+Scope: registry-driven typed graph synthesis
+Method: curated seed relationships + similarity expansion + typed routing heuristics.
 
 ## 1) Snapshot
 
 - Nodes: 120
-- Edges: 431
-- Registry coverage: 67.42%
+- Edges: 437
+- Registry coverage: 65.93%
 
 ### Cluster Distribution
 
@@ -22,7 +23,7 @@ curated seed relationships + similarity expansion + typed routing heuristics.
 
 ### Relationship Type Distribution
 
-- fallback: 166
+- fallback: 172
 - depends_on: 155
 - delegates: 54
 - feeds: 24
@@ -52,18 +53,18 @@ curated seed relationships + similarity expansion + typed routing heuristics.
 - podcast-hosting-setup-agent: 12
 - podcast-promotion-agent: 12
 - campaign-execution-agent: 11
+- contract-manager-agent: 11
 - keyword-research-agent: 11
 - link-building-agent: 11
+- personal-archaeology-source-team-orchestrator: 11
 - ab-testing-optimizer-agent: 10
 - analytics-and-reporting-agent: 10
 - asset-sourcer-agent: 10
+- competitive-intelligence-agent: 10
 - content-calendar-agent: 10
 - content-writer-agent: 10
-- contract-manager-agent: 10
+- deal-negotiator-agent: 10
 - niche-analyst-agent: 10
-- personal-archaeology-source-team-orchestrator: 10
-- podcast-analytics-agent: 10
-- podcast-niche-analyst-agent: 10
 
 ## 3) Representative Relationship Slice
 

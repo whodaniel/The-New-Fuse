@@ -201,17 +201,17 @@ class TNFRelayServer extends events_1.EventEmitter {
             TerminalFormatter_1.relay.redisBridgeConnected();
             console.log('[Relay] Bridge connected - Agent gate:', this.bridgeGateEnabled ? 'ENABLED' : 'OPEN');
         });
-        this.bridge.on('error', (err) => {
-            console.error('[Relay] Bridge error caught:', err instanceof Error ? err.message : String(err));
-        });
         this.bridge.on('egress', (envelope) => {
             // Handle message from Redis -> WebSocket (egress messages go to approved agents only)
             this.handleBridgeEgress(envelope);
         });
+        this.bridge.on('error', (err) => {
+            console.error('[Relay] Bridge error caught:', err instanceof Error ? err.message : String(err));
+        });
         this.bridge.connect().catch((err) => {
             console.error('[Relay] Failed to connect bridge:', err);
             console.log('[Relay] Continuing without Redis bridge - local-only mode');
-            this.bridge = null;
+            // Do not set this.bridge = null to keep error listeners active during retries
         });
         if (this.activityPersistenceEnabled && this.activityRedis) {
             this.activityRedis.on('error', (err) => {

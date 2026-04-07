@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-03-26",
+  "generated_at": "2026-04-07",
   "reports": [
     {
       "graph_file": "agent-relationship-graph.json",
       "domain": "full",
       "node_count": 120,
-      "edge_count": 431,
+      "edge_count": 437,
       "top_degree": [
         {
           "id": "task-agent-router",
@@ -31,23 +31,23 @@
       "top_betweenness": [
         {
           "id": "task-agent-router",
-          "score": 0.537867
+          "score": 0.534894
         },
         {
           "id": "orchestrator-agent",
-          "score": 0.268107
+          "score": 0.260637
         },
         {
           "id": "sponsorship-outreach-agent",
-          "score": 0.098328
+          "score": 0.097225
         },
         {
           "id": "legal-compliance-agent",
-          "score": 0.093671
+          "score": 0.094218
         },
         {
           "id": "campaign-execution-agent",
-          "score": 0.092376
+          "score": 0.091193
         }
       ],
       "top_closeness": [
@@ -57,7 +57,7 @@
         },
         {
           "id": "legal-compliance-agent",
-          "score": 0.402027
+          "score": 0.40339
         },
         {
           "id": "keyword-research-agent",
@@ -75,23 +75,23 @@
       "top_eigenvector": [
         {
           "id": "task-agent-router",
-          "score": 0.315317
+          "score": 0.312285
         },
         {
           "id": "keyword-research-agent",
-          "score": 0.220552
+          "score": 0.215203
         },
         {
           "id": "link-building-agent",
-          "score": 0.193543
+          "score": 0.188901
         },
         {
           "id": "seo-optimizer-agent",
-          "score": 0.182591
+          "score": 0.178181
         },
         {
-          "id": "content-writer-agent",
-          "score": 0.175313
+          "id": "content-calendar-agent",
+          "score": 0.171668
         }
       ],
       "communities": [
@@ -246,14 +246,14 @@
           "total": 4
         },
         "agent-search-engine": {
-          "in": 4,
+          "in": 5,
           "out": 1,
-          "total": 5
+          "total": 6
         },
         "agent-tagger": {
           "in": 2,
-          "out": 2,
-          "total": 4
+          "out": 3,
+          "total": 5
         },
         "content-calendar-orchestrator-agent": {
           "in": 3,
@@ -271,9 +271,9 @@
           "total": 2
         },
         "interoperability-protocol-agent": {
-          "in": 2,
-          "out": 4,
-          "total": 6
+          "in": 3,
+          "out": 5,
+          "total": 8
         },
         "orchestrator-agent": {
           "in": 2,
@@ -291,9 +291,9 @@
           "total": 5
         },
         "personal-archaeology-master-orchestrator": {
-          "in": 5,
+          "in": 6,
           "out": 4,
-          "total": 9
+          "total": 10
         },
         "personal-archaeology-narrative-team-orchestrator": {
           "in": 3,
@@ -302,8 +302,8 @@
         },
         "personal-archaeology-source-team-orchestrator": {
           "in": 6,
-          "out": 4,
-          "total": 10
+          "out": 5,
+          "total": 11
         },
         "personal-historical-archaeologist": {
           "in": 5,
@@ -696,9 +696,9 @@
           "total": 13
         },
         "brand-identity-agent": {
-          "in": 4,
+          "in": 5,
           "out": 4,
-          "total": 8
+          "total": 9
         },
         "brand-outreach-agent": {
           "in": 3,
@@ -722,23 +722,23 @@
         },
         "competitive-intelligence-agent": {
           "in": 5,
-          "out": 4,
-          "total": 9
+          "out": 5,
+          "total": 10
         },
         "contract-manager-agent": {
+          "in": 4,
+          "out": 7,
+          "total": 11
+        },
+        "deal-negotiator-agent": {
           "in": 4,
           "out": 6,
           "total": 10
         },
-        "deal-negotiator-agent": {
-          "in": 4,
-          "out": 5,
-          "total": 9
-        },
         "email-marketing-automation-agent": {
-          "in": 2,
+          "in": 4,
           "out": 3,
-          "total": 5
+          "total": 7
         },
         "financial-manager-agent": {
           "in": 4,
@@ -1235,7 +1235,7 @@
       "graph_file": "agent-relationship-brand-subgraph.json",
       "domain": "brand",
       "node_count": 20,
-      "edge_count": 48,
+      "edge_count": 51,
       "top_degree": [
         {
           "id": "campaign-execution-agent",
@@ -1243,11 +1243,11 @@
         },
         {
           "id": "contract-manager-agent",
-          "score": 8.0
+          "score": 9.0
         },
         {
           "id": "deal-negotiator-agent",
-          "score": 8.0
+          "score": 9.0
         },
         {
           "id": "brand-outreach-agent",
@@ -1261,23 +1261,23 @@
       "top_betweenness": [
         {
           "id": "campaign-execution-agent",
-          "score": 0.650989
-        },
-        {
-          "id": "financial-manager-agent",
-          "score": 0.587524
+          "score": 0.592467
         },
         {
           "id": "deal-negotiator-agent",
-          "score": 0.509997
+          "score": 0.493887
+        },
+        {
+          "id": "financial-manager-agent",
+          "score": 0.417001
+        },
+        {
+          "id": "contract-manager-agent",
+          "score": 0.27051
         },
         {
           "id": "campaign-reporting-agent",
-          "score": 0.259315
-        },
-        {
-          "id": "task-agent-router",
-          "score": 0.210526
+          "score": 0.231774
         }
       ],
       "top_closeness": [
@@ -1287,15 +1287,15 @@
         },
         {
           "id": "deal-negotiator-agent",
-          "score": 0.558824
+          "score": 0.575758
+        },
+        {
+          "id": "contract-manager-agent",
+          "score": 0.527778
         },
         {
           "id": "financial-manager-agent",
           "score": 0.527778
-        },
-        {
-          "id": "contract-manager-agent",
-          "score": 0.487179
         },
         {
           "id": "campaign-reporting-agent",
@@ -1305,56 +1305,50 @@
       "top_eigenvector": [
         {
           "id": "deal-negotiator-agent",
-          "score": 0.381705
-        },
-        {
-          "id": "campaign-execution-agent",
-          "score": 0.330522
-        },
-        {
-          "id": "brand-outreach-agent",
-          "score": 0.326629
+          "score": 0.401285
         },
         {
           "id": "contract-manager-agent",
-          "score": 0.324596
+          "score": 0.349509
+        },
+        {
+          "id": "campaign-execution-agent",
+          "score": 0.326278
+        },
+        {
+          "id": "brand-outreach-agent",
+          "score": 0.299507
         },
         {
           "id": "brand-prospecting-agent",
-          "score": 0.309301
+          "score": 0.272997
         }
       ],
       "communities": [
         {
           "community_id": 1,
-          "size": 13,
+          "size": 20,
           "members": [
+            "brand-identity-agent",
             "brand-outreach-agent",
             "brand-prospecting-agent",
             "campaign-execution-agent",
+            "campaign-reporting-agent",
+            "competitive-intelligence-agent",
             "contract-manager-agent",
             "deal-negotiator-agent",
+            "email-marketing-automation-agent",
+            "financial-manager-agent",
+            "influencer-media-kit-agent",
             "influencer-niche-agent",
             "legal-compliance-agent",
             "orchestrator-agent",
             "personal-brand-architect-agent",
             "platform-selection-agent",
             "reputation-management-agent",
+            "talent-manager-agent",
             "task-agent-router",
             "yt-content-strategy-agent"
-          ]
-        },
-        {
-          "community_id": 2,
-          "size": 7,
-          "members": [
-            "brand-identity-agent",
-            "campaign-reporting-agent",
-            "competitive-intelligence-agent",
-            "email-marketing-automation-agent",
-            "financial-manager-agent",
-            "influencer-media-kit-agent",
-            "talent-manager-agent"
           ]
         }
       ],
@@ -1370,9 +1364,9 @@
           "total": 5
         },
         "brand-identity-agent": {
-          "in": 2,
+          "in": 3,
           "out": 2,
-          "total": 4
+          "total": 5
         },
         "brand-outreach-agent": {
           "in": 2,
@@ -1396,23 +1390,23 @@
         },
         "competitive-intelligence-agent": {
           "in": 3,
-          "out": 1,
-          "total": 4
+          "out": 2,
+          "total": 5
         },
         "contract-manager-agent": {
           "in": 4,
-          "out": 4,
-          "total": 8
+          "out": 5,
+          "total": 9
         },
         "deal-negotiator-agent": {
           "in": 4,
-          "out": 4,
-          "total": 8
+          "out": 5,
+          "total": 9
         },
         "email-marketing-automation-agent": {
-          "in": 0,
+          "in": 2,
           "out": 2,
-          "total": 2
+          "total": 4
         },
         "financial-manager-agent": {
           "in": 3,
@@ -1593,12 +1587,16 @@
         {
           "community_id": 3,
           "size": 1,
-          "members": ["equipment-recommendation-agent"]
+          "members": [
+            "equipment-recommendation-agent"
+          ]
         },
         {
           "community_id": 4,
           "size": 1,
-          "members": ["information-retrieval-agent"]
+          "members": [
+            "information-retrieval-agent"
+          ]
         }
       ],
       "degree_detail": {
@@ -1849,7 +1847,9 @@
         {
           "community_id": 2,
           "size": 1,
-          "members": ["audience-persona-architect-agent"]
+          "members": [
+            "audience-persona-architect-agent"
+          ]
         }
       ],
       "degree_detail": {
@@ -2253,7 +2253,9 @@
         {
           "community_id": 3,
           "size": 1,
-          "members": ["twip-orchestration-bridge"]
+          "members": [
+            "twip-orchestration-bridge"
+          ]
         }
       ],
       "degree_detail": {

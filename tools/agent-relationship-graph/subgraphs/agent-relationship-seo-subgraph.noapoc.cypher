@@ -19,7 +19,7 @@ UNWIND [
 MERGE (a:Agent {id: row.id})
 SET a.kind = row.kind,
     a.cluster = row.cluster,
-    a.updatedAt = datetime('2026-03-26T09:23:34Z');
+    a.updatedAt = datetime('2026-04-07T13:44:06Z');
 
 UNWIND [
   {s:"content-calendar-agent",t:"content-writer-agent",rel:"DEPENDS_ON",strength:0.58,risk:""},

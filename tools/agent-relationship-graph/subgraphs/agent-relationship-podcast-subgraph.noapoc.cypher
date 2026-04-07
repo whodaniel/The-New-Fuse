@@ -28,7 +28,7 @@ UNWIND [
 MERGE (a:Agent {id: row.id})
 SET a.kind = row.kind,
     a.cluster = row.cluster,
-    a.updatedAt = datetime('2026-03-26T09:23:34Z');
+    a.updatedAt = datetime('2026-04-07T13:44:06Z');
 
 UNWIND [
   {s:"episode-planner-agent",t:"podcast-equipment-agent",rel:"FALLBACK",strength:0.77,risk:"capability_overlap"},

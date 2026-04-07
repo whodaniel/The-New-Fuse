@@ -8,7 +8,7 @@ export interface StandaloneRedisConfig {
   db: number;
   connectTimeout: number;
   lazyConnect: boolean;
-  maxRetriesPerRequest: number;
+  maxRetriesPerRequest: number | null;
   retryDelay: number;
   keyPrefix: string;
   clusterMode: boolean;
@@ -57,7 +57,7 @@ export function loadStandaloneRedisConfig(): StandaloneRedisConfig {
     db,
     connectTimeout: parseInt(process.env.REDIS_CONNECT_TIMEOUT || '10000', 10),
     lazyConnect: process.env.REDIS_LAZY_CONNECT === 'true',
-    maxRetriesPerRequest: parseInt(process.env.REDIS_MAX_RETRIES_PER_REQUEST || '3', 10),
+    maxRetriesPerRequest: null,
     retryDelay: parseInt(process.env.REDIS_RETRY_DELAY || '1000', 10),
     keyPrefix: process.env.REDIS_KEY_PREFIX || '',
     clusterMode: process.env.REDIS_CLUSTER_MODE === 'true',

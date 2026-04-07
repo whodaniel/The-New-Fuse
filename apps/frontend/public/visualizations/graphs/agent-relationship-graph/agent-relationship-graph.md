@@ -1,14 +1,14 @@
 # Agent Relationship Graph
 
-Generated: 2026-03-26
+Generated: 2026-04-07
 Scope: registry-driven typed graph synthesis
 Method: curated seed relationships + similarity expansion + typed routing heuristics.
 
 ## 1) Snapshot
 
 - Nodes: 120
-- Edges: 401
-- Registry coverage: 67.42%
+- Edges: 437
+- Registry coverage: 65.93%
 
 ### Cluster Distribution
 
@@ -23,9 +23,9 @@ Method: curated seed relationships + similarity expansion + typed routing heuris
 
 ### Relationship Type Distribution
 
+- fallback: 172
 - depends_on: 155
-- fallback: 137
-- delegates: 53
+- delegates: 54
 - feeds: 24
 - routes_to: 10
 - handoff: 5
@@ -45,26 +45,26 @@ Method: curated seed relationships + similarity expansion + typed routing heuris
 
 ## 2) Top Connectivity Hubs
 
-- task-agent-router: 25
-- orchestrator-agent: 19
+- task-agent-router: 26
+- orchestrator-agent: 20
+- legal-compliance-agent: 13
 - seo-optimizer-agent: 13
-- legal-compliance-agent: 12
+- sponsorship-outreach-agent: 13
 - podcast-hosting-setup-agent: 12
+- podcast-promotion-agent: 12
 - campaign-execution-agent: 11
+- contract-manager-agent: 11
 - keyword-research-agent: 11
-- podcast-promotion-agent: 11
-- sponsorship-outreach-agent: 11
+- link-building-agent: 11
+- personal-archaeology-source-team-orchestrator: 11
+- ab-testing-optimizer-agent: 10
 - analytics-and-reporting-agent: 10
+- asset-sourcer-agent: 10
+- competitive-intelligence-agent: 10
 - content-calendar-agent: 10
 - content-writer-agent: 10
-- link-building-agent: 10
-- yt-niche-strategy-agent: 10
-- ab-testing-optimizer-agent: 9
-- asset-sourcer-agent: 9
-- cognitive-bias-optimizer-agent: 9
-- contract-manager-agent: 9
-- cro-process-agent: 9
-- deal-negotiator-agent: 9
+- deal-negotiator-agent: 10
+- niche-analyst-agent: 10
 
 ## 3) Representative Relationship Slice
 
@@ -137,6 +137,7 @@ graph TD
   cognitive_bias_optimizer_agent[cognitive-bias-optimizer-agent] -->|measured_by| analytics_and_reporting_agent[analytics-and-reporting-agent]
   task_agent_router[task-agent-router] -->|delegates| analytics_and_reporting_agent[analytics-and-reporting-agent]
   task_agent_router[task-agent-router] -->|delegates| campaign_execution_agent[campaign-execution-agent]
+  task_agent_router[task-agent-router] -->|delegates| community_manager_agent[community-manager-agent]
   task_agent_router[task-agent-router] -->|delegates| content_repurposing_agent[content-repurposing-agent]
   task_agent_router[task-agent-router] -->|delegates| cro_process_agent[cro-process-agent]
   task_agent_router[task-agent-router] -->|delegates| keyword_research_agent[keyword-research-agent]
@@ -149,5 +150,4 @@ graph TD
   media_evidence_investigator[media-evidence-investigator] -->|depends_on| notes_ledger_investigator[notes-ledger-investigator]
   media_evidence_investigator[media-evidence-investigator] -->|depends_on| repo_lineage_investigator[repo-lineage-investigator]
   media_evidence_investigator[media-evidence-investigator] -->|depends_on| timeline_synthesis_investigator[timeline-synthesis-investigator]
-  monetization_strategy_agent[monetization-strategy-agent] -->|depends_on| platform_selection_agent[platform-selection-agent]
 ```

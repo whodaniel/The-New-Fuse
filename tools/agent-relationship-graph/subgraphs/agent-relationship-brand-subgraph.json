@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-26",
+  "generated_at": "2026-04-07",
   "domain": "brand",
   "nodes": [
     {
@@ -89,12 +89,12 @@
     },
     {
       "id": "talent-manager-agent",
-      "kind": "primary",
+      "kind": "sub",
       "cluster": "brand"
     },
     {
       "id": "yt-content-strategy-agent",
-      "kind": "sub",
+      "kind": "primary",
       "cluster": "brand"
     },
     {
@@ -268,6 +268,14 @@
     },
     {
       "source": "competitive-intelligence-agent",
+      "target": "brand-identity-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "competitive-intelligence-agent",
       "target": "talent-manager-agent",
       "type": "fallback",
       "strength": 0.58,
@@ -298,6 +306,14 @@
     },
     {
       "source": "contract-manager-agent",
+      "target": "email-marketing-automation-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "contract-manager-agent",
       "target": "legal-compliance-agent",
       "type": "depends_on",
       "strength": 0.58,
@@ -316,6 +332,14 @@
       "type": "requires",
       "strength": 0.92,
       "origin": "seed"
+    },
+    {
+      "source": "deal-negotiator-agent",
+      "target": "email-marketing-automation-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "registry",
+      "risk": "capability_overlap"
     },
     {
       "source": "deal-negotiator-agent",

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-26",
+  "generated_at": "2026-04-07",
   "nodes": [
     {
       "id": "agent-registry-manager",
@@ -538,12 +538,12 @@
     },
     {
       "id": "talent-manager-agent",
-      "kind": "primary",
+      "kind": "sub",
       "cluster": "brand"
     },
     {
       "id": "yt-content-strategy-agent",
-      "kind": "sub",
+      "kind": "primary",
       "cluster": "brand"
     },
     {
@@ -759,6 +759,14 @@
       "type": "enriches",
       "strength": 0.86,
       "origin": "seed"
+    },
+    {
+      "source": "agent-tagger",
+      "target": "agent-search-engine",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
     },
     {
       "source": "agent-tagger",
@@ -1312,6 +1320,14 @@
     },
     {
       "source": "competitive-intelligence-agent",
+      "target": "brand-identity-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "competitive-intelligence-agent",
       "target": "monetization-strategy-agent",
       "type": "depends_on",
       "strength": 0.71,
@@ -1547,6 +1563,14 @@
     },
     {
       "source": "contract-manager-agent",
+      "target": "email-marketing-automation-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "contract-manager-agent",
       "target": "legal-compliance-agent",
       "type": "depends_on",
       "strength": 0.58,
@@ -1647,6 +1671,14 @@
       "type": "requires",
       "strength": 0.92,
       "origin": "seed"
+    },
+    {
+      "source": "deal-negotiator-agent",
+      "target": "email-marketing-automation-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "registry",
+      "risk": "capability_overlap"
     },
     {
       "source": "deal-negotiator-agent",
@@ -2158,6 +2190,14 @@
       "type": "delegates",
       "strength": 0.58,
       "origin": "seed"
+    },
+    {
+      "source": "interoperability-protocol-agent",
+      "target": "personal-archaeology-master-orchestrator",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
     },
     {
       "source": "interoperability-protocol-agent",
@@ -2733,6 +2773,14 @@
       "type": "delegates",
       "strength": 0.64,
       "origin": "seed"
+    },
+    {
+      "source": "personal-archaeology-source-team-orchestrator",
+      "target": "interoperability-protocol-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "ring",
+      "risk": "intra_cluster_fallback"
     },
     {
       "source": "personal-archaeology-source-team-orchestrator",
@@ -3799,10 +3847,12 @@
     "builder": "build_agent_relationship_graph.py",
     "target_node_count": 120,
     "selected_nodes": 120,
-    "selected_edges": 431,
-    "registry_agents_total": 178,
-    "coverage_vs_registry_pct": 67.42,
+    "selected_edges": 437,
+    "registry_agents_total": 182,
+    "coverage_vs_registry_pct": 65.93,
     "edge_sources": {
+      "registry": 1,
+      "ring": 5,
       "seed": 431
     },
     "edge_types": {
@@ -3811,7 +3861,7 @@
       "depends_on": 155,
       "enables": 1,
       "enriches": 1,
-      "fallback": 166,
+      "fallback": 172,
       "feedback": 1,
       "feeds": 24,
       "gates": 1,

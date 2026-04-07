@@ -107,6 +107,7 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
     path: '/workspace/layout',
     description: 'Workspace Layout Management',
   },
+  { name: 'Workspace Spaces', path: '/spaces', description: 'Multi-workspace control surface' },
 
   // Tasks & Workflows
   { name: 'All Tasks', path: '/tasks', description: 'Task Management' },
@@ -114,6 +115,9 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   { name: 'Task Detail', path: '/tasks/:id', description: 'Task Details' },
   { name: 'Edit Task', path: '/tasks/:id/edit', description: 'Edit Task' },
   { name: 'Tasks Page', path: '/tasks-page', description: 'Dedicated Tasks Page' },
+  { name: 'Timeline', path: '/timeline', description: 'Operational Timeline' },
+  { name: 'Goals', path: '/goals', description: 'Strategic Goals' },
+  { name: 'Plans', path: '/plans', description: 'Execution Plans' },
   { name: 'Workflows', path: '/workflows', description: 'Workflow Management' },
   {
     name: 'Workflow Builder',
@@ -156,6 +160,7 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   { name: 'Feature Flags', path: '/admin/feature-flags', description: 'Feature Management' },
   { name: 'Port Management', path: '/admin/port-management', description: 'Port Configuration' },
   { name: 'Admin Settings', path: '/admin/settings', description: 'Admin Configuration' },
+  { name: 'External Connections', path: '/connect', description: 'Stripe and Provider Connect' },
   { name: 'Admin Onboarding', path: '/admin/onboarding', description: 'Admin Onboarding' },
   { name: 'Admin Dashboard', path: '/admin/dashboard', description: 'Admin Dashboard View' },
   { name: 'Admin Layout', path: '/admin/layout', description: 'Admin Layout Management' },

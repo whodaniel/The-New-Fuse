@@ -1,11 +1,11 @@
 # Agent Relationship Centrality Report
 
-Generated: 2026-03-26
+Generated: 2026-04-07
 
 ## full (agent-relationship-graph.json)
 
 - Nodes: 120
-- Edges: 431
+- Edges: 437
 - Communities: 3
 - Top degree hubs:
   - task-agent-router: 26.0
@@ -14,11 +14,11 @@ Generated: 2026-03-26
   - seo-optimizer-agent: 13.0
   - sponsorship-outreach-agent: 13.0
 - Top betweenness hubs:
-  - task-agent-router: 0.537867
-  - orchestrator-agent: 0.268107
-  - sponsorship-outreach-agent: 0.098328
-  - legal-compliance-agent: 0.093671
-  - campaign-execution-agent: 0.092376
+  - task-agent-router: 0.534894
+  - orchestrator-agent: 0.260637
+  - sponsorship-outreach-agent: 0.097225
+  - legal-compliance-agent: 0.094218
+  - campaign-execution-agent: 0.091193
 
 ## podcast (agent-relationship-podcast-subgraph.json)
 
@@ -59,20 +59,20 @@ Generated: 2026-03-26
 ## brand (agent-relationship-brand-subgraph.json)
 
 - Nodes: 20
-- Edges: 48
-- Communities: 2
+- Edges: 51
+- Communities: 1
 - Top degree hubs:
   - campaign-execution-agent: 10.0
-  - contract-manager-agent: 8.0
-  - deal-negotiator-agent: 8.0
+  - contract-manager-agent: 9.0
+  - deal-negotiator-agent: 9.0
   - brand-outreach-agent: 7.0
   - brand-prospecting-agent: 6.0
 - Top betweenness hubs:
-  - campaign-execution-agent: 0.650989
-  - financial-manager-agent: 0.587524
-  - deal-negotiator-agent: 0.509997
-  - campaign-reporting-agent: 0.259315
-  - task-agent-router: 0.210526
+  - campaign-execution-agent: 0.592467
+  - deal-negotiator-agent: 0.493887
+  - financial-manager-agent: 0.417001
+  - contract-manager-agent: 0.27051
+  - campaign-reporting-agent: 0.231774
 
 ## funnel (agent-relationship-funnel-subgraph.json)
 
@@ -145,3 +145,4 @@ Generated: 2026-03-26
   - keyword-research-agent: 0.616176
   - task-agent-router: 0.351471
   - content-writer-agent: 0.334314
+

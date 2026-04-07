@@ -10,7 +10,7 @@ MERGE (a:Agent {id: row.id})
 SET a.kind = row.kind,
     a.cluster = row.cluster,
     a.domains = CASE WHEN row.domains = '' THEN [] ELSE split(row.domains, '|') END,
-    a.updatedAt = datetime('2026-03-26T09:23:34Z');
+    a.updatedAt = datetime('2026-04-07T13:44:08Z');
 
 LOAD CSV WITH HEADERS FROM 'file:///edges.csv' AS row
 MATCH (s:Agent {id: row.source})
@@ -19,7 +19,7 @@ MERGE (s)-[r:RELATED {relationType: row.relationType}]->(t)
 SET r.strength = toFloat(row.strength),
     r.risk = row.risk,
     r.direction = row.direction,
-    r.updatedAt = datetime('2026-03-26T09:23:34Z');
+    r.updatedAt = datetime('2026-04-07T13:44:08Z');
 
 LOAD CSV WITH HEADERS FROM 'file:///domain_membership.csv' AS row
 MATCH (a:Agent {id: row.agentId})

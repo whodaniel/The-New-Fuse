@@ -145,7 +145,33 @@ export class ConfigService {
 
   // Environment variable helpers
   getEnv(key: string, defaultValue?: string): string {
-    return process.env[key] || defaultValue || '';
+    // 1. Check primary key
+    if (process.env[key]) return process.env[key]!;
+
+    // 2. Check Stripe Projects CLI protocol fallback (e.g. STRIPE_PROJECT_POSTGRES_URL)
+    const stripeProjectKey = this.mapToStripeProjectKey(key);
+    if (stripeProjectKey && process.env[stripeProjectKey]) {
+      return process.env[stripeProjectKey]!;
+    }
+
+    // 3. Check generic STRIPE_PROJECT_ prefix if not already checked
+    const genericStripeKey = `STRIPE_PROJECT_${key}`;
+    if (process.env[genericStripeKey]) {
+      return process.env[genericStripeKey]!;
+    }
+
+    return defaultValue || '';
+  }
+
+  private mapToStripeProjectKey(key: string): string | null {
+    const mapping: Record<string, string> = {
+      'DATABASE_URL': 'STRIPE_PROJECT_POSTGRES_URL',
+      'REDIS_HOST': 'STRIPE_PROJECT_REDIS_HOST',
+      'REDIS_PORT': 'STRIPE_PROJECT_REDIS_PORT',
+      'REDIS_PASSWORD': 'STRIPE_PROJECT_REDIS_PASSWORD',
+      'OPENAI_API_KEY': 'STRIPE_PROJECT_OPENAI_API_KEY',
+    };
+    return mapping[key] || null;
   }
 
   getEnvNumber(key: string, defaultValue?: number): number {

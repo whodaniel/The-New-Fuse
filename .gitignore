@@ -234,3 +234,6 @@ apps/casin8-games/.data/
 .venv_crawler312/
 .voicebridge/
 logs/*.jsonl
+
+# Stripe Projects
+.projects/

@@ -140,7 +140,22 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit, 
     // Handle environment variable substitution
     if (typeof value === 'string' && value.startsWith('${') && value.endsWith('}')) {
       const envVar = value.slice(2, -1);
-      const envValue = process.env[envVar];
+      
+      // Try primary key, then Stripe Projects CLI fallbacks
+      let envValue = process.env[envVar];
+      if (envValue === undefined) {
+        // Fallback mapping matching ConfigService
+        const mapping: Record<string, string> = {
+          'DATABASE_URL': 'STRIPE_PROJECT_POSTGRES_URL',
+          'REDIS_HOST': 'STRIPE_PROJECT_REDIS_HOST',
+          'REDIS_PORT': 'STRIPE_PROJECT_REDIS_PORT',
+          'REDIS_PASSWORD': 'STRIPE_PROJECT_REDIS_PASSWORD',
+          'OPENAI_API_KEY': 'STRIPE_PROJECT_OPENAI_API_KEY',
+        };
+        const stripeKey = mapping[envVar] || `STRIPE_PROJECT_${envVar}`;
+        envValue = process.env[stripeKey];
+      }
+
       if (envValue !== undefined) {
         let parsedValue: any = envValue;
         // Type conversion based on schema

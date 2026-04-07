@@ -464,6 +464,21 @@ async function main() {
     console.log("- SKIP Relay Server is not running on :3000");
   }
 
+  console.log("\n[11] Stripe Projects Compliance");
+  const stripeJson = exists("stripe.json");
+  const projectsDir = exists(".projects/");
+  console.log(`- ${stripeJson ? "OK" : "MISSING"} stripe.json`);
+  console.log(`- ${projectsDir ? "OK" : "MISSING"} .projects/ directory`);
+  
+  if (stripeJson) {
+    const config = loadJson("stripe.json");
+    if (config && config.env_mapping) {
+      console.log("- OK stripe.json env_mapping defined");
+    } else {
+      console.log("- WARN stripe.json missing env_mapping");
+    }
+  }
+
   console.log(`\nDoctor result: ${hardFail ? "FAIL" : "PASS"}`);
   if (hardFail) process.exit(1);
 }

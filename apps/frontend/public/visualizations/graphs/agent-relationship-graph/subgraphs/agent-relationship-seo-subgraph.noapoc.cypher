@@ -19,7 +19,7 @@ UNWIND [
 MERGE (a:Agent {id: row.id})
 SET a.kind = row.kind,
     a.cluster = row.cluster,
-    a.updatedAt = datetime('2026-03-26T06:38:20Z');
+    a.updatedAt = datetime('2026-04-07T13:44:06Z');
 
 UNWIND [
   {s:"content-calendar-agent",t:"content-writer-agent",rel:"DEPENDS_ON",strength:0.58,risk:""},
@@ -51,7 +51,9 @@ UNWIND [
   {s:"task-agent-router",t:"seo-optimizer-agent",rel:"ROUTES_TO",strength:0.73,risk:""},
   {s:"task-agent-router",t:"technical-seo-auditor-agent",rel:"ROUTES_TO",strength:0.68,risk:""},
   {s:"technical-seo-auditor-agent",t:"content-calendar-agent",rel:"FEEDBACK",strength:0.71,risk:""},
-  {s:"technical-seo-auditor-agent",t:"link-building-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"}
+  {s:"technical-seo-auditor-agent",t:"link-building-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
+  {s:"technical-seo-auditor-agent",t:"yt-seo-optimizer-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
+  {s:"yt-seo-optimizer-agent",t:"link-building-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"}
 ] AS r
 MATCH (a:Agent {id: r.s})
 MATCH (b:Agent {id: r.t})

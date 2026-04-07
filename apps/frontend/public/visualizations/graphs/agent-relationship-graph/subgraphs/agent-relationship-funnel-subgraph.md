@@ -1,6 +1,6 @@
 # Funnel Subgraph
 
-Generated: 2026-03-26
+Generated: 2026-04-07
 Source: `agent-relationship-graph.json`
 
 ```mermaid
@@ -8,6 +8,7 @@ graph TD
   ab_testing_optimizer_agent [ab-testing-optimizer-agent] --> analytics_and_reporting_agent [analytics-and-reporting-agent]
   ab_testing_optimizer_agent [ab-testing-optimizer-agent] --> analytics_and_reporting_agent [analytics-and-reporting-agent]
   ab_testing_optimizer_agent [ab-testing-optimizer-agent] --> cognitive_bias_optimizer_agent [cognitive-bias-optimizer-agent]
+  ab_testing_optimizer_agent [ab-testing-optimizer-agent] --> lead_magnet_funnel_agent [lead-magnet-funnel-agent]
   affiliate_link_manager_agent [affiliate-link-manager-agent] --> ab_testing_optimizer_agent [ab-testing-optimizer-agent]
   analytics_and_reporting_agent [analytics-and-reporting-agent] --> ethical_bias_auditor_agent [ethical-bias-auditor-agent]
   cognitive_bias_optimizer_agent [cognitive-bias-optimizer-agent] --> analytics_and_reporting_agent [analytics-and-reporting-agent]
@@ -27,10 +28,14 @@ graph TD
   funnel_economics_analyst_agent [funnel-economics-analyst-agent] --> lead_capture_agent [lead-capture-agent]
   funnel_economics_analyst_agent [funnel-economics-analyst-agent] --> oto_sequence_architect_agent [oto-sequence-architect-agent]
   lead_capture_agent [lead-capture-agent] --> lead_magnet_funnel_agent [lead-magnet-funnel-agent]
+  lead_capture_agent [lead-capture-agent] --> niche_analyst_agent [niche-analyst-agent]
   lead_capture_agent [lead-capture-agent] --> oto_sequence_architect_agent [oto-sequence-architect-agent]
   lead_magnet_funnel_agent [lead-magnet-funnel-agent] --> personalized_content_recommendation_agent [personalized-content-recommendation-agent]
+  monetization_strategy_agent [monetization-strategy-agent] --> lead_capture_agent [lead-capture-agent]
+  niche_analyst_agent [niche-analyst-agent] --> code_fossil_investigator [code-fossil-investigator]
   orchestrator_agent [orchestrator-agent] --> task_agent_router [task-agent-router]
   oto_sequence_architect_agent [oto-sequence-architect-agent] --> value_ladder_architect_agent [value-ladder-architect-agent]
+  personalized_content_recommendation_agent [personalized-content-recommendation-agent] --> monetization_strategy_agent [monetization-strategy-agent]
   sales_funnel_architect_agent [sales-funnel-architect-agent] --> lead_magnet_funnel_agent [lead-magnet-funnel-agent]
   sales_funnel_architect_agent [sales-funnel-architect-agent] --> value_ladder_architect_agent [value-ladder-architect-agent]
   task_agent_router [task-agent-router] --> analytics_and_reporting_agent [analytics-and-reporting-agent]

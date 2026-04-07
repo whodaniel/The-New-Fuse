@@ -1,5 +1,5 @@
 // Agent relationship graph import for Neo4j (no APOC required)
-// Generated: 2026-03-26
+// Generated: 2026-04-07
 
 CREATE CONSTRAINT agent_id IF NOT EXISTS
 FOR (a:Agent)
@@ -113,8 +113,8 @@ UNWIND [
   {id:'personal-brand-architect-agent',kind:'sub',cluster:'brand'},
   {id:'platform-selection-agent',kind:'sub',cluster:'brand'},
   {id:'reputation-management-agent',kind:'primary',cluster:'brand'},
-  {id:'talent-manager-agent',kind:'primary',cluster:'brand'},
-  {id:'yt-content-strategy-agent',kind:'sub',cluster:'brand'},
+  {id:'talent-manager-agent',kind:'sub',cluster:'brand'},
+  {id:'yt-content-strategy-agent',kind:'primary',cluster:'brand'},
   {id:'asset-sourcer-agent',kind:'primary',cluster:'ops'},
   {id:'auth-blocker-sentinel',kind:'primary',cluster:'ops'},
   {id:'digital-asset-manager-agent',kind:'primary',cluster:'ops'},
@@ -130,7 +130,7 @@ UNWIND [
 MERGE (a:Agent {id: row.id})
 SET a.kind = row.kind,
     a.cluster = row.cluster,
-    a.updatedAt = datetime('2026-03-26T09:23:33Z');
+    a.updatedAt = datetime('2026-04-07T13:44:06Z');
 
 UNWIND [
   {s:'ab-testing-optimizer-agent',t:'analytics-and-reporting-agent',rel:'DEPENDS_ON',strength:0.89,risk:'',direction:'unidirectional'},
@@ -154,6 +154,7 @@ UNWIND [
   {s:'agent-relationship-grapher',t:'orchestrator-agent',rel:'ANALYZES',strength:0.74,risk:'',direction:'bidirectional'},
   {s:'agent-search-engine',t:'orchestrator-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
   {s:'agent-tagger',t:'agent-search-engine',rel:'ENRICHES',strength:0.86,risk:'',direction:'unidirectional'},
+  {s:'agent-tagger',t:'agent-search-engine',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
   {s:'agent-tagger',t:'interoperability-protocol-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
   {s:'algorithm-adaptation-agent',t:'digital-product-creator-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
   {s:'algorithm-adaptation-agent',t:'information-retrieval-agent',rel:'DEPENDS_ON',strength:0.73,risk:'',direction:'unidirectional'},
@@ -228,6 +229,7 @@ UNWIND [
   {s:'community-manager-agent',t:'podcast-promotion-agent',rel:'DEPENDS_ON',strength:0.64,risk:'',direction:'unidirectional'},
   {s:'community-manager-agent',t:'social-selling-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
   {s:'community-manager-agent',t:'traffic-generation-agent',rel:'FALLBACK',strength:0.64,risk:'capability_overlap',direction:'unidirectional'},
+  {s:'competitive-intelligence-agent',t:'brand-identity-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
   {s:'competitive-intelligence-agent',t:'monetization-strategy-agent',rel:'DEPENDS_ON',strength:0.71,risk:'',direction:'unidirectional'},
   {s:'competitive-intelligence-agent',t:'talent-manager-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
   {s:'competitive-intelligence-agent',t:'traffic-generation-agent',rel:'DEPENDS_ON',strength:0.71,risk:'',direction:'unidirectional'},
@@ -260,6 +262,7 @@ UNWIND [
   {s:'contract-manager-agent',t:'campaign-execution-agent',rel:'DEPENDS_ON',strength:0.91,risk:'',direction:'unidirectional'},
   {s:'contract-manager-agent',t:'campaign-execution-agent',rel:'GATES',strength:0.91,risk:'',direction:'unidirectional'},
   {s:'contract-manager-agent',t:'customer-journey-map-agent',rel:'DEPENDS_ON',strength:0.56,risk:'',direction:'unidirectional'},
+  {s:'contract-manager-agent',t:'email-marketing-automation-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
   {s:'contract-manager-agent',t:'legal-compliance-agent',rel:'DEPENDS_ON',strength:0.58,risk:'',direction:'unidirectional'},
   {s:'contract-manager-agent',t:'tax-compliance-agent',rel:'DEPENDS_ON',strength:0.56,risk:'',direction:'unidirectional'},
   {s:'cro-process-agent',t:'ab-testing-optimizer-agent',rel:'DELEGATES',strength:0.92,risk:'',direction:'unidirectional'},
@@ -274,6 +277,7 @@ UNWIND [
   {s:'customer-journey-map-agent',t:'value-ladder-architect-agent',rel:'FALLBACK',strength:0.54,risk:'capability_overlap',direction:'unidirectional'},
   {s:'deal-negotiator-agent',t:'contract-manager-agent',rel:'DEPENDS_ON',strength:0.92,risk:'',direction:'unidirectional'},
   {s:'deal-negotiator-agent',t:'contract-manager-agent',rel:'REQUIRES',strength:0.92,risk:'',direction:'unidirectional'},
+  {s:'deal-negotiator-agent',t:'email-marketing-automation-agent',rel:'FALLBACK',strength:0.58,risk:'capability_overlap',direction:'unidirectional'},
   {s:'deal-negotiator-agent',t:'financial-manager-agent',rel:'FALLBACK',strength:0.58,risk:'capability_overlap',direction:'unidirectional'},
   {s:'deal-negotiator-agent',t:'personal-brand-architect-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
   {s:'deal-negotiator-agent',t:'sales-funnel-architect-agent',rel:'DEPENDS_ON',strength:0.68,risk:'',direction:'unidirectional'},
@@ -343,6 +347,7 @@ UNWIND [
   {s:'interoperability-protocol-agent',t:'agent-search-engine',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
   {s:'interoperability-protocol-agent',t:'local-ai-claude-code-cli',rel:'DELEGATES',strength:0.58,risk:'',direction:'unidirectional'},
   {s:'interoperability-protocol-agent',t:'local-ai-gemini-cli',rel:'DELEGATES',strength:0.58,risk:'',direction:'unidirectional'},
+  {s:'interoperability-protocol-agent',t:'personal-archaeology-master-orchestrator',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
   {s:'interoperability-protocol-agent',t:'productivity-and-burnout-prevention-agent',rel:'DELEGATES',strength:0.54,risk:'',direction:'unidirectional'},
   {s:'keyword-research-agent',t:'content-writer-agent',rel:'FEEDS',strength:0.88,risk:'',direction:'unidirectional'},
   {s:'keyword-research-agent',t:'link-building-agent',rel:'FALLBACK',strength:0.68,risk:'capability_overlap',direction:'unidirectional'},
@@ -422,6 +427,7 @@ UNWIND [
   {s:'personal-archaeology-narrative-team-orchestrator',t:'personal-archaeology-source-team-orchestrator',rel:'DELEGATES',strength:0.71,risk:'',direction:'unidirectional'},
   {s:'personal-archaeology-narrative-team-orchestrator',t:'personal-historical-archaeologist',rel:'DELEGATES',strength:0.66,risk:'',direction:'unidirectional'},
   {s:'personal-archaeology-narrative-team-orchestrator',t:'repo-lineage-investigator',rel:'DELEGATES',strength:0.64,risk:'',direction:'unidirectional'},
+  {s:'personal-archaeology-source-team-orchestrator',t:'interoperability-protocol-agent',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
   {s:'personal-archaeology-source-team-orchestrator',t:'personal-archaeology-master-orchestrator',rel:'FALLBACK',strength:0.58,risk:'intra_cluster_fallback',direction:'unidirectional'},
   {s:'personal-archaeology-source-team-orchestrator',t:'personal-historical-archaeologist',rel:'DELEGATES',strength:0.64,risk:'',direction:'unidirectional'},
   {s:'personal-archaeology-source-team-orchestrator',t:'repo-lineage-investigator',rel:'DELEGATES',strength:0.61,risk:'',direction:'unidirectional'},
@@ -571,4 +577,4 @@ MERGE (a)-[rel:RELATED {relationType: r.rel}]->(b)
 SET rel.strength = r.strength,
     rel.risk = r.risk,
     rel.direction = r.direction,
-    rel.updatedAt = datetime('2026-03-26T09:23:33Z');
+    rel.updatedAt = datetime('2026-04-07T13:44:06Z');

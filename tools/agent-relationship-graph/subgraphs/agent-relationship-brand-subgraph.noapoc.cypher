@@ -21,14 +21,14 @@ UNWIND [
   {id:"personal-brand-architect-agent",kind:"sub",cluster:"brand"},
   {id:"platform-selection-agent",kind:"sub",cluster:"brand"},
   {id:"reputation-management-agent",kind:"primary",cluster:"brand"},
-  {id:"talent-manager-agent",kind:"primary",cluster:"brand"},
-  {id:"yt-content-strategy-agent",kind:"sub",cluster:"brand"},
+  {id:"talent-manager-agent",kind:"sub",cluster:"brand"},
+  {id:"yt-content-strategy-agent",kind:"primary",cluster:"brand"},
   {id:"legal-compliance-agent",kind:"primary",cluster:"ops"}
 ] AS row
 MERGE (a:Agent {id: row.id})
 SET a.kind = row.kind,
     a.cluster = row.cluster,
-    a.updatedAt = datetime('2026-03-26T09:23:34Z');
+    a.updatedAt = datetime('2026-04-07T13:44:07Z');
 
 UNWIND [
   {s:"brand-identity-agent",t:"campaign-reporting-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
@@ -52,13 +52,16 @@ UNWIND [
   {s:"campaign-reporting-agent",t:"competitive-intelligence-agent",rel:"FALLBACK",strength:0.68,risk:"capability_overlap"},
   {s:"campaign-reporting-agent",t:"influencer-media-kit-agent",rel:"FALLBACK",strength:0.73,risk:"capability_overlap"},
   {s:"campaign-reporting-agent",t:"reputation-management-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
+  {s:"competitive-intelligence-agent",t:"brand-identity-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"competitive-intelligence-agent",t:"talent-manager-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"contract-manager-agent",t:"brand-outreach-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"contract-manager-agent",t:"campaign-execution-agent",rel:"DEPENDS_ON",strength:0.91,risk:""},
   {s:"contract-manager-agent",t:"campaign-execution-agent",rel:"GATES",strength:0.91,risk:""},
+  {s:"contract-manager-agent",t:"email-marketing-automation-agent",rel:"FALLBACK",strength:0.58,risk:"intra_cluster_fallback"},
   {s:"contract-manager-agent",t:"legal-compliance-agent",rel:"DEPENDS_ON",strength:0.58,risk:""},
   {s:"deal-negotiator-agent",t:"contract-manager-agent",rel:"DEPENDS_ON",strength:0.92,risk:""},
   {s:"deal-negotiator-agent",t:"contract-manager-agent",rel:"REQUIRES",strength:0.92,risk:""},
+  {s:"deal-negotiator-agent",t:"email-marketing-automation-agent",rel:"FALLBACK",strength:0.58,risk:"capability_overlap"},
   {s:"deal-negotiator-agent",t:"financial-manager-agent",rel:"FALLBACK",strength:0.58,risk:"capability_overlap"},
   {s:"deal-negotiator-agent",t:"personal-brand-architect-agent",rel:"FALLBACK",strength:0.68,risk:"capability_overlap"},
   {s:"email-marketing-automation-agent",t:"financial-manager-agent",rel:"FALLBACK",strength:0.68,risk:"capability_overlap"},

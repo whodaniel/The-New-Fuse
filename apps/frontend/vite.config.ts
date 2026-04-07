@@ -452,11 +452,19 @@ export default defineConfig(({ mode }) => {
           next();
         });
 
-        // SPA fallback - serve app.html for all non-API routes, except root
+        // SPA fallback - serve app.html for all /app/* routes
         server.middlewares.use((req: any, res: any, next: () => void) => {
+          if (!req.url) return next();
+
+          // Hard redirects for legacy routes
+          if (req.url === '/login' || req.url === '/register') {
+            res.writeHead(301, { Location: `/app${req.url}` });
+            res.end();
+            return;
+          }
+
           if (
-            req.url &&
-            req.url !== '/' &&
+            (req.url.startsWith('/app') || req.url === '/login' || req.url === '/register') &&
             !req.url.startsWith('/api') &&
             !req.url.startsWith('/ws') &&
             !req.url.includes('.') &&

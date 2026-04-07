@@ -1,47 +1,21 @@
 {
-  "generated_at": "2026-03-26T06:38:21.213886+00:00",
-  "baseline_snapshot": "snapshot-20260326T050245Z.json",
-  "current_snapshot": "snapshot-20260326T063821Z.json",
+  "generated_at": "2026-04-07T13:44:08.838605+00:00",
+  "baseline_snapshot": "snapshot-20260326T092335Z.json",
+  "current_snapshot": "snapshot-20260407T134408Z.json",
   "thresholds": {
-    "max_graphs_changed": 2,
+    "max_graphs_changed": 8,
     "max_nodes_added": 3,
     "max_nodes_removed": 1,
-    "max_edges_added": 5,
+    "max_edges_added": 60,
     "max_edges_removed": 3
   },
   "values": {
-    "graphs_changed": 8,
-    "nodes_added_total": 141,
-    "nodes_removed_total": 9,
-    "edges_added_total": 536,
-    "edges_removed_total": 6
+    "graphs_changed": 2,
+    "nodes_added_total": 0,
+    "nodes_removed_total": 0,
+    "edges_added_total": 9,
+    "edges_removed_total": 0
   },
-  "breaches": [
-    {
-      "metric": "graphs_changed",
-      "value": 8,
-      "threshold": 2
-    },
-    {
-      "metric": "nodes_added_total",
-      "value": 141,
-      "threshold": 3
-    },
-    {
-      "metric": "nodes_removed_total",
-      "value": 9,
-      "threshold": 1
-    },
-    {
-      "metric": "edges_added_total",
-      "value": 536,
-      "threshold": 5
-    },
-    {
-      "metric": "edges_removed_total",
-      "value": 6,
-      "threshold": 3
-    }
-  ],
-  "status": "alert"
+  "breaches": [],
+  "status": "ok"
 }

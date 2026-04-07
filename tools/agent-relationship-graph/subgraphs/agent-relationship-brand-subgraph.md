@@ -1,6 +1,7 @@
 # Brand Subgraph
 
-Generated: 2026-03-26 Source: `agent-relationship-graph.json`
+Generated: 2026-04-07
+Source: `agent-relationship-graph.json`
 
 ```mermaid
 graph TD
@@ -25,13 +26,16 @@ graph TD
   campaign_reporting_agent [campaign-reporting-agent] --> competitive_intelligence_agent [competitive-intelligence-agent]
   campaign_reporting_agent [campaign-reporting-agent] --> influencer_media_kit_agent [influencer-media-kit-agent]
   campaign_reporting_agent [campaign-reporting-agent] --> reputation_management_agent [reputation-management-agent]
+  competitive_intelligence_agent [competitive-intelligence-agent] --> brand_identity_agent [brand-identity-agent]
   competitive_intelligence_agent [competitive-intelligence-agent] --> talent_manager_agent [talent-manager-agent]
   contract_manager_agent [contract-manager-agent] --> brand_outreach_agent [brand-outreach-agent]
   contract_manager_agent [contract-manager-agent] --> campaign_execution_agent [campaign-execution-agent]
   contract_manager_agent [contract-manager-agent] --> campaign_execution_agent [campaign-execution-agent]
+  contract_manager_agent [contract-manager-agent] --> email_marketing_automation_agent [email-marketing-automation-agent]
   contract_manager_agent [contract-manager-agent] --> legal_compliance_agent [legal-compliance-agent]
   deal_negotiator_agent [deal-negotiator-agent] --> contract_manager_agent [contract-manager-agent]
   deal_negotiator_agent [deal-negotiator-agent] --> contract_manager_agent [contract-manager-agent]
+  deal_negotiator_agent [deal-negotiator-agent] --> email_marketing_automation_agent [email-marketing-automation-agent]
   deal_negotiator_agent [deal-negotiator-agent] --> financial_manager_agent [financial-manager-agent]
   deal_negotiator_agent [deal-negotiator-agent] --> personal_brand_architect_agent [personal-brand-architect-agent]
   email_marketing_automation_agent [email-marketing-automation-agent] --> financial_manager_agent [financial-manager-agent]

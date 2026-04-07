@@ -137,7 +137,6 @@ const DocsPage = lazy(() => import('./pages/Docs'));
 const BlogPage = lazy(() => import('./pages/Blog').then((module) => ({ default: module.Blog })));
 const ConnectExtensionPage = lazy(() => import('./pages/ConnectExtension'));
 const MembershipPage = lazy(() => import('./pages/Membership'));
-const VisualizationsPage = lazy(() => import('./pages/Visualizations'));
 const TerminalGraphPage = lazy(() => import('./pages/TerminalGraph'));
 const BookmarksPage = lazy(() => import('./pages/Bookmarks'));
 const PlatformParityDashboardPage = lazy(() => import('./pages/Parity/PlatformParityDashboard'));
@@ -257,7 +256,7 @@ const RedirectToStatic = ({ to }: { to: string }) => {
   return null;
 };
 
-const LandingPage = lazy(() => import('./pages/Landing'));
+
 
 const MarketplaceRootRoute = () => {
   if (typeof window === 'undefined') {
@@ -275,11 +274,7 @@ const MarketplaceRootRoute = () => {
     );
   }
 
-  return (
-    <Suspense fallback={<LoadingFallback name="Landing" />}>
-      <LandingPage />
-    </Suspense>
-  );
+  return <Navigate to="/dashboard" replace />;
 };
 
 const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
@@ -1324,7 +1319,7 @@ export default function ComprehensiveRouter() {
               <Route path="/onboarding" element={<OnboardingFlowPage />} />
               <Route path="/docs" element={<DocsPage />} />
               <Route path="/docs/*" element={<DocsPage />} />
-              <Route path="/visualizations" element={<VisualizationsPage />} />
+              <Route path="/visualizations" element={<RedirectToStatic to="/visualizations/dashboard.html" />} />
               <Route path="/visualizations/terminals" element={<TerminalGraphPage />} />
               <Route path="/terminals" element={<TerminalGraphPage />} />
               <Route

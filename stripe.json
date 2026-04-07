@@ -1,0 +1,42 @@
+{
+  "project_name": "the-new-fuse",
+  "version": "1.0.0",
+  "stack": {
+    "api": {
+      "provider": "railway",
+      "services": ["api-server", "api-gateway", "relay-server"]
+    },
+    "database": {
+      "provider": "postgres",
+      "version": "16"
+    },
+    "cache": {
+      "provider": "redis",
+      "version": "7"
+    },
+    "ai": {
+      "providers": ["openai", "anthropic", "google"]
+    }
+  },
+  "providers": [
+    {
+      "name": "railway",
+      "type": "hosting"
+    },
+    {
+      "name": "postgres",
+      "type": "database"
+    },
+    {
+      "name": "redis",
+      "type": "cache"
+    }
+  ],
+  "env_mapping": {
+    "DATABASE_URL": "STRIPE_PROJECT_POSTGRES_URL",
+    "REDIS_HOST": "STRIPE_PROJECT_REDIS_HOST",
+    "REDIS_PORT": "STRIPE_PROJECT_REDIS_PORT",
+    "REDIS_PASSWORD": "STRIPE_PROJECT_REDIS_PASSWORD",
+    "OPENAI_API_KEY": "STRIPE_PROJECT_OPENAI_API_KEY"
+  }
+}

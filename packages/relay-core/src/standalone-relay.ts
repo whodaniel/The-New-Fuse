@@ -294,10 +294,17 @@ export class TNFRelayServer extends EventEmitter {
       this.handleBridgeEgress(envelope);
     });
 
+    this.bridge.on('error', (err) => {
+      console.error(
+        '[Relay] Bridge error caught:',
+        err instanceof Error ? err.message : String(err)
+      );
+    });
+
     this.bridge.connect().catch((err) => {
       console.error('[Relay] Failed to connect bridge:', err);
       console.log('[Relay] Continuing without Redis bridge - local-only mode');
-      this.bridge = null;
+      // Do not set this.bridge = null to keep error listeners active during retries
     });
 
     if (this.activityPersistenceEnabled && this.activityRedis) {

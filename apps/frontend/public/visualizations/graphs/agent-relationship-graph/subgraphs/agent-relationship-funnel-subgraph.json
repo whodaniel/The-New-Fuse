@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-26",
+  "generated_at": "2026-04-07",
   "domain": "funnel",
   "nodes": [
     {
@@ -39,7 +39,7 @@
     },
     {
       "id": "cognitive-bias-optimizer-agent",
-      "kind": "primary",
+      "kind": "sub",
       "cluster": "funnel"
     },
     {
@@ -79,12 +79,12 @@
     },
     {
       "id": "lead-capture-agent",
-      "kind": "sub",
+      "kind": "primary",
       "cluster": "funnel"
     },
     {
       "id": "lead-magnet-funnel-agent",
-      "kind": "sub",
+      "kind": "primary",
       "cluster": "funnel"
     },
     {
@@ -94,7 +94,7 @@
     },
     {
       "id": "monetization-strategy-agent",
-      "kind": "sub",
+      "kind": "primary",
       "cluster": "funnel"
     },
     {
@@ -109,12 +109,12 @@
     },
     {
       "id": "personalized-content-recommendation-agent",
-      "kind": "sub",
+      "kind": "primary",
       "cluster": "funnel"
     },
     {
       "id": "sales-funnel-architect-agent",
-      "kind": "primary",
+      "kind": "sub",
       "cluster": "funnel"
     },
     {
@@ -124,7 +124,7 @@
     },
     {
       "id": "visual-asset-creator-agent",
-      "kind": "primary",
+      "kind": "sub",
       "cluster": "funnel"
     }
   ],
@@ -134,7 +134,7 @@
       "target": "analytics-and-reporting-agent",
       "type": "depends_on",
       "strength": 0.89,
-      "origin": "chain"
+      "origin": "seed"
     },
     {
       "source": "ab-testing-optimizer-agent",
@@ -148,7 +148,15 @@
       "target": "cognitive-bias-optimizer-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "ab-testing-optimizer-agent",
+      "target": "lead-magnet-funnel-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -156,7 +164,7 @@
       "target": "ab-testing-optimizer-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -164,14 +172,14 @@
       "target": "ethical-bias-auditor-agent",
       "type": "depends_on",
       "strength": 0.68,
-      "origin": "registry"
+      "origin": "seed"
     },
     {
       "source": "cognitive-bias-optimizer-agent",
       "target": "analytics-and-reporting-agent",
       "type": "depends_on",
       "strength": 0.82,
-      "origin": "chain"
+      "origin": "seed"
     },
     {
       "source": "cognitive-bias-optimizer-agent",
@@ -185,7 +193,7 @@
       "target": "visual-asset-creator-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -193,7 +201,7 @@
       "target": "ab-testing-optimizer-agent",
       "type": "delegates",
       "strength": 0.92,
-      "origin": "chain"
+      "origin": "seed"
     },
     {
       "source": "cro-process-agent",
@@ -207,7 +215,7 @@
       "target": "affiliate-link-manager-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -215,7 +223,7 @@
       "target": "cognitive-bias-optimizer-agent",
       "type": "delegates",
       "strength": 0.83,
-      "origin": "chain"
+      "origin": "seed"
     },
     {
       "source": "cro-process-agent",
@@ -229,7 +237,7 @@
       "target": "customer-journey-map-agent",
       "type": "fallback",
       "strength": 0.56,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -237,7 +245,7 @@
       "target": "funnel-economics-analyst-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -245,7 +253,7 @@
       "target": "funnel-economics-analyst-agent",
       "type": "fallback",
       "strength": 0.56,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -253,7 +261,7 @@
       "target": "value-ladder-architect-agent",
       "type": "fallback",
       "strength": 0.54,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -261,7 +269,7 @@
       "target": "lead-magnet-funnel-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -269,7 +277,7 @@
       "target": "visual-asset-creator-agent",
       "type": "fallback",
       "strength": 0.62,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -277,7 +285,7 @@
       "target": "lead-capture-agent",
       "type": "fallback",
       "strength": 0.56,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -285,7 +293,7 @@
       "target": "oto-sequence-architect-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -293,15 +301,23 @@
       "target": "lead-magnet-funnel-agent",
       "type": "fallback",
       "strength": 0.64,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
+    },
+    {
+      "source": "lead-capture-agent",
+      "target": "niche-analyst-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
     },
     {
       "source": "lead-capture-agent",
       "target": "oto-sequence-architect-agent",
       "type": "fallback",
       "strength": 0.56,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -309,7 +325,23 @@
       "target": "personalized-content-recommendation-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "monetization-strategy-agent",
+      "target": "lead-capture-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
+    },
+    {
+      "source": "niche-analyst-agent",
+      "target": "code-fossil-investigator",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -324,15 +356,23 @@
       "target": "value-ladder-architect-agent",
       "type": "fallback",
       "strength": 0.84,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
+    },
+    {
+      "source": "personalized-content-recommendation-agent",
+      "target": "monetization-strategy-agent",
+      "type": "fallback",
+      "strength": 0.58,
+      "origin": "seed",
+      "risk": "intra_cluster_fallback"
     },
     {
       "source": "sales-funnel-architect-agent",
       "target": "lead-magnet-funnel-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -340,7 +380,7 @@
       "target": "value-ladder-architect-agent",
       "type": "fallback",
       "strength": 0.62,
-      "origin": "registry",
+      "origin": "seed",
       "risk": "capability_overlap"
     },
     {
@@ -348,14 +388,14 @@
       "target": "analytics-and-reporting-agent",
       "type": "delegates",
       "strength": 0.82,
-      "origin": "scaffold"
+      "origin": "seed"
     },
     {
       "source": "task-agent-router",
       "target": "audio-recording-agent",
       "type": "delegates",
       "strength": 0.57,
-      "origin": "backstop",
+      "origin": "seed",
       "risk": "routing_backstop"
     },
     {
@@ -363,7 +403,7 @@
       "target": "cro-process-agent",
       "type": "delegates",
       "strength": 0.82,
-      "origin": "scaffold"
+      "origin": "seed"
     },
     {
       "source": "task-agent-router",
@@ -377,7 +417,7 @@
       "target": "ecom-platform-manager-agent",
       "type": "delegates",
       "strength": 0.57,
-      "origin": "backstop",
+      "origin": "seed",
       "risk": "routing_backstop"
     },
     {
@@ -385,7 +425,7 @@
       "target": "master-of-taxonomies",
       "type": "delegates",
       "strength": 0.57,
-      "origin": "backstop",
+      "origin": "seed",
       "risk": "routing_backstop"
     },
     {
@@ -393,7 +433,7 @@
       "target": "sales-funnel-architect-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     },
     {
@@ -401,7 +441,7 @@
       "target": "value-ladder-architect-agent",
       "type": "fallback",
       "strength": 0.58,
-      "origin": "ring",
+      "origin": "seed",
       "risk": "intra_cluster_fallback"
     }
   ]

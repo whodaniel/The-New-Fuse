@@ -278,6 +278,8 @@
     "viz:generate": "node visualizations/tools/cli.js",
     "viz:graph:publish": "node scripts/visualizations/publish-graph-artifacts.cjs",
     "viz:dashboard:metrics": "node scripts/visualizations/generate-dashboard-metrics.cjs",
+    "stride:bridge": "pnpm --filter @the-new-fuse/stripe-provider-bridge run dev",
+    "stride:bridge:build": "pnpm --filter @the-new-fuse/stripe-provider-bridge run build",
     "sync:repos": "bash scripts/sync-repos.sh",
     "sync:repos:open": "bash scripts/sync-repos.sh --open",
     "sync:repos:control": "bash scripts/sync-repos.sh --control",
