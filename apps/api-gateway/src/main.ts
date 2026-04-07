@@ -269,17 +269,14 @@ async function bootstrap() {
     res.status(200).end();
   });
 
-  // Health check endpoint
-  app.getHttpAdapter().get('/health', (req, res) => {
-    res.json(healthPayload());
-  });
+  // Health check endpoints
+  const healthCheckHandler = (req, res) => res.json(healthPayload());
+  app.getHttpAdapter().get('/health', healthCheckHandler);
+  app.getHttpAdapter().get('/h', healthCheckHandler); // Shorthand for monitoring
+
   // Compatibility health endpoints (some infra checks hit /api/health)
-  app.getHttpAdapter().get('/api/health', (req, res) => {
-    res.json(healthPayload());
-  });
-  app.getHttpAdapter().get('/api/v1/health', (req, res) => {
-    res.json(healthPayload());
-  });
+  app.getHttpAdapter().get('/api/health', healthCheckHandler);
+  app.getHttpAdapter().get('/api/v1/health', healthCheckHandler);
 
   // Listen on provided API_GATEWAY_PORT, default to PORT provided by Railway, fallback to 8080
   const port = Number(process.env.API_GATEWAY_PORT || process.env.PORT || 8080);

@@ -13,7 +13,8 @@ const routerPath = path.join(appRoot, 'src', 'ComprehensiveRouter.tsx');
 async function readFirstExistingFile(paths) {
   for (const filePath of paths) {
     try {
-      return await readFile(filePath, 'utf8');
+      const content = await readFile(filePath, 'utf8');
+      return { path: filePath, content };
     } catch (error) {
       if (error && error.code === 'ENOENT') continue;
       throw error;
@@ -39,7 +40,7 @@ function toDistRouteDir(routePath) {
 }
 
 async function main() {
-  const [routerSource, appShell] = await Promise.all([
+  const [routerSource, appShellData] = await Promise.all([
     readFile(routerPath, 'utf8'),
     readFirstExistingFile([
       path.join(distDir, 'app.html'),
@@ -48,6 +49,13 @@ async function main() {
       path.join(appRoot, 'index.html'),
     ]),
   ]);
+
+  const appShell = appShellData.content;
+  console.log(`Using shell for fallbacks: ${appShellData.path}`);
+
+  if (appShellData.path.includes('index.html') && !appShellData.path.includes('app.html')) {
+    console.warn('⚠️ WARNING: Using landing page (index.html) as SPA fallback shell!');
+  }
 
   const matches = [...routerSource.matchAll(/path="([^"]+)"/g)].map((match) => match[1]);
   const routePaths = [...new Set(matches)].filter(isStaticAppRoute);
