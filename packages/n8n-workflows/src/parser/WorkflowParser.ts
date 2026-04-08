@@ -5,13 +5,13 @@
 
 import {
   N8nWorkflow,
-  WorkflowNode,
-  TriggerNode,
-  WorkflowMetadata,
-  WorkflowAnalysis,
   NodeTypeInfo,
+  TriggerNode,
+  WorkflowAnalysis,
+  WorkflowMetadata,
+  WorkflowNode,
   WorkflowSource,
-} from '../types';
+} from '../types/index.js';
 
 export class WorkflowParser {
   /**
@@ -128,14 +128,11 @@ export class WorkflowParser {
   /**
    * Determine trigger type
    */
-  private determineTriggerType(
-    node: WorkflowNode
-  ): 'trigger' | 'webhook' | 'schedule' | 'manual' {
+  private determineTriggerType(node: WorkflowNode): 'trigger' | 'webhook' | 'schedule' | 'manual' {
     const type = node.type.toLowerCase();
     if (type.includes('webhook')) return 'webhook';
     if (type.includes('cron') || type.includes('schedule')) return 'schedule';
-    if (type.includes('manual') || type === 'n8n-nodes-base.start')
-      return 'manual';
+    if (type.includes('manual') || type === 'n8n-nodes-base.start') return 'manual';
     return 'trigger';
   }
 
@@ -207,11 +204,7 @@ export class WorkflowParser {
     const tags: string[] = [];
 
     if (workflowJson.tags && Array.isArray(workflowJson.tags)) {
-      tags.push(
-        ...workflowJson.tags.map((tag: any) =>
-          typeof tag === 'string' ? tag : tag.name
-        )
-      );
+      tags.push(...workflowJson.tags.map((tag: any) => (typeof tag === 'string' ? tag : tag.name)));
     }
 
     if (workflowJson.meta?.tags) {
@@ -233,10 +226,10 @@ export class WorkflowParser {
     // Common use case patterns
     const patterns: Record<string, string[]> = {
       'data sync': ['sync', 'synchronize', 'synchronization'],
-      'notification': ['notify', 'notification', 'alert', 'email'],
-      'automation': ['automate', 'automation', 'automatic'],
-      'integration': ['integrate', 'integration', 'connect'],
-      'webhook': ['webhook', 'api'],
+      notification: ['notify', 'notification', 'alert', 'email'],
+      automation: ['automate', 'automation', 'automatic'],
+      integration: ['integrate', 'integration', 'connect'],
+      webhook: ['webhook', 'api'],
       'scheduled task': ['schedule', 'cron', 'daily', 'weekly'],
       'data processing': ['process', 'transform', 'parse'],
     };
@@ -299,9 +292,7 @@ export class WorkflowParser {
           displayName: this.getDisplayName(node.type),
           description: '',
           category: this.getCategoryFromNodeType(node.type),
-          credentials: node.credentials
-            ? Object.keys(node.credentials)
-            : undefined,
+          credentials: node.credentials ? Object.keys(node.credentials) : undefined,
         });
       }
     });
@@ -363,11 +354,34 @@ export class WorkflowParser {
 
       // Extract service names from node types
       const knownServices = [
-        'gmail', 'slack', 'discord', 'github', 'gitlab', 'jira', 'trello',
-        'notion', 'airtable', 'google', 'drive', 'sheets', 'calendar',
-        'stripe', 'paypal', 'shopify', 'mailchimp', 'sendgrid',
-        'twitter', 'linkedin', 'facebook', 'instagram',
-        'aws', 'azure', 'gcp', 'mongodb', 'postgres', 'mysql',
+        'gmail',
+        'slack',
+        'discord',
+        'github',
+        'gitlab',
+        'jira',
+        'trello',
+        'notion',
+        'airtable',
+        'google',
+        'drive',
+        'sheets',
+        'calendar',
+        'stripe',
+        'paypal',
+        'shopify',
+        'mailchimp',
+        'sendgrid',
+        'twitter',
+        'linkedin',
+        'facebook',
+        'instagram',
+        'aws',
+        'azure',
+        'gcp',
+        'mongodb',
+        'postgres',
+        'mysql',
       ];
 
       knownServices.forEach((service) => {
@@ -383,9 +397,7 @@ export class WorkflowParser {
   /**
    * Calculate workflow complexity
    */
-  private calculateComplexity(
-    nodes: WorkflowNode[]
-  ): 'simple' | 'medium' | 'complex' {
+  private calculateComplexity(nodes: WorkflowNode[]): 'simple' | 'medium' | 'complex' {
     const nodeCount = nodes.length;
 
     if (nodeCount <= 3) return 'simple';
@@ -396,14 +408,9 @@ export class WorkflowParser {
   /**
    * Batch parse workflows
    */
-  public parseWorkflows(
-    workflows: any[],
-    source: WorkflowSource
-  ): N8nWorkflow[] {
+  public parseWorkflows(workflows: any[], source: WorkflowSource): N8nWorkflow[] {
     return workflows
-      .map((workflow, index) =>
-        this.parseWorkflow(workflow, source, `workflow-${index}`)
-      )
+      .map((workflow, index) => this.parseWorkflow(workflow, source, `workflow-${index}`))
       .filter((workflow): workflow is N8nWorkflow => workflow !== null);
   }
 }

@@ -8,11 +8,11 @@ import * as path from 'path';
 import {
   N8nWorkflow,
   WorkflowCategory,
-  WorkflowSource,
   WorkflowSearchQuery,
   WorkflowSearchResult,
+  WorkflowSource,
   WorkflowStats,
-} from '../types';
+} from '../types/index.js';
 
 export interface RegistryConfig {
   storageDir?: string;
@@ -27,9 +27,7 @@ export class WorkflowRegistry {
 
   constructor(config: RegistryConfig = {}) {
     this.workflows = new Map();
-    this.storageDir =
-      config.storageDir ||
-      path.join(process.cwd(), '.n8n-workflows-registry');
+    this.storageDir = config.storageDir || path.join(process.cwd(), '.n8n-workflows-registry');
     this.enablePersistence = config.enablePersistence !== false;
     this.lastSync = new Date();
   }
@@ -102,17 +100,13 @@ export class WorkflowRegistry {
     // Filter by tags
     if (query.tags && query.tags.length > 0) {
       results = results.filter((w) =>
-        query.tags!.some((tag) =>
-          w.tags.some((wTag) => wTag.toLowerCase() === tag.toLowerCase())
-        )
+        query.tags!.some((tag) => w.tags.some((wTag) => wTag.toLowerCase() === tag.toLowerCase()))
       );
     }
 
     // Filter by complexity
     if (query.complexity) {
-      results = results.filter(
-        (w) => w.metadata.complexity === query.complexity
-      );
+      results = results.filter((w) => w.metadata.complexity === query.complexity);
     }
 
     const total = results.length;
@@ -156,9 +150,7 @@ export class WorkflowRegistry {
    */
   public getByTag(tag: string): N8nWorkflow[] {
     const tagLower = tag.toLowerCase();
-    return this.getAllWorkflows().filter((w) =>
-      w.tags.some((t) => t.toLowerCase() === tagLower)
-    );
+    return this.getAllWorkflows().filter((w) => w.tags.some((t) => t.toLowerCase() === tagLower));
   }
 
   /**
@@ -306,10 +298,7 @@ export class WorkflowRegistry {
     });
 
     for (const [category, categoryWorkflows] of categorizedWorkflows) {
-      const categoryPath = path.join(
-        this.storageDir,
-        `category-${category}.json`
-      );
+      const categoryPath = path.join(this.storageDir, `category-${category}.json`);
       await fs.writeJSON(categoryPath, categoryWorkflows, { spaces: 2 });
     }
   }
@@ -402,18 +391,13 @@ export class WorkflowRegistry {
   /**
    * Get similar workflows
    */
-  public getSimilarWorkflows(
-    workflowId: string,
-    limit: number = 5
-  ): N8nWorkflow[] {
+  public getSimilarWorkflows(workflowId: string, limit: number = 5): N8nWorkflow[] {
     const workflow = this.getWorkflow(workflowId);
     if (!workflow) {
       return [];
     }
 
-    const allWorkflows = this.getAllWorkflows().filter(
-      (w) => w.id !== workflowId
-    );
+    const allWorkflows = this.getAllWorkflows().filter((w) => w.id !== workflowId);
 
     // Calculate similarity scores
     const scored = allWorkflows.map((w) => ({
@@ -446,9 +430,7 @@ export class WorkflowRegistry {
     // Similar node types
     const w1NodeTypes = new Set(w1.nodes.map((n) => n.type));
     const w2NodeTypes = new Set(w2.nodes.map((n) => n.type));
-    const sharedNodeTypes = Array.from(w1NodeTypes).filter((type) =>
-      w2NodeTypes.has(type)
-    );
+    const sharedNodeTypes = Array.from(w1NodeTypes).filter((type) => w2NodeTypes.has(type));
     score += sharedNodeTypes.length * 3;
 
     // Same source

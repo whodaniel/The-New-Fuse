@@ -4,8 +4,8 @@
  * Manually fetch and sync workflows from GitHub repositories
  */
 
-import { WorkflowService } from '../services/WorkflowService';
 import * as path from 'path';
+import { WorkflowService } from '../services/WorkflowService.js';
 
 async function main() {
   console.log('=== N8N Workflow Fetcher ===\n');

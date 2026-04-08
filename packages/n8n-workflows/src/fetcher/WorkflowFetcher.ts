@@ -7,15 +7,11 @@
 const simpleGit = require('simple-git');
 type SimpleGit = any;
 import * as fs from 'fs-extra';
-import * as path from 'path';
 import { glob } from 'glob';
-import {
-  WorkflowSource,
-  WorkflowFetchResult,
-  N8nWorkflow,
-} from '../types';
-import { WorkflowParser } from '../parser/WorkflowParser';
-import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer';
+import * as path from 'path';
+import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer.js';
+import { WorkflowParser } from '../parser/WorkflowParser.js';
+import { N8nWorkflow, WorkflowFetchResult, WorkflowSource } from '../types/index.js';
 
 export interface RepositoryConfig {
   source: WorkflowSource;
@@ -99,9 +95,7 @@ export class WorkflowFetcher {
   /**
    * Fetch workflows from a specific repository
    */
-  public async fetchFromRepository(
-    repo: RepositoryConfig
-  ): Promise<WorkflowFetchResult> {
+  public async fetchFromRepository(repo: RepositoryConfig): Promise<WorkflowFetchResult> {
     const repoPath = this.getRepoPath(repo.source);
 
     try {
@@ -144,9 +138,7 @@ export class WorkflowFetcher {
   /**
    * Load workflows from a repository
    */
-  private async loadWorkflowsFromRepo(
-    repo: RepositoryConfig
-  ): Promise<N8nWorkflow[]> {
+  private async loadWorkflowsFromRepo(repo: RepositoryConfig): Promise<N8nWorkflow[]> {
     const repoPath = this.getRepoPath(repo.source);
     const workflows: N8nWorkflow[] = [];
 
@@ -278,9 +270,7 @@ export class WorkflowFetcher {
   /**
    * Fetch workflows from a specific source
    */
-  public async fetchFromSource(
-    source: WorkflowSource
-  ): Promise<N8nWorkflow[]> {
+  public async fetchFromSource(source: WorkflowSource): Promise<N8nWorkflow[]> {
     const repo = this.repositories.find((r) => r.source === source);
 
     if (!repo) {
