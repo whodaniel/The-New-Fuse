@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/n8n-workflows",
+  "type": "module",
   "files": [
     "dist",
     "README.md"
