@@ -3,7 +3,6 @@ ARG NODE_VERSION=22
 FROM node:${NODE_VERSION}-alpine
 
 ENV CI=true
-ENV NODE_ENV=production
 ENV PORT=8080
 
 RUN apk add --no-cache python3 make g++ pkgconfig pixman-dev cairo-dev pango-dev libjpeg-turbo-dev giflib-dev pixman cairo pango giflib libjpeg-turbo
@@ -49,6 +48,7 @@ RUN pnpm build || echo "Build finished with warnings"
 
 # CRITICAL: Rerun install to ensure all dist folders are linked correctly in node_modules
 WORKDIR /app
+ENV NODE_ENV=production
 RUN pnpm install --prod --no-frozen-lockfile --ignore-scripts
 
 EXPOSE 8080

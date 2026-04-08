@@ -48,7 +48,7 @@ method = "POST"
 [services.TheNewFuse]
 builder = "DOCKERFILE"
 [services.TheNewFuse.build]
-dockerfilePath = "Dockerfile"
+dockerfilePath = "Dockerfile.frontend"
 # Build context is from repository root (not a subdirectory)
 # This allows access to workspace files like pnpm-lock.yaml
 watchPatterns = ["apps/frontend/**", "packages/**", "scripts/**"]
@@ -72,7 +72,7 @@ healthcheckPath = "/"
 [services.frontend]
 builder = "DOCKERFILE"
 [services.frontend.build]
-dockerfilePath = "Dockerfile"
+dockerfilePath = "Dockerfile.frontend"
 watchPatterns = ["apps/frontend/**", "packages/**", "scripts/**"]
 dockerBuildArgs = { SERVICE_PATH = "apps/frontend", PACKAGE_NAME = "@the-new-fuse/frontend-app", VITE_FIREBASE_API_KEY = "${{VITE_FIREBASE_API_KEY}}", VITE_FIREBASE_AUTH_DOMAIN = "${{VITE_FIREBASE_AUTH_DOMAIN}}", VITE_FIREBASE_PROJECT_ID = "${{VITE_FIREBASE_PROJECT_ID}}", VITE_FIREBASE_STORAGE_BUCKET = "${{VITE_FIREBASE_STORAGE_BUCKET}}", VITE_FIREBASE_MESSAGING_SENDER_ID = "${{VITE_FIREBASE_MESSAGING_SENDER_ID}}", VITE_FIREBASE_APP_ID = "${{VITE_FIREBASE_APP_ID}}", VITE_TURNSTILE_SITE_KEY = "${{VITE_TURNSTILE_SITE_KEY}}", VITE_AUTH_REQUIRE_TURNSTILE = "${{VITE_AUTH_REQUIRE_TURNSTILE}}", VITE_API_GATEWAY_URL = "${{VITE_API_GATEWAY_URL}}", VITE_SUPABASE_URL = "${{VITE_SUPABASE_URL}}", VITE_SUPABASE_ANON_KEY = "${{VITE_SUPABASE_ANON_KEY}}" }
 [services.frontend.deploy]
@@ -87,7 +87,7 @@ healthcheckPath = "/"
 startCommand = "npx --yes serve ./dist -p ${PORT:-3000} -s -n"
 
 [services."Frontend Application".build]
-dockerfilePath = "Dockerfile"
+dockerfilePath = "Dockerfile.frontend"
 watchPatterns = ["apps/frontend/**", "packages/**", "scripts/**"]
 dockerBuildArgs = { SERVICE_PATH = "apps/frontend", PACKAGE_NAME = "@the-new-fuse/frontend-app", VITE_FIREBASE_API_KEY = "${{VITE_FIREBASE_API_KEY}}", VITE_FIREBASE_AUTH_DOMAIN = "${{VITE_FIREBASE_AUTH_DOMAIN}}", VITE_FIREBASE_PROJECT_ID = "${{VITE_FIREBASE_PROJECT_ID}}", VITE_FIREBASE_STORAGE_BUCKET = "${{VITE_FIREBASE_STORAGE_BUCKET}}", VITE_FIREBASE_MESSAGING_SENDER_ID = "${{VITE_FIREBASE_MESSAGING_SENDER_ID}}", VITE_FIREBASE_APP_ID = "${{VITE_FIREBASE_APP_ID}}", VITE_TURNSTILE_SITE_KEY = "${{VITE_TURNSTILE_SITE_KEY}}", VITE_AUTH_REQUIRE_TURNSTILE = "${{VITE_AUTH_REQUIRE_TURNSTILE}}", VITE_API_GATEWAY_URL = "${{VITE_API_GATEWAY_URL}}", VITE_SUPABASE_URL = "${{VITE_SUPABASE_URL}}", VITE_SUPABASE_ANON_KEY = "${{VITE_SUPABASE_ANON_KEY}}" }
 
@@ -234,7 +234,7 @@ restartPolicyMaxRetries = 3
 [services.casin8-games]
 builder = "DOCKERFILE"
 [services.casin8-games.build]
-dockerfilePath = "Dockerfile"
+dockerfilePath = "Dockerfile.frontend"
 dockerBuildArgs = { SERVICE_PATH = "apps/poker-room", PACKAGE_NAME = "@the-new-fuse/poker-room", VITE_API_URL = "${{VITE_API_URL}}", VITE_API_GATEWAY_URL = "${{VITE_API_GATEWAY_URL}}", VITE_WS_URL = "${{VITE_WS_URL}}", GEMINI_API_KEY = "${{GEMINI_API_KEY}}" }
 watchPatterns = ["apps/poker-room/**", "packages/**"]
 [services.casin8-games.deploy]
