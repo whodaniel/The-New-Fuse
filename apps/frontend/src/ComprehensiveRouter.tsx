@@ -277,8 +277,6 @@ const MarketplaceRootRoute = () => {
   }
 
   // ON MAIN SITE: / should render the landing page (OnboardingFlowPage)
-  // But wait, if we are in the React app shell on the main domain,
-  // we want to show the landing component.
   return (
     <Suspense fallback={<LoadingFallback name="Landing" />}>
       <OnboardingFlowPage />
