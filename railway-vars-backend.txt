@@ -1,0 +1,84 @@
+╔═════════════════════════ Variables for backend-jfal ═════════════════════════╗
+║ DATABASE_URL                             │ postgresql://                     ║
+║                                          │ postgres:vANOgsJYNhIIsPoefCHdQIAO ║
+║                                          │ bVETTGuD@postgres.railway.interna ║
+║                                          │ l:5432/railway                    ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ JWT_SECRET                               │ d8k86eilz2jf3h513hoy20mvdiqkuzok  ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ LOG_LEVEL                                │ warn                              ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_ENVIRONMENT                      │ production                        ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_ENVIRONMENT_ID                   │ f706eaae-de9e-4a9b-a970-          ║
+║                                          │ 944dd4a6be41                      ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_ENVIRONMENT_NAME                 │ production                        ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_PRIVATE_DOMAIN                   │ backend-jfal.railway.internal     ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_PROJECT_ID                       │ 041cee9d-8648-4074-b5a6-          ║
+║                                          │ 0eae436de1d1                      ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_PROJECT_NAME                     │ TNF                               ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_AI_ARCADE_URL            │ ai-arcade.xyz                     ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_API3_URL                 │ api3-production-                  ║
+║                                          │ eb44.up.railway.app               ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_API_GATEWAY_URL          │ api.thenewfuse.com                ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_API_URL                  │ api-production-                   ║
+║                                          │ 48f1.up.railway.app               ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_BACKEND_URL              │ backend-production-               ║
+║                                          │ 5c20.up.railway.app               ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_CASIN8_GAMES_BACKEND_URL │ gaming.thenewfuse.com             ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_CASIN8_GAMES_URL         │ poker.ai-arcade.xyz               ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_CORE_VECTOR_DB_URL       │ core-vector-db-                   ║
+║                                          │ production.up.railway.app         ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_FRONTEND_APPLICATION_URL │ app.thenewfuse.com                ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_FUSE_THEIA_IDE_URL       │ ide.thenewfuse.com                ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_ID                       │ 1f26f5d5-ca1c-44ef-9314-          ║
+║                                          │ 154810a21676                      ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_NAME                     │ backend-jfal                      ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_NEXUS_ORCHESTRATOR_URL   │ nexus-orchestrator-               ║
+║                                          │ production.up.railway.app         ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_OPEN_AUDIO_DECK_URL      │ open-audio-deck-                  ║
+║                                          │ production.up.railway.app         ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_POSTGRES_URL             │ postgres-production-              ║
+║                                          │ 6b3c.up.railway.app               ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_RELAY_SERVER_URL         │ relay.thenewfuse.com              ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_SEARXNG_URL              │ searxng-production-               ║
+║                                          │ 15b8.up.railway.app               ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_THENEWFUSE_URL           │ thenewfuse.com                    ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_TNF_CLOUD_SANDBOX_URL    │ tnf-cloud-sandbox-                ║
+║                                          │ production.up.railway.app         ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ RAILWAY_SERVICE_TNF_CLOUD_SANDBOX_V2_URL │ live.thenewfuse.com               ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ REDIS_URL                                │ redis://                          ║
+║                                          │ default:mDNmtwseaVHcQsCHaIoZapjlW ║
+║                                          │ rvAjtot@redis.railway.internal:63 ║
+║                                          │ 79                                ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ SERVICE_NAME                             │ @the-new-fuse/backend-app         ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ SERVICE_PATH                             │ backend                           ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
