@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/tnf-cli",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -19,17 +21,18 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "ioredis": "^5.8.2",
-    "uuid": "^9.0.1",
-    "commander": "^13.1.0",
+    "@the-new-fuse/infrastructure": "workspace:*",
+    "@upstash/redis": "^1.37.0",
     "chalk": "^5.4.1",
-    "@the-new-fuse/infrastructure": "workspace:*"
+    "commander": "^13.1.0",
+    "ioredis": "^5.8.2",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/node": "^24.8.1",
     "@types/uuid": "^9.0.8",
-    "typescript": "^5.9.3",
+    "rimraf": "^5.0.10",
     "tsx": "^4.20.3",
-    "rimraf": "^5.0.10"
+    "typescript": "^5.9.3"
   }
 }
