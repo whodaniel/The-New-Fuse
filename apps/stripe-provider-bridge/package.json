@@ -1,6 +1,7 @@
 {
   "name": "@the-new-fuse/stripe-provider-bridge",
   "version": "1.0.0",
+  "type": "module",
   "private": true,
   "description": "TNF Bridge for Stripe Agentic Provisioning Protocol (APP)",
   "main": "dist/index.js",

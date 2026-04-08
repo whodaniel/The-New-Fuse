@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/relay-core",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Unified relay system for The New Fuse framework",
   "main": "dist/index.js",
@@ -35,6 +37,8 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
     "@the-new-fuse/database": "workspace:*",
+    "@the-new-fuse/infrastructure": "workspace:*",
+    "@upstash/redis": "^1.37.0",
     "chokidar": "^4.0.3",
     "ethers": "^6.15.0",
     "express": "^4.22.0",
@@ -42,8 +46,7 @@
     "jsonwebtoken": "^9.0.2",
     "redis": "^5.10.0",
     "ws": "^8.18.3",
-    "zod": "^4.2.1",
-    "@the-new-fuse/infrastructure": "workspace:*"
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",

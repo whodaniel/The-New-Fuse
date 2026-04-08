@@ -1,0 +1,67 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GooseCliBridgeService = void 0;
+const child_process_1 = require("child_process");
+/**
+ * Thin execution bridge around Goose CLI so TNF orchestrators can call Goose
+ * as a deterministic sub-agent without coupling to Goose internals.
+ */
+class GooseCliBridgeService {
+    logger;
+    binary;
+    constructor(logger, binary = process.env.GOOSE_BINARY || 'goose') {
+        this.logger = logger;
+        this.binary = binary;
+    }
+    async run(request) {
+        const startedAt = Date.now();
+        const args = ['run', request.prompt, ...(request.extraArgs || [])];
+        const timeoutMs = request.timeoutMs || 10 * 60 * 1000;
+        return new Promise((resolve) => {
+            const child = (0, child_process_1.spawn)(this.binary, args, {
+                cwd: request.cwd,
+                env: {
+                    ...process.env,
+                    ...(request.env || {}),
+                },
+                stdio: ['ignore', 'pipe', 'pipe'],
+            });
+            let stdout = '';
+            let stderr = '';
+            let finished = false;
+            const done = (exitCode) => {
+                if (finished)
+                    return;
+                finished = true;
+                resolve({
+                    ok: exitCode === 0,
+                    exitCode,
+                    stdout,
+                    stderr,
+                    durationMs: Date.now() - startedAt,
+                    command: [this.binary, ...args],
+                });
+            };
+            const timer = setTimeout(() => {
+                stderr += `\n[goose-bridge] timeout after ${timeoutMs}ms`;
+                this.logger.warn(`Goose run timed out after ${timeoutMs}ms`);
+                child.kill('SIGTERM');
+            }, timeoutMs);
+            child.stdout.on('data', (chunk) => {
+                stdout += String(chunk);
+            });
+            child.stderr.on('data', (chunk) => {
+                stderr += String(chunk);
+            });
+            child.on('error', (error) => {
+                stderr += `\n[goose-bridge] spawn error: ${error.message}`;
+            });
+            child.on('close', (exitCode) => {
+                clearTimeout(timer);
+                done(exitCode);
+            });
+        });
+    }
+}
+exports.GooseCliBridgeService = GooseCliBridgeService;
+//# sourceMappingURL=GooseCliBridgeService.js.map

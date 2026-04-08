@@ -47,11 +47,13 @@ export class TerminalFederationBridge extends EventEmitter {
       );
 
       // Listen for incoming commands directed at this terminal
-      this.client.onMessage('command', (msg) => {
+      this.client.onMessage('command', (msg: any) => {
         this.emit('command', msg);
       });
     } catch (error) {
-      this.logger.error(`[Federation] Failed to federate terminal ${this.config.tty}: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `[Federation] Failed to federate terminal ${this.config.tty}: ${error instanceof Error ? error.message : String(error)}`
+      );
       throw error;
     }
   }
