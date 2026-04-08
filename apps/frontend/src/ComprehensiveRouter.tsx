@@ -256,7 +256,9 @@ const RedirectToStatic = ({ to }: { to: string }) => {
   return null;
 };
 
-
+interface ComprehensiveRouterProps {
+  isApp?: boolean;
+}
 
 const MarketplaceRootRoute = () => {
   if (typeof window === 'undefined') {
@@ -274,7 +276,14 @@ const MarketplaceRootRoute = () => {
     );
   }
 
-  return <Navigate to="/dashboard" replace />;
+  // ON MAIN SITE: / should render the landing page (OnboardingFlowPage)
+  // But wait, if we are in the React app shell on the main domain,
+  // we want to show the landing component.
+  return (
+    <Suspense fallback={<LoadingFallback name="Landing" />}>
+      <OnboardingFlowPage />
+    </Suspense>
+  );
 };
 
 const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
@@ -284,7 +293,7 @@ const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
 );
 
 // Remove the old ComprehensiveNavigation component and replace with SmartNavigation
-export default function ComprehensiveRouter() {
+export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRouterProps) {
   const location = useLocation();
   const isPublicRoute =
     [
@@ -354,7 +363,10 @@ export default function ComprehensiveRouter() {
               <Route path="/debug/orphans/*" element={<OrphanAuditRouter />} />
 
               {/* Core Routes - Root switches based on hostname (marketplace vs main landing) */}
-              <Route path="/" element={<MarketplaceRootRoute />} />
+              <Route
+                path="/"
+                element={isApp ? <Navigate to="/dashboard" replace /> : <MarketplaceRootRoute />}
+              />
               <Route path="/app.html" element={<Navigate to="/dashboard" replace />} />
               <Route path="/home" element={<RedirectToStatic to="/" />} />
               {LEGACY_REDIRECTS.map((redirect) => (
@@ -1259,7 +1271,7 @@ export default function ComprehensiveRouter() {
                 path="/plans/:id"
                 element={
                   <RequireMemberAccess>
-                    <PlanDetailPage />
+                    <PlanDetailPage id={location.pathname.split('/').pop()} />
                   </RequireMemberAccess>
                 }
               />
@@ -1303,7 +1315,6 @@ export default function ComprehensiveRouter() {
               <Route path="/auth/oauth-callback" element={<OAuthCallbackPage />} />
 
               {/* Enhanced Landing Routes */}
-              <Route path="/landing" element={<RedirectToStatic to="/" />} />
               <Route path="/about" element={<Navigate to="/brand" replace />} />
               <Route path="/faq" element={<Navigate to="/docs" replace />} />
               <Route path="/comparisons" element={<Navigate to="/product-map" replace />} />
@@ -1319,7 +1330,10 @@ export default function ComprehensiveRouter() {
               <Route path="/onboarding" element={<OnboardingFlowPage />} />
               <Route path="/docs" element={<DocsPage />} />
               <Route path="/docs/*" element={<DocsPage />} />
-              <Route path="/visualizations" element={<RedirectToStatic to="/visualizations/dashboard.html" />} />
+              <Route
+                path="/visualizations"
+                element={<RedirectToStatic to="/visualizations/dashboard.html" />}
+              />
               <Route path="/visualizations/terminals" element={<TerminalGraphPage />} />
               <Route path="/terminals" element={<TerminalGraphPage />} />
               <Route
