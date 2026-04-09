@@ -15,7 +15,7 @@ export const SettingsButton: React.FC<SettingsButtonProps> = ({ className }) => 
   if (!user) return null;
 
   return (
-    <Link to={paths.settings()}>
+    <Link to={paths.settings()} aria-label="Settings">
       <Button variant="ghost" className={`transition-all duration-300 ${className}`}>
         <Settings className="h-5 w-5" />
       </Button>
