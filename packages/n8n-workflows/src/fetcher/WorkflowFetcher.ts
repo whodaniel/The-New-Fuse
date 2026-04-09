@@ -3,12 +3,10 @@
  * Fetches n8n workflows from GitHub repositories
  */
 
-// Use require to bypass resolution issues in some environments
-const simpleGit = require('simple-git');
-type SimpleGit = any;
 import * as fs from 'fs-extra';
 import { glob } from 'glob';
 import * as path from 'path';
+import { simpleGit, SimpleGit } from 'simple-git';
 import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer.js';
 import { WorkflowParser } from '../parser/WorkflowParser.js';
 import { N8nWorkflow, WorkflowFetchResult, WorkflowSource } from '../types/index.js';
