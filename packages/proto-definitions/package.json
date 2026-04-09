@@ -1,5 +1,6 @@
 {
   "name": "@the-new-fuse/proto-definitions",
+  "type": "module",
   "files": [
     "dist"
   ],
