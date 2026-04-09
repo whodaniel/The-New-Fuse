@@ -18,8 +18,7 @@
 **Vulnerability:** Widespread use of `Math.random().toString(36).substr(2, 9)` to generate unique IDs across the `packages/agent/src` directory, including execution IDs, message IDs, and session IDs.
 **Learning:** This pattern was likely copy-pasted across multiple files during initial development for convenience. `Math.random()` is not cryptographically secure, making these IDs predictable and vulnerable to guessing attacks, which is especially concerning for session and execution IDs.
 **Prevention:** Always use cryptographically secure methods like `crypto.randomBytes(4).toString('hex')` or `crypto.randomUUID()` when generating unique identifiers for security-sensitive or session-related context.
-
-## 2026-04-02 - dangerouslySetInnerHTML used for static CSS
-**Vulnerability:** The `InputNode` component used `dangerouslySetInnerHTML` to inject static CSS styles instead of using standard text children.
-**Learning:** Even if the injected string is completely static and currently safe from XSS, using `dangerouslySetInnerHTML` for static CSS is an anti-pattern. If dynamic variables are ever introduced, the application could be exposed to Cross-Site Scripting (XSS).
-**Prevention:** In React components, always avoid using `dangerouslySetInnerHTML` to inject CSS inside `<style>` tags. Use standard text children (e.g., `<style>{...}</style>`) instead.
+## 2024-03-24 - Remove dangerouslySetInnerHTML in input-node.tsx
+**Vulnerability:** A static `<style>` block was injected using `dangerouslySetInnerHTML={{ __html: \`...\` }}`.
+**Learning:** While the input was a hardcoded string and not user-controlled (thus not an active XSS), using `dangerouslySetInnerHTML` unnecessarily triggers security scanners and establishes a bad pattern.
+**Prevention:** Use standard text children within `<style>` tags in React (e.g., `<style>{\` ... \`}</style>`) to apply raw CSS safely without invoking `dangerouslySetInnerHTML`.
