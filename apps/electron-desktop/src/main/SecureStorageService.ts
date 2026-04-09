@@ -10,6 +10,7 @@
 import { safeStorage, app } from 'electron';
 import { join } from 'path';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
+import * as crypto from 'crypto';
 
 export interface StoredCredential {
   id: string;
@@ -920,7 +921,7 @@ export class SecureStorageService {
   // Private helper methods
 
   private generateId(): string {
-    return `cred_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    return `cred_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
   }
 
   private encryptString(plainText: string): string {
