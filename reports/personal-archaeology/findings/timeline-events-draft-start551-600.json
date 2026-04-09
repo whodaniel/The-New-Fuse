@@ -1,0 +1,53 @@
+{
+  "generatedAt": "2026-03-22T11:36:00.000Z",
+  "scope": "Apple Notes oldest-forward, seq 551..600",
+  "privacy": "Sensitive content redacted; references only",
+  "events": [
+    {
+      "title": "Life Segment 23 (Notes 551-575)",
+      "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (551-575).",
+      "timestamp": "2024-12-20T06:57:36.000Z",
+      "point": 220,
+      "category": "Business & Projects",
+      "segment": "Business & Projects",
+      "source": "apple-notes-chronology",
+      "evidenceRefs": [
+        "apple-notes:seq:551-575",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start551-size50.json"
+      ],
+      "sources": [
+        "Apple Notes sequence window 551-575",
+        "Redacted extraction batch (start551 size50)"
+      ],
+      "metadata": {
+        "startSeq": 551,
+        "endSeq": 575,
+        "dominantThemes": ["Business & Projects (16)", "Personal (9)"],
+        "skippedSeqs": []
+      }
+    },
+    {
+      "title": "Life Segment 24 (Notes 576-600)",
+      "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (576-600).",
+      "timestamp": "2024-12-23T09:35:32.000Z",
+      "point": 228,
+      "category": "Business & Projects",
+      "segment": "Business & Projects",
+      "source": "apple-notes-chronology",
+      "evidenceRefs": [
+        "apple-notes:seq:576-600",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start551-size50.json"
+      ],
+      "sources": [
+        "Apple Notes sequence window 576-600",
+        "Redacted extraction batch (start551 size50)"
+      ],
+      "metadata": {
+        "startSeq": 576,
+        "endSeq": 600,
+        "dominantThemes": ["Business & Projects (17)", "Personal (8)"],
+        "skippedSeqs": []
+      }
+    }
+  ]
+}

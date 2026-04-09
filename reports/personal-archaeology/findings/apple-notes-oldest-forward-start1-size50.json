@@ -1,0 +1,519 @@
+{
+  "generatedAt": "2026-03-22T07:02:55.500Z",
+  "totalNotes": 1537,
+  "startSeq": 1,
+  "endSeq": 50,
+  "batchSize": 50,
+  "order": "oldest_to_newest",
+  "themeCounts": {
+    "Personal": 36,
+    "Travel": 1,
+    "Health & Wellness": 5,
+    "Relationships": 1,
+    "Creativity": 3,
+    "Business & Projects": 3,
+    "Family": 1
+  },
+  "rows": [
+    {
+      "seq": 1,
+      "sourceIndex": 1537,
+      "title": "First then bus schedule",
+      "createdAt": "2016-06-23T16:32:45.000Z",
+      "updatedAt": "2016-06-23T16:32:57.000Z",
+      "excerpt": "First then bus schedule",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 2,
+      "sourceIndex": 1536,
+      "title": "Chris Thursday cash 1275 my read/ 414-4082 Even sen",
+      "createdAt": "2017-02-09T02:17:08.000Z",
+      "updatedAt": "2017-02-09T02:17:51.000Z",
+      "excerpt": "Chris Thursday cash 1275 my read/ 414-4082 Even sent me",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 3,
+      "sourceIndex": 1535,
+      "title": "We gettn up right? Rolling out of the Stone Age.",
+      "createdAt": "2017-03-22T02:27:52.000Z",
+      "updatedAt": "2017-03-22T02:28:55.000Z",
+      "excerpt": "We gettn up right? Rolling out of the Stone Age.",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 4,
+      "sourceIndex": 1534,
+      "title": "TripTronik",
+      "createdAt": "2017-04-27T16:11:18.000Z",
+      "updatedAt": "2017-04-27T16:11:33.000Z",
+      "excerpt": "TripTronik",
+      "theme": "Travel",
+      "narrative": "Location/movement signal indicating environment shift."
+    },
+    {
+      "seq": 5,
+      "sourceIndex": 1533,
+      "title": "Sex Lives Matter",
+      "createdAt": "2017-05-15T17:54:35.000Z",
+      "updatedAt": "2017-05-15T17:54:47.000Z",
+      "excerpt": "Sex Lives Matter",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 6,
+      "sourceIndex": 1532,
+      "title": "Hey Juliane! It's Daniel , (knocked on your door yesterday) 😁. Wanted",
+      "createdAt": "2017-05-24T17:59:10.000Z",
+      "updatedAt": "2017-05-24T18:13:19.000Z",
+      "excerpt": "Hey Juliane! It's Daniel , (knocked on your door yesterday) 😁. Wanted to give you a shout last night but it got late. I found your vibes very comfortable almost immediately and think you're really attractive! I wouldn't mind checking out each others eyes again sometime. Hope you're enjoying this amazingly beautiful da",
+      "theme": "Health & Wellness",
+      "narrative": "Mental/emotional state tracking signal; useful for resilience timeline."
+    },
+    {
+      "seq": 7,
+      "sourceIndex": 1531,
+      "title": "Wish the work week started on a Tuesday Thc kills negativity .",
+      "createdAt": "2017-05-30T17:00:28.000Z",
+      "updatedAt": "2017-05-30T17:02:22.000Z",
+      "excerpt": "Wish the work week started on a Tuesday Thc kills negativity .",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 8,
+      "sourceIndex": 1530,
+      "title": "This might well be my final jump off",
+      "createdAt": "2017-06-06T17:27:52.000Z",
+      "updatedAt": "2017-06-06T17:28:18.000Z",
+      "excerpt": "This might well be my final jump off",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 9,
+      "sourceIndex": 1529,
+      "title": "Attraction to cousins",
+      "createdAt": "2017-06-07T01:35:19.000Z",
+      "updatedAt": "2017-06-07T01:35:34.000Z",
+      "excerpt": "Attraction to cousins",
+      "theme": "Relationships",
+      "narrative": "Relational/interpersonal signal with emotionally charged framing."
+    },
+    {
+      "seq": 10,
+      "sourceIndex": 1528,
+      "title": "I get in a lot of air play",
+      "createdAt": "2017-06-14T17:57:05.000Z",
+      "updatedAt": "2017-06-14T17:57:35.000Z",
+      "excerpt": "I get in a lot of air play",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 11,
+      "sourceIndex": 1527,
+      "title": "Rot your mind like rock candy",
+      "createdAt": "2017-06-14T18:17:42.000Z",
+      "updatedAt": "2017-06-14T18:18:02.000Z",
+      "excerpt": "Rot your mind like rock candy",
+      "theme": "Health & Wellness",
+      "narrative": "Mental/emotional state tracking signal; useful for resilience timeline."
+    },
+    {
+      "seq": 12,
+      "sourceIndex": 1526,
+      "title": "The point is the point",
+      "createdAt": "2017-06-21T01:11:14.000Z",
+      "updatedAt": "2017-06-21T01:12:11.000Z",
+      "excerpt": "The point is the point",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 13,
+      "sourceIndex": 1525,
+      "title": "Lucid up",
+      "createdAt": "2017-06-21T01:12:20.000Z",
+      "updatedAt": "2017-06-21T01:13:05.000Z",
+      "excerpt": "Lucid up",
+      "theme": "Health & Wellness",
+      "narrative": "Mental/emotional state tracking signal; useful for resilience timeline."
+    },
+    {
+      "seq": 14,
+      "sourceIndex": 1524,
+      "title": "Keep dulling my own shine with all these fucked up thought in my mind",
+      "createdAt": "2017-06-21T18:41:42.000Z",
+      "updatedAt": "2017-06-21T18:42:22.000Z",
+      "excerpt": "Keep dulling my own shine with all these fucked up thought in my mind.",
+      "theme": "Health & Wellness",
+      "narrative": "Mental/emotional state tracking signal; useful for resilience timeline."
+    },
+    {
+      "seq": 15,
+      "sourceIndex": 1523,
+      "title": "Through the chaotic clash of noise is born new harmony",
+      "createdAt": "2017-06-21T20:51:11.000Z",
+      "updatedAt": "2017-06-21T20:52:22.000Z",
+      "excerpt": "Through the chaotic clash of noise is born new harmony",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 16,
+      "sourceIndex": 1522,
+      "title": "Catalyst",
+      "createdAt": "2017-06-28T23:21:21.000Z",
+      "updatedAt": "2017-06-28T23:21:39.000Z",
+      "excerpt": "Catalyst",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 17,
+      "sourceIndex": 1521,
+      "title": "Piano keyboard that drops down the unwanted notes in every key.",
+      "createdAt": "2017-08-10T05:38:04.000Z",
+      "updatedAt": "2017-08-10T05:38:55.000Z",
+      "excerpt": "Piano keyboard that drops down the unwanted notes in every key.",
+      "theme": "Creativity",
+      "narrative": "Creative exploration signal, likely tied to artistic processing."
+    },
+    {
+      "seq": 18,
+      "sourceIndex": 1520,
+      "title": "I'm a little backed up, babyback up, let's stack up I can make u crack",
+      "createdAt": "2017-08-23T23:15:53.000Z",
+      "updatedAt": "2017-08-23T23:16:32.000Z",
+      "excerpt": "I'm a little backed up, babyback up, let's stack up I can make u crack up",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 19,
+      "sourceIndex": 1519,
+      "title": "Music video idea: chiseling away at a rock, getting older, diamond…",
+      "createdAt": "2017-07-18T03:36:38.000Z",
+      "updatedAt": "2017-09-28T22:19:58.000Z",
+      "excerpt": "Music video idea: chiseling away at a rock, getting older, diamond, slow motion plugging in cords.m",
+      "theme": "Creativity",
+      "narrative": "Creative exploration signal, likely tied to artistic processing."
+    },
+    {
+      "seq": 20,
+      "sourceIndex": 1518,
+      "title": "Actions resonating out in waves into space and catching the reflection",
+      "createdAt": "2017-10-11T05:18:39.000Z",
+      "updatedAt": "2017-10-11T05:20:08.000Z",
+      "excerpt": "Actions resonating out in waves into space and catching the reflection of each planet in its natural rotation.",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 21,
+      "sourceIndex": 1517,
+      "title": "Dogalyst",
+      "createdAt": "2017-10-11T05:49:40.000Z",
+      "updatedAt": "2017-10-11T05:49:46.000Z",
+      "excerpt": "Dogalyst",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 22,
+      "sourceIndex": 1516,
+      "title": "Pup up tents for adults that come in all different tent shapes and",
+      "createdAt": "2017-10-16T03:36:21.000Z",
+      "updatedAt": "2017-10-16T03:37:46.000Z",
+      "excerpt": "Pup up tents for adults that come in all different tent shapes and also can be modular and Velcroed together!",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 23,
+      "sourceIndex": 1515,
+      "title": "Sweet spot records",
+      "createdAt": "2017-10-18T02:12:13.000Z",
+      "updatedAt": "2017-10-18T02:12:27.000Z",
+      "excerpt": "Sweet spot records",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 24,
+      "sourceIndex": 1514,
+      "title": "Crayfish",
+      "createdAt": "2017-10-22T15:22:42.000Z",
+      "updatedAt": "2017-10-22T15:22:50.000Z",
+      "excerpt": "Crayfish",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 25,
+      "sourceIndex": 1513,
+      "title": "Webster library metal",
+      "createdAt": "2017-11-07T17:59:40.000Z",
+      "updatedAt": "2017-11-07T17:59:52.000Z",
+      "excerpt": "Webster library metal",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 26,
+      "sourceIndex": 1512,
+      "title": "Behind Brighton jail metal dumpsters",
+      "createdAt": "2017-11-07T18:07:12.000Z",
+      "updatedAt": "2017-11-07T18:07:42.000Z",
+      "excerpt": "Behind Brighton jail metal dumpsters",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 27,
+      "sourceIndex": 1511,
+      "title": "Jacken funk",
+      "createdAt": "2018-03-15T02:34:03.000Z",
+      "updatedAt": "2018-03-15T08:36:54.000Z",
+      "excerpt": "Jacken funk Vomitstep Deep house Funky breaks Complextro Breakbeat Bass house Electro Metal step Liquid dubstep Hard house Brostep Synth hop Glitch hop",
+      "theme": "Creativity",
+      "narrative": "Creative exploration signal, likely tied to artistic processing."
+    },
+    {
+      "seq": 28,
+      "sourceIndex": 1510,
+      "title": "When your eyes change, how you see the world changes",
+      "createdAt": "2018-03-23T05:50:57.000Z",
+      "updatedAt": "2018-03-23T05:51:48.000Z",
+      "excerpt": "When your eyes change, how you see the world changes",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 29,
+      "sourceIndex": 1509,
+      "title": "Service where somebody is giving someone else realtime play by play",
+      "createdAt": "2018-04-03T16:22:51.000Z",
+      "updatedAt": "2018-04-03T16:24:24.000Z",
+      "excerpt": "Service where somebody is giving someone else realtime play by play advice on sex or talking!",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 30,
+      "sourceIndex": 1508,
+      "title": "And hoooww long will I be gone, I'm feeling strong, I'm alright…",
+      "createdAt": "2018-04-04T10:38:27.000Z",
+      "updatedAt": "2018-04-04T10:41:49.000Z",
+      "excerpt": "And hoooww long will I be gone, I'm feeling strong, I'm alright. And hoooow long wold I be gone, I really care, I'm blessed, I'm alright.",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 31,
+      "sourceIndex": 1507,
+      "title": "AAA# club code 620-084 Membership # 177-822-0006",
+      "createdAt": "2018-04-07T20:39:27.000Z",
+      "updatedAt": "2018-04-07T20:40:33.000Z",
+      "excerpt": "AAA# club code 620-084 Membership # 177-822-0006",
+      "theme": "Business & Projects",
+      "narrative": "Work/build direction signal with concrete execution language."
+    },
+    {
+      "seq": 32,
+      "sourceIndex": 1506,
+      "title": "Ticket 1182710714 1-866-667-6470 Pin#963421",
+      "createdAt": "2018-04-12T00:25:55.000Z",
+      "updatedAt": "2018-04-12T00:26:50.000Z",
+      "excerpt": "Ticket 1182710714 1-866-667-6470 Pin#963421",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 33,
+      "sourceIndex": 1505,
+      "title": "If you can make better harmony from the noise, you are on your higher…",
+      "createdAt": "2018-04-16T10:36:24.000Z",
+      "updatedAt": "2018-04-16T10:38:01.000Z",
+      "excerpt": "If you can make better harmony from the noise, you are on your higher path…",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 34,
+      "sourceIndex": 1504,
+      "title": "http://www.wcb.ny.gov/labor-market-attachment/",
+      "createdAt": "2018-05-09T15:22:20.000Z",
+      "updatedAt": "2018-05-09T15:22:20.000Z",
+      "excerpt": "http://www.wcb.ny.gov/labor-market-attachment/",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 35,
+      "sourceIndex": 1503,
+      "title": "Gorganzoid Mollenflap",
+      "createdAt": "2018-06-16T02:26:01.000Z",
+      "updatedAt": "2018-06-16T02:26:16.000Z",
+      "excerpt": "Gorganzoid Mollenflap",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 36,
+      "sourceIndex": 1502,
+      "title": "Idea> An exoskeleton that puts pressure on some areas of the backs…",
+      "createdAt": "2018-06-17T01:08:41.000Z",
+      "updatedAt": "2018-06-17T02:52:31.000Z",
+      "excerpt": "Idea&gt An exoskeleton that puts pressure on some areas of the backs and hips for instance, to help push inline other areas. In addition the device is also monitors the bodies responses . It also emits healing light and sound frequencies that specifically relax and strengthen the muscles.",
+      "theme": "Health & Wellness",
+      "narrative": "Mental/emotional state tracking signal; useful for resilience timeline."
+    },
+    {
+      "seq": 37,
+      "sourceIndex": 1501,
+      "title": "Mom's storage Hogan Rd Marion",
+      "createdAt": "2018-07-29T18:57:55.000Z",
+      "updatedAt": "2018-07-29T18:58:36.000Z",
+      "excerpt": "Mom's storage Hogan Rd Marion 9385#",
+      "theme": "Family",
+      "narrative": "Family-system signal relevant to identity and support structures."
+    },
+    {
+      "seq": 38,
+      "sourceIndex": 1500,
+      "title": "Intercom",
+      "createdAt": "2018-09-10T17:24:17.000Z",
+      "updatedAt": "2018-09-10T17:24:26.000Z",
+      "excerpt": "Intercom",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 39,
+      "sourceIndex": 1499,
+      "title": "27 Rhodesa Dr.",
+      "createdAt": "2018-10-15T14:14:57.000Z",
+      "updatedAt": "2018-10-15T14:15:30.000Z",
+      "excerpt": "27 Rhodesa Dr.",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 40,
+      "sourceIndex": 1498,
+      "title": "Dumpster at Mill Road and N. Greece Rd.",
+      "createdAt": "2018-10-24T14:12:00.000Z",
+      "updatedAt": "2018-10-24T14:12:22.000Z",
+      "excerpt": "Dumpster at Mill Road and N. Greece Rd.",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 41,
+      "sourceIndex": 1497,
+      "title": "Webster village Donovan Street huge pile of scrap",
+      "createdAt": "2018-10-25T15:06:50.000Z",
+      "updatedAt": "2018-10-25T15:07:05.000Z",
+      "excerpt": "Webster village Donovan Street huge pile of scrap",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 42,
+      "sourceIndex": 1496,
+      "title": "Eric 585-451-7857",
+      "createdAt": "2018-12-21T18:43:07.000Z",
+      "updatedAt": "2018-12-21T18:48:22.000Z",
+      "excerpt": "Eric 585-451-7857",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 43,
+      "sourceIndex": 1495,
+      "title": "Urinal cup holders",
+      "createdAt": "2018-12-23T04:23:11.000Z",
+      "updatedAt": "2018-12-23T04:23:32.000Z",
+      "excerpt": "Urinal cup holders",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 44,
+      "sourceIndex": 1494,
+      "title": "Truly sparkling cranberry 🥊 punch!",
+      "createdAt": "2018-12-23T05:38:27.000Z",
+      "updatedAt": "2018-12-23T05:38:53.000Z",
+      "excerpt": "Truly sparkling cranberry 🥊 punch!",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 45,
+      "sourceIndex": 1493,
+      "title": "I'm carrying a heavy heart",
+      "createdAt": "2019-02-14T01:26:42.000Z",
+      "updatedAt": "2019-02-14T01:27:27.000Z",
+      "excerpt": "I'm carrying a heavy heart",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 46,
+      "sourceIndex": 1492,
+      "title": "Check this out before it's deleted I hope it helps",
+      "createdAt": "2019-02-21T16:01:33.000Z",
+      "updatedAt": "2019-02-21T16:01:35.000Z",
+      "excerpt": "Check this out before it's deleted I hope it helps For all that are new to this when child support is rendered against you the agency under title iv-d, (SOCIAL SECURITY ACT) hires an ALJ or administrative law judge. These judges are not allowed to put you in jail because they are an &quotADMINISTRATOR&quot When being b",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 47,
+      "sourceIndex": 1491,
+      "title": "Lawyer - Moms recomendation - Nate Vanloon Family court lawyer.",
+      "createdAt": "2019-03-31T02:12:18.000Z",
+      "updatedAt": "2019-03-31T02:28:14.000Z",
+      "excerpt": "Lawyer - Moms recomendation - Nate Vanloon Family court lawyer. Mormon pagent Palmyra",
+      "theme": "Business & Projects",
+      "narrative": "Work/build direction signal with concrete execution language."
+    },
+    {
+      "seq": 48,
+      "sourceIndex": 1490,
+      "title": "Vatrina Live",
+      "createdAt": "2021-06-22T16:47:59.000Z",
+      "updatedAt": "2021-06-23T18:23:24.000Z",
+      "excerpt": "Vatrina Live Pain points: Syncing calendars across platforms Importing product data and media Importing data feeds Bulk adding category tree (import for other platforms..I.e. WP) ——— Review Notes: In the signup form, the Countries listed are not alphabetical In the configure your store, it asked for “civic number”, I d",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 49,
+      "sourceIndex": 1489,
+      "title": "List of criteria by which services, products, companies are vetted…",
+      "createdAt": "2021-06-25T12:02:55.000Z",
+      "updatedAt": "2021-06-25T12:04:54.000Z",
+      "excerpt": "List of criteria by which services, products, companies are vetted by user ratings. User ratings are kept confidential and not shared with the public on Market Referral.",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 50,
+      "sourceIndex": 1488,
+      "title": "There is no indication in this email as to what my original message…",
+      "createdAt": "2021-06-25T18:00:31.000Z",
+      "updatedAt": "2021-06-25T18:00:37.000Z",
+      "excerpt": "There is no indication in this email as to what my original message was? Was this email meant to be in response to me requesting the 2nd lifetime of Vetrina Live: $245 Unlimited &amp White Label Plan, code, as per the buy 1 get 1 deal offered in the Zoom meeting? If so, then we are talking about 2 separate",
+      "theme": "Business & Projects",
+      "narrative": "Work/build direction signal with concrete execution language."
+    }
+  ]
+}

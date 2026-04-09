@@ -1,0 +1,527 @@
+{
+  "generatedAt": "2026-03-22T07:23:16.958Z",
+  "totalNotes": 1537,
+  "startSeq": 101,
+  "endSeq": 150,
+  "batchSize": 50,
+  "order": "oldest_to_newest",
+  "themeCounts": {
+    "Personal": 41,
+    "Creativity": 2,
+    "Travel": 1,
+    "Finance": 1,
+    "Relationships": 2,
+    "Business & Projects": 2,
+    "Health & Wellness": 1
+  },
+  "rows": [
+    {
+      "seq": 101,
+      "sourceIndex": 1437,
+      "title": "Starname Blockchain domains",
+      "createdAt": "2021-10-07T04:56:36.000Z",
+      "updatedAt": "2021-10-07T04:57:22.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 102,
+      "sourceIndex": 1436,
+      "title": "[SKIPPED_UNREADABLE_NOTE]",
+      "createdAt": "",
+      "updatedAt": "",
+      "excerpt": "",
+      "skipped": true,
+      "skipReason": "TIMEOUT",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 103,
+      "sourceIndex": 1435,
+      "title": "[REDACTED_SENSITIVE_CONTENT]",
+      "createdAt": "2021-10-07T13:12:50.000Z",
+      "updatedAt": "2021-10-07T13:16:27.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 104,
+      "sourceIndex": 1434,
+      "title": "LegalFundPool",
+      "createdAt": "2021-10-09T19:22:35.000Z",
+      "updatedAt": "2021-10-09T19:30:19.000Z",
+      "excerpt": "LegalFundPool IntelProp IntelPropell IntelPropUp DevPool.dao",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 105,
+      "sourceIndex": 1433,
+      "title": "[REDACTED_SENSITIVE_CONTENT]",
+      "createdAt": "2021-10-10T04:42:46.000Z",
+      "updatedAt": "2021-10-10T04:43:41.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 106,
+      "sourceIndex": 1432,
+      "title": "[REDACTED_SENSITIVE_CONTENT]",
+      "createdAt": "2021-10-10T07:06:58.000Z",
+      "updatedAt": "2021-10-10T07:07:35.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 107,
+      "sourceIndex": 1431,
+      "title": "[REDACTED_SENSITIVE_CONTENT]",
+      "createdAt": "2021-10-10T11:03:16.000Z",
+      "updatedAt": "2021-10-10T11:03:39.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 108,
+      "sourceIndex": 1430,
+      "title": "ArtBlocks Interview Notes",
+      "createdAt": "2021-10-13T00:15:44.000Z",
+      "updatedAt": "2021-10-13T00:19:46.000Z",
+      "excerpt": "ArtBlocks Interview Notes Ban Shiller Aron Calderum of art blocks -True Ventures -Galexy Interactive -Colab Curancy -Libertus Capital -Flaming Dao -The lao",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 109,
+      "sourceIndex": 1429,
+      "title": "metabrands.nft",
+      "createdAt": "2021-10-14T01:42:31.000Z",
+      "updatedAt": "2021-10-14T01:52:17.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 110,
+      "sourceIndex": 1428,
+      "title": "IDEA- I want to offload my cookies to the cloud and only interact…",
+      "createdAt": "2021-10-15T06:59:05.000Z",
+      "updatedAt": "2021-10-15T07:00:02.000Z",
+      "excerpt": "IDEA- I want to offload my cookies to the cloud and only interact with the ones I choose to at any time.",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 111,
+      "sourceIndex": 1427,
+      "title": "Gemini - Shrimpy API",
+      "createdAt": "2021-10-17T06:58:14.000Z",
+      "updatedAt": "2021-10-17T07:03:36.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 112,
+      "sourceIndex": 1426,
+      "title": "[REDACTED_SENSITIVE_CONTENT]",
+      "createdAt": "2021-10-14T05:41:14.000Z",
+      "updatedAt": "2021-10-17T07:12:04.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 113,
+      "sourceIndex": 1425,
+      "title": "[REDACTED_SENSITIVE_CONTENT]",
+      "createdAt": "2021-11-01T23:09:14.000Z",
+      "updatedAt": "2021-11-01T23:09:28.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 114,
+      "sourceIndex": 1424,
+      "title": "[REDACTED_SENSITIVE_CONTENT]",
+      "createdAt": "2021-11-04T03:35:14.000Z",
+      "updatedAt": "2021-11-04T06:09:14.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 115,
+      "sourceIndex": 1423,
+      "title": "[REDACTED_SENSITIVE_CONTENT]",
+      "createdAt": "2021-11-04T14:55:05.000Z",
+      "updatedAt": "2021-11-04T14:55:50.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 116,
+      "sourceIndex": 1422,
+      "title": "POLKADOT.JS.ORG",
+      "createdAt": "2021-11-08T10:03:06.000Z",
+      "updatedAt": "2021-11-08T10:04:01.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 117,
+      "sourceIndex": 1421,
+      "title": "METAMASK RECOVERY",
+      "createdAt": "2021-11-08T21:35:08.000Z",
+      "updatedAt": "2021-11-08T21:35:18.000Z",
+      "excerpt": "METAMASK RECOVERY rich crime crunch mistake chef floor matrix pupil journey faculty myself manage",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 118,
+      "sourceIndex": 1420,
+      "title": "Idea: In trying to think of ways that someone with relatively very…",
+      "createdAt": "2021-11-13T18:22:32.000Z",
+      "updatedAt": "2021-11-13T18:44:22.000Z",
+      "excerpt": "Idea: In trying to think of ways that someone with relatively very little deposited ( Like myself, with only 109.00 PTaUSDC currently deposited ) could increase their chances of winning; I thought of the possibility of having a lending mechanism added into the protocol, whereby users (the Lendees) could tick the option",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 119,
+      "sourceIndex": 1419,
+      "title": "Nothing Creepy about these little guys at all, Nope!",
+      "createdAt": "2021-11-15T15:20:27.000Z",
+      "updatedAt": "2021-11-15T15:25:49.000Z",
+      "excerpt": "Nothing Creepy about these little guys at all, Nope! @hexidized https://twitter.com/i/status/1453391049762566146",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 120,
+      "sourceIndex": 1418,
+      "title": "civilian climate core",
+      "createdAt": "2021-11-15T17:44:41.000Z",
+      "updatedAt": "2021-11-18T12:41:07.000Z",
+      "excerpt": "civilian climate core 0.03506703 0.035029103954334125",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 121,
+      "sourceIndex": 1417,
+      "title": "[SKIPPED_UNREADABLE_NOTE]",
+      "createdAt": "",
+      "updatedAt": "",
+      "excerpt": "",
+      "skipped": true,
+      "skipReason": "TIMEOUT",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 122,
+      "sourceIndex": 1416,
+      "title": "[REDACTED_SENSITIVE_CONTENT]",
+      "createdAt": "2021-11-30T04:43:27.000Z",
+      "updatedAt": "2021-11-30T05:23:00.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 123,
+      "sourceIndex": 1415,
+      "title": "[REDACTED_SENSITIVE_CONTENT]",
+      "createdAt": "2021-11-30T15:06:50.000Z",
+      "updatedAt": "2021-11-30T15:08:00.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 124,
+      "sourceIndex": 1414,
+      "title": "I have actually intended to put together my own grant proposal, to…",
+      "createdAt": "2021-12-04T05:58:03.000Z",
+      "updatedAt": "2021-12-04T06:58:29.000Z",
+      "excerpt": "I have actually intended to put together my own grant proposal, to run marketing campaigns for PT. I have many enterprise level Saas tools to facilitate group brainstorming, planning and organization of campaigns. I also have many tools as well as the skills to create and deploy multimedia digital content on many platf",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 125,
+      "sourceIndex": 1413,
+      "title": "Hi, will you delegate to me so I can play ICE Poker please? It is…",
+      "createdAt": "2021-12-04T22:23:22.000Z",
+      "updatedAt": "2021-12-04T23:35:17.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 126,
+      "sourceIndex": 1412,
+      "title": "[SKIPPED_UNREADABLE_NOTE]",
+      "createdAt": "",
+      "updatedAt": "",
+      "excerpt": "",
+      "skipped": true,
+      "skipReason": "TIMEOUT",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 127,
+      "sourceIndex": 1411,
+      "title": "[SKIPPED_UNREADABLE_NOTE]",
+      "createdAt": "",
+      "updatedAt": "",
+      "excerpt": "",
+      "skipped": true,
+      "skipReason": "TIMEOUT",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 128,
+      "sourceIndex": 1410,
+      "title": "Fractional",
+      "createdAt": "2021-12-16T08:03:26.000Z",
+      "updatedAt": "2021-12-16T08:03:45.000Z",
+      "excerpt": "Fractional",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 129,
+      "sourceIndex": 1409,
+      "title": "A basic notification browser plugin that how you when new playlists…",
+      "createdAt": "2021-12-17T07:00:48.000Z",
+      "updatedAt": "2021-12-17T07:01:56.000Z",
+      "excerpt": "A basic notification browser plugin that how you when new playlists are launched, and then open a player with a brief audio description of the works and the it juts auto plays.",
+      "theme": "Creativity",
+      "narrative": "Creative exploration signal, likely tied to artistic processing."
+    },
+    {
+      "seq": 130,
+      "sourceIndex": 1408,
+      "title": "S Nurse",
+      "createdAt": "2021-12-17T18:56:00.000Z",
+      "updatedAt": "2021-12-17T18:58:11.000Z",
+      "excerpt": "S Nurse cwhite@spencerportschools.org Concelour Becky Denatally",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 131,
+      "sourceIndex": 1407,
+      "title": "OK, someone is going to have to break through the muck, might as well…",
+      "createdAt": "2022-02-02T04:33:45.000Z",
+      "updatedAt": "2022-02-02T07:27:59.000Z",
+      "excerpt": "OK, someone is going to have to break through the muck, might as well be me: Assuming the results of work are of value enough to consider paying for those services going forward, then the preliminary work that laid the groundwork to get things to that point should be valued equally and accordingly. There can be some va",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 132,
+      "sourceIndex": 1406,
+      "title": "[REDACTED_SENSITIVE_CONTENT]",
+      "createdAt": "2022-02-04T17:35:44.000Z",
+      "updatedAt": "2022-02-04T17:35:57.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 133,
+      "sourceIndex": 1405,
+      "title": "Holiday Valley -716-699-2345",
+      "createdAt": "2022-02-07T22:41:40.000Z",
+      "updatedAt": "2022-02-07T22:48:51.000Z",
+      "excerpt": "Holiday Valley -716-699-2345 Reserve 2Hr-$27 Ahead of time 4:30-9",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 134,
+      "sourceIndex": 1404,
+      "title": "A crypto coin comprised of:",
+      "createdAt": "2022-02-16T06:32:32.000Z",
+      "updatedAt": "2022-02-16T06:36:28.000Z",
+      "excerpt": "A crypto coin comprised of: A group purchasing platform for food, travel benefits and hotels, house purchase, group insurance, index of market indexes,",
+      "theme": "Travel",
+      "narrative": "Location/movement signal indicating environment shift."
+    },
+    {
+      "seq": 135,
+      "sourceIndex": 1403,
+      "title": "With the whole experience really, and kind of in a big way in terms…",
+      "createdAt": "2022-02-16T20:49:42.000Z",
+      "updatedAt": "2022-02-16T20:49:44.000Z",
+      "excerpt": "With the whole experience really, and kind of in a big way in terms of money lost to gas fees ( $500 in gas fees to get $100 in originally. Gas was super high at that time and I didn't know any better and prob did things the real hard way. Then there is the like $400 lost in similar fashion getting into the 3,3 pool. (",
+      "theme": "Finance",
+      "narrative": "Resource and stability signal tied to financial reality."
+    },
+    {
+      "seq": 136,
+      "sourceIndex": 1402,
+      "title": "New Note",
+      "createdAt": "2022-02-28T22:45:03.000Z",
+      "updatedAt": "2022-03-01T02:19:21.000Z",
+      "excerpt": "",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 137,
+      "sourceIndex": 1401,
+      "title": "Contributors",
+      "createdAt": "2022-03-01T08:09:01.000Z",
+      "updatedAt": "2022-03-01T08:09:06.000Z",
+      "excerpt": "Contributors Loading… Tanman Tjark Taliskye Leighton Pedro Treebeard DaBoom TangFeng SmartInvestor Gabor Mkkoll PoolTogether Gamified Ecosystem Similar to Stake DAO Stake POOL for sPOOL. Need to figure out if we can utilize sPOOL for governance. Can sPOOL enter hodlers into a special pool, that awards the yield on trea",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 138,
+      "sourceIndex": 1400,
+      "title": "[REDACTED_SENSITIVE_CONTENT]",
+      "createdAt": "2022-03-01T19:09:55.000Z",
+      "updatedAt": "2022-03-01T19:10:32.000Z",
+      "excerpt": "[REDACTED_SENSITIVE_CONTENT]",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 139,
+      "sourceIndex": 1399,
+      "title": "CRYPTO INVETMENTS LOG",
+      "createdAt": "2022-03-02T18:29:54.000Z",
+      "updatedAt": "2022-03-02T18:30:15.000Z",
+      "excerpt": "CRYPTO INVETMENTS LOG",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 140,
+      "sourceIndex": 1398,
+      "title": "A platform for others to list their NFTs and when they sell the house…",
+      "createdAt": "2022-03-07T03:36:36.000Z",
+      "updatedAt": "2022-03-07T17:30:15.000Z",
+      "excerpt": "A platform for others to list their NFTs and when they sell the house takes a % of the sale and/or a % of the sale gets distributed to other wallets like charities or other partners or mechanisms. You can legally start a membership site with monthly subscription where money prizes are played for with the sweepstakes to",
+      "theme": "Relationships",
+      "narrative": "Relational/interpersonal signal with emotionally charged framing."
+    },
+    {
+      "seq": 141,
+      "sourceIndex": 1397,
+      "title": "1 716 406 4132",
+      "createdAt": "2022-03-14T19:57:32.000Z",
+      "updatedAt": "2022-03-14T20:01:29.000Z",
+      "excerpt": "1 716 406 4132 April 4-5 over night 279 - 34",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 142,
+      "sourceIndex": 1396,
+      "title": "The Derivatives",
+      "createdAt": "2022-03-20T04:18:34.000Z",
+      "updatedAt": "2022-03-20T18:32:29.000Z",
+      "excerpt": "The Derivatives UtilityFirst upcycle Chargeup Changeup Meta mixer IP3 mintdish Freezings",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 143,
+      "sourceIndex": 1395,
+      "title": "Viral Loops | Viral Marketing Campaigns Made Easy",
+      "createdAt": "2022-03-23T03:44:07.000Z",
+      "updatedAt": "2022-03-23T03:48:53.000Z",
+      "excerpt": "Viral Loops | Viral Marketing Campaigns Made Easy We could even run a referral campaign something like this leaderboard style show in the following vid, for PT community members to participate in sharing the news. There could be delegation given out for the top referrers.. Lots of options.. https://app.viral-loops.com/",
+      "theme": "Business & Projects",
+      "narrative": "Work/build direction signal with concrete execution language."
+    },
+    {
+      "seq": 144,
+      "sourceIndex": 1394,
+      "title": "<?php",
+      "createdAt": "2022-04-26T18:21:22.000Z",
+      "updatedAt": "2022-04-26T18:21:25.000Z",
+      "excerpt": "&lt?php $_conf['jrCore_db_host'] = 'sdb-g.hosting.stackcp.net'; $_conf['jrCore_db_port'] = '3306'; $_conf['jrCore_db_name'] = 'zwodkeckztiefiqf_304-3138356399'; $_conf['jrCore_db_user'] = 'zwodkeckztiefiqf_304'; $_conf['jrCore_db_pass'] = 'zwodkeckztiefiqf_304'; $_conf['jrCore_base_url'] = 'http://startree.tv';",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 145,
+      "sourceIndex": 1393,
+      "title": "Music Bot Idea:",
+      "createdAt": "2022-04-27T09:05:12.000Z",
+      "updatedAt": "2022-04-27T09:11:27.000Z",
+      "excerpt": "Music Bot Idea: -You need to hold x NFT to be given Artist membership -You can provide content via live and recorded, and level up to Earn new commission levels, that would otherwise cost via Progressive NFTs. So like if you get 300 plays you get to rung 1. If you also stream live for x hours, you let this many points ",
+      "theme": "Creativity",
+      "narrative": "Creative exploration signal, likely tied to artistic processing."
+    },
+    {
+      "seq": 146,
+      "sourceIndex": 1392,
+      "title": "Gary Vaynerchuk (Gary Vee) is a man I admire most for his quality…",
+      "createdAt": "2022-05-04T17:41:43.000Z",
+      "updatedAt": "2022-05-04T18:24:55.000Z",
+      "excerpt": "Gary Vaynerchuk (Gary Vee) is a man I admire most for his quality of character. The humbleness and honestly that he exudes, is something that I hold in very high regard. His kind of open-hearted and open-minded creativity and self-determination are qualities that I myself aspire towards! I am proud to have even been no",
+      "theme": "Health & Wellness",
+      "narrative": "Mental/emotional state tracking signal; useful for resilience timeline."
+    },
+    {
+      "seq": 147,
+      "sourceIndex": 1391,
+      "title": "Kickstarter:",
+      "createdAt": "2022-05-05T18:11:49.000Z",
+      "updatedAt": "2022-05-05T18:59:17.000Z",
+      "excerpt": "Kickstarter: Good for the arts. Laura Finstein lfeinstein@kickstarter.com Takes 5% is goal is reached It is all or nothing, if you don’t raise your goal you don’t keep the funds. Wefunder: Is Investor crowdfunding (equity) Ave receives 400k, min50k, max 5 mil Maybe good as last funding step. 7.5% They have a min and ma",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 148,
+      "sourceIndex": 1390,
+      "title": "NFTs that owners of can resell (duplicate), and retain their copy…",
+      "createdAt": "2022-05-06T17:48:51.000Z",
+      "updatedAt": "2022-05-06T17:49:36.000Z",
+      "excerpt": "NFTs that owners of can resell (duplicate), and retain their copy of.",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 149,
+      "sourceIndex": 1389,
+      "title": "@ichbinpitu @PhoneDepot @EmergentCulture @Viivi_x3 @Razielsabbat @MageThaGreat…",
+      "createdAt": "2022-05-07T02:01:20.000Z",
+      "updatedAt": "2022-05-07T02:08:21.000Z",
+      "excerpt": "@ichbinpitu @PhoneDepot @EmergentCulture @Viivi_x3 @Razielsabbat @MageThaGreat @NastyNicole69 @JadeIzNinja @JessPasternack @ATL_DOLLZ @KeefNoSweat @4ybm @Susan_Clark @TinyPrints @followfriday_RT @Beverlyspeaks @ShainaMichele @sarahbabylove @tdigitales @LiGWing @Laraloveshimx3 @Stephanie_Beane @GoldBox_Shop",
+      "theme": "Relationships",
+      "narrative": "Relational/interpersonal signal with emotionally charged framing."
+    },
+    {
+      "seq": 150,
+      "sourceIndex": 1388,
+      "title": "Kiraly Payne - Artist Grant Proposal",
+      "createdAt": "2022-05-12T14:36:56.000Z",
+      "updatedAt": "2022-05-12T14:37:22.000Z",
+      "excerpt": "Kiraly Payne - Artist Grant Proposal Closed MODA DAO by 0xBaE3...2524 Core Share Show less About the Artist Kiraly Payne is a rapper and music producer that has been based out of Chicago since 2012. As a natural part of doing what he does, Kiraly Payne provides an exciting and engaging atmosphere where the audience com",
+      "theme": "Business & Projects",
+      "narrative": "Work/build direction signal with concrete execution language."
+    }
+  ]
+}

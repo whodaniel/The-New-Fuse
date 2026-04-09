@@ -1,0 +1,529 @@
+{
+  "generatedAt": "2026-03-22T07:40:43.933Z",
+  "totalNotes": 1537,
+  "startSeq": 151,
+  "endSeq": 200,
+  "batchSize": 50,
+  "order": "oldest_to_newest",
+  "themeCounts": {
+    "Personal": 39,
+    "Creativity": 4,
+    "Business & Projects": 4,
+    "Family": 2,
+    "Relationships": 1
+  },
+  "rows": [
+    {
+      "seq": 151,
+      "sourceIndex": 1387,
+      "title": "[SKIPPED_UNREADABLE_NOTE]",
+      "createdAt": "",
+      "updatedAt": "",
+      "excerpt": "",
+      "skipped": true,
+      "skipReason": "TIMEOUT",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 152,
+      "sourceIndex": 1386,
+      "title": "A Buying club for bulk purchases of everything.",
+      "createdAt": "2022-05-27T03:14:56.000Z",
+      "updatedAt": "2022-05-27T03:20:02.000Z",
+      "excerpt": "A Buying club for bulk purchases of everything. Entry into the buying club requires holding a “Buy3rs Club” NFT.",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 153,
+      "sourceIndex": 1385,
+      "title": "@imdanielallan",
+      "createdAt": "2022-05-27T02:40:55.000Z",
+      "updatedAt": "2022-05-27T03:49:52.000Z",
+      "excerpt": "@imdanielallan @bloodywhxte @diplo @ISO50 @3LAU @RAC @itsmelvv @pollenlads @MarianHillMusic @samgellaitry @MedasinMusic @hi_mija @camouflybeats @whoisbrux @NOTD @joshpan @LUCALUSH @iamdnmo @dotmvsic @paulineherr @twerlbeats @boysnoize @BT @TOKiMONSTA @alunaaa @deadmau5 @itscharliecrown @steveaoki @_AlexanderLewis @glow",
+      "theme": "Creativity",
+      "narrative": "Creative exploration signal, likely tied to artistic processing."
+    },
+    {
+      "seq": 154,
+      "sourceIndex": 1384,
+      "title": "@XYZLovee",
+      "createdAt": "2022-05-27T03:50:54.000Z",
+      "updatedAt": "2022-05-27T04:39:31.000Z",
+      "excerpt": "@XYZLovee @SangoBeats @Xcelencia @HeybelaNFT @HaleekMaul @mickjenkins @karmawav @SammyArriaga @genogrand_eth @Pipmusic_ @warpsound_ai @DS_WorldNFT @VZEstyre @xedraism @halfanorange @TheMiaAF @illuminaticongo @JangwonLeeBM @Xcelencia @jleewalls1 @ZironiVioletta @KaneMayfield @LowSleazy @Diversetfb1 @abcdjabcdjabcdj @Lop",
+      "theme": "Creativity",
+      "narrative": "Creative exploration signal, likely tied to artistic processing."
+    },
+    {
+      "seq": 155,
+      "sourceIndex": 1383,
+      "title": "First live on the WWW in 2003 BM(Before Myspace), StarTree.TV was…",
+      "createdAt": "2022-05-27T16:51:58.000Z",
+      "updatedAt": "2022-05-27T17:00:55.000Z",
+      "excerpt": "First live on the WWW in 2003 BM(Before Myspace), StarTree.TV was launched as a social networking portal specifically catering to Performance and Media Artists, Fans and Friends. Despite putting the project on the back burner for many years due to multiple unforeseen life challenges, I have always kept the pilot light ",
+      "theme": "Business & Projects",
+      "narrative": "Work/build direction signal with concrete execution language."
+    },
+    {
+      "seq": 156,
+      "sourceIndex": 1382,
+      "title": "POOLTOGETHER IS VERY OPTIMISTIC ABOUT SECURITY, SAVINGS, PUBLIC GOOD…",
+      "createdAt": "2022-06-03T03:51:27.000Z",
+      "updatedAt": "2022-06-03T03:51:28.000Z",
+      "excerpt": "POOLTOGETHER IS VERY OPTIMISTIC ABOUT SECURITY, SAVINGS, PUBLIC GOOD, AND PRIZES!",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 157,
+      "sourceIndex": 1381,
+      "title": "[SKIPPED_UNREADABLE_NOTE]",
+      "createdAt": "",
+      "updatedAt": "",
+      "excerpt": "",
+      "skipped": true,
+      "skipReason": "TIMEOUT",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 158,
+      "sourceIndex": 1380,
+      "title": "[SKIPPED_UNREADABLE_NOTE]",
+      "createdAt": "",
+      "updatedAt": "",
+      "excerpt": "",
+      "skipped": true,
+      "skipReason": "TIMEOUT",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 159,
+      "sourceIndex": 1379,
+      "title": "My greatest passion is in being a singer-songwriter.",
+      "createdAt": "2022-06-05T05:00:07.000Z",
+      "updatedAt": "2022-06-08T07:24:06.000Z",
+      "excerpt": "My greatest passion is in being a singer-songwriter. I decided I wanted to be a singer when I was just 4 years old, and have performed live professionally on and off since I was 14. I am running this crowdfunding campaign to hopefully raise enough support, that I can make releasing the many, many original acoustic rock",
+      "theme": "Creativity",
+      "narrative": "Creative exploration signal, likely tied to artistic processing."
+    },
+    {
+      "seq": 160,
+      "sourceIndex": 1378,
+      "title": "PoolTogether Multi-Delegator Sales Leads To Account Rep Handoff Contract",
+      "createdAt": "2022-06-09T17:45:29.000Z",
+      "updatedAt": "2022-06-09T17:56:37.000Z",
+      "excerpt": "PoolTogether Multi-Delegator Sales Leads To Account Rep Handoff Contract (40/60 of Upfront Bonus). 40/60 Percentage Split of Residual Commission Between Sales Lead and Account Rep",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 161,
+      "sourceIndex": 1377,
+      "title": "[SKIPPED_UNREADABLE_NOTE]",
+      "createdAt": "",
+      "updatedAt": "",
+      "excerpt": "",
+      "skipped": true,
+      "skipReason": "TIMEOUT",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 162,
+      "sourceIndex": 1376,
+      "title": "[SKIPPED_UNREADABLE_NOTE]",
+      "createdAt": "",
+      "updatedAt": "",
+      "excerpt": "",
+      "skipped": true,
+      "skipReason": "TIMEOUT",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 163,
+      "sourceIndex": 1375,
+      "title": "[SKIPPED_UNREADABLE_NOTE]",
+      "createdAt": "",
+      "updatedAt": "",
+      "excerpt": "",
+      "skipped": true,
+      "skipReason": "TIMEOUT",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 164,
+      "sourceIndex": 1374,
+      "title": "i perceive clinical narcissism to be something much more base and…",
+      "createdAt": "2022-06-23T10:25:50.000Z",
+      "updatedAt": "2022-06-23T10:25:53.000Z",
+      "excerpt": "i perceive clinical narcissism to be something much more base and fundemental in how someone is able to precieve things, than I think many assume the meening of the lable. It is not simply egotism, it is something more fundemental.",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 165,
+      "sourceIndex": 1373,
+      "title": "Hi,",
+      "createdAt": "2023-04-07T20:44:02.000Z",
+      "updatedAt": "2023-04-07T20:52:17.000Z",
+      "excerpt": "Hi, My name is Daniel Adam Goldberg, 12/05/1975, SS# 117-64-2970. I have had documented learning and emotional disabilities since I was 5 years old, and many, many times updated throughout the years. I received special education services my whole life, including working with Access-VR (VESID). In addition to my , what ",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 166,
+      "sourceIndex": 1372,
+      "title": "585-390-4094 - Jerimia 80 Tylor St 14621 - text",
+      "createdAt": "2023-04-18T15:15:19.000Z",
+      "updatedAt": "2023-04-18T15:35:50.000Z",
+      "excerpt": "585-390-4094 - Jerimia 80 Tylor St 14621 - text",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 167,
+      "sourceIndex": 1371,
+      "title": "https://api.computerender.com/generate/%20piece%20of%20art%20is%20a…",
+      "createdAt": "2023-05-18T20:03:09.000Z",
+      "updatedAt": "2023-05-18T20:05:13.000Z",
+      "excerpt": "https://api.computerender.com/generate/%20piece%20of%20art%20is%20a%20surreal,%20complex,%20and%20highly%20detailed%20mix%20of%20physical%20embodiments%20artistically%20depicted%20in%20an%20illustrated%20with%20intricate%20details,%20highlighting%20the%20complex%20interplay%20of%20mechanical%20and%20biological%20compon",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 168,
+      "sourceIndex": 1370,
+      "title": "Nicholson Hrs.",
+      "createdAt": "2023-04-03T17:18:02.000Z",
+      "updatedAt": "2023-05-24T01:38:45.000Z",
+      "excerpt": "Nicholson Hrs. Mon- 1 - 6:30 = 5.5 Tue- 12 - 1;30 boxes, trash , 11:30-12:30 caulking. =2.5 Wen- 10:30- 12:30 Stereo cleaning, setup. 7- to about 9:30 siting up stereo and finishing closet 4.5 Thurs - Helped Denis = 1hr Wen- painting back closet 11 - 3:30 = 4.5 Thurs- 12- 6:30 painting front hall = 5.5 Fri - 5- 8:30 Fi",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 169,
+      "sourceIndex": 1369,
+      "title": "https://api.computerender.com/generate/In this surreal, vivid color…",
+      "createdAt": "2023-12-08T12:37:53.000Z",
+      "updatedAt": "2023-12-17T18:55:27.000Z",
+      "excerpt": "https://api.computerender.com/generate/In this surreal, vivid color photograph, everyday objects have transformed into well-defined, living, breathing creatures. The Steampunk Masked Harlequin expertly manipulates a room-sized body of analog synthesizers, while the Radio-active Jukebox Golem crackles with energy. The d",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 170,
+      "sourceIndex": 1368,
+      "title": "585-739-4723",
+      "createdAt": "2023-12-23T20:30:18.000Z",
+      "updatedAt": "2023-12-23T20:30:38.000Z",
+      "excerpt": "585-739-4723 Ultimate",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 171,
+      "sourceIndex": 1367,
+      "title": "https://api.computerender.com/generate/ Layered stack of negative…",
+      "createdAt": "2023-12-28T19:32:30.000Z",
+      "updatedAt": "2023-12-29T02:51:52.000Z",
+      "excerpt": "https://api.computerender.com/generate/ Layered stack of negative, rainbow spectrum minimum opacitycity, city, facity, facelectric, translucent hexacosihedroid that progressively get smaller and rotated in a corkscrew pattern. Musically Just harmonic phi ratio proportions style structures. Exact line requirement, invis",
+      "theme": "Creativity",
+      "narrative": "Creative exploration signal, likely tied to artistic processing."
+    },
+    {
+      "seq": 172,
+      "sourceIndex": 1366,
+      "title": "https://api.computerender.com/generate/ piece of art is a surreal…",
+      "createdAt": "2023-05-18T20:06:01.000Z",
+      "updatedAt": "2023-12-29T06:22:31.000Z",
+      "excerpt": "https://api.computerender.com/generate/ piece of art is a surreal, complex, and highly detailed mix of physical embodiments artistically depicted in an illustrated with intricate details, highlighting the complex interplay of mechanical and biological components. a brightly colored painting, It explores symmetry and ba",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 173,
+      "sourceIndex": 1365,
+      "title": "Really Good Prompt!!",
+      "createdAt": "2023-12-30T08:55:08.000Z",
+      "updatedAt": "2023-12-30T08:55:38.000Z",
+      "excerpt": "Really Good Prompt!! https://api.computerender.com/generate/%20Catalog%20photo%20through%20the%20volumetric%20structure%203D%20shapes%20embedded%20internally%20duplicated%20like%20Russian%20dolls%20style%20in%20the%20shape%20of%20octahedrons%20getting%20progressively%20smaller,%20by%20Harmonic%20ratio%20proportions.%20",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 174,
+      "sourceIndex": 1364,
+      "title": "Sure, here is a detailed overview of all the information presented…",
+      "createdAt": "2024-01-02T22:15:40.000Z",
+      "updatedAt": "2024-01-02T22:15:43.000Z",
+      "excerpt": "Sure, here is a detailed overview of all the information presented in the YouTube video you linked: **Free AI Art Generators:** * **Microsoft products with Dolly 3:** These include Bing Image Creator, Microsoft Designer, and Microsoft Co-pilot/Bing Chat. They offer free access to Dolly 3, a powerful AI image generation",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 175,
+      "sourceIndex": 1363,
+      "title": "Copy -",
+      "createdAt": "2023-12-04T16:15:52.000Z",
+      "updatedAt": "2024-01-10T17:26:31.000Z",
+      "excerpt": "Copy - SS Driver license Bank Stament - verft information Case # U639- 723- 183 NY able Fax# 617 559 2477",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 176,
+      "sourceIndex": 1362,
+      "title": "Wedgepoint Apts : called and left a message.",
+      "createdAt": "2024-01-11T16:15:50.000Z",
+      "updatedAt": "2024-01-11T19:17:45.000Z",
+      "excerpt": "Wedgepoint Apts : called and left a message. The Eastman Reserve: left message Alexander Commons : left message Rochester Department of Planning and Development Community Development AdministratioN : called and left a message Emergency solutions grant, via 211, called and they don’t have info on it. Family emergency 58",
+      "theme": "Family",
+      "narrative": "Family-system signal relevant to identity and support structures."
+    },
+    {
+      "seq": 177,
+      "sourceIndex": 1361,
+      "title": "actraffic@alleganyco.gov",
+      "createdAt": "2024-01-25T16:00:41.000Z",
+      "updatedAt": "2024-01-25T16:01:23.000Z",
+      "excerpt": "actraffic@alleganyco.gov actraffic@alleganyco.gov mailto:actraffic@alleganyco.gov",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 178,
+      "sourceIndex": 1360,
+      "title": "approved100!!",
+      "createdAt": "2024-01-29T19:57:35.000Z",
+      "updatedAt": "2024-01-29T19:57:46.000Z",
+      "excerpt": "approved100!!",
+      "theme": "Business & Projects",
+      "narrative": "Work/build direction signal with concrete execution language."
+    },
+    {
+      "seq": 179,
+      "sourceIndex": 1359,
+      "title": "ABLE fax - 617-559-2477",
+      "createdAt": "2024-01-30T18:22:23.000Z",
+      "updatedAt": "2024-01-30T18:22:54.000Z",
+      "excerpt": "ABLE fax - 617-559-2477",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 180,
+      "sourceIndex": 1358,
+      "title": "ROMP & WOMP",
+      "createdAt": "2024-01-30T21:48:33.000Z",
+      "updatedAt": "2024-01-30T21:49:08.000Z",
+      "excerpt": "ROMP &amp WOMP",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 181,
+      "sourceIndex": 1357,
+      "title": "South Wedge",
+      "createdAt": "2024-02-02T20:23:17.000Z",
+      "updatedAt": "2024-02-02T20:23:46.000Z",
+      "excerpt": "South Wedge AppFolio",
+      "theme": "Business & Projects",
+      "narrative": "Work/build direction signal with concrete execution language."
+    },
+    {
+      "seq": 182,
+      "sourceIndex": 1356,
+      "title": "ITEMS",
+      "createdAt": "2024-02-06T00:32:27.000Z",
+      "updatedAt": "2024-02-06T00:32:30.000Z",
+      "excerpt": "ITEMS 1 at least 2 glasses of HDPE(should show a triangular recycle symbol with a 2 inside of it somewhere on the bottom) plastic jugs or jars. HDPE is preferred because strong iye solution will etch glass and cause it to break eventually. One should be 10L another should be 2L, both with lids 2. Caustic soda(500g) 3. ",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 183,
+      "sourceIndex": 1355,
+      "title": "Anikah, Your struggles are your strength!!!",
+      "createdAt": "2024-02-07T09:22:56.000Z",
+      "updatedAt": "2024-02-07T09:33:52.000Z",
+      "excerpt": "Anikah, Your struggles are your strength!!! I love you forever and just want you to know that everything is going to be alright! Always love yourself, and fight the tiger head on!! All Our Souls Are One!..And so LIVE Your Life, and Never give up!!! I pray and know that my spirit will Always look after you and protect y",
+      "theme": "Relationships",
+      "narrative": "Relational/interpersonal signal with emotionally charged framing."
+    },
+    {
+      "seq": 184,
+      "sourceIndex": 1354,
+      "title": "Rochester Social Security Office- 1866 964-2045",
+      "createdAt": "2024-02-23T17:37:43.000Z",
+      "updatedAt": "2024-02-23T18:35:07.000Z",
+      "excerpt": "Rochester Social Security Office- 1866 964-2045 200 east main st. 9-4 BPQY - benefit planning query",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 185,
+      "sourceIndex": 1353,
+      "title": "",
+      "createdAt": "2024-02-24T09:39:52.000Z",
+      "updatedAt": "2024-02-24T09:40:20.000Z",
+      "excerpt": "&lt!DOCTYPE html&gt &lthtml lang=&quoten&quot&gt &lthead&gt &ltmeta charset=&quotUTF-8&quot&gt &ltmeta name=&quotviewport&quot content=&quotwidth=device-width, initial-scale=1.0&quot&gt &lttitle&gtImage Generator&lt/title&gt &ltstyle&gt body { font-family: Arial, sans-serif; margin: 0; padding: 0; } .container { text-a",
+      "theme": "Family",
+      "narrative": "Family-system signal relevant to identity and support structures."
+    },
+    {
+      "seq": 186,
+      "sourceIndex": 1352,
+      "title": "US Department of Education",
+      "createdAt": "2024-02-28T16:26:51.000Z",
+      "updatedAt": "2024-02-28T16:28:11.000Z",
+      "excerpt": "US Department of Education Disability Information 303-696-5250",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 187,
+      "sourceIndex": 1351,
+      "title": "",
+      "createdAt": "2024-02-29T10:58:47.000Z",
+      "updatedAt": "2024-02-29T10:58:49.000Z",
+      "excerpt": "&lt!doctype html&gt &lthtml lang=&quoten&quot&gt &lthead&gt &ltmeta charset=&quotutf-8&quot&gt &ltmeta http-equiv=&quotx-ua-compatible&quot content=&quotie=edge&quot&gt &ltmeta name=&quotdescription&quot content=&quot&quot&gt &ltmeta name=&quotviewport&quot content=&quotwidth=device-width, initial-scale=1&quot&gt &ltti",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 188,
+      "sourceIndex": 1350,
+      "title": "Fax NY ABLE: 617 559 2477",
+      "createdAt": "2024-02-29T16:34:23.000Z",
+      "updatedAt": "2024-02-29T16:34:59.000Z",
+      "excerpt": "Fax NY ABLE: 617 559 2477",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 189,
+      "sourceIndex": 1349,
+      "title": "Character Ideas",
+      "createdAt": "2024-03-03T09:59:56.000Z",
+      "updatedAt": "2024-03-03T10:08:27.000Z",
+      "excerpt": "Character Ideas A little flying fairy type friend named “Curser”, who can be “guided”/“controlled” by “User”. Curser flys in 4 dimensions at least, interacting with the world around!",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 190,
+      "sourceIndex": 1348,
+      "title": "When you buy the NFT, AI upscales the image, thereby making each a…",
+      "createdAt": "2024-03-03T14:26:11.000Z",
+      "updatedAt": "2024-03-03T14:27:07.000Z",
+      "excerpt": "When you buy the NFT, AI upscales the image, thereby making each a truly unique piece!",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 191,
+      "sourceIndex": 1347,
+      "title": "15",
+      "createdAt": "2024-03-06T12:54:45.000Z",
+      "updatedAt": "2024-03-06T12:54:54.000Z",
+      "excerpt": "15",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 192,
+      "sourceIndex": 1346,
+      "title": "Code p0420",
+      "createdAt": "2024-03-06T19:20:15.000Z",
+      "updatedAt": "2024-03-06T19:20:23.000Z",
+      "excerpt": "Code p0420",
+      "theme": "Business & Projects",
+      "narrative": "Work/build direction signal with concrete execution language."
+    },
+    {
+      "seq": 193,
+      "sourceIndex": 1345,
+      "title": "Idea for frames, that are simply starting as purchasable ad space…",
+      "createdAt": "2024-03-07T07:42:19.000Z",
+      "updatedAt": "2024-03-07T07:44:27.000Z",
+      "excerpt": "Idea for frames, that are simply starting as purchasable ad space on a basic Website.",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 194,
+      "sourceIndex": 1344,
+      "title": "Fashion Concepts",
+      "createdAt": "2024-03-07T08:50:03.000Z",
+      "updatedAt": "2024-03-07T08:56:21.000Z",
+      "excerpt": "Fashion Concepts A 70s leisure suit for a male, with bell bottoms, bell wrists, suit style layers, petty coat, nickers variations, hoodies, unzippable flaps and panels. The seam stitching is Costa Rican style borrowed from the coats. Same ideas variations using leather. Super comfortable shoes on the inside, and all ed",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 195,
+      "sourceIndex": 1343,
+      "title": "Regarding schooling etc; The whole reason I ever ended up going to…",
+      "createdAt": "2024-03-12T21:05:12.000Z",
+      "updatedAt": "2024-03-12T21:40:11.000Z",
+      "excerpt": "Regarding schooling etc; The whole reason I ever ended up going to college was because of the fact that finding time and energy to actually pursue the things I was interested in while also just trying to survive, working etc, didn’t feel possible. I took out student loans for thousands of dollars and took on the challe",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 196,
+      "sourceIndex": 1342,
+      "title": "Animation Technique for AI video generation: Every frame must shift…",
+      "createdAt": "2024-03-13T07:36:11.000Z",
+      "updatedAt": "2024-03-13T07:39:00.000Z",
+      "excerpt": "Animation Technique for AI video generation: Every frame must shift between zoom in and zoom out, whereby then pairing each with the one before it as a cubit of data to prompt the next frame…",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 197,
+      "sourceIndex": 1341,
+      "title": "Idea for NFTs: With an Open Addition; someone can buy a copy, or someone…",
+      "createdAt": "2024-03-13T08:21:11.000Z",
+      "updatedAt": "2024-03-13T08:24:08.000Z",
+      "excerpt": "Idea for NFTs: With an Open Addition; someone can buy a copy, or someone can buy the rights to distribution, whereby they would be able to sell copies. The original creator retains any preset royalty percentage.",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 198,
+      "sourceIndex": 1340,
+      "title": "Remember: Creating a on demand street team, whereby the sales staff…",
+      "createdAt": "2024-03-13T08:37:20.000Z",
+      "updatedAt": "2024-03-13T08:38:10.000Z",
+      "excerpt": "Remember: Creating a on demand street team, whereby the sales staff pay $5 to unlock",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 199,
+      "sourceIndex": 1339,
+      "title": "Interesting",
+      "createdAt": "2024-03-15T10:11:27.000Z",
+      "updatedAt": "2024-03-15T10:11:37.000Z",
+      "excerpt": "Interesting",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    },
+    {
+      "seq": 200,
+      "sourceIndex": 1338,
+      "title": "Interesting",
+      "createdAt": "2024-03-15T10:11:27.000Z",
+      "updatedAt": "2024-03-15T10:11:37.000Z",
+      "excerpt": "Interesting",
+      "theme": "Personal",
+      "narrative": "Personal reflection signal; context likely clarified by neighboring notes."
+    }
+  ]
+}

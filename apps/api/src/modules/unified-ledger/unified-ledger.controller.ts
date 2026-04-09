@@ -35,7 +35,7 @@ export class UnifiedLedgerController {
 
   @Get('unified-ledger/records')
   async list(
-    @CurrentUser() _user: { id?: string; sub?: string },
+    @CurrentUser() user: { id?: string; sub?: string },
     @Query('kind') kind?: UnifiedRecordKind,
     @Query('status') status?: UnifiedRecordStatus,
     @Query('lane') lane?: UnifiedWorkLane,
@@ -47,8 +47,9 @@ export class UnifiedLedgerController {
   }
 
   @Get('unified-ledger/records/:id')
-  async get(@CurrentUser() _user: { id?: string; sub?: string }, @Param('id') id: string) {
-    return this.ledger.getRecord(id);
+  async get(@CurrentUser() user: { id?: string; sub?: string }, @Param('id') id: string) {
+    const userId = this.requireUserId(user);
+    return this.ledger.getRecord(id, userId);
   }
 
   @Get('unified-ledger/records/:id/connections')
@@ -58,44 +59,49 @@ export class UnifiedLedgerController {
   }
 
   @Post('unified-ledger/records')
-  async create(@CurrentUser() _user: { id?: string; sub?: string }, @Body() body: any) {
-    return this.ledger.createRecord(body);
+  async create(@CurrentUser() user: { id?: string; sub?: string }, @Body() body: any) {
+    const userId = this.requireUserId(user);
+    return this.ledger.createRecord({ ...body, owner: userId, source: body.source || 'api' });
   }
 
   @Patch('unified-ledger/records/:id')
   async patch(
-    @CurrentUser() _user: { id?: string; sub?: string },
+    @CurrentUser() user: { id?: string; sub?: string },
     @Param('id') id: string,
     @Body() body: any
   ) {
-    return this.ledger.updateRecord(id, body);
+    const userId = this.requireUserId(user);
+    return this.ledger.updateRecord(id, { ...body, owner: userId }, userId);
   }
 
   @Post('unified-ledger/records/:id/vote')
   async vote(
-    @CurrentUser() _user: { id?: string; sub?: string },
+    @CurrentUser() user: { id?: string; sub?: string },
     @Param('id') id: string,
     @Body() body: { direction: 'up' | 'down' }
   ) {
-    return this.ledger.voteRecord(id, body.direction);
+    const userId = this.requireUserId(user);
+    return this.ledger.voteRecord(id, body.direction, userId);
   }
 
   @Post('unified-ledger/records/:id/feedback')
   async feedback(
-    @CurrentUser() _user: { id?: string; sub?: string },
+    @CurrentUser() user: { id?: string; sub?: string },
     @Param('id') id: string,
     @Body() body: any
   ) {
-    return this.ledger.addFeedbackIteration(id, body);
+    const userId = this.requireUserId(user);
+    return this.ledger.addFeedbackIteration(id, body, userId);
   }
 
   @Post('unified-ledger/records/:id/links')
   async link(
-    @CurrentUser() _user: { id?: string; sub?: string },
+    @CurrentUser() user: { id?: string; sub?: string },
     @Param('id') id: string,
     @Body() body: any
   ) {
-    return this.ledger.addFunctionalLink(id, body);
+    const userId = this.requireUserId(user);
+    return this.ledger.addFunctionalLink(id, body, userId);
   }
 
   @Post('unified-ledger/ingest/orchestration')
@@ -104,8 +110,9 @@ export class UnifiedLedgerController {
   }
 
   @Get('unified-ledger/grid')
-  async grid(@CurrentUser() _user: { id?: string; sub?: string }) {
-    return this.ledger.getGrid();
+  async grid(@CurrentUser() user: { id?: string; sub?: string }) {
+    const userId = this.requireUserId(user);
+    return this.ledger.getGrid(userId);
   }
 
   @Get('timeline/events')
@@ -161,6 +168,27 @@ export class UnifiedLedgerController {
   ) {
     const userId = this.requireUserId(user);
     return this.ledger.deleteTimelineEvent(id, userId);
+  }
+
+  @Post('timeline/personal/bootstrap')
+  async bootstrapPersonalTimeline(
+    @CurrentUser()
+    user: {
+      id?: string;
+      sub?: string;
+      email?: string;
+      name?: string;
+      role?: string;
+      roles?: string[];
+    }
+  ) {
+    const userId = this.requireUserId(user);
+    return this.ledger.bootstrapPersonalTimeline(userId, {
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      roles: user.roles,
+    });
   }
 
   @Post('goals')
@@ -253,7 +281,7 @@ export class UnifiedLedgerController {
   // Compatibility routes for existing frontend pages under unified-ledger namespace.
   @Get('unified-ledger/tasks')
   async listTasks(
-    @CurrentUser() _user: { id?: string; sub?: string },
+    @CurrentUser() user: { id?: string; sub?: string },
     @Query('status') status?: UnifiedRecordStatus,
     @Query('lane') lane?: UnifiedWorkLane,
     @Query('horizon') horizon?: UnifiedWorkHorizon,
@@ -264,8 +292,9 @@ export class UnifiedLedgerController {
   }
 
   @Get('unified-ledger/tasks/:id')
-  async getTask(@CurrentUser() _user: { id?: string; sub?: string }, @Param('id') id: string) {
-    return this.ledger.getRecord(id);
+  async getTask(@CurrentUser() user: { id?: string; sub?: string }, @Param('id') id: string) {
+    const userId = this.requireUserId(user);
+    return this.ledger.getRecord(id, userId);
   }
 
   @Post('unified-ledger/tasks')
@@ -281,16 +310,17 @@ export class UnifiedLedgerController {
 
   @Patch('unified-ledger/tasks/:id')
   async patchTask(
-    @CurrentUser() _user: { id?: string; sub?: string },
+    @CurrentUser() user: { id?: string; sub?: string },
     @Param('id') id: string,
     @Body() body: any
   ) {
-    return this.ledger.updateRecord(id, body);
+    const userId = this.requireUserId(user);
+    return this.ledger.updateRecord(id, { ...body, owner: userId }, userId);
   }
 
   @Get('suggestions')
   async listSuggestions(
-    @CurrentUser() _user: { id?: string; sub?: string },
+    @CurrentUser() user: { id?: string; sub?: string },
     @Query('status') status?: UnifiedRecordStatus,
     @Query('lane') lane?: UnifiedWorkLane,
     @Query('horizon') horizon?: UnifiedWorkHorizon,
@@ -308,11 +338,9 @@ export class UnifiedLedgerController {
   }
 
   @Get('suggestions/:id')
-  async getSuggestion(
-    @CurrentUser() _user: { id?: string; sub?: string },
-    @Param('id') id: string
-  ) {
-    return this.ledger.getRecord(id);
+  async getSuggestion(@CurrentUser() user: { id?: string; sub?: string }, @Param('id') id: string) {
+    const userId = this.requireUserId(user);
+    return this.ledger.getRecord(id, userId);
   }
 
   @Post('suggestions')
@@ -329,19 +357,21 @@ export class UnifiedLedgerController {
 
   @Patch('suggestions/:id')
   async patchSuggestion(
-    @CurrentUser() _user: { id?: string; sub?: string },
+    @CurrentUser() user: { id?: string; sub?: string },
     @Param('id') id: string,
     @Body() body: any
   ) {
-    return this.ledger.updateRecord(id, body);
+    const userId = this.requireUserId(user);
+    return this.ledger.updateRecord(id, { ...body, owner: userId }, userId);
   }
 
   @Post('suggestions/:id/vote')
   async voteSuggestion(
-    @CurrentUser() _user: { id?: string; sub?: string },
+    @CurrentUser() user: { id?: string; sub?: string },
     @Param('id') id: string,
     @Body() body: { direction: 'up' | 'down' }
   ) {
-    return this.ledger.voteRecord(id, body.direction);
+    const userId = this.requireUserId(user);
+    return this.ledger.voteRecord(id, body.direction, userId);
   }
 }

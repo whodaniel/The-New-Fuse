@@ -18,8 +18,8 @@ interface MessageBubbleProps {
 }
 
 // ⚡ Bolt: Wrapped MessageBubble in React.memo to prevent O(n) re-renders
-// of the entire message list on every keystroke or update in the chat interface.
-// This significantly improves performance in chat applications with long message histories.
+// of the entire message list on every keystroke in the chat input.
+// This significantly improves typing performance in long chat rooms.
 export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({ message, className }) => {
   const isAgent = message.sender === 'agent';
 
@@ -61,4 +61,5 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({ message
     </div>
   );
 });
+
 MessageBubble.displayName = 'MessageBubble';

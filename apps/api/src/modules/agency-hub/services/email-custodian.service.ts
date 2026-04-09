@@ -6,8 +6,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import { execFile as execFileCallback } from 'node:child_process';
 import { promisify } from 'node:util';

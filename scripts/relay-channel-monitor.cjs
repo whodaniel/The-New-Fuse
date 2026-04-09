@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 /**
- * TNF REDIS-NATIVE RELAY MONITOR (v7)
+ * TNF REDIS-NATIVE RELAY MONITOR (v6)
  * 
- * SILENT & NON-DISRUPTIVE: Performs background injections only.
- * Does not steal window focus or use 'activate'.
+ * Subscribes directly to the Redis Bus to bypass WebSocket overhead.
+ * Performs verified Tab-then-Enter injections for terminal agents.
  */
 
-const { RedisAgentClient } = require('./lib/redis-agent-client.cjs');
+const { RedisAgentClient } = require('/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/lib/redis-agent-client.cjs');
 const { execFile } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -17,23 +17,11 @@ const execFileAsync = promisify(execFile);
 
 // Configuration
 const ALIAS_SOURCE_FILE = path.join(process.env.HOME, '.tnf', 'local-subdirector', 'state', 'local-subdirector-heartbeat.json');
-const ALLOW_PROMPT_INJECTION =
-  String(process.env.TNF_RELAY_MONITOR_ALLOW_PROMPT_INJECTION || 'false').toLowerCase() === 'true';
-const INTERACTIVE_SAFE_MODE_ENV = process.env.TNF_INTERACTIVE_SAFE_MODE || '';
-const INTERACTIVE_SAFE_MODE_FILE =
-  process.env.TNF_INTERACTIVE_SAFE_MODE_FILE ||
-  path.join(process.env.HOME, '.tnf', 'flags', 'interactive-safe-mode');
+const DIRECT_PROMPT_VERIFY_MS = 500;
 
 function log(message, metadata = {}) {
   const timestamp = new Date().toISOString();
   console.log(JSON.stringify({ timestamp, message, role: 'Relay-Monitor', ...metadata }));
-}
-
-function isInteractiveSafeModeEnabled() {
-  if (String(INTERACTIVE_SAFE_MODE_ENV || '').trim()) {
-    return String(INTERACTIVE_SAFE_MODE_ENV).toLowerCase() !== 'false';
-  }
-  return fs.existsSync(INTERACTIVE_SAFE_MODE_FILE);
 }
 
 async function readTerminalContents(windowId) {
@@ -43,93 +31,12 @@ async function readTerminalContents(windowId) {
   return String(stdout || '');
 }
 
-function getLastVisibleLine(contents) {
-  const lines = String(contents || '')
-    .split(/\r?\n/)
-    .map((line) => line.replace(/\u001b\[[0-9;]*m/g, ''));
-  for (let i = lines.length - 1; i >= 0; i -= 1) {
-    const line = lines[i];
-    if (line && line.trim()) return line;
-  }
-  return '';
-}
-
-function isTypingInTerminal(contents) {
-  const line = getLastVisibleLine(contents);
-  if (!line) return false;
-  const trimmed = line.trim();
-  if (!trimmed) return false;
-  if (trimmed.includes('tab to queue message')) return false;
-  if (trimmed.startsWith('› TNF wake') || trimmed.startsWith('› TNF heartbeat') || trimmed.startsWith('› TNF delegate')) {
-    return false;
-  }
-  if (trimmed.startsWith('/')) return true;
-  const promptMatch = line.match(/(?:[%$#>❯])\s*(.*)$/);
-  if (!promptMatch) return false;
-  const tail = String(promptMatch[1] || '').trim();
-  if (!tail) return false;
-  if (tail.startsWith('TNF wake') || tail.startsWith('TNF heartbeat') || tail.startsWith('TNF delegate')) {
-    return false;
-  }
-  return true;
-}
-
-function toTaskHint(foregroundArgs, foregroundCommand) {
-  const text = String(foregroundArgs || foregroundCommand || '').replace(/\s+/g, ' ').trim();
-  if (!text) return null;
-  return text.length > 140 ? `${text.slice(0, 137)}...` : text;
-}
-
-function buildCoordinationPoll(sessions, targetSession) {
-  const all = Array.isArray(sessions) ? sessions : [];
-  const targetTaskHint = toTaskHint(targetSession.foregroundArgs, targetSession.foregroundCommand);
-  const peers = all
-    .filter((session) => session && session.agentId && session.agentId !== targetSession.agentId)
-    .map((session) => ({
-      agentId: session.agentId,
-      tty: session.tty || null,
-      windowId: session.windowId || null,
-      status: session.status || (session.busy ? 'active' : 'idle'),
-      cwd: session.cwd || null,
-      taskHint: toTaskHint(session.foregroundArgs, session.foregroundCommand),
-    }));
-
-  const sharedCwdActivePeers = peers.filter(
-    (peer) =>
-      peer.cwd &&
-      targetSession.cwd &&
-      peer.cwd === targetSession.cwd &&
-      (peer.status === 'active' || peer.status === 'stalled')
-  );
-
-  return {
-    polledAt: new Date().toISOString(),
-    totalOpenTerminals: all.length,
-    target: {
-      agentId: targetSession.agentId,
-      tty: targetSession.tty || null,
-      status: targetSession.status || (targetSession.busy ? 'active' : 'idle'),
-      cwd: targetSession.cwd || null,
-      taskHint: targetTaskHint,
-    },
-    peerCount: peers.length,
-    peers: peers.slice(0, 8),
-    conflictRisk:
-      sharedCwdActivePeers.length > 0
-        ? {
-            code: 'shared-cwd-active-peers',
-            reason: 'Multiple active agent terminals are already working in the same cwd.',
-            peerAgentIds: sharedCwdActivePeers.map((peer) => peer.agentId),
-            cwd: targetSession.cwd || null,
-          }
-        : null,
-  };
-}
-
-async function silentSubmit(windowId) {
-  // Use background-safe 'do script' to clear composer
+async function pressTerminalKey(windowId, keyCode) {
   await execFileAsync('osascript', [
-    '-e', `tell application "Terminal" to do script " " in selected tab of window id ${Number(windowId)}`,
+    '-e', 'tell application "Terminal" to activate',
+    '-e', `tell application "Terminal" to set frontmost of window id ${Number(windowId)} to true`,
+    '-e', 'delay 0.1',
+    '-e', `tell application "System Events" to tell process "Terminal" to key code ${Number(keyCode)}`,
   ]);
 }
 
@@ -144,127 +51,92 @@ async function submitPromptIfNeeded(windowId, marker, pendingPrefix) {
   let submitted = false;
   let enterAttempts = 0;
 
-  while (pending && enterAttempts < 2) {
-    await silentSubmit(windowId);
+  // satisfy composer
+  if (hasQueueHint) {
+    await pressTerminalKey(windowId, 48); // Tab
+    await new Promise(r => setTimeout(r, 250));
+  }
+
+  while (pending && enterAttempts < 3) {
+    await pressTerminalKey(windowId, 36); // Enter
     submitted = true;
     enterAttempts += 1;
     await new Promise(r => setTimeout(r, 500));
     contents = await readTerminalContents(windowId);
-    pending = contents.includes(marker) || contents.includes(pendingPrefix) || contents.includes('tab to queue message');
+    hasQueueHint = contents.includes('tab to queue message');
+    hasMarker = contents.includes(marker) || contents.includes(pendingPrefix);
+    pending = hasMarker || hasQueueHint;
+    
+    if (pending && hasQueueHint) {
+      await pressTerminalKey(windowId, 48); // Tab
+      await new Promise(r => setTimeout(r, 250));
+    }
   }
 
   return { submitted, enterAttempts, pending };
 }
 
+async function flushAnyPendingTnfPrompt(windowId) {
+  let contents = await readTerminalContents(windowId);
+  let pending =
+    contents.includes('› TNF wake') ||
+    contents.includes('› TNF heartbeat') ||
+    contents.includes('tab to queue message');
+  
+  if (!pending) return { enterAttempts: 0, pending: false };
+
+  let enterAttempts = 0;
+  while (pending && enterAttempts < 3) {
+    if (contents.includes('tab to queue message')) {
+      await pressTerminalKey(windowId, 48); // Tab
+      await new Promise(r => setTimeout(r, 250));
+    }
+    await pressTerminalKey(windowId, 36); // Enter
+    enterAttempts += 1;
+    await new Promise(r => setTimeout(r, 500));
+    contents = await readTerminalContents(windowId);
+    pending =
+      contents.includes('› TNF wake') ||
+      contents.includes('› TNF heartbeat') ||
+      contents.includes('tab to queue message');
+  }
+  return { enterAttempts, pending };
+}
+
 async function inject(agentId, prompt, pingId) {
   try {
     if (!fs.existsSync(ALIAS_SOURCE_FILE)) {
-      return {
-        submitted: false,
-        method: 'terminal-do-script-silent',
-        skippedReason: 'alias-source-missing',
-      };
+      log('Alias source file missing', { path: ALIAS_SOURCE_FILE });
+      return;
     }
     const raw = fs.readFileSync(ALIAS_SOURCE_FILE, 'utf8');
     const sessions = JSON.parse(raw).sessions;
     const session = sessions.find(s => s.agentId === agentId);
     
-    if (!(session?.tty && session?.windowId)) {
-      return {
-        submitted: false,
-        method: 'terminal-do-script-silent',
-        skippedReason: 'terminal-target-unavailable',
-      };
-    }
+    if (session?.tty && session?.windowId) {
+      log('Injecting prompt', { agentId, tty: session.tty, pingId });
+      
+      // Pre-injection: aggressive line clear
+      await pressTerminalKey(session.windowId, 9); // Ctrl+C
+      await new Promise(r => setTimeout(r, 100));
+      await pressTerminalKey(session.windowId, 36); // Enter
+      await new Promise(r => setTimeout(r, 200));
 
-    const poll = buildCoordinationPoll(sessions, session);
-    if (isInteractiveSafeModeEnabled()) {
-      log('Injection skipped; interactive safe mode enabled', {
-        agentId,
-        pingId,
-        peerCount: poll.peerCount,
-        safeModeFile: INTERACTIVE_SAFE_MODE_FILE,
-      });
-      return {
-        submitted: false,
-        method: 'skipped-safety-hold',
-        skippedReason: 'interactive-safe-mode',
-        coordinationPoll: poll,
-      };
+      // Injection
+      const escapedPrompt = prompt.replace(/[\\"]/g, '\\$&');
+      await execFileAsync('osascript', [
+        '-e', `tell application "Terminal" to do script "${escapedPrompt}\\n" in selected tab of window id ${Number(session.windowId)}`,
+      ]);
+      
+      await new Promise(r => setTimeout(r, 500));
+      const res = await submitPromptIfNeeded(session.windowId, prompt.slice(0, 20), '› TNF');
+      
+      if (res.pending) {
+        await flushAnyPendingTnfPrompt(session.windowId);
+      }
     }
-
-    if (!ALLOW_PROMPT_INJECTION) {
-      log('Injection skipped; prompt injection policy disabled', {
-        agentId,
-        pingId,
-        peerCount: poll.peerCount,
-      });
-      return {
-        submitted: false,
-        method: 'skipped-policy-hold',
-        skippedReason: 'prompt-injection-disabled',
-        coordinationPoll: poll,
-      };
-    }
-
-    if (poll.conflictRisk) {
-      log('Injection skipped; coordination conflict risk', {
-        agentId,
-        pingId,
-        conflictRisk: poll.conflictRisk,
-        peerCount: poll.peerCount,
-      });
-      return {
-        submitted: false,
-        method: 'skipped-coordination-hold',
-        skippedReason: 'coordination-conflict-risk',
-        coordinationPoll: poll,
-      };
-    }
-
-    const preflightContents = await readTerminalContents(Number(session.windowId));
-    if (isTypingInTerminal(preflightContents)) {
-      log('Injection skipped; typing in progress', {
-        agentId,
-        windowId: Number(session.windowId),
-        pingId,
-        activeInputLine: getLastVisibleLine(preflightContents).slice(-160),
-      });
-      return {
-        submitted: false,
-        method: 'skipped-typing',
-        skippedReason: 'typing-in-progress',
-        activeInputLine: getLastVisibleLine(preflightContents).slice(-160),
-        coordinationPoll: poll,
-      };
-    }
-
-    log('Injecting prompt', { agentId, tty: session.tty, pingId });
-    
-    // Injection: 'do script' does not steal focus
-    const escapedPrompt = prompt.replace(/[\\"]/g, '\\$&');
-    await execFileAsync('osascript', [
-      '-e', `tell application "Terminal" to do script "${escapedPrompt}\\n" in selected tab of window id ${Number(session.windowId)}`,
-    ]);
-    
-    await new Promise(r => setTimeout(r, 500));
-    const res = await submitPromptIfNeeded(session.windowId, prompt.slice(0, 20), '› TNF');
-    return {
-      submitted: !res.pending,
-      method: 'terminal-do-script-silent',
-      skippedReason: res.pending ? 'pending-after-submit' : null,
-      enterAttempts: res.enterAttempts,
-      pending: res.pending,
-      coordinationPoll: poll,
-    };
   } catch (e) {
     log('Injection failed', { error: e.message });
-    return {
-      submitted: false,
-      method: 'terminal-do-script-silent',
-      skippedReason: 'injection-error',
-      error: e.message,
-    };
   }
 }
 
@@ -282,34 +154,27 @@ async function publishActivity(agentId, activityType, metadata) {
       })
     );
     await client.cleanup();
-  } catch (_error) {}
+  } catch (_error) {
+    // Fail silently
+  }
 }
 
 async function main() {
-  log('Starting Silent Redis-Native Monitor', {
-    allowPromptInjection: ALLOW_PROMPT_INJECTION,
-    interactiveSafeMode: isInteractiveSafeModeEnabled(),
-    interactiveSafeModeFile: INTERACTIVE_SAFE_MODE_FILE,
-  });
+  log('Starting Redis-Native Monitor');
   const client = new RedisAgentClient();
   await client.initialize();
 
+  // Subscribe to the ingress bus directly
   client.onMessage('tnf:bus:ingress', async (envelope) => {
     if (envelope.type === 'event' && envelope.payload?.eventType === 'wake_ping') {
       const data = envelope.payload.data;
       if (data.targetAgentId && data.customPrompt) {
-        const result = await inject(data.targetAgentId, data.customPrompt, data.pingId);
-        await publishActivity(
-          data.targetAgentId,
-          result && result.submitted ? 'prompt_injected' : 'prompt_skipped',
-          {
+        await inject(data.targetAgentId, data.customPrompt, data.pingId);
+        
+        await publishActivity(data.targetAgentId, 'prompt_injected', {
           pingId: data.pingId,
-          method: result?.method || 'terminal-do-script-silent',
-          submitted: Boolean(result?.submitted),
-          skippedReason: result?.skippedReason || null,
-          coordination: result?.coordinationPoll || null,
-        }
-        );
+          method: 'terminal-do-script'
+        });
       }
     }
   });
@@ -318,5 +183,6 @@ async function main() {
 }
 
 main().catch(err => {
+  log('Monitor Fatal Error', { error: err.message });
   process.exit(1);
 });

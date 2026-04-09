@@ -99,6 +99,7 @@ const PlanDetailPage = ({ id }: { id?: string }) => (
 );
 const TimelinePage = lazy(() => import('./pages/Timeline'));
 const MacroTimelinePage = lazy(() => import('./pages/Timeline/MacroTimelinePage'));
+const TimelineModulePage = lazy(() => import('./pages/Timeline/TimelineModulePage'));
 
 // Additional Admin components
 const AdminUserManagement = lazy(() => import('./pages/Admin/UserManagement'));
@@ -279,6 +280,37 @@ const MarketplaceRootRoute = () => {
     <Suspense fallback={<LoadingFallback name="Landing" />}>
       <OnboardingFlowPage />
     </Suspense>
+  );
+};
+
+const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
+  <RequireAuth>
+    <RequireMembership>{children}</RequireMembership>
+  </RequireAuth>
+);
+
+// Redirect component to force reload to static HTML pages
+const RedirectToStatic = ({ to }: { to: string }) => {
+  if (typeof window !== 'undefined') {
+    window.location.href = to;
+  }
+  return null;
+};
+
+const MarketplaceRootRoute = () => {
+  if (typeof window === 'undefined') {
+    return <RedirectToStatic to="/" />;
+  }
+
+  const host = window.location.hostname;
+  const isMarketplaceHost = host === 'marketplace.thenewfuse.com';
+
+  return isMarketplaceHost ? (
+    <Suspense fallback={<LoadingFallback name="Marketplace" />}>
+      <MarketplacePublicPage />
+    </Suspense>
+  ) : (
+    <RedirectToStatic to="/" />
   );
 };
 
@@ -1036,7 +1068,7 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
                 path="/settings/general"
                 element={
                   <RequireMemberAccess>
-                    <GeneralSettings />
+                    <SettingsGeneral />
                   </RequireMemberAccess>
                 }
               />
@@ -1185,6 +1217,14 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
                 element={
                   <RequireMemberAccess>
                     <MacroTimelinePage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/timeline/module"
+                element={
+                  <RequireMemberAccess>
+                    <TimelineModulePage />
                   </RequireMemberAccess>
                 }
               />

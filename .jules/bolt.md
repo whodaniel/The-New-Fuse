@@ -15,7 +15,3 @@
 ## 2026-03-03 - O(n) Array Loops in High-Frequency Input Handlers
 **Learning:** Functions evaluating entirely new object arrays (`groupMessagesByDate`) or wrapping items blindly (`MessageGroup`) can unintentionally cause an O(n) re-evaluation block that stalls input rendering. Even though nested items (`HistoricalMessage`) were memoized, the array transformation itself on keystroke (triggered by state in parent `ChatContainer`) was a major CPU block.
 **Action:** When a parent container has high-frequency updates (e.g., text inputs), always ensure derived complex arrays and mapping wrapper components are shielded with `useMemo` and `React.memo` respectively, to prevent unnecessary object instantiations from freezing the main thread.
-
-## 2024-05-24 - High-Frequency State Updates and Mapped Arrays
-**Learning:** In React components with high-frequency state updates like text input keystrokes, even if the individual message items are memoized (`React.memo`), mapping over a large array (like `messages.map(...)`) directly in the render body creates an O(n) re-evaluation that can block the main thread.
-**Action:** Always wrap the array mapping logic itself in `React.useMemo` (e.g., `useMemo(() => messages.map(...), [messages, agents])`) to completely bypass the O(n) iteration when unrelated state (like typing) updates.

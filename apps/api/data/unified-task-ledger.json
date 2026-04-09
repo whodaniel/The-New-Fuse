@@ -13,9 +13,7 @@
         "tenantId": "tnf-prod",
         "packetId": "4d8c8f09-5d9f-4d14-9b8b-2d6536a4bf5a",
         "fromAgentId": "agent-alpha",
-        "targetAgentIds": [
-          "agent-beta"
-        ],
+        "targetAgentIds": ["agent-beta"],
         "priority": "normal"
       }
     },
@@ -32,6 +30,666 @@
         "packetId": "4d8c8f09-5d9f-4d14-9b8b-2d6536a4bf5a",
         "agentId": "agent-beta",
         "status": "received"
+      }
+    },
+    {
+      "id": "evt_mn1g1aw0_8qb7vj",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2016-06-23T16:32:45.000Z",
+      "payload": {
+        "title": "Life Segment 1 (Notes 1-25)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (1-25).",
+        "point": 17,
+        "category": "Personal",
+        "segment": "Personal",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:1-25",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start1-size50.json",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start51-size50.json",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start101-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 1-25",
+          "Redacted extraction batches (start1/51/101 size50)"
+        ],
+        "storyKey": "apple-notes-seq-1-25",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T07:36:44.640Z"
+      }
+    },
+    {
+      "id": "evt_mn1g1aw0_n6cq76",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2017-11-07T18:07:12.000Z",
+      "payload": {
+        "title": "Life Segment 2 (Notes 26-50)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (26-50).",
+        "point": 33,
+        "category": "Personal",
+        "segment": "Personal",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:26-50",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start1-size50.json",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start51-size50.json",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start101-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 26-50",
+          "Redacted extraction batches (start1/51/101 size50)"
+        ],
+        "storyKey": "apple-notes-seq-26-50",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T07:36:44.640Z"
+      }
+    },
+    {
+      "id": "evt_mn1g1aw0_3ia032",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2021-06-23T19:12:40.000Z",
+      "payload": {
+        "title": "Life Segment 3 (Notes 51-75)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (51-75).",
+        "point": 50,
+        "category": "Personal",
+        "segment": "Personal",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:51-75",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start1-size50.json",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start51-size50.json",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start101-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 51-75",
+          "Redacted extraction batches (start1/51/101 size50)"
+        ],
+        "storyKey": "apple-notes-seq-51-75",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T07:36:44.640Z"
+      }
+    },
+    {
+      "id": "evt_mn1g1aw0_75ckaa",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2021-08-27T05:26:01.000Z",
+      "payload": {
+        "title": "Life Segment 4 (Notes 76-100)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (76-100).",
+        "point": 67,
+        "category": "Personal",
+        "segment": "Personal",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:76-100",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start1-size50.json",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start51-size50.json",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start101-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 76-100",
+          "Redacted extraction batches (start1/51/101 size50)"
+        ],
+        "storyKey": "apple-notes-seq-76-100",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T07:36:44.640Z"
+      }
+    },
+    {
+      "id": "evt_mn1g1aw0_t4ztq3",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2021-10-07T04:56:36.000Z",
+      "payload": {
+        "title": "Life Segment 5 (Notes 101-125)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (101-125).",
+        "point": 83,
+        "category": "Personal",
+        "segment": "Personal",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:101-125",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start1-size50.json",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start51-size50.json",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start101-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 101-125",
+          "Redacted extraction batches (start1/51/101 size50)"
+        ],
+        "storyKey": "apple-notes-seq-101-125",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T07:36:44.640Z"
+      }
+    },
+    {
+      "id": "evt_mn1g1aw0_mv8tfn",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2022-05-12T14:36:56.000Z",
+      "payload": {
+        "title": "Life Segment 6 (Notes 126-150)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (126-150).",
+        "point": 100,
+        "category": "Personal",
+        "segment": "Personal",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:126-150",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start1-size50.json",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start51-size50.json",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start101-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 126-150",
+          "Redacted extraction batches (start1/51/101 size50)"
+        ],
+        "storyKey": "apple-notes-seq-126-150",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T07:36:44.640Z"
+      }
+    },
+    {
+      "id": "evt_mn1gd6bq_h9nwxu",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2022-05-27T03:14:56.000Z",
+      "payload": {
+        "title": "Life Segment 7 (Notes 151-175)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (151-175).",
+        "point": 92,
+        "category": "Personal",
+        "segment": "Personal",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:151-175",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start151-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 151-175",
+          "Redacted extraction batch (start151 size50)"
+        ],
+        "storyKey": "apple-notes-seq-151-175",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T07:45:58.598Z"
+      }
+    },
+    {
+      "id": "evt_mn1gd6bq_t3gvfx",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-01-11T16:15:50.000Z",
+      "payload": {
+        "title": "Life Segment 8 (Notes 176-200)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (176-200).",
+        "point": 100,
+        "category": "Personal",
+        "segment": "Personal",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:176-200",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start151-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 176-200",
+          "Redacted extraction batch (start151 size50)"
+        ],
+        "storyKey": "apple-notes-seq-176-200",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T07:45:58.598Z"
+      }
+    },
+    {
+      "id": "evt_mn1vhej2_703hnk",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-08-04T14:55:15.000Z",
+      "payload": {
+        "title": "Life Segment 9 (Notes 201-225)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (201-225).",
+        "point": 108,
+        "category": "Personal",
+        "segment": "Personal",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:201-225",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start201-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 201-225",
+          "Redacted extraction batch (start201 size50)"
+        ],
+        "storyKey": "apple-notes-seq-201-225",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T14:49:10.094Z"
+      }
+    },
+    {
+      "id": "evt_mn1vhej3_9udigk",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-09-24T18:14:33.000Z",
+      "payload": {
+        "title": "Life Segment 10 (Notes 226-250)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (226-250).",
+        "point": 116,
+        "category": "Personal",
+        "segment": "Personal",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:226-250",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start201-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 226-250",
+          "Redacted extraction batch (start201 size50)"
+        ],
+        "storyKey": "apple-notes-seq-226-250",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T14:49:10.095Z"
+      }
+    },
+    {
+      "id": "evt_mn1vpf87_ovwx3t",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-09-27T19:51:11.000Z",
+      "payload": {
+        "title": "Life Segment 11 (Notes 251-275)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (251-275).",
+        "point": 124,
+        "category": "Personal",
+        "segment": "Personal",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:251-275",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start251-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 251-275",
+          "Redacted extraction batch (start251 size50)"
+        ],
+        "storyKey": "apple-notes-seq-251-275",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T14:55:24.247Z"
+      }
+    },
+    {
+      "id": "evt_mn1vpf87_q6dveg",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-10-21T07:29:01.000Z",
+      "payload": {
+        "title": "Life Segment 12 (Notes 276-300)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (276-300).",
+        "point": 132,
+        "category": "Personal",
+        "segment": "Personal",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:276-300",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start251-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 276-300",
+          "Redacted extraction batch (start251 size50)"
+        ],
+        "storyKey": "apple-notes-seq-276-300",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T14:55:24.247Z"
+      }
+    },
+    {
+      "id": "evt_mn1w1dwz_zwove0",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-10-23T19:52:40.000Z",
+      "payload": {
+        "title": "Life Segment 13 (Notes 301-325)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (301-325).",
+        "point": 140,
+        "category": "Business & Projects",
+        "segment": "Business & Projects",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:301-325",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start301-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 301-325",
+          "Redacted extraction batch (start301 size50)"
+        ],
+        "storyKey": "apple-notes-seq-301-325",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T15:04:42.419Z"
+      }
+    },
+    {
+      "id": "evt_mn1w1dwz_3fxh45",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-10-25T21:19:15.000Z",
+      "payload": {
+        "title": "Life Segment 14 (Notes 326-350)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (326-350).",
+        "point": 148,
+        "category": "Personal",
+        "segment": "Personal",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:326-350",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start301-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 326-350",
+          "Redacted extraction batch (start301 size50)"
+        ],
+        "storyKey": "apple-notes-seq-326-350",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T15:04:42.419Z"
+      }
+    },
+    {
+      "id": "evt_mn1wirlq_zmbp8n",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-10-25T11:31:24.000Z",
+      "payload": {
+        "title": "Life Segment 15 (Notes 351-375)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (351-375).",
+        "point": 156,
+        "category": "Business & Projects",
+        "segment": "Business & Projects",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:351-375",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start351-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 351-375",
+          "Redacted extraction batch (start351 size50)"
+        ],
+        "storyKey": "apple-notes-seq-351-375",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T15:18:13.310Z"
+      }
+    },
+    {
+      "id": "evt_mn1wirlq_7xag9d",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-10-26T10:14:55.000Z",
+      "payload": {
+        "title": "Life Segment 16 (Notes 376-400)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (376-400).",
+        "point": 164,
+        "category": "Business & Projects",
+        "segment": "Business & Projects",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:376-400",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start351-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 376-400",
+          "Redacted extraction batch (start351 size50)"
+        ],
+        "storyKey": "apple-notes-seq-376-400",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T15:18:13.310Z"
+      }
+    },
+    {
+      "id": "evt_mn1wn3pv_w6prlu",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-11-17T08:59:47.000Z",
+      "payload": {
+        "title": "Life Segment 17 (Notes 401-425)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (401-425).",
+        "point": 172,
+        "category": "Business & Projects",
+        "segment": "Business & Projects",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:401-425",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start401-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 401-425",
+          "Redacted extraction batch (start401 size50)"
+        ],
+        "storyKey": "apple-notes-seq-401-425",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T15:21:35.635Z"
+      }
+    },
+    {
+      "id": "evt_mn1wn3pv_4pb4of",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-11-18T05:45:45.000Z",
+      "payload": {
+        "title": "Life Segment 18 (Notes 426-450)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (426-450).",
+        "point": 180,
+        "category": "Business & Projects",
+        "segment": "Business & Projects",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:426-450",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start401-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 426-450",
+          "Redacted extraction batch (start401 size50)"
+        ],
+        "storyKey": "apple-notes-seq-426-450",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T15:21:35.635Z"
+      }
+    },
+    {
+      "id": "evt_mn1wunnn_eq4l9g",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-11-28T05:17:53.000Z",
+      "payload": {
+        "title": "Life Segment 19 (Notes 451-475)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (451-475).",
+        "point": 188,
+        "category": "Business & Projects",
+        "segment": "Business & Projects",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:451-475",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start451-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 451-475",
+          "Redacted extraction batch (start451 size50)"
+        ],
+        "storyKey": "apple-notes-seq-451-475",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T15:27:28.067Z"
+      }
+    },
+    {
+      "id": "evt_mn1wunnn_orj01k",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-12-04T07:56:39.000Z",
+      "payload": {
+        "title": "Life Segment 20 (Notes 476-500)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (476-500).",
+        "point": 196,
+        "category": "Business & Projects",
+        "segment": "Business & Projects",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:476-500",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start451-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 476-500",
+          "Redacted extraction batch (start451 size50)"
+        ],
+        "storyKey": "apple-notes-seq-476-500",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T15:27:28.067Z"
+      }
+    },
+    {
+      "id": "evt_mn1x47vy_r2lskz",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-12-08T12:40:50.000Z",
+      "payload": {
+        "title": "Life Segment 21 (Notes 501-525)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (501-525).",
+        "point": 204,
+        "category": "Personal",
+        "segment": "Personal",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:501-525",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start501-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 501-525",
+          "Redacted extraction batch (start501 size50)"
+        ],
+        "storyKey": "apple-notes-seq-501-525",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T15:34:54.190Z"
+      }
+    },
+    {
+      "id": "evt_mn1x47vy_bl3iyn",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-12-15T10:03:24.000Z",
+      "payload": {
+        "title": "Life Segment 22 (Notes 526-550)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (526-550).",
+        "point": 212,
+        "category": "Personal",
+        "segment": "Personal",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:526-550",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start501-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 526-550",
+          "Redacted extraction batch (start501 size50)"
+        ],
+        "storyKey": "apple-notes-seq-526-550",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T15:34:54.190Z"
+      }
+    },
+    {
+      "id": "evt_mn1zemsa_69uh1d",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-12-20T06:57:36.000Z",
+      "payload": {
+        "title": "Life Segment 23 (Notes 551-575)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (551-575).",
+        "point": 220,
+        "category": "Business & Projects",
+        "segment": "Business & Projects",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:551-575",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start551-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 551-575",
+          "Redacted extraction batch (start551 size50)"
+        ],
+        "storyKey": "apple-notes-seq-551-575",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T16:38:59.290Z"
+      }
+    },
+    {
+      "id": "evt_mn1zemsa_tt6vhj",
+      "userId": "usr_78cab885a6b0ee1700b0a0b7",
+      "eventType": "historical_event",
+      "actor": "usr_78cab885a6b0ee1700b0a0b7",
+      "timestamp": "2024-12-23T09:35:32.000Z",
+      "payload": {
+        "title": "Life Segment 24 (Notes 576-600)",
+        "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (576-600).",
+        "point": 228,
+        "category": "Business & Projects",
+        "segment": "Business & Projects",
+        "confidence": "moderate",
+        "evidenceRefs": [
+          "apple-notes:seq:576-600",
+          "reports/personal-archaeology/findings/apple-notes-oldest-forward-start551-size50.json"
+        ],
+        "sources": [
+          "Apple Notes sequence window 576-600",
+          "Redacted extraction batch (start551 size50)"
+        ],
+        "storyKey": "apple-notes-seq-576-600",
+        "source": "apple-notes-chronology",
+        "isPrivate": true,
+        "importedAt": "2026-03-22T16:38:59.290Z"
       }
     }
   ],

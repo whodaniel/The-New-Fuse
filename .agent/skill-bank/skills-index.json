@@ -11668,6 +11668,184 @@
       }
     },
     {
+      "id": "openclaw-oauth-rotation",
+      "canonicalName": "openclaw-oauth-rotation",
+      "descriptions": [],
+      "variants": [
+        {
+          "id": "openclaw-oauth-rotation",
+          "name": "openclaw-oauth-rotation",
+          "description": "",
+          "path": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-oauth-rotation",
+          "pathFromRepo": ".agent/skills/openclaw-oauth-rotation",
+          "llm": "project-agent",
+          "scope": "project",
+          "hash": "643129dfb60325e48506faa71a67a89878073d9b780c9b6e836cceb3bef66f76",
+          "hasAgents": false,
+          "hasReferences": false,
+          "hasScripts": true,
+          "hasAssets": false,
+          "format": "folder",
+          "updatedAt": "2026-02-26T21:16:40.767Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-oauth-rotation-643129df"
+        }
+      ],
+      "llms": {
+        "project-agent": 1
+      }
+    },
+    {
+      "id": "openclaw-provider-rollout",
+      "canonicalName": "openclaw-provider-rollout",
+      "descriptions": [],
+      "variants": [
+        {
+          "id": "openclaw-provider-rollout",
+          "name": "openclaw-provider-rollout",
+          "description": "",
+          "path": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-provider-rollout",
+          "pathFromRepo": ".agent/skills/openclaw-provider-rollout",
+          "llm": "project-agent",
+          "scope": "project",
+          "hash": "ff60b48f2be3925b247a4116817d25a5f640ed283cc3d3df94fb13cc3b19e974",
+          "hasAgents": false,
+          "hasReferences": false,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "folder",
+          "updatedAt": "2026-02-26T21:16:40.849Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-provider-rollout-ff60b48f"
+        }
+      ],
+      "llms": {
+        "project-agent": 1
+      }
+    },
+    {
+      "id": "openclaw-universal-knowledge",
+      "canonicalName": "openclaw-universal-knowledge",
+      "descriptions": [
+        "Universal OpenClaw knowledge skill for TNF agents. Use when working on OpenClaw/PicoClaw architecture, gateway, providers/models, skills authoring, tools, channels, installation, operations, troubleshooting, or cross-agent skill portability (.agent/.claude/.gemini/.kilo/OpenClaw).",
+        "Shared TNF OpenClaw docs-wide knowledge skill for gateway, providers, tools/skills policy, and cross-agent portability.",
+        "Shared TNF OpenClaw knowledge skill for PicoClaw agents; covers tools/skills spec, docs-wide navigation, and operational consistency.",
+        "Shared TNF skill adapter for OpenClaw docs-wide operations, including tools/skills rules, gateway/provider setup, and cross-agent skill portability.",
+        "Shared TNF skill adapter for OpenClaw full-docs operations, skills semantics, gateway/provider execution, and multi-agent portability.",
+        "Shared TNF adapter for OpenClaw-wide docs knowledge, skill format policy, and cross-agent execution consistency."
+      ],
+      "variants": [
+        {
+          "id": "openclaw-universal-knowledge",
+          "name": "openclaw-universal-knowledge",
+          "description": "Universal OpenClaw knowledge skill for TNF agents. Use when working on OpenClaw/PicoClaw architecture, gateway, providers/models, skills authoring, tools, channels, installation, operations, troubleshooting, or cross-agent skill portability (.agent/.claude/.gemini/.kilo/OpenClaw).",
+          "path": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-universal-knowledge",
+          "pathFromRepo": ".agent/skills/openclaw-universal-knowledge",
+          "llm": "project-agent",
+          "scope": "project",
+          "hash": "619530e2be4302fcdb600b7099a437077c649f4ac5f7512486a5ec9f79455095",
+          "hasAgents": true,
+          "hasReferences": true,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "folder",
+          "updatedAt": "2026-03-03T01:04:27.520Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-universal-knowledge-619530e2"
+        },
+        {
+          "id": "openclaw-universal-knowledge",
+          "name": "openclaw-universal-knowledge",
+          "description": "Shared TNF OpenClaw docs-wide knowledge skill for gateway, providers, tools/skills policy, and cross-agent portability.",
+          "path": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/openclaw-universal-knowledge",
+          "pathFromRepo": "apps/openclaw/skills/openclaw-universal-knowledge",
+          "llm": "openclaw",
+          "scope": "project",
+          "hash": "8f4ca0c3b530a66efcffc6683625cd0c098fd83e2deb391e73a6a71ef1d01975",
+          "hasAgents": false,
+          "hasReferences": true,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "folder",
+          "updatedAt": "2026-03-03T01:04:28.001Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/openclaw/openclaw-universal-knowledge-8f4ca0c3"
+        },
+        {
+          "id": "openclaw-universal-knowledge",
+          "name": "openclaw-universal-knowledge",
+          "description": "Shared TNF OpenClaw knowledge skill for PicoClaw agents; covers tools/skills spec, docs-wide navigation, and operational consistency.",
+          "path": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/openclaw-universal-knowledge",
+          "pathFromRepo": "apps/picoclaw-overseer/workspace/skills/openclaw-universal-knowledge",
+          "llm": "picoclaw",
+          "scope": "project",
+          "hash": "94afd0396652e43ce66a11815114b93e5217306e2da04da958af2db24e28d164",
+          "hasAgents": false,
+          "hasReferences": true,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "folder",
+          "updatedAt": "2026-03-03T01:04:28.009Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/openclaw-universal-knowledge-94afd039"
+        },
+        {
+          "id": "openclaw-universal-knowledge",
+          "name": "openclaw-universal-knowledge",
+          "description": "Shared TNF skill adapter for OpenClaw docs-wide operations, including tools/skills rules, gateway/provider setup, and cross-agent skill portability.",
+          "path": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/openclaw-universal-knowledge.md",
+          "pathFromRepo": ".claude/skills/openclaw-universal-knowledge.md",
+          "llm": "claude",
+          "scope": "project",
+          "hash": "693943051c6ecd6fd7b2c79648189304386dd1f105db7dc1045e6268e1512b4c",
+          "hasAgents": false,
+          "hasReferences": false,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "flat",
+          "updatedAt": "2026-03-03T01:04:27.970Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/claude/openclaw-universal-knowledge-69394305"
+        },
+        {
+          "id": "openclaw-universal-knowledge",
+          "name": "openclaw-universal-knowledge",
+          "description": "Shared TNF skill adapter for OpenClaw full-docs operations, skills semantics, gateway/provider execution, and multi-agent portability.",
+          "path": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.gemini/skills/openclaw-universal-knowledge.md",
+          "pathFromRepo": ".gemini/skills/openclaw-universal-knowledge.md",
+          "llm": "gemini",
+          "scope": "project",
+          "hash": "6abdd4de09a94c5c5bb10660a81a2cf72e10136c70fb5120c58ef88be118eaea",
+          "hasAgents": false,
+          "hasReferences": false,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "flat",
+          "updatedAt": "2026-03-03T01:04:27.985Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/gemini/openclaw-universal-knowledge-6abdd4de"
+        },
+        {
+          "id": "openclaw-universal-knowledge",
+          "name": "openclaw-universal-knowledge",
+          "description": "Shared TNF adapter for OpenClaw-wide docs knowledge, skill format policy, and cross-agent execution consistency.",
+          "path": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.kilo/skills/openclaw-universal-knowledge.md",
+          "pathFromRepo": ".kilo/skills/openclaw-universal-knowledge.md",
+          "llm": "kilo",
+          "scope": "project",
+          "hash": "5485b322e6aff36d3add97f93fd0d6059ac0d75a2b8effe32bb66d7d98fe3b9a",
+          "hasAgents": false,
+          "hasReferences": false,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "flat",
+          "updatedAt": "2026-03-03T01:04:27.994Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/kilo/openclaw-universal-knowledge-5485b322"
+        }
+      ],
+      "llms": {
+        "project-agent": 1,
+        "openclaw": 1,
+        "picoclaw": 1,
+        "claude": 1,
+        "gemini": 1,
+        "kilo": 1
+      }
+    },
+    {
       "id": "orchestrator",
       "canonicalName": "orchestrator",
       "descriptions": [],

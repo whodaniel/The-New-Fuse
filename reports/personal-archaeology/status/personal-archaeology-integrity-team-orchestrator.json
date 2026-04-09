@@ -3,8 +3,8 @@
   "role": "team_orchestrator",
   "teamId": "integrity-and-escalation",
   "status": "active",
-  "lastHeartbeatAt": "2026-03-19T08:56:37.056Z",
-  "summary": "Investigators 1; active 0; blocked 0; pending human 0",
+  "lastHeartbeatAt": "2026-03-22T17:00:32.749Z",
+  "summary": "Investigators 1; active 1; blocked 0; pending human 0",
   "findingsPath": null,
   "blockedReason": null
 }

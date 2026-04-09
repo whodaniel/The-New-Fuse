@@ -1,55 +1,43 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-LABEL="com.tnf.relay-monitor"
+LABEL="com.thenewfuse.relay-monitor"
 PLIST_PATH="$HOME/Library/LaunchAgents/${LABEL}.plist"
-NODE_BIN="${TNF_RELAY_MONITOR_NODE_BIN:-$(command -v node)}"
-SCRIPT_PATH="$HOME/.tnf/bin/relay-channel-monitor.cjs"
-WORK_DIR="$HOME/.tnf/relay-monitor"
-LOG_DIR="$WORK_DIR/logs"
-ALLOW_PROMPT_INJECTION="${TNF_RELAY_MONITOR_ALLOW_PROMPT_INJECTION:-false}"
-INTERACTIVE_SAFE_MODE="${TNF_INTERACTIVE_SAFE_MODE:-true}"
-INTERACTIVE_SAFE_MODE_FILE="${TNF_INTERACTIVE_SAFE_MODE_FILE:-$HOME/.tnf/flags/interactive-safe-mode}"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SCRIPT_PATH="$ROOT_DIR/scripts/relay-channel-monitor.cjs"
+LOG_DIR="$HOME/.tnf/relay-monitor/logs"
+NODE_BIN="$(command -v node)"
 
 ensure_dirs() {
   mkdir -p "$LOG_DIR"
 }
 
 create_plist() {
-  cat > "$PLIST_PATH" <<PLIST
+  cat > "$PLIST_PATH" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>Label</key>
-  <string>${LABEL}</string>
-  <key>ProgramArguments</key>
-  <array>
-    <string>${NODE_BIN}</string>
-    <string>${SCRIPT_PATH}</string>
-  </array>
-  <key>EnvironmentVariables</key>
-  <dict>
-    <key>TNF_RELAY_MONITOR_ALLOW_PROMPT_INJECTION</key>
-    <string>${ALLOW_PROMPT_INJECTION}</string>
-    <key>TNF_INTERACTIVE_SAFE_MODE</key>
-    <string>${INTERACTIVE_SAFE_MODE}</string>
-    <key>TNF_INTERACTIVE_SAFE_MODE_FILE</key>
-    <string>${INTERACTIVE_SAFE_MODE_FILE}</string>
-  </dict>
-  <key>RunAtLoad</key>
-  <true/>
-  <key>KeepAlive</key>
-  <true/>
-  <key>WorkingDirectory</key>
-  <string>${WORK_DIR}</string>
-  <key>StandardOutPath</key>
-  <string>${LOG_DIR}/stdout.log</string>
-  <key>StandardErrorPath</key>
-  <string>${LOG_DIR}/stderr.log</string>
+    <key>Label</key>
+    <string>${LABEL}</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>${NODE_BIN}</string>
+        <string>${SCRIPT_PATH}</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>${LOG_DIR}/stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>${LOG_DIR}/stderr.log</string>
+    <key>WorkingDirectory</key>
+    <string>${ROOT_DIR}</string>
 </dict>
 </plist>
-PLIST
+EOF
 }
 
 install() {
@@ -57,41 +45,35 @@ install() {
   create_plist
   launchctl unload "$PLIST_PATH" 2>/dev/null || true
   launchctl load -w "$PLIST_PATH"
-  echo "installed: $LABEL"
-}
-
-start() {
-  launchctl unload "$PLIST_PATH" 2>/dev/null || true
-  launchctl load -w "$PLIST_PATH"
-  echo "started: $LABEL"
-}
-
-stop() {
-  launchctl unload "$PLIST_PATH" 2>/dev/null || true
-  echo "stopped: $LABEL"
-}
-
-restart() {
-  stop
-  start
+  echo "✅ Installed and started ${LABEL} via launchd"
 }
 
 uninstall() {
-  stop
+  launchctl unload "$PLIST_PATH" 2>/dev/null || true
   rm -f "$PLIST_PATH"
-  echo "removed: $LABEL"
+  echo "Removed ${LABEL}"
 }
 
 status() {
-  launchctl list | grep "$LABEL" || echo "not-running: $LABEL"
+  launchctl list | grep "${LABEL}" || echo "Not running"
 }
 
 case "${1:-}" in
-  install) install ;;
-  start) start ;;
-  stop) stop ;;
-  restart) restart ;;
-  uninstall|remove) uninstall ;;
-  status) status ;;
-  *) echo "Usage: $0 <install|start|stop|restart|status|uninstall>"; exit 1 ;;
+  install)
+    install
+    ;;
+  uninstall)
+    uninstall
+    ;;
+  restart)
+    launchctl unload "$PLIST_PATH" 2>/dev/null || true
+    launchctl load -w "$PLIST_PATH"
+    echo "Restarted ${LABEL}"
+    ;;
+  status)
+    status
+    ;;
+  *)
+    echo "Usage: $0 <install|uninstall|restart|status>"
+    ;;
 esac

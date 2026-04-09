@@ -1,6 +1,5 @@
 {
   "name": "@the-new-fuse/mcp-cloud-redis-bridge",
-  "files": ["dist"],
   "version": "1.0.0",
   "description": "MCP Bridge for Cloud Redis & Super Director Trust Protocol",
   "type": "module",
@@ -17,12 +16,11 @@
     "redis": "^5.11.0",
     "tweetnacl": "^1.0.3",
     "tweetnacl-util": "^0.15.1",
-    "zod": "^4.3.6",
-    "@the-new-fuse/infrastructure": "workspace:*"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.2"
+    "typescript": "^5.9.3"
   }
 }

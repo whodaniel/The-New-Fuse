@@ -3,7 +3,7 @@
   "role": "investigator",
   "teamId": "source-acquisition",
   "status": "blocked",
-  "lastHeartbeatAt": "2026-03-19T08:56:37.272Z",
+  "lastHeartbeatAt": "2026-03-22T16:15:17.751Z",
   "summary": "Blocked: Apple Notes MCP authentication required",
   "findingsPath": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/reports/personal-archaeology/findings/notes-ledger.md",
   "blockedReason": "Apple Notes MCP authentication required"

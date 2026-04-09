@@ -9,8 +9,6 @@ import {
   Put,
   Req,
 } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { hasPermission, isPrivilegedUser } from '../../../auth/auth-policy';

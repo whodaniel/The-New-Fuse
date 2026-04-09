@@ -3,7 +3,7 @@
   "role": "master_orchestrator",
   "teamId": null,
   "status": "active",
-  "lastHeartbeatAt": "2026-03-19T08:56:37.056Z",
+  "lastHeartbeatAt": "2026-03-22T17:00:32.749Z",
   "summary": "Coordinated 3 teams; blocked investigators 1/7; pending human actions 1",
   "findingsPath": null,
   "blockedReason": null

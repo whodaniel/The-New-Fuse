@@ -1,0 +1,62 @@
+{
+  "generatedAt": "2026-03-22T11:24:00.000Z",
+  "scope": "Apple Notes oldest-forward, seq 451..500",
+  "privacy": "Sensitive content redacted; references only",
+  "events": [
+    {
+      "title": "Life Segment 19 (Notes 451-475)",
+      "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (451-475).",
+      "timestamp": "2024-11-28T05:17:53.000Z",
+      "point": 188,
+      "category": "Business & Projects",
+      "segment": "Business & Projects",
+      "source": "apple-notes-chronology",
+      "evidenceRefs": [
+        "apple-notes:seq:451-475",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start451-size50.json"
+      ],
+      "sources": [
+        "Apple Notes sequence window 451-475",
+        "Redacted extraction batch (start451 size50)"
+      ],
+      "metadata": {
+        "startSeq": 451,
+        "endSeq": 475,
+        "dominantThemes": [
+          "Business & Projects (16)",
+          "Personal (8)",
+          "Relationships (1)"
+        ],
+        "skippedSeqs": [465, 474]
+      }
+    },
+    {
+      "title": "Life Segment 20 (Notes 476-500)",
+      "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (476-500).",
+      "timestamp": "2024-12-04T07:56:39.000Z",
+      "point": 196,
+      "category": "Business & Projects",
+      "segment": "Business & Projects",
+      "source": "apple-notes-chronology",
+      "evidenceRefs": [
+        "apple-notes:seq:476-500",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start451-size50.json"
+      ],
+      "sources": [
+        "Apple Notes sequence window 476-500",
+        "Redacted extraction batch (start451 size50)"
+      ],
+      "metadata": {
+        "startSeq": 476,
+        "endSeq": 500,
+        "dominantThemes": [
+          "Business & Projects (13)",
+          "Personal (10)",
+          "Creativity (1)",
+          "Health & Wellness (1)"
+        ],
+        "skippedSeqs": []
+      }
+    }
+  ]
+}

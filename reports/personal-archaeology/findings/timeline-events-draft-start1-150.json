@@ -1,0 +1,167 @@
+{
+  "generatedAt": "2026-03-22T07:31:02.532Z",
+  "scope": "Apple Notes oldest-forward, seq 1..150",
+  "privacy": "Sensitive content redacted; references only",
+  "events": [
+    {
+      "title": "Life Segment 1 (Notes 1-25)",
+      "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (1-25).",
+      "timestamp": "2016-06-23T16:32:45.000Z",
+      "point": 17,
+      "category": "Personal",
+      "segment": "Personal",
+      "source": "apple-notes-chronology",
+      "evidenceRefs": [
+        "apple-notes:seq:1-25",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start1-size50.json",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start51-size50.json",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start101-size50.json"
+      ],
+      "sources": [
+        "Apple Notes sequence window 1-25",
+        "Redacted extraction batches (start1/51/101 size50)"
+      ],
+      "metadata": {
+        "startSeq": 1,
+        "endSeq": 25,
+        "dominantThemes": [
+          "Personal (17)",
+          "Health & Wellness (4)",
+          "Creativity (2)"
+        ]
+      }
+    },
+    {
+      "title": "Life Segment 2 (Notes 26-50)",
+      "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (26-50).",
+      "timestamp": "2017-11-07T18:07:12.000Z",
+      "point": 33,
+      "category": "Personal",
+      "segment": "Personal",
+      "source": "apple-notes-chronology",
+      "evidenceRefs": [
+        "apple-notes:seq:26-50",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start1-size50.json",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start51-size50.json",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start101-size50.json"
+      ],
+      "sources": [
+        "Apple Notes sequence window 26-50",
+        "Redacted extraction batches (start1/51/101 size50)"
+      ],
+      "metadata": {
+        "startSeq": 26,
+        "endSeq": 50,
+        "dominantThemes": [
+          "Personal (19)",
+          "Business & Projects (3)",
+          "Creativity (1)"
+        ]
+      }
+    },
+    {
+      "title": "Life Segment 3 (Notes 51-75)",
+      "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (51-75).",
+      "timestamp": "2021-06-23T19:12:40.000Z",
+      "point": 50,
+      "category": "Personal",
+      "segment": "Personal",
+      "source": "apple-notes-chronology",
+      "evidenceRefs": [
+        "apple-notes:seq:51-75",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start1-size50.json",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start51-size50.json",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start101-size50.json"
+      ],
+      "sources": [
+        "Apple Notes sequence window 51-75",
+        "Redacted extraction batches (start1/51/101 size50)"
+      ],
+      "metadata": {
+        "startSeq": 51,
+        "endSeq": 75,
+        "dominantThemes": ["Personal (17)", "Business & Projects (8)"]
+      }
+    },
+    {
+      "title": "Life Segment 4 (Notes 76-100)",
+      "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (76-100).",
+      "timestamp": "2021-08-27T05:26:01.000Z",
+      "point": 67,
+      "category": "Personal",
+      "segment": "Personal",
+      "source": "apple-notes-chronology",
+      "evidenceRefs": [
+        "apple-notes:seq:76-100",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start1-size50.json",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start51-size50.json",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start101-size50.json"
+      ],
+      "sources": [
+        "Apple Notes sequence window 76-100",
+        "Redacted extraction batches (start1/51/101 size50)"
+      ],
+      "metadata": {
+        "startSeq": 76,
+        "endSeq": 100,
+        "dominantThemes": [
+          "Personal (21)",
+          "Business & Projects (2)",
+          "Health & Wellness (1)"
+        ]
+      }
+    },
+    {
+      "title": "Life Segment 5 (Notes 101-125)",
+      "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (101-125).",
+      "timestamp": "2021-10-07T04:56:36.000Z",
+      "point": 83,
+      "category": "Personal",
+      "segment": "Personal",
+      "source": "apple-notes-chronology",
+      "evidenceRefs": [
+        "apple-notes:seq:101-125",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start1-size50.json",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start51-size50.json",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start101-size50.json"
+      ],
+      "sources": [
+        "Apple Notes sequence window 101-125",
+        "Redacted extraction batches (start1/51/101 size50)"
+      ],
+      "metadata": {
+        "startSeq": 101,
+        "endSeq": 125,
+        "dominantThemes": ["Personal (25)"]
+      }
+    },
+    {
+      "title": "Life Segment 6 (Notes 126-150)",
+      "description": "Chronological segment reconstructed from Apple Notes oldest-forward scan (126-150).",
+      "timestamp": "2022-05-12T14:36:56.000Z",
+      "point": 100,
+      "category": "Personal",
+      "segment": "Personal",
+      "source": "apple-notes-chronology",
+      "evidenceRefs": [
+        "apple-notes:seq:126-150",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start1-size50.json",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start51-size50.json",
+        "reports/personal-archaeology/findings/apple-notes-oldest-forward-start101-size50.json"
+      ],
+      "sources": [
+        "Apple Notes sequence window 126-150",
+        "Redacted extraction batches (start1/51/101 size50)"
+      ],
+      "metadata": {
+        "startSeq": 126,
+        "endSeq": 150,
+        "dominantThemes": [
+          "Personal (16)",
+          "Creativity (2)",
+          "Relationships (2)"
+        ]
+      }
+    }
+  ]
+}

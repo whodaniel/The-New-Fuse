@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import TimelineView from '../../features/timeline/components/TimelineView';
 import { useTimeline } from '../../features/timeline/hooks/useTimeline';
 
@@ -51,6 +52,26 @@ const MacroTimelinePage: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-2">
+              <Link
+                to="/timeline"
+                className="px-3 py-1 border border-amber-500/40 bg-amber-500/10 text-amber-200 text-xs font-semibold rounded"
+              >
+                Personal
+              </Link>
+              <Link
+                to="/timeline/module"
+                className="px-3 py-1 border border-emerald-500/40 bg-emerald-500/10 text-emerald-200 text-xs font-semibold rounded"
+              >
+                Module
+              </Link>
+              <Link
+                to="/timeline-demo"
+                className="px-3 py-1 border border-fuchsia-500/40 bg-fuchsia-500/10 text-fuchsia-200 text-xs font-semibold rounded"
+              >
+                Demo
+              </Link>
+            </div>
             <div className="text-[10px] text-slate-500 text-right">
               <span className="text-white font-bold">{tasks.length}</span> Active Tasks
               <br />

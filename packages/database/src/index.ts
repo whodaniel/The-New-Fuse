@@ -91,7 +91,6 @@ export type {
   WorkflowExecution,
   Workspace,
   WorkspaceMember,
-  NewWorkspaceMember,
 } from './drizzle/types';
 
 // Export Drizzle repositories

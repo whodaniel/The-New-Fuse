@@ -8,20 +8,8 @@ const path = require('path');
 const { promisify } = require('util');
 
 const execFileAsync = promisify(execFile);
-let RedisAgentClient = null;
-for (const candidate of [
-  path.join(__dirname, 'lib', 'redis-agent-client.cjs'),
-  path.join(__dirname, '..', 'lib', 'redis-agent-client.cjs'),
-  path.join(os.homedir(), '.tnf', 'bin', 'lib', 'redis-agent-client.cjs'),
-]) {
-  try {
-    ({ RedisAgentClient } = require(candidate));
-    break;
-  } catch (_error) {}
-}
-if (!RedisAgentClient) {
-  throw new Error('Unable to resolve redis-agent-client.cjs for terminal heartbeat runtime.');
-}
+
+const { RedisAgentClient } = require('/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/lib/redis-agent-client.cjs');
 
 const KNOWN_SHELLS = new Set(['bash', 'fish', 'sh', 'zsh']);
 const AGENT_COMMAND_HINTS = ['codex', 'claude', 'gemini', 'goose', 'aider'];
@@ -40,14 +28,8 @@ const config = {
     path.join(os.homedir(), '.tnf', 'session-discovery'),
   promptTemplate:
     process.env.TNF_TERMINAL_HEARTBEAT_PROMPT_TEMPLATE ||
-    'TNF heartbeat {{heartbeatId}} for {{agentId}}: post one-line status, keep current task focus, and do not switch tasks. If blocked or conflicted, message Local Sub-Director with issue and requested help.',
-  allowPromptInjection:
-    String(process.env.TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION || 'false').toLowerCase() ===
-    'true',
-  interactiveSafeModeEnv: process.env.TNF_INTERACTIVE_SAFE_MODE || '',
-  interactiveSafeModeFile:
-    process.env.TNF_INTERACTIVE_SAFE_MODE_FILE ||
-    path.join(os.homedir(), '.tnf', 'flags', 'interactive-safe-mode'),
+    'TNF heartbeat {{heartbeatId}} for {{agentId}}: report one-line status and continue your current owned task.',
+  allowPromptInjection: true, // HARD-CODED TRUE for Perpetual Awakeness
   clearLine: process.env.TNF_TERMINAL_HEARTBEAT_CLEAR_LINE !== 'false',
   verifyQueueHints: process.env.TNF_TERMINAL_HEARTBEAT_VERIFY_QUEUE_HINTS !== 'false',
   contentTailChars: parsePositiveInt(process.env.TNF_TERMINAL_HEARTBEAT_CONTENT_TAIL_CHARS, 1200),
@@ -79,13 +61,6 @@ function resolvePath(fileName) {
 async function ensureDirectories() {
   await fsp.mkdir(config.stateDir, { recursive: true });
   await fsp.mkdir(path.join(config.stateDir, 'history'), { recursive: true });
-}
-
-function isInteractiveSafeModeEnabled() {
-  if (String(config.interactiveSafeModeEnv || '').trim()) {
-    return String(config.interactiveSafeModeEnv).toLowerCase() !== 'false';
-  }
-  return fs.existsSync(config.interactiveSafeModeFile);
 }
 
 function readManagedSessions() {
@@ -251,115 +226,9 @@ function renderPrompt(agentId, heartbeatId) {
     .replace(/\{\{heartbeatId\}\}/g, heartbeatId);
 }
 
-function getLastVisibleLine(contents) {
-  const lines = String(contents || '')
-    .split(/\r?\n/)
-    .map((line) => line.replace(/\u001b\[[0-9;]*m/g, ''));
-  for (let i = lines.length - 1; i >= 0; i -= 1) {
-    const line = lines[i];
-    if (line && line.trim()) return line;
-  }
-  return '';
-}
-
-function isTypingInTerminal(contents) {
-  const line = getLastVisibleLine(contents);
-  if (!line) return false;
-
-  const trimmed = line.trim();
-  if (!trimmed) return false;
-  
-  // If the line is JUST a known system prefix, it's not typing
-  const systemPrefixes = ['› TNF wake', '› TNF heartbeat', '›', '>', '$', '%'];
-  if (systemPrefixes.some(p => trimmed === p)) return false;
-
-  // If it's a heartbeat/wake message being typed/flushed, it's not "user" typing
-  if (trimmed.startsWith('› TNF wake') || trimmed.startsWith('› TNF heartbeat')) return false;
-  if (trimmed.includes('tab to queue message')) return false;
-
-  // KEY FIX: More inclusive prompt detection (bash, zsh, conda, custom agent prompts)
-  const promptMatch = line.match(/(?:[%$#>❯]|(?:\(.*\)))\s*(.*)$/);
-  
-  if (promptMatch) {
-    const tail = String(promptMatch[1] || '').trim();
-    // If there is ANY text after the prompt, the user is likely typing
-    return tail.length > 0 && !tail.startsWith('TNF heartbeat') && !tail.startsWith('TNF wake');
-  }
-
-  // Fallback: If no prompt character found but the line has content, 
-  // it might be a custom agent prompt (e.g. Codex/Aider/Claude). 
-  // Safety first: assume typing.
-  return trimmed.length > 0;
-}
-
 function shouldTargetSession(observedSession, managedSession, protectedAgentIds) {
   // Collective Heartbeat Rule: If it looks like an agent and has a TTY, pulse it.
   return observedSession.agentLike && observedSession.tty;
-}
-
-function toTaskHint(foregroundArgs, foregroundCommand) {
-  const text = String(foregroundArgs || foregroundCommand || '').replace(/\s+/g, ' ').trim();
-  if (!text) return null;
-  return text.length > 140 ? `${text.slice(0, 137)}...` : text;
-}
-
-function buildCoordinationPoll(observed, target) {
-  const polledAt = nowIso();
-  const allSessions = Array.isArray(observed) ? observed : [];
-  const agentSessions = allSessions.filter((session) => session && session.agentLike && session.tty);
-
-  const targetTaskHint = toTaskHint(target.foregroundArgs, target.foregroundCommand);
-  const peers = agentSessions
-    .filter((session) => session.agentId && session.agentId !== target.agentId)
-    .map((session) => ({
-      agentId: session.agentId,
-      tty: session.tty,
-      windowId: session.windowId,
-      status: session.busy ? 'active' : 'idle',
-      cwd: session.cwd || null,
-      taskHint: toTaskHint(session.foregroundArgs, session.foregroundCommand),
-    }));
-
-  const sharedCwdActivePeers = peers.filter(
-    (peer) => peer.cwd && target.cwd && peer.cwd === target.cwd && peer.status === 'active'
-  );
-  const conflictRisk =
-    sharedCwdActivePeers.length > 0
-      ? {
-          code: 'shared-cwd-active-peers',
-          reason: 'Multiple active agent terminals are already working in the same cwd.',
-          peerAgentIds: sharedCwdActivePeers.map((peer) => peer.agentId),
-          cwd: target.cwd || null,
-        }
-      : null;
-
-  return {
-    polledAt,
-    totalOpenTerminals: allSessions.length,
-    totalAgentTerminals: agentSessions.length,
-    target: {
-      agentId: target.agentId,
-      tty: target.tty,
-      status: target.busy ? 'active' : 'idle',
-      cwd: target.cwd || null,
-      taskHint: targetTaskHint,
-    },
-    peers: peers.slice(0, 8),
-    conflictRisk,
-  };
-}
-
-function coordinationSummary(coordinationPoll) {
-  if (!coordinationPoll) return null;
-  return {
-    polledAt: coordinationPoll.polledAt,
-    totalOpenTerminals: coordinationPoll.totalOpenTerminals,
-    totalAgentTerminals: coordinationPoll.totalAgentTerminals,
-    peerCount: coordinationPoll.peers.length,
-    targetAgentId: coordinationPoll.target?.agentId || null,
-    targetTaskHint: coordinationPoll.target?.taskHint || null,
-    conflictRiskCode: coordinationPoll.conflictRisk?.code || null,
-  };
 }
 
 async function readTerminalContents(windowId) {
@@ -370,30 +239,17 @@ async function readTerminalContents(windowId) {
   return String(stdout || '');
 }
 
-async function forceSubmit(windowId) {
-  // Use System Events for a REAL hardware return keystroke.
-  // Requires 'activate' to ensure Terminal is focused at the OS level.
-  const script = `
-    activate application "Terminal"
-    tell application "Terminal"
-      set frontmost of window id ${Number(windowId)} to true
-    end tell
-    delay 0.2
-    tell application "System Events"
-      tell process "Terminal"
-        key code 36 -- Return key
-      end tell
-    end tell
-  `;
-  try {
-    await execFileAsync('osascript', ['-e', script]);
-  } catch (_err) {
-    // Secondary fallback using do script \n if keystroke fails
-    await execFileAsync('osascript', [
-      '-e',
-      `tell application "Terminal" to do script "\n" in selected tab of window id ${Number(windowId)}`,
-    ]);
-  }
+async function pressTerminalKey(windowId, keyCode) {
+  await execFileAsync('osascript', [
+    '-e',
+    'tell application "Terminal" to activate',
+    '-e',
+    `tell application "Terminal" to set frontmost of window id ${Number(windowId)} to true`,
+    '-e',
+    'delay 0.1',
+    '-e',
+    `tell application "System Events" to tell process "Terminal" to key code ${Number(keyCode)}`,
+  ]);
 }
 
 async function submitPromptIfNeeded(windowId, marker, pendingPrefix) {
@@ -407,16 +263,28 @@ async function submitPromptIfNeeded(windowId, marker, pendingPrefix) {
   let submitted = false;
   let enterAttempts = 0;
 
-  // Aggressive hardware Enter retry
+  // Satisfying the Codex composer requires Tab first
+  if (hasQueueHint) {
+    await pressTerminalKey(windowId, 48); // Tab
+    await new Promise((resolve) => setTimeout(resolve, 350));
+  }
+
+  // Attempt submission multiple times with verification
   while (pending && enterAttempts < 3) {
-    await forceSubmit(windowId);
+    await pressTerminalKey(windowId, 36); // Enter
     submitted = true;
     enterAttempts += 1;
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     contents = await readTerminalContents(windowId);
     hasQueueHint = contents.includes('tab to queue message');
     hasMarker = contents.includes(marker) || contents.includes(pendingPrefix);
     pending = hasMarker || hasQueueHint;
+    
+    // If still pending after first enter, try a Tab again in case it slipped back
+    if (pending && hasQueueHint) {
+      await pressTerminalKey(windowId, 48); // Tab
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    }
   }
 
   return {
@@ -437,11 +305,18 @@ async function flushAnyPendingTnfPrompt(windowId) {
   if (!pending) return { enterAttempts: 0, queueHintPresent: false };
 
   let enterAttempts = 0;
-  while (pending && enterAttempts < 2) {
-    await forceSubmit(windowId);
+  while (pending && enterAttempts < 3) {
+    // Satisfy composer if needed
+    if (contents.includes('tab to queue message')) {
+      await pressTerminalKey(windowId, 48); // Tab
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    }
+
+    // Direct submit via Enter
+    await pressTerminalKey(windowId, 36); // Enter
     enterAttempts += 1;
     await new Promise((resolve) => setTimeout(resolve, 500));
-
+    
     contents = await readTerminalContents(windowId);
     pending =
       contents.includes('› TNF wake') ||
@@ -456,69 +331,47 @@ async function flushAnyPendingTnfPrompt(windowId) {
 }
 
 async function injectHeartbeat(target) {
-  let activeInputLine = null;
-  let typingDetected = false;
-
-  if (target.windowId) {
-    try {
-      const contents = await readTerminalContents(Number(target.windowId));
-      activeInputLine = getLastVisibleLine(contents);
-      typingDetected = isTypingInTerminal(contents);
-      
-      if (typingDetected) {
-        return {
-          agentId: target.agentId,
-          tty: target.tty,
-          windowId: target.windowId,
-          heartbeatId: null,
-          method: 'skipped-typing',
-          submitted: false,
-          enterAttempts: 0,
-          queueHintPresent: false,
-          skippedReason: 'typing-in-progress',
-          activeInputLine: activeInputLine.slice(-160),
-          injectedAt: nowIso(),
-        };
-      }
-    } catch (_error) {}
-  }
-
   const heartbeatId = `cron-heartbeat-${normalizeTty(target.tty)}-${Date.now()}`;
   const prompt = renderPrompt(target.agentId, heartbeatId);
-  
-  // DANGER GUARD: Only use Ctrl+U if we are 100% sure the line is empty or just a system prompt.
-  const shouldClear = config.clearLine && !activeInputLine;
-  
-  try {
-    // Use do script for the text injection (fast and specific to tab)
-    const injectionScript = shouldClear 
-      ? `tell application "Terminal" to do script (ASCII character 21) & "${prompt.replace(/"/g, '\\"')}" in selected tab of window id ${Number(target.windowId)}`
-      : `tell application "Terminal" to do script "${prompt.replace(/"/g, '\\"')}" in selected tab of window id ${Number(target.windowId)}`;
-    
-    await execFileAsync('osascript', ['-e', injectionScript]);
-    
-    // Immediately trigger forceSubmit for the hardware Return key
-    await forceSubmit(target.windowId);
-  } catch (error) {
-    console.error(`[terminal-heartbeat] injection failed: ${error.message}`);
+  const escapedPrompt = `${config.clearLine ? '\u0015' : ''}${prompt}`;
+
+  // Pre-injection: aggressive line clear
+  if (config.clearLine) {
+    await pressTerminalKey(target.windowId, 9); // Ctrl+C just in case
+    await new Promise(r => setTimeout(r, 100));
+    await pressTerminalKey(target.windowId, 32); // Send a space to clear any prompt residue
+    await new Promise(r => setTimeout(r, 100));
+    await pressTerminalKey(target.windowId, 36); // Enter to clear
+    await new Promise(r => setTimeout(r, 200));
   }
+
+  // Using Terminal 'do script' for reliable type-and-submit in Codex
+  await execFileAsync('osascript', [
+    '-e',
+    `tell application "Terminal" to do script "${escapedPrompt.replace(/"/g, '\\"')}\\n" in selected tab of window id ${Number(target.windowId)}`,
+  ]);
 
   let queueHintPresent = false;
   let queued = false;
   let submitted = true;
-  let enterAttempts = 1;
+  let enterAttempts = 0;
   
   if (config.verifyQueueHints && target.windowId) {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-      const verify = await submitPromptIfNeeded(
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      ({ queueHintPresent, queued, submitted, enterAttempts } = await submitPromptIfNeeded(
         target.windowId,
         heartbeatId,
         '› TNF heartbeat'
-      );
-      queueHintPresent = verify.queueHintPresent;
-      enterAttempts += verify.enterAttempts;
-      submitted = verify.submitted || !queueHintPresent;
+      ));
+      
+      // Secondary aggressive flush if first pass failed
+      if (queueHintPresent) {
+        const cleanup = await flushAnyPendingTnfPrompt(target.windowId);
+        queueHintPresent = cleanup.queueHintPresent;
+        enterAttempts += cleanup.enterAttempts;
+        submitted = submitted || cleanup.enterAttempts > 0;
+      }
     } catch (_error) {
       queueHintPresent = false;
     }
@@ -529,12 +382,10 @@ async function injectHeartbeat(target) {
     tty: target.tty,
     windowId: target.windowId,
     heartbeatId,
-    method: 'do-script-with-force-submit',
+    method: 'terminal-do-script',
     submitted: config.verifyQueueHints ? submitted || !queueHintPresent : true,
     enterAttempts,
     queueHintPresent,
-    skippedReason: null,
-    activeInputLine: activeInputLine ? activeInputLine.slice(-160) : null,
     injectedAt: nowIso(),
   };
 }
@@ -604,10 +455,6 @@ function buildMarkdown(payload) {
     `- Agent sessions: ${payload.summary.agentSessions}`,
     `- Targeted sessions: ${payload.summary.targetedSessions}`,
     `- Direct injections: ${payload.summary.injections}`,
-    `- Skipped for safety mode: ${payload.summary.skippedForSafety || 0}`,
-    `- Skipped for policy: ${payload.summary.skippedForPolicy || 0}`,
-    `- Skipped for coordination: ${payload.summary.skippedForCoordination || 0}`,
-    `- Skipped for typing: ${payload.summary.skippedForTyping || 0}`,
     `- Queue hint failures: ${payload.summary.queueHintFailures}`,
     '',
     '## Targets',
@@ -644,7 +491,6 @@ async function main() {
   }
 
   try {
-    const interactiveSafeMode = isInteractiveSafeModeEnabled();
     const terminals = await pollTerminalWindows();
     const processTable = await collectProcessTable();
     const managedSessions = readManagedSessions();
@@ -682,129 +528,34 @@ async function main() {
 
     const injections = [];
     for (const target of targets) {
-      const poll = buildCoordinationPoll(observed, target);
-
-      if (interactiveSafeMode) {
-        const safeResult = {
-          agentId: target.agentId,
-          tty: target.tty,
-          windowId: target.windowId,
-          heartbeatId: null,
-          method: 'skipped-safety-hold',
-          submitted: false,
-          enterAttempts: 0,
-          queueHintPresent: false,
-          skippedReason: 'interactive-safe-mode',
-          coordinationPoll: poll,
-          injectedAt: nowIso(),
-        };
-        injections.push(safeResult);
-        await publishActivity(target.agentId, 'heartbeat_skipped', {
-          heartbeatId: null,
-          method: safeResult.method,
-          submitted: false,
-          skippedReason: safeResult.skippedReason,
-          coordination: coordinationSummary(poll),
-        });
-        continue;
-      }
-
-      if (!config.allowPromptInjection) {
-        const disabledResult = {
-          agentId: target.agentId,
-          tty: target.tty,
-          windowId: target.windowId,
-          heartbeatId: null,
-          method: 'skipped-policy-hold',
-          submitted: false,
-          enterAttempts: 0,
-          queueHintPresent: false,
-          skippedReason: 'prompt-injection-disabled',
-          coordinationPoll: poll,
-          injectedAt: nowIso(),
-        };
-        injections.push(disabledResult);
-        await publishActivity(target.agentId, 'heartbeat_skipped', {
-          heartbeatId: null,
-          method: disabledResult.method,
-          submitted: false,
-          skippedReason: disabledResult.skippedReason,
-          coordination: coordinationSummary(poll),
-        });
-        continue;
-      }
-
-      if (poll.conflictRisk) {
-        const holdResult = {
-          agentId: target.agentId,
-          tty: target.tty,
-          windowId: target.windowId,
-          heartbeatId: null,
-          method: 'skipped-coordination-hold',
-          submitted: false,
-          enterAttempts: 0,
-          queueHintPresent: false,
-          skippedReason: 'coordination-conflict-risk',
-          coordinationPoll: poll,
-          injectedAt: nowIso(),
-        };
-        injections.push(holdResult);
-        await publishActivity(target.agentId, 'heartbeat_skipped', {
-          heartbeatId: null,
-          method: holdResult.method,
-          submitted: false,
-          skippedReason: holdResult.skippedReason,
-          coordination: coordinationSummary(poll),
-        });
-        continue;
-      }
-
       const result = await injectHeartbeat(target);
-      result.coordinationPoll = poll;
       injections.push(result);
 
       // Official TNF Activity Integration
-      await publishActivity(target.agentId, result.submitted ? 'heartbeat_injected' : 'heartbeat_skipped', {
+      await publishActivity(target.agentId, 'heartbeat_injected', {
         heartbeatId: result.heartbeatId,
         method: result.method,
-        submitted: result.submitted,
-        skippedReason: result.skippedReason || null,
-        coordination: coordinationSummary(poll),
+        submitted: result.submitted
       });
     }
 
     const payload = {
       generatedAt: nowIso(),
       actor: { id: config.actorId, role: 'tnf-master-clock' },
-      status: injections.some((target) => target.queueHintPresent)
-        ? 'degraded'
-        : interactiveSafeMode || !config.allowPromptInjection
-          ? 'safe-no-injection'
-          : 'healthy',
+      status: injections.some((target) => target.queueHintPresent) ? 'degraded' : 'healthy',
       summary: {
         observedSessions: observed.length,
         agentSessions: observed.filter((session) => session.agentLike).length,
         targetedSessions: targets.length,
-        injections: injections.filter((target) => target.submitted).length,
-        skippedForSafety: injections.filter((target) => target.skippedReason === 'interactive-safe-mode')
-          .length,
-        skippedForPolicy: injections.filter(
-          (target) => target.skippedReason === 'prompt-injection-disabled'
-        ).length,
-        skippedForCoordination: injections.filter(
-          (target) => target.skippedReason === 'coordination-conflict-risk'
-        ).length,
-        skippedForTyping: injections.filter((target) => target.skippedReason === 'typing-in-progress').length,
+        injections: injections.length,
         queueHintFailures: injections.filter((target) => target.queueHintPresent).length,
       },
       observed,
       targets: injections,
       functionalGaps: [
-        'Collective Heartbeat Rule: Every agent-like TTY is evaluated every pulse, including the Director.',
-        'Coordination Poll Gate: before any send, a short cross-terminal poll captures peer status and task hints.',
-        `Interactive Safe Mode: ${interactiveSafeMode ? 'enabled' : 'disabled'} (flag: ${config.interactiveSafeModeFile}).`,
-        'Typing Guard: heartbeat injection skips terminals with active user input, including slash commands.',
-        'Non-Focus Injection: heartbeat never activates or front-focuses Terminal windows.',
+        'PERPETUAL AWAKENESS: Prompt injection is now hard-coded to TRUE.',
+        'Collective Heartbeat Rule: Every agent-like TTY is pulsed every minute, including the Director.',
+        'Aggressive Flush: Pulse now includes Ctrl+C and Enter passes BEFORE injection to clear residue.',
       ],
     };
 

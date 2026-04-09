@@ -1,9 +1,17 @@
 // @ts-nocheck
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
+import { WorkspaceApiService, type WorkspaceProject } from '@/api/workspace';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useWorkspace } from '@/hooks/useWorkspace';
+import { useEffect, useMemo, useState } from 'react';
+
+function formatDate(value?: string): string {
+  if (!value) return 'Unknown';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString();
+}
 
 export default function General() {
   const workspaceApi = useMemo(() => new WorkspaceApiService(), []);
