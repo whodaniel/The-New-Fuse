@@ -23,14 +23,7 @@ export function Sidebar({ className = '' }: SidebarProps) {
   return (
     <div className={`border-r bg-card flex flex-col ${className}`}>
       <div className="p-4 border-b">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleSidebar}
-          className="mb-2"
-          aria-label={layout.sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
-          aria-expanded={layout.sidebarOpen}
-        >
+        <Button variant="ghost" size="icon" onClick={toggleSidebar} className="mb-2" aria-label="Toggle sidebar">
           <Menu className="h-4 w-4" />
         </Button>
       </div>

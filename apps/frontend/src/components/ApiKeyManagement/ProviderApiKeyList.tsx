@@ -243,6 +243,7 @@ export function ProviderApiKeyList() {
                       size="icon"
                       className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-all"
                       onClick={() => handleDeleteApiKey(id, provider)}
+                      aria-label={`Delete API key for ${providerLabel}`}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
