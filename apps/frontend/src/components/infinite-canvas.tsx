@@ -71,10 +71,10 @@ export function InfiniteCanvas() {
         ))}
       </framer_motion_1.motion.div>
       <div className="absolute top-4 left-4 space-x-2">
-        <button_1.Button onClick={() => handleZoom(1)}>
+        <button_1.Button aria-label="Zoom in" onClick={() => handleZoom(1)}>
           <lucide_react_1.Plus className="h-4 w-4" />
         </button_1.Button>
-        <button_1.Button onClick={() => handleZoom(-1)}>
+        <button_1.Button aria-label="Zoom out" onClick={() => handleZoom(-1)}>
           <lucide_react_1.Minus className="h-4 w-4" />
         </button_1.Button>
       </div>
