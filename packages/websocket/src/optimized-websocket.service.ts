@@ -1,10 +1,16 @@
 // Optimized WebSocket Service - Connection pooling, message batching, and performance optimization
 // Handles real-time communication for multi-agent systems with intelligent load balancing
 
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
+import * as crypto from 'crypto';
+import { Server, Socket } from 'socket.io';
 import { RedisCacheService } from '../../cache/src/redis-cache.service';
 
 export interface WebSocketMessage {
@@ -44,11 +50,11 @@ export interface ConnectionPool {
 }
 
 export enum MessagePriority {
-  CRITICAL = 1,    // System alerts, errors
-  HIGH = 2,        // Real-time agent communication
-  MEDIUM = 3,      // Status updates, notifications
-  LOW = 4,         // Analytics, logs
-  BATCH = 5,       // Bulk data transfers
+  CRITICAL = 1, // System alerts, errors
+  HIGH = 2, // Real-time agent communication
+  MEDIUM = 3, // Status updates, notifications
+  LOW = 4, // Analytics, logs
+  BATCH = 5, // Bulk data transfers
 }
 
 export enum MessageType {
@@ -73,7 +79,9 @@ export enum MessageType {
   pingTimeout: 60000,
   pingInterval: 25000,
 })
-export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnection, OnGatewayDisconnect, OnModuleDestroy {
+export class OptimizedWebSocketService
+  implements OnModuleInit, OnGatewayConnection, OnGatewayDisconnect, OnModuleDestroy
+{
   @WebSocketServer()
   server: Server;
 
@@ -91,15 +99,15 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
 
   // Configuration for message batching and optimization
   private readonly config = {
-    batchSize: 50,                    // Maximum messages per batch
-    batchTimeout: 100,                // Batch timeout in milliseconds
-    maxMessageQueueSize: 1000,        // Max queued messages per user
-    connectionPoolTimeout: 300000,    // 5 minutes idle timeout
-    heartbeatInterval: 30000,         // 30 seconds
-    maxConnectionsPerUser: 5,         // Connection limit per user
-    compressionThreshold: 1024,       // Compress messages larger than 1KB
-    rateLimitWindow: 60000,           // 1 minute rate limit window
-    rateLimitMax: 100,                // Max messages per window
+    batchSize: 50, // Maximum messages per batch
+    batchTimeout: 100, // Batch timeout in milliseconds
+    maxMessageQueueSize: 1000, // Max queued messages per user
+    connectionPoolTimeout: 300000, // 5 minutes idle timeout
+    heartbeatInterval: 30000, // 30 seconds
+    maxConnectionsPerUser: 5, // Connection limit per user
+    compressionThreshold: 1024, // Compress messages larger than 1KB
+    rateLimitWindow: 60000, // 1 minute rate limit window
+    rateLimitMax: 100, // Max messages per window
   };
 
   private batchTimers: Map<string, NodeJS.Timeout> = new Map();
@@ -108,7 +116,7 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
 
   constructor(
     private configService: ConfigService,
-    private cacheService: RedisCacheService,
+    private cacheService: RedisCacheService
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -128,15 +136,15 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
 
       // Add to connection pool
       await this.addToConnectionPool(userId, client);
-      
+
       // Set up client event handlers
       this.setupClientHandlers(client, userId);
-      
+
       this.metrics.totalConnections++;
       this.metrics.activeConnections++;
-      
+
       this.logger.log(`Client connected: ${client.id} for user: ${userId}`);
-      
+
       // Send connection acknowledgment
       await this.sendMessage(client, {
         id: this.generateMessageId(),
@@ -145,7 +153,6 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
         timestamp: Date.now(),
         priority: MessagePriority.HIGH,
       });
-
     } catch (error) {
       this.logger.error('Connection error:', error);
       client.disconnect();
@@ -154,12 +161,12 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
 
   async handleDisconnect(client: Socket): Promise<void> {
     const userId = client.data.userId;
-    
+
     if (userId) {
       await this.removeFromConnectionPool(userId, client);
       this.logger.log(`Client disconnected: ${client.id} for user: ${userId}`);
     }
-    
+
     this.metrics.activeConnections--;
   }
 
@@ -181,7 +188,6 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
 
       client.data.userId = userId;
       return userId;
-
     } catch (error) {
       this.logger.error('Authentication error:', error);
       return null;
@@ -190,7 +196,7 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
 
   private async addToConnectionPool(userId: string, client: Socket): Promise<void> {
     let pool = this.connectionPools.get(userId);
-    
+
     if (!pool) {
       pool = {
         userId,
@@ -223,7 +229,7 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
     const pool = this.connectionPools.get(userId);
     if (pool) {
       pool.connections.delete(client);
-      
+
       if (pool.connections.size === 0) {
         pool.isActive = false;
         pool.lastActivity = Date.now();
@@ -255,7 +261,7 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
 
   private async handleClientMessage(client: Socket, userId: string, data: any): Promise<void> {
     this.updateConnectionActivity(userId);
-    
+
     // Implement rate limiting
     const rateLimit = await this.checkRateLimit(userId);
     if (!rateLimit.allowed) {
@@ -297,7 +303,7 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
 
   private async sendToUser(userId: string, message: WebSocketMessage): Promise<boolean> {
     const pool = this.connectionPools.get(userId);
-    
+
     if (!pool || pool.connections.size === 0) {
       // Queue message if user is offline
       await this.queueMessage(userId, message);
@@ -337,7 +343,6 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
       socket.emit('message', payload);
       this.updateMetrics('messageSent');
       return true;
-
     } catch (error) {
       this.logger.error('Error sending to socket:', error);
       return false;
@@ -367,8 +372,10 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
     batch.totalSize += JSON.stringify(message).length;
 
     // Send batch if it reaches size limit or timeout
-    if (batch.messages.length >= this.config.batchSize || 
-        batch.totalSize > this.config.compressionThreshold) {
+    if (
+      batch.messages.length >= this.config.batchSize ||
+      batch.totalSize > this.config.compressionThreshold
+    ) {
       await this.flushBatch(userId);
     } else {
       // Set or reset batch timer
@@ -379,7 +386,7 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
   private setBatchTimer(userId: string): void {
     const batchKey = `${userId}_batch`;
     const existingTimer = this.batchTimers.get(batchKey);
-    
+
     if (existingTimer) {
       clearTimeout(existingTimer);
     }
@@ -394,7 +401,7 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
   private async flushBatch(userId: string): Promise<void> {
     const batchKey = `${userId}_batch`;
     const batch = this.messageBatches.get(batchKey);
-    
+
     if (!batch || batch.messages.length === 0) {
       return;
     }
@@ -443,7 +450,7 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
   // Message queue management
   private async queueMessage(userId: string, message: WebSocketMessage): Promise<void> {
     let pool = this.connectionPools.get(userId);
-    
+
     if (!pool) {
       pool = {
         userId,
@@ -461,7 +468,7 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
     }
 
     pool.messageQueue.push(message);
-    
+
     // Cache important messages
     if (message.priority <= MessagePriority.HIGH) {
       await this.cacheService.set(`queued_message:${userId}:${message.id}`, message, { ttl: 3600 });
@@ -487,8 +494,8 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
   // Utility methods
   private async checkRateLimit(userId: string): Promise<{ allowed: boolean; retryAfter?: number }> {
     const key = `rate_limit:${userId}`;
-    const current = await this.cacheService.get(key) || 0;
-    
+    const current = (await this.cacheService.get(key)) || 0;
+
     if (current >= this.config.rateLimitMax) {
       return { allowed: false, retryAfter: this.config.rateLimitWindow };
     }
@@ -558,11 +565,13 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
   }
 
   private collectMetrics(): void {
-    this.metrics.totalConnections = Array.from(this.connectionPools.values())
-      .reduce((sum, pool) => sum + pool.connections.size, 0);
-    
+    this.metrics.totalConnections = Array.from(this.connectionPools.values()).reduce(
+      (sum, pool) => sum + pool.connections.size,
+      0
+    );
+
     this.metrics.activeConnections = Array.from(this.connectionPools.values())
-      .filter(pool => pool.isActive)
+      .filter((pool) => pool.isActive)
       .reduce((sum, pool) => sum + pool.connections.size, 0);
   }
 
@@ -571,13 +580,12 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
     const toRemove: string[] = [];
 
     for (const [userId, pool] of this.connectionPools) {
-      if (!pool.isActive && 
-          (now - pool.lastActivity) > this.config.connectionPoolTimeout) {
+      if (!pool.isActive && now - pool.lastActivity > this.config.connectionPoolTimeout) {
         toRemove.push(userId);
       }
     }
 
-    toRemove.forEach(userId => {
+    toRemove.forEach((userId) => {
       this.connectionPools.delete(userId);
       this.logger.debug(`Cleaned up inactive pool for user: ${userId}`);
     });
@@ -603,7 +611,8 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
   }
 
   private generateMessageId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    // SECURITY: Use cryptographically secure random values instead of Math.random()
+    return `msg_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
   }
 
   async getConnectionMetrics(): Promise<ConnectionMetrics> {
@@ -614,7 +623,7 @@ export class OptimizedWebSocketService implements OnModuleInit, OnGatewayConnect
     if (this.heartbeatInterval) {
       clearInterval(this.heartbeatInterval);
     }
-    
+
     if (this.metricsInterval) {
       clearInterval(this.metricsInterval);
     }
