@@ -13,8 +13,12 @@
     "paths": {
       "@/*": ["./src/*"],
       "@the-new-fuse/database/drizzle/*": ["../../packages/database/drizzle/*"],
-      "@the-new-fuse/database/drizzle": ["../../packages/database/drizzle/index"],
-      "@the-new-fuse/*": ["../../packages/*/dist"]
+      "@the-new-fuse/database/drizzle": [
+        "../../packages/database/drizzle/index"
+      ],
+      "@the-new-fuse/n8n-workflows/*": ["../../packages/n8n-workflows/src/*"],
+      "@the-new-fuse/n8n-workflows": ["../../packages/n8n-workflows/src/index"],
+      "@the-new-fuse/*": ["../../packages/*/src"]
     }
   },
   "include": ["src/**/*"],
