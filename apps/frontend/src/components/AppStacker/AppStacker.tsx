@@ -120,13 +120,7 @@ const DraggableApp = React.memo<DraggableAppProps>(({
           <CardHeader>
             <CardTitle className="flex justify-between items-center">
               {app.name}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => toggleExpand(app.id)}
-                aria-expanded={isExpanded}
-                aria-label={isExpanded ? 'Collapse app details' : 'Expand app details'}
-              >
+              <Button variant="ghost" size="sm" onClick={() => toggleExpand(app.id)} aria-expanded={isExpanded} aria-label={isExpanded ? "Collapse app details" : "Expand app details"}>
                 {isExpanded ? <ChevronUp /> : <ChevronDown />}
               </Button>
             </CardTitle>
