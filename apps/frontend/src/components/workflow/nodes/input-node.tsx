@@ -454,7 +454,8 @@ const InputNode: React.FC<NodeProps> = memo((props) => {
       </div>
 
       {/* Custom scrollbar styles */}
-      <style>{`
+      <style>
+        {`
           .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
           }
@@ -469,7 +470,8 @@ const InputNode: React.FC<NodeProps> = memo((props) => {
           .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: rgba(148, 163, 184, 0.7);
           }
-        `}</style>
+        `}
+      </style>
     </div>
   );
 
