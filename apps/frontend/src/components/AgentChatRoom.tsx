@@ -5,7 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { webSocketService } from '../services/websocket';
 import AgentMessage from './agent-message';
@@ -33,6 +33,19 @@ export function AgentChatRoom({}: AgentChatRoomProps) {
     name: 'Composer',
     avatar: '/composer-avatar.png',
   });
+
+  // ⚡ Bolt: Memoized the rendered message list to prevent O(n) re-evaluations
+  // of the entire message array when unrelated state updates occur.
+  const renderedMessages = React.useMemo(() => {
+    return messages.map((message) => (
+      <AgentMessage
+        key={message.id}
+        agent={message.agent}
+        message={message}
+        isCurrentUser={message.agent.id === currentAgent.id}
+      />
+    ));
+  }, [messages, currentAgent.id]);
 
   useEffect(() => {
     const handleError = (error: any) => {
@@ -97,14 +110,7 @@ export function AgentChatRoom({}: AgentChatRoomProps) {
         )}
         <ScrollArea className="flex-grow pr-4">
           <div className="space-y-4">
-            {messages.map((message) => (
-              <AgentMessage
-                key={message.id}
-                agent={message.agent}
-                message={message}
-                isCurrentUser={message.agent.id === currentAgent.id}
-              />
-            ))}
+            {renderedMessages}
           </div>
         </ScrollArea>
       </CardContent>

@@ -277,6 +277,12 @@ function EnhancedMultiAgentChatUI() {
     broadcast,
   ]);
 
+  // ⚡ Bolt: Memoized the rendered message list to prevent O(n) re-evaluations
+  // of the entire message array on every keystroke in the chat input or mode changes.
+  const renderedMessages = React.useMemo(() => {
+    return messages.map((msg) => <MessageBubble key={msg.id} msg={msg} agents={agents} />);
+  }, [messages, agents]);
+
   const handleAutomateAgentCreation = useCallback(async () => {
     setIsAutomating(true);
     try {
@@ -509,9 +515,7 @@ function EnhancedMultiAgentChatUI() {
       </header>
 
       <main className="p-4 overflow-y-auto flex flex-col space-y-4">
-        {messages.map((msg) => (
-          <MessageBubble key={msg.id} msg={msg} agents={agents} />
-        ))}
+        {renderedMessages}
         {messages.length === 0 && connectionState.authenticated && (
           <div className="text-center text-muted-foreground mt-8">
             <SystemIcon />
