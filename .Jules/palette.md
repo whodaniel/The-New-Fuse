@@ -1,3 +1,4 @@
-## 2024-03-30 - Accessible Interactive Hover Buttons in Lists
-**Learning:** For interactive elements in a list that are visually hidden until hover (e.g. `opacity-0 group-hover:opacity-100`), screen reader users and keyboard navigators cannot interact with or understand them if they remain visually hidden when focused.
-**Action:** Use `focus-within:opacity-100` on the parent container (or `focus:opacity-100` on the element) and add descriptive, dynamic `aria-label`s (like \`aria-label="View details for ${eventName}"\`) to ensure list actions are both perceivable and understandable contextually.
+
+## $(date +%Y-%m-%d) - Dynamic Status Announcements in Chat
+**Learning:** Screen readers cannot automatically announce when a purely visual animation (like a typing indicator) appears or disappears, meaning visually impaired users lose context of when a chat agent is thinking or responding.
+**Action:** Always wrap dynamic, transient status components (like typing dots or loading spinners) with `role="status"` and `aria-live="polite"` to ensure the UI announces changes naturally without interrupting the user. Additionally, hide visual-only animation DOM nodes using `aria-hidden="true"` to prevent screen reader noise.
