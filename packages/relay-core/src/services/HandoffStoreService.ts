@@ -1,11 +1,7 @@
 import crypto from 'crypto';
 
 // @ts-ignore
-import {
-  createStandaloneRedisClient,
-  createUpstashRestClient,
-} from '@the-new-fuse/infrastructure';
-import { Redis as UpstashRedis } from '@upstash/redis';
+import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 import Redis, { Cluster } from 'ioredis';
 
 import {
@@ -45,7 +41,7 @@ const DEFAULT_MAX_INBOX_ITEMS = 2000;
 
 export class HandoffStoreService {
   private client: Redis | Cluster | null = null;
-  private upstash: UpstashRedis | null = null;
+  private upstash: any = null;
   private readonly keyPrefix: string;
   private readonly defaultTtlSeconds: number;
   private readonly maxInboxItemsPerAgent: number;
@@ -63,7 +59,7 @@ export class HandoffStoreService {
     if (this.connected) {
       return;
     }
-    
+
     this.client = createStandaloneRedisClient({ lazyConnect: true } as any);
     this.upstash = createUpstashRestClient();
 

@@ -66,13 +66,9 @@ import { promisify } from 'util';
 import WebSocket from 'ws';
 
 // @ts-ignore
-import {
-  createStandaloneRedisClient,
-  createUpstashRestClient,
-} from '@the-new-fuse/infrastructure';
+import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 
-import { Redis as UpstashRedis } from '@upstash/redis';
-import { Redis, Cluster } from 'ioredis';
+import { Cluster, Redis } from 'ioredis';
 
 import { attachAuditTrace, type TnfAuditTrace } from './contracts/audit';
 import {
@@ -483,7 +479,7 @@ class MasterClock {
   ws: WebSocket | null;
   redis: Redis | Cluster | null;
   redisSub: Redis | Cluster | null;
-  upstash: UpstashRedis | null;
+  upstash: any;
   isRunning: boolean;
   heartbeatInterval: NodeJS.Timeout | null;
   stallCheckInterval: NodeJS.Timeout | null;

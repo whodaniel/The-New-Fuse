@@ -2,12 +2,8 @@
 import { readFile } from 'node:fs/promises';
 import * as path from 'node:path';
 // @ts-ignore
-import {
-  createStandaloneRedisClient,
-  createUpstashRestClient,
-} from '@the-new-fuse/infrastructure';
-import { Redis as UpstashRedis } from '@upstash/redis';
-import { Redis, Cluster } from 'ioredis';
+import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
+import { Cluster, Redis } from 'ioredis';
 import { createTNFEnvelope } from './protocol/tnf-envelope';
 
 type QueueTask = {
@@ -138,7 +134,7 @@ const REQUIRED_FEDERATION_GATES = [
 class BrokerAgent {
   private redis: Redis | Cluster | null = null;
   private redisBlocking: Redis | Cluster | null = null;
-  private upstash: UpstashRedis | null = null;
+  private upstash: any = null;
   private heartbeatInterval: NodeJS.Timeout | null = null;
   private running = false;
   private readonly brokerId = process.env.BROKER_ID || `BROKER-${Date.now()}`;
@@ -151,7 +147,9 @@ class BrokerAgent {
     this.upstash = createUpstashRestClient();
 
     if (this.redis instanceof Redis) {
-      this.redis.on('error', (err: any) => console.error('[Broker] Redis error:', err?.message || err));
+      this.redis.on('error', (err: any) =>
+        console.error('[Broker] Redis error:', err?.message || err)
+      );
     }
     if (this.redisBlocking instanceof Redis) {
       this.redisBlocking.on('error', (err: any) =>
@@ -188,7 +186,9 @@ class BrokerAgent {
     };
 
     if (this.upstash) {
-      await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, { [this.brokerId]: JSON.stringify(record) });
+      await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, {
+        [this.brokerId]: JSON.stringify(record),
+      });
     } else if (this.redis) {
       await this.redis.hset(CONFIG.AGENT_REGISTRY_KEY, this.brokerId, JSON.stringify(record));
     }
@@ -207,7 +207,10 @@ class BrokerAgent {
       try {
         if (this.upstash) {
           await this.upstash.publish(CONFIG.HEARTBEAT_CHANNEL, JSON.stringify(heartbeat));
-          const existing = await this.upstash.hget<string>(CONFIG.AGENT_REGISTRY_KEY, this.brokerId);
+          const existing = await this.upstash.hget<string>(
+            CONFIG.AGENT_REGISTRY_KEY,
+            this.brokerId
+          );
           const parsed = existing ? (JSON.parse(existing) as RegistryAgent) : {};
           await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, {
             [this.brokerId]: JSON.stringify({
@@ -895,7 +898,8 @@ class BrokerAgent {
     let registry: Record<string, string> = {};
 
     if (this.upstash) {
-      registry = (await this.upstash.hgetall<Record<string, string>>(CONFIG.AGENT_REGISTRY_KEY)) || {};
+      registry =
+        (await this.upstash.hgetall<Record<string, string>>(CONFIG.AGENT_REGISTRY_KEY)) || {};
     } else if (this.redis) {
       registry = await this.redis.hgetall(CONFIG.AGENT_REGISTRY_KEY);
     }

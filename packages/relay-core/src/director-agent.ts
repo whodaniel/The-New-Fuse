@@ -1,11 +1,7 @@
 #!/usr/bin/env node
 // @ts-ignore
-import {
-  createStandaloneRedisClient,
-  createUpstashRestClient,
-} from '@the-new-fuse/infrastructure';
-import { Redis as UpstashRedis } from '@upstash/redis';
-import { Redis, Cluster } from 'ioredis';
+import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
+import { Cluster, Redis } from 'ioredis';
 
 type QueueTask = {
   id: string;
@@ -62,7 +58,7 @@ const CONFIG = {
 class DirectorAgent {
   private redis: Redis | Cluster | null = null;
   private redisBlocking: Redis | Cluster | null = null;
-  private upstash: UpstashRedis | null = null;
+  private upstash: any = null;
   private heartbeatInterval: NodeJS.Timeout | null = null;
   private running = false;
   private readonly directorId = process.env.DIRECTOR_ID || `DIRECTOR-${Date.now()}`;
@@ -74,7 +70,9 @@ class DirectorAgent {
     this.upstash = createUpstashRestClient();
 
     if (this.redis instanceof Redis) {
-      this.redis.on('error', (err: any) => console.error('[Director] Redis error:', err?.message || err));
+      this.redis.on('error', (err: any) =>
+        console.error('[Director] Redis error:', err?.message || err)
+      );
     }
     if (this.redisBlocking instanceof Redis) {
       this.redisBlocking.on('error', (err: any) =>
@@ -111,7 +109,9 @@ class DirectorAgent {
     };
 
     if (this.upstash) {
-      await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, { [this.directorId]: JSON.stringify(record) });
+      await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, {
+        [this.directorId]: JSON.stringify(record),
+      });
     } else if (this.redis) {
       await this.redis.hset(CONFIG.AGENT_REGISTRY_KEY, this.directorId, JSON.stringify(record));
     }

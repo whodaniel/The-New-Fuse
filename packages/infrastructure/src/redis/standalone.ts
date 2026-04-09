@@ -104,10 +104,7 @@ export function createStandaloneRedisClient(
 /**
  * Create an Upstash REST client using standalone configuration
  */
-export function createUpstashRestClient(config?: {
-  restUrl?: string;
-  restToken?: string;
-}): UpstashRedis | null {
+export function createUpstashRestClient(config?: { restUrl?: string; restToken?: string }): any {
   const standaloneConfig = loadStandaloneRedisConfig();
   const restUrl = config?.restUrl || standaloneConfig.upstash?.restUrl;
   const restToken = config?.restToken || standaloneConfig.upstash?.restToken;

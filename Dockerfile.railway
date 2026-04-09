@@ -48,8 +48,8 @@ RUN pnpm --filter @the-new-fuse/core-vector-db build
 RUN pnpm --filter @the-new-fuse/api-client build
 RUN pnpm --filter @the-new-fuse/security build
 RUN pnpm --filter @the-new-fuse/mcp-core build
-RUN pnpm --filter @the-new-fuse/n8n-workflows build || echo "Skipping n8n-workflows"
-RUN pnpm --filter @the-new-fuse/relay-core build || echo "Skipping relay-core"
+RUN pnpm --filter @the-new-fuse/n8n-workflows build
+RUN pnpm --filter @the-new-fuse/relay-core build
 RUN pnpm --filter @the-new-fuse/hooks build
 RUN pnpm --filter @the-new-fuse/ui-consolidated build
 RUN pnpm --filter @the-new-fuse/port-management build
