@@ -103,6 +103,7 @@ async function main() {
         if (args.action === 'status') {
             let raw = null;
             if (upstash) {
+                // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
                 raw = await upstash.hget('tnf:master:state', 'superCycle');
             }
             else if (redis) {

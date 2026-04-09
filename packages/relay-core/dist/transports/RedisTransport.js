@@ -51,10 +51,10 @@ class RedisTransport extends events_1.EventEmitter {
                 ...message.metadata,
                 transport: 'redis',
                 channel,
-                receivedAt: new Date().toISOString()
+                receivedAt: new Date().toISOString(),
             };
             // Notify message handlers
-            this.messageHandlers.forEach(handler => {
+            this.messageHandlers.forEach((handler) => {
                 try {
                     handler(message);
                 }
@@ -110,8 +110,8 @@ class RedisTransport extends events_1.EventEmitter {
                     ...message.metadata,
                     transport: 'redis',
                     channel,
-                    sentAt: new Date().toISOString()
-                }
+                    sentAt: new Date().toISOString(),
+                },
             };
             await this.redisService.publish(channel, JSON.stringify(enrichedMessage));
             this.logger.debug(`Sent message to Redis channel ${channel}: ${message.type}`);
@@ -152,9 +152,9 @@ class RedisTransport extends events_1.EventEmitter {
                 source: 'redis_transport',
                 payload: {
                     timestamp: new Date().toISOString(),
-                    status: 'online'
+                    status: 'online',
                 },
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
             };
             await this.send(heartbeatMessage);
         }, 30000); // Every 30 seconds

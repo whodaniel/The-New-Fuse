@@ -1311,6 +1311,10 @@ async function runOpenClawPassthrough(args: string[] = []): Promise<void> {
   await runCommand('openclaw', normalizeForwardedArgs(args));
 }
 
+async function runHermesPassthrough(args: string[] = []): Promise<void> {
+  await runCommand('hermes', normalizeForwardedArgs(args));
+}
+
 async function runOpenClawControl(args: string[] = []): Promise<void> {
   await runCommand('node', ['scripts/openclaw/tnf-openclaw-control.cjs', ...args]);
 }
@@ -1661,6 +1665,20 @@ program
   .command('claw')
   .description('Alias for `tnf openclaw`')
   .argument('[args...]', 'Arguments forwarded to openclaw');
+
+program
+  .command('hermes')
+  .description('Pass through any Hermes Agent CLI command')
+  .argument('[args...]', 'Arguments forwarded to hermes')
+  .allowUnknownOption()
+  .action(runHermesPassthrough);
+
+program
+  .command('hrms')
+  .description('Alias for `tnf hermes`')
+  .argument('[args...]', 'Arguments forwarded to hermes')
+  .allowUnknownOption()
+  .action(runHermesPassthrough);
 
 const relay = program.command('relay').description('Relay operations');
 relay

@@ -76,7 +76,9 @@ class DirectorAgent {
             lastSeen: now,
         };
         if (this.upstash) {
-            await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, { [this.directorId]: JSON.stringify(record) });
+            await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, {
+                [this.directorId]: JSON.stringify(record),
+            });
         }
         else if (this.redis) {
             await this.redis.hset(CONFIG.AGENT_REGISTRY_KEY, this.directorId, JSON.stringify(record));

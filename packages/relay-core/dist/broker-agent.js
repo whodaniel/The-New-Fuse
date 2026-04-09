@@ -129,7 +129,9 @@ class BrokerAgent {
             lastSeen: now,
         };
         if (this.upstash) {
-            await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, { [this.brokerId]: JSON.stringify(record) });
+            await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, {
+                [this.brokerId]: JSON.stringify(record),
+            });
         }
         else if (this.redis) {
             await this.redis.hset(CONFIG.AGENT_REGISTRY_KEY, this.brokerId, JSON.stringify(record));
@@ -147,6 +149,7 @@ class BrokerAgent {
             try {
                 if (this.upstash) {
                     await this.upstash.publish(CONFIG.HEARTBEAT_CHANNEL, JSON.stringify(heartbeat));
+                    // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
                     const existing = await this.upstash.hget(CONFIG.AGENT_REGISTRY_KEY, this.brokerId);
                     const parsed = existing ? JSON.parse(existing) : {};
                     await this.upstash.hset(CONFIG.AGENT_REGISTRY_KEY, {
@@ -733,7 +736,9 @@ class BrokerAgent {
     async selectTargetAgent(task) {
         let registry = {};
         if (this.upstash) {
-            registry = (await this.upstash.hgetall(CONFIG.AGENT_REGISTRY_KEY)) || {};
+            // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
+            registry =
+                (await this.upstash.hgetall(CONFIG.AGENT_REGISTRY_KEY)) || {};
         }
         else if (this.redis) {
             registry = await this.redis.hgetall(CONFIG.AGENT_REGISTRY_KEY);
@@ -1064,6 +1069,7 @@ class BrokerAgent {
             this.heartbeatInterval = null;
         }
         try {
+            // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
             const nowIso = new Date().toISOString();
             if (this.upstash) {
                 const existing = await this.upstash.hget(CONFIG.AGENT_REGISTRY_KEY, this.brokerId);

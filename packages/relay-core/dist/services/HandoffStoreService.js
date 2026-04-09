@@ -99,6 +99,7 @@ class HandoffStoreService {
         await this.connect();
         let raw = null;
         if (this.upstash) {
+            // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
             raw = await this.upstash.get(this.packetKey(packetId));
         }
         else if (this.client) {
@@ -188,6 +189,7 @@ class HandoffStoreService {
     async getAck(packetId, agentId) {
         let raw = null;
         const key = this.ackKey(packetId);
+        // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
         if (this.upstash) {
             raw = await this.upstash.hget(key, agentId);
         }

@@ -127,7 +127,7 @@ async function main() {
       let raw: string | null = null;
       if (upstash) {
         // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
-        raw = await upstash.hget<string>('tnf:master:state', 'superCycle');
+        raw = await upstash.hget('tnf:master:state', 'superCycle');
       } else if (redis) {
         raw = await redis.hget('tnf:master:state', 'superCycle');
       }
