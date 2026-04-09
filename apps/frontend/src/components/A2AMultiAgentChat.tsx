@@ -62,8 +62,7 @@ const MessageBubble = React.memo<{ msg: A2AMessage; agents: AgentSummary[] }>(({
 });
 MessageBubble.displayName = 'MessageBubble';
 
-// ⚡ Bolt: Extracted ConnectionStatus outside of parent to prevent inline component
-// re-creation on every render of EnhancedMultiAgentChatUI
+// Connection status component hoisted to prevent O(n) remounting
 const ConnectionStatus = React.memo<{ connectionState: any }>(({ connectionState }) => (
   <div
     role="status"

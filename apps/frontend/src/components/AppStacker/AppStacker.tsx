@@ -99,7 +99,8 @@ interface DraggableAppProps {
   droppableId: string;
 }
 
-const DraggableApp: React.FC<DraggableAppProps> = ({
+// ⚡ Bolt: Wrapped DraggableApp in React.memo to prevent O(n) re-renders
+const DraggableApp = React.memo<DraggableAppProps>(({
   app,
   index,
   isExpanded,
@@ -151,7 +152,8 @@ const DraggableApp: React.FC<DraggableAppProps> = ({
       </div>
     )}
   </Draggable>
-);
+));
+DraggableApp.displayName = 'DraggableApp';
 
 export function AppStacker() {
   const [availableApps, setAvailableApps] = useState<App[]>([
@@ -189,17 +191,19 @@ export function AppStacker() {
   const [expandedAppId, setExpandedAppId] = useState<number | null>(null);
   const [virtualDeviceApp, setVirtualDeviceApp] = useState<App | null>(null);
 
-  const toggleExpand = (appId: number) => {
-    setExpandedAppId(expandedAppId === appId ? null : appId);
-  };
+  // ⚡ Bolt: Wrapped handlers in useCallback to maintain stable references
+  // across renders, enabling DraggableApp's React.memo to work effectively.
+  const toggleExpand = React.useCallback((appId: number) => {
+    setExpandedAppId(prev => prev === appId ? null : appId);
+  }, []);
 
-  const openVirtualDevice = (app: App) => {
+  const openVirtualDevice = React.useCallback((app: App) => {
     setVirtualDeviceApp(app);
-  };
+  }, []);
 
-  const closeVirtualDevice = () => {
+  const closeVirtualDevice = React.useCallback(() => {
     setVirtualDeviceApp(null);
-  };
+  }, []);
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
