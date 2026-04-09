@@ -1,0 +1,3 @@
+## 2024-03-30 - Accessible Interactive Hover Buttons in Lists
+**Learning:** For interactive elements in a list that are visually hidden until hover (e.g. `opacity-0 group-hover:opacity-100`), screen reader users and keyboard navigators cannot interact with or understand them if they remain visually hidden when focused.
+**Action:** Use `focus-within:opacity-100` on the parent container (or `focus:opacity-100` on the element) and add descriptive, dynamic `aria-label`s (like \`aria-label="View details for ${eventName}"\`) to ensure list actions are both perceivable and understandable contextually.

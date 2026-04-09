@@ -81,8 +81,11 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ events, loading }) => {
                     </div>
                   </div>
 
-                  <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="text-[10px] font-bold text-sky-500 hover:text-sky-400">
+                  <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                    <button
+                      className="text-[10px] font-bold text-sky-500 hover:text-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 rounded px-1"
+                      aria-label={`View details for ${event.payload?.title || event.payload?.message || 'Update'}`}
+                    >
                       VIEW
                     </button>
                   </div>
