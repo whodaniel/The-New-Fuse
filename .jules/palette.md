@@ -1,29 +1,11 @@
-## 2024-05-18 - Missing ARIA Labels on Icon-only Action Buttons
+## 2024-03-18 - A2A Agent Chat Screen Reader Updates
 
-**Learning:** Found an accessibility issue pattern in the `ActiveWorkspaces`
-component where icon-only action buttons (like the one containing the
-`UploadSimple` icon) lacked descriptive labels, making them inaccessible to
-screen readers. **Action:** Always add explicit `aria-label` and `title`
-attributes to all icon-only buttons to ensure they are accessible to users
-relying on assistive technologies, providing both screen-reader support and
-native browser tooltips.
-
-## 2025-03-04 - Accessible tooltips and labels for hover/shortcut buttons
-
-**Learning:** Icon-only action buttons (especially those visible only on hover
-states or specific key presses like holding Control) must explicitly include
-both descriptive `aria-label` attributes for screen readers and `title`
-attributes for native tooltips, ensuring both accessibility compliance and good
-UX. **Action:** When adding or auditing icon-only buttons, I will ensure they
-have both `aria-label` and `title` attributes implemented (e.g.,
-`aria-label="Restore thread" title="Restore thread"`).
-## 2024-03-05 - Missing ARIA Labels on List Creation Operations
-**Learning:** Core operations inside dynamically updating sections (like thread creation buttons within a list of threads) are critical targets for `aria-label` additions. Without them, screen readers may fail to distinctly identify the action or state of dynamic button components with icons. Additionally, when a creation action is happening (like creating a thread), disabling the button prevents unwanted duplicate form submissions while providing immediate UI feedback.
-**Action:** Ensure dynamic buttons in list controls, especially creation and multi-deletion actions, explicitly contain `aria-label`, `title`, and handle disabled loading states correctly.
-
-## 2025-03-10 - ARIA Labels on Historical Message Action Buttons
-**Learning:** Icon-only action buttons in chat history interactions (e.g., Edit, Save Changes, Cancel, and Play TTS) often lack descriptive `aria-label` or `title` attributes, making them confusing for screen reader users and those relying on native tooltips.
-**Action:** When working on chat interfaces or action bars with icon-only buttons, ensure that every action clearly states what it does using `aria-label` and `title` attributes. Dynamic buttons, like TTS, should also update their `aria-label` based on state (e.g., 'Play text-to-speech' vs 'Stop text-to-speech').
-## 2024-03-14 - Keyboard Visibility on Hover Elements
-**Learning:** When adding `focus-visible` ring styling to interactive elements (like icon buttons) that are hidden by default using Tailwind's `opacity-0` and revealed on hover (e.g., `group-hover:opacity-100`), the focus ring and button will remain invisible during keyboard navigation unless the opacity is also explicitly overridden.
-**Action:** Always include `focus-visible:opacity-100` alongside `focus-visible:ring-*` classes when making hidden-on-hover elements keyboard accessible.
+**Learning:** For dynamic real-time communication screens like
+`A2AMultiAgentChat`, connection statuses (e.g. "Connecting...", "Connected") and
+full-screen blocking UI states (like "Setting up A2A Agents...") are often
+visually distinct but lack screen reader announcements, leaving users blind to
+whether they can interact or why they are blocked. **Action:** When adding or
+modifying real-time status badges or full-screen loading overlays in
+communication components, always add `role="status"` and `aria-live="polite"` to
+ensure screen readers narrate connection and setup state transitions
+dynamically.
