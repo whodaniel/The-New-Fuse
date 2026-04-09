@@ -1662,6 +1662,75 @@ class TNFRelayServer extends events_1.EventEmitter {
         }
     }
     /**
+     * Approve an agent for bridge access (operator action)
+     */
+    approveBridgeAccess(agentId) {
+        const pending = this.pendingBridgeAgents.get(agentId);
+        if (!pending && !this.agents.has(agentId)) {
+            console.warn('[Relay] Cannot approve unknown agent: ' + agentId);
+            return false;
+        }
+        this.approvedBridgeAgents.add(agentId);
+        this.pendingBridgeAgents.delete(agentId);
+        console.log('[Relay] Agent ' + agentId + ' approved for bridge access');
+        // Subscribe them to the bridge
+        this.ensureBridgeSubscription(agentId);
+        // Notify the agent
+        const socket = this.sockets.get(agentId);
+        if (socket) {
+            this.send(socket, {
+                type: 'BRIDGE_APPROVED',
+                payload: { agentId, approvedAt: Date.now() },
+            });
+        }
+        return true;
+    }
+    /**
+     * Deny an agent bridge access (operator action)
+     */
+    denyBridgeAccess(agentId, reason) {
+        const pending = this.pendingBridgeAgents.get(agentId);
+        if (!pending) {
+            console.warn('[Relay] No pending bridge request for agent: ' + agentId);
+            return false;
+        }
+        this.pendingBridgeAgents.delete(agentId);
+        console.log('[Relay] Agent ' + agentId + ' denied bridge access');
+        // Notify the agent
+        const socket = this.sockets.get(agentId);
+        if (socket) {
+            this.send(socket, {
+                type: 'BRIDGE_DENIED',
+                payload: { agentId, reason: reason || 'Access denied by operator', deniedAt: Date.now() },
+            });
+        }
+        return true;
+    }
+    /**
+     * Get list of pending bridge access requests
+     */
+    getPendingBridgeRequests() {
+        return Array.from(this.pendingBridgeAgents.values()).map(({ agent, requestedAt }) => ({
+            agentId: agent.id,
+            name: agent.name,
+            platform: agent.platform,
+            requestedAt,
+        }));
+    }
+    /**
+     * Toggle bridge gate on/off
+     */
+    setBridgeGateEnabled(enabled) {
+        this.bridgeGateEnabled = enabled;
+        console.log('[Relay] Bridge gate ' + (enabled ? 'ENABLED' : 'DISABLED'));
+        // If disabling, auto-approve all pending
+        if (!enabled) {
+            for (const [agentId] of this.pendingBridgeAgents) {
+                this.approveBridgeAccess(agentId);
+            }
+        }
+    }
+    /**
      * Send a recovery message to wake up stalled conversations
      */
     sendRecoveryMessage(channelId, message, metadata) {

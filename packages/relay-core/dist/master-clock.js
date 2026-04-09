@@ -2140,6 +2140,78 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         }
         return undefined;
     }
+    parseTimestampMs(value) {
+        if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+            return value;
+        }
+        if (typeof value === 'string') {
+            const isoValue = Date.parse(value);
+            if (Number.isFinite(isoValue) && isoValue > 0)
+                return isoValue;
+            const numericValue = Number.parseInt(value, 10);
+            if (Number.isFinite(numericValue) && numericValue > 0)
+                return numericValue;
+        }
+        return undefined;
+    }
+    readCadenceMs(source) {
+        if (!source || typeof source !== 'object')
+            return undefined;
+        const valueMs = Number(source.intendedIntervalMs ||
+            source.expectedIntervalMs ||
+            source.intervalMs ||
+            source.heartbeatIntervalMs ||
+            0);
+        if (Number.isFinite(valueMs) && valueMs > 0)
+            return valueMs;
+        const valueSeconds = Number(source.intendedIntervalSeconds ||
+            source.intervalSeconds ||
+            source.heartbeatIntervalSeconds ||
+            source.cadenceSeconds ||
+            0);
+        if (Number.isFinite(valueSeconds) && valueSeconds > 0)
+            return valueSeconds * 1000;
+        return undefined;
+    }
+    resolveScheduledProcessInterval(payload, metadata, existing) {
+        const producerInterval = this.readCadenceMs(payload);
+        if (producerInterval) {
+            return {
+                intendedIntervalMs: producerInterval,
+                intervalSource: 'producer',
+                intervalExact: true,
+            };
+        }
+        const metadataInterval = this.readCadenceMs(metadata);
+        if (metadataInterval) {
+            return {
+                intendedIntervalMs: metadataInterval,
+                intervalSource: 'metadata',
+                intervalExact: true,
+            };
+        }
+        if (existing?.intendedIntervalMs) {
+            return {
+                intendedIntervalMs: existing.intendedIntervalMs,
+                intervalSource: existing.intervalSource || 'inferred',
+                intervalExact: Boolean(existing.intervalExact),
+            };
+        }
+        return {
+            intendedIntervalMs: undefined,
+            intervalSource: 'inferred',
+            intervalExact: false,
+        };
+    }
+    resolveNextExpectedAt(payload, anchorMs, intervalMs) {
+        const explicit = this.parseTimestampMs(payload.nextExpectedAt);
+        if (explicit)
+            return explicit;
+        if (anchorMs && intervalMs && intervalMs > 0) {
+            return anchorMs + intervalMs;
+        }
+        return undefined;
+    }
     // --------------------------------------------------------------------------
     // SHUTDOWN
     // --------------------------------------------------------------------------

@@ -1,564 +1,695 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The New Fuse — Orchestrate Intelligence</title>
-  <meta name="description" content="Build intelligent AI workflows, coordinate agent swarms, and leverage the MCP protocol for seamless integration.">
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <style>
-    :root {
-      --bg-slate-950: #020617;
-      --bg-slate-900: #0f172a;
-      --primary-blue: #3b82f6;
-      --primary-purple: #8b5cf6;
-      --primary-pink: #ec4899;
-      --text-white: #f8fafc;
-      --text-gray: #94a3b8;
-      --text-muted: #64748b;
-      --border-white: rgba(255, 255, 255, 0.1);
-      --gradient-main: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
-      --glass: rgba(15, 23, 42, 0.7);
-    }
+    <!-- Import Map: Provides fallback resolution for bare module specifiers that external scripts may try to load -->
+    <script type="importmap">
+      {
+        "imports": {
+          "scheduler": "data:text/javascript,export const unstable_scheduleCallback=(p,c)=>setTimeout(c,0);export const unstable_cancelCallback=t=>clearTimeout(t);export const unstable_now=()=>performance.now();export const unstable_getCurrentPriorityLevel=()=>3;export const unstable_ImmediatePriority=1;export const unstable_UserBlockingPriority=2;export const unstable_NormalPriority=3;export const unstable_LowPriority=4;export const unstable_IdlePriority=5;export const unstable_runWithPriority=(p,c)=>c();export const unstable_next=c=>c();export const unstable_wrapCallback=c=>c;export const unstable_shouldYield=()=>false;export const unstable_requestPaint=()=>{};export const unstable_Profiling=null;export default{unstable_scheduleCallback,unstable_cancelCallback,unstable_now,unstable_getCurrentPriorityLevel,unstable_ImmediatePriority,unstable_UserBlockingPriority,unstable_NormalPriority,unstable_LowPriority,unstable_IdlePriority,unstable_runWithPriority,unstable_next,unstable_wrapCallback,unstable_shouldYield,unstable_requestPaint,unstable_Profiling};",
+          "scheduler/tracing": "data:text/javascript,export const __interactionsRef={current:new Set};export const __subscriberRef={current:null};export const unstable_clear=c=>c();export const unstable_getCurrent=()=>new Set;export const unstable_getThreadID=()=>0;export const unstable_subscribe=()=>{};export const unstable_trace=(n,t,c)=>c();export const unstable_unsubscribe=()=>{};export const unstable_wrap=c=>c;"
+        }
+      }
+    </script>
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <!-- CRITICAL: Custom Element Guard MUST be first to intercept browser extension scripts -->
+    <script>
+      (function () {
+        let GUARD_DEBUG = false;
+        try {
+          GUARD_DEBUG =
+            (window && window.__TNF_DEBUG_CUSTOM_ELEMENTS__) ||
+            (window && window.localStorage && window.localStorage.getItem('TNF_DEBUG_CE') === '1');
+        } catch (_e) {
+          GUARD_DEBUG = false;
+        }
 
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: var(--bg-slate-950);
-      color: var(--text-white);
-      line-height: 1.5;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
+        // AGGRESSIVE ERROR FILTER: Catch and swallow specific collision and module resolution errors
+        const swallowError = function (message) {
+          const msg = (message || '').toLowerCase();
+          return (
+            msg.includes('mce-autosize-textarea') ||
+            msg.includes('already been defined') ||
+            msg.includes('already been used') ||
+            msg.includes('failed to resolve module') ||
+            msg.includes('scheduler') ||
+            (msg.includes('uncaught') && msg.includes('custom element'))
+          );
+        };
 
-    /* Background Effects */
-    .bg-grid {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-      background-size: 40px 40px;
-      mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
-      pointer-events: none;
-      z-index: -1;
-    }
+        // window.onerror for broad string-based errors
+        const originalOnerror = window.onerror;
+        window.onerror = function (message, source, lineno, colno, error) {
+          if (swallowError(message)) {
+            console.warn('[The New Fuse] Globally suppressed error:', message);
+            return true; // Prevents error from appearing in console
+          }
+          if (originalOnerror) return originalOnerror.apply(this, arguments);
+        };
 
-    .bg-gradient {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at 50% -20%, rgba(59, 130, 246, 0.15), transparent 60%);
-      pointer-events: none;
-      z-index: -1;
-    }
+        // addEventListener('error') for Event object errors
+        window.addEventListener(
+          'error',
+          function (event) {
+            if (swallowError(event.message)) {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+              return true;
+            }
+          },
+          true
+        );
 
-    /* Typography */
-    h1, h2, h3 {
-      font-weight: 800;
-      letter-spacing: -0.03em;
-    }
+        // Also catch unhandled promise rejections
+        window.addEventListener(
+          'unhandledrejection',
+          function (event) {
+            const reason = event.reason?.message || String(event.reason || '');
+            if (swallowError(reason)) {
+              event.preventDefault();
+              return true;
+            }
+          },
+          true
+        );
 
-    .gradient-text {
-      background: var(--gradient-main);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+        try {
+          // Keep track of all registered elements
+          const registeredElements = new Set();
+          const definingElements = new Set();
 
-    /* Navbar */
-    nav {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      padding: 1.5rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 100;
-      transition: background 0.3s ease;
-      backdrop-filter: blur(8px);
-    }
+          // Store original methods
+          const registry = customElements;
+          const originalDefine = registry.define.bind(registry);
+          const originalGet = registry.get.bind(registry);
 
-    nav.scrolled {
-      background: var(--glass);
-      border-bottom: 1px solid var(--border-white);
-    }
+          // Create a safer define function
+          const safeDefine = function (name, constructor, options) {
+            // SPECIAL CASE: mce-autosize-textarea is notoriously problematic with polyfills
+            if (name === 'mce-autosize-textarea') {
+              if (customElements.get(name) || registeredElements.has(name)) {
+                return;
+              }
+            }
 
-    .logo {
-      font-size: 1.5rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
+            // Double-check if already registered in our tracker
+            if (registeredElements.has(name)) {
+              return;
+            }
 
-    .nav-links {
-      display: flex;
-      gap: 2.5rem;
-      align-items: center;
-    }
+            // Check if already defined via native API
+            try {
+              const existing = originalGet(name);
+              if (existing) {
+                registeredElements.add(name);
+                return;
+              }
+            } catch (e) {
+              // Get failed, element doesn't exist - continue
+            }
 
-    .nav-links a {
-      color: var(--text-gray);
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
+            // Check if currently being defined (race condition)
+            if (definingElements.has(name)) {
+              return;
+            }
 
-    .nav-links a:hover {
-      color: var(--text-white);
-    }
+            // Final safety check: if already defined in the global registry, skip
+            if (customElements.get(name)) {
+              registeredElements.add(name);
+              return;
+            }
 
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border-radius: 9999px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      display: inline-block;
-    }
+            // Mark as being defined
+            definingElements.add(name);
 
-    .btn-primary {
-      background: var(--gradient-main);
-      color: var(--bg-slate-950);
-      border: none;
-    }
+            try {
+              originalDefine(name, constructor, options);
+              registeredElements.add(name);
+            } catch (e) {
+              const msg = (e && e.message) || String(e || '');
+              if (
+                msg.toLowerCase().includes('already') ||
+                msg.toLowerCase().includes('defined') ||
+                msg.toLowerCase().includes('used') ||
+                msg.includes('NotSupportedError')
+              ) {
+                // Silently handle - element is already defined
+                registeredElements.add(name);
+                return;
+              }
+              // Re-throw unexpected errors
+              console.error(`[The New Fuse] Error defining '${name}':`, e);
+              // don't throw to prevent crashing the whole app
+            } finally {
+              // Remove from defining set
+              definingElements.delete(name);
+            }
+          };
 
-    .btn-primary:hover {
-      opacity: 0.9;
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px -5px rgba(167, 139, 250, 0.3);
-    }
+          // Mark as guarded so other scripts know
+          safeDefine.__isSafeGuarded = true;
 
-    .btn-outline {
-      border: 1px solid var(--border-white);
-      color: var(--text-white);
-      background: transparent;
-    }
+          // Bind the function to customElements to maintain context
+          const boundSafeDefine = safeDefine.bind(registry);
+          // Also mark the bound function
+          boundSafeDefine.__isSafeGuarded = true;
 
-    .btn-outline:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: var(--text-gray);
-    }
+          // Patch prototype AND instance so polyfills or wrappers calling either path are protected.
+          const proto = window.CustomElementRegistry && window.CustomElementRegistry.prototype;
+          if (proto && proto.define && !proto.define.__isSafeGuarded) {
+            Object.defineProperty(proto, 'define', {
+              value: boundSafeDefine,
+              configurable: false,
+              writable: false,
+            });
+          }
+          if (!registry.define.__isSafeGuarded) {
+            Object.defineProperty(registry, 'define', {
+              value: boundSafeDefine,
+              configurable: false,
+              writable: false,
+            });
+          }
 
-    /* Hero Section */
-    section {
-      padding: 8rem 2rem 4rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+          // Lock the customElements object itself to prevent polyfills from replacing it
+          try {
+            const originalCustomElements = window.customElements;
+            if (originalCustomElements) {
+              Object.defineProperty(window, 'customElements', {
+                get() {
+                  return originalCustomElements;
+                },
+                set(v) {
+                  console.warn(
+                    '[The New Fuse] Prevented external script from overwriting window.customElements'
+                  );
+                },
+                configurable: false,
+              });
+            }
+          } catch (e) {
+            // Ignore if already non-configurable
+          }
 
-    .hero {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2rem;
-    }
+          if (GUARD_DEBUG) {
+            console.log('[The New Fuse] Custom Element Guard active');
+          }
+        } catch (e) {
+          console.error('[The New Fuse] Custom Element Guard failed to initialize', e);
+        }
+      })();
+    </script>
 
-    .announcement {
-      background: rgba(59, 130, 246, 0.1);
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      padding: 0.5rem 1rem;
-      border-radius: 9999px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--primary-blue);
-    }
+    <!-- Content Security Policy: Allow unsafe-eval/inline as requested for legacy dependency support -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob: wss:; connect-src 'self' https: wss:; img-src 'self' https: data: blob:; worker-src 'self' blob:;"
+    />
 
-    .hero h1 {
-      font-size: 4.5rem;
-      line-height: 1.1;
-      max-width: 900px;
-    }
+    <!-- Global CommonJS require() shim for bundled dependencies (ethers.js, bn.js, etc.) -->
+    <script>
+      // Shim for CommonJS require() calls that can't be polyfilled at build time
+      // Some libraries use eval("require(...)") which bypasses Vite's transforms
+      (function () {
+        if (typeof window.require === 'undefined') {
+          // Create a stub that returns empty modules for common Node.js modules
+          const emptyModule = {};
+          const bufferModule = {
+            Buffer: typeof Buffer !== 'undefined' ? Buffer : { from: () => [], alloc: () => [] },
+          };
 
-    .hero p {
-      color: var(--text-gray);
-      font-size: 1.25rem;
-      max-width: 600px;
-    }
+          window.require = function (moduleName) {
+            // Suppress warnings for expected browser-incompatible modules
+            const ignoredModules = [
+              'fs',
+              'path',
+              'os',
+              'crypto',
+              'buffer',
+              '@emotion/is-prop-valid',
+            ];
+            if (!ignoredModules.includes(moduleName) && !moduleName.startsWith('node:')) {
+              console.warn('[The New Fuse] CommonJS require() called for:', moduleName);
+            }
 
-    .hero-ctas {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
+            // Return appropriate stubs for known modules
+            if (moduleName === 'crypto') {
+              return (
+                window.crypto || {
+                  createHash: () => ({ update: () => ({ digest: () => '' }), digest: () => '' }),
+                  randomBytes: (size) => new Uint8Array(size),
+                }
+              );
+            }
+            if (moduleName === 'buffer' || moduleName === 'buffer/') {
+              return bufferModule;
+            }
+            if (moduleName === 'bn.js') {
+              // Return a functional BN implementation using BigInt
+              // This handles the eval("require('bn.js')") pattern in some crypto libs
+              if (window._BNCache) return window._BNCache;
 
-    .metrics-bar {
-      display: flex;
-      gap: 4rem;
-      margin-top: 4rem;
-      padding: 2rem;
-      border-top: 1px solid var(--border-white);
-      border-bottom: 1px solid var(--border-white);
-    }
+              class BN {
+                constructor(number, base, endian) {
+                  if (number instanceof BN) {
+                    this.value = number.value;
+                  } else if (typeof number === 'bigint') {
+                    this.value = number;
+                  } else if (typeof number === 'number') {
+                    this.value = BigInt(number);
+                  } else if (typeof number === 'string') {
+                    const b = base || 10;
+                    this.value = BigInt(b === 16 ? '0x' + number.replace(/^0x/i, '') : number);
+                  } else if (number && number.length !== undefined) {
+                    // Array or Buffer
+                    let hex = '0x';
+                    for (let i = 0; i < number.length; i++)
+                      hex += number[i].toString(16).padStart(2, '0');
+                    this.value = BigInt(hex);
+                  } else {
+                    this.value = BigInt(0);
+                  }
+                }
+                clone() {
+                  return new BN(this.value);
+                }
+                add(b) {
+                  return new BN(this.value + new BN(b).value);
+                }
+                sub(b) {
+                  return new BN(this.value - new BN(b).value);
+                }
+                mul(b) {
+                  return new BN(this.value * new BN(b).value);
+                }
+                div(b) {
+                  return new BN(this.value / new BN(b).value);
+                }
+                mod(b) {
+                  return new BN(this.value % new BN(b).value);
+                }
+                pow(b) {
+                  return new BN(this.value ** new BN(b).value);
+                }
+                sqr() {
+                  return new BN(this.value * this.value);
+                }
+                neg() {
+                  return new BN(-this.value);
+                }
+                abs() {
+                  return new BN(this.value < 0n ? -this.value : this.value);
+                }
+                isZero() {
+                  return this.value === 0n;
+                }
+                isNeg() {
+                  return this.value < 0n;
+                }
+                cmp(b) {
+                  const bv = new BN(b).value;
+                  return this.value < bv ? -1 : this.value > bv ? 1 : 0;
+                }
+                lt(b) {
+                  return this.cmp(b) < 0;
+                }
+                lte(b) {
+                  return this.cmp(b) <= 0;
+                }
+                gt(b) {
+                  return this.cmp(b) > 0;
+                }
+                gte(b) {
+                  return this.cmp(b) >= 0;
+                }
+                eq(b) {
+                  return this.cmp(b) === 0;
+                }
+                toNumber() {
+                  return Number(this.value);
+                }
+                toString(base) {
+                  const b = base || 10;
+                  if (b === 16) return this.value.toString(16);
+                  return this.value.toString();
+                }
+                toArray(endian, length) {
+                  let hex = this.value.toString(16);
+                  if (hex.length % 2) hex = '0' + hex;
+                  const arr = [];
+                  for (let i = 0; i < hex.length; i += 2) arr.push(parseInt(hex.substr(i, 2), 16));
+                  if (length && arr.length < length) {
+                    while (arr.length < length) arr.unshift(0);
+                  }
+                  if (endian === 'le') arr.reverse();
+                  return arr;
+                }
+                toBuffer(endian, length) {
+                  return new Uint8Array(this.toArray(endian, length));
+                }
+                bitLength() {
+                  return this.value.toString(2).length;
+                }
+                byteLength() {
+                  return Math.ceil(this.bitLength() / 8);
+                }
+                and(b) {
+                  return new BN(this.value & new BN(b).value);
+                }
+                or(b) {
+                  return new BN(this.value | new BN(b).value);
+                }
+                xor(b) {
+                  return new BN(this.value ^ new BN(b).value);
+                }
+                shln(n) {
+                  return new BN(this.value << BigInt(n));
+                }
+                shrn(n) {
+                  return new BN(this.value >> BigInt(n));
+                }
+                static isBN(obj) {
+                  return obj instanceof BN;
+                }
+                static red(m) {
+                  return { prime: null, m: new BN(m) };
+                }
+                toRed(ctx) {
+                  this._red = ctx;
+                  return this;
+                }
+                fromRed() {
+                  return this.clone();
+                }
+                redAdd(b) {
+                  return this.add(b).mod(this._red?.m || new BN(1));
+                }
+                redSub(b) {
+                  return this.sub(b).mod(this._red?.m || new BN(1));
+                }
+                redMul(b) {
+                  return this.mul(b).mod(this._red?.m || new BN(1));
+                }
+                redSqr() {
+                  return this.sqr().mod(this._red?.m || new BN(1));
+                }
+                redPow(b) {
+                  return this.pow(b).mod(this._red?.m || new BN(1));
+                }
+              }
+              BN.BN = BN;
+              BN.wordSize = 26;
+              window._BNCache = BN;
+              return BN;
+            }
+            if (moduleName === '@emotion/is-prop-valid') {
+              return { default: () => true };
+            }
 
-    .metric {
-      text-align: center;
-    }
+            // Scheduler module - used internally by React, some external scripts try to import it directly
+            if (moduleName === 'scheduler' || moduleName === 'scheduler/tracing') {
+              // Return a minimal scheduler shim that provides the essential APIs
+              if (window._schedulerShim) return window._schedulerShim;
 
-    .metric-value {
-      font-size: 2rem;
-      font-weight: 800;
-      display: block;
-    }
+              const schedulerShim = {
+                unstable_scheduleCallback: function (priority, callback) {
+                  return setTimeout(callback, 0);
+                },
+                unstable_cancelCallback: function (task) {
+                  clearTimeout(task);
+                },
+                unstable_now: function () {
+                  return performance.now();
+                },
+                unstable_getCurrentPriorityLevel: function () {
+                  return 3; // NormalPriority
+                },
+                unstable_ImmediatePriority: 1,
+                unstable_UserBlockingPriority: 2,
+                unstable_NormalPriority: 3,
+                unstable_LowPriority: 4,
+                unstable_IdlePriority: 5,
+                unstable_runWithPriority: function (priority, callback) {
+                  return callback();
+                },
+                unstable_next: function (callback) {
+                  return callback();
+                },
+                unstable_wrapCallback: function (callback) {
+                  return callback;
+                },
+                unstable_shouldYield: function () {
+                  return false;
+                },
+                unstable_requestPaint: function () {},
+                unstable_Profiling: null,
+              };
+              window._schedulerShim = schedulerShim;
+              return schedulerShim;
+            }
 
-    .metric-label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
+            return emptyModule;
+          };
+          window.require.main = null;
+          // Intentional no-op log to avoid console noise in production.
+        }
+      })();
+    </script>
 
-    /* Features Grid */
-    .features {
-      padding-top: 6rem;
-    }
+    <!-- Global Custom Element Guard: Prevents crashes from duplicate definitions -->
+    <!-- SEO and Meta Information -->
+    <title>The New Fuse - AI Agent Orchestration Platform</title>
+    <meta
+      name="description"
+      content="Orchestrate intelligent workflows, enable seamless agent communication, and unlock the full potential of AI automation with The New Fuse. Support for MCP and A2A protocols."
+    />
+    <meta
+      name="keywords"
+      content="AI platform, workflow automation, AI agents, agent orchestration, MCP protocol, A2A protocol, enterprise AI, AI collaboration"
+    />
+    <meta name="author" content="The New Fuse Team" />
+    <meta name="theme-color" content="#3b82f6" />
 
-    .section-header {
-      text-align: center;
-      margin-bottom: 4rem;
-    }
+    <!-- Favicons and PWA -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="The New Fuse" />
 
-    .section-header h2 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="The New Fuse - AI Collaboration Platform" />
+    <meta
+      property="og:description"
+      content="Orchestrate intelligent workflows, enable seamless agent communication, and unlock the full potential of AI automation."
+    />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:site_name" content="The New Fuse" />
 
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-    }
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The New Fuse - AI Collaboration Platform" />
+    <meta
+      name="twitter:description"
+      content="Orchestrate intelligent workflows, enable seamless agent communication, and unlock the full potential of AI automation."
+    />
+    <meta name="twitter:image" content="/og-image.png" />
 
-    .feature-card {
-      background: var(--bg-slate-900);
-      border: 1px solid var(--border-white);
-      padding: 2.5rem;
-      border-radius: 1.5rem;
-      transition: all 0.3s ease;
-    }
+    <!-- AI Agent Discoverability Metadata (Required per ULTIMATE_UX_DESIGNER_BRIEF) -->
+    <link rel="api-docs" href="/api/docs" />
+    <link rel="agent-onboarding" href="/docs/ai-orientation" />
+    <link rel="agent-registry" href="/api/agents/registry" />
+    <meta name="api-version" content="v1.0" />
+    <meta name="agent-protocols" content="MCP,A2A,REST,WebSocket" />
 
-    .feature-card:hover {
-      border-color: var(--primary-blue);
-      transform: translateY(-5px);
-    }
+    <!-- JSON-LD Structured Data for AI Agents and Search Engines -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "The New Fuse",
+        "applicationCategory": "AI Collaboration Platform",
+        "applicationSubCategory": "Agent Orchestration",
+        "operatingSystem": "Web",
+        "description": "Enterprise-grade platform for managing multi-agent AI workflows, visual automation, and Web3-native AI monetization.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "url": "/api/agents/register"
+        },
+        "featureList": [
+          "Multi-LLM Support (GPT-4, Claude, Gemini, Llama)",
+          "Visual Workflow Builder",
+          "Web3 NFT Marketplace",
+          "MCP Protocol Integration",
+          "A2A Agent-to-Agent Communication",
+          "Real-time Analytics Dashboard"
+        ],
+        "softwareRequirements": "Modern web browser",
+        "creator": {
+          "@type": "Organization",
+          "name": "The New Fuse Team"
+        },
+        "potentialAction": {
+          "@type": "RegisterAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "/api/agents/register",
+            "httpMethod": "POST",
+            "contentType": "application/json"
+          },
+          "description": "Register as an AI agent on The New Fuse platform"
+        }
+      }
+    </script>
 
-    .feature-icon {
-      width: 48px;
-      height: 48px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1.5rem;
-      font-size: 1.5rem;
-    }
+    <!-- Performance Optimization: DNS Prefetch for external resources -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
 
-    .feature-card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-    }
+    <!-- Performance Optimization: Preconnect to critical origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    .feature-card p {
-      color: var(--text-gray);
-    }
+    <!-- Font Optimization: Preload critical fonts -->
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      as="style"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
+    />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    /></noscript>
 
-    /* Bento Grid */
-    .bento {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: repeat(2, 300px);
-      gap: 1.5rem;
-      margin-top: 4rem;
-    }
+    <!-- Critical CSS for initial render - Dark Theme -->
+    <style>
+      /* Critical above-the-fold styles - Premium Dark Theme */
+      * {
+        box-sizing: border-box;
+      }
 
-    .bento-item {
-      background: var(--bg-slate-900);
-      border: 1px solid var(--border-white);
-      border-radius: 1.5rem;
-      padding: 2rem;
-      position: relative;
-      overflow: hidden;
-    }
+      html {
+        color-scheme: dark;
+      }
 
-    .bento-1 { grid-column: span 2; }
-    .bento-2 { grid-column: span 2; }
-    .bento-3 { grid-column: span 1; }
-    .bento-4 { grid-column: span 2; }
-    .bento-5 { grid-column: span 1; }
+      body {
+        font-family:
+          'Plus Jakarta Sans',
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #020617; /* Slate 950 - Deep Obsidian */
+        background-image:
+          radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+          radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.05) 0%, transparent 50%),
+          linear-gradient(180deg, #020617 0%, #0f172a 100%);
+        background-attachment: fixed;
+        min-height: 100vh;
+        color: #f8fafc; /* Slate 50 */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
 
-    .code-preview {
-      font-family: 'Courier New', monospace;
-      font-size: 0.8rem;
-      background: #020617;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      margin-top: 1rem;
-      color: #60a5fa;
-    }
+      #root {
+        width: 100%;
+        min-height: 100vh;
+        background: transparent; /* CRITICAL: Was 'white', now transparent */
+      }
 
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--border-white);
-      padding: 4rem 2rem;
-      margin-top: 8rem;
-    }
+      /* Optimized loading spinner - Dark Theme */
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        color: #60a5fa; /* Blue 400 */
+        font-size: 18px;
+        font-weight: 500;
+      }
 
-    .footer-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 2fr repeat(3, 1fr);
-      gap: 4rem;
-    }
+      .loading::after {
+        content: '';
+        width: 20px;
+        height: 20px;
+        margin-left: 10px;
+        border: 3px solid #3b82f6;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
 
-    .footer-col h4 {
-      margin-bottom: 1.5rem;
-      font-size: 1rem;
-    }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
 
-    .footer-col ul {
-      list-style: none;
-    }
-
-    .footer-col li {
-      margin-bottom: 0.75rem;
-    }
-
-    .footer-col a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: color 0.2s;
-    }
-
-    .footer-col a:hover {
-      color: var(--text-white);
-    }
-
-    /* Animations */
-    [data-reveal] {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    [data-reveal].revealed {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    @media (max-width: 768px) {
-      .hero h1 { font-size: 3rem; }
-      .nav-links { display: none; }
-      .bento { grid-template-columns: 1fr; grid-template-rows: auto; }
-      .bento-item { grid-column: span 1 !br; }
-      .metrics-bar { flex-direction: column; gap: 2rem; }
-    }
-  </style>
-</head>
-<body>
-  <div class="bg-grid"></div>
-  <div class="bg-gradient"></div>
-
-  <nav id="navbar">
-    <div class="logo">
-      <span>🚀</span> The New Fuse
-    </div>
-    <div class="nav-links">
-      <a href="#features">Features</a>
-      <a href="#product">Product</a>
-      <a href="#pricing">Pricing</a>
-      <a href="/visualizations/dashboard.html">Visualizations</a>
-      <a href="/login">Sign In</a>
-      <a href="/dashboard" class="btn btn-primary">Get Started</a>
-    </div>
-  </nav>
-
-  <header class="hero">
-    <div class="announcement" data-reveal>New: Integrated MCP Protocol Support →</div>
-    <h1 data-reveal>Build Intelligent <span class="gradient-text">AI Workflows</span></h1>
-    <p data-reveal>
-      Orchestrate autonomous agent swarms, manage persistent memory banks, and deploy production-grade AI infrastructure in minutes.
-    </p>
-    <div class="hero-ctas" data-reveal>
-      <a href="/dashboard" class="btn btn-primary">Start Building Free</a>
-      <a href="https://github.com/tnf" class="btn btn-outline">Star on GitHub</a>
-    </div>
-
-    <div class="metrics-bar" data-reveal>
-      <div class="metric">
-        <span class="metric-value">113</span>
-        <span class="metric-label">Active Agents</span>
-      </div>
-      <div class="metric">
-        <span class="metric-value">&lt;100ms</span>
-        <span class="metric-label">Avg Latency</span>
-      </div>
-      <div class="metric">
-        <span class="metric-value">∞</span>
-        <span class="metric-label">Scale</span>
-      </div>
-    </div>
-  </header>
-
-  <section id="features" class="features">
-    <div class="section-header" data-reveal>
-      <h2>Stop duct-taping APIs.</h2>
-      <p class="gradient-text" style="font-size: 1.5rem; font-weight: 700;">Start orchestrating intelligence.</p>
-    </div>
-
-    <div class="feature-grid">
-      <div class="feature-card" data-reveal>
-        <div class="feature-icon">🔌</div>
-        <h3>Universal MCP Support</h3>
-        <p>Connect any tool or data source via the Model Context Protocol. Seamlessly bridge your local context to LLMs.</p>
-      </div>
-      <div class="feature-card" data-reveal>
-        <div class="feature-icon">🐝</div>
-        <h3>Agent Swarm Control</h3>
-        <p>Coordinate hundreds of specialized agents to work in parallel on complex multi-step objectives.</p>
-      </div>
-      <div class="feature-card" data-reveal>
-        <div class="feature-icon">🛡️</div>
-        <h3>Zero-Trust Security</h3>
-        <p>Production-ready security with isolated execution environments and granular permission mapping.</p>
-      </div>
-      <div class="feature-card" data-reveal>
-        <div class="feature-icon">🧠</div>
-        <h3>Vector Memory Bank</h3>
-        <p>Give your agents persistent long-term memory with built-in vector database synchronization.</p>
-      </div>
-      <div class="feature-card" data-reveal>
-        <div class="feature-icon">☁️</div>
-        <h3>Deploy Anywhere</h3>
-        <p>Export your swarms to Docker, Railway, or Vercel with one click. No lock-in, just performance.</p>
-      </div>
-      <div class="feature-card" data-reveal>
-        <div class="feature-icon">⚡</div>
-        <h3>Sub-ms Latency</h3>
-        <p>Optimized TNF Envelope Protocol ensures your agents communicate with minimal overhead.</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="product">
-    <div class="section-header" data-reveal>
-      <h2>Engineered for Performance.</h2>
-    </div>
-
-    <div class="bento">
-      <div class="bento-item bento-1" data-reveal>
-        <h3>IDE Integration</h3>
-        <p>Direct bridge to VS Code, Cursor, and Theia.</p>
-        <div class="code-preview">
-          tnf agents deploy --swarm experimental
+      /* Prevent layout shift */
+      img,
+      svg,
+      video,
+      canvas,
+      iframe {
+        max-width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div class="loading" role="status" aria-live="polite">
+        <div style="text-align: center">
+          <div style="font-size: 48px; margin-bottom: 20px">🚀</div>
+          <h1 style="font-size: 32px; font-weight: 700; color: #f1f5f9; margin: 0 0 12px 0">
+            The New Fuse
+          </h1>
+          <p style="font-size: 16px; color: #94a3b8; margin: 0 0 24px 0">
+            AI Agent Orchestration Platform
+          </p>
+          <div
+            style="
+              width: 40px;
+              height: 40px;
+              margin: 0 auto;
+              border: 4px solid #334155;
+              border-top-color: #3b82f6;
+              border-radius: 50%;
+              animation: spin 0.8s linear infinite;
+            "
+          ></div>
         </div>
       </div>
-      <div class="bento-item bento-2" data-reveal>
-        <h3>A2A Communication</h3>
-        <p>Native agent-to-agent protocol for deep collaboration.</p>
-      </div>
-      <div class="bento-item bento-3" data-reveal>
-        <h3>Real-time Observatory</h3>
-      </div>
-      <div class="bento-item bento-4" data-reveal>
-        <h3>Visual Builder</h3>
-        <p>Drag and drop nodes to define complex logic chains.</p>
-      </div>
-      <div class="bento-item bento-5" data-reveal>
-        <h3>Graph Analytics</h3>
-      </div>
     </div>
-  </section>
 
-  <section id="cta" style="text-align: center;">
-    <div class="section-header" data-reveal>
-      <h2>Ready to Build The Future?</h2>
-      <div style="margin-top: 2rem;">
-        <a href="/dashboard" class="btn btn-primary" style="padding: 1.5rem 3rem; font-size: 1.2rem;">Start Processing Now</a>
-      </div>
-    </div>
-  </section>
+    <!-- Main application entry point - Vite will inject preload tags automatically -->
+    <script type="module" src="/src/main.tsx"></script>
 
-  <footer>
-    <div class="footer-content">
-      <div class="footer-col">
-        <div class="logo">🚀 The New Fuse</div>
-        <p style="margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;">
-          The ultimate orchestration plane for the AI-first era.
+    <!-- Fallback for users with JavaScript disabled -->
+    <noscript>
+      <div style="padding: 20px; text-align: center; color: #333">
+        <h1>JavaScript Required</h1>
+        <p>
+          This application requires JavaScript to run. Please enable JavaScript in your browser
+          settings.
         </p>
       </div>
-      <div class="footer-col">
-        <h4>Product</h4>
-        <ul>
-          <li><a href="#features">Features</a></li>
-          <li><a href="/visualizations/dashboard.html">Visualizations</a></li>
-          <li><a href="/marketplace">Marketplace</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Developers</h4>
-        <ul>
-          <li><a href="/docs">Documentation</a></li>
-          <li><a href="https://github.com/tnf">GitHub</a></li>
-          <li><a href="/api/docs">API Reference</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Company</h4>
-        <ul>
-          <li><a href="/about">About</a></li>
-          <li><a href="/blog">Blog</a></li>
-          <li><a href="/legal/privacy">Privacy</a></li>
-        </ul>
-      </div>
-    </div>
-    <div style="text-align: center; margin-top: 4rem; color: var(--text-muted); font-size: 0.8rem;">
-      © 2026 The New Fuse Team. All rights reserved.
-    </div>
-  </footer>
-
-  <script>
-    // Navbar scroll effect
-    window.addEventListener('scroll', () => {
-      const nav = document.getElementById('navbar');
-      if (window.scrollY > 50) {
-        nav.classList.add('scrolled');
-      } else {
-        nav.classList.remove('scrolled');
-      }
-    });
-
-    // Intersection Observer for scroll animations
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
-        }
-      });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
-  </script>
-</body>
+    </noscript>
+  </body>
 </html>

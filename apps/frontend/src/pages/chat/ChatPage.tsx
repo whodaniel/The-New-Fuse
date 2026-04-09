@@ -643,6 +643,7 @@ function ChatPage() {
                   <button
                     onClick={() => setIsPaused(!isPaused)}
                     className="p-2 text-muted-foreground hover:text-foreground rounded-full"
+                    aria-label={isPaused ? "Resume auto-responses" : "Pause auto-responses"}
                   >
                     {isPaused ? <Play size={16} /> : <Pause size={16} />}
                   </button>
@@ -715,10 +716,10 @@ function ChatPage() {
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  <button className="p-2 text-muted-foreground hover:text-foreground rounded transition-colors">
+                  <button aria-label="Attach file" className="p-2 text-muted-foreground hover:text-foreground rounded transition-colors">
                     <Paperclip size={20} />
                   </button>
-                  <button className="p-2 text-muted-foreground hover:text-foreground rounded transition-colors">
+                  <button aria-label="Settings" className="p-2 text-muted-foreground hover:text-foreground rounded transition-colors">
                     <Settings size={20} />
                   </button>
                 </div>

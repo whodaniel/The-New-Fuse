@@ -1,4 +1,4 @@
-import { assertInteger, assertString } from '../../shared/contracts.mjs';
+import { assertInteger, assertString } from '../shared/contracts.mjs';
 
 export const MTT_STATUS = Object.freeze({
   REGISTRATION: 'registration',

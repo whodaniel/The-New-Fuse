@@ -4,7 +4,7 @@ import {
   assertString,
   buildCursor,
   parseCursor,
-} from '../../shared/contracts.mjs';
+} from '../shared/contracts.mjs';
 
 const MAX_EVENTS = 5000;
 const MAX_IDEMPOTENCY_KEYS = 10000;

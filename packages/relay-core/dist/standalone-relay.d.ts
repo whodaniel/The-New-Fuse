@@ -151,6 +151,27 @@ export declare class TNFRelayServer extends EventEmitter {
      */
     setBridgeGateEnabled(enabled: boolean): void;
     /**
+     * Approve an agent for bridge access (operator action)
+     */
+    approveBridgeAccess(agentId: string): boolean;
+    /**
+     * Deny an agent bridge access (operator action)
+     */
+    denyBridgeAccess(agentId: string, reason?: string): boolean;
+    /**
+     * Get list of pending bridge access requests
+     */
+    getPendingBridgeRequests(): Array<{
+        agentId: string;
+        name: string;
+        platform: string;
+        requestedAt: number;
+    }>;
+    /**
+     * Toggle bridge gate on/off
+     */
+    setBridgeGateEnabled(enabled: boolean): void;
+    /**
      * Send a recovery message to wake up stalled conversations
      */
     private sendRecoveryMessage;

@@ -1,10 +1,8 @@
-import { assertInteger, assertString } from '../../shared/contracts.mjs';
+import { assertInteger, assertString } from '../shared/contracts.mjs';
 import { createHash } from 'node:crypto';
 
 const STREETS = ['preflop', 'flop', 'turn', 'river'];
 const MAX_IDEMPOTENCY_CACHE = 5000;
-const CARD_SUITS = ['s', 'h', 'd', 'c'];
-const CARD_RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 
 function cloneJson(value) {
   return JSON.parse(JSON.stringify(value));
@@ -28,47 +26,6 @@ function stableStringify(value) {
 
 function hashHex(value) {
   return createHash('sha256').update(String(value)).digest('hex');
-}
-
-function createRng(seed) {
-  let counter = 0;
-  return function rand() {
-    const hex = hashHex(`${seed}:${counter}`);
-    counter += 1;
-    const int = Number.parseInt(hex.slice(0, 8), 16);
-    return int / 0x100000000;
-  };
-}
-
-function buildDeck() {
-  const deck = [];
-  for (const suit of CARD_SUITS) {
-    for (const rank of CARD_RANKS) {
-      deck.push(`${rank}${suit}`);
-    }
-  }
-  return deck;
-}
-
-function drawCards(rng, deck, count) {
-  const cards = [];
-  for (let i = 0; i < count; i += 1) {
-    const idx = Math.floor(rng() * deck.length);
-    cards.push(deck.splice(idx, 1)[0]);
-  }
-  return cards;
-}
-
-function dealHoldemCards(engine, hand, seated) {
-  const rng = createRng(`${engine.replaySeed}:${hand.handId}`);
-  const deck = buildDeck();
-  const holeCards = {};
-  for (const seat of seated) {
-    holeCards[String(seat.seat)] = drawCards(rng, deck, 2);
-  }
-  hand.holeCards = holeCards;
-  hand.boardCards = drawCards(rng, deck, 5);
-  hand.deckHash = hashHex(deck.join(','));
 }
 
 function asInt(value, field, min = 0) {
@@ -346,7 +303,7 @@ export function createHoldemTable(options = {}) {
   };
 }
 
-export function seatPlayer(engine, { playerId, seat, stack, autoPostBlinds = true, controlMode }) {
+export function seatPlayer(engine, { playerId, seat, stack, autoPostBlinds = true }) {
   assertString(playerId, 'playerId');
   const seatNo = asInt(seat, 'seat', 0);
   const stackUnits = asInt(stack, 'stack', 1);
@@ -354,8 +311,6 @@ export function seatPlayer(engine, { playerId, seat, stack, autoPostBlinds = tru
   if (engine.seats[seatNo]) throw new Error('Seat occupied');
 
   const hasPlayed = engine.events.some((e) => e.type === 'player.seated' && e.payload.playerId === playerId);
-  const mode = String(controlMode || '').trim().toLowerCase();
-  const normalizedMode = ['human', 'hybrid', 'agent'].includes(mode) ? mode : 'human';
   const row = {
     seat: seatNo,
     playerId,
@@ -367,7 +322,6 @@ export function seatPlayer(engine, { playerId, seat, stack, autoPostBlinds = tru
     autoPostBlinds,
     connected: true,
     straddleRequested: 0,
-    controlMode: normalizedMode,
   };
   engine.seats[seatNo] = row;
   appendEvent(engine, 'player.seated', row);
@@ -604,8 +558,6 @@ export function startHand(engine, { handId, idempotencyKey }) {
     auditHash: '',
     auditTrail: [],
   };
-
-  dealHoldemCards(engine, hand, seated);
 
   // Antes
   for (const seat of seated) {

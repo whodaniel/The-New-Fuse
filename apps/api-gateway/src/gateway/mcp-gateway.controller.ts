@@ -82,6 +82,34 @@ export class McpGatewayController {
   }
 
   @Post('servers')
+  @Version('1')
+  @ApiOperation({ summary: 'Get MCP marketplace server listings' })
+  @ApiResponse({ status: 200, description: 'MCP marketplace servers retrieved successfully' })
+  async getMcpMarketplaceServers(
+    @Query() query: Record<string, string>,
+    @Headers() headers: Record<string, string>,
+    @Res() res: Response
+  ) {
+    try {
+      const response = await this.proxyService.proxyRequest(
+        'backend',
+        '/api/mcp/marketplace/servers',
+        'GET',
+        headers,
+        undefined,
+        query
+      );
+      return res.status(response.status).json(response.data);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      return res.status(HttpStatus.BAD_GATEWAY).json({
+        message: 'MCP marketplace unavailable',
+        error: errorMessage,
+      });
+    }
+  }
+
+  @Post('servers')
   @ApiOperation({ summary: 'Register a new MCP server' })
   @ApiResponse({ status: 201, description: 'MCP server registered successfully' })
   async registerMcpServer(
