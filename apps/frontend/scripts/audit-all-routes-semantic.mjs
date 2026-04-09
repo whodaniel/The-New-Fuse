@@ -17,8 +17,6 @@ const PLAYWRIGHT_BROWSER_CHANNEL = (process.env.PLAYWRIGHT_BROWSER_CHANNEL || ''
 const PLAYWRIGHT_ENABLE_FIREFOX_FALLBACK = String(process.env.PLAYWRIGHT_ENABLE_FIREFOX_FALLBACK || '1') !== '0';
 const PLAYWRIGHT_LAUNCH_RETRIES = Math.max(1, Number.parseInt(process.env.PLAYWRIGHT_LAUNCH_RETRIES || '4', 10));
 const PLAYWRIGHT_LAUNCH_DELAY_MS = Math.max(0, Number.parseInt(process.env.PLAYWRIGHT_LAUNCH_DELAY_MS || '900', 10));
-const PLAYWRIGHT_STORAGE_STATE = (process.env.PLAYWRIGHT_STORAGE_STATE || '').trim();
-const PLAYWRIGHT_EXTRA_HEADERS_JSON = (process.env.PLAYWRIGHT_EXTRA_HEADERS_JSON || '').trim();
 
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const normalizeText = (value) => String(value || '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -259,11 +257,10 @@ const main = async () => {
   let context = null;
   let page = null;
   let visit = null;
-  const contextOptions = buildContextOptions();
 
   try {
     browser = await launchAuditBrowser();
-    context = await browser.newContext(contextOptions);
+    context = await browser.newContext();
     page = await context.newPage();
     visit = (route) => visitRoute(page, route);
   } catch (error) {

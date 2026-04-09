@@ -834,7 +834,7 @@ export default function ConnectExtensionPage() {
               { label: 'TNF Platform', href: '/', icon: Rocket },
               { label: 'AI Studio', href: 'https://aistudio.google.com/', icon: Bot },
               { label: 'NotebookLM', href: 'https://notebooklm.google.com/', icon: BrainCircuit },
-              { label: 'Documentation', href: '/docs', icon: ExternalLink },
+              { label: 'Documentation', href: 'https://thenewfuse.com/docs', icon: ExternalLink },
               { label: 'GitHub', href: 'https://github.com/whodaniel', icon: Code2 },
             ].map((link, i) => (
               <a
