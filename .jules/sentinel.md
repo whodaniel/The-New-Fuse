@@ -18,8 +18,7 @@
 **Vulnerability:** Widespread use of `Math.random().toString(36).substr(2, 9)` to generate unique IDs across the `packages/agent/src` directory, including execution IDs, message IDs, and session IDs.
 **Learning:** This pattern was likely copy-pasted across multiple files during initial development for convenience. `Math.random()` is not cryptographically secure, making these IDs predictable and vulnerable to guessing attacks, which is especially concerning for session and execution IDs.
 **Prevention:** Always use cryptographically secure methods like `crypto.randomBytes(4).toString('hex')` or `crypto.randomUUID()` when generating unique identifiers for security-sensitive or session-related context.
-## 2024-05-24 - Cryptographically Secure Random Identifiers
-
-**Vulnerability:** Predictable identifiers generated using Math.random().
-**Learning:** Found instances where Math.random().toString() was being used to generate IDs across packages in the monorepo instead of using the globally available crypto package.
-**Prevention:** Avoid Math.random() for ID generation across all packages, ensure developers are aware of using crypto.getRandomValues or crypto.randomBytes depending on the runtime context.
+## 2024-05-24 - SQL Injection Risk in AccessService
+**Vulnerability:** Found multiple SQL injection risks in `apps/api/src/modules/access/access.service.ts` where raw queries were built using string interpolation with manually escaped variables (e.g., `.replace(/'/g, "''")`).
+**Learning:** Manual escaping of SQL inputs is highly prone to errors and is not a robust defense against SQL injection.
+**Prevention:** Always use parameterized queries or native ORM query builders. For Drizzle ORM, use the `sql` tagged template literal (`import { sql } from 'drizzle-orm'`) for safe raw queries.
