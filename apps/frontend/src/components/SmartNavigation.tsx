@@ -355,7 +355,9 @@ function SmartNavigation() {
                   <div key={menu.key} className="relative">
                     <button
                       onClick={() => toggleDropdown(menu.key)}
-                      className={`px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors ${
+                      aria-expanded={activeDropdown === menu.key}
+                      aria-label={`${menu.label} Menu`}
+                      className={`px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none ${
                         isActive
                           ? menu.activeClassName
                           : 'text-slate-400 hover:text-white hover:bg-white/5'
@@ -460,6 +462,13 @@ function SmartNavigation() {
                 </div>
               )}
             </div>
+
+            <button
+              aria-label="Open mobile menu"
+              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-md bg-transparent/5 text-slate-400 hover:text-white transition-colors"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
           </div>
         </div>
       </div>

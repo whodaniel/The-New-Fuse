@@ -144,10 +144,16 @@ const EnhancedHeader = () => {
 
         <div className="flex items-center space-x-4">
           {/* User menu and notifications would go here */}
-          <button className="relative rounded-full w-8 h-8 bg-muted flex items-center justify-center">
+          <button
+            aria-label="Notifications"
+            className="relative rounded-full w-8 h-8 bg-muted flex items-center justify-center focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          >
             🔔
           </button>
-          <button className="relative rounded-full w-8 h-8 bg-muted flex items-center justify-center">
+          <button
+            aria-label="User Profile"
+            className="relative rounded-full w-8 h-8 bg-muted flex items-center justify-center focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          >
             👤
           </button>
         </div>
