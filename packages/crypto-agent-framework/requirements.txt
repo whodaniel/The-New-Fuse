@@ -23,7 +23,7 @@ jsonschema==4.20.0           # JSON schema validation
 
 # Crypto utilities
 cryptography==46.0.7         # Cryptographic operations (security update)
-ecdsa==0.18.0                # ECDSA signing (awaiting security patch)
+ecdsa==0.19.2                # ECDSA signing (awaiting security patch)
 base58==2.1.1                # Base58 encoding
 
 # Logging and monitoring
