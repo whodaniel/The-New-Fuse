@@ -168,6 +168,54 @@ function EnhancedMultiAgentChatUI() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // ⚡ Bolt: Wrap agents and conversations maps in useMemo to prevent O(n) re-evaluations
+  // during frequent state updates like typing in the inputValue.
+  const agentOptions = React.useMemo(() => {
+    return agents.map((agent) => (
+      <option key={agent.agentId} value={agent.agentId}>
+        {agent.name} ({agent.type})
+      </option>
+    ));
+  }, [agents]);
+
+  const agentBadges = React.useMemo(() => {
+    return agents.map((agent) => (
+      <div
+        key={agent.agentId}
+        className="flex items-center gap-2 bg-gray-200 dark:bg-gray-700 rounded-md px-2 py-1"
+      >
+        <span className="text-sm">{agent.name}</span>
+        <span className="text-xs opacity-75">({agent.type})</span>
+        <div
+          className={cn(
+            'w-2 h-2 rounded-full',
+            'bg-green-500' // Assume online for now
+          )}
+        />
+      </div>
+    ));
+  }, [agents]);
+
+  const conversationButtons = React.useMemo(() => {
+    return conversations.map((conv) => (
+      <button
+        key={conv.id}
+        onClick={() => {
+          setCurrentConversation(conv.id);
+          setMode('conversation');
+        }}
+        className={cn(
+          'px-2 py-1 text-xs rounded border',
+          currentConversation === conv.id
+            ? 'bg-blue-500 text-white'
+            : 'bg-gray-100 dark:bg-gray-700'
+        )}
+      >
+        Conv {conv.id.slice(-6)} ({conv.participantCount} agents)
+      </button>
+    ));
+  }, [conversations, currentConversation, setCurrentConversation, setMode]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -435,11 +483,7 @@ function EnhancedMultiAgentChatUI() {
               className="px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 text-sm"
             >
               <option value="">Select Agent</option>
-              {agents.map((agent) => (
-                <option key={agent.agentId} value={agent.agentId}>
-                  {agent.name} ({agent.type})
-                </option>
-              ))}
+              {agentOptions}
             </select>
           )}
 
@@ -450,21 +494,7 @@ function EnhancedMultiAgentChatUI() {
 
         {/* Agents list */}
         <div className="flex items-center gap-2 mt-2 flex-wrap">
-          {agents.map((agent) => (
-            <div
-              key={agent.agentId}
-              className="flex items-center gap-2 bg-gray-200 dark:bg-gray-700 rounded-md px-2 py-1"
-            >
-              <span className="text-sm">{agent.name}</span>
-              <span className="text-xs opacity-75">({agent.type})</span>
-              <div
-                className={cn(
-                  'w-2 h-2 rounded-full',
-                  'bg-green-500' // Assume online for now
-                )}
-              />
-            </div>
-          ))}
+          {agentBadges}
         </div>
 
         {/* Conversations list */}
@@ -472,23 +502,7 @@ function EnhancedMultiAgentChatUI() {
           <div className="mt-2">
             <div className="text-sm font-medium mb-1">Active Conversations:</div>
             <div className="flex gap-2 flex-wrap">
-              {conversations.map((conv) => (
-                <button
-                  key={conv.id}
-                  onClick={() => {
-                    setCurrentConversation(conv.id);
-                    setMode('conversation');
-                  }}
-                  className={cn(
-                    'px-2 py-1 text-xs rounded border',
-                    currentConversation === conv.id
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-100 dark:bg-gray-700'
-                  )}
-                >
-                  Conv {conv.id.slice(-6)} ({conv.participantCount} agents)
-                </button>
-              ))}
+              {conversationButtons}
             </div>
           </div>
         )}
