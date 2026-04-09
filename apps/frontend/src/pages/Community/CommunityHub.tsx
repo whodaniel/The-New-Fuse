@@ -111,22 +111,7 @@ const CommunityHub: React.FC = () => {
       if (postsResponse.ok && statsResponse.ok && isJson(postsResponse) && isJson(statsResponse)) {
         const postsData = await postsResponse.json();
         const statsData = await statsResponse.json();
-        const normalizedPosts: CommunityPost[] = Array.isArray(postsData)
-          ? postsData.map((post: any) => ({
-              ...post,
-              tags: Array.isArray(post?.tags) ? post.tags : [],
-              votes: {
-                upvotes: Number(post?.votes?.upvotes || 0),
-                downvotes: Number(post?.votes?.downvotes || 0),
-                userVote: post?.votes?.userVote ?? null,
-              },
-              author: {
-                ...(post?.author || {}),
-                badges: Array.isArray(post?.author?.badges) ? post.author.badges : [],
-              },
-            }))
-          : [];
-        setPosts(normalizedPosts);
+        setPosts(Array.isArray(postsData) ? postsData : []);
         setStats(statsData ?? null);
       } else {
         setPosts([]);
