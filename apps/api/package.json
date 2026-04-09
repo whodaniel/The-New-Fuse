@@ -37,7 +37,7 @@
     "@types/express": "^5.0.6",
     "@types/express-session": "^1.18.2",
     "@types/jsdom": "^28.0.1",
-    "@types/pg": "^8.16.0",
+    "@types/pg": "^8.20.0",
     "@types/ws": "^8.18.1",
     "@web3auth/base": "^9.7.0",
     "@web3auth/ethereum-provider": "^9.7.0",
