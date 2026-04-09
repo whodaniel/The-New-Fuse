@@ -39,8 +39,8 @@
     "@types/node": "^24.8.1",
     "@types/uuid": "^11.0.0",
     "jest": "^30.3.0",
-    "ts-jest": "^29.4.6",
-    "typescript": "^5.9.3"
+    "ts-jest": "^29.4.9",
+    "typescript": "^6.0.2"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

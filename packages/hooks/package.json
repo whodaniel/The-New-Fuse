@@ -30,6 +30,6 @@
     "@types/react": "^19.2.14",
     "jest": "^30.3.0",
     "rimraf": "^6.0.1",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   }
 }

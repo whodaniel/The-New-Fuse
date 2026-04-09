@@ -68,7 +68,7 @@
     "react": "^19.2.5",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
-    "ts-jest": "29.4.6",
+    "ts-jest": "29.4.9",
     "uuid": "^13.0.0",
     "viem": "^2.45.2",
     "winston": "^3.19.0",
@@ -115,7 +115,7 @@
     "rimraf": "^6.1.3",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.2",
     "vite": "^8.0.0"
   }
 }

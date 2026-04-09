@@ -33,7 +33,7 @@
     "@types/node": "^24.8.1",
     "eslint": "^9.38.0",
     "jest": "^30.3.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   },
   "peerDependencies": {
     "@nestjs/common": "^10.0.0",

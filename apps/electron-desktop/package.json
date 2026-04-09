@@ -40,7 +40,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "concurrently": "^8.2.2",
     "electron-builder": "^26.8.1",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.2",
     "vite": "^6.2.1",
     "wait-on": "^9.0.3"
   },
