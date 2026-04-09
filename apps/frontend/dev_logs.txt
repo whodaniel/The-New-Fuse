@@ -9,3 +9,17 @@
   ➜  Network: http://192.168.1.104:3002/
 12:20:47 AM [vite] (client) page reload dashboard_output.html
 12:20:47 AM [vite] (client) page reload dashboard_output.html
+4:10:11 AM [vite] vite.config.ts changed, restarting server...
+4:10:11 AM [vite] server restarted.
+10:00:00 AM [vite] (client) page reload public/visualizations/AG-UI-INTEGRATION-ANALYSIS.html
+10:00:00 AM [vite] (client) page reload public/visualizations/AG-UI-INTEGRATION-GUIDE.html
+10:00:00 AM [vite] (client) page reload public/visualizations/CAPABILITY-PACKAGING-COMPLETE.html
+10:00:00 AM [vite] (client) page reload public/visualizations/CLAUDE-CODE-AT-SCALE.html
+10:00:00 AM [vite] (client) page reload public/visualizations/GEMINI-CODE-ASSIST-DEEP-DIVE-INCORRECT.html
+10:00:00 AM [vite] (client) page reload public/visualizations/GEMINI-CODE-ASSIST-INTEGRATION.html
+10:00:00 AM [vite] (client) page reload public/visualizations/NINE-MULTIPLIER-HACKS.html
+10:00:00 AM [vite] (client) page reload public/visualizations/PROJECT-SUMMARY.html
+10:00:00 AM [vite] (client) page reload public/visualizations/PROJECT_SUMMARY.html
+10:00:00 AM [vite] (client) page reload public/visualizations/QUICKSTART.html
+10:00:00 AM [vite] (client) page reload public/visualizations/README.html
+10:00:00 AM [vite] (client) page reload public/visualizations/VISUAL-DEMO.html
