@@ -91,7 +91,14 @@ export class GatewayAuthService implements OnModuleDestroy {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService
-  ) {}
+  ) {
+    const secret = this.configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET;
+    if (!secret || secret.length < 32 || secret === 'dev-secret-key-123') {
+      throw new Error(
+        '[GatewayAuth] 🛑 CRITICAL SECURITY ERROR: Invalid or missing JWT secret. Must provide a strong JWT_SECRET environment variable (at least 32 characters).'
+      );
+    }
+  }
 
   async onModuleDestroy() {
     await this.sql.end({ timeout: 5 });
@@ -162,7 +169,8 @@ export class GatewayAuthService implements OnModuleDestroy {
   async validateToken(token: string): Promise<AuthUser | null> {
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: this.getAccessSecret(),
+        secret:
+          this.configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET,
       });
       return this.me(payload.sub);
     } catch {
