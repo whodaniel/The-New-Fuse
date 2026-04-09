@@ -16,6 +16,6 @@
 **Learning:** Functions evaluating entirely new object arrays (`groupMessagesByDate`) or wrapping items blindly (`MessageGroup`) can unintentionally cause an O(n) re-evaluation block that stalls input rendering. Even though nested items (`HistoricalMessage`) were memoized, the array transformation itself on keystroke (triggered by state in parent `ChatContainer`) was a major CPU block.
 **Action:** When a parent container has high-frequency updates (e.g., text inputs), always ensure derived complex arrays and mapping wrapper components are shielded with `useMemo` and `React.memo` respectively, to prevent unnecessary object instantiations from freezing the main thread.
 
-## 2024-05-24 - [React.memo Optimization in A2AControl]
-**Learning:** Found an inline mapping of items for the live message bus that was re-rendering excessively whenever the parent component received telemetry updates.
-**Action:** Extracted the mapped block into a `MessageListItem` component and wrapped it in `React.memo` to ensure list items only re-render when their specific message props change. Always extract inline mapping items in lists that have high-frequency updates (e.g. streaming or telemetry) and wrap them with `React.memo`.
+## 2024-05-18 - Inline Component Definitions Break Memoization and Force Full Unmounts
+**Learning:** Defining React components (e.g., `ConnectionStatus`) inline within the render body of a parent component forces React to create a completely new function reference on every parent render. This causes React to unmount the old component instance and mount a new one, destroying state and causing significant layout thrashing, entirely defeating React's reconciliation engine.
+**Action:** Always extract inner component definitions outside of their parent component. If they depend on variables from the parent scope, pass those variables down as explicit props and wrap the extracted component in `React.memo` to optimize rendering.

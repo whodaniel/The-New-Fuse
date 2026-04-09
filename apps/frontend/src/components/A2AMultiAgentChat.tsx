@@ -83,8 +83,8 @@ export default function MultiAgentChat() {
   );
 }
 
-// ⚡ Bolt: Extracted inline component to prevent unmounting/remounting on every parent render (e.g., keystrokes).
-const ConnectionStatus = React.memo(({ connectionState }: { connectionState: ReturnType<typeof useA2AContext>['connectionState'] }) => (
+// ⚡ Bolt: Extracted component to prevent inline definition re-renders
+const ConnectionStatus = React.memo<{ connectionState: { connected: boolean; authenticated: boolean; connecting: boolean } }>(({ connectionState }) => (
   <div
     role="status"
     aria-live="polite"
@@ -116,6 +116,7 @@ const ConnectionStatus = React.memo(({ connectionState }: { connectionState: Ret
         : 'Disconnected'}
   </div>
 ));
+ConnectionStatus.displayName = 'ConnectionStatus';
 
 function EnhancedMultiAgentChatUI() {
   const { connectionState, connect } = useA2AContext();
@@ -287,7 +288,6 @@ function EnhancedMultiAgentChatUI() {
       console.error('Failed to create conversation:', error);
     }
   }, [agents, joinConversation]);
-
 
   if (connectionError) {
     return (
