@@ -162,10 +162,7 @@ export class GatewayAuthService implements OnModuleDestroy {
   async validateToken(token: string): Promise<AuthUser | null> {
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret:
-          this.configService.get<string>('JWT_SECRET') ||
-          process.env.JWT_SECRET ||
-          'dev-secret-key-123',
+        secret: this.getAccessSecret(),
       });
       return this.me(payload.sub);
     } catch {
