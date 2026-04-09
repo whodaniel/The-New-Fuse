@@ -25,7 +25,7 @@ pnpm install
 - **[Complete Guide](../CODE_QUALITY.md)** - Comprehensive documentation
 - **[Quick Reference](../CODE_STYLE_QUICK_REFERENCE.md)** - Common patterns and
   examples
-- **[Setup Summary](../development/CODE_QUALITY_SETUP_COMPLETE.md)** - What was
+- **[Setup Summary](../../CODE_QUALITY_SETUP_COMPLETE.md)** - What was
   configured
 
 ## Tools Configured

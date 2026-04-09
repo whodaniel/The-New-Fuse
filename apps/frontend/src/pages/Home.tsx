@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatedEmoji } from '../components/AnimatedEmoji';
@@ -194,7 +194,7 @@ const FeaturesSection: React.FC = () => {
               >
                 <dt className="flex items-center gap-x-3 text-lg font-semibold leading-7 text-gray-900">
                   <motion.div
-                    className={`h-10 w-10 sm:h-12 sm:w-12 flex items-center justify-center rounded-md ${feature.iconBg} shadow-md`}
+                    className={`h-10 w-10 sm:h-12 sm:w-12 flex items-center justify-center rounded-md ${feature.iconBg} text-2xl sm:text-2xl shadow-md`}
                     whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
                     transition={{ duration: 0.5 }}
                   >

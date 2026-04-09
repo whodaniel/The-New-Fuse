@@ -863,7 +863,10 @@ export default function ConnectExtensionPage() {
               <span>&copy; {new Date().getFullYear()} The New Fuse. All rights reserved.</span>
             </div>
             <div className="flex gap-4 text-sm text-slate-600">
-              <a href="/privacy" className="hover:text-slate-400 transition-colors">
+              <a
+                href="https://thenewfuse.com/privacy"
+                className="hover:text-slate-400 transition-colors"
+              >
                 Privacy Policy
               </a>
               <a href="/terms" className="hover:text-slate-400 transition-colors">

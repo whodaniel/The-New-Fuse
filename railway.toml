@@ -101,6 +101,15 @@ watchPatterns = ["apps/casin8-games/**"]
 [services.casin8-games-backend.deploy]
 healthcheckPath = "/api/health"
 
+# Casin8 Games Backend (Poker engine / game server)
+[services.casin8-games-backend]
+builder = "DOCKERFILE"
+[services.casin8-games-backend.build]
+dockerfilePath = "apps/casin8-games/Dockerfile"
+watchPatterns = ["apps/casin8-games/**"]
+[services.casin8-games-backend.deploy]
+healthcheckPath = "/api/health"
+
 
 # TNF Cloud Sandbox (MCP Server for Tauri bridge)
 # Uses shared Dockerfile.railway from repository root
@@ -234,12 +243,11 @@ restartPolicyMaxRetries = 3
 [services.casin8-games]
 builder = "DOCKERFILE"
 [services.casin8-games.build]
-dockerfilePath = "Dockerfile.frontend"
+dockerfilePath = "Dockerfile"
 dockerBuildArgs = { SERVICE_PATH = "apps/poker-room", PACKAGE_NAME = "@the-new-fuse/poker-room", VITE_API_URL = "${{VITE_API_URL}}", VITE_API_GATEWAY_URL = "${{VITE_API_GATEWAY_URL}}", VITE_WS_URL = "${{VITE_WS_URL}}", GEMINI_API_KEY = "${{GEMINI_API_KEY}}" }
 watchPatterns = ["apps/poker-room/**", "packages/**"]
 [services.casin8-games.deploy]
 healthcheckPath = "/"
-
 
 # Relay Server Service (agent relay + networking health)
 [services.relay-server]
@@ -255,7 +263,7 @@ healthcheckPath = "/health"
 builder = "DOCKERFILE"
 [services.nexus-orchestrator.build]
 dockerfilePath = "Dockerfile.railway"
-dockerBuildArgs = { SERVICE_PATH = "apps/nexus-orchestrator", SERVICE_NAME = "@the-new-fuse/nexus-orchestrator", PACKAGE_NAME = "@the-new-fuse/nexus-orchestrator" }
+dockerBuildArgs = { SERVICE_PATH = "apps/nexus-orchestrator", SERVICE_NAME = "@the-new-fuse/nexus-orchestrator" }
 watchPatterns = ["apps/nexus-orchestrator/**", "packages/**"]
 [services.nexus-orchestrator.deploy]
 healthcheckPath = "/"

@@ -1,0 +1,126 @@
+import React, { FC } from "react";
+import { 
+  Grid, 
+  Paper, 
+  Typography, 
+  CircularProgress,
+  Alert
+} from '@mui/material';
+import TimelineSlider from '@the-new-fuse/TimelineSlider';
+import EventDetails from '@the-new-fuse/EventDetails';
+import BranchSelector from '@the-new-fuse/BranchSelector';
+import { TimelineService, TimelineEvent, TimelineBranch } from '@the-new-fuse/types';
+
+interface TimelineViewProps {
+  timelineService: TimelineService;
+  initialBranchId?: string;
+}
+
+const TimelineView: FC<TimelineViewProps> = ({
+  timelineService,
+  initialBranchId
+}) => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const [events, setEvents] = useState<TimelineEvent[]>([]);
+  const [branches, setBranches] = useState<TimelineBranch[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
+  const [currentBranchId, setCurrentBranchId] = useState(initialBranchId);
+
+  useEffect(() => {
+    const fetchTimelineData = async (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const [fetchedEvents, fetchedBranches] = await Promise.all([
+          timelineService.getEventTimeline(currentBranchId || 'main'),
+          timelineService.getBranchHierarchy()
+        ]);
+
+        setEvents(fetchedEvents);
+        setBranches(fetchedBranches);
+
+        if (fetchedEvents.length > 0) {
+          setSelectedEvent(fetchedEvents[0]);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to fetch timeline data'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTimelineData();
+  }, [currentBranchId, timelineService]);
+
+  const handleBranchSelect = (branchId: string) => {
+    setCurrentBranchId(branchId);
+  };
+
+  const handleEventSelect = (eventId: string) => {
+    const event = events.find(e => e.id === eventId);
+    if (event) {
+      setSelectedEvent(event);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: '400px' }}>
+        <CircularProgress />
+      </Grid>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert severity="error" sx={{ mb: 2 }}>
+        {error.message}
+      </Alert>
+    );
+  }
+
+  return (
+    <Grid container spacing={3}>
+      <Grid item xs={12}>
+        <Paper sx={{ p: 2 }}>
+          <Typography variant="h5" gutterBottom>
+            Timeline View
+          </Typography>
+          <BranchSelector
+            branches={branches}
+            currentBranchId={currentBranchId}
+            onBranchSelect={handleBranchSelect}
+          />
+        </Paper>
+      </Grid>
+
+      <Grid item xs={12}>
+        <TimelineSlider
+          events={events}
+          onEventSelect={handleEventSelect}
+          initialZoom={1}
+          autoPlaySpeed={2000}
+        />
+      </Grid>
+
+      <Grid item xs={12}>
+        <Paper sx={{ p: 2 }}>
+          {selectedEvent ? (
+            <EventDetails
+              event={selectedEvent}
+              timelineService={timelineService}
+            />
+          ) : (
+            <Typography variant="body1" color="textSecondary">
+              Select an event to view details
+            </Typography>
+          )}
+        </Paper>
+      </Grid>
+    </Grid>
+  );
+};
+
+export default TimelineView;

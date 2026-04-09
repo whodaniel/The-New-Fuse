@@ -26,11 +26,7 @@ export const LEGACY_REDIRECTS: LegacyRedirect[] = [
   { from: '/agents/unified-creator', to: '/agents/new' },
   { from: '/workspace/chat', to: '/workspace-chat' },
   { from: '/workspace/layout', to: '/workspace/overview' },
-
-  // Auth redirects — explicit /login and /register routes exist,
-  // so only redirect deeper legacy auth paths.
-  { from: '/auth/google/callback', to: '/auth/google-callback' },
-
+  { from: '/integrations', to: '/connect' },
   { from: '/ide', to: '/command-center' },
   { from: '/privacy', to: '/legal/privacy' },
   { from: '/terms', to: '/legal/terms' },

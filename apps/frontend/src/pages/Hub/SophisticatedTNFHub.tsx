@@ -589,7 +589,7 @@ export const SophisticatedTNFHub: React.FC = () => {
                               ? 'bg-yellow-500'
                               : status === 'error'
                                 ? 'bg-red-500'
-                                : 'bg-gray-500';
+                                : 'bg-transparent0';
                         return (
                           <div key={execution.id} className="flex items-center space-x-3">
                             <div className={`w-2 h-2 rounded-full ${dotClass}`}></div>
@@ -600,7 +600,7 @@ export const SophisticatedTNFHub: React.FC = () => {
                                 execution.id.slice(0, 8)}{' '}
                               {String(execution.status || 'unknown').toLowerCase()}
                             </span>
-                            <span className="text-xs text-gray-500 ml-auto">
+                            <span className="text-xs text-muted-foreground ml-auto">
                               {formatRelativeTime(execution.updatedAt || execution.createdAt)}
                             </span>
                           </div>
@@ -738,18 +738,18 @@ export const SophisticatedTNFHub: React.FC = () => {
 
             {hubDataUnavailable ? (
               <Card className="bg-amber-500/10 border-amber-500/30">
-                <CardContent className="p-6 text-amber-200 text-sm">
+                <CardContent className="p-4 text-amber-200 text-sm">
                   Agent registry is currently unavailable.
                 </CardContent>
               </Card>
             ) : agentsData.length === 0 ? (
               <Card className="bg-black/20 backdrop-blur-sm border-white/10">
-                <CardContent className="p-6 text-sm text-gray-400">
+                <CardContent className="p-4 text-sm text-gray-400">
                   No agents registered yet.
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {agentsData.slice(0, 6).map((agent, index) => {
                   const normalized = normalizeStatus(agent.status);
                   const badgeClass =
@@ -759,13 +759,13 @@ export const SophisticatedTNFHub: React.FC = () => {
                         ? 'bg-yellow-500/20 text-yellow-400'
                         : normalized === 'error'
                           ? 'bg-red-500/20 text-red-400'
-                          : 'bg-gray-500/20 text-gray-300';
+                          : 'bg-transparent0/20 text-gray-300';
                   return (
                     <Card
                       key={agent.id}
                       className="bg-black/20 backdrop-blur-sm border-white/10 hover:border-purple-500/50 transition-colors cursor-pointer"
                     >
-                      <CardContent className="p-6">
+                      <CardContent className="p-4">
                         <div className="flex items-center justify-between mb-4">
                           <Bot
                             className={`w-8 h-8 ${index % 2 === 0 ? 'text-purple-400' : 'text-blue-400'}`}
@@ -812,7 +812,7 @@ export const SophisticatedTNFHub: React.FC = () => {
                     activeWorkflows.slice(0, 6).map((workflow) => (
                       <div
                         key={workflow.id}
-                        className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg"
+                        className="flex items-center justify-between p-3 bg-gray-800/50 rounded-md"
                       >
                         <div className="flex items-center space-x-3">
                           <Play className="w-4 h-4 text-green-400" />
@@ -840,7 +840,7 @@ export const SophisticatedTNFHub: React.FC = () => {
                     workflowTemplatesData.slice(0, 6).map((template) => (
                       <div
                         key={template.id}
-                        className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer"
+                        className="p-3 bg-gray-800/50 rounded-md hover:bg-gray-700/50 transition-colors cursor-pointer"
                         onClick={() => navigate(`/workflows/builder?template=${template.id}`)}
                       >
                         <div className="flex items-center justify-between">

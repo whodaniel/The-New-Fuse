@@ -62,41 +62,6 @@ const MessageBubble = React.memo<{ msg: A2AMessage; agents: AgentSummary[] }>(({
 });
 MessageBubble.displayName = 'MessageBubble';
 
-// Connection status component hoisted to prevent O(n) remounting
-const ConnectionStatus = React.memo<{ connectionState: any }>(({ connectionState }) => (
-  <div
-    role="status"
-    aria-live="polite"
-    className={cn(
-      'flex items-center gap-2 px-3 py-1 rounded-full text-sm',
-      connectionState.connected
-        ? connectionState.authenticated
-          ? 'bg-green-100 text-green-800'
-          : 'bg-yellow-100 text-yellow-800'
-        : 'bg-red-100 text-red-800'
-    )}
-  >
-    <div
-      className={cn(
-        'w-2 h-2 rounded-full',
-        connectionState.connected
-          ? connectionState.authenticated
-            ? 'bg-green-500'
-            : 'bg-yellow-500'
-          : 'bg-red-500'
-      )}
-    />
-    {connectionState.connected
-      ? connectionState.authenticated
-        ? 'Connected & Authenticated'
-        : 'Connected (Authenticating...)'
-      : connectionState.connecting
-        ? 'Connecting...'
-        : 'Disconnected'}
-  </div>
-));
-ConnectionStatus.displayName = 'ConnectionStatus';
-
 // Enhanced MultiAgentChat with A2A integration
 export default function MultiAgentChat() {
   return (
@@ -378,6 +343,40 @@ function EnhancedMultiAgentChatUI() {
     }
   }, [agents, joinConversation]);
 
+  // Connection status component
+  const ConnectionStatus = () => (
+    <div
+      role="status"
+      aria-live="polite"
+      className={cn(
+        'flex items-center gap-2 px-3 py-1 rounded-full text-sm',
+        connectionState.connected
+          ? connectionState.authenticated
+            ? 'bg-green-100 text-green-800'
+            : 'bg-yellow-100 text-yellow-800'
+          : 'bg-red-100 text-red-800'
+      )}
+    >
+      <div
+        className={cn(
+          'w-2 h-2 rounded-full',
+          connectionState.connected
+            ? connectionState.authenticated
+              ? 'bg-green-500'
+              : 'bg-yellow-500'
+            : 'bg-red-500'
+        )}
+      />
+      {connectionState.connected
+        ? connectionState.authenticated
+          ? 'Connected & Authenticated'
+          : 'Connected (Authenticating...)'
+        : connectionState.connecting
+          ? 'Connecting...'
+          : 'Disconnected'}
+    </div>
+  );
+
   if (connectionError) {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-900 text-white">
@@ -500,7 +499,21 @@ function EnhancedMultiAgentChatUI() {
 
         {/* Agents list */}
         <div className="flex items-center gap-2 mt-2 flex-wrap">
-          {agentBadges}
+          {agents.map((agent) => (
+            <div
+              key={agent.agentId}
+              className="flex items-center gap-2 bg-gray-200 dark:bg-gray-700 rounded-md px-2 py-1"
+            >
+              <span className="text-sm">{agent.name}</span>
+              <span className="text-xs opacity-75">({agent.type})</span>
+              <div
+                className={cn(
+                  'w-2 h-2 rounded-full',
+                  'bg-green-500' // Assume online for now
+                )}
+              />
+            </div>
+          ))}
         </div>
 
         {/* Conversations list */}
@@ -515,7 +528,9 @@ function EnhancedMultiAgentChatUI() {
       </header>
 
       <main className="p-4 overflow-y-auto flex flex-col space-y-4">
-        {renderedMessages}
+        {messages.map((msg) => (
+          <MessageBubble key={msg.id} msg={msg} agents={agents} />
+        ))}
         {messages.length === 0 && connectionState.authenticated && (
           <div className="text-center text-muted-foreground mt-8">
             <SystemIcon />

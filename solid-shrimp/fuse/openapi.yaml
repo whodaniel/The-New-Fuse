@@ -1,0 +1,1637 @@
+openapi: 3.1.0
+info:
+  title: The New Fuse API
+  version: 1.0.0
+  description: |
+    Comprehensive API documentation for The New Fuse platform - a multi-agent orchestration system with blockchain integration, workflow automation, and AI-powered capabilities.
+
+    ## Features
+    - **Agent Management**: Create, manage, and orchestrate AI agents
+    - **Workflow Engine**: Build and execute complex workflows
+    - **Chat System**: Real-time messaging and communication
+    - **Web3 Integration**: Wallet management, transactions, and smart accounts (ERC-4337)
+    - **MCP Protocol**: Model Context Protocol for agent communication
+    - **Authentication**: JWT-based secure authentication
+    - **Rate Limiting**: Tiered rate limiting based on user roles
+
+    ## Authentication
+    Most endpoints require JWT authentication. Include the Bearer token in the Authorization header:
+    ```
+    Authorization: Bearer <your-jwt-token>
+    ```
+
+    ## Base URLs
+    - Development: `http://localhost:3001/api`
+    - API Gateway: `http://localhost:4000/api/v1`
+    - Production: `https://api.thenewfuse.com/api`
+
+  contact:
+    name: The New Fuse API Support
+    url: https://thenewfuse.com/support
+    email: support@thenewfuse.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3001/api
+    description: Development API Server
+  - url: http://localhost:4000/api/v1
+    description: API Gateway (Development)
+  - url: https://api.thenewfuse.com/api
+    description: Production API Server
+
+tags:
+  - name: auth
+    description: Authentication and authorization endpoints
+  - name: Agents
+    description: Agent management and orchestration
+  - name: chat
+    description: Chat rooms and messaging
+  - name: workflows
+    description: Workflow creation and execution
+  - name: wallets
+    description: Web3 wallet management
+  - name: transactions
+    description: Blockchain transaction operations
+  - name: smart-accounts
+    description: ERC-4337 Smart Account operations
+  - name: mcp
+    description: Model Context Protocol operations
+  - name: webhooks
+    description: Webhook management
+  - name: monitoring
+    description: System monitoring and health checks
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT authentication token obtained from /auth/login
+
+  schemas:
+    # Authentication Schemas
+    LoginDto:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          minLength: 8
+          example: SecurePass123!
+
+    RegisterDto:
+      type: object
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+      properties:
+        email:
+          type: string
+          format: email
+          example: newuser@example.com
+        password:
+          type: string
+          format: password
+          minLength: 8
+          example: SecurePass123!
+        firstName:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: John
+        lastName:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: Doe
+        phone:
+          type: string
+          format: phone
+          example: "+1234567890"
+
+    AuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: JWT access token (15 minutes expiry)
+        refreshToken:
+          type: string
+          description: JWT refresh token (7 days expiry)
+        user:
+          $ref: '#/components/schemas/User'
+        expiresIn:
+          type: integer
+          description: Token expiration time in seconds
+          example: 900
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+          enum: [user, admin, agent]
+        emailVerified:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        lastLogin:
+          type: string
+          format: date-time
+
+    # Agent Schemas
+    AgentType:
+      type: string
+      enum:
+        - BASIC
+        - CHAT
+        - WORKFLOW
+        - TASK
+        - ASSISTANT
+        - ANALYSIS
+        - CONVERSATIONAL
+        - IDE_EXTENSION
+        - API
+
+    AgentStatus:
+      type: string
+      enum:
+        - active
+        - inactive
+        - paused
+        - busy
+        - error
+
+    AgentCapability:
+      type: string
+      enum:
+        - natural_language
+        - code_generation
+        - data_analysis
+        - image_processing
+        - web_scraping
+        - api_integration
+        - workflow_execution
+
+    CreateAgentDto:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 100
+          example: "Customer Support Bot"
+        type:
+          $ref: '#/components/schemas/AgentType'
+        description:
+          type: string
+          maxLength: 500
+          example: "Handles customer inquiries and support tickets"
+        systemPrompt:
+          type: string
+          example: "You are a helpful customer support assistant"
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentCapability'
+        configuration:
+          type: object
+          additionalProperties: true
+          example:
+            maxConcurrent: 10
+            responseTimeout: 30
+
+    UpdateAgentDto:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        systemPrompt:
+          type: string
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentCapability'
+        configuration:
+          type: object
+          additionalProperties: true
+        status:
+          $ref: '#/components/schemas/AgentStatus'
+
+    AgentResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "agent123"
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/AgentType'
+        status:
+          $ref: '#/components/schemas/AgentStatus'
+        description:
+          type: string
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentCapability'
+        configuration:
+          type: object
+          additionalProperties: true
+        metrics:
+          type: object
+          properties:
+            uptime:
+              type: number
+              format: float
+            avgResponseTime:
+              type: number
+              format: float
+            satisfaction:
+              type: number
+              format: float
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        lastActiveAt:
+          type: string
+          format: date-time
+
+    # Chat Schemas
+    ChatRoom:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum: [public, private, group]
+        memberCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateMessageDto:
+      type: object
+      required:
+        - content
+        - type
+      properties:
+        content:
+          type: string
+          maxLength: 10000
+        type:
+          type: string
+          enum: [text, image, file, system]
+        metadata:
+          type: object
+          additionalProperties: true
+        replyTo:
+          type: string
+          description: ID of message being replied to
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        content:
+          type: string
+        type:
+          type: string
+        sender:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            avatar:
+              type: string
+        createdAt:
+          type: string
+          format: date-time
+        reactions:
+          type: array
+          items:
+            type: object
+            properties:
+              emoji:
+                type: string
+              count:
+                type: integer
+              users:
+                type: array
+                items:
+                  type: string
+
+    # Workflow Schemas
+    WorkflowStatus:
+      type: string
+      enum: [draft, active, paused, completed, failed, cancelled]
+
+    CreateWorkflowDto:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        nodes:
+          type: array
+          items:
+            type: object
+        edges:
+          type: array
+          items:
+            type: object
+        tags:
+          type: array
+          items:
+            type: string
+
+    Workflow:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/WorkflowStatus'
+        nodes:
+          type: array
+          items:
+            type: object
+        edges:
+          type: array
+          items:
+            type: object
+        version:
+          type: integer
+        createdBy:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    WorkflowExecution:
+      type: object
+      properties:
+        id:
+          type: string
+        workflowId:
+          type: string
+        status:
+          type: string
+          enum: [running, completed, failed, cancelled, paused]
+        input:
+          type: object
+          additionalProperties: true
+        output:
+          type: object
+          additionalProperties: true
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+
+    # Web3 Schemas
+    CreateWalletDto:
+      type: object
+      required:
+        - userId
+        - verifierId
+      properties:
+        userId:
+          type: string
+        verifierId:
+          type: string
+        chainId:
+          type: integer
+          example: 1
+        userType:
+          type: string
+          enum: [HUMAN, AI]
+          default: HUMAN
+        enableSmartAccount:
+          type: boolean
+          default: true
+
+    Wallet:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        address:
+          type: string
+          example: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+        chainId:
+          type: integer
+        userType:
+          type: string
+        smartAccountEnabled:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    TransactionDto:
+      type: object
+      required:
+        - to
+        - value
+      properties:
+        to:
+          type: string
+          example: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+        value:
+          type: string
+          example: "1000000000000000000"
+        data:
+          type: string
+          example: "0x"
+        useSmartAccount:
+          type: boolean
+          default: false
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+        walletId:
+          type: string
+        txHash:
+          type: string
+        to:
+          type: string
+        value:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, SUCCESS, FAILED]
+        createdAt:
+          type: string
+          format: date-time
+
+    # MCP Schemas
+    MCPServer:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        endpoint:
+          type: string
+        status:
+          type: string
+          enum: [online, offline, error]
+        capabilities:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    # Error Schemas
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        error:
+          type: string
+        statusCode:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+
+    ValidationError:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string
+
+    # Pagination
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total:
+          type: integer
+        pages:
+          type: integer
+
+paths:
+  # Authentication Endpoints
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: User login
+      description: Authenticate user and generate JWT tokens
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDto'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests - rate limit exceeded
+
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: User registration
+      description: Create a new user account
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDto'
+      responses:
+        '201':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid registration data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '409':
+          description: Email already registered
+
+  /auth/refresh:
+    post:
+      tags:
+        - auth
+      summary: Refresh authentication token
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refreshToken
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid refresh token
+
+  /auth/logout:
+    post:
+      tags:
+        - auth
+      summary: User logout
+      operationId: logout
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+        '401':
+          description: Not authenticated
+
+  /auth/me:
+    get:
+      tags:
+        - auth
+      summary: Get current user
+      operationId: getCurrentUser
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Current user information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Not authenticated
+
+  # Agent Endpoints
+  /agents:
+    get:
+      tags:
+        - Agents
+      summary: Get all agents
+      operationId: getAgents
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: type
+          in: query
+          schema:
+            $ref: '#/components/schemas/AgentType'
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/AgentStatus'
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of agents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AgentResponseDto'
+
+    post:
+      tags:
+        - Agents
+      summary: Create a new agent
+      operationId: createAgent
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAgentDto'
+      responses:
+        '201':
+          description: Agent created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponseDto'
+        '400':
+          description: Invalid agent data
+
+  /agents/active:
+    get:
+      tags:
+        - Agents
+      summary: Get active agents
+      operationId: getActiveAgents
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of active agents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AgentResponseDto'
+
+  /agents/stats/types:
+    get:
+      tags:
+        - Agents
+      summary: Get agent count by type
+      operationId: getAgentTypeCounts
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Agent counts by type
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: integer
+
+  /agents/{id}:
+    get:
+      tags:
+        - Agents
+      summary: Get agent by ID
+      operationId: getAgentById
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Agent details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponseDto'
+        '404':
+          description: Agent not found
+
+    put:
+      tags:
+        - Agents
+      summary: Update agent
+      operationId: updateAgent
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAgentDto'
+      responses:
+        '200':
+          description: Agent updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponseDto'
+        '404':
+          description: Agent not found
+
+    delete:
+      tags:
+        - Agents
+      summary: Delete agent
+      operationId: deleteAgent
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Agent deleted successfully
+        '404':
+          description: Agent not found
+
+  /agents/{id}/stats:
+    get:
+      tags:
+        - Agents
+      summary: Get agent statistics
+      operationId: getAgentStats
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Agent statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uptime:
+                    type: number
+                  avgResponseTime:
+                    type: number
+                  totalTasks:
+                    type: integer
+                  completedTasks:
+                    type: integer
+                  failedTasks:
+                    type: integer
+                  successRate:
+                    type: number
+                  satisfaction:
+                    type: number
+
+  /agents/{id}/activate:
+    put:
+      tags:
+        - Agents
+      summary: Activate agent
+      operationId: activateAgent
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Agent activated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponseDto'
+
+  /agents/{id}/deactivate:
+    put:
+      tags:
+        - Agents
+      summary: Deactivate agent
+      operationId: deactivateAgent
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Agent deactivated successfully
+
+  /agents/{id}/pause:
+    put:
+      tags:
+        - Agents
+      summary: Pause agent
+      operationId: pauseAgent
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Agent paused successfully
+
+  # Chat Endpoints
+  /chat/rooms:
+    get:
+      tags:
+        - chat
+      summary: Get all chat rooms
+      operationId: getChatRooms
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of chat rooms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatRoom'
+
+  /chat/rooms/{roomId}:
+    get:
+      tags:
+        - chat
+      summary: Get chat room by ID
+      operationId: getChatRoom
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Chat room details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatRoom'
+
+  /chat/rooms/{roomId}/messages:
+    get:
+      tags:
+        - chat
+      summary: Get messages in room
+      operationId: getChatMessages
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+    post:
+      tags:
+        - chat
+      summary: Send message to room
+      operationId: sendMessage
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMessageDto'
+      responses:
+        '201':
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+
+  /chat/analytics:
+    get:
+      tags:
+        - chat
+      summary: Get chat analytics
+      operationId: getChatAnalytics
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Chat analytics data
+
+  # Workflow Endpoints
+  /workflows:
+    get:
+      tags:
+        - workflows
+      summary: Get all workflows
+      operationId: getWorkflows
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/WorkflowStatus'
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of workflows
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  workflows:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Workflow'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+    post:
+      tags:
+        - workflows
+      summary: Create a new workflow
+      operationId: createWorkflow
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkflowDto'
+      responses:
+        '201':
+          description: Workflow created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workflow'
+
+  /workflows/{id}:
+    get:
+      tags:
+        - workflows
+      summary: Get workflow by ID
+      operationId: getWorkflow
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Workflow details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workflow'
+
+    patch:
+      tags:
+        - workflows
+      summary: Update workflow
+      operationId: updateWorkflow
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkflowDto'
+      responses:
+        '200':
+          description: Workflow updated successfully
+
+    delete:
+      tags:
+        - workflows
+      summary: Delete workflow
+      operationId: deleteWorkflow
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Workflow deleted successfully
+
+  /workflows/execute:
+    post:
+      tags:
+        - workflows
+      summary: Execute a workflow
+      operationId: executeWorkflow
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - workflowId
+              properties:
+                workflowId:
+                  type: string
+                input:
+                  type: object
+                  additionalProperties: true
+      responses:
+        '201':
+          description: Workflow execution started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowExecution'
+
+  /workflows/executions/{executionId}:
+    get:
+      tags:
+        - workflows
+      summary: Get execution details
+      operationId: getExecution
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Execution details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowExecution'
+
+  /workflows/executions/{executionId}/cancel:
+    post:
+      tags:
+        - workflows
+      summary: Cancel execution
+      operationId: cancelExecution
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Execution cancelled successfully
+
+  # Wallet Endpoints
+  /wallets/create:
+    post:
+      tags:
+        - wallets
+      summary: Create a new wallet
+      operationId: createWallet
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWalletDto'
+      responses:
+        '201':
+          description: Wallet created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+
+  /wallets/user/{userId}:
+    get:
+      tags:
+        - wallets
+      summary: Get wallets by user ID
+      operationId: getWalletsByUserId
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of user wallets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Wallet'
+
+  /wallets/address/{address}:
+    get:
+      tags:
+        - wallets
+      summary: Get wallet by address
+      operationId: getWalletByAddress
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: address
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Wallet details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+
+  # Transaction Endpoints
+  /transactions/execute/{walletId}:
+    post:
+      tags:
+        - transactions
+      summary: Execute a transaction
+      operationId: executeTransaction
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: walletId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionDto'
+      responses:
+        '201':
+          description: Transaction executed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+
+  /transactions/execute-batch/{walletId}:
+    post:
+      tags:
+        - transactions
+      summary: Execute batch transaction
+      operationId: executeBatchTransaction
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: walletId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transactions:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TransactionDto'
+                useSmartAccount:
+                  type: boolean
+      responses:
+        '201':
+          description: Batch transaction executed successfully
+
+  /transactions/wallet/{walletId}:
+    get:
+      tags:
+        - transactions
+      summary: Get transactions by wallet
+      operationId: getTransactionsByWallet
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: walletId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+
+  # Smart Account Endpoints
+  /smart-accounts/enable/{walletId}:
+    post:
+      tags:
+        - smart-accounts
+      summary: Enable smart account for wallet
+      operationId: enableSmartAccount
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: walletId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Smart account enabled successfully
+
+  /smart-accounts/deploy/{walletId}:
+    post:
+      tags:
+        - smart-accounts
+      summary: Deploy smart account
+      operationId: deploySmartAccount
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: walletId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Smart account deployed successfully
+
+  /smart-accounts/execute/{walletId}:
+    post:
+      tags:
+        - smart-accounts
+      summary: Execute smart account transaction
+      operationId: executeSmartAccountTransaction
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: walletId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target:
+                  type: string
+                value:
+                  type: string
+                data:
+                  type: string
+      responses:
+        '200':
+          description: Transaction executed successfully
+
+  /smart-accounts/info/{walletId}:
+    get:
+      tags:
+        - smart-accounts
+      summary: Get smart account info
+      operationId: getSmartAccountInfo
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: walletId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Smart account information
+
+  # MCP Endpoints
+  /mcp/servers:
+    get:
+      tags:
+        - mcp
+      summary: Get MCP server configurations
+      operationId: getMcpServers
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of MCP servers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MCPServer'
+
+    post:
+      tags:
+        - mcp
+      summary: Register a new MCP server
+      operationId: registerMcpServer
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                endpoint:
+                  type: string
+                capabilities:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: MCP server registered successfully
+
+  /mcp/servers/{id}/status:
+    get:
+      tags:
+        - mcp
+      summary: Get MCP server status
+      operationId: getMcpServerStatus
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: MCP server status
+
+  /mcp/servers/{id}:
+    put:
+      tags:
+        - mcp
+      summary: Update MCP server configuration
+      operationId: updateMcpServer
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: MCP server updated successfully
+
+    delete:
+      tags:
+        - mcp
+      summary: Remove MCP server configuration
+      operationId: removeMcpServer
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: MCP server removed successfully

@@ -26,7 +26,6 @@ import toast from 'react-hot-toast';
 
 export default function SkillsBrowser() {
   const { user } = useAuth();
-  const queryClient = useQueryClient();
   const [selectedSkill, setSelectedSkill] = useState<ClaudeSkill | null>(null);
   const [personalSkillForm, setPersonalSkillForm] = useState({
     name: '',

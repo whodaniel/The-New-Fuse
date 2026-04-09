@@ -1,0 +1,12 @@
+[
+  {
+    "id": "notes-ledger-investigator-2026-03-19t08-32-52.566z",
+    "timestamp": "2026-03-19T08:32:52.566Z",
+    "agentId": "notes-ledger-investigator",
+    "teamId": "source-acquisition",
+    "reason": "Apple Notes MCP authentication required",
+    "requiresHuman": "Authenticate Apple Notes MCP",
+    "findingsPath": null,
+    "status": "pending-human"
+  }
+]

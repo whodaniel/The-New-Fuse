@@ -195,7 +195,7 @@ export function MCPMarketplace() {
           </Select>
         </div>
         {loadError && (
-          <div className="mb-4 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3">
+          <div className="mb-4 rounded-md border border-amber-500/40 bg-amber-500/10 px-4 py-2">
             <p className="text-sm text-amber-200">{loadError}. Showing no fallback catalog.</p>
           </div>
         )}

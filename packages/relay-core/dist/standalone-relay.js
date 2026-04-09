@@ -194,19 +194,22 @@ class TNFRelayServer extends events_1.EventEmitter {
                 void manager.transition(conversation_state_machine_1.ConversationPhase.EXECUTION);
             }
         });
-        // Initialize Redis Bridge if enabled
-        if (process.env.ENABLE_REDIS_BRIDGE === 'true') {
-            this.bridge = (0, redis_relay_bridge_1.createRedisRelayBridge)();
-            this.bridge.on('connected', () => {
-                TerminalFormatter_1.relay.redisBridgeConnected();
-                this.syncBridgeSubscriptions();
-            });
-            this.bridge.on('egress', (envelope) => {
-                // Handle message from Redis -> WebSocket
-                this.handleBridgeEgress(envelope);
-            });
-            this.bridge.connect().catch((err) => console.error('[Relay] Failed to connect bridge:', err));
-        }
+        // Initialize Redis Bridge (always enabled for coordination, but gated)
+        this.bridgeGateEnabled = process.env.BRIDGE_GATE_ENABLED !== 'false'; // Default: gate is ON
+        this.bridge = (0, redis_relay_bridge_1.createRedisRelayBridge)();
+        this.bridge.on('connected', () => {
+            TerminalFormatter_1.relay.redisBridgeConnected();
+            console.log('[Relay] Bridge connected - Agent gate:', this.bridgeGateEnabled ? 'ENABLED' : 'OPEN');
+        });
+        this.bridge.on('egress', (envelope) => {
+            // Handle message from Redis -> WebSocket (egress messages go to approved agents only)
+            this.handleBridgeEgress(envelope);
+        });
+        this.bridge.connect().catch((err) => {
+            console.error('[Relay] Failed to connect bridge:', err);
+            console.log('[Relay] Continuing without Redis bridge - local-only mode');
+            this.bridge = null;
+        });
         if (this.activityPersistenceEnabled) {
             this.activityRedis = (0, redis_1.createClient)({
                 url: process.env.ACTIVITY_REDIS_URL ||
@@ -536,6 +539,35 @@ class TNFRelayServer extends events_1.EventEmitter {
         }
         let { type, payload, source, channel } = message;
         const agentId = source || currentAgentId;
+        // Back-compat: map legacy REGISTER to AGENT_REGISTER
+        if (type === 'REGISTER') {
+            const regPayload = (payload || {});
+            const regName = regPayload.name ||
+                regPayload.clientType ||
+                regPayload.type ||
+                'Unknown Agent';
+            const regId = regPayload.id ||
+                regPayload.instanceId ||
+                regName.replace(/\s+/g, '-').toLowerCase() ||
+                `agent-${Date.now()}`;
+            const converted = {
+                ...message,
+                type: 'AGENT_REGISTER',
+                source: regId,
+                payload: {
+                    agent: {
+                        id: regId,
+                        name: regName,
+                        platform: regPayload.type || regPayload.clientType || 'unknown',
+                        status: 'active',
+                        capabilities: regPayload.capabilities || [],
+                        channels: regPayload.channels || [],
+                        metadata: regPayload.metadata || {},
+                    },
+                },
+            };
+            return this.handleMessage(ws, converted, currentAgentId);
+        }
         TerminalFormatter_1.relay.protocolMessage(type, agentId || null);
         switch (type) {
             case 'AGENT_REGISTER': {
@@ -1557,6 +1589,75 @@ class TNFRelayServer extends events_1.EventEmitter {
                     ...operator,
                     reason: operator.reason || 'gate_disabled_auto_approve',
                 });
+            }
+        }
+    }
+    /**
+     * Approve an agent for bridge access (operator action)
+     */
+    approveBridgeAccess(agentId) {
+        const pending = this.pendingBridgeAgents.get(agentId);
+        if (!pending && !this.agents.has(agentId)) {
+            console.warn('[Relay] Cannot approve unknown agent: ' + agentId);
+            return false;
+        }
+        this.approvedBridgeAgents.add(agentId);
+        this.pendingBridgeAgents.delete(agentId);
+        console.log('[Relay] Agent ' + agentId + ' approved for bridge access');
+        // Subscribe them to the bridge
+        this.ensureBridgeSubscription(agentId);
+        // Notify the agent
+        const socket = this.sockets.get(agentId);
+        if (socket) {
+            this.send(socket, {
+                type: 'BRIDGE_APPROVED',
+                payload: { agentId, approvedAt: Date.now() },
+            });
+        }
+        return true;
+    }
+    /**
+     * Deny an agent bridge access (operator action)
+     */
+    denyBridgeAccess(agentId, reason) {
+        const pending = this.pendingBridgeAgents.get(agentId);
+        if (!pending) {
+            console.warn('[Relay] No pending bridge request for agent: ' + agentId);
+            return false;
+        }
+        this.pendingBridgeAgents.delete(agentId);
+        console.log('[Relay] Agent ' + agentId + ' denied bridge access');
+        // Notify the agent
+        const socket = this.sockets.get(agentId);
+        if (socket) {
+            this.send(socket, {
+                type: 'BRIDGE_DENIED',
+                payload: { agentId, reason: reason || 'Access denied by operator', deniedAt: Date.now() },
+            });
+        }
+        return true;
+    }
+    /**
+     * Get list of pending bridge access requests
+     */
+    getPendingBridgeRequests() {
+        return Array.from(this.pendingBridgeAgents.values()).map(({ agent, requestedAt }) => ({
+            agentId: agent.id,
+            name: agent.name,
+            platform: agent.platform,
+            requestedAt,
+        }));
+    }
+    /**
+     * Toggle bridge gate on/off
+     */
+    setBridgeGateEnabled(enabled) {
+        this.bridgeGateEnabled = enabled;
+        console.log('[Relay] Bridge gate ' + (enabled ? 'ENABLED' : 'DISABLED'));
+        // If disabling, auto-approve all pending
+        if (!enabled) {
+            for (const [agentId] of this.pendingBridgeAgents) {
+                this.approveBridgeAccess(agentId);
             }
         }
     }

@@ -205,7 +205,7 @@ export default function AdminPanel() {
       </div>
 
       {loadError && (
-        <div className="rounded-lg border border-amber-300 bg-amber-100/80 px-4 py-3 text-sm text-amber-900">
+        <div className="rounded-md border border-amber-300 bg-amber-100/80 px-4 py-2 text-sm text-amber-900">
           {loadError}
         </div>
       )}

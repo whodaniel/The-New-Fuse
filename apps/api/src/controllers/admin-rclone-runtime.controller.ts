@@ -1,7 +1,4 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { AdminGuard } from '../guards/admin.guard';
@@ -233,7 +230,7 @@ export class AdminRcloneRuntimeController {
       transfers: body?.transfers == null ? undefined : this.toInteger(body.transfers, 1),
       timeoutMs: body?.timeoutMs == null ? undefined : this.toInteger(body.timeoutMs, 180000),
       extraArgs: Array.isArray(body?.extraArgs)
-        ? body?.extraArgs.map((item: any) => String(item || '')).filter(Boolean)
+        ? body?.extraArgs.map((item) => String(item || '')).filter(Boolean)
         : [],
     });
   }

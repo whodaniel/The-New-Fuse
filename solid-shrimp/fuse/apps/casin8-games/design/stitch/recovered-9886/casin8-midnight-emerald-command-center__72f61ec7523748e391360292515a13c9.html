@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Casin8 Midnight Emerald Command Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Playfair+Display:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80", // Emerald Glow
+                        "accent": "#f3cf8a",  // Champagne Gold
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#0a1410", // Obsidian
+                        "surface-dark": "#102219",    // Deep Teal
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass {
+            background: rgba(16, 34, 25, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(19, 236, 128, 0.1);
+        }
+        .emerald-glow {
+            box-shadow: 0 0 20px rgba(19, 236, 128, 0.2);
+        }
+        .active-glow {
+            box-shadow: 0 0 30px rgba(19, 236, 128, 0.4), inset 0 0 10px rgba(19, 236, 128, 0.2);
+            border-color: #13ec80;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 overflow-hidden h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="h-16 border-b border-primary/10 flex items-center justify-between px-6 glass z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-accent text-3xl">token</span>
+<h1 class="font-serif text-2xl tracking-tight text-accent">Casin8</h1>
+</div>
+<div class="hidden md:flex items-center gap-6 text-xs uppercase tracking-widest text-slate-400">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span>Solana Mainnet</span>
+</div>
+<div class="flex items-center gap-2 border-l border-primary/20 pl-6">
+<span class="material-symbols-outlined text-sm">speed</span>
+<span>12ms Latency</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center bg-background-dark/50 rounded-lg p-1 border border-primary/10">
+<div class="px-4 py-1.5 text-sm font-bold text-slate-100 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">account_balance_wallet</span>
+                    $2,450.50
+                </div>
+<button class="bg-primary hover:bg-primary/90 text-background-dark px-4 py-1.5 rounded-md text-xs font-bold transition-all">
+                    ADD FUNDS
+                </button>
+</div>
+<div class="w-10 h-10 rounded-full border border-accent/30 p-0.5 overflow-hidden">
+<img class="w-full h-full rounded-full object-cover" data-alt="User profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCN9KsNIvS5E-D9He56k15oE066BO8hWKIfPm71Lcf9ISBLztXDo0yqwdXkmdN6ETEsnDPzy0x5fODyUFSPRduallKbMJwJhDbSijI-fiO4ks9rYSm4aUdn98SvZ1bQXnAbu6NxHYtJuooEAh4U_fQyHLW7x6QOcvbY3SuKoXQ4vwnSNBUR3s2H7gWKshH_TiheTXjRkZIOncnFbgmThoUohkUrF7zPxgzg4vi2W0tuMRAxwRUll8yg_dgkW3sp0Nt2MB2GazFVNNk"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden relative">
+<!-- Left Rail Navigation -->
+<nav class="w-20 border-r border-primary/10 flex flex-col items-center py-8 gap-8 glass">
+<button class="group relative flex flex-col items-center gap-1 text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-3xl">playing_cards</span>
+<span class="text-[10px] uppercase font-bold tracking-tighter">Poker</span>
+</button>
+<button class="group relative flex flex-col items-center gap-1 text-primary active-glow bg-primary/10 p-3 rounded-xl transition-all">
+<span class="material-symbols-outlined text-3xl fill-current">playing_cards</span>
+<span class="text-[10px] uppercase font-bold tracking-tighter">Blackjack</span>
+<div class="absolute -right-[1px] top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-l-full"></div>
+</button>
+<button class="group relative flex flex-col items-center gap-1 text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-3xl">adjust</span>
+<span class="text-[10px] uppercase font-bold tracking-tighter">Roulette</span>
+</button>
+<button class="group relative flex flex-col items-center gap-1 text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-3xl">casino</span>
+<span class="text-[10px] uppercase font-bold tracking-tighter">Slots</span>
+</button>
+<div class="mt-auto">
+<button class="text-slate-500 hover:text-accent">
+<span class="material-symbols-outlined text-3xl">settings</span>
+</button>
+</div>
+</nav>
+<!-- Main Gaming Stage -->
+<main class="flex-1 relative overflow-hidden bg-gradient-to-b from-[#0a1a14] to-background-dark flex flex-col">
+<!-- Table Background/Environment -->
+<div class="absolute inset-0 z-0 flex items-center justify-center opacity-60">
+<div class="w-[800px] h-[500px] bg-gradient-to-b from-surface-dark to-transparent rounded-[100%] border-[20px] border-surface-dark/50 shadow-[0_40px_100px_rgba(19,236,128,0.1)] rotate-[-5deg]"></div>
+</div>
+<!-- Table Content Area -->
+<div class="relative z-10 flex-1 flex flex-col items-center justify-center pt-10">
+<!-- Dealer Area -->
+<div class="flex flex-col items-center mb-16">
+<div class="w-24 h-32 rounded-lg border-2 border-white/10 bg-surface-dark/80 backdrop-blur-md shadow-2xl rotate-[-2deg] flex items-center justify-center">
+<span class="material-symbols-outlined text-white/5 text-6xl">blur_on</span>
+</div>
+<div class="mt-4 px-4 py-1 rounded-full bg-background-dark/80 border border-primary/20 text-xs text-primary font-bold uppercase tracking-widest">
+                        Dealer Stands on 17
+                    </div>
+</div>
+<!-- Active Game Area (Dealing State) -->
+<div class="flex gap-20 items-end">
+<!-- Player Cards -->
+<div class="flex flex-col items-center gap-4">
+<div class="flex gap-4">
+<div class="w-24 h-36 bg-white rounded-lg shadow-xl flex flex-col justify-between p-3 text-slate-900 border-2 border-slate-200 rotate-[-5deg]">
+<div class="font-bold text-xl leading-none">A <br/><span class="text-xs">♠</span></div>
+<div class="text-center"><span class="material-symbols-outlined text-4xl">playing_cards</span></div>
+<div class="font-bold text-xl leading-none self-end rotate-180">A <br/><span class="text-xs">♠</span></div>
+</div>
+<div class="w-24 h-36 bg-white rounded-lg shadow-xl flex flex-col justify-between p-3 text-slate-900 border-2 border-slate-200 rotate-[3deg]">
+<div class="font-bold text-xl leading-none">8 <br/><span class="text-xs">♣</span></div>
+<div class="text-center"><span class="material-symbols-outlined text-4xl">clover_spark</span></div>
+<div class="font-bold text-xl leading-none self-end rotate-180">8 <br/><span class="text-xs">♣</span></div>
+</div>
+</div>
+<div class="px-6 py-2 rounded-xl bg-primary text-background-dark font-display font-bold text-xl emerald-glow">
+                            19
+                        </div>
+</div>
+</div>
+<!-- TX Pending Corner Overlay -->
+<div class="absolute bottom-8 left-8 flex items-center gap-3 bg-background-dark/80 border border-primary/30 px-4 py-3 rounded-xl glass">
+<div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+<div>
+<p class="text-[10px] text-primary/60 font-bold uppercase tracking-wider">Blockchain</p>
+<p class="text-xs font-medium text-slate-100">Transaction Pending...</p>
+</div>
+</div>
+</div>
+<!-- Bottom Control Bar -->
+<div class="h-28 glass border-t border-primary/20 px-10 flex items-center justify-between z-20">
+<!-- Chip Selector -->
+<div class="flex items-center gap-4">
+<button class="w-12 h-12 rounded-full bg-slate-100 border-4 border-dashed border-slate-400 text-slate-900 flex items-center justify-center font-bold text-xs shadow-lg hover:scale-110 transition-transform">1</button>
+<button class="w-14 h-14 rounded-full bg-accent border-4 border-dashed border-accent/60 text-background-dark flex items-center justify-center font-bold text-sm shadow-lg hover:scale-110 transition-transform ring-4 ring-accent/20">5</button>
+<button class="w-12 h-12 rounded-full bg-primary border-4 border-dashed border-primary/60 text-background-dark flex items-center justify-center font-bold text-xs shadow-lg hover:scale-110 transition-transform">25</button>
+<button class="w-12 h-12 rounded-full bg-rose-500 border-4 border-dashed border-rose-300 text-white flex items-center justify-center font-bold text-xs shadow-lg hover:scale-110 transition-transform">100</button>
+</div>
+<!-- Primary Controls -->
+<div class="flex items-center gap-4">
+<button class="px-10 py-4 rounded-xl border-2 border-slate-500 text-slate-300 font-bold uppercase tracking-widest hover:bg-slate-500/10 transition-all">Hit</button>
+<button class="px-10 py-4 rounded-xl border-2 border-accent text-accent font-bold uppercase tracking-widest hover:bg-accent/10 transition-all">Stand</button>
+<button class="px-12 py-4 rounded-xl bg-primary text-background-dark font-black uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(19,236,128,0.4)] hover:shadow-[0_0_40px_rgba(19,236,128,0.6)] transition-all transform hover:-translate-y-1">Double Down</button>
+</div>
+<!-- Total Bet Info -->
+<div class="text-right">
+<p class="text-[10px] text-accent font-bold uppercase tracking-widest mb-1">Current Bet</p>
+<p class="text-2xl font-serif text-slate-100">$50.00</p>
+</div>
+</div>
+</main>
+<!-- Right Utility HUD -->
+<aside class="w-80 glass border-l border-primary/10 flex flex-col p-6 gap-6 z-30">
+<!-- Provably Fair Widget -->
+<div class="bg-surface-dark/50 rounded-xl p-4 border border-primary/10">
+<div class="flex items-center justify-between mb-3">
+<span class="text-[10px] text-primary font-black uppercase tracking-widest">Provably Fair</span>
+<span class="material-symbols-outlined text-primary text-sm">verified_user</span>
+</div>
+<div class="font-mono text-[10px] text-slate-400 break-all p-2 bg-background-dark/80 rounded border border-primary/5 mb-3">
+                    0x7f2a1b9c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z
+                </div>
+<button class="w-full py-1.5 rounded-lg border border-primary/30 text-[10px] text-primary font-bold uppercase hover:bg-primary/5 transition-all">
+                    Verify Integrity
+                </button>
+</div>
+<!-- Multiplayer Activity -->
+<div>
+<h3 class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
+                    Active Players <span class="bg-primary/20 text-primary px-2 py-0.5 rounded-full text-[8px]">1,204</span>
+</h3>
+<div class="flex flex-wrap gap-2 mb-6">
+<div class="relative">
+<img class="w-8 h-8 rounded-full border border-primary/20" data-alt="Other player avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxsyuo5VOb-er_BZcQJROJ4dZnl-5Cz8qXEUZgRio8IgsFvfptGudFmE8FUVDWtMm2O9Ry3zeKRHqYR7TD9uAjvbbJVPSfbMvOtUWqZ5hzfmrTQ9S52TEc9OTjhYpM76YhsVZsQjBi65BX4QBsSVcWdnHnMLVNMpN9ak1B9U5HJXLMjp2G4GrL__q-21c6dRgRl1CKyfRNHZIrN1uGY9XHvCSk4D6LFfj7eydaUm8vVe-bHOx-RmMPPYL10q4a3DWMNh38e-hG1eY"/>
+<div class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary border border-background-dark"></div>
+</div>
+<img class="w-8 h-8 rounded-full border border-primary/20" data-alt="Other player avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMzlvIf4mSTEF8tHmROe_z-bIpViqhsRw6PJ7C8RzyD8_m5QHoPXEJQsiuQX9qJaktjfpAkQ_mthytbsFSb7JFu1QxUt0vDfXWFd4VYTHAAoVU_IHZaoNtTMhIX1pib_v7TIbgyDs6u4-AHOAsZ2UTeKq_fcVOvzwetZNE2FeBXNqxaXMYE9DdjRPVrkfO6eBM82-IXScisk7SmqVmqxErHFeBCf_IBJygszcbn__dr2x1BkjaiQUrMG6rQ3aWgZ54T_-Kwu7xCbY"/>
+<img class="w-8 h-8 rounded-full border border-primary/20" data-alt="Other player avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCg5w4gQSbtA930nkb-gTn0el0oclv1_RqwFVxrLCzKARj_yQXlWIO7p80ojAxc7Lq48RzV2IsYofAPmOkSEICdlzz6CIrmqQ00dUdyAxPVjekLao7oJH-5Y4tuay3NfC5uUnEuNQ4X-HqPqMix9RGclUjM1Ce8IlLZqIzu0kRQSr-qjU5WGb3rv5xfSr_G0sFH4Qv-nNiL-nlY0scJdBa5Fwm4NM-mQO_52lWnM8RWoYg83aNZc5MN2U47fdsiClwKJsyYpmnZogc"/>
+<img class="w-8 h-8 rounded-full border border-primary/20 opacity-50" data-alt="Other player avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8mz_XwgehmpHu7_zC9aJyGOwvSsub6mMsxvRu69LvNrodh_xs9oMziaI4W54kusjegcQNZMjWcNjuj3pOwXrddWa8kb5zzrL_VWsuWAvn2MMSYwXCw3QaUjOSvc6VsuzxEXCAm-WKOLccQzxHUDKOBEaWtZJatf3zIYOrPkd3p5-L9FNctrrToTb0gMuU6abdtKigZhdHV45KS2ppbLc5uwB-2M6OBh6uKeMrA1TrTQuaIJID0PWqInawRXYlu-aWV2R3QGX7Gwk"/>
+<div class="w-8 h-8 rounded-full bg-surface-dark flex items-center justify-center text-[10px] font-bold text-slate-500 border border-primary/10">+84</div>
+</div>
+</div>
+<!-- Live Ledger -->
+<div class="flex-1 flex flex-col min-h-0">
+<h3 class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">Live Ledger</h3>
+<div class="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-hide">
+<div class="flex items-center justify-between p-3 rounded-lg bg-primary/5 border border-primary/10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent">
+<span class="material-symbols-outlined text-sm">workspace_premium</span>
+</div>
+<div>
+<p class="text-xs font-bold text-slate-100">LuckyWhale</p>
+<p class="text-[10px] text-slate-500">Blackjack</p>
+</div>
+</div>
+<p class="text-xs font-bold text-primary">+0.52 SOL</p>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-dark/30 border border-primary/5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary/50">
+<span class="material-symbols-outlined text-sm">poker_chip</span>
+</div>
+<div>
+<p class="text-xs font-bold text-slate-100">SolanaDev</p>
+<p class="text-[10px] text-slate-500">Slots</p>
+</div>
+</div>
+<p class="text-xs font-bold text-primary">+1.20 SOL</p>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-dark/30 border border-primary/5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary/50">
+<span class="material-symbols-outlined text-sm">casino</span>
+</div>
+<div>
+<p class="text-xs font-bold text-slate-100">NFTDegenerate</p>
+<p class="text-[10px] text-slate-500">Roulette</p>
+</div>
+</div>
+<p class="text-xs font-bold text-primary">+0.15 SOL</p>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-primary/5 border border-primary/10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent">
+<span class="material-symbols-outlined text-sm">workspace_premium</span>
+</div>
+<div>
+<p class="text-xs font-bold text-slate-100">AceHigh</p>
+<p class="text-[10px] text-slate-500">Blackjack</p>
+</div>
+</div>
+<p class="text-xs font-bold text-primary">+4.00 SOL</p>
+</div>
+</div>
+</div>
+<!-- Fairness Badge -->
+<div class="pt-4 border-t border-primary/10">
+<div class="flex items-center gap-3 px-4 py-2 rounded-lg bg-primary/10 border border-primary/20">
+<span class="material-symbols-outlined text-primary text-xl">shield</span>
+<span class="text-xs font-bold text-primary uppercase tracking-wider">Fairness Verified</span>
+</div>
+</div>
+</aside>
+</div>
+</body></html>

@@ -6,11 +6,7 @@
     "description": "MUST BE USED to introduce data-driven optimization into the creative process. It systematically A/B tests creative variables like YouTube thumbnails or email subject lines to find the best-performing version.",
     "agentType": "api",
     "sourceFile": ".claude/agents/ab-testing-optimizer-agent.md",
-    "tools": [
-      "YouTubeAPI",
-      "EmailMarketingAPI",
-      "GoogleAnalyticsAPI"
-    ],
+    "tools": ["YouTubeAPI", "EmailMarketingAPI", "GoogleAnalyticsAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -53,9 +49,7 @@
     "description": "MUST BE USED to manage the application process for display ad networks like Google AdSense. It ensures the blog meets all eligibility requirements before submitting the application.",
     "agentType": "api",
     "sourceFile": ".claude/agents/ad-network-manager-agent.md",
-    "tools": [
-      "AdSenseAPI"
-    ],
+    "tools": ["AdSenseAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -92,10 +86,7 @@
     "description": "MUST BE USED to identify relevant affiliate programs and strategically insert affiliate links into content. It ensures all links provide genuine value and comply with FTC disclosure rules.",
     "agentType": "api",
     "sourceFile": ".claude/agents/affiliate-link-manager-agent.md",
-    "tools": [
-      "WebSearch",
-      "AmazonAssociatesAPI"
-    ],
+    "tools": ["WebSearch", "AmazonAssociatesAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -726,9 +717,7 @@
     "description": "MUST BE USED to stay informed about the latest changes to social media algorithms (e.g., Instagram, TikTok) and adjust the content and posting strategy in real-time to maintain and optimize reach.",
     "agentType": "local",
     "sourceFile": ".claude/agents/algorithm-adaptation-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -768,9 +757,7 @@
     "description": "MUST BE USED to monitor blog performance by tracking key metrics in Google Analytics. It generates regular reports with actionable data to enable a continuous cycle of improvement.",
     "agentType": "api",
     "sourceFile": ".claude/agents/analytics-and-reporting-agent.md",
-    "tools": [
-      "GoogleAnalyticsAPI"
-    ],
+    "tools": ["GoogleAnalyticsAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -807,9 +794,7 @@
     "description": "MUST BE USED for legal compliance to source and license copyright-free assets. It primarily finds background music and sound effects to prevent Content ID claims and copyright strikes.",
     "agentType": "api",
     "sourceFile": ".claude/agents/asset-sourcer-agent.md",
-    "tools": [
-      "MusicLibraryAPI"
-    ],
+    "tools": ["MusicLibraryAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -847,10 +832,7 @@
     "description": "MUST BE USED to implement tactical strategies to acquire the initial follower base (the first 1,000 followers). This includes optimizing the bio, creating a hashtag strategy, and performing strategic engagement.",
     "agentType": "api",
     "sourceFile": ".claude/agents/audience-growth-agent.md",
-    "tools": [
-      "SocialMediaAPI",
-      "HashtagGeneratorAPI"
-    ],
+    "tools": ["SocialMediaAPI", "HashtagGeneratorAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -892,9 +874,7 @@
     "description": "MUST BE USED to develop a detailed audience persona or 'Ideal Customer Avatar' based on a given content niche and platform. This agent conducts market research to define demographics, psychographics, and media habits.",
     "agentType": "local",
     "sourceFile": ".claude/agents/audience-persona-architect-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -935,11 +915,7 @@
     "description": "MUST BE USED to analyze customer data and create advanced audience segments using behavioral, psychographic, and value-based methodologies for hyper-personalized marketing.",
     "agentType": "api",
     "sourceFile": ".claude/agents/audience-segmentation-agent.md",
-    "tools": [
-      "CRM_API",
-      "AnalyticsAPI",
-      "DatabaseQueryTool"
-    ],
+    "tools": ["CRM_API", "AnalyticsAPI", "DatabaseQueryTool"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -978,9 +954,7 @@
     "description": "MUST BE USED to oversee a recording session by ensuring best practices are followed. It checks for proper microphone positioning, correct audio levels (around -12dB), and a quiet recording environment.",
     "agentType": "api",
     "sourceFile": ".claude/agents/audio-recording-agent.md",
-    "tools": [
-      "AudioInterfaceAPI"
-    ],
+    "tools": ["AudioInterfaceAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -1018,10 +992,7 @@
     "description": "MUST BE USED to create a complete brand identity for a new blog. Generates blog name suggestions, performs domain availability checks, and develops a brand voice and visual style guide based on the niche.",
     "agentType": "api",
     "sourceFile": ".claude/agents/brand-identity-agent.md",
-    "tools": [
-      "WebSearch",
-      "DomainAvailabilityAPI"
-    ],
+    "tools": ["WebSearch", "DomainAvailabilityAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -1061,9 +1032,7 @@
     "description": "MUST BE USED to craft personalized and compelling pitches to send to potential brand partners. The pitch must highlight the influencer's unique value, demonstrate understanding of the brand, and propose tailored ideas.",
     "agentType": "local",
     "sourceFile": ".claude/agents/brand-outreach-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -1101,9 +1070,7 @@
     "description": "MUST BE USED to research and identify potential brand partners that align with an influencer's niche, audience, and values. For smaller influencers, it strategically targets smaller or emerging brands.",
     "agentType": "local",
     "sourceFile": ".claude/agents/brand-prospecting-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -1214,10 +1181,7 @@
     "description": "MUST BE USED after a campaign concludes to compile a comprehensive performance report for the brand. The report details key metrics (reach, engagement, clicks, conversions) to demonstrate ROI and secure long-term partnerships.",
     "agentType": "api",
     "sourceFile": ".claude/agents/campaign-reporting-agent.md",
-    "tools": [
-      "SocialMediaAPI",
-      "PDFGeneratorAPI"
-    ],
+    "tools": ["SocialMediaAPI", "PDFGeneratorAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -1446,10 +1410,7 @@
     "description": "MUST BE USED to analyze a funnel asset and provide actionable recommendations for conversion improvements based on cognitive biases and neuromarketing principles.",
     "agentType": "local",
     "sourceFile": ".claude/agents/cognitive-bias-optimizer-agent.md",
-    "tools": [
-      "WebScraper",
-      "A/BTestingOptimizerAgent"
-    ],
+    "tools": ["WebScraper", "A/BTestingOptimizerAgent"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -1484,10 +1445,7 @@
     "description": "MUST BE USED to foster a community around a blog. It monitors and responds to all comments on blog posts and social media shares to build reader loyalty.",
     "agentType": "api",
     "sourceFile": ".claude/agents/community-engagement-agent.md",
-    "tools": [
-      "WordPressAPI",
-      "SocialMediaAPI"
-    ],
+    "tools": ["WordPressAPI", "SocialMediaAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -1523,9 +1481,7 @@
     "description": "MUST BE USED to maintain an active and engaged community. It monitors all platforms for comments and direct messages, responding promptly to build relationships and make followers feel valued.",
     "agentType": "api",
     "sourceFile": ".claude/agents/community-manager-agent.md",
-    "tools": [
-      "SocialMediaAPI"
-    ],
+    "tools": ["SocialMediaAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -1563,11 +1519,7 @@
     "description": "MUST BE USED to perform ongoing, periodic monitoring of key competitors. It tracks their new content, campaigns, and monetization strategies to generate a \"State of the Niche\" report with actionable intelligence.",
     "agentType": "api",
     "sourceFile": ".claude/agents/competitive-intelligence-agent.md",
-    "tools": [
-      "WebSearch",
-      "YouTubeAPI",
-      "SocialMediaAPI"
-    ],
+    "tools": ["WebSearch", "YouTubeAPI", "SocialMediaAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -1643,10 +1595,7 @@
     "description": "MUST BE USED to manage and optimize the entire content calendar across all platforms. It ensures optimal timing, cross-promotion, and consistent messaging, preventing content silos.",
     "agentType": "api",
     "sourceFile": ".claude/agents/content-calendar-orchestrator-agent.md",
-    "tools": [
-      "CalendarAPI",
-      "AnalyticsAPI"
-    ],
+    "tools": ["CalendarAPI", "AnalyticsAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -1684,11 +1633,7 @@
     "description": "MUST BE USED to combat 'content decay'. It identifies old or underperforming blog posts and generates a detailed plan to update them with fresh content, new keywords, and better internal linking to improve SEO.",
     "agentType": "api",
     "sourceFile": ".claude/agents/content-refresh-agent.md",
-    "tools": [
-      "GoogleAnalyticsAPI",
-      "WordPressAPI",
-      "KeywordToolAPI"
-    ],
+    "tools": ["GoogleAnalyticsAPI", "WordPressAPI", "KeywordToolAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -1731,10 +1676,7 @@
     "description": "MUST BE USED to act as a force multiplier by taking a single piece of cornerstone content (like a YouTube video or blog post) and intelligently repurposing it into multiple 'snackable' assets tailored for each social platform.",
     "agentType": "api",
     "sourceFile": ".claude/agents/content-repurposing-agent.md",
-    "tools": [
-      "VideoEditingAPI",
-      "ImageEditingAPI"
-    ],
+    "tools": ["VideoEditingAPI", "ImageEditingAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -1777,9 +1719,7 @@
     "description": "MUST BE USED to draft the full text of a blog post. It focuses on creating high-value, authentic, and engaging content that solves the reader's problem, adhering to the 'Authenticity over Optimization' principle.",
     "agentType": "local",
     "sourceFile": ".claude/agents/content-writer-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -1820,10 +1760,7 @@
     "description": "MUST BE USED to manage the legal framework of partnerships. It is responsible for drafting, reviewing, and ensuring the execution of legally sound influencer contracts that clearly outline all agreed-upon terms.",
     "agentType": "api",
     "sourceFile": ".claude/agents/contract-manager-agent.md",
-    "tools": [
-      "LegalTemplateAPI",
-      "DigitalSignatureAPI"
-    ],
+    "tools": ["LegalTemplateAPI", "DigitalSignatureAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -1865,11 +1802,7 @@
     "description": "MUST BE USED to manage a systematic, 4-step Conversion Rate Optimization (CRO) process. It handles investigation, research, hypothesis generation, optimization, and evaluation to drive continuous improvement.",
     "agentType": "api",
     "sourceFile": ".claude/agents/cro-process-agent.md",
-    "tools": [
-      "AnalyticsAPI",
-      "HeatmapToolAPI",
-      "A/BTestingOptimizerAgent"
-    ],
+    "tools": ["AnalyticsAPI", "HeatmapToolAPI", "A/BTestingOptimizerAgent"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -2065,11 +1998,7 @@
     "description": "MUST BE USED to create a holistic Customer Journey Map from the customer's perspective. It visualizes stages, touchpoints, actions, and emotions to identify pain points and improvement opportunities.",
     "agentType": "api",
     "sourceFile": ".claude/agents/customer-journey-map-agent.md",
-    "tools": [
-      "AnalyticsAPI",
-      "CRM_API",
-      "DiagrammingTool"
-    ],
+    "tools": ["AnalyticsAPI", "CRM_API", "DiagrammingTool"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -2107,11 +2036,7 @@
     "description": "MUST BE USED for handling direct customer inquiries, support tickets, and addressing specific user issues. It monitors support channels, categorizes inquiries, provides automated responses, and escalates complex issues.",
     "agentType": "api",
     "sourceFile": ".claude/agents/customer-support-agent.md",
-    "tools": [
-      "EmailAPI",
-      "HelpdeskAPI",
-      "SocialMediaAPI"
-    ],
+    "tools": ["EmailAPI", "HelpdeskAPI", "SocialMediaAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -2188,9 +2113,7 @@
     "description": "MUST BE USED to establish and maintain an organized digital asset management system. It catalogues raw video footage, audio, graphics, and music into a structured directory for easy access.",
     "agentType": "api",
     "sourceFile": ".claude/agents/digital-asset-manager-agent.md",
-    "tools": [
-      "FileSystemAPI"
-    ],
+    "tools": ["FileSystemAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -2229,10 +2152,7 @@
     "description": "MUST BE USED to oversee the creation and sale of proprietary digital products like eBooks or online courses. It handles topic validation, content outlining, and e-commerce platform integration.",
     "agentType": "api",
     "sourceFile": ".claude/agents/digital-product-creator-agent.md",
-    "tools": [
-      "WebSearch",
-      "EcommercePlatformAPI"
-    ],
+    "tools": ["WebSearch", "EcommercePlatformAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -2321,9 +2241,7 @@
     "description": "MUST BE USED to set up and manage the technical infrastructure for selling products. It selects and configures the appropriate platform, from lightweight solutions like Sellfy to full-featured platforms like Shopify.",
     "agentType": "api",
     "sourceFile": ".claude/agents/ecom-platform-manager-agent.md",
-    "tools": [
-      "EcomPlatformAPI"
-    ],
+    "tools": ["EcomPlatformAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -2362,9 +2280,7 @@
     "description": "MUST BE USED to manage the email list and build automated email sequences. This includes a welcome series, an educational nurture sequence, and targeted sales campaigns.",
     "agentType": "api",
     "sourceFile": ".claude/agents/email-marketing-automation-agent.md",
-    "tools": [
-      "EmailMarketingAPI"
-    ],
+    "tools": ["EmailMarketingAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -2401,9 +2317,7 @@
     "description": "MUST BE USED to brainstorm and outline a substantial bank of potential episode topics (at least 10, ideally 30+) before a podcast launches to ensure long-term content viability and create a buffer.",
     "agentType": "local",
     "sourceFile": ".claude/agents/episode-planner-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -2442,9 +2356,7 @@
     "description": "MUST BE USED to generate a comprehensive list of recommended video production equipment. It tailors recommendations for cameras, microphones, and lighting to a specified budget and content style.",
     "agentType": "local",
     "sourceFile": ".claude/agents/equipment-recommendation-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -2480,9 +2392,7 @@
     "description": "MUST BE USED to audit AI-generated content for ethical biases. It runs content against fairness metrics, identifies potential stereotyping or bias, and recommends remediation based on the principle of 'Model Rejection'.",
     "agentType": "api",
     "sourceFile": ".claude/agents/ethical-bias-auditor-agent.md",
-    "tools": [
-      "BiasDetectionAPI"
-    ],
+    "tools": ["BiasDetectionAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -2521,9 +2431,7 @@
     "description": "MUST BE USED to develop a Facebook strategy focused on community building and deeper storytelling. It leverages Facebook Groups to foster a dedicated community and uses Reels and Live streams for engagement.",
     "agentType": "api",
     "sourceFile": ".claude/agents/facebook-strategy-agent.md",
-    "tools": [
-      "FacebookAPI"
-    ],
+    "tools": ["FacebookAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -2559,9 +2467,7 @@
     "description": "MUST BE USED to set up and manage direct-from-listener revenue streams. It creates paid subscription tiers on platforms like Supercast and sets up options for one-time donations via services like PayPal.",
     "agentType": "api",
     "sourceFile": ".claude/agents/fan-funding-agent.md",
-    "tools": [
-      "FanFundingPlatformAPI"
-    ],
+    "tools": ["FanFundingPlatformAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -2603,9 +2509,7 @@
     "description": "MUST BE USED to act as the virtual CFO. It meticulously tracks all sources of income (ad revenue, affiliate commissions, product sales, sponsorships) and all business expenses to generate financial reports like profit and loss statements.",
     "agentType": "api",
     "sourceFile": ".claude/agents/financial-manager-agent.md",
-    "tools": [
-      "AccountingAPI"
-    ],
+    "tools": ["AccountingAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -2649,9 +2553,7 @@
     "agentType": "local",
     "sourceFile": ".claude/agents/frontend-debugger-agent.md",
     "tools": [],
-    "inferredTools": [
-      "Use browser DevTools Network tab"
-    ],
+    "inferredTools": ["Use browser DevTools Network tab"],
     "capabilities": [
       "Debug React context initialization and hook errors",
       "Resolve custom element and Web Component conflicts",
@@ -2775,10 +2677,7 @@
     "description": "MUST BE USED to calculate and analyze the core economic metrics of a sales funnel, including CAC, LTV, and the LTV:CAC ratio, and provide strategic optimization recommendations.",
     "agentType": "api",
     "sourceFile": ".claude/agents/funnel-economics-analyst-agent.md",
-    "tools": [
-      "FinancialDataAPI",
-      "AnalyticsAPI"
-    ],
+    "tools": ["FinancialDataAPI", "AnalyticsAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -3153,12 +3052,7 @@
     "description": "MUST BE USED for interview-based shows to identify potential guests, handle outreach and scheduling, and crucially, manage the distribution and collection of a PodcastGuestReleaseForm.",
     "agentType": "api",
     "sourceFile": ".claude/agents/guest-booking-agent.md",
-    "tools": [
-      "WebSearch",
-      "EmailAPI",
-      "SchedulingAPI",
-      "DigitalSignatureAPI"
-    ],
+    "tools": ["WebSearch", "EmailAPI", "SchedulingAPI", "DigitalSignatureAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -3196,10 +3090,7 @@
     "description": "MUST BE USED to nurture long-term relationships with podcast guests after their appearance. It sends a thank-you email with promotional assets and schedules a future check-in to maintain the network.",
     "agentType": "api",
     "sourceFile": ".claude/agents/guest-relationship-manager-agent.md",
-    "tools": [
-      "EmailAPI",
-      "CalendarAPI"
-    ],
+    "tools": ["EmailAPI", "CalendarAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -3242,9 +3133,7 @@
     "description": "MUST BE USED to create and maintain a professional media kit for an influencer. This document serves as a resume, including a bio, audience demographics, key metrics, case studies, and a rate card.",
     "agentType": "api",
     "sourceFile": ".claude/agents/influencer-media-kit-agent.md",
-    "tools": [
-      "PDFGeneratorAPI"
-    ],
+    "tools": ["PDFGeneratorAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -3283,9 +3172,7 @@
     "description": "MUST BE USED to identify a highly specific and defensible niche for a personal brand. The strategy is to 'niche down' to reduce competition and establish authority in a targeted area.",
     "agentType": "local",
     "sourceFile": ".claude/agents/influencer-niche-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -3320,10 +3207,7 @@
     "description": "MUST BE USED for complex queries requiring deep information synthesis. It operationalizes the 'Semantic Chunk Protocol' by deconstructing queries, retrieving 'Information Shards' from multiple sources, and structuring them into semantically clustered, categorized outputs.",
     "agentType": "api",
     "sourceFile": ".claude/agents/information-retrieval-agent.md",
-    "tools": [
-      "WebSearch",
-      "VectorDatabaseAPI"
-    ],
+    "tools": ["WebSearch", "VectorDatabaseAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -3366,9 +3250,7 @@
     "description": "MUST BE USED to develop a comprehensive content plan for Instagram. It defines key content pillars and a strategy for using a mix of formats like Reels, Stories, and carousels for reach and engagement.",
     "agentType": "api",
     "sourceFile": ".claude/agents/instagram-strategy-agent.md",
-    "tools": [
-      "InstagramAPI"
-    ],
+    "tools": ["InstagramAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -3556,10 +3438,7 @@
     "description": "MUST BE USED to manage the discovery and integration of new agents and tools. It performs handshakes, extracts capabilities from Agent Cards or MCP schemas, translates them into a standard format, and registers them in a central Capability Catalog.",
     "agentType": "mcp",
     "sourceFile": ".claude/agents/interoperability-protocol-agent.md",
-    "tools": [
-      "HttpAPI",
-      "StaticCodeAnalyzerAPI"
-    ],
+    "tools": ["HttpAPI", "StaticCodeAnalyzerAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -3604,9 +3483,7 @@
     "agentType": "external",
     "sourceFile": ".claude/agents/jules-cli-agent.md",
     "tools": [],
-    "inferredTools": [
-      "Updating deprecated APIs throughout project"
-    ],
+    "inferredTools": ["Updating deprecated APIs throughout project"],
     "capabilities": [
       "Parallel Task Execution: Launch multiple Jules sessions concurrently for",
       "Asynchronous Processing: Submit long-running tasks without blocking other",
@@ -3759,10 +3636,7 @@
     "description": "MUST BE USED to conduct in-depth keyword research for a blog's content strategy. Identifies long-tail and 'Gold Nugget' keywords and analyzes SERPs to determine search intent.",
     "agentType": "api",
     "sourceFile": ".claude/agents/keyword-research-agent.md",
-    "tools": [
-      "KeywordToolAPI",
-      "WebSearch"
-    ],
+    "tools": ["KeywordToolAPI", "WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -3800,11 +3674,7 @@
     "description": "MUST BE USED to convert anonymous visitors into known leads by capturing their email addresses. It does this by creating and deploying valuable 'lead magnets' and embedding opt-in forms.",
     "agentType": "api",
     "sourceFile": ".claude/agents/lead-capture-agent.md",
-    "tools": [
-      "PDFGeneratorAPI",
-      "LandingPageBuilderAPI",
-      "EmailMarketingAPI"
-    ],
+    "tools": ["PDFGeneratorAPI", "LandingPageBuilderAPI", "EmailMarketingAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -3846,10 +3716,7 @@
     "description": "MUST BE USED to create the core components of a Lead Magnet Funnel. It designs the lead magnet concept, squeeze page copy, and a welcome email sequence to capture and nurture new leads.",
     "agentType": "api",
     "sourceFile": ".claude/agents/lead-magnet-funnel-agent.md",
-    "tools": [
-      "StoryBrandCopywriterAgent",
-      "LandingPageBuilderAPI"
-    ],
+    "tools": ["StoryBrandCopywriterAgent", "LandingPageBuilderAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -3887,11 +3754,7 @@
     "description": "MUST BE USED to ensure the entire content business adheres to laws and platform policies. Its core functions are generating legal pages, ensuring FTC disclosures, and managing copyright issues.",
     "agentType": "api",
     "sourceFile": ".claude/agents/legal-compliance-agent.md",
-    "tools": [
-      "LegalTemplateAPI",
-      "WebSearch",
-      "YouTubeAPI"
-    ],
+    "tools": ["LegalTemplateAPI", "WebSearch", "YouTubeAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -3934,10 +3797,7 @@
     "description": "MUST BE USED for off-page SEO to build a blog's domain authority. It identifies guest posting opportunities, develops pitch ideas, and initiates collaborations with other bloggers.",
     "agentType": "api",
     "sourceFile": ".claude/agents/link-building-agent.md",
-    "tools": [
-      "WebSearch",
-      "EmailAPI"
-    ],
+    "tools": ["WebSearch", "EmailAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4093,9 +3953,7 @@
     "description": "MUST BE USED to design a diversified monetization plan for a blog. It selects and prioritizes a mix of strategies like ads, affiliate marketing, and digital products based on the niche and audience.",
     "agentType": "local",
     "sourceFile": ".claude/agents/monetization-strategy-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4133,11 +3991,7 @@
     "description": "MUST BE USED for identifying, researching, and validating profitable content niches for new business ventures. Analyzes market demand, competition, and monetization potential based on creator inputs to generate a strategic niche recommendation report.",
     "agentType": "api",
     "sourceFile": ".claude/agents/niche-analyst-agent.md",
-    "tools": [
-      "WebSearch",
-      "KeywordToolAPI",
-      "GoogleTrendsAPI"
-    ],
+    "tools": ["WebSearch", "KeywordToolAPI", "GoogleTrendsAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4182,9 +4036,7 @@
     "description": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
     "agentType": "local",
     "sourceFile": ".claude/agents/orchestrator-agent copy.md",
-    "tools": [
-      "SubAgentExecutor"
-    ],
+    "tools": ["SubAgentExecutor"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4225,9 +4077,7 @@
     "description": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
     "agentType": "local",
     "sourceFile": ".claude/agents/orchestrator-agent.md",
-    "tools": [
-      "SubAgentExecutor"
-    ],
+    "tools": ["SubAgentExecutor"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4267,10 +4117,7 @@
     "description": "MUST BE USED to design a complex, multi-step One-Time Offer (OTO) sequence with upsells and downsells. It creates a logical flowchart to maximize Average Order Value (AOV) post-purchase.",
     "agentType": "api",
     "sourceFile": ".claude/agents/oto-sequence-architect-agent.md",
-    "tools": [
-      "FunnelMappingTool",
-      "ProductCatalogAPI"
-    ],
+    "tools": ["FunnelMappingTool", "ProductCatalogAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4312,9 +4159,7 @@
     "description": "MUST BE USED to construct a complete influencer brand identity. It defines core values, a unique selling proposition (USP), a consistent brand voice, and a visual aesthetic.",
     "agentType": "local",
     "sourceFile": ".claude/agents/personal-brand-architect-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4351,10 +4196,7 @@
     "description": "MUST BE USED to analyze individual user behavior and preferences to deliver personalized content recommendations (e.g., suggesting specific blog posts, videos, or products to individual users).",
     "agentType": "api",
     "sourceFile": ".claude/agents/personalized-content-recommendation-agent.md",
-    "tools": [
-      "UserDataAPI",
-      "RecommendationEngineAPI"
-    ],
+    "tools": ["UserDataAPI", "RecommendationEngineAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4391,9 +4233,7 @@
     "description": "MUST BE USED to determine the most effective social media platforms to focus on. The decision is data-driven, considering where the target demographic is most active and which platform's format aligns with the brand.",
     "agentType": "local",
     "sourceFile": ".claude/agents/platform-selection-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4433,9 +4273,7 @@
     "description": "MUST BE USED for an automated approach to advertising by managing relationships with podcast ad networks (e.g., Acast) or programmatic ad marketplaces (e.g., Simplecast's AdsWizz).",
     "agentType": "api",
     "sourceFile": ".claude/agents/podcast-ad-network-agent.md",
-    "tools": [
-      "AdNetworkAPI"
-    ],
+    "tools": ["AdNetworkAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4467,9 +4305,7 @@
     "description": "MUST BE USED to implement a podcast affiliate marketing strategy. It finds relevant affiliate programs and incorporates unique affiliate links and promo codes into show notes and verbal calls-to-action.",
     "agentType": "local",
     "sourceFile": ".claude/agents/podcast-affiliate-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4507,9 +4343,7 @@
     "description": "MUST BE USED to track podcast performance metrics like download numbers, listener demographics, and drop-off points. It provides data to refine content and marketing strategies for steady, sustainable growth.",
     "agentType": "api",
     "sourceFile": ".claude/agents/podcast-analytics-agent.md",
-    "tools": [
-      "PodcastHostingAPI"
-    ],
+    "tools": ["PodcastHostingAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4550,9 +4384,7 @@
     "description": "MUST BE USED to perform post-production on raw podcast audio. It 'tops and tails' the audio, removes mistakes and filler words, and applies processing like noise reduction, EQ, and compression.",
     "agentType": "api",
     "sourceFile": ".claude/agents/podcast-audio-editor-agent.md",
-    "tools": [
-      "AudioProcessingAPI"
-    ],
+    "tools": ["AudioProcessingAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4590,11 +4422,7 @@
     "description": "MUST BE USED to distribute a podcast by taking its RSS feed and submitting it to all major podcast directories, including Apple Podcasts, Spotify, and YouTube Podcasts.",
     "agentType": "api",
     "sourceFile": ".claude/agents/podcast-distribution-agent.md",
-    "tools": [
-      "ApplePodcastsAPI",
-      "SpotifyAPI",
-      "YouTubePodcastsAPI"
-    ],
+    "tools": ["ApplePodcastsAPI", "SpotifyAPI", "YouTubePodcastsAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4631,9 +4459,7 @@
     "description": "MUST BE USED to recommend an appropriate podcast equipment setup based on budget and format. It suggests specific microphones, headphones, and cameras for audio or video podcasts.",
     "agentType": "local",
     "sourceFile": ".claude/agents/podcast-equipment-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4706,9 +4532,7 @@
     "description": "MUST BE USED to select an appropriate podcast hosting service (e.g., Buzzsprout), set up the account, and upload the initial episodes to generate the show's RSS feed.",
     "agentType": "api",
     "sourceFile": ".claude/agents/podcast-hosting-setup-agent.md",
-    "tools": [
-      "PodcastHostingAPI"
-    ],
+    "tools": ["PodcastHostingAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4743,9 +4567,7 @@
     "description": "MUST BE USED to establish a clear monetization plan for a podcast from the beginning. It selects a strategy that aligns with the niche and audience, such as sponsorships, affiliate marketing, or fan funding.",
     "agentType": "local",
     "sourceFile": ".claude/agents/podcast-monetization-strategy-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4782,10 +4604,7 @@
     "description": "MUST BE USED to identify a viable podcast niche. It balances the creator's passion and expertise with audience interest, competitive landscape, and monetization potential, specifically seeking to avoid oversaturated markets.",
     "agentType": "api",
     "sourceFile": ".claude/agents/podcast-niche-analyst-agent.md",
-    "tools": [
-      "WebSearch",
-      "PodcastDirectoryAPI"
-    ],
+    "tools": ["WebSearch", "PodcastDirectoryAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4825,11 +4644,7 @@
     "description": "MUST BE USED to execute a comprehensive marketing strategy for each new podcast episode. This includes creating and sharing audiograms on social media, sending email newsletters, and coordinating with guests.",
     "agentType": "api",
     "sourceFile": ".claude/agents/podcast-promotion-agent.md",
-    "tools": [
-      "AudiogramGeneratorAPI",
-      "SocialMediaAPI",
-      "EmailAPI"
-    ],
+    "tools": ["AudiogramGeneratorAPI", "SocialMediaAPI", "EmailAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4871,10 +4686,7 @@
     "description": "MUST BE USED to improve a podcast's discoverability through search. It conducts keyword research, optimizes titles and show notes, and manages posting full transcripts to a dedicated website to be indexed by search engines.",
     "agentType": "api",
     "sourceFile": ".claude/agents/podcast-seo-agent.md",
-    "tools": [
-      "KeywordToolAPI",
-      "WordPressAPI"
-    ],
+    "tools": ["KeywordToolAPI", "WordPressAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4915,9 +4727,7 @@
     "description": "MUST BE USED for video podcasts to handle video editing. It synchronizes audio and video tracks, adds B-roll and lower-thirds, and incorporates branding elements for a polished visual experience.",
     "agentType": "api",
     "sourceFile": ".claude/agents/podcast-video-editor-agent.md",
-    "tools": [
-      "VideoEditingSoftwareAPI"
-    ],
+    "tools": ["VideoEditingSoftwareAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4955,10 +4765,7 @@
     "description": "MUST BE USED for selling physical merchandise by managing the entire print-on-demand (POD) workflow. It integrates an e-commerce store with a POD service like Printify, uploads designs, and creates product mockups.",
     "agentType": "api",
     "sourceFile": ".claude/agents/print-on-demand-manager-agent.md",
-    "tools": [
-      "EcomPlatformAPI",
-      "POD_ServiceAPI"
-    ],
+    "tools": ["EcomPlatformAPI", "POD_ServiceAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -4999,9 +4806,7 @@
     "description": "MUST BE USED to ensure the long-term sustainability of the operation by preventing creator burnout. It monitors schedules, sets realistic goals, and schedules mandatory breaks to prevent exhaustion.",
     "agentType": "api",
     "sourceFile": ".claude/agents/productivity-and-burnout-prevention-agent.md",
-    "tools": [
-      "ProjectManagementAPI"
-    ],
+    "tools": ["ProjectManagementAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5039,10 +4844,7 @@
     "description": "MUST BE USED to proactively monitor for negative comments, reviews, or potential PR crises. It assesses severity, proposes response strategies, and aims to protect and enhance brand image.",
     "agentType": "api",
     "sourceFile": ".claude/agents/reputation-management-agent.md",
-    "tools": [
-      "SocialMediaMonitoringAPI",
-      "SentimentAnalysisAPI"
-    ],
+    "tools": ["SocialMediaMonitoringAPI", "SentimentAnalysisAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5122,9 +4924,7 @@
     "description": "MUST BE USED to craft a detailed script for a YouTube video. It focuses on writing a compelling hook to maximize audience retention and structuring the script with a clear intro, body, and call-to-action.",
     "agentType": "local",
     "sourceFile": ".claude/agents/scriptwriter-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5162,9 +4962,7 @@
     "description": "MUST BE USED to perform on-page SEO on a blog post draft. It integrates keywords, crafts a meta description, and adds internal and external links without corrupting the core message.",
     "agentType": "external",
     "sourceFile": ".claude/agents/seo-optimizer-agent.md",
-    "tools": [
-      "WebSearch"
-    ],
+    "tools": ["WebSearch"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5203,9 +5001,7 @@
     "description": "MUST BE USED to leverage the native e-commerce features of social media platforms. It sets up and manages Facebook and Instagram Shops and creates shoppable posts and stories by tagging products.",
     "agentType": "api",
     "sourceFile": ".claude/agents/social-selling-agent.md",
-    "tools": [
-      "FacebookAPI"
-    ],
+    "tools": ["FacebookAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5243,11 +5039,7 @@
     "description": "MUST BE USED to proactively seek podcast sponsorship deals. It identifies and researches brands, creates a professional media kit or one-pager, and sends personalized pitches to potential sponsors.",
     "agentType": "api",
     "sourceFile": ".claude/agents/sponsorship-outreach-agent.md",
-    "tools": [
-      "WebSearch",
-      "EmailAPI",
-      "PDFGeneratorAPI"
-    ],
+    "tools": ["WebSearch", "EmailAPI", "PDFGeneratorAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5288,9 +5080,7 @@
     "description": "MUST BE USED to translate a video script into a visual storyboard. It outlines each scene, camera angle, required B-roll footage, and on-screen graphics to ensure an efficient filming process.",
     "agentType": "api",
     "sourceFile": ".claude/agents/storyboard-artist-agent.md",
-    "tools": [
-      "ImageGenerationAPI"
-    ],
+    "tools": ["ImageGenerationAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5330,10 +5120,7 @@
     "description": "MUST BE USED for creators who have reached a significant level of success. It functions as an in-house talent manager, focusing on high-level career strategy and seeking out major opportunities like book deals or speaking engagements.",
     "agentType": "api",
     "sourceFile": ".claude/agents/talent-manager-agent.md",
-    "tools": [
-      "WebSearch",
-      "EmailAPI"
-    ],
+    "tools": ["WebSearch", "EmailAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5377,9 +5164,7 @@
     "description": "MUST BE USED to handle all tax-related responsibilities for the business. It tracks deductible expenses, calculates estimated tax liability, and manages the submission of quarterly estimated tax payments.",
     "agentType": "api",
     "sourceFile": ".claude/agents/tax-compliance-agent.md",
-    "tools": [
-      "TaxCalculationAPI"
-    ],
+    "tools": ["TaxCalculationAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5544,9 +5329,7 @@
     "description": "MUST BE USED to create a content strategy specifically for TikTok's algorithm. It focuses on creating videos with strong hooks, leveraging trending sounds, and using features like Duets and Stitches.",
     "agentType": "api",
     "sourceFile": ".claude/agents/tiktok-strategy-agent.md",
-    "tools": [
-      "TikTokAPI"
-    ],
+    "tools": ["TikTokAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5584,11 +5367,7 @@
     "description": "MUST BE USED to execute a multi-channel promotion plan for a new blog post. It shares the post on relevant social media platforms, to an email list, and in niche online communities.",
     "agentType": "api",
     "sourceFile": ".claude/agents/traffic-generation-agent.md",
-    "tools": [
-      "SocialMediaAPI",
-      "EmailMarketingAPI",
-      "RedditAPI"
-    ],
+    "tools": ["SocialMediaAPI", "EmailMarketingAPI", "RedditAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5629,9 +5408,7 @@
     "description": "MUST BE USED to systematically collect, analyze, and synthesize qualitative user feedback from various sources (comments, DMs, surveys) into actionable insights for content or product improvement.",
     "agentType": "api",
     "sourceFile": ".claude/agents/user-feedback-analysis-agent.md",
-    "tools": [
-      "NaturalLanguageProcessingAPI"
-    ],
+    "tools": ["NaturalLanguageProcessingAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5669,10 +5446,7 @@
     "description": "MUST BE USED to design a strategic Value Ladder and an integrated ecosystem of interconnected sales funnels. It maps the entire customer journey across multiple offers to maximize lifetime value.",
     "agentType": "api",
     "sourceFile": ".claude/agents/value-ladder-architect-agent.md",
-    "tools": [
-      "FunnelMappingTool",
-      "ProductCatalogAPI"
-    ],
+    "tools": ["FunnelMappingTool", "ProductCatalogAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5711,10 +5485,7 @@
     "description": "MUST BE USED to assemble and edit a video. It assembles raw footage based on a storyboard, trims clips, adds B-roll and transitions, and can leverage AI tools like Descript for efficiency.",
     "agentType": "api",
     "sourceFile": ".claude/agents/video-editor-agent.md",
-    "tools": [
-      "VideoEditingSoftwareAPI",
-      "DescriptAPI"
-    ],
+    "tools": ["VideoEditingSoftwareAPI", "DescriptAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5754,10 +5525,7 @@
     "description": "MUST BE USED to create or source relevant visual assets for blog posts. It finds or generates graphics, infographics, or stock photos, ensuring they are licensed and optimized.",
     "agentType": "api",
     "sourceFile": ".claude/agents/visual-asset-creator-agent.md",
-    "tools": [
-      "StockPhotoAPI",
-      "ImageGenerationAPI"
-    ],
+    "tools": ["StockPhotoAPI", "ImageGenerationAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5797,9 +5565,7 @@
     "description": "MUST BE USED to design a content strategy for X (formerly Twitter). It emphasizes real-time engagement, creating valuable threads for thought leadership, and using polls and visuals to stand out.",
     "agentType": "api",
     "sourceFile": ".claude/agents/x-strategy-agent.md",
-    "tools": [
-      "X_API"
-    ],
+    "tools": ["X_API"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5872,10 +5638,7 @@
     "description": "MUST BE USED to identify a profitable YouTube niche. It analyzes high-CPM categories, conducts competitive analysis to reverse-engineer content strategies, and identifies market gaps.",
     "agentType": "api",
     "sourceFile": ".claude/agents/yt-niche-strategy-agent.md",
-    "tools": [
-      "WebSearch",
-      "YouTubeAPI"
-    ],
+    "tools": ["WebSearch", "YouTubeAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5914,9 +5677,7 @@
     "description": "MUST BE USED to optimize a video's metadata for YouTube's search and recommendation algorithms. It performs keyword research and crafts the video's title, description, and tags for maximum discoverability.",
     "agentType": "api",
     "sourceFile": ".claude/agents/yt-seo-optimizer-agent.md",
-    "tools": [
-      "YouTubeKeywordToolAPI"
-    ],
+    "tools": ["YouTubeKeywordToolAPI"],
     "inferredTools": [],
     "capabilities": [],
     "tags": [
@@ -5956,51 +5717,11 @@
     "tools": [],
     "inferredTools": [],
     "capabilities": [
-      {
-        "name": "CHAT",
-        "description": "CHAT capability provided by Claude Code CLI",
-        "parameters": {
-          "provider": "Claude Code CLI",
-          "command": "claude",
-          "defaultModel": "claude-3-5-sonnet-20241022"
-        }
-      },
-      {
-        "name": "CODE_GENERATION",
-        "description": "CODE_GENERATION capability provided by Claude Code CLI",
-        "parameters": {
-          "provider": "Claude Code CLI",
-          "command": "claude",
-          "defaultModel": "claude-3-5-sonnet-20241022"
-        }
-      },
-      {
-        "name": "FILE_MANAGEMENT",
-        "description": "FILE_MANAGEMENT capability provided by Claude Code CLI",
-        "parameters": {
-          "provider": "Claude Code CLI",
-          "command": "claude",
-          "defaultModel": "claude-3-5-sonnet-20241022"
-        }
-      },
-      {
-        "name": "DATA_ANALYSIS",
-        "description": "DATA_ANALYSIS capability provided by Claude Code CLI",
-        "parameters": {
-          "provider": "Claude Code CLI",
-          "command": "claude",
-          "defaultModel": "claude-3-5-sonnet-20241022"
-        }
-      },
-      {
-        "name": "AUTOMATION",
-        "description": "AUTOMATION capability provided by Claude Code CLI",
-        "parameters": {
-          "provider": "Claude Code CLI",
-          "command": "claude",
-          "defaultModel": "claude-3-5-sonnet-20241022"
-        }
-      }
+      "CHAT",
+      "CODE_GENERATION",
+      "FILE_MANAGEMENT",
+      "DATA_ANALYSIS",
+      "AUTOMATION"
     ],
     "tags": [
       "claude",
@@ -6008,7 +5729,14 @@
       "cli",
       "anthropic",
       "local",
-      "assistant"
+      "assistant",
+      "chat",
+      "generation",
+      "file",
+      "management",
+      "data",
+      "analysis",
+      "automation"
     ],
     "systemPrompt": "You are Claude Code CLI, a local AI assistant integrated with The New Fuse platform. You provide intelligent assistance for coding, analysis, and automation tasks.",
     "status": "active",
@@ -6023,43 +5751,67 @@
     "sourceFile": "config/ai-agents/local-ai-gemini cli.json",
     "tools": [],
     "inferredTools": [],
-    "capabilities": [
-      {
-        "name": "CHAT",
-        "description": "CHAT capability provided by Gemini CLI",
-        "parameters": {
-          "provider": "Gemini CLI",
-          "command": "gemini",
-          "defaultModel": "gemini-pro"
-        }
-      },
-      {
-        "name": "CODE_GENERATION",
-        "description": "CODE_GENERATION capability provided by Gemini CLI",
-        "parameters": {
-          "provider": "Gemini CLI",
-          "command": "gemini",
-          "defaultModel": "gemini-pro"
-        }
-      },
-      {
-        "name": "DATA_ANALYSIS",
-        "description": "DATA_ANALYSIS capability provided by Gemini CLI",
-        "parameters": {
-          "provider": "Gemini CLI",
-          "command": "gemini",
-          "defaultModel": "gemini-pro"
-        }
-      }
-    ],
+    "capabilities": ["CHAT", "CODE_GENERATION", "DATA_ANALYSIS"],
     "tags": [
       "gemini",
       "cli",
       "google",
       "local",
-      "assistant"
+      "assistant",
+      "chat",
+      "code",
+      "generation",
+      "data",
+      "analysis"
     ],
     "systemPrompt": "You are Gemini CLI, a local AI assistant integrated with The New Fuse platform. You provide intelligent assistance for chat, coding, and data analysis.",
+    "status": "active",
+    "version": "1.0.0"
+  },
+  {
+    "id": "twip-protocol-bridge",
+    "name": "TWIP Protocol Bridge",
+    "displayName": "TWIP Protocol Bridge",
+    "description": "Terminal Window Identity Protocol capability profile for TNF interoperability, transfer-safe handoffs, and policy-gated identity workflows.",
+    "agentType": "external",
+    "sourceFile": "config/ai-agents/twip-protocol-bridge.json",
+    "tools": [
+      "twip_publish_identity",
+      "twip_resolve_identity",
+      "twip_revoke_identity",
+      "twip_policy_evaluate",
+      "twip_register_capability"
+    ],
+    "inferredTools": [],
+    "capabilities": [
+      "TWIP_IDENTITY",
+      "TWIP_ENVELOPE",
+      "TWIP_POLICY_GATE",
+      "TWIP_AUDIT_TRAIL"
+    ],
+    "tags": [
+      "twip",
+      "protocol",
+      "bridge",
+      "terminal",
+      "window",
+      "identity",
+      "capability",
+      "profile",
+      "tnf",
+      "interoperability",
+      "transfer",
+      "safe",
+      "handoffs",
+      "policy",
+      "gated",
+      "workflows",
+      "envelope",
+      "gate",
+      "audit",
+      "trail"
+    ],
+    "systemPrompt": "Provide TWIP identity normalization, envelope validation, tenant-safe transfer, and policy evaluation for terminal runtime identity in TNF.",
     "status": "active",
     "version": "1.0.0"
   }

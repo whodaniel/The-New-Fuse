@@ -44,8 +44,18 @@ import { UsersModule } from './users/users.module';
 
 type NestImport = Type<unknown> | DynamicModule | Promise<DynamicModule> | ForwardReference;
 
-// AG-UI Protocol - temporarily disabled to fix ESM require cycle
-// const optionalAGUIImports: NestImport[] = [];
+const optionalAGUIImports: NestImport[] = (() => {
+  try {
+    // AG-UI is an optional visualization layer. If Railway's runtime image prunes
+    // the built workspace package, the backend should still boot without it.
+    const agui = require('@the-new-fuse/ag-ui-core') as { AGUIModule?: NestImport };
+    return agui.AGUIModule ? [agui.AGUIModule] : [];
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`[AppModule] AG-UI disabled: ${message}`);
+    return [];
+  }
+})();
 
 // Create a comprehensive module to support all frontend routing expectations
 // TNF (The New Fuse) is the Master Agent that orchestrates all other agents
@@ -123,7 +133,7 @@ type NestImport = Type<unknown> | DynamicModule | Promise<DynamicModule> | Forwa
     RelayModule, // Relay Core - Agent-to-Agent communication relay
     SelfImprovementModule, // Autonomous improvement loop
     SharedStateModule, // Cloudflare SharedState Integration
-    // AG-UI Protocol - temporarily removed to fix ESM require cycle
+    ...optionalAGUIImports, // AG-UI Protocol - optional real-time agent visualization pipeline
     UserBotsModule,
   ],
   controllers: [AppController, CacheController],

@@ -1,0 +1,17 @@
+{
+  "runId": "graphics-run-1772226675579-ocqiht",
+  "relayUrl": "ws://localhost:3000/ws",
+  "inputPacket": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/docs/NANOBANANA_POKER_GRAPHICS_TASK_PACKET.json",
+  "channelRegex": "red",
+  "matchedChannels": [
+    {
+      "id": "red",
+      "name": "Red"
+    }
+  ],
+  "joinedChannels": ["red"],
+  "sentMessages": 1,
+  "broadcastAcks": 0,
+  "repliesCount": 0,
+  "replies": []
+}

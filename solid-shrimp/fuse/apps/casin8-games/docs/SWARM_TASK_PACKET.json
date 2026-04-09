@@ -1,0 +1,55 @@
+{
+  "generatedAt": "2026-02-27T21:24:30.128Z",
+  "scope": "poker-only swarm reinforcement",
+  "sourceGapReport": "docs/SWARM_GAP_REPORT.json",
+  "missingStreams": [],
+  "assignments": [
+    {
+      "id": "alpha-core",
+      "lane": "core",
+      "capacity": 2,
+      "assignments": []
+    },
+    {
+      "id": "beta-agent",
+      "lane": "agent",
+      "capacity": 2,
+      "assignments": []
+    },
+    {
+      "id": "gamma-finance",
+      "lane": "finance",
+      "capacity": 2,
+      "assignments": []
+    },
+    {
+      "id": "delta-tourney",
+      "lane": "tourney",
+      "capacity": 2,
+      "assignments": []
+    },
+    {
+      "id": "epsilon-trust",
+      "lane": "trust",
+      "capacity": 2,
+      "assignments": []
+    },
+    {
+      "id": "zeta-design",
+      "lane": "design",
+      "capacity": 2,
+      "assignments": []
+    },
+    {
+      "id": "eta-orchestrator",
+      "lane": "ops",
+      "capacity": 2,
+      "assignments": []
+    }
+  ],
+  "collision": {
+    "ok": true,
+    "collisions": []
+  },
+  "tasks": []
+}

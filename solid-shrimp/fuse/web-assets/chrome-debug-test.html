@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chrome Debug Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            -webkit-backdrop-filter: blur(10px); /* Safari support */
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        h1 { text-align: center; margin-bottom: 30px; }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        button:hover { background: #45a049; }
+        .status { 
+            padding: 10px; 
+            margin: 10px 0; 
+            border-radius: 4px; 
+            background: rgba(0, 0, 0, 0.2);
+        }
+        .success { border-left: 4px solid #4CAF50; }
+        .error { border-left: 4px solid #f44336; }
+        .info { border-left: 4px solid #2196F3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Chrome Debug Connection Test</h1>
+        
+        <div class="test-section">
+            <h3>Debugging Status</h3>
+            <div id="debugStatus" class="status info">
+                Checking Chrome debugging connection...
+            </div>
+            <button onclick="testDebugConnection()">Test Debug Connection</button>
+            <button onclick="triggerBreakpoint()">Trigger Breakpoint</button>
+        </div>
+
+        <div class="test-section">
+            <h3>Console Test</h3>
+            <div id="consoleStatus" class="status info">
+                Click the button to test console output
+            </div>
+            <button onclick="testConsoleOutput()">Test Console</button>
+        </div>
+
+        <div class="test-section">
+            <h3>VS Code Debug Instructions</h3>
+            <div class="status info">
+                <strong>To test VS Code debugging:</strong><br>
+                1. Set a breakpoint in this script (click line numbers)<br>
+                2. In VS Code, press <code>F5</code> or go to Run → Start Debugging<br>
+                3. Select "🔧 Attach to Chrome (Port 9222)"<br>
+                4. Click the "Trigger Breakpoint" button above<br>
+                5. VS Code should pause at your breakpoint!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function testDebugConnection() {
+            console.log('🔧 Testing Chrome debug connection...');
+            
+            const statusDiv = document.getElementById('debugStatus');
+            
+            // Test basic debugging availability
+            if (typeof chrome !== 'undefined' && chrome.runtime) {
+                statusDiv.innerHTML = '✅ Chrome debugging environment detected';
+                statusDiv.className = 'status success';
+            } else {
+                statusDiv.innerHTML = '✅ Standard web debugging available';
+                statusDiv.className = 'status success';
+            }
+            
+            // Log debugging info
+            console.log('User Agent:', navigator.userAgent);
+            console.log('Location:', window.location.href);
+            console.log('Timestamp:', new Date().toISOString());
+            
+            // Test performance timing
+            if (performance && performance.timing) {
+                console.log('Page Load Time:', performance.timing.loadEventEnd - performance.timing.navigationStart, 'ms');
+            }
+        }
+        
+        function triggerBreakpoint() {
+            console.log('🚨 About to trigger breakpoint - set one on the next line!');
+            
+            // Set a breakpoint on this line to test VS Code debugging
+            const testVariable = 'This is a test variable for debugging';
+            const currentTime = new Date();
+            const debugInfo = {
+                message: 'VS Code should pause here if debugging is working',
+                timestamp: currentTime.toISOString(),
+                location: window.location.href,
+                userAgent: navigator.userAgent
+            };
+            
+            console.log('Debug Info:', debugInfo);
+            alert('Breakpoint triggered! Check VS Code debugger.');
+        }
+        
+        function testConsoleOutput() {
+            const consoleDiv = document.getElementById('consoleStatus');
+            
+            console.log('📝 Testing console output...');
+            console.warn('This is a warning message');
+            console.error('This is an error message (for testing)');
+            console.info('This is an info message');
+            console.table({
+                'Debug Port': '9222',
+                'Status': 'Connected',
+                'Browser': 'Chrome',
+                'Protocol': 'Chrome DevTools Protocol'
+            });
+            
+            consoleDiv.innerHTML = '✅ Console output generated - check browser DevTools and VS Code Debug Console';
+            consoleDiv.className = 'status success';
+        }
+        
+        // Auto-test on page load
+        window.addEventListener('load', function() {
+            console.log('🚀 Chrome Debug Test Page Loaded');
+            console.log('Chrome debugging port should be: 9222');
+            testDebugConnection();
+        });
+        
+        // Test error handling
+        window.addEventListener('error', function(e) {
+            console.error('Page Error:', e.error);
+        });
+    </script>
+</body>
+</html>

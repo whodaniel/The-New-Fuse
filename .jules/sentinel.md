@@ -18,7 +18,7 @@
 **Vulnerability:** Widespread use of `Math.random().toString(36).substr(2, 9)` to generate unique IDs across the `packages/agent/src` directory, including execution IDs, message IDs, and session IDs.
 **Learning:** This pattern was likely copy-pasted across multiple files during initial development for convenience. `Math.random()` is not cryptographically secure, making these IDs predictable and vulnerable to guessing attacks, which is especially concerning for session and execution IDs.
 **Prevention:** Always use cryptographically secure methods like `crypto.randomBytes(4).toString('hex')` or `crypto.randomUUID()` when generating unique identifiers for security-sensitive or session-related context.
-## 2024-03-24 - Remove dangerouslySetInnerHTML in input-node.tsx
-**Vulnerability:** A static `<style>` block was injected using `dangerouslySetInnerHTML={{ __html: \`...\` }}`.
-**Learning:** While the input was a hardcoded string and not user-controlled (thus not an active XSS), using `dangerouslySetInnerHTML` unnecessarily triggers security scanners and establishes a bad pattern.
-**Prevention:** Use standard text children within `<style>` tags in React (e.g., `<style>{\` ... \`}</style>`) to apply raw CSS safely without invoking `dangerouslySetInnerHTML`.
+## 2026-03-21 - Replace unsafe eval() in ConditionNode
+**Vulnerability:** The `evaluateCondition` method in `packages/core/src/workflow/nodes/condition-node.ts` used `eval()` to evaluate workflow conditions. While there was a regex check beforehand, `eval()` executes in the local lexical scope, which means if the regex validation was ever weakened or bypassed, an attacker could potentially access or modify local variables and context.
+**Learning:** Using `eval()` for expression evaluation is unnecessarily risky because of its access to the local scope. Even with validation, it violates defense-in-depth principles.
+**Prevention:** Replace `eval()` with the `Function` constructor (`new Function(...)`) for evaluating simple expressions. The `Function` constructor executes strictly in the global scope, limiting the potential blast radius by preventing access to local variables if the input validation fails.

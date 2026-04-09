@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2bee6c",
+                        "warning": "#fbbf24",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                        "surface-dark": "#1a2e20",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: "Space Grotesk", sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .betting-grid-disabled {
+            filter: grayscale(1) contrast(0.8) brightness(0.5);
+            pointer-events: none;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(43, 238, 108, 0.1), transparent);
+            background-size: 200% 100%;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col overflow-x-hidden">
+<!-- Header -->
+<header class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between border-b border-white/5 sticky top-0 z-50">
+<div class="text-slate-900 dark:text-slate-100 flex size-12 shrink-0 items-center">
+<span class="material-symbols-outlined text-2xl">menu</span>
+</div>
+<div class="flex flex-col items-center">
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight uppercase">Casin8</h2>
+<span class="text-[10px] text-primary font-bold tracking-[0.2em] uppercase">Command Center</span>
+</div>
+<div class="flex w-12 items-center justify-end">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary/10 text-primary">
+<span class="material-symbols-outlined">person</span>
+</button>
+</div>
+</header>
+<!-- Alert Banner (Amber/Warning) -->
+<div class="p-4 pt-2">
+<div class="flex flex-col gap-4 rounded-xl border border-warning/30 bg-warning/10 p-4 backdrop-blur-md">
+<div class="flex items-start justify-between gap-4">
+<div class="flex gap-3">
+<div class="mt-1">
+<span class="material-symbols-outlined text-warning animate-pulse">cloud_off</span>
+</div>
+<div class="flex flex-col gap-0.5">
+<p class="text-warning text-sm font-bold leading-tight uppercase tracking-wide">Degraded Service State</p>
+<p class="text-slate-300 text-sm font-normal leading-normal">Reconnecting to Game Server...</p>
+</div>
+</div>
+<button class="flex min-w-[70px] cursor-pointer items-center justify-center rounded-lg h-8 px-3 bg-warning text-background-dark text-xs font-bold uppercase tracking-tighter">
+                    Retry
+                </button>
+</div>
+<!-- Progress Loader -->
+<div class="flex flex-col gap-1.5">
+<div class="flex justify-between items-center text-[10px] text-warning/70 font-bold uppercase">
+<span>Signal Strength</span>
+<span>30%</span>
+</div>
+<div class="h-1 rounded-full bg-white/10 overflow-hidden">
+<div class="h-full bg-warning rounded-full transition-all duration-500" style="width: 30%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Content Area (Greyscale/Disabled state) -->
+<main class="flex-1 px-4 betting-grid-disabled flex flex-col gap-6 opacity-40">
+<!-- Live Stream Placeholder -->
+<div class="relative aspect-video rounded-xl overflow-hidden bg-slate-800 border border-white/10">
+<img alt="Roulette Table View" class="w-full h-full object-cover grayscale" data-alt="Close up of a roulette wheel on green felt" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtP5yN9Q6rfiYOOXCNXfpQK0pcKWgpqmAQ8Denm0AQwe5zUOkExNRPeODPo9D5pi8jbs1AZvd4E0eyyvc4E8s16mjCpYI4M9saZC29niaPnYfboYTEwlE5ac2vW36t7ulOJKG6H9ddifjpY-uix5Egl7RP31QDXj-ebPz-616yBvuVDhdu5rVRLwGT5iksmy9yzAyac0hNWU2vw6gkDlV5ycuCi5mOVclmJV6PTuKM9Lsd2nRxDZDuRKFSFEh8E71viecTF6R59IAA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/80 to-transparent"></div>
+<div class="absolute top-4 left-4 flex items-center gap-2 bg-black/40 px-2 py-1 rounded backdrop-blur-sm">
+<div class="size-2 rounded-full bg-red-600"></div>
+<span class="text-[10px] font-bold uppercase tracking-widest">Live Table 04</span>
+</div>
+</div>
+<!-- Betting Grid Section -->
+<div class="grid grid-cols-3 gap-2">
+<div class="h-20 rounded-lg bg-surface-dark border border-white/5 flex flex-col items-center justify-center gap-1">
+<span class="text-xl font-bold">1st 12</span>
+<span class="text-[10px] text-slate-500">2 to 1</span>
+</div>
+<div class="h-20 rounded-lg bg-surface-dark border border-white/5 flex flex-col items-center justify-center gap-1">
+<span class="text-xl font-bold">2nd 12</span>
+<span class="text-[10px] text-slate-500">2 to 1</span>
+</div>
+<div class="h-20 rounded-lg bg-surface-dark border border-white/5 flex flex-col items-center justify-center gap-1">
+<span class="text-xl font-bold">3rd 12</span>
+<span class="text-[10px] text-slate-500">2 to 1</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div class="h-16 rounded-lg bg-red-900/30 border border-red-900/50 flex items-center justify-center">
+<span class="font-bold text-lg uppercase">Red</span>
+</div>
+<div class="h-16 rounded-lg bg-slate-900/80 border border-white/10 flex items-center justify-center">
+<span class="font-bold text-lg uppercase">Black</span>
+</div>
+</div>
+</main>
+<!-- Trust Drawer / Bottom Status -->
+<div class="mt-auto px-4 pb-4">
+<div class="bg-surface-dark rounded-xl border border-white/10 p-4 flex items-center justify-between shadow-2xl">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary/5 flex items-center justify-center border border-primary/20">
+<span class="material-symbols-outlined text-primary text-xl">account_balance_wallet</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Balance</span>
+<span class="text-lg font-bold">$12,450.00</span>
+</div>
+</div>
+<!-- Tx Lifecycle Badge -->
+<div class="flex items-center gap-2 bg-primary/10 border border-primary/30 px-3 py-1.5 rounded-full">
+<span class="material-symbols-outlined text-sm text-primary animate-spin">refresh</span>
+<span class="text-[10px] font-bold text-primary uppercase tracking-tight">Tx Pending</span>
+</div>
+</div>
+</div>
+<!-- Navigation Bar -->
+<nav class="flex border-t border-white/5 bg-surface-dark px-4 pb-6 pt-3 safe-area-bottom">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">casino</span>
+<p class="text-[10px] font-bold uppercase">Lobby</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-primary" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<p class="text-[10px] font-bold uppercase">Betting</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">history</span>
+<p class="text-[10px] font-bold uppercase">History</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">support_agent</span>
+<p class="text-[10px] font-bold uppercase">Support</p>
+</a>
+</nav>
+<!-- Visual Cues for System Lag (Overlay) -->
+<div class="fixed inset-0 pointer-events-none bg-background-dark/20 backdrop-grayscale-[0.5] z-40"></div>
+</body></html>

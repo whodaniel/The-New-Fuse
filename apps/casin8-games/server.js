@@ -1112,11 +1112,8 @@ function redactHoldemSnapshot(snapshot, playerId) {
   const safe = cloneJsonSafe(snapshot);
   const holeCards = safe?.hand?.holeCards || {};
   let seatNo = null;
-  const targetId = playerId ? String(playerId).toLowerCase() : null;
-  if (targetId && Array.isArray(safe.seats)) {
-    const seatRow = safe.seats.find(
-      (row) => row && row.playerId && String(row.playerId).toLowerCase() === targetId
-    );
+  if (playerId && Array.isArray(safe.seats)) {
+    const seatRow = safe.seats.find((row) => row && row.playerId === playerId);
     if (seatRow && Number.isInteger(seatRow.seat)) seatNo = seatRow.seat;
   }
   const masked = {};

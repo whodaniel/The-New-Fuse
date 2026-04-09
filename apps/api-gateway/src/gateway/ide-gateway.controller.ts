@@ -105,6 +105,7 @@ export class IdeGatewayController {
   }
 
   @All('*path')
+  @Version('1')
   @ApiOperation({ summary: 'Proxy all other requests to IDE' })
   @ApiResponse({ status: 200, description: 'Request proxied successfully' })
   async proxyToIde(

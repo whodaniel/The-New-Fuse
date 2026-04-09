@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Casin8 - UI Kit &amp; Design System</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;family=Playfair+Display:wght@700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f4c025",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#181611",
+                        "emerald-accent": "#50c878",
+                        "cyan-accent": "#00ffff",
+                        "navy-base": "#0a0e1a",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .volumetric-glow {
+            box-shadow: 0 0 20px rgba(244, 192, 37, 0.15);
+        }
+        .metallic-gradient {
+            background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full border-b border-white/10 bg-background-dark/80 backdrop-blur-md px-6 lg:px-20 py-4">
+<div class="max-w-7xl mx-auto flex items-center justify-between">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl font-bold">casino</span>
+<h2 class="text-xl font-black tracking-tighter uppercase italic">Casin8</h2>
+</div>
+<div class="hidden md:flex items-center gap-1 bg-white/5 rounded-lg p-1 border border-white/10">
+<span class="material-symbols-outlined text-slate-400 pl-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48 placeholder:text-slate-500" placeholder="Search components..."/>
+</div>
+</div>
+<nav class="hidden lg:flex items-center gap-8">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Foundations</a>
+<a class="text-sm font-medium text-primary" href="#">Components</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Templates</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Assets</a>
+<button class="bg-primary hover:bg-primary/90 text-background-dark px-5 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20">
+                    Download Kit
+                </button>
+</nav>
+</div>
+</header>
+<main class="max-w-7xl mx-auto w-full px-6 lg:px-20 py-12">
+<!-- Hero Section -->
+<section class="mb-20">
+<div class="flex flex-col gap-4">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 w-fit">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary">Version 1.0.4 Stable</span>
+</div>
+<h1 class="text-5xl lg:text-7xl font-black tracking-tight dark:text-white">
+                    Design System <span class="text-primary italic">&amp;</span> UI Kit
+                </h1>
+<p class="text-xl text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
+                    Cinematic AI-arcade aesthetic for the next generation of crypto gaming. High-trust glassmorphism, volumetric glows, and production-ready components.
+                </p>
+</div>
+</section>
+<!-- Sidebar + Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+<!-- Left Navigation -->
+<aside class="lg:col-span-3 space-y-8">
+<div>
+<h3 class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 px-3">Getting Started</h3>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 text-primary border border-white/10 font-medium" href="#">
+<span class="material-symbols-outlined text-sm">dashboard</span> Overview
+                        </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-sm text-slate-500 group-hover:text-white">palette</span> Colors
+                        </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-sm text-slate-500 group-hover:text-white">font_download</span> Typography
+                        </a>
+</nav>
+</div>
+<div>
+<h3 class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 px-3">Components</h3>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-sm text-slate-500 group-hover:text-white">smart_button</span> Buttons
+                        </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-sm text-slate-500 group-hover:text-white">style</span> Cards
+                        </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-sm text-slate-500 group-hover:text-white">error</span> States
+                        </a>
+</nav>
+</div>
+</aside>
+<!-- Main Documentation -->
+<div class="lg:col-span-9 space-y-24">
+<!-- Section: Color Palette -->
+<section id="colors">
+<div class="flex items-center gap-4 mb-8">
+<h2 class="text-2xl font-bold">Color Palette</h2>
+<div class="h-px grow bg-white/10"></div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="group">
+<div class="h-32 rounded-xl bg-navy-base border border-white/10 mb-3 shadow-inner flex flex-col justify-end p-4">
+<span class="text-[10px] font-mono text-slate-500">#0A0E1A</span>
+</div>
+<p class="font-bold text-sm">Midnight Navy</p>
+<p class="text-xs text-slate-500">Base Background</p>
+</div>
+<div class="group">
+<div class="h-32 rounded-xl bg-primary border border-white/10 mb-3 shadow-lg shadow-primary/20 flex flex-col justify-end p-4">
+<span class="text-[10px] font-mono text-background-dark font-bold">#F4C025</span>
+</div>
+<p class="font-bold text-sm">Casino Gold</p>
+<p class="text-xs text-slate-500">Primary Actions</p>
+</div>
+<div class="group">
+<div class="h-32 rounded-xl bg-emerald-accent border border-white/10 mb-3 shadow-lg shadow-emerald-accent/20 flex flex-col justify-end p-4">
+<span class="text-[10px] font-mono text-background-dark font-bold">#50C878</span>
+</div>
+<p class="font-bold text-sm">Emerald Green</p>
+<p class="text-xs text-slate-500">Success/Secondary</p>
+</div>
+<div class="group">
+<div class="h-32 rounded-xl bg-cyan-accent border border-white/10 mb-3 shadow-lg shadow-cyan-accent/20 flex flex-col justify-end p-4">
+<span class="text-[10px] font-mono text-background-dark font-bold">#00FFFF</span>
+</div>
+<p class="font-bold text-sm">Neon Cyan</p>
+<p class="text-xs text-slate-500">AI/Tech Accents</p>
+</div>
+</div>
+</section>
+<!-- Section: Typography -->
+<section id="typography">
+<div class="flex items-center gap-4 mb-8">
+<h2 class="text-2xl font-bold">Typography</h2>
+<div class="h-px grow bg-white/10"></div>
+</div>
+<div class="glass-panel rounded-2xl p-8 space-y-12">
+<div class="space-y-4">
+<p class="text-xs font-mono text-primary uppercase tracking-widest">Display Serif - Playfair Display</p>
+<h3 class="font-serif text-6xl italic leading-tight">The Art of Winning</h3>
+<p class="text-slate-400">Used for hero sections and dramatic headings to evoke premium quality.</p>
+</div>
+<div class="space-y-4">
+<p class="text-xs font-mono text-primary uppercase tracking-widest">Interface Sans - Inter</p>
+<h3 class="font-display text-4xl font-black tracking-tight">Responsive Control System</h3>
+<p class="font-display text-lg leading-relaxed text-slate-300">
+                                Built for readability and precision in data-dense casino environments.
+                            </p>
+</div>
+</div>
+</section>
+<!-- Section: Buttons -->
+<section id="buttons">
+<div class="flex items-center gap-4 mb-8">
+<h2 class="text-2xl font-bold">Action Systems</h2>
+<div class="h-px grow bg-white/10"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="space-y-4">
+<p class="text-xs font-bold text-slate-500 uppercase">Primary Gold</p>
+<button class="w-full bg-primary hover:scale-[1.02] active:scale-95 text-background-dark py-4 rounded-xl font-black text-sm transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">rocket_launch</span>
+                                START PLAYING
+                            </button>
+</div>
+<div class="space-y-4">
+<p class="text-xs font-bold text-slate-500 uppercase">Secondary Emerald</p>
+<button class="w-full bg-emerald-accent/20 border border-emerald-accent/40 text-emerald-accent hover:bg-emerald-accent/30 py-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">payments</span>
+                                DEPOSIT CRYPTO
+                            </button>
+</div>
+<div class="space-y-4">
+<p class="text-xs font-bold text-slate-500 uppercase">Ghost UI</p>
+<button class="w-full bg-white/5 border border-white/10 text-white hover:bg-white/10 py-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">settings</span>
+                                CONFIGURE HUD
+                            </button>
+</div>
+</div>
+</section>
+<!-- Section: Cards & HUD -->
+<section id="cards">
+<div class="flex items-center gap-4 mb-8">
+<h2 class="text-2xl font-bold">Glassmorphism HUDs</h2>
+<div class="h-px grow bg-white/10"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Game Badge -->
+<div class="relative group rounded-2xl overflow-hidden border border-white/10 bg-navy-base">
+<div class="h-48 w-full bg-slate-800 relative">
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent z-10"></div>
+<div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518623489648-a173ef7824f3?auto=format&amp;fit=crop&amp;q=80&amp;w=800')] bg-cover bg-center opacity-60 mix-blend-overlay" data-alt="Cyberpunk arcade slot machine visual"></div>
+</div>
+<div class="p-6 relative z-20 -mt-12">
+<div class="flex justify-between items-end mb-4">
+<div>
+<p class="text-[10px] font-bold text-primary uppercase tracking-tighter">SLOTS • MEGAWAYS</p>
+<h4 class="text-2xl font-black italic tracking-tighter">NEON TITANS</h4>
+</div>
+<div class="bg-primary text-background-dark px-2 py-1 rounded font-black text-xs">
+                                        RTP 98.4%
+                                    </div>
+</div>
+<div class="flex gap-2">
+<button class="grow bg-white/10 hover:bg-white/20 py-2 rounded-lg text-xs font-bold transition-colors">DEMO</button>
+<button class="grow bg-primary text-background-dark py-2 rounded-lg text-xs font-bold transition-colors">PLAY NOW</button>
+</div>
+</div>
+</div>
+<!-- Trust HUD -->
+<div class="glass-panel rounded-2xl p-6 border-l-4 border-l-primary flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<h4 class="text-lg font-bold">Verified Trust Score</h4>
+<p class="text-sm text-slate-500">Real-time cryptographic audit</p>
+</div>
+<span class="material-symbols-outlined text-primary text-3xl">verified_user</span>
+</div>
+<div class="mt-8 space-y-4">
+<div class="flex justify-between items-end">
+<span class="text-xs font-mono text-slate-400">HASH: 0x82...f9e2</span>
+<span class="text-2xl font-black tracking-tighter text-emerald-accent">SECURE</span>
+</div>
+<div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-emerald-accent w-[92%] shadow-[0_0_10px_rgba(80,200,120,0.5)]"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: States -->
+<section id="states">
+<div class="flex items-center gap-4 mb-8">
+<h2 class="text-2xl font-bold">System States</h2>
+<div class="h-px grow bg-white/10"></div>
+</div>
+<div class="space-y-6">
+<!-- Reconnecting Banner -->
+<div class="w-full bg-primary/20 border border-primary/30 p-3 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary animate-spin">sync</span>
+<span class="text-sm font-bold text-primary">Reconnecting to secure node...</span>
+</div>
+<span class="text-[10px] font-mono text-primary/60">ATTEMPT 3/5</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Success Badge -->
+<div class="bg-emerald-accent/10 border border-emerald-accent/20 p-4 rounded-xl flex items-center gap-4">
+<div class="h-10 w-10 rounded-full bg-emerald-accent/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-emerald-accent">check_circle</span>
+</div>
+<div>
+<p class="text-sm font-bold">Transaction Confirmed</p>
+<p class="text-xs text-slate-500">Your 0.42 BTC has been credited.</p>
+</div>
+</div>
+<!-- Error Badge -->
+<div class="bg-red-500/10 border border-red-500/20 p-4 rounded-xl flex items-center gap-4">
+<div class="h-10 w-10 rounded-full bg-red-500/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-red-500">warning</span>
+</div>
+<div>
+<p class="text-sm font-bold">Insufficient Balance</p>
+<p class="text-xs text-slate-500">Please top up your wallet to continue.</p>
+</div>
+</div>
+</div>
+<!-- Loading Spinners -->
+<div class="flex flex-wrap items-center gap-12 glass-panel p-8 rounded-2xl justify-center">
+<div class="flex flex-col items-center gap-3">
+<div class="h-12 w-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
+<span class="text-[10px] font-bold text-slate-500 uppercase">Radial</span>
+</div>
+<div class="flex flex-col items-center gap-3">
+<div class="flex gap-1">
+<div class="h-8 w-2 bg-primary animate-bounce"></div>
+<div class="h-8 w-2 bg-primary animate-bounce [animation-delay:-0.1s]"></div>
+<div class="h-8 w-2 bg-primary animate-bounce [animation-delay:-0.2s]"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500 uppercase">Pulse</span>
+</div>
+<div class="flex flex-col items-center gap-3">
+<div class="relative h-12 w-12">
+<div class="absolute inset-0 rounded-full border-2 border-primary animate-ping opacity-25"></div>
+<div class="absolute inset-2 rounded-full border-2 border-primary animate-ping opacity-50 [animation-delay:-0.5s]"></div>
+<div class="absolute inset-4 rounded-full bg-primary"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500 uppercase">Ping</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Footer Decoration -->
+<footer class="mt-24 border-t border-white/10 py-12 px-6 lg:px-20 bg-background-dark/50">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-3 text-slate-500">
+<span class="material-symbols-outlined">casino</span>
+<p class="text-xs font-medium uppercase tracking-widest">© 2024 Casin8 Labs • All rights reserved.</p>
+</div>
+<div class="flex gap-6">
+<a class="text-xs font-bold text-slate-500 hover:text-primary transition-colors" href="#">GITHUB</a>
+<a class="text-xs font-bold text-slate-500 hover:text-primary transition-colors" href="#">FIGMA COMMUNITY</a>
+<a class="text-xs font-bold text-slate-500 hover:text-primary transition-colors" href="#">CHANGELOG</a>
+</div>
+</div>
+</footer>
+</div>
+</body></html>

@@ -134,15 +134,15 @@ export default function Workflows() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <GlassCard className="p-4">
           <p className="text-xs uppercase tracking-wide text-gray-400">Total Runs</p>
-          <p className="text-xl font-bold text-white mt-1">{executions.length}</p>
+          <p className="text-2xl font-bold text-white mt-1">{executions.length}</p>
         </GlassCard>
         <GlassCard className="p-4">
           <p className="text-xs uppercase tracking-wide text-gray-400">Running Now</p>
-          <p className="text-xl font-bold text-white mt-1">{runningExecutions}</p>
+          <p className="text-2xl font-bold text-white mt-1">{runningExecutions}</p>
         </GlassCard>
         <GlassCard className="p-4">
           <p className="text-xs uppercase tracking-wide text-gray-400">Failure Count</p>
-          <p className="text-xl font-bold text-white mt-1">{failedExecutions}</p>
+          <p className="text-2xl font-bold text-white mt-1">{failedExecutions}</p>
         </GlassCard>
       </div>
 

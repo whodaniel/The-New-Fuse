@@ -1,0 +1,29 @@
+{
+  "dashboard": {
+    "title": "The New Fuse - Main Dashboard",
+    "panels": [
+      {
+        "title": "API Response Time",
+        "type": "graph",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "http_request_duration_seconds{service=\"api\"}",
+            "legendFormat": "{{method}} {{path}}"
+          }
+        ]
+      },
+      {
+        "title": "Error Rate",
+        "type": "graph",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{status=~\"5.*\"}[5m])",
+            "legendFormat": "{{service}}"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,132 @@
+# Quality Gates Configuration
+# This file defines the quality gates that must pass before deployment
+
+quality_gates:
+  # Code Quality Gates
+  code_quality:
+    - name: "Linting"
+      type: "lint"
+      required: true
+      failure_threshold: 0
+      warning_threshold: 10
+      
+    - name: "Type Checking"
+      type: "type-check"
+      required: true
+      failure_threshold: 0
+      
+    - name: "Code Formatting"
+      type: "format"
+      required: true
+      auto_fix: true
+      
+    - name: "Security Scanning"
+      type: "security"
+      required: true
+      severity_threshold: "high"
+      
+  # Test Quality Gates
+  test_quality:
+    - name: "Unit Test Coverage"
+      type: "coverage"
+      required: true
+      minimum_coverage: 80
+      coverage_types: ["line", "branch", "function"]
+      
+    - name: "Unit Test Pass Rate"
+      type: "test-pass-rate"
+      required: true
+      minimum_pass_rate: 95
+      test_type: "unit"
+      
+    - name: "Integration Test Pass Rate"
+      type: "test-pass-rate"
+      required: true
+      minimum_pass_rate: 90
+      test_type: "integration"
+      
+    - name: "E2E Test Pass Rate"
+      type: "test-pass-rate"
+      required: false
+      minimum_pass_rate: 85
+      test_type: "e2e"
+      
+  # Performance Quality Gates
+  performance:
+    - name: "Build Time"
+      type: "build-performance"
+      required: false
+      maximum_duration: "15m"
+      
+    - name: "Bundle Size"
+      type: "bundle-size"
+      required: true
+      maximum_size: "5MB"
+      size_increase_threshold: "10%"
+      
+    - name: "Docker Image Size"
+      type: "image-size"
+      required: false
+      maximum_size: "500MB"
+      
+  # Security Quality Gates
+  security:
+    - name: "Vulnerability Scanning"
+      type: "vulnerability"
+      required: true
+      severity_threshold: "high"
+      max_vulnerabilities: 0
+      
+    - name: "License Compliance"
+      type: "license"
+      required: true
+      allowed_licenses: ["MIT", "Apache-2.0", "BSD-3-Clause", "ISC"]
+      
+    - name: "Secret Detection"
+      type: "secrets"
+      required: true
+      failure_threshold: 0
+
+# Environment-specific overrides
+environments:
+  development:
+    quality_gates:
+      test_quality:
+        - name: "Unit Test Coverage"
+          minimum_coverage: 70
+        - name: "E2E Test Pass Rate"
+          required: false
+          
+  staging:
+    quality_gates:
+      test_quality:
+        - name: "Unit Test Coverage"
+          minimum_coverage: 85
+        - name: "E2E Test Pass Rate"
+          required: true
+          
+  production:
+    quality_gates:
+      test_quality:
+        - name: "Unit Test Coverage"
+          minimum_coverage: 90
+        - name: "E2E Test Pass Rate"
+          required: true
+          minimum_pass_rate: 95
+      security:
+        - name: "Vulnerability Scanning"
+          max_vulnerabilities: 0
+          severity_threshold: "medium"
+
+# Bypass conditions
+bypass_conditions:
+  - type: "hotfix"
+    branch_pattern: "hotfix/*"
+    allowed_gates: ["code_quality.linting", "test_quality.unit_test_coverage"]
+    requires_approval: true
+    
+  - type: "emergency"
+    label: "emergency-deploy"
+    allowed_gates: ["security.vulnerability_scanning"]
+    requires_approval: true
+    approval_count: 2

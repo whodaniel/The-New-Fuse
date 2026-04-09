@@ -294,20 +294,16 @@ export class TNFRelayServer extends EventEmitter {
       this.handleBridgeEgress(envelope);
     });
 
-    this.bridge.on('error', (err) => {
-      console.error(
-        '[Relay] Bridge error caught:',
-        err instanceof Error ? err.message : String(err)
-      );
-    });
-
     this.bridge.connect().catch((err) => {
       console.error('[Relay] Failed to connect bridge:', err);
       console.log('[Relay] Continuing without Redis bridge - local-only mode');
-      // Do not set this.bridge = null to keep error listeners active during retries
+      this.bridge = null;
     });
 
-    if (this.activityPersistenceEnabled && this.activityRedis) {
+    if (this.activityPersistenceEnabled) {
+      this.activityRedis = createClient({
+        url: process.env.ACTIVITY_REDIS_URL || process.env.REDIS_URL || 'redis://localhost:6379',
+      });
       this.activityRedis.on('error', (err: Error) => {
         console.error('[Relay] Activity Redis client error:', err.message);
       });
@@ -1989,7 +1985,6 @@ export class TNFRelayServer extends EventEmitter {
           ...metadata,
           isSystemMessage: true,
           isRecoveryAttempt: true,
-          forceInject: true, // Ensure this reaches the chat input field
         },
         {
           source: 'standalone-relay',

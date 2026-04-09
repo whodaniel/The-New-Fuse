@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - The New Fuse</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        header { background-color: #333; color: #fff; padding: 1em 0; text-align: center; }
+        nav { background-color: #444; padding: 0.5em; text-align: center; }
+        nav a { color: #fff; margin: 0 15px; text-decoration: none; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+        .container { width: 90%; margin: 2em auto; padding: 2em; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: #333; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 2em; }
+        .card { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .card h3 { margin-top: 0; }
+        .placeholder-chart { background-color: #e9e9e9; height: 200px; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: #777; }
+        ul { list-style-type: none; padding: 0; }
+        ul li { background-color: #f9f9f9; border: 1px solid #eee; padding: 10px; margin-bottom: 5px; border-radius: 4px; }
+        footer { text-align: center; padding: 1em 0; background-color: #333; color: #fff; margin-top: 2em; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>The New Fuse - HTML/CSS Showcase</h1>
+    </header>
+    <nav>
+        <a href="home.html">Home</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="chat.html">Chat</a>
+        <a href="tasks.html">Tasks</a>
+        <a href="workflows.html">Workflows</a>
+        <a href="admin.html">Admin</a>
+        <a href="agents.html">Agents</a>
+        <a href="suggestions.html">Suggestions</a>
+        <a href="settings.html">Settings</a>
+        <a href="../index.html">Component Demos</a>
+    </nav>
+    <div class="container">
+        <h2>Dashboard</h2>
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>Key Metric 1</h3>
+                <p style="font-size: 2em; font-weight: bold;">1,234</p>
+                <p>Description of metric 1.</p>
+            </div>
+            <div class="card">
+                <h3>Key Metric 2</h3>
+                <p style="font-size: 2em; font-weight: bold;">567</p>
+                <p>Description of metric 2.</p>
+            </div>
+            <div class="card">
+                <h3>Key Metric 3</h3>
+                <p style="font-size: 2em; font-weight: bold;">89%</p>
+                <p>Description of metric 3.</p>
+            </div>
+            <div class="card" style="grid-column: span 2;">
+                <h3>Performance Overview</h3>
+                <div class="placeholder-chart">Placeholder for Chart/Graph</div>
+            </div>
+            <div class="card">
+                <h3>Recent Activity</h3>
+                <ul>
+                    <li>User John Doe completed Task A.</li>
+                    <li>New Agent "Alpha" registered.</li>
+                    <li>Workflow "Beta" executed successfully.</li>
+                    <li>Settings updated by Admin.</li>
+                </ul>
+                <a href="tasks.html" style="display:inline-block; margin-top:10px;">View All Tasks</a>
+            </div>
+             <div class="card">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="tasks.html">Manage Tasks</a></li>
+                    <li><a href="workflows.html">View Workflows</a></li>
+                    <li><a href="agents.html">Configure Agents</a></li>
+                    <li><a href="settings.html">User Settings</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2025 The New Fuse - HTML/CSS Showcase</p>
+    </footer>
+</body>
+</html>

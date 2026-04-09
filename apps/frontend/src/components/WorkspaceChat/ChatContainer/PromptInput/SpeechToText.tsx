@@ -98,8 +98,8 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({
         disabled && 'opacity-50 cursor-not-allowed',
         className
       )}
-      title={isListening ? 'Stop listening' : 'Start voice input'}
-      aria-label={isListening ? 'Stop listening' : 'Start voice input'}
+      title={isListening ? "Stop listening" : "Start voice input"}
+      aria-label={isListening ? "Stop listening" : "Start voice input"}
     >
       {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
     </button>

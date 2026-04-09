@@ -173,14 +173,18 @@ const Analytics = () => {
 
       const failed = responses.find((response) => response.status === 'rejected');
       if (failed) {
-        if (failed.status === 501) {
+        const statusCode =
+          failed.status === 'rejected' ? Number((failed.reason as any)?.response?.status ?? 0) : 0;
+        if (statusCode === 501) {
           setErrorMessage(
             'Analytics features are not deployed on this backend yet. Enable agency analytics services to activate this dashboard.'
           );
           setData(null);
           return;
         }
-        throw new Error(`Analytics endpoint request failed (${failed.status})`);
+        throw new Error(
+          `Analytics endpoint request failed${statusCode > 0 ? ` (${statusCode})` : ''}`
+        );
       }
 
       const fulfilled = responses as Array<PromiseFulfilledResult<any>>;
@@ -306,18 +310,7 @@ const Analytics = () => {
           responseType: 'blob',
         }
       );
-      if (response.status === 501) {
-        toast({
-          title: 'Unavailable',
-          description: 'Analytics export is not deployed on this backend.',
-          variant: 'destructive',
-        });
-        return;
-      }
-      if (!response.ok) {
-        throw new Error(`Export failed (${response.status})`);
-      }
-      const blob = await response.blob();
+      const blob = response.data as Blob;
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;

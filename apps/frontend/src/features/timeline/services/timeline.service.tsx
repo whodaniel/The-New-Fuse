@@ -1,59 +1,12 @@
 // @ts-nocheck
-import api from '../../../services/api';
 import { TimelineService as ITimelineService } from '../../../types/services';
 import { TimelineBranch, TimelineEvent, TimelineWorkflow } from '../../../types/timeline';
+import { api } from '../../../utils/api';
 
 export class TimelineService implements ITimelineService {
-  async getEventTimeline(branchId?: string, includeDetails = false): Promise<TimelineEvent[]> {
-    const params: Record<string, string | boolean> = {};
-    if (branchId && branchId !== 'all') {
-      params.recordId = branchId;
-    }
-    if (includeDetails) {
-      params.includeDetails = true;
-    }
-
-    const response = await api.get('/timeline/events', { params });
-    const rows = Array.isArray(response.data)
-      ? response.data
-      : Array.isArray(response.data?.items)
-        ? response.data.items
-        : [];
-
-    return rows.map((entry: any) => {
-      const recordBranchId =
-        entry.recordId || entry.planId || entry.goalId || entry.branchId || branchId || 'global';
-      const eventType = String(entry.eventType || entry.type || 'NOTE').toUpperCase();
-      const normalizedType = eventType.includes('WORKFLOW')
-        ? 'WORKFLOW'
-        : eventType.includes('MERGE')
-          ? 'MERGE'
-          : eventType.includes('BRANCH')
-            ? 'BRANCH'
-            : eventType.includes('FEATURE')
-              ? 'FEATURE'
-              : 'NOTE';
-
-      return {
-        id: String(entry.id || `${recordBranchId}-${Date.now()}`),
-        title: String(entry.title || entry.eventType || 'Timeline Event'),
-        description:
-          typeof entry.description === 'string'
-            ? entry.description
-            : JSON.stringify(entry.payload || {}),
-        type: normalizedType,
-        timestamp: entry.timestamp || entry.createdAt || new Date().toISOString(),
-        branchId: recordBranchId,
-        data: {
-          title: String(entry.title || entry.eventType || 'Timeline Event'),
-          description:
-            typeof entry.description === 'string'
-              ? entry.description
-              : JSON.stringify(entry.payload || {}),
-          status: 'ACTIVE',
-          branchId: recordBranchId,
-        },
-      };
+  async getEventTimeline(branchId: string, includeDetails = false): Promise<TimelineEvent[]> {
+    const response = await api.get('/timeline/events', {
+      params: { recordId: branchId, includeDetails },
     });
   }
 

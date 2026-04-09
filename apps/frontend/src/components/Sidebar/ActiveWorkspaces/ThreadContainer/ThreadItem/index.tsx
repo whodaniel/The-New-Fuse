@@ -40,7 +40,18 @@ const STYLES = {
 };
 const THREAD_CALLOUT_DETAIL_WIDTH = 26;
 // ⚡ Bolt: Wrapped in React.memo to prevent unnecessary re-renders when parent components update but thread data is unchanged.
-const ThreadItem = React.memo(({ idx, activeIdx, isActive, workspace, thread, onRemove, toggleMarkForDeletion, hasNext, ctrlPressed = false, }) => {
+const ThreadItem = React.memo(
+  ({
+    idx,
+    activeIdx,
+    isActive,
+    workspace,
+    thread,
+    onRemove,
+    toggleMarkForDeletion,
+    hasNext,
+    ctrlPressed = false,
+  }) => {
     const { slug } = useParams();
     const optionsContainer = useRef(null);
     const [showOptions, setShowOptions] = useState(false);
@@ -127,8 +138,9 @@ const ThreadItem = React.memo(({ idx, activeIdx, isActive, workspace, thread, on
           )}
         </div>
       </div>
-    </div>);
-});
+    );
+  }
+);
 
 export default ThreadItem;
 

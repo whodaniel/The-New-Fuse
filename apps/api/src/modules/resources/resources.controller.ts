@@ -1,13 +1,10 @@
-// @ts-nocheck
 import {
   BadRequestException,
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Post,
-  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -27,24 +24,17 @@ import type {
 import type { Request } from 'express';
 import { JwtAuth, SecureAuthGuard } from '../../guards/secure-auth.guard';
 import { MarketplaceService } from '../marketplace/marketplace.service';
-import { MarketplaceCatalogItem, MarketplaceCatalogSubmissionInput } from '../marketplace/marketplace.types';
+import { MarketplaceCatalogItem } from '../marketplace/marketplace.types';
 import {
   ResourceSearchProtocolRequestEnvelopeDto,
   ResourceSearchProtocolResponseEnvelopeDto,
 } from './dto/resource-search-protocol.dto';
-import {
-  CreatePersonalSkillDto,
-  PersonalSkillDto,
-  UpdatePersonalSkillDto,
-} from './dto/personal-skill.dto';
 import {
   ResourceDto,
   ResourceSearchEnvelopeDto,
   ResourceSearchMetaDto,
   ResourceSearchRequestDto,
 } from './dto/resource-search.dto';
-import { PersonalSkillsService } from './personal-skills.service';
-import { ResourceRegistryApiKeyGuard } from './resource-registry-api-key.guard';
 import { ResourceInteractionService } from './resource-interaction.service';
 import { ResourceSearchPolicyService } from './resource-search-policy.service';
 import { ResourceSearchProtocolService } from './resource-search-protocol.service';
@@ -56,8 +46,7 @@ export class ResourcesController {
     private readonly marketplaceService: MarketplaceService,
     private readonly resourceSearchPolicyService: ResourceSearchPolicyService,
     private readonly resourceSearchProtocolService: ResourceSearchProtocolService,
-    private readonly resourceInteractionService: ResourceInteractionService,
-    private readonly personalSkillsService: PersonalSkillsService
+    private readonly resourceInteractionService: ResourceInteractionService
   ) {}
 
   private resolveUserId(req: Request, fallbackUserId?: string): string {

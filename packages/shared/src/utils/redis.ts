@@ -1,10 +1,6 @@
-// @ts-ignore
-import {
-  createStandaloneRedisClient,
-  createUpstashRestClient,
-} from '@the-new-fuse/infrastructure';
-import { Redis as UpstashRedis } from '@upstash/redis';
-import Redis, { Cluster } from 'ioredis';
+import { createClient } from 'redis';
+
+const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 
 class RedisClient {
   private static instance: RedisClient;

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocket Server Setup - The New Fuse</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      color: #0066cc;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #0066cc;
+      margin-top: 30px;
+    }
+    code {
+      background: #f5f5f5;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    pre {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .step {
+      margin-bottom: 30px;
+    }
+    .step-number {
+      display: inline-block;
+      background: #0066cc;
+      color: white;
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+    .note {
+      background: #ffffd8;
+      border-left: 4px solid #e7c000;
+      padding: 10px 15px;
+      margin: 20px 0;
+    }
+    .button {
+      display: inline-block;
+      background: #0066cc;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    .button:hover {
+      background: #0052a3;
+    }
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #1e1e1e;
+        color: #ddd;
+      }
+      h1, h2 {
+        color: #4da6ff;
+      }
+      .card {
+        background: #252525;
+        border-color: #444;
+      }
+      code, pre {
+        background: #2d2d2d;
+        color: #ccc;
+      }
+      .note {
+        background: #3a3a00;
+        border-left-color: #9b8300;
+      }
+      .button {
+        background: #0066cc;
+      }
+      .button:hover {
+        background: #0052a3;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>WebSocket Server Setup - The New Fuse</h1>
+  
+  <div class="card">
+    <p>The WebSocket server is required for The New Fuse Chrome extension to communicate with VS Code.</p>
+    <p>We tried to open VS Code to start the server, but it seems the VS Code integration might not be installed or properly set up.</p>
+  </div>
+
+  <h2>How to Start the WebSocket Server</h2>
+  
+  <div class="step">
+    <h3><span class="step-number">1</span>Open VS Code</h3>
+    <p>Make sure VS Code is installed and open.</p>
+  </div>
+  
+  <div class="step">
+    <h3><span class="step-number">2</span>Run the WebSocket Server Task</h3>
+    <p>In VS Code, press <code>Ctrl+Shift+P</code> (Windows/Linux) or <code>Cmd+Shift+P</code> (Mac) to open the command palette.</p>
+    <p>Type "Tasks: Run Task" and select it.</p>
+    <p>Then choose "Start WebSocket Server" from the task list.</p>
+    <pre>Tasks: Run Task > Start WebSocket Server</pre>
+  </div>
+  
+  <div class="step">
+    <h3><span class="step-number">3</span>Verify the Server is Running</h3>
+    <p>You should see a message in the VS Code terminal indicating that the WebSocket server has started.</p>
+    <p>The server typically runs on port 8080 by default.</p>
+  </div>
+  
+  <div class="note">
+    <p><strong>Note:</strong> If the VS Code extension for The New Fuse is not installed, you'll need to install it first:</p>
+    <ol>
+      <li>Open VS Code</li>
+      <li>Go to Extensions (Ctrl+Shift+X or Cmd+Shift+X)</li>
+      <li>Search for "The New Fuse"</li>
+      <li>Install the extension</li>
+    </ol>
+  </div>
+  
+  <div class="card">
+    <h3>Manually Start the Server</h3>
+    <p>If you prefer to start the server manually, you can run the following command in your terminal:</p>
+    <pre>cd /path/to/your/project && node test-websocket-server-3711.cjs</pre>
+    <p>Make sure to replace the path with your actual project directory.</p>
+  </div>
+  
+  <p>After starting the server, go back to the Chrome extension and click "Connect to WebSocket Server" to establish the connection.</p>
+  
+  <a href="javascript:window.close();" class="button">Close This Page</a>
+</body>
+</html>

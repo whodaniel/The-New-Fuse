@@ -1,80 +1,86 @@
 # Agent Relationship Delta Report
 
-Generated: 2026-04-07T13:44:08.708042+00:00
-Baseline: `snapshot-20260326T092335Z.json`
-Current: `snapshot-20260407T134408Z.json`
+Generated: 2026-03-12T14:01:57.142579+00:00 Baseline:
+`snapshot-20260305T203150Z.json` Current: `snapshot-20260312T140157Z.json`
 
 ## Summary
 
-- Graphs changed: 2
+- Graphs changed: 0
 - Nodes added: 0
 - Nodes removed: 0
-- Edges added: 9
+- Edges added: 0
 - Edges removed: 0
 
 ## Per Graph
 
 ### brand (agent-relationship-brand-subgraph.json)
-- Node count: 20 -> 20
-- Edge count: 48 -> 51
+
+- Node count: 10 -> 10
+- Edge count: 8 -> 8
 - Nodes added: 0
 - Nodes removed: 0
-- Edges added: 3
+- Edges added: 0
 - Edges removed: 0
 
 ### content (agent-relationship-content-subgraph.json)
-- Node count: 18 -> 18
-- Edge count: 27 -> 27
+
+- Node count: 9 -> 9
+- Edge count: 10 -> 10
 - Nodes added: 0
 - Nodes removed: 0
 - Edges added: 0
 - Edges removed: 0
 
 ### funnel (agent-relationship-funnel-subgraph.json)
-- Node count: 25 -> 25
-- Edge count: 41 -> 41
+
+- Node count: 8 -> 8
+- Edge count: 6 -> 6
 - Nodes added: 0
 - Nodes removed: 0
 - Edges added: 0
 - Edges removed: 0
 
 ### full (agent-relationship-graph.json)
-- Node count: 120 -> 120
-- Edge count: 431 -> 437
+
+- Node count: 49 -> 49
+- Edge count: 43 -> 43
 - Nodes added: 0
 - Nodes removed: 0
-- Edges added: 6
+- Edges added: 0
 - Edges removed: 0
 
 ### ops (agent-relationship-ops-subgraph.json)
-- Node count: 13 -> 13
-- Edge count: 23 -> 23
+
+- Node count: 11 -> 11
+- Edge count: 5 -> 5
 - Nodes added: 0
 - Nodes removed: 0
 - Edges added: 0
 - Edges removed: 0
 
 ### podcast (agent-relationship-podcast-subgraph.json)
-- Node count: 20 -> 20
-- Edge count: 48 -> 48
+
+- Node count: 9 -> 9
+- Edge count: 7 -> 7
 - Nodes added: 0
 - Nodes removed: 0
 - Edges added: 0
 - Edges removed: 0
 
 ### seo (agent-relationship-seo-subgraph.json)
-- Node count: 11 -> 11
-- Edge count: 32 -> 32
+
+- Node count: 9 -> 9
+- Edge count: 13 -> 13
 - Nodes added: 0
 - Nodes removed: 0
 - Edges added: 0
 - Edges removed: 0
 
 ### social (agent-relationship-social-subgraph.json)
-- Node count: 18 -> 18
-- Edge count: 31 -> 31
+
+- Node count: 8 -> 8
+- Edge count: 2 -> 2
 - Nodes added: 0
 - Nodes removed: 0
 - Edges added: 0
 - Edges removed: 0
-

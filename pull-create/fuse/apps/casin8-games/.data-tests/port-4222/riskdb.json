@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 4,
+  "migrations": [
+    {
+      "version": 1,
+      "name": "init-risk-tables",
+      "at": "2026-02-27T23:36:26.307Z"
+    },
+    {
+      "version": 2,
+      "name": "add-funding-attempts",
+      "at": "2026-02-27T23:36:26.307Z"
+    },
+    {
+      "version": 3,
+      "name": "normalize-provider-fraud-signals",
+      "at": "2026-02-27T23:36:26.307Z"
+    },
+    {
+      "version": 4,
+      "name": "add-trait-control-plane-tables",
+      "at": "2026-02-27T23:36:26.308Z"
+    }
+  ],
+  "createdAt": "2026-02-27T23:36:26.307Z",
+  "updatedAt": "2026-02-27T23:36:27.195Z",
+  "tables": {
+    "compliance_profiles": [],
+    "payment_orders": [],
+    "webhook_events": [],
+    "velocity_events": [],
+    "risk_alerts": [],
+    "sponsorship_positions": [
+      {
+        "positionId": "qa-pos-qa-1772235385792-88579",
+        "agentId": "agent-it-1",
+        "status": "funded",
+        "stakeForSaleBps": 7000,
+        "markupBps": 11000,
+        "maxExposureUnits": {
+          "__type": "bigint",
+          "value": "1000000"
+        },
+        "fundedPrincipalUnits": {
+          "__type": "bigint",
+          "value": "500"
+        },
+        "totalBuyCostUnits": {
+          "__type": "bigint",
+          "value": "550"
+        },
+        "totalMarkupRevenueUnits": {
+          "__type": "bigint",
+          "value": "50"
+        },
+        "defaults": {
+          "platformMarkupFeeBps": 250,
+          "platformSettlementFeeBps": 50
+        },
+        "sponsors": {
+          "sponsor-it-1": {
+            "sponsorId": "sponsor-it-1",
+            "principalUnits": {
+              "__type": "bigint",
+              "value": "500"
+            },
+            "buyCostUnits": {
+              "__type": "bigint",
+              "value": "550"
+            },
+            "markupPaidUnits": {
+              "__type": "bigint",
+              "value": "50"
+            },
+            "claimsUnits": {
+              "__type": "bigint",
+              "value": "0"
+            },
+            "claimedTotalUnits": {
+              "__type": "bigint",
+              "value": "171"
+            }
+          }
+        },
+        "settlements": [
+          {
+            "eventId": "qa-event-qa-1772235385792-88579",
+            "buyInUnits": {
+              "__type": "bigint",
+              "value": "100"
+            },
+            "prizeUnits": {
+              "__type": "bigint",
+              "value": "250"
+            },
+            "rakeUnits": {
+              "__type": "bigint",
+              "value": "5"
+            },
+            "netResultUnits": {
+              "__type": "bigint",
+              "value": "145"
+            },
+            "platformSettlementFeeUnits": {
+              "__type": "bigint",
+              "value": "0"
+            },
+            "backerNetUnits": {
+              "__type": "bigint",
+              "value": "101"
+            },
+            "agentNetUnits": {
+              "__type": "bigint",
+              "value": "44"
+            },
+            "totalSponsorPayoutUnits": {
+              "__type": "bigint",
+              "value": "171"
+            },
+            "sponsorPayouts": [
+              {
+                "sponsorId": "sponsor-it-1",
+                "exposureShareUnits": {
+                  "__type": "bigint",
+                  "value": "70"
+                },
+                "pnlShareUnits": {
+                  "__type": "bigint",
+                  "value": "101"
+                },
+                "payoutUnits": {
+                  "__type": "bigint",
+                  "value": "171"
+                }
+              }
+            ]
+          }
+        ],
+        "createdAt": "2026-02-27T23:36:27.168Z",
+        "updatedAt": "2026-02-27T23:36:27.195Z"
+      }
+    ],
+    "funding_attempts": [
+      {
+        "id": "qa-pos-qa-1772235385792-88579::sponsor-it-1",
+        "positionId": "qa-pos-qa-1772235385792-88579",
+        "sponsorId": "sponsor-it-1",
+        "lastAttemptMs": 1772235387171,
+        "dayStartMs": 1772235387171,
+        "dayCount": 1,
+        "dayTotalPrincipalUnits": "500"
+      }
+    ],
+    "trait_rollouts": [],
+    "trait_observations": [
+      {
+        "fold": 0,
+        "check": 0,
+        "call": 0,
+        "raise": 1,
+        "updatedAt": "2026-02-27T23:36:26.820Z",
+        "agentId": "agent-it-1"
+      }
+    ],
+    "trait_recommendations": [],
+    "trait_policy_events": []
+  }
+}

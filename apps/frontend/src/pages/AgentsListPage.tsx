@@ -225,7 +225,72 @@ export default function AgentsPage() {
       {/* Agents List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {agents.map((agent, index) => (
-          <MemoizedAgentCard key={agent.id} agent={agent} index={index} />
+          <div
+            key={agent.id}
+            className="animate-in fade-in zoom-in duration-500 fill-mode-both"
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
+            <GlassCard hover={true} className="h-full group flex flex-col">
+              {/* Agent Header */}
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-md bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-none group-hover:scale-110 transition-transform duration-300">
+                    <Bot className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white group-hover:text-purple-300 transition-colors">
+                      {agent.name}
+                    </h3>
+                    <p className="text-sm text-gray-400">{agent.type}</p>
+                  </div>
+                </div>
+                {getStatusBadge(agent.status)}
+              </div>
+
+              {/* Last Active */}
+              <div className="flex items-center gap-2 mb-4 text-sm text-gray-400 bg-transparent/5 p-2 rounded-md">
+                <TrendingUp className="w-4 h-4 text-purple-400" />
+                <span>{agent.lastActive}</span>
+              </div>
+
+              {/* Description */}
+              <p className="text-gray-300 mb-6 leading-relaxed flex-grow">{agent.description}</p>
+
+              {/* Capabilities */}
+              <div className="mb-6">
+                <p className="text-xs font-bold text-muted-foreground mb-3 uppercase tracking-wider">
+                  Core Abilities
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {agent.capabilities.map((capability, idx) => (
+                    <span
+                      key={idx}
+                      className="px-2.5 py-1 text-xs font-medium bg-blue-500/10 border border-blue-500/20 rounded-md text-blue-200"
+                    >
+                      {capability}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="grid grid-cols-2 gap-3 mt-auto">
+                <Link to={`/agents/${agent.id}`} className="w-full">
+                  <PremiumButton variant="outline" size="sm" icon={Eye} fullWidth>
+                    Inspect
+                  </PremiumButton>
+                </Link>
+                <PremiumButton
+                  variant={agent.status === 'active' ? 'danger' : 'primary'}
+                  size="sm"
+                  icon={agent.status === 'active' ? StopCircle : PlayCircle}
+                  fullWidth
+                >
+                  {agent.status === 'active' ? 'Halt' : 'Deploy'}
+                </PremiumButton>
+              </div>
+            </GlassCard>
+          </div>
         ))}
       </div>
 

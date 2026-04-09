@@ -258,7 +258,7 @@ const AIAgentPortal: React.FC = () => {
             </Link>
           </div>
           {localAIStatus && localAIStatus.enabled === false && (
-            <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-amber-200 text-sm">
+            <div className="mt-4 rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-amber-200 text-sm">
               Local AI integration is not deployed in this environment.
             </div>
           )}

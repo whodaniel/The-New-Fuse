@@ -1,13 +1,8 @@
 import { BadRequestException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-// @ts-ignore
-// @ts-ignore
 import { GooseCliBridgeService } from '@the-new-fuse/relay-core/dist/services/GooseCliBridgeService.js';
-// @ts-ignore
-// @ts-ignore
 import { LogLevel, Logger as RelayLogger } from '@the-new-fuse/relay-core/dist/utils/Logger.js';
 import * as path from 'path';
-import * as crypto from 'crypto';
 
 import { hasAuthorizationLevel } from '../../../auth/auth-policy';
 import { PayPalService } from '../../billing/paypal.service';
@@ -70,7 +65,7 @@ export class GooseService {
     const resolvedCwd = this.resolveCwd(input.cwd);
     const timeoutMs = input.timeoutMs || 120000;
     const extraArgs = input.extraArgs || [];
-    const correlationId = `${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
+    const correlationId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
     const result = await this.gooseBridge.run({
       prompt: input.prompt,

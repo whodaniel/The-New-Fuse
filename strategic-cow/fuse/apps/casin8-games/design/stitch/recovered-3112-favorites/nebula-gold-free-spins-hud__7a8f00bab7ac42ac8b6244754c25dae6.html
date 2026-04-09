@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nebula Gold - Free Spins HUD</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7f13ec",
+                        "primary-dark": "#5e0eb0",
+                        "primary-light": "#9d4bf1",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                        "secondary-dark": "#2a1b38",
+                        "accent-gold": "#FFD700",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                    boxShadow: {
+                        'glow': '0 0 15px rgba(127, 19, 236, 0.5)',
+                        'glow-gold': '0 0 20px rgba(255, 215, 0, 0.3)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .spin-btn-gradient {
+            background: linear-gradient(135deg, #7f13ec 0%, #a855f7 100%);
+        }
+        .slot-reel-gradient {
+            background: linear-gradient(180deg, #120b18 0%, #2a1b38 20%, #2a1b38 80%, #120b18 100%);
+        }
+        .bonus-text-shadow {
+            text-shadow: 0 0 10px rgba(127, 19, 236, 0.8);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-hidden select-none">
+<div class="relative flex h-screen w-full flex-col max-w-md mx-auto shadow-2xl overflow-hidden bg-background-light dark:bg-background-dark">
+<!-- Header / HUD Top -->
+<div class="flex flex-col gap-2 p-4 pb-2 z-20 relative">
+<div class="flex items-center h-12 justify-between">
+<button class="flex size-10 items-center justify-center rounded-full bg-secondary-dark/50 hover:bg-secondary-dark text-slate-100 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">verified</span>
+<p class="text-slate-100 text-sm font-bold tracking-wider uppercase opacity-80">Free Spins Mode</p>
+</div>
+<button class="flex h-10 px-3 items-center justify-center rounded-full bg-secondary-dark/50 hover:bg-secondary-dark text-slate-100 gap-1 transition-colors">
+<span class="material-symbols-outlined text-sm">help</span>
+<span class="text-sm font-bold">Help</span>
+</button>
+</div>
+<div class="flex flex-col items-center justify-center mt-2">
+<h1 class="text-slate-100 tracking-tight text-3xl font-bold leading-tight drop-shadow-md">Nebula Gold</h1>
+<div class="h-1 w-16 bg-gradient-to-r from-transparent via-primary to-transparent mt-2 rounded-full"></div>
+</div>
+</div>
+<!-- Bonus HUD Stats -->
+<div class="px-4 py-2 z-10">
+<div class="flex flex-wrap gap-3">
+<div class="flex min-w-[140px] flex-1 flex-col items-center justify-center gap-1 rounded-xl p-4 bg-secondary-dark border border-primary/30 shadow-glow relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-all duration-500"></div>
+<p class="text-primary-light text-xs font-bold uppercase tracking-widest z-10">Spins Left</p>
+<p class="text-slate-100 tracking-tight text-2xl font-bold leading-none z-10">12 <span class="text-slate-500 text-lg">/ 15</span></p>
+</div>
+<div class="flex min-w-[140px] flex-1 flex-col items-center justify-center gap-1 rounded-xl p-4 bg-gradient-to-br from-secondary-dark to-primary/20 border border-primary/50 shadow-glow relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-12 h-12 bg-accent-gold/20 blur-xl rounded-full"></div>
+<p class="text-accent-gold text-xs font-bold uppercase tracking-widest z-10">Total Win</p>
+<p class="text-white tracking-tight text-2xl font-bold leading-none z-10 drop-shadow-sm">450.50 <span class="text-xs align-top mt-1 inline-block">TOK</span></p>
+</div>
+</div>
+</div>
+<!-- Main Game Area (Reels) -->
+<div class="flex-1 relative flex flex-col justify-center px-2 py-2 overflow-hidden">
+<!-- Active Bonus State Indicator -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 py-1 bg-primary/20 rounded-b-xl border-b border-x border-primary/40 text-center">
+<p class="text-primary-light text-[10px] font-bold tracking-[0.2em] uppercase animate-pulse">Overdrive Active</p>
+</div>
+<!-- Reels Container -->
+<div class="grid grid-cols-5 gap-1.5 h-full max-h-[380px] p-2 bg-black/40 rounded-xl border border-primary/20 shadow-2xl relative">
+<!-- Reel 1 -->
+<div class="flex flex-col gap-1.5 rounded-lg slot-reel-gradient overflow-hidden relative">
+<div class="flex-1 bg-cover bg-center rounded-sm opacity-50 blur-[1px]" data-alt="Generic space gem symbol" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAfGFQY5ThCswpBJZff016-mPaOZL_PBuXaDYedQyKfGmiaUdR-L71r5qVcMcb9-W_PJ7MouzYqvTUPFD9UtxgQ4VZPQfspdsBhVuurx8jglDKsmhGJdaNlP7QAxnh_Bbx2oxVqST6qb3P7DLtwMo3g4SQA5vM0sjZCb2-cazKt074ziz7eHRoyEr4E5_jLyvbR0EvL4j0kHww7qofkuoWaIQNrNYI-cX0cb5syvqX4lvVc8kRkWDbvzE7PAFnYF2E9jmlRUCrf3Ns");'></div>
+<div class="flex-1 bg-cover bg-center rounded-sm border border-primary/50 shadow-[0_0_10px_rgba(127,19,236,0.4)]" data-alt="Purple nebula planet symbol" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCr-1Ug05jGZkJSl2k0Rz3iQopEp9LVVb9PLMR-RRFAzmThDjWPo9ayjBDrgIJ6pFxKCnez8_zzY_GBRqC8mRP39FBocHyK1G3lVcjeh0kjBYRabrvkfIgXtMtPnpEoTvi69NDSUJL2vkddAftIgtfIjF3NpBmA8-9A3aPQSXEGhqvjGBkte7XruJMgMBrIS8i9dUD5ATflRlXnqJF0QG3NJd7G8O8bz0irIEXShe3zXExOc3FK0Mlr8dUo7H3gevGhFJXN-xM1pgE");'></div>
+<div class="flex-1 bg-cover bg-center rounded-sm opacity-50 blur-[1px]" data-alt="Space rock symbol" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDBM2cjSJzuneflgcVG47fk2KKHLihWSbnQh0W8YRkW_koBpf1vFkU7zwdzUXrrNCxGMaI0f40AlH7RKqFJKcpLIuYdGmJanwq9fgUTSVfqiOOlOJUnU3r0VV9Sp56A52jAHXqhC8gnL5Xm67qV88K_v_lKJ4p4FtONqHpRaA1igM_b8taYSyFSy8KY9qXBGH2oZmwuvxx8da84hrZDrCDsejCAhJkM1m5KWGcv95__F0f_QH_PzEh7BO1udgmvx_r4OqdWo_kQP7o");'></div>
+</div>
+<!-- Reel 2 -->
+<div class="flex flex-col gap-1.5 rounded-lg slot-reel-gradient overflow-hidden">
+<div class="flex-1 bg-cover bg-center rounded-sm opacity-60" data-alt="Blue energy crystal" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA5PLEeVmBnNse9EDFeVFMMoeZELKcfFwyZHadjrL_8zY1FFqalKQ-TFPrBqFhktvTsgi-rumlNUEAreM0rKqQybBnxxwISMvW3o4UgVKQRlz22rx-2gaqvB_oo-hEiFVcwKksoncjnmF62GujCY2BjPM4jbtIDgGbCejWrUWEC5k6Cqq4fHGypoiLMBqdvKKKQuB1mcEOLyfJWBXYIIMzkw9l2r77QakKgXTjayua5TJdzVX6bg9GCh1Ivh2Grb_9Jh1m0K1Dn6-0");'></div>
+<div class="flex-1 bg-cover bg-center rounded-sm opacity-60" data-alt="Generic asteroid symbol" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBqVg7g9DBSD20JlXINzP_m6KqMzW20mC9YjiSPN4SbDQRwUmaCMHLHlS__QoCJTRZwa9graOAiDar_BZjm6QhDKttnjxQzMQLnNC-TICXWmAdbdPFNjjtn2rPu-uS2G8gN-0PO8Fd1pO5TNsePUBV26sIKQm7sGUwm-kwM2cx6Nd-mI0eniSVylEy046b6wPyGWvgOth5FCTGEATpnM2jIZ59AF8TS6fZfttJgkRKoVGOVI_a6SxNraXEw-MGbTWljVvBscjTjcdw");'></div>
+<div class="flex-1 bg-cover bg-center rounded-sm opacity-60" data-alt="Small star cluster" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDT18RstyOXic4Dsc8EwGcC5GBlXor9LDziXxKllh7RH7bTmLQLmZQ7TiJkXoPnHaQyuWc15UjXB96hw34Jp4zUCem_yMqTLiz-PI5T0FXyCwk33oZ-4-z--2U4xXPlF9HM1k3JihkPlwop_fZuLaOMgUsvcSUShXKEXfu_tBuSS1uOGeoVGn7E-xUbRU5FHw2QqtUm36_UoJ-4r9aI9JWumnBUMA4ox8h2qDPvQH6y8RMT6Hzlq1wjZmM8XCeRfBQxrnYHHf9JeNc");'></div>
+</div>
+<!-- Reel 3 (Wild Multiplier Focus) -->
+<div class="flex flex-col gap-1.5 rounded-lg slot-reel-gradient overflow-hidden border border-accent-gold/50 shadow-glow-gold relative z-10">
+<div class="absolute inset-0 bg-accent-gold/5 animate-pulse pointer-events-none"></div>
+<div class="flex-1 bg-cover bg-center rounded-sm opacity-40 blur-[1px]" data-alt="Faded generic symbol" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDoHTka2-GSBJOYRuPljJBxoe4xGPt0VnrGJhoV90FovjAbBGAQadHQ3clAUvdRp5Rv3yry_RnZXUBchF4aAhseJnA8P88oweHVramNoQZiAJZY4ZEPI7ICKAtCMVbmVoYjovTjUl-oXI6Qb_e0oH_GA49swCe2B9dpnA-CGqo_srvubip0kPvfJBnfSkBzdeA_3u6IyGSdhT7sMpFTV_7qy10os5wtmfUVQi4FHT5xWQdYTJSai-WObauvAR_rhZN7iOwc6pjKY5M");'></div>
+<!-- Wild Symbol -->
+<div class="flex-1 rounded-md relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#FFD700] to-[#FFA500]">
+<div class="absolute inset-0 bg-[url('https://placeholder.pics/svg/300')] bg-cover opacity-50 mix-blend-overlay" data-alt="Golden texture pattern"></div>
+<div class="z-10 flex flex-col items-center">
+<span class="text-black font-black text-xs uppercase tracking-tighter">WILD</span>
+<span class="text-black font-black text-2xl leading-none">x5</span>
+</div>
+<div class="absolute inset-0 border-2 border-white/50 rounded-md animate-pulse"></div>
+</div>
+<div class="flex-1 bg-cover bg-center rounded-sm opacity-40 blur-[1px]" data-alt="Faded generic symbol" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCSknM-gS-g7hIAs8z7k64bVs1iXNqY66LIJyclgyPV8QJwQUZBkEOEnfAYHe2kuROTEsd78P48XKFtPpjDXCBxCDpjLeKISAkb5R-T9HMhkGXthd85T4NMj_pzYPg1-1CPv4tIrQqkvvDXvT_rF0zMhSIEf3MZtdRS7y7UBBwR99mpEC0CM0kRcRb7nZKeaPjRz9DQTr18La73rCy27puTX5PobxkwRq1ypc8dMwkzUGaPCRWSbAZHoQ3QCR_WstODUrX-yBULNC0");'></div>
+</div>
+<!-- Reel 4 -->
+<div class="flex flex-col gap-1.5 rounded-lg slot-reel-gradient overflow-hidden">
+<div class="flex-1 bg-cover bg-center rounded-sm opacity-60" data-alt="Red dwarf star" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDeE13T8R7kvXus5CmtwMjoC50jErJwwZ_bQCGsqnLEve0apFt-Qb_hmtPb3JdFHAbD3BTRvF8OsHiQiaX6k1QvqkBqntvnK4XxJ69R4QiYsAAzmRrfGq9qQgQVlVzXlxObIKl1DTD1_Q8hLVo2Be34jHO4aFSHug7E9-mpZ0CB9Ms9zZsHCJLAO_z350O0JJDwyfT3HaPizZMZFvmNOPzCAznBRoC0j1QHHkGFuwnbSjRx17ziwBmpOuDnuI39t8bJEebcN15jhFs");'></div>
+<div class="flex-1 bg-cover bg-center rounded-sm opacity-60" data-alt="Space satellite debris" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAljzkdwvvfsHMJ9LYwt1ladZvv_IdStwp4dMK4ayq94jnlYzu0pJp_QJE4P9I5_6oInERPTFFjPmEnaPNHVbeaiYOGzA60nGe1y9vXektb9urd11dPfz1uYimw5R3D9xfu0QVX4t6jDKND04bys_-wNQeZspcd5bS3BbGfINKGFKA39CUe1dqCaNAQlwFbGKUcVCi2ibDwFKzmHbmhzom4jXwMN3HMT9xbyiC_o0FntgDnlDkbiuBA8iv_bciypQYA0OC9V7hI2O4");'></div>
+<div class="flex-1 bg-cover bg-center rounded-sm opacity-60" data-alt="Green alien artifact" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDKQbJ22snv0bFUC5IRjoP4b4d4mgxYGPOaoDP0u1i6qUeVVAPjPbv_fp9Z82RgPQunq445goLyRP-TmzmiMgHC8ty2iu1HqIhFNuI3NEAFH6Yrv1LysB4nGuxlw58IXK0P4711umV5nZO1y7AXeQqWaUdEEvuX7vZqe2Cd4ZJlFuOeN9I6Uw5MwL8UzHKIt50-sQr8Qj6akH7OYewZnjIZx-7emTICGv6_O0xACVbV6OFoooZIxWH5MH3KifmgS-IK4y8km8g7DBQ");'></div>
+</div>
+<!-- Reel 5 -->
+<div class="flex flex-col gap-1.5 rounded-lg slot-reel-gradient overflow-hidden relative">
+<div class="flex-1 bg-cover bg-center rounded-sm opacity-50 blur-[1px]" data-alt="Generic space rock" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA68i2dnAYT9pswN3kcXdWrF3RpjbhdZZXpSQ3Z8-H9GQxsQh6phAp6CUAMBTCd8MGuNBGhKhXRn7udaHUme0OrH9cH2MhqoEz6PRiFmc4uLm0PU-9-EQsPz96cVKKsk-YkXPYAv2cLwDRMGDe8pE95Ddmb5bUN2DznZMhhrmA07n74SMkgRRyEVrfTitg3YkYZjcsRFWjrQ5gU3eWtxjKL7KNag19T5I8yvO3EUGsNmFV1rM0rLXwgGSYBgtbB9fBG48ug6VUzdBw");'></div>
+<div class="flex-1 bg-cover bg-center rounded-sm border border-primary/50 shadow-[0_0_10px_rgba(127,19,236,0.4)]" data-alt="Purple nebula planet symbol" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAkvayqDZOc_pku1uFAYtK1xVAVMMCYwpJVW8m-eKrDl9eVQKBpgSPYAJ1G4tgtWqjlBYfdk659p4ux-24tt3xDzVraFajcANf8EZz1egbCu2iFbxiQ1Sv8CrSBtGA2QORoPUbo39E4X7ZMtG0zFueJgVlmX6s_9RaJiPzvgM0MevBCtMBMA-1yrgDaWEevK4wF0IoxzsEbF-BGpHbsBarpi2UqbgmjCwM5uv-Y8h8AwdwykFzNO3VaiXVnyA0DJocVXJ6HF1PK2IU");'></div>
+<div class="flex-1 bg-cover bg-center rounded-sm opacity-50 blur-[1px]" data-alt="Small moon crater" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD-JTHJDE6ee_nIF0qkuseYwU0XAu1aYbCmJ_izXTRTtFeWaGG5r02G_0zwN1V5OpgiKAjP4bJOGGSgl4b_rk3gFYL6q-5GxB_RGl8ht197tBUMhXz7qJTwDTkAXtXVYCklIjOfUTbXoQr86wOxUzB_xWJhJpFUfjqeWIib6sF5pTuNQf0qDOOc2rQ620UaJyu2XYC2Iyhu2cee0rS68C-U3oqrZjtx2NPxjTHtR7BF66ogdw7qzF7LIhWprjCcBdLXO6V4Zmw2cUg");'></div>
+<!-- Payline Indicator (Abstract) -->
+<div class="absolute top-1/2 left-[-400%] right-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 z-20 shadow-[0_0_8px_#7f13ec]"></div>
+</div>
+</div>
+<div class="text-center mt-3">
+<p class="text-slate-400 text-xs font-medium tracking-widest uppercase animate-pulse">Good Luck!</p>
+</div>
+</div>
+<!-- Controls Area -->
+<div class="px-4 pb-4 pt-2">
+<div class="flex items-center justify-between gap-4">
+<div class="flex flex-col">
+<span class="text-xs text-slate-400 font-medium">Bet</span>
+<span class="text-lg font-bold text-slate-200">2.00 TOK</span>
+</div>
+<!-- Spin Button -->
+<button class="relative group size-20 rounded-full spin-btn-gradient shadow-glow flex items-center justify-center transform active:scale-95 transition-all">
+<div class="absolute inset-1 rounded-full border-2 border-white/20 group-hover:border-white/40"></div>
+<span class="material-symbols-outlined text-white text-4xl group-hover:rotate-180 transition-transform duration-700">cached</span>
+</button>
+<div class="flex flex-col items-end">
+<span class="text-xs text-slate-400 font-medium">Wallet</span>
+<span class="text-lg font-bold text-slate-200">1,240.00</span>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation -->
+<div class="mt-auto border-t border-secondary-dark bg-[#261933] px-6 pb-6 pt-3 z-30">
+<div class="flex justify-between items-end gap-2">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 group" href="#">
+<div class="text-primary group-hover:text-primary-light transition-colors flex h-6 items-center justify-center">
+<span class="material-symbols-outlined filled text-[24px]" style="font-variation-settings: 'FILL' 1;">spoke</span>
+</div>
+<p class="text-primary group-hover:text-primary-light transition-colors text-[10px] font-bold uppercase tracking-wide">Slots</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 group" href="#">
+<div class="text-slate-400 group-hover:text-slate-200 transition-colors flex h-6 items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">casino</span>
+</div>
+<p class="text-slate-400 group-hover:text-slate-200 transition-colors text-[10px] font-bold uppercase tracking-wide">Live</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 group" href="#">
+<div class="text-slate-400 group-hover:text-slate-200 transition-colors flex h-6 items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">account_balance_wallet</span>
+</div>
+<p class="text-slate-400 group-hover:text-slate-200 transition-colors text-[10px] font-bold uppercase tracking-wide">Wallet</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 group" href="#">
+<div class="text-slate-400 group-hover:text-slate-200 transition-colors flex h-6 items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">person</span>
+</div>
+<p class="text-slate-400 group-hover:text-slate-200 transition-colors text-[10px] font-bold uppercase tracking-wide">Profile</p>
+</a>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,140 @@
+import React, { FC } from "react";
+import { useTheme } from '@the-new-fuse/ThemeContext';
+import { ColorMode, FontSize, Spacing } from '@the-new-fuse/types';
+import { Button } from '@the-new-fuse/../../core/components/ui/Button';
+
+interface ColorOption {
+  name: string;
+  value: string;
+}
+
+const colorOptions: ColorOption[] = [
+  { name: 'Blue', value: '#2563eb' },
+  { name: 'Indigo', value: '#4f46e5' },
+  { name: 'Purple', value: '#7c3aed' },
+  { name: 'Pink', value: '#db2777' },
+  { name: 'Red', value: '#dc2626' },
+  { name: 'Orange', value: '#ea580c' },
+  { name: 'Green', value: '#16a34a' },
+  { name: 'Teal', value: '#0d9488' },
+];
+
+export const ThemeCustomizer: (React as unknown).FC<{}> = () => {
+  const { theme, setTheme, toggleColorMode } = useTheme(): ColorMode): unknown  = (mode> {
+    setTheme({ mode }): FontSize): unknown  = (fontSize> {
+    setTheme({ fontSize }): Spacing): unknown  = (spacing> {
+    setTheme({ spacing }): string): unknown  = (color> {
+    setTheme({
+      colors: {
+        light: { ...(theme as unknown): color },
+        dark: { ...(theme as unknown).(colors as unknown).dark, primary: color },
+      },
+    });
+  };
+
+  return (
+    <div className="space-y-6 p-6 bg-white rounded-lg shadow">
+      {/* Color Mode */}
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Color Mode</h3>
+        <div className="flex space-x-4">
+          {(['light', 'dark', 'system'] as ColorMode[]).map((mode) => (
+            <button
+              key={mode}
+              onClick={() => handleColorModeChange(mode)}
+              className={`px-4 py-2 rounded-md text-sm font-medium ${
+                (theme as unknown).mode === mode
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              {(mode as unknown).charAt(0).toUpperCase() + (mode as unknown).slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Primary Color */}
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">
+          Primary Color
+        </h3>
+        <div className="grid grid-cols-8 gap-3">
+          {colorOptions.map((color) => (
+            <button
+              key={(color as unknown).value}
+              onClick={() => handlePrimaryColorChange((color as unknown).value)}
+              className={`w-8 h-8 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                (theme as unknown).colors.(light as unknown).primary === (color as unknown).value
+                  ? 'ring-2 ring-offset-2 ring-blue-500'
+                  : ''
+              }`}
+              style={{ backgroundColor: (color as unknown).value }}
+              title={(color as unknown).name}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Font Size */}
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Font Size</h3>
+        <div className="flex space-x-4">
+          {(['sm', 'md', 'lg'] as FontSize[]).map((size) => (
+            <button
+              key={size}
+              onClick={() => handleFontSizeChange(size)}
+              className={`px-4 py-2 rounded-md text-sm font-medium ${
+                (theme as unknown).fontSize === size
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              {(size as unknown).toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Spacing */}
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Spacing</h3>
+        <div className="flex space-x-4">
+          {(['compact', 'comfortable', 'spacious'] as Spacing[]).map(
+            (spacing) => (
+              <button
+                key={spacing}
+                onClick={() => handleSpacingChange(spacing)}
+                className={`px-4 py-2 rounded-md text-sm font-medium ${
+                  (theme as unknown).spacing === spacing
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                {(spacing as unknown).charAt(0).toUpperCase() + (spacing as unknown).slice(1)}
+              </button>
+            )
+          )}
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="border-t pt-6">
+        <div className="flex justify-between">
+          <Button
+            variant="outline"
+            onClick={toggleColorMode}
+          >
+            Toggle Dark Mode
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setTheme({ ...theme, mode: 'system' })}
+          >
+            Reset to System
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};

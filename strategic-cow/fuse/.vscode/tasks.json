@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Scaffold wallet, transaction, and web3auth modules/services/controllers (NestJS)",
+			"command": "pnpm dlx nest generate module wallets && pnpm dlx nest generate service wallets && pnpm dlx nest generate controller wallets && pnpm dlx nest generate module transactions && pnpm dlx nest generate service transactions && pnpm dlx nest generate module web3auth && pnpm dlx nest generate service web3auth",
+			"group": "build",
+			"isBackground": false
+		}
+	]
+}

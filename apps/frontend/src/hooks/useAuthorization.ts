@@ -146,13 +146,25 @@ export const useAuthorization = () => {
 
   const effectiveRoles = React.useMemo(() => getEffectiveRoles(), [user, isBizSynthMasterAdmin]);
 
-  const hasRoleCallback = React.useCallback(hasRole, [user, isBizSynthMasterAdmin]);
-  const canAccessCallback = React.useCallback(canAccess, [
-    user,
+  return {
+    hasRole,
+    canAccess,
+    // Master admin checks
+    isSuperAdmin: isBizSynthMasterAdmin || hasRole(['SUPER_ADMIN']),
     isBizSynthMasterAdmin,
-    hasRoleCallback,
-    getEffectiveRoles,
-  ]);
+    // Agency admin checks
+    isAgencyOwner: hasRole(['AGENCY_OWNER']),
+    isAgencyAdmin: hasRole(['AGENCY_ADMIN', 'AGENCY_MANAGER']),
+    isAnyAgencyAdmin: hasRole(['AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER']),
+    // Legacy checks
+    isAdmin: hasRole(['SUPER_ADMIN', 'ADMIN']),
+    isDeveloper: hasRole(['DEVELOPER']),
+    // User info
+    userRole: isBizSynthMasterAdmin ? 'SUPER_ADMIN' : normalizeRole(user?.role) || undefined,
+    userRoles: effectiveRoles,
+    // Helper to filter items by tenancy
+    filterByTenancy: <T extends { tenantId?: string; agencyId?: string }>(items: T[]): T[] => {
+      if (hasRole(['SUPER_ADMIN', 'ADMIN'])) return items;
 
   return React.useMemo(
     () => ({

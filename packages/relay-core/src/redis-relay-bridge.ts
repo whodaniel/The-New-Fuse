@@ -16,8 +16,7 @@
 // @ts-ignore
 import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 import { EventEmitter } from 'events';
-import Redis, { Cluster } from 'ioredis';
-import { Redis as UpstashRedis } from '@upstash/redis';
+import { createClient, RedisClientType } from 'redis';
 import { createAgentIdentityRecord } from './contracts/identity';
 import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from './protocol/tnf-envelope';
 
@@ -137,14 +136,10 @@ export class RedisRelayBridge extends EventEmitter {
     // Publish to ingress
     try {
       const normalizedEnvelope = validateTNFEnvelope(envelope);
-      const payloadStr = JSON.stringify(normalizedEnvelope);
-
-      if (this.upstashClient) {
-        await this.upstashClient.publish(this.config.ingressChannel, payloadStr);
-      } else {
-        await this.redisClient.publish(this.config.ingressChannel, payloadStr);
-      }
-
+      await this.redisClient.publish(
+        this.config.ingressChannel,
+        JSON.stringify(normalizedEnvelope)
+      );
       console.log(
         `[Redis-Bridge] Published to ${this.config.ingressChannel}:`,
         normalizedEnvelope.id
@@ -254,14 +249,7 @@ export class RedisRelayBridge extends EventEmitter {
     }
 
     const normalizedEnvelope = validateTNFEnvelope(envelope);
-    const payloadStr = JSON.stringify(normalizedEnvelope);
-
-    if (this.upstashClient) {
-      await this.upstashClient.publish(this.config.ingressChannel, payloadStr);
-    } else {
-      await this.redisClient.publish(this.config.ingressChannel, payloadStr);
-    }
-
+    await this.redisClient.publish(this.config.ingressChannel, JSON.stringify(normalizedEnvelope));
     console.log(`[Redis-Bridge] Published to ingress:`, normalizedEnvelope.id);
   }
 
@@ -275,14 +263,7 @@ export class RedisRelayBridge extends EventEmitter {
 
     const channel = `${this.config.egressChannelPrefix}:${agentId}`;
     const normalizedEnvelope = validateTNFEnvelope(envelope);
-    const payloadStr = JSON.stringify(normalizedEnvelope);
-
-    if (this.upstashClient) {
-      await this.upstashClient.publish(channel, payloadStr);
-    } else {
-      await this.redisClient.publish(channel, payloadStr);
-    }
-
+    await this.redisClient.publish(channel, JSON.stringify(normalizedEnvelope));
     console.log(`[Redis-Bridge] Published to ${channel}:`, normalizedEnvelope.id);
   }
 

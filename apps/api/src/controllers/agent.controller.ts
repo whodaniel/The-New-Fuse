@@ -15,9 +15,6 @@ import {
 // @ts-ignore
 // @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService, User } from '@the-new-fuse/database';
 import {
   AgentResponseDto,
@@ -27,6 +24,7 @@ import {
   UpdateAgentDto,
 } from '@the-new-fuse/types';
 import { AgentProfileDto } from '../agents/dto/agent.dto';
+import { isPrivilegedUser } from '../auth/auth-policy';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import {
   JwtAuth,

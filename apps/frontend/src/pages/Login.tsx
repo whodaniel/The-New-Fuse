@@ -44,7 +44,7 @@ export const Login: React.FC = () => {
         <div className="bg-transparent py-8 px-4 shadow sm:rounded-md sm:px-10">
           {error && (
             <div
-              className="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"
+              className="bg-red-50 border border-red-400 text-red-700 px-4 py-2 rounded mb-4"
               role="alert"
             >
               <span className="block sm:inline">{error}</span>
@@ -103,7 +103,7 @@ export const Login: React.FC = () => {
 
               <div className="text-sm">
                 <Link
-                  to="/forgot-password"
+                  to="/auth/forgot-password"
                   className="font-medium text-blue-600 hover:text-blue-500"
                 >
                   Forgot your password?

@@ -1,0 +1,10 @@
+{
+  "agentId": "personal-archaeology-narrative-team-orchestrator",
+  "role": "team_orchestrator",
+  "teamId": "narrative-reconstruction",
+  "status": "active",
+  "lastHeartbeatAt": "2026-03-19T08:56:37.421Z",
+  "summary": "Published digest with 1 pending human actions",
+  "findingsPath": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/reports/personal-archaeology/reports/periodic-digest.md",
+  "blockedReason": null
+}

@@ -1,5 +1,3 @@
-// @ts-ignore
-// @ts-ignore
 import { ApiProperty, ApiPropertyOptional, getSchemaPath } from '@nestjs/swagger';
 import type {
   ResourceSearchProtocolActor,

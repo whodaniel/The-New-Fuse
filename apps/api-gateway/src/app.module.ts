@@ -12,12 +12,10 @@ import { ChatGatewayModule } from './gateway/chat-gateway.module';
 import { IdeGatewayModule } from './gateway/ide-gateway.module';
 import { MarketplaceGatewayModule } from './gateway/marketplace-gateway.module';
 import { McpGatewayModule } from './gateway/mcp-gateway.module';
-import { NexusObservabilityGatewayModule } from './gateway/nexus-observability-gateway.module';
 import { PokerGatewayModule } from './gateway/poker-gateway.module';
 import { SgpGatewayModule } from './gateway/sgp-gateway.module';
 import { SystemGatewayModule } from './gateway/system-gateway.module';
 import { TerminalsGatewayModule } from './gateway/terminals-gateway.module';
-import { TimelineGatewayModule } from './gateway/timeline-gateway.module';
 import { WebhookGatewayModule } from './gateway/webhook-gateway.module';
 import { WorkspaceGatewayModule } from './gateway/workspace-gateway.module';
 import { ProxyModule } from './proxy/proxy.module';
@@ -42,14 +40,11 @@ import { ProxyModule } from './proxy/proxy.module';
     ChatGatewayModule,
     McpGatewayModule,
     MarketplaceGatewayModule,
-    NexusObservabilityGatewayModule,
     IdeGatewayModule,
     PokerGatewayModule,
     SgpGatewayModule,
     SystemGatewayModule,
     TerminalsGatewayModule,
-    TimelineGatewayModule,
-    WorkspaceGatewayModule,
   ],
 })
 export class AppModule {}

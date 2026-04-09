@@ -1,0 +1,293 @@
+<html class="dark"><head>
+<meta charset="utf-8"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#0ac285",
+            "gold": "#d4af37",
+            "background-light": "#f5f8f7",
+            "background-dark": "#10221c",
+            "surface-dark": "#1a2e28",
+          },
+          fontFamily: {
+            "display": ["Manrope"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Manrope', sans-serif;
+    }
+    .blackjack-table-gradient {
+      background: radial-gradient(circle at center, #1a3a5f 0%, #0f172a 100%);
+    }
+    .gold-border {
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased font-display">
+<div class="relative flex h-screen w-full flex-col overflow-hidden">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between border-b border-primary/10 bg-background-dark px-6 py-3 shrink-0">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-xl font-extrabold tracking-tight">Casin8</h2>
+</div>
+<div class="relative flex w-80 items-center">
+<span class="material-symbols-outlined absolute left-3 text-slate-400">search</span>
+<input class="w-full rounded-lg border-none bg-surface-dark py-2 pl-10 pr-4 text-sm text-slate-200 placeholder:text-slate-500 focus:ring-1 focus:ring-primary" placeholder="Search games, tables, players..."/>
+</div>
+</div>
+<nav class="flex items-center gap-10">
+<div class="flex items-center gap-8">
+<a class="text-sm font-semibold text-slate-400 hover:text-primary transition-colors" href="#">Sports</a>
+<a class="text-sm font-semibold text-primary" href="#">Casino</a>
+<a class="text-sm font-semibold text-slate-400 hover:text-primary transition-colors" href="#">Live</a>
+<a class="text-sm font-semibold text-slate-400 hover:text-primary transition-colors" href="#">Promotions</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex h-10 items-center justify-center rounded-lg bg-primary px-5 text-sm font-bold text-background-dark">
+            Deposit
+          </button>
+<div class="flex h-10 items-center gap-3 rounded-lg bg-surface-dark px-4 border border-primary/20">
+<span class="text-xs font-bold text-primary">BTC</span>
+<span class="text-sm font-medium text-slate-100">0.00000000</span>
+</div>
+<div class="size-10 overflow-hidden rounded-full border-2 border-primary/30">
+<img alt="Profile" data-alt="User profile avatar with premium styling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDn8shDTBnrw23_f9vfmydfJ_dVfidLHHzlrymfOavsHAG18a3hrOsW6albGqz9sTf0_4LPRmj4cI00x8llLprx8_Z3EOiWAYgRk_N8ULr0wlgnRZnQg3bJW3QZYLpMrHgYwPZbyMTxnkhi9fQ7Ine5t5gRjj26Vi4pL8_suspJnx6M-gPZF8ZOci6D2AoYgo2UiNy1VXO-Ezfpk-Wjm8SpW6YZRcey1JMoIJ_dFk5odqLBgMzo2rLvWI6wx0XuigVOy0MTiuSDrPjZ"/>
+</div>
+</div>
+</nav>
+</header>
+<!-- Main Content Area -->
+<div class="flex flex-1 overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-64 border-r border-primary/10 bg-background-dark p-4 flex flex-col gap-6">
+<div class="rounded-xl bg-surface-dark p-4 border border-primary/10">
+<p class="text-[10px] font-bold uppercase tracking-widest text-primary/60">Current Status</p>
+<h3 class="mt-1 text-sm font-bold text-slate-100">Casin8 Elite</h3>
+<div class="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-background-dark">
+<div class="h-full w-2/3 bg-primary"></div>
+</div>
+<p class="mt-2 text-xs text-slate-400">Silver Tier • 65% to Gold</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-slate-400 hover:bg-surface-dark hover:text-slate-100 transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-sm font-medium">Home</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-slate-400 hover:bg-surface-dark hover:text-slate-100 transition-all" href="#">
+<span class="material-symbols-outlined">casino</span>
+<span class="text-sm font-medium">Slots</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg bg-primary/10 px-3 py-2 text-primary transition-all" href="#">
+<span class="material-symbols-outlined">style</span>
+<span class="text-sm font-bold">Blackjack</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-slate-400 hover:bg-surface-dark hover:text-slate-100 transition-all" href="#">
+<span class="material-symbols-outlined">adjust</span>
+<span class="text-sm font-medium">Roulette</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-slate-400 hover:bg-surface-dark hover:text-slate-100 transition-all" href="#">
+<span class="material-symbols-outlined">work</span>
+<span class="text-sm font-medium">Baccarat</span>
+</a>
+<div class="my-4 border-t border-primary/5"></div>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-slate-400 hover:bg-surface-dark hover:text-slate-100 transition-all" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="text-sm font-medium">Bet History</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-slate-400 hover:bg-surface-dark hover:text-slate-100 transition-all" href="#">
+<span class="material-symbols-outlined">support_agent</span>
+<span class="text-sm font-medium">Support</span>
+</a>
+</nav>
+</aside>
+<!-- Main Game Stage -->
+<main class="flex-1 overflow-y-auto bg-black p-6 relative">
+<!-- Game Header -->
+<div class="mb-6 flex items-center justify-between">
+<div>
+<nav class="mb-1 flex items-center gap-2 text-xs font-medium text-slate-500">
+<a class="hover:text-primary transition-colors" href="#">Casino</a>
+<span>/</span>
+<span class="text-slate-300">Live Blackjack</span>
+</nav>
+<h1 class="text-2xl font-bold text-slate-100">Blackjack Elite <span class="text-gold">#042</span></h1>
+</div>
+<div class="flex gap-3">
+<div class="flex items-center gap-2 rounded-lg bg-surface-dark px-4 py-2 border border-primary/10">
+<span class="text-xs text-slate-400">Min:</span>
+<span class="text-sm font-bold text-gold">0.0001 BTC</span>
+</div>
+<div class="flex items-center gap-2 rounded-lg bg-surface-dark px-4 py-2 border border-primary/10">
+<span class="text-xs text-slate-400">Max:</span>
+<span class="text-sm font-bold text-gold">1.5 BTC</span>
+</div>
+</div>
+</div>
+<!-- The Table -->
+<div class="blackjack-table-gradient relative aspect-[21/9] w-full rounded-[100px] border-[12px] border-slate-900 shadow-2xl flex items-center justify-center overflow-hidden">
+<!-- Table Markings -->
+<div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#d4af37 1px, transparent 1px); background-size: 40px 40px;"></div>
+<div class="absolute top-1/4 flex flex-col items-center">
+<div class="mb-4 text-center">
+<p class="text-sm font-bold tracking-widest text-gold/60 uppercase">Dealer Stands on 17</p>
+<p class="text-xs font-medium text-gold/40">Insurance Pays 2:1</p>
+</div>
+<!-- Dealer Cards (Placeholder for dealing animation state) -->
+<div class="flex gap-2">
+<div class="h-28 w-20 rounded-lg bg-slate-100 shadow-xl flex items-center justify-center border-2 border-slate-300">
+<span class="text-2xl font-bold text-red-600">A♥</span>
+</div>
+<div class="h-28 w-20 rounded-lg bg-slate-800 shadow-xl border-2 border-slate-700 relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/20 opacity-50"></div>
+<div class="absolute inset-4 border border-primary/30 rounded"></div>
+</div>
+</div>
+</div>
+<!-- Betting Circles & Player Positions -->
+<div class="absolute bottom-12 flex w-full justify-around px-20">
+<div class="flex flex-col items-center gap-4">
+<div class="size-20 rounded-full border-4 border-dashed border-gold/40 flex items-center justify-center bg-black/20">
+<span class="text-[10px] font-bold text-gold/60">EMPTY</span>
+</div>
+</div>
+<!-- Active Player Position -->
+<div class="flex flex-col items-center gap-6 relative">
+<!-- Player Cards -->
+<div class="absolute -top-32 flex gap-1">
+<div class="h-28 w-20 rounded-lg bg-slate-100 shadow-xl flex flex-col p-2 border-2 border-slate-300 transform -rotate-3">
+<span class="text-xl font-bold text-slate-900">10</span>
+<span class="material-symbols-outlined text-slate-900">favorite</span>
+</div>
+<div class="h-28 w-20 rounded-lg bg-slate-100 shadow-xl flex flex-col p-2 border-2 border-slate-300 transform rotate-3">
+<span class="text-xl font-bold text-slate-900">7</span>
+<span class="material-symbols-outlined text-slate-900">favorite</span>
+</div>
+</div>
+<div class="size-24 rounded-full border-4 border-gold bg-gold/10 shadow-[0_0_30px_rgba(212,175,55,0.2)] flex flex-col items-center justify-center">
+<span class="text-xs font-bold text-gold">BET</span>
+<span class="text-lg font-black text-white">0.05</span>
+</div>
+<div class="rounded-full bg-primary/20 px-3 py-1 border border-primary/40">
+<span class="text-[10px] font-bold text-primary">YOUR HAND: 17</span>
+</div>
+</div>
+<div class="flex flex-col items-center gap-4">
+<div class="size-20 rounded-full border-4 border-dashed border-gold/40 flex items-center justify-center bg-black/20">
+<span class="text-[10px] font-bold text-gold/60">EMPTY</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Controls / Actions -->
+<div class="mt-8 flex flex-col items-center gap-6">
+<div class="flex gap-4">
+<button class="w-32 rounded-xl bg-surface-dark py-4 text-sm font-bold text-slate-100 border border-slate-700 hover:border-slate-500 transition-all">HIT</button>
+<button class="w-32 rounded-xl bg-surface-dark py-4 text-sm font-bold text-slate-100 border border-slate-700 hover:border-slate-500 transition-all">STAND</button>
+<button class="w-32 rounded-xl bg-surface-dark py-4 text-sm font-bold text-slate-100 border border-slate-700 opacity-50 cursor-not-allowed">DOUBLE</button>
+<button class="w-32 rounded-xl bg-surface-dark py-4 text-sm font-bold text-slate-100 border border-slate-700 opacity-50 cursor-not-allowed">SPLIT</button>
+</div>
+<div class="w-full max-w-md">
+<!-- ERROR STATE BUTTON -->
+<button class="group relative flex w-full items-center justify-center overflow-hidden rounded-xl bg-red-500/10 p-5 border border-red-500/50 cursor-not-allowed">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-red-500">error</span>
+<span class="text-base font-bold text-red-500 uppercase tracking-widest">Insufficient Balance</span>
+</div>
+</button>
+<p class="mt-3 text-center text-xs text-slate-500">Your current balance of 0.00 BTC is below the minimum bet of 0.0001 BTC.</p>
+</div>
+</div>
+</main>
+<!-- Right Utility Rail -->
+<aside class="w-80 border-l border-primary/10 bg-background-dark flex flex-col">
+<!-- Fairness Panel -->
+<div class="p-4 border-b border-primary/10">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-xs font-bold uppercase tracking-widest text-slate-400">Provably Fair</h3>
+<span class="material-symbols-outlined text-primary text-sm">verified_user</span>
+</div>
+<div class="space-y-3">
+<div class="rounded-lg bg-surface-dark p-3 text-[10px] font-mono text-slate-400 break-all border border-primary/5">
+<span class="text-primary/60 block mb-1 font-sans font-bold uppercase tracking-tighter">Server Seed Hash:</span>
+              8e4f1a2b...c9d0e1f2
+            </div>
+<div class="rounded-lg bg-surface-dark p-3 text-[10px] font-mono text-slate-400 break-all border border-primary/5">
+<span class="text-primary/60 block mb-1 font-sans font-bold uppercase tracking-tighter">Client Seed:</span>
+              player_session_88429
+            </div>
+</div>
+</div>
+<!-- Chat Component -->
+<div class="flex-1 flex flex-col p-4 overflow-hidden">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-xs font-bold uppercase tracking-widest text-slate-400">Live Table Chat</h3>
+<div class="flex gap-2">
+<span class="size-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-[10px] text-slate-500">124 active</span>
+</div>
+</div>
+<div class="flex-1 space-y-4 overflow-y-auto mb-4 scrollbar-hide">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold text-primary">HighRoller99</span>
+<span class="text-[9px] text-slate-600">14:22</span>
+</div>
+<p class="text-xs text-slate-300 leading-relaxed rounded-lg bg-surface-dark p-2 border border-primary/5">Dealer is on fire today! 🔥 Three blackjacks in a row.</p>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold text-gold">VIP_Satoshi</span>
+<span class="text-[9px] text-slate-600">14:23</span>
+</div>
+<p class="text-xs text-slate-300 leading-relaxed rounded-lg bg-surface-dark p-2 border border-primary/5">Just hit 21 with a double down! LFG!</p>
+</div>
+<div class="flex flex-col gap-1 opacity-60">
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold text-slate-500">System</span>
+</div>
+<p class="text-[11px] italic text-slate-500">Moderator: Keep it friendly in the chat.</p>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold text-primary">CryptoKing</span>
+<span class="text-[9px] text-slate-600">14:25</span>
+</div>
+<p class="text-xs text-slate-300 leading-relaxed rounded-lg bg-surface-dark p-2 border border-primary/5">Anyone playing with SOL today?</p>
+</div>
+</div>
+<!-- Chat Input -->
+<div class="relative">
+<input class="w-full rounded-lg border-none bg-surface-dark py-3 pl-4 pr-10 text-xs text-slate-200 placeholder:text-slate-600 focus:ring-1 focus:ring-primary" placeholder="Type a message..."/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2">
+<span class="material-symbols-outlined text-primary text-lg">send</span>
+</button>
+</div>
+</div>
+</aside>
+</div>
+</div>
+</body></html>

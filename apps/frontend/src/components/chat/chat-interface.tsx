@@ -98,17 +98,6 @@ export function ChatInterface() {
       resetConversation();
     }
   };
-
-  // ⚡ Bolt: Wrapped mapped messages list in react_1.useMemo to prevent O(n) re-renders
-  // on every keystroke in the input field, which drastically improves typing performance.
-  const renderedMessages = (0, react_1.useMemo)(
-    () =>
-      messages.map((message) => (
-        <MessageItem key={message.id} message={message} agents={agents} />
-      )),
-    [messages, agents]
-  );
-
   return (
     <card_1.Card className="w-full min-h-[600px] max-h-screen flex flex-col bg-transparent dark:bg-neutral-900 shadow-none">
       <card_1.CardHeader className="border-b border-neutral-200 dark:border-neutral-800">
@@ -141,7 +130,9 @@ export function ChatInterface() {
       <card_1.CardContent className="flex-grow flex flex-col p-4">
         <scroll_area_1.ScrollArea className="flex-grow pr-4">
           <div className="space-y-4">
-            {renderedMessages}
+            {messages.map((message) => (
+              <MessageItem key={message.id} message={message} agents={agents} />
+            ))}
             {isTyping && <typing_indicator_1.TypingIndicator />}
             <div ref={scrollRef} />
           </div>
@@ -150,7 +141,7 @@ export function ChatInterface() {
           <input_1.Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyPress}
+            onKeyPress={handleKeyPress}
             placeholder={
               selectedAgent
                 ? `Message ${(_a = agents.find((a) => a.id === selectedAgent)) === null || _a === void 0 ? void 0 : _a.name}...`

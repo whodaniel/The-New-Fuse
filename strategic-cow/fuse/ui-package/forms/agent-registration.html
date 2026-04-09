@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register Agent - The New Fuse</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #2d3748;
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .field {
+            margin-bottom: 24px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 14px;
+        }
+        .required {
+            color: #e53e3e;
+        }
+        input[type="text"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .file-input-wrapper {
+            position: relative;
+        }
+        .file-name {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #718096;
+        }
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-item input {
+            width: auto;
+            margin-right: 8px;
+        }
+        .checkbox-item label {
+            margin: 0;
+            font-weight: normal;
+            font-size: 13px;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+        }
+        #result {
+            margin-top: 24px;
+            padding: 16px;
+            border-radius: 8px;
+            display: none;
+        }
+        .result-success {
+            background: #d1fae5;
+            color: #065f46;
+            display: block;
+        }
+        .result-error {
+            background: #fee2e2;
+            color: #991b1b;
+            display: block;
+        }
+        .help-text {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 4px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 24px 0 12px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Register New Agent</h1>
+        <p class="subtitle">Add a new agent to The New Fuse ecosystem</p>
+
+        <form id="agentForm" onsubmit="handleSubmit(event)">
+            <div class="section-title">Basic Information</div>
+
+            <div class="field">
+                <label>
+                    Agent Name <span class="required">*</span>
+                </label>
+                <input
+                    type="text"
+                    name="agentName"
+                    placeholder="e.g., data-analyzer-agent"
+                    required
+                />
+                <div class="help-text">Use kebab-case for agent names</div>
+            </div>
+
+            <div class="field">
+                <label>
+                    Display Name <span class="required">*</span>
+                </label>
+                <input
+                    type="text"
+                    name="displayName"
+                    placeholder="e.g., Data Analyzer"
+                    required
+                />
+            </div>
+
+            <div class="field">
+                <label>Description</label>
+                <textarea
+                    name="description"
+                    placeholder="What does this agent do?"
+                ></textarea>
+            </div>
+
+            <div class="section-title">Agent Definition</div>
+
+            <div class="field">
+                <label>
+                    Agent Definition File <span class="required">*</span>
+                </label>
+                <div class="file-input-wrapper">
+                    <input
+                        type="file"
+                        name="agentFile"
+                        accept=".md,.claude"
+                        required
+                        onchange="updateFileName(this)"
+                    />
+                    <div class="file-name" id="fileName"></div>
+                </div>
+                <div class="help-text">Upload .claude or .md file</div>
+            </div>
+
+            <div class="section-title">Capabilities</div>
+
+            <div class="field">
+                <label>Agent Capabilities</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="caps" value="text-generation" id="cap1">
+                        <label for="cap1">Text Generation</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="caps" value="data-analysis" id="cap2">
+                        <label for="cap2">Data Analysis</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="caps" value="workflow-orchestration" id="cap3">
+                        <label for="cap3">Workflow Orchestration</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="caps" value="api-integration" id="cap4">
+                        <label for="cap4">API Integration</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="caps" value="browser-automation" id="cap5">
+                        <label for="cap5">Browser Automation</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="caps" value="database-operations" id="cap6">
+                        <label for="cap6">Database Operations</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Agent Type <span class="required">*</span></label>
+                <select name="agentType" required>
+                    <option value="">Select type...</option>
+                    <option value="task-based">Task-Based</option>
+                    <option value="role-based">Role-Based</option>
+                    <option value="service">Service Agent</option>
+                    <option value="coordinator">Coordinator Agent</option>
+                </select>
+            </div>
+
+            <div class="section-title">Configuration</div>
+
+            <div class="field">
+                <label>MCP Servers (comma-separated)</label>
+                <input
+                    type="text"
+                    name="mcpServers"
+                    placeholder="e.g., chrome-devtools, filesystem"
+                />
+                <div class="help-text">List MCP servers this agent requires</div>
+            </div>
+
+            <div class="field">
+                <label>Priority Level</label>
+                <select name="priority">
+                    <option value="normal">Normal</option>
+                    <option value="high">High</option>
+                    <option value="critical">Critical</option>
+                </select>
+            </div>
+
+            <button type="submit">🚀 Register Agent</button>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function updateFileName(input) {
+            const fileName = document.getElementById('fileName');
+            if (input.files.length > 0) {
+                fileName.textContent = `Selected: ${input.files[0].name}`;
+            } else {
+                fileName.textContent = '';
+            }
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const result = document.getElementById('result');
+
+            // Get selected capabilities
+            const capabilities = Array.from(
+                document.querySelectorAll('input[name="caps"]:checked')
+            ).map(cb => cb.value);
+
+            // Build agent data
+            const agentData = {
+                name: formData.get('agentName'),
+                displayName: formData.get('displayName'),
+                description: formData.get('description'),
+                type: formData.get('agentType'),
+                capabilities: capabilities,
+                mcpServers: formData.get('mcpServers').split(',').map(s => s.trim()).filter(Boolean),
+                priority: formData.get('priority'),
+            };
+
+            // Show loading
+            result.className = '';
+            result.style.display = 'block';
+            result.textContent = '⏳ Registering agent...';
+
+            try {
+                // In a real implementation, this would:
+                // 1. Upload the agent file
+                // 2. Parse and validate it
+                // 3. Register in database via API
+                // 4. Sync with Claude agents
+
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // For demo: show success
+                result.className = 'result-success';
+                result.innerHTML = `
+                    ✅ <strong>Agent registered successfully!</strong><br><br>
+                    <strong>Name:</strong> ${agentData.name}<br>
+                    <strong>Display Name:</strong> ${agentData.displayName}<br>
+                    <strong>Type:</strong> ${agentData.type}<br>
+                    <strong>Capabilities:</strong> ${capabilities.join(', ') || 'None'}<br><br>
+                    <strong>Next steps:</strong><br>
+                    1. Agent synced to .agent/ directory<br>
+                    2. Registered in agent registry database<br>
+                    3. Ready to use in workflows!<br><br>
+                    <strong>Commands to verify:</strong><br>
+                    <code>pnpm run claude:agents:search "${agentData.name}"</code>
+                `;
+
+                // Reset form
+                form.reset();
+                document.getElementById('fileName').textContent = '';
+
+            } catch (error) {
+                result.className = 'result-error';
+                result.innerHTML = `
+                    ❌ <strong>Registration failed</strong><br><br>
+                    ${error.message}<br><br>
+                    <strong>Troubleshooting:</strong><br>
+                    1. Ensure backend is running: <code>pnpm run dev</code><br>
+                    2. Check agent file format<br>
+                    3. Verify agent name is unique
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

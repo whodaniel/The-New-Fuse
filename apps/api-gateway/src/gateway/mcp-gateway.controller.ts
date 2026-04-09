@@ -15,8 +15,8 @@ import {
   Put,
   Query,
   Res,
+  Version,
 } from '@nestjs/common';
-// @ts-ignore
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
@@ -54,6 +54,7 @@ export class McpGatewayController {
   }
 
   @Get('marketplace/servers')
+  @Version('1')
   @ApiOperation({ summary: 'Get MCP marketplace server listings' })
   @ApiResponse({ status: 200, description: 'MCP marketplace servers retrieved successfully' })
   async getMcpMarketplaceServers(
@@ -63,7 +64,7 @@ export class McpGatewayController {
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
-        'api',
+        'backend',
         '/api/mcp/marketplace/servers',
         'GET',
         headers,

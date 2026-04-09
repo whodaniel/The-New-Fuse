@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { db } from '@the-new-fuse/database';
 import { tnfAgentDefinitions } from '@the-new-fuse/database/drizzle/schema';
-import fsSync from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { AgentProfileVectorService } from './agent-profile-vector.service';
@@ -27,13 +26,6 @@ type SnapshotEntry = {
   version?: string;
   status?: string;
   mcpIds?: string[];
-  categoriesNormalized?: string[];
-  categoriesRaw?: string[];
-  unknownTags?: string[];
-  classification?: Record<string, unknown>;
-  sourceVariants?: Record<string, unknown>[];
-  metadata?: Record<string, unknown>;
-  schemaVersion?: string;
 };
 
 @Injectable()
@@ -43,27 +35,7 @@ export class AgentRegistryImportService {
   constructor(private readonly agentProfileVectorService: AgentProfileVectorService) {}
 
   private getRepoRoot() {
-    const override = process.env.AGENT_REGISTRY_REPO_ROOT?.trim();
-    if (override) return override;
-
-    const cwd = process.cwd();
-    const candidates = [
-      cwd,
-      path.resolve(cwd, '..'),
-      path.resolve(cwd, '../..'),
-      path.resolve(cwd, '../../..'),
-      '/app',
-    ];
-
-    for (const candidate of candidates) {
-      const snapshotCandidate = path.join(candidate, 'data/agent-registry/agents.json');
-      if (fsSync.existsSync(snapshotCandidate)) {
-        return candidate;
-      }
-    }
-
-    // Best default for runtime layouts like /app/apps/backend and local apps/backend.
-    return path.resolve(cwd, '../..');
+    return process.env.AGENT_REGISTRY_REPO_ROOT || path.resolve(process.cwd(), '../../..');
   }
 
   private resolveSnapshotPath(snapshotPath: string) {
@@ -74,43 +46,6 @@ export class AgentRegistryImportService {
   private normalizeArray(input: unknown): string[] {
     if (!Array.isArray(input)) return [];
     return input.map((value) => String(value).trim()).filter(Boolean);
-  }
-
-  private normalizeObject(input: unknown): Record<string, unknown> | null {
-    if (!input || Array.isArray(input) || typeof input !== 'object') return null;
-    return input as Record<string, unknown>;
-  }
-
-  private normalizeClassification(input: unknown) {
-    const obj = this.normalizeObject(input);
-    if (!obj) return null;
-    const complexity = typeof obj.complexity === 'string' ? obj.complexity : null;
-    const riskTier = typeof obj.riskTier === 'string' ? obj.riskTier : null;
-    return {
-      domain: this.normalizeArray(obj.domain),
-      workflowStage: this.normalizeArray(obj.workflowStage),
-      complexity,
-      riskTier,
-    };
-  }
-
-  private normalizeSourceVariants(input: unknown) {
-    if (!Array.isArray(input)) return [];
-    return input
-      .map((item) => {
-        if (!item || typeof item !== 'object') return null;
-        const obj = item as Record<string, unknown>;
-        const sourceId = typeof obj.sourceId === 'string' ? obj.sourceId : null;
-        const sourceFile = typeof obj.sourceFile === 'string' ? obj.sourceFile : null;
-        const name = typeof obj.name === 'string' ? obj.name : null;
-        if (!sourceId && !sourceFile) return null;
-        return {
-          ...(sourceId ? { sourceId } : {}),
-          ...(sourceFile ? { sourceFile } : {}),
-          ...(name ? { name } : {}),
-        };
-      })
-      .filter((item): item is Record<string, string> => Boolean(item));
   }
 
   private mergeUnique(...inputs: unknown[]): string[] {
@@ -158,7 +93,6 @@ export class AgentRegistryImportService {
       imported: 0,
       skipped: 0,
       vectorReindex: null as unknown,
-      warnings: [] as { id: string; warning: string }[],
       errors: [] as { id: string; error: string }[],
     };
     const importedTnfIds: string[] = [];
@@ -193,36 +127,12 @@ export class AgentRegistryImportService {
         typeof entry.personaSource === 'string' ? entry.personaSource : undefined;
       const avatarUrl = typeof entry.avatarUrl === 'string' ? entry.avatarUrl : undefined;
       const version = typeof entry.version === 'string' ? entry.version : undefined;
-      const schemaVersion = typeof entry.schemaVersion === 'string' ? entry.schemaVersion : null;
-      const categoriesNormalized = this.normalizeArray(entry.categoriesNormalized);
-      const categoriesRaw = this.normalizeArray(entry.categoriesRaw);
-      const unknownTags = this.normalizeArray(entry.unknownTags);
-      const classification = this.normalizeClassification(entry.classification);
-      const sourceVariants = this.normalizeSourceVariants(entry.sourceVariants);
-      const entryMetadata = this.normalizeObject(entry.metadata);
 
       const metadata = {
-        ...(entryMetadata || {}),
         sourceFile,
         tools: this.normalizeArray(entry.tools || []),
         inferredTools: this.normalizeArray(entry.inferredTools || []),
         status: entry.status || null,
-        categoriesNormalized,
-        categoriesRaw,
-        unknownTags,
-        classification,
-        sourceVariants,
-        tnfRegistry: {
-          schemaVersion,
-          sourceFile,
-          status: entry.status || null,
-          categoriesNormalized,
-          categoriesRaw,
-          unknownTags,
-          classification,
-          sourceVariants,
-          personaSource: personaSource || null,
-        },
       };
 
       const insertValues = {
@@ -295,9 +205,10 @@ export class AgentRegistryImportService {
       try {
         result.vectorReindex = await this.agentProfileVectorService.reindexByTnfIds(importedTnfIds);
       } catch (error: any) {
+        result.ok = false;
         const message = error?.message || String(error);
-        result.warnings.push({ id: 'vector-reindex', warning: message });
-        this.logger.warn(`Vector reindex failed after snapshot import: ${message}`);
+        result.errors.push({ id: 'vector-reindex', error: message });
+        this.logger.error(`Vector reindex failed after snapshot import: ${message}`);
       }
     }
 

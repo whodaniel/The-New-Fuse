@@ -210,19 +210,9 @@ const DEFAULT_PROCESS_CATALOG: Record<string, ProcessCatalogEntry> = {
     timezone: 'UTC',
     description:
       'Tenant-scoped default reminder loop for user and tenant-agent terminal context continuity.',
-    runNow: {
-      command: 'node',
-      args: [
-        'scripts/protocols/chronological-dispatch.cjs',
-        '--process-id',
-        'tenant-terminal-awareness-default',
-        '--allow-local-fallback',
-      ],
-      timeoutMs: 15000,
-    },
+    runNow: null,
     docs: {
       protocol: 'docs/protocols/tnf-cron-governance-protocol-v0.1.md',
-      runbook: 'docs/operations/super-admin-chronological-processes.md',
     },
   },
   'tenant-personal-archaeology-master-loop': {

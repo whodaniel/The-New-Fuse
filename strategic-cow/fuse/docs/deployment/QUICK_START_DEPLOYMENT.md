@@ -1,0 +1,188 @@
+# Quick Start: Deploy The New Fuse to Railway
+
+This is a simplified guide to get The New Fuse up and running on Railway quickly.
+
+## Prerequisites (5 minutes)
+
+1. **Docker Desktop** - Download and start: https://www.docker.com/products/docker-desktop
+2. **Railway Account** - Sign up: https://railway.app (free tier available)
+3. **Railway CLI** - Install:
+   ```bash
+   npm install -g @railway/cli
+   railway login
+   ```
+
+## Option 1: Quick Deploy (Recommended for Testing)
+
+### Step 1: Test Locally First (Optional but Recommended)
+
+```bash
+cd .
+
+# Test all Docker builds
+./test-docker-builds.sh
+
+# If successful, test the full stack
+docker-compose -f docker-compose.prod.yml up
+```
+
+Visit http://localhost:3000 to verify everything works.
+
+### Step 2: Deploy to Railway
+
+```bash
+# Run the deployment script
+./deploy-to-railway.sh
+```
+
+Choose option 1 to deploy all services, or deploy them individually.
+
+### Step 3: Add Database (in Railway Dashboard)
+
+1. Go to Railway Dashboard: https://railway.app/dashboard
+2. Select your project
+3. Click "New" → "Database" → "PostgreSQL"
+4. Click "New" → "Database" → "Redis"
+
+### Step 4: Configure Environment Variables
+
+In Railway Dashboard, for each service, add:
+
+**Frontend:**
+- `VITE_API_URL` = URL of your API Gateway (from Railway)
+
+**API, Backend, API Gateway:**
+- `DATABASE_URL` = `${{Postgres.DATABASE_URL}}`
+- `REDIS_URL` = `${{Redis.REDIS_URL}}`
+- `JWT_SECRET` = (generate with: `openssl rand -base64 32`)
+
+### Step 5: Redeploy
+
+After adding environment variables, Railway will automatically redeploy your services.
+
+## Option 2: Manual Step-by-Step Deploy
+
+### 1. Create Railway Project
+
+```bash
+cd .
+railway init
+```
+
+### 2. Deploy Core Services
+
+```bash
+# Deploy API Gateway (does routing)
+cd apps/api-gateway
+railway up
+cd ../..
+
+# Deploy API Service (main backend)
+cd apps/api
+railway up
+cd ../..
+
+# Deploy Frontend (UI)
+cd apps/frontend
+railway up
+cd ../..
+```
+
+### 3. Add Databases
+
+In Railway Dashboard:
+- Add PostgreSQL
+- Add Redis
+
+### 4. Link Services
+
+Set environment variables for each service (see Option 1, Step 4).
+
+## Simplified Architecture
+
+```
+Internet → Frontend (Port 3000)
+              ↓
+           API Gateway (Port 3002)
+              ↓
+           API Service (Port 3001)
+              ↓
+        PostgreSQL + Redis
+```
+
+## Minimum Viable Deployment
+
+If you want to start with the bare minimum:
+
+1. **Deploy only these two services:**
+   - API Service (backend)
+   - Frontend (UI)
+
+2. **Add only PostgreSQL** (Redis is optional for MVP)
+
+3. **Skip Backend Service and API Gateway** for now
+
+```bash
+# Deploy just API Service
+cd apps/api
+railway up
+
+# Deploy just Frontend
+cd ../frontend
+railway up
+```
+
+## Troubleshooting
+
+### Build fails with "Cannot find module"
+- Make sure you're in the project root directory
+- Run: `pnpm install` before building
+
+### Service crashes after deploy
+- Check Railway logs: `railway logs --service <name>`
+- Verify environment variables are set
+- Make sure DATABASE_URL is configured
+
+### Cannot access frontend
+- Check if VITE_API_URL is set correctly
+- Verify API Gateway/API Service is running
+- Check Railway domains in dashboard
+
+## What's Next?
+
+After successful deployment:
+
+1. **Custom Domain**: Add your domain in Railway Dashboard
+2. **Monitoring**: Railway provides built-in metrics
+3. **Scaling**: Adjust replicas in service settings
+4. **CI/CD**: Connect GitHub for automatic deployments
+
+## Cost Estimate (Railway)
+
+- **Hobby Plan**: $5/month for basic setup
+- **Pro Plan**: $20/month for production use
+- **Free Tier**: Available for testing (500 hours/month)
+
+Each service uses approximately:
+- Frontend: ~256MB RAM, minimal CPU
+- API Service: ~512MB RAM, moderate CPU
+- PostgreSQL: ~256MB RAM
+- Redis: ~128MB RAM
+
+**Total for basic setup**: ~1GB RAM, fits within Hobby plan
+
+## Support Files
+
+- `DEPLOYMENT_GUIDE_RAILWAY.md` - Detailed deployment guide
+- `docker-compose.prod.yml` - Local testing configuration
+- `deploy-to-railway.sh` - Automated deployment script
+- `test-docker-builds.sh` - Test builds before deploying
+
+## Need Help?
+
+1. Check logs: `railway logs --service <service-name>`
+2. Check Railway status: `railway status`
+3. Open dashboard: `railway open`
+4. Read detailed guide: `DEPLOYMENT_GUIDE_RAILWAY.md`
+
+Good luck with your deployment! 🚀

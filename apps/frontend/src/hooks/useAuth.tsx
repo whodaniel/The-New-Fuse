@@ -624,34 +624,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  const contextValue = useMemo(
-    () => ({
-      user,
-      isAuthenticated: !!user,
-      isLoading,
-      login,
-      register,
-      signInWithGoogle,
-      signInWithMagicLink,
-      forgotPassword,
-      resetPassword,
-      handleSSOCallback,
-      logout,
-      error,
-    }),
-    [
-      user,
-      isLoading,
-      login,
-      register,
-      signInWithGoogle,
-      signInWithMagicLink,
-      forgotPassword,
-      resetPassword,
-      handleSSOCallback,
-      logout,
-      error,
-    ]
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        isLoading,
+        login,
+        register,
+        signInWithGoogle,
+        signInWithMagicLink,
+        forgotPassword,
+        resetPassword,
+        handleSSOCallback,
+        logout,
+        error,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   );
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

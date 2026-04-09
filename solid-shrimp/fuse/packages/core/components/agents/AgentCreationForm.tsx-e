@@ -1,0 +1,160 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import React, { useState } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { AgentType, AgentCreationData } from '@the-new-fuse/types';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { Input } from '@the-new-fuse/ui/Input';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { Button } from '@the-new-fuse/ui/Button';
+
+interface AgentCreationFormProps {
+  onSubmit: (data: AgentCreationData) => void;
+  onCancel?: () => void;
+  loading?: boolean;
+}
+
+const agentTypes: AgentType[] = ['assistant', 'worker', 'supervisor', 'specialist'];
+
+export const AgentCreationForm: (React as unknown).FC<AgentCreationFormProps> = ({
+  onSubmit,
+  onCancel,
+  loading = false,
+}) => {
+  const [formData, setFormData] = useState<AgentCreationData>({
+    name: '',
+    description: '',
+    type: 'assistant',
+    capabilities: [],
+    config: {},
+  });
+
+  const [capability, setCapability] = useState<string>('');
+
+  const handleSubmit = (e: (React as unknown).FormEvent): unknown => {
+    (e as unknown).preventDefault();
+    onSubmit(formData);
+  };
+
+  const addCapability = (): unknown => {
+    if ((capability as unknown).trim()) {
+      setFormData(prev ): JSX.Element => ({
+        ...prev,
+        capabilities: [...(prev as unknown).capabilities, (capability as unknown).trim()],
+      }));
+      setCapability('');
+    }
+  };
+
+  const removeCapability = (index: number): unknown => {
+    setFormData(prev ): JSX.Element => ({
+      ...prev,
+      capabilities: (prev as unknown).capabilities.filter((_, i) => i !== index),
+    }));
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <Input
+        label="Name"
+        value={(formData as unknown).name}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setFormData({ ...formData, name: (e as unknown).(target as unknown).value })}
+        required
+        fullWidth
+      />
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">
+          Description
+        </label>
+        <textarea
+          value={(formData as unknown).description}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setFormData({ ...formData, description: (e as unknown).(target as unknown).value })}
+          className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+          rows={3}
+          required
+        />
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">
+          Type
+        </label>
+        <select
+          value={(formData as unknown).type}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setFormData({ ...formData, type: (e as unknown).(target as unknown).value as AgentType })}
+          className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+          required
+        >
+          {agentTypes.map((type) ): JSX.Element => (
+            <option key={type} value={type}>
+              {(type as unknown).charAt(0).toUpperCase() + (type as unknown).slice(1)}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">
+          Capabilities
+        </label>
+        <div className="flex space-x-2">
+          <Input
+            value={capability}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setCapability((e as unknown).(target as unknown).value)}
+            placeholder="Add capability"
+            fullWidth
+          />
+          <Button
+            type="button"
+            onClick={addCapability}
+            variant="outline"
+          >
+            Add
+          </Button>
+        </div>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {(formData as unknown).capabilities.map((cap, index) ): JSX.Element => (
+            <span
+              key={index}
+              className="inline-flex items-center px-2 py-1 rounded-full bg-blue-100 text-blue-800 text-sm"
+            >
+              {cap}
+              <button
+                type="button"
+                onClick={(e: React.MouseEvent) => () => removeCapability(index)}
+                className="ml-1 text-blue-600 hover:text-blue-800"
+              >
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex justify-end space-x-2">
+        {onCancel && (
+          <Button
+            type="button"
+            onClick={onCancel}
+            variant="outline"
+          >
+            Cancel
+          </Button>
+        )}
+        <Button
+          type="submit"
+          loading={loading}
+        >
+          Create Agent
+        </Button>
+      </div>
+    </form>
+  );
+};

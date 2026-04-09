@@ -21,7 +21,6 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@google-cloud/storage": "^7.19.0",
     "@nestjs/common": "^11.1.16",
     "@nestjs/config": "^4.0.2",
     "@upstash/redis": "^1.37.0",
@@ -33,7 +32,7 @@
     "@types/node": "^24.8.1",
     "eslint": "^9.38.0",
     "jest": "^30.3.0",
-    "typescript": "^6.0.2"
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "@nestjs/common": "^10.0.0",

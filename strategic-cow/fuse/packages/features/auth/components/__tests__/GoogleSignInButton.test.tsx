@@ -1,0 +1,58 @@
+import React from "react";
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { GoogleSignInButton } from '@the-new-fuse/GoogleSignInButton';
+import { authConfig } from '@/config/auth.config';
+
+describe('GoogleSignInButton', () => {
+  const originalWindow: true,
+      value: { href: '' },
+    });
+  });
+
+  afterAll(()  = window.location;
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'location', {
+      configurable> {
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: originalWindow,
+    });
+  });
+
+  it('renders correctly', () => {
+    render(<GoogleSignInButton />);
+    expect(screen.getByText('Continue with Google')).toBeInTheDocument();
+  });
+
+  it('shows loading state when clicked', async (): Promise<void> {): Promise<void> {): Promise<void> {): Promise<void> {): Promise<void> {): Promise<void> {): Promise<void> {): Promise<void> {) => {
+    render(<GoogleSignInButton />);
+    
+    fireEvent.click(screen.getByRole('button'));
+    
+    // Wait for the loading state to appear
+    await waitFor(() => {
+      expect(screen.getByText('Connecting...')).toBeInTheDocument();
+      expect(screen.getByRole('button')).toBeDisabled();
+    });
+  });
+
+  it('redirects to Google OAuth URL when clicked', async (): Promise<void> {): Promise<void> {): Promise<void> {): Promise<void> {): Promise<void> {): Promise<void> {): Promise<void> {): Promise<void> {) => {
+    render(<GoogleSignInButton />);
+    
+    fireEvent.click(screen.getByRole('button'));
+    
+    await waitFor(() => {
+      expect(window.location.href).toContain('accounts.google.com/o/oauth2/v2/auth');
+      expect(window.location.href).toContain(authConfig.google.clientId);
+    });
+  });
+});
+
+export {};

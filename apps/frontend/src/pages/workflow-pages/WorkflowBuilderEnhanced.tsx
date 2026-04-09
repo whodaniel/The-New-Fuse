@@ -555,7 +555,7 @@ const WorkflowBuilderContent: React.FC = () => {
           duration: 3000,
         });
       } else {
-        throw new Error(response.error || response.message || 'Failed to execute workflow');
+        throw new Error(responseError || response.message || 'Failed to execute workflow');
       }
     } catch (error) {
       toast({
@@ -597,7 +597,7 @@ const WorkflowBuilderContent: React.FC = () => {
           duration: 3000,
         });
       } else {
-        throw new Error(response.error || response.message || 'Failed to save workflow');
+        throw new Error(responseError || response.message || 'Failed to save workflow');
       }
     } catch (error) {
       toast({

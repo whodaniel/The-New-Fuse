@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-07",
+  "generated_at": "2026-03-03",
   "domain": "brand",
   "nodes": [
     {
@@ -14,7 +14,12 @@
     },
     {
       "id": "brand-identity-agent",
-      "kind": "primary",
+      "kind": "sub",
+      "cluster": "brand"
+    },
+    {
+      "id": "brand-prospecting-agent",
+      "kind": "sub",
       "cluster": "brand"
     },
     {
@@ -23,7 +28,12 @@
       "cluster": "brand"
     },
     {
-      "id": "brand-prospecting-agent",
+      "id": "deal-negotiator-agent",
+      "kind": "sub",
+      "cluster": "brand"
+    },
+    {
+      "id": "contract-manager-agent",
       "kind": "sub",
       "cluster": "brand"
     },
@@ -34,67 +44,7 @@
     },
     {
       "id": "campaign-reporting-agent",
-      "kind": "primary",
-      "cluster": "brand"
-    },
-    {
-      "id": "competitive-intelligence-agent",
-      "kind": "primary",
-      "cluster": "brand"
-    },
-    {
-      "id": "contract-manager-agent",
       "kind": "sub",
-      "cluster": "brand"
-    },
-    {
-      "id": "deal-negotiator-agent",
-      "kind": "sub",
-      "cluster": "brand"
-    },
-    {
-      "id": "email-marketing-automation-agent",
-      "kind": "sub",
-      "cluster": "brand"
-    },
-    {
-      "id": "financial-manager-agent",
-      "kind": "primary",
-      "cluster": "brand"
-    },
-    {
-      "id": "influencer-media-kit-agent",
-      "kind": "sub",
-      "cluster": "brand"
-    },
-    {
-      "id": "influencer-niche-agent",
-      "kind": "sub",
-      "cluster": "brand"
-    },
-    {
-      "id": "personal-brand-architect-agent",
-      "kind": "sub",
-      "cluster": "brand"
-    },
-    {
-      "id": "platform-selection-agent",
-      "kind": "sub",
-      "cluster": "brand"
-    },
-    {
-      "id": "reputation-management-agent",
-      "kind": "primary",
-      "cluster": "brand"
-    },
-    {
-      "id": "talent-manager-agent",
-      "kind": "sub",
-      "cluster": "brand"
-    },
-    {
-      "id": "yt-content-strategy-agent",
-      "kind": "primary",
       "cluster": "brand"
     },
     {
@@ -105,396 +55,52 @@
   ],
   "edges": [
     {
-      "source": "brand-identity-agent",
-      "target": "campaign-reporting-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
+      "source": "orchestrator-agent",
+      "target": "task-agent-router",
+      "type": "delegates",
+      "strength": 0.98
     },
     {
-      "source": "brand-identity-agent",
-      "target": "competitive-intelligence-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
+      "source": "task-agent-router",
+      "target": "campaign-execution-agent",
+      "type": "routes_to",
+      "strength": 0.75
     },
     {
-      "source": "brand-outreach-agent",
-      "target": "brand-prospecting-agent",
-      "type": "fallback",
-      "strength": 0.95,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "brand-outreach-agent",
-      "target": "deal-negotiator-agent",
-      "type": "feeds",
-      "strength": 0.86,
-      "origin": "seed"
-    },
-    {
-      "source": "brand-outreach-agent",
-      "target": "deal-negotiator-agent",
-      "type": "handoff",
-      "strength": 0.86,
-      "origin": "seed"
-    },
-    {
-      "source": "brand-outreach-agent",
-      "target": "influencer-niche-agent",
-      "type": "fallback",
-      "strength": 0.77,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "brand-outreach-agent",
-      "target": "personal-brand-architect-agent",
-      "type": "fallback",
-      "strength": 0.95,
-      "origin": "seed",
-      "risk": "capability_overlap"
+      "source": "task-agent-router",
+      "target": "legal-compliance-agent",
+      "type": "routes_to",
+      "strength": 0.81
     },
     {
       "source": "brand-prospecting-agent",
       "target": "brand-outreach-agent",
       "type": "feeds",
-      "strength": 0.9,
-      "origin": "seed"
+      "strength": 0.90
     },
     {
-      "source": "brand-prospecting-agent",
+      "source": "brand-outreach-agent",
       "target": "deal-negotiator-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "brand-prospecting-agent",
-      "target": "influencer-niche-agent",
-      "type": "fallback",
-      "strength": 0.77,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "brand-prospecting-agent",
-      "target": "personal-brand-architect-agent",
-      "type": "fallback",
-      "strength": 0.95,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "brand-prospecting-agent",
-      "target": "platform-selection-agent",
-      "type": "fallback",
-      "strength": 0.77,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "campaign-execution-agent",
-      "target": "campaign-reporting-agent",
-      "type": "feeds",
-      "strength": 0.88,
-      "origin": "seed"
-    },
-    {
-      "source": "campaign-execution-agent",
-      "target": "campaign-reporting-agent",
       "type": "handoff",
-      "strength": 0.88,
-      "origin": "seed"
-    },
-    {
-      "source": "campaign-execution-agent",
-      "target": "deal-negotiator-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "campaign-execution-agent",
-      "target": "financial-manager-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "campaign-execution-agent",
-      "target": "legal-compliance-agent",
-      "type": "depends_on",
-      "strength": 0.8,
-      "origin": "seed"
-    },
-    {
-      "source": "campaign-execution-agent",
-      "target": "yt-content-strategy-agent",
-      "type": "fallback",
-      "strength": 0.77,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "campaign-reporting-agent",
-      "target": "competitive-intelligence-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "campaign-reporting-agent",
-      "target": "influencer-media-kit-agent",
-      "type": "fallback",
-      "strength": 0.73,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "campaign-reporting-agent",
-      "target": "reputation-management-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "competitive-intelligence-agent",
-      "target": "brand-identity-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "ring",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "competitive-intelligence-agent",
-      "target": "talent-manager-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "contract-manager-agent",
-      "target": "brand-outreach-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "contract-manager-agent",
-      "target": "campaign-execution-agent",
-      "type": "depends_on",
-      "strength": 0.91,
-      "origin": "seed"
-    },
-    {
-      "source": "contract-manager-agent",
-      "target": "campaign-execution-agent",
-      "type": "gates",
-      "strength": 0.91,
-      "origin": "seed"
-    },
-    {
-      "source": "contract-manager-agent",
-      "target": "email-marketing-automation-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "ring",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "contract-manager-agent",
-      "target": "legal-compliance-agent",
-      "type": "depends_on",
-      "strength": 0.58,
-      "origin": "seed"
-    },
-    {
-      "source": "deal-negotiator-agent",
-      "target": "contract-manager-agent",
-      "type": "depends_on",
-      "strength": 0.92,
-      "origin": "seed"
+      "strength": 0.86
     },
     {
       "source": "deal-negotiator-agent",
       "target": "contract-manager-agent",
       "type": "requires",
-      "strength": 0.92,
-      "origin": "seed"
+      "strength": 0.92
     },
     {
-      "source": "deal-negotiator-agent",
-      "target": "email-marketing-automation-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "registry",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "deal-negotiator-agent",
-      "target": "financial-manager-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "deal-negotiator-agent",
-      "target": "personal-brand-architect-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "email-marketing-automation-agent",
-      "target": "financial-manager-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "email-marketing-automation-agent",
-      "target": "influencer-media-kit-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "financial-manager-agent",
-      "target": "brand-identity-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "financial-manager-agent",
-      "target": "competitive-intelligence-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "financial-manager-agent",
-      "target": "influencer-media-kit-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "influencer-niche-agent",
-      "target": "personal-brand-architect-agent",
-      "type": "fallback",
-      "strength": 0.77,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "influencer-niche-agent",
-      "target": "platform-selection-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "orchestrator-agent",
-      "target": "task-agent-router",
-      "type": "delegates",
-      "strength": 0.98,
-      "origin": "seed"
-    },
-    {
-      "source": "personal-brand-architect-agent",
-      "target": "platform-selection-agent",
-      "type": "fallback",
-      "strength": 0.77,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "platform-selection-agent",
-      "target": "yt-content-strategy-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "reputation-management-agent",
-      "target": "contract-manager-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "reputation-management-agent",
-      "target": "yt-content-strategy-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "talent-manager-agent",
-      "target": "brand-identity-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "task-agent-router",
+      "source": "contract-manager-agent",
       "target": "campaign-execution-agent",
-      "type": "delegates",
-      "strength": 0.82,
-      "origin": "seed"
+      "type": "gates",
+      "strength": 0.91
     },
     {
-      "source": "task-agent-router",
-      "target": "campaign-execution-agent",
-      "type": "routes_to",
-      "strength": 0.75,
-      "origin": "seed"
-    },
-    {
-      "source": "task-agent-router",
-      "target": "legal-compliance-agent",
-      "type": "delegates",
-      "strength": 0.82,
-      "origin": "seed"
-    },
-    {
-      "source": "task-agent-router",
-      "target": "legal-compliance-agent",
-      "type": "routes_to",
-      "strength": 0.81,
-      "origin": "seed"
-    },
-    {
-      "source": "yt-content-strategy-agent",
-      "target": "contract-manager-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
+      "source": "campaign-execution-agent",
+      "target": "campaign-reporting-agent",
+      "type": "handoff",
+      "strength": 0.88
     }
   ]
 }

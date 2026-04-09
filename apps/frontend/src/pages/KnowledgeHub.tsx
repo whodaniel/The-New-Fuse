@@ -86,7 +86,7 @@ export const KnowledgeHub: React.FC = () => {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <StatCard
           label="Total Vectors"
           value={indices.reduce((total, index) => total + index.vectorsCount, 0).toLocaleString()}
@@ -121,18 +121,18 @@ export const KnowledgeHub: React.FC = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {loading ? (
-                <GlassCard className="p-5 text-sm text-gray-400">
+                <GlassCard className="p-4 text-sm text-gray-400">
                   Loading knowledge indices...
                 </GlassCard>
               ) : indices.length === 0 ? (
-                <GlassCard className="p-5 text-sm text-gray-400">
+                <GlassCard className="p-4 text-sm text-gray-400">
                   No live vector indices available.
                 </GlassCard>
               ) : (
                 indices.map((index) => (
                   <GlassCard
                     key={index.id}
-                    className="p-5 border-white/5 hover:border-purple-500/30 transition-all group"
+                    className="p-4 border-white/5 hover:border-purple-500/30 transition-all group"
                   >
                     <div className="flex items-center justify-between mb-3">
                       <span
@@ -144,20 +144,20 @@ export const KnowledgeHub: React.FC = () => {
                       >
                         {index.status}
                       </span>
-                      <Settings className="w-4 h-4 text-gray-700 group-hover:text-gray-400 transition-colors" />
+                      <Settings className="w-4 h-4 text-foreground group-hover:text-gray-400 transition-colors" />
                     </div>
                     <h3 className="text-lg font-bold text-white">{index.name}</h3>
                     <div className="mt-4 space-y-2">
                       <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">Dimensions</span>
+                        <span className="text-muted-foreground">Dimensions</span>
                         <span className="text-gray-300">{index.dimension}</span>
                       </div>
                       <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">Metric</span>
+                        <span className="text-muted-foreground">Metric</span>
                         <span className="text-gray-300">{index.metric}</span>
                       </div>
                       <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">Vectors</span>
+                        <span className="text-muted-foreground">Vectors</span>
                         <span className="text-gray-300">{index.vectorsCount.toLocaleString()}</span>
                       </div>
                     </div>
@@ -174,7 +174,7 @@ export const KnowledgeHub: React.FC = () => {
             <Shield className="w-5 h-5 text-emerald-400" />
             Memory Security
           </h2>
-          <GlassCard className="p-6 space-y-4">
+          <GlassCard className="p-4 space-y-4">
             <p className="text-xs text-gray-400">
               Knowledge is stored in sovereign isolation per agency. Encryption is handled at the
               Vector Store layer.
@@ -186,7 +186,7 @@ export const KnowledgeHub: React.FC = () => {
             </div>
           </GlassCard>
 
-          <GlassCard className="p-6 bg-gradient-to-br from-purple-600/10 to-transparent">
+          <GlassCard className="p-4 bg-gradient-to-br from-purple-600/10 to-transparent">
             <h3 className="text-lg font-bold text-white mb-2">Memory Studio</h3>
             <p className="text-xs text-gray-400 mb-4">
               Visualize agent relationships and semantic clusters in 3D space.
@@ -227,10 +227,10 @@ const SecurityToggle: React.FC<{ label: string; active?: boolean }> = ({ label, 
   <div className="flex items-center justify-between">
     <span className="text-xs text-gray-300">{label}</span>
     <div
-      className={`w-8 h-4 rounded-full relative transition-colors ${active ? 'bg-emerald-500/40' : 'bg-white/10'}`}
+      className={`w-8 h-4 rounded-full relative transition-colors ${active ? 'bg-emerald-500/40' : 'bg-transparent/10'}`}
     >
       <div
-        className={`absolute top-0.5 w-3 h-3 rounded-full transition-all ${active ? 'right-0.5 bg-emerald-400' : 'left-0.5 bg-gray-500'}`}
+        className={`absolute top-0.5 w-3 h-3 rounded-full transition-all ${active ? 'right-0.5 bg-emerald-400' : 'left-0.5 bg-transparent0'}`}
       />
     </div>
   </div>

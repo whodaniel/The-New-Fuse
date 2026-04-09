@@ -1,7 +1,7 @@
 // @ts-nocheck
 import Workspace from '@/models/workspace';
 import { SpeakerHigh, SpeakerX } from '@phosphor-icons/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 
 interface TTSMessageProps {
@@ -53,28 +53,18 @@ export default function TTSMessage({ slug, chatId, message }: TTSMessageProps): 
       setAudioUrl(url);
 
       newAudio.addEventListener('ended', () => {
-        stopPlayback();
+        setIsPlaying(false);
+        setAudio(null);
+        URL.revokeObjectURL(url);
       });
 
       newAudio.play();
       setAudio(newAudio);
       setIsPlaying(true);
     } catch (error) {
-      console.error('Failed to play backend TTS, falling back to browser speech:', error);
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window && message?.trim()) {
-        const utterance = new SpeechSynthesisUtterance(message.trim());
-        utterance.onend = () => {
-          setIsPlaying(false);
-        };
-        utterance.onerror = () => {
-          setIsPlaying(false);
-        };
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utterance);
-        setIsPlaying(true);
-      } else {
-        setIsPlaying(false);
-      }
+      console.error('Failed to play TTS:', error);
+      setIsPlaying(false);
+      setAudio(null);
     }
   };
 

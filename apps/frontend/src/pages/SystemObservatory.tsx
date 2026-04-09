@@ -1,5 +1,7 @@
+// @ts-nocheck
 import { CapabilityBadge } from '@/components/ui/CapabilityBadge';
 import { useFeatureCapabilities } from '@/hooks/useFeatureCapabilities';
+import axios from 'axios';
 import {
   Activity,
   AlertTriangle,
@@ -243,12 +245,6 @@ export const SystemObservatory: React.FC = () => {
           validateStatus: () => true,
         });
         if (response.status < 200 || response.status >= 300) continue;
-        if (
-          typeof response.data === 'string' &&
-          /^<!doctype html|<html[\s>]/i.test(response.data.trim().slice(0, 64))
-        ) {
-          continue;
-        }
         if (usedAlternate) {
           console.warn(
             `[System Observatory] ${contextLabel} using alternate endpoint: ${paths[0]} -> ${path}`
@@ -295,8 +291,7 @@ export const SystemObservatory: React.FC = () => {
 
       const formatSource = (result: EndpointResolution | null) =>
         result ? `${result.source}${result.usedAlternate ? ' (alt)' : ''}` : 'unavailable';
-      setDataSources((prev) => ({
-        ...prev,
+      setDataSources({
         orchestratorAgents: formatSource(agentsResult),
         orchestratorHealth: formatSource(orchestratorHealthResult),
         systemHealth: formatSource(systemHealthResult),
@@ -1466,35 +1461,6 @@ export const SystemObservatory: React.FC = () => {
                       )}
                     </div>
                   </details>
-                </div>
-              )}
-            </GlassCard>
-          )}
-
-          {activeLayer === 'graphs' && (
-            <GlassCard className="p-4 border-white/5 bg-black/40">
-              <div className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">
-                Graph Coverage
-              </div>
-              <div className="space-y-2 text-xs text-gray-300">
-                <div className="flex items-center justify-between">
-                  <span>Datasets</span>
-                  <span className="font-mono">{graphArtifacts?.totals?.datasets ?? 0}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Total Subgraphs</span>
-                  <span className="font-mono">{graphArtifacts?.totals?.subgraphs ?? 0}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Missing Implementations</span>
-                  <span className="font-mono">
-                    {graphArtifacts?.totals?.missingImplementations ?? 0}
-                  </span>
-                </div>
-              </div>
-              {graphArtifactsError && (
-                <div className="mt-3 text-[10px] text-red-200 bg-red-500/10 border border-red-500/30 rounded-md p-2">
-                  {graphArtifactsError}
                 </div>
               )}
             </GlassCard>

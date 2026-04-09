@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Poker All-in State</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "royal-red": "#dc2626", // Added for RISK: HIGH
+                        "cyan-telemetry": "#06b6d4", // Added for Win %
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    boxShadow: {
+                        "glow-primary": "0 0 20px -5px rgba(19, 91, 236, 0.5)",
+                        "glow-red": "0 0 20px -5px rgba(220, 38, 38, 0.6)",
+                        "glow-cyan": "0 0 15px -3px rgba(6, 182, 212, 0.4)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for modern feel if needed, though mostly hidden on mobile */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101622;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        /* Grid background pattern for space tech feel */
+        .bg-tech-grid {
+            background-image: linear-gradient(rgba(19, 91, 236, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(19, 91, 236, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col overflow-hidden relative">
+<!-- Background Tech Grid Overlay -->
+<div class="absolute inset-0 bg-tech-grid pointer-events-none z-0 opacity-20"></div>
+<!-- Top App Bar -->
+<header class="relative z-10 flex items-center justify-between p-4 bg-background-light/80 dark:bg-background-dark/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<button class="flex items-center justify-center size-10 rounded-full text-slate-900 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</button>
+<div class="flex flex-col items-center">
+<h1 class="text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Table 808</h1>
+<span class="text-xs text-primary font-medium tracking-wider">NO LIMIT HOLD'EM</span>
+</div>
+<button class="flex items-center justify-center size-10 rounded-full text-slate-900 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+</button>
+</header>
+<!-- Main Content Area -->
+<main class="relative z-10 flex-1 flex flex-col w-full max-w-md mx-auto p-4 gap-4 overflow-y-auto">
+<!-- Risk Warning -->
+<div class="w-full text-center py-2 animate-pulse">
+<div class="inline-flex items-center gap-2 px-6 py-2 rounded border border-royal-red/30 bg-royal-red/10 shadow-glow-red backdrop-blur-sm">
+<span class="material-symbols-outlined text-royal-red animate-bounce">warning</span>
+<h2 class="text-royal-red text-xl font-bold tracking-widest uppercase shadow-black drop-shadow-lg">RISK: HIGH</h2>
+<span class="material-symbols-outlined text-royal-red animate-bounce">warning</span>
+</div>
+</div>
+<!-- Opponent Player Card (Top) -->
+<div class="relative group">
+<div class="absolute inset-0 bg-gradient-to-r from-transparent via-slate-700/20 to-transparent blur-xl"></div>
+<div class="relative flex items-center justify-between gap-4 p-3 rounded-xl bg-slate-900/60 border border-slate-700/50 backdrop-blur-md">
+<!-- Avatar -->
+<div class="relative size-14 rounded-full border-2 border-slate-600 overflow-hidden shrink-0">
+<img alt="Opponent Avatar" class="w-full h-full object-cover grayscale opacity-70" data-alt="Cyberpunk avatar with neon visor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwAHvT-WeOJi4MrvP0xChC7R3aV8MobkGWbCS5Z99CMdiDtFiZ6ugWDcgn8Z5QJwN1e7rgsHTSStJNfaqebT72mKtEW4_A4uQR2MdGmE_Vx-3QS-7mGK9Kb-tPcY2IIBKbbwSXAl7MQaRIp32Q3J_SmYTuSGiujcTb1PQiDEfjOxWqmTez_ytfZEABmTuGaAWRuwD2xx0osihxMyL3hQ3RIqfZDeChvBsyO_7DpqkppwKodwD92AoxictKKY1NboSA3izEC1ZbiQkd"/>
+</div>
+<!-- Info -->
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<span class="text-slate-300 font-bold truncate">Opponent</span>
+<span class="text-xs text-slate-500 font-mono tracking-tight">ID: #9X22</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-xs text-slate-400 font-mono uppercase">All-in</div>
+<div class="h-1 flex-1 bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-slate-500 w-full"></div>
+</div>
+</div>
+</div>
+<!-- Cards (Hidden/Back) -->
+<div class="flex -space-x-4 shrink-0">
+<div class="w-8 h-12 bg-slate-800 rounded border border-slate-600 shadow-lg transform -rotate-6"></div>
+<div class="w-8 h-12 bg-slate-800 rounded border border-slate-600 shadow-lg transform rotate-3"></div>
+</div>
+</div>
+<!-- Win Probability Badge Opponent -->
+<div class="absolute -bottom-3 right-4 bg-slate-900 border border-slate-700 text-slate-400 text-xs font-mono px-2 py-1 rounded shadow-lg z-20">
+                Win: 32%
+            </div>
+</div>
+<!-- Community Cards & Pot Area -->
+<div class="flex flex-col items-center justify-center py-6 gap-6 my-auto">
+<!-- Pot Display with Volumetric Glow -->
+<div class="relative flex flex-col items-center justify-center p-6">
+<!-- Glow Effect -->
+<div class="absolute inset-0 rounded-full bg-primary/20 blur-2xl animate-pulse"></div>
+<div class="relative z-10 flex flex-col items-center">
+<span class="text-primary font-mono text-xs uppercase tracking-[0.2em] mb-1">Total Pot</span>
+<div class="text-4xl font-bold text-white tracking-tighter drop-shadow-[0_0_10px_rgba(19,91,236,0.8)]">
+                        $24,500
+                    </div>
+</div>
+</div>
+<!-- Community Cards -->
+<div class="flex gap-2 justify-center w-full">
+<!-- Flop 1 -->
+<div class="w-12 h-16 sm:w-14 sm:h-20 bg-slate-100 rounded border-2 border-slate-300 flex items-center justify-center shadow-[0_0_15px_rgba(0,0,0,0.5)] transform hover:-translate-y-1 transition-transform">
+<span class="text-slate-900 font-bold text-lg">A<span class="text-red-600">♦</span></span>
+</div>
+<!-- Flop 2 -->
+<div class="w-12 h-16 sm:w-14 sm:h-20 bg-slate-100 rounded border-2 border-slate-300 flex items-center justify-center shadow-[0_0_15px_rgba(0,0,0,0.5)] transform hover:-translate-y-1 transition-transform">
+<span class="text-slate-900 font-bold text-lg">K<span class="text-black">♣</span></span>
+</div>
+<!-- Flop 3 -->
+<div class="w-12 h-16 sm:w-14 sm:h-20 bg-slate-100 rounded border-2 border-slate-300 flex items-center justify-center shadow-[0_0_15px_rgba(0,0,0,0.5)] transform hover:-translate-y-1 transition-transform">
+<span class="text-slate-900 font-bold text-lg">10<span class="text-red-600">♥</span></span>
+</div>
+<!-- Turn -->
+<div class="w-12 h-16 sm:w-14 sm:h-20 bg-slate-800 rounded border border-slate-600 flex items-center justify-center opacity-50">
+<!-- Card Back Pattern placeholder -->
+<div class="w-full h-full bg-[radial-gradient(circle,_#334155_1px,_transparent_1px)] bg-[length:4px_4px] opacity-20"></div>
+</div>
+<!-- River -->
+<div class="w-12 h-16 sm:w-14 sm:h-20 bg-slate-800 rounded border border-slate-600 flex items-center justify-center opacity-50">
+<!-- Card Back Pattern placeholder -->
+<div class="w-full h-full bg-[radial-gradient(circle,_#334155_1px,_transparent_1px)] bg-[length:4px_4px] opacity-20"></div>
+</div>
+</div>
+</div>
+<!-- Win Probability Bar (Telemetry Style) -->
+<div class="w-full px-2">
+<div class="flex justify-between items-end mb-2">
+<span class="text-cyan-telemetry text-xs font-mono uppercase tracking-wider">Analysis Complete</span>
+<span class="text-white text-sm font-bold">68% <span class="text-slate-500 text-xs font-normal">vs</span> 32%</span>
+</div>
+<div class="h-3 w-full bg-slate-800 rounded-full overflow-hidden flex shadow-inner border border-slate-700">
+<div class="h-full bg-cyan-telemetry shadow-[0_0_10px_#06b6d4]" style="width: 68%"></div>
+<div class="h-full bg-slate-600/30" style="width: 32%"></div>
+</div>
+<div class="flex justify-between mt-1">
+<span class="text-cyan-telemetry/70 text-[10px] font-mono">YOU</span>
+<span class="text-slate-500 text-[10px] font-mono">OPPONENT</span>
+</div>
+</div>
+<!-- Player Card (You - Hero) -->
+<div class="relative mt-2">
+<!-- Glow under hero card -->
+<div class="absolute -inset-1 bg-gradient-to-t from-primary/30 to-transparent blur opacity-50 rounded-xl"></div>
+<div class="relative flex flex-col p-4 rounded-xl bg-[#151e2e] border border-primary/40 shadow-glow-primary">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="size-12 rounded-full border-2 border-primary p-0.5 bg-background-dark">
+<img alt="Player Avatar" class="w-full h-full object-cover rounded-full" data-alt="Futuristic pilot avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFCms4-XdvgI4s82bppS_E3V2KrS2W_IGEpKtSIL6C4NCtDvPWpDQPwsKZEt88ekJ1jsiT-12lk4KJze3tzYRnPDhO8mKtmivphMfeg1t0SCMSjIWImW9Qf6vWhFTIGWAsIgvgucyeIVxeFjqG9P7q9eAltp9L6sf7etb7HY3UVfefNsH2QWmLhGh-D4dBQv5zk1JXXa2DmnH0MHMQXnRKb1oOOoF8xGaz6ICLto60m1ButhNrTmUhPf4gteIH4tptYCvrsZwZNA_v"/>
+</div>
+<div>
+<h3 class="text-white font-bold text-lg leading-none">Player 1 (You)</h3>
+<div class="text-cyan-telemetry text-sm font-mono mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">analytics</span>
+                                Win: 68%
+                            </div>
+</div>
+</div>
+<!-- Trust Panel Badge -->
+<div class="flex items-center gap-1.5 px-2 py-1 bg-green-900/20 border border-green-500/30 rounded text-green-400">
+<span class="material-symbols-outlined text-[16px] fill-current">check_circle</span>
+<div class="flex flex-col leading-none">
+<span class="text-[8px] uppercase opacity-70">Tx Lifecycle</span>
+<span class="text-[10px] font-bold uppercase tracking-wide">Committed</span>
+</div>
+</div>
+</div>
+<!-- Hand Cards -->
+<div class="flex justify-center -space-x-2 relative z-10 pb-2">
+<!-- Card 1 -->
+<div class="w-16 h-24 bg-white rounded-lg border border-slate-300 shadow-2xl transform -rotate-3 hover:rotate-0 transition-transform duration-300 flex flex-col items-center justify-center relative overflow-hidden">
+<span class="absolute top-1 left-1 text-xs font-bold text-slate-900">Q</span>
+<span class="text-2xl text-slate-900">Q<span class="text-black">♠</span></span>
+<span class="absolute bottom-1 right-1 text-xs font-bold text-slate-900 transform rotate-180">Q</span>
+</div>
+<!-- Card 2 -->
+<div class="w-16 h-24 bg-white rounded-lg border border-slate-300 shadow-2xl transform rotate-6 hover:rotate-0 transition-transform duration-300 flex flex-col items-center justify-center relative overflow-hidden">
+<span class="absolute top-1 left-1 text-xs font-bold text-slate-900">Q</span>
+<span class="text-2xl text-slate-900">Q<span class="text-red-600">♦</span></span>
+<span class="absolute bottom-1 right-1 text-xs font-bold text-slate-900 transform rotate-180">Q</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Action Bar (disabled/info state since all-in) -->
+<footer class="relative z-10 p-4 bg-background-dark/95 border-t border-slate-800 backdrop-blur pb-8">
+<div class="grid grid-cols-2 gap-4">
+<button class="col-span-1 py-3 rounded-lg bg-slate-800 text-slate-500 font-bold uppercase tracking-wider text-sm cursor-not-allowed opacity-50 flex items-center justify-center gap-2" disabled="">
+<span class="material-symbols-outlined text-[18px]">block</span>
+                Fold
+            </button>
+<button class="col-span-1 py-3 rounded-lg bg-primary/20 text-primary font-bold uppercase tracking-wider text-sm cursor-default flex items-center justify-center gap-2 border border-primary/30">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+                 All-In
+            </button>
+</div>
+<div class="mt-4 text-center">
+<p class="text-slate-500 text-xs">Waiting for showdown...</p>
+</div>
+</footer>
+</body></html>

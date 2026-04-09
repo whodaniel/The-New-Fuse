@@ -75,13 +75,4 @@ export class TraitScreenRequestDto {
   @IsOptional()
   @Type(() => Boolean)
   includeChunks?: boolean = true;
-
-  @ApiPropertyOptional({
-    description: 'Enable hybrid graph rerank/expansion on top of vector screening',
-    default: true,
-  })
-  @IsBoolean()
-  @IsOptional()
-  @Type(() => Boolean)
-  useKnowledgeGraph?: boolean = true;
 }

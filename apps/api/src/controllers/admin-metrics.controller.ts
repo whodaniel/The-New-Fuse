@@ -1,8 +1,4 @@
-// @ts-nocheck
 import { Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   drizzleAgentRepository,
@@ -199,7 +195,7 @@ export class AdminMetricsController {
     });
 
     const gateRows = timelineRows
-      .filter((event: any) => event?.payload?.category === 'handoff_gate_evaluation')
+      .filter((event) => event?.payload?.category === 'handoff_gate_evaluation')
       .slice(0, limit);
 
     const byOutcome: Record<string, number> = {};
@@ -236,7 +232,7 @@ export class AdminMetricsController {
       brokerCounters[key] = Number.isFinite(parsed) ? parsed : 0;
     }
 
-    const recent = gateRows.slice(0, 50).map((event: any) => ({
+    const recent = gateRows.slice(0, 50).map((event) => ({
       id: event.id,
       timestamp: event.timestamp,
       actor: event.actor,

@@ -97,9 +97,11 @@ export const AgentHub: React.FC = () => {
                   {loadError}
                 </div>
               )}
-              {loading && <div className="text-sm text-gray-500">Loading agents...</div>}
+              {loading && <div className="text-sm text-muted-foreground">Loading agents...</div>}
               {!loading && !loadError && agents.length === 0 && (
-                <div className="text-sm text-gray-500">No agents are currently available.</div>
+                <div className="text-sm text-muted-foreground">
+                  No agents are currently available.
+                </div>
               )}
               <div className="space-y-2">
                 {agents.map((agent) => (

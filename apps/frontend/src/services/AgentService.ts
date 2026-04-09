@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Agent Service - Production ready service for agent management
  * Dynamically fetches both active agent instances and system-defined agent templates.

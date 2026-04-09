@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cashier Payment Confirmation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                        "glass-surface": "rgba(255, 255, 255, 0.05)",
+                        "glass-border": "rgba(255, 255, 255, 0.1)",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    backdropBlur: {
+                        'xs': '2px',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom gradient background to match the description */
+        .bg-royal-gradient {
+            background: radial-gradient(circle at 50% 0%, #1e40af 0%, #102216 60%);
+        }
+        
+        .glass-panel {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(16, 34, 22, 0.8) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col items-center justify-center p-0 sm:p-4 overflow-hidden">
+<!-- Mobile Container -->
+<div class="relative flex h-full w-full max-w-md flex-col overflow-hidden bg-background-light dark:bg-background-dark sm:rounded-[32px] sm:h-[844px] sm:border-[8px] sm:border-slate-900 shadow-2xl">
+<!-- Abstract Background Glow -->
+<div class="absolute inset-0 z-0 bg-royal-gradient opacity-90"></div>
+<div class="absolute top-[-10%] right-[-20%] w-[300px] h-[300px] bg-blue-500/20 rounded-full blur-[80px]"></div>
+<div class="absolute bottom-[-10%] left-[-20%] w-[300px] h-[300px] bg-primary/10 rounded-full blur-[80px]"></div>
+<!-- Header -->
+<div class="relative z-10 flex items-center justify-between p-6 pt-12 sm:pt-6">
+<button class="flex size-10 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors text-white">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+<h2 class="text-white text-base font-semibold tracking-wide uppercase opacity-90">Confirm Transaction</h2>
+<div class="size-10"></div> <!-- Spacer for balance -->
+</div>
+<!-- Main Content -->
+<div class="relative z-10 flex flex-1 flex-col px-6">
+<!-- Amount Display -->
+<div class="flex flex-col items-center justify-center py-8">
+<span class="text-emerald-300 text-sm font-medium mb-2 tracking-wider uppercase">Total Payment</span>
+<h1 class="text-white text-5xl font-bold tracking-tight flex items-baseline gap-1">
+<span class="text-3xl text-white/60">$</span>500.00
+                </h1>
+</div>
+<!-- Security Badge -->
+<div class="mx-auto mb-8 flex items-center gap-2 rounded-full bg-cyan-950/40 border border-cyan-500/20 pl-3 pr-4 py-1.5 backdrop-blur-sm">
+<span class="material-symbols-outlined text-cyan-400 text-[18px]">lock</span>
+<span class="text-cyan-100 text-xs font-medium">End-to-end Encrypted</span>
+</div>
+<!-- Details Card -->
+<div class="glass-panel rounded-2xl p-6 mb-6">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-white flex items-center justify-center overflow-hidden border border-white/10">
+<!-- Placeholder for Provider Logo -->
+<div class="w-full h-full bg-slate-900 flex items-center justify-center text-white text-xs font-bold" data-alt="Payment provider logo icon" style="background-image: linear-gradient(135deg, #0f172a 0%, #334155 100%);">
+                                V
+                            </div>
+</div>
+<div>
+<p class="text-white text-sm font-semibold">Visa Debit</p>
+<p class="text-slate-400 text-xs">**** 4829</p>
+</div>
+</div>
+<button class="text-primary text-xs font-medium hover:text-primary/80 transition-colors">Change</button>
+</div>
+<div class="h-px w-full bg-white/10 mb-6"></div>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<p class="text-slate-400 text-sm">Send Amount</p>
+<p class="text-white text-sm font-medium">$500.00</p>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<p class="text-slate-400 text-sm">Processing Fee</p>
+<span class="material-symbols-outlined text-slate-500 text-[14px]">info</span>
+</div>
+<p class="text-white text-sm font-medium">$2.50</p>
+</div>
+<div class="flex items-center justify-between">
+<p class="text-slate-400 text-sm">Exchange Rate</p>
+<p class="text-white text-sm font-medium">1 USD = 1.00 TC</p>
+</div>
+</div>
+<div class="h-px w-full bg-white/10 my-6"></div>
+<div class="flex items-center justify-between">
+<p class="text-emerald-300 text-sm font-medium">You Receive</p>
+<p class="text-primary text-xl font-bold">497.50 TC</p>
+</div>
+</div>
+<!-- Warning/Note -->
+<div class="flex gap-3 px-2 mb-4">
+<span class="material-symbols-outlined text-yellow-500/80 shrink-0 text-[20px]">warning</span>
+<p class="text-slate-400 text-xs leading-relaxed">
+                    Transaction times may vary based on network congestion. By confirming, you agree to our Terms of Service.
+                </p>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="relative z-20 mt-auto p-6 pb-8 bg-gradient-to-t from-[#102216] to-transparent">
+<!-- Slide to Confirm Slider Mockup -->
+<button class="group relative w-full overflow-hidden rounded-xl bg-primary p-4 transition-all hover:bg-opacity-90 active:scale-[0.99] shadow-[0_0_20px_rgba(19,236,91,0.3)]">
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-[#052e16] text-lg font-bold tracking-tight">Confirm &amp; Pay $500.00</span>
+</div>
+<!-- Shimmer effect -->
+<div class="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+</button>
+<div class="mt-6 flex justify-center">
+<div class="flex items-center gap-2 opacity-50">
+<span class="material-symbols-outlined text-white text-[16px]">verified_user</span>
+<span class="text-white text-xs">Secure SSL Payment</span>
+</div>
+</div>
+</div>
+</div>
+</body></html>

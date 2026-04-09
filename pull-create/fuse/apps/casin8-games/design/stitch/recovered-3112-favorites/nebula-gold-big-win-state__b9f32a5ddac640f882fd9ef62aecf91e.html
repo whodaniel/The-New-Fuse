@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nebula Gold - Big Win</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#7f13ec",
+                        "primary-content": "#ffffff",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#130b1a", 
+                        "secondary": "#ad92c9",
+                        "accent": "#0bda73",
+                        "nebula-gold": "#ffd700",
+                        "nebula-cyan": "#00f0ff",
+                        "glass-border": "rgba(255, 255, 255, 0.1)",
+                        "glass-bg": "rgba(25, 16, 34, 0.65)",
+                    },
+                    fontFamily: {
+                        display: ["Space Grotesk", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        full: "9999px",
+                    },
+                    boxShadow: {
+                        'neon': '0 0 10px rgba(127, 19, 236, 0.5), 0 0 20px rgba(127, 19, 236, 0.3)',
+                        'gold': '0 0 15px rgba(255, 215, 0, 0.4)',
+                        'cyan': '0 0 15px rgba(0, 240, 255, 0.4)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .bg-pattern {
+            background-color: #130b1a;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(273,56%,28%,0.2) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(280,84%,40%,0.2) 0, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(250,56%,28%,0.2) 0, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(290,84%,40%,0.2) 0, transparent 50%);
+        }
+        .glass-card {
+            background: rgba(30, 20, 45, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .text-glow-gold {
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        .winline-glow {
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.6), inset 0 0 10px rgba(0, 240, 255, 0.3);
+            border-color: #00f0ff;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-slate-100 min-h-screen flex flex-col overflow-hidden bg-pattern">
+<!-- Top Navigation / Game Header -->
+<header class="flex items-center justify-between p-4 z-20 glass-card border-b border-glass-border rounded-b-xl mx-2 mt-2">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-white/10 transition-colors text-slate-300">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<div class="flex flex-col items-center">
+<h2 class="text-white text-lg font-bold tracking-wide uppercase">Nebula Gold</h2>
+<div class="flex items-center gap-1">
+<span class="text-[10px] text-nebula-cyan uppercase tracking-wider font-semibold">Megaways</span>
+<span class="material-symbols-outlined text-[10px] text-nebula-cyan">bolt</span>
+</div>
+</div>
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-white/10 transition-colors text-slate-300">
+<span class="material-symbols-outlined text-2xl">settings</span>
+</button>
+</header>
+<!-- Main Game Area with Overlay -->
+<main class="flex-1 relative flex flex-col items-center justify-center w-full px-4 py-6">
+<!-- Background Slots Grid (Dimmed) -->
+<div class="absolute inset-0 z-0 opacity-30 px-2 py-20 flex items-center justify-center pointer-events-none">
+<div class="grid grid-cols-5 gap-2 w-full h-full max-w-md mx-auto opacity-50 grayscale">
+<!-- Row 1 -->
+<div class="bg-primary/20 rounded-lg border border-primary/30 aspect-[3/4]"></div>
+<div class="bg-primary/20 rounded-lg border border-primary/30 aspect-[3/4]"></div>
+<div class="bg-primary/20 rounded-lg border border-primary/30 aspect-[3/4]"></div>
+<div class="bg-primary/20 rounded-lg border border-primary/30 aspect-[3/4]"></div>
+<div class="bg-primary/20 rounded-lg border border-primary/30 aspect-[3/4]"></div>
+<!-- Row 2 -->
+<div class="bg-primary/20 rounded-lg border border-primary/30 aspect-[3/4]"></div>
+<div class="bg-primary/20 rounded-lg border border-primary/30 aspect-[3/4]"></div>
+<div class="bg-primary/20 rounded-lg border border-primary/30 aspect-[3/4]"></div>
+<div class="bg-primary/20 rounded-lg border border-primary/30 aspect-[3/4]"></div>
+<div class="bg-primary/20 rounded-lg border border-primary/30 aspect-[3/4]"></div>
+<!-- Row 3 -->
+<div class="bg-primary/20 rounded-lg border border-primary/30 aspect-[3/4]"></div>
+<div class="bg-primary/20 rounded-lg border border-primary/30 aspect-[3/4]"></div>
+<div class="bg-primary/20 rounded-lg border border-primary/30 aspect-[3/4]"></div>
+<div class="bg-primary/20 rounded-lg border border-primary/30 aspect-[3/4]"></div>
+<div class="bg-primary/20 rounded-lg border border-primary/30 aspect-[3/4]"></div>
+</div>
+</div>
+<!-- Winning Symbols Highlights (Winline) - Positioned absolutely over grid -->
+<div class="absolute inset-0 z-10 px-2 py-20 flex items-center justify-center pointer-events-none">
+<div class="grid grid-cols-5 gap-2 w-full h-full max-w-md mx-auto">
+<!-- Winning symbols at specific coordinates -->
+<div class="col-start-2 row-start-2 relative rounded-lg border-2 winline-glow bg-nebula-cyan/10">
+<div class="w-full h-full bg-center bg-contain bg-no-repeat" data-alt="Glowing emerald gem wild symbol" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDA2IpaDcmGqQQ704Xyr7-C3IfYYfneZ4T_DBTXBpcNzOnCMliWsQ1vlnIeFx96W3YpYUG4HcVhQin0Di06ER01Wp2DkikzFkPxroOYUnmufrHbYuc3t8jVz5sp0ff6M1cOdj2_7RcpwxELo4SI8Vp48JSLftzwHwfbLTLpOvxGa6ZLb-O-h4aN-nRCeSze87prStV89ndl4KYQx7EkZUGTqZicM1ld0eU0ItaBWeLX4ux_KVpMZ87OgDHYOQZRF1T3uGQ8PN9sea8');"></div>
+</div>
+<div class="col-start-3 row-start-2 relative rounded-lg border-2 winline-glow bg-nebula-cyan/10">
+<div class="w-full h-full bg-center bg-contain bg-no-repeat" data-alt="Glowing gold star high value symbol" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA79jLGzgTcoU64vhEDBKq5AMB2dPax8Uwr0zZiAKh3aYMtA5luhfY_rZZKvrnutM1-IMGj05ocQ4gm01mjpUYv-YaaNtRcUB0AOKklnIl5O-2VgMX_XriYkVYwBP-ObukCA5I_xDn52g1nPdt6bhwzTuA-g-U2sLMa9V122VAVe5nWEaK_G121UKnLeyIHOlr4uH9XOwEtSlXzOxDV8i4WFn2nalfQCRagC0luDlru6xHRZTxxz1RwDzK67401isuh0UtT0LfjlzE');"></div>
+</div>
+<div class="col-start-4 row-start-2 relative rounded-lg border-2 winline-glow bg-nebula-cyan/10">
+<div class="w-full h-full bg-center bg-contain bg-no-repeat" data-alt="Glowing emerald gem wild symbol" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBvU3Cx8lalPyUXLZP6kjYZi5xj7JA-7aeIGYQvKmLo4HY90-PdIqSjAb13bm_jeqcjtaxpdfIUpEEQjnFJzDO3cysBOL6MozIx4l1pI_RB_eA1RGbEXXbGoxWcQD0Pa-Piw2JWe6_lW3HV4-jF9nPrE37AbiDJKAX0QlVVCPZP7OjS5QGQtMlbN5XyRZowe_UeQTVehqf8-R7IsXRMlc40qa0Lba2xnF_0DMxmDlJAAQkZOXbvHonstvnKGxVIEhnDhzfFoIOD8rI');"></div>
+</div>
+</div>
+</div>
+<!-- BIG WIN Overlay Modal -->
+<div class="relative z-20 w-full max-w-sm mx-auto glass-card rounded-3xl p-6 flex flex-col items-center gap-6 shadow-neon border-t border-white/20">
+<!-- Confetti / Particles Decoration (Abstracted) -->
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 w-64 h-64 bg-primary/30 rounded-full blur-3xl pointer-events-none"></div>
+<!-- Header Title -->
+<div class="text-center relative">
+<h1 class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-[#fff] to-[#ffd700] tracking-tighter italic text-glow-gold drop-shadow-sm" style="-webkit-text-stroke: 1px rgba(218,165,32,0.5);">
+                    BIG WIN
+                </h1>
+<div class="h-1 w-24 mx-auto mt-2 rounded-full bg-gradient-to-r from-transparent via-nebula-gold to-transparent shadow-gold"></div>
+</div>
+<!-- Amount Display -->
+<div class="flex flex-col items-center gap-1 relative w-full">
+<span class="text-sm font-medium text-nebula-cyan tracking-widest uppercase">Total Payout</span>
+<div class="text-4xl font-bold text-white tracking-tight flex items-baseline gap-1">
+<span class="text-2xl text-slate-400">$</span>
+<span class="text-glow-gold">15,420.50</span>
+</div>
+<div class="flex items-center gap-2 mt-2 bg-accent/10 px-3 py-1 rounded-full border border-accent/20">
+<span class="material-symbols-outlined text-accent text-sm">trending_up</span>
+<span class="text-accent text-xs font-bold">+1500% Multiplier</span>
+</div>
+</div>
+<!-- Coin Pile Graphic -->
+<div class="w-48 h-32 relative flex items-center justify-center my-2">
+<div class="absolute inset-0 bg-gradient-to-t from-nebula-gold/20 to-transparent rounded-full blur-xl"></div>
+<img alt="Stack of golden crypto coins overflowing" class="relative z-10 drop-shadow-2xl scale-125" data-alt="3D rendered stack of gold coins" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmGowY83PZ-Tmf5gR7HPe2zvzmrybw86nSQlZIN4K_WXF4UYPZdjn495LGGwPpBfga3v91SDA_8r0ghUGA5ynQxG1uIe7_cwfKWC15HomHiCEkfsQ8saAWwsBJbWnE1rhDuzSepPeGm64rxyWjtmIbOB1i2vpJpHClvyyZLZ3PQ2IUdk_rzWbtU4DdMl-G4_TelsnDj5YvVSvkOdecHlngXy-_0u7sUqny0tBj7D4_IUwa3JHY7-Fqmhn_yyfE6Gu5lWmvVG3Flfw"/>
+</div>
+<!-- Action Buttons -->
+<div class="w-full flex flex-col gap-3">
+<button class="w-full py-4 bg-gradient-to-r from-primary to-[#9d4edd] hover:to-[#b16ee6] text-white font-bold text-lg rounded-xl shadow-lg shadow-primary/40 relative overflow-hidden group">
+<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+<span class="relative flex items-center justify-center gap-2">
+                        Collect
+                        <span class="material-symbols-outlined">payments</span>
+</span>
+</button>
+<button class="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-secondary font-medium text-sm rounded-xl transition-colors flex items-center justify-center gap-2">
+<span>Payout Breakdown</span>
+<span class="material-symbols-outlined text-lg">expand_more</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="relative z-30 flex gap-2 border-t border-[#362348] bg-[#1e1329] px-4 pb-6 pt-2">
+<a class="just flex flex-1 flex-col items-center justify-end gap-1 rounded-full text-primary" href="#">
+<div class="text-primary flex h-8 items-center justify-center">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;">casino</span>
+</div>
+<p class="text-primary text-[10px] font-medium leading-normal tracking-[0.015em]">Slots</p>
+</a>
+<a class="just flex flex-1 flex-col items-center justify-end gap-1 text-secondary group hover:text-white transition-colors" href="#">
+<div class="group-hover:text-white flex h-8 items-center justify-center text-secondary transition-colors">
+<span class="material-symbols-outlined text-3xl">videocam</span>
+</div>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Live Casino</p>
+</a>
+<a class="just flex flex-1 flex-col items-center justify-end gap-1 text-secondary group hover:text-white transition-colors" href="#">
+<div class="group-hover:text-white flex h-8 items-center justify-center text-secondary transition-colors">
+<span class="material-symbols-outlined text-3xl">account_balance_wallet</span>
+</div>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Wallet</p>
+</a>
+<a class="just flex flex-1 flex-col items-center justify-end gap-1 text-secondary group hover:text-white transition-colors" href="#">
+<div class="group-hover:text-white flex h-8 items-center justify-center text-secondary transition-colors">
+<span class="material-symbols-outlined text-3xl">person</span>
+</div>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Profile</p>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#2bee6c",
+              "background-light": "#f6f8f6",
+              "background-dark": "#102216",
+              "accent-cyan": "#00f2ff",
+            },
+            fontFamily: {
+              "display": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<title>Casin8 Roulette - Spinning State</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 overflow-hidden h-screen flex flex-col">
+<!-- Top Navigation Header -->
+<header class="flex items-center justify-between px-4 py-3 bg-background-light/50 dark:bg-background-dark/50 backdrop-blur-md border-b border-primary/10">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">menu</span>
+<h1 class="text-lg font-bold tracking-tight">CASIN8 <span class="text-primary/60 font-medium">ROULETTE</span></h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-end">
+<span class="text-[10px] uppercase tracking-widest text-slate-400">Balance</span>
+<span class="text-sm font-bold text-primary">$12,450.00</span>
+</div>
+<div class="size-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-xl">person</span>
+</div>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto no-scrollbar pb-24">
+<!-- Roulette Wheel Section (Spinning State) -->
+<div class="relative w-full aspect-square max-h-[400px] flex items-center justify-center p-6 bg-gradient-to-b from-background-dark to-slate-900/40">
+<!-- Rotating Wheel Base -->
+<div class="relative w-full h-full rounded-full border-[12px] border-slate-800 shadow-[0_0_60px_rgba(43,238,108,0.15)] overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Close up of a spinning roulette wheel in motion" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAZYcfN-wMFT08UFNWGwFqC4UlcBCcB8NS_DLuwlk5q2aqAzLewhz-z_WN6kWbA_nt3uk2CN4RbE8y5Y0wMufPG6S1Mgnp9HyjOtNOMMwjIOhY0oW-CT7yJt0N9QCx12GGZdQDfleNSSxpVEg962bikVB8dlxs28_kykY68SV6iuK6ZiG98sBX32yXmIj4QIK1Lrixur6h-4wACu4K1hLjntSgkBvOlLv6prCev_qwN730XK5fbI-x6D-ZpVY5_0s3elLWWdSIMtd_Z');"></div>
+<!-- Motion Blur Overlay -->
+<div class="absolute inset-0 bg-background-dark/20 backdrop-blur-[2px]"></div>
+<!-- Center Cap -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="size-16 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 border border-slate-600 shadow-2xl z-10"></div>
+</div>
+</div>
+<!-- Fairness Chip / Live Telemetry -->
+<div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-cyan/10 border border-accent-cyan/40 backdrop-blur-md">
+<span class="flex size-2 rounded-full bg-accent-cyan animate-pulse"></span>
+<p class="text-[10px] font-bold text-accent-cyan tracking-tighter uppercase">Live Telemetry: 782.4 RPM • SHA-256 Verified</p>
+</div>
+</div>
+<!-- Bets Locked Overlay -->
+<div class="px-4 -mt-6 relative z-20">
+<div class="w-full py-3 bg-accent-cyan/10 border border-accent-cyan/30 backdrop-blur-xl rounded-xl flex items-center justify-center gap-3">
+<span class="material-symbols-outlined text-accent-cyan text-xl">lock</span>
+<h2 class="text-accent-cyan font-bold tracking-[0.2em] text-sm uppercase">Bets Locked • Ball in Motion</h2>
+</div>
+</div>
+<!-- Dimmed Betting Table -->
+<div class="p-4 opacity-40 grayscale-[0.5] pointer-events-none transition-opacity duration-500">
+<div class="grid grid-cols-12 gap-1 bg-slate-800/50 p-2 rounded-xl border border-slate-700">
+<!-- Row 3 -->
+<div class="col-span-1 h-12 bg-primary/20 flex items-center justify-center rounded-sm text-xs font-bold border border-primary/30">0</div>
+<div class="col-span-1 h-12 bg-slate-700 flex items-center justify-center rounded-sm text-xs font-bold">3</div>
+<div class="col-span-1 h-12 bg-red-600/50 flex items-center justify-center rounded-sm text-xs font-bold">6</div>
+<div class="col-span-1 h-12 bg-slate-700 flex items-center justify-center rounded-sm text-xs font-bold">9</div>
+<div class="col-span-1 h-12 bg-red-600/50 flex items-center justify-center rounded-sm text-xs font-bold">12</div>
+<div class="col-span-1 h-12 bg-slate-700 flex items-center justify-center rounded-sm text-xs font-bold">15</div>
+<div class="col-span-1 h-12 bg-red-600/50 flex items-center justify-center rounded-sm text-xs font-bold">18</div>
+<div class="col-span-1 h-12 bg-slate-700 flex items-center justify-center rounded-sm text-xs font-bold">21</div>
+<div class="col-span-1 h-12 bg-red-600/50 flex items-center justify-center rounded-sm text-xs font-bold">24</div>
+<div class="col-span-1 h-12 bg-red-600/50 flex items-center justify-center rounded-sm text-xs font-bold">27</div>
+<div class="col-span-1 h-12 bg-slate-700 flex items-center justify-center rounded-sm text-xs font-bold">30</div>
+<div class="col-span-1 h-12 bg-slate-700 flex items-center justify-center rounded-sm text-xs font-bold">33</div>
+</div>
+<!-- Chips Section (Dimmed) -->
+<div class="flex justify-center gap-4 mt-8">
+<div class="size-12 rounded-full border-4 border-dashed border-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-600">5</div>
+<div class="size-14 rounded-full border-4 border-dashed border-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-600 translate-y-[-4px] scale-110">25</div>
+<div class="size-12 rounded-full border-4 border-dashed border-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-600">100</div>
+</div>
+</div>
+</main>
+<!-- Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 right-0 bg-background-dark/80 backdrop-blur-xl border-t border-slate-800 pb-8 pt-4 px-4">
+<div class="max-w-md mx-auto flex items-center gap-4">
+<button class="flex-1 py-4 rounded-xl bg-slate-800 text-slate-500 font-bold flex items-center justify-center gap-2 cursor-not-allowed">
+<span class="material-symbols-outlined text-lg">autorenew</span>
+                SPINNING...
+            </button>
+<div class="flex gap-2">
+<button class="size-14 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined">undo</span>
+</button>
+<button class="size-14 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 h-16 bg-background-dark flex items-center justify-around px-2 border-t border-primary/5">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined fill-1">play_circle</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Play</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">table_chart</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Tables</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">History</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Wallet</span>
+</a>
+</nav>
+<!-- Floating Stats Toast -->
+<div class="fixed top-20 right-4 flex flex-col gap-2">
+<div class="px-3 py-2 rounded-lg bg-background-dark/60 border border-primary/20 backdrop-blur-sm">
+<div class="flex items-center justify-between gap-8">
+<span class="text-[10px] text-slate-400 font-medium">Last 5</span>
+<div class="flex gap-1">
+<span class="size-4 rounded-full bg-red-600 text-[8px] flex items-center justify-center font-bold">14</span>
+<span class="size-4 rounded-full bg-slate-900 text-[8px] flex items-center justify-center font-bold">31</span>
+<span class="size-4 rounded-full bg-red-600 text-[8px] flex items-center justify-center font-bold">9</span>
+<span class="size-4 rounded-full bg-slate-900 text-[8px] flex items-center justify-center font-bold">2</span>
+<span class="size-4 rounded-full bg-primary text-background-dark text-[8px] flex items-center justify-center font-bold">0</span>
+</div>
+</div>
+</div>
+</div>
+</body></html>

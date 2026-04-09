@@ -91,6 +91,19 @@ function tokenizeTags(input) {
   )];
 }
 
+function normalizeExternalCapabilities(input) {
+  if (!Array.isArray(input)) return [];
+  return input
+    .map((cap) => {
+      if (typeof cap === 'string') return cap;
+      if (cap && typeof cap === 'object') {
+        return cap.name || cap.id || cap.capability || null;
+      }
+      return null;
+    })
+    .filter(Boolean);
+}
+
 function relationshipScore(a, b) {
   const ta = new Set(a.tags);
   const tb = new Set(b.tags);
@@ -161,8 +174,13 @@ async function main() {
     const relPath = path.posix.join('config', 'ai-agents', path.basename(fullPath));
     const raw = await fs.readFile(fullPath, 'utf8');
     const parsed = JSON.parse(raw);
+    const normalizedCapabilities = normalizeExternalCapabilities(parsed.capabilities);
+    const capabilityText = normalizedCapabilities.join(' ');
+    const toolNames = Array.isArray(parsed.tools)
+      ? parsed.tools.map((tool) => (typeof tool === 'string' ? tool : tool?.name)).filter(Boolean)
+      : [];
     const id = slugify(parsed.name || path.basename(fullPath, '.json'));
-    const tags = tokenizeTags(`${parsed.name || ''} ${parsed.description || ''}`);
+    const tags = tokenizeTags(`${parsed.name || ''} ${parsed.description || ''} ${capabilityText}`);
 
     agents.push({
       id,
@@ -171,9 +189,9 @@ async function main() {
       description: parsed.description || 'External agent profile',
       agentType: 'external',
       sourceFile: relPath,
-      tools: Array.isArray(parsed.tools) ? parsed.tools : [],
+      tools: toolNames,
       inferredTools: [],
-      capabilities: Array.isArray(parsed.capabilities) ? parsed.capabilities : [],
+      capabilities: normalizedCapabilities,
       tags,
       systemPrompt: parsed.systemPrompt || '',
       status: 'active',

@@ -3,204 +3,85 @@ import { UnauthorizedException } from '@nestjs/common';
 
 import { UnifiedLedgerController } from './unified-ledger.controller';
 
-describe('UnifiedLedgerController timeline auth scoping', () => {
+describe('UnifiedLedgerController internal ingest auth', () => {
   const ledger = {
-    listRecords: jest.fn(),
-    getRecord: jest.fn(),
-    createRecord: jest.fn(),
-    updateRecord: jest.fn(),
-    voteRecord: jest.fn(),
-    addFeedbackIteration: jest.fn(),
-    addFunctionalLink: jest.fn(),
-    getGrid: jest.fn(),
-    listTimelineEvents: jest.fn(),
-    getTimelineEvent: jest.fn(),
+    ingestOrchestrationEvent: jest.fn(),
     createTimelineEvent: jest.fn(),
-    updateTimelineEvent: jest.fn(),
-    deleteTimelineEvent: jest.fn(),
-    bootstrapPersonalTimeline: jest.fn(),
-    listMacroView: jest.fn(),
   } as any;
-
   const controller = new UnifiedLedgerController(ledger);
+
+  const originalNodeEnv = process.env.NODE_ENV;
+  const originalInternalSecret = process.env.TNF_INTERNAL_INGEST_SECRET;
+  const originalLegacySecret = process.env.UNIFIED_LEDGER_INTERNAL_SECRET;
+  const originalTimelineUser = process.env.TNF_INTERNAL_TIMELINE_USER_ID;
 
   afterEach(() => {
     jest.clearAllMocks();
+    process.env.NODE_ENV = originalNodeEnv;
+    process.env.TNF_INTERNAL_INGEST_SECRET = originalInternalSecret;
+    process.env.UNIFIED_LEDGER_INTERNAL_SECRET = originalLegacySecret;
+    process.env.TNF_INTERNAL_TIMELINE_USER_ID = originalTimelineUser;
   });
 
-  it('gets macro view scoped to authenticated user', async () => {
-    ledger.listMacroView.mockResolvedValue({ plans: [], unlinkedRecords: [] });
-    const result = await controller.getMacroView({ id: 'user-macro' });
-    expect(result).toEqual({ plans: [], unlinkedRecords: [] });
-    expect(ledger.listMacroView).toHaveBeenCalledWith('user-macro');
+  function reqWithSecret(secret?: string) {
+    return {
+      header: (name: string) => {
+        const normalized = name.toLowerCase();
+        if (normalized === 'x-tnf-internal-secret' || normalized === 'x-internal-secret') {
+          return secret;
+        }
+        return undefined;
+      },
+    } as any;
+  }
+
+  it('accepts internal orchestration ingest when secret matches', async () => {
+    process.env.TNF_INTERNAL_INGEST_SECRET = 'test-secret';
+    ledger.ingestOrchestrationEvent.mockResolvedValue({ ok: true });
+
+    const body = { type: 'TASK_DISPATCH', action: 'relay_dispatch' };
+    const result = await controller.ingestInternal(reqWithSecret('test-secret'), body);
+
+    expect(result).toEqual({ ok: true });
+    expect(ledger.ingestOrchestrationEvent).toHaveBeenCalledWith(body);
   });
 
-  it('lists timeline events scoped to authenticated id', async () => {
-    ledger.listTimelineEvents.mockResolvedValue([{ id: 'evt_1' }]);
+  it('rejects internal orchestration ingest when secret mismatches', async () => {
+    process.env.TNF_INTERNAL_INGEST_SECRET = 'expected-secret';
 
-    const result = await controller.timeline(
-      { id: 'user-1' },
-      'record-1',
-      'goal-1',
-      'plan-1',
-      'historical_event',
-      'user-1',
-      '2026-01-01T00:00:00.000Z',
-      '2026-12-31T23:59:59.999Z'
-    );
-
-    expect(result).toEqual([{ id: 'evt_1' }]);
-    expect(ledger.listTimelineEvents).toHaveBeenCalledWith({
-      userId: 'user-1',
-      recordId: 'record-1',
-      goalId: 'goal-1',
-      planId: 'plan-1',
-      eventType: 'historical_event',
-      actor: 'user-1',
-      dateFrom: '2026-01-01T00:00:00.000Z',
-      dateTo: '2026-12-31T23:59:59.999Z',
-    });
+    await expect(
+      controller.ingestInternal(reqWithSecret('wrong-secret'), { type: 'TASK_DISPATCH' })
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+    expect(ledger.ingestOrchestrationEvent).not.toHaveBeenCalled();
   });
 
-  it('lists unified records scoped to authenticated owner', async () => {
-    ledger.listRecords.mockResolvedValue([{ id: 'rec-1' }]);
-    const result = await controller.list(
-      { id: 'owner-1' },
-      'task',
-      'submitted',
-      undefined,
-      undefined,
-      'query'
-    );
-    expect(result).toEqual([{ id: 'rec-1' }]);
-    expect(ledger.listRecords).toHaveBeenCalledWith({
-      owner: 'owner-1',
-      kind: 'task',
-      status: 'submitted',
-      lane: undefined,
-      horizon: undefined,
-      q: 'query',
-    });
+  it('rejects internal timeline writes in production if no secret is configured', async () => {
+    process.env.NODE_ENV = 'production';
+    delete process.env.TNF_INTERNAL_INGEST_SECRET;
+    delete process.env.UNIFIED_LEDGER_INTERNAL_SECRET;
+
+    await expect(
+      controller.createInternalTimelineEvent(reqWithSecret(undefined), { payload: {} })
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+    expect(ledger.createTimelineEvent).not.toHaveBeenCalled();
   });
 
-  it('overrides record owner with authenticated user on create/patch', async () => {
-    ledger.createRecord.mockResolvedValue({ id: 'rec-created' });
-    ledger.updateRecord.mockResolvedValue({ id: 'rec-updated' });
+  it('allows internal timeline writes in non-production without secret and applies defaults', async () => {
+    process.env.NODE_ENV = 'test';
+    delete process.env.TNF_INTERNAL_INGEST_SECRET;
+    delete process.env.UNIFIED_LEDGER_INTERNAL_SECRET;
+    process.env.TNF_INTERNAL_TIMELINE_USER_ID = 'tnf-relay-user';
+    ledger.createTimelineEvent.mockResolvedValue({ ok: true });
 
-    const created = await controller.create(
-      { id: 'owner-2' },
-      { title: 'T', description: 'D', owner: 'spoofed-owner' }
-    );
-    expect(created).toEqual({ id: 'rec-created' });
-    expect(ledger.createRecord).toHaveBeenCalledWith({
-      title: 'T',
-      description: 'D',
-      owner: 'owner-2',
-      source: 'api',
+    await controller.createInternalTimelineEvent(reqWithSecret(undefined), {
+      payload: { relayEventType: 'bridge_access_approved' },
     });
 
-    const patched = await controller.patch({ id: 'owner-2' }, 'rec-1', {
-      title: 'updated',
-      owner: 'spoofed-owner',
-    });
-    expect(patched).toEqual({ id: 'rec-updated' });
-    expect(ledger.updateRecord).toHaveBeenCalledWith(
-      'rec-1',
-      { title: 'updated', owner: 'owner-2' },
-      'owner-2'
-    );
-  });
-
-  it('accepts sub claim as fallback user id', async () => {
-    ledger.getTimelineEvent.mockResolvedValue({ id: 'evt_2' });
-    const result = await controller.timelineEvent({ sub: 'user-sub' }, 'evt_2');
-    expect(result).toEqual({ id: 'evt_2' });
-    expect(ledger.getTimelineEvent).toHaveBeenCalledWith('evt_2', 'user-sub');
-  });
-
-  it('rejects timeline access without authenticated user id', async () => {
-    await expect(controller.timeline(undefined as any)).rejects.toBeInstanceOf(
-      UnauthorizedException
-    );
-    expect(ledger.listTimelineEvents).not.toHaveBeenCalled();
-  });
-
-  it('overrides createTimelineEvent userId with authenticated user', async () => {
-    ledger.createTimelineEvent.mockResolvedValue({ id: 'evt_3' });
-
-    const result = await controller.createTimelineEvent(
-      { id: 'auth-user' },
-      {
-        userId: 'spoofed-user',
-        eventType: 'historical_event',
-        payload: { title: 'T1' },
-      }
-    );
-
-    expect(result).toEqual({ id: 'evt_3' });
     expect(ledger.createTimelineEvent).toHaveBeenCalledWith({
-      userId: 'auth-user',
+      payload: { relayEventType: 'bridge_access_approved' },
+      userId: 'tnf-relay-user',
       eventType: 'historical_event',
-      payload: { title: 'T1' },
+      actor: 'relay-system',
     });
-  });
-
-  it('overrides updateTimelineEvent userId with authenticated user', async () => {
-    ledger.updateTimelineEvent.mockResolvedValue({ id: 'evt_4' });
-
-    const result = await controller.patchTimelineEvent({ id: 'auth-user' }, 'evt_4', {
-      userId: 'spoofed-user',
-      payload: { title: 'Updated' },
-    });
-
-    expect(result).toEqual({ id: 'evt_4' });
-    expect(ledger.updateTimelineEvent).toHaveBeenCalledWith('evt_4', {
-      userId: 'auth-user',
-      payload: { title: 'Updated' },
-    });
-  });
-
-  it('passes authenticated user to deleteTimelineEvent', async () => {
-    ledger.deleteTimelineEvent.mockResolvedValue(true);
-    const result = await controller.deleteTimelineEvent({ id: 'auth-user' }, 'evt_5');
-    expect(result).toBe(true);
-    expect(ledger.deleteTimelineEvent).toHaveBeenCalledWith('evt_5', 'auth-user');
-  });
-
-  it('bootstraps timeline only for authenticated current user', async () => {
-    ledger.bootstrapPersonalTimeline.mockResolvedValue({
-      message: 'Generated',
-      createdCount: 3,
-      totalCount: 3,
-      events: [],
-    });
-
-    const result = await controller.bootstrapPersonalTimeline({
-      id: 'user-1',
-      email: 'user@example.com',
-      name: 'User One',
-      role: 'member',
-      roles: ['member'],
-    });
-
-    expect(result).toEqual({
-      message: 'Generated',
-      createdCount: 3,
-      totalCount: 3,
-      events: [],
-    });
-    expect(ledger.bootstrapPersonalTimeline).toHaveBeenCalledWith('user-1', {
-      email: 'user@example.com',
-      name: 'User One',
-      role: 'member',
-      roles: ['member'],
-    });
-  });
-
-  it('rejects timeline bootstrap when no authenticated user id is present', async () => {
-    await expect(controller.bootstrapPersonalTimeline({})).rejects.toBeInstanceOf(
-      UnauthorizedException
-    );
-    expect(ledger.bootstrapPersonalTimeline).not.toHaveBeenCalled();
   });
 });

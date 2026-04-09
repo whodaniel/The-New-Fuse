@@ -16,20 +16,8 @@ import {
 // @ts-ignore
 // @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database/drizzle';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { drizzleUserRepository } from '@the-new-fuse/database/drizzle/repositories';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { membershipOverrides } from '@the-new-fuse/database/drizzle/schema';
 import { AdminGuard } from '../guards/admin.guard';
 import { SecureAuthGuard } from '../guards/secure-auth.guard';
@@ -273,7 +261,7 @@ export class AdminUsersController {
     const active = Number(activeRows?.[0]?.count || 0);
     if (active === 0) {
       const roles = Array.isArray(user.roles)
-        ? user.roles.filter((r: any) => r !== 'MEMBERSHIP_OVERRIDE')
+        ? user.roles.filter((r) => r !== 'MEMBERSHIP_OVERRIDE')
         : [];
       await this.userRepository.update(id, { roles });
     }

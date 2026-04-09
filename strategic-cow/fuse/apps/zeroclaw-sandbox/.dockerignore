@@ -1,0 +1,10 @@
+target/
+.git
+*.md
+*.jpeg
+*.png
+tests/
+benches/
+scripts/
+docs/
+.github/

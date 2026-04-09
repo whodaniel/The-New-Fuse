@@ -1,7 +1,4 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { AuditLogEntry } from '@the-new-fuse/database';
 import { ChildProcessWithoutNullStreams, execFile, spawn } from 'node:child_process';
 import * as fs from 'node:fs';
@@ -516,11 +513,11 @@ export class RcloneRuntimeService implements OnModuleInit, OnModuleDestroy {
       },
       queue: {
         total: this.ardriveQueue.length,
-        queued: this.ardriveQueue.filter((item: any) => item.status === 'queued').length,
-        processing: this.ardriveQueue.filter((item: any) => item.status === 'processing').length,
-        submitted: this.ardriveQueue.filter((item: any) => item.status === 'submitted').length,
-        failed: this.ardriveQueue.filter((item: any) => item.status === 'failed').length,
-        completed: this.ardriveQueue.filter((item: any) => item.status === 'completed').length,
+        queued: this.ardriveQueue.filter((item) => item.status === 'queued').length,
+        processing: this.ardriveQueue.filter((item) => item.status === 'processing').length,
+        submitted: this.ardriveQueue.filter((item) => item.status === 'submitted').length,
+        failed: this.ardriveQueue.filter((item) => item.status === 'failed').length,
+        completed: this.ardriveQueue.filter((item) => item.status === 'completed').length,
       },
     };
   }
@@ -553,7 +550,7 @@ export class RcloneRuntimeService implements OnModuleInit, OnModuleDestroy {
     this.ardriveWorkerRunning = true;
     try {
       const candidates = this.ardriveQueue
-        .filter((item: any) => this.isArdriveWorkerProcessable(item.status))
+        .filter((item) => this.isArdriveWorkerProcessable(item.status))
         .sort((a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime())
         .slice(0, maxItems);
 
@@ -624,9 +621,9 @@ export class RcloneRuntimeService implements OnModuleInit, OnModuleDestroy {
     this.ardriveWorkerRunning = true;
     try {
       const candidate = requestedQueueId
-        ? this.ardriveQueue.find((item: any) => item.queueId === requestedQueueId)
+        ? this.ardriveQueue.find((item) => item.queueId === requestedQueueId)
         : this.ardriveQueue
-            .filter((item: any) => this.isArdriveWorkerProcessable(item.status))
+            .filter((item) => this.isArdriveWorkerProcessable(item.status))
             .sort((a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime())[0];
 
       if (!candidate) {
@@ -708,7 +705,7 @@ export class RcloneRuntimeService implements OnModuleInit, OnModuleDestroy {
 
     return {
       ok: true,
-      provider: this.providerProfiles.find((provider: any) => provider.id === normalized),
+      provider: this.providerProfiles.find((provider) => provider.id === normalized),
       blueprint: this.providerBlueprints[normalized],
     };
   }
@@ -916,7 +913,7 @@ export class RcloneRuntimeService implements OnModuleInit, OnModuleDestroy {
       .toLowerCase();
 
     const filtered = status
-      ? this.ardriveQueue.filter((item: any) => item.status === status)
+      ? this.ardriveQueue.filter((item) => item.status === status)
       : this.ardriveQueue;
 
     return {
@@ -1053,7 +1050,7 @@ export class RcloneRuntimeService implements OnModuleInit, OnModuleDestroy {
   }
 
   async runWorkflow(input: RcloneWorkflowRunRequest): Promise<RcloneWorkflowRunLogEntry> {
-    const preset = this.workflowPresets.find((item: any) => item.id === input.presetId);
+    const preset = this.workflowPresets.find((item) => item.id === input.presetId);
     if (!preset) {
       throw new Error(`Unknown workflow preset: ${String(input.presetId || '')}`);
     }
@@ -1139,7 +1136,7 @@ export class RcloneRuntimeService implements OnModuleInit, OnModuleDestroy {
       this.appendRunStderr(current.entry, String(chunk || ''));
     });
 
-    child.on('error', (error: any) => {
+    child.on('error', (error) => {
       const current = this.activeRuns.get(entry.id);
       if (!current) return;
       this.cleanupActiveRunTimers(current);
@@ -1327,7 +1324,7 @@ export class RcloneRuntimeService implements OnModuleInit, OnModuleDestroy {
   }
 
   private addOrUpdateInHistory(entry: RcloneWorkflowRunLogEntry): void {
-    const idx = this.workflowRunHistory.findIndex((row: any) => row.id === entry.id);
+    const idx = this.workflowRunHistory.findIndex((row) => row.id === entry.id);
     if (idx >= 0) {
       this.workflowRunHistory[idx] = { ...entry };
     } else {
@@ -1473,7 +1470,7 @@ export class RcloneRuntimeService implements OnModuleInit, OnModuleDestroy {
       command: {
         binary: 'rclone',
         args: Array.isArray((run.command as Record<string, unknown>)?.args)
-          ? ((run.command as Record<string, unknown>).args as unknown[]).map((value: any) =>
+          ? ((run.command as Record<string, unknown>).args as unknown[]).map((value) =>
               String(value || '')
             )
           : [],

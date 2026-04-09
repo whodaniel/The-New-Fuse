@@ -1,0 +1,64 @@
+{
+  "mcpServers": {
+    "the-new-fuse-main": {
+      "command": "node",
+      "args": ["--loader", "tsx/esm", "./src/mcp/server.ts"],
+      "env": {
+        "NODE_ENV": "development",
+        "DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/fuse",
+        "REDIS_URL": "redis://default:<YOUR_REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT>",
+        "LOG_LEVEL": "info"
+      },
+      "description": "Main The New Fuse MCP Server - Full platform capabilities"
+    },
+    "the-new-fuse-remote": {
+      "command": "node",
+      "args": [
+        "--loader",
+        "tsx/esm",
+        "./src/mcp/server.ts",
+        "--remote",
+        "--port=3001"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "description": "Remote The New Fuse MCP Server - HTTP/SSE transport"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "--allow-dir",
+        "."
+      ],
+      "description": "File system operations for TNF project"
+    },
+    "postgres": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "-e",
+        "POSTGRES_CONNECTION_STRING=postgresql://postgres:postgres@localhost:5432/fuse",
+        "modelcontextprotocol/postgres"
+      ],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://postgres:postgres@localhost:5432/fuse"
+      },
+      "description": "PostgreSQL database access for TNF"
+    },
+    "browsermcp": {
+      "command": "npx",
+      "args": ["@browsermcp/mcp@latest"],
+      "description": "Browser automation capabilities"
+    },
+    "applescript_execute": {
+      "command": "npx",
+      "args": ["@peakmojo/applescript-mcp"],
+      "description": "AppleScript execution for macOS automation"
+    }
+  }
+}

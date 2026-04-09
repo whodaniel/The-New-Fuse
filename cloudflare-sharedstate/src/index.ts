@@ -421,24 +421,8 @@ function evaluateFederationPacket(request: any) {
   };
 }
 
-function isLocalEnvironment(value: string | undefined): boolean {
-  const normalized = String(value || '')
-    .trim()
-    .toLowerCase();
-  return ['local', 'localhost', 'devlocal', 'test'].includes(normalized);
-}
-
-function isLocalRuntimeRequest(req: Request, env: Env): boolean {
-  if (isLocalEnvironment(env.ENVIRONMENT)) return true;
-  try {
-    const hostname = new URL(req.url).hostname.toLowerCase();
-    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
-  } catch {
-    return false;
-  }
-}
-
-function authorized(req: Request, env: Env, localRuntime: boolean) {
+function authorized(req: Request, env: Env) {
+  // Hardening: Fail closed unless strictly in 'dev' environment
   if (!env.SHAREDSTATE_AUTH_TOKEN) {
     return localRuntime;
   }

@@ -37,7 +37,7 @@ interface Link extends d3.SimulationLinkDatum<Node> {
 const AgentFlowViewer = () => {
   const svgRef = useRef<SVGSVGElement>(null);
   const simulationRef = useRef<d3.Simulation<Node, undefined> | null>(null);
-  const [, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState<{ nodes: Node[]; links: Link[] }>({ nodes: [], links: [] });
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });

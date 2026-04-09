@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database/drizzle';
-import { sql } from 'drizzle-orm';
 import { isMasterSuperAdminEmail, resolveRoleClaims } from '../../auth/auth-policy';
 import { AuthService } from '../../services/auth.service';
 import { PayPalService } from '../billing/paypal.service';
@@ -251,14 +247,15 @@ export class AccessService {
   }
 
   private async getActiveMembershipOverride(userId: string) {
-    const rows = await this.db.client.execute<{
+    const safeUserId = userId.replace(/'/g, "''");
+    const rows = await this.db.executeRaw<{
       id: string;
       tier: SubscriptionTier;
       expires_at: string | null;
     }>(
-      sql`SELECT id, tier, expires_at
+      `SELECT id, tier, expires_at
        FROM membership_overrides
-       WHERE user_id = ${userId}
+       WHERE user_id = '${safeUserId}'
          AND status = 'ACTIVE'
        ORDER BY created_at DESC
        LIMIT 1`
@@ -277,15 +274,17 @@ export class AccessService {
   }
 
   private async getActiveEntitlement(userId: string, gameId: string) {
-    const rows = await this.db.client.execute<{
+    const safeUserId = userId.replace(/'/g, "''");
+    const safeGameId = gameId.replace(/'/g, "''");
+    const rows = await this.db.executeRaw<{
       source: string;
       tier_granted: SubscriptionTier;
       expires_at: string | null;
     }>(
-      sql`SELECT source, tier_granted, expires_at
+      `SELECT source, tier_granted, expires_at
        FROM game_entitlements
-       WHERE user_id = ${userId}
-         AND game_id = ${gameId}
+       WHERE user_id = '${safeUserId}'
+         AND game_id = '${safeGameId}'
        ORDER BY created_at DESC
        LIMIT 1`
     );
@@ -303,11 +302,12 @@ export class AccessService {
   }
 
   private async getGameRule(gameId: string) {
-    const rows = await this.db.client.execute<GameRuleRecord>(
-      sql`SELECT id, game_id, label, description, required_tier, requires_membership,
+    const safeGameId = gameId.replace(/'/g, "''");
+    const rows = await this.db.executeRaw<GameRuleRecord>(
+      `SELECT id, game_id, label, description, required_tier, requires_membership,
               required_nft_contract, required_nft_chain_id, required_nft_token_id, required_nft_traits
        FROM game_access_rules
-       WHERE game_id = ${gameId}
+       WHERE game_id = '${safeGameId}'
          AND is_active = true
        LIMIT 1`
     );

@@ -22,10 +22,10 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "eslint .",
-    "clean": "rm -rf dist icons coverage .turbo node_modules/.cache tsconfig.tsbuildinfo",
-    "clean:build": "rm -rf dist icons coverage",
-    "clean:v5": "rm -rf dist-v5",
-    "clean:v6": "rm -rf dist-v6",
+    "clean": "rimraf dist icons coverage .turbo node_modules/.cache tsconfig.tsbuildinfo",
+    "clean:build": "rimraf dist icons coverage",
+    "clean:v5": "rimraf dist-v5",
+    "clean:v6": "rimraf dist-v6",
     "typecheck": "tsc --noEmit",
     "build:package": "pnpm run build && pnpm run package",
     "aivi:inventory": "find aivi -maxdepth 3 -type d | sort",
@@ -45,8 +45,7 @@
     "ajv-keywords": "^5.1.0",
     "dompurify": "^3.3.2",
     "highlight.js": "^11.11.1",
-    "pako": "^2.1.0",
-    "@the-new-fuse/infrastructure": "workspace:*"
+    "pako": "^2.1.0"
   },
   "overrides": {
     "serialize-javascript": "7.0.3"
@@ -78,7 +77,7 @@
     "rimraf": "^5.0.5",
     "terser-webpack-plugin": "^5.3.14",
     "ts-loader": "^9.5.4",
-    "typescript": "^6.0.2",
+    "typescript": "^5.9.3",
     "webpack": "^5.105.0",
     "webpack-cli": "^5.1.4"
   },

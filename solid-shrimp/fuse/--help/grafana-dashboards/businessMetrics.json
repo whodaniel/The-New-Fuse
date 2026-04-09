@@ -1,0 +1,119 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Business Metrics",
+    "description": "Key business and user experience metrics",
+    "tags": [
+      "monitoring",
+      "production"
+    ],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Daily Active Users",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "dau",
+            "legendFormat": "dau",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": 2,
+        "title": "User Engagement",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "session_duration",
+            "legendFormat": "session_duration",
+            "refId": "A"
+          },
+          {
+            "expr": "page_views",
+            "legendFormat": "page_views",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        }
+      },
+      {
+        "id": 3,
+        "title": "Feature Usage",
+        "type": "pie",
+        "targets": [
+          {
+            "expr": "feature_usage_breakdown",
+            "legendFormat": "feature_usage_breakdown",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        }
+      },
+      {
+        "id": 4,
+        "title": "Revenue Metrics",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "revenue_per_hour",
+            "legendFormat": "revenue_per_hour",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        }
+      },
+      {
+        "id": 5,
+        "title": "SLA Compliance",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sla_uptime",
+            "legendFormat": "sla_uptime",
+            "refId": "A"
+          },
+          {
+            "expr": "sla_performance",
+            "legendFormat": "sla_performance",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        }
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "30s"
+  }
+}

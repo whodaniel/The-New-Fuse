@@ -36,10 +36,10 @@ def evaluate(delta: dict, max_graphs_changed: int, max_nodes_added: int, max_nod
 
 def main():
     parser = argparse.ArgumentParser(description='Check latest graph delta against alert thresholds.')
-    parser.add_argument('--max-graphs-changed', type=int, default=8)
+    parser.add_argument('--max-graphs-changed', type=int, default=2)
     parser.add_argument('--max-nodes-added', type=int, default=3)
     parser.add_argument('--max-nodes-removed', type=int, default=1)
-    parser.add_argument('--max-edges-added', type=int, default=60)
+    parser.add_argument('--max-edges-added', type=int, default=5)
     parser.add_argument('--max-edges-removed', type=int, default=3)
     parser.add_argument('--strict-exit', action='store_true', help='Exit non-zero if thresholds are breached')
     args = parser.parse_args()

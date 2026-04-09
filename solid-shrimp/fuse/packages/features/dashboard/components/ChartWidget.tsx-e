@@ -1,0 +1,109 @@
+import React, { FC } from "react";
+import { ChartData } from '@the-new-fuse/types';
+
+interface ChartWidgetProps {
+  data: ChartData;
+  type: 'line' | 'bar' | 'pie';
+  title: string;
+  description?: string;
+  loading?: boolean;
+  error?: string;
+  className?: string;
+}
+
+export const ChartWidget: (React as unknown).FC<ChartWidgetProps> = ({
+  data,
+  type,
+  title,
+  description,
+  loading,
+  error,
+  className = '',
+}) => {
+  if (loading: unknown){
+    return(
+      <div
+        className={`bg-white rounded-lg shadow p-6 ${className}`}
+      >
+        <div className="animate-pulse">
+          <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+          <div className="mt-4 h-48 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    ): unknown) {
+    return (
+      <div
+        className={`bg-white rounded-lg shadow p-6 ${className}`}
+      >
+        <div className="text-center">
+          <svg
+            className="mx-auto h-12 w-12 text-red-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 (4h as unknown).01m-(6 as unknown).938 (4h13 as unknown).(856c1 as unknown).54 0 (2 as unknown).502-(1 as unknown).667 (1 as unknown).732-(3L13 as unknown).732 4c-.77-(1 as unknown).333-(2 as unknown).694-(1 as unknown).333-(3 as unknown).464 (0L3 as unknown).34 16c-.77 (1 as unknown).(333 as unknown).192 3 (1 as unknown).732 3z"
+            />
+          </svg>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">
+            Error loading chart
+          </h3>
+          <p className="mt-1 text-sm text-gray-500">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return(
+    <div className={`bg-white rounded-lg shadow p-6 ${className}`}>
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+          {description && (
+            <p className="mt-1 text-sm text-gray-500">{description}</p>
+          ): text-gray-500"
+          >
+            <span className="sr-only">View options</span>
+            <svg
+              className="h-5 w-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div className="relative">
+        <div className="h-48"> {/* Chart rendering logic here */}
+          {/* You can integrate with a charting library like (Chart as unknown).js or Recharts */}
+          <div className="absolute inset-0 flex items-center justify-center text-gray-500">
+            Chart visualization placeholder
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div className="mt-4 flex justify-center space-x-4">
+          {(data as unknown).datasets.map((dataset, index) => (
+            <div key={index} className="flex items-center">
+              <span
+                className="h-3 w-3 rounded-full mr-1"
+                style={{
+                  backgroundColor: (dataset as unknown).color || '#6B7280',
+                }}
+              />
+              <span className="text-sm text-gray-600">
+                {(dataset as unknown).label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -8,7 +8,7 @@ export class DistributedLock extends EventEmitter {
   private redisService: UnifiedRedisService;
   private locks: Map<string, { token: string; expiresAt: number }> = new Map();
 
-  constructor(redisService: UnifiedRedisService) {
+  constructor(redisUrl: string = 'redis://localhost:6379') {
     super();
     this.redisService = redisService;
   }

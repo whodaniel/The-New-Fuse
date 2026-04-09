@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account - AI Video Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #030712;
+      --text-color: #f9fafb;
+      --text-muted: #9ca3af;
+      --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #d946ef 100%);
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-hover: rgba(255, 255, 255, 0.06);
+      --card-radius: 16px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      padding: 80px 24px 40px;
+    }
+
+    .bg-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background: radial-gradient(circle at 50% 0%, #172033 0%, #030712 60%);
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 20px 24px;
+      background: rgba(3, 7, 18, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--glass-border);
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+    }
+
+    nav {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      color: white;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .info-value {
+      color: white;
+      font-weight: 600;
+    }
+
+    .tier-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tier-free {
+      background: rgba(156, 163, 175, 0.1);
+      color: #9ca3af;
+    }
+
+    .tier-pro {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      color: white;
+    }
+
+    .tier-tnf {
+      background: linear-gradient(135deg, #d946ef 0%, #f59e0b 100%);
+      color: white;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--glass-border);
+      color: white;
+    }
+
+    .btn-outline:hover {
+      border-color: white;
+      background: var(--glass-hover);
+    }
+
+    .btn-danger {
+      background: transparent;
+      border: 1px solid #ef4444;
+      color: #ef4444;
+    }
+
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .features-list {
+      list-style: none;
+      margin-top: 16px;
+    }
+
+    .features-list li {
+      padding: 10px 0;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .features-list li:before {
+      content: '✓';
+      color: #10b981;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <header>
+    <div class="header-content">
+      <a href="/" class="logo">AI Video Intelligence</a>
+      <nav>
+        <a href="/dashboard.html">Dashboard</a>
+        <a href="/reports.html">Reports</a>
+        <a href="/account.html" class="active">Account</a>
+        <a href="https://chrome.google.com/webstore/detail/ai-video-intelligence-suite/YOUR_EXTENSION_ID" target="_blank">Extension</a>
+        <a href="/support.html">Support</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>Account Settings</h1>
+    <p class="subtitle">Manage your profile and subscription</p>
+
+    <!-- Profile Information -->
+    <div class="card">
+      <h2 class="card-title">Profile Information</h2>
+      <div class="info-row">
+        <span class="info-label">Email</span>
+        <span class="info-value" id="userEmail">Loading...</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Member Since</span>
+        <span class="info-value" id="memberSince">Loading...</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Total Videos Processed</span>
+        <span class="info-value" id="totalProcessed">0</span>
+      </div>
+    </div>
+
+    <!-- Subscription -->
+    <div class="card">
+      <h2 class="card-title">Subscription</h2>
+      <div class="info-row">
+        <span class="info-label">Current Plan</span>
+        <span class="tier-badge" id="tierBadge">FREE</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Daily Quota</span>
+        <span class="info-value"><span id="dailyUsage">0</span>/<span id="dailyLimit">20</span> videos</span>
+      </div>
+
+      <div id="currentFeatures" style="margin-top: 20px;">
+        <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px; font-weight: 600;">Your Plan Includes:</div>
+        <ul class="features-list" id="featuresList">
+          <li>Loading...</li>
+        </ul>
+      </div>
+
+      <div style="margin-top: 32px; display: flex; gap: 12px;">
+        <button class="btn btn-primary" id="upgradeBtn">Upgrade Plan</button>
+        <button class="btn btn-outline" onclick="window.location.href='/'">View Pricing</button>
+      </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="card" style="border-color: rgba(239, 68, 68, 0.2);">
+      <h2 class="card-title" style="color: #ef4444;">Danger Zone</h2>
+      <div class="info-row">
+        <div>
+          <div style="font-weight: 600; margin-bottom: 4px;">Sign Out</div>
+          <div style="font-size: 0.9rem; color: var(--text-muted);">You can sign back in anytime</div>
+        </div>
+        <button class="btn btn-danger" onclick="signOut()">Sign Out</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = window.location.origin + '/api';
+    let currentUser = null;
+
+    async function loadAccount() {
+      try {
+        // Check authentication
+        const authRes = await fetch(`${API_URL}/auth/me`);
+        if (!authRes.ok) {
+          window.location.href = '/';
+          return;
+        }
+
+        const authData = await authRes.json();
+        currentUser = authData.data.user;
+
+        // Update profile info
+        document.getElementById('userEmail').textContent = currentUser.email;
+        document.getElementById('memberSince').textContent = new Date(currentUser.created_at).toLocaleDateString();
+        document.getElementById('totalProcessed').textContent = currentUser.total_processed || 0;
+
+        // Update subscription info
+        const tier = currentUser.tier || 'free';
+        const tierBadge = document.getElementById('tierBadge');
+        tierBadge.textContent = tier.toUpperCase();
+        tierBadge.className = `tier-badge tier-${tier}`;
+
+        document.getElementById('dailyUsage').textContent = currentUser.daily_usage || 0;
+        document.getElementById('dailyLimit').textContent = currentUser.daily_limit || 20;
+
+        // Load features for current tier
+        loadTierFeatures(tier);
+
+        // Update upgrade button
+        const upgradeBtn = document.getElementById('upgradeBtn');
+        if (tier === 'free') {
+          upgradeBtn.textContent = 'Upgrade to Pro';
+          upgradeBtn.onclick = () => upgradeTier('pro');
+        } else if (tier === 'pro') {
+          upgradeBtn.textContent = 'Upgrade to TNF';
+          upgradeBtn.onclick = () => upgradeTier('tnf');
+        } else {
+          upgradeBtn.style.display = 'none';
+        }
+
+      } catch (error) {
+        console.error('Failed to load account:', error);
+      }
+    }
+
+    function loadTierFeatures(tier) {
+      const features = {
+        free: [
+          '20 videos per day',
+          '1 concurrent process',
+          'Basic prompts only',
+          'Auto-download reports'
+        ],
+        pro: [
+          'Unlimited videos',
+          '3 concurrent processes',
+          'Custom prompts (50 templates)',
+          'NotebookLM integration',
+          'Podcast creation (5/month)',
+          'Cloud sync',
+          'Analytics dashboard',
+          'Priority support'
+        ],
+        tnf: [
+          'Everything in Pro',
+          '10 concurrent processes',
+          'Unlimited custom prompts',
+          'Unlimited podcasts',
+          'API access',
+          'RAG semantic search',
+          'Personal AI assistant',
+          'Team collaboration',
+          'White-label option'
+        ]
+      };
+
+      const featuresList = document.getElementById('featuresList');
+      featuresList.innerHTML = (features[tier] || features.free).map(f => `<li>${f}</li>`).join('');
+    }
+
+    async function upgradeTier(tier) {
+      try {
+        const res = await fetch(`${API_URL}/subscriptions/checkout`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tier, billingPeriod: 'monthly' })
+        });
+
+        const data = await res.json();
+        if (data.success && data.data.approvalUrl) {
+          window.location.href = data.data.approvalUrl;
+        } else {
+          alert('Failed to initiate checkout');
+        }
+      } catch (error) {
+        console.error('Upgrade failed:', error);
+        alert('Failed to upgrade. Please try again.');
+      }
+    }
+
+    async function signOut() {
+      if (confirm('Are you sure you want to sign out?')) {
+        await fetch(`${API_URL}/auth/logout`, { method: 'POST' });
+        window.location.href = '/';
+      }
+    }
+
+    // Load account on page load
+    loadAccount();
+  </script>
+</body>
+</html>

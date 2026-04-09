@@ -459,7 +459,7 @@ const QuickActionsPanel: React.FC<{
               onClick={() => onAction(action.id)}
               disabled={!availability.enabled}
               title={availability.enabled ? action.label : availability.reason || 'Unavailable'}
-              className={`flex items-center gap-2 p-3 rounded-lg border transition-all text-left ${
+              className={`flex items-center gap-2 p-3 rounded-md border transition-all text-left ${
                 availability.enabled
                   ? 'bg-black/20 hover:bg-black/40 border-white/10 hover:border-white/20'
                   : 'bg-black/10 border-white/5 opacity-50 cursor-not-allowed'
@@ -534,12 +534,6 @@ export const TNFCommandCenter: React.FC = () => {
         enabled: false,
         reason: 'Deployment action is not wired in this environment.',
       },
-      'restart-mesh': {
-        enabled: capabilities.swarm
-          ? Object.keys(capabilities.swarm.unavailable || {}).length === 0
-          : false,
-        reason: 'Swarm restart is unavailable because swarm control APIs are partially deployed.',
-      },
       'clear-logs': { enabled: true },
       'run-tests': {
         enabled: false,
@@ -548,7 +542,7 @@ export const TNFCommandCenter: React.FC = () => {
       'new-agent': { enabled: true },
       'view-docs': { enabled: true },
     }),
-    [capabilities.swarm]
+    []
   );
 
   useEffect(() => {

@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create AG-UI Analysis Agent</title>
+    <style>
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 60px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 30px;
+            color: #2d3748;
+        }
+        button {
+            font-size: 18px;
+            padding: 20px 40px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        #status {
+            margin-top: 30px;
+            font-size: 16px;
+            color: #4a5568;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create AG-UI Analysis Agent</h1>
+        <button onclick="executeCapability()">🚀 Create AG-UI Analysis Agent</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        async function executeCapability() {
+            const status = document.getElementById('status');
+            status.textContent = '⏳ Processing...';
+
+            try {
+                // Call backend API
+                const response = await fetch('/api/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        capability: 'Create AG-UI Analysis Agent',
+                        parameters: {}  // Use defaults
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    status.textContent = '✅ Create AG-UI Analysis Agent completed successfully!';
+                    status.style.color = '#10b981';
+
+                    // Show result
+                    if (result.filePath) {
+                        status.innerHTML += `<br><a href="${result.filePath}" target="_blank">View Result</a>`;
+                    }
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                status.textContent = '❌ ' + error.message;
+                status.style.color = '#ef4444';
+            }
+        }
+    </script>
+</body>
+</html>

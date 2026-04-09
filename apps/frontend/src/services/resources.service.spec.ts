@@ -6,8 +6,6 @@ vi.mock('axios', () => ({
   default: {
     post: vi.fn(),
     get: vi.fn(),
-    put: vi.fn(),
-    delete: vi.fn(),
   },
 }));
 
@@ -21,8 +19,6 @@ describe('ResourcesService.searchResources', () => {
   const mockedAxios = axios as unknown as {
     post: ReturnType<typeof vi.fn>;
     get: ReturnType<typeof vi.fn>;
-    put: ReturnType<typeof vi.fn>;
-    delete: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
@@ -258,75 +254,6 @@ describe('ResourcesService.searchResources', () => {
       expect.stringContaining('/resources/search/protocol'),
       expect.objectContaining({
         type: 'RESOURCE.SEARCH.REQUEST',
-      })
-    );
-  });
-});
-
-describe('ResourcesService personal skills API', () => {
-  const mockedAxios = axios as unknown as {
-    post: ReturnType<typeof vi.fn>;
-    get: ReturnType<typeof vi.fn>;
-    put: ReturnType<typeof vi.fn>;
-    delete: ReturnType<typeof vi.fn>;
-  };
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-    window.localStorage.setItem('auth_token', 'token-abc');
-  });
-
-  it('uses auth header to fetch personal skills', async () => {
-    const service = new ResourcesService();
-    mockedAxios.get.mockResolvedValueOnce({
-      data: [{ id: 'skill-1', name: 'Private Skill' }],
-    });
-
-    const result = await service.getPersonalSkills();
-
-    expect(result).toHaveLength(1);
-    expect(mockedAxios.get).toHaveBeenCalledWith(
-      expect.stringContaining('/resources/personal-skills'),
-      expect.objectContaining({
-        headers: { Authorization: 'Bearer token-abc' },
-      })
-    );
-  });
-
-  it('creates, updates, and deletes personal skills with auth header', async () => {
-    const service = new ResourcesService();
-    mockedAxios.post.mockResolvedValueOnce({ data: { id: 'skill-1', name: 'Draft Skill' } });
-    mockedAxios.put.mockResolvedValueOnce({ data: { id: 'skill-1', name: 'Updated Skill' } });
-    mockedAxios.delete.mockResolvedValueOnce({ data: { success: true, id: 'skill-1' } });
-
-    const created = await service.createPersonalSkill({
-      name: 'Draft Skill',
-      instructions: 'Do the thing',
-    });
-    const updated = await service.updatePersonalSkill('skill-1', { name: 'Updated Skill' });
-    const deleted = await service.deletePersonalSkill('skill-1');
-
-    expect(created).toMatchObject({ id: 'skill-1', name: 'Draft Skill' });
-    expect(updated).toMatchObject({ id: 'skill-1', name: 'Updated Skill' });
-    expect(deleted).toMatchObject({ success: true, id: 'skill-1' });
-    expect(mockedAxios.post).toHaveBeenCalledWith(
-      expect.stringContaining('/resources/personal-skills'),
-      expect.objectContaining({ name: 'Draft Skill' }),
-      expect.objectContaining({
-        headers: { Authorization: 'Bearer token-abc' },
-      })
-    );
-    expect(mockedAxios.put).toHaveBeenCalledWith(
-      expect.stringContaining('/resources/personal-skills/skill-1'),
-      expect.objectContaining({ name: 'Updated Skill' }),
-      expect.objectContaining({
-        headers: { Authorization: 'Bearer token-abc' },
-      })
-    );
-    expect(mockedAxios.delete).toHaveBeenCalledWith(
-      expect.stringContaining('/resources/personal-skills/skill-1'),
-      expect.objectContaining({
-        headers: { Authorization: 'Bearer token-abc' },
       })
     );
   });

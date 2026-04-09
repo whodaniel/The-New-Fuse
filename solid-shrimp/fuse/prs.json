@@ -1,0 +1,252 @@
+[
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 603,
+    "title": "chore(deps): bump the eslint group across 1 directory with 11 updates"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 602,
+    "title": "chore(deps): bump the react group across 1 directory with 3 updates"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 601,
+    "title": "build(deps): bump golang.org/x/net from 0.24.0 to 0.38.0 in /apps/openclaw/scripts/docs-i18n"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 599,
+    "title": "chore(deps): bump @modelcontextprotocol/sdk from 1.25.3 to 1.26.0"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 598,
+    "title": "build(deps-dev): bump webpack from 5.99.9 to 5.105.0 in /apps/chrome-extension"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 597,
+    "title": "build(deps): bump @modelcontextprotocol/sdk from 1.25.1 to 1.26.0 in /packages/youtube-mcp-server"
+  },
+  {
+    "author": {
+      "id": "MDQ6VXNlcjg3NzcyNzc3",
+      "is_bot": false,
+      "login": "whodaniel",
+      "name": "Daniel Who?"
+    },
+    "number": 593,
+    "title": "Align Drizzle DB repositories and seeders with current schema"
+  },
+  {
+    "author": {
+      "id": "MDQ6VXNlcjg3NzcyNzc3",
+      "is_bot": false,
+      "login": "whodaniel",
+      "name": "Daniel Who?"
+    },
+    "number": 592,
+    "title": "Fix VSCode provider return types"
+  },
+  {
+    "author": {
+      "id": "MDQ6VXNlcjg3NzcyNzc3",
+      "is_bot": false,
+      "login": "whodaniel",
+      "name": "Daniel Who?"
+    },
+    "number": 591,
+    "title": "Fix extension-system test script"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 590,
+    "title": "build(deps): bump @modelcontextprotocol/sdk from 1.25.1 to 1.26.0 in /packages/google-docs-mcp-server"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 589,
+    "title": "chore(deps): bump @apollo/server from 5.2.0 to 5.4.0"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 588,
+    "title": "build(deps-dev): bump @types/node from 18.19.130 to 25.2.0 in /apps/api-gateway"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 587,
+    "title": "build(deps): bump axios from 1.13.2 to 1.13.4 in /apps/api-gateway"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 586,
+    "title": "build(deps-dev): bump @typescript-eslint/parser from 8.53.1 to 8.54.0 in /apps/api-gateway"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 585,
+    "title": "chore(deps-dev): bump rimraf from 5.0.10 to 6.1.2"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 584,
+    "title": "chore(deps): bump bcrypt and @types/bcrypt"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 583,
+    "title": "chore(deps-dev): bump shx from 0.3.4 to 0.4.0"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 582,
+    "title": "chore(deps): bump electron from 40.0.0 to 40.1.0"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 581,
+    "title": "chore(deps): bump @google/generative-ai from 0.21.0 to 0.24.1"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 578,
+    "title": "chore(deps): bump the testing group across 1 directory with 27 updates"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 577,
+    "title": "chore(deps): bump @modelcontextprotocol/sdk from 1.0.1 to 1.25.2 in /packages/google-drive-mcp-server"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 574,
+    "title": "chore(deps): bump hono from 4.11.3 to 4.11.7 in /packages/youtube-mcp-server"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 558,
+    "title": "chore(deps): bump axios from 1.13.2 to 1.13.3 in /apps/api"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 557,
+    "title": "chore(deps): bump @nestjs/core from 10.4.22 to 11.1.12 in /apps/api"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 556,
+    "title": "chore(deps): bump react-router-dom from 7.12.0 to 7.13.0 in /apps/backend"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 555,
+    "title": "chore(deps): bump axios from 1.13.2 to 1.13.3 in /apps/frontend"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 553,
+    "title": "chore(deps-dev): bump vitest from 4.0.17 to 4.0.18 in /apps/frontend"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 552,
+    "title": "chore(deps): bump axios from 1.13.2 to 1.13.3 in /apps/backend"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 551,
+    "title": "chore(deps-dev): bump @types/node from 18.19.130 to 25.0.10 in /apps/api"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 550,
+    "title": "chore(deps): bump redis from 4.7.1 to 5.10.0 in /apps/api-gateway"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 549,
+    "title": "chore(deps-dev): bump vite-tsconfig-paths from 6.0.4 to 6.0.5 in /apps/frontend"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 548,
+    "title": "chore(deps): bump katex from 0.16.27 to 0.16.28 in /apps/frontend"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 547,
+    "title": "chore(deps): bump viem from 2.44.4 to 2.45.0 in /apps/api"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 546,
+    "title": "chore(deps): bump zod from 3.25.76 to 4.3.6 in /apps/backend"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 545,
+    "title": "chore(deps-dev): bump prettier from 3.8.0 to 3.8.1 in /apps/api-gateway"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 544,
+    "title": "chore(deps): bump mongoose from 8.21.0 to 9.1.5 in /apps/api"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 543,
+    "title": "chore(deps): bump cors from 2.8.5 to 2.8.6 in /apps/backend"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 541,
+    "title": "chore(deps): bump react-router-dom from 7.12.0 to 7.13.0 in /apps/frontend"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 540,
+    "title": "chore(deps): bump react-router from 7.12.0 to 7.13.0 in /apps/backend"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 539,
+    "title": "chore(deps): bump @vscode/codicons from 0.0.36 to 0.0.44"
+  },
+  {
+    "author": {
+      "id": "MDQ6VXNlcjg3NzcyNzc3",
+      "is_bot": false,
+      "login": "whodaniel",
+      "name": "Daniel Who?"
+    },
+    "number": 532,
+    "title": "feat(dashboard): implement real-time metrics and analytics"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/dependabot" },
+    "number": 527,
+    "title": "chore(deps): bump minimatch from 3.0.4 to 10.1.1"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/google-labs-jules" },
+    "number": 526,
+    "title": "Fix relay-core build failure by strictly typing master-clock.ts"
+  },
+  {
+    "author": {
+      "id": "MDQ6VXNlcjg3NzcyNzc3",
+      "is_bot": false,
+      "login": "whodaniel",
+      "name": "Daniel Who?"
+    },
+    "number": 502,
+    "title": "Jules resolve security issues 1 18041788359703718932"
+  },
+  {
+    "author": { "is_bot": true, "login": "app/google-labs-jules" },
+    "number": 495,
+    "title": "Fix Frontend TypeScript Errors and Zod v4 Compatibility"
+  }
+]

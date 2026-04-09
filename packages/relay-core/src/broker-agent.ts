@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 import { readFile } from 'node:fs/promises';
 import * as path from 'node:path';
-// @ts-ignore
-import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
-import { Cluster, Redis } from 'ioredis';
+import { createClient, type RedisClientType } from 'redis';
 import { createTNFEnvelope } from './protocol/tnf-envelope';
 
 type QueueTask = {
@@ -476,7 +474,7 @@ class BrokerAgent {
 
     try {
       const raw = await readFile(CONFIG.TWIP_INVENTORY_SNAPSHOT_PATH, 'utf8');
-      const parsed = JSON.parse(raw as string) as TwipInventorySnapshot;
+      const parsed = JSON.parse(raw) as TwipInventorySnapshot;
       const identities = Array.isArray(parsed?.terminals) ? parsed.terminals : [];
       const byTwid = new Map<string, TwipIdentity>();
       for (const identity of identities) {
@@ -1139,76 +1137,39 @@ class BrokerAgent {
     }
 
     try {
-      if (this.upstash) {
-        const pipeline = this.upstash.pipeline();
-        for (const key of keys) {
-          pipeline.hincrby(CONFIG.GATE_METRICS_HASH, key, 1);
-        }
-        await pipeline.exec();
-
-        await this.upstash.publish(
-          CONFIG.DECISION_CHANNEL,
-          JSON.stringify({
-            type: 'federation_gate_telemetry',
-            brokerId: this.brokerId,
-            taskId: task.id,
-            tenantId,
-            stage,
-            mode,
-            outcome,
-            reasons,
-            twipContextSignal: {
-              terminalBound: contextSignal.terminalBound,
-              twid: contextSignal.twid,
-              available: contextSignal.available,
-              stale: contextSignal.stale,
-              ageMs: contextSignal.ageMs,
-              source: contextSignal.source,
-              riskLevel: contextSignal.riskLevel,
-              reasons: contextSignal.reasons,
-              redactionCount: contextSignal.redactionCount,
-              capturedAt: contextSignal.capturedAt,
-              preview: contextSignal.preview,
-            },
-            at: timestamp,
-            metricsHash: CONFIG.GATE_METRICS_HASH,
-          })
-        );
-      } else if (this.redis) {
-        const tx = (this.redis as any).multi();
-        for (const key of keys) {
-          tx.hincrby(CONFIG.GATE_METRICS_HASH, key, 1);
-        }
-        await tx.exec();
-        await this.redis.publish(
-          CONFIG.DECISION_CHANNEL,
-          JSON.stringify({
-            type: 'federation_gate_telemetry',
-            brokerId: this.brokerId,
-            taskId: task.id,
-            tenantId,
-            stage,
-            mode,
-            outcome,
-            reasons,
-            twipContextSignal: {
-              terminalBound: contextSignal.terminalBound,
-              twid: contextSignal.twid,
-              available: contextSignal.available,
-              stale: contextSignal.stale,
-              ageMs: contextSignal.ageMs,
-              source: contextSignal.source,
-              riskLevel: contextSignal.riskLevel,
-              reasons: contextSignal.reasons,
-              redactionCount: contextSignal.redactionCount,
-              capturedAt: contextSignal.capturedAt,
-              preview: contextSignal.preview,
-            },
-            at: timestamp,
-            metricsHash: CONFIG.GATE_METRICS_HASH,
-          })
-        );
+      const tx = this.redis.multi();
+      for (const key of keys) {
+        tx.hIncrBy(CONFIG.GATE_METRICS_HASH, key, 1);
       }
+      await tx.exec();
+      await this.redis.publish(
+        CONFIG.DECISION_CHANNEL,
+        JSON.stringify({
+          type: 'federation_gate_telemetry',
+          brokerId: this.brokerId,
+          taskId: task.id,
+          tenantId,
+          stage,
+          mode,
+          outcome,
+          reasons,
+          twipContextSignal: {
+            terminalBound: contextSignal.terminalBound,
+            twid: contextSignal.twid,
+            available: contextSignal.available,
+            stale: contextSignal.stale,
+            ageMs: contextSignal.ageMs,
+            source: contextSignal.source,
+            riskLevel: contextSignal.riskLevel,
+            reasons: contextSignal.reasons,
+            redactionCount: contextSignal.redactionCount,
+            capturedAt: contextSignal.capturedAt,
+            preview: contextSignal.preview,
+          },
+          at: timestamp,
+          metricsHash: CONFIG.GATE_METRICS_HASH,
+        })
+      );
     } catch (error) {
       console.warn(
         '[Broker] Failed to record federation gate telemetry:',

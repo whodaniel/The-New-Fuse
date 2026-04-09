@@ -1,0 +1,70 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist/services",
+    "rootDir": ".",
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "removeComments": false,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@the-new-fuse/*": ["packages/*/src"],
+      "@types/*": ["packages/types/src/*"],
+      "@core/*": ["packages/core/src/*"],
+      "@database/*": ["packages/database/src/*"],
+      "@utils/*": ["packages/utils/src/*"]
+    },
+    "types": ["node", "jest"],
+    "lib": ["ES2022", "DOM"],
+    "allowJs": false,
+    "checkJs": false,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": false,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "useUnknownInCatchVariables": false
+  },
+  "include": [
+    "**/*.service.ts",
+    "**/*.dto.ts",
+    "**/*.controller.ts",
+    "packages/*/src/**/*.service.ts",
+    "packages/*/src/**/*.dto.ts",
+    "packages/*/src/**/*.controller.ts",
+    "apps/*/src/**/*.service.ts",
+    "apps/*/src/**/*.dto.ts",
+    "apps/*/src/**/*.controller.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.d.ts",
+    "chrome-extension/**/*",
+    "scripts/**/*",
+    "tools/**/*"
+  ],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
+}

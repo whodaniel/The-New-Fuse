@@ -8,7 +8,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/.system/skill-creator",
+      "source": "/path/to/.codex/skills/.system/skill-creator",
       "metadata": {
         "hash": "faf5931f553dc9f19b061f8049dd4d31e00232b14eed2577d95795ac1c5ab8de",
         "id": "skill-creator",
@@ -22,7 +22,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/.system/skill-installer",
+      "source": "/path/to/.codex/skills/.system/skill-installer",
       "metadata": {
         "hash": "09df0ea7921f63d51befae9fc8f71daece5ef49d7b96e35fff8b18d15d6afda7",
         "id": "skill-installer",
@@ -120,7 +120,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/context-frontloader",
+      "source": "/path/to/.codex/skills/context-frontloader",
       "metadata": {
         "hash": "f5d7a5bcea5194c445e667f4d289daa2de08a4432f387d933fdd0bbc318183c5",
         "id": "context-frontloader",
@@ -240,13 +240,27 @@
       }
     },
     {
+      "name": "design-md",
+      "description": "Analyze Stitch projects and synthesize a semantic design system into DESIGN.md files",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["codex", "global", "skill-bank"],
+      "source": "/path/to/.codex/skills/design-md",
+      "metadata": {
+        "hash": "eb15f44646528f3a087ce023329ae699c1b6e803662af68338e1eb1c0406b59b",
+        "id": "design-md",
+        "snapshotPath": ".agent/skill-bank/snapshots/codex/design-md-eb15f446"
+      }
+    },
+    {
       "name": "doc",
       "description": "Use when the task involves reading, creating, or editing `.docx` documents, especially when formatting or layout fidelity matters; prefer `python-docx` plus the bundled `scripts/render_docx.py` for visual checks.",
       "category": "CLAUDE_SKILL",
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/doc",
+      "source": "/path/to/.codex/skills/doc",
       "metadata": {
         "hash": "0a635585817d1ac96e8e512114d08258b70f9e54ce0052078a258291ac13a8ed",
         "id": "doc",
@@ -260,7 +274,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/enhance-prompt",
+      "source": "/path/to/.codex/skills/enhance-prompt",
       "metadata": {
         "hash": "ccb200c798072438b642b1fa6a5c515563159e2fab3d56e813d76d8afa9a7ce6",
         "id": "enhance-prompt",
@@ -274,7 +288,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/framework-consciousness",
+      "source": "/path/to/.codex/skills/framework-consciousness",
       "metadata": {
         "hash": "7531f7783ec8804e01b0f5773d6381d9e232263696dff656033e8673e696f23b",
         "id": "framework-consciousness",
@@ -302,7 +316,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/gh-fix-ci",
+      "source": "/path/to/.codex/skills/gh-fix-ci",
       "metadata": {
         "hash": "7b326b4a2f0f5f85122144628ec02077e48841e0e0e82efce88b3415bcfb7c26",
         "id": "gh-fix-ci",
@@ -1912,7 +1926,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/jules-followup-ops",
+      "source": "/path/to/.codex/skills/jules-followup-ops",
       "metadata": {
         "hash": "e051572821cf1d90a1fce6ec68908fcdccd9cf9cd2c86dc2d6b415cf52125c4a",
         "id": "jules-followup-ops",
@@ -1940,7 +1954,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/library-of-living-knowledge",
+      "source": "/path/to/.codex/skills/library-of-living-knowledge",
       "metadata": {
         "hash": "c80207c6717d4223086698a0aa7a355b8e02c8d55e37b53f226cf75d4adc238c",
         "id": "library-of-living-knowledge",
@@ -2066,7 +2080,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/openai-docs",
+      "source": "/path/to/.codex/skills/openai-docs",
       "metadata": {
         "hash": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7",
         "id": "openai-docs",
@@ -2136,7 +2150,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/pdf",
+      "source": "/path/to/.codex/skills/pdf",
       "metadata": {
         "hash": "d108cf2b36355ab37eb5962933f4d09785ec002f3105c506129320209306b9d2",
         "id": "pdf",
@@ -2150,7 +2164,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/playwright",
+      "source": "/path/to/.codex/skills/playwright",
       "metadata": {
         "hash": "0ffaabcc8e0990627c4725f18bf1c7955534a796c1c199e872909de2013ce6a8",
         "id": "playwright",
@@ -2164,7 +2178,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/react-components",
+      "source": "/path/to/.codex/skills/react-components",
       "metadata": {
         "hash": "f0473659edcdda6edf9aa78fb705c01937196034fac1a76d24b8700b24481c03",
         "id": "react-components",
@@ -2178,7 +2192,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/remotion",
+      "source": "/path/to/.codex/skills/remotion",
       "metadata": {
         "hash": "34fde6f0d4ffe9d1f170f311da2ee91691e1c85018653bddf2eb55d50ccaf27f",
         "id": "remotion",
@@ -2192,7 +2206,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/screenshot",
+      "source": "/path/to/.codex/skills/screenshot",
       "metadata": {
         "hash": "081935a6a163277537d46365f49d6b4a3cb40b4748347e7e88759c5927fa8cf5",
         "id": "screenshot",
@@ -2206,7 +2220,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/security-best-practices",
+      "source": "/path/to/.codex/skills/security-best-practices",
       "metadata": {
         "hash": "7b3dae1ffc5434d890f3c65c8f552af52d0307fab3b35dec13013c9ca3844c4f",
         "id": "security-best-practices",
@@ -2220,7 +2234,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/security-ownership-map",
+      "source": "/path/to/.codex/skills/security-ownership-map",
       "metadata": {
         "hash": "f06c1a59247569326702c945f397af163ea96cf2ecfdf2dde280605bf89a3ec8",
         "id": "security-ownership-map",
@@ -2234,7 +2248,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/security-threat-model",
+      "source": "/path/to/.codex/skills/security-threat-model",
       "metadata": {
         "hash": "1283c0dd62a8104d9edda4583569b5d8510b4ddaa45120687c999250fd96bad2",
         "id": "security-threat-model",
@@ -2248,7 +2262,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/shadcn-ui",
+      "source": "/path/to/.codex/skills/shadcn-ui",
       "metadata": {
         "hash": "2ddfe599ac2ba631ca019f7b6e37ee5df9cd34f83fc016f6ea9d4ba5bbfa0304",
         "id": "shadcn-ui",
@@ -2262,7 +2276,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/skill-builder",
+      "source": "/path/to/.codex/skills/skill-builder",
       "metadata": {
         "hash": "e90619894e39d8ef7600714e02ec954a1a1803b735bcea40aad6f91f75c7c7c2",
         "id": "skill-builder",
@@ -2276,7 +2290,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/stitch-loop",
+      "source": "/path/to/.codex/skills/stitch-loop",
       "metadata": {
         "hash": "22611f4c294fed0f390c1c1e25d5c1056eedfb4a9f707ba6aee797bcdb22e830",
         "id": "stitch-loop",
@@ -2290,7 +2304,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/agent-discovery-protocol",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/agent-discovery-protocol",
       "metadata": {
         "hash": "be0f1fe3a91f3ffb804ed308f380e38c9e77e5802ef32d20a620d778e2392922",
         "id": "agent-discovery-protocol",
@@ -2304,7 +2318,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/algorithmic-art",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/algorithmic-art",
       "metadata": {
         "hash": "fb25accbe1ea82da00b18440f9f8521b3c778575e577ddea2b188a77cc2044eb",
         "id": "algorithmic-art",
@@ -2318,7 +2332,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/brand-guidelines",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/brand-guidelines",
       "metadata": {
         "hash": "6de1cb5aad287fa77a1a017caca66f941ba4c921e67348cab3bcaf5a2d65c4ee",
         "id": "brand-guidelines",
@@ -2332,7 +2346,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/canvas-design",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/canvas-design",
       "metadata": {
         "hash": "0c1281e95357845a79f8bfd799e27079f319bad5ca0c97d0bad961fcf9e1f560",
         "id": "canvas-design",
@@ -2346,7 +2360,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/doc-coauthoring",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/doc-coauthoring",
       "metadata": {
         "hash": "0a1863456c46d5408ca198ec8b2295302259857ce54edfad0f880d2ba77cb304",
         "id": "doc-coauthoring",
@@ -2360,7 +2374,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/docx",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/docx",
       "metadata": {
         "hash": "ab845132b850cc741cd6642bbc5ee7113715d929b58161271e228461b766c763",
         "id": "docx",
@@ -2374,7 +2388,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/frontend-design",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/frontend-design",
       "metadata": {
         "hash": "00f6a198c03c1d1ba649196e31da4f89cb91feaf69afe9b89ea21dff8d2939ad",
         "id": "frontend-design",
@@ -2388,7 +2402,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/internal-comms",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/internal-comms",
       "metadata": {
         "hash": "c00ae6a7015107df76304ad145d869bd7fa268fd36f7c658e176962ac0103b33",
         "id": "internal-comms",
@@ -2402,7 +2416,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/mcp-builder",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/mcp-builder",
       "metadata": {
         "hash": "57b671c19009ab51fba6d557bb10d7609095adb7b0f4d82aa7d5fb5a12df3750",
         "id": "mcp-builder",
@@ -2416,7 +2430,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/pdf",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/pdf",
       "metadata": {
         "hash": "34b41cb865aea9c8cd59e07c855011e4d655742ad95585f7075565f7d95a11c6",
         "id": "pdf",
@@ -2430,7 +2444,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/pptx",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/pptx",
       "metadata": {
         "hash": "093cc68c0715c0672b5249f096658e0c97724a9b2561ace34b090893357173a2",
         "id": "pptx",
@@ -2444,7 +2458,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/skill-creator",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/skill-creator",
       "metadata": {
         "hash": "e8047445aaabb76ba0e71455a708db041d0d20b96a88fc3891c9e0c0b85b4844",
         "id": "skill-creator",
@@ -2458,7 +2472,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/slack-gif-creator",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/slack-gif-creator",
       "metadata": {
         "hash": "502ccf809185d4c91e1269f2f327dde97625c0abed03e910948059e5ee171657",
         "id": "slack-gif-creator",
@@ -2472,7 +2486,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/theme-factory",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/theme-factory",
       "metadata": {
         "hash": "b3bc756fe84af6cdf958d27bf3f94ddb8d83eee96e3b577714e182295aae48ca",
         "id": "theme-factory",
@@ -2486,7 +2500,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/web-artifacts-builder",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/web-artifacts-builder",
       "metadata": {
         "hash": "d39fbe76d3d305b65c8d05dda7d5de15da41a95dc82cb664e690e2dfce838b8f",
         "id": "web-artifacts-builder",
@@ -2500,7 +2514,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/webapp-testing",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/webapp-testing",
       "metadata": {
         "hash": "58d4b02e77ee2f371234302a612793871a57234320b22a45cc1b8a698a05e681",
         "id": "webapp-testing",
@@ -2514,7 +2528,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/xlsx",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/xlsx",
       "metadata": {
         "hash": "6b335e58b4fed670e5d69075ddc2c3ccdc96aec9fc38b375b2a48f492df8b973",
         "id": "xlsx",
@@ -2528,7 +2542,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/3d-web-experience",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/3d-web-experience",
       "metadata": {
         "hash": "1329eaa8a9d12f7a56a275960f95185d5cabc83f3261f1d6cacb87b250f15741",
         "id": "3d-web-experience",
@@ -2542,7 +2556,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/ab-test-setup",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/ab-test-setup",
       "metadata": {
         "hash": "51b1895d080bca288a6f1d8022a6a124e82338a7d88c7dd34f1f01b500286459",
         "id": "ab-test-setup",
@@ -2556,7 +2570,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/active-directory-attacks",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/active-directory-attacks",
       "metadata": {
         "hash": "9ebff10ec04b52f585e339824cdeff845572a219dcf3907d9bd52c53af16b99f",
         "id": "active-directory-attacks",
@@ -2570,7 +2584,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/address-github-comments",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/address-github-comments",
       "metadata": {
         "hash": "075bcc90295ffb889983451a906e0a0e92c052e0a2ea56cc7a37e46ed853f29a",
         "id": "address-github-comments",
@@ -2584,7 +2598,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/agent-evaluation",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/agent-evaluation",
       "metadata": {
         "hash": "ed17c32416886ddd5fcff8ff8117a0c09a36066e4a9b72759a73aec3020d779b",
         "id": "agent-evaluation",
@@ -2598,7 +2612,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/agent-manager-skill",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/agent-manager-skill",
       "metadata": {
         "hash": "87b31c016d990581b043d3d443b99c7bef427aec2112002da1efed730d953bee",
         "id": "agent-manager-skill",
@@ -2612,7 +2626,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/agent-memory-mcp",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/agent-memory-mcp",
       "metadata": {
         "hash": "87f7692450db90f0ca101040873f431862dad1f8a71b41824a810eaa176c0897",
         "id": "agent-memory-mcp",
@@ -2626,7 +2640,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/agent-memory-systems",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/agent-memory-systems",
       "metadata": {
         "hash": "c45f6da6e83d7740b91c32e9ba5a7320bbdc4e5c973416af6371b53e599f1dc6",
         "id": "agent-memory-systems",
@@ -2640,7 +2654,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/agent-tool-builder",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/agent-tool-builder",
       "metadata": {
         "hash": "51b313c6bf7281e03e95aece8cd2298d85fda2957a262bda8935da22255ed91c",
         "id": "agent-tool-builder",
@@ -2654,7 +2668,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/ai-agents-architect",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/ai-agents-architect",
       "metadata": {
         "hash": "b4ec9d32aedf17993fdb63799938addee0765ab1ec65cd1a9fafd48088dbb039",
         "id": "ai-agents-architect",
@@ -2668,7 +2682,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/ai-product",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/ai-product",
       "metadata": {
         "hash": "1f0fbff109d1caaa3148f4fff7a2e65d6fd4ce3b53f756e4dced9bc5f27b80b7",
         "id": "ai-product",
@@ -2682,7 +2696,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/ai-wrapper-product",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/ai-wrapper-product",
       "metadata": {
         "hash": "71254dbd3eb1647d44be4a9b93b991d26eea9e08b09f33b219f99fa0fc708c02",
         "id": "ai-wrapper-product",
@@ -2696,7 +2710,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/algolia-search",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/algolia-search",
       "metadata": {
         "hash": "a8b8ca2c05e5bc6b988f5e447f0e4aa6b65c6bc132369d5e0927a3db63c0d8d0",
         "id": "algolia-search",
@@ -2710,7 +2724,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/algorithmic-art",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/algorithmic-art",
       "metadata": {
         "hash": "3bc4092c09804853186524c826bc0621b940bb6122c05b84496dff95388e6eef",
         "id": "algorithmic-art",
@@ -2724,7 +2738,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/analytics-tracking",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/analytics-tracking",
       "metadata": {
         "hash": "d3619b093a80a814821d87f40e230e165918800820738af9d6087975d765ccff",
         "id": "analytics-tracking",
@@ -2738,7 +2752,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/api-documentation-generator",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/api-documentation-generator",
       "metadata": {
         "hash": "4b4c6a6728108792e224ecc5a36c52c08248cdd10eda7731891aa82ae5d6aebb",
         "id": "api-documentation-generator",
@@ -2752,7 +2766,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/api-fuzzing-bug-bounty",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/api-fuzzing-bug-bounty",
       "metadata": {
         "hash": "6e252cef1aa1d4d125c6f15b81f6edb0728bcb698f6dfc390a9695a37f63e2e3",
         "id": "api-fuzzing-for-bug-bounty",
@@ -2766,7 +2780,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/api-patterns",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/api-patterns",
       "metadata": {
         "hash": "d8c2cbe8a0966e95a52d4c9641368b64c402cef4e9e4924978b7cd633423fcbf",
         "id": "api-patterns",
@@ -2780,7 +2794,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/app-builder",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/app-builder",
       "metadata": {
         "hash": "c0a20d2c554e0917f52e9a17df0d5b7df183778d23915958ceed36761e449277",
         "id": "app-builder",
@@ -2794,7 +2808,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/app-builder/templates",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/app-builder/templates",
       "metadata": {
         "hash": "99f1c0e0d627866f9f2b20ef6bc6b8858d3a65446404e749ad4d088a55647305",
         "id": "templates",
@@ -2808,7 +2822,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/app-store-optimization",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/app-store-optimization",
       "metadata": {
         "hash": "246f6f1624fe8d2def37f29228e0601b9624e94dccde31f6c6def60f8d7486e4",
         "id": "app-store-optimization",
@@ -2822,7 +2836,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/architecture",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/architecture",
       "metadata": {
         "hash": "43c45f6db39195213b5cb938db3aefd447f31374a7d7a42ffc5eaddab7e8452d",
         "id": "architecture",
@@ -2836,7 +2850,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/autonomous-agent-patterns",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/autonomous-agent-patterns",
       "metadata": {
         "hash": "be44f06d05c6fb542699a6f39bf097145df0163d7c93e7524396c61aeb41745e",
         "id": "autonomous-agent-patterns",
@@ -2850,7 +2864,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/autonomous-agents",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/autonomous-agents",
       "metadata": {
         "hash": "f279e8a3ba4b87cff09575c4a44ac3e5616825c7a1eda364ee20a6fe2a2a977c",
         "id": "autonomous-agents",
@@ -2864,7 +2878,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/aws-penetration-testing",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/aws-penetration-testing",
       "metadata": {
         "hash": "45c3f62c29eac3de57a93200ea1955555d427ba09a32e92150796faefe5e7785",
         "id": "aws-penetration-testing",
@@ -2878,7 +2892,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/aws-serverless",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/aws-serverless",
       "metadata": {
         "hash": "3deca503480d1be9e26c7104626d30f0c40deb342ca60d3b189b404b6bfe7235",
         "id": "aws-serverless",
@@ -2892,7 +2906,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/azure-functions",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/azure-functions",
       "metadata": {
         "hash": "b88320d8dda0f108d7a96c754d9f5be899483fc01e92546e330130365653d0a6",
         "id": "azure-functions",
@@ -2906,7 +2920,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/backend-dev-guidelines",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/backend-dev-guidelines",
       "metadata": {
         "hash": "d2656ea66fbb3965496b44deefe3ae347a3c11ac4518571d8d39574a0a4288fb",
         "id": "backend-dev-guidelines",
@@ -2920,7 +2934,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/bash-linux",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/bash-linux",
       "metadata": {
         "hash": "17c0a0d75bf28f0f639c983299a5e3c0f7fa829d50d6e147f553b3d26ffcb13c",
         "id": "bash-linux",
@@ -2934,7 +2948,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/behavioral-modes",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/behavioral-modes",
       "metadata": {
         "hash": "1bfdf106d23c51a425b687677638d88472ea5bcdd3bcd76ca13783df77f6eb13",
         "id": "behavioral-modes",
@@ -2948,7 +2962,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/blockrun",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/blockrun",
       "metadata": {
         "hash": "f1658d2cde534f4b2ecf07c5f7509f55209781c071e2d3c02c6e0ce338711594",
         "id": "blockrun",
@@ -2962,7 +2976,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/brainstorming",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/brainstorming",
       "metadata": {
         "hash": "206c63e80d38c57e6afc657296332b1d0ff75572435d75c079e7407b26762ecd",
         "id": "brainstorming",
@@ -2976,7 +2990,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/brand-guidelines-anthropic",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/brand-guidelines-anthropic",
       "metadata": {
         "hash": "1120b3769e2985cefb3d25be981b1f914abeba57ae079b83c20c666c164fa9fe",
         "id": "brand-guidelines",
@@ -2990,7 +3004,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/brand-guidelines-community",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/brand-guidelines-community",
       "metadata": {
         "hash": "1120b3769e2985cefb3d25be981b1f914abeba57ae079b83c20c666c164fa9fe",
         "id": "brand-guidelines",
@@ -3004,7 +3018,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/broken-authentication",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/broken-authentication",
       "metadata": {
         "hash": "70ff7a295178998f4bee5cff539b0094886b07d9ae3e12bdbdd505392215f793",
         "id": "broken-authentication-testing",
@@ -3018,7 +3032,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/browser-automation",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/browser-automation",
       "metadata": {
         "hash": "86847cc7d882e48bba81ab55e8deab53c483feb135724b3ca15be8d36a28a9b9",
         "id": "browser-automation",
@@ -3032,7 +3046,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/browser-extension-builder",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/browser-extension-builder",
       "metadata": {
         "hash": "7bc401a7f30741844b7c08b60b5f37aabb8b9e881880c254de951ca85ed7b733",
         "id": "browser-extension-builder",
@@ -3046,7 +3060,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/bullmq-specialist",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/bullmq-specialist",
       "metadata": {
         "hash": "7b50885d38d6a46965c9397f22cb5b09c1f5cfe47d92671603bd08288db01a02",
         "id": "bullmq-specialist",
@@ -3060,7 +3074,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/bun-development",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/bun-development",
       "metadata": {
         "hash": "f5ecf8a22f01be88194e0158003ee91ce8d7639f4db3b34497d5e6a8c103f107",
         "id": "bun-development",
@@ -3074,7 +3088,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/burp-suite-testing",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/burp-suite-testing",
       "metadata": {
         "hash": "8b0f7b7dc83a26af06cd0d22f25e01711f00c2244ffed0d31c8031570fbf7ef0",
         "id": "burp-suite-web-application-testing",
@@ -3088,7 +3102,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/canvas-design",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/canvas-design",
       "metadata": {
         "hash": "a1f288079624402f30682753c1d43920b6664785698d21d3e7aa197450a6448b",
         "id": "canvas-design",
@@ -3102,7 +3116,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-backend-patterns",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-backend-patterns",
       "metadata": {
         "hash": "23b9ef6b7cfc98d96c449ad9ade23b2e6939a3938c557c0f3daff1723d2a0770",
         "id": "backend-patterns",
@@ -3116,7 +3130,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-clickhouse-io",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-clickhouse-io",
       "metadata": {
         "hash": "069d0887e4636adddd5f6c8ceff438da70aef469b07e577fea07562b20da617a",
         "id": "clickhouse-io",
@@ -3130,7 +3144,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-coding-standards",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-coding-standards",
       "metadata": {
         "hash": "4034db738c85d87eb3f94a12a5a662ac9b20005be028b0a9c69b914300508a31",
         "id": "coding-standards",
@@ -3144,7 +3158,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-continuous-learning",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-continuous-learning",
       "metadata": {
         "hash": "a01df48bcdd437afd697d2785d961776edee234a69a39ee0e377e57c9f9946da",
         "id": "cc-skill-continuous-learning",
@@ -3158,7 +3172,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-frontend-patterns",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-frontend-patterns",
       "metadata": {
         "hash": "5f6512d2c3303c12512ef07b1b97cf7bed1d6bf84072d461a42493c340238288",
         "id": "frontend-patterns",
@@ -3172,7 +3186,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-project-guidelines-example",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-project-guidelines-example",
       "metadata": {
         "hash": "677b5ea6d81592a52fd3c59664ee3ff141112baa6e16de37534868b13d09632f",
         "id": "cc-skill-project-guidelines-example",
@@ -3186,7 +3200,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-security-review",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-security-review",
       "metadata": {
         "hash": "ebfd124f250ae9d31a6eedd2f4141725eae2db0bbed2de8e1e7ef796c226bbda",
         "id": "security-review",
@@ -3200,7 +3214,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-strategic-compact",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cc-skill-strategic-compact",
       "metadata": {
         "hash": "ecd448d26e830161800d4e6dbae284130353344c2fc9cc12ed61f567386fd487",
         "id": "cc-skill-strategic-compact",
@@ -3214,7 +3228,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/claude-code-guide",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/claude-code-guide",
       "metadata": {
         "hash": "94144e941761fa3fc7c849185d22ea472bd57b35dc94a97ad0aebbdbf8af5eed",
         "id": "claude-code-guide",
@@ -3228,7 +3242,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/claude-d3js-skill",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/claude-d3js-skill",
       "metadata": {
         "hash": "4b1f820cd87c55dc6b7c714a76c1320903187967cd43f3b4db9d6eacbcc085b3",
         "id": "d3-viz",
@@ -3242,7 +3256,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/clean-code",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/clean-code",
       "metadata": {
         "hash": "1b212a0a59f8162587a681b16e20af5bd793e4f6c7fb7c7af2d32a7deef553fb",
         "id": "clean-code",
@@ -3256,7 +3270,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/clerk-auth",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/clerk-auth",
       "metadata": {
         "hash": "1c0faf47537759cd08a4de9ee93a6321f0cd626859dd60b073d410cfd3e7c758",
         "id": "clerk-auth",
@@ -3270,7 +3284,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cloud-penetration-testing",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/cloud-penetration-testing",
       "metadata": {
         "hash": "b3f59b99b683815a461aeeef51b012346ff755a00ab62a4434d3943c396f0847",
         "id": "cloud-penetration-testing",
@@ -3284,7 +3298,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/code-review-checklist",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/code-review-checklist",
       "metadata": {
         "hash": "905ec9820ad5ac6f04de94a26921c1c7e363b3d5449853c1ffa2150f0c9e8caf",
         "id": "code-review-checklist",
@@ -3298,7 +3312,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/competitor-alternatives",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/competitor-alternatives",
       "metadata": {
         "hash": "50d9b99ac71d7b4bbdf168d5c28abef566a97da6f1decb2951e3d4d2574c41f4",
         "id": "competitor-alternatives",
@@ -3312,7 +3326,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/computer-use-agents",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/computer-use-agents",
       "metadata": {
         "hash": "d565aa781527b3571a5f555fda950d279a6fea781f74bdabc4d4575c78fdca47",
         "id": "computer-use-agents",
@@ -3326,7 +3340,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/concise-planning",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/concise-planning",
       "metadata": {
         "hash": "ecd35e54ee110a81623893617567aca442bbe6b13699bd4c65bb8bfec9ac920c",
         "id": "concise-planning",
@@ -3340,7 +3354,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/content-creator",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/content-creator",
       "metadata": {
         "hash": "f7446716a74d72f9765c5236c8123837ac86fb1e0cb0fad707ce20b790f6c634",
         "id": "content-creator",
@@ -3354,7 +3368,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/context-window-management",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/context-window-management",
       "metadata": {
         "hash": "85ba962196db25cf213e7bb04ea99bf648979eb9d7f1499d3bccda95c5ee14bf",
         "id": "context-window-management",
@@ -3368,7 +3382,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/conversation-memory",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/conversation-memory",
       "metadata": {
         "hash": "48de65ebd93c4867681c8ad9891106914eb4bd0601fc2a17db54b230b55cb03b",
         "id": "conversation-memory",
@@ -3382,7 +3396,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/copy-editing",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/copy-editing",
       "metadata": {
         "hash": "f0bf068d14ed3d5fcf13961e7e0de78374663e38255253cad13113e5e66c8bd2",
         "id": "copy-editing",
@@ -3396,7 +3410,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/copywriting",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/copywriting",
       "metadata": {
         "hash": "5b3ea76961e8de82f00083569f4ef275058afb70bb301a9153dd80f73837b18e",
         "id": "copywriting",
@@ -3410,7 +3424,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/core-components",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/core-components",
       "metadata": {
         "hash": "9b4325340921e7b1793bebe320a298675a38120d2202a0310831d4643e90d0f2",
         "id": "core-components",
@@ -3424,7 +3438,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/crewai",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/crewai",
       "metadata": {
         "hash": "8e3a079c85ef8ca8579e134ef8fbf79c5116caba27ff6ad03f363a452a99439e",
         "id": "crewai",
@@ -3438,7 +3452,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/database-design",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/database-design",
       "metadata": {
         "hash": "eb704c410ed159496d222dea3341b7d2453ea9a052923b0260bc1516af0991c1",
         "id": "database-design",
@@ -3452,7 +3466,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/deployment-procedures",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/deployment-procedures",
       "metadata": {
         "hash": "61e5f86dfbacfcc76604917d49cc5c9e80d53a0fddf48933ede81005549abb17",
         "id": "deployment-procedures",
@@ -3466,7 +3480,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/discord-bot-architect",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/discord-bot-architect",
       "metadata": {
         "hash": "989a07c9fce84bca2a183388d55f1fef30f9ebda9000172807fda0cfed873b76",
         "id": "discord-bot-architect",
@@ -3480,7 +3494,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/dispatching-parallel-agents",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/dispatching-parallel-agents",
       "metadata": {
         "hash": "c628917689ccc12ce9991615db6824d44c4fe71f8427cd959560aebe6a1a6476",
         "id": "dispatching-parallel-agents",
@@ -3494,7 +3508,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/doc-coauthoring",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/doc-coauthoring",
       "metadata": {
         "hash": "2e47d78846faeea4a56e9809c52700087a15a2155a3f293a3efbaded81398ef4",
         "id": "doc-coauthoring",
@@ -3508,7 +3522,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/docker-expert",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/docker-expert",
       "metadata": {
         "hash": "e33b08feeaa8e110c08dddd030970547356514d42aa484e52f51e2fd2d4f451b",
         "id": "docker-expert",
@@ -3522,7 +3536,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/documentation-templates",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/documentation-templates",
       "metadata": {
         "hash": "463a55ff6ded0e84d0f0eb1454c9635b7b8695ea5ee4a308f0cd810f27060dba",
         "id": "documentation-templates",
@@ -3536,7 +3550,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/docx-official",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/docx-official",
       "metadata": {
         "hash": "0bd90681fcab2e282025ee14acf508b60bbd6c41ac6c3bf83c0dc14d52c37933",
         "id": "docx",
@@ -3550,7 +3564,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/email-sequence",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/email-sequence",
       "metadata": {
         "hash": "3db17b4bfcb1bbcf1487891b95391561db7f5a2ca6c397392d64c0aea7abd00e",
         "id": "email-sequence",
@@ -3564,7 +3578,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/email-systems",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/email-systems",
       "metadata": {
         "hash": "e112c9d65e6816a05598df03de3bd077687ae50775026bbbb5157b44795f6f40",
         "id": "email-systems",
@@ -3578,7 +3592,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/ethical-hacking-methodology",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/ethical-hacking-methodology",
       "metadata": {
         "hash": "5983de61a40f364f68de685646aceafcced7f4036185d6a628c1265961fa787e",
         "id": "ethical-hacking-methodology",
@@ -3592,7 +3606,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/executing-plans",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/executing-plans",
       "metadata": {
         "hash": "582937183ad9bec6fac0ce8c6ad85d2e6404e1e274a4564594577f1965d4d8ae",
         "id": "executing-plans",
@@ -3606,7 +3620,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/file-organizer",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/file-organizer",
       "metadata": {
         "hash": "3fecd9fb97cbb01d57465fe634c22b564d1c32d214493c2acec60bc0f6ad6185",
         "id": "file-organizer",
@@ -3620,7 +3634,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/file-path-traversal",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/file-path-traversal",
       "metadata": {
         "hash": "3677f26cdb9b3a1d142dae83d63ebc9e2a41195659caccbc44f7734812f2d0d0",
         "id": "file-path-traversal-testing",
@@ -3634,7 +3648,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/file-uploads",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/file-uploads",
       "metadata": {
         "hash": "758ab4f35467b011a8e8472245098b46ce3b5929cfaccab3ad8aac660a53af80",
         "id": "file-uploads",
@@ -3648,7 +3662,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/finishing-a-development-branch",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/finishing-a-development-branch",
       "metadata": {
         "hash": "dd2f82c6dc8582b621f9eb57fcb65f557f88eadf872727ac81d0840ae12c504e",
         "id": "finishing-a-development-branch",
@@ -3662,7 +3676,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/firebase",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/firebase",
       "metadata": {
         "hash": "c48918ca4c3e639260a5e64d2da2c121393973257f324c6343996dbcdadd4d35",
         "id": "firebase",
@@ -3676,7 +3690,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/form-cro",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/form-cro",
       "metadata": {
         "hash": "0d41e83de9863a51e7fa420766798387556b427656a1c18bbb3505ff52b8e7bf",
         "id": "form-cro",
@@ -3690,7 +3704,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/free-tool-strategy",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/free-tool-strategy",
       "metadata": {
         "hash": "afd05058a2b0a4df3f32db31f01230e97008d0838d20efb7764effa8677db541",
         "id": "free-tool-strategy",
@@ -3704,7 +3718,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/frontend-design",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/frontend-design",
       "metadata": {
         "hash": "b81e2ff87ed8fa4d6c377ccb127a7254c9e6a77e3ae94f21e6b514f7bb2945a0",
         "id": "frontend-design",
@@ -3718,7 +3732,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/frontend-dev-guidelines",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/frontend-dev-guidelines",
       "metadata": {
         "hash": "646f2fb6e25cef87f39de43363f0962d92b3c39f53ffd881fb7959e1338a4ae0",
         "id": "frontend-dev-guidelines",
@@ -3732,7 +3746,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/2d-games",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/2d-games",
       "metadata": {
         "hash": "f31d95e041d06f018620fc697f25a32ea115b4ec577d9f448f714eeeb606363d",
         "id": "2d-games",
@@ -3746,7 +3760,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/3d-games",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/3d-games",
       "metadata": {
         "hash": "141bf1ca6af96066cffa91b2b37417b9d1cffec4fcc2a6ef1333ee976121f7dd",
         "id": "3d-games",
@@ -3760,7 +3774,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development",
       "metadata": {
         "hash": "994e2de3a8fd7dcd5caa8f08ddcb663d0d27cf161ddd5f74f88a441c0905189d",
         "id": "game-development",
@@ -3774,7 +3788,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/game-art",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/game-art",
       "metadata": {
         "hash": "ab7029cb91c498c6469137f7b8b1575fdc7a97db3cc338c5cd2f0edc2ac2888a",
         "id": "game-art",
@@ -3788,7 +3802,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/game-audio",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/game-audio",
       "metadata": {
         "hash": "5cfa7e0a750c202ce81dde7aef8ebbd6e9954ece42ce47ed1619163d217a48c3",
         "id": "game-audio",
@@ -3802,7 +3816,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/game-design",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/game-design",
       "metadata": {
         "hash": "93c4179046820a685506d81b066cbceeaa91b197cdb89ab7da1e04cac9062657",
         "id": "game-design",
@@ -3816,7 +3830,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/mobile-games",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/mobile-games",
       "metadata": {
         "hash": "43db8fb50830a99fb14ace08cb29cc60cd7f51a240c5ae73dbe5b31da704f24f",
         "id": "mobile-games",
@@ -3830,7 +3844,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/multiplayer",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/multiplayer",
       "metadata": {
         "hash": "79ee8d6f2e04a993b6cdf5eb251590051427cc4e09aa3a7f67f1ab8e61e205f5",
         "id": "multiplayer",
@@ -3844,7 +3858,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/pc-games",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/pc-games",
       "metadata": {
         "hash": "739b244b02659ec53ca719bbdf8ac2684dbeeafc5d5ddac124ffa6407f10f5df",
         "id": "pc-games",
@@ -3858,7 +3872,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/vr-ar",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/vr-ar",
       "metadata": {
         "hash": "59ddbdecc4fa17e74c4747f5f02bd69edb8bffcd1cdc2866dd6a053e19bc139e",
         "id": "vr-ar",
@@ -3872,7 +3886,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/web-games",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/game-development/web-games",
       "metadata": {
         "hash": "1213dbf108ac6a56c7c2cb67e81705b10cf0b9d136fa775ad161273bfe452a90",
         "id": "web-games",
@@ -3886,7 +3900,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/gcp-cloud-run",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/gcp-cloud-run",
       "metadata": {
         "hash": "587cebee6bac6e310a89dcfab5f2f405f35745925a07ccf559093bedd058e642",
         "id": "gcp-cloud-run",
@@ -3900,7 +3914,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/geo-fundamentals",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/geo-fundamentals",
       "metadata": {
         "hash": "2ee830fe680802316c549dbeb31cc0c4e49569c25ab338e7812500d097a5924b",
         "id": "geo-fundamentals",
@@ -3914,7 +3928,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/git-pushing",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/git-pushing",
       "metadata": {
         "hash": "58ba22907d621bca88f93c44fb278cee88ef365f3c186189dc1d308d2d6fcfdd",
         "id": "git-pushing",
@@ -3928,7 +3942,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/github-workflow-automation",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/github-workflow-automation",
       "metadata": {
         "hash": "aaa0f9c34e193ea2d830dba25702b24164149d10ad7035d6a9cb9c291fd554b2",
         "id": "github-workflow-automation",
@@ -3942,7 +3956,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/graphql",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/graphql",
       "metadata": {
         "hash": "900fce3a40964535fb64a85fba12a98b2b57a5d8630ace4f753409875be3c338",
         "id": "graphql",
@@ -3956,7 +3970,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/html-injection-testing",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/html-injection-testing",
       "metadata": {
         "hash": "779795725d9738bda7a8b409f081131b0a0518f9e869f647217c9c0f1d143e3f",
         "id": "html-injection-testing",
@@ -3970,7 +3984,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/hubspot-integration",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/hubspot-integration",
       "metadata": {
         "hash": "94df063ff00538d27edae780215258b207275c0d73942707e2d162ea121a9f06",
         "id": "hubspot-integration",
@@ -3984,7 +3998,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/i18n-localization",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/i18n-localization",
       "metadata": {
         "hash": "1509cf8dc323307ffec7288f185414226862a400c3ef2617c62fdd77ee4cb8f9",
         "id": "i18n-localization",
@@ -3998,7 +4012,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/idor-testing",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/idor-testing",
       "metadata": {
         "hash": "b97f241442802396f5dd5b1a0990611ac1327759fd2e48b45463e162f9da4248",
         "id": "idor-vulnerability-testing",
@@ -4012,7 +4026,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/inngest",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/inngest",
       "metadata": {
         "hash": "1676c94122b69c2ff5363c071de5675b96e3baa643c2daca8ab0bee326e80d4b",
         "id": "inngest",
@@ -4026,7 +4040,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/interactive-portfolio",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/interactive-portfolio",
       "metadata": {
         "hash": "67fec9ca048af1c0780d7c816449b241faa4da68472f25837eb8c4eff51606f7",
         "id": "interactive-portfolio",
@@ -4040,7 +4054,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/internal-comms-anthropic",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/internal-comms-anthropic",
       "metadata": {
         "hash": "067b7587a344a928fc6534ef66b1bcd591fc7c26d207ea7ca3334aeb678d6475",
         "id": "internal-comms",
@@ -4054,7 +4068,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/internal-comms-community",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/internal-comms-community",
       "metadata": {
         "hash": "067b7587a344a928fc6534ef66b1bcd591fc7c26d207ea7ca3334aeb678d6475",
         "id": "internal-comms",
@@ -4068,7 +4082,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/javascript-mastery",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/javascript-mastery",
       "metadata": {
         "hash": "b47245a09c6a7274b56a338bcbdc906230f8d9d3404ef64dfd10b636710c6f49",
         "id": "javascript-mastery",
@@ -4082,7 +4096,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/kaizen",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/kaizen",
       "metadata": {
         "hash": "27535c5b9235cce48b2fb56d7422539dca55c9949d9c26a0d83adeb6ef4d737c",
         "id": "kaizen",
@@ -4096,7 +4110,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/langfuse",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/langfuse",
       "metadata": {
         "hash": "cd7c9c648933581f340123865135e908e3eb7ad895793520b4532b1064d552e5",
         "id": "langfuse",
@@ -4110,7 +4124,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/langgraph",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/langgraph",
       "metadata": {
         "hash": "d193219abd353676507dc3c7030530b8e7715fc16132921c1ea01fc4d6303723",
         "id": "langgraph",
@@ -4124,7 +4138,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/launch-strategy",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/launch-strategy",
       "metadata": {
         "hash": "f4bb88f62b9217214a9362f7ab2787cf1f3c47065623c9ae43aab0f932c5e84d",
         "id": "launch-strategy",
@@ -4138,7 +4152,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/lint-and-validate",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/lint-and-validate",
       "metadata": {
         "hash": "00497ead822be9f5dc871ab48dfba38a19f1a04cc77e5fdee77898a2a7e2e88f",
         "id": "lint-and-validate",
@@ -4152,7 +4166,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/linux-privilege-escalation",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/linux-privilege-escalation",
       "metadata": {
         "hash": "a683a60d807435f23477c35075e60b45ee70637a1b847be89e0191c0ef37e24d",
         "id": "linux-privilege-escalation",
@@ -4166,7 +4180,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/linux-shell-scripting",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/linux-shell-scripting",
       "metadata": {
         "hash": "c52e2c534cf0ceb268bc9aa0ef1b8d557a744ed1cbab3c2ed070519e60918b15",
         "id": "linux-production-shell-scripts",
@@ -4180,7 +4194,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/llm-app-patterns",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/llm-app-patterns",
       "metadata": {
         "hash": "6ba59c0506634fecd25eee0324a66518e355df30c477247e9180e5b6a893322b",
         "id": "llm-app-patterns",
@@ -4194,7 +4208,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/loki-mode",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/loki-mode",
       "metadata": {
         "hash": "d8a3e2e639a8e5bfc8970b593990b70c3a71f508650b8d7e61b74d27066a498f",
         "id": "loki-mode",
@@ -4208,7 +4222,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/marketing-ideas",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/marketing-ideas",
       "metadata": {
         "hash": "27528960d32a0dd30d556f360d47357abf6051ac4a563af1506af92aff231983",
         "id": "marketing-ideas",
@@ -4222,7 +4236,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/marketing-psychology",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/marketing-psychology",
       "metadata": {
         "hash": "793332c9374bc4c28f23590e01bff5e5730ff5900ef2c8ffbc9ba4337a1a9f5d",
         "id": "marketing-psychology",
@@ -4236,7 +4250,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/mcp-builder",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/mcp-builder",
       "metadata": {
         "hash": "0f4592dcb53cf2b5d6b7febee6b4152018b565551a1c29e3c612f57b218ab295",
         "id": "mcp-builder",
@@ -4250,7 +4264,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/metasploit-framework",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/metasploit-framework",
       "metadata": {
         "hash": "260c73085a019689baed1ce1ee19450827b3ef41e66615cebd82cd64347a162d",
         "id": "metasploit-framework",
@@ -4264,7 +4278,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/micro-saas-launcher",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/micro-saas-launcher",
       "metadata": {
         "hash": "b941be706fcb678788b78b0155428e4e1861e512a26ea0765ee8ba6deb0ff427",
         "id": "micro-saas-launcher",
@@ -4278,7 +4292,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/mobile-design",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/mobile-design",
       "metadata": {
         "hash": "ec74cda5e1954572e4282c3aaa9c1c32ec743cef83c53f8aef622c00dc8f0682",
         "id": "mobile-design",
@@ -4292,7 +4306,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/moodle-external-api-development",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/moodle-external-api-development",
       "metadata": {
         "hash": "5eb420939322c014823912322c8f32c50150d691bab83ff5cd39de353d140f56",
         "id": "moodle-external-api-development",
@@ -4306,7 +4320,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/neon-postgres",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/neon-postgres",
       "metadata": {
         "hash": "d2ea61c111a3905a7e468a467da6184d9ba83c8f3b78a530c40b43dddeeecc89",
         "id": "neon-postgres",
@@ -4320,7 +4334,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/nestjs-expert",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/nestjs-expert",
       "metadata": {
         "hash": "3ec4c6d9f890097de8f6bdc8f112dc18b4d6c89c9c908f6a6e7b78f1d3042ca9",
         "id": "nestjs-expert",
@@ -4334,7 +4348,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/network-101",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/network-101",
       "metadata": {
         "hash": "2ba73385c3ced4fcecd5c3ae917ae72c2f989c3b8a02d481e7fb6745da40c1fd",
         "id": "network-101",
@@ -4348,7 +4362,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/nextjs-best-practices",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/nextjs-best-practices",
       "metadata": {
         "hash": "50bf04377ef5686f02884153c4115168ef2ec21b481bdac732c27389e4f3d3ef",
         "id": "nextjs-best-practices",
@@ -4362,7 +4376,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/nextjs-supabase-auth",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/nextjs-supabase-auth",
       "metadata": {
         "hash": "654f352ad3e7e147452a7486ede76bde65dbc01b7e03a1f9cdc2b27939bbad12",
         "id": "nextjs-supabase-auth",
@@ -4376,7 +4390,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/nodejs-best-practices",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/nodejs-best-practices",
       "metadata": {
         "hash": "e6d0dea6b638c8674370bba370377b2812dfc84268700e55e08f7babb685c17d",
         "id": "nodejs-best-practices",
@@ -4390,7 +4404,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/notebooklm",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/notebooklm",
       "metadata": {
         "hash": "8fcfe1aa04523483c1d1a5aa10835bc796228d2de9a66460a767bf2d6ed7432e",
         "id": "notebooklm",
@@ -4404,7 +4418,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/notion-template-business",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/notion-template-business",
       "metadata": {
         "hash": "1e8fb0c71822f4f80df9739ebaf791ea8a980c52aed58eaba5222cb920f3b85f",
         "id": "notion-template-business",
@@ -4418,7 +4432,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/onboarding-cro",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/onboarding-cro",
       "metadata": {
         "hash": "c973ee1520d800fb68c39965d6c99526489c834440d7b2c254ab059cb54dab8d",
         "id": "onboarding-cro",
@@ -4432,7 +4446,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/page-cro",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/page-cro",
       "metadata": {
         "hash": "ea4ac2ac8400f1853ae386785f63a0a9c445e1c08c981a9f6b734bc7c810cfc9",
         "id": "page-cro",
@@ -4446,7 +4460,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/paid-ads",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/paid-ads",
       "metadata": {
         "hash": "0d00d270771f28b74f6243389f73f413fa539612215595757680fa5c95f25b53",
         "id": "paid-ads",
@@ -4460,7 +4474,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/parallel-agents",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/parallel-agents",
       "metadata": {
         "hash": "f422b1d355d985880d6a0e9de0fdf2cb6fd67f76b24c584cc9f09d879621fccc",
         "id": "parallel-agents",
@@ -4474,7 +4488,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/paywall-upgrade-cro",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/paywall-upgrade-cro",
       "metadata": {
         "hash": "8104b18390db197707ad9b44ec4e68ee8f79326cc9ebb3a143e4c57b30857ef1",
         "id": "paywall-upgrade-cro",
@@ -4488,7 +4502,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/pdf-official",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/pdf-official",
       "metadata": {
         "hash": "38d8559d4899602f82f3560052132aa0c40cfca80203037729756bdb4fb8e0cb",
         "id": "pdf",
@@ -4502,7 +4516,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/pentest-checklist",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/pentest-checklist",
       "metadata": {
         "hash": "b559440c2e36e6a2f8980663dc31457ea23afcc467c08c6a427878e1afca92a6",
         "id": "pentest-checklist",
@@ -4516,7 +4530,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/pentest-commands",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/pentest-commands",
       "metadata": {
         "hash": "7080b1f51c0f0a6c0c04293c6f5bf76d7da7206237ac4bb2689efb7132f9b104",
         "id": "pentest-commands",
@@ -4530,7 +4544,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/performance-profiling",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/performance-profiling",
       "metadata": {
         "hash": "5e58efdd8fd951cf89910c65317b7b7bcc5bf8fde9317e32f4a751fa208d8ff2",
         "id": "performance-profiling",
@@ -4544,7 +4558,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/personal-tool-builder",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/personal-tool-builder",
       "metadata": {
         "hash": "006a858dac390b9e2e1feb1713dc27d727fd7a8436349f6900e86020d8ca1376",
         "id": "personal-tool-builder",
@@ -4558,7 +4572,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/plaid-fintech",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/plaid-fintech",
       "metadata": {
         "hash": "8204d36c3939ad69a6aa1d0616f143494a886f38b02efe9f8cecf62a47a50092",
         "id": "plaid-fintech",
@@ -4572,7 +4586,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/plan-writing",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/plan-writing",
       "metadata": {
         "hash": "93cd02ab3c431913845d0dd2bed7649cb4636785314cec4cfdb3f4a403f97f68",
         "id": "plan-writing",
@@ -4586,7 +4600,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/planning-with-files",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/planning-with-files",
       "metadata": {
         "hash": "33533aac264cf31d22ac7a1a50b85cb9760a821a49401ad1bac8cbae9b1d369f",
         "id": "planning-with-files",
@@ -4600,7 +4614,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/playwright-skill",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/playwright-skill",
       "metadata": {
         "hash": "f38b55f1a3f132b9e89cd736d8085373f340c4f225193b943deedf3afd06740e",
         "id": "playwright-skill",
@@ -4614,7 +4628,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/popup-cro",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/popup-cro",
       "metadata": {
         "hash": "7284678a518ff9dedb125ce39d04732fb532e32adea6fe0913e64928ab7e8282",
         "id": "popup-cro",
@@ -4628,7 +4642,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/powershell-windows",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/powershell-windows",
       "metadata": {
         "hash": "e902ee8d16b3fe50d8c53d7612fbfce4c97526ec4d069e7738e14bc9ae3acacb",
         "id": "powershell-windows",
@@ -4642,7 +4656,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/pptx-official",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/pptx-official",
       "metadata": {
         "hash": "b6f25545bfb358739f1532f793458b5dbc87ee009933cb7c306b2d951ab6617f",
         "id": "pptx",
@@ -4656,7 +4670,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/pricing-strategy",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/pricing-strategy",
       "metadata": {
         "hash": "44cd0b6d3dfc1921d1a3eefdcbc43ef2fbb909bb913af44db1923c5f68e1ebb1",
         "id": "pricing-strategy",
@@ -4670,7 +4684,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/privilege-escalation-methods",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/privilege-escalation-methods",
       "metadata": {
         "hash": "230ebe3a0dd2d9a40216bb993cc7d41525f1a4e8b31185097d51a6a83f5dc7db",
         "id": "privilege-escalation-methods",
@@ -4684,7 +4698,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/product-manager-toolkit",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/product-manager-toolkit",
       "metadata": {
         "hash": "51cae5e4162bdeae1c66b9b7e55f6e4a04334d7001fc706c86d88d92ddad7705",
         "id": "product-manager-toolkit",
@@ -4698,7 +4712,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/programmatic-seo",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/programmatic-seo",
       "metadata": {
         "hash": "f54fd1731b67cf7d3b0e2f418790c589a56c7076913df13c63c7bdd3a6bd72df",
         "id": "programmatic-seo",
@@ -4712,7 +4726,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/prompt-caching",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/prompt-caching",
       "metadata": {
         "hash": "807b70b2ddd707ecfea10e83f4ccc18558659b31eadf53dff8a35cd0a5c5b38d",
         "id": "prompt-caching",
@@ -4726,7 +4740,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/prompt-engineer",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/prompt-engineer",
       "metadata": {
         "hash": "ea243270b70eb986dedd3c974f7ea6de5d91d6348c7827b005d3e7cde9f1681d",
         "id": "prompt-engineer",
@@ -4740,7 +4754,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/prompt-engineering",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/prompt-engineering",
       "metadata": {
         "hash": "668d59f0e8d4e3d2d32634eacb99531157daa8640ec9ebe8b066ed8a458aeffe",
         "id": "prompt-engineering",
@@ -4754,7 +4768,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/prompt-library",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/prompt-library",
       "metadata": {
         "hash": "4213f5a4aaf95534256cd1fdbbaf28f0432e3d437426923573b777c37dd27643",
         "id": "prompt-library",
@@ -4768,7 +4782,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/python-patterns",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/python-patterns",
       "metadata": {
         "hash": "b295d6221117d189efe741abf680924aedb836c80bc6990f85137f6975fd734e",
         "id": "python-patterns",
@@ -4782,7 +4796,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/rag-engineer",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/rag-engineer",
       "metadata": {
         "hash": "a6d17aaee87829bac0abe05680c9e28bcb385ac753a9df571212a0e0a372c112",
         "id": "rag-engineer",
@@ -4796,7 +4810,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/rag-implementation",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/rag-implementation",
       "metadata": {
         "hash": "ef888c8b742d79458a0f90814fa6392df3f6cbafbe103b1262503d1b0c568efe",
         "id": "rag-implementation",
@@ -4810,7 +4824,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/react-best-practices",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/react-best-practices",
       "metadata": {
         "hash": "6378620591a6c9e3008653f1e5ccdbf1fdbddedd2ebd943ba951eff8482b1103",
         "id": "vercel-react-best-practices",
@@ -4824,7 +4838,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/react-patterns",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/react-patterns",
       "metadata": {
         "hash": "b10579e408d1a03dca9f23c62648c8b669e8a18a9f119a48860b9aa44f397b81",
         "id": "react-patterns",
@@ -4838,7 +4852,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/react-ui-patterns",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/react-ui-patterns",
       "metadata": {
         "hash": "ab7d275cbd9a8c91f5f92596988a0df9ddb1116096386ac9474b106a2fa670d1",
         "id": "react-ui-patterns",
@@ -4852,7 +4866,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/receiving-code-review",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/receiving-code-review",
       "metadata": {
         "hash": "c9382e92b8f32363566068ecfed19d3b2651eaf40d3942b24840f839dedfc406",
         "id": "receiving-code-review",
@@ -4866,7 +4880,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/red-team-tactics",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/red-team-tactics",
       "metadata": {
         "hash": "7cc6a5c25dc015f9a5d7035f1612f40716bd33a0b11659726397322d7d836587",
         "id": "red-team-tactics",
@@ -4880,7 +4894,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/red-team-tools",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/red-team-tools",
       "metadata": {
         "hash": "60f254763e3e93a6422319bc0afbd503f4eadb1b976acff8511b2bb07e2880d7",
         "id": "red-team-tools-and-methodology",
@@ -4894,7 +4908,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/referral-program",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/referral-program",
       "metadata": {
         "hash": "4ea4a7fd3bb9fd66b45e1643bc107d330038d44cc830676590117fae8a4fe710",
         "id": "referral-program",
@@ -4908,7 +4922,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/remotion-best-practices",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/remotion-best-practices",
       "metadata": {
         "hash": "aca0edbad9e4e21d716818d201a14577d996d5142847710b0fdc0002b2b98c50",
         "id": "remotion-best-practices",
@@ -4922,7 +4936,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/requesting-code-review",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/requesting-code-review",
       "metadata": {
         "hash": "2da31af22a58938ab78f3ee6d5b4687fcca062b923b646459eb52ba72117ef97",
         "id": "requesting-code-review",
@@ -4936,7 +4950,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/research-engineer",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/research-engineer",
       "metadata": {
         "hash": "5349dfa2833a6ed8eda3363438a4982d99e01465d787d5df3d5a60df4940eaef",
         "id": "research-engineer",
@@ -4950,7 +4964,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/salesforce-development",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/salesforce-development",
       "metadata": {
         "hash": "5adf1e9cfd24e8210070c0a462a70dafca0e1bb817b4034ac80320971f6f08e9",
         "id": "salesforce-development",
@@ -4964,7 +4978,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/scanning-tools",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/scanning-tools",
       "metadata": {
         "hash": "fb487cf3bf46191c0bb284454f34f5a6d0dbe11181edf2d2164cfa551e8b61d3",
         "id": "security-scanning-tools",
@@ -4978,7 +4992,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/schema-markup",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/schema-markup",
       "metadata": {
         "hash": "b43f80e20747a21f7b459d22d605858cf1d3586fd99388ec2941115e0e043fd8",
         "id": "schema-markup",
@@ -4992,7 +5006,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/scroll-experience",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/scroll-experience",
       "metadata": {
         "hash": "9d820b99dd89f9f36cb84cf6a7225deebff36d6bc770df8c809fe9ce3f639815",
         "id": "scroll-experience",
@@ -5006,7 +5020,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/segment-cdp",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/segment-cdp",
       "metadata": {
         "hash": "39eb6ef8d81adaa58587929d4875d94bd6ecd9c2ab0168d7f724d3820023521f",
         "id": "segment-cdp",
@@ -5020,7 +5034,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/senior-architect",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/senior-architect",
       "metadata": {
         "hash": "0328e22c9a0ad8e51f5e6bebf768db2db17b113d4e5c2bdfd61a331d949fbcd8",
         "id": "senior-architect",
@@ -5034,7 +5048,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/senior-fullstack",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/senior-fullstack",
       "metadata": {
         "hash": "6012679e3f5a9e8586f34a89f70d4d8bdc4da673b23d2879e265e8ac2355f0d6",
         "id": "senior-fullstack",
@@ -5048,7 +5062,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/seo-audit",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/seo-audit",
       "metadata": {
         "hash": "746cc57c51afc93da2d2f4f06e1270b3a4360ef8b3b49d1e416bf2c0c49bb454",
         "id": "seo-audit",
@@ -5062,7 +5076,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/seo-fundamentals",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/seo-fundamentals",
       "metadata": {
         "hash": "eb5f2f9fe15f290323c464f362ea258dc40ebd9f72991e611beb2e7f5f8db2d3",
         "id": "seo-fundamentals",
@@ -5076,7 +5090,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/server-management",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/server-management",
       "metadata": {
         "hash": "60277deafa8e97df1d8ec571eab94e752dba768e70aee6d994c87a25a4a09521",
         "id": "server-management",
@@ -5090,7 +5104,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/shodan-reconnaissance",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/shodan-reconnaissance",
       "metadata": {
         "hash": "035ae5d1c954095fecf684e5ce6e368d2e4e71455f7f1f7f5fcdf222159962c1",
         "id": "shodan-reconnaissance-and-pentesting",
@@ -5104,7 +5118,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/shopify-apps",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/shopify-apps",
       "metadata": {
         "hash": "679500db2c08248327bc4f41ab3f317c21ccbdc8e21ae128283b0218cfb66f5d",
         "id": "shopify-apps",
@@ -5118,7 +5132,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/shopify-development",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/shopify-development",
       "metadata": {
         "hash": "7aace9bf90f0bf5db393c9a7b18166bb68434274b575205d33eddaabfb6de99d",
         "id": "shopify-development",
@@ -5132,7 +5146,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/signup-flow-cro",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/signup-flow-cro",
       "metadata": {
         "hash": "d52fe97c2712260cbba0832e5747dcc6f189e131000be0df762abd7c85562812",
         "id": "signup-flow-cro",
@@ -5146,7 +5160,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/skill-creator",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/skill-creator",
       "metadata": {
         "hash": "b2e3d83f60425c2d0b9d4162efb8f9aa322b45843497340f2289f42be422801c",
         "id": "skill-creator",
@@ -5160,7 +5174,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/skill-developer",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/skill-developer",
       "metadata": {
         "hash": "25d2d11bc193d709e54ea577e9aad7ef9b512387c3cb0b87b28548dc063153c8",
         "id": "skill-developer",
@@ -5174,7 +5188,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/slack-bot-builder",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/slack-bot-builder",
       "metadata": {
         "hash": "a3e38c57a4d816c2d1905cb290782e7dec6f18304529e8efad5f7b018b587bc0",
         "id": "slack-bot-builder",
@@ -5188,7 +5202,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/slack-gif-creator",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/slack-gif-creator",
       "metadata": {
         "hash": "2efca615ce55a3edd8fc05c779068a8085816617991987e446606403cd3abb22",
         "id": "slack-gif-creator",
@@ -5202,7 +5216,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/smtp-penetration-testing",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/smtp-penetration-testing",
       "metadata": {
         "hash": "0994f7796d22b4d7bbd81bbcb132de00498ccbf306d3fb35e45d765725e7564a",
         "id": "smtp-penetration-testing",
@@ -5216,7 +5230,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/social-content",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/social-content",
       "metadata": {
         "hash": "9c40b9ceda9094b3ce256d62ca8a33e8f82f323cff357da294e14262ed429b69",
         "id": "social-content",
@@ -5230,7 +5244,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/software-architecture",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/software-architecture",
       "metadata": {
         "hash": "54b1ac17188f0495e04d814e8a0796292972f4d9052ab95f036ef8ee3ab5b8c3",
         "id": "software-architecture",
@@ -5244,7 +5258,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/sql-injection-testing",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/sql-injection-testing",
       "metadata": {
         "hash": "ef8cab6e5509f3f346f7c9c4b0beb8ef67e7a48937f424cd70e7a455c6041545",
         "id": "sql-injection-testing",
@@ -5258,7 +5272,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/sqlmap-database-pentesting",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/sqlmap-database-pentesting",
       "metadata": {
         "hash": "43732dff3159abc0a5f953532b948708543220bd85129451b228bc4af74ef11a",
         "id": "sqlmap-database-penetration-testing",
@@ -5272,7 +5286,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/ssh-penetration-testing",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/ssh-penetration-testing",
       "metadata": {
         "hash": "d9a51c71e00efef412049d62788d81c398e3c1e3cc5bd90345e6396bbf9a5c73",
         "id": "ssh-penetration-testing",
@@ -5286,7 +5300,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/stripe-integration",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/stripe-integration",
       "metadata": {
         "hash": "d66de010a1b16366a1bc2f93005289cd7d0b5bd0ad213e68782a51f1cdffce50",
         "id": "stripe-integration",
@@ -5300,7 +5314,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/subagent-driven-development",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/subagent-driven-development",
       "metadata": {
         "hash": "724ff7f5edf539a7b5697daa120a5d0befa012660376724adaf9dd04ca6c305a",
         "id": "subagent-driven-development",
@@ -5314,7 +5328,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/systematic-debugging",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/systematic-debugging",
       "metadata": {
         "hash": "4999cb851360485eca5074e727bbdd62ef20549c5d5b01216fcbf5831badb473",
         "id": "systematic-debugging",
@@ -5328,7 +5342,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/tailwind-patterns",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/tailwind-patterns",
       "metadata": {
         "hash": "bc64b47c56a44183441f3c908457dd4dcaaf1dfe4dc2c508b83f56ecdb017667",
         "id": "tailwind-patterns",
@@ -5342,7 +5356,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/tdd-workflow",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/tdd-workflow",
       "metadata": {
         "hash": "b8fceb81c0967e5beadb7a89e80bc6b199c5c203fb34de50514ba9742d530157",
         "id": "tdd-workflow",
@@ -5356,7 +5370,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/telegram-bot-builder",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/telegram-bot-builder",
       "metadata": {
         "hash": "858672c20bedfaf071e8cc900c4a23ece8939872152bb310ebb1b2492b80c71a",
         "id": "telegram-bot-builder",
@@ -5370,7 +5384,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/telegram-mini-app",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/telegram-mini-app",
       "metadata": {
         "hash": "ff4e3b54b589f88b31888d89d240b92df159c87ac557f22eb1f481af6df8f1ac",
         "id": "telegram-mini-app",
@@ -5384,7 +5398,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/test-driven-development",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/test-driven-development",
       "metadata": {
         "hash": "7dee67b4af6bdccc7a914ca34533184d64592d0f5b23aeae631538168db14994",
         "id": "test-driven-development",
@@ -5398,7 +5412,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/test-fixing",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/test-fixing",
       "metadata": {
         "hash": "bf15e89cb04d28ecc3286c61ff14b3f7882424dae6f22217f02aca8e15b078f1",
         "id": "test-fixing",
@@ -5412,7 +5426,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/testing-patterns",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/testing-patterns",
       "metadata": {
         "hash": "20ac6875fbbd55715ed0ed1dd0ec624b1dc9e13a731190cb9ceccd1836772787",
         "id": "testing-patterns",
@@ -5426,7 +5440,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/theme-factory",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/theme-factory",
       "metadata": {
         "hash": "c35893e221e28895c52143cc11bf30e41a44817796b39d4b15727dadc9796552",
         "id": "theme-factory",
@@ -5440,7 +5454,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/top-web-vulnerabilities",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/top-web-vulnerabilities",
       "metadata": {
         "hash": "6f86478d46ac4b6c7dd7b1a1d953d635a9e06de25912297730d951a1386de99b",
         "id": "top-100-web-vulnerabilities-reference",
@@ -5454,7 +5468,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/trait-antigravity",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/trait-antigravity",
       "metadata": {
         "hash": "3cfd36ed57eebd0b5c0f85203678c8570483fe0645ed5c7aa90bd9d93e67b778",
         "id": "trait-antigravity",
@@ -5468,7 +5482,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/trigger-dev",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/trigger-dev",
       "metadata": {
         "hash": "c62463443d6b84a0eea98368886adad4899f663342f83fd284c8bedc3f39e047",
         "id": "trigger-dev",
@@ -5482,7 +5496,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/twilio-communications",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/twilio-communications",
       "metadata": {
         "hash": "57aa14bdb61b6e1bec9e5f338857897f0b61400da7d1b5d0d2d34e21361c76f3",
         "id": "twilio-communications",
@@ -5496,7 +5510,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/typescript-expert",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/typescript-expert",
       "metadata": {
         "hash": "88b62c21b51eae08cd9af282d29d5adb9fa06626af59768cd4e9d739791e5a65",
         "id": "typescript-expert",
@@ -5510,7 +5524,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/ui-ux-pro-max",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/ui-ux-pro-max",
       "metadata": {
         "hash": "fff024e58ee4aeef4f06d3ec93bbf4aa0c6af12ec8e680182fa60d90d7f070e4",
         "id": "ui-ux-pro-max",
@@ -5524,7 +5538,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/upstash-qstash",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/upstash-qstash",
       "metadata": {
         "hash": "7c9132a3e5e4c7eb0b9329ddbadc8f4ff02740149ca0c44054a126d675dc6bfe",
         "id": "upstash-qstash",
@@ -5538,7 +5552,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/using-git-worktrees",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/using-git-worktrees",
       "metadata": {
         "hash": "4e2aeeb740335d9160ee3a6da66ca6b2ceea8e1e03b9835b5ee357a17500f2bc",
         "id": "using-git-worktrees",
@@ -5552,7 +5566,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/using-superpowers",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/using-superpowers",
       "metadata": {
         "hash": "81d921b16502091f44e8669bbcfae74b87bbf4295d03fff70a98e81d73af60a6",
         "id": "using-superpowers",
@@ -5566,7 +5580,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/vercel-deployment",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/vercel-deployment",
       "metadata": {
         "hash": "334c40249c1783e3d0ea421cb8d4f46ed2c558e8dff9eecd6cc5863a1c680b40",
         "id": "vercel-deployment",
@@ -5580,7 +5594,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/verification-before-completion",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/verification-before-completion",
       "metadata": {
         "hash": "ea52d15aabaf72bc6b558efe2c126f161b53961090ddcd712000273bfe8c7b6c",
         "id": "verification-before-completion",
@@ -5594,7 +5608,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/viral-generator-builder",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/viral-generator-builder",
       "metadata": {
         "hash": "78a806303f70f830451342e9591de6cd1cbe0e0d512e86c03a4786fbb0a8cf1b",
         "id": "viral-generator-builder",
@@ -5608,7 +5622,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/voice-agents",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/voice-agents",
       "metadata": {
         "hash": "c31bb21df6e104f42aa7f6ce99025cc01fb9c020d43d22372bb056ae56a0bd9e",
         "id": "voice-agents",
@@ -5622,7 +5636,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/voice-ai-development",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/voice-ai-development",
       "metadata": {
         "hash": "011c4a50a643789dec319d783f5d8295951aabf3a2d9c5cc5bc62fb26f8ba156",
         "id": "voice-ai-development",
@@ -5636,7 +5650,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/vulnerability-scanner",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/vulnerability-scanner",
       "metadata": {
         "hash": "8dfe6febffb085d2b7bf7ba68aba5734a7c696b1235a5d60c97394a818705eba",
         "id": "vulnerability-scanner",
@@ -5650,7 +5664,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/web-artifacts-builder",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/web-artifacts-builder",
       "metadata": {
         "hash": "81c5002c6643b0de7b8710b00e7a9038daa6fb9b68d59870ee6adb12da8d10f8",
         "id": "web-artifacts-builder",
@@ -5664,7 +5678,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/web-design-guidelines",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/web-design-guidelines",
       "metadata": {
         "hash": "fc48547ce7b3f384043d0804d823a0c6bd02f4a94a484bc724551d28fcd6b90d",
         "id": "web-design-guidelines",
@@ -5678,7 +5692,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/webapp-testing",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/webapp-testing",
       "metadata": {
         "hash": "51b7349e77ec63b7744a6f63647e7566a0b4d2e301121cc10e8c2113af6556a2",
         "id": "webapp-testing",
@@ -5692,7 +5706,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/windows-privilege-escalation",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/windows-privilege-escalation",
       "metadata": {
         "hash": "affa51414188b95192c0f6fd6fd03ffda3dc46f3809143449bb8b79dd0416657",
         "id": "windows-privilege-escalation",
@@ -5706,7 +5720,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/wireshark-analysis",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/wireshark-analysis",
       "metadata": {
         "hash": "d2f094fb06675efad0bd2ee8c9bdf49e4456aa42570dc50ca8a870721f851376",
         "id": "wireshark-network-traffic-analysis",
@@ -5720,7 +5734,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/wordpress-penetration-testing",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/wordpress-penetration-testing",
       "metadata": {
         "hash": "a123814a39894f16d274413b2b335fcc353fb2cea00a4a46c524967c50f216c4",
         "id": "wordpress-penetration-testing",
@@ -5734,7 +5748,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/workflow-automation",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/workflow-automation",
       "metadata": {
         "hash": "5448de475e395890d5a7dbdfba791bbe574be1903bd5e477c701f40e877e0867",
         "id": "workflow-automation",
@@ -5748,7 +5762,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/writing-plans",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/writing-plans",
       "metadata": {
         "hash": "2046e5b955aa16c288f9c7290c58f237628dfb6ba6d4817fad3da0fa830b46c2",
         "id": "writing-plans",
@@ -5762,7 +5776,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/writing-skills",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/writing-skills",
       "metadata": {
         "hash": "652e5612109d9c57091591453377920e46c8fc0c35e5867fe81a496674e69e93",
         "id": "writing-skills",
@@ -5776,7 +5790,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/xlsx-official",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/xlsx-official",
       "metadata": {
         "hash": "020ccdb5932257b66c638ec1157ea248d57fa52c8c01f1f68b559b5970c7df35",
         "id": "xlsx",
@@ -5790,7 +5804,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/xss-html-injection",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/xss-html-injection",
       "metadata": {
         "hash": "727f5af3c030c70c8f6be1aee824d5ed0e6c1652e476584e87bfd50ca656754f",
         "id": "cross-site-scripting-and-html-injection-testing",
@@ -5804,7 +5818,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/zapier-make-patterns",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/antigravity/zapier-make-patterns",
       "metadata": {
         "hash": "19f55fb53942e8053fa30450309b3c89a5ad698830069d9b48841c9ae9baee09",
         "id": "zapier-make-patterns",
@@ -5902,7 +5916,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/browser-automation",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/browser-automation",
       "metadata": {
         "hash": "103ff010c871833828ff9eec04d8961d003c9610a1416e2a1f38b59f545f098c",
         "id": "browser-automation",
@@ -6014,7 +6028,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/context-frontloader",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/context-frontloader",
       "metadata": {
         "hash": "e9af66b3c10f6878fbef8f4ce7d58787d3040b3aca249af16f5f8d99618ddbd8",
         "id": "context-frontloader",
@@ -6028,7 +6042,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/continuous-improvement",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/continuous-improvement",
       "metadata": {
         "hash": "6d8a7bb020a89e658ac8bdb303c1d64364c65470099b7d6e6dc859794b8c4062",
         "id": "continuous-improvement",
@@ -6070,7 +6084,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/design-md",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/design-md",
       "metadata": {
         "hash": "eb15f44646528f3a087ce023329ae699c1b6e803662af68338e1eb1c0406b59b",
         "id": "design-md",
@@ -6224,7 +6238,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/env-manager",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/env-manager",
       "metadata": {
         "hash": "edd7a6ead451110cc62b8ae000327f901e05e3985e0894c6bb742f2aad89508f",
         "id": "env-manager",
@@ -6238,7 +6252,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/framework-consciousness",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/framework-consciousness",
       "metadata": {
         "hash": "77af4dd6ec5b83449ea025e580b0135a443af513d75776858a80089c996a3de1",
         "id": "framework-consciousness",
@@ -6252,7 +6266,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/jules-autonomous-loop",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/jules-autonomous-loop",
       "metadata": {
         "hash": "f3fa95f25e3751c017134488a496292efd97c8f4453b80c1ad798d9cc66c72c1",
         "id": "jules-autonomous-loop",
@@ -6266,7 +6280,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/jules-delegation",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/jules-delegation",
       "metadata": {
         "hash": "04a64dc244cdbf52cd4ec3c392753a43be959d54358469c0457f4a4cd5982836",
         "id": "jules-delegation",
@@ -6322,7 +6336,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/library-of-living-knowledge",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/library-of-living-knowledge",
       "metadata": {
         "hash": "c80207c6717d4223086698a0aa7a355b8e02c8d55e37b53f226cf75d4adc238c",
         "id": "library-of-living-knowledge",
@@ -6504,7 +6518,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/news-scouting",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/news-scouting",
       "metadata": {
         "hash": "37e262e9072cd80519c895ad8688bae944fe036a1b998ba0cfe7ac0d26f1386b",
         "id": "news-scouting",
@@ -6518,7 +6532,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/notebooklm",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/notebooklm",
       "metadata": {
         "hash": "8fcfe1aa04523483c1d1a5aa10835bc796228d2de9a66460a767bf2d6ed7432e",
         "id": "notebooklm",
@@ -6532,7 +6546,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-oauth-rotation",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-oauth-rotation",
       "metadata": {
         "hash": "643129dfb60325e48506faa71a67a89878073d9b780c9b6e836cceb3bef66f76",
         "id": "openclaw-oauth-rotation",
@@ -6546,7 +6560,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-provider-rollout",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-provider-rollout",
       "metadata": {
         "hash": "ff60b48f2be3925b247a4116817d25a5f640ed283cc3d3df94fb13cc3b19e974",
         "id": "openclaw-provider-rollout",
@@ -6560,7 +6574,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-universal-knowledge",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-universal-knowledge",
       "metadata": {
         "hash": "619530e2be4302fcdb600b7099a437077c649f4ac5f7512486a5ec9f79455095",
         "id": "openclaw-universal-knowledge",
@@ -6574,7 +6588,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/orchestrator",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/orchestrator",
       "metadata": {
         "hash": "f5edcb8896bec13c88e5c18daaa70bc3f97fe5348e2b4e91157c9f6816f77d6e",
         "id": "orchestrator",
@@ -6630,7 +6644,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/planning-with-files",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/planning-with-files",
       "metadata": {
         "hash": "c40fcf01c9a29501b2d073096dfd55a76789c1df13c6785f81cb9b9bfdcd31cc",
         "id": "planning-with-files",
@@ -6672,7 +6686,7 @@
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/react-components",
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/react-components",
       "metadata": {
         "hash": "f0473659edcdda6edf9aa78fb705c01937196034fac1a76d24b8700b24481c03",
         "id": "react-components",
@@ -7371,8 +7385,8 @@
       "category": "CLAUDE_SKILL",
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
-      "tags": ["openclaw", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/skill-builder",
+      "tags": ["project-agent", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/skill-builder",
       "metadata": {
         "hash": "7a715f0fac3f1ca0f7edde226a4be9209797c61a82c13221100d2b84e93f615f",
         "id": "skill-builder",
@@ -7385,8 +7399,8 @@
       "category": "CLAUDE_SKILL",
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
-      "tags": ["openclaw", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/skill-creator",
+      "tags": ["project-agent", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/stitch-loop",
       "metadata": {
         "hash": "e8047445aaabb76ba0e71455a708db041d0d20b96a88fc3891c9e0c0b85b4844",
         "id": "skill-creator",
@@ -10369,6 +10383,440 @@
       "visibility": "AGENTS_ONLY",
       "tags": ["kilo", "project", "skill-bank"],
       "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.kilo/skills/openclaw-universal-knowledge.md",
+      "metadata": {
+        "hash": "5485b322e6aff36d3add97f93fd0d6059ac0d75a2b8effe32bb66d7d98fe3b9a",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/kilo/openclaw-universal-knowledge-5485b322"
+      }
+    },
+    {
+      "name": "context-frontloader",
+      "description": "|",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/context-frontloader",
+      "metadata": {
+        "hash": "e9af66b3c10f6878fbef8f4ce7d58787d3040b3aca249af16f5f8d99618ddbd8",
+        "id": "context-frontloader",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/context-frontloader-e9af66b3"
+      }
+    },
+    {
+      "name": "continuous-improvement",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/continuous-improvement",
+      "metadata": {
+        "hash": "6d8a7bb020a89e658ac8bdb303c1d64364c65470099b7d6e6dc859794b8c4062",
+        "id": "continuous-improvement",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/continuous-improvement-6d8a7bb0"
+      }
+    },
+    {
+      "name": "framework-consciousness",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/framework-consciousness",
+      "metadata": {
+        "hash": "77af4dd6ec5b83449ea025e580b0135a443af513d75776858a80089c996a3de1",
+        "id": "framework-consciousness",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/framework-consciousness-77af4dd6"
+      }
+    },
+    {
+      "name": "library-of-living-knowledge",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/library-of-living-knowledge",
+      "metadata": {
+        "hash": "16ac518242689d5fc1708f661ddb0d19512ac39b8c4711f6dbba06402ba16bfd",
+        "id": "library-of-living-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/library-of-living-knowledge-16ac5182"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF OpenClaw docs-wide knowledge skill for gateway, providers, tools/skills policy, and cross-agent portability.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/openclaw-universal-knowledge",
+      "metadata": {
+        "hash": "8f4ca0c3b530a66efcffc6683625cd0c098fd83e2deb391e73a6a71ef1d01975",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/openclaw-universal-knowledge-8f4ca0c3"
+      }
+    },
+    {
+      "name": "skill-builder",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/skill-builder",
+      "metadata": {
+        "hash": "7a715f0fac3f1ca0f7edde226a4be9209797c61a82c13221100d2b84e93f615f",
+        "id": "skill-builder",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/skill-builder-7a715f0f"
+      }
+    },
+    {
+      "name": "skill-creator",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/skill-creator",
+      "metadata": {
+        "hash": "e8047445aaabb76ba0e71455a708db041d0d20b96a88fc3891c9e0c0b85b4844",
+        "id": "skill-creator",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/skill-creator-e8047445"
+      }
+    },
+    {
+      "name": "context-frontloader",
+      "description": "|",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/context-frontloader",
+      "metadata": {
+        "hash": "e9af66b3c10f6878fbef8f4ce7d58787d3040b3aca249af16f5f8d99618ddbd8",
+        "id": "context-frontloader",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/context-frontloader-e9af66b3"
+      }
+    },
+    {
+      "name": "continuous-improvement",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/continuous-improvement",
+      "metadata": {
+        "hash": "6d8a7bb020a89e658ac8bdb303c1d64364c65470099b7d6e6dc859794b8c4062",
+        "id": "continuous-improvement",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/continuous-improvement-6d8a7bb0"
+      }
+    },
+    {
+      "name": "framework-consciousness",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/framework-consciousness",
+      "metadata": {
+        "hash": "77af4dd6ec5b83449ea025e580b0135a443af513d75776858a80089c996a3de1",
+        "id": "framework-consciousness",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/framework-consciousness-77af4dd6"
+      }
+    },
+    {
+      "name": "github",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/github",
+      "metadata": {
+        "hash": "10a44ac238bbb7b3e92a78a2712ac89436cdaac4593b8642e9a8cd1e0fe2e683",
+        "id": "github",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/github-10a44ac2"
+      }
+    },
+    {
+      "name": "hardware",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/hardware",
+      "metadata": {
+        "hash": "74f161217308f656f38ea7fd7d7a3765dac35101822dd2e66f1325dbddaf3499",
+        "id": "hardware",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/hardware-74f16121"
+      }
+    },
+    {
+      "name": "library-of-living-knowledge",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/library-of-living-knowledge",
+      "metadata": {
+        "hash": "16ac518242689d5fc1708f661ddb0d19512ac39b8c4711f6dbba06402ba16bfd",
+        "id": "library-of-living-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/library-of-living-knowledge-16ac5182"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF OpenClaw knowledge skill for PicoClaw agents; covers tools/skills spec, docs-wide navigation, and operational consistency.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/openclaw-universal-knowledge",
+      "metadata": {
+        "hash": "94afd0396652e43ce66a11815114b93e5217306e2da04da958af2db24e28d164",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/openclaw-universal-knowledge-94afd039"
+      }
+    },
+    {
+      "name": "overwatch",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/overwatch",
+      "metadata": {
+        "hash": "3581432c11379017e539f8dd999d744716e1f40748d217a20cf4ea0b17f6f496",
+        "id": "overwatch",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/overwatch-3581432c"
+      }
+    },
+    {
+      "name": "skill-builder",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/skill-builder",
+      "metadata": {
+        "hash": "7a715f0fac3f1ca0f7edde226a4be9209797c61a82c13221100d2b84e93f615f",
+        "id": "skill-builder",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/skill-builder-7a715f0f"
+      }
+    },
+    {
+      "name": "skill-creator",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/skill-creator",
+      "metadata": {
+        "hash": "e8047445aaabb76ba0e71455a708db041d0d20b96a88fc3891c9e0c0b85b4844",
+        "id": "skill-creator",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/skill-creator-e8047445"
+      }
+    },
+    {
+      "name": "summarize",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/summarize",
+      "metadata": {
+        "hash": "680a539f5b5f8acaacf8d17e21bce4911451d032a2c19fb97c2898402b367022",
+        "id": "summarize",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/summarize-680a539f"
+      }
+    },
+    {
+      "name": "tmux",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/tmux",
+      "metadata": {
+        "hash": "417e5e425aa70e2ad57fbc3484a042443ead225e51095446d3c07cf4eb49dd2a",
+        "id": "tmux",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/tmux-417e5e42"
+      }
+    },
+    {
+      "name": "weather",
+      "description": "Get current weather and forecasts (no API key required).",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/weather",
+      "metadata": {
+        "hash": "98412aadcfd828ceb3cf10bb3914895b6a4ef6024786e3ba56c2fb2df492ba34",
+        "id": "weather",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/weather-98412aad"
+      }
+    },
+    {
+      "name": "README",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "global", "skill-bank"],
+      "source": "/path/to/.claude/skills/README.md",
+      "metadata": {
+        "hash": "d7c5c2f9b248c7c0b31f093cf22b9a7407f5b093c8ca9ebe75a5b6845b02b76e",
+        "id": "readme",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/readme-d7c5c2f9"
+      }
+    },
+    {
+      "name": "THIRD_PARTY_NOTICES",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "global", "skill-bank"],
+      "source": "/path/to/.claude/skills/THIRD_PARTY_NOTICES.md",
+      "metadata": {
+        "hash": "a8ff7a84dee9dfb42ab448de281784387ceafdf63881b7c070ee2de7f6ed865c",
+        "id": "third_party_notices",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/third_party_notices-a8ff7a84"
+      }
+    },
+    {
+      "name": "context-frontloader",
+      "description": "|",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/context-frontloader.md",
+      "metadata": {
+        "hash": "e9af66b3c10f6878fbef8f4ce7d58787d3040b3aca249af16f5f8d99618ddbd8",
+        "id": "context-frontloader",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/context-frontloader-e9af66b3"
+      }
+    },
+    {
+      "name": "continuous-improvement",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/continuous-improvement.md",
+      "metadata": {
+        "hash": "6d8a7bb020a89e658ac8bdb303c1d64364c65470099b7d6e6dc859794b8c4062",
+        "id": "continuous-improvement",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/continuous-improvement-6d8a7bb0"
+      }
+    },
+    {
+      "name": "framework-consciousness",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/framework-consciousness.md",
+      "metadata": {
+        "hash": "77af4dd6ec5b83449ea025e580b0135a443af513d75776858a80089c996a3de1",
+        "id": "framework-consciousness",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/framework-consciousness-77af4dd6"
+      }
+    },
+    {
+      "name": "library-of-living-knowledge",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/library-of-living-knowledge.md",
+      "metadata": {
+        "hash": "16ac518242689d5fc1708f661ddb0d19512ac39b8c4711f6dbba06402ba16bfd",
+        "id": "library-of-living-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/library-of-living-knowledge-16ac5182"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF skill adapter for OpenClaw docs-wide operations, including tools/skills rules, gateway/provider setup, and cross-agent skill portability.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/openclaw-universal-knowledge.md",
+      "metadata": {
+        "hash": "693943051c6ecd6fd7b2c79648189304386dd1f105db7dc1045e6268e1512b4c",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/openclaw-universal-knowledge-69394305"
+      }
+    },
+    {
+      "name": "skill-builder",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/skill-builder.md",
+      "metadata": {
+        "hash": "7a715f0fac3f1ca0f7edde226a4be9209797c61a82c13221100d2b84e93f615f",
+        "id": "skill-builder",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/skill-builder-7a715f0f"
+      }
+    },
+    {
+      "name": "ui-automation-with-context",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/ui-automation-with-context.md",
+      "metadata": {
+        "hash": "e87b6bb4c9b5823a9c3fe468524281db999a113cb5012fcc568503b8c2e38874",
+        "id": "ui-automation-with-context",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/ui-automation-with-context-e87b6bb4"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF skill adapter for OpenClaw full-docs operations, skills semantics, gateway/provider execution, and multi-agent portability.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["gemini", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.gemini/skills/openclaw-universal-knowledge.md",
+      "metadata": {
+        "hash": "6abdd4de09a94c5c5bb10660a81a2cf72e10136c70fb5120c58ef88be118eaea",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/gemini/openclaw-universal-knowledge-6abdd4de"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF adapter for OpenClaw-wide docs knowledge, skill format policy, and cross-agent execution consistency.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["kilo", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.kilo/skills/openclaw-universal-knowledge.md",
       "metadata": {
         "hash": "5485b322e6aff36d3add97f93fd0d6059ac0d75a2b8effe32bb66d7d98fe3b9a",
         "id": "openclaw-universal-knowledge",

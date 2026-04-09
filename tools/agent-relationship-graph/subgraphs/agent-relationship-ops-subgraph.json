@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-07",
+  "generated_at": "2026-03-03",
   "domain": "ops",
   "nodes": [
     {
@@ -13,38 +13,23 @@
       "cluster": "orchestration"
     },
     {
-      "id": "asset-sourcer-agent",
-      "kind": "primary",
-      "cluster": "ops"
-    },
-    {
-      "id": "auth-blocker-sentinel",
-      "kind": "primary",
-      "cluster": "ops"
-    },
-    {
-      "id": "digital-asset-manager-agent",
-      "kind": "primary",
-      "cluster": "ops"
-    },
-    {
       "id": "legal-compliance-agent",
       "kind": "primary",
       "cluster": "ops"
     },
     {
-      "id": "local-ai-claude-code-cli",
-      "kind": "sub",
-      "cluster": "ops"
-    },
-    {
-      "id": "local-ai-gemini-cli",
-      "kind": "sub",
-      "cluster": "ops"
-    },
-    {
-      "id": "notes-ledger-investigator",
+      "id": "financial-manager-agent",
       "kind": "primary",
+      "cluster": "ops"
+    },
+    {
+      "id": "tax-compliance-agent",
+      "kind": "sub",
+      "cluster": "ops"
+    },
+    {
+      "id": "reputation-management-agent",
+      "kind": "sub",
       "cluster": "ops"
     },
     {
@@ -53,200 +38,56 @@
       "cluster": "ops"
     },
     {
-      "id": "repo-lineage-investigator",
+      "id": "analytics-and-reporting-agent",
       "kind": "primary",
       "cluster": "ops"
     },
     {
-      "id": "tax-compliance-agent",
-      "kind": "primary",
+      "id": "affiliate-link-manager-agent",
+      "kind": "sub",
       "cluster": "ops"
     },
     {
-      "id": "timeline-synthesis-investigator",
+      "id": "asset-sourcer-agent",
+      "kind": "sub",
+      "cluster": "ops"
+    },
+    {
+      "id": "visual-asset-creator-agent",
       "kind": "sub",
       "cluster": "ops"
     }
   ],
   "edges": [
     {
-      "source": "asset-sourcer-agent",
-      "target": "auth-blocker-sentinel",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "asset-sourcer-agent",
-      "target": "legal-compliance-agent",
-      "type": "fallback",
-      "strength": 0.64,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "asset-sourcer-agent",
-      "target": "productivity-and-burnout-prevention-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "asset-sourcer-agent",
-      "target": "tax-compliance-agent",
-      "type": "fallback",
-      "strength": 0.64,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "auth-blocker-sentinel",
-      "target": "notes-ledger-investigator",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "digital-asset-manager-agent",
-      "target": "auth-blocker-sentinel",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "digital-asset-manager-agent",
-      "target": "tax-compliance-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "legal-compliance-agent",
-      "target": "asset-sourcer-agent",
-      "type": "delegates",
-      "strength": 0.89,
-      "origin": "seed"
-    },
-    {
-      "source": "legal-compliance-agent",
-      "target": "asset-sourcer-agent",
-      "type": "governs",
-      "strength": 0.89,
-      "origin": "seed"
-    },
-    {
-      "source": "legal-compliance-agent",
-      "target": "digital-asset-manager-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "legal-compliance-agent",
-      "target": "tax-compliance-agent",
-      "type": "fallback",
-      "strength": 0.64,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "local-ai-claude-code-cli",
-      "target": "local-ai-gemini-cli",
-      "type": "fallback",
-      "strength": 0.95,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "local-ai-claude-code-cli",
-      "target": "productivity-and-burnout-prevention-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "local-ai-gemini-cli",
-      "target": "productivity-and-burnout-prevention-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "notes-ledger-investigator",
-      "target": "repo-lineage-investigator",
-      "type": "fallback",
-      "strength": 0.95,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "notes-ledger-investigator",
-      "target": "timeline-synthesis-investigator",
-      "type": "fallback",
-      "strength": 0.95,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
       "source": "orchestrator-agent",
       "target": "task-agent-router",
       "type": "delegates",
-      "strength": 0.98,
-      "origin": "seed"
-    },
-    {
-      "source": "productivity-and-burnout-prevention-agent",
-      "target": "digital-asset-manager-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "repo-lineage-investigator",
-      "target": "timeline-synthesis-investigator",
-      "type": "fallback",
-      "strength": 0.95,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "task-agent-router",
-      "target": "legal-compliance-agent",
-      "type": "delegates",
-      "strength": 0.82,
-      "origin": "seed"
+      "strength": 0.98
     },
     {
       "source": "task-agent-router",
       "target": "legal-compliance-agent",
       "type": "routes_to",
-      "strength": 0.81,
-      "origin": "seed"
+      "strength": 0.81
     },
     {
-      "source": "tax-compliance-agent",
+      "source": "legal-compliance-agent",
+      "target": "affiliate-link-manager-agent",
+      "type": "governs",
+      "strength": 0.90
+    },
+    {
+      "source": "legal-compliance-agent",
       "target": "asset-sourcer-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
+      "type": "governs",
+      "strength": 0.89
     },
     {
-      "source": "timeline-synthesis-investigator",
-      "target": "local-ai-gemini-cli",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
+      "source": "asset-sourcer-agent",
+      "target": "visual-asset-creator-agent",
+      "type": "supplies",
+      "strength": 0.82
     }
   ]
 }

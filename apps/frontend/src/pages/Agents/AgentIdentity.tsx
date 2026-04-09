@@ -186,7 +186,7 @@ export const AgentIdentityPage: React.FC = () => {
                         </span>
                       ))
                     ) : (
-                      <span className="text-xs text-gray-500">No nodes assigned</span>
+                      <span className="text-xs text-muted-foreground">No nodes assigned</span>
                     )}
                   </div>
                 </div>
@@ -200,14 +200,14 @@ export const AgentIdentityPage: React.FC = () => {
                   identity.privileges.map((priv) => (
                     <div
                       key={priv}
-                      className="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-white/5"
+                      className="flex items-center justify-between p-3 rounded-md bg-black/20 border border-white/5"
                     >
                       <span className="text-xs text-gray-300 font-mono">{priv}</span>
                       <ShieldCheck className="w-4 h-4 text-emerald-400" />
                     </div>
                   ))
                 ) : (
-                  <div className="text-xs text-gray-500">No privileges reported.</div>
+                  <div className="text-xs text-muted-foreground">No privileges reported.</div>
                 )}
                 <div className="mt-4 flex items-center gap-2 text-[10px] text-amber-400/80 bg-amber-400/5 p-2 rounded border border-amber-400/20">
                   <ShieldAlert className="w-3 h-3" />

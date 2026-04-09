@@ -12,8 +12,14 @@ import {
 import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import {
-  AgentCatalogImportService,
-  AgentRegistrationService,
+  AgentDirectoryResponseDto,
+  AgentRegistrationResponseDto,
+  RegisterAgentDto,
+  SearchAgentsDto,
+  TraitScreenRequestDto,
+} from './dto';
+import {
+  AgentDirectoryService,
   AgentOnboardingService,
   AgentOrientationService,
   AgentProfileVectorService,
@@ -31,7 +37,8 @@ export class AgentRegistryController {
     private readonly onboardingService: AgentOnboardingService,
     private readonly orientationService: AgentOrientationService,
     private readonly directoryService: AgentDirectoryService,
-    private readonly catalogImportService: AgentCatalogImportService,
+    private readonly traitVectorService: AgentProfileVectorService,
+    private readonly importService: AgentRegistryImportService
   ) {}
 
   // ============================================================================

@@ -1100,7 +1100,7 @@ production-ready and designed for extensibility.
 - [Agent Framework
   Protocols](<repo-root>/docs/agents-and-protocols/AGENT_FRAMEWORK_PROTOCOLS.md)
 - [Complete Agent Communication
-  Guide](<repo-root>/docs/agents-and-protocols/AGENT_COMMUNICATION_GUIDE.md)
+  Guide](<repo-root>/docs/guides/COMPLETE-AGENT-COMMUNICATION-GUIDE.md)
 - [Available Agents Registry](<repo-root>/docs/AVAILABLE_AGENTS_REGISTRY.md)
 - [MCP Complete Guide](<repo-root>/docs/protocols/MCP-COMPLETE-GUIDE.md)
 

@@ -1,0 +1,44 @@
+FROM mcr.microsoft.com/playwright:v1.58.2-jammy
+
+# Install Node.js 22
+RUN apt-get update && apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g pnpm
+
+WORKDIR /app
+
+# Copy cloud-sandbox files (Repository Root Context)
+# Railway sets root directory to / so we need full paths
+COPY apps/cloud-sandbox/package.json ./
+COPY apps/cloud-sandbox/tsconfig.json ./
+COPY apps/cloud-sandbox/src ./src
+COPY apps/cloud-sandbox/public ./public
+
+# Strip workspace-only deps for standalone image builds
+RUN node -e "const fs=require('fs');const p='package.json';const j=JSON.parse(fs.readFileSync(p,'utf8'));if(j.dependencies){delete j.dependencies['@the-new-fuse/database'];delete j.dependencies['@the-new-fuse/types'];}fs.writeFileSync(p,JSON.stringify(j,null,2));"
+
+# Build only the runtime server entrypoint for lightweight standalone deploys
+RUN node -e "const fs=require('fs');const p='tsconfig.json';const j=JSON.parse(fs.readFileSync(p,'utf8'));j.include=['src/server.ts'];j.exclude=['src/auth/**','src/tools/**'];fs.writeFileSync(p,JSON.stringify(j,null,2));"
+
+# Install dependencies for standalone app image
+RUN npm install
+
+# Build runtime bundle
+RUN npm run build
+
+# Verify runtime bundle is present
+RUN test -f dist/server.js
+
+# Verify public folder is present
+RUN ls -la public/ || echo "Warning: public folder not found"
+
+# Create app-user
+RUN addgroup --system app-user && adduser --system --ingroup app-user app-user
+RUN chown -R app-user:app-user /home/app-user
+RUN chown -R app-user:app-user /app
+
+USER app-user
+ENV HOME=/home/app-user
+
+CMD ["node", "dist/server.js"]

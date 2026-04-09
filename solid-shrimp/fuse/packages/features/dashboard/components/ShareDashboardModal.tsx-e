@@ -1,0 +1,247 @@
+import React, { FC } from "react";
+import { Modal } from '@the-new-fuse/../../core/components/ui/Modal';
+import { Input } from '@/shared/ui/core/Input';
+import { Button } from '@the-new-fuse/../../core/components/ui/Button';
+import { ShareConfig } from '@the-new-fuse/data/exporters/types';
+
+interface ShareDashboardModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onShare: (config: ShareConfig) => void;
+  dashboardId: string;
+  currentUser: {
+    id: string;
+    name: string;
+  };
+}
+
+export const ShareDashboardModal: (React as unknown).FC<ShareDashboardModalProps> = ({
+  isOpen,
+  onClose,
+  onShare,
+  dashboardId,
+  currentUser,
+}) => {
+  const [shareConfig, setShareConfig] = useState<Partial<ShareConfig>>({
+    type: 'view',
+    recipient: {
+      type: 'user',
+    },
+    allowExport: false,
+    allowShare: false,
+  });
+
+  const [expiryDays, setExpiryDays] = useState<number>(0);
+  const [password, setPassword] = useState<string>('');
+  const [copied, setCopied] = useState(false): unknown  = ()> {
+    const config: ShareConfig = {
+      id: (crypto as unknown).randomUUID(): (shareConfig as unknown).type || 'view',
+      recipient: (shareConfig as unknown).recipient || { type: 'user' },
+      allowExport: (shareConfig as unknown).allowExport || false,
+      allowShare: (shareConfig as unknown).allowShare || false,
+      createdAt: new Date(): currentUser,
+    };
+
+    if (expiryDays > 0: unknown) {
+      (config as unknown).expiresAt = new Date(): unknown) {
+      (config as unknown).password = password;
+    }
+
+    onShare(config): unknown  = ()> {
+    const baseUrl: dashboardId,
+      share: (shareConfig as unknown).id || '',
+    });
+    return `${baseUrl}/dashboard/shared?${(params as unknown).toString(): unknown) {
+      (console as unknown).error('Failed to copy to clipboard:', error);
+    }
+  };
+
+  return (
+    <Modal isOpen = (window as unknown).(location as unknown).origin;
+    const params = new URLSearchParams({
+      id async (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> () => {
+    try {
+      await(navigator as unknown: unknown) {isOpen} onClose={onClose} title="Share Dashboard">
+      <div className="space-y-6">
+        {/* Share Type */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Share Type
+          </label>
+          <div className="mt-2 space-x-4">
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                value="view"
+                checked={(shareConfig as unknown).type === 'view'}
+                onChange={(e) =>
+                  setShareConfig((prev) => ({
+                    ...prev,
+                    type: (e as unknown).(target as unknown).value as 'view' | 'edit',
+                  }))
+                }
+                className="form-radio"
+              />
+              <span className="ml-2">View only</span>
+            </label>
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                value="edit"
+                checked={(shareConfig as unknown).type === 'edit'}
+                onChange={(e) =>
+                  setShareConfig((prev) => ({
+                    ...prev,
+                    type: (e as unknown).(target as unknown).value as 'view' | 'edit',
+                  }))
+                }
+                className="form-radio"
+              />
+              <span className="ml-2">Can edit</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Recipient */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Share With
+          </label>
+          <div className="mt-2">
+            <select
+              value={(shareConfig as unknown).recipient?.type}
+              onChange={(e) =>
+                setShareConfig((prev) => ({
+                  ...prev,
+                  recipient: { type: (e as unknown).(target as unknown).value as 'user' | 'team' | 'public' },
+                }))
+              }
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            >
+              <option value="user">Specific User</option>
+              <option value="team">Team</option>
+              <option value="public">Public</option>
+            </select>
+          </div>
+          {(shareConfig as unknown).recipient?.type === 'user' && (
+            <Input
+              type="email"
+              placeholder="Enter email address"
+              value={(shareConfig as unknown).recipient?.email || ''}
+              onChange={(e) =>
+                setShareConfig((prev) => ({
+                  ...prev,
+                  recipient: { ...(prev as unknown).recipient, email: (e as unknown).(target as unknown).value },
+                }))
+              }
+              className="mt-2"
+            />
+          )}
+        </div>
+
+        {/* Expiration */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Expiration
+          </label>
+          <Input
+            type="number"
+            min="0"
+            value={expiryDays}
+            onChange={(e) => setExpiryDays(parseInt((e as unknown).(target as unknown).value, 10))}
+            placeholder="Days (0 for no expiration)"
+            className="mt-2"
+          />
+        </div>
+
+        {/* Password Protection */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Password Protection
+          </label>
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword((e as unknown).(target as unknown).value)}
+            placeholder="Leave empty for no password"
+            className="mt-2"
+          />
+        </div>
+
+        {/* Permissions */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Additional Permissions
+          </label>
+          <div className="mt-2 space-y-2">
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                checked={(shareConfig as unknown).allowExport}
+                onChange={(e) =>
+                  setShareConfig((prev) => ({
+                    ...prev,
+                    allowExport: (e as unknown).(target as unknown).checked,
+                  }))
+                }
+                className="form-checkbox"
+              />
+              <span className="ml-2">Allow export</span>
+            </label>
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                checked={(shareConfig as unknown).allowShare}
+                onChange={(e) =>
+                  setShareConfig((prev) => ({
+                    ...prev,
+                    allowShare: (e as unknown).(target as unknown).checked,
+                  }))
+                }
+                className="form-checkbox"
+              />
+              <span className="ml-2">Allow resharing</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Share Link */}
+        {(shareConfig as unknown).id && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Share Link
+            </label>
+            <div className="mt-2 flex space-x-2">
+              <Input
+                readOnly
+                value={generateShareLink()}
+                className="flex-1"
+              />
+              <Button onClick={copyToClipboard}>
+                {copied ? 'Copied!' : 'Copy'}
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="mt-6 flex justify-end space-x-3">
+        <Button variant="outline" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button
+          variant="primary"
+          onClick={handleShare}
+          disabled={
+            !(shareConfig as unknown).type ||
+            ((shareConfig as unknown).recipient?.type === 'user' &&
+              !(shareConfig as unknown).recipient?.email)
+          }
+        >
+          Share Dashboard
+        </Button>
+      </div>
+    </Modal>
+  );
+};

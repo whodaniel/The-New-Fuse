@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Casin8 UI Kit &amp; Component Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#F59E0B",
+                        "success": "#10B981",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#0B1120",
+                        "neutral-800": "#1e293b",
+                        "neutral-900": "#0f172a",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>.glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1)
+    }
+.grainy-bg {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuBsgzrKySAEZTQYQq7Pc0qiscoQAaoPRbRB26hDgymKuirr1RdiKlXdM0dyJzgMaesJKGDLMdtF9J_YDDrv6U-aFJkO0K_zfd2cmLG-nn1DEJfwtY1f3EUwzH5HXjE_Vmc50-x8aTXvtqXzg8TGoCge8822WnYSnrcHfy7kEpijhqviPd2gcBolzMKXAqR9TL2cSEbauyAjzLTDGha2JwWXZsYbqyMoE9RqytQbpndc3znKZllXoS9aC8rmFcztNO-PCNCZ_ZIspAyx)
+    }</style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="flex min-h-screen">
+<!-- Sidebar Navigation -->
+<aside class="w-64 border-r border-slate-200 dark:border-slate-800 hidden lg:flex flex-col fixed h-full bg-background-light dark:bg-background-dark z-50">
+<div class="p-6 flex items-center gap-3">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-background-dark">
+<span class="material-symbols-outlined font-bold">casino</span>
+</div>
+<h1 class="font-serif text-2xl font-black tracking-tight text-primary">Casin8</h1>
+</div>
+<nav class="flex-1 px-4 space-y-2 py-4">
+<div class="text-xs font-bold text-slate-500 uppercase tracking-widest px-4 mb-4">Core Library</div>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/10 text-primary font-medium" href="#">
+<span class="material-symbols-outlined">dashboard</span> Foundations
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400" href="#">
+<span class="material-symbols-outlined">ads_click</span> Buttons &amp; Inputs
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400" href="#">
+<span class="material-symbols-outlined">style</span> Game Cards
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400" href="#">
+<span class="material-symbols-outlined">verified_user</span> Trust Components
+                </a>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<div class="glass rounded-xl p-4 flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">account_circle</span>
+</div>
+<div>
+<p class="text-sm font-bold">Admin Panel</p>
+<p class="text-xs text-slate-500">v1.2.4 Production</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 lg:ml-64 p-8">
+<header class="mb-12">
+<h2 class="font-serif text-5xl text-slate-900 dark:text-white mb-4">UI Kit &amp; Design System</h2>
+<p class="text-slate-500 dark:text-slate-400 max-w-2xl text-lg leading-relaxed">
+                    The Casin8 design language blends high-end cinematic aesthetics with crisp, data-heavy fintech components. Built for performance and luxury.
+                </p>
+</header>
+<!-- 1. Typography & Colors -->
+<section class="mb-16">
+<h3 class="text-sm font-bold uppercase tracking-widest text-primary mb-8 flex items-center gap-2">
+<span class="h-px w-8 bg-primary"></span> 01. Visual Foundations
+                </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Typography -->
+<div class="space-y-6">
+<div class="p-8 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+<p class="text-xs text-slate-500 mb-4 font-mono uppercase tracking-tighter">Typography Scale</p>
+<h4 class="font-serif text-4xl mb-2 text-primary">High-End Cinematic</h4>
+<p class="font-serif text-xl mb-6 text-slate-400 italic">Playfair Display - Headers &amp; Hero Elements</p>
+<div class="space-y-2">
+<p class="text-2xl font-bold">Data-Heavy Interface</p>
+<p class="text-slate-500">Inter - System UI, Tables, Bets &amp; Navigation</p>
+</div>
+</div>
+</div>
+<!-- Colors -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<div class="group">
+<div class="h-32 w-full rounded-xl bg-[#0B1120] border border-white/10 mb-2 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+</div>
+<p class="text-sm font-bold">Midnight Navy</p>
+<p class="text-xs text-slate-500 uppercase">#0B1120</p>
+</div>
+<div class="group">
+<div class="h-32 w-full rounded-xl bg-[#10B981] mb-2 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent"></div>
+</div>
+<p class="text-sm font-bold">Emerald Glow</p>
+<p class="text-xs text-slate-500 uppercase">#10B981</p>
+</div>
+<div class="group">
+<div class="h-32 w-full rounded-xl bg-[#F59E0B] mb-2 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-bl from-white/30 to-transparent"></div>
+</div>
+<p class="text-sm font-bold">Imperial Gold</p>
+<p class="text-xs text-slate-500 uppercase">#F59E0B</p>
+</div>
+</div>
+</div>
+</section>
+<!-- 2. Buttons & Inputs -->
+<section class="mb-16">
+<h3 class="text-sm font-bold uppercase tracking-widest text-primary mb-8 flex items-center gap-2">
+<span class="h-px w-8 bg-primary"></span> 02. Interactive Elements
+                </h3>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Buttons -->
+<div class="lg:col-span-2 glass rounded-2xl p-8 space-y-8">
+<div class="flex flex-wrap gap-4">
+<button class="px-8 py-3 bg-primary text-background-dark font-bold rounded-lg shadow-lg shadow-primary/20 hover:scale-105 transition-all">PRIMARY DEPOSIT</button>
+<button class="px-8 py-3 bg-success text-white font-bold rounded-lg shadow-lg shadow-success/20 hover:scale-105 transition-all">SECONDARY WIN</button>
+<button class="px-8 py-3 bg-slate-800 text-slate-100 font-bold rounded-lg border border-slate-700 hover:bg-slate-700 transition-all">UTILITY BUTTON</button>
+</div>
+<div class="flex flex-wrap items-center gap-8">
+<div class="inline-flex items-center bg-slate-900 border border-slate-700 rounded-lg p-1">
+<button class="size-10 flex items-center justify-center text-slate-400 hover:text-white"><span class="material-symbols-outlined">remove</span></button>
+<input class="bg-transparent border-none text-center w-20 font-bold text-primary focus:ring-0" type="text" value="0.005 BTC"/>
+<button class="size-10 flex items-center justify-center text-slate-400 hover:text-white"><span class="material-symbols-outlined">add</span></button>
+</div>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-slate-800 rounded text-xs font-bold border border-slate-700 text-slate-400 cursor-pointer hover:border-primary">1/2</span>
+<span class="px-3 py-1 bg-slate-800 rounded text-xs font-bold border border-slate-700 text-slate-400 cursor-pointer hover:border-primary">2X</span>
+<span class="px-3 py-1 bg-primary/20 rounded text-xs font-bold border border-primary/50 text-primary cursor-pointer uppercase">Max</span>
+</div>
+</div>
+</div>
+<!-- Glass Inputs -->
+<div class="glass rounded-2xl p-8 space-y-6">
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-500 uppercase tracking-tighter">Bet Amount</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-primary font-bold">₿</span>
+<input class="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-10 pr-4 focus:ring-1 focus:ring-primary focus:border-primary text-white placeholder:text-slate-600" placeholder="0.00000000" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-500 uppercase tracking-tighter">Promo Code</label>
+<div class="relative">
+<input class="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-4 focus:ring-1 focus:ring-primary focus:border-primary text-white placeholder:text-slate-600" placeholder="CASINO2024" type="text"/>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-background-dark px-4 py-2 rounded-lg text-xs font-black">APPLY</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Game Cards -->
+<section class="mb-16">
+<h3 class="text-sm font-bold uppercase tracking-widest text-primary mb-8 flex items-center gap-2">
+<span class="h-px w-8 bg-primary"></span> 03. Luxury Game Cards
+                </h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Poker Card -->
+<div class="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-slate-900 border border-white/10 transition-all hover:border-primary/50">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" data-alt="Close up of poker cards and chips on table" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCwTpa-bmsxZvlhDe-HXQxZkH7aCYg5BL2I-gMZJLFHy9vp16AA_q2LcUQjkE_BTqirLNqUYfxJYHCHVmSIYDfh-9TR0fbFdU9Bvg7rORgdQfsduVH3LDHINGtPpgu_LY7FMvmzUbjmDVVB8_Jf1daxiss9zQMvzE6YAX6hivOWzLNbvHBZGS_xp3UDn7hFJzHNyokZgrW4FCHDIHZPiuB3CQacZstKdwEE7ooc2idrytNVGQy7M6S-fJpXUISlbkq-B8FhPFEAtTNN');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/20 to-transparent"></div>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-full bg-primary text-background-dark text-[10px] font-black uppercase tracking-tighter">Premium</span>
+</div>
+<div class="absolute bottom-4 left-4 right-4">
+<p class="font-serif text-2xl text-white mb-1">Texas Hold'em</p>
+<p class="text-xs text-slate-400 flex items-center gap-1"><span class="material-symbols-outlined text-xs">group</span> 432 Playing</p>
+<button class="mt-4 w-full py-2 bg-white/10 backdrop-blur-md rounded-lg text-sm font-bold opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all border border-white/10">PLAY NOW</button>
+</div>
+</div>
+<!-- Blackjack Card -->
+<div class="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-slate-900 border border-white/10 transition-all hover:border-primary/50">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" data-alt="Sleek blackjack card table setup" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCWXw9kdbaXBD98-6fVgRjc5bhC-jDEjMuknCSqOCc1GisUY-XCW0okhBcjBv_26xZlwqqQB_IpZ6qCkH3qGpRQXdXw_eA_sYWh9YeUuTerY7l1KQUDHtW7tY97PLy1NmcZ1zOwg0g8htQXCZ1l9y0vkuObSADIVo1oD1_9FiMwGhexfQ-UrNSoAqCuSlEEavORpaztQFseV3_LEKkLIrk-LZ2Q9pknOg6_iEzM-FawT-p1u-LnJYl-NvyjDj3lRpKAm83X7DAwTSJy');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/20 to-transparent"></div>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-full bg-success text-white text-[10px] font-black uppercase tracking-tighter">Live Dealer</span>
+</div>
+<div class="absolute bottom-4 left-4 right-4">
+<p class="font-serif text-2xl text-white mb-1">Blackjack Pro</p>
+<p class="text-xs text-slate-400 flex items-center gap-1"><span class="material-symbols-outlined text-xs">visibility</span> 1.2k Watching</p>
+<button class="mt-4 w-full py-2 bg-white/10 backdrop-blur-md rounded-lg text-sm font-bold opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all border border-white/10">JOIN TABLE</button>
+</div>
+</div>
+<!-- Roulette Card -->
+<div class="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-slate-900 border border-white/10 transition-all hover:border-primary/50">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" data-alt="Spinning roulette wheel gold details" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAhGAZd665S94V0itxE3dwgJSL2PTAOedm_iyjDTUZJEHpqzndH2HOTCArPWzPuaDvtgUPstI5FuFTF0f_ygKnBPBX1Igt1bB6fB8HB3kkXFIE9sb2Rqnwfp6yOSzkFnO_zpmWpnByfxEHaLdNJt1EFXzGAqVVBB55roVAyGMjgvrm4C_37Tg47eneEWyaFZllGiX8TEtvvNg5gza4gPaB-yxrfE02M3ntMH80AD-L0o2tkBJSOtELQt8PtxxsCYYtBKRPr_2_p7epX');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/20 to-transparent"></div>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-full bg-primary text-background-dark text-[10px] font-black uppercase tracking-tighter">Hot Jackpots</span>
+</div>
+<div class="absolute bottom-4 left-4 right-4">
+<p class="font-serif text-2xl text-white mb-1">Imperial Roulette</p>
+<p class="text-xs text-slate-400 flex items-center gap-1"><span class="material-symbols-outlined text-xs">stars</span> 5.0 Rating</p>
+<button class="mt-4 w-full py-2 bg-white/10 backdrop-blur-md rounded-lg text-sm font-bold opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all border border-white/10">SPIN NOW</button>
+</div>
+</div>
+<!-- Slots Card -->
+<div class="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-slate-900 border border-white/10 transition-all hover:border-primary/50">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" data-alt="Digital slot machine neon lighting" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBU8E0i71Ljx8EGr9T0HTAsleJS8mUuaTa7sIlnr1wErz6Qp7ofd9eLcA-Ntvga-rD8CTXltBHVSefXqhx70DjC10hmrgAwaSgGpTbDfQ9yb_7mEnXKI6vsX2C_xs2bXM6-r-_IMtpidjBfQRndc7Whoz8IpbLGiMDReIIpH6AisYuYPg-kfeP-zSKs4-xwhqLsSRlf-jwgkJcr3q_z9defkvyd_1B1jnroX5-OyIGmoynj5Q373QL0nwfjP0TF9Nci-Ff-Po3jzeGi');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/20 to-transparent"></div>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-full bg-slate-100 text-background-dark text-[10px] font-black uppercase tracking-tighter">New Game</span>
+</div>
+<div class="absolute bottom-4 left-4 right-4">
+<p class="font-serif text-2xl text-white mb-1">Crypto Rush</p>
+<p class="text-xs text-slate-400 flex items-center gap-1"><span class="material-symbols-outlined text-xs">bolt</span> Instant Win</p>
+<button class="mt-4 w-full py-2 bg-white/10 backdrop-blur-md rounded-lg text-sm font-bold opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all border border-white/10">PLAY DEMO</button>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. Trust & Status Components -->
+<section class="mb-16">
+<h3 class="text-sm font-bold uppercase tracking-widest text-primary mb-8 flex items-center gap-2">
+<span class="h-px w-8 bg-primary"></span> 04. Trust &amp; Security
+                </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Transaction Badges -->
+<div class="glass rounded-2xl p-8 space-y-6">
+<p class="text-xs text-slate-500 font-bold uppercase">Transaction Status</p>
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-success/20 text-success flex items-center justify-center"><span class="material-symbols-outlined text-lg">check_circle</span></div>
+<p class="text-sm font-bold">Withdrawal Confirmed</p>
+</div>
+<span class="text-xs font-mono text-slate-500">2 mins ago</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-primary/20 text-primary flex items-center justify-center"><span class="material-symbols-outlined text-lg">pending</span></div>
+<p class="text-sm font-bold">Deposit Pending</p>
+</div>
+<span class="text-xs font-mono text-slate-500">Processing...</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 opacity-70">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center"><span class="material-symbols-outlined text-lg">error</span></div>
+<p class="text-sm font-bold">Transaction Failed</p>
+</div>
+<span class="text-xs font-mono text-red-500">Retry</span>
+</div>
+</div>
+</div>
+<!-- Provably Fair -->
+<div class="glass rounded-2xl p-8 space-y-6 overflow-hidden relative">
+<div class="absolute -right-4 -top-4 size-24 bg-primary/10 rounded-full blur-3xl"></div>
+<p class="text-xs text-slate-500 font-bold uppercase">Provably Fair System</p>
+<div class="space-y-4">
+<div class="p-4 rounded-xl bg-background-dark/50 border border-primary/20">
+<p class="text-[10px] text-primary font-black uppercase mb-2">Active Server Seed</p>
+<div class="flex items-center justify-between gap-2">
+<code class="text-xs font-mono text-slate-300 truncate">a7b2c9d1e5f8g4h2j1k9m3n7p5r2t8u1w6x4y2z0</code>
+<button class="text-primary hover:scale-110 transition-transform"><span class="material-symbols-outlined text-lg">content_copy</span></button>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex-1 p-3 rounded-xl bg-white/5 border border-white/10">
+<p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Nonce</p>
+<p class="text-xl font-mono text-white">45,892</p>
+</div>
+<div class="flex-1 p-3 rounded-xl bg-white/5 border border-white/10">
+<p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Verify</p>
+<span class="material-symbols-outlined text-primary">verified</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- Mobile Navigation Bar -->
+<div class="lg:hidden fixed bottom-0 left-0 right-0 bg-background-dark border-t border-slate-800 px-6 py-4 flex items-center justify-between z-50">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-bold uppercase">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined">casino</span>
+<span class="text-[10px] font-bold uppercase">Games</span>
+</button>
+<div class="size-14 -mt-10 bg-primary rounded-full flex items-center justify-center shadow-xl shadow-primary/30 border-4 border-background-dark">
+<span class="material-symbols-outlined text-background-dark font-black">add</span>
+</div>
+<button class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="text-[10px] font-bold uppercase">Race</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold uppercase">Profile</span>
+</button>
+</div>
+</body></html>

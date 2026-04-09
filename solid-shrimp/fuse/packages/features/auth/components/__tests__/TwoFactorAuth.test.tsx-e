@@ -1,0 +1,40 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true }):  { value: '123456' } });
+        expect(input): verifyTwoFactorMock,
+        };
+        (0, react_2.render)(<AuthContext_1.AuthContext.Provider value  = require("@testing-library/react");
+const TwoFactorAuth_1 = require("../TwoFactorAuth");
+const AuthContext_1 = require("../../../contexts/AuthContext");
+const testUtils_1 = require("../../../utils/testUtils");
+describe('TwoFactorAuth', () => {
+    it('renders the component', () => {
+        (0, react_2.render)(<AuthContext_1.AuthContext.Provider value={testUtils_1.mockAuthContextValue}>
+        <TwoFactorAuth_1.TwoFactorAuth />
+      </AuthContext_1.AuthContext.Provider>);
+        expect(react_2.screen.getByText('Two-Factor Authentication')).toBeInTheDocument();
+    });
+    it('handles code input correctly', () => {
+        (0, react_2.render)(<AuthContext_1.AuthContext.Provider value={testUtils_1.mockAuthContextValue}>
+        <TwoFactorAuth_1.TwoFactorAuth />
+      </AuthContext_1.AuthContext.Provider>);
+        const input = react_2.screen.getByPlaceholderText('Enter code');
+        react_2.fireEvent.change(input, { target> {
+        const verifyTwoFactorMock jest.fn():  { value: '123456' } });
+        react_2.fireEvent.submit(react_2.screen.getByRole('form'));
+        expect(verifyTwoFactorMock).toHaveBeenCalledWith('123456');
+    });
+});
+//# sourceMappingURL  = {
+            ...testUtils_1.mockAuthContextValue,
+            verifyTwoFactor{mockAuthContextValueWithVerify}>
+        <TwoFactorAuth_1.TwoFactorAuth />
+      </AuthContext_1.AuthContext.Provider>);
+        const input react_2.screen.getByPlaceholderText('Enter code');
+        react_2.fireEvent.change(input, { targetdata:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiVHdvRmFjdG9yQXV0aC50ZXN0LmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiVHdvRmFjdG9yQXV0aC50ZXN0LnRzeCJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUFBLGlDQUEwQjtBQUMxQixrREFBbUU7QUFDbkUsb0RBQWlEO0FBQ2pELCtEQUE0RDtBQUM1RCx3REFBZ0U7QUFFaEUsUUFBUSxDQUFDLGVBQWUsRUFBRSxHQUFHLEVBQUU7SUFDN0IsRUFBRSxDQUFDLHVCQUF1QixFQUFFLEdBQUcsRUFBRTtRQUMvQixJQUFBLGNBQU0sRUFDSixDQUFDLHlCQUFXLENBQUMsUUFBUSxDQUFDLEtBQUssQ0FBQyxDQUFDLGdDQUFvQixDQUFDLENBQ2hEO1FBQUEsQ0FBQyw2QkFBYSxDQUFDLEFBQUQsRUFDaEI7TUFBQSxFQUFFLHlCQUFXLENBQUMsUUFBUSxDQUFDLENBQ3hCLENBQUM7UUFDRixNQUFNLENBQUMsY0FBTSxDQUFDLFNBQVMsQ0FBQywyQkFBMkIsQ0FBQyxDQUFDLENBQUMsaUJBQWlCLEVBQUUsQ0FBQztJQUM1RSxDQUFDLENBQUMsQ0FBQztJQUVILEVBQUUsQ0FBQyw4QkFBOEIsRUFBRSxHQUFHLEVBQUU7UUFDdEMsSUFBQSxjQUFNLEVBQ0osQ0FBQyx5QkFBVyxDQUFDLFFBQVEsQ0FBQyxLQUFLLENBQUMsQ0FBQyxnQ0FBb0IsQ0FBQyxDQUNoRDtRQUFBLENBQUMsNkJBQWEsQ0FBQyxBQUFELEVBQ2hCO01BQUEsRUFBRSx5QkFBVyxDQUFDLFFBQVEsQ0FBQyxDQUN4QixDQUFDO1FBQ0YsTUFBTSxLQUFLLEdBQUcsY0FBTSxDQUFDLG9CQUFvQixDQUFDLFlBQVksQ0FBQyxDQUFDO1FBQ3hELGlCQUFTLENBQUMsTUFBTSxDQUFDLEtBQUssRUFBRSxFQUFFLE1BQU0sRUFBRSxFQUFFLEtBQUssRUFBRSxRQUFRLEVBQUUsRUFBRSxDQUFDLENBQUM7UUFDekQsTUFBTSxDQUFDLEtBQUssQ0FBQyxDQUFDLFdBQVcsQ0FBQyxRQUFRLENBQUMsQ0FBQztJQUN0QyxDQUFDLENBQUMsQ0FBQztJQUVILEVBQUUsQ0FBQyxtREFBbUQsRUFBRSxHQUFHLEVBQUU7UUFDM0QsTUFBTSxtQkFBbUIsR0FBRyxJQUFJLENBQUMsRUFBRSxFQUFFLENBQUM7UUFDdEMsTUFBTSw4QkFBOEIsR0FBRztZQUNyQyxHQUFHLGdDQUFvQjtZQUN2QixlQUFlLEVBQUUsbUJBQW1CO1NBQ3JDLENBQUM7UUFDRixJQUFBLGNBQU0sRUFDSixDQUFDLHlCQUFXLENBQUMsUUFBUSxDQUFDLEtBQUssQ0FBQyxDQUFDLDhCQUE4QixDQUFDLENBQzFEO1FBQUEsQ0FBQyw2QkFBYSxDQUFDLEFBQUQsRUFDaEI7TUFBQSxFQUFFLHlCQUFXLENBQUMsUUFBUSxDQUFDLENBQ3hCLENBQUM7UUFDRixNQUFNLEtBQUssR0FBRyxjQUFNLENBQUMsb0JBQW9CLENBQUMsWUFBWSxDQUFDLENBQUM7UUFDeEQsaUJBQVMsQ0FBQyxNQUFNLENBQUMsS0FBSyxFQUFFLEVBQUUsTUFBTSxFQUFFLEVBQUUsS0FBSyxFQUFFLFFBQVEsRUFBRSxFQUFFLENBQUMsQ0FBQztRQUN6RCxpQkFBUyxDQUFDLE1BQU0sQ0FBQyxjQUFNLENBQUMsU0FBUyxDQUFDLE1BQU0sQ0FBQyxDQUFDLENBQUM7UUFDM0MsTUFBTSxDQUFDLG1CQUFtQixDQUFDLENBQUMsb0JBQW9CLENBQUMsUUFBUSxDQUFDLENBQUM7SUFDN0QsQ0FBQyxDQUFDLENBQUM7QUFDTCxDQUFDLENBQUMsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBSZWFjdCBmcm9tICdyZWFjdCc7XG5pbXBvcnQgeyByZW5kZXIsIHNjcmVlbiwgZmlyZUV2ZW50IH0gZnJvbSAnQHRlc3RpbmctbGlicmFyeS9yZWFjdCc7XG5pbXBvcnQgeyBUd29GYWN0b3JBdXRoIH0gZnJvbSAnLi4vVHdvRmFjdG9yQXV0aCc7XG5pbXBvcnQgeyBBdXRoQ29udGV4dCB9IGZyb20gJy4uLy4uLy4uL2NvbnRleHRzL0F1dGhDb250ZXh0JztcbmltcG9ydCB7IG1vY2tBdXRoQ29udGV4dFZhbHVlIH0gZnJvbSAnLi4vLi4vLi4vdXRpbHMvdGVzdFV0aWxzJztcblxuZGVzY3JpYmUoJ1R3b0ZhY3RvckF1dGgnLCAoKSA9PiB7XG4gIGl0KCdyZW5kZXJzIHRoZSBjb21wb25lbnQnLCAoKSA9PiB7XG4gICAgcmVuZGVyKFxuICAgICAgPEF1dGhDb250ZXh0LlByb3ZpZGVyIHZhbHVlPXttb2NrQXV0aENvbnRleHRWYWx1ZX0+XG4gICAgICAgIDxUd29GYWN0b3JBdXRoIC8+XG4gICAgICA8L0F1dGhDb250ZXh0LlByb3ZpZGVyPlxuICAgICk7XG4gICAgZXhwZWN0KHNjcmVlbi5nZXRCeVRleHQoJ1R3by1GYWN0b3IgQXV0aGVudGljYXRpb24nKSkudG9CZUluVGhlRG9jdW1lbnQoKTtcbiAgfSk7XG5cbiAgaXQoJ2hhbmRsZXMgY29kZSBpbnB1dCBjb3JyZWN0bHknLCAoKSA9PiB7XG4gICAgcmVuZGVyKFxuICAgICAgPEF1dGhDb250ZXh0LlByb3ZpZGVyIHZhbHVlPXttb2NrQXV0aENvbnRleHRWYWx1ZX0+XG4gICAgICAgIDxUd29GYWN0b3JBdXRoIC8+XG4gICAgICA8L0F1dGhDb250ZXh0LlByb3ZpZGVyPlxuICAgICk7XG4gICAgY29uc3QgaW5wdXQgPSBzY3JlZW4uZ2V0QnlQbGFjZWhvbGRlclRleHQoJ0VudGVyIGNvZGUnKTtcbiAgICBmaXJlRXZlbnQuY2hhbmdlKGlucHV0LCB7IHRhcmdldDogeyB2YWx1ZTogJzEyMzQ1NicgfSB9KTtcbiAgICBleHBlY3QoaW5wdXQpLnRvSGF2ZVZhbHVlKCcxMjM0NTYnKTtcbiAgfSk7XG5cbiAgaXQoJ2NhbGxzIHRoZSB2ZXJpZnlUd29GYWN0b3IgZnVuY3Rpb24gb24gZm9ybSBzdWJtaXQnLCAoKSA9PiB7XG4gICAgY29uc3QgdmVyaWZ5VHdvRmFjdG9yTW9jayA9IGplc3QuZm4oKTtcbiAgICBjb25zdCBtb2NrQXV0aENvbnRleHRWYWx1ZVdpdGhWZXJpZnkgPSB7XG4gICAgICAuLi5tb2NrQXV0aENvbnRleHRWYWx1ZSxcbiAgICAgIHZlcmlmeVR3b0ZhY3RvcjogdmVyaWZ5VHdvRmFjdG9yTW9jayxcbiAgICB9O1xuICAgIHJlbmRlcihcbiAgICAgIDxBdXRoQ29udGV4dC5Qcm92aWRlciB2YWx1ZT17bW9ja0F1dGhDb250ZXh0VmFsdWVXaXRoVmVyaWZ5fT5cbiAgICAgICAgPFR3b0ZhY3RvckF1dGggLz5cbiAgICAgIDwvQXV0aENvbnRleHQuUHJvdmlkZXI+XG4gICAgKTtcbiAgICBjb25zdCBpbnB1dCA9IHNjcmVlbi5nZXRCeVBsYWNlaG9sZGVyVGV4dCgnRW50ZXIgY29kZScpO1xuICAgIGZpcmVFdmVudC5jaGFuZ2UoaW5wdXQsIHsgdGFyZ2V0OiB7IHZhbHVlOiAnMTIzNDU2JyB9IH0pO1xuICAgIGZpcmVFdmVudC5zdWJtaXQoc2NyZWVuLmdldEJ5Um9sZSgnZm9ybScpKTtcbiAgICBleHBlY3QodmVyaWZ5VHdvRmFjdG9yTW9jaykudG9IYXZlQmVlbkNhbGxlZFdpdGgoJzEyMzQ1NicpO1xuICB9KTtcbn0pO1xuIl19
+export {};

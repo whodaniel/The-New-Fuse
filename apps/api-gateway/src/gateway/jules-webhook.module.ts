@@ -36,6 +36,16 @@ class NoopJulesWebhookHandler {
       useClass: DatabaseService,
     },
     {
+      provide: 'REDIS_CLIENT',
+      useFactory: () => {
+        return new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+      },
+    },
+    {
+      provide: Redis,
+      useExisting: 'REDIS_CLIENT',
+    },
+    {
       provide: JulesUsageTracker,
       useClass: JulesUsageTracker,
     },

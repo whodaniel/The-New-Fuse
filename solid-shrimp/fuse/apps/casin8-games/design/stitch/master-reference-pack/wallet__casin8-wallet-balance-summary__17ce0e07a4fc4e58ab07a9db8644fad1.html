@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Casin8 Wallet</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec6a", // Emerald Green
+                        "secondary": "#9d4edd", // Royal Purple accent
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#050508", // Obsidian
+                        "surface-dark": "#12121a", // Deep surface
+                        "gold": "#ffd700",
+                        "royal-red": "#dc2626",
+                        "cyan-tech": "#06b6d4",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                        "mono": ["monospace"],
+                    },
+                    backgroundImage: {
+                        'gradient-obsidian': 'linear-gradient(to bottom, #1a0b2e, #050508)',
+                        'glass': 'linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)',
+                        'glass-card': 'linear-gradient(180deg, rgba(30, 27, 46, 0.7) 0%, rgba(18, 18, 26, 0.4) 100%)',
+                    },
+                    backdropBlur: {
+                        'xs': '2px',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        .hud-border {
+            position: relative;
+        }
+        .hud-border::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 8px;
+            border-top: 1px solid rgba(19, 236, 106, 0.5);
+            border-right: 1px solid rgba(19, 236, 106, 0.5);
+        }
+        .hud-border::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 8px;
+            height: 8px;
+            border-bottom: 1px solid rgba(19, 236, 106, 0.5);
+            border-left: 1px solid rgba(19, 236, 106, 0.5);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-gradient-obsidian min-h-screen text-slate-100 antialiased overflow-x-hidden pb-24">
+<!-- Header / Nav -->
+<div class="sticky top-0 z-50 flex items-center justify-between p-4 bg-[#1a0b2e]/80 backdrop-blur-md border-b border-white/5">
+<div class="flex items-center gap-3">
+<button class="text-white hover:text-primary transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-xl font-bold tracking-tight text-white">Wallet <span class="text-white/40 font-normal">| Ledger</span></h1>
+</div>
+<button class="relative group p-2 rounded-full hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-white">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+</button>
+</div>
+<!-- Balance Section -->
+<div class="p-4 flex flex-col gap-4">
+<!-- Main Balance Card -->
+<div class="glass-panel rounded-2xl p-6 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">token</span>
+<span class="text-sm font-medium text-slate-400 tracking-wider uppercase">Total Balance</span>
+</div>
+<span class="bg-primary/20 text-primary text-xs font-mono py-1 px-2 rounded border border-primary/20">LIVE</span>
+</div>
+<div class="mb-4">
+<h2 class="text-4xl font-bold text-white tracking-tight flex items-baseline gap-1">
+<span class="text-2xl text-slate-400">$</span>8,450.00
+                </h2>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-primary text-sm font-bold flex items-center">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                        +12.5%
+                    </span>
+<span class="text-slate-500 text-xs">past 24h</span>
+</div>
+</div>
+<!-- Decorative HUD Lines -->
+<div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-50"></div>
+</div>
+<!-- Secondary Rewards Card -->
+<div class="grid grid-cols-2 gap-4">
+<div class="glass-panel rounded-xl p-4 relative hud-border">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary text-lg">hotel_class</span>
+<span class="text-xs font-medium text-slate-400 uppercase">Rewards</span>
+</div>
+<p class="text-xl font-bold text-white">1,250</p>
+<p class="text-xs text-secondary mt-1 font-mono">PTS: ACTIVE</p>
+</div>
+<div class="glass-panel rounded-xl p-4 relative hud-border">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-cyan-tech text-lg">savings</span>
+<span class="text-xs font-medium text-slate-400 uppercase">Staked</span>
+</div>
+<p class="text-xl font-bold text-white">500.00</p>
+<p class="text-xs text-cyan-tech mt-1 font-mono">APR: 5.2%</p>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex gap-3 mt-2">
+<button class="flex-1 bg-primary text-background-dark h-12 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-primary/90 transition-all shadow-[0_0_15px_rgba(19,236,106,0.3)]">
+<span class="material-symbols-outlined">add_circle</span>
+                DEPOSIT
+            </button>
+<button class="flex-1 bg-surface-dark border border-white/10 text-white h-12 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">arrow_circle_up</span>
+                WITHDRAW
+            </button>
+</div>
+</div>
+<!-- Ledger / Transactions -->
+<div class="mt-2">
+<div class="px-4 pb-2 flex items-center justify-between">
+<h3 class="text-lg font-bold text-white tracking-wide">Recent Ledger</h3>
+<button class="text-xs text-primary font-mono hover:underline">VIEW ALL &gt;</button>
+</div>
+<div class="flex flex-col gap-3 px-4 pb-4">
+<!-- Transaction Item: Payout (Gold) -->
+<div class="glass-panel p-4 rounded-xl flex flex-col gap-2 relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-gold"></div>
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center text-gold border border-gold/20">
+<span class="material-symbols-outlined">trophy</span>
+</div>
+<div>
+<p class="font-bold text-white">Tournament Payout</p>
+<p class="text-xs text-slate-400">NL Hold'em - Table #4092</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-gold text-lg">+ $1,200.00</p>
+<p class="text-[10px] text-slate-500 font-mono">14:02 PM</p>
+</div>
+</div>
+<!-- Micro Telemetry -->
+<div class="border-t border-white/5 pt-2 mt-1 flex justify-between items-center text-[10px] font-mono text-cyan-tech/80">
+<span>TX: 0x82...91a2</span>
+<span class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                        STATUS: CONFIRMED
+                    </span>
+</div>
+</div>
+<!-- Transaction Item: Buy-in (Red) -->
+<div class="glass-panel p-4 rounded-xl flex flex-col gap-2 relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-royal-red"></div>
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-royal-red/10 flex items-center justify-center text-royal-red border border-royal-red/20">
+<span class="material-symbols-outlined">casino</span>
+</div>
+<div>
+<p class="font-bold text-white">Table Buy-in</p>
+<p class="text-xs text-slate-400">PLO Omaha - Table #8821</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-white text-lg">- $500.00</p>
+<p class="text-[10px] text-slate-500 font-mono">11:30 AM</p>
+</div>
+</div>
+<div class="border-t border-white/5 pt-2 mt-1 flex justify-between items-center text-[10px] font-mono text-cyan-tech/80">
+<span>TX: 0x3a...b29c</span>
+<span class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                        STATUS: CONFIRMED
+                    </span>
+</div>
+</div>
+<!-- Transaction Item: Deposit (Green/Primary) -->
+<div class="glass-panel p-4 rounded-xl flex flex-col gap-2 relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</div>
+<div>
+<p class="font-bold text-white">Wallet Deposit</p>
+<p class="text-xs text-slate-400">External Transfer</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-primary text-lg">+ $2,000.00</p>
+<p class="text-[10px] text-slate-500 font-mono">Yesterday</p>
+</div>
+</div>
+<div class="border-t border-white/5 pt-2 mt-1 flex justify-between items-center text-[10px] font-mono text-cyan-tech/80">
+<span>TX: 0xf1...c45a</span>
+<span class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                        STATUS: CONFIRMED
+                    </span>
+</div>
+</div>
+<!-- Transaction Item: Withdrawal (Grey) -->
+<div class="glass-panel p-4 rounded-xl flex flex-col gap-2 relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-slate-500"></div>
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-slate-700/30 flex items-center justify-center text-slate-300 border border-slate-600/30">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div>
+<p class="font-bold text-white">Withdrawal</p>
+<p class="text-xs text-slate-400">To Bank Account ****4492</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-slate-300 text-lg">- $1,500.00</p>
+<p class="text-[10px] text-slate-500 font-mono">Oct 24</p>
+</div>
+</div>
+<div class="border-t border-white/5 pt-2 mt-1 flex justify-between items-center text-[10px] font-mono text-cyan-tech/80">
+<span>TX: 0x99...a1d4</span>
+<span class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                        STATUS: COMPLETED
+                    </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Nav -->
+<div class="fixed bottom-0 left-0 right-0 glass-panel border-t border-white/10 px-6 pb-6 pt-3 z-50">
+<div class="flex justify-between items-end">
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">home</span>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary tracking-wide">HOME</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">sports_esports</span>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary tracking-wide">GAMES</span>
+</a>
+<!-- Active State Wallet -->
+<div class="relative -top-6">
+<div class="absolute -inset-4 bg-primary/20 blur-xl rounded-full"></div>
+<button class="bg-gradient-to-br from-primary to-[#0fb854] h-14 w-14 rounded-full flex items-center justify-center text-background-dark shadow-lg shadow-primary/40 relative z-10 border-4 border-background-dark">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+</button>
+</div>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">leaderboard</span>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary tracking-wide">STATS</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">person</span>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary tracking-wide">PROFILE</span>
+</a>
+</div>
+</div>
+</body></html>

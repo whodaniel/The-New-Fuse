@@ -237,15 +237,11 @@ export class HandoffStoreService {
   async listBySession(sessionKey: string, limit = 50): Promise<HandoffPacketType[]> {
     await this.connect();
 
-    const key = this.sessionIndexKey(sessionKey);
-    let ids: string[] = [];
-
-    if (this.upstash) {
-      ids = await this.upstash.lrange(key, 0, Math.max(limit, 1) - 1);
-    } else if (this.client) {
-      ids = await this.client.lrange(key, 0, Math.max(limit, 1) - 1);
-    }
-
+    const ids = await this.client.lRange(
+      this.sessionIndexKey(sessionKey),
+      0,
+      Math.max(limit, 1) - 1
+    );
     const packets: HandoffPacketType[] = [];
 
     for (const id of ids) {

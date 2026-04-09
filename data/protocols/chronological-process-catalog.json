@@ -70,19 +70,9 @@
       "cadence": "0 * * * *",
       "timezone": "UTC",
       "description": "Tenant-scoped default reminder loop for user and tenant-agent terminal context continuity.",
-      "runNow": {
-        "command": "node",
-        "args": [
-          "scripts/protocols/chronological-dispatch.cjs",
-          "--process-id",
-          "tenant-terminal-awareness-default",
-          "--allow-local-fallback"
-        ],
-        "timeoutMs": 15000
-      },
+      "runNow": null,
       "docs": {
-        "protocol": "docs/protocols/tnf-cron-governance-protocol-v0.1.md",
-        "runbook": "docs/operations/super-admin-chronological-processes.md"
+        "protocol": "docs/protocols/tnf-cron-governance-protocol-v0.1.md"
       }
     },
     "tenant-personal-archaeology-master-loop": {
@@ -167,8 +157,7 @@
         "args": [
           "scripts/protocols/chronological-dispatch.cjs",
           "--process-id",
-          "tenant-daily-priority-plan",
-          "--allow-local-fallback"
+          "tenant-daily-priority-plan"
         ],
         "timeoutMs": 15000
       },
@@ -193,8 +182,7 @@
         "args": [
           "scripts/protocols/chronological-dispatch.cjs",
           "--process-id",
-          "tenant-nightly-maintenance",
-          "--allow-local-fallback"
+          "tenant-nightly-maintenance"
         ],
         "timeoutMs": 15000
       },
@@ -219,8 +207,7 @@
         "args": [
           "scripts/protocols/chronological-dispatch.cjs",
           "--process-id",
-          "tenant-orchestrator-pulse",
-          "--allow-local-fallback"
+          "tenant-orchestrator-pulse"
         ],
         "timeoutMs": 15000
       },
@@ -245,8 +232,7 @@
         "args": [
           "scripts/protocols/chronological-dispatch.cjs",
           "--process-id",
-          "tenant-self-improvement-loop",
-          "--allow-local-fallback"
+          "tenant-self-improvement-loop"
         ],
         "timeoutMs": 15000
       },
@@ -271,8 +257,7 @@
         "args": [
           "scripts/protocols/chronological-dispatch.cjs",
           "--process-id",
-          "tenant-continuous-qa-loop",
-          "--allow-local-fallback"
+          "tenant-continuous-qa-loop"
         ],
         "timeoutMs": 15000
       },
@@ -297,8 +282,7 @@
         "args": [
           "scripts/protocols/chronological-dispatch.cjs",
           "--process-id",
-          "tenant-hourly-attribution-audit",
-          "--allow-local-fallback"
+          "tenant-hourly-attribution-audit"
         ],
         "timeoutMs": 15000
       },
@@ -323,8 +307,7 @@
         "args": [
           "scripts/protocols/chronological-dispatch.cjs",
           "--process-id",
-          "tenant-knowledge-scout-sprint",
-          "--allow-local-fallback"
+          "tenant-knowledge-scout-sprint"
         ],
         "timeoutMs": 15000
       },
@@ -349,8 +332,7 @@
         "args": [
           "scripts/protocols/chronological-dispatch.cjs",
           "--process-id",
-          "tenant-loop-watchdog",
-          "--allow-local-fallback"
+          "tenant-loop-watchdog"
         ],
         "timeoutMs": 15000
       },
@@ -375,8 +357,7 @@
         "args": [
           "scripts/protocols/chronological-dispatch.cjs",
           "--process-id",
-          "tenant-launch-validation",
-          "--allow-local-fallback"
+          "tenant-launch-validation"
         ],
         "timeoutMs": 15000
       },
@@ -409,74 +390,6 @@
       "docs": {
         "protocol": "docs/protocols/bridges/tnf-openclaw-command-assimilation.yml",
         "runbook": "docs/operations/super-admin-chronological-processes.md"
-      }
-    },
-    "tnf-staff-role-call-and-scheduling": {
-      "title": "TNF Staff Role Call and Scheduling",
-      "cadence": "*/20 * * * *",
-      "timezone": "UTC",
-      "description": "Corporation-wide role call and staff scheduling reconciliation loop that keeps terminal owners, role tags, and schedule coverage aligned with current priorities.",
-      "runNow": {
-        "command": "node",
-        "args": ["scripts/protocols/staffops-role-call.cjs", "--json"],
-        "timeoutMs": 45000
-      },
-      "docs": {
-        "protocol": "docs/operations/TNF_CORPORATE_CHAIN_OF_COMMAND_AND_ORDER_OF_OPERATIONS_MANUAL.md",
-        "runbook": "docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md"
-      }
-    },
-    "tnf-growth-blocker-audit": {
-      "title": "TNF Growth Blocker Audit",
-      "cadence": "0 */4 * * *",
-      "timezone": "UTC",
-      "description": "Recurring protocol and policy audit that flags stale restrictions and coordination bottlenecks limiting corporation-wide throughput and attribution continuity.",
-      "runNow": {
-        "command": "node",
-        "args": [
-          ".skills/tnf-growth-blocker-auditor/scripts/run_growth_blocker_audit.cjs"
-        ],
-        "timeoutMs": 60000
-      },
-      "docs": {
-        "protocol": "docs/operations/TNF_CORPORATE_CHAIN_OF_COMMAND_AND_ORDER_OF_OPERATIONS_MANUAL.md",
-        "runbook": "reports/protocols/growth-blocker-audit/growth-blocker-audit-latest.md"
-      }
-    },
-    "tnf-staffing-director-cycle": {
-      "title": "TNF Staffing Director Cycle",
-      "cadence": "30 */6 * * *",
-      "timezone": "UTC",
-      "description": "Recurring staffing architecture cycle that detects role gaps and proposes new agent+skill role packages for uncovered operational niches.",
-      "runNow": {
-        "command": "node",
-        "args": [
-          ".skills/tnf-staffing-director-agent/scripts/run_staffing_director_cycle.cjs",
-          "--json"
-        ],
-        "timeoutMs": 60000
-      },
-      "docs": {
-        "protocol": "docs/operations/TNF_CORPORATE_CHAIN_OF_COMMAND_AND_ORDER_OF_OPERATIONS_MANUAL.md",
-        "runbook": "reports/protocols/staffing-director/staffing-director-latest.md"
-      }
-    },
-    "tnf-staff-review-cycle": {
-      "title": "TNF Staff Review Cycle",
-      "cadence": "15 */2 * * *",
-      "timezone": "UTC",
-      "description": "Periodic review loop over recent staff work, protocol outcomes, and schedule health with actionable improvement recommendations.",
-      "runNow": {
-        "command": "node",
-        "args": [
-          ".skills/tnf-staff-review-agent/scripts/run_staff_review_cycle.cjs",
-          "--json"
-        ],
-        "timeoutMs": 60000
-      },
-      "docs": {
-        "protocol": "docs/operations/TNF_CORPORATE_CHAIN_OF_COMMAND_AND_ORDER_OF_OPERATIONS_MANUAL.md",
-        "runbook": "reports/protocols/staff-review/staff-review-latest.md"
       }
     }
   }

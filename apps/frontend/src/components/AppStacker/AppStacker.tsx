@@ -99,8 +99,7 @@ interface DraggableAppProps {
   droppableId: string;
 }
 
-// ⚡ Bolt: Wrapped DraggableApp in React.memo to prevent O(n) re-renders
-const DraggableApp = React.memo<DraggableAppProps>(({
+const DraggableApp: React.FC<DraggableAppProps> = ({
   app,
   index,
   isExpanded,

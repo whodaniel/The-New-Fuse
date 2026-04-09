@@ -1,5 +1,2 @@
-# Serve root from index.html (landing)
 / /index.html 200
-
-# Everything else from app.html (SaaS)
 /* /app.html 200

@@ -1,0 +1,1301 @@
+import chalk from 'chalk';
+import { spawn } from 'child_process';
+import { Command } from 'commander';
+import fs from 'fs';
+import path from 'path';
+import readline from 'readline';
+import { fileURLToPath } from 'url';
+import type { AgentMessage } from './RedisAgentClient.js';
+import { RedisAgentClient } from './RedisAgentClient.js';
+import { Orchestrator } from './orchestration.js';
+
+const program = new Command();
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
+const SUPER_ADMIN_ENV_KEY = 'TNF_SUPER_ADMIN_TOKEN';
+const SUPER_ADMIN_INPUT_ENV_KEY = 'TNF_SUPER_ADMIN_INPUT_TOKEN';
+const RUNNABLE_SCRIPT_EXTENSIONS = new Set([
+  '.sh',
+  '.bash',
+  '.zsh',
+  '.js',
+  '.cjs',
+  '.mjs',
+  '.ts',
+  '.tsx',
+  '.py',
+]);
+
+async function runCommand(
+  cmd: string,
+  args: string[],
+  options: { cwd?: string; env?: NodeJS.ProcessEnv } = {}
+): Promise<void> {
+  await new Promise<void>((resolve, reject) => {
+    const child = spawn(cmd, args, {
+      cwd: options.cwd || repoRoot,
+      env: { ...process.env, ...(options.env || {}) },
+      stdio: 'inherit',
+    });
+
+    child.on('error', (error: NodeJS.ErrnoException) => {
+      if (error?.code === 'ENOENT') {
+        reject(new Error(`'${cmd}' is not installed or not on PATH`));
+        return;
+      }
+      reject(error);
+    });
+    child.on('close', (code) => {
+      if (code === 0) return resolve();
+      reject(new Error(`${cmd} exited with code ${code}`));
+    });
+  });
+}
+
+function requireSuperAdmin(
+  options: { superAdminToken?: string } | undefined,
+  commandLabel: string
+): void {
+  const expected = process.env[SUPER_ADMIN_ENV_KEY];
+  const provided =
+    options?.superAdminToken ||
+    process.env[SUPER_ADMIN_INPUT_ENV_KEY] ||
+    process.env.CI_SUPER_ADMIN_TOKEN;
+
+  if (!expected) {
+    throw new Error(
+      `Super Admin auth is not configured. Set ${SUPER_ADMIN_ENV_KEY} in the execution environment.`
+    );
+  }
+
+  if (!provided || provided !== expected) {
+    throw new Error(
+      `Super Admin authentication required for '${commandLabel}'. Provide --super-admin-token or ${SUPER_ADMIN_INPUT_ENV_KEY}.`
+    );
+  }
+}
+
+type RootScriptEntry = { name: string; command: string };
+type FileScriptEntry = { key: string; relPath: string; absPath: string };
+
+function loadRootScripts(): RootScriptEntry[] {
+  const packageJsonPath = path.join(repoRoot, 'package.json');
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')) as {
+    scripts?: Record<string, string>;
+  };
+  return Object.entries(packageJson.scripts || {})
+    .map(([name, command]) => ({ name, command }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function isRunnableScriptFile(fileName: string): boolean {
+  const ext = path.extname(fileName).toLowerCase();
+  if (RUNNABLE_SCRIPT_EXTENSIONS.has(ext)) return true;
+  const lower = fileName.toLowerCase();
+  return lower === 'makefile' || lower === 'justfile';
+}
+
+function discoverFileScripts(): FileScriptEntry[] {
+  const out: FileScriptEntry[] = [];
+  const roots = [path.join(repoRoot, 'scripts'), path.join(repoRoot, 'tools')].filter((p) =>
+    fs.existsSync(p)
+  );
+
+  const walk = (dir: string) => {
+    let entries: fs.Dirent[] = [];
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      if (entry.name === 'node_modules' || entry.name === '.git') continue;
+      const absPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(absPath);
+        continue;
+      }
+      if (!entry.isFile() || !isRunnableScriptFile(entry.name)) continue;
+      const relPath = path.relative(repoRoot, absPath).replace(/\\/g, '/');
+      out.push({ key: relPath, relPath, absPath });
+    }
+  };
+
+  for (const root of roots) walk(root);
+
+  // Include runnable files directly in repo root.
+  for (const fileName of fs.readdirSync(repoRoot)) {
+    const absPath = path.join(repoRoot, fileName);
+    if (!fs.existsSync(absPath) || !fs.statSync(absPath).isFile()) continue;
+    if (!isRunnableScriptFile(fileName)) continue;
+    const relPath = path.relative(repoRoot, absPath).replace(/\\/g, '/');
+    out.push({ key: relPath, relPath, absPath });
+  }
+
+  return out.sort((a, b) => a.key.localeCompare(b.key));
+}
+
+function resolveFileScript(input: string): FileScriptEntry | null {
+  const normalized = input.replace(/\\/g, '/').replace(/^\.?\//, '');
+  const candidates = discoverFileScripts();
+  const direct = candidates.find((item) => item.relPath === normalized);
+  if (direct) return direct;
+  const withScriptsPrefix = candidates.find((item) => item.relPath === `scripts/${normalized}`);
+  if (withScriptsPrefix) return withScriptsPrefix;
+  const withToolsPrefix = candidates.find((item) => item.relPath === `tools/${normalized}`);
+  if (withToolsPrefix) return withToolsPrefix;
+
+  const absCandidate = path.resolve(repoRoot, normalized);
+  if (
+    absCandidate.startsWith(repoRoot) &&
+    fs.existsSync(absCandidate) &&
+    fs.statSync(absCandidate).isFile() &&
+    isRunnableScriptFile(path.basename(absCandidate))
+  ) {
+    const relPath = path.relative(repoRoot, absCandidate).replace(/\\/g, '/');
+    return { key: relPath, relPath, absPath: absCandidate };
+  }
+  return null;
+}
+
+async function runFileScript(file: FileScriptEntry, args: string[]): Promise<void> {
+  const ext = path.extname(file.absPath).toLowerCase();
+  if (ext === '.sh' || ext === '.bash' || ext === '.zsh') {
+    await runCommand('bash', [file.relPath, ...args]);
+    return;
+  }
+  if (ext === '.py') {
+    await runCommand('python3', [file.relPath, ...args]);
+    return;
+  }
+  if (ext === '.ts' || ext === '.tsx') {
+    await runCommand('node', ['--import', 'tsx', file.relPath, ...args]);
+    return;
+  }
+  if (ext === '.js' || ext === '.cjs' || ext === '.mjs') {
+    await runCommand('node', [file.relPath, ...args]);
+    return;
+  }
+  throw new Error(`Unsupported script type for ${file.relPath}`);
+}
+
+program
+  .name('tnf')
+  .description('TNF CLI - Unified Command Surface for TNF Operations')
+  .version('1.0.0')
+  .showSuggestionAfterError()
+  .showHelpAfterError();
+
+const logMessage = (message: AgentMessage) => {
+  const fromName = message.from?.agentName || 'Unknown';
+  const fromRole = message.from?.role || '';
+  const type = message.type || 'message';
+  const content = message.content || '';
+
+  const roleEmoji: Record<string, string> = {
+    orchestrator: '👑',
+    broker: '🎯',
+    worker: '⚙️',
+    participant: '💬',
+  };
+
+  const emoji = roleEmoji[fromRole] || '📨';
+
+  let color = chalk.white;
+  if (fromRole === 'orchestrator') {
+    color = chalk.yellow;
+  } else if (fromRole === 'broker') {
+    color = chalk.cyan;
+  } else if (fromRole === 'worker') {
+    color = chalk.green;
+  }
+
+  console.log(`\n${emoji} [${color.bold(fromName)}] (${chalk.dim(type)}):`);
+  console.log(`   ${content}`);
+
+  if (message.metadata?.event) {
+    console.log(`   ${chalk.blue('Event:')} ${message.metadata.event}`);
+  }
+
+  if (message.expectsResponse) {
+    console.log(`   ${chalk.yellow('⏳ Expects response')}`);
+  }
+};
+
+function isRedisUnavailable(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error ?? '');
+  return (
+    message.includes('Could not connect to Redis') ||
+    message.includes('max retries per request') ||
+    message.includes('ECONNREFUSED')
+  );
+}
+
+function logRedisUnavailable(commandHint: string): never {
+  console.error(chalk.yellow('Redis is unavailable at localhost:6379.'));
+  console.error(chalk.yellow(`Start Redis, then re-run \`${commandHint}\`.`));
+  process.exit(1);
+}
+
+program
+  .command('register')
+  .description('Register and listen as an agent')
+  .argument('[name]', 'Agent name', process.env.AGENT_NAME || 'unnamed-agent')
+  .argument(
+    '[role]',
+    'Agent role (orchestrator, broker, worker, participant)',
+    process.env.AGENT_ROLE || 'participant'
+  )
+  .argument(
+    '[platform]',
+    'Agent platform (antigravity, gemini, claude, jules, vscode, browser)',
+    process.env.AGENT_PLATFORM || 'vscode'
+  )
+  .option('-d, --daemon', 'Run in daemon mode (register and exit immediately)', false)
+  .action(async (name, role, platform, options) => {
+    const client = new RedisAgentClient();
+    try {
+      await client.initialize();
+      const agentInfo = await client.register(name, role, platform);
+
+      console.log(chalk.green(`\n🤖 Registered as: ${chalk.bold(name)} (${role}) on ${platform}`));
+      console.log(`   ID: ${chalk.dim(agentInfo.id)}`);
+      console.log(`   Capabilities: ${chalk.dim(agentInfo.capabilities.join(', '))}`);
+
+      if (options.daemon) {
+        console.log(chalk.cyan('\n🚀 Daemon mode: Agent registered and running in background'));
+        // Keep heartbeat running in background
+        // In production, this would be a long-running process
+        // For now, just clean up the registration
+        await client.cleanup();
+        console.log(chalk.green('\n✅ Agent deployment complete'));
+        process.exit(0);
+      }
+
+      console.log(
+        chalk.cyan(
+          '\n🎧 Listening for messages... (Type a message and press Enter, or Ctrl+C to exit)\n'
+        )
+      );
+
+      client.onMessage('*', (msg) => {
+        logMessage(msg);
+      });
+
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+
+      rl.on('line', async (line) => {
+        if (line.trim()) {
+          await client.send(line.trim());
+        }
+      });
+
+      process.on('SIGINT', async () => {
+        console.log(chalk.yellow('\n👋 Shutting down...'));
+        await client.cleanup();
+        process.exit(0);
+      });
+    } catch (err: any) {
+      if (isRedisUnavailable(err)) {
+        logRedisUnavailable(`./tnf register ${name} ${role} ${platform}`);
+      }
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('onboard')
+  .description('Run TNF frontload onboarding')
+  .option('--allow-local-db', 'Allow local DATABASE_URL for this run')
+  .option('--require-cloud-db', 'Require cloud DATABASE_URL for this run')
+  .option('--no-require-cloud-db', 'Allow non-cloud DATABASE_URL for this run')
+  .option('--database-url <url>', 'Override DATABASE_URL for this run')
+  .action(
+    async (options: { allowLocalDb?: boolean; requireCloudDb?: boolean; databaseUrl?: string }) => {
+      try {
+        const args = ['scripts/tnf-onboard.cjs'];
+        if (options.allowLocalDb) args.push('--allow-local-db');
+        if (typeof options.requireCloudDb === 'boolean') {
+          args.push(options.requireCloudDb ? '--require-cloud-db' : '--no-require-cloud-db');
+        }
+        if (options.databaseUrl) args.push('--database-url', options.databaseUrl);
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+program
+  .command('doctor')
+  .description('Run TNF diagnostics')
+  .option('--mode <mode>', 'Execution mode: cloud (default) or local')
+  .option('--allow-local-db', 'Allow local DATABASE_URL for this run')
+  .option('--require-cloud-db', 'Require cloud DATABASE_URL for this run')
+  .option('--no-require-cloud-db', 'Allow non-cloud DATABASE_URL for this run')
+  .option('--database-url <url>', 'Override DATABASE_URL for this run')
+  .action(
+    async (options: {
+      mode?: string;
+      allowLocalDb?: boolean;
+      requireCloudDb?: boolean;
+      databaseUrl?: string;
+    }) => {
+      try {
+        const args = ['scripts/tnf-doctor.cjs'];
+        if (options.mode) args.push('--mode', options.mode);
+        if (options.allowLocalDb) args.push('--allow-local-db');
+        if (typeof options.requireCloudDb === 'boolean') {
+          args.push(options.requireCloudDb ? '--require-cloud-db' : '--no-require-cloud-db');
+        }
+        if (options.databaseUrl) args.push('--database-url', options.databaseUrl);
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+const metaskills = program.command('metaskills').description('Meta-skills audit utilities');
+metaskills
+  .command('audit')
+  .description('Audit meta-skills and scaffolding readiness')
+  .option('--json', 'Print JSON output')
+  .action(async (options: { json?: boolean }) => {
+    try {
+      const args = ['scripts/tnf-metaskills-audit.cjs'];
+      if (options.json) args.push('--json');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const mcp = program.command('mcp').description('MCP utilities');
+mcp
+  .command('generate')
+  .description('Generate MCP clients inventory')
+  .action(async () => {
+    try {
+      await runCommand('node', ['scripts/tnf-generate-mcp-clients.cjs']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const ai = program.command('ai').description('AI launcher commands');
+ai.command('start')
+  .argument('[provider]', 'codex|claude|gemini', '')
+  .description('Start an AI session helper')
+  .action(async (provider: string) => {
+    try {
+      const args = ['scripts/tnf-start-ai.cjs'];
+      if (provider) args.push(provider);
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const relay = program.command('relay').description('Relay operations');
+relay
+  .command('start')
+  .description('Start relay-core relay service')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'relay start');
+      await runCommand('pnpm', ['--filter', '@the-new-fuse/relay-core', 'run', 'relay']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+relay
+  .command('monitor')
+  .description('Monitor relay channels')
+  .action(async () => {
+    try {
+      await runCommand('node', ['scripts/relay-channel-monitor.cjs']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const jules = program.command('jules').description('Jules automation operations');
+jules
+  .command('loop')
+  .description('Run autonomous Jules loop')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'jules loop');
+      await runCommand('bash', ['scripts/jules-autonomous-loop.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+jules
+  .command('supervisor')
+  .description('Run continuous Jules follow-up supervisor')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'jules supervisor');
+      await runCommand('bash', ['scripts/jules-followup-supervisor.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+jules
+  .command('supervisor-start')
+  .description('Start Jules follow-up supervisor in background')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'jules supervisor-start');
+      await runCommand('bash', ['scripts/jules-followup-start.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+jules
+  .command('supervisor-stop')
+  .description('Stop Jules follow-up supervisor')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'jules supervisor-stop');
+      await runCommand('bash', ['scripts/jules-followup-stop.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+jules
+  .command('supervisor-status')
+  .description('Show Jules follow-up supervisor status')
+  .action(async () => {
+    try {
+      await runCommand('bash', ['scripts/jules-followup-status.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+jules
+  .command('supervisor-migrate-from-cron')
+  .description('Disable cron follow-up and switch to supervisor mode')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'jules supervisor-migrate-from-cron');
+      await runCommand('bash', ['scripts/jules-followup-migrate-from-cron.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+jules
+  .command('merge-open')
+  .description('Merge all open Jules PRs')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'jules merge-open');
+      await runCommand('bash', ['scripts/jules-merge-open-prs.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+jules
+  .command('cron-install')
+  .description('Install local Jules cron loop')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'jules cron-install');
+      await runCommand('bash', ['scripts/install-jules-cron.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const masterClock = program
+  .command('master-clock')
+  .description('Master clock controls (cloud-first)');
+masterClock
+  .command('start')
+  .description('Start master-clock in cloud via Railway (default) or locally')
+  .option('--local', 'Run local master-clock (override cloud-first policy)', false)
+  .option('--service <name>', 'Railway service name for master clock', 'tnf-master-clock')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { local: boolean; service: string; superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'master-clock start');
+      if (options.local) {
+        await runCommand('pnpm', ['--filter', '@the-new-fuse/relay-core', 'run', 'master-clock']);
+        return;
+      }
+
+      console.log(
+        chalk.cyan(`☁️ Starting cloud master clock on Railway service ${options.service}`)
+      );
+      await runCommand('railway', ['up', '--service', options.service]);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+masterClock
+  .command('logs')
+  .description('Tail cloud master-clock logs')
+  .option('--service <name>', 'Railway service name for master clock', 'tnf-master-clock')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { service: string; superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'master-clock logs');
+      await runCommand('railway', ['logs', '--service', options.service]);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+masterClock
+  .command('status')
+  .description('Show Railway status for master-clock service')
+  .option('--service <name>', 'Railway service name for master clock', 'tnf-master-clock')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { service: string; superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'master-clock status');
+      await runCommand('railway', ['status', '--service', options.service]);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const superCycle = program.command('super-cycle').description('Super-cycle controls (cloud-first)');
+superCycle
+  .command('event')
+  .description('Send super-cycle register/heartbeat/unregister event')
+  .requiredOption('--action <action>', 'register|heartbeat|unregister')
+  .requiredOption('--process-id <id>', 'Process identifier')
+  .option('--name <name>', 'Process display name')
+  .option('--status <status>', 'Process status', 'running')
+  .option('--kind <kind>', 'Process kind', 'scheduled-job')
+  .option('--owner <owner>', 'Process owner', 'tnf')
+  .option('--result <result>', 'Last result')
+  .option('--metadata <json>', 'JSON metadata', '{}')
+  .option('--local', 'Run local super-cycle client (override cloud-first policy)', false)
+  .option('--service <name>', 'Railway service name', 'tnf-master-clock')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(
+    async (options: {
+      action: string;
+      processId: string;
+      name?: string;
+      status: string;
+      kind: string;
+      owner: string;
+      result?: string;
+      metadata: string;
+      local: boolean;
+      service: string;
+      superAdminToken?: string;
+    }) => {
+      try {
+        requireSuperAdmin(options, 'super-cycle event');
+        const baseArgs = [
+          '--filter',
+          '@the-new-fuse/relay-core',
+          'run',
+          'super-cycle:event',
+          '--',
+          '--action',
+          options.action,
+          '--process-id',
+          options.processId,
+          '--status',
+          options.status,
+          '--kind',
+          options.kind,
+          '--owner',
+          options.owner,
+          '--metadata',
+          options.metadata,
+        ];
+        if (options.name) baseArgs.push('--name', options.name);
+        if (options.result) baseArgs.push('--result', options.result);
+
+        if (options.local) {
+          await runCommand('pnpm', baseArgs);
+          return;
+        }
+
+        console.log(
+          chalk.cyan(`☁️ Sending super-cycle event via cloud service ${options.service}`)
+        );
+        await runCommand('railway', ['run', '--service', options.service, 'pnpm', ...baseArgs]);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+const skills = program.command('skills').description('Skill bank operations');
+const skillsBank = skills.command('bank').description('Cross-LLM skill bank operations');
+skillsBank
+  .command('sync')
+  .description('Build/refresh cross-LLM skill bank index and snapshots')
+  .action(async () => {
+    try {
+      await runCommand('node', ['scripts/skills/skill-bank-sync.cjs']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+skillsBank
+  .command('query')
+  .description('Search skill bank index')
+  .argument('<query>', 'Search query')
+  .action(async (query: string) => {
+    try {
+      await runCommand('node', ['scripts/skills/skill-bank-query.cjs', query]);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+skillsBank
+  .command('ingest')
+  .description('Ingest skill-bank export rows into resource registry API')
+  .option('--strict', 'Exit non-zero if any records fail')
+  .option('--dry-run', 'Validate ingest payload without posting')
+  .action(async (options: { strict?: boolean; dryRun?: boolean }) => {
+    try {
+      const args = ['scripts/skills/skill-bank-ingest.cjs'];
+      if (options.strict) args.push('--strict');
+      if (options.dryRun) args.push('--dry-run');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+skillsBank
+  .command('retry-pending')
+  .description('Retry pending failed skill-bank ingests')
+  .option('--strict', 'Exit non-zero if any records still fail')
+  .action(async (options: { strict?: boolean }) => {
+    try {
+      const args = ['scripts/skills/skill-bank-retry-pending.cjs'];
+      if (options.strict) args.push('--strict');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+skillsBank
+  .command('supervisor')
+  .description('Run continuous skill-bank sync/ingest/retry supervisor')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'skills bank supervisor');
+      await runCommand('bash', ['scripts/skills/skill-bank-supervisor.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+skillsBank
+  .command('supervisor-start')
+  .description('Start skill-bank supervisor in background')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'skills bank supervisor-start');
+      await runCommand('bash', ['scripts/skills/skill-bank-supervisor-start.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+skillsBank
+  .command('supervisor-stop')
+  .description('Stop skill-bank supervisor')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'skills bank supervisor-stop');
+      await runCommand('bash', ['scripts/skills/skill-bank-supervisor-stop.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+skillsBank
+  .command('supervisor-status')
+  .description('Show skill-bank supervisor status')
+  .action(async () => {
+    try {
+      await runCommand('bash', ['scripts/skills/skill-bank-supervisor-status.sh']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+superCycle
+  .command('status')
+  .description('Read super-cycle state snapshot')
+  .option('--local', 'Read from local Redis via local client', false)
+  .option('--service <name>', 'Railway service name', 'tnf-master-clock')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (options: { local: boolean; service: string; superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'super-cycle status');
+      if (options.local) {
+        await runCommand('pnpm', [
+          '--filter',
+          '@the-new-fuse/relay-core',
+          'run',
+          'super-cycle:status',
+        ]);
+        return;
+      }
+      await runCommand('railway', [
+        'run',
+        '--service',
+        options.service,
+        'pnpm',
+        '--filter',
+        '@the-new-fuse/relay-core',
+        'run',
+        'super-cycle:status',
+      ]);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('run')
+  .description('Execute any root package script through unified TNF CLI')
+  .argument('<script>', 'Root package.json script name')
+  .argument('[args...]', 'Arguments to forward')
+  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .action(async (script: string, args: string[], options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'run');
+      const cmdArgs = ['run', script];
+      if (args.length > 0) cmdArgs.push('--', ...args);
+      await runCommand('pnpm', cmdArgs);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const scriptsCommand = program
+  .command('scripts')
+  .description('Discover and run repo scripts and root package scripts');
+
+scriptsCommand
+  .command('list')
+  .description('List runnable scripts from package.json, scripts/**, tools/**, and repo root')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const rootScripts = loadRootScripts();
+      const fileScripts = discoverFileScripts();
+      if (options.json) {
+        console.log(
+          JSON.stringify(
+            {
+              rootScripts,
+              fileScripts: fileScripts.map((s) => s.relPath),
+            },
+            null,
+            2
+          )
+        );
+        return;
+      }
+
+      console.log(chalk.bold('\nRoot package scripts:\n'));
+      for (const script of rootScripts) {
+        console.log(`- ${chalk.cyan(script.name)}: ${chalk.dim(script.command)}`);
+      }
+
+      console.log(chalk.bold('\nRunnable files (scripts/**, tools/**, repo root):\n'));
+      for (const script of fileScripts) {
+        console.log(`- ${chalk.green(script.relPath)}`);
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+scriptsCommand
+  .command('run')
+  .description('Run either a root package script or a runnable file path')
+  .argument(
+    '<target>',
+    'Root script name OR runnable file path (scripts/**, tools/**, or repo root)'
+  )
+  .argument('[args...]', 'Arguments to forward')
+  .action(async (target: string, args: string[]) => {
+    try {
+      const rootScripts = loadRootScripts();
+      const rootMatch = rootScripts.find((s) => s.name === target);
+      if (rootMatch) {
+        const cmdArgs = ['run', target];
+        if (args.length > 0) cmdArgs.push('--', ...args);
+        await runCommand('pnpm', cmdArgs);
+        return;
+      }
+
+      const fileScript = resolveFileScript(target);
+      if (fileScript) {
+        await runFileScript(fileScript, args);
+        return;
+      }
+
+      throw new Error(
+        `Unknown target '${target}'. Use 'tnf scripts list' to see available scripts.`
+      );
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('list')
+  .description('List all registered agents')
+  .action(async () => {
+    const client = new RedisAgentClient();
+    try {
+      await client.initialize();
+      const agents = await client.listAgents();
+
+      console.log(chalk.bold('\n📋 Registered Agents:\n'));
+
+      if (agents.length === 0) {
+        console.log('   No agents registered');
+      } else {
+        agents.forEach((agent) => {
+          const statusIcon = agent.isOnline ? chalk.green('🟢') : chalk.red('🔴');
+          const roleIcon: Record<string, string> = {
+            orchestrator: '👑',
+            broker: '🎯',
+            worker: '⚙️',
+            participant: '💬',
+          };
+          const icon = roleIcon[agent.role] || '📦';
+
+          console.log(`${statusIcon} ${icon} ${chalk.bold(agent.name)} (${agent.platform})`);
+          console.log(`      Role: ${agent.role}`);
+          console.log(`      ID: ${chalk.dim(agent.id)}`);
+          console.log(`      Last seen: ${chalk.dim(agent.lastSeen)}`);
+          console.log('');
+        });
+      }
+    } catch (err: any) {
+      if (isRedisUnavailable(err)) {
+        logRedisUnavailable('./tnf list');
+      }
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    } finally {
+      await client.cleanup();
+    }
+  });
+
+program
+  .command('send')
+  .description('Send a single message')
+  .argument('<message>', 'Message to send')
+  .option('-t, --to <agentId>', 'Recipient agent ID')
+  .option('-n, --name <name>', 'Sender name', process.env.AGENT_NAME || 'cli-sender')
+  .action(async (message, options) => {
+    const client = new RedisAgentClient();
+    try {
+      await client.initialize();
+      await client.register(options.name, 'participant', 'vscode');
+      await client.send(message, { to: options.to ? { agentId: options.to } : undefined });
+
+      console.log(chalk.green('📤 Message sent'));
+
+      // Wait a bit for responses
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    } catch (err: any) {
+      if (isRedisUnavailable(err)) {
+        logRedisUnavailable('./tnf send <message>');
+      }
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    } finally {
+      await client.cleanup();
+    }
+  });
+
+program
+  .command('orchestrate')
+  .description('Execute an orchestrated multi-agent workflow')
+  .argument('<workflow>', 'Workflow name (health-check, code-review, self-improvement)')
+  .option('-p, --path <path>', 'Target path for code-review')
+  .action(async (workflow, options) => {
+    const client = new RedisAgentClient();
+    try {
+      await client.initialize();
+      await client.register('orchestrator-cli', 'orchestrator', 'vscode');
+      const orchestrator = new Orchestrator(client);
+      await orchestrator.executeWorkflow(workflow, options);
+
+      // Wait for any immediate feedback
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    } catch (err: any) {
+      if (isRedisUnavailable(err)) {
+        logRedisUnavailable('./tnf orchestrate <workflow>');
+      }
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    } finally {
+      await client.cleanup();
+    }
+  });
+
+program
+  .command('convo')
+  .description('Manage conversations')
+  .argument('<action>', 'Action (start, join)')
+  .argument('[param]', 'Topic for start, ID for join')
+  .action(async (action, param) => {
+    const client = new RedisAgentClient();
+    try {
+      await client.initialize();
+      await client.register('convo-cli', 'participant', 'vscode');
+
+      if (action === 'start') {
+        const id = await client.startConversation(param || 'general');
+        console.log(chalk.green(`💬 Started conversation: ${chalk.bold(param || 'general')}`));
+        console.log(`   ID: ${chalk.dim(id)}`);
+      } else if (action === 'join') {
+        if (!param) {
+          throw new Error('Conversation ID required to join');
+        }
+        client.joinConversation(param);
+        console.log(chalk.green(`🔗 Joined conversation: ${chalk.dim(param)}`));
+      }
+
+      console.log(chalk.cyan('\nType messages and press Enter (Ctrl+C to exit)\n'));
+
+      client.onMessage('*', (msg) => {
+        logMessage(msg);
+      });
+
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+
+      rl.on('line', async (line) => {
+        if (line.trim()) {
+          await client.send(line.trim());
+        }
+      });
+
+      process.on('SIGINT', async () => {
+        await client.cleanup();
+        process.exit(0);
+      });
+    } catch (err: any) {
+      if (isRedisUnavailable(err)) {
+        logRedisUnavailable(`./tnf convo ${action}${param ? ` ${param}` : ''}`);
+      }
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// ────────────────────────────────────────────────────────────────────────────
+// Reports lifecycle management
+// ────────────────────────────────────────────────────────────────────────────
+const reports = program
+  .command('reports')
+  .description('Report lifecycle management — rotation, metadata, trending');
+
+reports
+  .command('status')
+  .description('Show report inventory: counts per type, disk usage, and lifecycle metadata')
+  .option('--json', 'Output machine-readable JSON')
+  .action(async (options: { json?: boolean }) => {
+    try {
+      const reportDir = path.join(repoRoot, '.agent/test-reports');
+      if (!fs.existsSync(reportDir)) {
+        console.log(chalk.yellow('No reports directory found at .agent/test-reports'));
+        process.exit(0);
+      }
+      const files = fs
+        .readdirSync(reportDir)
+        .filter((f) => f.endsWith('.json') && !f.startsWith('_'));
+
+      const counts: Record<string, number> = {};
+      let totalBytes = 0;
+      for (const file of files) {
+        const prefix = file.replace(/-\d{13}\.json$/, '');
+        counts[prefix] = (counts[prefix] || 0) + 1;
+        try {
+          totalBytes += fs.statSync(path.join(reportDir, file)).size;
+        } catch {
+          /* skip */
+        }
+      }
+
+      // Check for rolling summary
+      const summaryPath = path.join(reportDir, '_rolling-summary.json');
+      let summary: any = null;
+      if (fs.existsSync(summaryPath)) {
+        try {
+          summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+        } catch {
+          /* skip */
+        }
+      }
+
+      if (options.json) {
+        console.log(
+          JSON.stringify({ counts, totalBytes, totalFiles: files.length, summary }, null, 2)
+        );
+        return;
+      }
+
+      console.log(chalk.bold('\n📋 Report Inventory\n'));
+      console.log(`   Directory: ${chalk.dim('.agent/test-reports')}`);
+      console.log(`   Total files: ${chalk.cyan(String(files.length))}`);
+      console.log(`   Total size: ${chalk.cyan((totalBytes / 1024).toFixed(1) + ' KB')}\n`);
+
+      for (const [prefix, count] of Object.entries(counts).sort()) {
+        const meta = summary?.types?.[prefix];
+        const domain = meta?.domain || 'unknown';
+        const lifecycle = meta?.lifecycle || 'unknown';
+        const avgScore = meta?.recentAvgScore;
+        const trend = meta?.trend;
+
+        console.log(
+          `   ${chalk.green(prefix)}: ${chalk.bold(String(count))} files` +
+            `  ${chalk.dim(`[${domain}/${lifecycle}]`)}` +
+            (avgScore != null ? `  avg=${chalk.cyan(avgScore + '%')}` : '') +
+            (trend
+              ? `  trend=${trend === 'declining' ? chalk.red(trend) : chalk.green(trend)}`
+              : '')
+        );
+      }
+
+      if (summary?.generatedAt) {
+        console.log(`\n   Summary last updated: ${chalk.dim(summary.generatedAt)}`);
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+reports
+  .command('prune')
+  .description('Prune old reports and regenerate the rolling summary')
+  .option('--max-per-type <n>', 'Maximum reports to keep per type', '50')
+  .option('--max-age-days <n>', 'Maximum report age in days', '7')
+  .option('--dry-run', 'Show what would be pruned without deleting')
+  .action(async (options: { maxPerType: string; maxAgeDays: string; dryRun?: boolean }) => {
+    try {
+      const env: Record<string, string> = {};
+      if (options.maxPerType) env.REPORT_MAX_PER_TYPE = options.maxPerType;
+      if (options.maxAgeDays) {
+        env.REPORT_MAX_AGE_MS = String(parseInt(options.maxAgeDays, 10) * 86400000);
+      }
+      if (options.dryRun) {
+        // In dry-run mode, just show counts without actually pruning
+        const reportDir = path.join(repoRoot, '.agent/test-reports');
+        if (!fs.existsSync(reportDir)) {
+          console.log(chalk.yellow('No reports directory found.'));
+          process.exit(0);
+        }
+
+        const maxPerType = parseInt(options.maxPerType, 10);
+        const maxAgeMs = parseInt(options.maxAgeDays, 10) * 86400000;
+        const now = Date.now();
+        const prefixes = ['test-report', 'integration-report', 'uiux-report'];
+
+        console.log(chalk.bold('\n🔍 Dry Run — Reports that WOULD be pruned:\n'));
+        for (const prefix of prefixes) {
+          const files = fs
+            .readdirSync(reportDir)
+            .filter((f) => f.startsWith(prefix + '-') && f.endsWith('.json'))
+            .sort();
+
+          let wouldPrune = 0;
+          for (const file of files) {
+            const tsMatch = file.match(/(\d{13})\.json$/);
+            if (tsMatch && parseInt(tsMatch[1], 10) < now - maxAgeMs) {
+              wouldPrune++;
+            }
+          }
+          const remaining = files.length - wouldPrune;
+          if (remaining > maxPerType) {
+            wouldPrune += remaining - maxPerType;
+          }
+
+          console.log(
+            `   ${chalk.green(prefix)}: ${chalk.red(String(wouldPrune))} pruned, ${chalk.cyan(String(Math.max(0, files.length - wouldPrune)))} kept`
+          );
+        }
+        console.log('');
+        return;
+      }
+
+      await runCommand('node', ['scripts/swarm/report-lifecycle.cjs'], { env });
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+reports
+  .command('summary')
+  .description('Display the rolling summary dashboard')
+  .option('--json', 'Output raw rolling summary JSON')
+  .action(async (options: { json?: boolean }) => {
+    try {
+      const summaryPath = path.join(repoRoot, '.agent/test-reports/_rolling-summary.json');
+      if (!fs.existsSync(summaryPath)) {
+        console.log(
+          chalk.yellow('No rolling summary found. Run `tnf reports prune` to generate one.')
+        );
+        process.exit(0);
+      }
+
+      const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+
+      if (options.json) {
+        console.log(JSON.stringify(summary, null, 2));
+        return;
+      }
+
+      console.log(chalk.bold('\n📊 Rolling Summary Dashboard\n'));
+      console.log(`   Generated: ${chalk.dim(summary.generatedAt)}`);
+      console.log(`   Window: last ${summary.config?.summaryWindow || '?'} reports per type\n`);
+
+      for (const [type, data] of Object.entries(summary.types || {}) as [string, any][]) {
+        const trendColor = data.trend === 'declining' ? chalk.red : chalk.green;
+        const scoreColor =
+          (data.recentAvgScore ?? 0) >= 80
+            ? chalk.green
+            : (data.recentAvgScore ?? 0) >= 60
+              ? chalk.yellow
+              : chalk.red;
+
+        console.log(`   ${chalk.bold(type)} ${chalk.dim(`(${data.domain}/${data.lifecycle})`)}`);
+        console.log(`     Owner: ${chalk.dim(data.owner)}`);
+        console.log(`     On disk: ${chalk.cyan(String(data.totalOnDisk))}`);
+        console.log(
+          `     Avg score: ${scoreColor(data.recentAvgScore != null ? data.recentAvgScore + '%' : 'n/a')}`
+        );
+        console.log(
+          `     Min/Max: ${data.recentMinScore ?? 'n/a'}% / ${data.recentMaxScore ?? 'n/a'}%`
+        );
+        console.log(`     Trend: ${trendColor(data.trend)}`);
+        if (data.latestReport) {
+          console.log(
+            `     Latest: ${chalk.dim(data.latestReport.file)} (${data.latestReport.status})`
+          );
+        }
+        console.log('');
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+reports
+  .command('trends')
+  .description('Show score trends for a specific report type')
+  .argument('[type]', 'Report type (test-report, integration-report, uiux-report)', 'test-report')
+  .option('--limit <n>', 'Number of recent reports to show', '20')
+  .action(async (type: string, options: { limit: string }) => {
+    try {
+      const reportDir = path.join(repoRoot, '.agent/test-reports');
+      if (!fs.existsSync(reportDir)) {
+        console.log(chalk.yellow('No reports directory found.'));
+        process.exit(0);
+      }
+
+      const limit = parseInt(options.limit, 10);
+      const files = fs
+        .readdirSync(reportDir)
+        .filter((f) => f.startsWith(type + '-') && f.endsWith('.json'))
+        .sort()
+        .slice(-limit);
+
+      if (files.length === 0) {
+        console.log(chalk.yellow(`No reports found for type: ${type}`));
+        process.exit(0);
+      }
+
+      console.log(chalk.bold(`\n📈 Score Trends: ${type} (last ${files.length})\n`));
+
+      const maxBarWidth = 40;
+      for (const file of files) {
+        try {
+          const data = JSON.parse(fs.readFileSync(path.join(reportDir, file), 'utf8'));
+          const score = data.overall?.score ?? 0;
+          const status = data.overall?.status ?? '?';
+          const ts = data.timestamp ? new Date(data.timestamp).toLocaleString() : 'unknown';
+
+          const barFill = Math.round((score / 100) * maxBarWidth);
+          const bar = '█'.repeat(barFill) + '░'.repeat(maxBarWidth - barFill);
+          const scoreColor = score >= 80 ? chalk.green : score >= 60 ? chalk.yellow : chalk.red;
+
+          console.log(
+            `   ${chalk.dim(ts)}  ${scoreColor(bar)} ${scoreColor.bold(String(score) + '%')} ${chalk.dim(status)}`
+          );
+        } catch {
+          /* skip corrupt */
+        }
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+program.parse();

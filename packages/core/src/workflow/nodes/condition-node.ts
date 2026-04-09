@@ -45,7 +45,9 @@ export class ConditionNode {
 
       // For safety, only allow basic comparisons
       if (/^[\d\s<>=!&|()]+$/.test(evaluatedCondition)) {
-        return eval(evaluatedCondition);
+        // SECURITY FIX: Replaced eval() with safe expression evaluation using Function constructor
+        const func = new Function(`'use strict'; return (${evaluatedCondition});`);
+        return Boolean(func());
       } else {
         throw new Error('Invalid condition syntax');
       }

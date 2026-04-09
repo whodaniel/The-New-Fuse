@@ -1,0 +1,91 @@
+{
+  "name": "@the-new-fuse/claude-skills",
+  "version": "1.0.0",
+  "description": "Integration layer for Anthropic's Claude Skills into The New Fuse",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/types/index.js",
+      "require": "./dist/types/index.js",
+      "default": "./dist/types/index.js"
+    },
+    "./parser": {
+      "types": "./dist/parser/index.d.ts",
+      "import": "./dist/parser/index.js",
+      "require": "./dist/parser/index.js",
+      "default": "./dist/parser/index.js"
+    },
+    "./loader": {
+      "types": "./dist/loader/index.d.ts",
+      "import": "./dist/loader/index.js",
+      "require": "./dist/loader/index.js",
+      "default": "./dist/loader/index.js"
+    },
+    "./executor": {
+      "types": "./dist/executor/index.d.ts",
+      "import": "./dist/executor/index.js",
+      "require": "./dist/executor/index.js",
+      "default": "./dist/executor/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist coverage *.tsbuildinfo tsconfig.tsbuildinfo",
+    "type-check": "tsc --noEmit",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --passWithNoTests",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix"
+  },
+  "dependencies": {
+    "yaml": "^2.6.1",
+    "zod": "^3.24.1",
+    "gray-matter": "^4.0.3",
+    "@the-new-fuse/mcp-core": "workspace:*",
+    "@the-new-fuse/core-error-handling": "workspace:*",
+    "@the-new-fuse/core-monitoring": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.8.1",
+    "@typescript-eslint/eslint-plugin": "^8.49.0",
+    "@typescript-eslint/parser": "^8.49.0",
+    "eslint": "^9.38.0",
+    "jest": "^30.2.0",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.9.3"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "claude",
+    "skills",
+    "anthropic",
+    "ai",
+    "agents",
+    "mcp",
+    "the-new-fuse"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "The New Fuse Team",
+    "url": "https://github.com/the-new-fuse"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

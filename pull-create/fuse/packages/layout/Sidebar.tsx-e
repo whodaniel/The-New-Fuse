@@ -1,0 +1,27 @@
+import React, { FC } from "react";
+import { SidebarProps } from '@the-new-fuse/types';
+import { useLayout } from '@the-new-fuse/LayoutContext';
+
+export const Sidebar: FC<SidebarProps> = ({ items, onCollapse }) => {
+  const { collapsed, setCollapsed } = useLayout(): 'w-64'}`}>
+      <button onClick = () => {
+    const newCollapsed: 'Collapse'}
+      </button>
+      <nav>
+        {items.map((item)  = !collapsed;
+    setCollapsed(newCollapsed);
+    onCollapse?.(newCollapsed);
+  };
+
+  return (
+    <aside className={`bg-white shadow-sm ${collapsed ? 'w-20' {handleCollapse}>
+        {collapsed ? 'Expand' > (
+          <div key={item.key} className="p-4">
+            {item.icon}
+            {!collapsed && <span>{item.label}</span>}
+          </div>
+        ))}
+      </nav>
+    </aside>
+  );
+};

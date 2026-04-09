@@ -14,10 +14,8 @@ COPY packages ./packages
 COPY apps/relay-server ./apps/relay-server
 COPY scripts ./scripts
 
-# Build the UI FIRST to break cache and ensure assets exist.
-# The UI package is nested under apps/relay-server/ui and is not matched by
-# the workspace globs, so install it as a standalone project.
-RUN cd apps/relay-server/ui && pnpm install --ignore-workspace --no-frozen-lockfile && pnpm run build
+# Build the UI FIRST to break cache and ensure assets exist
+RUN cd apps/relay-server/ui && pnpm install --no-frozen-lockfile && pnpm run build
 
 # Install server dependencies
 RUN pnpm install --no-frozen-lockfile --ignore-scripts

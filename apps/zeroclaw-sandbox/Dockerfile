@@ -4,7 +4,7 @@
 # syntax=docker/dockerfile:1.7
 
 # ── Stage 1: Build the zeroclaw binary ───────────────────────
-FROM rust:1.88-slim AS builder
+FROM rust:1.81-slim AS builder
 
 WORKDIR /app
 

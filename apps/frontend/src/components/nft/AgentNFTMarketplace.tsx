@@ -263,6 +263,110 @@ export const AgentNFTMarketplace: React.FC<AgentNFTMarketplaceProps> = ({
       });
   }, [agentNFTs, marketplaceListings, searchTerm, filterBy, sortBy]);
 
+  const MarketplaceStats = () => (
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex items-center gap-2">
+            <Coins className="w-5 h-5 text-blue-500" />
+            <div>
+              <p className="text-sm text-muted-foreground">Total NFTs</p>
+              <p className="text-2xl font-bold">{agentNFTs.length}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex items-center gap-2">
+            <Users className="w-5 h-5 text-green-500" />
+            <div>
+              <p className="text-sm text-muted-foreground">Fractionalized</p>
+              <p className="text-2xl font-bold">
+                {agentNFTs.filter((nft) => nft.isFractionalized).length}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-purple-500" />
+            <div>
+              <p className="text-sm text-muted-foreground">Active Listings</p>
+              <p className="text-2xl font-bold">{marketplaceListings.length}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex items-center gap-2">
+            <Coins className="w-5 h-5 text-orange-500" />
+            <div>
+              <p className="text-sm text-muted-foreground">Your Holdings</p>
+              <p className="text-2xl font-bold">{userShares.length}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const SearchAndFilters = () => (
+    <div className="flex flex-col md:flex-row gap-4 mb-6">
+      <div className="flex-1 relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+        <Input
+          placeholder="Search agent NFTs..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10"
+        />
+      </div>
+
+      <Select
+        value={sortBy}
+        onValueChange={(value: 'name' | 'price' | 'revenue' | 'created') => setSortBy(value)}
+      >
+        <SelectTrigger className="w-[180px]">
+          <SortAsc className="w-4 h-4 mr-2" />
+          <SelectValue placeholder="Sort by" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="created">Recently Created</SelectItem>
+          <SelectItem value="name">Name A-Z</SelectItem>
+          <SelectItem value="price">Price High-Low</SelectItem>
+          <SelectItem value="revenue">Revenue High-Low</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select
+        value={filterBy}
+        onValueChange={(value: 'all' | 'fractionalized' | 'available') => setFilterBy(value)}
+      >
+        <SelectTrigger className="w-[180px]">
+          <Filter className="w-4 h-4 mr-2" />
+          <SelectValue placeholder="Filter" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All NFTs</SelectItem>
+          <SelectItem value="fractionalized">Fractionalized</SelectItem>
+          <SelectItem value="available">Available for Sale</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Button variant="outline" onClick={loadMarketplaceData} disabled={isLoading}>
+        <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+        Refresh
+      </Button>
+    </div>
+  );
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
@@ -290,16 +394,7 @@ export const AgentNFTMarketplace: React.FC<AgentNFTMarketplaceProps> = ({
         </TabsList>
 
         <TabsContent value="marketplace" className="space-y-6">
-          <SearchAndFilters
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            filterBy={filterBy}
-            setFilterBy={setFilterBy}
-            loadMarketplaceData={loadMarketplaceData}
-            isLoading={isLoading}
-          />
+          <SearchAndFilters />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filteredAndSortedNFTs.map((agentNft) => (

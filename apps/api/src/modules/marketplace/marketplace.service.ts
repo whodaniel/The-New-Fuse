@@ -1,6 +1,4 @@
 import { BadRequestException, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
 import { drizzleMarketplaceCatalogRepository } from '@the-new-fuse/database';
 import { spawn } from 'child_process';
 import { randomUUID } from 'crypto';
@@ -1539,8 +1537,8 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
 
       // Mark initialized before seed inserts to avoid re-entrant ensureInitialized calls.
       this.initialized = true;
-      const hasRows = this.extractRows(existingRows).length > 0;
-      if (!hasRows) {
+      const rowCount = await drizzleMarketplaceCatalogRepository.count();
+      if (rowCount === 0) {
         for (const item of this.seedItems) {
           await this.persistItem(item, false);
         }
@@ -1558,46 +1556,12 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
   private async getAllItems(): Promise<MarketplaceCatalogItem[]> {
     await this.ensureInitialized();
 
-    if (!this.dbEnabled || !this.dbClient) {
-      return [];
-    }
-
-    const result = await this.dbClient`
-      SELECT
-        id,
-        slug,
-        name,
-        description,
-        kind,
-        category,
-        tags,
-        capabilities,
-        rating,
-        total_runs,
-        success_rate,
-        price_per_run,
-        status,
-        publication_status,
-        launch_url,
-        avatar_url,
-        created_by,
-        created_at,
-        updated_at
-      FROM marketplace_catalog_items
-      ORDER BY created_at DESC;
-    `;
-
-    return this.extractRows(result).map((row) => this.mapRowToItem(row));
+    const rows = await drizzleMarketplaceCatalogRepository.findAll();
+    return rows.map((row: any) => this.mapCatalogRowToItem(row));
   }
 
   private async persistItem(item: MarketplaceCatalogItem, upsert: boolean): Promise<void> {
     await this.ensureInitialized();
-    if (!this.dbEnabled || !this.dbClient) {
-      throw new Error('Marketplace storage unavailable');
-    }
-
-    const tags = JSON.stringify(item.tags || []);
-    const capabilities = JSON.stringify(item.capabilities || []);
 
     try {
       if (upsert) {

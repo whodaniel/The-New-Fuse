@@ -1,4 +1,3 @@
-// @ts-ignore
 import type { Metadata, ServerUnaryCall } from '@grpc/grpc-js';
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod, GrpcService } from '@nestjs/microservices';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { LucideIcon } from 'lucide-react';
 import React, { InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
 
@@ -58,7 +59,7 @@ export const PremiumInput: React.FC<PremiumInputProps> = ({
       </div>
 
       {error && <p className="text-sm text-red-400">{error}</p>}
-      {hint && !error && <p className="text-sm text-gray-400">{hint}</p>}
+      {hint && !error && <p className="text-sm text-muted-foreground">{hint}</p>}
     </div>
   );
 };
@@ -93,7 +94,7 @@ export const PremiumTextarea: React.FC<PremiumTextareaProps> = ({
       />
 
       {error && <p className="text-sm text-red-400">{error}</p>}
-      {hint && !error && <p className="text-sm text-gray-400">{hint}</p>}
+      {hint && !error && <p className="text-sm text-muted-foreground">{hint}</p>}
     </div>
   );
 };
@@ -125,27 +126,20 @@ export const PremiumSelect: React.FC<PremiumSelectProps> = ({
         </label>
       )}
 
-      <div className="relative">
-        <select
-          className={`w-full px-4 py-2 bg-black/20 border border-white/10 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed appearance-none ${error ? 'border-red-500/50' : ''} ${className}`}
-          {...props}
-        >
-          {children}
-          {options.map((option) => (
-            <option key={option.value} value={option.value} className="bg-slate-900 text-white">
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-          <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-          </svg>
-        </div>
-      </div>
+      <select
+        className={`w-full px-4 py-2 bg-black/20 border border-white/10 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed ${error ? 'border-red-500/50' : ''} ${className}`}
+        {...props}
+      >
+        {children}
+        {options.map((option) => (
+          <option key={option.value} value={option.value} className="bg-slate-800">
+            {option.label}
+          </option>
+        ))}
+      </select>
 
       {error && <p className="text-sm text-red-400">{error}</p>}
-      {hint && !error && <p className="text-sm text-gray-400">{hint}</p>}
+      {hint && !error && <p className="text-sm text-muted-foreground">{hint}</p>}
     </div>
   );
 };
@@ -174,17 +168,9 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
 
   return (
     <div className="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-md backdrop-blur-sm">
-      <div className="flex-1 mr-4">
-        {label && (
-          <p id={labelId} className="text-sm font-medium text-white">
-            {label}
-          </p>
-        )}
-        {description && (
-          <p id={descId} className="text-xs text-gray-400 mt-1">
-            {description}
-          </p>
-        )}
+      <div className="flex-1">
+        {label && <p id={labelId} className="text-sm font-medium text-white">{label}</p>}
+        {description && <p id={descId} className="text-xs text-gray-400 mt-1">{description}</p>}
       </div>
 
       <button
@@ -200,7 +186,7 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
         }`}
       >
         <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-lg transition-transform ${
+          className={`inline-block h-4 w-4 transform rounded-full bg-transparent transition-transform ${
             checked ? 'translate-x-6' : 'translate-x-1'
           }`}
         />

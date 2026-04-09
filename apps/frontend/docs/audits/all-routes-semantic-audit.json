@@ -1,17 +1,13 @@
 {
   "summary": {
-    "startedAt": "2026-03-26T10:54:46.780Z",
-    "generatedAt": "2026-03-26T10:59:43.383Z",
+    "startedAt": "2026-03-09T08:20:02.555Z",
+    "generatedAt": "2026-03-09T08:23:28.751Z",
     "baseUrl": "https://thenewfuse.com",
-    "crawlAuth": {
-      "storageStateEnabled": true,
-      "extraHeadersEnabled": false
-    },
     "totalRoutes": 190,
     "hardBroken": 0,
     "networkBroken": 0,
     "sameAsRoot": 0,
-    "duplicateFingerprintGroups": 15
+    "duplicateFingerprintGroups": 14
   },
   "rows": [
     {
@@ -19,24 +15,24 @@
       "url": "https://thenewfuse.com/",
       "finalUrl": "https://thenewfuse.com/",
       "finalPath": "/",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse — AI Agent Orchestration Platform",
+      "h1": "\n          Build Intelligent\n          AI Workflows\n        ",
+      "fingerprint": "ab58a05cf0b02c5b8ba9efcd0edd1d6ec84a7cd4",
+      "textPreview": "the new fuse features product pricing visualizations sign in get started announcing the new fuse 2.0 build intelligent ai workflows the autonomous development ecosystem where ai minds unite. bridge high-level reasoning w"
     },
     {
       "route": "/404",
       "url": "https://thenewfuse.com/404",
       "finalUrl": "https://thenewfuse.com/404",
       "finalPath": "/404",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "404",
+      "fingerprint": "f707166653a5f9aaf1712c819853754abcbdb1d2",
+      "textPreview": "404page not foundreturn to home <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requires javascript to run. please enable javascript in your browser settings"
     },
     {
       "route": "/a2a-control",
@@ -47,188 +43,188 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/about",
       "url": "https://thenewfuse.com/about",
-      "finalUrl": "https://thenewfuse.com/about",
-      "finalPath": "/about",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/brand",
+      "finalPath": "/brand",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "The New Fuse",
+      "fingerprint": "4ab19bbfebc904a8010bd0f6d2a24d9c8ca1188a",
+      "textPreview": "official brand guidelinesthe new fusebrand identitya comprehensive guide to the visual language, logos, colors, and voice that define our premium ai orchestration platform.logo conceptstnf monogram explorations downloadn"
     },
     {
       "route": "/admin",
       "url": "https://thenewfuse.com/admin",
-      "finalUrl": "https://thenewfuse.com/admin",
-      "finalPath": "/admin",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/agent-management",
       "url": "https://thenewfuse.com/admin/agent-management",
-      "finalUrl": "https://thenewfuse.com/admin/agent-management",
-      "finalPath": "/admin/agent-management",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/agents/skills",
       "url": "https://thenewfuse.com/admin/agents/skills",
-      "finalUrl": "https://thenewfuse.com/admin/agents/skills",
-      "finalPath": "/admin/agents/skills",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/agents/web-search",
       "url": "https://thenewfuse.com/admin/agents/web-search",
-      "finalUrl": "https://thenewfuse.com/admin/agents/web-search",
-      "finalPath": "/admin/agents/web-search",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/api-analytics",
       "url": "https://thenewfuse.com/admin/api-analytics",
-      "finalUrl": "https://thenewfuse.com/admin/api-analytics",
-      "finalPath": "/admin/api-analytics",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/audit-logs",
       "url": "https://thenewfuse.com/admin/audit-logs",
-      "finalUrl": "https://thenewfuse.com/admin/audit-logs",
-      "finalPath": "/admin/audit-logs",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/backup-restore",
       "url": "https://thenewfuse.com/admin/backup-restore",
-      "finalUrl": "https://thenewfuse.com/admin/backup-restore",
-      "finalPath": "/admin/backup-restore",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/configuration",
       "url": "https://thenewfuse.com/admin/configuration",
-      "finalUrl": "https://thenewfuse.com/admin/configuration",
-      "finalPath": "/admin/configuration",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/control-panel",
       "url": "https://thenewfuse.com/admin/control-panel",
-      "finalUrl": "https://thenewfuse.com/admin/control-panel",
-      "finalPath": "/admin/control-panel",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/dashboard",
       "url": "https://thenewfuse.com/admin/dashboard",
-      "finalUrl": "https://thenewfuse.com/admin/dashboard",
-      "finalPath": "/admin/dashboard",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/database",
       "url": "https://thenewfuse.com/admin/database",
-      "finalUrl": "https://thenewfuse.com/admin/database",
-      "finalPath": "/admin/database",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/experimental-features",
       "url": "https://thenewfuse.com/admin/experimental-features",
-      "finalUrl": "https://thenewfuse.com/admin/experimental-features",
-      "finalPath": "/admin/experimental-features",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/feature-flags",
       "url": "https://thenewfuse.com/admin/feature-flags",
-      "finalUrl": "https://thenewfuse.com/admin/feature-flags",
-      "finalPath": "/admin/feature-flags",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/layout",
       "url": "https://thenewfuse.com/admin/layout",
-      "finalUrl": "https://thenewfuse.com/admin/layout",
-      "finalPath": "/admin/layout",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/marketplace",
@@ -239,128 +235,128 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/admin/onboarding",
       "url": "https://thenewfuse.com/admin/onboarding",
-      "finalUrl": "https://thenewfuse.com/admin/onboarding",
-      "finalPath": "/admin/onboarding",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/openclaw-security",
       "url": "https://thenewfuse.com/admin/openclaw-security",
-      "finalUrl": "https://thenewfuse.com/admin/openclaw-security",
-      "finalPath": "/admin/openclaw-security",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/panel",
       "url": "https://thenewfuse.com/admin/panel",
-      "finalUrl": "https://thenewfuse.com/admin/panel",
-      "finalPath": "/admin/panel",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/port-management",
       "url": "https://thenewfuse.com/admin/port-management",
-      "finalUrl": "https://thenewfuse.com/admin/port-management",
-      "finalPath": "/admin/port-management",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/settings",
       "url": "https://thenewfuse.com/admin/settings",
-      "finalUrl": "https://thenewfuse.com/admin/settings",
-      "finalPath": "/admin/settings",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/system-health",
       "url": "https://thenewfuse.com/admin/system-health",
-      "finalUrl": "https://thenewfuse.com/admin/system-health",
-      "finalPath": "/admin/system-health",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/system-metrics",
       "url": "https://thenewfuse.com/admin/system-metrics",
-      "finalUrl": "https://thenewfuse.com/admin/system-metrics",
-      "finalPath": "/admin/system-metrics",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/user-management",
       "url": "https://thenewfuse.com/admin/user-management",
-      "finalUrl": "https://thenewfuse.com/admin/user-management",
-      "finalPath": "/admin/user-management",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/users",
       "url": "https://thenewfuse.com/admin/users",
-      "finalUrl": "https://thenewfuse.com/admin/users",
-      "finalPath": "/admin/users",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/admin/workspaces",
       "url": "https://thenewfuse.com/admin/workspaces",
-      "finalUrl": "https://thenewfuse.com/admin/workspaces",
-      "finalPath": "/admin/workspaces",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/agency/dashboard",
@@ -371,8 +367,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/agency/onboard",
@@ -383,8 +379,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/agent-builder",
@@ -395,8 +391,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/agent-management",
@@ -407,8 +403,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/agents",
@@ -419,8 +415,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/agents/new",
@@ -431,8 +427,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/agents/nft-marketplace",
@@ -443,20 +439,20 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/agents/onboard",
       "url": "https://thenewfuse.com/agents/onboard",
       "finalUrl": "https://thenewfuse.com/agents/onboard",
       "finalPath": "/agents/onboard",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "fingerprint": "5593b2906c72c673ff19a238359bff9f4023097e",
+      "textPreview": "welcome to the new fuseidentify yourselfselect your categorycreate your profilediscover the networkwelcome to the new fusethe new fuse is a multi-agent orchestration platform where both human users and autonomous ai agen"
     },
     {
       "route": "/agents/revenue-dashboard",
@@ -467,8 +463,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/agents/unified-creator",
@@ -479,8 +475,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/ai-agent-portal",
@@ -491,8 +487,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/ai-agents",
@@ -503,20 +499,20 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/ai-command-center",
       "url": "https://thenewfuse.com/ai-command-center",
-      "finalUrl": "https://thenewfuse.com/ai-command-center",
-      "finalPath": "/ai-command-center",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/ai-portal",
@@ -527,20 +523,20 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/all-pages",
       "url": "https://thenewfuse.com/all-pages",
-      "finalUrl": "https://thenewfuse.com/all-pages",
-      "finalPath": "/all-pages",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/analytics",
@@ -551,8 +547,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/app.html",
@@ -563,80 +559,80 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/audit-logs",
       "url": "https://thenewfuse.com/audit-logs",
-      "finalUrl": "https://thenewfuse.com/audit-logs",
-      "finalPath": "/audit-logs",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/auth",
       "url": "https://thenewfuse.com/auth",
       "finalUrl": "https://thenewfuse.com/auth",
       "finalPath": "/auth",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
-    },
-    {
-      "route": "/auth/callback",
-      "url": "https://thenewfuse.com/auth/callback",
-      "finalUrl": "https://thenewfuse.com/auth/oauth-callback",
-      "finalPath": "/auth/oauth-callback",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "fingerprint": "4185d3f8f167dea81f08ff987e79b675960d372a",
+      "textPreview": "welcome to the new fuse <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requires javascript to run. please enable javascript in your browser settings. </p> <"
+    },
+    {
+      "route": "/auth/callback",
+      "url": "https://thenewfuse.com/auth/callback",
+      "finalUrl": "https://thenewfuse.com/auth/callback",
+      "finalPath": "/auth/callback",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "",
+      "fingerprint": "2521ada22a5cdaccdeecfd34527bc6d2ba9e9ea3",
+      "textPreview": "processing...please wait while we complete your authentication. <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requires javascript to run. please enable jav"
     },
     {
       "route": "/auth/forgot-password",
       "url": "https://thenewfuse.com/auth/forgot-password",
       "finalUrl": "https://thenewfuse.com/auth/forgot-password",
       "finalPath": "/auth/forgot-password",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "fingerprint": "28d9942399c5e1bf7e3f559f200f3155d445dabf",
+      "textPreview": "forgot your password?enter your email address and we'll send you a link to reset your password.email addresssend reset linkback to login <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript require"
     },
     {
       "route": "/auth/google-callback",
       "url": "https://thenewfuse.com/auth/google-callback",
-      "finalUrl": "https://thenewfuse.com/auth/google-callback",
-      "finalPath": "/auth/google-callback",
+      "finalUrl": "https://thenewfuse.com/auth/login?error=auth_failed",
+      "finalPath": "/auth/login",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "",
-      "fingerprint": "373f832a5a572ab94c0181ea00cccfbb15fdf2c5",
-      "textPreview": "processing authentication... <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requires javascript to run. please enable javascript in your browser settings. <"
+      "h1": "Sign in",
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/auth/google/callback",
       "url": "https://thenewfuse.com/auth/google/callback",
-      "finalUrl": "https://thenewfuse.com/auth/google-callback",
-      "finalPath": "/auth/google-callback",
+      "finalUrl": "https://thenewfuse.com/auth/login?error=auth_failed",
+      "finalPath": "/auth/login",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "",
-      "fingerprint": "373f832a5a572ab94c0181ea00cccfbb15fdf2c5",
-      "textPreview": "processing authentication... <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requires javascript to run. please enable javascript in your browser settings. <"
+      "h1": "Sign in",
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/auth/login",
@@ -647,20 +643,20 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/auth/oauth-callback",
       "url": "https://thenewfuse.com/auth/oauth-callback",
       "finalUrl": "https://thenewfuse.com/auth/oauth-callback",
       "finalPath": "/auth/oauth-callback",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "fingerprint": "2521ada22a5cdaccdeecfd34527bc6d2ba9e9ea3",
+      "textPreview": "processing...please wait while we complete your authentication. <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requires javascript to run. please enable jav"
     },
     {
       "route": "/auth/register",
@@ -671,68 +667,68 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Create account",
-      "fingerprint": "7fcfa405ebae245e32833f37dc93362dcd45ae69",
-      "textPreview": "create accountfresh register flow for cloudflare authcanonical identity (exacting tracking)user_..._[timestamp]your unique protocol identifier for strict attribution and mesh sovereignty.nameemailpasswordconfirm password"
+      "fingerprint": "b8e1108002b6409b0348d02c58825001d87cde26",
+      "textPreview": "create accountfresh register flow for cloudflare authnameemailpasswordconfirm passwordcreate accountcontinue with googlealready have an account? sign in <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>ja"
     },
     {
       "route": "/auth/reset-password",
       "url": "https://thenewfuse.com/auth/reset-password",
       "finalUrl": "https://thenewfuse.com/auth/reset-password",
       "finalPath": "/auth/reset-password",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "fingerprint": "61e0885d807671d9977fb29d75592502db985029",
+      "textPreview": "reset your passwordenter your new password below.new passwordconfirm new passwordreset password <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requires java"
     },
     {
       "route": "/auth/sso",
       "url": "https://thenewfuse.com/auth/sso",
       "finalUrl": "https://thenewfuse.com/auth/sso",
       "finalPath": "/auth/sso",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "fingerprint": "0c7d4e948b0711907c7758deaed87c7434763b70",
+      "textPreview": "processing login...please wait while we authenticate your account. <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requires javascript to run. please enable "
     },
     {
       "route": "/blog",
       "url": "https://thenewfuse.com/blog",
       "finalUrl": "https://thenewfuse.com/blog",
       "finalPath": "/blog",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "The New Fuse",
+      "fingerprint": "c42ff08bc9a350891040bda5213b0e41e3d7d081",
+      "textPreview": "latest insightsthe new fuse blognews, updates, and insights about ai collaboration and workflow automation.get startedlatest postsexplore our latest articles and insightsdecember 8, 2025daniel goldbergthe future of ai co"
     },
     {
       "route": "/brand",
       "url": "https://thenewfuse.com/brand",
       "finalUrl": "https://thenewfuse.com/brand",
       "finalPath": "/brand",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "The New Fuse",
+      "fingerprint": "4ab19bbfebc904a8010bd0f6d2a24d9c8ca1188a",
+      "textPreview": "official brand guidelinesthe new fusebrand identitya comprehensive guide to the visual language, logos, colors, and voice that define our premium ai orchestration platform.logo conceptstnf monogram explorations downloadn"
     },
     {
       "route": "/build-info",
       "url": "https://thenewfuse.com/build-info",
-      "finalUrl": "https://thenewfuse.com/build-info",
-      "finalPath": "/build-info",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/capabilities",
@@ -743,20 +739,20 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
-      "fingerprint": "ede881e01c42b8a19f697c4f4fa170e0d02f1fde",
+      "fingerprint": "4b579ea0414367ef6be6ca08136209178cba5c9c",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
       "route": "/channels",
       "url": "https://thenewfuse.com/channels",
-      "finalUrl": "https://thenewfuse.com/channels",
-      "finalPath": "/channels",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/chat",
@@ -767,8 +763,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/chat-page",
@@ -779,20 +775,20 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/command-center",
       "url": "https://thenewfuse.com/command-center",
-      "finalUrl": "https://thenewfuse.com/command-center",
-      "finalPath": "/command-center",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/community",
@@ -803,8 +799,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
-      "fingerprint": "bcf869a597c3b9226b7e56319981c6611bea2e69",
-      "textPreview": "community hubconnect, share, and learn with the ai communitynew postcommunity endpoints are unavailable. no synthetic community posts are shown.filtersno live community posts available.load more posts"
+      "fingerprint": "5669d4e0090d26804948b1e08f33e00ae63c2a66",
+      "textPreview": "community hubconnect, share, and learn with the ai communitynew post1,230members94active today3posts24commentsfilters11pinnedhelp & supporthow are you handling staged deploy rollbacks?looking for practical rollback patte"
     },
     {
       "route": "/components",
@@ -815,8 +811,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/components-nav",
@@ -827,20 +823,20 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/components-showcase",
       "url": "https://thenewfuse.com/components-showcase",
-      "finalUrl": "https://thenewfuse.com/components-showcase",
-      "finalPath": "/components-showcase",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/config",
@@ -851,32 +847,32 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/connect",
       "url": "https://thenewfuse.com/connect",
       "finalUrl": "https://thenewfuse.com/connect",
       "finalPath": "/connect",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "Your Browser is Now an Agentic Supernode",
+      "fingerprint": "b60edf4b35d9d5fc890a4ea5c3062ec218351214",
+      "textPreview": "fuse connectv8.0featuresplatformshow it workspricingtnf platformsign inthe new fuse · chrome extensionyour browser is now an agentic supernodefuse connect transforms every tab into a first-class agent on the new fuse orc"
     },
     {
       "route": "/contact",
       "url": "https://thenewfuse.com/contact",
       "finalUrl": "https://thenewfuse.com/contact",
       "finalPath": "/contact",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "The New Fuse",
+      "fingerprint": "4a235d791e19ed7b43d517c699bea8d8f8320aca",
+      "textPreview": "24/7 supporthelp & supportwe're here to help with any questions or issues you may have.get startedsupport optionschoose the support method that works best for youlive chatget instant help from our support teamstart chatd"
     },
     {
       "route": "/cron-jobs",
@@ -887,8 +883,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/dashboard",
@@ -899,8 +895,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/dashboard/agents",
@@ -911,8 +907,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/dashboard/agents/new",
@@ -923,8 +919,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/dashboard/analytics",
@@ -935,8 +931,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/dashboard/architecture",
@@ -947,8 +943,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/dashboard/logs",
@@ -959,8 +955,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/dashboard/observability",
@@ -971,8 +967,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/dashboard/settings",
@@ -983,92 +979,92 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/debug",
       "url": "https://thenewfuse.com/debug",
-      "finalUrl": "https://thenewfuse.com/debug",
-      "finalPath": "/debug",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/debug-routing",
       "url": "https://thenewfuse.com/debug-routing",
-      "finalUrl": "https://thenewfuse.com/debug-routing",
-      "finalPath": "/debug-routing",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/design-system",
       "url": "https://thenewfuse.com/design-system",
       "finalUrl": "https://thenewfuse.com/design-system",
       "finalPath": "/design-system",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "The New Fuse",
+      "fingerprint": "4ab19bbfebc904a8010bd0f6d2a24d9c8ca1188a",
+      "textPreview": "official brand guidelinesthe new fusebrand identitya comprehensive guide to the visual language, logos, colors, and voice that define our premium ai orchestration platform.logo conceptstnf monogram explorations downloadn"
     },
     {
       "route": "/docs",
       "url": "https://thenewfuse.com/docs",
       "finalUrl": "https://thenewfuse.com/docs",
       "finalPath": "/docs",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "Documentation",
+      "fingerprint": "3cf740a5a411e8615cd25eeb24c702f5bc9e3cc4",
+      "textPreview": "documentationeverything you need to build, deploy, and scale with the new fuse.getting startedlearn the basics of the new fuse, from account creation to your first agent.read guide →api referencedetailed documentation fo"
     },
     {
       "route": "/features",
       "url": "https://thenewfuse.com/features",
-      "finalUrl": "https://thenewfuse.com/features",
-      "finalPath": "/features",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/#features",
+      "finalPath": "/",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse — AI Agent Orchestration Platform",
+      "h1": "\n          Build Intelligent\n          AI Workflows\n        ",
+      "fingerprint": "ab58a05cf0b02c5b8ba9efcd0edd1d6ec84a7cd4",
+      "textPreview": "the new fuse features product pricing visualizations sign in get started announcing the new fuse 2.0 build intelligent ai workflows the autonomous development ecosystem where ai minds unite. bridge high-level reasoning w"
     },
     {
       "route": "/forgot-password",
       "url": "https://thenewfuse.com/forgot-password",
-      "finalUrl": "https://thenewfuse.com/forgot-password",
-      "finalPath": "/forgot-password",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
+      "finalUrl": "https://thenewfuse.com/auth/forgot-password",
+      "finalPath": "/auth/forgot-password",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "fingerprint": "28d9942399c5e1bf7e3f559f200f3155d445dabf",
+      "textPreview": "forgot your password?enter your email address and we'll send you a link to reset your password.email addresssend reset linkback to login <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript require"
     },
     {
       "route": "/frontend-showcase",
       "url": "https://thenewfuse.com/frontend-showcase",
-      "finalUrl": "https://thenewfuse.com/frontend-showcase",
-      "finalPath": "/frontend-showcase",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/general-settings",
@@ -1079,8 +1075,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/general-settings/community-hub",
@@ -1091,8 +1087,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/general-settings/embedding",
@@ -1103,8 +1099,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/goals",
@@ -1115,8 +1111,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/graph-demo",
@@ -1127,8 +1123,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/help/community",
@@ -1139,140 +1135,140 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
-      "fingerprint": "bcf869a597c3b9226b7e56319981c6611bea2e69",
-      "textPreview": "community hubconnect, share, and learn with the ai communitynew postcommunity endpoints are unavailable. no synthetic community posts are shown.filtersno live community posts available.load more posts"
+      "fingerprint": "5669d4e0090d26804948b1e08f33e00ae63c2a66",
+      "textPreview": "community hubconnect, share, and learn with the ai communitynew post1,230members94active today3posts24commentsfilters11pinnedhelp & supporthow are you handling staged deploy rollbacks?looking for practical rollback patte"
     },
     {
       "route": "/help/documentation",
       "url": "https://thenewfuse.com/help/documentation",
-      "finalUrl": "https://thenewfuse.com/help/documentation",
-      "finalPath": "/help/documentation",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/docs",
+      "finalPath": "/docs",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "Documentation",
+      "fingerprint": "3cf740a5a411e8615cd25eeb24c702f5bc9e3cc4",
+      "textPreview": "documentationeverything you need to build, deploy, and scale with the new fuse.getting startedlearn the basics of the new fuse, from account creation to your first agent.read guide →api referencedetailed documentation fo"
     },
     {
       "route": "/help/faq",
       "url": "https://thenewfuse.com/help/faq",
-      "finalUrl": "https://thenewfuse.com/help/faq",
-      "finalPath": "/help/faq",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/docs",
+      "finalPath": "/docs",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "Documentation",
+      "fingerprint": "3cf740a5a411e8615cd25eeb24c702f5bc9e3cc4",
+      "textPreview": "documentationeverything you need to build, deploy, and scale with the new fuse.getting startedlearn the basics of the new fuse, from account creation to your first agent.read guide →api referencedetailed documentation fo"
     },
     {
       "route": "/help/support",
       "url": "https://thenewfuse.com/help/support",
-      "finalUrl": "https://thenewfuse.com/help/support",
-      "finalPath": "/help/support",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/support",
+      "finalPath": "/support",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "The New Fuse",
+      "fingerprint": "4a235d791e19ed7b43d517c699bea8d8f8320aca",
+      "textPreview": "24/7 supporthelp & supportwe're here to help with any questions or issues you may have.get startedsupport optionschoose the support method that works best for youlive chatget instant help from our support teamstart chatd"
     },
     {
       "route": "/help/tutorials",
       "url": "https://thenewfuse.com/help/tutorials",
-      "finalUrl": "https://thenewfuse.com/help/tutorials",
-      "finalPath": "/help/tutorials",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/docs",
+      "finalPath": "/docs",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "Documentation",
+      "fingerprint": "3cf740a5a411e8615cd25eeb24c702f5bc9e3cc4",
+      "textPreview": "documentationeverything you need to build, deploy, and scale with the new fuse.getting startedlearn the basics of the new fuse, from account creation to your first agent.read guide →api referencedetailed documentation fo"
     },
     {
       "route": "/home",
       "url": "https://thenewfuse.com/home",
-      "finalUrl": "https://thenewfuse.com/home",
-      "finalPath": "/home",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/",
+      "finalPath": "/",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse — AI Agent Orchestration Platform",
+      "h1": "\n          Build Intelligent\n          AI Workflows\n        ",
+      "fingerprint": "ab58a05cf0b02c5b8ba9efcd0edd1d6ec84a7cd4",
+      "textPreview": "the new fuse features product pricing visualizations sign in get started announcing the new fuse 2.0 build intelligent ai workflows the autonomous development ecosystem where ai minds unite. bridge high-level reasoning w"
     },
     {
       "route": "/html/admin",
       "url": "https://thenewfuse.com/html/admin",
-      "finalUrl": "https://thenewfuse.com/html/admin",
-      "finalPath": "/html/admin",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/html/agents",
       "url": "https://thenewfuse.com/html/agents",
-      "finalUrl": "https://thenewfuse.com/html/agents",
-      "finalPath": "/html/agents",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/html/chat",
       "url": "https://thenewfuse.com/html/chat",
-      "finalUrl": "https://thenewfuse.com/html/chat",
-      "finalPath": "/html/chat",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/html/dashboard",
       "url": "https://thenewfuse.com/html/dashboard",
-      "finalUrl": "https://thenewfuse.com/html/dashboard",
-      "finalPath": "/html/dashboard",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/html/tasks",
       "url": "https://thenewfuse.com/html/tasks",
-      "finalUrl": "https://thenewfuse.com/html/tasks",
-      "finalPath": "/html/tasks",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/html/workflows",
       "url": "https://thenewfuse.com/html/workflows",
-      "finalUrl": "https://thenewfuse.com/html/workflows",
-      "finalPath": "/html/workflows",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/hub",
@@ -1283,44 +1279,44 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/ide",
       "url": "https://thenewfuse.com/ide",
-      "finalUrl": "https://thenewfuse.com/ide",
-      "finalPath": "/ide",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/instances",
       "url": "https://thenewfuse.com/instances",
-      "finalUrl": "https://thenewfuse.com/instances",
-      "finalPath": "/instances",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/integrations",
       "url": "https://thenewfuse.com/integrations",
-      "finalUrl": "https://thenewfuse.com/integrations",
-      "finalPath": "/integrations",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/connect",
+      "finalPath": "/connect",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "Your Browser is Now an Agentic Supernode",
+      "fingerprint": "b60edf4b35d9d5fc890a4ea5c3062ec218351214",
+      "textPreview": "fuse connectv8.0featuresplatformshow it workspricingtnf platformsign inthe new fuse · chrome extensionyour browser is now an agentic supernodefuse connect transforms every tab into a first-class agent on the new fuse orc"
     },
     {
       "route": "/knowledge-hub",
@@ -1331,104 +1327,104 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/landing",
       "url": "https://thenewfuse.com/landing",
-      "finalUrl": "https://thenewfuse.com/landing",
-      "finalPath": "/landing",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/",
+      "finalPath": "/",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse — AI Agent Orchestration Platform",
+      "h1": "\n          Build Intelligent\n          AI Workflows\n        ",
+      "fingerprint": "ab58a05cf0b02c5b8ba9efcd0edd1d6ec84a7cd4",
+      "textPreview": "the new fuse features product pricing visualizations sign in get started announcing the new fuse 2.0 build intelligent ai workflows the autonomous development ecosystem where ai minds unite. bridge high-level reasoning w"
     },
     {
       "route": "/landing-page",
       "url": "https://thenewfuse.com/landing-page",
-      "finalUrl": "https://thenewfuse.com/landing-page",
-      "finalPath": "/landing-page",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/",
+      "finalPath": "/",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse — AI Agent Orchestration Platform",
+      "h1": "\n          Build Intelligent\n          AI Workflows\n        ",
+      "fingerprint": "ab58a05cf0b02c5b8ba9efcd0edd1d6ec84a7cd4",
+      "textPreview": "the new fuse features product pricing visualizations sign in get started announcing the new fuse 2.0 build intelligent ai workflows the autonomous development ecosystem where ai minds unite. bridge high-level reasoning w"
     },
     {
       "route": "/layout-example",
       "url": "https://thenewfuse.com/layout-example",
-      "finalUrl": "https://thenewfuse.com/layout-example",
-      "finalPath": "/layout-example",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/legal/privacy",
       "url": "https://thenewfuse.com/legal/privacy",
       "finalUrl": "https://thenewfuse.com/legal/privacy",
       "finalPath": "/legal/privacy",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "The New Fuse",
+      "fingerprint": "d58f68b87dae3f1d7f79537cc940e995868f8fc6",
+      "textPreview": "privacy policylast updated: january 17, 20251. introductionwelcome to the new fuse (\"we,\" \"our,\" or \"us\"). we respect your privacy and are committed to protecting your personal data. this privacy policy will inform you a"
     },
     {
       "route": "/legal/terms",
       "url": "https://thenewfuse.com/legal/terms",
       "finalUrl": "https://thenewfuse.com/legal/terms",
       "finalPath": "/legal/terms",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "The New Fuse",
+      "fingerprint": "8b1d98ffb72377899c6ea2faaf54fb1023e76261",
+      "textPreview": "terms of servicelast updated: january 17, 20251. acceptance of termsby accessing and using the new fuse website (https://thenewfuse.com), you accept and agree to be bound by these terms of service. if you do not agree to"
     },
     {
       "route": "/live-view",
       "url": "https://thenewfuse.com/live-view",
-      "finalUrl": "https://thenewfuse.com/live-view",
-      "finalPath": "/live-view",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/login",
       "url": "https://thenewfuse.com/login",
-      "finalUrl": "https://thenewfuse.com/auth/login",
-      "finalPath": "/auth/login",
+      "finalUrl": "https://thenewfuse.com/login",
+      "finalPath": "/login",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/logs",
       "url": "https://thenewfuse.com/logs",
-      "finalUrl": "https://thenewfuse.com/logs",
-      "finalPath": "/logs",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/main",
@@ -1439,8 +1435,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/marketplace",
@@ -1451,7 +1447,7 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
-      "fingerprint": "ede881e01c42b8a19f697c4f4fa170e0d02f1fde",
+      "fingerprint": "4b579ea0414367ef6be6ca08136209178cba5c9c",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
@@ -1463,8 +1459,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/membership",
@@ -1475,7 +1471,7 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "TNF MembershipLive access to AI-ARCADE & the Protocol",
-      "fingerprint": "49b443982b9b0f895a2e69e4a03cca0176c46b3e",
+      "fingerprint": "142f5336e7105f4a603a9469d23de778992e4277",
       "textPreview": "membership billingtnf membershiplive access to ai-arcade & the protocoltnf membership is $30/month. paypal remains the default subscription rail, with stripe available as an additional checkout option when enabled. once "
     },
     {
@@ -1487,92 +1483,92 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/multi-agent-chat-demo",
       "url": "https://thenewfuse.com/multi-agent-chat-demo",
-      "finalUrl": "https://thenewfuse.com/multi-agent-chat-demo",
-      "finalPath": "/multi-agent-chat-demo",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/nexus",
       "url": "https://thenewfuse.com/nexus",
-      "finalUrl": "https://thenewfuse.com/nexus",
-      "finalPath": "/nexus",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/nodes",
       "url": "https://thenewfuse.com/nodes",
-      "finalUrl": "https://thenewfuse.com/nodes",
-      "finalPath": "/nodes",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/not-found",
       "url": "https://thenewfuse.com/not-found",
       "finalUrl": "https://thenewfuse.com/not-found",
       "finalPath": "/not-found",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "404",
+      "fingerprint": "49e0eea32cb8be47ea51c4f14a0f45b152dfaa82",
+      "textPreview": "404page not foundreturn to home"
     },
     {
       "route": "/observatory",
       "url": "https://thenewfuse.com/observatory",
-      "finalUrl": "https://thenewfuse.com/observatory",
-      "finalPath": "/observatory",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/onboarding",
       "url": "https://thenewfuse.com/onboarding",
       "finalUrl": "https://thenewfuse.com/onboarding",
       "finalPath": "/onboarding",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "Identity Verification",
+      "fingerprint": "c59a491f43796c74bce09d78265241d29b68884d",
+      "textPreview": "identity verificationplease wait while we establish your secure session context.analyzing connectionchecking authentication methodanalyzing request patternsdetermining user typeestablishing secure handshake... <div style"
     },
     {
       "route": "/onboarding/ai-agent",
       "url": "https://thenewfuse.com/onboarding/ai-agent",
       "finalUrl": "https://thenewfuse.com/onboarding/ai-agent",
       "finalPath": "/onboarding/ai-agent",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "fingerprint": "242ac799308a30f160f59c8877ba0e578f7c1513",
+      "textPreview": "ai agent onboardingdetecting agent typeanalyzing connection patterns and headers... <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requires javascript to ru"
     },
     {
       "route": "/overview",
@@ -1583,56 +1579,56 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/package/agents",
       "url": "https://thenewfuse.com/package/agents",
-      "finalUrl": "https://thenewfuse.com/package/agents",
-      "finalPath": "/package/agents",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/package/dashboard",
       "url": "https://thenewfuse.com/package/dashboard",
-      "finalUrl": "https://thenewfuse.com/package/dashboard",
-      "finalPath": "/package/dashboard",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/package/login",
       "url": "https://thenewfuse.com/package/login",
-      "finalUrl": "https://thenewfuse.com/package/login",
-      "finalPath": "/package/login",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/package/workflows",
       "url": "https://thenewfuse.com/package/workflows",
-      "finalUrl": "https://thenewfuse.com/package/workflows",
-      "finalPath": "/package/workflows",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/plans",
@@ -1643,8 +1639,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/platform",
@@ -1655,7 +1651,7 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
-      "fingerprint": "ede881e01c42b8a19f697c4f4fa170e0d02f1fde",
+      "fingerprint": "4b579ea0414367ef6be6ca08136209178cba5c9c",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
@@ -1663,36 +1659,36 @@
       "url": "https://thenewfuse.com/preview/onboarding",
       "finalUrl": "https://thenewfuse.com/preview/onboarding",
       "finalPath": "/preview/onboarding",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "",
-      "fingerprint": "6070a1037352fdc4bafe417ab3f24db91aa97163",
-      "textPreview": "something went wrongusewizard must be used within a wizardprovidertry again (3 attempts left)reload page <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requ"
+      "fingerprint": "305bae8efa624a4571c4de22e0d8f950944ce23c",
+      "textPreview": "loading onboarding preview..."
     },
     {
       "route": "/pricing",
       "url": "https://thenewfuse.com/pricing",
-      "finalUrl": "https://thenewfuse.com/pricing",
-      "finalPath": "/pricing",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/#pricing",
+      "finalPath": "/",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse — AI Agent Orchestration Platform",
+      "h1": "\n          Build Intelligent\n          AI Workflows\n        ",
+      "fingerprint": "ab58a05cf0b02c5b8ba9efcd0edd1d6ec84a7cd4",
+      "textPreview": "the new fuse features product pricing visualizations sign in get started announcing the new fuse 2.0 build intelligent ai workflows the autonomous development ecosystem where ai minds unite. bridge high-level reasoning w"
     },
     {
       "route": "/privacy",
       "url": "https://thenewfuse.com/privacy",
-      "finalUrl": "https://thenewfuse.com/privacy",
-      "finalPath": "/privacy",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/legal/privacy",
+      "finalPath": "/legal/privacy",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "The New Fuse",
+      "fingerprint": "d58f68b87dae3f1d7f79537cc940e995868f8fc6",
+      "textPreview": "privacy policylast updated: january 17, 20251. introductionwelcome to the new fuse (\"we,\" \"our,\" or \"us\"). we respect your privacy and are committed to protecting your personal data. this privacy policy will inform you a"
     },
     {
       "route": "/product-map",
@@ -1703,7 +1699,7 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
-      "fingerprint": "ede881e01c42b8a19f697c4f4fa170e0d02f1fde",
+      "fingerprint": "4b579ea0414367ef6be6ca08136209178cba5c9c",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
@@ -1715,20 +1711,20 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/register",
       "url": "https://thenewfuse.com/register",
-      "finalUrl": "https://thenewfuse.com/auth/register",
-      "finalPath": "/auth/register",
+      "finalUrl": "https://thenewfuse.com/register",
+      "finalPath": "/register",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Create account",
-      "fingerprint": "7fcfa405ebae245e32833f37dc93362dcd45ae69",
-      "textPreview": "create accountfresh register flow for cloudflare authcanonical identity (exacting tracking)user_..._[timestamp]your unique protocol identifier for strict attribution and mesh sovereignty.nameemailpasswordconfirm password"
+      "fingerprint": "b8e1108002b6409b0348d02c58825001d87cde26",
+      "textPreview": "create accountfresh register flow for cloudflare authnameemailpasswordconfirm passwordcreate accountcontinue with googlealready have an account? sign in <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>ja"
     },
     {
       "route": "/resources",
@@ -1739,8 +1735,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/sessions",
@@ -1751,8 +1747,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/settings",
@@ -1763,8 +1759,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/settings/api",
@@ -1775,8 +1771,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/settings/appearance",
@@ -1787,8 +1783,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/settings/general",
@@ -1799,8 +1795,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/settings/notifications",
@@ -1811,8 +1807,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/settings/security",
@@ -1823,32 +1819,32 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/simple-landing",
       "url": "https://thenewfuse.com/simple-landing",
-      "finalUrl": "https://thenewfuse.com/simple-landing",
-      "finalPath": "/simple-landing",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/",
+      "finalPath": "/",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse — AI Agent Orchestration Platform",
+      "h1": "\n          Build Intelligent\n          AI Workflows\n        ",
+      "fingerprint": "ab58a05cf0b02c5b8ba9efcd0edd1d6ec84a7cd4",
+      "textPreview": "the new fuse features product pricing visualizations sign in get started announcing the new fuse 2.0 build intelligent ai workflows the autonomous development ecosystem where ai minds unite. bridge high-level reasoning w"
     },
     {
       "route": "/simple-test",
       "url": "https://thenewfuse.com/simple-test",
-      "finalUrl": "https://thenewfuse.com/simple-test",
-      "finalPath": "/simple-test",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/skills",
@@ -1859,8 +1855,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/sophisticated-hub",
@@ -1871,8 +1867,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/suggestions",
@@ -1883,8 +1879,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/suggestions/new",
@@ -1895,20 +1891,20 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/support",
       "url": "https://thenewfuse.com/support",
       "finalUrl": "https://thenewfuse.com/support",
       "finalPath": "/support",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "The New Fuse",
+      "fingerprint": "4a235d791e19ed7b43d517c699bea8d8f8320aca",
+      "textPreview": "24/7 supporthelp & supportwe're here to help with any questions or issues you may have.get startedsupport optionschoose the support method that works best for youlive chatget instant help from our support teamstart chatd"
     },
     {
       "route": "/tasks",
@@ -1919,8 +1915,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/tasks-page",
@@ -1931,8 +1927,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/tasks/new",
@@ -1943,8 +1939,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/team",
@@ -1955,32 +1951,32 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/terms",
       "url": "https://thenewfuse.com/terms",
-      "finalUrl": "https://thenewfuse.com/terms",
-      "finalPath": "/terms",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/legal/terms",
+      "finalPath": "/legal/terms",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "The New Fuse",
+      "fingerprint": "8b1d98ffb72377899c6ea2faaf54fb1023e76261",
+      "textPreview": "terms of servicelast updated: january 17, 20251. acceptance of termsby accessing and using the new fuse website (https://thenewfuse.com), you accept and agree to be bound by these terms of service. if you do not agree to"
     },
     {
       "route": "/test",
       "url": "https://thenewfuse.com/test",
-      "finalUrl": "https://thenewfuse.com/test",
-      "finalPath": "/test",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "finalUrl": "https://thenewfuse.com/unauthorized",
+      "finalPath": "/unauthorized",
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/timeline",
@@ -1991,8 +1987,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/timeline-demo",
@@ -2003,8 +1999,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/tnf-hub",
@@ -2015,20 +2011,20 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/unauthorized",
       "url": "https://thenewfuse.com/unauthorized",
       "finalUrl": "https://thenewfuse.com/unauthorized",
       "finalPath": "/unauthorized",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
+      "status": 200,
+      "error": null,
+      "title": "The New Fuse - AI Agent Orchestration Platform",
+      "h1": "401",
+      "fingerprint": "a301267e3093107d4e73909e41f6c0474bb447dc",
+      "textPreview": "401unauthorized accessyou don't have permission to access this page.go to dashboard →switch account"
     },
     {
       "route": "/usage",
@@ -2039,8 +2035,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/user/profile",
@@ -2051,8 +2047,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workflows",
@@ -2063,8 +2059,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workflows-enhanced",
@@ -2075,8 +2071,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workflows/advanced-builder",
@@ -2087,8 +2083,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workflows/builder",
@@ -2099,8 +2095,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workflows/console",
@@ -2111,8 +2107,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workflows/detail",
@@ -2123,8 +2119,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workflows/execution",
@@ -2135,8 +2131,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workflows/executions",
@@ -2147,8 +2143,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workflows/templates",
@@ -2159,8 +2155,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workspace",
@@ -2171,8 +2167,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workspace-chat",
@@ -2183,8 +2179,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workspace-settings/agent-model",
@@ -2195,8 +2191,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workspace-settings/chat-model",
@@ -2207,8 +2203,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workspace-settings/llm-selection",
@@ -2219,8 +2215,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workspace/analytics",
@@ -2231,8 +2227,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workspace/chat",
@@ -2243,8 +2239,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workspace/layout",
@@ -2255,8 +2251,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workspace/members",
@@ -2267,8 +2263,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workspace/overview",
@@ -2279,8 +2275,8 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     },
     {
       "route": "/workspace/settings",
@@ -2291,56 +2287,31 @@
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "Sign in",
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
-      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googlesend magic linkneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this app"
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "textPreview": "sign innew cloudflare-ready auth flowemailpasswordsign incontinue with googleneed an account? register <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application requir"
     }
   ],
   "hardBroken": [],
-  "networkBroken": [
+  "networkBroken": [],
+  "sameAsRoot": [],
+  "duplicateFingerprintGroups": [
     {
-      "route": "/",
-      "url": "https://thenewfuse.com/",
-      "finalUrl": "https://thenewfuse.com/",
-      "finalPath": "/",
-      "status": null,
-      "error": "semantic-fetch-timeout: fetch failed",
-      "title": "",
-      "h1": "",
-      "fingerprint": "c65f37b2cb1ae26c89e9b4f26e2ca9e9cde4ae5b",
-      "textPreview": ""
-    },
-    {
-      "fingerprint": "68377f370c054880d0e4ae28c3ad5b8799109995",
+      "fingerprint": "ab58a05cf0b02c5b8ba9efcd0edd1d6ec84a7cd4",
       "routes": [
         "/",
-        "/404",
+        "/features",
+        "/home",
+        "/landing",
+        "/landing-page",
+        "/pricing",
+        "/simple-landing"
+      ]
+    },
+    {
+      "fingerprint": "03901bbb92e120c59e7c22381fb5727e599d2de8",
+      "routes": [
         "/a2a-control",
-        "/about",
-        "/admin",
-        "/admin/agent-management",
-        "/admin/agents/skills",
-        "/admin/agents/web-search",
-        "/admin/api-analytics",
-        "/admin/audit-logs",
-        "/admin/backup-restore",
-        "/admin/configuration",
-        "/admin/control-panel",
-        "/admin/dashboard",
-        "/admin/database",
-        "/admin/experimental-features",
-        "/admin/feature-flags",
-        "/admin/layout",
         "/admin/marketplace",
-        "/admin/onboarding",
-        "/admin/openclaw-security",
-        "/admin/panel",
-        "/admin/port-management",
-        "/admin/settings",
-        "/admin/system-health",
-        "/admin/system-metrics",
-        "/admin/user-management",
-        "/admin/users",
-        "/admin/workspaces",
         "/agency/dashboard",
         "/agency/onboard",
         "/agent-builder",
@@ -2348,36 +2319,21 @@
         "/agents",
         "/agents/new",
         "/agents/nft-marketplace",
-        "/agents/onboard",
         "/agents/revenue-dashboard",
         "/agents/unified-creator",
         "/ai-agent-portal",
         "/ai-agents",
-        "/ai-command-center",
         "/ai-portal",
-        "/all-pages",
         "/analytics",
         "/app.html",
+        "/auth/google-callback",
+        "/auth/google/callback",
         "/auth/login",
-        "/auth/oauth-callback",
-        "/auth/register",
-        "/auth/reset-password",
-        "/auth/sso",
-        "/blog",
-        "/brand",
-        "/build-info",
-        "/capabilities",
-        "/channels",
         "/chat",
         "/chat-page",
-        "/command-center",
-        "/community",
         "/components",
         "/components-nav",
-        "/components-showcase",
         "/config",
-        "/connect",
-        "/contact",
         "/cron-jobs",
         "/dashboard",
         "/dashboard/agents",
@@ -2387,68 +2343,20 @@
         "/dashboard/logs",
         "/dashboard/observability",
         "/dashboard/settings",
-        "/debug",
-        "/debug-routing",
-        "/design-system",
-        "/docs",
-        "/features",
-        "/forgot-password",
-        "/frontend-showcase",
         "/general-settings",
         "/general-settings/community-hub",
         "/general-settings/embedding",
         "/goals",
         "/graph-demo",
-        "/help/community",
-        "/help/documentation",
-        "/help/faq",
-        "/help/support",
-        "/help/tutorials",
-        "/home",
-        "/html/admin",
-        "/html/agents",
-        "/html/chat",
-        "/html/dashboard",
-        "/html/tasks",
-        "/html/workflows",
         "/hub",
-        "/ide",
-        "/instances",
-        "/integrations",
         "/knowledge-hub",
-        "/landing",
-        "/landing-page",
-        "/layout-example",
-        "/legal/privacy",
-        "/legal/terms",
-        "/live-view",
         "/login",
-        "/logs",
         "/main",
-        "/marketplace",
         "/mcp-hub",
-        "/membership",
         "/multi-agent-chat",
-        "/multi-agent-chat-demo",
-        "/nexus",
-        "/nodes",
-        "/not-found",
-        "/observatory",
-        "/onboarding",
-        "/onboarding/ai-agent",
         "/overview",
-        "/package/agents",
-        "/package/dashboard",
-        "/package/login",
-        "/package/workflows",
         "/plans",
-        "/platform",
-        "/preview/onboarding",
-        "/pricing",
-        "/privacy",
-        "/product-map",
         "/profile",
-        "/register",
         "/resources",
         "/sessions",
         "/settings",
@@ -2457,23 +2365,17 @@
         "/settings/general",
         "/settings/notifications",
         "/settings/security",
-        "/simple-landing",
-        "/simple-test",
         "/skills",
         "/sophisticated-hub",
         "/suggestions",
         "/suggestions/new",
-        "/support",
         "/tasks",
         "/tasks-page",
         "/tasks/new",
         "/team",
-        "/terms",
-        "/test",
         "/timeline",
         "/timeline-demo",
         "/tnf-hub",
-        "/unauthorized",
         "/usage",
         "/user/profile",
         "/workflows",
@@ -2572,19 +2474,15 @@
       "routes": ["/auth/forgot-password", "/forgot-password"]
     },
     {
-      "fingerprint": "373f832a5a572ab94c0181ea00cccfbb15fdf2c5",
-      "routes": ["/auth/google-callback", "/auth/google/callback"]
-    },
-    {
-      "fingerprint": "7fcfa405ebae245e32833f37dc93362dcd45ae69",
+      "fingerprint": "b8e1108002b6409b0348d02c58825001d87cde26",
       "routes": ["/auth/register", "/register"]
     },
     {
-      "fingerprint": "ede881e01c42b8a19f697c4f4fa170e0d02f1fde",
+      "fingerprint": "4b579ea0414367ef6be6ca08136209178cba5c9c",
       "routes": ["/capabilities", "/marketplace", "/platform", "/product-map"]
     },
     {
-      "fingerprint": "bcf869a597c3b9226b7e56319981c6611bea2e69",
+      "fingerprint": "5669d4e0090d26804948b1e08f33e00ae63c2a66",
       "routes": ["/community", "/help/community"]
     },
     {

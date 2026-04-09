@@ -1,0 +1,5 @@
+- Unify variant implementations across UI/Core/Feature components
+- Standardize sizing units (currently mix of px and rem)
+- Implement consistent loading states
+- Enhance accessibility features
+- Add comprehensive tooltip support

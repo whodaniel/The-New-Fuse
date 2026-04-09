@@ -22,7 +22,6 @@ async function bootstrap() {
   // In dev: always allow, including file:// and electron origins (no Origin header)
   const prodAllowedOrigins = new Set([
     'https://thenewfuse.com',
-    'https://www.thenewfuse.com',
     'https://app.thenewfuse.com',
     'https://poker.ai-arcade.xyz',
   ]);
@@ -51,63 +50,6 @@ async function bootstrap() {
     if (req.url.startsWith('/v1/') || req.url === '/v1') {
       req.url = `/api${req.url}`;
     }
-    next();
-  });
-
-  // Compatibility rewrites for legacy no-version endpoints that now map to v1 routes.
-  const legacyPathMap: Record<string, string> = {
-    '/api/workspaces': '/api/v1/workspaces',
-    '/api/agents': '/api/v1/agents',
-    '/api/system/mesh-health': '/api/v1/system/mesh-health',
-    '/api/system/master-clock': '/api/v1/system/master-clock',
-    '/api/system/health': '/api/v1/system/health',
-    '/api/system/metrics': '/api/v1/system/metrics',
-    '/api/system/status': '/api/v1/system/status',
-    '/api/terminals/graph': '/api/v1/terminals/graph',
-    '/api/orchestrator/health': '/api/v1/orchestrator/health',
-    '/api/orchestrator/agents': '/api/v1/orchestrator/agents',
-    '/api/visualizations/data/graph-artifacts.index.json':
-      '/api/v1/visualizations/data/graph-artifacts.index.json',
-  };
-  app.use((req, _res, next) => {
-    const [pathname, query = ''] = req.url.split('?');
-
-    // Check for exact matches in legacy map first
-    const mapped = legacyPathMap[pathname];
-    if (mapped) {
-      req.url = query ? `${mapped}?${query}` : mapped;
-      return next();
-    }
-
-    // Generic rewrite for unversioned resource paths: /api/resource -> /api/v1/resource
-    // This handles subpaths like /api/workspaces/current which aren't in the exact map.
-    if (pathname.startsWith('/api/') && !pathname.startsWith('/api/v')) {
-      const parts = pathname.split('/');
-      const resource = parts[2];
-      const versionableResources = [
-        'workspaces',
-        'agents',
-        'chat',
-        'marketplace',
-        'poker',
-        'system',
-        'analytics',
-        'mcp',
-        'sgp',
-        'terminals',
-        'timeline',
-        'webhooks',
-        'ide',
-        'visualizations',
-        'orchestrator',
-        'health',
-      ];
-
-      if (resource && versionableResources.includes(resource)) {
-        req.url = req.url.replace('/api/', '/api/v1/');
-      }
-    }
-
     next();
   });
 
@@ -157,47 +99,47 @@ async function bootstrap() {
       All endpoints are now available through this single entry point with
       consistent authentication, versioning, and error handling.
     `
-        )
-        .setVersion('1.0.0')
-        .setContact(
-          'The New Fuse API Support',
-          'https://thenewfuse.com/support',
-          'api-support@thenewfuse.com'
-        )
-        .setLicense('Proprietary', 'https://thenewfuse.com/license')
-        .addTag('auth', 'Authentication and authorization')
-        .addTag('agents', 'AI Agent management and operations')
-        .addTag('chat', 'Real-time chat and communication')
-        .addTag('workflows', 'Task workflows and pipelines')
-        .addTag('webhooks', 'Webhook management and ingestion')
-        .addTag('sse', 'Server-Sent Events streaming')
-        .addTag('mcp', 'Model Context Protocol servers')
-        .addTag('sgp', 'Spreadsheet Graph Protocol translation bridge')
-        .addTag('health', 'Health checks and monitoring')
-        .addBearerAuth(
-          {
-            type: 'http',
-            scheme: 'bearer',
-            bearerFormat: 'JWT',
-            name: 'JWT',
-            description: 'JWT token obtained from /auth/login',
-            in: 'header',
-          },
-          'JWT-auth'
-        )
-        .addApiKey(
-          {
-            type: 'apiKey',
-            name: 'x-api-key',
-            in: 'header',
-            description: 'API key for service-to-service communication',
-          },
-          'api-key'
-        )
-        .addServer('https://api.thenewfuse.com', 'Production server')
-        .addServer('https://staging-api.thenewfuse.com', 'Staging server')
-        .addServer('http://localhost:8080', 'Local API Gateway')
-        .build();
+    )
+    .setVersion('1.0.0')
+    .setContact(
+      'The New Fuse API Support',
+      'https://thenewfuse.com/support',
+      'api-support@thenewfuse.com'
+    )
+    .setLicense('Proprietary', 'https://thenewfuse.com/license')
+    .addTag('auth', 'Authentication and authorization')
+    .addTag('agents', 'AI Agent management and operations')
+    .addTag('chat', 'Real-time chat and communication')
+    .addTag('workflows', 'Task workflows and pipelines')
+    .addTag('webhooks', 'Webhook management and ingestion')
+    .addTag('sse', 'Server-Sent Events streaming')
+    .addTag('mcp', 'Model Context Protocol servers')
+    .addTag('sgp', 'Spreadsheet Graph Protocol translation bridge')
+    .addTag('health', 'Health checks and monitoring')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'JWT token obtained from /auth/login',
+        in: 'header',
+      },
+      'JWT-auth'
+    )
+    .addApiKey(
+      {
+        type: 'apiKey',
+        name: 'x-api-key',
+        in: 'header',
+        description: 'API key for service-to-service communication',
+      },
+      'api-key'
+    )
+    .addServer('https://api.thenewfuse.com', 'Production server')
+    .addServer('https://staging-api.thenewfuse.com', 'Staging server')
+    .addServer('http://localhost:8080', 'Local API Gateway')
+    .build();
 
       const document = SwaggerModule.createDocument(app as any, config, {
         deepScanRoutes: true,
@@ -249,6 +191,20 @@ async function bootstrap() {
     },
   });
 
+  const healthPayload = () => ({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    version: process.env.npm_package_version || '1.0.0',
+    services: {
+      agents: 'active',
+      webhooks: 'active',
+      sse: 'active',
+      mcp: 'active',
+    },
+  });
+
   // Root endpoint for health checks and basic info
   const rootHandler = (req, res) => {
     res.json({
@@ -269,14 +225,17 @@ async function bootstrap() {
     res.status(200).end();
   });
 
-  // Health check endpoints
-  const healthCheckHandler = (req, res) => res.json(healthPayload());
-  app.getHttpAdapter().get('/health', healthCheckHandler);
-  app.getHttpAdapter().get('/h', healthCheckHandler); // Shorthand for monitoring
-
+  // Health check endpoint
+  app.getHttpAdapter().get('/health', (req, res) => {
+    res.json(healthPayload());
+  });
   // Compatibility health endpoints (some infra checks hit /api/health)
-  app.getHttpAdapter().get('/api/health', healthCheckHandler);
-  app.getHttpAdapter().get('/api/v1/health', healthCheckHandler);
+  app.getHttpAdapter().get('/api/health', (req, res) => {
+    res.json(healthPayload());
+  });
+  app.getHttpAdapter().get('/api/v1/health', (req, res) => {
+    res.json(healthPayload());
+  });
 
   // Listen on provided API_GATEWAY_PORT, default to PORT provided by Railway, fallback to 8080
   const port = Number(process.env.API_GATEWAY_PORT || process.env.PORT || 8080);

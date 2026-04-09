@@ -1,0 +1,136 @@
+import React, { FC } from "react";
+import { Card } from '@the-new-fuse/../core/components/ui/Card';
+import { Button } from '@the-new-fuse/../core/components/ui/Button';
+import { MarketplaceItem as MarketplaceItemType } from '@the-new-fuse/types';
+
+interface MarketplaceItemProps {
+  item: MarketplaceItemType;
+  onSelect?: (item: MarketplaceItemType) => void;
+  onDownload?: (item: MarketplaceItemType) => void;
+  onPurchase?: (item: MarketplaceItemType) => void;
+}
+
+export const MarketplaceItem: (React as unknown).FC<MarketplaceItemProps> = ({
+  item,
+  onSelect,
+  onDownload,
+  onPurchase,
+}) => {
+  const renderRating: unknown  = ()> {
+    return (
+      <div className="flex items-center">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <svg
+            key={star}
+            className={`w-4 h-4 ${
+              star <= (item as unknown).rating ? 'text-yellow-400' : 'text-gray-300'
+            }`}
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 (15 as unknown).585l-(6 as unknown).327 (3 as unknown).89 (1 as unknown).42-(7 as unknown).(897L as unknown).18 (6 as unknown).(974l7 as unknown).924-(1 as unknown).092L10 (0l1 as unknown).896 (5 as unknown).882 (7 as unknown).924 (1 as unknown).092-(4 as unknown).913 (4 as unknown).604 (1 as unknown).42 (7 as unknown).897z"
+              clipRule="evenodd"
+            />
+          </svg>
+        ))}
+        <span className="ml-1 text-sm text-gray-600">
+          ({(item as unknown).reviews} reviews)
+        </span>
+      </div>
+    );
+  };
+
+  const formatPrice: number): unknown  = (price> {
+    return price === 0
+      ? 'Free'
+      : new (Intl as unknown).NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(price): shadow-md cursor-pointer"
+      onClick= {() => onSelect?.(item)}
+    >
+      {/* Thumbnail */}
+      {(item as unknown).thumbnail && (
+        <div className="relative pb-[(56 as unknown).25%]">
+          <img
+            src={(item as unknown).thumbnail}
+            alt={(item as unknown).title}
+            className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
+          />
+        </div>
+      )}
+
+      {/* Content */}
+      <div className="p-4">
+        <div className="flex items-start justify-between">
+          <div>
+            <h3 className="text-lg font-medium text-gray-900">{(item as unknown).title}</h3>
+            <p className="mt-1 text-sm text-gray-500 line-clamp-2">
+              {(item as unknown).description}
+            </p>
+          </div>
+          <span className="text-lg font-medium text-gray-900">
+            {formatPrice((item as unknown).price)}
+          </span>
+        </div>
+
+        <div className="mt-4 flex items-center justify-between">
+          <div className="flex items-center">
+            {(item as unknown).(author as unknown).avatar ? (<img
+                src={(item as unknown).(author as unknown).avatar}
+                alt={(item as unknown).(author as unknown).name}
+                className="w-6 h-6 rounded-full"
+              />: unknown): (
+              <div className="w-6 h-6 rounded-full bg-gray-200" />
+            )}
+            <span className="ml-2 text-sm text-gray-600">
+              {(item as unknown).(author as unknown).name}
+            </span>
+          </div>
+          {renderRating()}
+        </div>
+
+        <div className="mt-4">
+          <div className="flex flex-wrap gap-1">
+            {(item as unknown).tags.map((tag) => (
+              <span
+                key={tag}
+                className="px-2 py-1 text-xs font-medium text-blue-600 bg-blue-100 rounded-full"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-sm text-gray-500">
+            <span className="mr-3">
+              {(item as unknown).(downloads as unknown).toLocaleString()} downloads
+            </span>
+            <span>v{(item as unknown).version}</span>
+          </div>
+          <div className="flex space-x-2">
+            {(item as unknown).price > 0 ? (
+              <Button
+                variant="primary"
+                onClick={(e) => {
+                  (e as unknown).stopPropagation(): (
+              <Button
+                variant="outline"
+                onClick= {(e) => {
+                  (e as unknown).stopPropagation();
+                  onDownload?.(item);
+                }}
+              >
+                Download
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+};

@@ -99,7 +99,6 @@ const PlanDetailPage = ({ id }: { id?: string }) => (
 );
 const TimelinePage = lazy(() => import('./pages/Timeline'));
 const MacroTimelinePage = lazy(() => import('./pages/Timeline/MacroTimelinePage'));
-const TimelineModulePage = lazy(() => import('./pages/Timeline/TimelineModulePage'));
 
 // Additional Admin components
 const AdminUserManagement = lazy(() => import('./pages/Admin/UserManagement'));
@@ -137,9 +136,8 @@ const DocsPage = lazy(() => import('./pages/Docs'));
 const BlogPage = lazy(() => import('./pages/Blog').then((module) => ({ default: module.Blog })));
 const ConnectExtensionPage = lazy(() => import('./pages/ConnectExtension'));
 const MembershipPage = lazy(() => import('./pages/Membership'));
+const VisualizationsPage = lazy(() => import('./pages/Visualizations'));
 const TerminalGraphPage = lazy(() => import('./pages/TerminalGraph'));
-const BookmarksPage = lazy(() => import('./pages/Bookmarks'));
-const PlatformParityDashboardPage = lazy(() => import('./pages/Parity/PlatformParityDashboard'));
 
 // AI Agent Onboarding - Critical for autonomous agent self-registration
 const AIAgentOnboardingPage = lazy(() =>
@@ -290,6 +288,37 @@ const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
   </RequireAuth>
 );
 
+// Redirect component to force reload to static HTML pages
+const RedirectToStatic = ({ to }: { to: string }) => {
+  if (typeof window !== 'undefined') {
+    window.location.href = to;
+  }
+  return null;
+};
+
+const MarketplaceRootRoute = () => {
+  if (typeof window === 'undefined') {
+    return <RedirectToStatic to="/" />;
+  }
+
+  const host = window.location.hostname;
+  const isMarketplaceHost = host === 'marketplace.thenewfuse.com';
+
+  return isMarketplaceHost ? (
+    <Suspense fallback={<LoadingFallback name="Marketplace" />}>
+      <MarketplacePublicPage />
+    </Suspense>
+  ) : (
+    <RedirectToStatic to="/" />
+  );
+};
+
+const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
+  <RequireAuth>
+    <RequireMembership>{children}</RequireMembership>
+  </RequireAuth>
+);
+
 // Remove the old ComprehensiveNavigation component and replace with SmartNavigation
 export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRouterProps) {
   const location = useLocation();
@@ -314,7 +343,6 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
       '/capabilities',
       '/design-system',
       '/app.html',
-      '/debug/orphans',
     ].includes(location.pathname) ||
     location.pathname.startsWith('/debug/orphans') ||
     location.pathname.startsWith('/auth') ||
@@ -357,14 +385,8 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
         <Layout>
           <Suspense fallback={<LoadingFallback name="Page" />}>
             <Routes>
-              {/* Dev Only Audit Routes */}
-              <Route path="/debug/orphans/*" element={<OrphanAuditRouter />} />
-
               {/* Core Routes - Root switches based on hostname (marketplace vs main landing) */}
-              <Route
-                path="/"
-                element={isApp ? <Navigate to="/dashboard" replace /> : <MarketplaceRootRoute />}
-              />
+              <Route path="/" element={<MarketplaceRootRoute />} />
               <Route path="/app.html" element={<Navigate to="/dashboard" replace />} />
               <Route path="/home" element={<RedirectToStatic to="/" />} />
               {LEGACY_REDIRECTS.map((redirect) => (
@@ -417,14 +439,6 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
                 }
               />
               <Route
-                path="/launchpad"
-                element={
-                  <RequireMemberAccess>
-                    <LaunchpadDashboard />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
                 path="/hub"
                 element={
                   <RequireMemberAccess>
@@ -462,70 +476,6 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
                   </RequireMemberAccess>
                 }
               />
-              <Route
-                path="/files"
-                element={
-                  <RequireMemberAccess>
-                    <FilesWorkspacePage />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/skills"
-                element={
-                  <RequireMemberAccess>
-                    <ResourcesDashboard />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/tools"
-                element={
-                  <RequireMemberAccess>
-                    <ResourcesDashboard />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/tools/*"
-                element={
-                  <RequireMemberAccess>
-                    <ResourcesDashboard />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/integrations"
-                element={
-                  <RequireMemberAccess>
-                    <ResourcesDashboard />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/integrations/*"
-                element={
-                  <RequireMemberAccess>
-                    <ResourcesDashboard />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/datasets"
-                element={
-                  <RequireMemberAccess>
-                    <DatasetsWorkbenchPage />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/automations"
-                element={
-                  <RequireMemberAccess>
-                    <Workflows />
-                  </RequireMemberAccess>
-                }
-              />
 
               {/* All routes using LazyPage for now to avoid import issues */}
               <Route
@@ -546,31 +496,6 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
               />
               <Route
                 path="/chat"
-                element={
-                  <RequireMemberAccess>
-                    <ChatPage />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/channels"
-                element={
-                  <RequireMemberAccess>
-                    <ChatPage />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/channels/*"
-                element={
-                  <RequireMemberAccess>
-                    <ChatPage />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route path="/models" element={<Navigate to="/settings/api" replace />} />
-              <Route
-                path="/chats"
                 element={
                   <RequireMemberAccess>
                     <ChatPage />
@@ -676,54 +601,6 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
                 element={
                   <RequireMemberAccess>
                     <RevenueDashboardPage />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/agents/pfp-studio"
-                element={
-                  <RequireMemberAccess>
-                    <PfpStudioPage />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/ai-portal/pfp-studio"
-                element={
-                  <RequireMemberAccess>
-                    <PfpStudioPage />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/agents/pfp-prompts"
-                element={
-                  <RequireMemberAccess>
-                    <PfpPromptCatalogPage />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/ai-portal/pfp-prompts"
-                element={
-                  <RequireMemberAccess>
-                    <PfpPromptCatalogPage />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/agents/profiles"
-                element={
-                  <RequireMemberAccess>
-                    <PfpPromptCatalogPage />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/agents/profiles/:slug"
-                element={
-                  <RequireMemberAccess>
-                    <CatalogProfilePage />
                   </RequireMemberAccess>
                 }
               />
@@ -1070,46 +947,6 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
                 }
               />
               <Route
-                path="/terminal"
-                element={
-                  <RequireMemberAccess>
-                    <TerminalGraphPage />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/billing"
-                element={
-                  <RequireMemberAccess>
-                    <MembershipPage />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/bookmarks"
-                element={
-                  <RequireMemberAccess>
-                    <BookmarksPage />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/platform-parity"
-                element={
-                  <RequireMemberAccess>
-                    <PlatformParityDashboardPage />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/system"
-                element={
-                  <RequirePermission roles={['SUPER_ADMIN']}>
-                    <SystemHealth />
-                  </RequirePermission>
-                }
-              />
-              <Route
                 path="/knowledge-hub"
                 element={
                   <RequireMemberAccess>
@@ -1137,7 +974,7 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
                 path="/settings/general"
                 element={
                   <RequireMemberAccess>
-                    <SettingsGeneral />
+                    <GeneralSettings />
                   </RequireMemberAccess>
                 }
               />
@@ -1269,7 +1106,7 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
                 path="/plans/:id"
                 element={
                   <RequireMemberAccess>
-                    <PlanDetailPage id={location.pathname.split('/').pop()} />
+                    <PlanDetailPage />
                   </RequireMemberAccess>
                 }
               />
@@ -1289,14 +1126,6 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
                   </RequireMemberAccess>
                 }
               />
-              <Route
-                path="/timeline/module"
-                element={
-                  <RequireMemberAccess>
-                    <TimelineModulePage />
-                  </RequireMemberAccess>
-                }
-              />
 
               {/* Admin routes have been consolidated above with permission guards */}
 
@@ -1313,12 +1142,8 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
               <Route path="/auth/oauth-callback" element={<OAuthCallbackPage />} />
 
               {/* Enhanced Landing Routes */}
+              <Route path="/landing" element={<RedirectToStatic to="/" />} />
               <Route path="/about" element={<Navigate to="/brand" replace />} />
-              <Route path="/faq" element={<Navigate to="/docs" replace />} />
-              <Route path="/comparisons" element={<Navigate to="/product-map" replace />} />
-              <Route path="/careers" element={<Navigate to="/community" replace />} />
-              <Route path="/ambassador" element={<Navigate to="/community" replace />} />
-              <Route path="/testimonials" element={<RedirectToStatic to="/#testimonials" />} />
               <Route path="/features" element={<RedirectToStatic to="/#features" />} />
               <Route path="/pricing" element={<RedirectToStatic to="/#pricing" />} />
               <Route path="/community" element={<CommunityHubPage />} />
@@ -1328,20 +1153,10 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
               <Route path="/onboarding" element={<OnboardingFlowPage />} />
               <Route path="/docs" element={<DocsPage />} />
               <Route path="/docs/*" element={<DocsPage />} />
-              <Route
-                path="/visualizations"
-                element={<RedirectToStatic to="/visualizations/dashboard.html" />}
-              />
+              <Route path="/visualizations" element={<VisualizationsPage />} />
               <Route path="/visualizations/terminals" element={<TerminalGraphPage />} />
               <Route path="/terminals" element={<TerminalGraphPage />} />
-              <Route
-                path="/connect"
-                element={
-                  <RequireMemberAccess>
-                    <ConnectExtensionPage />
-                  </RequireMemberAccess>
-                }
-              />
+              <Route path="/connect" element={<ConnectExtensionPage />} />
               <Route path="/legal/privacy" element={<PrivacyPolicyPage />} />
               <Route path="/legal/terms" element={<TermsOfServicePage />} />
               {/* Brand Identity / Design System */}
@@ -1627,200 +1442,6 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
                       <AICommandCenter />
                     </Suspense>
                   </RequirePermission>
-                }
-              />
-
-              <Route
-                path="/tnf-command-center"
-                element={
-                  <RequirePermission roles={['SUPER_ADMIN']}>
-                    <Suspense fallback={<LoadingFallback name="TNF Command Center" />}>
-                      <TNFCommandCenter />
-                    </Suspense>
-                  </RequirePermission>
-                }
-              />
-
-              <Route
-                path="/fairtable"
-                element={
-                  <RequireMemberAccess>
-                    <Suspense fallback={<LoadingFallback name="Fairtable Dashboard" />}>
-                      <FairtableDashboard />
-                    </Suspense>
-                  </RequireMemberAccess>
-                }
-              />
-
-              <Route
-                path="/admin/system-monitoring"
-                element={
-                  <RequirePermission roles={['SUPER_ADMIN']}>
-                    <LazyPage name="System Monitoring" path="/admin/system-monitoring" />
-                  </RequirePermission>
-                }
-              />
-
-              <Route
-                path="/ide"
-                element={
-                  <RequireMemberAccess>
-                    <LazyPage name="Theia IDE" path="/ide" />
-                  </RequireMemberAccess>
-                }
-              />
-
-              <Route
-                path="/agents/atlas"
-                element={
-                  <RequireMemberAccess>
-                    <LazyPage name="Profile Atlas" path="/agents/atlas" />
-                  </RequireMemberAccess>
-                }
-              />
-
-              <Route
-                path="/resources/templates"
-                element={
-                  <RequireMemberAccess>
-                    <Suspense fallback={<LoadingFallback name="Agent Templates Browser" />}>
-                      <AgentTemplatesBrowser />
-                    </Suspense>
-                  </RequireMemberAccess>
-                }
-              />
-
-              <Route
-                path="/resources/skills"
-                element={
-                  <RequireMemberAccess>
-                    <Suspense fallback={<LoadingFallback name="Skills Browser" />}>
-                      <SkillsBrowser />
-                    </Suspense>
-                  </RequireMemberAccess>
-                }
-              />
-
-              <Route
-                path="/resources/workflows"
-                element={
-                  <RequireMemberAccess>
-                    <Suspense fallback={<LoadingFallback name="Workflow Browser" />}>
-                      <WorkflowBrowser />
-                    </Suspense>
-                  </RequireMemberAccess>
-                }
-              />
-
-              <Route
-                path="/workflows/enhanced-builder"
-                element={
-                  <RequireMemberAccess>
-                    <LazyPage name="Enhanced Workflow Builder" path="/workflows/enhanced-builder" />
-                  </RequireMemberAccess>
-                }
-              />
-
-              <Route
-                path="/workflows/modern-builder"
-                element={
-                  <RequireMemberAccess>
-                    <LazyPage name="Modern Builder" path="/workflows/modern-builder" />
-                  </RequireMemberAccess>
-                }
-              />
-
-              <Route
-                path="/workflows/builder-enhanced"
-                element={
-                  <RequireMemberAccess>
-                    <LazyPage name="Workflow Builder Enhanced" path="/workflows/builder-enhanced" />
-                  </RequireMemberAccess>
-                }
-              />
-
-              <Route
-                path="/admin/users"
-                element={
-                  <RequirePermission roles={['SUPER_ADMIN']}>
-                    <LazyPage name="User Management" path="/admin/users" />
-                  </RequirePermission>
-                }
-              />
-
-              <Route
-                path="/admin/workspaces"
-                element={
-                  <RequirePermission roles={['SUPER_ADMIN']}>
-                    <LazyPage name="Workspace Management" path="/admin/workspaces" />
-                  </RequirePermission>
-                }
-              />
-
-              <Route
-                path="/admin/controls/llm"
-                element={
-                  <RequirePermission roles={['SUPER_ADMIN']}>
-                    <LazyPage name="LLM Routing Control" path="/admin/controls/llm" />
-                  </RequirePermission>
-                }
-              />
-
-              <Route
-                path="/admin/controls/oauth"
-                element={
-                  <RequirePermission roles={['SUPER_ADMIN']}>
-                    <LazyPage name="OAuth Instance Rotation" path="/admin/controls/oauth" />
-                  </RequirePermission>
-                }
-              />
-
-              <Route
-                path="/admin/controls/mobility"
-                element={
-                  <RequirePermission roles={['SUPER_ADMIN']}>
-                    <LazyPage name="Rclone Mobility Control" path="/admin/controls/mobility" />
-                  </RequirePermission>
-                }
-              />
-
-              <Route
-                path="/tasks/calendar"
-                element={
-                  <RequireMemberAccess>
-                    <Suspense fallback={<LoadingFallback name="Tasks Calendar" />}>
-                      <TasksCalendar />
-                    </Suspense>
-                  </RequireMemberAccess>
-                }
-              />
-
-              <Route
-                path="/dashboard/create-agent"
-                element={
-                  <RequireMemberAccess>
-                    <Suspense fallback={<LoadingFallback name="Create Agent" />}>
-                      <CreateAgent />
-                    </Suspense>
-                  </RequireMemberAccess>
-                }
-              />
-
-              <Route
-                path="/dashboard/settings"
-                element={
-                  <RequireMemberAccess>
-                    <LazyPage name="Dashboard Settings" path="/dashboard/settings" />
-                  </RequireMemberAccess>
-                }
-              />
-
-              <Route
-                path="/workspace/layout"
-                element={
-                  <RequireMemberAccess>
-                    <LazyPage name="Workspace Layout" path="/workspace/layout" />
-                  </RequireMemberAccess>
                 }
               />
 

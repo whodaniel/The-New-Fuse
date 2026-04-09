@@ -20,14 +20,16 @@ import {
     AgentOnboardingService,
     AgentOrientationService,
     AgentDirectoryService,
-    AgentCatalogImportService,
+    AgentProfileVectorService,
+    AgentRegistryImportService,
   ],
   exports: [
     AgentRegistrationService,
     AgentOnboardingService,
     AgentOrientationService,
     AgentDirectoryService,
-    AgentCatalogImportService,
+    AgentProfileVectorService,
+    AgentRegistryImportService,
   ],
 })
 export class AgentRegistryModule {}

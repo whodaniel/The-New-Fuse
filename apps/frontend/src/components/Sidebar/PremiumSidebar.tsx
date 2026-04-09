@@ -26,62 +26,23 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
   const { logout, isAuthenticated } = useAuth();
   const { hasRole } = useAuthorization();
 
-  const hasAccess = React.useCallback(
-    (access?: 'public' | 'authenticated', requiredRoles?: string[]) => {
-      if (access === 'authenticated' && !isAuthenticated) return false;
-      if (!requiredRoles || requiredRoles.length === 0) return true;
-      return hasRole(requiredRoles);
-    },
-    [hasRole, isAuthenticated]
-  );
-
-  const navigation = React.useMemo<SidebarNavItem[]>(
-    () =>
-      SIDEBAR_NAVIGATION.map((item) => {
-        const children = (item.children || []).filter((child) =>
-          hasAccess(child.access, child.requiredRoles)
-        );
-        const itemAccessible = hasAccess(item.access, item.requiredRoles);
-
-        if (!itemAccessible && children.length === 0) {
-          return null;
-        }
-
-        return {
-          ...item,
-          href: itemAccessible ? item.href : children[0]?.href || item.href,
-          children,
-        } as SidebarNavItem;
-      }).filter((item): item is SidebarNavItem => item !== null),
-    [hasAccess]
-  );
-
-  const groupedNavigation = React.useMemo(
-    () =>
-      SIDEBAR_SECTION_GROUPS.map((group) => ({
-        ...group,
-        items: navigation.filter((item) => group.sections.includes(item.section)),
-      })).filter((group) => group.items.length > 0),
-    [navigation]
-  );
-
-  const [openGroups, setOpenGroups] = React.useState<Record<string, boolean>>({
-    core: true,
-    build: true,
-    ops: false,
+  const navigation = SIDEBAR_NAVIGATION.filter((item) => {
+    if (!item.requiredRoles || item.requiredRoles.length === 0) return true;
+    return hasRole(item.requiredRoles);
   });
-  const [openItems, setOpenItems] = React.useState<Record<string, boolean>>({});
-
-  const isPathActive = React.useCallback(
-    (href: string) =>
-      href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`),
-    [pathname]
-  );
-
-  const isItemRouteActive = React.useCallback(
-    (item: SidebarNavItem) =>
-      isPathActive(item.href) || (item.children || []).some((child) => isPathActive(child.href)),
-    [isPathActive]
+  const sections: Array<{ key: SidebarNavItem['section']; label: string }> = [
+    { key: 'dashboard', label: 'Dashboard' },
+    { key: 'workspace', label: 'Workspace' },
+    { key: 'forge', label: 'Forge' },
+    { key: 'nexus', label: 'Nexus' },
+    { key: 'apex', label: 'Apex' },
+  ];
+  const advancedItems = navigation.filter((item) => item.section === 'advanced');
+  const hasAdvancedItems = advancedItems.length > 0;
+  const isAdvancedRouteActive = advancedItems.some((item) =>
+    item.href === '/'
+      ? pathname === '/'
+      : pathname === item.href || pathname.startsWith(`${item.href}/`)
   );
 
   React.useEffect(() => {
@@ -172,134 +133,97 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
 
           {/* Navigation Links */}
           <nav className="flex-1 overflow-y-auto py-2 px-3 space-y-3">
-            {isCollapsed &&
-              navigation.map((item) => {
-                const isActive = isItemRouteActive(item);
-                return (
-                  <NavLink
-                    key={item.name}
-                    to={item.href}
-                    onClick={() => setIsOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-150 group justify-center ${
-                      isActive
-                        ? 'bg-slate-800 text-slate-100 border border-slate-700'
-                        : 'text-slate-400 hover:bg-slate-800/60 hover:text-white'
-                    }`}
-                    title={item.name}
-                    aria-label={item.name}
-                  >
-                    <item.icon
-                      className={`w-5 h-5 shrink-0 ${isActive ? 'text-slate-100' : 'text-slate-500 group-hover:text-slate-300'}`}
-                    />
-                  </NavLink>
-                );
-              })}
+            {sections.map((section) => {
+              const sectionItems = navigation.filter((item) => item.section === section.key);
+              if (sectionItems.length === 0) return null;
 
-            {!isCollapsed &&
-              groupedNavigation.map((group) => {
-                const isOpenGroup = openGroups[group.id] ?? true;
-                return (
-                  <div key={group.id}>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setOpenGroups((prev) => ({ ...prev, [group.id]: !isOpenGroup }))
-                      }
-                      className="w-full px-2 pb-2 text-[10px] tracking-wide uppercase text-slate-500 flex items-center justify-between hover:text-slate-300 transition-colors"
-                      aria-expanded={isOpenGroup}
-                    >
-                      <span>{group.label}</span>
-                      {isOpenGroup ? (
-                        <ChevronUp className="w-3.5 h-3.5" />
-                      ) : (
-                        <ChevronDown className="w-3.5 h-3.5" />
-                      )}
-                    </button>
-                    <div className="px-2 pb-2 text-xs text-slate-600">{group.description}</div>
-                    {isOpenGroup && (
-                      <div className="space-y-1">
-                        {group.items.map((item) => {
-                          const hasChildren = (item.children?.length || 0) > 0;
-                          const isItemExpanded = openItems[item.name] ?? isItemRouteActive(item);
-                          const isActive = isItemRouteActive(item);
-                          return (
-                            <div key={item.name} className="space-y-1">
-                              <div className="flex items-center gap-1">
-                                <NavLink
-                                  to={item.href}
-                                  onClick={() => setIsOpen(false)}
-                                  className={`flex min-w-0 flex-1 items-center gap-3 px-3 py-2 rounded-md transition-colors duration-150 group ${
-                                    isActive
-                                      ? 'bg-slate-800 text-slate-100 border border-slate-700'
-                                      : 'text-slate-400 hover:bg-slate-800/60 hover:text-white'
-                                  }`}
-                                >
-                                  <item.icon
-                                    className={`w-5 h-5 shrink-0 ${isActive ? 'text-slate-100' : 'text-slate-500 group-hover:text-slate-300'}`}
-                                  />
-                                  <span className="text-sm font-medium whitespace-nowrap truncate">
-                                    {item.name}
-                                  </span>
-                                </NavLink>
-                                {hasChildren && (
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      setOpenItems((prev) => ({
-                                        ...prev,
-                                        [item.name]: !isItemExpanded,
-                                      }))
-                                    }
-                                    className="p-2 rounded-md text-slate-500 hover:text-slate-200 hover:bg-slate-800/60 transition-colors"
-                                    aria-label={`${isItemExpanded ? 'Collapse' : 'Expand'} ${item.name} navigation`}
-                                  >
-                                    {isItemExpanded ? (
-                                      <ChevronUp className="w-4 h-4" />
-                                    ) : (
-                                      <ChevronDown className="w-4 h-4" />
-                                    )}
-                                  </button>
-                                )}
-                              </div>
-                              {hasChildren && isItemExpanded && (
-                                <div className="ml-7 border-l border-slate-800 pl-3 space-y-1">
-                                  {item.children?.map((child) => {
-                                    const isChildActive = isPathActive(child.href);
-                                    const ChildIcon = child.icon || item.icon;
-                                    return (
-                                      <NavLink
-                                        key={`${item.name}-${child.name}`}
-                                        to={child.href}
-                                        onClick={() => setIsOpen(false)}
-                                        className={`flex items-center gap-2 px-2 py-1.5 rounded-md transition-colors duration-150 group ${
-                                          isChildActive
-                                            ? 'bg-slate-800/70 text-slate-100'
-                                            : 'text-slate-500 hover:bg-slate-800/50 hover:text-slate-200'
-                                        }`}
-                                      >
-                                        <ChildIcon
-                                          className={`w-3.5 h-3.5 shrink-0 ${
-                                            isChildActive
-                                              ? 'text-slate-200'
-                                              : 'text-slate-600 group-hover:text-slate-400'
-                                          }`}
-                                        />
-                                        <span className="text-xs font-medium whitespace-nowrap truncate">
-                                          {child.name}
-                                        </span>
-                                      </NavLink>
-                                    );
-                                  })}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
+              return (
+                <div key={section.key}>
+                  {!isCollapsed && (
+                    <div className="px-2 pb-2 text-[10px] tracking-wide uppercase text-slate-500">
+                      {section.label}
+                    </div>
+                  )}
+                  <div className="space-y-1">
+                    {sectionItems.map((item) => {
+                      const isActive =
+                        item.href === '/'
+                          ? pathname === '/'
+                          : pathname === item.href || pathname.startsWith(`${item.href}/`);
+                      return (
+                        <NavLink
+                          key={item.name}
+                          to={item.href}
+                          onClick={() => setIsOpen(false)}
+                          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-150 group ${
+                            isActive
+                              ? 'bg-slate-800 text-slate-100 border border-slate-700'
+                              : 'text-slate-400 hover:bg-slate-800/60 hover:text-white'
+                          } ${isCollapsed ? 'justify-center' : ''}`}
+                          title={isCollapsed ? item.name : undefined}
+                          aria-label={isCollapsed ? item.name : undefined}
+                        >
+                          <item.icon
+                            className={`w-5 h-5 shrink-0 ${isActive ? 'text-slate-100' : 'text-slate-500 group-hover:text-slate-300'}`}
+                          />
+                          {!isCollapsed && (
+                            <span className="text-sm font-medium whitespace-nowrap">
+                              {item.name}
+                            </span>
+                          )}
+                        </NavLink>
+                      );
+                    })}
                   </div>
-                );
-              })}
+                </div>
+              );
+            })}
+
+            {hasAdvancedItems && !isCollapsed && (
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setShowAdvanced((prev) => !prev)}
+                  className="w-full px-2 pb-2 text-[10px] tracking-wide uppercase text-slate-500 flex items-center justify-between hover:text-slate-300 transition-colors"
+                  aria-expanded={showAdvanced}
+                  aria-controls="advanced-nav-items"
+                >
+                  <span>Advanced</span>
+                  {showAdvanced ? (
+                    <ChevronUp className="w-3.5 h-3.5" />
+                  ) : (
+                    <ChevronDown className="w-3.5 h-3.5" />
+                  )}
+                </button>
+                {showAdvanced && (
+                  <div id="advanced-nav-items" className="space-y-1">
+                    {advancedItems.map((item) => {
+                      const isActive =
+                        item.href === '/'
+                          ? pathname === '/'
+                          : pathname === item.href || pathname.startsWith(`${item.href}/`);
+                      return (
+                        <NavLink
+                          key={item.name}
+                          to={item.href}
+                          onClick={() => setIsOpen(false)}
+                          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-150 group ${
+                            isActive
+                              ? 'bg-slate-800 text-slate-100 border border-slate-700'
+                              : 'text-slate-400 hover:bg-slate-800/60 hover:text-white'
+                          }`}
+                        >
+                          <item.icon
+                            className={`w-5 h-5 shrink-0 ${isActive ? 'text-slate-100' : 'text-slate-500 group-hover:text-slate-300'}`}
+                          />
+                          <span className="text-sm font-medium whitespace-nowrap">{item.name}</span>
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
           </nav>
 
           {/* Collapse Toggle */}

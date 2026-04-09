@@ -143,21 +143,15 @@ echo "Health endpoint: port ${HEALTH_PORT}"
 echo "Gateway: port ${GATEWAY_PORT}"
 echo "Provider/Model: ${PICOCLAW_AGENTS_DEFAULTS_PROVIDER:-openai}/${PICOCLAW_AGENTS_DEFAULTS_MODEL:-z-ai/glm-5:free}"
 
-# Start a static health server only if gateway is not bound to Railway's health port.
-if [ "${HEALTH_PORT}" != "${GATEWAY_PORT}" ]; then
-  mkdir -p /tmp/www /tmp/www/api
-  echo '{"ok":true,"status":"healthy"}' > /tmp/www/health.json
-  # Also serve root path for platforms that probe "/" by default.
-  echo '{"ok":true,"status":"healthy","path":"/"}' > /tmp/www/index.html
-  # And serve /health for platforms that probe this conventional route.
-  echo '{"ok":true,"status":"healthy","path":"/health"}' > /tmp/www/health
-  # Keep compatibility with callers probing /api/status.
-  echo '{"ok":true,"status":"healthy","path":"/api/status"}' > /tmp/www/api/status
-  httpd -p "${HEALTH_PORT}" -h /tmp/www &
-  echo "Health server started on port ${HEALTH_PORT}"
-else
-  echo "Health server disabled: gateway is bound to the Railway health port (${HEALTH_PORT})"
-fi
+# Start HTTP health server on Railway's PORT for health checks
+mkdir -p /tmp/www
+echo '{"ok":true,"status":"healthy"}' > /tmp/www/health.json
+# Also serve root path for platforms that probe "/" by default.
+echo '{"ok":true,"status":"healthy","path":"/"}' > /tmp/www/index.html
+# And serve /health for platforms that probe this conventional route.
+echo '{"ok":true,"status":"healthy","path":"/health"}' > /tmp/www/health
+httpd -p ${HEALTH_PORT} -h /tmp/www &
+echo "Health server started on port ${HEALTH_PORT}"
 
 # TNF Agent Heartbeat - sends status to TNF orchestration worker
 AGENT_ID="${TNF_AGENT_ID:-}"

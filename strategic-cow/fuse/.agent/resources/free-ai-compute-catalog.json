@@ -1,0 +1,395 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-21",
+  "description": "Catalog of free AI chat interfaces and compute resources for TNF orchestration",
+  "categories": {
+    "webChatInterfaces": {
+      "description": "Free AI chat interfaces accessible via Chrome extension federation",
+      "resources": [
+        {
+          "id": "gemini-web",
+          "name": "Google Gemini",
+          "url": "https://gemini.google.com",
+          "provider": "Google",
+          "capabilities": [
+            "text-generation",
+            "code-generation",
+            "image-analysis",
+            "web-search"
+          ],
+          "limits": "Free tier available",
+          "accessMethod": "chrome-extension",
+          "priority": 1,
+          "notes": "Excellent for analysis and reasoning. Multiple tabs = multiple agents."
+        },
+        {
+          "id": "chatgpt-web",
+          "name": "ChatGPT",
+          "url": "https://chat.openai.com",
+          "provider": "OpenAI",
+          "capabilities": [
+            "text-generation",
+            "code-generation",
+            "image-generation",
+            "web-search"
+          ],
+          "limits": "GPT-4o limited, GPT-3.5 unlimited",
+          "accessMethod": "chrome-extension",
+          "priority": 2,
+          "notes": "Good general purpose. Rate limited on free tier."
+        },
+        {
+          "id": "claude-web",
+          "name": "Claude",
+          "url": "https://claude.ai",
+          "provider": "Anthropic",
+          "capabilities": [
+            "text-generation",
+            "code-generation",
+            "file-analysis",
+            "artifacts"
+          ],
+          "limits": "Limited messages per conversation",
+          "accessMethod": "chrome-extension",
+          "priority": 2,
+          "notes": "Excellent for coding and analysis."
+        },
+        {
+          "id": "perplexity-web",
+          "name": "Perplexity AI",
+          "url": "https://perplexity.ai",
+          "provider": "Perplexity",
+          "capabilities": ["text-generation", "web-search", "citations"],
+          "limits": "Free tier with limited Pro searches",
+          "accessMethod": "chrome-extension",
+          "priority": 3,
+          "notes": "Best for research with citations."
+        },
+        {
+          "id": "deepseek-web",
+          "name": "DeepSeek",
+          "url": "https://chat.deepseek.com",
+          "provider": "DeepSeek",
+          "capabilities": ["text-generation", "code-generation", "reasoning"],
+          "limits": "Generous free tier",
+          "accessMethod": "chrome-extension",
+          "priority": 3,
+          "notes": "Excellent reasoning model, R1 available."
+        },
+        {
+          "id": "qwen-web",
+          "name": "Qwen/Tongyi Qianwen",
+          "url": "https://tongyi.aliyun.com",
+          "provider": "Alibaba",
+          "capabilities": ["text-generation", "code-generation"],
+          "limits": "Free tier available",
+          "accessMethod": "chrome-extension",
+          "priority": 4,
+          "notes": "Good multilingual support."
+        },
+        {
+          "id": "huggingchat",
+          "name": "HuggingChat",
+          "url": "https://huggingface.co/chat",
+          "provider": "Hugging Face",
+          "capabilities": ["text-generation", "code-generation"],
+          "limits": "Free, uses open models",
+          "accessMethod": "chrome-extension",
+          "priority": 4,
+          "notes": "Access to various open-source models."
+        },
+        {
+          "id": "poe",
+          "name": "Poe",
+          "url": "https://poe.com",
+          "provider": "Quora",
+          "capabilities": ["text-generation", "multi-model-access"],
+          "limits": "Limited free credits daily",
+          "accessMethod": "chrome-extension",
+          "priority": 5,
+          "notes": "Access to multiple AI models."
+        },
+        {
+          "id": "coze",
+          "name": "Coze",
+          "url": "https://www.coze.com",
+          "provider": "ByteDance",
+          "capabilities": ["text-generation", "bot-building", "plugins"],
+          "limits": "Free tier with bot creation",
+          "accessMethod": "chrome-extension",
+          "priority": 5,
+          "notes": "Bot builder with free tier."
+        },
+        {
+          "id": "you-chat",
+          "name": "You.com Chat",
+          "url": "https://you.com/chat",
+          "provider": "You.com",
+          "capabilities": ["text-generation", "web-search"],
+          "limits": "Free tier available",
+          "accessMethod": "chrome-extension",
+          "priority": 5,
+          "notes": "Search-integrated AI."
+        },
+        {
+          "id": "phind",
+          "name": "Phind",
+          "url": "https://phind.com",
+          "provider": "Phind",
+          "capabilities": [
+            "code-generation",
+            "web-search",
+            "coding-assistance"
+          ],
+          "limits": "Free tier with limited uses",
+          "accessMethod": "chrome-extension",
+          "priority": 4,
+          "notes": "Optimized for developers."
+        },
+        {
+          "id": "kimi-chat",
+          "name": "Kimi",
+          "url": "https://kimi.moonshot.cn",
+          "provider": "Moonshot",
+          "capabilities": ["text-generation", "long-context"],
+          "limits": "Free tier",
+          "accessMethod": "chrome-extension",
+          "priority": 5,
+          "notes": "Long context window."
+        },
+        {
+          "id": "mistral-chat",
+          "name": "Mistral Le Chat",
+          "url": "https://chat.mistral.ai",
+          "provider": "Mistral",
+          "capabilities": ["text-generation", "code-generation"],
+          "limits": "Free tier available",
+          "accessMethod": "chrome-extension",
+          "priority": 4,
+          "notes": "Strong open-weight models."
+        }
+      ]
+    },
+    "computePlatforms": {
+      "description": "Free compute platforms for AI workloads",
+      "resources": [
+        {
+          "id": "google-colab",
+          "name": "Google Colab",
+          "url": "https://colab.research.google.com",
+          "provider": "Google",
+          "capabilities": ["jupyter-notebooks", "gpu-access", "tpu-access"],
+          "limits": "Session timeouts, limited GPU hours",
+          "hardware": "T4 GPU, TPU",
+          "notes": "Best for training and heavy computation."
+        },
+        {
+          "id": "kaggle-kernels",
+          "name": "Kaggle Kernels",
+          "url": "https://www.kaggle.com",
+          "provider": "Kaggle/Google",
+          "capabilities": ["jupyter-notebooks", "gpu-access"],
+          "limits": "30-40 GPU hours/week",
+          "hardware": "T4 GPU x2",
+          "notes": "Good GPU quota, data science focused."
+        },
+        {
+          "id": "huggingface-spaces",
+          "name": "Hugging Face Spaces",
+          "url": "https://huggingface.co/spaces",
+          "provider": "Hugging Face",
+          "capabilities": ["model-hosting", "api-endpoints", "gradio-apps"],
+          "limits": "Free CPU tier, requestable GPU",
+          "hardware": "CPU, T4 GPU (request)",
+          "notes": "Deploy models as API endpoints."
+        },
+        {
+          "id": "github-actions",
+          "name": "GitHub Actions",
+          "url": "https://github.com/features/actions",
+          "provider": "GitHub",
+          "capabilities": ["ci-cd", "scripted-compute"],
+          "limits": "2000 minutes/month free (public)",
+          "hardware": "2-core CPU, 7GB RAM",
+          "notes": "Bursty, stateless computation."
+        },
+        {
+          "id": "replit",
+          "name": "Replit",
+          "url": "https://replit.com",
+          "provider": "Replit",
+          "capabilities": ["cloud-ide", "hosting", "ai-assistant"],
+          "limits": "Free tier with limits",
+          "hardware": "CPU",
+          "notes": "Full development environment."
+        }
+      ]
+    },
+    "autonomousCodingAgents": {
+      "description": "AI agents that can perform coding tasks autonomously",
+      "resources": [
+        {
+          "id": "jules-cli",
+          "name": "Jules CLI (Google)",
+          "url": "https://jules.google.com",
+          "provider": "Google",
+          "capabilities": ["code-generation", "code-review", "task-execution"],
+          "limits": "100 tasks/day (Super Admin)",
+          "accessMethod": "cli",
+          "notes": "Primary async task executor. Parallel up to 4."
+        },
+        {
+          "id": "cursor-agent",
+          "name": "Cursor Agent Mode",
+          "url": "https://cursor.sh",
+          "provider": "Cursor",
+          "capabilities": ["code-generation", "agentic-editing"],
+          "limits": "Subscription based, but has free tier",
+          "accessMethod": "desktop-app",
+          "notes": "IDE with agentic capabilities."
+        },
+        {
+          "id": "github-copilot-workspace",
+          "name": "GitHub Copilot Workspace",
+          "url": "https://github.com/features/copilot",
+          "provider": "GitHub/Microsoft",
+          "capabilities": ["code-generation", "workspace-editing"],
+          "limits": "Copilot subscription required",
+          "accessMethod": "github",
+          "notes": "Plan and execute multi-file changes."
+        }
+      ]
+    },
+    "decentralizedCompute": {
+      "description": "Web3/DePIN compute networks",
+      "resources": [
+        {
+          "id": "akash-network",
+          "name": "Akash Network",
+          "url": "https://akash.network",
+          "provider": "Akash",
+          "capabilities": ["docker-hosting", "gpu-compute"],
+          "limits": "Testnet tokens free",
+          "accessMethod": "deploy",
+          "notes": "Decentralized cloud. Testnet for free experimentation."
+        },
+        {
+          "id": "golem-network",
+          "name": "Golem Network",
+          "url": "https://golem.network",
+          "provider": "Golem",
+          "capabilities": ["distributed-compute"],
+          "limits": "Testnet available",
+          "accessMethod": "deploy",
+          "notes": "Peer-to-peer compute sharing."
+        }
+      ]
+    },
+    "apiFreeTiers": {
+      "description": "AI APIs with free tiers",
+      "resources": [
+        {
+          "id": "openai-api",
+          "name": "OpenAI API",
+          "url": "https://platform.openai.com",
+          "provider": "OpenAI",
+          "limits": "$5 free credit for new accounts",
+          "notes": "Limited to 3 months."
+        },
+        {
+          "id": "anthropic-api",
+          "name": "Anthropic API",
+          "url": "https://console.anthropic.com",
+          "provider": "Anthropic",
+          "limits": "$5 free credit for new accounts",
+          "notes": "Claude API access."
+        },
+        {
+          "id": "google-ai-studio",
+          "name": "Google AI Studio",
+          "url": "https://makersuite.google.com",
+          "provider": "Google",
+          "limits": "Free tier generous",
+          "notes": "Gemini API with good free quota."
+        },
+        {
+          "id": "groq-api",
+          "name": "Groq API",
+          "url": "https://console.groq.com",
+          "provider": "Groq",
+          "limits": "Free tier with rate limits",
+          "notes": "Fastest inference. Good for high-volume."
+        },
+        {
+          "id": "together-ai",
+          "name": "Together AI",
+          "url": "https://together.ai",
+          "provider": "Together",
+          "limits": "$5 free credit",
+          "notes": "Open-source models API."
+        },
+        {
+          "id": "fireworks-ai",
+          "name": "Fireworks AI",
+          "url": "https://fireworks.ai",
+          "provider": "Fireworks",
+          "limits": "Free tier available",
+          "notes": "Fast open model inference."
+        },
+        {
+          "id": "cerebras-api",
+          "name": "Cerebras API",
+          "url": "https://inference.cerebras.ai",
+          "provider": "Cerebras",
+          "limits": "Free tier with generous limits",
+          "notes": "Extremely fast inference."
+        },
+        {
+          "id": "deepseek-api",
+          "name": "DeepSeek API",
+          "url": "https://platform.deepseek.com",
+          "provider": "DeepSeek",
+          "limits": "Very generous free tier",
+          "notes": "R1 and V3 models available."
+        }
+      ]
+    }
+  },
+  "orchestrationStrategy": {
+    "description": "How to maximize free compute for TNF",
+    "tiers": [
+      {
+        "name": "Tier 1: Browser Federation",
+        "description": "Multiple Chrome tabs with AI chats connected via extension",
+        "setup": "Open multiple tabs (Gemini, Claude, ChatGPT), connect via Fuse extension",
+        "parallelism": "5-10 agents",
+        "cost": "$0",
+        "bestFor": "Analysis, research, reasoning tasks"
+      },
+      {
+        "name": "Tier 2: Jules CLI",
+        "description": "Async coding tasks delegated to Jules",
+        "setup": "Install Jules CLI, submit tasks",
+        "parallelism": "Up to 4 parallel",
+        "cost": "$0",
+        "bestFor": "Code generation, refactoring, testing"
+      },
+      {
+        "name": "Tier 3: API Free Tiers",
+        "description": "Direct API calls to free tiers",
+        "setup": "Configure API keys in TNF",
+        "parallelism": "Rate limited",
+        "cost": "$0 (within limits)",
+        "bestFor": "Structured automation, pipelines"
+      },
+      {
+        "name": "Tier 4: Compute Platforms",
+        "description": "Colab/Kaggle for heavy workloads",
+        "setup": "Run TNF agent connector in notebooks",
+        "parallelism": "Limited GPU hours",
+        "cost": "$0",
+        "bestFor": "Training, heavy processing"
+      }
+    ]
+  }
+}

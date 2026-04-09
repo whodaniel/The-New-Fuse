@@ -170,7 +170,9 @@ export class GatewayAuthService implements OnModuleDestroy {
     try {
       const payload = await this.jwtService.verifyAsync(token, {
         secret:
-          this.configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET,
+          this.configService.get<string>('JWT_SECRET') ||
+          process.env.JWT_SECRET ||
+          'dev-secret-key-123',
       });
       return this.me(payload.sub);
     } catch {

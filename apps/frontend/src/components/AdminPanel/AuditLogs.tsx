@@ -37,8 +37,8 @@ export const AuditLogs: React.FC = () => {
         <input
           type="text"
           placeholder="Search logs..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          value={filters.search}
+          onChange={(e) => setFilters({ ...filters, search: e.target.value })}
           className="flex-1 px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-transparent dark:bg-transparent"
         />
       </div>

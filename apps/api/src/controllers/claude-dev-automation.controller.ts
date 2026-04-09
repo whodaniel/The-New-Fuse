@@ -127,7 +127,10 @@ export class ClaudeDevAutomationController {
   @ApiParam({ name: 'tenantId', description: 'Tenant identifier' })
   @ApiResponse({ status: 201, description: 'Agent created successfully' })
   @ApiResponse({ status: 400, description: 'Invalid request data' })
-  async createAgent(@Param('tenantId') tenantId: string, @Body() createAgentDto: CreateAgentDto) {
+  async createAgent(
+    @Param('tenantId') tenantId: string,
+    @Body() createAgentDto: ClaudeDevCreateAgentDto
+  ) {
     try {
       this.validateTenantId(tenantId);
       this.validateCreateAgentDto(createAgentDto);

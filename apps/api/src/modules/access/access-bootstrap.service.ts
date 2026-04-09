@@ -1,8 +1,5 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database/drizzle';
 
 type SeedRule = {
@@ -17,8 +14,6 @@ type SeedRule = {
 @Injectable()
 export class AccessBootstrapService implements OnModuleInit {
   private readonly logger = new Logger(AccessBootstrapService.name);
-  private gameAccessRulesTableAvailable: boolean | null = null;
-  private missingTableWarningLogged = false;
 
   constructor(
     private readonly db: DatabaseService,
@@ -30,11 +25,6 @@ export class AccessBootstrapService implements OnModuleInit {
   }
 
   private async seedDefaultPokerRules() {
-    const tableAvailable = await this.ensureGameAccessRulesTable();
-    if (!tableAvailable) {
-      return;
-    }
-
     const nftContract = this.clean(this.configService.get<string>('AI_ARCADE_ACCESS_NFT_CONTRACT'));
     const nftChainIdRaw = this.clean(
       this.configService.get<string>('AI_ARCADE_ACCESS_NFT_CHAIN_ID')
@@ -127,53 +117,9 @@ export class AccessBootstrapService implements OnModuleInit {
              updated_at = now()`
         );
       } catch (error) {
-        if (this.isMissingGameAccessRulesTableError(error)) {
-          this.gameAccessRulesTableAvailable = false;
-          this.warnMissingGameAccessRulesTable();
-          return;
-        }
         this.logger.warn(`Unable to seed access rule ${rule.gameId}: ${String(error)}`);
       }
     }
-  }
-
-  private async ensureGameAccessRulesTable(): Promise<boolean> {
-    if (this.gameAccessRulesTableAvailable !== null) {
-      return this.gameAccessRulesTableAvailable;
-    }
-
-    try {
-      const rows = await this.db.executeRaw<{ table_name?: string | null }>(
-        `SELECT to_regclass('public.game_access_rules') AS table_name`
-      );
-      const tableName = rows?.[0]?.table_name;
-      this.gameAccessRulesTableAvailable = typeof tableName === 'string' && tableName.length > 0;
-    } catch (error) {
-      this.logger.warn(`Unable to probe game_access_rules availability: ${String(error)}`);
-      this.gameAccessRulesTableAvailable = false;
-    }
-
-    if (!this.gameAccessRulesTableAvailable) {
-      this.warnMissingGameAccessRulesTable();
-    }
-
-    return this.gameAccessRulesTableAvailable;
-  }
-
-  private isMissingGameAccessRulesTableError(error: unknown): boolean {
-    const message = String((error as Error | undefined)?.message || '').toLowerCase();
-    return (
-      message.includes('relation "game_access_rules" does not exist') ||
-      message.includes('relation "public.game_access_rules" does not exist')
-    );
-  }
-
-  private warnMissingGameAccessRulesTable(): void {
-    if (this.missingTableWarningLogged) {
-      return;
-    }
-    this.missingTableWarningLogged = true;
-    this.logger.warn('Skipping access-rule bootstrap: game_access_rules table is missing.');
   }
 
   private clean(value?: string | null) {

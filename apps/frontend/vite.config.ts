@@ -21,7 +21,10 @@ function ethersBrowserResolve(): Plugin {
         return path.resolve(__dirname, 'src/stubs/ethers-provider-ipcsocket-browser.js');
       }
       // Prevent axios Node adapter from pulling server-only modules into browser bundles.
-      if (source === 'axios/lib/adapters/http.js' || source.endsWith('/axios/lib/adapters/http.js')) {
+      if (
+        source === 'axios/lib/adapters/http.js' ||
+        source.endsWith('/axios/lib/adapters/http.js')
+      ) {
         return path.resolve(__dirname, 'src/stubs/axios-http-adapter.ts');
       }
       return null;
@@ -34,6 +37,9 @@ export default defineConfig(({ mode }) => {
   const isDev = mode === 'development';
   const isProduction = mode === 'production';
   const enableBuildCompression = isProduction && env.VITE_BUILD_COMPRESS !== 'false';
+  const publicEnv = Object.fromEntries(
+    Object.entries(env).filter(([key]) => key.startsWith('VITE_'))
+  );
 
   // Smart host detection for HMR
   const getHMRConfig = () => {
@@ -224,7 +230,6 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 500,
       rollupOptions: {
         input: {
-          main: path.resolve(__dirname, 'index.html'),
           app: path.resolve(__dirname, 'app.html'),
         },
         // Optimize bundle size by eliminating unnecessary code
@@ -446,11 +451,12 @@ export default defineConfig(({ mode }) => {
           next();
         });
 
-        // SPA fallback - serve app.html for all routes except root
+        // SPA fallback - serve app.html for all non-API routes, except root
         server.middlewares.use((req: any, res: any, next: () => void) => {
           if (!req.url) return next();
 
           if (
+            req.url &&
             req.url !== '/' &&
             !req.url.startsWith('/api') &&
             !req.url.startsWith('/ws') &&
@@ -458,10 +464,7 @@ export default defineConfig(({ mode }) => {
             !req.url.match(/\.[a-zA-Z0-9]+$/) &&
             req.method === 'GET'
           ) {
-            console.log(`[Vite SPA Fallback] Rewriting ${req.url} to /app.html`);
             req.url = '/app.html';
-          } else if (req.url !== '/' && req.method === 'GET') {
-            console.log(`[Vite SPA Fallback] Ignoring ${req.url}`);
           }
           next();
         });

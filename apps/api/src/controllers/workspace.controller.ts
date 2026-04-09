@@ -1426,24 +1426,22 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
   @Get()
   @ApiOperation({ summary: 'Get all workspaces for the current user' })
   @ApiResponse({ status: 200, description: 'List of workspaces' })
-  async getAllWorkspaces(@CurrentUser('id') userId: string) {
-    return this.listAccessibleWorkspaces(userId);
-  }
+  async getAllWorkspaces(@CurrentUser() user: { id: string }) {
+    const owned = await this.db.workspaces.findByOwnerWithOwner(user.id);
+    const memberRows = await this.db.workspaceMembers.listByUser(user.id);
+    const ownedIds = new Set(owned.map((workspace) => workspace.id));
+    const memberIds = memberRows.map((row) => row.workspaceId).filter((id) => !ownedIds.has(id));
+    const memberWorkspaces = await this.db.workspaces.findByIdsWithOwner(memberIds);
 
-  /**
-   * Get current workspace for user.
-   * Uses first accessible workspace as default current workspace.
-   */
-  @Get('current')
-  @ApiOperation({ summary: 'Get current workspace for current user' })
-  @ApiResponse({ status: 200, description: 'Current workspace' })
-  @ApiResponse({ status: 404, description: 'No workspace found for user' })
-  async getCurrentWorkspace(@CurrentUser('id') userId: string) {
-    const workspaces = await this.listAccessibleWorkspaces(userId);
-    if (workspaces.length === 0) {
-      throw new NotFoundException('No workspace found for current user');
-    }
-    return workspaces[0];
+    const roleByWorkspace = new Map(memberRows.map((row) => [row.workspaceId, row.role]));
+
+    return [
+      ...owned.map((workspace) => ({ ...workspace, membershipRole: 'owner' })),
+      ...memberWorkspaces.map((workspace) => ({
+        ...workspace,
+        membershipRole: roleByWorkspace.get(workspace.id) || 'member',
+      })),
+    ];
   }
 
   /**
@@ -1455,8 +1453,18 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
   @ApiResponse({ status: 200, description: 'Workspace details' })
   @ApiResponse({ status: 404, description: 'Workspace not found' })
   @ApiResponse({ status: 403, description: 'Access denied' })
-  async getWorkspaceById(@Param('id') id: string, @CurrentUser('id') userId: string) {
-    const { workspace } = await this.ensureWorkspaceAccess(id, userId);
+  async getWorkspaceById(@Param('id') id: string, @CurrentUser() user: { id: string }) {
+    const workspace = await this.db.workspaces.findByIdWithOwner(id);
+
+    if (!workspace) {
+      throw new NotFoundException('Workspace not found');
+    }
+
+    const membership = await this.db.workspaceMembers.findMembership(id, user.id);
+    if (workspace.ownerId !== user.id && !membership) {
+      throw new ForbiddenException('You do not have access to this workspace');
+    }
+
     return workspace;
   }
 
@@ -1487,6 +1495,15 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
       updatedAt: new Date(),
     });
 
+    await this.db.workspaceMembers.upsertMember({
+      workspaceId: workspace.id,
+      userId: user.id,
+      role: 'owner',
+      addedByUserId: user.id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
     return workspace;
   }
 
@@ -1504,7 +1521,17 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
     @Body() workspaceData: UpdateWorkspaceDto,
     @CurrentUser('id') userId: string
   ) {
-    const { isOwner, isAdmin } = await this.ensureWorkspaceAccess(id, userId);
+    // Verify ownership
+    const existingWorkspace = await this.db.workspaces.findById(id);
+
+    if (!existingWorkspace) {
+      throw new NotFoundException('Workspace not found');
+    }
+
+    const membership = await this.db.workspaceMembers.findMembership(id, user.id);
+    const isOwner = existingWorkspace.ownerId === user.id;
+    const isAdmin = membership?.role === 'admin' || membership?.role === 'owner';
+
     if (!isOwner && !isAdmin) {
       throw new ForbiddenException('You do not have permission to update this workspace');
     }
@@ -1551,12 +1578,43 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
   @ApiOperation({ summary: 'Get workspace members' })
   @ApiResponse({ status: 200, description: 'List of workspace members' })
   @ApiResponse({ status: 404, description: 'Workspace not found' })
-  async getWorkspaceMembers(@Param('id') id: string, @CurrentUser('id') userId: string) {
-    return this.listWorkspaceMembersInternal(id, userId);
+  async getWorkspaceMembers(@Param('id') id: string, @CurrentUser() user: { id: string }) {
+    // Verify workspace exists and user has access
+    const workspace = await this.db.workspaces.findByIdWithOwner(id);
+
+    if (!workspace) {
+      throw new NotFoundException('Workspace not found');
+    }
+
+    const membership = await this.db.workspaceMembers.findMembership(id, user.id);
+    if (workspace.ownerId !== user.id && !membership) {
+      throw new ForbiddenException('You do not have access to this workspace');
+    }
+
+    const members = await this.db.workspaceMembers.listByWorkspaceWithUsers(id);
+    const hasOwner = members.some((member) => member.userId === workspace.ownerId);
+
+    const formatted = members.map((member) => ({
+      userId: member.userId,
+      email: member.userEmail,
+      role: member.role,
+      joinedAt: member.createdAt,
+    }));
+
+    if (!hasOwner) {
+      formatted.unshift({
+        userId: workspace.ownerId,
+        email: workspace.owner?.email ?? null,
+        role: 'owner',
+        joinedAt: workspace.createdAt,
+      });
+    }
+
+    return formatted;
   }
 
   /**
-   * Add member to workspace by userId or email
+   * Add member to workspace
    */
   @Post(':id/members')
   @ApiOperation({ summary: 'Add member to workspace' })
@@ -1572,21 +1630,37 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
     return this.addWorkspaceMemberInternal(id, memberData, userId);
   }
 
-  /**
-   * Update member role in workspace
-   */
-  @Patch(':id/members/:userId')
-  @ApiOperation({ summary: 'Update workspace member role' })
-  @ApiResponse({ status: 200, description: 'Member role updated' })
-  @ApiResponse({ status: 404, description: 'Workspace or member not found' })
-  @ApiResponse({ status: 403, description: 'Access denied' })
-  async updateWorkspaceMemberRole(
-    @Param('id') id: string,
-    @Param('userId') memberUserId: string,
-    @Body() roleData: UpdateWorkspaceMemberRoleDto,
-    @CurrentUser('id') userId: string
-  ) {
-    return this.updateWorkspaceMemberRoleInternal(id, memberUserId, roleData, userId);
+    if (!workspace) {
+      throw new NotFoundException('Workspace not found');
+    }
+
+    const membership = await this.db.workspaceMembers.findMembership(id, user.id);
+    const isOwner = workspace.ownerId === user.id;
+    const isAdmin = membership?.role === 'admin' || membership?.role === 'owner';
+
+    if (!isOwner && !isAdmin) {
+      throw new ForbiddenException('Only workspace owners or admins can add members');
+    }
+
+    const targetUser = await this.db.users.findById(memberData.userId);
+    if (!targetUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    const role = memberData.role || 'member';
+    const member = await this.db.workspaceMembers.upsertMember({
+      workspaceId: id,
+      userId: memberData.userId,
+      role,
+      addedByUserId: user.id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    return {
+      message: 'Workspace member added',
+      member,
+    };
   }
 
   /**
@@ -1605,22 +1679,31 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
     return this.removeWorkspaceMemberInternal(id, memberUserId, userId);
   }
 
-  /**
-   * List delegated sub-access users (non-owner members), useful for VA management UIs.
-   */
-  @Get(':id/sub-access')
-  @ApiOperation({ summary: 'List delegated sub-access users for workspace' })
-  @ApiResponse({ status: 200, description: 'List of delegated users and access levels' })
-  async listWorkspaceSubAccess(@Param('id') id: string, @CurrentUser('id') userId: string) {
-    const members = await this.listWorkspaceMembersInternal(id, userId);
+    if (!workspace) {
+      throw new NotFoundException('Workspace not found');
+    }
+
+    const membership = await this.db.workspaceMembers.findMembership(id, userId);
+    const isOwner = workspace.ownerId === userId;
+    const isAdmin = membership?.role === 'admin' || membership?.role === 'owner';
+
+    if (!isOwner && !isAdmin) {
+      throw new ForbiddenException('Only workspace owners or admins can remove members');
+    }
+
+    // Cannot remove the owner
+    if (memberUserId === workspace.ownerId) {
+      throw new ForbiddenException('Cannot remove the workspace owner. Transfer ownership first.');
+    }
+
+    const removed = await this.db.workspaceMembers.removeMember(id, memberUserId);
+    if (!removed) {
+      throw new NotFoundException('Workspace member not found');
+    }
+
     return {
-      workspaceId: id,
-      members: members
-        .filter((member: any) => member.role !== 'owner')
-        .map((member: any) => ({
-          ...member,
-          accessLevel: member.role,
-        })),
+      message: 'Workspace member removed',
+      memberId: memberUserId,
     };
   }
 
@@ -1945,9 +2028,19 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
   @ApiResponse({ status: 200, description: 'List of projects in the workspace' })
   @ApiResponse({ status: 404, description: 'Workspace not found' })
   @ApiResponse({ status: 403, description: 'Access denied' })
-  async getWorkspaceProjects(@Param('id') id: string, @CurrentUser() user: WorkspaceActor) {
-    const actor = this.requireActor(user);
-    const access = await this.ensureWorkspaceAccess(id, actor.userId);
+  async getWorkspaceProjects(@Param('id') id: string, @CurrentUser('id') userId: string) {
+    // Verify workspace exists and user has access
+    const workspace = await this.db.workspaces.findById(id);
+
+    if (!workspace) {
+      throw new NotFoundException('Workspace not found');
+    }
+
+    const membership = await this.db.workspaceMembers.findMembership(id, userId);
+    if (workspace.ownerId !== userId && !membership) {
+      throw new ForbiddenException('You do not have access to this workspace');
+    }
+
     const workspaceWithProjects = await this.db.workspaces.findByIdWithProjects(id);
     const projects = workspaceWithProjects?.projects || [];
     if (this.canAccessHostMariaWorkspace(access, actor.email, 'read')) {

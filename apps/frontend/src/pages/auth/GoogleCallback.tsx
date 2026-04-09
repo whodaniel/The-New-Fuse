@@ -67,16 +67,15 @@ const GoogleCallback = () => {
         return;
       }
 
-      localStorage.setItem('auth_token', token);
-      navigate('/dashboard');
-    } else {
-      const error = searchParams.get('error');
-      if (error) {
-        console.warn('Authentication error:', error);
-      }
-      navigate('/auth/login?error=' + (error || 'auth_failed'));
-    }
-  }, [searchParams, navigate]);
+      await handleSSOCallback('supabase', searchParams.get('code') || '');
+      navigate('/dashboard', { replace: true });
+    };
+
+    run().catch((error) => {
+      console.error('Google callback handling failed:', error);
+      navigate('/auth/login?error=auth_failed', { replace: true });
+    });
+  }, [searchParams, navigate, login, handleSSOCallback]);
 
   return (
     <div className="flex items-center justify-center min-h-screen">

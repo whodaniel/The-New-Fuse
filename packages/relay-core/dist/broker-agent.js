@@ -36,9 +36,7 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const promises_1 = require("node:fs/promises");
 const path = __importStar(require("node:path"));
-// @ts-ignore
-const infrastructure_1 = require("@the-new-fuse/infrastructure");
-const ioredis_1 = require("ioredis");
+const redis_1 = require("redis");
 const tnf_envelope_1 = require("./protocol/tnf-envelope");
 const CONFIG = {
     REDIS_URL: process.env.REDIS_URL ||
@@ -591,38 +589,13 @@ class BrokerAgent {
                 body: JSON.stringify(payload),
             });
             const body = (await response.json().catch(() => null));
-            if (response.status >= 500) {
-                return {
-                    ok: true,
-                    reasons: [
-                        `external gate worker unavailable (HTTP ${response.status}); local fallback used`,
-                    ],
-                    fallbackUsed: true,
-                };
-            }
-            if (response.ok && body === null) {
-                return {
-                    ok: true,
-                    reasons: [
-                        `external gate worker returned invalid JSON (HTTP ${response.status}); local fallback used`,
-                    ],
-                    fallbackUsed: true,
-                };
-            }
             const reasons = Array.isArray(body?.reasons)
                 ? body.reasons.map((entry) => String(entry))
                 : [];
-            if (!response.ok && reasons.length === 0) {
-                reasons.push(`external gate returned HTTP ${response.status}`);
-            }
             return { ok: response.ok && body?.ok === true, reasons };
         }
         catch (error) {
-            return {
-                ok: true,
-                reasons: [`external gate check failed: ${error.message}; local fallback used`],
-                fallbackUsed: true,
-            };
+            return { ok: false, reasons: [`external gate check failed: ${error.message}`] };
         }
     }
     async evaluatePolicy(task, targetAgentId) {
@@ -667,10 +640,7 @@ class BrokerAgent {
                 console.warn(`[Broker] WARN ${task.id}: ${reason}`);
             }
             else {
-                await this.recordFederationGateTelemetry(task, 'external', gateMode, externalGate.reasons, contextSignal, externalGate.fallbackUsed ? 'warn' : undefined);
-                if (externalGate.fallbackUsed && externalGate.reasons.length > 0) {
-                    console.warn(`[Broker] WARN ${task.id}: ${externalGate.reasons.join('; ')}`);
-                }
+                await this.recordFederationGateTelemetry(task, 'external', gateMode, externalGate.reasons, contextSignal);
             }
         }
         if (!lane) {
@@ -920,10 +890,10 @@ class BrokerAgent {
             console.warn('[Broker] Failed to persist dispatch:', error.message);
         }
     }
-    async recordFederationGateTelemetry(task, stage, mode, reasons, contextSignal, outcomeOverride) {
+    async recordFederationGateTelemetry(task, stage, mode, reasons, contextSignal) {
         if (mode === 'off')
             return;
-        const outcome = outcomeOverride || (reasons.length === 0 ? 'allow' : mode === 'enforce' ? 'deny' : 'warn');
+        const outcome = reasons.length === 0 ? 'allow' : mode === 'enforce' ? 'deny' : 'warn';
         const tenantId = this.getScopeTenant(task) || 'unknown';
         const timestamp = new Date().toISOString();
         const keys = new Set([
@@ -943,70 +913,36 @@ class BrokerAgent {
                 keys.add(`reason:${reasonKey}`);
         }
         try {
-            if (this.upstash) {
-                const pipeline = this.upstash.pipeline();
-                for (const key of keys) {
-                    pipeline.hincrby(CONFIG.GATE_METRICS_HASH, key, 1);
-                }
-                await pipeline.exec();
-                await this.upstash.publish(CONFIG.DECISION_CHANNEL, JSON.stringify({
-                    type: 'federation_gate_telemetry',
-                    brokerId: this.brokerId,
-                    taskId: task.id,
-                    tenantId,
-                    stage,
-                    mode,
-                    outcome,
-                    reasons,
-                    twipContextSignal: {
-                        terminalBound: contextSignal.terminalBound,
-                        twid: contextSignal.twid,
-                        available: contextSignal.available,
-                        stale: contextSignal.stale,
-                        ageMs: contextSignal.ageMs,
-                        source: contextSignal.source,
-                        riskLevel: contextSignal.riskLevel,
-                        reasons: contextSignal.reasons,
-                        redactionCount: contextSignal.redactionCount,
-                        capturedAt: contextSignal.capturedAt,
-                        preview: contextSignal.preview,
-                    },
-                    at: timestamp,
-                    metricsHash: CONFIG.GATE_METRICS_HASH,
-                }));
+            const tx = this.redis.multi();
+            for (const key of keys) {
+                tx.hIncrBy(CONFIG.GATE_METRICS_HASH, key, 1);
             }
-            else if (this.redis) {
-                const tx = this.redis.multi();
-                for (const key of keys) {
-                    tx.hincrby(CONFIG.GATE_METRICS_HASH, key, 1);
-                }
-                await tx.exec();
-                await this.redis.publish(CONFIG.DECISION_CHANNEL, JSON.stringify({
-                    type: 'federation_gate_telemetry',
-                    brokerId: this.brokerId,
-                    taskId: task.id,
-                    tenantId,
-                    stage,
-                    mode,
-                    outcome,
-                    reasons,
-                    twipContextSignal: {
-                        terminalBound: contextSignal.terminalBound,
-                        twid: contextSignal.twid,
-                        available: contextSignal.available,
-                        stale: contextSignal.stale,
-                        ageMs: contextSignal.ageMs,
-                        source: contextSignal.source,
-                        riskLevel: contextSignal.riskLevel,
-                        reasons: contextSignal.reasons,
-                        redactionCount: contextSignal.redactionCount,
-                        capturedAt: contextSignal.capturedAt,
-                        preview: contextSignal.preview,
-                    },
-                    at: timestamp,
-                    metricsHash: CONFIG.GATE_METRICS_HASH,
-                }));
-            }
+            await tx.exec();
+            await this.redis.publish(CONFIG.DECISION_CHANNEL, JSON.stringify({
+                type: 'federation_gate_telemetry',
+                brokerId: this.brokerId,
+                taskId: task.id,
+                tenantId,
+                stage,
+                mode,
+                outcome,
+                reasons,
+                twipContextSignal: {
+                    terminalBound: contextSignal.terminalBound,
+                    twid: contextSignal.twid,
+                    available: contextSignal.available,
+                    stale: contextSignal.stale,
+                    ageMs: contextSignal.ageMs,
+                    source: contextSignal.source,
+                    riskLevel: contextSignal.riskLevel,
+                    reasons: contextSignal.reasons,
+                    redactionCount: contextSignal.redactionCount,
+                    capturedAt: contextSignal.capturedAt,
+                    preview: contextSignal.preview,
+                },
+                at: timestamp,
+                metricsHash: CONFIG.GATE_METRICS_HASH,
+            }));
         }
         catch (error) {
             console.warn('[Broker] Failed to record federation gate telemetry:', error.message);
@@ -1031,16 +967,6 @@ class BrokerAgent {
             return 'missing_cumulative_tenant';
         if (normalized.includes('missing twid'))
             return 'missing_twid';
-        if (normalized.includes('external gate worker unavailable')) {
-            return 'external_worker_unavailable';
-        }
-        if (normalized.includes('external gate worker returned invalid json')) {
-            return 'external_worker_invalid_json';
-        }
-        if (normalized.includes('external gate check failed'))
-            return 'external_worker_request_failed';
-        if (normalized.includes('external gate returned http'))
-            return 'external_worker_http_error';
         if (normalized.includes('twip context signal unavailable'))
             return 'twip_context_unavailable';
         if (normalized.includes('twip context stale'))

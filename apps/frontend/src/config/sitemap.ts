@@ -519,79 +519,10 @@ export const sitemap: SiteMapNode[] = [
     ],
   },
   {
-    path: '/main',
-    title: 'Main Workspace',
-    description: 'Main workspace page',
-    requiresAuth: true,
-  },
-
-  // ═══════════════════════════════════════════════════
-  // FEATURE DASHBOARDS & TOOLS (from SITEMAP.md feature pages)
-  // ═══════════════════════════════════════════════════
-  {
-    path: '/prompt-workbench',
-    title: 'Prompt Workbench',
-    description: 'Prompt engineering workbench',
-    requiresAuth: true,
-    lifecycle: 'beta',
-    sources: ['SITEMAP.md'],
-  },
-  {
-    path: '/knowledge-base-editor',
-    title: 'Knowledge Base Editor',
-    description: 'Knowledge base editing',
-    requiresAuth: true,
-    lifecycle: 'beta',
-    sources: ['SITEMAP.md'],
-  },
-  {
-    path: '/memory-dashboard',
-    title: 'Memory Dashboard',
-    description: 'Memory management',
-    requiresAuth: true,
-    lifecycle: 'beta',
-    sources: ['SITEMAP.md'],
-  },
-  {
-    path: '/performance-dashboard',
-    title: 'Performance Dashboard',
-    description: 'Performance metrics',
-    requiresAuth: true,
-    lifecycle: 'beta',
-    sources: ['SITEMAP.md', 'COMPONENT_STATUS.md'],
-  },
-  {
-    path: '/moderation-dashboard',
-    title: 'Moderation Dashboard',
-    description: 'Content moderation',
-    requiresAuth: true,
-    lifecycle: 'beta',
-    sources: ['SITEMAP.md'],
-  },
-  {
-    path: '/youtube-transcriber',
-    title: 'YouTube Transcriber',
-    description: 'YouTube transcription tool',
-    requiresAuth: true,
-    lifecycle: 'beta',
-    sources: ['SITEMAP.md'],
-  },
-
-  // ═══════════════════════════════════════════════════
-  // ASSETS & RESOURCES
-  // ═══════════════════════════════════════════════════
-  { path: '/files', title: 'Files', description: 'Operator file workspace', requiresAuth: true },
-  {
-    path: '/datasets',
-    title: 'Datasets',
-    description: 'Dataset catalog and workbench',
-    requiresAuth: true,
-  },
-  {
-    path: '/bookmarks',
-    title: 'Bookmarks',
-    description: 'Workspace-aware bookmark management',
-    requiresAuth: true,
+    path: '/marketplace',
+    title: 'Marketplace',
+    description: 'Resource marketplace and library',
+    requiresAuth: false,
   },
   {
     path: '/resources',

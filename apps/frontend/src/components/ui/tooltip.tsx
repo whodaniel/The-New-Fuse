@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Tooltip Component - Chakra-compatible Tooltip for The New Fuse
  */

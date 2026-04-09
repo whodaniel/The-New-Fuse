@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Agents - The New Fuse</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        header { background-color: #333; color: #fff; padding: 1em 0; text-align: center; }
+        nav { background-color: #444; padding: 0.5em; text-align: center; }
+        nav a { color: #fff; margin: 0 15px; text-decoration: none; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+        .container { width: 90%; margin: 2em auto; padding: 2em; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: #333; }
+        .agents-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 2em; }
+        .agent-card { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        .agent-card h3 { margin-top: 0; color: #007bff; }
+        .agent-card p { font-size: 0.9em; color: #555; flex-grow: 1;}
+        .agent-card .capabilities { margin-top: 10px; margin-bottom: 15px; }
+        .agent-card .capabilities strong { font-size: 0.9em; }
+        .agent-card .capabilities ul { list-style-type: disc; margin-left: 20px; padding-left: 0; font-size: 0.85em; }
+        .agent-card .interact-btn { background-color: #28a745; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px; text-align: center; margin-top: auto; }
+        .agent-card .interact-btn:hover { background-color: #218838; }
+        footer { text-align: center; padding: 1em 0; background-color: #333; color: #fff; margin-top: 2em; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>The New Fuse - HTML/CSS Showcase</h1>
+    </header>
+    <nav>
+        <a href="home.html">Home</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="chat.html">Chat</a>
+        <a href="tasks.html">Tasks</a>
+        <a href="workflows.html">Workflows</a>
+        <a href="admin.html">Admin</a>
+        <a href="agents.html">Agents</a>
+        <a href="suggestions.html">Suggestions</a>
+        <a href="settings.html">Settings</a>
+        <a href="../index.html">Component Demos</a>
+    </nav>
+    <div class="container">
+        <h2>Available Agents</h2>
+        <p>Discover and interact with various AI agents to assist with your tasks and workflows.</p>
+        
+        <div class="agents-grid">
+            <div class="agent-card">
+                <h3>CodeHelper Bot</h3>
+                <p>An AI assistant specialized in generating code snippets, debugging, and explaining programming concepts.</p>
+                <div class="capabilities">
+                    <strong>Capabilities:</strong>
+                    <ul>
+                        <li>Code Generation (Python, JavaScript, Java)</li>
+                        <li>Debugging Assistance</li>
+                        <li>Algorithm Explanation</li>
+                        <li>API Documentation Lookup</li>
+                    </ul>
+                </div>
+                <a href="#" class="interact-btn">Interact with CodeHelper</a>
+            </div>
+            <div class="agent-card">
+                <h3>Research Analyst AI</h3>
+                <p>Gathers, summarizes, and analyzes information from various sources to provide comprehensive research reports.</p>
+                 <div class="capabilities">
+                    <strong>Capabilities:</strong>
+                    <ul>
+                        <li>Web Scraping & Data Collection</li>
+                        <li>Text Summarization</li>
+                        <li>Trend Analysis</li>
+                        <li>Report Generation</li>
+                    </ul>
+                </div>
+                <a href="#" class="interact-btn">Use Research Analyst</a>
+            </div>
+            <div class="agent-card">
+                <h3>Creative Writer Agent</h3>
+                <p>Helps draft and refine creative content, including articles, stories, scripts, and marketing copy.</p>
+                 <div class="capabilities">
+                    <strong>Capabilities:</strong>
+                    <ul>
+                        <li>Content Ideation</li>
+                        <li>Drafting & Outlining</li>
+                        <li>Tone & Style Adjustment</li>
+                        <li>Grammar & Spell Check</li>
+                    </ul>
+                </div>
+                <a href="#" class="interact-btn">Start Writing</a>
+            </div>
+             <div class="agent-card">
+                <h3>Workflow Optimizer</h3>
+                <p>Analyzes existing workflows and suggests improvements for efficiency and automation.</p>
+                 <div class="capabilities">
+                    <strong>Capabilities:</strong>
+                    <ul>
+                        <li>Workflow Analysis</li>
+                        <li>Bottleneck Identification</li>
+                        <li>Automation Suggestions</li>
+                        <li>Process Mapping</li>
+                    </ul>
+                </div>
+                <a href="#" class="interact-btn">Optimize Workflow</a>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2025 The New Fuse - HTML/CSS Showcase</p>
+    </footer>
+</body>
+</html>

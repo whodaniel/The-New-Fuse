@@ -85,7 +85,7 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
 }
 
 export function DialogContent({ className = '', children }: DialogContentProps) {
-  return <div className={`p-6 ${className}`}>{children}</div>;
+  return <div className={`p-4 ${className}`}>{children}</div>;
 }
 
 export function DialogHeader({ children }: DialogHeaderProps) {
@@ -97,7 +97,7 @@ export function DialogTitle({ children, className = '' }: DialogTitleProps) {
 }
 
 export function DialogDescription({ children }: DialogDescriptionProps) {
-  return <p className="text-sm text-gray-600 mt-2">{children}</p>;
+  return <p className="text-sm text-muted-foreground mt-2">{children}</p>;
 }
 
 export function DialogFooter({ children, className = '' }: DialogFooterProps) {

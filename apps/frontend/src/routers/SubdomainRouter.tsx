@@ -28,19 +28,31 @@ const getSubdomainInfo = () => {
 };
 
 const SubdomainRouter: React.FC = () => {
-  const [{ name: subdomain, isApp }, setSubdomainInfo] = useState(() => {
-    if (typeof window === 'undefined') return { name: null, isApp: false };
-    return getSubdomainInfo();
+  const [subdomain, setSubdomain] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    return getSubdomain();
   });
 
   useEffect(() => {
-    const info = getSubdomainInfo();
-    if (info.name) console.log('Detected Subdomain:', info.name, 'isApp:', info.isApp);
-    setSubdomainInfo(info);
+    const sub = getSubdomain();
+    if (sub) console.log('Detected Agency Subdomain:', sub);
+    setSubdomain(sub);
   }, []);
 
-  if (subdomain && !isApp) {
-    // Marketplace runs as a standalone surface
+  // If we are on a subdomain (e.g., alpha.thenewfuse.hub), we might want to show
+  // the Agency's Public Landing Page OR their Admin Dashboard if they are logged in as owner.
+  // For the purpose of "Accessing their own super admin account",
+  // let's route /admin on a subdomain to the AgencyDashboard.
+
+  // Actually, typical White Label structure:
+  // 1. agency.thenewfuse.hub -> The Agency's "SaaS" (multitenant instance for THEIR users)
+  // 2. app.thenewfuse.hub/agency/dashboard -> Where the Agency Owner manages their empire
+
+  // The user asked: "infrastructure... to have their own multitenent system for their own Users"
+  // So `agency.thenewfuse.hub` should look like a branded version of TNF.
+
+  if (subdomain) {
+    // Marketplace runs as a standalone surface, but it still uses shared TNF auth routes.
     if (subdomain === 'marketplace') {
       const pathname = window.location.pathname;
       const isSharedAuthPath =
@@ -56,7 +68,7 @@ const SubdomainRouter: React.FC = () => {
       return <MarketplacePublicPage />;
     }
 
-    // Keep connect subdomain at root URL
+    // Keep connect subdomain at root URL and render a focused extension landing page.
     if (subdomain === 'connect' && window.location.pathname === '/') {
       return <ConnectExtensionPage />;
     }

@@ -10,7 +10,7 @@ and operational practices as of March 2026.
 **Doc Classification** Production docs:
 
 - `PRODUCTION_READINESS.md`
-- `docs/guides/deployment-guide.md`
+- `docs/deployment/DEPLOYMENT_GUIDE.md`
 - `docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md`
 - `SECURITY.md`
 - `SECURITY_MIGRATION_GUIDE.md`
@@ -87,7 +87,7 @@ Docker (local dev infra):
 
 Primary references:
 
-- `docs/guides/deployment-guide.md`
+- `docs/deployment/DEPLOYMENT_GUIDE.md`
 - `docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md`
 
 ## Build and Development

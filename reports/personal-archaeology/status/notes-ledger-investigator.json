@@ -1,0 +1,10 @@
+{
+  "agentId": "notes-ledger-investigator",
+  "role": "investigator",
+  "teamId": "source-acquisition",
+  "status": "blocked",
+  "lastHeartbeatAt": "2026-03-19T08:56:37.272Z",
+  "summary": "Blocked: Apple Notes MCP authentication required",
+  "findingsPath": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/reports/personal-archaeology/findings/notes-ledger.md",
+  "blockedReason": "Apple Notes MCP authentication required"
+}

@@ -11,8 +11,8 @@ import { marketplaceService } from '../../services/marketplace.service';
 import './MarketplacePublicPage.css';
 
 const sectionDelay = (index: number) => ({ duration: 0.36, delay: 0.08 * index });
-const AUTH_LOGIN_URL = '/auth/login';
-const AUTH_REGISTER_URL = '/auth/register';
+const AUTH_LOGIN_URL = 'https://thenewfuse.com/auth/login';
+const AUTH_REGISTER_URL = 'https://thenewfuse.com/auth/register';
 
 const KIND_LABELS: Record<MarketplaceKind, string> = {
   agent: 'Complete Agents',

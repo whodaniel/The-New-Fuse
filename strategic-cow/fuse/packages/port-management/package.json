@@ -1,0 +1,50 @@
+{
+  "name": "@the-new-fuse/port-management",
+  "version": "1.0.0",
+  "description": "Port management and configuration system for The New Fuse",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "lint": "eslint src",
+    "test": "echo \"No tests found for @the-new-fuse/port-management\" && exit 0",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@the-new-fuse/types": "workspace:*",
+    "@the-new-fuse/utils": "workspace:*",
+    "axios": "^1.13.5",
+    "node-port-check": "^2.0.1",
+    "portfinder": "^1.0.38",
+    "ws": "^8.18.3",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^24.8.1",
+    "@types/ws": "^8.18.1",
+    "eslint": "^9.38.0",
+    "jest": "^30.2.0",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.3"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./client": {
+      "import": "./dist/client/index.js",
+      "types": "./dist/client/index.d.ts"
+    },
+    "./server": {
+      "import": "./dist/server/index.js",
+      "types": "./dist/server/index.d.ts"
+    }
+  }
+}

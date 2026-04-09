@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Casin8 Cashier - History</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#eccb13",
+                        "background-light": "#f8f8f6",
+                        "background-dark": "#221f10",
+                        "glass-dark": "rgba(34, 31, 16, 0.8)",
+                        "glass-border": "rgba(236, 203, 19, 0.1)",
+                        "royal-red": "#dc2626",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    backdropBlur: {
+                        xs: '2px',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding for horizontal scroll areas */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen overflow-hidden text-slate-900 dark:text-slate-100 relative">
+<!-- Background decorative elements for glassmorphism context -->
+<div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+<div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px]"></div>
+<div class="absolute bottom-[-10%] left-[-20%] w-[400px] h-[400px] rounded-full bg-royal-red/10 blur-[100px]"></div>
+</div>
+<!-- Main Content Simulation (Behind the sheet) -->
+<div class="relative z-10 p-6 flex flex-col h-full opacity-40 scale-95 origin-top transition-transform duration-500">
+<div class="flex justify-between items-center mb-8">
+<span class="material-symbols-outlined text-3xl">menu</span>
+<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+</div>
+<div class="h-40 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 mb-6 flex flex-col justify-center items-center">
+<p class="text-sm opacity-60 uppercase tracking-widest">Total Balance</p>
+<h1 class="text-4xl font-bold mt-2">$12,450.00</h1>
+</div>
+</div>
+<!-- Bottom Sheet Container -->
+<div class="fixed inset-0 z-50 flex flex-col justify-end">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+<!-- Sheet Content -->
+<div class="relative w-full flex flex-col bg-background-light/95 dark:bg-[#1a180c]/95 backdrop-blur-xl rounded-t-[2rem] shadow-[0_-8px_30px_rgba(0,0,0,0.3)] border-t border-white/10 max-h-[90vh] overflow-hidden group/design-root transition-all duration-300 ease-out translate-y-0">
+<!-- Handle Area -->
+<div class="flex flex-col items-center pt-4 pb-2 w-full shrink-0 cursor-grab active:cursor-grabbing">
+<div class="h-1.5 w-12 rounded-full bg-slate-300 dark:bg-white/20"></div>
+</div>
+<!-- Header Section -->
+<div class="flex flex-col px-6 pb-4 shrink-0 border-b border-slate-200 dark:border-white/5">
+<div class="flex justify-between items-center mb-6 mt-2">
+<h2 class="text-2xl font-bold tracking-tight">Transaction History</h2>
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-xl">search</span>
+</button>
+</div>
+<!-- Filter Chips -->
+<div class="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+<!-- Active Chip -->
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary text-background-dark px-4 shadow-[0_0_15px_rgba(236,203,19,0.3)] transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<p class="text-sm font-bold">All</p>
+</button>
+<!-- Inactive Chips -->
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-slate-200 dark:bg-white/5 border border-transparent dark:border-white/10 hover:border-primary/30 px-4 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px] text-slate-500 dark:text-slate-400">arrow_downward</span>
+<p class="text-sm font-medium text-slate-600 dark:text-slate-300">Deposits</p>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-slate-200 dark:bg-white/5 border border-transparent dark:border-white/10 hover:border-primary/30 px-4 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px] text-slate-500 dark:text-slate-400">arrow_upward</span>
+<p class="text-sm font-medium text-slate-600 dark:text-slate-300">Withdrawals</p>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-slate-200 dark:bg-white/5 border border-transparent dark:border-white/10 hover:border-primary/30 px-4 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px] text-slate-500 dark:text-slate-400">schedule</span>
+<p class="text-sm font-medium text-slate-600 dark:text-slate-300">Pending</p>
+</button>
+</div>
+</div>
+<!-- List Content -->
+<div class="flex-1 overflow-y-auto overflow-x-hidden p-6 pt-2">
+<!-- Date Header -->
+<div class="flex justify-between items-end gap-x-6 py-4 sticky top-0 bg-background-light/95 dark:bg-[#1a180c]/95 backdrop-blur-sm z-10">
+<p class="text-primary text-xs font-bold uppercase tracking-widest">Today</p>
+<div class="h-[1px] flex-1 bg-gradient-to-r from-primary/30 to-transparent"></div>
+</div>
+<!-- Transaction Item 1: Deposit -->
+<div class="group relative flex gap-4 p-4 mb-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/5 hover:border-primary/30 transition-all active:scale-[0.98]">
+<div class="relative shrink-0">
+<div class="flex items-center justify-center rounded-full bg-primary/10 w-12 h-12 text-primary">
+<span class="material-symbols-outlined text-2xl">add</span>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-background-dark rounded-full p-[2px]">
+<span class="material-symbols-outlined text-[14px] text-primary bg-primary/20 rounded-full w-4 h-4 flex items-center justify-center" title="Confirmed">check</span>
+</div>
+</div>
+<div class="flex flex-1 flex-col justify-center min-w-0">
+<div class="flex justify-between items-start mb-0.5">
+<h3 class="text-slate-900 dark:text-white text-base font-semibold truncate pr-2">Token Deposit</h3>
+<p class="text-primary text-base font-bold whitespace-nowrap">+500 TKN</p>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex flex-col gap-0.5">
+<p class="text-slate-500 dark:text-slate-400 text-xs">Confirmed • $50.00 USD</p>
+<button class="text-left text-xs text-primary/80 hover:text-primary mt-1 flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-[12px]">receipt_long</span>
+                                    Download Receipt
+                                </button>
+</div>
+<p class="text-xs text-slate-400 dark:text-slate-600 font-mono">14:20</p>
+</div>
+</div>
+</div>
+<!-- Transaction Item 2: Pending Withdrawal -->
+<div class="group relative flex gap-4 p-4 mb-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/5 hover:border-royal-red/30 transition-all active:scale-[0.98]">
+<div class="relative shrink-0">
+<div class="flex items-center justify-center rounded-full bg-royal-red/10 w-12 h-12 text-royal-red">
+<span class="material-symbols-outlined text-2xl">arrow_outward</span>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-background-dark rounded-full p-[2px]">
+<span class="material-symbols-outlined text-[14px] text-slate-400 bg-slate-700/50 rounded-full w-4 h-4 flex items-center justify-center animate-pulse" title="Pending">hourglass_top</span>
+</div>
+</div>
+<div class="flex flex-1 flex-col justify-center min-w-0">
+<div class="flex justify-between items-start mb-0.5">
+<h3 class="text-slate-900 dark:text-white text-base font-semibold truncate pr-2">Bank Withdrawal</h3>
+<p class="text-royal-red text-base font-bold whitespace-nowrap">-2,500 TKN</p>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex flex-col gap-0.5">
+<p class="text-slate-500 dark:text-slate-400 text-xs">Pending • $250.00 USD</p>
+<button class="text-left text-xs text-slate-400 hover:text-slate-300 mt-1 flex items-center gap-1 font-medium transition-colors">
+<span class="material-symbols-outlined text-[12px]">receipt_long</span>
+                                    Download Receipt
+                                </button>
+</div>
+<p class="text-xs text-slate-400 dark:text-slate-600 font-mono">11:05</p>
+</div>
+</div>
+</div>
+<!-- Date Header -->
+<div class="flex justify-between items-end gap-x-6 py-4 mt-2 sticky top-0 bg-background-light/95 dark:bg-[#1a180c]/95 backdrop-blur-sm z-10">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-widest">Yesterday</p>
+<div class="h-[1px] flex-1 bg-gradient-to-r from-slate-200 dark:from-white/10 to-transparent"></div>
+</div>
+<!-- Transaction Item 3: Confirmed Deposit -->
+<div class="group relative flex gap-4 p-4 mb-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/5 hover:border-primary/30 transition-all active:scale-[0.98]">
+<div class="relative shrink-0">
+<div class="flex items-center justify-center rounded-full bg-primary/10 w-12 h-12 text-primary">
+<span class="material-symbols-outlined text-2xl">account_balance_wallet</span>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-background-dark rounded-full p-[2px]">
+<span class="material-symbols-outlined text-[14px] text-primary bg-primary/20 rounded-full w-4 h-4 flex items-center justify-center" title="Confirmed">check</span>
+</div>
+</div>
+<div class="flex flex-1 flex-col justify-center min-w-0">
+<div class="flex justify-between items-start mb-0.5">
+<h3 class="text-slate-900 dark:text-white text-base font-semibold truncate pr-2">Crypto Top-up</h3>
+<p class="text-primary text-base font-bold whitespace-nowrap">+1,000 TKN</p>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex flex-col gap-0.5">
+<p class="text-slate-500 dark:text-slate-400 text-xs">Confirmed • $100.00 USD</p>
+<button class="text-left text-xs text-primary/80 hover:text-primary mt-1 flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-[12px]">receipt_long</span>
+                                    Download Receipt
+                                </button>
+</div>
+<p class="text-xs text-slate-400 dark:text-slate-600 font-mono">18:45</p>
+</div>
+</div>
+</div>
+<!-- Transaction Item 4: Failed/Reverted (Example of edge case) -->
+<div class="group relative flex gap-4 p-4 mb-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/5 opacity-70 hover:opacity-100 transition-all">
+<div class="relative shrink-0">
+<div class="flex items-center justify-center rounded-full bg-slate-200 dark:bg-white/5 w-12 h-12 text-slate-400">
+<span class="material-symbols-outlined text-2xl">block</span>
+</div>
+</div>
+<div class="flex flex-1 flex-col justify-center min-w-0">
+<div class="flex justify-between items-start mb-0.5">
+<h3 class="text-slate-900 dark:text-slate-300 text-base font-semibold truncate pr-2 decoration-slice line-through decoration-slate-500">Deposit Failed</h3>
+<p class="text-slate-500 text-base font-bold whitespace-nowrap">0 TKN</p>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex flex-col gap-0.5">
+<p class="text-slate-500 dark:text-slate-400 text-xs">Declined by bank</p>
+</div>
+<p class="text-xs text-slate-400 dark:text-slate-600 font-mono">09:12</p>
+</div>
+</div>
+</div>
+<!-- Footer Spacer -->
+<div class="h-8"></div>
+</div>
+<!-- Gradient fade at bottom -->
+<div class="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-background-light dark:from-[#1a180c] to-transparent pointer-events-none"></div>
+</div>
+</div>
+</body></html>

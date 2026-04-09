@@ -1,5 +1,4 @@
 import { MarketplaceService } from '../marketplace/marketplace.service';
-import { PersonalSkillsService } from './personal-skills.service';
 import { ResourceInteractionService } from './resource-interaction.service';
 import { ResourceSearchPolicyService } from './resource-search-policy.service';
 import { ResourceSearchProtocolService } from './resource-search-protocol.service';
@@ -29,19 +28,12 @@ describe('ResourcesController /resources/search contract', () => {
       toggleFavorite: jest.fn(),
       shareResource: jest.fn(),
     };
-    const personalSkillsService = {
-      listByUser: jest.fn(),
-      createByUser: jest.fn(),
-      updateByUser: jest.fn(),
-      deleteByUser: jest.fn(),
-    };
 
     const controller = new ResourcesController(
       { getCatalog: jest.fn() } as unknown as MarketplaceService,
       searchPolicyService as unknown as ResourceSearchPolicyService,
       searchProtocolService as unknown as ResourceSearchProtocolService,
-      resourceInteractionService as unknown as ResourceInteractionService,
-      personalSkillsService as unknown as PersonalSkillsService
+      resourceInteractionService as unknown as ResourceInteractionService
     );
 
     return {
@@ -49,7 +41,6 @@ describe('ResourcesController /resources/search contract', () => {
       searchPolicyService,
       searchProtocolService,
       resourceInteractionService,
-      personalSkillsService,
     };
   };
 
@@ -259,121 +250,6 @@ describe('ResourcesController /resources/search contract', () => {
         fromUserId: 'user-1',
         toAgentId: 'agent-beta',
       },
-    });
-  });
-
-  it('lists authenticated user personal skills', async () => {
-    const { controller, personalSkillsService } = buildController();
-    personalSkillsService.listByUser.mockResolvedValue([
-      {
-        id: '31f8a9be-a773-4ef2-8ad0-d8f4e23af1f2',
-        userId: '2cfd0d4d-dbc0-4530-afde-39e13a395618',
-        slug: 'email-reply',
-        name: 'Email Reply Skill',
-        description: 'Handles personal email replies',
-        instructions: 'Always keep tone concise.',
-        tags: ['email'],
-        metadata: {},
-        isPrivate: true,
-        createdAt: '2026-03-24T10:00:00Z',
-        updatedAt: '2026-03-24T10:00:00Z',
-      },
-    ]);
-
-    const result = await controller.getPersonalSkills({
-      user: { id: '2cfd0d4d-dbc0-4530-afde-39e13a395618' },
-    } as any);
-
-    expect(personalSkillsService.listByUser).toHaveBeenCalledWith(
-      '2cfd0d4d-dbc0-4530-afde-39e13a395618'
-    );
-    expect(result).toHaveLength(1);
-    expect(result[0]?.name).toBe('Email Reply Skill');
-  });
-
-  it('creates authenticated user personal skills', async () => {
-    const { controller, personalSkillsService } = buildController();
-    personalSkillsService.createByUser.mockResolvedValue({
-      id: '31f8a9be-a773-4ef2-8ad0-d8f4e23af1f2',
-      userId: '2cfd0d4d-dbc0-4530-afde-39e13a395618',
-      slug: 'email-reply',
-      name: 'Email Reply Skill',
-      description: 'Handles personal email replies',
-      instructions: 'Always keep tone concise.',
-      tags: ['email'],
-      metadata: {},
-      isPrivate: true,
-      createdAt: '2026-03-24T10:00:00Z',
-      updatedAt: '2026-03-24T10:00:00Z',
-    });
-
-    const payload = {
-      name: 'Email Reply Skill',
-      description: 'Handles personal email replies',
-      instructions: 'Always keep tone concise.',
-      tags: ['email'],
-    };
-    const result = await controller.createPersonalSkill(payload, {
-      user: { id: '2cfd0d4d-dbc0-4530-afde-39e13a395618' },
-    } as any);
-
-    expect(personalSkillsService.createByUser).toHaveBeenCalledWith(
-      '2cfd0d4d-dbc0-4530-afde-39e13a395618',
-      payload
-    );
-    expect(result).toMatchObject({ name: 'Email Reply Skill', isPrivate: true });
-  });
-
-  it('updates authenticated user personal skills', async () => {
-    const { controller, personalSkillsService } = buildController();
-    personalSkillsService.updateByUser.mockResolvedValue({
-      id: '31f8a9be-a773-4ef2-8ad0-d8f4e23af1f2',
-      userId: '2cfd0d4d-dbc0-4530-afde-39e13a395618',
-      slug: 'email-reply-v2',
-      name: 'Email Reply Skill v2',
-      description: 'Handles personal email replies',
-      instructions: 'Always keep tone concise.',
-      tags: ['email'],
-      metadata: {},
-      isPrivate: true,
-      createdAt: '2026-03-24T10:00:00Z',
-      updatedAt: '2026-03-24T11:00:00Z',
-    });
-
-    const payload = {
-      name: 'Email Reply Skill v2',
-    };
-    const result = await controller.updatePersonalSkill(
-      '31f8a9be-a773-4ef2-8ad0-d8f4e23af1f2',
-      payload,
-      {
-        user: { id: '2cfd0d4d-dbc0-4530-afde-39e13a395618' },
-      } as any
-    );
-
-    expect(personalSkillsService.updateByUser).toHaveBeenCalledWith(
-      '2cfd0d4d-dbc0-4530-afde-39e13a395618',
-      '31f8a9be-a773-4ef2-8ad0-d8f4e23af1f2',
-      payload
-    );
-    expect(result).toMatchObject({ name: 'Email Reply Skill v2' });
-  });
-
-  it('deletes authenticated user personal skills', async () => {
-    const { controller, personalSkillsService } = buildController();
-    personalSkillsService.deleteByUser.mockResolvedValue(undefined);
-
-    const result = await controller.deletePersonalSkill('31f8a9be-a773-4ef2-8ad0-d8f4e23af1f2', {
-      user: { id: '2cfd0d4d-dbc0-4530-afde-39e13a395618' },
-    } as any);
-
-    expect(personalSkillsService.deleteByUser).toHaveBeenCalledWith(
-      '2cfd0d4d-dbc0-4530-afde-39e13a395618',
-      '31f8a9be-a773-4ef2-8ad0-d8f4e23af1f2'
-    );
-    expect(result).toEqual({
-      success: true,
-      id: '31f8a9be-a773-4ef2-8ad0-d8f4e23af1f2',
     });
   });
 });

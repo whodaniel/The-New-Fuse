@@ -29,7 +29,7 @@ export default defineConfig(({ mode }) => {
         'blackjack.ai-arcade.xyz',
         'slots.ai-arcade.xyz',
         'roulette.ai-arcade.xyz',
-        'casin8-games-241337102384.us-central1.run.app',
+        'casin8-games-production-b06e.up.railway.app',
       ],
     },
   };

@@ -9,9 +9,6 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { hasAuthorizationLevel } from '../auth/auth-policy';
@@ -152,5 +149,10 @@ export class AuthController {
     } catch {
       return { authenticated: false, user: null };
     }
+  }
+
+  private assertAdmin(user: any) {
+    const isAdmin = hasAuthorizationLevel(user || {}, 'admin');
+    if (!isAdmin) throw new ForbiddenException('Admin access required');
   }
 }

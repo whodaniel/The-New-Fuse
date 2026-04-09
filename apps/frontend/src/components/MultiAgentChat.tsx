@@ -298,18 +298,10 @@ export const MultiAgentChat: React.FC = () => {
               </h2>
             </div>
             <div className="flex gap-2">
-              <button
-                aria-label="Search Messages"
-                title="Search Messages"
-                className="p-2 text-muted-foreground hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none rounded-md"
-              >
+              <button className="p-2 text-muted-foreground hover:text-white transition-colors">
                 <Search className="w-4 h-4" />
               </button>
-              <button
-                aria-label="Chat Settings"
-                title="Chat Settings"
-                className="p-2 text-muted-foreground hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none rounded-md"
-              >
+              <button className="p-2 text-muted-foreground hover:text-white transition-colors">
                 <Settings className="w-4 h-4" />
               </button>
             </div>
@@ -366,8 +358,7 @@ export const MultiAgentChat: React.FC = () => {
                 />
                 <div className="flex items-center gap-2 ml-4">
                   <button
-                    aria-label="Attach Context"
-                    className="p-2 text-muted-foreground hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none rounded-md"
+                    className="p-2 text-muted-foreground hover:text-white transition-colors"
                     title="Attach Context"
                   >
                     <Zap className="w-4 h-4" />
@@ -376,7 +367,7 @@ export const MultiAgentChat: React.FC = () => {
                     aria-label="Send Message"
                     onClick={() => void handleSend()}
                     disabled={!inputValue.trim() || isTyping}
-                    className="p-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-800 disabled:text-muted-foreground text-white rounded-md transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                    className="p-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-800 disabled:text-muted-foreground text-white rounded-md transition-all"
                   >
                     <Send className="w-4 h-4" />
                   </button>

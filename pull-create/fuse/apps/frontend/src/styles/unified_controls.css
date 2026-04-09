@@ -1,0 +1,89 @@
+
+.unified-controls {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --border-color: #dee2e6;
+    --bg-hover: #f8f9fa;
+}
+
+.command-palette {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+}
+
+.command-input-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.command-prefix {
+    color: var(--primary-color);
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.suggestion-item:hover {
+    background: var(--bg-hover);
+}
+
+.quick-access-toolbar {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 900;
+}
+
+.btn-tool {
+    padding: 8px;
+    margin: 0 4px;
+    border-radius: 4px;
+    background: white;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+}
+
+.btn-tool:hover {
+    background: var(--bg-hover);
+    transform: translateY(-2px);
+}
+
+.results-viewer {
+    margin-top: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.results-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-hover);
+}
+
+.tab-btn {
+    padding: 8px 16px;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.tab-btn.active {
+    border-bottom: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}

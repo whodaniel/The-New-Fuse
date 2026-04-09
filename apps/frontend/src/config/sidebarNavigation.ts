@@ -27,7 +27,6 @@ import {
   ScrollText,
   Settings,
   Shield,
-  Target,
   Users,
   Workflow,
   Zap,
@@ -37,7 +36,8 @@ import type { ComponentType } from 'react';
 export interface SidebarNavChildItem {
   name: string;
   href: string;
-  icon?: ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
+  section: 'dashboard' | 'workspace' | 'forge' | 'nexus' | 'apex' | 'advanced';
   access?: 'public' | 'authenticated';
   requiredRoles?: string[];
 }
@@ -53,14 +53,57 @@ export interface SidebarNavItem {
 }
 
 // Canonical sidebar source of truth for PremiumLayout surfaces.
-// IA: functional workspace grouping (work, build, knowledge, operations).
-// Every user-navigable route in ComprehensiveRouter MUST have an entry here.
+// IA: Dashboard (overview), Workspace (day-to-day), Forge (build/AI), Nexus (ecosystem), Apex (governance).
 export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
-  // ─────────────────────────── WORKSPACE ───────────────────────────
+  // DASHBOARD: Overview & Trends
   {
     name: 'Workspace',
     href: '/dashboard',
     icon: LayoutDashboard,
+    section: 'dashboard',
+    access: 'authenticated',
+  },
+  {
+    name: 'Timeline',
+    href: '/timeline',
+    icon: Activity,
+    section: 'dashboard',
+    access: 'authenticated',
+  },
+  {
+    name: 'Analytics',
+    href: '/analytics',
+    icon: BarChart3,
+    section: 'dashboard',
+    access: 'authenticated',
+  },
+
+  // WORKSPACE: Daily Operations
+  {
+    name: 'Chat',
+    href: '/chat',
+    icon: MessageSquare,
+    section: 'workspace',
+    access: 'authenticated',
+  },
+  {
+    name: 'Workspace',
+    href: '/workspace/overview',
+    icon: Users,
+    section: 'workspace',
+    access: 'authenticated',
+  },
+  {
+    name: 'Tasks',
+    href: '/tasks',
+    icon: ClipboardList,
+    section: 'workspace',
+    access: 'authenticated',
+  },
+  {
+    name: 'Suggestions',
+    href: '/suggestions',
+    icon: Lightbulb,
     section: 'workspace',
     access: 'authenticated',
     children: [
@@ -154,142 +197,75 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
 
   // ─────────────────────────── BUILD (FORGE) ───────────────────────────
   {
-    name: 'Build',
-    href: '/agents',
-    icon: Bot,
+    name: 'AI Portal',
+    href: '/ai-portal',
+    icon: Cpu,
     section: 'forge',
     access: 'authenticated',
-    children: [
-      { name: 'Agent Fleet', href: '/agents', icon: Bot, access: 'authenticated' },
-      {
-        name: 'Agent Builder',
-        href: '/agent-builder',
-        icon: Bot,
-        access: 'authenticated',
-      },
-      {
-        name: 'Agent Onboarding',
-        href: '/agents/onboard',
-        icon: Bot,
-        access: 'authenticated',
-      },
-      { name: 'AI Portal', href: '/ai-portal', icon: Cpu, access: 'authenticated' },
-      { name: 'Agent Profiles', href: '/agents/profiles', icon: Users, access: 'authenticated' },
-      {
-        name: 'NFT Marketplace',
-        href: '/agents/nft-marketplace',
-        icon: Package,
-        access: 'authenticated',
-      },
-      {
-        name: 'Revenue Dashboard',
-        href: '/agents/revenue-dashboard',
-        icon: BarChart3,
-        access: 'authenticated',
-      },
-      { name: 'Workflows', href: '/workflows', icon: Workflow, access: 'authenticated' },
-      {
-        name: 'Workflow Builder',
-        href: '/workflows/builder',
-        icon: Workflow,
-        access: 'authenticated',
-      },
-      {
-        name: 'Advanced Builder',
-        href: '/workflows/advanced-builder',
-        icon: Workflow,
-        access: 'authenticated',
-      },
-      {
-        name: 'Workflow Templates',
-        href: '/workflows/templates',
-        icon: ScrollText,
-        access: 'authenticated',
-      },
-      {
-        name: 'Workflow Runs',
-        href: '/workflows/executions',
-        icon: Activity,
-        access: 'authenticated',
-      },
-      {
-        name: 'Execution Console',
-        href: '/workflows/console',
-        icon: Activity,
-        access: 'authenticated',
-      },
-      { name: 'Automations', href: '/automations', icon: Workflow, access: 'authenticated' },
-      { name: 'Skills', href: '/skills', icon: Zap, access: 'authenticated' },
-      { name: 'Resources', href: '/resources', icon: Library, access: 'authenticated' },
-      { name: 'Datasets', href: '/datasets', icon: Database, access: 'authenticated' },
-      { name: 'Hosting', href: '/hosting', icon: Boxes, access: 'authenticated' },
-      { name: 'PFP Studio', href: '/ai-portal/pfp-studio', icon: Bot, access: 'authenticated' },
-      {
-        name: 'Prompt Catalog',
-        href: '/ai-portal/pfp-prompts',
-        icon: ScrollText,
-        access: 'authenticated',
-      },
-    ],
+  },
+  { name: 'Agent Fleet', href: '/agents', icon: Bot, section: 'forge', access: 'authenticated' },
+  {
+    name: 'Workflows',
+    href: '/workflows',
+    icon: Workflow,
+    section: 'forge',
+    access: 'authenticated',
   },
 
-  // ─────────────────────────── KNOWLEDGE (NEXUS) ───────────────────────────
+  // NEXUS: Ecosystem & Knowledge
+  { name: 'Nexus 3D', href: '/nexus', icon: Network, section: 'nexus', access: 'authenticated' },
   {
-    name: 'Knowledge',
-    href: '/hub',
-    icon: Globe,
+    name: 'Viz Hub',
+    href: '/visualizations',
+    icon: Activity,
     section: 'nexus',
     access: 'authenticated',
-    children: [
-      { name: 'TNF Hub', href: '/hub', icon: Globe, access: 'authenticated' },
-      { name: 'Nexus 3D', href: '/nexus', icon: Network, access: 'authenticated' },
-      { name: 'Viz Hub', href: '/visualizations', icon: Activity, access: 'authenticated' },
-      { name: 'Knowledge Hub', href: '/knowledge-hub', icon: Database, access: 'authenticated' },
-      { name: 'MCP Hub', href: '/mcp-hub', icon: Boxes, access: 'authenticated' },
-      { name: 'A2A Control', href: '/a2a-control', icon: Network, access: 'authenticated' },
-      { name: 'Terminal Graph', href: '/terminal', icon: Activity, access: 'authenticated' },
-      { name: 'Docs', href: '/docs', icon: Library, access: 'public' },
-      { name: 'Marketplace', href: '/marketplace', icon: Package, access: 'public' },
-      { name: 'Community', href: '/community', icon: Users, access: 'public' },
-      {
-        name: 'Connect Extension',
-        href: '/connect',
-        icon: Plug,
-        access: 'authenticated',
-      },
-    ],
   },
-
-  // ─────────────────────────── AGENCY ───────────────────────────
+  { name: 'TNF Hub', href: '/hub', icon: Globe, section: 'nexus', access: 'authenticated' },
   {
-    name: 'Agency',
-    href: '/agency/dashboard',
-    icon: Building2,
-    section: 'apex',
+    name: 'Marketplace',
+    href: '/marketplace',
+    icon: Package,
+    section: 'nexus',
+    access: 'public',
+  },
+  {
+    name: 'Knowledge Hub',
+    href: '/knowledge-hub',
+    icon: Database,
+    section: 'nexus',
     access: 'authenticated',
-    requiredRoles: ['SUPER_ADMIN', 'AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER'],
-    children: [
-      {
-        name: 'Agency Dashboard',
-        href: '/agency/dashboard',
-        icon: LayoutDashboard,
-        access: 'authenticated',
-        requiredRoles: ['SUPER_ADMIN', 'AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER'],
-      },
-      {
-        name: 'Agency Onboarding',
-        href: '/agency/onboard',
-        icon: Rocket,
-        access: 'authenticated',
-      },
-    ],
   },
+  { name: 'MCP Hub', href: '/mcp-hub', icon: Boxes, section: 'nexus', access: 'authenticated' },
+  { name: 'Docs', href: '/docs', icon: Library, section: 'nexus', access: 'public' },
 
-  // ─────────────────────────── CONTROL CENTER (APEX) ───────────────────────────
+  // APEX: Governance & Control
   {
-    name: 'Control Center',
+    name: 'Command Core',
     href: '/command-center',
     icon: Zap,
+    section: 'apex',
+    access: 'authenticated',
+    requiredRoles: ['SUPER_ADMIN'],
+  },
+  {
+    name: 'Observatory',
+    href: '/observatory',
+    icon: Eye,
+    section: 'apex',
+    access: 'authenticated',
+  },
+  {
+    name: 'Audit Logs',
+    href: '/admin/audit-logs',
+    icon: ScrollText,
+    section: 'apex',
+    access: 'authenticated',
+  },
+  {
+    name: 'Admin',
+    href: '/admin',
+    icon: Shield,
     section: 'apex',
     access: 'authenticated',
     requiredRoles: ['SUPER_ADMIN', 'ADMIN', 'AGENCY_OWNER', 'AGENCY_ADMIN'],

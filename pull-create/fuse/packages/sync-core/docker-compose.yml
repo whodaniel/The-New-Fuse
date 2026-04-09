@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  sync-core:
+    build:
+      context: ../..
+      dockerfile: packages/sync-core/Dockerfile
+    container_name: tnf-sync-core
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+      - "9090:9090"  # Metrics port
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=redis://redis:6379
+      - WEBSOCKET_PORT=3001
+      - SYNC_BATCH_SIZE=50
+      - SYNC_TIMEOUT=30000
+      - CONFLICT_STRATEGY=latest_wins
+      - TENANT_ISOLATION=true
+      - CACHE_SIZE_MB=256
+      - MAX_CONNECTIONS=100
+      - LOG_LEVEL=info
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - tnf-network
+    volumes:
+      - sync-logs:/app/logs
+
+  redis:
+    image: redis:7-alpine
+    container_name: tnf-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - tnf-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: tnf-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-tnf}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-tnf_password}
+      - POSTGRES_DB=${POSTGRES_DB:-tnf}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - tnf-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-tnf}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Optional: Redis Commander for debugging
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: tnf-redis-commander
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - tnf-network
+    profiles:
+      - debug
+
+networks:
+  tnf-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  postgres-data:
+  sync-logs:

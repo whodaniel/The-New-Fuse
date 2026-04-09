@@ -1,12 +1,7 @@
 {
-  "generated_at": "2026-04-07",
+  "generated_at": "2026-03-03",
   "domain": "social",
   "nodes": [
-    {
-      "id": "content-calendar-orchestrator-agent",
-      "kind": "primary",
-      "cluster": "orchestration"
-    },
     {
       "id": "orchestrator-agent",
       "kind": "primary",
@@ -18,38 +13,23 @@
       "cluster": "orchestration"
     },
     {
-      "id": "algorithm-adaptation-agent",
-      "kind": "sub",
-      "cluster": "social"
-    },
-    {
-      "id": "audience-growth-agent",
+      "id": "content-calendar-orchestrator-agent",
       "kind": "primary",
-      "cluster": "social"
+      "cluster": "content"
     },
     {
-      "id": "audience-persona-architect-agent",
+      "id": "instagram-strategy-agent",
       "kind": "sub",
       "cluster": "social"
     },
     {
-      "id": "audience-segmentation-agent",
+      "id": "tiktok-strategy-agent",
       "kind": "sub",
       "cluster": "social"
     },
     {
-      "id": "community-engagement-agent",
+      "id": "x-strategy-agent",
       "kind": "sub",
-      "cluster": "social"
-    },
-    {
-      "id": "community-manager-agent",
-      "kind": "primary",
-      "cluster": "social"
-    },
-    {
-      "id": "content-repurposing-agent",
-      "kind": "primary",
       "cluster": "social"
     },
     {
@@ -58,284 +38,23 @@
       "cluster": "social"
     },
     {
-      "id": "instagram-strategy-agent",
+      "id": "audience-growth-agent",
       "kind": "sub",
-      "cluster": "social"
-    },
-    {
-      "id": "scout-llm-opportunities",
-      "kind": "sub",
-      "cluster": "social"
-    },
-    {
-      "id": "scriptwriter-agent",
-      "kind": "primary",
-      "cluster": "social"
-    },
-    {
-      "id": "social-selling-agent",
-      "kind": "sub",
-      "cluster": "social"
-    },
-    {
-      "id": "tiktok-strategy-agent",
-      "kind": "primary",
-      "cluster": "social"
-    },
-    {
-      "id": "traffic-generation-agent",
-      "kind": "primary",
-      "cluster": "social"
-    },
-    {
-      "id": "x-strategy-agent",
-      "kind": "primary",
       "cluster": "social"
     }
   ],
   "edges": [
     {
-      "source": "audience-growth-agent",
-      "target": "community-engagement-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "audience-growth-agent",
-      "target": "community-manager-agent",
-      "type": "fallback",
-      "strength": 0.73,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "audience-growth-agent",
-      "target": "facebook-strategy-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "community-engagement-agent",
-      "target": "algorithm-adaptation-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "community-engagement-agent",
-      "target": "community-manager-agent",
-      "type": "fallback",
-      "strength": 0.73,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "community-engagement-agent",
-      "target": "instagram-strategy-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "community-manager-agent",
-      "target": "social-selling-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "community-manager-agent",
-      "target": "traffic-generation-agent",
-      "type": "fallback",
-      "strength": 0.64,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "content-repurposing-agent",
-      "target": "scriptwriter-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "content-repurposing-agent",
-      "target": "tiktok-strategy-agent",
-      "type": "fallback",
-      "strength": 0.71,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "facebook-strategy-agent",
-      "target": "instagram-strategy-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "facebook-strategy-agent",
-      "target": "social-selling-agent",
-      "type": "fallback",
-      "strength": 0.81,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "facebook-strategy-agent",
-      "target": "tiktok-strategy-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "instagram-strategy-agent",
-      "target": "community-manager-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "instagram-strategy-agent",
-      "target": "tiktok-strategy-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "instagram-strategy-agent",
-      "target": "x-strategy-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "orchestrator-agent",
-      "target": "content-calendar-orchestrator-agent",
-      "type": "delegates",
-      "strength": 0.86,
-      "origin": "seed"
-    },
-    {
-      "source": "orchestrator-agent",
-      "target": "content-calendar-orchestrator-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
       "source": "orchestrator-agent",
       "target": "task-agent-router",
       "type": "delegates",
-      "strength": 0.98,
-      "origin": "seed"
-    },
-    {
-      "source": "scout-llm-opportunities",
-      "target": "social-selling-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "scriptwriter-agent",
-      "target": "tiktok-strategy-agent",
-      "type": "fallback",
-      "strength": 0.64,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "task-agent-router",
-      "target": "audience-segmentation-agent",
-      "type": "delegates",
-      "strength": 0.57,
-      "origin": "seed",
-      "risk": "routing_backstop"
-    },
-    {
-      "source": "task-agent-router",
-      "target": "community-engagement-agent",
-      "type": "delegates",
-      "strength": 0.57,
-      "origin": "seed",
-      "risk": "routing_backstop"
-    },
-    {
-      "source": "task-agent-router",
-      "target": "community-manager-agent",
-      "type": "delegates",
-      "strength": 0.82,
-      "origin": "seed"
+      "strength": 0.98
     },
     {
       "source": "task-agent-router",
       "target": "content-calendar-orchestrator-agent",
       "type": "routes_to",
-      "strength": 0.8,
-      "origin": "seed"
-    },
-    {
-      "source": "task-agent-router",
-      "target": "content-repurposing-agent",
-      "type": "delegates",
-      "strength": 0.82,
-      "origin": "seed"
-    },
-    {
-      "source": "tiktok-strategy-agent",
-      "target": "x-strategy-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "traffic-generation-agent",
-      "target": "content-repurposing-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "traffic-generation-agent",
-      "target": "scriptwriter-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
-    },
-    {
-      "source": "traffic-generation-agent",
-      "target": "x-strategy-agent",
-      "type": "fallback",
-      "strength": 0.68,
-      "origin": "seed",
-      "risk": "capability_overlap"
-    },
-    {
-      "source": "x-strategy-agent",
-      "target": "audience-growth-agent",
-      "type": "fallback",
-      "strength": 0.58,
-      "origin": "seed",
-      "risk": "intra_cluster_fallback"
+      "strength": 0.80
     }
   ]
 }

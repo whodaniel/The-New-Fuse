@@ -1136,22 +1136,6 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
       entries: [
         { path: 'tnf onboard', description: 'Run TNF frontload onboarding' },
         { path: 'tnf doctor', description: 'Run TNF diagnostics' },
-        { path: 'tnf voice start', description: 'Start Voice Bridge server + injection bridge' },
-        {
-          path: 'tnf voice up',
-          description: 'Start profile-scoped Voice Bridge background runtime',
-        },
-        {
-          path: 'tnf voice down',
-          description: 'Stop profile-scoped Voice Bridge background runtime',
-        },
-        { path: 'tnf voice relay', description: 'Relay transcribed text between voice profiles' },
-        { path: 'tnf voice listen', description: 'Start microphone transcription loop' },
-        {
-          path: 'tnf voice activate',
-          description: 'Auto-heal and activate local Voice Bridge daemons',
-        },
-        { path: 'tnf voice status', description: 'Show local Voice Bridge status' },
         { path: 'tnf scripts list', description: 'List runnable scripts and package commands' },
         {
           path: 'tnf scripts run <target> [args...]',
@@ -1309,10 +1293,6 @@ function normalizeForwardedArgs(args: string[] = []): string[] {
 
 async function runOpenClawPassthrough(args: string[] = []): Promise<void> {
   await runCommand('openclaw', normalizeForwardedArgs(args));
-}
-
-async function runHermesPassthrough(args: string[] = []): Promise<void> {
-  await runCommand('hermes', normalizeForwardedArgs(args));
 }
 
 async function runOpenClawControl(args: string[] = []): Promise<void> {
@@ -1665,20 +1645,6 @@ program
   .command('claw')
   .description('Alias for `tnf openclaw`')
   .argument('[args...]', 'Arguments forwarded to openclaw');
-
-program
-  .command('hermes')
-  .description('Pass through any Hermes Agent CLI command')
-  .argument('[args...]', 'Arguments forwarded to hermes')
-  .allowUnknownOption()
-  .action(runHermesPassthrough);
-
-program
-  .command('hrms')
-  .description('Alias for `tnf hermes`')
-  .argument('[args...]', 'Arguments forwarded to hermes')
-  .allowUnknownOption()
-  .action(runHermesPassthrough);
 
 const relay = program.command('relay').description('Relay operations');
 relay
@@ -3848,6 +3814,214 @@ agents
   });
 
 program
+  .command('menu')
+  .description('Show an organized TNF command menu')
+  .option('--theme <theme>', `Splash theme: ${SPLASH_THEMES.join('|')}`)
+  .option('--animate <mode>', 'Splash animation mode: auto|on|off')
+  .option('--speed <ms>', 'Splash animation speed in milliseconds')
+  .option('--compact', 'Use compact splash layout')
+  .option('--no-splash', 'Disable splash graphic')
+  .option('--full', 'Include expanded command inventory')
+  .option('--json', 'Output machine-readable JSON')
+  .action(
+    async (options: {
+      json?: boolean;
+      splash?: boolean;
+      theme?: string;
+      animate?: string;
+      speed?: string;
+      compact?: boolean;
+      full?: boolean;
+    }) => {
+      try {
+        const sections = buildCommandMenuSections({ full: options.full });
+        if (options.json) {
+          console.log(JSON.stringify(sections, null, 2));
+          return;
+        }
+
+        const speedMs = options.speed ? Number.parseInt(options.speed, 10) : undefined;
+        const compact = options.compact ?? shouldAutoCompactMenuSplash();
+        await printCommandMenu({
+          showSplash: options.splash,
+          splash: {
+            theme: coerceSplashTheme(options.theme),
+            animate: parseAnimateMode(options.animate),
+            speedMs: Number.isFinite(speedMs) ? speedMs : undefined,
+            compact,
+          },
+          full: options.full,
+        });
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+program
+  .command('splash')
+  .description('Render TNF branded splash only')
+  .option('--theme <theme>', `Splash theme: ${SPLASH_THEMES.join('|')}`)
+  .option('--animate <mode>', 'Splash animation mode: auto|on|off')
+  .option('--speed <ms>', 'Splash animation speed in milliseconds')
+  .option('--compact', 'Use compact splash layout')
+  .action(
+    async (options: { theme?: string; animate?: string; speed?: string; compact?: boolean }) => {
+      try {
+        const speedMs = options.speed ? Number.parseInt(options.speed, 10) : undefined;
+        await renderSplash({
+          theme: coerceSplashTheme(options.theme),
+          animate: parseAnimateMode(options.animate),
+          speedMs: Number.isFinite(speedMs) ? speedMs : undefined,
+          compact: options.compact,
+        });
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
+
+program
+  .command('paths')
+  .description('List all command paths in the TNF CLI')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const paths = collectCommandPaths(program).sort((a, b) => a.path.localeCompare(b.path));
+      if (options.json) {
+        console.log(JSON.stringify(paths, null, 2));
+        return;
+      }
+
+      console.log(chalk.bold('\nTNF Command Paths\n'));
+      for (const entry of paths) {
+        const paddedPath = entry.path.padEnd(52, ' ');
+        console.log(`  ${chalk.green(paddedPath)} ${chalk.dim(entry.description)}`);
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const types = program.command('types').description('Command namespace and script type inventory');
+types
+  .command('list')
+  .description('List TNF command namespaces and root script namespaces')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const typeIndex = buildTypeIndex();
+      if (options.json) {
+        console.log(JSON.stringify(typeIndex, null, 2));
+        return;
+      }
+
+      console.log(chalk.bold('\nTNF Types\n'));
+      console.log(chalk.cyan('CLI namespaces:'));
+      for (const namespace of typeIndex.cliNamespaces) {
+        console.log(`  - ${chalk.green(namespace)}`);
+      }
+
+      console.log(`\n${chalk.cyan('Root script namespaces:')}`);
+      for (const [namespace, count] of Object.entries(typeIndex.scriptNamespaces).sort(([a], [b]) =>
+        a.localeCompare(b)
+      )) {
+        console.log(`  - ${chalk.green(namespace)} ${chalk.dim(`(${count} scripts)`)}`);
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const traits = program.command('traits').description('Role/platform and command behavior traits');
+traits
+  .command('list')
+  .description('List TNF traits for agents and command families')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const groups = buildTraitGroups();
+      if (options.json) {
+        console.log(JSON.stringify(groups, null, 2));
+        return;
+      }
+
+      console.log(chalk.bold('\nTNF Traits\n'));
+      for (const group of groups) {
+        console.log(chalk.cyan(`${group.name}:`));
+        for (const value of group.values) {
+          console.log(`  - ${chalk.green(value)}`);
+        }
+        console.log('');
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const agents = program.command('agents').description('Agent-focused command paths');
+agents
+  .command('list')
+  .description('Alias for `tnf list`')
+  .action(async () => runSelfCliWithExit(['list']));
+agents
+  .command('register')
+  .description('Alias for `tnf register`')
+  .argument('[name]', 'Agent name')
+  .argument('[role]', 'Agent role')
+  .argument('[platform]', 'Agent platform')
+  .option('-d, --daemon', 'Run in daemon mode (register and exit immediately)', false)
+  .action(
+    async (name?: string, role?: string, platform?: string, options: { daemon?: boolean } = {}) => {
+      const args = ['register'];
+      if (name) args.push(name);
+      if (role) args.push(role);
+      if (platform) args.push(platform);
+      if (options.daemon) args.push('--daemon');
+      await runSelfCliWithExit(args);
+    }
+  );
+agents
+  .command('send')
+  .description('Alias for `tnf send`')
+  .argument('<message>', 'Message to send')
+  .option('-t, --to <agentId>', 'Recipient agent ID')
+  .option('-n, --name <name>', 'Sender name')
+  .action(async (message: string, options: { to?: string; name?: string } = {}) => {
+    const args = ['send', message];
+    if (options.to) args.push('--to', options.to);
+    if (options.name) args.push('--name', options.name);
+    await runSelfCliWithExit(args);
+  });
+agents
+  .command('orchestrate')
+  .description('Alias for `tnf orchestrate`')
+  .argument('<workflow>', 'Workflow name')
+  .option('-p, --path <path>', 'Target path for code-review')
+  .action(async (workflow: string, options: { path?: string } = {}) => {
+    const args = ['orchestrate', workflow];
+    if (options.path) args.push('--path', options.path);
+    await runSelfCliWithExit(args);
+  });
+agents
+  .command('convo')
+  .description('Alias for `tnf convo`')
+  .argument('<action>', 'Action (start|join)')
+  .argument('[param]', 'Topic for start or ID for join')
+  .action(async (action: string, param?: string) => {
+    const args = ['convo', action];
+    if (param) args.push(param);
+    await runSelfCliWithExit(args);
+  });
+
+program
   .command('list')
   .description('List all registered agents')
   .action(async () => {
@@ -4244,50 +4418,6 @@ async function main(): Promise<void> {
   }
   await program.parseAsync(process.argv);
 }
-
-program
-  .command('orchestrate [script]')
-  .description('Run an orchestration script from the registry')
-  .action(async (scriptName) => {
-    const registryDir = path.join(repoRoot, 'scripts/registry/orchestrator');
-    if (!scriptName) {
-      console.log(chalk.bold('\nAvailable Orchestration Scripts:'));
-      if (fs.existsSync(registryDir)) {
-        fs.readdirSync(registryDir).forEach((file) => {
-          if (file.endsWith('.js')) console.log(`- ${file.replace('.js', '')}`);
-        });
-      }
-      return;
-    }
-    const scriptPath = path.join(registryDir, `${scriptName}.js`);
-    if (fs.existsSync(scriptPath)) {
-      await runCommand('node', [scriptPath]);
-    } else {
-      console.error(chalk.red(`Script not found: ${scriptName}`));
-    }
-  });
-
-program
-  .command('diag [script]')
-  .description('Run a diagnostic script from the registry')
-  .action(async (scriptName) => {
-    const registryDir = path.join(repoRoot, 'scripts/registry/diagnostics');
-    if (!scriptName) {
-      console.log(chalk.bold('\nAvailable Diagnostic Scripts:'));
-      if (fs.existsSync(registryDir)) {
-        fs.readdirSync(registryDir).forEach((file) => {
-          if (file.endsWith('.js')) console.log(`- ${file.replace('.js', '')}`);
-        });
-      }
-      return;
-    }
-    const scriptPath = path.join(registryDir, `${scriptName}.js`);
-    if (fs.existsSync(scriptPath)) {
-      await runCommand('node', [scriptPath]);
-    } else {
-      console.error(chalk.red(`Script not found: ${scriptName}`));
-    }
-  });
 
 main().catch((err: Error) => {
   console.error(chalk.red(`Error: ${err.message}`));

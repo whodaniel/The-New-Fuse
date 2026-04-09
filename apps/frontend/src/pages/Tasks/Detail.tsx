@@ -1,5 +1,3 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -30,8 +28,6 @@ import { ChevronLeft, MessageSquare } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
-
-type LogPreset = 'all' | 'errors' | 'router' | 'dispatch' | 'worker_execution' | 'custom';
 
 const TaskDetail: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
@@ -89,21 +85,22 @@ const TaskDetail: React.FC = () => {
 
   const load = async () => {
     try {
-      const [task, events, allGoals, allPlans, connections, execution] = await Promise.all([
-        getTask(id),
-        listTimelineEvents({ recordId: id }),
-        listGoals(),
-        listPlans(),
-        getRecordConnections(id),
-        listTaskExecutionLogs(id),
-      ]);
+      const [task, events, allGoals, allPlans, connections, executionLogResponse] =
+        await Promise.all([
+          getTask(id),
+          listTimelineEvents({ recordId: id }),
+          listGoals(owner),
+          listPlans(owner),
+          getRecordConnections(id, owner),
+          getTaskExecutionLogs(id).catch(() => ({ taskId: id, logs: [], count: 0 })),
+        ]);
       setRow(task);
       setTimeline(events);
       setGoals(allGoals);
       setPlans(allPlans);
       setConnectedGoals(connections.goals || []);
       setConnectedPlans(connections.plans || []);
-      setExecutionLogs(execution.logs || []);
+      setExecutionLogs(executionLogResponse.logs || []);
     } catch {
       toast.error('Failed to load task');
     }
@@ -159,14 +156,18 @@ const TaskDetail: React.FC = () => {
     if (!note.trim()) return;
     try {
       await appendTaskExecutionLog(id, {
-        message: note,
-        actor: 'ui-user',
-        source: 'task-detail',
         level: 'info',
+        message: note,
+        actor: owner,
+        source: 'task-detail-ui',
+        stage: 'note_capture',
+        metadata: {
+          panel: 'task_detail',
+        },
       });
       setNote('');
       await load();
-      toast.success('Note added to execution log');
+      toast.success('Note saved to execution log');
     } catch {
       toast.error('Failed to save note');
     }
@@ -483,108 +484,7 @@ const TaskDetail: React.FC = () => {
         </div>
       </Card>
 
-      <Card className="p-6 mt-6">
-        <h3 className="text-lg font-semibold mb-3">Execution Logs</h3>
-        <div className="flex flex-wrap gap-2 mb-3">
-          <Button
-            size="sm"
-            variant={activeLogPreset === 'all' ? 'default' : 'outline'}
-            onClick={() => applyLogPreset('all')}
-          >
-            All
-          </Button>
-          <Button
-            size="sm"
-            variant={activeLogPreset === 'errors' ? 'default' : 'outline'}
-            onClick={() => applyLogPreset('errors')}
-          >
-            Errors Only
-          </Button>
-          <Button
-            size="sm"
-            variant={activeLogPreset === 'router' ? 'default' : 'outline'}
-            onClick={() => applyLogPreset('router')}
-          >
-            Router Events
-          </Button>
-          <Button
-            size="sm"
-            variant={activeLogPreset === 'dispatch' ? 'default' : 'outline'}
-            onClick={() => applyLogPreset('dispatch')}
-          >
-            Dispatch Stage
-          </Button>
-          <Button
-            size="sm"
-            variant={activeLogPreset === 'worker_execution' ? 'default' : 'outline'}
-            onClick={() => applyLogPreset('worker_execution')}
-          >
-            Worker Execution
-          </Button>
-          {activeLogPreset === 'custom' ? <Badge variant="outline">Custom</Badge> : null}
-        </div>
-        <div className="grid md:grid-cols-4 gap-2 mb-3">
-          <select
-            className="h-10 w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
-            value={logLevelFilter}
-            onChange={(e) => onChangeLogLevelFilter(e.target.value as 'all' | 'info' | 'warn' | 'error')}
-          >
-            <option value="all">All levels</option>
-            <option value="info">Info</option>
-            <option value="warn">Warn</option>
-            <option value="error">Error</option>
-          </select>
-          <select
-            className="h-10 w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
-            value={logSourceFilter}
-            onChange={(e) => onChangeLogSourceFilter(e.target.value)}
-          >
-            <option value="all">All sources</option>
-            {availableSources.map((source) => (
-              <option key={source} value={source}>
-                {source}
-              </option>
-            ))}
-          </select>
-          <select
-            className="h-10 w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
-            value={logStageFilter}
-            onChange={(e) => onChangeLogStageFilter(e.target.value)}
-          >
-            <option value="all">All stages</option>
-            {availableStages.map((stage) => (
-              <option key={stage} value={stage}>
-                {stage}
-              </option>
-            ))}
-          </select>
-          <Input
-            value={logQuery}
-            onChange={(e) => onChangeLogQuery(e.target.value)}
-            placeholder="Search logs"
-          />
-        </div>
-        <div className="space-y-2 max-h-80 overflow-auto">
-          {filteredExecutionLogs.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No execution logs yet.</p>
-          ) : null}
-          {filteredExecutionLogs.map((log) => (
-            <div key={log.id} className="border rounded p-2 text-sm">
-              <div className="flex justify-between gap-2">
-                <span className="font-medium">
-                  {log.level.toUpperCase()} • {log.source}
-                  {log.stage ? ` • ${log.stage}` : ''}
-                </span>
-                <span className="text-muted-foreground">{new Date(log.timestamp).toLocaleString()}</span>
-              </div>
-              <div className="text-muted-foreground">actor: {log.actor}</div>
-              <div>{log.message}</div>
-            </div>
-          ))}
-        </div>
-      </Card>
-
-      <Card className="p-6 mt-6">
+      <Card className="p-4 mt-6">
         <h3 className="text-lg font-semibold mb-3">Timeline</h3>
         <div className="space-y-2 max-h-80 overflow-auto">
           {timeline.length === 0 ? (

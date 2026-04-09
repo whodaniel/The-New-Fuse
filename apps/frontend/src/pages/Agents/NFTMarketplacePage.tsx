@@ -382,9 +382,9 @@ export const NFTMarketplacePage: React.FC<NFTMarketplacePageProps> = () => {
         </div>
       )}
 
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="relative container mx-auto px-4 sm:px-3 lg:px-8 py-8">
         {statsError && (
-          <div className="mb-6 rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <div className="mb-6 rounded border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800">
             {statsError}
           </div>
         )}

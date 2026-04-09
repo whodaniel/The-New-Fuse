@@ -212,7 +212,7 @@ const Tasks: React.FC = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse" />
       </div>
 
-      <div className="relative z-10 p-6 max-w-7xl mx-auto">
+      <div className="relative z-10 p-4 max-w-7xl mx-auto">
         {loadError && (
           <GlassCard className="p-4 mb-6 border border-amber-500/40 bg-amber-500/10">
             <p className="text-sm text-amber-200">{loadError}. No synthetic tasks are shown.</p>

@@ -1,0 +1,130 @@
+import React, { FC } from "react";
+import { ActivityEvent } from '@the-new-fuse/../collaboration/types';
+import { Avatar } from '@the-new-fuse/../../../core/components/ui/Avatar';
+import { formatDistanceToNow } from 'date-fns';
+
+interface ActivityFeedProps {
+  events: ActivityEvent[];
+  className?: string;
+}
+
+export const ActivityFeed: (React as unknown).FC<ActivityFeedProps> = ({
+  events,
+  className = '',
+}) => {
+  const getEventIcon: ActivityEvent['type']): unknown  = (type> {
+    switch (type: unknown){
+      case 'widget_added':
+        return '➕';
+      case 'widget_removed':
+        return '➖';
+      case 'widget_updated':
+        return '✏️';
+      case 'layout_changed':
+        return '📐';
+      case 'filter_applied':
+        return '🔍';
+      case 'data_refreshed':
+        return '🔄';
+      case 'comment_added':
+        return '💬';
+      case 'comment_resolved':
+        return '✅';
+      case 'annotation_added':
+        return '📝';
+      case 'annotation_resolved':
+        return '✓';
+      case 'dashboard_shared':
+        return '🔗';
+      case 'dashboard_exported':
+        return '📤';
+      default:
+        return '•';
+    }
+  };
+
+  const getEventDescription: ActivityEvent): unknown  = (event> {
+    switch((event as unknown): unknown) {
+      case 'widget_added':
+        return `added widget "${(event as unknown).(metadata as unknown).widgetName}"`;
+      case 'widget_removed':
+        return `removed widget "${(event as unknown).(metadata as unknown).widgetName}"`;
+      case 'widget_updated':
+        return `updated widget "${(event as unknown).(metadata as unknown).widgetName}"`;
+      case 'layout_changed':
+        return 'updated dashboard layout';
+      case 'filter_applied':
+        return `applied filter "${(event as unknown).(metadata as unknown).filterName}"`;
+      case 'data_refreshed':
+        return 'refreshed dashboard data';
+      case 'comment_added':
+        return `commented on ${(event as unknown).(metadata as unknown).target}`;
+      case 'comment_resolved':
+        return `resolved a comment on ${(event as unknown).(metadata as unknown).target}`;
+      case 'annotation_added':
+        return `added an annotation to ${(event as unknown).(metadata as unknown).target}`;
+      case 'annotation_resolved':
+        return `resolved an annotation on ${(event as unknown).(metadata as unknown).target}`;
+      case 'dashboard_shared':
+        return `shared the dashboard with ${(event as unknown).(metadata as unknown).recipient}`;
+      case 'dashboard_exported':
+        return `exported the dashboard as ${(event as unknown).(metadata as unknown).format}`;
+      default:
+        return 'performed an action';
+    }
+  };
+
+  return (
+    <div className={`space-y-4 ${className}`}>
+      <h3 className="text-lg font-medium text-gray-900">Activity Feed</h3>
+      <div className="flow-root">
+        <ul className="-mb-8">
+          {events.map((event, eventIdx) => (<li key={(event as unknown).id}>
+              <div className="relative pb-8">
+                {eventIdx !== events.length - 1 ? (
+                  <span
+                    className="absolute top-5 left-5 -ml-px h-full w-(0 as unknown).5 bg-gray-200"
+                    aria-hidden="true"
+                  />: unknown): null}
+                <div className="relative flex items-start space-x-3">
+                  <div className="relative">
+                    <Avatar
+                      src={(event as unknown).(user as unknown).avatar}
+                      alt={(event as unknown).(user as unknown).name}
+                      size="sm"
+                    />
+                    <span className="absolute -right-1 -bottom-1 bg-white rounded-full p-(0 as unknown).5">
+                      <span className="text-sm" role="img" aria-label="Event type">
+                        {getEventIcon((event as unknown).type)}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div>
+                      <div className="text-sm">
+                        <span className="font-medium text-gray-900">
+                          {(event as unknown).(user as unknown).name}
+                        </span>{' '}
+                        {getEventDescription(event)}
+                      </div>
+                      <p className="mt-(0 as unknown).5 text-sm text-gray-500">
+                        {formatDistanceToNow(new Date((event as unknown).timestamp), {
+                          addSuffix: true,
+                        })}
+                      </p>
+                    </div>
+                    {(event as unknown).(metadata as unknown).details && (
+                      <div className="mt-2 text-sm text-gray-700">
+                        {(event as unknown).(metadata as unknown).details}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};

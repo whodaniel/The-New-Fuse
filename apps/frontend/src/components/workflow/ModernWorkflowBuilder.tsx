@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { useMcpTools } from '@/hooks/useMcpTools';
 import React, { useCallback, useRef, useState } from 'react';
 import ReactFlow, {
   addEdge,
@@ -17,19 +18,345 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import './ModernWorkflowBuilder.css';
 
-// Import standardized node components
-import {
-  A2ANode,
-  AgentNode,
-  ConditionNode,
-  InputNode,
-  LoopNode,
-  MCPToolNode,
-  NotificationNode,
-  OutputNode,
-  SubworkflowNode,
-  TransformNode,
-} from './nodes';
+// Custom Node Components
+const AgentNode = ({ data }: { data: any }) => (
+  <div className="agent-node relative">
+    <StatusDecorator status={data.status} />
+    <div className="node-header">
+      <div className="node-icon">🤖</div>
+      <div className="node-title">{data.label}</div>
+    </div>
+    <div className="node-content">
+      <div className="node-field">
+        <label>Agent Type:</label>
+        <select
+          value={data.agentType || 'claude'}
+          onChange={(e) => data.onChange?.('agentType', e.target.value)}
+        >
+          <option value="claude">Claude AI</option>
+          <option value="gemini">Gemini</option>
+          <option value="chatgpt">ChatGPT</option>
+          <option value="perplexity">Perplexity</option>
+        </select>
+      </div>
+      <div className="node-field">
+        <label>Prompt:</label>
+        <textarea
+          value={data.prompt || ''}
+          onChange={(e) => data.onChange?.('prompt', e.target.value)}
+          placeholder="Enter your prompt here..."
+        />
+      </div>
+    </div>
+  </div>
+);
+
+const MCPToolNode = ({ data }: { data: any }) => {
+  const { servers, loading, source, setSource, resetSource } = useMcpTools();
+  const selectedServer = servers.find((server) => server.name === data.mcpServer);
+  const tools = selectedServer?.tools || [];
+  const registryBadge = selectedServer?.metadata?.source === 'registry';
+  const serverSchema = selectedServer?.metadata?.configurationSchema;
+  const serverConfigProperties = serverSchema?.properties || {};
+
+  const parseServerConfig = () => {
+    if (!data?.serverConfig) return {};
+    if (typeof data.serverConfig === 'string') {
+      try {
+        return JSON.parse(data.serverConfig);
+      } catch {
+        return {};
+      }
+    }
+    return data.serverConfig;
+  };
+
+  const serverConfigValues = parseServerConfig();
+
+  const buildConfigDefaults = (schema: any, existing: Record<string, any>) => {
+    const properties = schema?.properties || {};
+    const defaults: Record<string, any> = { ...existing };
+
+    Object.entries(properties).forEach(([key, config]: [string, any]) => {
+      if (defaults[key] !== undefined) return;
+      if (config?.default !== undefined) {
+        defaults[key] = config.default;
+        return;
+      }
+      switch (config?.type) {
+        case 'number':
+          defaults[key] = 0;
+          break;
+        case 'boolean':
+          defaults[key] = false;
+          break;
+        case 'object':
+          defaults[key] = {};
+          break;
+        case 'array':
+          defaults[key] = [];
+          break;
+        default:
+          defaults[key] = '';
+      }
+    });
+
+    return defaults;
+  };
+
+  const handleServerConfigChange = (paramName: string, value: any) => {
+    const nextConfig = {
+      ...serverConfigValues,
+      [paramName]: value,
+    };
+    data.onChange?.('serverConfig', nextConfig as any);
+  };
+
+  return (
+    <div className="mcp-node relative">
+      <StatusDecorator status={data.status} />
+      <div className="node-header">
+        <div className="node-icon">🔧</div>
+        <div className="node-title">{data.label}</div>
+      </div>
+      <div className="node-content">
+        <div className="node-field">
+          <label className="flex items-center justify-between">
+            Server Source
+            <button
+              type="button"
+              onClick={() => resetSource()}
+              className="text-[10px] text-slate-400 hover:text-slate-200 transition-colors"
+            >
+              Reset
+            </button>
+          </label>
+          <div className="flex gap-2 mt-1">
+            <button
+              type="button"
+              className={`flex-1 px-2 py-1 text-xs rounded ${source === 'tnf' ? 'bg-blue-600 text-white' : 'bg-slate-700/50 text-slate-300 border border-slate-600'}`}
+              onClick={() => setSource('tnf' as any)}
+              disabled={loading}
+            >
+              TNF Curated
+            </button>
+            <button
+              type="button"
+              className={`flex-1 px-2 py-1 text-xs rounded ${source === 'registry' ? 'bg-blue-600 text-white' : 'bg-slate-700/50 text-slate-300 border border-slate-600'}`}
+              onClick={() => setSource('registry' as any)}
+              disabled={loading}
+            >
+              Official Registry
+            </button>
+          </div>
+        </div>
+
+        <div className="node-field">
+          <label>MCP Server:</label>
+          <select
+            value={data.mcpServer || ''}
+            onChange={(e) => {
+              const nextServer = e.target.value;
+              data.onChange?.('mcpServer', nextServer);
+              const nextSchema = servers.find((server) => server.name === nextServer)?.metadata
+                ?.configurationSchema;
+              const defaults = nextSchema?.properties ? buildConfigDefaults(nextSchema, {}) : {};
+              data.onChange?.('serverConfig', defaults as any);
+            }}
+            disabled={loading}
+          >
+            <option value="">Select a server...</option>
+            {servers.map((server) => (
+              <option key={server.id} value={server.name}>
+                {server.name}
+              </option>
+            ))}
+          </select>
+          {registryBadge && (
+            <div className="mt-2 inline-flex items-center gap-1 rounded-full border border-blue-500/40 bg-blue-500/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-blue-200">
+              Official Registry
+            </div>
+          )}
+        </div>
+
+        {selectedServer && tools.length === 0 && (
+          <div className="text-[11px] text-amber-200 bg-amber-500/10 p-2 rounded border border-amber-500/30">
+            This server does not expose tools in the registry listing yet.
+          </div>
+        )}
+
+        {Object.keys(serverConfigProperties).length > 0 && (
+          <div className="node-field">
+            <label>Server Configuration:</label>
+            <div className="space-y-2 mt-2">
+              {Object.entries(serverConfigProperties).map(
+                ([paramName, paramConfig]: [string, any]) => {
+                  const isRequired = serverSchema?.required?.includes(paramName);
+                  const isSecret = Boolean(paramConfig?.['x-secret']);
+                  const isEnum = Array.isArray(paramConfig?.enum) && paramConfig.enum.length > 0;
+                  const value = serverConfigValues[paramName];
+                  const isEmpty = value === undefined || value === '' || value === null;
+
+                  if (isEnum) {
+                    return (
+                      <label key={paramName} className="block text-xs text-slate-300">
+                        {paramName} {isRequired && <span className="text-red-400">*</span>}
+                        <select
+                          className="mt-1 w-full"
+                          value={serverConfigValues[paramName] ?? ''}
+                          onChange={(e) => handleServerConfigChange(paramName, e.target.value)}
+                        >
+                          <option value="">Select...</option>
+                          {paramConfig.enum.map((option: string) => (
+                            <option key={option} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                        {isRequired && isEmpty && (
+                          <div className="text-[10px] text-amber-400 mt-1">
+                            ⚠️ Required configuration
+                          </div>
+                        )}
+                      </label>
+                    );
+                  }
+
+                  if (paramConfig?.type === 'boolean') {
+                    return (
+                      <label
+                        key={paramName}
+                        className="flex items-center gap-2 text-xs text-slate-300"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={Boolean(serverConfigValues[paramName])}
+                          onChange={(e) => handleServerConfigChange(paramName, e.target.checked)}
+                        />
+                        {paramName} {isRequired && <span className="text-red-400">*</span>}
+                      </label>
+                    );
+                  }
+
+                  if (paramConfig?.type === 'object' || paramConfig?.type === 'array') {
+                    return (
+                      <label key={paramName} className="block text-xs text-slate-300">
+                        {paramName} {isRequired && <span className="text-red-400">*</span>}
+                        <textarea
+                          className="mt-1 w-full"
+                          rows={3}
+                          value={
+                            typeof serverConfigValues[paramName] === 'string'
+                              ? serverConfigValues[paramName]
+                              : JSON.stringify(serverConfigValues[paramName] ?? '', null, 2)
+                          }
+                          onChange={(e) => {
+                            try {
+                              handleServerConfigChange(paramName, JSON.parse(e.target.value));
+                            } catch {
+                              handleServerConfigChange(paramName, e.target.value);
+                            }
+                          }}
+                          placeholder={paramConfig?.description || paramName}
+                        />
+                        {isRequired && isEmpty && (
+                          <div className="text-[10px] text-amber-400 mt-1">
+                            ⚠️ Required configuration
+                          </div>
+                        )}
+                      </label>
+                    );
+                  }
+
+                  return (
+                    <label key={paramName} className="block text-xs text-slate-300">
+                      {paramName} {isRequired && <span className="text-red-400">*</span>}
+                      <input
+                        className="mt-1 w-full"
+                        type={
+                          isSecret ? 'password' : paramConfig?.type === 'number' ? 'number' : 'text'
+                        }
+                        value={serverConfigValues[paramName] ?? ''}
+                        onChange={(e) =>
+                          handleServerConfigChange(
+                            paramName,
+                            paramConfig?.type === 'number' ? Number(e.target.value) : e.target.value
+                          )
+                        }
+                        placeholder={paramConfig?.description || paramName}
+                      />
+                      {isRequired && isEmpty && (
+                        <div className="text-[10px] text-amber-400 mt-1">
+                          ⚠️ Required configuration
+                        </div>
+                      )}
+                    </label>
+                  );
+                }
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="node-field">
+          <label>Tool:</label>
+          <select
+            value={data.tool || ''}
+            onChange={(e) => data.onChange?.('tool', e.target.value)}
+            disabled={loading || !selectedServer}
+          >
+            <option value="">Select a tool...</option>
+            {tools.map((tool) => (
+              <option key={tool.id || tool.name} value={tool.name}>
+                {tool.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="node-field">
+          <label>Parameters:</label>
+          <textarea
+            value={data.parameters || ''}
+            onChange={(e) => data.onChange?.('parameters', e.target.value)}
+            placeholder="Enter parameters as JSON..."
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const FlowControlNode = ({ data }: { data: any }) => (
+  <div className="flow-node">
+    <div className="node-header">
+      <div className="node-icon">⚡</div>
+      <div className="node-title">{data.label}</div>
+    </div>
+    <div className="node-content">
+      <div className="node-field">
+        <label>Type:</label>
+        <select
+          value={data.type || 'condition'}
+          onChange={(e) => data.onChange?.('type', e.target.value)}
+        >
+          <option value="condition">Condition</option>
+          <option value="loop">Loop</option>
+          <option value="delay">Delay</option>
+          <option value="parallel">Parallel</option>
+        </select>
+      </div>
+      <div className="node-field">
+        <label>Configuration:</label>
+        <textarea
+          value={data.config || ''}
+          onChange={(e) => data.onChange?.('config', e.target.value)}
+          placeholder="Enter configuration..."
+        />
+      </div>
+    </div>
+  </div>
+);
 
 const nodeTypes = {
   agent: AgentNode,
@@ -149,7 +476,7 @@ const WorkflowBuilderContent = () => {
         position,
         data: {
           label: `${type.charAt(0).toUpperCase() + type.slice(1)} Node`,
-          onUpdate: (updates: any) => {
+          onChange: (field: string, value: any) => {
             setNodes((nds) =>
               nds.map((node) =>
                 node.id === newNode.id ? { ...node, data: { ...node.data, ...updates } } : node
@@ -227,8 +554,162 @@ const WorkflowBuilderContent = () => {
   };
 
   const loadTemplate = (templateName: string) => {
-    // Template loading logic preserved and updated for new onUpdate callback
-    // (Simplified for brevity here, actual implementation would map templates to new node schema)
+    const templates = {
+      'ai-research': {
+        nodes: [
+          { id: 'start', type: 'input', position: { x: 100, y: 100 }, data: { label: '🚀 Start' } },
+          {
+            id: 'research',
+            type: 'agent',
+            position: { x: 300, y: 100 },
+            data: {
+              label: 'Research Agent',
+              agentType: 'perplexity',
+              prompt: 'Research the given topic and provide comprehensive information',
+            },
+          },
+          {
+            id: 'analyze',
+            type: 'agent',
+            position: { x: 500, y: 100 },
+            data: {
+              label: 'Analysis Agent',
+              agentType: 'claude',
+              prompt: 'Analyze the research data and extract key insights',
+            },
+          },
+          {
+            id: 'report',
+            type: 'agent',
+            position: { x: 700, y: 100 },
+            data: {
+              label: 'Report Generator',
+              agentType: 'chatgpt',
+              prompt: 'Generate a comprehensive report based on the analysis',
+            },
+          },
+        ],
+        edges: [
+          { id: 'e1', source: 'start', target: 'research' },
+          { id: 'e2', source: 'research', target: 'analyze' },
+          { id: 'e3', source: 'analyze', target: 'report' },
+        ],
+      },
+      'content-creation': {
+        nodes: [
+          { id: 'start', type: 'input', position: { x: 100, y: 100 }, data: { label: '🚀 Start' } },
+          {
+            id: 'ideation',
+            type: 'agent',
+            position: { x: 300, y: 100 },
+            data: {
+              label: 'Ideation Agent',
+              agentType: 'gemini',
+              prompt: 'Generate creative content ideas based on the brief',
+            },
+          },
+          {
+            id: 'writing',
+            type: 'agent',
+            position: { x: 500, y: 100 },
+            data: {
+              label: 'Writing Agent',
+              agentType: 'chatgpt',
+              prompt: 'Write engaging content based on the selected idea',
+            },
+          },
+          {
+            id: 'editing',
+            type: 'agent',
+            position: { x: 700, y: 100 },
+            data: {
+              label: 'Editor Agent',
+              agentType: 'claude',
+              prompt: 'Edit and refine the content for clarity and impact',
+            },
+          },
+        ],
+        edges: [
+          { id: 'e1', source: 'start', target: 'ideation' },
+          { id: 'e2', source: 'ideation', target: 'writing' },
+          { id: 'e3', source: 'writing', target: 'editing' },
+        ],
+      },
+      'data-processing': {
+        nodes: [
+          { id: 'start', type: 'input', position: { x: 100, y: 100 }, data: { label: '🚀 Start' } },
+          {
+            id: 'ingest',
+            type: 'mcpTool',
+            position: { x: 300, y: 100 },
+            data: {
+              label: 'Data Ingestion',
+              tool: 'file-system',
+              parameters: '{"action": "read", "path": "data/"}',
+            },
+          },
+          {
+            id: 'clean',
+            type: 'agent',
+            position: { x: 500, y: 100 },
+            data: {
+              label: 'Data Cleaner',
+              agentType: 'claude',
+              prompt: 'Clean and normalize the data',
+            },
+          },
+          {
+            id: 'analyze',
+            type: 'agent',
+            position: { x: 700, y: 100 },
+            data: {
+              label: 'Data Analyst',
+              agentType: 'gemini',
+              prompt: 'Analyze the data and generate insights',
+            },
+          },
+          {
+            id: 'visualize',
+            type: 'mcpTool',
+            position: { x: 900, y: 100 },
+            data: {
+              label: 'Visualization',
+              tool: 'database',
+              parameters: '{"action": "create_chart"}',
+            },
+          },
+        ],
+        edges: [
+          { id: 'e1', source: 'start', target: 'ingest' },
+          { id: 'e2', source: 'ingest', target: 'clean' },
+          { id: 'e3', source: 'clean', target: 'analyze' },
+          { id: 'e4', source: 'analyze', target: 'visualize' },
+        ],
+      },
+    };
+
+    const template = templates[templateName as keyof typeof templates];
+    if (template) {
+      setNodes(
+        template.nodes.map((node) => ({
+          ...node,
+          data: {
+            ...node.data,
+            onChange: (field: string, value: any) => {
+              setNodes((nds) =>
+                nds.map((n) =>
+                  n.id === node.id ? { ...n, data: { ...n.data, [field]: value } } : n
+                )
+              );
+            },
+          },
+        }))
+      );
+      setEdges(template.edges);
+      setWorkflowName(
+        `${templateName.replace('-', ' ').replace(/\b\w/g, (l) => l.toUpperCase())} Workflow`
+      );
+    }
   };
 
   return (

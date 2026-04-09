@@ -7,7 +7,8 @@ nixpacks.toml
 **/node_modules/
 *.log
 .DS_Store
-
+apps/casin8-games/AI-ARCADE.XYZ---POKER-ROOM/
+apps/casin8-games/.data-tests/
 # Exclude large non-build artifacts from upload context
 /output/
 /docs/
@@ -19,5 +20,18 @@ nixpacks.toml
 /component-inventory/
 /ui-audit-results/
 /assets/
-/data/agent-registry/
 /scripts/agent-registry/
+/pull-create/
+/solid-shrimp/
+/strategic-cow/
+/tools/
+
+# Exclude large apps not needed for api-gateway deployments
+/apps/gemini-bridge-extension/
+/apps/chrome-extension/
+/apps/tauri-desktop/
+/apps/picoclaw-overseer/
+/apps/skideancer-ide/
+/apps/poker-room/
+/apps/casin8-games/
+/apps/electron-desktop/

@@ -56,3 +56,7 @@ export {
   drizzleWorkspaceDomainRepository,
 } from './workspace-domain.repository';
 export { DrizzleWorkspaceRepository, drizzleWorkspaceRepository } from './workspace.repository';
+export {
+  DrizzleWorkspaceMemberRepository,
+  drizzleWorkspaceMemberRepository,
+} from './workspace-member.repository';

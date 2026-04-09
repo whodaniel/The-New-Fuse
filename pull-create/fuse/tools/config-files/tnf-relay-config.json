@@ -1,0 +1,30 @@
+{
+  "relay": {
+    "id": "TNF-RELAY-001",
+    "version": "2.1",
+    "enabled": true
+  },
+  "mcp_integration": {
+    "applescript_mcp": {
+      "type": "process",
+      "pid": 3712,
+      "capabilities": ["applescript_execution", "system_automation"],
+      "status": "running"
+    },
+    "browser_mcp": {
+      "type": "process", 
+      "pid": 3739,
+      "capabilities": ["browser_automation", "web_interaction"],
+      "status": "running"
+    }
+  },
+  "communication": {
+    "test_endpoints": ["http://localhost:3000", "http://localhost:3772"],
+    "protocols": ["http", "stdio", "ipc"],
+    "message_format": "json"
+  },
+  "agents": {
+    "discovered": [],
+    "last_scan": "Sunday, May 25, 2025 at 3:31:31 PM"
+  }
+}

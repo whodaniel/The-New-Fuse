@@ -48,7 +48,7 @@ export const TypingIndicator: React.FC<TypingIndicatorProps> = ({
           />
         ))}
       </div>
-      {showLabel && <span className="text-sm text-muted-foreground animate-pulse" aria-hidden="true">{label}</span>}
+      {showLabel && <span className="text-sm text-muted-foreground animate-pulse">{label}</span>}
     </div>
   );
 };

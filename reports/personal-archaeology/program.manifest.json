@@ -1,0 +1,46 @@
+{
+  "spec": "tnf/personal-archaeology-program/0.1",
+  "generatedAt": "2026-03-19T08:32:22.147Z",
+  "title": "TNF Personal Archaeology Program",
+  "org": {
+    "masterDirector": {
+      "title": "Master Director",
+      "embodiment": "tnf-cli-agent"
+    },
+    "masterOrchestrator": {
+      "title": "Master Orchestrator",
+      "agentId": "personal-archaeology-master-orchestrator"
+    }
+  },
+  "teams": [
+    {
+      "id": "source-acquisition",
+      "title": "Source Acquisition Team",
+      "orchestrator": "personal-archaeology-source-team-orchestrator",
+      "cadenceMinutes": 60,
+      "investigators": [
+        "repo-lineage-investigator",
+        "notes-ledger-investigator",
+        "media-evidence-investigator",
+        "code-fossil-investigator"
+      ]
+    },
+    {
+      "id": "narrative-reconstruction",
+      "title": "Narrative Reconstruction Team",
+      "orchestrator": "personal-archaeology-narrative-team-orchestrator",
+      "cadenceMinutes": 120,
+      "investigators": [
+        "timeline-synthesis-investigator",
+        "personal-historical-archaeologist"
+      ]
+    },
+    {
+      "id": "integrity-and-escalation",
+      "title": "Integrity And Escalation Team",
+      "orchestrator": "personal-archaeology-integrity-team-orchestrator",
+      "cadenceMinutes": 30,
+      "investigators": ["auth-blocker-sentinel"]
+    }
+  ]
+}

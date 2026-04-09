@@ -1,5 +1,3 @@
-// @ts-ignore
-// @ts-ignore
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import type {
   ResourceCatalogItem,

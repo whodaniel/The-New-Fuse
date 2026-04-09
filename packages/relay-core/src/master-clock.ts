@@ -62,14 +62,9 @@ import { randomUUID } from 'crypto';
 import { existsSync, promises as fs } from 'fs';
 import { execFile } from 'node:child_process';
 import path from 'path';
+import { createClient } from 'redis';
 import { promisify } from 'util';
 import WebSocket from 'ws';
-
-// @ts-ignore
-import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
-
-import { Cluster, Redis } from 'ioredis';
-
 import { attachAuditTrace, type TnfAuditTrace } from './contracts/audit';
 import {
   buildCanonicalEntityId,
@@ -1077,21 +1072,17 @@ class MasterClock {
 
     if (!this.redis && !this.upstash) return;
     try {
-      const logEntry = JSON.stringify({
-        timestamp: new Date().toISOString(),
-        sessionId: this.sessionId,
-        eventType,
-        content,
-        metadata: auditedMetadata,
-      });
-
-      if (this.upstash) {
-        await this.upstash.lpush(CONFIG.REDIS_KEYS.LOGS, logEntry);
-        await this.upstash.ltrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
-      } else if (this.redis) {
-        await this.redis.lpush(CONFIG.REDIS_KEYS.LOGS, logEntry);
-        await this.redis.ltrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
-      }
+      await this.redis.lPush(
+        CONFIG.REDIS_KEYS.LOGS,
+        JSON.stringify({
+          timestamp: new Date().toISOString(),
+          sessionId: this.sessionId,
+          eventType,
+          content,
+          metadata: auditedMetadata,
+        })
+      );
+      await this.redis.lTrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
     } catch {
       // non-fatal
     }
@@ -2278,31 +2269,17 @@ Acknowledge by sending: [${agentId}] Ready for duty!
     );
 
     try {
-      if (this.upstash) {
-        await this.upstash.publish(CONFIG.REDIS_KEYS.INGRESS, JSON.stringify(broadcastEnvelope));
-        await this.upstash.lpush(
-          CONFIG.REDIS_KEYS.SELF_PROMPTS,
-          JSON.stringify({
-            sessionId: this.sessionId,
-            ...params,
-            cumulativeId,
-            issuedAt: now,
-          })
-        );
-        await this.upstash.ltrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
-      } else if (this.redis) {
-        await this.redis.publish(CONFIG.REDIS_KEYS.INGRESS, JSON.stringify(broadcastEnvelope));
-        await this.redis.lpush(
-          CONFIG.REDIS_KEYS.SELF_PROMPTS,
-          JSON.stringify({
-            sessionId: this.sessionId,
-            ...params,
-            cumulativeId,
-            issuedAt: now,
-          })
-        );
-        await this.redis.ltrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
-      }
+      await this.redis.publish(CONFIG.REDIS_KEYS.INGRESS, JSON.stringify(broadcastEnvelope));
+      await this.redis.lPush(
+        CONFIG.REDIS_KEYS.SELF_PROMPTS,
+        JSON.stringify({
+          sessionId: this.sessionId,
+          ...params,
+          cumulativeId,
+          issuedAt: now,
+        })
+      );
+      await this.redis.lTrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
     } catch (error: any) {
       log('warn', 'SELF-PROMPT', `Failed to publish self-prompt: ${error.message}`);
     }

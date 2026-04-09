@@ -7,9 +7,7 @@ import { Injectable, Logger } from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
 import type { NewTask, NewTaskExecution, Task, TaskExecution } from '@the-new-fuse/database';
-// @ts-ignore
-// @ts-ignore
-import { DatabaseService, sql } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 import type { TaskExecutionLogEntry, TaskExecutionLogPayload } from './task.types';
 
 @Injectable()
@@ -23,11 +21,8 @@ export class TaskService {
    */
   async findStuckTasks(userId: string): Promise<Task[]> {
     const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
-    const allTasks = await this.findActiveTasksByUser(userId);
-    return allTasks.filter((task) => {
-      const startedAt = this.getTaskStartTime(task);
-      return startedAt ? startedAt < thirtyMinutesAgo : false;
-    });
+    const allTasks = await this.db.tasks.findTasksByStatus('IN_PROGRESS', userId);
+    return allTasks.filter((task) => task.startTime && new Date(task.startTime) < thirtyMinutesAgo);
   }
 
   /**
@@ -35,11 +30,8 @@ export class TaskService {
    */
   async findStuckTasksUnscoped(): Promise<Task[]> {
     const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
-    const allTasks = await this.findActiveTasks();
-    return allTasks.filter((task) => {
-      const startedAt = this.getTaskStartTime(task);
-      return startedAt ? startedAt < thirtyMinutesAgo : false;
-    });
+    const allTasks = await this.db.tasks.findTasksByStatusUnscoped('IN_PROGRESS');
+    return allTasks.filter((task) => task.startTime && new Date(task.startTime) < thirtyMinutesAgo);
   }
 
   /**
@@ -162,21 +154,13 @@ export class TaskService {
       timestamp: now.toISOString(),
     };
 
-    try {
-      await this.db.tasks.createExecution({
-        taskId,
-        status: `LOG_${payload.level.toUpperCase()}`,
-        output: logEntry as any,
-        startedAt: now,
-        completedAt: now,
-      });
-    } catch (error) {
-      if (!this.isLegacyExecutionSchemaError(error)) {
-        throw error;
-      }
-
-      await this.appendLegacyExecutionLog(taskId, logEntry);
-    }
+    await this.db.tasks.createExecution({
+      taskId,
+      status: `LOG_${payload.level.toUpperCase()}`,
+      output: logEntry as any,
+      startedAt: now,
+      completedAt: now,
+    });
 
     return logEntry;
   }
@@ -249,225 +233,6 @@ export class TaskService {
    */
   async countTasksByStatus(userId?: string): Promise<{ status: string; count: number }[]> {
     return this.db.tasks.countTasksByStatus(userId);
-  }
-
-  private async findActiveTasksByUser(userId: string): Promise<Task[]> {
-    try {
-      return await this.db.tasks.findTasksByStatus('IN_PROGRESS', userId);
-    } catch (error) {
-      if (!this.isLegacyTaskSchemaError(error)) {
-        throw error;
-      }
-
-      this.logger.warn(
-        `Falling back to legacy tasks schema for user active task discovery (user=${userId}).`
-      );
-      return this.queryLegacyTasksByStatus('IN_PROGRESS', userId);
-    }
-  }
-
-  private normalizeSqlRows(result: unknown): Array<Record<string, unknown>> {
-    if (Array.isArray(result)) {
-      return result.map((row) => this.asObject(row));
-    }
-
-    const payload = this.asObject(result);
-    if (Array.isArray(payload.rows)) {
-      return payload.rows.map((row) => this.asObject(row));
-    }
-
-    return [];
-  }
-
-  private asObject(value: unknown): Record<string, unknown> {
-    return value && typeof value === 'object' && !Array.isArray(value)
-      ? (value as Record<string, unknown>)
-      : {};
-  }
-
-  private asStringArray(value: unknown): string[] {
-    if (!Array.isArray(value)) return [];
-    return value.map((entry) => String(entry ?? '').trim()).filter((entry) => entry.length > 0);
-  }
-
-  private getTaskStartTime(task: Partial<Task> & Record<string, unknown>): Date | null {
-    const candidates = [task.startTime, task.updatedAt, task.createdAt] as Array<unknown>;
-    for (const candidate of candidates) {
-      if (!candidate) continue;
-      const parsed = candidate instanceof Date ? candidate : new Date(String(candidate));
-      if (!Number.isNaN(parsed.getTime())) {
-        return parsed;
-      }
-    }
-    return null;
-  }
-
-  private isLegacyTaskSchemaError(error: unknown): boolean {
-    const message = String((error as Error | undefined)?.message || '').toLowerCase();
-    return (
-      message.includes('column "data" does not exist') ||
-      message.includes('column "user_id" does not exist') ||
-      message.includes('column "deleted_at" does not exist') ||
-      message.includes('column "start_time" does not exist') ||
-      message.includes('column "end_time" does not exist')
-    );
-  }
-
-  private isLegacyExecutionSchemaError(error: unknown): boolean {
-    const message = String((error as Error | undefined)?.message || '').toLowerCase();
-    return (
-      message.includes('relation "task_executions" does not exist') ||
-      message.includes('column "task_id" does not exist') ||
-      message.includes('column "started_at" does not exist') ||
-      message.includes('column "completed_at" does not exist') ||
-      this.isLegacyTaskSchemaError(error)
-    );
-  }
-
-  private mapLegacyTaskRow(row: Record<string, unknown>): Task {
-    const metadata = this.asObject(row.metadata);
-    const normalized: Record<string, unknown> = {
-      id: String(row.id || ''),
-      title: String(row.title || ''),
-      description: row.description ? String(row.description) : null,
-      status: String(row.status || 'PENDING'),
-      priority: String(row.priority || 'MEDIUM'),
-      type: String(row.type || ''),
-      createdAt: row.createdAt ? new Date(String(row.createdAt)) : new Date(),
-      updatedAt: row.updatedAt ? new Date(String(row.updatedAt)) : new Date(),
-      startTime: row.updatedAt
-        ? new Date(String(row.updatedAt))
-        : row.createdAt
-          ? new Date(String(row.createdAt))
-          : null,
-      endTime: row.completedAt ? new Date(String(row.completedAt)) : null,
-      userId: String(row.createdBy || ''),
-      metadata,
-      error: row.error ? String(row.error) : null,
-      completedAt: row.completedAt ? new Date(String(row.completedAt)) : null,
-      assignedToId: row.assignedTo ? String(row.assignedTo) : null,
-      tags: this.asStringArray(row.tags),
-      dependencies: this.asStringArray(row.dependencies),
-    };
-    return normalized as unknown as Task;
-  }
-
-  private async queryLegacyTasksByStatus(status: string, userId?: string): Promise<Task[]> {
-    const result = userId
-      ? await this.db.client.execute(sql`
-          SELECT
-            "id",
-            "title",
-            "description",
-            "status",
-            "priority",
-            "type",
-            "createdAt",
-            "updatedAt",
-            "completedAt",
-            "createdBy",
-            "assignedTo",
-            "metadata",
-            "tags",
-            "dependencies",
-            "error"
-          FROM "tasks"
-          WHERE "status" = ${status}
-            AND "createdBy" = ${userId}
-          ORDER BY "updatedAt" DESC
-        `)
-      : await this.db.client.execute(sql`
-          SELECT
-            "id",
-            "title",
-            "description",
-            "status",
-            "priority",
-            "type",
-            "createdAt",
-            "updatedAt",
-            "completedAt",
-            "createdBy",
-            "assignedTo",
-            "metadata",
-            "tags",
-            "dependencies",
-            "error"
-          FROM "tasks"
-          WHERE "status" = ${status}
-          ORDER BY "updatedAt" DESC
-        `);
-
-    return this.normalizeSqlRows(result).map((row) => this.mapLegacyTaskRow(row));
-  }
-
-  private async updateLegacyTaskStatus(taskId: string, status: string): Promise<Task | null> {
-    const nowIso = new Date().toISOString();
-    const completedAt =
-      status === 'COMPLETED' || status === 'FAILED' || status === 'CANCELLED' ? nowIso : null;
-
-    const result = await this.db.client.execute(sql`
-      UPDATE "tasks"
-      SET
-        "status" = ${status},
-        "updatedAt" = ${nowIso},
-        "completedAt" = ${completedAt}
-      WHERE "id" = ${taskId}
-      RETURNING
-        "id",
-        "title",
-        "description",
-        "status",
-        "priority",
-        "type",
-        "createdAt",
-        "updatedAt",
-        "completedAt",
-        "createdBy",
-        "assignedTo",
-        "metadata",
-        "tags",
-        "dependencies",
-        "error"
-    `);
-
-    const row = this.normalizeSqlRows(result)[0];
-    return row ? this.mapLegacyTaskRow(row) : null;
-  }
-
-  private async appendLegacyExecutionLog(
-    taskId: string,
-    logEntry: TaskExecutionLogEntry
-  ): Promise<void> {
-    const currentRows = this.normalizeSqlRows(
-      await this.db.client.execute(sql`
-        SELECT "metadata"
-        FROM "tasks"
-        WHERE "id" = ${taskId}
-        LIMIT 1
-      `)
-    );
-    const current = currentRows[0];
-    if (!current) {
-      return;
-    }
-
-    const metadata = this.asObject(current.metadata);
-    const currentLogs = Array.isArray(metadata.executionLogs) ? metadata.executionLogs : [];
-    const nextLogs = [...currentLogs, logEntry].slice(-200);
-    const nextMetadata = {
-      ...metadata,
-      executionLogs: nextLogs,
-      lastExecutionLogAt: logEntry.timestamp,
-    };
-
-    await this.db.client.execute(sql`
-      UPDATE "tasks"
-      SET
-        "metadata" = ${JSON.stringify(nextMetadata)}::jsonb,
-        "updatedAt" = ${new Date().toISOString()}
-      WHERE "id" = ${taskId}
-    `);
   }
 
   private mapExecutionToLog(execution: TaskExecution): TaskExecutionLogEntry | null {

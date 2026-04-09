@@ -1,6 +1,6 @@
 {
   "summary": {
-    "generatedAt": "2026-03-26T10:59:52.395Z",
+    "generatedAt": "2026-03-09T10:51:53.625Z",
     "total": 4,
     "passed": 4,
     "failed": 0,
@@ -19,8 +19,8 @@
       },
       "status": 401,
       "ok": true,
-      "elapsedMs": 348,
-      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-03-26T10:59:52.162Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\"}"
+      "elapsedMs": 251,
+      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-03-09T10:51:53.265Z\",\"path\":\"/v1/auth/login\",\"method\":\"POST\",\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\"}"
     },
     {
       "name": "Public /api/v1/auth/login compatibility route",
@@ -33,8 +33,8 @@
       },
       "status": 401,
       "ok": true,
-      "elapsedMs": 176,
-      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-03-26T10:59:52.335Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\"}"
+      "elapsedMs": 146,
+      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-03-09T10:51:53.423Z\",\"path\":\"/v1/auth/login\",\"method\":\"POST\",\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\"}"
     },
     {
       "name": "Gateway /v1/auth/login canonical route",
@@ -47,8 +47,8 @@
       },
       "status": 401,
       "ok": true,
-      "elapsedMs": 233,
-      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-03-26T10:59:52.586Z\",\"path\":\"/api/v1/auth/login\",\"method\":\"POST\",\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\"}"
+      "elapsedMs": 227,
+      "responseSnippet": "{\"statusCode\":401,\"timestamp\":\"2026-03-09T10:51:53.657Z\",\"path\":\"/v1/auth/login\",\"method\":\"POST\",\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\"}"
     },
     {
       "name": "Public /health route",
@@ -57,7 +57,7 @@
       "expectedStatus": [200],
       "status": 200,
       "ok": true,
-      "elapsedMs": 53,
+      "elapsedMs": 39,
       "responseSnippet": "healthy\n"
     }
   ]

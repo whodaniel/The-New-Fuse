@@ -1,0 +1,156 @@
+import React, { FC } from "react";
+import { 
+  TimelineEvent, 
+  TimelineBranch, 
+  TimelineWorkflow,
+  WorkflowStep 
+} from '@the-new-fuse/types';
+import { useTimeline } from '@the-new-fuse/hooks/useTimeline';
+import TimelineSlider from '@the-new-fuse/TimelineSlider';
+import WorkflowPanel from '@the-new-fuse/WorkflowPanel';
+import BranchSelector from '@the-new-fuse/BranchSelector';
+import EventDetails from '@the-new-fuse/EventDetails';
+import { Button, Card, Grid, Typography } from '@mui/material';
+
+interface EnhancedTimelineViewProps {
+  timelineService: {
+    getEventTimeline: (branchId: string) => Promise<TimelineEvent[]>;
+    getBranchHierarchy: (branchId: string) => Promise<TimelineBranch[]>;
+    getWorkflowsByEvent: (branchId: string) => Promise<TimelineWorkflow[]>;
+    createBranch: (name: string, startEventId: string, parentBranchId?: string) => Promise<TimelineBranch>;
+    mergeBranch: (branchId: string, targetEventId: string, mergedFromEvents: string[]) => Promise<void>;
+    createWorkflow: (params: {
+      name: string;
+      description: string;
+      eventId: string;
+      steps: Omit<WorkflowStep, 'id' | 'workflowId'>[];
+    }) => Promise<TimelineWorkflow>;
+    executeWorkflowStep: (workflowId: string, stepId: string, result: unknown) => Promise<void>;
+  };
+  initialBranchId?: string;
+}
+
+const EnhancedTimelineView: FC<EnhancedTimelineViewProps> = ({
+  timelineService,
+  initialBranchId
+}) => {
+  const {
+    events,
+    branches,
+    workflows,
+    loading,
+    error,
+    currentBranchId,
+    createBranch,
+    mergeBranch,
+    createWorkflow,
+    executeWorkflowStep,
+    switchBranch,
+    refresh
+  } = useTimeline({ timelineService, initialBranchId }): string,
+    startEventId: string,
+    parentBranchId?: string
+  )  = useMemo(() => 
+    [...events].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()),
+    [events]
+  );
+
+  const handleCreateBranch: ', err);
+    }
+  }, [createBranch, switchBranch]);
+
+  const handleMergeBranch   = useCallback(async (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (
+    name> {
+    try {
+      const newBranch await createBranch(name, startEventId, parentBranchId): unknown) {
+      console.error('Failed to create branch useCallback(async (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (
+    targetEventId: string,
+    mergedFromEvents: string[]
+  ) => {
+    if (!currentBranchId) return;
+    try {
+      await mergeBranch(currentBranchId, targetEventId, mergedFromEvents): unknown) {
+      console.error('Failed to merge branch:', err): string,
+    description: string,
+    eventId: string,
+    steps: Omit<WorkflowStep, 'id' | 'workflowId'>[]
+  )  = useCallback(async (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (
+    name> {
+    try {
+      await createWorkflow(name, description, eventId, steps): unknown) {
+      console.error('Failed to create workflow:', err): string,
+    stepId: string,
+    result: unknown
+  )  = useCallback(async (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (
+    workflowId> {
+    try {
+      await executeWorkflowStep(workflowId, stepId, result): unknown) {
+      console.error('Failed to execute workflow step:', err): unknown) {
+    return <Typography>Loading timeline data...</Typography>;
+  }
+
+  if(error: unknown) {
+    return <Typography color="error">Error: {error.message}</Typography>;
+  }
+
+  return (
+    <Grid container spacing={3}>
+      <Grid item xs={12}>
+        <Card>
+          <BranchSelector
+            branches={branches}
+            currentBranchId={currentBranchId}
+            onBranchSelect={switchBranch}
+            onCreateBranch={handleCreateBranch}
+          />
+        </Card>
+      </Grid>
+
+      <Grid item xs={12}>
+        <Card>
+          <TimelineSlider
+            events={sortedEvents}
+            onEventSelect={(eventId) => {
+              const event: ', event);
+              }
+            }}
+          />
+        </Card>
+      </Grid>
+
+      <Grid item xs = events.find(e => e.id === eventId): unknown) {
+                // Handle event selection
+                console.log('Selected event{12} md={8}>
+        <Card>
+          <EventDetails
+            events={events}
+            workflows={workflows}
+            onCreateWorkflow={handleCreateWorkflow}
+          />
+        </Card>
+      </Grid>
+
+      <Grid item xs={12} md={4}>
+        <Card>
+          <WorkflowPanel
+            workflows={workflows}
+            onExecuteStep={handleExecuteWorkflowStep}
+            onMergeBranch={handleMergeBranch}
+          />
+        </Card>
+      </Grid>
+
+      <Grid item xs={12}>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          onClick={refresh}
+        >
+          Refresh Timeline
+        </Button>
+      </Grid>
+    </Grid>
+  );
+};
+
+export default EnhancedTimelineView;

@@ -1,11 +1,7 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-// @ts-ignore
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService, sql, User } from '@the-new-fuse/database';
 import { compare, hash } from 'bcrypt';
 import * as crypto from 'crypto';
@@ -155,7 +151,7 @@ export class AuthService {
   private async makeUsernameUnique(base: string): Promise<string> {
     const existing = await this.db.users.findByUsername(base);
     if (!existing) return base;
-    return `${base}_${crypto.randomBytes(3).toString('hex')}`;
+    return `${base}_${Math.random().toString(36).slice(2, 7)}`;
   }
 
   async validateToken(token: string): Promise<User> {
@@ -561,8 +557,8 @@ export class AuthService {
     const codesValue = this.configService.get<string>('AUTH_INVITE_CODES') || '';
     return codesValue
       .split(',')
-      .map((value: any) => value.trim())
-      .filter((value: any) => value.length > 0);
+      .map((value) => value.trim())
+      .filter((value) => value.length > 0);
   }
 
   private generateInviteCodeValue(federationId?: string): string {

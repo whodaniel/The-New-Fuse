@@ -213,10 +213,10 @@
       })();
     </script>
 
-    <!-- Content Security Policy: Relaxed for local development (http/ws) and legacy eval support -->
+    <!-- Content Security Policy: Allow unsafe-eval/inline as requested for legacy dependency support -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self' 'unsafe-inline' 'unsafe-eval' http: https: data: blob: ws: wss:; connect-src 'self' http: https: ws: wss:; img-src 'self' http: https: data: blob:; worker-src 'self' blob:;"
+      content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob: wss:; connect-src 'self' https: wss:; img-src 'self' https: data: blob:; worker-src 'self' blob:;"
     />
 
     <!-- Global CommonJS require() shim for bundled dependencies (ethers.js, bn.js, etc.) -->

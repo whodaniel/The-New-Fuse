@@ -544,52 +544,40 @@ function ChatPage() {
   }
 
   return (
-    <div className="w-full min-h-[640px] bg-background text-foreground flex flex-col gap-4">
-      <OpsPageHeader
-        eyebrow="Collaboration"
-        title="Chat Operations"
-        subtitle="Coordinate human + agent conversations, goals, and response chains."
-        meta={
-          <div className="flex flex-wrap gap-2 text-xs">
-            <span className="rounded-full border border-slate-500/30 bg-slate-500/12 px-2 py-1 text-slate-200">
-              {agents?.length || 0} agents
-            </span>
-            <span className="rounded-full border border-slate-500/30 bg-slate-500/12 px-2 py-1 text-slate-200">
-              {rules?.length || 0} rules
-            </span>
-            <span className="rounded-full border border-slate-500/30 bg-slate-500/10 px-2 py-1 text-slate-200">
-              mode: {mode}
-            </span>
-            <span className="rounded-full border border-slate-500/30 bg-slate-500/12 px-2 py-1 text-slate-200">
-              tts: {isTtsEnabled ? 'on' : 'off'}
-            </span>
+    <div className="h-[calc(100vh-64px)] w-full p-4 bg-background text-foreground flex flex-col">
+      {/* Header */}
+      <div className="mb-6 flex-none">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground mb-2">💬 Chat Center</h1>
+            <p className="text-muted-foreground">Communicate with AI agents and get instant help</p>
           </div>
         }
         actions={
           <div className="flex flex-wrap gap-2 md:justify-end">
             <button
               onClick={() => setIsAgentModalOpen(true)}
-              className="border border-slate-600/70 bg-slate-800/80 text-slate-100 px-3 py-2 rounded-md hover:bg-slate-700/80 transition-colors flex items-center shadow-none text-sm"
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors flex items-center shadow-none"
             >
               <Users size={14} className="mr-2" />
               Agents ({agents?.length || 0})
             </button>
             <button
               onClick={() => setIsGoalModalOpen(true)}
-              className="border border-slate-600/70 bg-slate-800/80 text-slate-100 px-3 py-2 rounded-md hover:bg-slate-700/80 transition-colors flex items-center shadow-none text-sm"
+              className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition-colors flex items-center shadow-none"
             >
               <Lightbulb size={14} className="mr-2" />
               Set Goal
             </button>
             <button
               onClick={() => setIsRuleModalOpen(true)}
-              className="border border-slate-600/70 bg-slate-800/80 text-slate-100 px-3 py-2 rounded-md hover:bg-slate-700/80 transition-colors flex items-center shadow-none text-sm"
+              className="bg-yellow-500 text-black px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors flex items-center shadow-none"
             >
               <Copy size={14} className="mr-2" />
               Rules
             </button>
             <button
-              className="border border-cyan-500/40 bg-cyan-600/80 text-white px-3 py-2 rounded-md hover:bg-cyan-600 transition-colors flex items-center shadow-none text-sm"
+              className="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 transition-colors flex items-center shadow-none"
               disabled={isSynthesizing}
             >
               <Sparkles size={14} className="mr-2" />
@@ -599,10 +587,10 @@ function ChatPage() {
         }
       />
 
-      <div className="flex-1 min-h-[520px] grid grid-cols-1 xl:grid-cols-[320px_minmax(0,1fr)] gap-4 overflow-hidden">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-4 overflow-hidden">
         {/* Agent Selection Sidebar */}
-        <div className="flex flex-col gap-4 overflow-hidden h-full min-h-0">
-          <div className="bg-card text-card-foreground rounded-xl border border-border shadow-none p-4 flex flex-col h-full overflow-hidden">
+        <div className="flex flex-col gap-4 overflow-hidden h-full">
+          <div className="bg-card text-card-foreground rounded-md border border-border shadow-none p-4 flex flex-col h-full overflow-hidden">
             <h2 className="text-lg font-semibold mb-4 flex-none">Available Agents</h2>
             <div className="space-y-3 flex-1 overflow-y-auto pr-2">
               {agents.map((agent) => (
@@ -702,8 +690,8 @@ function ChatPage() {
         </div>
 
         {/* Chat Interface */}
-        <div className="h-full overflow-hidden min-h-0">
-          <div className="bg-card text-card-foreground rounded-xl border border-border shadow-none flex flex-col h-full overflow-hidden">
+        <div className="lg:col-span-1 h-full overflow-hidden">
+          <div className="bg-card text-card-foreground rounded-md border border-border shadow-none flex flex-col h-full">
             {/* Chat Header */}
             <div className="p-4 border-b border-border flex-none">
               <div className="flex items-center justify-between">

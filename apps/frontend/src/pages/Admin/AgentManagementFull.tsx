@@ -211,7 +211,7 @@ export default function AgentManagementFull() {
       </div>
 
       {loadError && (
-        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <div className="mb-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800">
           {loadError}
         </div>
       )}
@@ -364,7 +364,10 @@ export default function AgentManagementFull() {
                         >
                           <RefreshCw className="h-4 w-4" />
                         </button>
-                        <button className="text-gray-600 hover:text-gray-900" title="Settings">
+                        <button
+                          className="text-muted-foreground hover:text-gray-900"
+                          title="Settings"
+                        >
                           <Settings className="h-4 w-4" />
                         </button>
                         <button
@@ -389,7 +392,7 @@ export default function AgentManagementFull() {
         <div className="bg-transparent rounded-md shadow-none-none p-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Request Volume</h3>
           {performanceData.length === 0 && (
-            <div className="pb-4 text-sm text-gray-500">
+            <div className="pb-4 text-sm text-muted-foreground">
               No live metrics yet. Refresh after agents report activity.
             </div>
           )}
@@ -408,7 +411,7 @@ export default function AgentManagementFull() {
         <div className="bg-transparent rounded-md shadow-none-none p-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Response Time & Errors</h3>
           {performanceData.length === 0 && (
-            <div className="pb-4 text-sm text-gray-500">
+            <div className="pb-4 text-sm text-muted-foreground">
               No live metrics yet. Refresh after agents report activity.
             </div>
           )}
