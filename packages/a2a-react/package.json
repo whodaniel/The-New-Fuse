@@ -18,14 +18,14 @@
   },
   "dependencies": {
     "@the-new-fuse/a2a-core": "workspace:*",
-    "react": "^19.2.3"
+    "react": "^19.2.5"
   },
   "peerDependencies": {
-    "react": "^19.2.3"
+    "react": "^19.2.5"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "@types/react": "^19.2.3",
+    "@types/react": "^19.2.14",
     "@testing-library/react": "^16.3.0",
     "@testing-library/react-hooks": "^8.0.1",
     "@types/jest": "^30.0.0",

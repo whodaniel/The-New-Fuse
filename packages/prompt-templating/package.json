@@ -28,13 +28,13 @@
   },
   "dependencies": {
     "lucide-react": "^0.546.0",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "reactflow": "^11.11.4",
     "@the-new-fuse/database": "workspace:*"
   },
   "devDependencies": {
-    "@types/react": "^19.2.3",
+    "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.38.0",
     "jest": "^30.3.0",
@@ -42,7 +42,7 @@
     "rimraf": "^6.0.1"
   },
   "peerDependencies": {
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
   }
 }

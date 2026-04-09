@@ -20,18 +20,18 @@
     "@the-new-fuse/fairtable-components": "workspace:*",
     "@the-new-fuse/fairtable-core": "workspace:*",
     "@the-new-fuse/fairtable-utils": "workspace:*",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
   },
   "devDependencies": {
     "@types/node": "^24.9.1",
-    "@types/react": "^19.2.3",
+    "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "rimraf": "^6.0.1",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
   }
 }

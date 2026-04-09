@@ -17,8 +17,8 @@
     "@vitejs/plugin-react": "^5.0.4",
     "lucide-react": "^0.546.0",
     "framer-motion": "^12.4.7",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "vite": "^6.2.0"
   },
   "devDependencies": {

@@ -28,14 +28,14 @@
   "dependencies": {
     "@the-new-fuse/infrastructure": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
-    "react": "^19.2.3",
+    "react": "^19.2.5",
     "react-hot-toast": "^2.4.1",
     "redis": "^5.11.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^25.5.0",
-    "@types/react": "^19.2.3",
+    "@types/react": "^19.2.14",
     "jest": "^30.3.0",
     "ts-jest": "^29.4.6",
     "typescript": "^5.9.3"

@@ -31,11 +31,11 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "react": "^19.2.3",
+    "react": "^19.2.5",
     "lucide-react": "^0.460.0"
   },
   "devDependencies": {
     "@the-new-fuse/types": "workspace:*",
-    "@types/react": "^19.2.3"
+    "@types/react": "^19.2.14"
   }
 }
