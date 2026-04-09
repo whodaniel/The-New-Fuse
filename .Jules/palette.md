@@ -1,4 +1,11 @@
+## 2024-03-24 - Initialization
+**Learning:** Initializing Palette journal.
+**Action:** Keep records of only critical UI/UX learnings.
 
-## $(date +%Y-%m-%d) - Dynamic Status Announcements in Chat
-**Learning:** Screen readers cannot automatically announce when a purely visual animation (like a typing indicator) appears or disappears, meaning visually impaired users lose context of when a chat agent is thinking or responding.
-**Action:** Always wrap dynamic, transient status components (like typing dots or loading spinners) with `role="status"` and `aria-live="polite"` to ensure the UI announces changes naturally without interrupting the user. Additionally, hide visual-only animation DOM nodes using `aria-hidden="true"` to prevent screen reader noise.
+## 2024-03-24 - Form Control Pattern Standardization
+**Learning:** Found that basic standard inputs like `Textarea` lacked built-in accessibility (auto-generated IDs linking `label`, `aria-describedby`, and `aria-invalid`) compared to the `Input` component. This indicates a pattern where complex components implicitly rely on the underlying basic elements to handle their own accessibility, leading to failures if the base component is not self-contained.
+**Action:** Always ensure that fundamental form components (Inputs, Textareas, Selects) abstract their labeling and ARIA state management internally using `React.useId()` and explicit associations to prevent downstream accessibility gaps.
+
+## 2024-03-24 - Icon Button Accessibility
+**Learning:** `IconButton` components, particularly in high-traffic interactive areas like `ChatRoom`, frequently lack `aria-label` definitions, making them inaccessible to screen reader users. The abstract nature of an `icon` prop obscures the component's intent if an explicit label is not enforced or required.
+**Action:** When implementing or modifying `IconButton` components that do not have visible text, always check for and explicitly pass an `aria-label` attribute describing the button's action.

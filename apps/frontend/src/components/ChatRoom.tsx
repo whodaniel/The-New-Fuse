@@ -207,8 +207,8 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({ roomId, title }) => {
       </CardContent>
       <CardFooter>
         <div className="flex items-center gap-2 w-full">
-          <IconButton variant="ghost" icon={Paperclip as any} />
-          <IconButton variant="ghost" icon={Smile as any} />
+          <IconButton variant="ghost" icon={Paperclip as any} aria-label="Attach file" />
+          <IconButton variant="ghost" icon={Smile as any} aria-label="Insert emoji" />
           <Input
             value={newMessage}
             onChange={handleTyping}
