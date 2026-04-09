@@ -1513,6 +1513,15 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
       updatedAt: new Date(),
     });
 
+    await this.db.workspaceMembers.upsertMember({
+      workspaceId: workspace.id,
+      userId: user.id,
+      role: 'owner',
+      addedByUserId: user.id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
     return workspace;
   }
 

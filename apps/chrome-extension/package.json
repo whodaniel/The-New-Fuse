@@ -57,6 +57,9 @@
   "overrides": {
     "serialize-javascript": "7.0.3"
   },
+  "overrides": {
+    "serialize-javascript": "7.0.3"
+  },
   "devDependencies": {
     "@types/chrome": "^0.0.254",
     "@types/dompurify": "^3.0.0",

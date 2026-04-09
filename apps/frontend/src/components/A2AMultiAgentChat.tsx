@@ -133,53 +133,10 @@ function EnhancedMultiAgentChatUI() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // ⚡ Bolt: Wrap agents and conversations maps in useMemo to prevent O(n) re-evaluations
-  // during frequent state updates like typing in the inputValue.
-  const agentOptions = React.useMemo(() => {
-    return agents.map((agent) => (
-      <option key={agent.agentId} value={agent.agentId}>
-        {agent.name} ({agent.type})
-      </option>
-    ));
-  }, [agents]);
-
-  const agentBadges = React.useMemo(() => {
-    return agents.map((agent) => (
-      <div
-        key={agent.agentId}
-        className="flex items-center gap-2 bg-gray-200 dark:bg-gray-700 rounded-md px-2 py-1"
-      >
-        <span className="text-sm">{agent.name}</span>
-        <span className="text-xs opacity-75">({agent.type})</span>
-        <div
-          className={cn(
-            'w-2 h-2 rounded-full',
-            'bg-green-500' // Assume online for now
-          )}
-        />
-      </div>
-    ));
-  }, [agents]);
-
-  const conversationButtons = React.useMemo(() => {
-    return conversations.map((conv) => (
-      <button
-        key={conv.id}
-        onClick={() => {
-          setCurrentConversation(conv.id);
-          setMode('conversation');
-        }}
-        className={cn(
-          'px-2 py-1 text-xs rounded border',
-          currentConversation === conv.id
-            ? 'bg-blue-500 text-white'
-            : 'bg-gray-100 dark:bg-gray-700'
-        )}
-      >
-        Conv {conv.id.slice(-6)} ({conv.participantCount} agents)
-      </button>
-    ));
-  }, [conversations, currentConversation, setCurrentConversation, setMode]);
+  const memoizedMessages = React.useMemo(
+    () => messages.map((msg) => <MessageBubble key={msg.id} msg={msg} agents={agents} />),
+    [messages, agents]
+  );
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -528,9 +485,7 @@ function EnhancedMultiAgentChatUI() {
       </header>
 
       <main className="p-4 overflow-y-auto flex flex-col space-y-4">
-        {messages.map((msg) => (
-          <MessageBubble key={msg.id} msg={msg} agents={agents} />
-        ))}
+        {memoizedMessages}
         {messages.length === 0 && connectionState.authenticated && (
           <div className="text-center text-muted-foreground mt-8">
             <SystemIcon />
