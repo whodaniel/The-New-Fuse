@@ -1,7 +1,7 @@
-import { DynamicModule, Module, Global } from '@nestjs/common';
-import { StorageService } from './StorageService';
-import { GcsStorageService } from './GcsStorageService';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { DynamicModule, Global, Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { GcsStorageService } from './GcsStorageService.js';
+import { StorageService } from './StorageService.js';
 
 @Global()
 @Module({})

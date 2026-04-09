@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 // @ts-ignore
 import { Storage } from '@google-cloud/storage';
-import { StorageService } from './StorageService';
-import { StorageFile, StorageOptions, StorageConfig } from './types';
 import { ConfigService } from '@nestjs/config';
+import { StorageService } from './StorageService.js';
+import { StorageFile, StorageOptions } from './types.js';
 
 @Injectable()
 export class GcsStorageService extends StorageService {
@@ -13,7 +13,7 @@ export class GcsStorageService extends StorageService {
 
   constructor(private readonly configService: ConfigService) {
     super();
-    
+
     const projectId = this.configService.get<string>('GCP_PROJECT_ID');
     const keyFilename = this.configService.get<string>('GCP_KEY_FILE');
     this.defaultBucket = this.configService.get<string>('GCS_BUCKET', 'tnf-storage');
@@ -25,11 +25,7 @@ export class GcsStorageService extends StorageService {
     this.storage = new Storage(options);
   }
 
-  async upload(
-    key: string,
-    data: any,
-    options?: StorageOptions
-  ): Promise<StorageFile> {
+  async upload(key: string, data: any, options?: StorageOptions): Promise<StorageFile> {
     const bucketName = options?.bucket || this.defaultBucket;
     const bucket = this.storage.bucket(bucketName);
     const file = bucket.file(key);
@@ -53,10 +49,7 @@ export class GcsStorageService extends StorageService {
     } else {
       // Stream upload
       await new Promise((resolve, reject) => {
-        data
-          .pipe(file.createWriteStream({ metadata }))
-          .on('error', reject)
-          .on('finish', resolve);
+        data.pipe(file.createWriteStream({ metadata })).on('error', reject).on('finish', resolve);
       });
     }
 

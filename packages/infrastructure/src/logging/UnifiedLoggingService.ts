@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { DEFAULT_LOG_CONFIG, LogConfig, LogLevel } from './types';
+import { DEFAULT_LOG_CONFIG, LogConfig, LogLevel } from './types.js';
 
 /**
  * Unified Logging Service for The New Fuse

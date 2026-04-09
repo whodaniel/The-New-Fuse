@@ -1,0 +1,11 @@
+
+> @the-new-fuse/frontend-app@0.0.0 dev /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend
+> vite --host 0.0.0.0 --port 3002
+
+
+  VITE v7.3.1  ready in 1642 ms
+
+  ➜  Local:   http://localhost:3002/
+  ➜  Network: http://192.168.1.104:3002/
+12:20:47 AM [vite] (client) page reload dashboard_output.html
+12:20:47 AM [vite] (client) page reload dashboard_output.html

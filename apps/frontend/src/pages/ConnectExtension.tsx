@@ -407,7 +407,7 @@ export default function ConnectExtensionPage() {
               Pricing
             </a>
             <a
-              href="https://thenewfuse.com"
+              href="/"
               target="_blank"
               rel="noreferrer"
               className="hover:text-white transition-colors"
@@ -416,7 +416,7 @@ export default function ConnectExtensionPage() {
             </a>
           </div>
           <a
-            href="https://thenewfuse.com/auth/login"
+            href="/auth/login"
             className="text-sm font-medium text-slate-400 hover:text-white transition-colors"
           >
             Sign In
@@ -766,7 +766,7 @@ export default function ConnectExtensionPage() {
                 'Advanced analytics',
               ]}
               cta="Get Pro"
-              href="https://thenewfuse.com/pricing"
+              href="/pricing"
               delay={0.2}
             />
             <PricingCard
@@ -786,7 +786,7 @@ export default function ConnectExtensionPage() {
                 'Dedicated support',
               ]}
               cta="Learn More"
-              href="https://thenewfuse.com"
+              href="/"
               delay={0.3}
             />
           </div>
@@ -831,10 +831,10 @@ export default function ConnectExtensionPage() {
         <section className="mx-auto max-w-7xl px-3 pb-12 lg:px-8">
           <div className="flex flex-wrap justify-center gap-4">
             {[
-              { label: 'TNF Platform', href: 'https://thenewfuse.com', icon: Rocket },
+              { label: 'TNF Platform', href: '/', icon: Rocket },
               { label: 'AI Studio', href: 'https://aistudio.google.com/', icon: Bot },
               { label: 'NotebookLM', href: 'https://notebooklm.google.com/', icon: BrainCircuit },
-              { label: 'Documentation', href: 'https://thenewfuse.com/docs', icon: ExternalLink },
+              { label: 'Documentation', href: '/docs', icon: ExternalLink },
               { label: 'GitHub', href: 'https://github.com/whodaniel', icon: Code2 },
             ].map((link, i) => (
               <a
@@ -863,22 +863,13 @@ export default function ConnectExtensionPage() {
               <span>&copy; {new Date().getFullYear()} The New Fuse. All rights reserved.</span>
             </div>
             <div className="flex gap-4 text-sm text-slate-600">
-              <a
-                href="https://thenewfuse.com/privacy"
-                className="hover:text-slate-400 transition-colors"
-              >
+              <a href="/privacy" className="hover:text-slate-400 transition-colors">
                 Privacy Policy
               </a>
-              <a
-                href="https://thenewfuse.com/terms"
-                className="hover:text-slate-400 transition-colors"
-              >
+              <a href="/terms" className="hover:text-slate-400 transition-colors">
                 Terms of Service
               </a>
-              <a
-                href="https://thenewfuse.com/support"
-                className="hover:text-slate-400 transition-colors"
-              >
+              <a href="/support" className="hover:text-slate-400 transition-colors">
                 Support
               </a>
             </div>

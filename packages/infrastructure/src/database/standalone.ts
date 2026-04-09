@@ -1,4 +1,4 @@
-import { DatabaseConfig, DEFAULT_DB_CONFIG } from './types';
+import { DatabaseConfig, DEFAULT_DB_CONFIG } from './types.js';
 
 /**
  * Load Database configuration from environment variables

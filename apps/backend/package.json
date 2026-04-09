@@ -2,6 +2,7 @@
   "name": "@the-new-fuse/backend-app",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "prebuild": "pnpm --filter @the-new-fuse/database build && pnpm --filter @the-new-fuse/mcp-core build && pnpm --filter @the-new-fuse/ag-ui-core build && pnpm --filter @the-new-fuse/types build && pnpm --filter @the-new-fuse/utils build",
     "build": "tsc --noEmitOnError false || echo 'Build completed with warnings'",

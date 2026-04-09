@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import Redis, { Cluster } from 'ioredis';
 import { Redis as UpstashRedis } from '@upstash/redis';
-import { RedisConfig } from './RedisConfig';
+import Redis, { Cluster } from 'ioredis';
+import { RedisConfig } from './RedisConfig.js';
 import {
   CacheOptions,
   PubSubMessage,
@@ -11,7 +11,7 @@ import {
   RedisOperationLog,
   RedisOperationType,
   SearchResult,
-} from './types';
+} from './types.js';
 
 @Injectable()
 export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
@@ -506,7 +506,9 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
   }
 
   async zremrangebyscore(key: string, min: number | string, max: number | string): Promise<number> {
-    return this.executeOperation('zremrangebyscore', key, () => this.mainClient.zremrangebyscore(key, min, max));
+    return this.executeOperation('zremrangebyscore', key, () =>
+      this.mainClient.zremrangebyscore(key, min, max)
+    );
   }
 
   async zcard(key: string): Promise<number> {

@@ -452,25 +452,22 @@ export default defineConfig(({ mode }) => {
           next();
         });
 
-        // SPA fallback - serve app.html for all /app/* routes
+        // SPA fallback - serve app.html for all routes except root
         server.middlewares.use((req: any, res: any, next: () => void) => {
           if (!req.url) return next();
 
-          // Hard redirects for legacy routes
-          if (req.url === '/login' || req.url === '/register') {
-            res.writeHead(301, { Location: `/app${req.url}` });
-            res.end();
-            return;
-          }
-
           if (
-            (req.url.startsWith('/app') || req.url === '/login' || req.url === '/register') &&
+            req.url !== '/' &&
             !req.url.startsWith('/api') &&
             !req.url.startsWith('/ws') &&
-            !req.url.includes('.') &&
+            // Allow explicit file requests (like .js, .css, .png) to fall through
+            !req.url.match(/\.[a-zA-Z0-9]+$/) &&
             req.method === 'GET'
           ) {
+            console.log(`[Vite SPA Fallback] Rewriting ${req.url} to /app.html`);
             req.url = '/app.html';
+          } else if (req.url !== '/' && req.method === 'GET') {
+            console.log(`[Vite SPA Fallback] Ignoring ${req.url}`);
           }
           next();
         });

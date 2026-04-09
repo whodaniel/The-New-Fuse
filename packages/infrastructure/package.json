@@ -5,6 +5,7 @@
   ],
   "version": "1.0.0",
   "description": "Unified infrastructure services for The New Fuse framework",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

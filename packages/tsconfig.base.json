@@ -10,10 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-
+    "noFallthroughCasesInSwitch": true
   },
   "include": [],
   "exclude": ["node_modules", "dist"]
