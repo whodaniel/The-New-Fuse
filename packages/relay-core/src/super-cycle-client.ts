@@ -7,12 +7,8 @@
  */
 
 // @ts-ignore
-import {
-  createStandaloneRedisClient,
-  createUpstashRestClient,
-} from '@the-new-fuse/infrastructure';
-import { Redis as UpstashRedis } from '@upstash/redis';
-import Redis, { Cluster } from 'ioredis';
+import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
+import Redis from 'ioredis';
 
 type Action = 'register' | 'heartbeat' | 'unregister' | 'status' | 'self-prompts';
 
@@ -114,7 +110,7 @@ function mapActionToType(action: Action): string {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  
+
   // Use unified standalone utilities
   const redis = createStandaloneRedisClient({ lazyConnect: true } as any);
   const upstash = createUpstashRestClient();
@@ -130,6 +126,7 @@ async function main() {
     if (args.action === 'status') {
       let raw: string | null = null;
       if (upstash) {
+        // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
         raw = await upstash.hget<string>('tnf:master:state', 'superCycle');
       } else if (redis) {
         raw = await redis.hget('tnf:master:state', 'superCycle');

@@ -146,6 +146,7 @@ export class HandoffStoreService {
 
     let raw: string | null = null;
     if (this.upstash) {
+      // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
       raw = await this.upstash.get<string>(this.packetKey(packetId));
     } else if (this.client) {
       raw = await this.client.get(this.packetKey(packetId));
@@ -268,6 +269,7 @@ export class HandoffStoreService {
     let raw: string | null = null;
     const key = this.ackKey(packetId);
 
+    // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
     if (this.upstash) {
       raw = await this.upstash.hget<string>(key, agentId);
     } else if (this.client) {

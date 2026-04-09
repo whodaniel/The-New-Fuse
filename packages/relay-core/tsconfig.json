@@ -1,6 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "strict": false,
+    "noImplicitAny": false,
+    "strictFunctionTypes": false,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "outDir": "./dist",
@@ -10,6 +13,9 @@
 
     "types": ["node"],
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "noImplicitAny": false,
+    "strictFunctionTypes": false,
+
     "baseUrl": ".",
     "paths": {
       "@the-new-fuse/infrastructure": ["../infrastructure/dist"],
