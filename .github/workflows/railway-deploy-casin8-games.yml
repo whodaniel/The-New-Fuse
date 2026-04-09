@@ -4,9 +4,10 @@ on:
   push:
     branches: [main]
     paths:
-      - 'apps/casin8-games/**'
-      - 'railway.toml'
-      - '.github/workflows/railway-deploy-casin8-games.yml'
+      - "apps/casin8-games/**"
+      - "apps/poker-room/**"
+      - "railway.toml"
+      - ".github/workflows/railway-deploy-casin8-games.yml"
   workflow_dispatch:
 
 jobs:
@@ -23,7 +24,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install Railway CLI
         run: npm i -g @railway/cli
