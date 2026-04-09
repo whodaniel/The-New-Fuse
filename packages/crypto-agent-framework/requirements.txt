@@ -9,7 +9,7 @@ eth-account==0.10.0          # Ethereum account management
 
 # L3: Compute (Akash & Render)
 httpx==0.25.2                # Async HTTP client
-aiohttp==3.13.3               # Async HTTP for compute APIs (security update)
+aiohttp==3.13.4               # Async HTTP for compute APIs (security update)
 
 # L4: Memory (Arweave & AO)
 arweave-python-client==1.0.16  # Arweave storage
