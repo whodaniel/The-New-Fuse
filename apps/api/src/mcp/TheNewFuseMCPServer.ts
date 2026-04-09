@@ -23,7 +23,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // @ts-ignore
-import { WebScrapingMCPTools } from '@the-new-fuse/web-scraping';
+// import { WebScrapingMCPTools } from '@the-new-fuse/web-scraping';
 // @ts-ignore
 import { JulesClient } from '@the-new-fuse/jules-skill';
 
@@ -63,7 +63,7 @@ export class TheNewFuseMCPServer {
     );
 
     // Initialize supplemental tool classes
-    this.webScrapingTools = new WebScrapingMCPTools();
+    // this.webScrapingTools = new WebScrapingMCPTools();
     this.julesClient = new JulesClient();
 
     this.setupToolHandlers();
@@ -339,12 +339,14 @@ export class TheNewFuseMCPServer {
           },
         },
 
+        /*
         // Web Scraping Tools (from @the-new-fuse/web-scraping)
         ...this.webScrapingTools.getTools().map((t: any) => ({
           name: t.name,
           description: t.description,
           inputSchema: t.inputSchema,
         })),
+        */
 
         // Jules Coding Agent Tools (from @the-new-fuse/jules-skill)
         {
@@ -484,6 +486,7 @@ export class TheNewFuseMCPServer {
           case 'get_agent_bank_resources':
             return await this.handleGetAgentBankResources(args);
 
+          /*
           // Web Scraping Tools
           case 'scrape_website_crawl4ai':
           case 'scrape_website_simple':
@@ -496,6 +499,7 @@ export class TheNewFuseMCPServer {
               throw new McpError(ErrorCode.MethodNotFound, `Scraping tool not found: ${name}`);
             return await tool.handler.execute(args);
           }
+          */
 
           // Jules Tools
           case 'jules_create_session':
