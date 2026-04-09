@@ -42,7 +42,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.16",
     "@nestjs/event-emitter": "^3.0.1",
-    "@nestjs/graphql": "^13.2.4",
+    "@nestjs/graphql": "^13.2.5",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.1.16",
@@ -69,7 +69,7 @@
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.14",
-    "@nestjs/schematics": "11.0.9",
+    "@nestjs/schematics": "11.0.10",
     "@nestjs/testing": "^11.1.16",
     "@types/cookie-parser": "^1.4.9",
     "@types/express": "^5.0.3",

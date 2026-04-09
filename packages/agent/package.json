@@ -21,7 +21,7 @@
     "@jest/globals": "^30.3.0",
     "@nestjs/common": "^11.1.16",
     "@nestjs/core": "^11.1.16",
-    "@nestjs/graphql": "13.2.4",
+    "@nestjs/graphql": "13.2.5",
     "@the-new-fuse/api-types": "workspace:*",
     "@the-new-fuse/infrastructure": "workspace:*",
     "@the-new-fuse/mcp-core": "workspace:*",
