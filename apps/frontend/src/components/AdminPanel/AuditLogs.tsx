@@ -1,8 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuditLogs } from '../../hooks/useAuditLogs';
+import { useDebounce } from '../../hooks/useDebounce';
 
 export const AuditLogs: React.FC = () => {
   const { logs, filters, setFilters, loading } = useAuditLogs();
+
+  // ⚡ Bolt: Debounced local state for search input to prevent API calls on every keystroke
+  const [searchTerm, setSearchTerm] = useState(filters.search);
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
+  // Sync external filter changes to local state (e.g. clear filters)
+  useEffect(() => {
+    setSearchTerm(filters.search);
+  }, [filters.search]);
+
+  useEffect(() => {
+    setFilters((prev: any) => {
+      if (prev.search === debouncedSearchTerm) return prev;
+      return { ...prev, search: debouncedSearchTerm };
+    });
+  }, [debouncedSearchTerm, setFilters]);
 
   return (
     <div>
@@ -20,8 +37,8 @@ export const AuditLogs: React.FC = () => {
         <input
           type="text"
           placeholder="Search logs..."
-          value={filters.search}
-          onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
           className="flex-1 px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md bg-transparent dark:bg-transparent"
         />
       </div>
