@@ -1,6 +1,6 @@
 {
   "name": "@the-new-fuse/api-server",
-  "version": "0.0.3",
+  "version": "0.0.3 ",
   "private": true,
   "dependencies": {
     "@apollo/server": "^5.4.0",
