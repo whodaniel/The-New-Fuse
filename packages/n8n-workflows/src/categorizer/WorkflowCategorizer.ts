@@ -3,7 +3,12 @@
  * Categorizes n8n workflows based on their content, nodes, and metadata
  */
 
-import { CategoryConfig, N8nWorkflow, WorkflowCategory } from '../types/index.js';
+import {
+  N8nWorkflow,
+  WorkflowCategory,
+  CategoryConfig,
+  WorkflowNode,
+} from '../types/index.js';
 
 export class WorkflowCategorizer {
   private categoryConfigs: CategoryConfig[] = [
