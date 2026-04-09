@@ -18,3 +18,7 @@
 **Vulnerability:** Widespread use of `Math.random().toString(36).substr(2, 9)` to generate unique IDs across the `packages/agent/src` directory, including execution IDs, message IDs, and session IDs.
 **Learning:** This pattern was likely copy-pasted across multiple files during initial development for convenience. `Math.random()` is not cryptographically secure, making these IDs predictable and vulnerable to guessing attacks, which is especially concerning for session and execution IDs.
 **Prevention:** Always use cryptographically secure methods like `crypto.randomBytes(4).toString('hex')` or `crypto.randomUUID()` when generating unique identifiers for security-sensitive or session-related context.
+## 2026-04-09 - Fix SQL injection in pgvector driver getStats method
+**Vulnerability:** Unsanitized collection parameter directly interpolated into SQL query via pg_total_relation_size() and FROM clause
+**Learning:** A sanitizeIdentifier function existed but was missed for one specific method query where a dynamic parameter was evaluated directly in string template literals, leading to an easy SQL Injection.
+**Prevention:** Ensure that anytime string interpolations are required (since table names cannot be parameterized in Postgres), the variables are strictly run through identifier sanitizers or whitelist validators.
