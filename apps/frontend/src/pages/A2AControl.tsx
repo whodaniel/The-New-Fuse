@@ -33,6 +33,53 @@ interface BrokerStats {
   avgLatency: string;
 }
 
+// ⚡ Bolt: Wrapped MessageListItem in React.memo to prevent O(n) re-renders
+// of the entire message bus list when new messages arrive or stats update.
+const MessageListItem = React.memo<{ msg: A2AMessage }>(({ msg }) => (
+  <div className="p-4 hover:bg-transparent/5 transition-colors flex items-center gap-4 group">
+    <div className="flex flex-col items-center justify-center w-8 shrink-0">
+      <div className="text-[10px] text-muted-foreground font-mono">
+        {new Date(msg.timestamp).toLocaleTimeString([], {
+          hour12: false,
+          minute: '2-digit',
+          second: '2-digit',
+        })}
+      </div>
+    </div>
+
+    <div className="flex-1 min-w-0">
+      <div className="flex items-center gap-2 mb-1">
+        <span className="bg-transparent/5 border border-white/10 text-[10px] font-mono text-cyan-300 px-1.5 py-0.5 rounded">
+          {msg.type}
+        </span>
+        <span className="text-xs text-gray-400 truncate max-w-[100px] font-mono">
+          {msg.senderId}
+        </span>
+        <ArrowRight className="w-3 h-3 text-muted-foreground" />
+        <span className="text-xs text-gray-400 truncate max-w-[100px] font-mono">
+          {msg.receiverId}
+        </span>
+      </div>
+      <div className="text-sm text-gray-200 truncate font-mono bg-black/40 p-2 rounded border border-white/5 group-hover:border-white/10 transition-colors">
+        {JSON.stringify(msg.payload)}
+      </div>
+    </div>
+
+    <div
+      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+        msg.status === 'processed'
+          ? 'bg-emerald-500/10 text-emerald-400'
+          : msg.status === 'failed'
+            ? 'bg-red-500/10 text-red-400'
+            : 'bg-transparent0/10 text-gray-400'
+      }`}
+    >
+      {msg.status}
+    </div>
+  </div>
+));
+MessageListItem.displayName = 'MessageListItem';
+
 export const A2AControl: React.FC = () => {
   const { api } = useApi();
   const [messages, setMessages] = useState<A2AMessage[]>([]);
@@ -196,52 +243,7 @@ export const A2AControl: React.FC = () => {
               ) : messages.length === 0 ? (
                 <div className="p-6 text-sm text-gray-400">No live A2A messages available.</div>
               ) : (
-                messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className="p-4 hover:bg-white/5 transition-colors flex items-center gap-4 group"
-                  >
-                    <div className="flex flex-col items-center justify-center w-8 shrink-0">
-                      <div className="text-[10px] text-gray-500 font-mono">
-                        {new Date(msg.timestamp).toLocaleTimeString([], {
-                          hour12: false,
-                          minute: '2-digit',
-                          second: '2-digit',
-                        })}
-                      </div>
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="bg-white/5 border border-white/10 text-[10px] font-mono text-cyan-300 px-1.5 py-0.5 rounded">
-                          {msg.type}
-                        </span>
-                        <span className="text-xs text-gray-400 truncate max-w-[100px] font-mono">
-                          {msg.senderId}
-                        </span>
-                        <ArrowRight className="w-3 h-3 text-gray-600" />
-                        <span className="text-xs text-gray-400 truncate max-w-[100px] font-mono">
-                          {msg.receiverId}
-                        </span>
-                      </div>
-                      <div className="text-sm text-gray-200 truncate font-mono bg-black/40 p-2 rounded border border-white/5 group-hover:border-white/10 transition-colors">
-                        {JSON.stringify(msg.payload)}
-                      </div>
-                    </div>
-
-                    <div
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                        msg.status === 'processed'
-                          ? 'bg-emerald-500/10 text-emerald-400'
-                          : msg.status === 'failed'
-                            ? 'bg-red-500/10 text-red-400'
-                            : 'bg-gray-500/10 text-gray-400'
-                      }`}
-                    >
-                      {msg.status}
-                    </div>
-                  </div>
-                ))
+                messages.map((msg) => <MessageListItem key={msg.id} msg={msg} />)
               )}
             </div>
           </GlassCard>
