@@ -15,6 +15,7 @@
 ## 2026-03-03 - O(n) Array Loops in High-Frequency Input Handlers
 **Learning:** Functions evaluating entirely new object arrays (`groupMessagesByDate`) or wrapping items blindly (`MessageGroup`) can unintentionally cause an O(n) re-evaluation block that stalls input rendering. Even though nested items (`HistoricalMessage`) were memoized, the array transformation itself on keystroke (triggered by state in parent `ChatContainer`) was a major CPU block.
 **Action:** When a parent container has high-frequency updates (e.g., text inputs), always ensure derived complex arrays and mapping wrapper components are shielded with `useMemo` and `React.memo` respectively, to prevent unnecessary object instantiations from freezing the main thread.
-## 2026-03-03 - Debounce Derived State Anti-pattern
-**Learning:** Debouncing a value and updating a shared state object in `useEffect` works, but using `setFilters({ ...filters, search: debouncedSearchTerm })` inside an effect triggered by typing breaks programmatic external filter updates (like a "Clear Filters" button). The local state overrides the external state change because the delayed `debouncedSearchTerm` triggers an overwrite.
-**Action:** Always synchronize the parent component's state downward into the local state (`useEffect(() => setSearchTerm(externalValue), [externalValue])`), and use a functional updater (`setFilters(prev => ...)`) to apply the debounced local state upward safely without breaking external modifications.
+
+## 2026-03-05 - Vitest Environment Failures vs TSC Verification
+**Learning:** Running `pnpm test` or `vitest` for specific frontend UI components (like `A2AMultiAgentChat.tsx`) fails completely not due to broken component logic, but due to deep unhandled errors in vitest pool execution and missing testing dependencies (like `@testing-library/react` context issues).
+**Action:** When `vitest` throws `Unhandled Error: Worker exited unexpectedly` on perfectly valid component updates, abandon tests and strictly use `pnpm --filter @the-new-fuse/frontend-app exec tsc --noEmit <filepath>` to verify type correctness of the refactored React logic.

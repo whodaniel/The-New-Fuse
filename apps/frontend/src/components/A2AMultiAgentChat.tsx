@@ -62,6 +62,42 @@ const MessageBubble = React.memo<{ msg: A2AMessage; agents: AgentSummary[] }>(({
 });
 MessageBubble.displayName = 'MessageBubble';
 
+// ⚡ Bolt: Extracted ConnectionStatus outside of parent to prevent inline component
+// re-creation on every render of EnhancedMultiAgentChatUI
+const ConnectionStatus = React.memo<{ connectionState: any }>(({ connectionState }) => (
+  <div
+    role="status"
+    aria-live="polite"
+    className={cn(
+      'flex items-center gap-2 px-3 py-1 rounded-full text-sm',
+      connectionState.connected
+        ? connectionState.authenticated
+          ? 'bg-green-100 text-green-800'
+          : 'bg-yellow-100 text-yellow-800'
+        : 'bg-red-100 text-red-800'
+    )}
+  >
+    <div
+      className={cn(
+        'w-2 h-2 rounded-full',
+        connectionState.connected
+          ? connectionState.authenticated
+            ? 'bg-green-500'
+            : 'bg-yellow-500'
+          : 'bg-red-500'
+      )}
+    />
+    {connectionState.connected
+      ? connectionState.authenticated
+        ? 'Connected & Authenticated'
+        : 'Connected (Authenticating...)'
+      : connectionState.connecting
+        ? 'Connecting...'
+        : 'Disconnected'}
+  </div>
+));
+ConnectionStatus.displayName = 'ConnectionStatus';
+
 // Enhanced MultiAgentChat with A2A integration
 export default function MultiAgentChat() {
   return (
