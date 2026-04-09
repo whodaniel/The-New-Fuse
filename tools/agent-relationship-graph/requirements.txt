@@ -171,7 +171,7 @@ pkginfo==1.11.2
 platformdirs==4.3.6
 playwright==1.47.0
 pluggy==1.5.0
-poetry==1.8.4
+poetry==2.3.3
 poetry-core==1.9.1
 poetry-plugin-export==1.8.0
 posthog==3.7.0
