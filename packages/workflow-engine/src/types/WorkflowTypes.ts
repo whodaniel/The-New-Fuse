@@ -78,11 +78,15 @@ export enum WorkflowNodeType {
   // Basic nodes
   START = 'start',
   END = 'end',
+  INPUT = 'input',
+  OUTPUT = 'output',
 
   // Agent nodes
+  AGENT = 'agent',
   AGENT_TASK = 'agent_task',
   AGENT_HANDOFF = 'agent_handoff',
   AGENT_COORDINATION = 'agent_coordination',
+  A2A = 'a2a',
 
   // Logic nodes
   CONDITION = 'condition',
@@ -91,6 +95,7 @@ export enum WorkflowNodeType {
   MERGE = 'merge',
 
   // Integration nodes
+  MCP_TOOL = 'mcp-tool',
   API_CALL = 'api_call',
   DATABASE_QUERY = 'database_query',
   FILE_OPERATION = 'file_operation',
@@ -99,14 +104,20 @@ export enum WorkflowNodeType {
   RELAY_MESSAGE = 'relay_message',
   WEBHOOK = 'webhook',
   EMAIL = 'email',
+  NOTIFICATION = 'notification',
 
   // AI/LLM nodes
   LLM_PROMPT = 'llm_prompt',
   CODE_GENERATION = 'code_generation',
   ANALYSIS = 'analysis',
+  PROMPT = 'prompt',
 
   // Sandbox nodes
   SANDBOX_EXECUTION = 'sandbox_execution',
+  TRANSFORM = 'transform',
+
+  // Workflow nodes
+  SUBWORKFLOW = 'subworkflow',
 
   // Custom nodes
   CUSTOM = 'custom',
@@ -116,8 +127,10 @@ export interface WorkflowConnection {
   id: string;
   sourceNodeId: string;
   sourceOutputId: string;
+  sourceHandle?: string; // ReactFlow handle ID
   targetNodeId: string;
   targetInputId: string;
+  targetHandle?: string; // ReactFlow handle ID
   condition?: string; // JavaScript expression
   metadata: Record<string, any>;
 }

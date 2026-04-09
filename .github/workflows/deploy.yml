@@ -1,15 +1,10 @@
-name: Deploy to Railway
+name: Deploy to Railway (LEGACY)
 
 on:
-  push:
-    branches:
-      - main
-    tags:
-      - 'v*.*.*'
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environment to deploy to'
+        description: "Environment to deploy to"
         required: true
         type: choice
         options:
@@ -17,9 +12,9 @@ on:
           - staging
         default: production
       services:
-        description: 'Services to deploy (comma-separated: api,backend,frontend,gateway or all)'
+        description: "Services to deploy (comma-separated: api,backend,frontend,gateway or all)"
         required: false
-        default: 'all'
+        default: "all"
 
 concurrency:
   group: deploy-${{ github.ref }}
@@ -223,11 +218,6 @@ jobs:
   health-checks:
     name: Post-Deployment Health Checks
     needs: [pre-deploy-checks, deploy-to-railway]
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
-  health-checks:
-    name: Post-Deployment Health Checks
-    needs: [pre-deploy-checks, deploy-to-railway]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -313,7 +303,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install Railway CLI
         run: npm install -g @railway/cli

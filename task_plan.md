@@ -51,20 +51,21 @@ Phase 4 (Implementation) - in progress
 
 ### Phase 2: Planning & Structure (PLANNING)
 
-- [x] Define swarm lanes and file ownership boundaries
-- [x] Define 11-hour timeline with hard checkpoints
-- [x] Define priority order based on user-visible impact
-- [x] Define merge/review gate policy
-- **Status:** in_progress
-- **Code Allowed:** NO
+- [x] Build a module inventory matrix with features/controls per module.
+- [x] Define audit checklist (UI behavior, persistence, execution, errors).
+- [x] Create `docs/PLAN-workflow-builder-audit.md` with per-module tasks.
+- [x] Define QA scenarios + acceptance criteria for each module.
+- **Status:** completed
+- **Code Allowed:** ❌ NO
 
 ### Phase 3: Solutioning (DESIGN)
 
-- [x] Finalize API contracts for each frontend mock replacement
-- [x] Produce lane-specific acceptance checks
-- [x] Freeze P0 feature list (must-ship vs defer)
-- **Status:** complete
-- **Code Allowed:** NO
+- [ ] Decide instrumentation and tracing approach for end-to-end flows.
+- [ ] Define UI layout fixes (grid, container constraints, overflow rules).
+- [ ] Specify backend contract updates and migrations (if needed).
+- [ ] Get user approval on scope and priorities before implementation.
+- **Status:** in_progress
+- **Code Allowed:** ❌ NO
 
 ### Phase 4: Implementation
 

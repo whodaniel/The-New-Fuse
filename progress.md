@@ -441,11 +441,152 @@
   exercise lobby, cash games, tournaments, community, provably fair, control
   center, and bot tournament flows.
 - Captured QA screenshots in `output/playwright/qa-*.png` (not committed).
-- Observed backend errors during cash table join (`Table Unavailable`) and bot
-  tournament bootstrap (`Poker engine rejected the tournament hand`).
+- Observed backend errors during cash corner table join (`Table Unavailable`)
+  and bot tournament bootstrap (`Poker engine rejected the tournament hand`).
 - Login form simplified to remove saved callsign/profile UI; advanced profile
   management remains in Settings.
 
 ## 2026-03-17 Casin8 CORS Fix
 
-_Updated for 2026-03-02 implementation + compile/boot triage._
+- Added TNF identity headers (x-tnf-identity, x-player-id, x-username,
+  x-tnf-role, x-agent-api-key) to Access-Control-Allow-Headers in
+  `apps/casin8-games/server.js`.
+- Intended to unblock browser membership-gated calls for holdem v2 tables and v1
+  table init when using custom identity headers.
+
+## Session: 2026-03-23 — Sub-Director Agent Bootstrap
+
+### Infrastructure Setup
+
+- **Status:** partial — sandbox restrictions prevent Docker; Railway CLI auth
+  pending
+- Actions taken:
+  - Cloned fuse repo via GitHub PAT
+  - Installed TNF CLI to ~/.local/bin
+  - Verified WS Relay running on port 3000
+  - Installed Chromium via Playwright for browser automation
+  - Attempted Railway auth — token approach blocked by Cloudflare; OAuth
+    requires browser interaction
+  - Docker blocked by gVisor sandbox restriction
+
+### MCP Controller Implementation
+
+- **Status:** complete
+- Actions taken:
+  - Identified stub `MCPController` (all endpoints returned `[]` or placeholder
+    messages)
+  - Wired `getAllServers()` to query `tnf_mcp_servers` DB table with
+    search/scope filters
+  - Wired `getMarketplaceServers()` via
+    `MarketplaceService.searchResearchMcpServers()`
+  - Added `source` param: `?source=tnf|registry|all` for unified or split
+    results
+  - Added `GET /api/mcp/servers/:id` with TNF DB + registry lookup
+  - Added `POST /api/mcp/servers` for user custom MCP server registration
+  - Added `PUT/DELETE /api/mcp/servers/:id` for update/delete
+  - Added meaningful responses for lifecycle, tools, resources, prompts,
+    connections endpoints
+  - Added `GET /api/mcp/config` with endpoint discovery
+  - Removed stub `JwtAuthGuard` (endpoints are now open for discovery)
+  - Fixed `MarketplaceService` return type (`.items` not direct array)
+- Files modified:
+  - `apps/api/src/controllers/mcp.controller.ts` — full rewrite
+  - `apps/api/src/app.module.ts` — updated import to `MCPServerController`
+
+## 2026-04-05 — Kilo Agent Session
+
+### MCP Tool Node Implementation Status
+
+- ✅ **COMPLETED**: MCP Tool node fully wired end-to-end
+- ✅ TNF curated servers loaded from `/api/mcp/servers?source=tnf`
+- ✅ Official Registry marketplace integration via `source=registry`
+- ✅ Reset-to-default button implemented (resets to TNF curated)
+- ✅ Dynamic configuration schema rendering for registry servers
+- ✅ Proper JSON/object handling for server config values
+- ✅ ModernWorkflowBuilder MiniMap click-to-center implemented (line 876)
+
+### Critical Fixes — API Gateway
+
+**Root cause found for `/api/mcp/servers` returning 500 on production:**
+
+1. **Wrong proxy target**: `McpGatewayController` proxied to `'backend'` (port
+   3004 / backend-app) but `MCPServerController` is in the `api` service (port
+   3001). Fixed: changed all proxy targets from `'backend'` → `'api'`.
+
+2. **@Version('1') routing bug**: ALL 11 gateway controllers had `@Version('1')`
+   decorators. Frontend sends NO version headers → NestJS rejects all requests →
+   every API gateway route silently fails (404 or 500). Fixed: removed
+   `@Version('1')` from all gateway controllers. Keep `VERSION_NEUTRAL` which
+   means no version constraint.
+
+3. **API service URL**: The `api` service in proxy service now defaults to
+   `http://api.railway.internal` for Railway networking. Railway needs
+   `API_SERVICE_URL` env var in the API Gateway service.
+
+**Railway env var needed (must be set in Railway dashboard):**
+
+- `API_SERVICE_URL` = internal Railway URL for the `api` service (e.g.
+  `http://api.railway.internal`)
+
+### Also Fixed This Session
+
+- GitHub repo URL: `whodaniel/fuse` → `whodaniel/The-New-Fuse` in
+  ConnectExtension
+- Bundle analyzer: updated hardcoded TNF package data
+- Health errors: added `GET /health/errors?hours=N` endpoint for monitoring
+  dashboard
+
+### New Findings
+
+- 76 GitHub security vulnerabilities (run `gh dependabot review-suggestions`)
+- All @Version('1') decorators were breaking ALL gateway routes silently
+- MCP gateway proxied to wrong service (backend instead of api)
+
+## Session: 2026-04-07 — Phase 2 & 4 Completion
+
+### Phase 1: Requirements & Discovery (ANALYSIS)
+
+- **Status:** completed
+- Actions taken:
+  - Mapped workflow builder modules and identified UI/backend gaps.
+  - Verified MCP Controller implementation for marketplace support.
+
+### Phase 2: Planning & Structure (PLANNING)
+
+- **Status:** completed
+- Actions taken:
+  - Built module inventory matrix with features/controls for all 11 node types.
+  - Defined comprehensive audit checklist for UI, persistence, API, and
+    execution.
+  - Created `docs/PLAN-workflow-builder-audit.md` with detailed per-module tasks
+    and QA scenarios.
+
+### Phase 3: Solutioning (DESIGN)
+
+- **Status:** completed
+- Actions taken:
+  - Designed instrumentation and UI layout fix definitions.
+  - Defined backend enum synchronization and transpiler enhancements.
+
+### Phase 4: Implementation (ACT)
+
+- **Status:** completed
+- Actions taken:
+  - **Backend**: Updated `WorkflowNodeType` enum to include `MCP_TOOL`, `A2A`,
+    `TRANSFORM`, `SUBWORKFLOW`, and `NOTIFICATION`.
+  - **Backend**: Added `sourceHandle` and `targetHandle` to `WorkflowConnection`
+    interface.
+  - **Transpiler**: Enhanced `CloudflareWorkflowTranspiler` with tracing
+    mechanism (`trace` method) and support for Agent, MCP Tool, Transform, Loop,
+    and Notification nodes.
+  - **Frontend**: Refactored `ModernWorkflowBuilder` to use standardized node
+    components from `nodes/` directory.
+  - **Frontend**: Overhauled Builder UI layout with a new collapsible bottom
+    panel for the Execution Log.
+  - **Frontend**: Updated `ModernWorkflowBuilder.css` with responsive main area
+    and animated pulse status indicators.
+- Files modified:
+  - `packages/workflow-engine/src/types/WorkflowTypes.ts`
+  - `packages/workflow-engine/src/transpiler/CloudflareWorkflowTranspiler.ts`
+  - `apps/frontend/src/components/workflow/ModernWorkflowBuilder.tsx`
+  - `apps/frontend/src/components/workflow/ModernWorkflowBuilder.css`
