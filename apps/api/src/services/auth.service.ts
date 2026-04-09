@@ -155,7 +155,7 @@ export class AuthService {
   private async makeUsernameUnique(base: string): Promise<string> {
     const existing = await this.db.users.findByUsername(base);
     if (!existing) return base;
-    return `${base}_${Math.random().toString(36).slice(2, 7)}`;
+    return `${base}_${crypto.randomBytes(3).toString('hex')}`;
   }
 
   async validateToken(token: string): Promise<User> {
