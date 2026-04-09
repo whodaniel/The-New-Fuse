@@ -83,6 +83,40 @@ export default function MultiAgentChat() {
   );
 }
 
+// ⚡ Bolt: Extracted inline component to prevent unmounting/remounting on every parent render (e.g., keystrokes).
+const ConnectionStatus = React.memo(({ connectionState }: { connectionState: ReturnType<typeof useA2AContext>['connectionState'] }) => (
+  <div
+    role="status"
+    aria-live="polite"
+    className={cn(
+      'flex items-center gap-2 px-3 py-1 rounded-full text-sm',
+      connectionState.connected
+        ? connectionState.authenticated
+          ? 'bg-green-100 text-green-800'
+          : 'bg-yellow-100 text-yellow-800'
+        : 'bg-red-100 text-red-800'
+    )}
+  >
+    <div
+      className={cn(
+        'w-2 h-2 rounded-full',
+        connectionState.connected
+          ? connectionState.authenticated
+            ? 'bg-green-500'
+            : 'bg-yellow-500'
+          : 'bg-red-500'
+      )}
+    />
+    {connectionState.connected
+      ? connectionState.authenticated
+        ? 'Connected & Authenticated'
+        : 'Connected (Authenticating...)'
+      : connectionState.connecting
+        ? 'Connecting...'
+        : 'Disconnected'}
+  </div>
+));
+
 function EnhancedMultiAgentChatUI() {
   const { connectionState, connect } = useA2AContext();
   const connectionError = connectionState.error ? new Error(connectionState.error) : null;
@@ -254,39 +288,6 @@ function EnhancedMultiAgentChatUI() {
     }
   }, [agents, joinConversation]);
 
-  // Connection status component
-  const ConnectionStatus = () => (
-    <div
-      role="status"
-      aria-live="polite"
-      className={cn(
-        'flex items-center gap-2 px-3 py-1 rounded-full text-sm',
-        connectionState.connected
-          ? connectionState.authenticated
-            ? 'bg-green-100 text-green-800'
-            : 'bg-yellow-100 text-yellow-800'
-          : 'bg-red-100 text-red-800'
-      )}
-    >
-      <div
-        className={cn(
-          'w-2 h-2 rounded-full',
-          connectionState.connected
-            ? connectionState.authenticated
-              ? 'bg-green-500'
-              : 'bg-yellow-500'
-            : 'bg-red-500'
-        )}
-      />
-      {connectionState.connected
-        ? connectionState.authenticated
-          ? 'Connected & Authenticated'
-          : 'Connected (Authenticating...)'
-        : connectionState.connecting
-          ? 'Connecting...'
-          : 'Disconnected'}
-    </div>
-  );
 
   if (connectionError) {
     return (
@@ -340,7 +341,7 @@ function EnhancedMultiAgentChatUI() {
 
       <header className="bg-transparent dark:bg-transparent shadow-none p-3 z-10">
         <div className="flex items-center gap-4 pb-2 flex-wrap">
-          <ConnectionStatus />
+          <ConnectionStatus connectionState={connectionState} />
 
           <button
             onClick={handleAutomateAgentCreation}
