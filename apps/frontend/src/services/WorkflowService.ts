@@ -99,13 +99,8 @@ class WorkflowService {
 
   // Workflow CRUD operations
   async getWorkflows(): Promise<Workflow[]> {
-    const payload = await this.request<any>('/workflows');
-    const workflows = Array.isArray(payload)
-      ? payload
-      : Array.isArray(payload?.workflows)
-        ? payload.workflows
-        : [];
-    return workflows.map((workflow: any) => this.transformWorkflow(workflow));
+    const workflows = await this.request<any[]>('/workflows');
+    return workflows.map(this.transformWorkflow);
   }
 
   async getWorkflow(id: string): Promise<Workflow> {

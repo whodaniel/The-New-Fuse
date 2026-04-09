@@ -84,9 +84,7 @@ export function UserDashboard() {
 
         {loading && (
           <Card>
-            <CardContent className="py-6 text-sm text-muted-foreground">
-              Loading your apps...
-            </CardContent>
+            <CardContent className="py-6 text-sm text-gray-500">Loading your apps...</CardContent>
           </Card>
         )}
 
@@ -105,7 +103,7 @@ export function UserDashboard() {
 
         {!loading && apps.length === 0 && !loadError && (
           <Card>
-            <CardContent className="py-6 text-sm text-muted-foreground">
+            <CardContent className="py-6 text-sm text-gray-500">
               No applications are linked to this account yet.
             </CardContent>
           </Card>

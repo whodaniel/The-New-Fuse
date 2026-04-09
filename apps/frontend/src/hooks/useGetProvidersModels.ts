@@ -1,7 +1,12 @@
-// @ts-nocheck
-import System from '@/models/system';
-import { useEffect, useState } from 'react';
-export const DISABLED_PROVIDERS = ['azure', 'native', 'textgenwebui', 'generic-openai', 'bedrock'];
+import { useEffect, useState } from "react";
+import System from "@/models/system";
+export const DISABLED_PROVIDERS = [
+    "azure",
+    "native",
+    "textgenwebui",
+    "generic-openai",
+    "bedrock",
+];
 const PROVIDER_DEFAULT_MODELS = {
   openai: [],
   gemini: [
@@ -60,37 +65,37 @@ function groupModels(models): any {
 }
 const groupedProviders = ['togetherai', 'fireworksai', 'openai', 'novita', 'openrouter'];
 export default function useGetProviderModels(provider = null): any {
-  const [defaultModels, setDefaultModels] = useState([]);
-  const [customModels, setCustomModels] = useState([]);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    async function fetchProviderModels(): any {
-      if (!provider) {
-        setLoading(false);
-        return;
-      }
-      setLoading(true);
-      let models: any[] = [];
-      try {
-        const response = await System.customModels(provider);
-        models = (response === null || response === void 0 ? void 0 : response.models) || [];
-      } catch {
-        models = [];
-      }
-      if (
-        PROVIDER_DEFAULT_MODELS.hasOwnProperty(provider) &&
-        !groupedProviders.includes(provider)
-      ) {
-        setDefaultModels(PROVIDER_DEFAULT_MODELS[provider]);
-      } else {
-        setDefaultModels([]);
-      }
-      groupedProviders.includes(provider)
-        ? setCustomModels(groupModels(models))
-        : setCustomModels(models);
-      setLoading(false);
-    }
-    fetchProviderModels();
-  }, [provider]);
-  return { defaultModels, customModels, loading };
+    const [defaultModels, setDefaultModels] = useState([]);
+    const [customModels, setCustomModels] = useState([]);
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        async function fetchProviderModels(): any {
+            if (!provider) {
+                setLoading(false);
+                return;
+            }
+            setLoading(true);
+            let models: any[] = [];
+            try {
+                const response = await System.customModels(provider);
+                models = (response === null || response === void 0 ? void 0 : response.models) || [];
+            }
+            catch {
+                models = [];
+            }
+            if (PROVIDER_DEFAULT_MODELS.hasOwnProperty(provider) &&
+                !groupedProviders.includes(provider)) {
+                setDefaultModels(PROVIDER_DEFAULT_MODELS[provider]);
+            }
+            else {
+                setDefaultModels([]);
+            }
+            groupedProviders.includes(provider)
+                ? setCustomModels(groupModels(models))
+                : setCustomModels(models);
+            setLoading(false);
+        }
+        fetchProviderModels();
+    }, [provider]);
+    return { defaultModels, customModels, loading };
 }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-25T11:12:56.485Z",
+  "generatedAt": "2026-03-03T01:33:44.538Z",
   "rows": [
     {
       "name": "skill-creator",
@@ -156,6 +156,20 @@
       }
     },
     {
+      "name": "design-md",
+      "description": "Analyze Stitch projects and synthesize a semantic design system into DESIGN.md files",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["codex", "global", "skill-bank"],
+      "source": "/Users/<owner>/.codex/skills/design-md",
+      "metadata": {
+        "hash": "eb15f44646528f3a087ce023329ae699c1b6e803662af68338e1eb1c0406b59b",
+        "id": "design-md",
+        "snapshotPath": ".agent/skill-bank/snapshots/codex/design-md-eb15f446"
+      }
+    },
+    {
       "name": "doc",
       "description": "Use when the task involves reading, creating, or editing `.docx` documents, especially when formatting or layout fidelity matters; prefer `python-docx` plus the bundled `scripts/render_docx.py` for visual checks.",
       "category": "CLAUDE_SKILL",
@@ -170,20 +184,6 @@
       }
     },
     {
-      "name": "email-custodian-agent",
-      "description": "Provision and link new email inboxes with ChatGPT accounts, then complete Codex CLI authentication for that identity. Use when setting up a fresh agent persona account end-to-end (email login, ChatGPT signup/login, one-time code retrieval from Stackmail, Codex browser auth handoff, and terminal mode verification).",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/email-custodian-agent",
-      "metadata": {
-        "hash": "61ae68100601ccfacc15070c018a796ef704f6d096727c58523e6e7c870c7d29",
-        "id": "email-custodian-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/email-custodian-agent-61ae6810"
-      }
-    },
-    {
       "name": "enhance-prompt",
       "description": "Transforms vague UI ideas into polished, Stitch-optimized prompts. Enhances specificity, adds UI/UX keywords, injects design system context, and structures output for better generation results.",
       "category": "CLAUDE_SKILL",
@@ -195,34 +195,6 @@
         "hash": "ccb200c798072438b642b1fa6a5c515563159e2fab3d56e813d76d8afa9a7ce6",
         "id": "enhance-prompt",
         "snapshotPath": ".agent/skill-bank/snapshots/codex/enhance-prompt-ccb200c7"
-      }
-    },
-    {
-      "name": "figma",
-      "description": "Use the Figma MCP server to fetch design context, screenshots, variables, and assets from Figma, and to translate Figma nodes into production code. Trigger when a task involves Figma URLs, node IDs, design-to-code implementation, or Figma MCP setup and troubleshooting.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/figma",
-      "metadata": {
-        "hash": "5b11f7c8d0ce4c047b401323e7b8fe6559bd3162a3397bf5248634a5444609d5",
-        "id": "figma",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/figma-5b11f7c8"
-      }
-    },
-    {
-      "name": "figma-implement-design",
-      "description": "Translate Figma nodes into production-ready code with 1:1 visual fidelity using the Figma MCP workflow (design context, screenshots, assets, and project-convention translation). Trigger when the user provides Figma URLs or node IDs, or asks to implement designs or components that must match Figma specs. Requires a working Figma MCP server connection.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/figma-implement-design",
-      "metadata": {
-        "hash": "adea0fa5ed0b77a75112f64737f4aa562fcc231d242370f8cbdb25d050be19ad",
-        "id": "figma-implement-design",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/figma-implement-design-adea0fa5"
       }
     },
     {
@@ -2116,20 +2088,6 @@
       }
     },
     {
-      "name": "production-pipeline-segment",
-      "description": "Build and operationalize a reusable game-frontend production pipeline segment from asset requirements to AI build prompts. Use when Codex needs to convert an asset manifest into a per-asset production checklist, map best local candidate images, generate a browser report with copy-ready per-asset prompt containers, and prepare implementation prompts for Gemini/AI Studio to generate a React frontend wired for backend integration.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/production-pipeline-segment",
-      "metadata": {
-        "hash": "3209dc476018e2bf2dc7810a216d3fa947f0034f009c4844af68501c412cc86c",
-        "id": "production-pipeline-segment",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/production-pipeline-segment-3209dc47"
-      }
-    },
-    {
       "name": "react:components",
       "description": "Converts Stitch designs into modular Vite and React components using system-level networking and AST-based validation.",
       "category": "CLAUDE_SKILL",
@@ -2155,20 +2113,6 @@
         "hash": "34fde6f0d4ffe9d1f170f311da2ee91691e1c85018653bddf2eb55d50ccaf27f",
         "id": "remotion",
         "snapshotPath": ".agent/skill-bank/snapshots/codex/remotion-34fde6f0"
-      }
-    },
-    {
-      "name": "render-deploy",
-      "description": "Deploy applications to Render by analyzing codebases, generating render.yaml Blueprints, and providing Dashboard deeplinks. Use when the user wants to deploy, host, publish, or set up their application on Render's cloud platform.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/render-deploy",
-      "metadata": {
-        "hash": "c17c75adeb1834ed5cee1e440a651ae476c4101cd63762fcd9a58eada917552d",
-        "id": "render-deploy",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/render-deploy-c17c75ad"
       }
     },
     {
@@ -2228,20 +2172,6 @@
       }
     },
     {
-      "name": "sentry",
-      "description": "Use when the user asks to inspect Sentry issues or events, summarize recent production errors, or pull basic Sentry health data via the Sentry API; perform read-only queries with the bundled script and require `SENTRY_AUTH_TOKEN`.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/sentry",
-      "metadata": {
-        "hash": "b598ea447ad6bec923f5c3879ace25e4a7f1368a7eac019b5c0e2f79a36322c6",
-        "id": "sentry",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/sentry-b598ea44"
-      }
-    },
-    {
       "name": "shadcn-ui",
       "description": "Expert guidance for integrating and building applications with shadcn/ui components, including component discovery, installation, customization, and best practices.",
       "category": "CLAUDE_SKILL",
@@ -2270,48 +2200,6 @@
       }
     },
     {
-      "name": "sora",
-      "description": "Use when the user asks to generate, remix, poll, list, download, or delete Sora videos via OpenAI\\u2019s video API using the bundled CLI (`scripts/sora.py`), including requests like \\u201cgenerate AI video,\\u201d \\u201cSora,\\u201d \\u201cvideo remix,\\u201d \\u201cdownload video/thumbnail/spritesheet,\\u201d and batch video generation; requires `OPENAI_API_KEY` and Sora API access.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/sora",
-      "metadata": {
-        "hash": "13ac4711e544afc1d76cc2f7ae34ff19089be5797654afba7932d6c2424acccf",
-        "id": "sora",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/sora-13ac4711"
-      }
-    },
-    {
-      "name": "speech",
-      "description": "Use when the user asks for text-to-speech narration or voiceover, accessibility reads, audio prompts, or batch speech generation via the OpenAI Audio API; run the bundled CLI (`scripts/text_to_speech.py`) with built-in voices and require `OPENAI_API_KEY` for live calls. Custom voice creation is out of scope.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/speech",
-      "metadata": {
-        "hash": "d6120efc03ea0e80204f687801cfaec8efc4519a3430b68e13e4ebd8e1c69b52",
-        "id": "speech",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/speech-d6120efc"
-      }
-    },
-    {
-      "name": "spreadsheet",
-      "description": "Use when tasks involve creating, editing, analyzing, or formatting spreadsheets (`.xlsx`, `.csv`, `.tsv`) using Python (`openpyxl`, `pandas`), especially when formulas, references, and formatting need to be preserved and verified.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/spreadsheet",
-      "metadata": {
-        "hash": "a9c3e61acb5e33b92760e9a1ea75b0031328095b0bb0118cacd055d749d1b73f",
-        "id": "spreadsheet",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/spreadsheet-a9c3e61a"
-      }
-    },
-    {
       "name": "stitch-loop",
       "description": "Teaches agents to iteratively build websites using Stitch with an autonomous baton-passing loop pattern",
       "category": "CLAUDE_SKILL",
@@ -2323,230 +2211,6 @@
         "hash": "22611f4c294fed0f390c1c1e25d5c1056eedfb4a9f707ba6aee797bcdb22e830",
         "id": "stitch-loop",
         "snapshotPath": ".agent/skill-bank/snapshots/codex/stitch-loop-22611f4c"
-      }
-    },
-    {
-      "name": "task-agent-router",
-      "description": "Triage messy or ambiguous work requests, identify what actually needs to be done first, and select the best-fit agent or agent sequence for execution. Use when a user asks which tasks to work on, which agents to use, how to delegate work across multiple agents, or how to turn a broad goal into an executable multi-agent plan.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/task-agent-router",
-      "metadata": {
-        "hash": "6b34f45340953eece1d86fca808704d861de73b61e97ae4c717de5c2d888161a",
-        "id": "task-agent-router",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/task-agent-router-6b34f453"
-      }
-    },
-    {
-      "name": "tnf-execution-audit-trail",
-      "description": "Implement or repair per-task execution audit logging across The New Fuse stack. Use when requests involve task execution visibility, audit trails, timeline logging, or “what happened during task/workflow execution” features in TNF. Trigger for tasks that require wiring logs through backend API endpoints, workflow engine telemetry/router/worker events, and Task Detail frontend filtering/presets/shareable log views.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/tnf-execution-audit-trail",
-      "metadata": {
-        "hash": "663495e6dc6c77e723f8d27c50dbf705f302b42d78199848253a2db4d974bbb2",
-        "id": "tnf-execution-audit-trail",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-execution-audit-trail-663495e6"
-      }
-    },
-    {
-      "name": "tnf-frontload-protocols",
-      "description": "TNF frontloading system design and operations. Use when Codex must build, verify, repair, or explain the frontload banner and context refresh for terminal shells (zsh) and OpenClaw, including cache regeneration, hook placement, and reproducible verification of what the user sees at session start.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/tnf-frontload-protocols",
-      "metadata": {
-        "hash": "4fe326621aef6b44e98baf5427ec638adcdb66bc854a23293f8a78452a3e13d0",
-        "id": "tnf-frontload-protocols",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-frontload-protocols-4fe32662"
-      }
-    },
-    {
-      "name": "tnf-live-session-coordination",
-      "description": "Use when coordinating multiple live TNF/Codex sessions, polling active terminal windows, checking whether another agent is already working an edge, establishing lane splits, or handling A2A coordination incidents. Prefer shared thread context and repo artifacts over raw TTY writes; treat terminal injection as an emergency fallback only.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/tnf-live-session-coordination",
-      "metadata": {
-        "hash": "8e91ba778ccf7e79bae80ae49a8a9be0f782cfd33b98925d56804c7a0dbfa308",
-        "id": "tnf-live-session-coordination",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-live-session-coordination-8e91ba77"
-      }
-    },
-    {
-      "name": "tnf-master-clock-sync",
-      "description": "Sync TNF reliability and self-improvement audit loops with master clock cron protocols, including schedule mapping, trigger contracts, escalation paths, and verification checks. Use when Codex must operationalize or harden scheduled TNF loops beyond ad hoc CI triggers.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/tnf-master-clock-sync",
-      "metadata": {
-        "hash": "d81f511a1d8074b5c7b3f553347530cd8f4a67238c7c815d41f38f7fc6144b6a",
-        "id": "tnf-master-clock-sync",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-master-clock-sync-d81f511a"
-      }
-    },
-    {
-      "name": "tnf-skill-bridging",
-      "description": "Define and implement skill-bridges between TNF skills. Use when Codex must connect skill inputs/outputs, define handoff contracts, or create bridge artifacts that let multiple skills execute as a cohesive workflow.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/tnf-skill-bridging",
-      "metadata": {
-        "hash": "413b3297a1a1eaecbf5b01a5bbf617b8f773158bf7ff4bf46b6e18c87cd2b758",
-        "id": "tnf-skill-bridging",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-skill-bridging-413b3297"
-      }
-    },
-    {
-      "name": "tnf-skill-types",
-      "description": "Define and apply TNF skill taxonomy. Use when Codex must classify skills by type, enforce type-specific rules, design new skill types, or validate a skill’s type selection and requirements.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/tnf-skill-types",
-      "metadata": {
-        "hash": "ffd840d1b07aed22caa185b03bc6080c42a5ae83078f561d60dcfa39660a16f7",
-        "id": "tnf-skill-types",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-skill-types-ffd840d1"
-      }
-    },
-    {
-      "name": "tnf-stack-self-improvement-loop",
-      "description": "Construct, verify, run, and continuously improve the TNF full-stack reliability loop with deterministic build checks, deep link and semantic route audits, auth pathway validation, logging artifacts, architecture diagram generation, specialist-agent audit coverage, and iterative skill refinement. Use when Codex must harden or operate TNF as an ongoing self-improving system.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/tnf-stack-self-improvement-loop",
-      "metadata": {
-        "hash": "5e9d92f6bceb4355d4300ca652d0abda319f89146719f779ba4ed054e16e2193",
-        "id": "tnf-stack-self-improvement-loop",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-stack-self-improvement-loop-5e9d92f6"
-      }
-    },
-    {
-      "name": "tnf-task-production-pipeline",
-      "description": "Operate and validate the TNF task execution production pipeline end-to-end. Use when requests involve running or hardening TNF task APIs, execution-log ingestion, unified timeline mirroring, stuck-task monitoring on a 30-minute cadence, production readiness checks, or rollout verification in The New Fuse.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/tnf-task-production-pipeline",
-      "metadata": {
-        "hash": "d748bf2d49292dc1cd251c378af14b35fc583566dce93f4a4bf51d3f2c1123e4",
-        "id": "tnf-task-production-pipeline",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-task-production-pipeline-d748bf2d"
-      }
-    },
-    {
-      "name": "transcribe",
-      "description": "Transcribe audio files to text with optional diarization and known-speaker hints. Use when a user asks to transcribe speech from audio/video, extract text from recordings, or label speakers in interviews or meetings.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/transcribe",
-      "metadata": {
-        "hash": "f530021da9f377362ee4214e0bc689cbb5404640d2eb88ee272d51d61f530a09",
-        "id": "transcribe",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/transcribe-f530021d"
-      }
-    },
-    {
-      "name": "vercel-deploy",
-      "description": "Deploy applications and websites to Vercel. Use when the user requests deployment actions like \"deploy my app\", \"deploy and give me the link\", \"push this live\", or \"create a preview deployment\".",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/vercel-deploy",
-      "metadata": {
-        "hash": "f4a6cbfbb378a320fae179a79f727a881d19677e9b3db96ed49d2dc02a74fa46",
-        "id": "vercel-deploy",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/vercel-deploy-f4a6cbfb"
-      }
-    },
-    {
-      "name": "web-game-deterministic-loop",
-      "description": "Build and iterate HTML/JS canvas web games with a deterministic test loop using the standard Playwright client. Use when a user asks to implement or fix gameplay, controls, collisions, UI states, or regressions in browser games and you must validate behavior with screenshots, render_game_to_text output, and console-error checks after each change.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/web-game-deterministic-loop",
-      "metadata": {
-        "hash": "f3e0df45c592f4086a538584715657a07a9f4372d4716730f366dfaae8a84970",
-        "id": "web-game-deterministic-loop",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/web-game-deterministic-loop-f3e0df45"
-      }
-    },
-    {
-      "name": "yeet",
-      "description": "Use only when the user explicitly asks to stage, commit, push, and open a GitHub pull request in one flow using the GitHub CLI (`gh`).",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["codex", "global", "skill-bank"],
-      "source": "/Users/<owner>/.codex/skills/yeet",
-      "metadata": {
-        "hash": "2b4583b296a3a043b9002cd74e3ca5407fce832598dcd428272da08a9839f64b",
-        "id": "yeet",
-        "snapshotPath": ".agent/skill-bank/snapshots/codex/yeet-2b4583b2"
-      }
-    },
-    {
-      "name": "skill-creator",
-      "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Codex's capabilities with specialized knowledge, workflows, or tool integrations.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/.system/skill-creator",
-      "metadata": {
-        "hash": "faf5931f553dc9f19b061f8049dd4d31e00232b14eed2577d95795ac1c5ab8de",
-        "id": "skill-creator",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/skill-creator-faf5931f"
-      }
-    },
-    {
-      "name": "skill-installer",
-      "description": "Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos).",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/.system/skill-installer",
-      "metadata": {
-        "hash": "09df0ea7921f63d51befae9fc8f71daece5ef49d7b96e35fff8b18d15d6afda7",
-        "id": "skill-installer",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/skill-installer-09df0ea7"
-      }
-    },
-    {
-      "name": "Agent Browser",
-      "description": "A fast Rust-based headless browser automation CLI with Node.js fallback that enables AI agents to navigate, click, type, and snapshot pages via structured commands.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/agent-browser",
-      "metadata": {
-        "hash": "04afeeb53a8b6ab953974311ec7ed60e0d66c532341ca21933625320f28b01c6",
-        "id": "agent-browser",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/agent-browser-04afeeb5"
       }
     },
     {
@@ -6498,48 +6162,6 @@
       }
     },
     {
-      "name": "figma",
-      "description": "Use the Figma MCP server to fetch design context, screenshots, variables, and assets from Figma, and to translate Figma nodes into production code. Trigger when a task involves Figma URLs, node IDs, design-to-code implementation, or Figma MCP setup and troubleshooting.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/figma",
-      "metadata": {
-        "hash": "5b11f7c8d0ce4c047b401323e7b8fe6559bd3162a3397bf5248634a5444609d5",
-        "id": "figma",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/figma-5b11f7c8"
-      }
-    },
-    {
-      "name": "figma-implement-design",
-      "description": "Translate Figma nodes into production-ready code with 1:1 visual fidelity using the Figma MCP workflow (design context, screenshots, assets, and project-convention translation). Trigger when the user provides Figma URLs or node IDs, or asks to implement designs or components that must match Figma specs. Requires a working Figma MCP server connection.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/figma-implement-design",
-      "metadata": {
-        "hash": "adea0fa5ed0b77a75112f64737f4aa562fcc231d242370f8cbdb25d050be19ad",
-        "id": "figma-implement-design",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/figma-implement-design-adea0fa5"
-      }
-    },
-    {
-      "name": "find-skills",
-      "description": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/find-skills",
-      "metadata": {
-        "hash": "54b44dc9539df865fbb060f62fb062e8232e765852a0cf14c38301fe0c1eb264",
-        "id": "find-skills",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/find-skills-54b44dc9"
-      }
-    },
-    {
       "name": "framework-consciousness",
       "description": "",
       "category": "CLAUDE_SKILL",
@@ -6551,1742 +6173,6 @@
         "hash": "77af4dd6ec5b83449ea025e580b0135a443af513d75776858a80089c996a3de1",
         "id": "framework-consciousness",
         "snapshotPath": ".agent/skill-bank/snapshots/project-agent/framework-consciousness-77af4dd6"
-      }
-    },
-    {
-      "name": "freeride",
-      "description": "Manages free AI models from OpenRouter for OpenClaw. Automatically ranks models by quality, configures fallbacks for rate-limit handling, and updates openclaw.json. Use when the user mentions free AI, OpenRouter, model switching, rate limits, or wants to reduce AI costs.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/free-ride",
-      "metadata": {
-        "hash": "06e07f2a2ca0cb8d39a2c0d70daf0c6c58a546715bee32471bb787f94ce96c89",
-        "id": "freeride",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/freeride-06e07f2a"
-      }
-    },
-    {
-      "name": "frontend-design",
-      "description": "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, or applications. Generates creative, polished code that avoids generic AI aesthetics.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/frontend-design",
-      "metadata": {
-        "hash": "8bf9905dbcd9b1edb47f2a44cadbb9bb66314f73a8e3631ec7feee913777ceb8",
-        "id": "frontend-design",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/frontend-design-8bf9905d"
-      }
-    },
-    {
-      "name": "gh-address-comments",
-      "description": "Help address review/issue comments on the open GitHub PR for the current branch using gh CLI; verify gh auth first and prompt the user to authenticate if not logged in.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/gh-address-comments",
-      "metadata": {
-        "hash": "77389eefd3fb6584210668ca8e43f4b8de87e7722ddd953474bc9e24cdfaaedd",
-        "id": "gh-address-comments",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/gh-address-comments-77389eef"
-      }
-    },
-    {
-      "name": "gh-fix-ci",
-      "description": "Use when a user asks to debug or fix failing GitHub PR checks that run in GitHub Actions; use `gh` to inspect checks and logs, summarize failure context, draft a fix plan, and implement only after explicit approval. Treat external providers (for example Buildkite) as out of scope and report only the details URL.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/gh-fix-ci",
-      "metadata": {
-        "hash": "7b326b4a2f0f5f85122144628ec02077e48841e0e0e82efce88b3415bcfb7c26",
-        "id": "gh-fix-ci",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/gh-fix-ci-7b326b4a"
-      }
-    },
-    {
-      "name": "github",
-      "description": "Interact with GitHub using the `gh` CLI. Use `gh issue`, `gh pr`, `gh run`, and `gh api` for issues, PRs, CI runs, and advanced queries.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/github",
-      "metadata": {
-        "hash": "51b28818a6f0359287d5c8244a6fdc59a4ac5504596deb193b28b81832221c86",
-        "id": "github",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/github-51b28818"
-      }
-    },
-    {
-      "name": "gmail",
-      "description": "|",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/gmail",
-      "metadata": {
-        "hash": "a9b948436dc3392ad3693ec91cf4ee6e390a9c38495661e3f9b6b069979f307e",
-        "id": "gmail",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/gmail-a9b94843"
-      }
-    },
-    {
-      "name": "gog",
-      "description": "Google Workspace CLI for Gmail, Calendar, Drive, Contacts, Sheets, and Docs.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/gog",
-      "metadata": {
-        "hash": "00c1af6cde01299753439088916cb6e245ce00e1672b8cd4305a66d7eac2abad",
-        "id": "gog",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/gog-00c1af6c"
-      }
-    },
-    {
-      "name": "himalaya",
-      "description": "CLI to manage emails via IMAP/SMTP. Use `himalaya` to list, read, write, reply, forward, search, and organize emails from the terminal. Supports multiple accounts and message composition with MML (MIME Meta Language).",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/himalaya",
-      "metadata": {
-        "hash": "2265054da976a3d9ec3d55b66888233cb39509ea4703abed8066382e5b4fc14f",
-        "id": "himalaya",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/himalaya-2265054d"
-      }
-    },
-    {
-      "name": "humanize-ai-text",
-      "description": "Humanize AI-generated text to bypass detection. This humanizer rewrites ChatGPT, Claude, and GPT content to sound natural and pass AI detectors like GPTZero, Turnitin, and Originality.ai. Based on Wikipedia's comprehensive \"Signs of AI Writing\" guide. Makes robotic AI writing undetectable and human-like.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/humanize-ai-text",
-      "metadata": {
-        "hash": "d03b5947503a35b3959dc0820dd3a9f37805c68dd934d900f905607a3e85092d",
-        "id": "humanize-ai-text",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/humanize-ai-text-d03b5947"
-      }
-    },
-    {
-      "name": "humanizer",
-      "description": "|",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/humanizer",
-      "metadata": {
-        "hash": "d7ce483d368e430185b707611ce82ef4206021da28cf306d75d4b64f1167416f",
-        "id": "humanizer",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/humanizer-d7ce483d"
-      }
-    },
-    {
-      "name": "imagegen",
-      "description": "Use when the user asks to generate or edit images via the OpenAI Image API (for example: generate image, edit/inpaint/mask, background removal or replacement, transparent background, product shots, concept art, covers, or batch variants); run the bundled CLI (`scripts/image_gen.py`) and require `OPENAI_API_KEY` for live calls.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imagegen",
-      "metadata": {
-        "hash": "4da06e7a1fbfaa94154dda2699e449a1f6d79e6e4299fcfeb785aad7c87f59dc",
-        "id": "imagegen",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/imagegen-4da06e7a"
-      }
-    },
-    {
-      "name": "ab-testing-optimizer-agent",
-      "description": "MUST BE USED to introduce data-driven optimization into the creative process. It systematically A/B tests creative variables like YouTube thumbnails or email subject lines to find the best-performing version.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/ab-testing-optimizer-agent",
-      "metadata": {
-        "hash": "4509ef39ce137177c1ad61232bd1aeabcb11e1cc2e15ec97758026e256b078f0",
-        "id": "ab-testing-optimizer-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/ab-testing-optimizer-agent-4509ef39"
-      }
-    },
-    {
-      "name": "ad-network-manager-agent",
-      "description": "MUST BE USED to manage the application process for display ad networks like Google AdSense. It ensures the blog meets all eligibility requirements before submitting the application.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/ad-network-manager-agent",
-      "metadata": {
-        "hash": "f7a60ebe4b8c262432a1d423fda6835037d81f4152de18111e831eed2041df14",
-        "id": "ad-network-manager-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/ad-network-manager-agent-f7a60ebe"
-      }
-    },
-    {
-      "name": "affiliate-link-manager-agent",
-      "description": "MUST BE USED to identify relevant affiliate programs and strategically insert affiliate links into content. It ensures all links provide genuine value and comply with FTC disclosure rules.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/affiliate-link-manager-agent",
-      "metadata": {
-        "hash": "15215688c4c6eace04ad19e819ba1c782868231c94af4512447c02e7127d131d",
-        "id": "affiliate-link-manager-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/affiliate-link-manager-agent-15215688"
-      }
-    },
-    {
-      "name": "agent-registry-manager",
-      "description": "MUST BE USED to register, store, and manage all agent metadata and system prompts in The New Fuse database. Handles both local .claude agents and external agents like Gemini CLI, creating comprehensive agent profiles with discoverable metadata.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/agent-registry-manager",
-      "metadata": {
-        "hash": "326fc9ad6a3cd0625129f4eca2f6f29ddeb623cee38e161e7ff266fa839c481e",
-        "id": "agent-registry-manager",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/agent-registry-manager-326fc9ad"
-      }
-    },
-    {
-      "name": "agent-relationship-grapher",
-      "description": "MUST BE USED to graph and analyze relationships between agents in the ecosystem. Maps agent hierarchies, collaboration patterns, temporal role changes, and orchestration networks. Creates comprehensive visualizations of agent interactions, dependencies, and evolutionary structures.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/agent-relationship-grapher",
-      "metadata": {
-        "hash": "23e24e09c46f51145facb8b2c8671d5b2d562f112be447d0929447b62b036bec",
-        "id": "agent-relationship-grapher",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/agent-relationship-grapher-23e24e09"
-      }
-    },
-    {
-      "name": "agent-search-engine",
-      "description": "MUST BE USED to provide advanced search and discovery capabilities for agents based on keywords, capabilities, tools, domain expertise, and complex criteria. Enables powerful agent filtering and recommendation systems.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/agent-search-engine",
-      "metadata": {
-        "hash": "dcf4257fd2f90bcbdb7b3a1caa6c17a16274f180f2bf996fdd10b8f6466e64cf",
-        "id": "agent-search-engine",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/agent-search-engine-dcf4257f"
-      }
-    },
-    {
-      "name": "agent-tagger",
-      "description": "MUST BE USED to analyze, categorize, and tag other agents with keywords based on their properties, capabilities, tools, and domain expertise. Creates a comprehensive tagging system for agent discovery and organization.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/agent-tagger",
-      "metadata": {
-        "hash": "90fe3f79561965a0d8671ab4e849c437e55a785f41de9d8667dce870ae3603ed",
-        "id": "agent-tagger",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/agent-tagger-90fe3f79"
-      }
-    },
-    {
-      "name": "algorithm-adaptation-agent",
-      "description": "MUST BE USED to stay informed about the latest changes to social media algorithms (e.g., Instagram, TikTok) and adjust the content and posting strategy in real-time to maintain and optimize reach.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/algorithm-adaptation-agent",
-      "metadata": {
-        "hash": "404012b21b63e01d584e1e5cc4c68d86f4cf237da92c6db9ca79d4cfc97978a4",
-        "id": "algorithm-adaptation-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/algorithm-adaptation-agent-404012b2"
-      }
-    },
-    {
-      "name": "analytics-and-reporting-agent",
-      "description": "MUST BE USED to monitor blog performance by tracking key metrics in Google Analytics. It generates regular reports with actionable data to enable a continuous cycle of improvement.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/analytics-and-reporting-agent",
-      "metadata": {
-        "hash": "2faa77bae56d768e0ae8db8cafef4eb98c97532c9fff007204741ba1685d0fae",
-        "id": "analytics-and-reporting-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/analytics-and-reporting-agent-2faa77ba"
-      }
-    },
-    {
-      "name": "asset-sourcer-agent",
-      "description": "MUST BE USED for legal compliance to source and license copyright-free assets. It primarily finds background music and sound effects to prevent Content ID claims and copyright strikes.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/asset-sourcer-agent",
-      "metadata": {
-        "hash": "c01e35b50fafee0073960088a91037c9ec1df65131e5ca6bd65775e4d8b5cffd",
-        "id": "asset-sourcer-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/asset-sourcer-agent-c01e35b5"
-      }
-    },
-    {
-      "name": "audience-growth-agent",
-      "description": "MUST BE USED to implement tactical strategies to acquire the initial follower base (the first 1,000 followers). This includes optimizing the bio, creating a hashtag strategy, and performing strategic engagement.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/audience-growth-agent",
-      "metadata": {
-        "hash": "2c840907945dbb83dadba5975076f3841bb563eb68d5a5ff61091ea93a09a346",
-        "id": "audience-growth-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/audience-growth-agent-2c840907"
-      }
-    },
-    {
-      "name": "audience-persona-architect-agent",
-      "description": "MUST BE USED to develop a detailed audience persona or 'Ideal Customer Avatar' based on a given content niche and platform. This agent conducts market research to define demographics, psychographics, and media habits.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/audience-persona-architect-agent",
-      "metadata": {
-        "hash": "1d534f5b5e78b8770c308eeb62df73f5c6cbfca710d6e812ce25a4bda2298d8a",
-        "id": "audience-persona-architect-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/audience-persona-architect-agent-1d534f5b"
-      }
-    },
-    {
-      "name": "audience-segmentation-agent",
-      "description": "MUST BE USED to analyze customer data and create advanced audience segments using behavioral, psychographic, and value-based methodologies for hyper-personalized marketing.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/audience-segmentation-agent",
-      "metadata": {
-        "hash": "f748197b809878c827ad51febeb0eae11261f6d5c1b1ce64df01e3f41fc2334f",
-        "id": "audience-segmentation-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/audience-segmentation-agent-f748197b"
-      }
-    },
-    {
-      "name": "audio-recording-agent",
-      "description": "MUST BE USED to oversee a recording session by ensuring best practices are followed. It checks for proper microphone positioning, correct audio levels (around -12dB), and a quiet recording environment.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/audio-recording-agent",
-      "metadata": {
-        "hash": "4683bf959f67ce658b4d818c81bebb43057e2f0c26fc18cbd402e5a5ff0889fc",
-        "id": "audio-recording-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/audio-recording-agent-4683bf95"
-      }
-    },
-    {
-      "name": "brand-identity-agent",
-      "description": "MUST BE USED to create a complete brand identity for a new blog. Generates blog name suggestions, performs domain availability checks, and develops a brand voice and visual style guide based on the niche.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/brand-identity-agent",
-      "metadata": {
-        "hash": "66ee254fac8919c03c43c83af4287543091df6623543ce8bc9d0626b92cf0585",
-        "id": "brand-identity-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/brand-identity-agent-66ee254f"
-      }
-    },
-    {
-      "name": "brand-outreach-agent",
-      "description": "MUST BE USED to craft personalized and compelling pitches to send to potential brand partners. The pitch must highlight the influencer's unique value, demonstrate understanding of the brand, and propose tailored ideas.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/brand-outreach-agent",
-      "metadata": {
-        "hash": "8407c3d526e9fb9a11a7f77d0bca1b197a3b4af4cb5fe46d1f34c4c322484b2a",
-        "id": "brand-outreach-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/brand-outreach-agent-8407c3d5"
-      }
-    },
-    {
-      "name": "brand-prospecting-agent",
-      "description": "MUST BE USED to research and identify potential brand partners that align with an influencer's niche, audience, and values. For smaller influencers, it strategically targets smaller or emerging brands.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/brand-prospecting-agent",
-      "metadata": {
-        "hash": "62f44b12a0b5cf00c7bca83c91c04e7d74e921ea1a6a2da1b42f915570f4187b",
-        "id": "brand-prospecting-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/brand-prospecting-agent-62f44b12"
-      }
-    },
-    {
-      "name": "business-model-architect-agent",
-      "description": "MUST BE USED to define the high-level e-commerce strategy. It selects the most appropriate business model—such as Business-to-Consumer (B2C) or Business-to-Business (B2B)—based on the creator's goals and products.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/business-model-architect-agent",
-      "metadata": {
-        "hash": "b1cd9fa48a6c6a5b2fbfa8f657ad5d0cb39044e16ba9da82d146c6a434730d7c",
-        "id": "business-model-architect-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/business-model-architect-agent-b1cd9fa4"
-      }
-    },
-    {
-      "name": "campaign-execution-agent",
-      "description": "MUST BE USED to oversee the execution of sponsored campaigns from start to finish. It ensures all content is created and submitted for approval on time and that all contractual obligations are met.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/campaign-execution-agent",
-      "metadata": {
-        "hash": "8dfa5e5ee06b9a2597324b0c504a26dde098f6620ad4b7dca4b082475d0a63a7",
-        "id": "campaign-execution-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/campaign-execution-agent-8dfa5e5e"
-      }
-    },
-    {
-      "name": "campaign-reporting-agent",
-      "description": "MUST BE USED after a campaign concludes to compile a comprehensive performance report for the brand. The report details key metrics (reach, engagement, clicks, conversions) to demonstrate ROI and secure long-term partnerships.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/campaign-reporting-agent",
-      "metadata": {
-        "hash": "a03e6a13a9cd4e598b163090105cde5234b36ca6ee40419c1bc5c31d85c59b78",
-        "id": "campaign-reporting-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/campaign-reporting-agent-a03e6a13"
-      }
-    },
-    {
-      "name": "codebase-pathway-tracer",
-      "description": "MUST BE USED to trace possible logical pathways through codebases. Analyzes code structure, data flow, execution paths, dependency relationships, and architectural patterns to map comprehensive logical pathways. Passes structured pathway data to graph writer systems for visualization and analysis.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/codebase-pathway-tracer",
-      "metadata": {
-        "hash": "bf65c9769ee209236dd43cc6f73453799d87949ea2ec541238b1534cc69e8fa0",
-        "id": "codebase-pathway-tracer",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/codebase-pathway-tracer-bf65c976"
-      }
-    },
-    {
-      "name": "cognitive-bias-optimizer-agent",
-      "description": "MUST BE USED to analyze a funnel asset and provide actionable recommendations for conversion improvements based on cognitive biases and neuromarketing principles.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/cognitive-bias-optimizer-agent",
-      "metadata": {
-        "hash": "0835fc3c3ef37f9d39fc927ceb7655d68a272912305a89e1dbd5a2784c2053be",
-        "id": "cognitive-bias-optimizer-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/cognitive-bias-optimizer-agent-0835fc3c"
-      }
-    },
-    {
-      "name": "community-engagement-agent",
-      "description": "MUST BE USED to foster a community around a blog. It monitors and responds to all comments on blog posts and social media shares to build reader loyalty.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/community-engagement-agent",
-      "metadata": {
-        "hash": "386d51d6bb434989f7d03f2de58b7820668bb7d28eebd13846480e48744829ba",
-        "id": "community-engagement-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/community-engagement-agent-386d51d6"
-      }
-    },
-    {
-      "name": "community-manager-agent",
-      "description": "MUST BE USED to maintain an active and engaged community. It monitors all platforms for comments and direct messages, responding promptly to build relationships and make followers feel valued.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/community-manager-agent",
-      "metadata": {
-        "hash": "4393a6d5215b45e8ff0bf2d014cf5a6782d0db95340218faaafa6dbcf5c73f81",
-        "id": "community-manager-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/community-manager-agent-4393a6d5"
-      }
-    },
-    {
-      "name": "competitive-intelligence-agent",
-      "description": "MUST BE USED to perform ongoing, periodic monitoring of key competitors. It tracks their new content, campaigns, and monetization strategies to generate a \\\"State of the Niche\\\" report with actionable intelligence.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/competitive-intelligence-agent",
-      "metadata": {
-        "hash": "aea87fff454906580f9e3cb22bae3c932c309f78187c43b9db6ec962a024d44a",
-        "id": "competitive-intelligence-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/competitive-intelligence-agent-aea87fff"
-      }
-    },
-    {
-      "name": "content-calendar-agent",
-      "description": "MUST BE USED to develop and maintain a comprehensive editorial calendar. It uses a keyword strategy to schedule blog post topics and ensure a consistent publishing frequency.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/content-calendar-agent",
-      "metadata": {
-        "hash": "f58aefd1e99bf3b0ca56366c05ddb7b3117f616a5d79ebd75856b83f50b0371d",
-        "id": "content-calendar-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/content-calendar-agent-f58aefd1"
-      }
-    },
-    {
-      "name": "content-calendar-orchestrator-agent",
-      "description": "MUST BE USED to manage and optimize the entire content calendar across all platforms. It ensures optimal timing, cross-promotion, and consistent messaging, preventing content silos.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/content-calendar-orchestrator-agent",
-      "metadata": {
-        "hash": "74fbe0cd1d81c022f86b6e9a74b5ce9b418ea78af473713b7efd3d034155da66",
-        "id": "content-calendar-orchestrator-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/content-calendar-orchestrator-agent-74fbe0cd"
-      }
-    },
-    {
-      "name": "content-refresh-agent",
-      "description": "MUST BE USED to combat 'content decay'. It identifies old or underperforming blog posts and generates a detailed plan to update them with fresh content, new keywords, and better internal linking to improve SEO.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/content-refresh-agent",
-      "metadata": {
-        "hash": "de661c83d5eead31e7b0819a19bd708af9b6c27466e716d96992dc60d795f763",
-        "id": "content-refresh-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/content-refresh-agent-de661c83"
-      }
-    },
-    {
-      "name": "content-repurposing-agent",
-      "description": "MUST BE USED to act as a force multiplier by taking a single piece of cornerstone content (like a YouTube video or blog post) and intelligently repurposing it into multiple 'snackable' assets tailored for each social platform.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/content-repurposing-agent",
-      "metadata": {
-        "hash": "37e52c3a5201e946733b6874e4d86cc4d494a02623b820750eceef44705a6fe8",
-        "id": "content-repurposing-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/content-repurposing-agent-37e52c3a"
-      }
-    },
-    {
-      "name": "content-writer-agent",
-      "description": "MUST BE USED to draft the full text of a blog post. It focuses on creating high-value, authentic, and engaging content that solves the reader's problem, adhering to the 'Authenticity over Optimization' principle.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/content-writer-agent",
-      "metadata": {
-        "hash": "3bfa2411043f27a26bcd7bfc9e9f0cefbfd619241cef7be9095dc2a4636ca933",
-        "id": "content-writer-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/content-writer-agent-3bfa2411"
-      }
-    },
-    {
-      "name": "contract-manager-agent",
-      "description": "MUST BE USED to manage the legal framework of partnerships. It is responsible for drafting, reviewing, and ensuring the execution of legally sound influencer contracts that clearly outline all agreed-upon terms.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/contract-manager-agent",
-      "metadata": {
-        "hash": "fa7945feedf2cd3a52ab8c969da05a899b742fd4c1370fface83f6fe939d1ced",
-        "id": "contract-manager-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/contract-manager-agent-fa7945fe"
-      }
-    },
-    {
-      "name": "cro-process-agent",
-      "description": "MUST BE USED to manage a systematic, 4-step Conversion Rate Optimization (CRO) process. It handles investigation, research, hypothesis generation, optimization, and evaluation to drive continuous improvement.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/cro-process-agent",
-      "metadata": {
-        "hash": "4501a3a74d51bc64b9e5f963e7e47f7b7ec5f1228e485a1c585c0ae52712af0b",
-        "id": "cro-process-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/cro-process-agent-4501a3a7"
-      }
-    },
-    {
-      "name": "custom-slash-command-agent",
-      "description": "MUST BE USED to create and manage custom slash commands for sub-agents. This agent is responsible for designing, implementing, and maintaining the slash command infrastructure that allows sub-agents to expose their capabilities through the Claude Code slash command system.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/custom-slash-command-agent",
-      "metadata": {
-        "hash": "708f99b65948cd100d0f1cf3d643ac08237e1e4f575027080a7a5ccfa7b767b4",
-        "id": "custom-slash-command-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/custom-slash-command-agent-708f99b6"
-      }
-    },
-    {
-      "name": "customer-journey-map-agent",
-      "description": "MUST BE USED to create a holistic Customer Journey Map from the customer's perspective. It visualizes stages, touchpoints, actions, and emotions to identify pain points and improvement opportunities.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/customer-journey-map-agent",
-      "metadata": {
-        "hash": "e48b3f0e41ecd6a5d0e73cfc9720b380a7be780ac440edc2dd1e51c21906f1d8",
-        "id": "customer-journey-map-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/customer-journey-map-agent-e48b3f0e"
-      }
-    },
-    {
-      "name": "customer-support-agent",
-      "description": "MUST BE USED for handling direct customer inquiries, support tickets, and addressing specific user issues. It monitors support channels, categorizes inquiries, provides automated responses, and escalates complex issues.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/customer-support-agent",
-      "metadata": {
-        "hash": "bdbd63a779352c0c928b16ccb3cc561c09530ef67e7e20d727be25dd70d7883d",
-        "id": "customer-support-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/customer-support-agent-bdbd63a7"
-      }
-    },
-    {
-      "name": "deal-negotiator-agent",
-      "description": "MUST BE USED to handle negotiations with a brand. It finalizes the scope of work, deliverables, compensation model (flat fee, commission, product, hybrid), usage rights, and exclusivity clauses.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/deal-negotiator-agent",
-      "metadata": {
-        "hash": "8e1ed1223112378788593b8dbe32fb3f1ef6d8a070f09f8193f4e0a02be0dc12",
-        "id": "deal-negotiator-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/deal-negotiator-agent-8e1ed122"
-      }
-    },
-    {
-      "name": "digital-asset-manager-agent",
-      "description": "MUST BE USED to establish and maintain an organized digital asset management system. It catalogues raw video footage, audio, graphics, and music into a structured directory for easy access.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/digital-asset-manager-agent",
-      "metadata": {
-        "hash": "ce931e82a9c79dad4ea5b44a832ca51e245d7a9dd710e065eb57a67b2dcdabaa",
-        "id": "digital-asset-manager-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/digital-asset-manager-agent-ce931e82"
-      }
-    },
-    {
-      "name": "digital-product-creator-agent",
-      "description": "MUST BE USED to oversee the creation and sale of proprietary digital products like eBooks or online courses. It handles topic validation, content outlining, and e-commerce platform integration.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/digital-product-creator-agent",
-      "metadata": {
-        "hash": "52a5207532322ba5ac52859bec4090bde66c05f5bf1cf53f2596476dff2b0617",
-        "id": "digital-product-creator-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/digital-product-creator-agent-52a52075"
-      }
-    },
-    {
-      "name": "digital-product-factory-agent",
-      "description": "MUST BE USED to oversee the end-to-end creation of digital products. For eBooks, this includes topic research, writing, formatting, and cover design. For online courses, it includes curriculum outlining and content packaging.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/digital-product-factory-agent",
-      "metadata": {
-        "hash": "7cb7dd444b1274caa0df8b31aaa0493571daec478bc42fe7bee5022c2b3701de",
-        "id": "digital-product-factory-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/digital-product-factory-agent-7cb7dd44"
-      }
-    },
-    {
-      "name": "ecom-platform-manager-agent",
-      "description": "MUST BE USED to set up and manage the technical infrastructure for selling products. It selects and configures the appropriate platform, from lightweight solutions like Sellfy to full-featured platforms like Shopify.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/ecom-platform-manager-agent",
-      "metadata": {
-        "hash": "dac5e56d91dcc8ea76eae9fae358fbba656ea60b11df20fe6b16710bc864b740",
-        "id": "ecom-platform-manager-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/ecom-platform-manager-agent-dac5e56d"
-      }
-    },
-    {
-      "name": "email-marketing-automation-agent",
-      "description": "MUST BE USED to manage the email list and build automated email sequences. This includes a welcome series, an educational nurture sequence, and targeted sales campaigns.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/email-marketing-automation-agent",
-      "metadata": {
-        "hash": "dec590423bd728bc18b57469a020108373b70dd7e992ff6bb22fc7769abe5f95",
-        "id": "email-marketing-automation-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/email-marketing-automation-agent-dec59042"
-      }
-    },
-    {
-      "name": "episode-planner-agent",
-      "description": "MUST BE USED to brainstorm and outline a substantial bank of potential episode topics (at least 10, ideally 30+) before a podcast launches to ensure long-term content viability and create a buffer.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/episode-planner-agent",
-      "metadata": {
-        "hash": "603ba7801ea4bc908c0cd0b43de04538c8dbc563fe70e8d91b2e78d78cd4cdc6",
-        "id": "episode-planner-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/episode-planner-agent-603ba780"
-      }
-    },
-    {
-      "name": "equipment-recommendation-agent",
-      "description": "MUST BE USED to generate a comprehensive list of recommended video production equipment. It tailors recommendations for cameras, microphones, and lighting to a specified budget and content style.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/equipment-recommendation-agent",
-      "metadata": {
-        "hash": "074350ba1c8a58c6e370baa38505ced314e43350823985b37139692cfbc63bb6",
-        "id": "equipment-recommendation-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/equipment-recommendation-agent-074350ba"
-      }
-    },
-    {
-      "name": "ethical-bias-auditor-agent",
-      "description": "MUST BE USED to audit AI-generated content for ethical biases. It runs content against fairness metrics, identifies potential stereotyping or bias, and recommends remediation based on the principle of 'Model Rejection'.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/ethical-bias-auditor-agent",
-      "metadata": {
-        "hash": "5846132d1c3596f223c5406636e0857dbfbebb838cf09f67f3e24bde9a226b0b",
-        "id": "ethical-bias-auditor-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/ethical-bias-auditor-agent-5846132d"
-      }
-    },
-    {
-      "name": "facebook-strategy-agent",
-      "description": "MUST BE USED to develop a Facebook strategy focused on community building and deeper storytelling. It leverages Facebook Groups to foster a dedicated community and uses Reels and Live streams for engagement.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/facebook-strategy-agent",
-      "metadata": {
-        "hash": "b4d8b5a019b05d457be92d4c2b8e2b8a705b904f80dba765c5cb241e31c13a26",
-        "id": "facebook-strategy-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/facebook-strategy-agent-b4d8b5a0"
-      }
-    },
-    {
-      "name": "fan-funding-agent",
-      "description": "MUST BE USED to set up and manage direct-from-listener revenue streams. It creates paid subscription tiers on platforms like Supercast and sets up options for one-time donations via services like PayPal.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/fan-funding-agent",
-      "metadata": {
-        "hash": "6d42111785a13c16b1f396f3ae576e3d702323f7c6b3b211bd3d5866e4f24513",
-        "id": "fan-funding-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/fan-funding-agent-6d421117"
-      }
-    },
-    {
-      "name": "financial-manager-agent",
-      "description": "MUST BE USED to act as the virtual CFO. It meticulously tracks all sources of income (ad revenue, affiliate commissions, product sales, sponsorships) and all business expenses to generate financial reports like profit and loss statements.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/financial-manager-agent",
-      "metadata": {
-        "hash": "b69e3d6bebb51c26bdb2116768556f496e2e3e9875aa23c3c060cdd1df4b376d",
-        "id": "financial-manager-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/financial-manager-agent-b69e3d6b"
-      }
-    },
-    {
-      "name": "frontend-debugger-agent",
-      "description": "Use when Codex needs to execute the frontend-debugger-agent workflow imported from a Claude agent definition.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/frontend-debugger-agent",
-      "metadata": {
-        "hash": "1abea2a6fbd70988cdd00573b0297c475546dafb070c0c33d715f415bfdffd2a",
-        "id": "frontend-debugger-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/frontend-debugger-agent-1abea2a6"
-      }
-    },
-    {
-      "name": "funnel-economics-analyst-agent",
-      "description": "MUST BE USED to calculate and analyze the core economic metrics of a sales funnel, including CAC, LTV, and the LTV:CAC ratio, and provide strategic optimization recommendations.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/funnel-economics-analyst-agent",
-      "metadata": {
-        "hash": "4bf918b4e93fd5c9cae8c2876c2034a9e8c3321ba84a7adf4baa15f2a47b2281",
-        "id": "funnel-economics-analyst-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/funnel-economics-analyst-agent-4bf918b4"
-      }
-    },
-    {
-      "name": "gemini",
-      "description": "Google's advanced multimodal AI assistant accessible through CLI interface. Provides real-time web access, multimodal processing, and advanced reasoning capabilities.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/gemini",
-      "metadata": {
-        "hash": "d09e6708a9ebb0341c73dbeb49fc62ea470747e527b1713448ed1745244d9c1b",
-        "id": "gemini",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/gemini-d09e6708"
-      }
-    },
-    {
-      "name": "graph-writer",
-      "description": "MUST BE USED to receive structured pathway data from analysis agents and generate comprehensive graph visualizations. Creates interactive, navigable graph representations of code pathways, data flows, and system architectures using multiple visualization technologies.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/graph-writer",
-      "metadata": {
-        "hash": "8d207ed0c163848137e06511418c47879c9d61134e70f0ae2a5b33acf55e72ae",
-        "id": "graph-writer",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/graph-writer-8d207ed0"
-      }
-    },
-    {
-      "name": "guest-booking-agent",
-      "description": "MUST BE USED for interview-based shows to identify potential guests, handle outreach and scheduling, and crucially, manage the distribution and collection of a PodcastGuestReleaseForm.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/guest-booking-agent",
-      "metadata": {
-        "hash": "94a4662d2e348abafa798cb4bf772e4866eb23c9a38d164400de9f7a84b7a72c",
-        "id": "guest-booking-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/guest-booking-agent-94a4662d"
-      }
-    },
-    {
-      "name": "guest-relationship-manager-agent",
-      "description": "MUST BE USED to nurture long-term relationships with podcast guests after their appearance. It sends a thank-you email with promotional assets and schedules a future check-in to maintain the network.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/guest-relationship-manager-agent",
-      "metadata": {
-        "hash": "8617c6cbfc991b2400b4c7580a76fae1ed2ada18bd3b21346364b36a830a80f1",
-        "id": "guest-relationship-manager-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/guest-relationship-manager-agent-8617c6cb"
-      }
-    },
-    {
-      "name": "influencer-media-kit-agent",
-      "description": "MUST BE USED to create and maintain a professional media kit for an influencer. This document serves as a resume, including a bio, audience demographics, key metrics, case studies, and a rate card.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/influencer-media-kit-agent",
-      "metadata": {
-        "hash": "50dfa67635970a1d8c302bb2f5085cc4c6e28071aa03c1e7198efc3c477c0acd",
-        "id": "influencer-media-kit-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/influencer-media-kit-agent-50dfa676"
-      }
-    },
-    {
-      "name": "influencer-niche-agent",
-      "description": "MUST BE USED to identify a highly specific and defensible niche for a personal brand. The strategy is to 'niche down' to reduce competition and establish authority in a targeted area.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/influencer-niche-agent",
-      "metadata": {
-        "hash": "18d8c8b02406608e183b00bf69179f1c743bb4971161131b686439019d1c7c9d",
-        "id": "influencer-niche-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/influencer-niche-agent-18d8c8b0"
-      }
-    },
-    {
-      "name": "information-retrieval-agent",
-      "description": "MUST BE USED for complex queries requiring deep information synthesis. It operationalizes the 'Semantic Chunk Protocol' by deconstructing queries, retrieving 'Information Shards' from multiple sources, and structuring them into semantically clustered, categorized outputs.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/information-retrieval-agent",
-      "metadata": {
-        "hash": "a4a2182150c0a234e7367dd8a2777edaabc563a577f10f69f8573f9a6ca90683",
-        "id": "information-retrieval-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/information-retrieval-agent-a4a21821"
-      }
-    },
-    {
-      "name": "instagram-strategy-agent",
-      "description": "MUST BE USED to develop a comprehensive content plan for Instagram. It defines key content pillars and a strategy for using a mix of formats like Reels, Stories, and carousels for reach and engagement.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/instagram-strategy-agent",
-      "metadata": {
-        "hash": "cb5c0f5d858da7002f96c8ad385e75a28c00dfd8e053260bcc451f9e97182857",
-        "id": "instagram-strategy-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/instagram-strategy-agent-cb5c0f5d"
-      }
-    },
-    {
-      "name": "inter-agentic-workflow-definer",
-      "description": "MUST BE USED to define, refine, and formalize workflow tasks/subtasks that occur BETWEEN agentic nodes. Specializes in standardizing connecting processes, creating predictable fill-in-the-blank workflow structures, and establishing formal task definition frameworks for inter-agent coordination.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/inter-agentic-workflow-definer",
-      "metadata": {
-        "hash": "5abb441ab65402214eca8b21283031a830cce0316322d27e1cd9f6626f1ee732",
-        "id": "inter-agentic-workflow-definer",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/inter-agentic-workflow-definer-5abb441a"
-      }
-    },
-    {
-      "name": "interoperability-protocol-agent",
-      "description": "MUST BE USED to manage the discovery and integration of new agents and tools. It performs handshakes, extracts capabilities from Agent Cards or MCP schemas, translates them into a standard format, and registers them in a central Capability Catalog.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/interoperability-protocol-agent",
-      "metadata": {
-        "hash": "cfa477ab5a02eadf8087404aff54fb5c98689fd709d93bd567b427a05be8cc2b",
-        "id": "interoperability-protocol-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/interoperability-protocol-agent-cfa477ab"
-      }
-    },
-    {
-      "name": "jules-cli-agent",
-      "description": "Use when Codex needs to execute the jules-cli-agent workflow imported from a Claude agent definition.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/jules-cli-agent",
-      "metadata": {
-        "hash": "a748a3f3d05db2d56ff10c98d27c90b8acf4e973d45eeb163d1a4a525857b5a1",
-        "id": "jules-cli-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/jules-cli-agent-a748a3f3"
-      }
-    },
-    {
-      "name": "keyword-research-agent",
-      "description": "MUST BE USED to conduct in-depth keyword research for a blog's content strategy. Identifies long-tail and 'Gold Nugget' keywords and analyzes SERPs to determine search intent.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/keyword-research-agent",
-      "metadata": {
-        "hash": "0ec9f78d9808f79751fb24f6aba4f3920152a0451fb8ddd401eb73f5b988c077",
-        "id": "keyword-research-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/keyword-research-agent-0ec9f78d"
-      }
-    },
-    {
-      "name": "lead-capture-agent",
-      "description": "MUST BE USED to convert anonymous visitors into known leads by capturing their email addresses. It does this by creating and deploying valuable 'lead magnets' and embedding opt-in forms.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/lead-capture-agent",
-      "metadata": {
-        "hash": "039e59f85262877070f33326ece04660fb61f6b3bf2cb9704118b9cc31922a21",
-        "id": "lead-capture-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/lead-capture-agent-039e59f8"
-      }
-    },
-    {
-      "name": "lead-magnet-funnel-agent",
-      "description": "MUST BE USED to create the core components of a Lead Magnet Funnel. It designs the lead magnet concept, squeeze page copy, and a welcome email sequence to capture and nurture new leads.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/lead-magnet-funnel-agent",
-      "metadata": {
-        "hash": "22e1a855955a9e2d73189058f49ee7eeeff55348921faee289dca8be2365de58",
-        "id": "lead-magnet-funnel-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/lead-magnet-funnel-agent-22e1a855"
-      }
-    },
-    {
-      "name": "legal-compliance-agent",
-      "description": "MUST BE USED to ensure the entire content business adheres to laws and platform policies. Its core functions are generating legal pages, ensuring FTC disclosures, and managing copyright issues.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/legal-compliance-agent",
-      "metadata": {
-        "hash": "f370adb68bb9864546e6fb54e80e8a56fa1e75a10da9827d78242b0bad86d052",
-        "id": "legal-compliance-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/legal-compliance-agent-f370adb6"
-      }
-    },
-    {
-      "name": "link-building-agent",
-      "description": "MUST BE USED for off-page SEO to build a blog's domain authority. It identifies guest posting opportunities, develops pitch ideas, and initiates collaborations with other bloggers.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/link-building-agent",
-      "metadata": {
-        "hash": "539a8631317d8b44677440e8f8cf00d09fffac904c07fe734d438c34e91fb87e",
-        "id": "link-building-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/link-building-agent-539a8631"
-      }
-    },
-    {
-      "name": "live-stream-manager-agent",
-      "description": "MUST BE USED to manage the end-to-end lifecycle of a live stream. It handles scheduling, pre-stream promotion, configuring broadcast settings, and post-stream content repurposing.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/live-stream-manager-agent",
-      "metadata": {
-        "hash": "5ea6e12fa0a2db67691c7e7685156325885dbb5ad922b6a8c18f7eb012a2b81c",
-        "id": "live-stream-manager-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/live-stream-manager-agent-5ea6e12f"
-      }
-    },
-    {
-      "name": "logical-reasoning-agent",
-      "description": "MUST BE USED to apply formal analytical frameworks to complex problems. It can decompose a problem using a MECE logic tree, perform a '5 Whys' root cause analysis, or classify a problem using the Cynefin framework to guide strategy.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/logical-reasoning-agent",
-      "metadata": {
-        "hash": "57a674d8cd620c4643dfe8667fff267263f60fe2ddc89fcd8ae9bf25aa15d474",
-        "id": "logical-reasoning-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/logical-reasoning-agent-57a674d8"
-      }
-    },
-    {
-      "name": "meta-agent-architect",
-      "description": "Expert agent architect. Use this to design and generate the",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/meta-agent-architect",
-      "metadata": {
-        "hash": "fd7380d2155ccca313542de46cdb90c8900cbcff36d8ef50305fda2af4c6bc58",
-        "id": "meta-agent-architect",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/meta-agent-architect-fd7380d2"
-      }
-    },
-    {
-      "name": "monetization-strategy-agent",
-      "description": "MUST BE USED to design a diversified monetization plan for a blog. It selects and prioritizes a mix of strategies like ads, affiliate marketing, and digital products based on the niche and audience.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/monetization-strategy-agent",
-      "metadata": {
-        "hash": "8863e69bbb6cb72b44701c05e335a4cec0a5cc5d8ec9c23c7a30d3fedaa7b479",
-        "id": "monetization-strategy-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/monetization-strategy-agent-8863e69b"
-      }
-    },
-    {
-      "name": "niche-analyst-agent",
-      "description": "MUST BE USED for identifying, researching, and validating profitable content niches for new business ventures. Analyzes market demand, competition, and monetization potential based on creator inputs to generate a strategic niche recommendation report.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/niche-analyst-agent",
-      "metadata": {
-        "hash": "29f2241d46ecbfc4bde09133fbc00c259c5c6971611f6fd62ba988774e311a11",
-        "id": "niche-analyst-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/niche-analyst-agent-29f2241d"
-      }
-    },
-    {
-      "name": "orchestrator-agent",
-      "description": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/orchestrator-agent",
-      "metadata": {
-        "hash": "ee5085370f4b916ba33a4cc458ffc82cfe9141cf97f066ec21d6933552e7aa66",
-        "id": "orchestrator-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/orchestrator-agent-ee508537"
-      }
-    },
-    {
-      "name": "orchestrator-agent-copy",
-      "description": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/orchestrator-agent-copy",
-      "metadata": {
-        "hash": "72648f330ff36ad6e2f81529626e064f5674722df2c92c4a0fb2000059e0d8c6",
-        "id": "orchestrator-agent-copy",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/orchestrator-agent-copy-72648f33"
-      }
-    },
-    {
-      "name": "oto-sequence-architect-agent",
-      "description": "MUST BE USED to design a complex, multi-step One-Time Offer (OTO) sequence with upsells and downsells. It creates a logical flowchart to maximize Average Order Value (AOV) post-purchase.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/oto-sequence-architect-agent",
-      "metadata": {
-        "hash": "ac5089a7bc5776edc0b11e036f8ee6b28638dc3fe5e0d92e57a4b69acda9c3d9",
-        "id": "oto-sequence-architect-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/oto-sequence-architect-agent-ac5089a7"
-      }
-    },
-    {
-      "name": "personal-brand-architect-agent",
-      "description": "MUST BE USED to construct a complete influencer brand identity. It defines core values, a unique selling proposition (USP), a consistent brand voice, and a visual aesthetic.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/personal-brand-architect-agent",
-      "metadata": {
-        "hash": "89ad5f744afdf871cab7ac245090d7e213075144e4780873e941935779b1d393",
-        "id": "personal-brand-architect-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/personal-brand-architect-agent-89ad5f74"
-      }
-    },
-    {
-      "name": "personalized-content-recommendation-agent",
-      "description": "MUST BE USED to analyze individual user behavior and preferences to deliver personalized content recommendations (e.g., suggesting specific blog posts, videos, or products to individual users).",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/personalized-content-recommendation-agent",
-      "metadata": {
-        "hash": "77f26b5c3be10e58da1752dc77e3dfbb2a36d076201646eabefad47da0aa9d27",
-        "id": "personalized-content-recommendation-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/personalized-content-recommendation-agent-77f26b5c"
-      }
-    },
-    {
-      "name": "platform-selection-agent",
-      "description": "MUST BE USED to determine the most effective social media platforms to focus on. The decision is data-driven, considering where the target demographic is most active and which platform's format aligns with the brand.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/platform-selection-agent",
-      "metadata": {
-        "hash": "5df5ec33fa3bfdbc1c27feada9b65d60c170587f66dc5892df60d8dc1e649d83",
-        "id": "platform-selection-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/platform-selection-agent-5df5ec33"
-      }
-    },
-    {
-      "name": "podcast-ad-network-agent",
-      "description": "MUST BE USED for an automated approach to advertising by managing relationships with podcast ad networks (e.g., Acast) or programmatic ad marketplaces (e.g., Simplecast's AdsWizz).",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/podcast-ad-network-agent",
-      "metadata": {
-        "hash": "0b83d0a354df3df454d638eb8de4a1e56dbb2e74ea4e46173ae294c9d6076846",
-        "id": "podcast-ad-network-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/podcast-ad-network-agent-0b83d0a3"
-      }
-    },
-    {
-      "name": "podcast-affiliate-agent",
-      "description": "MUST BE USED to implement a podcast affiliate marketing strategy. It finds relevant affiliate programs and incorporates unique affiliate links and promo codes into show notes and verbal calls-to-action.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/podcast-affiliate-agent",
-      "metadata": {
-        "hash": "c54cb4eb2a1695820bc33b81ddfdb529740a3a7689802f0ee5f5f27fa378db28",
-        "id": "podcast-affiliate-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/podcast-affiliate-agent-c54cb4eb"
-      }
-    },
-    {
-      "name": "podcast-analytics-agent",
-      "description": "MUST BE USED to track podcast performance metrics like download numbers, listener demographics, and drop-off points. It provides data to refine content and marketing strategies for steady, sustainable growth.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/podcast-analytics-agent",
-      "metadata": {
-        "hash": "b0f4c3bac4a2bc652e1373f954cab38c340c38ba19bf27f035be0e499f4f0944",
-        "id": "podcast-analytics-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/podcast-analytics-agent-b0f4c3ba"
-      }
-    },
-    {
-      "name": "podcast-audio-editor-agent",
-      "description": "MUST BE USED to perform post-production on raw podcast audio. It 'tops and tails' the audio, removes mistakes and filler words, and applies processing like noise reduction, EQ, and compression.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/podcast-audio-editor-agent",
-      "metadata": {
-        "hash": "368b9dfee1f3d37639d98d6bb2c4def734534e8a9f177d1affafc3037db15976",
-        "id": "podcast-audio-editor-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/podcast-audio-editor-agent-368b9dfe"
-      }
-    },
-    {
-      "name": "podcast-distribution-agent",
-      "description": "MUST BE USED to distribute a podcast by taking its RSS feed and submitting it to all major podcast directories, including Apple Podcasts, Spotify, and YouTube Podcasts.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/podcast-distribution-agent",
-      "metadata": {
-        "hash": "c2cd7fa05edb9d2023509c316497d3238a4528957f4146cb9c1fa44bdff90592",
-        "id": "podcast-distribution-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/podcast-distribution-agent-c2cd7fa0"
-      }
-    },
-    {
-      "name": "podcast-equipment-agent",
-      "description": "MUST BE USED to recommend an appropriate podcast equipment setup based on budget and format. It suggests specific microphones, headphones, and cameras for audio or video podcasts.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/podcast-equipment-agent",
-      "metadata": {
-        "hash": "c62e34f6b3301f658b84006506ccd1dd7deceb66abd7f38d078efd33ee951647",
-        "id": "podcast-equipment-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/podcast-equipment-agent-c62e34f6"
-      }
-    },
-    {
-      "name": "podcast-format-designer-agent",
-      "description": "MUST BE USED to select the most suitable and sustainable show format (solo, interview, etc.). A key consideration is choosing a format that can be produced consistently to avoid podfade.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/podcast-format-designer-agent",
-      "metadata": {
-        "hash": "b5180ee41e7e08107d46c8190865894baf2dc37ccce9305d288e43b13367e83a",
-        "id": "podcast-format-designer-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/podcast-format-designer-agent-b5180ee4"
-      }
-    },
-    {
-      "name": "podcast-hosting-setup-agent",
-      "description": "MUST BE USED to select an appropriate podcast hosting service (e.g., Buzzsprout), set up the account, and upload the initial episodes to generate the show's RSS feed.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/podcast-hosting-setup-agent",
-      "metadata": {
-        "hash": "25a43cbd7287e9a8d7b6f619392ebe1a341c8990bf0be07bc1dcb8d48d20681c",
-        "id": "podcast-hosting-setup-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/podcast-hosting-setup-agent-25a43cbd"
-      }
-    },
-    {
-      "name": "podcast-monetization-strategy-agent",
-      "description": "MUST BE USED to establish a clear monetization plan for a podcast from the beginning. It selects a strategy that aligns with the niche and audience, such as sponsorships, affiliate marketing, or fan funding.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/podcast-monetization-strategy-agent",
-      "metadata": {
-        "hash": "65f228e3e7f94eb924f67cb3ae046b25dbb08f32b4615daff661f8650db2cf6b",
-        "id": "podcast-monetization-strategy-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/podcast-monetization-strategy-agent-65f228e3"
-      }
-    },
-    {
-      "name": "podcast-niche-analyst-agent",
-      "description": "MUST BE USED to identify a viable podcast niche. It balances the creator's passion and expertise with audience interest, competitive landscape, and monetization potential, specifically seeking to avoid oversaturated markets.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/podcast-niche-analyst-agent",
-      "metadata": {
-        "hash": "051fbc2df714e7642cf20dee0f96abb0b0bfcd2a6a8f96a1be4cff127339167a",
-        "id": "podcast-niche-analyst-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/podcast-niche-analyst-agent-051fbc2d"
-      }
-    },
-    {
-      "name": "podcast-promotion-agent",
-      "description": "MUST BE USED to execute a comprehensive marketing strategy for each new podcast episode. This includes creating and sharing audiograms on social media, sending email newsletters, and coordinating with guests.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/podcast-promotion-agent",
-      "metadata": {
-        "hash": "0e39a960eae191d68ab346386fac334fef5fcbd0243e9eb469b36bc59111c31a",
-        "id": "podcast-promotion-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/podcast-promotion-agent-0e39a960"
-      }
-    },
-    {
-      "name": "podcast-seo-agent",
-      "description": "MUST BE USED to improve a podcast's discoverability through search. It conducts keyword research, optimizes titles and show notes, and manages posting full transcripts to a dedicated website to be indexed by search engines.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/podcast-seo-agent",
-      "metadata": {
-        "hash": "193d8a12e6d2257dd3c4a62a1a4532764379196c098e405c710cac9a32508b42",
-        "id": "podcast-seo-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/podcast-seo-agent-193d8a12"
-      }
-    },
-    {
-      "name": "podcast-video-editor-agent",
-      "description": "MUST BE USED for video podcasts to handle video editing. It synchronizes audio and video tracks, adds B-roll and lower-thirds, and incorporates branding elements for a polished visual experience.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/podcast-video-editor-agent",
-      "metadata": {
-        "hash": "36e553650d2a345c3cce947ce28455a51320f2d7b22d6b12b0cfa537b8c23e41",
-        "id": "podcast-video-editor-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/podcast-video-editor-agent-36e55365"
-      }
-    },
-    {
-      "name": "print-on-demand-manager-agent",
-      "description": "MUST BE USED for selling physical merchandise by managing the entire print-on-demand (POD) workflow. It integrates an e-commerce store with a POD service like Printify, uploads designs, and creates product mockups.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/print-on-demand-manager-agent",
-      "metadata": {
-        "hash": "b08dd693658313f38f7c16c87b8c3abd30cf70660db5119934a40f5a1df65836",
-        "id": "print-on-demand-manager-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/print-on-demand-manager-agent-b08dd693"
-      }
-    },
-    {
-      "name": "productivity-and-burnout-prevention-agent",
-      "description": "MUST BE USED to ensure the long-term sustainability of the operation by preventing creator burnout. It monitors schedules, sets realistic goals, and schedules mandatory breaks to prevent exhaustion.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/productivity-and-burnout-prevention-agent",
-      "metadata": {
-        "hash": "d8cdc75d3dfe758a9511e62f3ee571e7b6367a957f8f86e764d317b18c64121d",
-        "id": "productivity-and-burnout-prevention-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/productivity-and-burnout-prevention-agent-d8cdc75d"
-      }
-    },
-    {
-      "name": "reputation-management-agent",
-      "description": "MUST BE USED to proactively monitor for negative comments, reviews, or potential PR crises. It assesses severity, proposes response strategies, and aims to protect and enhance brand image.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/reputation-management-agent",
-      "metadata": {
-        "hash": "7659d870944e4eb2ee9b66a31b0618c622ce7a05a01ad9c2da6e5f087bffaeaa",
-        "id": "reputation-management-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/reputation-management-agent-7659d870"
-      }
-    },
-    {
-      "name": "sales-funnel-architect-agent",
-      "description": "MUST BE USED to design the complete customer journey, known as the sales funnel. It maps out the stages from initial Awareness (Top of Funnel, TOFU), through Consideration (Middle of Funnel, MOFU), to the final Purchase (Bottom of Funnel, BOFU).",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/sales-funnel-architect-agent",
-      "metadata": {
-        "hash": "2edb0e839592901d7ab1c42a85a46e2a87366a554bd0bf2a173b539a383a7bcf",
-        "id": "sales-funnel-architect-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/sales-funnel-architect-agent-2edb0e83"
-      }
-    },
-    {
-      "name": "scriptwriter-agent",
-      "description": "MUST BE USED to craft a detailed script for a YouTube video. It focuses on writing a compelling hook to maximize audience retention and structuring the script with a clear intro, body, and call-to-action.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/scriptwriter-agent",
-      "metadata": {
-        "hash": "dbaba1fc84751c611c81aab279192fd19fd64add2cf84c3159f87aa5b73b4944",
-        "id": "scriptwriter-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/scriptwriter-agent-dbaba1fc"
-      }
-    },
-    {
-      "name": "seo-optimizer-agent",
-      "description": "MUST BE USED to perform on-page SEO on a blog post draft. It integrates keywords, crafts a meta description, and adds internal and external links without corrupting the core message.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/seo-optimizer-agent",
-      "metadata": {
-        "hash": "f9119845e25c8789f76c24665c48d73dea47c45eca9c3ab16b0946d9d99f7b83",
-        "id": "seo-optimizer-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/seo-optimizer-agent-f9119845"
-      }
-    },
-    {
-      "name": "social-selling-agent",
-      "description": "MUST BE USED to leverage the native e-commerce features of social media platforms. It sets up and manages Facebook and Instagram Shops and creates shoppable posts and stories by tagging products.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/social-selling-agent",
-      "metadata": {
-        "hash": "5ac580eb4783c3a435c6b3097dce7c68c50cdf4cd25427390e031ba88ccbadff",
-        "id": "social-selling-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/social-selling-agent-5ac580eb"
-      }
-    },
-    {
-      "name": "sponsorship-outreach-agent",
-      "description": "MUST BE USED to proactively seek podcast sponsorship deals. It identifies and researches brands, creates a professional media kit or one-pager, and sends personalized pitches to potential sponsors.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/sponsorship-outreach-agent",
-      "metadata": {
-        "hash": "7d47e1a20cc379f48e953a9d87c9335d259b6e764d544358e92234845828c36a",
-        "id": "sponsorship-outreach-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/sponsorship-outreach-agent-7d47e1a2"
-      }
-    },
-    {
-      "name": "storyboard-artist-agent",
-      "description": "MUST BE USED to translate a video script into a visual storyboard. It outlines each scene, camera angle, required B-roll footage, and on-screen graphics to ensure an efficient filming process.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/storyboard-artist-agent",
-      "metadata": {
-        "hash": "07efc17875dfd970c64848d7244980421ca69ce3b3b14e92b1196ee0009d2f24",
-        "id": "storyboard-artist-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/storyboard-artist-agent-07efc178"
-      }
-    },
-    {
-      "name": "talent-manager-agent",
-      "description": "MUST BE USED for creators who have reached a significant level of success. It functions as an in-house talent manager, focusing on high-level career strategy and seeking out major opportunities like book deals or speaking engagements.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/talent-manager-agent",
-      "metadata": {
-        "hash": "0db3209609db05d56b1f1092d569cfcabfdaea0d6e4b1721813b5c11bc9c1e66",
-        "id": "talent-manager-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/talent-manager-agent-0db32096"
-      }
-    },
-    {
-      "name": "tax-compliance-agent",
-      "description": "MUST BE USED to handle all tax-related responsibilities for the business. It tracks deductible expenses, calculates estimated tax liability, and manages the submission of quarterly estimated tax payments.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/tax-compliance-agent",
-      "metadata": {
-        "hash": "7677bd874becc3ec6210e493bb3845239d847b4bd50c8337494ea910261d7905",
-        "id": "tax-compliance-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/tax-compliance-agent-7677bd87"
-      }
-    },
-    {
-      "name": "technical-seo-auditor-agent",
-      "description": "MUST BE USED to perform periodic technical SEO audits of a website. It checks site speed, mobile-friendliness, and crawlability, and manages XML sitemap submission.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/technical-seo-auditor-agent",
-      "metadata": {
-        "hash": "6e7eb4142dcf4d64f99cedae83fa34541c1f1ce8306c5ee23e7dabf80d6ef59e",
-        "id": "technical-seo-auditor-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/technical-seo-auditor-agent-6e7eb414"
-      }
-    },
-    {
-      "name": "technical-setup-agent",
-      "description": "MUST BE USED to automate the entire technical deployment of a WordPress blog. This includes purchasing hosting, registering a domain, installing WordPress, and configuring essential themes and plugins.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/technical-setup-agent",
-      "metadata": {
-        "hash": "e25a8ec1a6052306cd9f07e572cc47481f5f286b4cfbe740a33ccd33a877ef29",
-        "id": "technical-setup-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/technical-setup-agent-e25a8ec1"
-      }
-    },
-    {
-      "name": "temporal-agent-reclassifier",
-      "description": "MUST BE USED to provide standardized temporal reclassification of sub-agents to primary agents. Manages authority elevation, role transitions, delegation privileges, and hierarchical orchestration with comprehensive documentation and metrics tracking for exponential functionality scaling.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/temporal-agent-reclassifier",
-      "metadata": {
-        "hash": "3eedf9182bb2b1ac0a6820e8c5849a481410df8fc197673a4b4e9eac87a4d400",
-        "id": "temporal-agent-reclassifier",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/temporal-agent-reclassifier-3eedf918"
-      }
-    },
-    {
-      "name": "tiktok-strategy-agent",
-      "description": "MUST BE USED to create a content strategy specifically for TikTok's algorithm. It focuses on creating videos with strong hooks, leveraging trending sounds, and using features like Duets and Stitches.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/tiktok-strategy-agent",
-      "metadata": {
-        "hash": "c9bdcc155c3338933e51dc6515386728c8393d6d925dcdbc4018d86a35b48edd",
-        "id": "tiktok-strategy-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/tiktok-strategy-agent-c9bdcc15"
-      }
-    },
-    {
-      "name": "traffic-generation-agent",
-      "description": "MUST BE USED to execute a multi-channel promotion plan for a new blog post. It shares the post on relevant social media platforms, to an email list, and in niche online communities.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/traffic-generation-agent",
-      "metadata": {
-        "hash": "c049489727f7014dada08dd2b5cf667b75d6b8c6e923dcd4b8150fb06ac1795f",
-        "id": "traffic-generation-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/traffic-generation-agent-c0494897"
-      }
-    },
-    {
-      "name": "user-feedback-analysis-agent",
-      "description": "MUST BE USED to systematically collect, analyze, and synthesize qualitative user feedback from various sources (comments, DMs, surveys) into actionable insights for content or product improvement.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/user-feedback-analysis-agent",
-      "metadata": {
-        "hash": "b3e6217b19d2fa2142c16f86c9d8aef5c6123329fbb5eb6edc8d1c27a83916b1",
-        "id": "user-feedback-analysis-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/user-feedback-analysis-agent-b3e6217b"
-      }
-    },
-    {
-      "name": "value-ladder-architect-agent",
-      "description": "MUST BE USED to design a strategic Value Ladder and an integrated ecosystem of interconnected sales funnels. It maps the entire customer journey across multiple offers to maximize lifetime value.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/value-ladder-architect-agent",
-      "metadata": {
-        "hash": "5f1b1553c2d540848a9723fe3b87911848927edc6f7491baba3ec48ce05a3e00",
-        "id": "value-ladder-architect-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/value-ladder-architect-agent-5f1b1553"
-      }
-    },
-    {
-      "name": "video-editor-agent",
-      "description": "MUST BE USED to assemble and edit a video. It assembles raw footage based on a storyboard, trims clips, adds B-roll and transitions, and can leverage AI tools like Descript for efficiency.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/video-editor-agent",
-      "metadata": {
-        "hash": "516d0f8b3bf7d77af0fe7592bca16e5a67292c56e92f69f3773e2ab43ad588e7",
-        "id": "video-editor-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/video-editor-agent-516d0f8b"
-      }
-    },
-    {
-      "name": "visual-asset-creator-agent",
-      "description": "MUST BE USED to create or source relevant visual assets for blog posts. It finds or generates graphics, infographics, or stock photos, ensuring they are licensed and optimized.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/visual-asset-creator-agent",
-      "metadata": {
-        "hash": "5eb41d73be555673c492f63558e84fff7dc8d02f19a89ab6ec5d84e11a840649",
-        "id": "visual-asset-creator-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/visual-asset-creator-agent-5eb41d73"
-      }
-    },
-    {
-      "name": "x-strategy-agent",
-      "description": "MUST BE USED to design a content strategy for X (formerly Twitter). It emphasizes real-time engagement, creating valuable threads for thought leadership, and using polls and visuals to stand out.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/x-strategy-agent",
-      "metadata": {
-        "hash": "d8fafef6a47572b7ee1fa3cdd52a12be96ec344e8d2efb659cdf332e6934ee6a",
-        "id": "x-strategy-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/x-strategy-agent-d8fafef6"
-      }
-    },
-    {
-      "name": "yt-content-strategy-agent",
-      "description": "MUST BE USED to define a new YouTube channel's overarching content strategy. It selects content formats, establishes a brand identity and value proposition, and creates a posting schedule.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/yt-content-strategy-agent",
-      "metadata": {
-        "hash": "4dc508c9f266abaf3ee794fb9a5ef85d17f5fafa3e50a1996014bf149c325fe9",
-        "id": "yt-content-strategy-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/yt-content-strategy-agent-4dc508c9"
-      }
-    },
-    {
-      "name": "yt-niche-strategy-agent",
-      "description": "MUST BE USED to identify a profitable YouTube niche. It analyzes high-CPM categories, conducts competitive analysis to reverse-engineer content strategies, and identifies market gaps.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/yt-niche-strategy-agent",
-      "metadata": {
-        "hash": "8207a96022e190b5ba15a6825fc4f353706b9000d97e7e463f6b167933da336b",
-        "id": "yt-niche-strategy-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/yt-niche-strategy-agent-8207a960"
-      }
-    },
-    {
-      "name": "yt-seo-optimizer-agent",
-      "description": "MUST BE USED to optimize a video's metadata for YouTube's search and recommendation algorithms. It performs keyword research and crafts the video's title, description, and tags for maximum discoverability.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/yt-seo-optimizer-agent",
-      "metadata": {
-        "hash": "88530b18c395529a23b48f475ab45d62d02e2359d6ce6cf5d28aee126024ad92",
-        "id": "yt-seo-optimizer-agent",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/yt-seo-optimizer-agent-88530b18"
       }
     },
     {
@@ -8570,132 +6456,6 @@
       }
     },
     {
-      "name": "notion",
-      "description": "Notion API for creating and managing pages, databases, and blocks.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/notion",
-      "metadata": {
-        "hash": "1002bcb8230ff496b65c2cb030737ed561c8c85fa1f823bed9192550e282a6fa",
-        "id": "notion",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/notion-1002bcb8"
-      }
-    },
-    {
-      "name": "notion-knowledge-capture",
-      "description": "Capture conversations and decisions into structured Notion pages; use when turning chats/notes into wiki entries, how-tos, decisions, or FAQs with proper linking.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/notion-knowledge-capture",
-      "metadata": {
-        "hash": "b49383b229bc766190ea22bb58502cfcf7e08449f5fce55a104eef1e54e27f00",
-        "id": "notion-knowledge-capture",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/notion-knowledge-capture-b49383b2"
-      }
-    },
-    {
-      "name": "notion-meeting-intelligence",
-      "description": "Prepare meeting materials with Notion context and Codex research; use when gathering context, drafting agendas/pre-reads, and tailoring materials to attendees.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/notion-meeting-intelligence",
-      "metadata": {
-        "hash": "bad61faccbbe0f2cab53bcfbc4cb22f847ba8593ef14c2e37fea5b9b03346332",
-        "id": "notion-meeting-intelligence",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/notion-meeting-intelligence-bad61fac"
-      }
-    },
-    {
-      "name": "notion-research-documentation",
-      "description": "Research across Notion and synthesize into structured documentation; use when gathering info from multiple Notion sources to produce briefs, comparisons, or reports with citations.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/notion-research-documentation",
-      "metadata": {
-        "hash": "e88a46da978cf6f088a788fa92ee736df699a355a72f41f14bdc258bf3ef57e7",
-        "id": "notion-research-documentation",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/notion-research-documentation-e88a46da"
-      }
-    },
-    {
-      "name": "notion-spec-to-implementation",
-      "description": "Turn Notion specs into implementation plans, tasks, and progress tracking; use when implementing PRDs/feature specs and creating Notion plans + tasks from them.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/notion-spec-to-implementation",
-      "metadata": {
-        "hash": "6e22c4c6df441e849fa6b4b825371b579c9bb4896f97bedca5f8536020427a81",
-        "id": "notion-spec-to-implementation",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/notion-spec-to-implementation-6e22c4c6"
-      }
-    },
-    {
-      "name": "obsidian",
-      "description": "Work with Obsidian vaults (plain Markdown notes) and automate via obsidian-cli.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/obsidian",
-      "metadata": {
-        "hash": "dc45b522a0f08fa11762b330b5355ccaca789bd645b0c450fe75026f69d728b2",
-        "id": "obsidian",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/obsidian-dc45b522"
-      }
-    },
-    {
-      "name": "openai-docs",
-      "description": "Use when the user asks how to build with OpenAI products or APIs and needs up-to-date official documentation with citations (for example: Codex, Responses API, Chat Completions, Apps SDK, Agents SDK, Realtime, model capabilities or limits); prioritize OpenAI docs MCP tools and restrict any fallback browsing to official OpenAI domains.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openai-docs",
-      "metadata": {
-        "hash": "100099568ce8887ccd961aad2aa824a6d6054d4e5e697625815cc6e1b30d54a7",
-        "id": "openai-docs",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openai-docs-10009956"
-      }
-    },
-    {
-      "name": "openai-whisper",
-      "description": "Local speech-to-text with the Whisper CLI (no API key).",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openai-whisper",
-      "metadata": {
-        "hash": "f9fadf134b6de49d55ffae904b2c75f5b7035f37ffa96394b19de648bdef9e0f",
-        "id": "openai-whisper",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openai-whisper-f9fadf13"
-      }
-    },
-    {
-      "name": "openclaw-assistant-setup",
-      "description": "Set up and harden an OpenClaw personal assistant using the official two-phone WhatsApp flow, safe allowlist defaults, workspace bootstrap, session behavior, and heartbeat controls. Use when users ask to install, configure, verify, or troubleshoot OpenClaw as a personal assistant (especially from https://docs.openclaw.ai/start/openclaw), including edits to ~/.openclaw/openclaw.json and operational checks.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-assistant-setup",
-      "metadata": {
-        "hash": "a677956d1909ae666f1ef8489375f1f4f66b9de0cc4a0c34694f5f639090cf43",
-        "id": "openclaw-assistant-setup",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-assistant-setup-a677956d"
-      }
-    },
-    {
       "name": "openclaw-oauth-rotation",
       "description": "",
       "category": "CLAUDE_SKILL",
@@ -8707,34 +6467,6 @@
         "hash": "643129dfb60325e48506faa71a67a89878073d9b780c9b6e836cceb3bef66f76",
         "id": "openclaw-oauth-rotation",
         "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-oauth-rotation-643129df"
-      }
-    },
-    {
-      "name": "openclaw-onboarding-wizard",
-      "description": "Guide OpenClaw onboarding via `openclaw onboard` with QuickStart vs Advanced decisions, local vs remote mode, secure defaults, reconfiguration flows, and post-onboarding checks. Use when users ask to set up OpenClaw from scratch, choose onboarding defaults, re-run or reset onboarding safely, or configure additional agents from the wizard docs at https://docs.openclaw.ai/start/wizard.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-onboarding-wizard",
-      "metadata": {
-        "hash": "d15440b04bb34d9cfd997cd131aa490e89ac50edbbf965c5cdc5ce9e591803ab",
-        "id": "openclaw-onboarding-wizard",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-onboarding-wizard-d15440b0"
-      }
-    },
-    {
-      "name": "openclaw-protocol",
-      "description": "",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-protocol",
-      "metadata": {
-        "hash": "426ce6790d0fd973509f7b9a3798584aad5bbeb62603b10c679ab6b74dc02a58",
-        "id": "openclaw-protocol",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-protocol-426ce679"
       }
     },
     {
@@ -8752,129 +6484,17 @@
       }
     },
     {
-      "name": "openclaw-sherpa",
-      "description": "",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-sherpa",
-      "metadata": {
-        "hash": "43d2793786a0a7608fb6d1a41a770b75ecde294e7b4fd9577809ad741e9f0599",
-        "id": "openclaw-sherpa",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-sherpa-43d27937"
-      }
-    },
-    {
-      "name": "openclaw-sherpa",
-      "description": "",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-sherpa-service",
-      "metadata": {
-        "hash": "43d2793786a0a7608fb6d1a41a770b75ecde294e7b4fd9577809ad741e9f0599",
-        "id": "openclaw-sherpa",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-sherpa-43d27937"
-      }
-    },
-    {
       "name": "openclaw-universal-knowledge",
-      "description": "",
+      "description": "Universal OpenClaw knowledge skill for TNF agents. Use when working on OpenClaw/PicoClaw architecture, gateway, providers/models, skills authoring, tools, channels, installation, operations, troubleshooting, or cross-agent skill portability (.agent/.claude/.gemini/.kilo/OpenClaw).",
       "category": "CLAUDE_SKILL",
       "type": "MARKDOWN",
       "visibility": "AGENTS_ONLY",
       "tags": ["project-agent", "project", "skill-bank"],
       "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-universal-knowledge",
       "metadata": {
-        "hash": "551f45a4893c39146cdd96574f038cb8cf0235a0de85d13013150e0ec4b5ced3",
+        "hash": "619530e2be4302fcdb600b7099a437077c649f4ac5f7512486a5ec9f79455095",
         "id": "openclaw-universal-knowledge",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-universal-knowledge-551f45a4"
-      }
-    },
-    {
-      "name": "openclaw-wizard-cli-automation",
-      "description": "Automate OpenClaw onboarding and agent creation with non-interactive CLI flows from the wizard automation guide, including provider-specific auth flags, secret input modes, gateway settings, JSON output, and add-another-agent setup. Use when users ask for scripts or commands around `openclaw onboard --non-interactive`, `openclaw agents add`, CI/bootstrap automation, or safe secrets handling from https://docs.openclaw.ai/start/wizard-cli-automation.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-wizard-cli-automation",
-      "metadata": {
-        "hash": "cec32fdc4533be9667c9c412dec91c59c38c6adc57b97465cc4bae2f4ffdafa8",
-        "id": "openclaw-wizard-cli-automation",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-wizard-cli-automation-cec32fdc"
-      }
-    },
-    {
-      "name": "openclaw-wizard-cli-reference",
-      "description": "Execute and troubleshoot OpenClaw CLI onboarding from the official wizard reference, including local vs remote flows, reset scopes, auth/model selection, daemon choices, channel setup, and onboarding outputs. Use when users ask about `openclaw onboard`, onboarding flags, recovery from bad onboarding state, or interpreting wizard behavior from https://docs.openclaw.ai/start/wizard-cli-reference.",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-wizard-cli-reference",
-      "metadata": {
-        "hash": "515822f507a48106d42f870e695b59e97fe6c5cedfdd60ea58d4f7f44a8c7dc3",
-        "id": "openclaw-wizard-cli-reference",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-wizard-cli-reference-515822f5"
-      }
-    },
-    {
-      "name": "hardware",
-      "description": "|",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/ops/hardware/hardware",
-      "metadata": {
-        "hash": "84584f988f7fb53301f6eda1dcc6747cd0a63097890b817af2383003ec28bd0c",
-        "id": "hardware",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/hardware-84584f98"
-      }
-    },
-    {
-      "name": "overwatch",
-      "description": "|",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/ops/monitoring/overwatch",
-      "metadata": {
-        "hash": "cab92a71ac7c36ad49646c716d97ea62c5be93ab81831b226f5af85afec66fdc",
-        "id": "overwatch",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/overwatch-cab92a71"
-      }
-    },
-    {
-      "name": "linux-production-shell-scripts",
-      "description": "|",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/ops/systems/linux-production-shell-scripts",
-      "metadata": {
-        "hash": "cb9668a94e7e5a8251389329845703ce306975f34750f9f5ba056c9d596d0637",
-        "id": "linux-production-shell-scripts",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/linux-production-shell-scripts-cb9668a9"
-      }
-    },
-    {
-      "name": "tmux",
-      "description": "|",
-      "category": "CLAUDE_SKILL",
-      "type": "MARKDOWN",
-      "visibility": "AGENTS_ONLY",
-      "tags": ["project-agent", "project", "skill-bank"],
-      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/ops/tooling/tmux",
-      "metadata": {
-        "hash": "687ca395020c2825f854aa0e05a96c0b9abbad9fcc7704e6a20534ed94c596cc",
-        "id": "tmux",
-        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/tmux-687ca395"
+        "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-universal-knowledge-619530e2"
       }
     },
     {
@@ -10079,6 +7699,440 @@
         "hash": "41aaca89873f0b7b918611453d44e52060d3ca5cbabf1b2763042c481b359126",
         "id": "openclaw-universal-knowledge",
         "snapshotPath": ".agent/skill-bank/snapshots/kilo/openclaw-universal-knowledge-41aaca89"
+      }
+    },
+    {
+      "name": "context-frontloader",
+      "description": "|",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/context-frontloader",
+      "metadata": {
+        "hash": "e9af66b3c10f6878fbef8f4ce7d58787d3040b3aca249af16f5f8d99618ddbd8",
+        "id": "context-frontloader",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/context-frontloader-e9af66b3"
+      }
+    },
+    {
+      "name": "continuous-improvement",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/continuous-improvement",
+      "metadata": {
+        "hash": "6d8a7bb020a89e658ac8bdb303c1d64364c65470099b7d6e6dc859794b8c4062",
+        "id": "continuous-improvement",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/continuous-improvement-6d8a7bb0"
+      }
+    },
+    {
+      "name": "framework-consciousness",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/framework-consciousness",
+      "metadata": {
+        "hash": "77af4dd6ec5b83449ea025e580b0135a443af513d75776858a80089c996a3de1",
+        "id": "framework-consciousness",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/framework-consciousness-77af4dd6"
+      }
+    },
+    {
+      "name": "library-of-living-knowledge",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/library-of-living-knowledge",
+      "metadata": {
+        "hash": "16ac518242689d5fc1708f661ddb0d19512ac39b8c4711f6dbba06402ba16bfd",
+        "id": "library-of-living-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/library-of-living-knowledge-16ac5182"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF OpenClaw docs-wide knowledge skill for gateway, providers, tools/skills policy, and cross-agent portability.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/openclaw-universal-knowledge",
+      "metadata": {
+        "hash": "8f4ca0c3b530a66efcffc6683625cd0c098fd83e2deb391e73a6a71ef1d01975",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/openclaw-universal-knowledge-8f4ca0c3"
+      }
+    },
+    {
+      "name": "skill-builder",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/skill-builder",
+      "metadata": {
+        "hash": "7a715f0fac3f1ca0f7edde226a4be9209797c61a82c13221100d2b84e93f615f",
+        "id": "skill-builder",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/skill-builder-7a715f0f"
+      }
+    },
+    {
+      "name": "skill-creator",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/skill-creator",
+      "metadata": {
+        "hash": "e8047445aaabb76ba0e71455a708db041d0d20b96a88fc3891c9e0c0b85b4844",
+        "id": "skill-creator",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/skill-creator-e8047445"
+      }
+    },
+    {
+      "name": "context-frontloader",
+      "description": "|",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/context-frontloader",
+      "metadata": {
+        "hash": "e9af66b3c10f6878fbef8f4ce7d58787d3040b3aca249af16f5f8d99618ddbd8",
+        "id": "context-frontloader",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/context-frontloader-e9af66b3"
+      }
+    },
+    {
+      "name": "continuous-improvement",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/continuous-improvement",
+      "metadata": {
+        "hash": "6d8a7bb020a89e658ac8bdb303c1d64364c65470099b7d6e6dc859794b8c4062",
+        "id": "continuous-improvement",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/continuous-improvement-6d8a7bb0"
+      }
+    },
+    {
+      "name": "framework-consciousness",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/framework-consciousness",
+      "metadata": {
+        "hash": "77af4dd6ec5b83449ea025e580b0135a443af513d75776858a80089c996a3de1",
+        "id": "framework-consciousness",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/framework-consciousness-77af4dd6"
+      }
+    },
+    {
+      "name": "github",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/github",
+      "metadata": {
+        "hash": "10a44ac238bbb7b3e92a78a2712ac89436cdaac4593b8642e9a8cd1e0fe2e683",
+        "id": "github",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/github-10a44ac2"
+      }
+    },
+    {
+      "name": "hardware",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/hardware",
+      "metadata": {
+        "hash": "74f161217308f656f38ea7fd7d7a3765dac35101822dd2e66f1325dbddaf3499",
+        "id": "hardware",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/hardware-74f16121"
+      }
+    },
+    {
+      "name": "library-of-living-knowledge",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/library-of-living-knowledge",
+      "metadata": {
+        "hash": "16ac518242689d5fc1708f661ddb0d19512ac39b8c4711f6dbba06402ba16bfd",
+        "id": "library-of-living-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/library-of-living-knowledge-16ac5182"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF OpenClaw knowledge skill for PicoClaw agents; covers tools/skills spec, docs-wide navigation, and operational consistency.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/openclaw-universal-knowledge",
+      "metadata": {
+        "hash": "94afd0396652e43ce66a11815114b93e5217306e2da04da958af2db24e28d164",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/openclaw-universal-knowledge-94afd039"
+      }
+    },
+    {
+      "name": "overwatch",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/overwatch",
+      "metadata": {
+        "hash": "3581432c11379017e539f8dd999d744716e1f40748d217a20cf4ea0b17f6f496",
+        "id": "overwatch",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/overwatch-3581432c"
+      }
+    },
+    {
+      "name": "skill-builder",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/skill-builder",
+      "metadata": {
+        "hash": "7a715f0fac3f1ca0f7edde226a4be9209797c61a82c13221100d2b84e93f615f",
+        "id": "skill-builder",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/skill-builder-7a715f0f"
+      }
+    },
+    {
+      "name": "skill-creator",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/skill-creator",
+      "metadata": {
+        "hash": "e8047445aaabb76ba0e71455a708db041d0d20b96a88fc3891c9e0c0b85b4844",
+        "id": "skill-creator",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/skill-creator-e8047445"
+      }
+    },
+    {
+      "name": "summarize",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/summarize",
+      "metadata": {
+        "hash": "680a539f5b5f8acaacf8d17e21bce4911451d032a2c19fb97c2898402b367022",
+        "id": "summarize",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/summarize-680a539f"
+      }
+    },
+    {
+      "name": "tmux",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/tmux",
+      "metadata": {
+        "hash": "417e5e425aa70e2ad57fbc3484a042443ead225e51095446d3c07cf4eb49dd2a",
+        "id": "tmux",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/tmux-417e5e42"
+      }
+    },
+    {
+      "name": "weather",
+      "description": "Get current weather and forecasts (no API key required).",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/weather",
+      "metadata": {
+        "hash": "98412aadcfd828ceb3cf10bb3914895b6a4ef6024786e3ba56c2fb2df492ba34",
+        "id": "weather",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/weather-98412aad"
+      }
+    },
+    {
+      "name": "README",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "global", "skill-bank"],
+      "source": "/Users/<owner>/.claude/skills/README.md",
+      "metadata": {
+        "hash": "d7c5c2f9b248c7c0b31f093cf22b9a7407f5b093c8ca9ebe75a5b6845b02b76e",
+        "id": "readme",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/readme-d7c5c2f9"
+      }
+    },
+    {
+      "name": "THIRD_PARTY_NOTICES",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "global", "skill-bank"],
+      "source": "/Users/<owner>/.claude/skills/THIRD_PARTY_NOTICES.md",
+      "metadata": {
+        "hash": "a8ff7a84dee9dfb42ab448de281784387ceafdf63881b7c070ee2de7f6ed865c",
+        "id": "third_party_notices",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/third_party_notices-a8ff7a84"
+      }
+    },
+    {
+      "name": "context-frontloader",
+      "description": "|",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/context-frontloader.md",
+      "metadata": {
+        "hash": "e9af66b3c10f6878fbef8f4ce7d58787d3040b3aca249af16f5f8d99618ddbd8",
+        "id": "context-frontloader",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/context-frontloader-e9af66b3"
+      }
+    },
+    {
+      "name": "continuous-improvement",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/continuous-improvement.md",
+      "metadata": {
+        "hash": "6d8a7bb020a89e658ac8bdb303c1d64364c65470099b7d6e6dc859794b8c4062",
+        "id": "continuous-improvement",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/continuous-improvement-6d8a7bb0"
+      }
+    },
+    {
+      "name": "framework-consciousness",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/framework-consciousness.md",
+      "metadata": {
+        "hash": "77af4dd6ec5b83449ea025e580b0135a443af513d75776858a80089c996a3de1",
+        "id": "framework-consciousness",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/framework-consciousness-77af4dd6"
+      }
+    },
+    {
+      "name": "library-of-living-knowledge",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/library-of-living-knowledge.md",
+      "metadata": {
+        "hash": "16ac518242689d5fc1708f661ddb0d19512ac39b8c4711f6dbba06402ba16bfd",
+        "id": "library-of-living-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/library-of-living-knowledge-16ac5182"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF skill adapter for OpenClaw docs-wide operations, including tools/skills rules, gateway/provider setup, and cross-agent skill portability.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/openclaw-universal-knowledge.md",
+      "metadata": {
+        "hash": "693943051c6ecd6fd7b2c79648189304386dd1f105db7dc1045e6268e1512b4c",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/openclaw-universal-knowledge-69394305"
+      }
+    },
+    {
+      "name": "skill-builder",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/skill-builder.md",
+      "metadata": {
+        "hash": "7a715f0fac3f1ca0f7edde226a4be9209797c61a82c13221100d2b84e93f615f",
+        "id": "skill-builder",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/skill-builder-7a715f0f"
+      }
+    },
+    {
+      "name": "ui-automation-with-context",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/ui-automation-with-context.md",
+      "metadata": {
+        "hash": "e87b6bb4c9b5823a9c3fe468524281db999a113cb5012fcc568503b8c2e38874",
+        "id": "ui-automation-with-context",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/ui-automation-with-context-e87b6bb4"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF skill adapter for OpenClaw full-docs operations, skills semantics, gateway/provider execution, and multi-agent portability.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["gemini", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.gemini/skills/openclaw-universal-knowledge.md",
+      "metadata": {
+        "hash": "6abdd4de09a94c5c5bb10660a81a2cf72e10136c70fb5120c58ef88be118eaea",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/gemini/openclaw-universal-knowledge-6abdd4de"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF adapter for OpenClaw-wide docs knowledge, skill format policy, and cross-agent execution consistency.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["kilo", "project", "skill-bank"],
+      "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.kilo/skills/openclaw-universal-knowledge.md",
+      "metadata": {
+        "hash": "5485b322e6aff36d3add97f93fd0d6059ac0d75a2b8effe32bb66d7d98fe3b9a",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/kilo/openclaw-universal-knowledge-5485b322"
       }
     }
   ]

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -390,7 +389,7 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
             </div>
           ) : (
             <>
-              <div className="p-2 text-xs font-medium text-muted-foreground">Default Providers</div>
+              <div className="p-2 text-xs font-medium text-gray-500">Default Providers</div>
               {providers
                 .filter((p) => !p.isCustom)
                 .map((provider) => (
@@ -406,9 +405,7 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
 
               {providers.some((p) => p.isCustom) && (
                 <>
-                  <div className="mt-2 p-2 text-xs font-medium text-muted-foreground">
-                    Custom Providers
-                  </div>
+                  <div className="mt-2 p-2 text-xs font-medium text-gray-500">Custom Providers</div>
                   {providers
                     .filter((p) => p.isCustom)
                     .map((provider) => (
@@ -443,7 +440,7 @@ export const LLMSelector: React.FC<LLMSelectorProps> = ({
         </div>
       )}
 
-      {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
+      {description && <p className="text-xs text-gray-500 mt-1">{description}</p>}
     </div>
   );
 };

@@ -4,7 +4,7 @@ import { UnifiedWorkflowEngine } from '../engine/WorkflowEngine';
 import { WorkflowQueue, WORKFLOW_QUEUE_NAME, WorkflowJobType, StartWorkflowJobData, ExecuteNodeJobData } from './WorkflowQueue';
 import { WorkflowNodeType, ExecutionContext } from '../types/WorkflowTypes';
 import { telemetry } from '../telemetry/TelemetryService';
-import { context, trace } from '@opentelemetry/api';
+import { context } from '@opentelemetry/api';
 
 export class WorkflowWorker {
   private worker: Worker;
@@ -65,8 +65,18 @@ export class WorkflowWorker {
   }
 
   private async processStartWorkflow(data: StartWorkflowJobData) {
-    const { executionId, workflowId } = data;
+    const { executionId, workflowId, taskId } = data;
+    const logTaskId = taskId || executionId;
+    const persist = Boolean(taskId);
     this.logger.info(`Processing START_WORKFLOW for execution ${executionId}`);
+    telemetry.emitTaskExecutionLog({
+      taskId: logTaskId,
+      message: `START_WORKFLOW received for workflow ${workflowId}`,
+      source: 'workflow-worker',
+      actor: 'workflow-worker',
+      stage: 'start_workflow',
+      persist,
+    });
 
     const execution = await this.engine.getExecutionStatus(executionId);
     if (!execution) {
@@ -86,14 +96,25 @@ export class WorkflowWorker {
     await this.queue.addExecuteNodeJob({
       executionId,
       workflowId,
+      taskId,
       nodeId: startNode.id,
       context: execution.context,
     });
   }
 
   private async processExecuteNode(data: ExecuteNodeJobData) {
-    const { executionId, nodeId, context } = data;
+    const { executionId, nodeId, context, taskId } = data;
+    const logTaskId = taskId || executionId;
+    const persist = Boolean(taskId);
     this.logger.debug(`Processing EXECUTE_NODE ${nodeId} for execution ${executionId}`);
+    telemetry.emitTaskExecutionLog({
+      taskId: logTaskId,
+      message: `Executing node ${nodeId}`,
+      source: 'workflow-worker',
+      actor: 'workflow-worker',
+      stage: 'execute_node',
+      persist,
+    });
 
     const workflow = await this.engine.loadWorkflow(data.workflowId);
     if (!workflow) throw new Error("Workflow not found");
@@ -105,6 +126,15 @@ export class WorkflowWorker {
 
     // Execute the node
     const result = await this.engine.executeNode(node, context);
+    telemetry.emitTaskExecutionLog({
+      taskId: logTaskId,
+      message: `Node ${nodeId} executed successfully`,
+      source: 'workflow-worker',
+      actor: 'workflow-worker',
+      stage: 'execute_node',
+      persist,
+      metadata: { nodeType: node.type },
+    });
 
     // Update context with result
     // Ideally this should merge properly based on node output config
@@ -124,6 +154,7 @@ export class WorkflowWorker {
       await this.queue.addExecuteNodeJob({
         executionId,
         workflowId: data.workflowId,
+        taskId,
         nodeId: nextNode.id,
         context: updatedContext,
       });
@@ -131,6 +162,14 @@ export class WorkflowWorker {
 
     if (node.type === WorkflowNodeType.END) {
         this.logger.info(`Workflow ${executionId} reached end via node ${nodeId}`);
+        telemetry.emitTaskExecutionLog({
+          taskId: logTaskId,
+          message: `Workflow reached END node ${nodeId}`,
+          source: 'workflow-worker',
+          actor: 'workflow-worker',
+          stage: 'finalize',
+          persist,
+        });
         const execution = await this.engine.getExecutionStatus(executionId);
         if (execution) {
             execution.status = 'COMPLETED' as any; // WorkflowExecutionStatus.COMPLETED

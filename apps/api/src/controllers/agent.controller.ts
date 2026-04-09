@@ -27,7 +27,6 @@ import {
   UpdateAgentDto,
 } from '@the-new-fuse/types';
 import { AgentProfileDto } from '../agents/dto/agent.dto';
-import { isPrivilegedUser } from '../auth/auth-policy';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import {
   JwtAuth,

@@ -63,33 +63,6 @@ export interface LocalAICapabilityStatus {
   endpoints?: Record<string, boolean>;
 }
 
-export interface HumanConnectionOption {
-  name: string;
-  url: string;
-  icon: string;
-  description: string;
-}
-
-export interface SwarmLog {
-  timestamp: string;
-  eventType?: string;
-  content?: string;
-  metadata?: {
-    source?: string;
-    actor?: string;
-    [key: string]: any;
-  };
-}
-
-export interface SwarmActivity {
-  id: string;
-  type: 'auction' | 'scan' | 'award';
-  title: string;
-  agent: string;
-  timestamp: Date;
-  status: 'completed' | 'active';
-}
-
 class AgentService {
   private baseUrl: string;
   private apiKey?: string;

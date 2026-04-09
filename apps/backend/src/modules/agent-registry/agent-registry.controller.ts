@@ -12,14 +12,8 @@ import {
 import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import {
-  AgentDirectoryResponseDto,
-  AgentRegistrationResponseDto,
-  RegisterAgentDto,
-  SearchAgentsDto,
-  TraitScreenRequestDto,
-} from './dto';
-import {
-  AgentDirectoryService,
+  AgentCatalogImportService,
+  AgentRegistrationService,
   AgentOnboardingService,
   AgentOrientationService,
   AgentProfileVectorService,
@@ -37,8 +31,7 @@ export class AgentRegistryController {
     private readonly onboardingService: AgentOnboardingService,
     private readonly orientationService: AgentOrientationService,
     private readonly directoryService: AgentDirectoryService,
-    private readonly traitVectorService: AgentProfileVectorService,
-    private readonly importService: AgentRegistryImportService
+    private readonly catalogImportService: AgentCatalogImportService,
   ) {}
 
   // ============================================================================
@@ -186,6 +179,23 @@ export class AgentRegistryController {
       agentId,
       capabilities: details?.capabilities || [],
     };
+  }
+
+  // ============================================================================
+  // IMPORT ENDPOINTS
+  // ============================================================================
+
+  @Post('import/snapshot')
+  @ApiOperation({ summary: 'Import agent registry snapshot JSON into database' })
+  async importSnapshot(
+    @Body() body: { snapshotPath?: string; onlyType?: string },
+    @Headers('x-admin-token') adminToken?: string,
+  ) {
+    return this.catalogImportService.importSnapshot({
+      snapshotPath: body?.snapshotPath,
+      onlyType: body?.onlyType,
+      adminToken,
+    });
   }
 
   // ============================================================================

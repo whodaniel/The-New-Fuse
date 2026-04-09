@@ -10,6 +10,7 @@
  */
 
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/providers/AuthProvider';
 import { GlassCard, PremiumButton, PremiumInput, PremiumTextarea } from '@/components/ui/premium';
 import { agentService } from '@/services/AgentService';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -159,6 +160,7 @@ interface OnboardingState {
 
 export default function AgentOnboarding(): React.ReactElement {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [state, setState] = useState<OnboardingState>({
     currentStep: 0,
     isAIAgent: null,
@@ -179,6 +181,10 @@ export default function AgentOnboarding(): React.ReactElement {
 
   // Fetch existing agent count
   useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
     const fetchAgentCount = async () => {
       try {
         const agents = await agentService.getAgents();
@@ -188,7 +194,7 @@ export default function AgentOnboarding(): React.ReactElement {
       }
     };
     fetchAgentCount();
-  }, []);
+  }, [isAuthenticated]);
 
   const goToStep = (step: number) => {
     setState((prev) => ({ ...prev, currentStep: step }));

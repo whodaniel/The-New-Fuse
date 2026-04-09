@@ -2,12 +2,12 @@ import os
 import csv
 import glob
 
-MANIFEST_PATH = "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/docs/NANOBANANA_POKER_GRAPHICS_MANIFEST.csv"
-OUTPUT_HTML = "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/docs/poker_asset_gallery.html"
+MANIFEST_PATH = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/docs/NANOBANANA_POKER_GRAPHICS_MANIFEST.csv"
+OUTPUT_HTML = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/docs/poker_asset_gallery.html"
 
-DIR1 = "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/assets/poker"
-DIR2 = "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/assets/poker/incoming"
-DIR3 = "/path/to/.gemini/antigravity/brain/10fb84f8-6e8f-41e1-beb4-ba647f63f6ad"
+DIR1 = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/assets/poker"
+DIR2 = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/assets/poker/incoming"
+DIR3 = "/Users/<owner>/.gemini/antigravity/brain/10fb84f8-6e8f-41e1-beb4-ba647f63f6ad"
 
 GLOBAL_THEME = "Create production-ready game UI art for a multiplayer crypto poker app called \"AI-ARCADE.XYZ - POKER ROOM\". Universe: ai-arcade adjacent sci-fantasy; premium, trustworthy, technical, cinematic. Material language: glassmorphism, frosted holographic panels, brushed metal accents, carbon microtexture. Lighting: soft volumetric glow, subtle neon edge lighting, no overblown bloom. Mood: calm confidence + high-stakes precision; cyborg-and-bot compatible space-tech aesthetic. "
 

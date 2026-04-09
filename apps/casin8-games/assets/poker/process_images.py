@@ -3,11 +3,11 @@ import csv
 import glob
 from PIL import Image, ImageDraw, ImageFont
 
-BASE_DIR = "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games"
+BASE_DIR = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games"
 ASSETS_DIR = os.path.join(BASE_DIR, "assets", "poker")
 INCOMING_DIR = os.path.join(ASSETS_DIR, "incoming")
 DOCS_DIR = os.path.join(BASE_DIR, "docs")
-GEMINI_DIR = "/path/to/.gemini/antigravity/brain/10fb84f8-6e8f-41e1-beb4-ba647f63f6ad"
+GEMINI_DIR = "/Users/<owner>/.gemini/antigravity/brain/10fb84f8-6e8f-41e1-beb4-ba647f63f6ad"
 
 os.makedirs(INCOMING_DIR, exist_ok=True)
 

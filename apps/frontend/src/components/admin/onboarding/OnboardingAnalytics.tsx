@@ -148,7 +148,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
             <button className="p-2 text-muted-foreground dark:text-muted-foreground hover:text-gray-900 dark:hover:text-white hover:bg-muted/30 dark:hover:bg-gray-700 rounded-md transition-colors">
               <MoreVertical className="w-4 h-4" />
             </button>
-            <div className="absolute right-0 top-full mt-1 w-48 bg-transparent dark:bg-transparent border border-gray-200 dark:border-gray-700 rounded-md shadow-none-none-none opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+            <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
               <button
                 onClick={handleExport}
                 className="flex items-center w-full px-4 py-2 text-sm text-foreground dark:text-gray-300 hover:bg-muted/30 dark:hover:bg-gray-700 transition-colors"
@@ -205,7 +205,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
             <div className="bg-transparent dark:bg-transparent border border-gray-200 dark:border-gray-700 rounded-md p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Completion Rate
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -219,10 +219,10 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
               </div>
             </div>
 
-            <div className="bg-transparent dark:bg-transparent border border-gray-200 dark:border-gray-700 rounded-md p-4">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Avg. Time to Complete
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -238,10 +238,10 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
               </div>
             </div>
 
-            <div className="bg-transparent dark:bg-transparent border border-gray-200 dark:border-gray-700 rounded-md p-4">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Total Onboardings
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -255,10 +255,10 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
               </div>
             </div>
 
-            <div className="bg-transparent dark:bg-transparent border border-gray-200 dark:border-gray-700 rounded-md p-4">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Completed Onboardings
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -276,8 +276,8 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
           {/* Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Daily Completions Chart */}
-            <div className="bg-transparent dark:bg-transparent border border-gray-200 dark:border-gray-700 rounded-md">
-              <div className="p-4 pb-0">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+              <div className="p-6 pb-0">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   Daily Onboarding Activity
                 </h3>
@@ -314,8 +314,8 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
             </div>
 
             {/* User Type Distribution Chart */}
-            <div className="bg-transparent dark:bg-transparent border border-gray-200 dark:border-gray-700 rounded-md">
-              <div className="p-4 pb-0">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+              <div className="p-6 pb-0">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   User Type Distribution
                 </h3>
@@ -323,7 +323,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
               <div className="p-4">
                 <div className="h-80">
                   {userTypeData.length === 0 ? (
-                    <div className="flex h-full items-center justify-center text-sm text-muted-foreground dark:text-muted-foreground">
+                    <div className="flex h-full items-center justify-center text-sm text-gray-500 dark:text-gray-400">
                       No user type distribution data available.
                     </div>
                   ) : (
@@ -357,8 +357,8 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
           </div>
 
           {/* Step Completion Chart */}
-          <div className="bg-transparent dark:bg-transparent border border-gray-200 dark:border-gray-700 rounded-md">
-            <div className="p-4 pb-0">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div className="p-6 pb-0">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Step Completion Rates
               </h3>
@@ -384,8 +384,8 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
           </div>
 
           {/* Drop-off Points Table */}
-          <div className="bg-transparent dark:bg-transparent border border-gray-200 dark:border-gray-700 rounded-md">
-            <div className="p-4 pb-0">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div className="p-6 pb-0">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Drop-off Points
               </h3>
@@ -395,45 +395,45 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                 <table className="min-w-full divide-y divide-border/50 dark:divide-border/40">
                   <thead className="bg-transparent dark:bg-transparent">
                     <tr>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Step
                       </th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Drop-off Rate
                       </th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Users
                       </th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Trend
                       </th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Action
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-transparent dark:bg-transparent divide-y divide-border/50 dark:divide-border/40">
+                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     {dropOffPoints.length > 0 ? (
                       dropOffPoints.map((point: any, index: number) => (
                         <tr key={index}>
-                          <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                             {point.step}
                           </td>
-                          <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground dark:text-muted-foreground">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                             {(point.rate * 100).toFixed(1)}%
                           </td>
-                          <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground dark:text-muted-foreground">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                             {Math.round(point.rate * (analytics.totalOnboardings || 198))}
                           </td>
-                          <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground dark:text-muted-foreground">
-                            <span className="flex items-center text-muted-foreground dark:text-gray-300">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <span className="flex items-center text-gray-600 dark:text-gray-300">
                               <TrendingUp className="w-3 h-3 mr-1" />
                               {typeof point.trend === 'number'
                                 ? `${point.trend.toFixed(1)}%`
                                 : 'N/A'}
                             </span>
                           </td>
-                          <td className="px-3 py-2 whitespace-nowrap text-sm text-muted-foreground dark:text-muted-foreground">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                             <button
                               className="px-3 py-1 text-sm border border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors"
                               aria-label="Analyze drop-off point"
@@ -448,7 +448,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                       <tr>
                         <td
                           colSpan={5}
-                          className="px-3 py-8 text-center text-sm text-muted-foreground dark:text-muted-foreground"
+                          className="px-6 py-8 text-center text-sm text-gray-500 dark:text-gray-400"
                         >
                           No drop-off analytics available for the selected range.
                         </td>
@@ -461,8 +461,8 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
           </div>
 
           {/* Recommendations */}
-          <div className="bg-transparent dark:bg-transparent border border-gray-200 dark:border-gray-700 rounded-md">
-            <div className="p-4 pb-0">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div className="p-6 pb-0">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Recommendations
               </h3>
@@ -477,7 +477,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                     <p className="font-semibold text-gray-900 dark:text-white">
                       Simplify the Profile step
                     </p>
-                    <p className="text-muted-foreground dark:text-muted-foreground">
+                    <p className="text-gray-600 dark:text-gray-400">
                       This step has the highest drop-off rate. Consider reducing the number of
                       required fields.
                     </p>
@@ -492,7 +492,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                     <p className="font-semibold text-gray-900 dark:text-white">
                       Optimize for AI Agents
                     </p>
-                    <p className="text-muted-foreground dark:text-muted-foreground">
+                    <p className="text-gray-600 dark:text-gray-400">
                       AI Agents have a lower completion rate. Consider creating a more streamlined
                       flow for them.
                     </p>
@@ -507,7 +507,7 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                     <p className="font-semibold text-gray-900 dark:text-white">
                       Reduce time spent on AI Preferences
                     </p>
-                    <p className="text-muted-foreground dark:text-muted-foreground">
+                    <p className="text-gray-600 dark:text-gray-400">
                       Users spend an average of 90 seconds on this step, which is higher than other
                       steps.
                     </p>

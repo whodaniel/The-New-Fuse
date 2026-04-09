@@ -12,6 +12,9 @@ HEARTBEAT_FILE="$LOG_DIR/heartbeat.json"
 RUNTIME_STATUS_FILE="$ROOT_DIR/.agent/testing-status.json"
 RUNNER_SCRIPT="$ROOT_DIR/scripts/swarm/run-qa-loop-service.sh"
 UID_VALUE="$(id -u)"
+NODE_BIN_DIR="$(dirname "$(command -v node 2>/dev/null || echo /usr/local/bin/node)")"
+PNPM_BIN_DIR="$HOME/Library/pnpm"
+LAUNCH_PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${PNPM_BIN_DIR}:${NODE_BIN_DIR}"
 if launchctl print "gui/${UID_VALUE}" >/dev/null 2>&1; then
   DOMAIN="gui/${UID_VALUE}"
 else
@@ -55,7 +58,7 @@ render_plist() {
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key>
-    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <string>${LAUNCH_PATH}</string>
     <key>TEST_ENABLE_IMPROVER</key>
     <string>${TEST_ENABLE_IMPROVER_VALUE}</string>
     <key>TEST_LOOP_INTERVAL</key>

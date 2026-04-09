@@ -44,16 +44,10 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { Request, Response } from 'express';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { CacheService } from '../cache/cache.service';
-import {
-  AuthLevel,
-  RateLimitTier,
-  RequireAuthLevel,
-  SetRateLimitTier,
-} from '../guards/secure-auth.guard';
 import {
   A2AMessageBrokerService,
   A2AMessageType,
@@ -571,18 +565,8 @@ export class SystemController {
       this.logger.error('Health check failed:', error);
       return {
         status: 'unhealthy',
-        timestamp: new Date().toISOString(),
-        uptime: process.uptime(),
-        version: process.version,
-        environment: process.env.NODE_ENV || 'development',
-        services: {
-          api: 'online',
-          database: 'offline',
-          filesystem: 'unknown',
-          memory: 'unknown',
-        },
         error: 'Health check failed',
-      };
+      });
     }
   }
 
@@ -1040,7 +1024,7 @@ export class SystemController {
       const response = {
         message: 'System restart initiated',
         timestamp: new Date().toISOString(),
-      };
+      });
 
       // Graceful shutdown and restart
       setTimeout(() => {

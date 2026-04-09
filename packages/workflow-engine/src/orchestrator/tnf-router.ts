@@ -4,6 +4,7 @@ import { AgentInbox } from '@the-new-fuse/core';
 import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from '@the-new-fuse/relay-core';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { SystemQueueName, SystemQueueService } from './services/system-queue.service';
+import { telemetry } from '../telemetry/TelemetryService';
 
 export interface RouterConfig {
   redisUrl: string;
@@ -98,6 +99,10 @@ export class TNFRouter {
   private async routeTask(envelope: TNFEnvelope): Promise<void> {
     const payload = envelope.payload as any;
     const requiredCapability = payload.requiredCapability || 'general';
+    await this.logTaskExecution(envelope.id, 'Task received by router', {
+      stage: 'ingress',
+      metadata: { requiredCapability },
+    });
 
     // CHECK FOR SYSTEM CAPABILITIES
     if (requiredCapability.startsWith('system:')) {
@@ -110,6 +115,11 @@ export class TNFRouter {
 
     if (candidates.length === 0) {
       console.warn(`[Router] No agents found for capability: ${requiredCapability}`);
+      await this.logTaskExecution(envelope.id, 'No eligible agent found', {
+        level: 'warn',
+        stage: 'routing',
+        metadata: { requiredCapability },
+      });
       await this.sendError(
         envelope,
         'NO_AGENT_FOUND',
@@ -126,6 +136,10 @@ export class TNFRouter {
     }
 
     console.log(`[Router] Routing task to agent: ${targetAgentId}`);
+    await this.logTaskExecution(envelope.id, `Routing to agent ${targetAgentId}`, {
+      stage: 'routing',
+      metadata: { targetAgentId },
+    });
 
     // 3. NEW: Route to agent's inbox (if enabled) or direct channel
     if (this.config.enableInboxRouting) {
@@ -160,6 +174,10 @@ export class TNFRouter {
 
       await inbox.receiveTask(task);
       console.log(`[Router] Task ${envelope.id} delivered to inbox of agent ${agentId}`);
+      await this.logTaskExecution(envelope.id, `Delivered to inbox: ${agentId}`, {
+        stage: 'dispatch',
+        metadata: { agentId, via: 'inbox' },
+      });
 
       // Emit routing event
       this.eventEmitter.emit('router.task_routed', {
@@ -169,6 +187,11 @@ export class TNFRouter {
       });
     } catch (error) {
       console.error(`[Router] Failed to route to inbox for agent ${agentId}:`, error);
+      await this.logTaskExecution(envelope.id, `Inbox delivery failed for ${agentId}`, {
+        level: 'warn',
+        stage: 'dispatch',
+        metadata: { agentId, error: String((error as any)?.message || error) },
+      });
       // Fallback to direct channel
       await this.forwardToAgent(agentId, envelope);
     }
@@ -230,8 +253,17 @@ export class TNFRouter {
 
       const jobId = await this.systemQueue.dispatchTask(queueName, jobType, envelope.payload);
       console.log(`[Router] Dispatched to queue ${queueName}, Job ID: ${jobId}`);
+      await this.logTaskExecution(envelope.id, `Dispatched to system queue ${queueName}`, {
+        stage: 'dispatch',
+        metadata: { queueName, jobId, capability },
+      });
     } catch (error: any) {
       console.error(`[Router] System task failed:`, error);
+      await this.logTaskExecution(envelope.id, 'System task dispatch failed', {
+        level: 'error',
+        stage: 'dispatch',
+        metadata: { capability, error: String(error?.message || error) },
+      });
       await this.sendError(envelope, 'SYSTEM_TASK_FAILED', error.message);
     }
   }
@@ -251,6 +283,10 @@ export class TNFRouter {
     const channel = `${this.config.egressChannelPrefix}:${agentId}`;
     await this.redisService.publish(channel, JSON.stringify(envelope));
     console.log(`[Router] Forwarded to ${channel}`);
+    await this.logTaskExecution(envelope.id, `Forwarded to channel ${channel}`, {
+      stage: 'dispatch',
+      metadata: { agentId, channel, via: 'pubsub' },
+    });
   }
 
   /**
@@ -317,5 +353,21 @@ export class TNFRouter {
       totalAgents: agents.length,
       agentLoads: loadMap,
     };
+  }
+
+  private async logTaskExecution(
+    taskId: string,
+    message: string,
+    options?: { level?: 'info' | 'warn' | 'error'; stage?: string; metadata?: Record<string, unknown> }
+  ): Promise<void> {
+    await telemetry.emitAndPersistTaskExecutionLog({
+      taskId,
+      message,
+      level: options?.level || 'info',
+      actor: 'tnf-router',
+      source: 'workflow-engine.router',
+      stage: options?.stage,
+      metadata: options?.metadata,
+    });
   }
 }

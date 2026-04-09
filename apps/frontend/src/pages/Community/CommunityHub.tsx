@@ -237,7 +237,7 @@ const CommunityHub: React.FC = () => {
             </button>
           </div>
           {loadError && (
-            <GlassCard className="rounded-md p-4 mb-6 border border-amber-500/40 bg-amber-500/10">
+            <GlassCard className="rounded-lg p-4 mb-6 border border-amber-500/40 bg-amber-500/10">
               <p className="text-sm text-amber-200">
                 {loadError}. No synthetic community posts are shown.
               </p>
@@ -345,7 +345,7 @@ const CommunityHub: React.FC = () => {
         {/* Posts List */}
         <div className="space-y-4">
           {posts.length === 0 && (
-            <GlassCard className="rounded-md p-4 border-white/10 bg-transparent/5 text-sm text-gray-300">
+            <GlassCard className="rounded-lg p-6 border-white/10 bg-white/5 text-sm text-gray-300">
               No live community posts available.
             </GlassCard>
           )}

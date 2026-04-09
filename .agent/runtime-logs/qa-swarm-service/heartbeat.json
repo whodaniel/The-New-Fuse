@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-03-26T17:03:11Z",
-  "status": "running",
-  "supervisorPid": 93448,
-  "childPid": 93476,
+  "timestamp": "2026-03-03T09:00:34Z",
+  "status": "stopping",
+  "supervisorPid": 98996,
+  "childPid": 99026,
   "exitCode": null,
   "rootDir": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
-  "testLoopInterval": "180000",
-  "targetScore": "100",
+  "testLoopInterval": "300000",
+  "targetScore": "95",
   "continueAfterTarget": "1",
   "enableImprover": "1"
 }

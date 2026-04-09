@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
@@ -31,6 +31,8 @@ cycle=0
 log() {
   echo "[$(date +%H:%M:%S)] [Jules-Supervisor] $*" | tee -a "$LOG_FILE"
 }
+
+trap 'log "Fatal error at line $LINENO (exit=$?)."; declare -F write_heartbeat >/dev/null && write_heartbeat "fatal-error" "Fatal shell error at line $LINENO" || true' ERR
 
 load_runtime_config() {
   INTERVAL_SEC="${JULES_SUPERVISOR_INTERVAL_SEC:-180}"
@@ -292,8 +294,16 @@ while true; do
   stall_count="$(wc -l < "$STALL_TMP" | tr -d ' ')"
   log "Candidates: followup=$followup_count publish=$publish_count stalled_no_pr=$stall_count"
 
-  stalled_ids_json="$(jq -R -s 'split("\n") | map(select(length > 0))' "$STALL_TMP")"
-  set_stalled_counts "$stalled_ids_json"
+  stalled_ids_json="[]"
+  if ! stalled_ids_json="$(jq -R -s 'split("\n") | map(select(length > 0))' "$STALL_TMP" 2>/dev/null)"; then
+    log "Unable to parse stalled session list from $STALL_TMP"
+    cycle_failed=1
+    stalled_ids_json="[]"
+  fi
+  if ! set_stalled_counts "$stalled_ids_json"; then
+    log "Unable to update stalled cycle counters in $STATE_FILE"
+    cycle_failed=1
+  fi
   stalled_offenders="$(
     jq -r --argjson threshold "$ALERT_STALLED_CYCLES" '
       .stalledCycles

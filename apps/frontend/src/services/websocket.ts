@@ -18,8 +18,18 @@ class WebSocketService extends EventEmitter {
     this.connect();
   }
 
-  private getWebSocketUrl(): string {
-    return import.meta.env.VITE_WS_URL || 'ws://localhost:3001';
+  getWebSocketUrl() {
+    if (import.meta.env.VITE_WS_URL) {
+      return import.meta.env.VITE_WS_URL;
+    }
+
+    const { protocol, hostname, host } = window.location;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'ws://localhost:3001';
+    }
+
+    const wsProtocol = protocol === 'https:' ? 'wss:' : 'ws:';
+    return `${wsProtocol}//${host}/ws`;
   }
 
   private connect(): void {

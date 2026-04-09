@@ -417,44 +417,6 @@ const WorkflowBuilderContent: React.FC = () => {
     }
   };
 
-  const publishWorkflow = async () => {
-    if (!workflowId) {
-      toast({
-        title: 'Save Required',
-        description: 'Save this workflow before publishing.',
-        variant: 'warning',
-        duration: 3000,
-      });
-      return;
-    }
-
-    setIsPublishing(true);
-    try {
-      const workflowService = new WorkflowApiService();
-      const response = await workflowService.publishWorkflow(workflowId);
-
-      if (!response.success) {
-        throw new Error(response.error || response.message || 'Failed to publish workflow');
-      }
-
-      toast({
-        title: 'Workflow Published',
-        description: `"${workflowName}" is now active.`,
-        variant: 'success',
-        duration: 3000,
-      });
-    } catch (error) {
-      toast({
-        title: 'Publish Error',
-        description: error instanceof Error ? error.message : 'Failed to publish workflow',
-        variant: 'destructive',
-        duration: 3000,
-      });
-    } finally {
-      setIsPublishing(false);
-    }
-  };
-
   const onNodeClick = (_event: React.MouseEvent, node: Node) => {
     setSelectedNode(node);
     setIsSettingsOpen(true);

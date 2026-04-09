@@ -40,6 +40,17 @@ export interface TimelineEvent {
   payload: Record<string, unknown>;
 }
 
+export interface TaskExecutionLogEntry {
+  id: string;
+  level: 'info' | 'warn' | 'error';
+  message: string;
+  actor: string;
+  source: string;
+  stage?: string;
+  metadata?: Record<string, unknown>;
+  timestamp: string;
+}
+
 export interface GoalRecord {
   id: string;
   title: string;
@@ -174,6 +185,35 @@ export async function updateTask(id: string, patch: Partial<LedgerRecord>): Prom
       method: 'PATCH',
       headers: JSON_HEADERS,
       body: JSON.stringify(patch),
+    })
+  );
+}
+
+export async function listTaskExecutionLogs(
+  taskId: string
+): Promise<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }> {
+  return parse<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }>(
+    await fetch(`/api/tasks/${taskId}/execution-logs`)
+  );
+}
+
+export async function appendTaskExecutionLog(
+  taskId: string,
+  input: {
+    level?: 'info' | 'warn' | 'error';
+    message: string;
+    actor?: string;
+    source?: string;
+    stage?: string;
+    metadata?: Record<string, unknown>;
+    timestamp?: string;
+  }
+): Promise<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }> {
+  return parse<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }>(
+    await fetch(`/api/tasks/${taskId}/execution-logs`, {
+      method: 'POST',
+      headers: JSON_HEADERS,
+      body: JSON.stringify(input),
     })
   );
 }

@@ -323,7 +323,7 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
                       <td className="px-3 py-2 whitespace-nowrap">
                         <div>
                           <div className="text-sm font-medium text-gray-900">{log.event_type}</div>
-                          <div className="text-sm text-muted-foreground">{log.source}</div>
+                          <div className="text-sm text-gray-500">{log.source}</div>
                         </div>
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap">
@@ -349,9 +349,7 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
                       <td className="px-3 py-2 whitespace-nowrap">
                         <div>
                           <div className="text-sm text-gray-900">{log.response_time_ms}ms</div>
-                          <div className="text-sm text-muted-foreground">
-                            {formatDate(log.created_at)}
-                          </div>
+                          <div className="text-sm text-gray-500">{formatDate(log.created_at)}</div>
                         </div>
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap">

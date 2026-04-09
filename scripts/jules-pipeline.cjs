@@ -40,6 +40,8 @@ const BRANCH_PREFIX = 'jules-auto';
 const GITHUB_REPO = 'whodaniel/fuse';
 const MAX_SESSIONS = 15;
 const POLL_INTERVAL_MS = 30_000; // 30s between status polls
+const JULES_API_BASE = process.env.JULES_API_BASE_URL || 'https://jules.googleapis.com';
+const JULES_API_KEY = process.env.JULES_API_KEY || '';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function sh(cmd, opts = {}) {
@@ -93,6 +95,11 @@ function clearIndexLock() {
   const lockFile = path.join(REPO_ROOT, '.git/index.lock');
   if (fs.existsSync(lockFile)) {
     try {
+      const ageMs = Date.now() - fs.statSync(lockFile).mtimeMs;
+      if (ageMs < 120_000) {
+        log(`WARNING: .git/index.lock exists and appears active (${Math.round(ageMs / 1000)}s old).`);
+        return;
+      }
       fs.unlinkSync(lockFile);
       log('WARNING: Removed stale .git/index.lock');
     } catch (error) {
@@ -108,7 +115,9 @@ function normalizeJulesStatus(rawStatus) {
   if (!value) return 'REVIEW';
   if (value === 'PLANNING') return 'PLANNING';
   if (value === 'IN PROGRESS') return 'RUNNING';
+  if (value === 'IN_PROGRESS') return 'RUNNING';
   if (value.startsWith('AWAITING PLAN')) return 'AWAITING_PLAN_APPROVAL';
+  if (value === 'AWAITING_PLAN_APPROVAL') return 'AWAITING_PLAN_APPROVAL';
   if (value === 'COMPLETED') return 'COMPLETED';
   if (value === 'RUNNING') return 'RUNNING';
   if (value === 'FAILED') return 'FAILED';
@@ -116,6 +125,30 @@ function normalizeJulesStatus(rawStatus) {
   if (value === 'CANCELLED') return 'CANCELLED';
   if (value === 'REVIEW') return 'REVIEW';
   return 'UNKNOWN';
+}
+
+async function fetchSessionMetaFromApi(id) {
+  if (!JULES_API_KEY) return null;
+  const url =
+    `${JULES_API_BASE.replace(/\/$/, '')}/v1alpha/sessions/${id}` +
+    '?fields=id,state,url,outputs(pullRequest)';
+  const response = await fetch(url, {
+    headers: {
+      'X-Goog-Api-Key': JULES_API_KEY,
+    },
+  });
+  if (!response.ok) {
+    throw new Error(`GET session ${id} failed (${response.status})`);
+  }
+  const json = await response.json();
+  const prUrls = (json.outputs || [])
+    .map((o) => (o && o.pullRequest && o.pullRequest.url ? o.pullRequest.url : null))
+    .filter(Boolean);
+  return {
+    state: normalizeJulesStatus(json.state),
+    url: json.url || null,
+    prUrl: prUrls[0] || null,
+  };
 }
 
 // ── State management ─────────────────────────────────────────────────────────
@@ -181,6 +214,20 @@ async function cmdStatus() {
     }
   }
 
+  // API is source-of-truth for PR URLs and final state transitions.
+  // If API credentials are missing we still keep CLI status behavior.
+  const apiMeta = {};
+  if (JULES_API_KEY) {
+    for (const id of sessionIds) {
+      try {
+        const meta = await fetchSessionMetaFromApi(id);
+        if (meta) apiMeta[id] = meta;
+      } catch (error) {
+        log(`  ⚠️ API refresh failed for ${id}: ${(error.message || String(error)).slice(0, 120)}`);
+      }
+    }
+  }
+
   // Update state and display
   let completed = 0,
     running = 0,
@@ -193,9 +240,12 @@ async function cmdStatus() {
     unknown = 0;
   for (const id of sessionIds) {
     const session = state.sessions[id];
-    const newStatus = julesStatuses[id] || session.status;
+    const apiStatus = apiMeta[id]?.state || '';
+    const newStatus = apiStatus || julesStatuses[id] || session.status;
     session.status = newStatus;
     session.lastChecked = new Date().toISOString();
+    if (apiMeta[id]?.url) session.url = apiMeta[id].url;
+    if (apiMeta[id]?.prUrl) session.prUrl = apiMeta[id].prUrl;
 
     const icon =
       newStatus === 'COMPLETED'
@@ -294,10 +344,30 @@ async function cmdPublish() {
       log(`  Applying patch (--3way)...`);
       const applyResult = shSafe(`git apply --3way --ignore-whitespace ${patchFile}`);
       log(`  apply exit=${applyResult.status}`);
+      if (applyResult.stderr) {
+        log(`  apply stderr: ${applyResult.stderr.slice(0, 160)}`);
+      }
+
+      // Do not proceed if apply failed and produced no file changes.
+      if (!applyResult.ok) {
+        const postApplyStatus = shSafe('git status --porcelain');
+        if (!postApplyStatus.stdout) {
+          log('  No changes after failed apply. Skipping.');
+          fs.unlinkSync(patchFile);
+          continue;
+        }
+      }
 
       // Stage everything (including conflict markers from --3way)
-      clearIndexLock();
-      sh('git add -A');
+      const addResult = shSafe('git add -A');
+      if (!addResult.ok) {
+        log(`  ❌ git add failed: ${addResult.stderr.slice(0, 160)}`);
+        shSafe(
+          'git restore --staged . 2>/dev/null; git restore . 2>/dev/null; git clean -fd apps/ packages/ src/ 2>/dev/null'
+        );
+        fs.unlinkSync(patchFile);
+        continue;
+      }
 
       // Check if anything actually changed vs HEAD
       const diffCheck = shSafe(`git diff --cached --quiet`);

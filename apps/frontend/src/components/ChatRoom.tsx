@@ -48,7 +48,7 @@ const MessageItem = React.memo<{ message: Message; isSelf: boolean; sender?: Mem
         </Avatar>
         <div className={`flex flex-col gap-1 ${isSelf ? 'items-end' : ''}`}>
           <div
-            className={`rounded-md p-3 ${isSelf ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
+            className={`rounded-lg p-3 ${isSelf ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
           >
             <p className="font-semibold text-sm">{sender?.name}</p>
             {message.type === MessageType.TEXT && <p className="text-sm">{message.content}</p>}

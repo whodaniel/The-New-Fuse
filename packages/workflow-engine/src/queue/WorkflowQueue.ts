@@ -18,12 +18,14 @@ export interface WorkflowJobData {
 export interface StartWorkflowJobData extends WorkflowJobData {
   executionId: string;
   workflowId: string;
+  taskId?: string;
 }
 
 export interface ExecuteNodeJobData extends WorkflowJobData {
   executionId: string;
   workflowId: string;
   nodeId: string;
+  taskId?: string;
   // We pass minimal context needed to resume execution
   // Full context should be fetched from storage or passed if small enough
   context?: ExecutionContext;

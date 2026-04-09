@@ -21,10 +21,7 @@ function ethersBrowserResolve(): Plugin {
         return path.resolve(__dirname, 'src/stubs/ethers-provider-ipcsocket-browser.js');
       }
       // Prevent axios Node adapter from pulling server-only modules into browser bundles.
-      if (
-        source === 'axios/lib/adapters/http.js' ||
-        source.endsWith('/axios/lib/adapters/http.js')
-      ) {
+      if (source === 'axios/lib/adapters/http.js' || source.endsWith('/axios/lib/adapters/http.js')) {
         return path.resolve(__dirname, 'src/stubs/axios-http-adapter.ts');
       }
       return null;
@@ -37,9 +34,6 @@ export default defineConfig(({ mode }) => {
   const isDev = mode === 'development';
   const isProduction = mode === 'production';
   const enableBuildCompression = isProduction && env.VITE_BUILD_COMPRESS !== 'false';
-  const publicEnv = Object.fromEntries(
-    Object.entries(env).filter(([key]) => key.startsWith('VITE_'))
-  );
 
   // Smart host detection for HMR
   const getHMRConfig = () => {

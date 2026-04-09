@@ -19,7 +19,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TNFRelayServer = exports.TerminalFormatter = void 0;
 __exportStar(require("./server/RelayServer"), exports);
-__exportStar(require("./services/GooseCliBridgeService"), exports);
 __exportStar(require("./services/HandoffStoreService"), exports);
 __exportStar(require("./services/HeartbeatMonitoringService"), exports);
 __exportStar(require("./services/MasterAgentRegistry"), exports);
@@ -39,9 +38,6 @@ Object.defineProperty(exports, "TNFRelayServer", { enumerable: true, get: functi
 // Stall detection and recovery
 __exportStar(require("./services/stall-detector"), exports);
 // Protocol
-__exportStar(require("./contracts/audit"), exports);
-__exportStar(require("./contracts/identity"), exports);
-__exportStar(require("./contracts/lifecycle"), exports);
 __exportStar(require("./protocol/handoff-protocol"), exports);
 __exportStar(require("./protocol/resource-protocol"), exports);
 __exportStar(require("./protocol/task-protocol"), exports);

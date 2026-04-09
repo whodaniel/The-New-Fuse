@@ -28,13 +28,6 @@ SELF_PROMPT_ENABLED="${SELF_PROMPT_ENABLED:-true}"
 SELF_PROMPT_COOLDOWN_MS="${SELF_PROMPT_COOLDOWN_MS:-30000}"
 FACTORY_SUPERVISOR_ENABLED="${FACTORY_SUPERVISOR_ENABLED:-true}"
 RELAY_ACTIVITY_PERSISTENCE_ENABLED="${RELAY_ACTIVITY_PERSISTENCE_ENABLED:-false}"
-SUPERVISOR_STATE_DIR="${ROOT_DIR}/.agent/runtime-state/supervisor"
-SUPERVISOR_PID_FILE="${SUPERVISOR_STATE_DIR}/supervisor.pid"
-
-# Force TCP fallback by unsetting REST tokens (avoid WRONGPASS errors)
-export UPSTASH_REDIS_REST_URL=""
-export UPSTASH_REDIS_REST_TOKEN=""
-export BRIDGE_GATE_ENABLED=false
 
 echo "[factory-boot] root=${ROOT_DIR}"
 echo "[factory-boot] log_dir=${LOG_DIR}"
@@ -86,7 +79,7 @@ if curl -fsS --max-time 2 http://localhost:3000/health >/dev/null 2>&1; then
   echo "[factory-boot] relay already healthy on :3000"
 else
   echo "[factory-boot] starting relay-core relay (compiled)"
-  nohup bash -lc "cd '${ROOT_DIR}/packages/relay-core' && PORT=3000 REDIS_URL='${REDIS_URL}' ENABLE_REDIS_BRIDGE=true ENABLE_ACTIVITY_PERSISTENCE='${RELAY_ACTIVITY_PERSISTENCE_ENABLED}' ACTIVITY_PERSISTENCE_REQUIRED=false node dist/standalone-relay.js" \
+  nohup bash -lc "cd '${ROOT_DIR}' && REDIS_URL='${REDIS_URL}' ENABLE_REDIS_BRIDGE=true ENABLE_ACTIVITY_PERSISTENCE='${RELAY_ACTIVITY_PERSISTENCE_ENABLED}' ACTIVITY_PERSISTENCE_REQUIRED=false pnpm --filter @the-new-fuse/relay-core run relay" \
     > "${LOG_DIR}/relay-dev.log" 2>&1 &
   sleep 3
 fi

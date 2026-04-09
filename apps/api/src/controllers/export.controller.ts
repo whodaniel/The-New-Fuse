@@ -1,7 +1,4 @@
 import { Body, Controller, HttpException, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { ExportFormat } from '@the-new-fuse/types';
 import { Response } from 'express';
 import {

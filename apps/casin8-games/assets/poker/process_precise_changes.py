@@ -62,8 +62,8 @@ def process_image(src_path, dst_path, tgt_w, tgt_h, filename):
         return False
 
 def main():
-    docs_dir = "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/docs"
-    assets_dir = "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/assets/poker"
+    docs_dir = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/docs"
+    assets_dir = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/casin8-games/assets/poker"
     manifest_csv = os.path.join(docs_dir, "NANOBANANA_POKER_GRAPHICS_MANIFEST.csv")
     need_edit_csv = os.path.join(docs_dir, "POKER_ASSETS_NEED_EDIT_OR_REGEN.csv")
 

@@ -40,9 +40,6 @@
  * GET /monitoring/app-metrics
  */
 import { Controller, Get, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import * as os from 'os';
 import * as process from 'process';

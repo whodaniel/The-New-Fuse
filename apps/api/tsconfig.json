@@ -32,5 +32,11 @@
     "src/scripts/**/*",
     "src/modules/agent-tracking/**/*",
     "src/middleware/agent-tracking.middleware.ts"
+  ],
+  "references": [
+    { "path": "../../packages/types" },
+
+    { "path": "../../packages/database" },
+    { "path": "../../packages/utils" }
   ]
 }

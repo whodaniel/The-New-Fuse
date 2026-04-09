@@ -127,10 +127,7 @@ export class ClaudeDevAutomationController {
   @ApiParam({ name: 'tenantId', description: 'Tenant identifier' })
   @ApiResponse({ status: 201, description: 'Agent created successfully' })
   @ApiResponse({ status: 400, description: 'Invalid request data' })
-  async createAgent(
-    @Param('tenantId') tenantId: string,
-    @Body() createAgentDto: ClaudeDevCreateAgentDto
-  ) {
+  async createAgent(@Param('tenantId') tenantId: string, @Body() createAgentDto: CreateAgentDto) {
     try {
       this.validateTenantId(tenantId);
       this.validateCreateAgentDto(createAgentDto);
@@ -181,10 +178,10 @@ export class ClaudeDevAutomationController {
 
       // Apply filters
       if (status) {
-        agents = agents.filter((agent: any) => agent.status === status);
+        agents = agents.filter((agent) => agent.status === status);
       }
       if (template) {
-        agents = agents.filter((agent: any) => agent.template === template);
+        agents = agents.filter((agent) => agent.template === template);
       }
 
       return {

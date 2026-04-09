@@ -75,48 +75,8 @@ function resolveEndpoints() {
     process.env.TNF_API_BASE_URL ||
     process.env.API_BASE_URL ||
     'http://localhost:3001';
-  const configuredPath = process.env.RESOURCE_REGISTRY_ENDPOINT_PATH || '/api/resources';
-
-  const base = normalizeBase(baseRaw);
-  const ingestUrl = joinUrl(base, configuredPath);
-  const rootBase = stripApiSuffix(base);
-  const marketplaceSubmitUrl = joinUrl(rootBase, '/api/marketplace/catalog/submit');
-  const marketplaceCatalogUrl = joinUrl(rootBase, '/api/marketplace/catalog');
-
-  const alternateResourceUrls = [];
-  if (/\/api\/resources$/i.test(ingestUrl)) {
-    alternateResourceUrls.push(ingestUrl.replace(/\/api\/resources$/i, '/resources'));
-  } else if (/\/resources$/i.test(ingestUrl)) {
-    alternateResourceUrls.push(ingestUrl.replace(/\/resources$/i, '/api/resources'));
-  }
-
-  return {
-    ingestUrl,
-    resourceCandidateUrls: uniqueUrls([ingestUrl, ...alternateResourceUrls]),
-    marketplaceSubmitUrl,
-    marketplaceCatalogUrl,
-    isDirectMarketplace: /\/api\/marketplace\/catalog\/submit$/i.test(ingestUrl),
-  };
-}
-
-function isMissingRouteStatus(status) {
-  return status === 404 || status === 405;
-}
-
-function buildFailureHint(status, isDirectMarketplace) {
-  if (status === 401 || status === 403) {
-    if (isDirectMarketplace) {
-      return 'Marketplace submit requires a valid member/admin JWT bearer token.';
-    }
-    return 'Resource-registry ingest requires RESOURCE_REGISTRY_API_KEY or a valid ingest bearer token.';
-  }
-  if (status === 404 || status === 405) {
-    return 'Ingest route not available; deploy API with POST /api/resources or set RESOURCE_REGISTRY_ENDPOINT_PATH to a valid ingest route.';
-  }
-  if (status === 500) {
-    return 'Server error from ingest endpoint; check backend logs and endpoint/auth contract.';
-  }
-  return '';
+  const path = process.env.RESOURCE_REGISTRY_ENDPOINT_PATH || '/api/resources';
+  return `${String(base).replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
 function headers() {
@@ -296,12 +256,11 @@ async function main() {
     })
     .filter(Boolean);
 
-  const endpointConfig = resolveEndpoints();
-  const url = endpointConfig.ingestUrl;
-  const resourceCandidateUrls = endpointConfig.resourceCandidateUrls;
-  const marketplaceUrl = endpointConfig.marketplaceSubmitUrl;
-  const marketplaceCatalogUrl = endpointConfig.marketplaceCatalogUrl;
-  const isDirectMarketplace = endpointConfig.isDirectMarketplace;
+  const url = endpoint();
+  const base = url.replace(/\/api\/[^/]+(?:\/[^/]+)?$/, '');
+  const marketplaceUrl = `${base}/api/marketplace/catalog/submit`;
+  const marketplaceCatalogUrl = `${base}/api/marketplace/catalog`;
+  const isDirectMarketplace = /\/api\/marketplace\/catalog\/submit$/i.test(url);
   const hdrs = headers();
   const dedupeRemote = process.env.SKILL_BANK_DEDUPE_REMOTE !== 'false';
   const remoteLookupCache = new Map();
@@ -362,17 +321,7 @@ async function main() {
       while (attempts < 4) {
         attempts += 1;
         result = isDirectMarketplace ? await postMarketplace(url, hdrs, row) : await post(url, hdrs, row);
-        if (!isDirectMarketplace && !result.ok && isMissingRouteStatus(result.status)) {
-          for (const candidateUrl of resourceCandidateUrls) {
-            if (candidateUrl === url) continue;
-            const altResult = await post(candidateUrl, hdrs, row);
-            result = altResult;
-            if (altResult.ok || !isMissingRouteStatus(altResult.status)) {
-              break;
-            }
-          }
-        }
-        if (!isDirectMarketplace && !result.ok && isMissingRouteStatus(result.status)) {
+        if (!isDirectMarketplace && !result.ok && (result.status === 404 || result.status === 405)) {
           result = await postMarketplace(marketplaceUrl, hdrs, row);
         }
         if (result.ok) break;
@@ -388,12 +337,7 @@ async function main() {
       } else {
         const hint = buildFailureHint(result?.status, isDirectMarketplace);
         summary.failed += 1;
-        stillPending.push({
-          row,
-          reason: `HTTP ${result?.status || 'unknown'}`,
-          response: result?.body || null,
-          hint: hint || undefined,
-        });
+        stillPending.push({ row, reason: `HTTP ${result?.status || 'unknown'}`, response: result?.body || null });
       }
     } catch (error) {
       summary.failed += 1;

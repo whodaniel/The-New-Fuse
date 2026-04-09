@@ -8,7 +8,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { drizzleUserRepository } from '@the-new-fuse/database';
-// @ts-ignore
+import * as admin from 'firebase-admin';
+import { Address, Hex, verifyMessage } from 'viem';
 import { SiweMessage } from 'siwe';
 import { EventBus } from '../events/event-bus.service';
 import { IdentityService } from '../services/identity.service';
@@ -280,13 +281,13 @@ export class AuthService {
     walletType?: string
   ) {
     try {
+      // Verify the signature matches the message and address
       const siweMessage = new SiweMessage(message);
-      const verificationResult = await siweMessage.verify({ signature });
+      const verificationResult = await siweMessage.verify({
+        signature,
+      });
 
-      if (
-        !verificationResult.success ||
-        siweMessage.address.toLowerCase() !== walletAddress.toLowerCase()
-      ) {
+      if (!verificationResult.success || siweMessage.address.toLowerCase() !== walletAddress.toLowerCase()) {
         throw new UnauthorizedException('Invalid signature or address mismatch');
       }
     } catch (error) {

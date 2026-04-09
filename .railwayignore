@@ -7,8 +7,7 @@ nixpacks.toml
 **/node_modules/
 *.log
 .DS_Store
-apps/casin8-games/AI-ARCADE.XYZ---POKER-ROOM/
-apps/casin8-games/.data-tests/
+
 # Exclude large non-build artifacts from upload context
 /output/
 /docs/
@@ -20,29 +19,5 @@ apps/casin8-games/.data-tests/
 /component-inventory/
 /ui-audit-results/
 /assets/
+/data/agent-registry/
 /scripts/agent-registry/
-/pull-create/
-/solid-shrimp/
-/strategic-cow/
-/tools/
-
-# Exclude large apps not needed for api-gateway deployments
-/apps/gemini-bridge-extension/
-/apps/chrome-extension/
-/apps/tauri-desktop/
-/apps/skideancer-ide/
-/apps/electron-desktop/
-
-# Additional large directories found during audit
-/ui-build/
-/ui-html-css/
-/ui-package/
-/web-assets/
-/voice-bridge-package-20260325/
-/standalone-react/
-/scraper/
-/cloudflare-sharedstate/
-/cloudflare-worker/
-/cloudflare-zeroclaw-relay/
-/apps/audio-trigger-kws-mvp/
-/apps/vscode-extension/

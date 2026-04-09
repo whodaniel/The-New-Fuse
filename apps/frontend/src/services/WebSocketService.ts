@@ -36,6 +36,7 @@ import { logger } from '../utils/logger';
 function resolveDefaultSocketUrl(): string {
   if (import.meta.env.VITE_WS_URL) return import.meta.env.VITE_WS_URL;
   if (typeof window === 'undefined') return 'ws://localhost:3001';
+
   const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   return `${wsProtocol}//${window.location.host}`;
 }

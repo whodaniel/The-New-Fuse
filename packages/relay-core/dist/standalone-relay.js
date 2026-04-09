@@ -194,32 +194,39 @@ class TNFRelayServer extends events_1.EventEmitter {
                 void manager.transition(conversation_state_machine_1.ConversationPhase.EXECUTION);
             }
         });
-        // Initialize Redis Bridge (always enabled for coordination, but gated)
-        this.bridgeGateEnabled = process.env.BRIDGE_GATE_ENABLED !== 'false'; // Default: gate is ON
-        this.bridge = (0, redis_relay_bridge_1.createRedisRelayBridge)();
-        this.bridge.on('connected', () => {
-            TerminalFormatter_1.relay.redisBridgeConnected();
-            console.log('[Relay] Bridge connected - Agent gate:', this.bridgeGateEnabled ? 'ENABLED' : 'OPEN');
-        });
-        this.bridge.on('egress', (envelope) => {
-            // Handle message from Redis -> WebSocket (egress messages go to approved agents only)
-            this.handleBridgeEgress(envelope);
-        });
-        this.bridge.on('error', (err) => {
-            console.error('[Relay] Bridge error caught:', err instanceof Error ? err.message : String(err));
-        });
-        this.bridge.connect().catch((err) => {
-            console.error('[Relay] Failed to connect bridge:', err);
-            console.log('[Relay] Continuing without Redis bridge - local-only mode');
-            // Do not set this.bridge = null to keep error listeners active during retries
-        });
-        if (this.activityPersistenceEnabled && this.activityRedis) {
+        // Initialize Redis Bridge if enabled
+        if (process.env.ENABLE_REDIS_BRIDGE === 'true') {
+            this.bridge = (0, redis_relay_bridge_1.createRedisRelayBridge)();
+            this.bridge.on('connected', () => {
+                TerminalFormatter_1.relay.redisBridgeConnected();
+                this.syncBridgeSubscriptions();
+            });
+            this.bridge.on('egress', (envelope) => {
+                // Handle message from Redis -> WebSocket
+                this.handleBridgeEgress(envelope);
+            });
+            this.bridge.connect().catch((err) => console.error('[Relay] Failed to connect bridge:', err));
+        }
+        if (this.activityPersistenceEnabled) {
+            this.activityRedis = (0, redis_1.createClient)({
+                url: process.env.ACTIVITY_REDIS_URL ||
+                    process.env.REDIS_URL ||
+                    'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+            });
             this.activityRedis.on('error', (err) => {
                 console.error('[Relay] Activity Redis client error:', err.message);
             });
-            // ioredis handles connection automatically, but we can wrap it in a promise if needed
-            this.activityRedisConnectPromise = Promise.resolve();
-            TerminalFormatter_1.relay.activityPersistenceEnabled(this.activityStreamKey);
+            this.activityRedisConnectPromise = this.activityRedis
+                .connect()
+                .then(() => {
+                TerminalFormatter_1.relay.activityPersistenceEnabled(this.activityStreamKey);
+            })
+                .catch((err) => {
+                console.error('[Relay] Failed to connect activity Redis:', err.message);
+                this.activityPersistenceEnabled = false;
+                this.activityRedis = null;
+                throw err;
+            });
         }
     }
     handleHttpRequest(req, res) {
@@ -529,38 +536,6 @@ class TNFRelayServer extends events_1.EventEmitter {
         }
         let { type, payload, source, channel } = message;
         const agentId = source || currentAgentId;
-        // Back-compat: map legacy REGISTER to AGENT_REGISTER
-        if (type === 'REGISTER') {
-            const regPayload = (payload || {});
-            const regName = regPayload.name ||
-                regPayload.clientType ||
-                regPayload.type ||
-                'Unknown Agent';
-            const regId = regPayload.id ||
-                regPayload.instanceId ||
-                regName.replace(/\s+/g, '-').toLowerCase() ||
-                `agent-${Date.now()}`;
-            const converted = {
-                ...message,
-                type: 'AGENT_REGISTER',
-                source: regId,
-                payload: {
-                    agent: {
-                        id: regId,
-                        operationalHandle: regId,
-                        runtimeSessionId: regId,
-                        aliases: [regId],
-                        name: regName,
-                        platform: regPayload.type || regPayload.clientType || 'unknown',
-                        status: 'active',
-                        capabilities: regPayload.capabilities || [],
-                        channels: regPayload.channels || [],
-                        metadata: regPayload.metadata || {},
-                    },
-                },
-            };
-            return this.handleMessage(ws, converted, currentAgentId);
-        }
         TerminalFormatter_1.relay.protocolMessage(type, agentId || null);
         switch (type) {
             case 'AGENT_REGISTER': {
@@ -1701,8 +1676,6 @@ class TNFRelayServer extends events_1.EventEmitter {
                                 this.activityRedis = null;
                             }
                         }
-                        // Upstash REST client doesn't need explicit closing as it is HTTP-based
-                        this.activityUpstash = null;
                         TerminalFormatter_1.relay.serverStopped();
                         this.emit('stopped');
                         resolve();

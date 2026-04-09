@@ -7,8 +7,7 @@ interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function Badge({ children, variant = 'default', className = '' }: BadgeProps) {
-  const baseStyles =
-    'inline-flex items-center rounded-full px-2 py-0.5 text-[0.7rem] font-medium border border-transparent';
+  const baseStyles = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
 
   const appliedStyles = {
     default: 'bg-transparent/5 text-slate-100 border-white/10',

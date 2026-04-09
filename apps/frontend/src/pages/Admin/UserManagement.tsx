@@ -151,7 +151,7 @@ const UserManagement = () => {
           <div className="p-4 text-sm text-red-700 bg-red-50 border-b border-red-100">{error}</div>
         )}
         {users.length === 0 ? (
-          <div className="p-4 text-sm text-muted-foreground">No users returned by the API.</div>
+          <div className="p-6 text-sm text-gray-500">No users returned by the API.</div>
         ) : (
           <UserTable users={users} onEdit={handleEdit} onDelete={handleDelete} />
         )}

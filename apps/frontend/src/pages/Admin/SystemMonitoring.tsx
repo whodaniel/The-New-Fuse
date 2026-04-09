@@ -58,15 +58,15 @@ const SystemMonitoring = () => {
         </Card>
       )}
       {!health && !loading ? (
-        <Card className="p-4 text-sm text-muted-foreground">No live system metrics available.</Card>
+        <Card className="p-6 text-sm text-gray-600">No live system metrics available.</Card>
       ) : (
         <>
           {/* Key Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="p-4">
-              <h3 className="text-sm font-medium text-muted-foreground">CPU Usage</h3>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <Card className="p-6">
+              <h3 className="text-sm font-medium text-gray-500">CPU Usage</h3>
               <div className="mt-2 flex items-baseline">
-                <span className="text-2xl font-semibold text-gray-900">{health?.cpuUsage}%</span>
+                <span className="text-3xl font-semibold text-gray-900">{health?.cpuUsage}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
                 <div
@@ -75,10 +75,10 @@ const SystemMonitoring = () => {
                 ></div>
               </div>
             </Card>
-            <Card className="p-4">
-              <h3 className="text-sm font-medium text-muted-foreground">Memory Usage</h3>
+            <Card className="p-6">
+              <h3 className="text-sm font-medium text-gray-500">Memory Usage</h3>
               <div className="mt-2 flex items-baseline">
-                <span className="text-2xl font-semibold text-gray-900">{health?.memoryUsage}%</span>
+                <span className="text-3xl font-semibold text-gray-900">{health?.memoryUsage}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
                 <div
@@ -87,10 +87,10 @@ const SystemMonitoring = () => {
                 ></div>
               </div>
             </Card>
-            <Card className="p-4">
-              <h3 className="text-sm font-medium text-muted-foreground">Disk Usage</h3>
+            <Card className="p-6">
+              <h3 className="text-sm font-medium text-gray-500">Disk Usage</h3>
               <div className="mt-2 flex items-baseline">
-                <span className="text-2xl font-semibold text-gray-900">{health?.diskUsage}%</span>
+                <span className="text-3xl font-semibold text-gray-900">{health?.diskUsage}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
                 <div
@@ -99,13 +99,13 @@ const SystemMonitoring = () => {
                 ></div>
               </div>
             </Card>
-            <Card className="p-4">
-              <h3 className="text-sm font-medium text-muted-foreground">Uptime</h3>
+            <Card className="p-6">
+              <h3 className="text-sm font-medium text-gray-500">Uptime</h3>
               <div className="mt-2 flex items-baseline">
-                <span className="text-2xl font-semibold text-gray-900">
+                <span className="text-3xl font-semibold text-gray-900">
                   {health ? Math.floor(health.uptime / 3600) : 0}h
                 </span>
-                <span className="ml-2 text-sm text-muted-foreground">
+                <span className="ml-2 text-sm text-gray-500">
                   {health ? Math.floor((health.uptime % 3600) / 60) : 0}m
                 </span>
               </div>
@@ -114,17 +114,17 @@ const SystemMonitoring = () => {
 
           {/* Service Status */}
           <Card className="overflow-hidden">
-            <div className="px-3 py-2 border-b border-gray-200 bg-transparent">
+            <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
               <h3 className="text-lg font-medium leading-6 text-gray-900">Services Status</h3>
             </div>
-            <ul className="divide-y divide-border/50">
+            <ul className="divide-y divide-gray-200">
               {health?.services.map((service, index) => (
-                <li key={index} className="px-3 py-2 flex items-center justify-between">
+                <li key={index} className="px-6 py-4 flex items-center justify-between">
                   <div className="flex items-center">
                     <Server className="h-5 w-5 text-gray-400 mr-3" />
                     <div>
                       <p className="text-sm font-medium text-gray-900">{service.name}</p>
-                      <p className="text-xs text-muted-foreground">Latency: {service.latency}ms</p>
+                      <p className="text-xs text-gray-500">Latency: {service.latency}ms</p>
                     </div>
                   </div>
                   <span

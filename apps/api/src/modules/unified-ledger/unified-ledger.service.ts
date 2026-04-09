@@ -22,6 +22,17 @@ import {
 type CreateRecordInput = Partial<UnifiedTaskRecord> &
   Pick<UnifiedTaskRecord, 'title' | 'description'>;
 
+type TaskExecutionLogEntry = {
+  id: string;
+  level: 'info' | 'warn' | 'error';
+  message: string;
+  actor: string;
+  source: string;
+  stage?: string;
+  metadata?: Record<string, unknown>;
+  timestamp: string;
+};
+
 @Injectable()
 export class UnifiedLedgerService implements OnModuleInit {
   private readonly logger = new Logger(UnifiedLedgerService.name);
@@ -186,12 +197,75 @@ export class UnifiedLedgerService implements OnModuleInit {
     return updated;
   }
 
-  async voteRecord(
-    id: string,
-    direction: 'up' | 'down',
-    owner?: string
-  ): Promise<UnifiedTaskRecord | null> {
-    const row = await this.getRecord(id, owner);
+  async getTaskExecutionLogs(
+    recordId: string
+  ): Promise<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number } | null> {
+    const record = await this.getRecord(recordId);
+    if (!record) return null;
+    const logs = this.readExecutionLogs(record.metadata);
+    return { taskId: recordId, logs, count: logs.length };
+  }
+
+  async appendTaskExecutionLog(
+    recordId: string,
+    input: {
+      level?: 'info' | 'warn' | 'error';
+      message?: string;
+      actor?: string;
+      source?: string;
+      stage?: string;
+      metadata?: Record<string, unknown>;
+      timestamp?: string;
+    }
+  ): Promise<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number } | null> {
+    const record = await this.getRecord(recordId);
+    if (!record) return null;
+    const message = String(input?.message || '').trim();
+    if (!message) {
+      throw new Error('message is required');
+    }
+
+    const entry: TaskExecutionLogEntry = {
+      id: `log_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
+      level: input.level || 'info',
+      message,
+      actor: input.actor || 'system',
+      source: input.source || 'task-service',
+      stage: input.stage,
+      metadata: input.metadata || {},
+      timestamp: input.timestamp ? this.normalizeTimestamp(input.timestamp) : new Date().toISOString(),
+    };
+
+    const existingLogs = this.readExecutionLogs(record.metadata);
+    const logs = [...existingLogs, entry].slice(-500);
+    await this.updateRecord(recordId, {
+      metadata: {
+        ...(record.metadata || {}),
+        executionLogs: logs,
+        lastExecutionLogAt: entry.timestamp,
+      },
+    } as Partial<UnifiedTaskRecord>);
+
+    await this.createTimelineEvent({
+      recordId,
+      eventType: 'historical_event',
+      actor: entry.actor,
+      timestamp: entry.timestamp,
+      payload: {
+        category: 'task_execution_log',
+        level: entry.level,
+        source: entry.source,
+        stage: entry.stage || null,
+        message: entry.message,
+        metadata: entry.metadata || {},
+      },
+    });
+
+    return { taskId: recordId, logs, count: logs.length };
+  }
+
+  async voteRecord(id: string, direction: 'up' | 'down'): Promise<UnifiedTaskRecord | null> {
+    const row = await this.getRecord(id);
     if (!row) return null;
     const votes = { ...row.votes, [direction]: row.votes[direction] + 1 };
     const updated = await this.updateRecord(id, { votes }, owner);
@@ -1160,531 +1234,20 @@ export class UnifiedLedgerService implements OnModuleInit {
     return existing || null;
   }
 
-  private async buildPersonalTimelineBlueprint(
-    userId: string,
-    context?: { email?: string; name?: string; role?: string; roles?: string[] }
-  ): Promise<
-    Array<{
-      key: string;
-      title: string;
-      description: string;
-      point: number;
-      timestamp: string;
-      segment: string;
-      confidence?: 'moderate' | 'strong' | 'hard';
-      evidenceRefs?: string[];
-    }>
-  > {
-    const displayName = context?.name?.trim() || 'Builder';
-    const email = (context?.email || '').toLowerCase();
-    const normalizedName = displayName.toLowerCase();
-    const isDanielProfile =
-      email === 'owner@example.com' ||
-      normalizedName.includes('daniel') ||
-      normalizedName.includes('who');
-    const localJourney = isDanielProfile ? await this.readLocalJourneySummary() : null;
-    const notesSummary = isDanielProfile ? await this.readAppleNotesBatchSummary() : null;
-    const chronologySummary = isDanielProfile
-      ? await this.readChronologicalReadthroughSummary()
-      : null;
-
-    if (isDanielProfile) {
-      const firstSignalTimestamp = localJourney?.firstEventTimestamp || '2016-01-25T05:16:32.000Z';
-      const firstSignalLabel = localJourney?.firstEventLabel || 'Early BizSynth signal artifact';
-      const latestSignalTimestamp =
-        localJourney?.latestEventTimestamp || '2026-03-22T00:00:00.000Z';
-      const latestSignalLabel = localJourney?.latestEventLabel || 'Latest system evolution signal';
-      const events2025 = localJourney?.byYear['2025'] || 0;
-      const events2026 = localJourney?.byYear['2026'] || 0;
-      const totalSignals = localJourney?.totalEvents || events2025 + events2026;
-      const firstNoteTimestamp = notesSummary?.firstNoteTimestamp;
-      const firstNoteTitle = notesSummary?.firstNoteTitle;
-      const latestNoteTimestamp = notesSummary?.latestNoteTimestamp;
-      const latestNoteTitle = notesSummary?.latestNoteTitle;
-      const noteCount = notesSummary?.count || 0;
-      const relayMilestone = chronologySummary?.relayEntry;
-      const mcpMilestone = chronologySummary?.mcpEntry;
-      const roadmapMilestone = chronologySummary?.roadmapEntry;
-
-      return [
-        {
-          key: 'birth-daniel-adam-goldberg-1975',
-          title: 'Birth: Daniel Adam Goldberg',
-          description:
-            'Daniel Adam Goldberg (Daniel Who) born on December 5, 1975. This marks the first anchor in the reconstructed personal timeline.',
-          point: 1,
-          timestamp: '1975-12-05T00:00:00.000Z',
-          segment: 'Origins',
-          confidence: 'hard',
-          evidenceRefs: ['provided-by-user:dob-1975-12-05'],
-        },
-        {
-          key: 'origins-builder-identity',
-          title: 'Origins: Builder Identity Emerges',
-          description: `${displayName} establishes a systems-first builder identity focused on autonomy, independent execution, and long-range leverage.`,
-          point: 9,
-          timestamp: '2014-01-01T00:00:00.000Z',
-          segment: 'Foundations',
-          confidence: 'moderate',
-        },
-        {
-          key: 'bizsynth-signal-2016',
-          title: 'BizSynth Era Signal',
-          description: `First local evidence signal captured: ${firstSignalLabel}.`,
-          point: 16,
-          timestamp: firstSignalTimestamp,
-          segment: 'Foundations',
-          confidence: 'strong',
-          evidenceRefs: [
-            'reports/development-journey-local/tnf-development-journey-timeline-events.json',
-          ],
-        },
-        {
-          key: 'automation-mindset-shift',
-          title: 'Automation Mindset Shift',
-          description:
-            'Execution shifts from one-off tasks toward repeatable processes, workflows, and compounding leverage.',
-          point: 24,
-          timestamp: '2017-01-01T00:00:00.000Z',
-          segment: 'Foundations',
-          confidence: 'moderate',
-        },
-        ...(firstNoteTimestamp
-          ? [
-              {
-                key: 'apple-notes-chronicle-begins',
-                title: 'Apple Notes Chronicle Begins',
-                description: firstNoteTitle
-                  ? `First recovered Apple Notes signal: ${firstNoteTitle}.`
-                  : 'First recovered Apple Notes signal appears in the chronology.',
-                point: 21,
-                timestamp: firstNoteTimestamp,
-                segment: 'Foundations',
-                confidence: 'strong' as const,
-                evidenceRefs: [
-                  'reports/personal-archaeology/findings/apple-notes-oldest-forward-batch1-40-2026-03-22.md',
-                ],
-              },
-            ]
-          : []),
-        {
-          key: 'github-identity-created-2021',
-          title: 'Public GitHub Identity Established',
-          description:
-            'GitHub account `whodaniel` is created on July 21, 2021, establishing a public software footprint.',
-          point: 31,
-          timestamp: '2021-07-21T15:56:39.000Z',
-          segment: 'Identity',
-          confidence: 'hard',
-          evidenceRefs: ['https://api.github.com/users/whodaniel'],
-        },
-        {
-          key: 'tnf-vision',
-          title: 'The New Fuse Vision',
-          description:
-            'A unified personal operating layer is conceived to connect projects, memory, orchestration, and decision velocity.',
-          point: 40,
-          timestamp: '2022-01-01T00:00:00.000Z',
-          segment: 'Vision',
-          confidence: 'moderate',
-        },
-        {
-          key: 'thenewfuse-domain-created-2025',
-          title: 'thenewfuse.com Domain Registered',
-          description:
-            'Domain registration for thenewfuse.com is recorded on January 17, 2025, signaling formal brand infrastructure.',
-          point: 52,
-          timestamp: '2025-01-17T19:49:42.000Z',
-          segment: 'Build',
-          confidence: 'hard',
-          evidenceRefs: ['whois:thenewfuse.com'],
-        },
-        {
-          key: 'fuse-repo-created-2025',
-          title: 'Public Monorepo Goes Live',
-          description:
-            'The `whodaniel/fuse` repository is created on April 11, 2025 as a public monorepo foundation.',
-          point: 58,
-          timestamp: '2025-04-11T20:44:10.000Z',
-          segment: 'Build',
-          confidence: 'hard',
-          evidenceRefs: ['https://api.github.com/repos/whodaniel/fuse'],
-        },
-        {
-          key: 'monorepo-build',
-          title: 'Monorepo Buildout and Expansion',
-          description:
-            'Core architecture scales in a public monorepo, integrating API, frontend, and multi-agent execution primitives.',
-          point: 64,
-          timestamp: '2024-01-01T00:00:00.000Z',
-          segment: 'Build',
-          confidence: 'strong',
-        },
-        ...(relayMilestone
-          ? [
-              {
-                key: 'tnf-relay-integration-phase',
-                title: 'Relay Integration Phase',
-                description: `Chronological notes capture a relay-centric systems phase (${relayMilestone.title}) with cross-environment agent communication wiring.`,
-                point: 67,
-                timestamp: relayMilestone.timestamp,
-                segment: 'Build',
-                confidence: 'strong' as const,
-                evidenceRefs: [
-                  'reports/personal-archaeology/findings/daniel-notes-chronological-readthrough-2026-03-22.md',
-                ],
-              },
-            ]
-          : []),
-        ...(mcpMilestone
-          ? [
-              {
-                key: 'tnf-desktop-mcp-phase',
-                title: 'Desktop MCP Expansion',
-                description: `Chronology marks a desktop MCP integration phase (${mcpMilestone.title}), extending orchestration into local system tooling.`,
-                point: 70,
-                timestamp: mcpMilestone.timestamp,
-                segment: 'Scale',
-                confidence: 'strong' as const,
-                evidenceRefs: [
-                  'reports/personal-archaeology/findings/daniel-notes-chronological-readthrough-2026-03-22.md',
-                ],
-              },
-            ]
-          : []),
-        {
-          key: 'agentic-scale',
-          title: 'Agentic Orchestration Intensifies',
-          description:
-            events2025 > 0
-              ? `Operational practice matures around orchestration loops and reliability-first automation, with ${events2025} recovered journey signals in 2025.`
-              : 'Operational practice matures around orchestration loops, timeline instrumentation, and reliability-first automation.',
-          point: 72,
-          timestamp: '2025-06-01T00:00:00.000Z',
-          segment: 'Scale',
-          confidence: events2025 > 0 ? 'strong' : 'moderate',
-          evidenceRefs:
-            events2025 > 0
-              ? ['reports/development-journey-local/tnf-development-journey-timeline-events.json']
-              : undefined,
-        },
-        ...(roadmapMilestone
-          ? [
-              {
-                key: 'canon-drift-reconciliation-phase',
-                title: 'Canon and Drift Reconciliation',
-                description: `Readthrough evidence marks an explicit canonicalization phase (${roadmapMilestone.title}) focused on aligning docs, architecture, and execution reality.`,
-                point: 77,
-                timestamp: roadmapMilestone.timestamp,
-                segment: 'Reconstruction',
-                confidence: 'strong' as const,
-                evidenceRefs: [
-                  'reports/personal-archaeology/findings/daniel-notes-chronological-readthrough-2026-03-22.md',
-                ],
-              },
-            ]
-          : []),
-        {
-          key: 'timeline-archaeology-synthesis-2026',
-          title: 'Life/Build Timeline Reconstruction',
-          description:
-            events2026 > 0 || totalSignals > 0
-              ? `Personal archaeology compiles ${totalSignals} evidence-backed timeline signals, including ${events2026} from 2026.`
-              : 'Personal archaeology process begins consolidating evidence-backed timeline events.',
-          point: 80,
-          timestamp: latestSignalTimestamp,
-          segment: 'Reconstruction',
-          confidence: 'strong',
-          evidenceRefs: [
-            'reports/development-journey-local/tnf-development-journey-timeline-events.json',
-          ],
-        },
-        {
-          key: 'personalized-control-panel',
-          title: 'Personalized User Control Surfaces',
-          description:
-            'User-scoped control panels and configurable UI interactions become central to daily command and decision flow.',
-          point: 86,
-          timestamp: '2026-02-01T00:00:00.000Z',
-          segment: 'Product',
-          confidence: 'strong',
-        },
-        {
-          key: 'delegated-sub-access',
-          title: 'Delegated VA Sub-Access',
-          description:
-            'Secure delegated access enables VAs and collaborators to operate workspace controls without sharing credentials.',
-          point: 92,
-          timestamp: '2026-03-20T00:00:00.000Z',
-          segment: 'Security',
-          confidence: 'strong',
-        },
-        ...(latestNoteTimestamp
-          ? [
-              {
-                key: 'apple-notes-reconstruction-pass',
-                title: 'Apple Notes Reconstruction Pass',
-                description:
-                  noteCount > 0 && latestNoteTitle
-                    ? `Oldest-forward Apple Notes reconstruction recovers ${noteCount} entries; latest captured note: ${latestNoteTitle}.`
-                    : 'Oldest-forward Apple Notes reconstruction adds private narrative signals.',
-                point: 95,
-                timestamp: latestNoteTimestamp,
-                segment: 'Reconstruction',
-                confidence: 'strong' as const,
-                evidenceRefs: [
-                  'reports/personal-archaeology/findings/apple-notes-oldest-forward-batch1-40-2026-03-22.md',
-                ],
-              },
-            ]
-          : []),
-        {
-          key: 'two-layer-transition',
-          title: 'Two-Layer Repository Transition',
-          description:
-            'On March 21, 2026, migration begins from a fully public monorepo toward a private proprietary cloud layer plus open-source layer.',
-          point: 97,
-          timestamp: '2026-03-21T00:00:00.000Z',
-          segment: 'Transition',
-          confidence: 'hard',
-        },
-        {
-          key: 'latest-reconstruction-signal',
-          title: 'Latest Recovered Signal',
-          description: `Most recent recovered signal: ${latestSignalLabel}.`,
-          point: 99,
-          timestamp: latestSignalTimestamp,
-          segment: 'Now',
-          confidence: 'strong',
-          evidenceRefs: [
-            'reports/development-journey-local/tnf-development-journey-timeline-events.json',
-          ],
-        },
-      ];
-    }
-
-    return [
-      {
-        key: `foundation_${userId}`,
-        title: `${displayName} Foundations`,
-        description:
-          'Early stage focused on identity, consistency, and establishing durable operating principles.',
-        point: 12,
-        timestamp: '2019-01-01T00:00:00.000Z',
-        segment: 'Foundations',
-        confidence: 'moderate',
-      },
-      {
-        key: `vision_${userId}`,
-        title: 'Vision and Direction',
-        description: 'Mission and direction become explicit enough to guide daily execution.',
-        point: 34,
-        timestamp: '2021-01-01T00:00:00.000Z',
-        segment: 'Vision',
-        confidence: 'moderate',
-      },
-      {
-        key: `build_${userId}`,
-        title: 'Build and Ship',
-        description: 'Projects move from planning to consistent shipping with measurable outcomes.',
-        point: 55,
-        timestamp: '2023-01-01T00:00:00.000Z',
-        segment: 'Build',
-        confidence: 'moderate',
-      },
-      {
-        key: `scale_${userId}`,
-        title: 'Scale Through Systems',
-        description:
-          'Automation, delegation, and orchestration become everyday operational defaults.',
-        point: 78,
-        timestamp: '2025-01-01T00:00:00.000Z',
-        segment: 'Scale',
-        confidence: 'moderate',
-      },
-    ];
-  }
-
-  private async readLocalJourneySummary(): Promise<{
-    totalEvents: number;
-    byYear: Record<string, number>;
-    firstEventLabel?: string;
-    firstEventTimestamp?: string;
-    latestEventLabel?: string;
-    latestEventTimestamp?: string;
-  } | null> {
-    const localTimelinePath = path.join(
-      process.cwd(),
-      'reports',
-      'development-journey-local',
-      'tnf-development-journey-timeline-events.json'
-    );
-
-    try {
-      const content = await fs.readFile(localTimelinePath, 'utf8');
-      const parsed = JSON.parse(content) as unknown;
-      if (!Array.isArray(parsed) || parsed.length === 0) {
-        return null;
-      }
-
-      const events = parsed
-        .map((entry) => {
-          if (!entry || typeof entry !== 'object') return null;
-          const candidate = entry as Record<string, unknown>;
-          const timestamp = typeof candidate.timestamp === 'string' ? candidate.timestamp : '';
-          if (!timestamp) return null;
-          const payload =
-            candidate.payload && typeof candidate.payload === 'object'
-              ? (candidate.payload as Record<string, unknown>)
-              : {};
-          const label =
-            String(
-              payload.label || payload.title || payload.summary || candidate.eventType || 'Event'
-            ).trim() || 'Event';
-          return { timestamp: this.normalizeTimestamp(timestamp), label };
-        })
-        .filter((event): event is { timestamp: string; label: string } => !!event)
-        .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-
-      if (events.length === 0) {
-        return null;
-      }
-
-      const byYear: Record<string, number> = {};
-      for (const event of events) {
-        const year = event.timestamp.slice(0, 4);
-        if (Number.isNaN(Number(year))) continue;
-        byYear[year] = (byYear[year] || 0) + 1;
-      }
-
-      return {
-        totalEvents: events.length,
-        byYear,
-        firstEventLabel: events[0].label,
-        firstEventTimestamp: events[0].timestamp,
-        latestEventLabel: events[events.length - 1].label,
-        latestEventTimestamp: events[events.length - 1].timestamp,
-      };
-    } catch {
-      return null;
-    }
-  }
-
-  private async readAppleNotesBatchSummary(): Promise<{
-    count: number;
-    firstNoteTimestamp?: string;
-    firstNoteTitle?: string;
-    latestNoteTimestamp?: string;
-    latestNoteTitle?: string;
-  } | null> {
-    const notesPath = path.join(
-      process.cwd(),
-      'reports',
-      'personal-archaeology',
-      'findings',
-      'apple-notes-oldest-forward-batch1-40-2026-03-22.md'
-    );
-
-    try {
-      const content = await fs.readFile(notesPath, 'utf8');
-      const matches = [...content.matchAll(/^##\s+\d+\.\s+(.+?)\s+—\s+(.+)$/gm)];
-      if (matches.length === 0) {
-        return null;
-      }
-
-      const entries = matches
-        .map((match) => {
-          const rawDate = match[1]?.trim();
-          const title = match[2]?.trim() || 'Untitled note';
-          if (!rawDate) return null;
-          const parsedDate = new Date(rawDate);
-          if (Number.isNaN(parsedDate.getTime())) return null;
-          return {
-            timestamp: this.normalizeTimestamp(parsedDate.toISOString()),
-            title,
-          };
-        })
-        .filter((entry): entry is { timestamp: string; title: string } => !!entry)
-        .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-
-      if (entries.length === 0) {
-        return null;
-      }
-
-      return {
-        count: entries.length,
-        firstNoteTimestamp: entries[0].timestamp,
-        firstNoteTitle: entries[0].title,
-        latestNoteTimestamp: entries[entries.length - 1].timestamp,
-        latestNoteTitle: entries[entries.length - 1].title,
-      };
-    } catch {
-      return null;
-    }
-  }
-
-  private async readChronologicalReadthroughSummary(): Promise<{
-    totalEntries: number;
-    firstTimestamp?: string;
-    firstTitle?: string;
-    latestTimestamp?: string;
-    latestTitle?: string;
-    relayEntry?: { timestamp: string; title: string };
-    mcpEntry?: { timestamp: string; title: string };
-    roadmapEntry?: { timestamp: string; title: string };
-  } | null> {
-    const chronologyPath = path.join(
-      process.cwd(),
-      'reports',
-      'personal-archaeology',
-      'findings',
-      'daniel-notes-chronological-readthrough-2026-03-22.md'
-    );
-
-    try {
-      const content = await fs.readFile(chronologyPath, 'utf8');
-      const matches = [...content.matchAll(/^###\s+\d+\.\s+(.+?)\s+—\s+(.+)$/gm)];
-      if (matches.length === 0) {
-        return null;
-      }
-
-      const entries = matches
-        .map((match) => {
-          const rawTimestamp = match[1]?.trim();
-          const title = match[2]?.trim() || 'Untitled entry';
-          if (!rawTimestamp) return null;
-          const parsedDate = new Date(rawTimestamp);
-          if (Number.isNaN(parsedDate.getTime())) return null;
-          return {
-            timestamp: this.normalizeTimestamp(parsedDate.toISOString()),
-            title,
-          };
-        })
-        .filter((entry): entry is { timestamp: string; title: string } => !!entry)
-        .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-
-      if (entries.length === 0) {
-        return null;
-      }
-
-      const relayEntry = entries.find((entry) => /relay/i.test(entry.title));
-      const mcpEntry = entries.find((entry) => /mcp/i.test(entry.title));
-      const roadmapEntry = entries.find((entry) =>
-        /(roadmap|architecture-overview|runbook|agent-protocol)/i.test(entry.title)
+  private readExecutionLogs(metadata: Record<string, unknown> | undefined): TaskExecutionLogEntry[] {
+    const raw = metadata?.executionLogs;
+    if (!Array.isArray(raw)) return [];
+    return raw.filter((entry): entry is TaskExecutionLogEntry => {
+      if (!entry || typeof entry !== 'object') return false;
+      const v = entry as Partial<TaskExecutionLogEntry>;
+      return (
+        typeof v.id === 'string' &&
+        typeof v.level === 'string' &&
+        typeof v.message === 'string' &&
+        typeof v.actor === 'string' &&
+        typeof v.source === 'string' &&
+        typeof v.timestamp === 'string'
       );
-
-      return {
-        totalEntries: entries.length,
-        firstTimestamp: entries[0].timestamp,
-        firstTitle: entries[0].title,
-        latestTimestamp: entries[entries.length - 1].timestamp,
-        latestTitle: entries[entries.length - 1].title,
-        relayEntry,
-        mcpEntry,
-        roadmapEntry,
-      };
-    } catch {
-      return null;
-    }
+    });
   }
 }

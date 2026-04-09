@@ -34,7 +34,9 @@ class RedisRelayBridge extends events_1.EventEmitter {
     constructor(config = {}) {
         super();
         this.config = {
-            redisUrl: config.redisUrl || process.env.REDIS_URL || 'redis://localhost:6379',
+            redisUrl: config.redisUrl ||
+                process.env.REDIS_URL ||
+                'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
             ingressChannel: config.ingressChannel || 'tnf:bus:ingress',
             egressChannelPrefix: config.egressChannelPrefix || 'tnf:bus:egress',
             enableLegacyShim: config.enableLegacyShim ?? true,

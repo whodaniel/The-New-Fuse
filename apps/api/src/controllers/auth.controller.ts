@@ -153,9 +153,4 @@ export class AuthController {
       return { authenticated: false, user: null };
     }
   }
-
-  private assertAdmin(user: any) {
-    const isAdmin = hasAuthorizationLevel(user || {}, 'admin');
-    if (!isAdmin) throw new ForbiddenException('Admin access required');
-  }
 }

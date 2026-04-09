@@ -433,9 +433,7 @@ export const AgentsRevolution = () => {
                 Swarm Intelligence
               </h3>
               <div className="flex items-center gap-2">
-                <Badge className="bg-slate-500/15 text-slate-100 border-slate-500/25">
-                  LIVE FEED
-                </Badge>
+                <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20">LIVE FEED</Badge>
                 {swarmCapabilityStatus &&
                   Object.keys(swarmCapabilityStatus.unavailable || {}).length > 0 && (
                     <Badge className="bg-amber-500/10 text-amber-300 border-amber-500/30">
@@ -446,7 +444,7 @@ export const AgentsRevolution = () => {
             </div>
             {swarmCapabilityStatus &&
               Object.keys(swarmCapabilityStatus.unavailable || {}).length > 0 && (
-                <div className="p-4 rounded-md border border-amber-500/30 bg-amber-500/10 text-sm text-amber-200">
+                <div className="p-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 text-sm text-amber-200">
                   Some swarm execution/message APIs are not deployed yet. Live activity feed remains
                   available.
                 </div>

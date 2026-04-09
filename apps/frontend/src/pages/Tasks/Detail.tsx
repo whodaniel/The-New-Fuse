@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -16,6 +18,7 @@ import {
   listGoals,
   listPlans,
   listTimelineEvents,
+  listTaskExecutionLogs,
   updateTask,
   type GoalRecord,
   type LedgerRecord,
@@ -28,10 +31,13 @@ import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 
+type LogPreset = 'all' | 'errors' | 'router' | 'dispatch' | 'worker_execution' | 'custom';
+
 const TaskDetail: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [row, setRow] = useState<LedgerRecord | null>(null);
   const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
   const [executionLogs, setExecutionLogs] = useState<TaskExecutionLogEntry[]>([]);
@@ -40,6 +46,39 @@ const TaskDetail: React.FC = () => {
   const [connectedGoals, setConnectedGoals] = useState<GoalRecord[]>([]);
   const [connectedPlans, setConnectedPlans] = useState<ProjectPlanRecord[]>([]);
   const [note, setNote] = useState('');
+  const initialLogLevel = (() => {
+    const value = searchParams.get('logLevel');
+    return value === 'info' || value === 'warn' || value === 'error' ? value : 'all';
+  })();
+  const initialLogSource = searchParams.get('logSource') || 'all';
+  const initialLogStage = searchParams.get('logStage') || 'all';
+  const initialLogQuery = searchParams.get('logQuery') || '';
+  const initialActivePreset = (() => {
+    const value = searchParams.get('logPreset');
+    if (
+      value === 'all' ||
+      value === 'errors' ||
+      value === 'router' ||
+      value === 'dispatch' ||
+      value === 'worker_execution' ||
+      value === 'custom'
+    ) {
+      return value as LogPreset;
+    }
+    const hasCustomFilters =
+      initialLogLevel !== 'all' ||
+      initialLogSource !== 'all' ||
+      initialLogStage !== 'all' ||
+      initialLogQuery.trim().length > 0;
+    return hasCustomFilters ? 'custom' : 'all';
+  })();
+  const [activeLogPreset, setActiveLogPreset] = useState<LogPreset>(initialActivePreset);
+  const [logLevelFilter, setLogLevelFilter] = useState<'all' | 'info' | 'warn' | 'error'>(
+    initialLogLevel
+  );
+  const [logSourceFilter, setLogSourceFilter] = useState(initialLogSource);
+  const [logStageFilter, setLogStageFilter] = useState(initialLogStage);
+  const [logQuery, setLogQuery] = useState(initialLogQuery);
   const [goalTitle, setGoalTitle] = useState('');
   const [goalDescription, setGoalDescription] = useState('');
   const [planName, setPlanName] = useState('');
@@ -50,22 +89,21 @@ const TaskDetail: React.FC = () => {
 
   const load = async () => {
     try {
-      const [task, events, allGoals, allPlans, connections, executionLogResponse] =
-        await Promise.all([
-          getTask(id),
-          listTimelineEvents({ recordId: id }),
-          listGoals(owner),
-          listPlans(owner),
-          getRecordConnections(id, owner),
-          getTaskExecutionLogs(id).catch(() => ({ taskId: id, logs: [], count: 0 })),
-        ]);
+      const [task, events, allGoals, allPlans, connections, execution] = await Promise.all([
+        getTask(id),
+        listTimelineEvents({ recordId: id }),
+        listGoals(),
+        listPlans(),
+        getRecordConnections(id),
+        listTaskExecutionLogs(id),
+      ]);
       setRow(task);
       setTimeline(events);
       setGoals(allGoals);
       setPlans(allPlans);
       setConnectedGoals(connections.goals || []);
       setConnectedPlans(connections.plans || []);
-      setExecutionLogs(executionLogResponse.logs || []);
+      setExecutionLogs(execution.logs || []);
     } catch {
       toast.error('Failed to load task');
     }
@@ -74,6 +112,38 @@ const TaskDetail: React.FC = () => {
   useEffect(() => {
     if (id) load();
   }, [id]);
+
+  useEffect(() => {
+    const next = new URLSearchParams(searchParams);
+
+    if (activeLogPreset !== 'all') next.set('logPreset', activeLogPreset);
+    else next.delete('logPreset');
+
+    if (logLevelFilter !== 'all') next.set('logLevel', logLevelFilter);
+    else next.delete('logLevel');
+
+    if (logSourceFilter !== 'all') next.set('logSource', logSourceFilter);
+    else next.delete('logSource');
+
+    if (logStageFilter !== 'all') next.set('logStage', logStageFilter);
+    else next.delete('logStage');
+
+    const trimmedQuery = logQuery.trim();
+    if (trimmedQuery) next.set('logQuery', trimmedQuery);
+    else next.delete('logQuery');
+
+    if (next.toString() !== searchParams.toString()) {
+      setSearchParams(next, { replace: true });
+    }
+  }, [
+    activeLogPreset,
+    logLevelFilter,
+    logSourceFilter,
+    logStageFilter,
+    logQuery,
+    searchParams,
+    setSearchParams,
+  ]);
 
   const updateStatus = async (status: LedgerRecord['status']) => {
     try {
@@ -89,18 +159,14 @@ const TaskDetail: React.FC = () => {
     if (!note.trim()) return;
     try {
       await appendTaskExecutionLog(id, {
-        level: 'info',
         message: note,
-        actor: owner,
-        source: 'task-detail-ui',
-        stage: 'note_capture',
-        metadata: {
-          panel: 'task_detail',
-        },
+        actor: 'ui-user',
+        source: 'task-detail',
+        level: 'info',
       });
       setNote('');
       await load();
-      toast.success('Note saved to execution log');
+      toast.success('Note added to execution log');
     } catch {
       toast.error('Failed to save note');
     }
@@ -170,9 +236,85 @@ const TaskDetail: React.FC = () => {
     }
   };
 
+  const applyLogPreset = (
+    preset: 'all' | 'errors' | 'router' | 'dispatch' | 'worker_execution'
+  ) => {
+    setActiveLogPreset(preset);
+    if (preset === 'all') {
+      setLogLevelFilter('all');
+      setLogSourceFilter('all');
+      setLogStageFilter('all');
+      setLogQuery('');
+      return;
+    }
+    if (preset === 'errors') {
+      setLogLevelFilter('error');
+      setLogSourceFilter('all');
+      setLogStageFilter('all');
+      setLogQuery('');
+      return;
+    }
+    if (preset === 'router') {
+      setLogLevelFilter('all');
+      setLogSourceFilter('workflow-engine.router');
+      setLogStageFilter('all');
+      setLogQuery('');
+      return;
+    }
+    if (preset === 'dispatch') {
+      setLogLevelFilter('all');
+      setLogSourceFilter('all');
+      setLogStageFilter('dispatch');
+      setLogQuery('');
+      return;
+    }
+    setLogLevelFilter('all');
+    setLogSourceFilter('workflow-worker');
+    setLogStageFilter('execute_node');
+    setLogQuery('');
+  };
+
+  const onChangeLogLevelFilter = (value: 'all' | 'info' | 'warn' | 'error') => {
+    setActiveLogPreset('custom');
+    setLogLevelFilter(value);
+  };
+
+  const onChangeLogSourceFilter = (value: string) => {
+    setActiveLogPreset('custom');
+    setLogSourceFilter(value);
+  };
+
+  const onChangeLogStageFilter = (value: string) => {
+    setActiveLogPreset('custom');
+    setLogStageFilter(value);
+  };
+
+  const onChangeLogQuery = (value: string) => {
+    setActiveLogPreset('custom');
+    setLogQuery(value);
+  };
+
   if (!row) {
     return <div className="max-w-5xl mx-auto">Loading task...</div>;
   }
+
+  const availableSources = Array.from(
+    new Set(executionLogs.map((log) => log.source).filter(Boolean))
+  );
+  const availableStages = Array.from(
+    new Set(executionLogs.map((log) => log.stage).filter((stage): stage is string => Boolean(stage)))
+  );
+  const filteredExecutionLogs = executionLogs.filter((log) => {
+    if (logLevelFilter !== 'all' && log.level !== logLevelFilter) return false;
+    if (logSourceFilter !== 'all' && log.source !== logSourceFilter) return false;
+    if (logStageFilter !== 'all' && (log.stage || 'none') !== logStageFilter) return false;
+    if (logQuery.trim()) {
+      const q = logQuery.trim().toLowerCase();
+      const haystack = `${log.message} ${log.actor} ${log.source} ${log.stage || ''}`.toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    return true;
+  });
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -341,7 +483,108 @@ const TaskDetail: React.FC = () => {
         </div>
       </Card>
 
-      <Card className="p-4 mt-6">
+      <Card className="p-6 mt-6">
+        <h3 className="text-lg font-semibold mb-3">Execution Logs</h3>
+        <div className="flex flex-wrap gap-2 mb-3">
+          <Button
+            size="sm"
+            variant={activeLogPreset === 'all' ? 'default' : 'outline'}
+            onClick={() => applyLogPreset('all')}
+          >
+            All
+          </Button>
+          <Button
+            size="sm"
+            variant={activeLogPreset === 'errors' ? 'default' : 'outline'}
+            onClick={() => applyLogPreset('errors')}
+          >
+            Errors Only
+          </Button>
+          <Button
+            size="sm"
+            variant={activeLogPreset === 'router' ? 'default' : 'outline'}
+            onClick={() => applyLogPreset('router')}
+          >
+            Router Events
+          </Button>
+          <Button
+            size="sm"
+            variant={activeLogPreset === 'dispatch' ? 'default' : 'outline'}
+            onClick={() => applyLogPreset('dispatch')}
+          >
+            Dispatch Stage
+          </Button>
+          <Button
+            size="sm"
+            variant={activeLogPreset === 'worker_execution' ? 'default' : 'outline'}
+            onClick={() => applyLogPreset('worker_execution')}
+          >
+            Worker Execution
+          </Button>
+          {activeLogPreset === 'custom' ? <Badge variant="outline">Custom</Badge> : null}
+        </div>
+        <div className="grid md:grid-cols-4 gap-2 mb-3">
+          <select
+            className="h-10 w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
+            value={logLevelFilter}
+            onChange={(e) => onChangeLogLevelFilter(e.target.value as 'all' | 'info' | 'warn' | 'error')}
+          >
+            <option value="all">All levels</option>
+            <option value="info">Info</option>
+            <option value="warn">Warn</option>
+            <option value="error">Error</option>
+          </select>
+          <select
+            className="h-10 w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
+            value={logSourceFilter}
+            onChange={(e) => onChangeLogSourceFilter(e.target.value)}
+          >
+            <option value="all">All sources</option>
+            {availableSources.map((source) => (
+              <option key={source} value={source}>
+                {source}
+              </option>
+            ))}
+          </select>
+          <select
+            className="h-10 w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
+            value={logStageFilter}
+            onChange={(e) => onChangeLogStageFilter(e.target.value)}
+          >
+            <option value="all">All stages</option>
+            {availableStages.map((stage) => (
+              <option key={stage} value={stage}>
+                {stage}
+              </option>
+            ))}
+          </select>
+          <Input
+            value={logQuery}
+            onChange={(e) => onChangeLogQuery(e.target.value)}
+            placeholder="Search logs"
+          />
+        </div>
+        <div className="space-y-2 max-h-80 overflow-auto">
+          {filteredExecutionLogs.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No execution logs yet.</p>
+          ) : null}
+          {filteredExecutionLogs.map((log) => (
+            <div key={log.id} className="border rounded p-2 text-sm">
+              <div className="flex justify-between gap-2">
+                <span className="font-medium">
+                  {log.level.toUpperCase()} • {log.source}
+                  {log.stage ? ` • ${log.stage}` : ''}
+                </span>
+                <span className="text-muted-foreground">{new Date(log.timestamp).toLocaleString()}</span>
+              </div>
+              <div className="text-muted-foreground">actor: {log.actor}</div>
+              <div>{log.message}</div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <Card className="p-6 mt-6">
         <h3 className="text-lg font-semibold mb-3">Timeline</h3>
         <div className="space-y-2 max-h-80 overflow-auto">
           {timeline.length === 0 ? (

@@ -36,26 +36,18 @@ for service in "${SERVICES[@]}"; do
   echo "--- ${service} ---"
 
   service_json="$(printf '%s' "${STATUS_JSON}" | jq -c --arg s "${service}" '
-    [
-      .environments.edges[].node.serviceInstances.edges[].node
-      | select(.serviceName==$s)
-    ]
-    | (map(select((.domains.serviceDomains[0].domain // "") | contains("production"))) | first)
-      // first
+    .environments.edges[].node.serviceInstances.edges[].node
+    | select(.serviceName==$s)
   ')"
 
-  if [[ -z "${service_json}" ]] || [[ "${service_json}" == "null" ]]; then
+  if [[ -z "${service_json}" ]]; then
     echo "ERROR: Service not found in current Railway context: ${service}"
     failures=$((failures + 1))
     echo
     continue
   fi
 
-  domain="$(printf '%s' "${service_json}" | jq -r '
-    (.domains.serviceDomains | map(.domain) | map(select(contains("production"))) | first)
-    // .domains.serviceDomains[0].domain
-    // ""
-  ')"
+  domain="$(printf '%s' "${service_json}" | jq -r '.domains.serviceDomains[0].domain // ""')"
   deploy_id="$(printf '%s' "${service_json}" | jq -r '.latestDeployment.id // ""')"
   deploy_status="$(printf '%s' "${service_json}" | jq -r '.latestDeployment.status // "UNKNOWN"')"
   source_image="$(printf '%s' "${service_json}" | jq -r '.source.image // ""')"
@@ -104,13 +96,8 @@ for service in "${SERVICES[@]}"; do
     echo "WARN: /api/status not reachable"
   fi
 
-  if command -v rg >/dev/null 2>&1; then
-    recent_errors="$(railway logs --service "${service}" --deployment --latest --lines 120 2>/dev/null \
-      | rg -i "All providers/models failed|No response from OpenAI Codex websocket stream|Missing Authentication header|Custom API key not set|Application failed to respond|panic|ERROR" || true)"
-  else
-    recent_errors="$(railway logs --service "${service}" --deployment --latest --lines 120 2>/dev/null \
-      | grep -Ei "All providers/models failed|No response from OpenAI Codex websocket stream|Missing Authentication header|Custom API key not set|Application failed to respond|panic|ERROR" || true)"
-  fi
+  recent_errors="$(railway logs --service "${service}" --deployment --latest --lines 120 2>/dev/null \
+    | rg -i "All providers/models failed|No response from OpenAI Codex websocket stream|Missing Authentication header|Custom API key not set|Application failed to respond|panic|ERROR" || true)"
   if [[ -n "${recent_errors}" ]]; then
     echo "WARN: matching error signatures found in recent logs"
     echo "${recent_errors}" | sed -n '1,8p'

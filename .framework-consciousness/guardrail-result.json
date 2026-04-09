@@ -1,6 +1,6 @@
 {
   "timestamp": "2026-03-03T02:42:36.671Z",
-  "baselinePath": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/framework-consciousness-baseline.json",
+  "baselinePath": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/framework-consciousness-baseline.json",
   "baseline": {
     "completionPct": 100,
     "latestPhase": "Phase 6: Reach & Value",

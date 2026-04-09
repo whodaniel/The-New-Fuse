@@ -1,7 +1,5 @@
-// @ts-nocheck
 import { CapabilityBadge } from '@/components/ui/CapabilityBadge';
 import { useFeatureCapabilities } from '@/hooks/useFeatureCapabilities';
-import axios from 'axios';
 import {
   Activity,
   AlertTriangle,
@@ -197,9 +195,7 @@ function categorizeAgent(name: string): string {
 
 export const SystemObservatory: React.FC = () => {
   const { capabilities } = useFeatureCapabilities();
-  const [activeLayer, setActiveLayer] = useState<'topology' | 'semantic' | 'graphs' | 'metrics'>(
-    'topology'
-  );
+  const [activeLayer, setActiveLayer] = useState<'topology' | 'semantic' | 'metrics'>('topology');
   const [agentIndex, setAgentIndex] = useState<AgentIndex | null>(null);
   const [agentIndexLoading, setAgentIndexLoading] = useState(true);
   const [agentIndexError, setAgentIndexError] = useState<string | null>(null);
@@ -752,7 +748,6 @@ export const SystemObservatory: React.FC = () => {
               <SourceBadge label="Orchestrator" value={dataSources.orchestratorHealth} />
               <SourceBadge label="System Health" value={dataSources.systemHealth} />
               <SourceBadge label="System Metrics" value={dataSources.systemMetrics} />
-              <SourceBadge label="Graph Index" value={dataSources.graphArtifacts} />
               <CapabilityBadge
                 label="Swarm API"
                 enabled={

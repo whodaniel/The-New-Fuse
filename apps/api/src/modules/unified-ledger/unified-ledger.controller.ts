@@ -327,6 +327,16 @@ export class UnifiedLedgerController {
     return this.ledger.updateRecord(id, { ...body, owner: userId }, userId);
   }
 
+  @Get('tasks/:id/execution-logs')
+  async getTaskExecutionLogs(@Param('id') id: string) {
+    return this.ledger.getTaskExecutionLogs(id);
+  }
+
+  @Post('tasks/:id/execution-logs')
+  async appendTaskExecutionLog(@Param('id') id: string, @Body() body: any) {
+    return this.ledger.appendTaskExecutionLog(id, body || {});
+  }
+
   @Get('suggestions')
   async listSuggestions(
     @CurrentUser() user: { id?: string; sub?: string },

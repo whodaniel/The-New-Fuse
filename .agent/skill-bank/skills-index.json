@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-25T11:12:56.474Z",
+  "generatedAt": "2026-03-03T01:33:44.531Z",
   "repoRoot": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
   "sourceRoots": [
     "/Users/<owner>/.codex/skills",
@@ -15,14 +15,14 @@
   ],
   "totals": {
     "scannedSources": 10,
-    "discoveredSkillFiles": 720,
-    "uniqueSkills": 476,
+    "discoveredSkillFiles": 324,
+    "uniqueSkills": 272,
     "byLlm": {
-      "codex": 179,
-      "project-agent": 507,
+      "codex": 22,
+      "project-agent": 271,
       "openclaw": 7,
       "picoclaw": 13,
-      "claude": 12,
+      "claude": 9,
       "gemini": 1,
       "kilo": 1
     }
@@ -391,7 +391,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.904Z",
+          "updatedAt": "2026-01-22T11:24:18.448Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/agent-discovery-protocol-be0f1fe3"
         }
       ],
@@ -946,7 +946,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.904Z",
+          "updatedAt": "2026-01-22T11:24:18.501Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/algorithmic-art-fb25accb"
         },
         {
@@ -1975,7 +1975,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.905Z",
+          "updatedAt": "2026-01-22T11:24:18.539Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/brand-guidelines-6de1cb5a"
         },
         {
@@ -2272,7 +2272,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.920Z",
+          "updatedAt": "2026-01-22T11:24:18.735Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/browser-automation-103ff010"
         }
       ],
@@ -2717,7 +2717,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.906Z",
+          "updatedAt": "2026-01-22T11:24:18.513Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/canvas-design-0c1281e9"
         },
         {
@@ -3837,8 +3837,8 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-10T10:39:04.673Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/context-frontloader-f5d7a5bc"
+          "updatedAt": "2026-01-28T20:58:01.000Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/codex/context-frontloader-e9af66b3"
         },
         {
           "id": "context-frontloader",
@@ -3982,7 +3982,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-22T01:41:12.924Z",
+          "updatedAt": "2026-02-22T20:11:53.219Z",
           "snapshotPath": ".agent/skill-bank/snapshots/openclaw/continuous-improvement-6d8a7bb0"
         },
         {
@@ -4025,53 +4025,6 @@
         "openclaw": 1,
         "picoclaw": 1,
         "claude": 1
-      }
-    },
-    {
-      "id": "contract-manager-agent",
-      "canonicalName": "contract-manager-agent",
-      "descriptions": [
-        "MUST BE USED to manage the legal framework of partnerships. It is responsible for drafting, reviewing, and ensuring the execution of legally sound influencer contracts that clearly outline all agreed-upon terms."
-      ],
-      "variants": [
-        {
-          "id": "contract-manager-agent",
-          "name": "contract-manager-agent",
-          "description": "MUST BE USED to manage the legal framework of partnerships. It is responsible for drafting, reviewing, and ensuring the execution of legally sound influencer contracts that clearly outline all agreed-upon terms.",
-          "path": "/Users/<owner>/.codex/skills/imported-claude-agents/contract-manager-agent",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "fa7945feedf2cd3a52ab8c969da05a899b742fd4c1370fface83f6fe939d1ced",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-03T08:03:22.338Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/contract-manager-agent-fa7945fe"
-        },
-        {
-          "id": "contract-manager-agent",
-          "name": "contract-manager-agent",
-          "description": "MUST BE USED to manage the legal framework of partnerships. It is responsible for drafting, reviewing, and ensuring the execution of legally sound influencer contracts that clearly outline all agreed-upon terms.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/contract-manager-agent",
-          "pathFromRepo": ".agent/skills/imported-claude-agents/contract-manager-agent",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "fa7945feedf2cd3a52ab8c969da05a899b742fd4c1370fface83f6fe939d1ced",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:45.039Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/contract-manager-agent-fa7945fe"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
       }
     },
     {
@@ -4633,207 +4586,19 @@
         {
           "id": "design-md",
           "name": "design-md",
-          "description": "Analyze Stitch projects and synthesize a semantic design system into DESIGN.md files",
+          "description": "",
           "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/design-md",
           "pathFromRepo": ".agent/skills/design-md",
           "llm": "project-agent",
           "scope": "project",
-          "hash": "eb15f44646528f3a087ce023329ae699c1b6e803662af68338e1eb1c0406b59b",
+          "hash": "7dea32e6c93b9bd0162eb74425b8b8e7b0d43fd3a9916a3409a869b97925064a",
           "hasAgents": false,
           "hasReferences": false,
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-23T11:54:44.482Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/design-md-eb15f446"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
-      }
-    },
-    {
-      "id": "develop-web-game",
-      "canonicalName": "develop-web-game",
-      "descriptions": [
-        "Use when Codex is building or iterating on a web game (HTML/JS) and needs a reliable development + testing loop: implement small changes, run a Playwright-based test script with short input bursts and intentional pauses, inspect screenshots/text, and review console errors with render_game_to_text."
-      ],
-      "variants": [
-        {
-          "id": "develop-web-game",
-          "name": "develop-web-game",
-          "description": "Use when Codex is building or iterating on a web game (HTML/JS) and needs a reliable development + testing loop: implement small changes, run a Playwright-based test script with short input bursts and intentional pauses, inspect screenshots/text, and review console errors with render_game_to_text.",
-          "path": "/Users/<owner>/.codex/skills/develop-web-game",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "4586330e97c99581f37798c179a71c62030fc20befa6de3e3ccb96d1adead9c7",
-          "hasAgents": true,
-          "hasReferences": true,
-          "hasScripts": true,
-          "hasAssets": true,
-          "format": "folder",
-          "updatedAt": "2026-03-03T02:43:35.094Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/develop-web-game-4586330e"
-        },
-        {
-          "id": "develop-web-game",
-          "name": "develop-web-game",
-          "description": "Use when Codex is building or iterating on a web game (HTML/JS) and needs a reliable development + testing loop: implement small changes, run a Playwright-based test script with short input bursts and intentional pauses, inspect screenshots/text, and review console errors with render_game_to_text.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/develop-web-game",
-          "pathFromRepo": ".agent/skills/develop-web-game",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "4586330e97c99581f37798c179a71c62030fc20befa6de3e3ccb96d1adead9c7",
-          "hasAgents": true,
-          "hasReferences": true,
-          "hasScripts": true,
-          "hasAssets": true,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:44.487Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/develop-web-game-4586330e"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
-      }
-    },
-    {
-      "id": "digital-asset-manager-agent",
-      "canonicalName": "digital-asset-manager-agent",
-      "descriptions": [
-        "MUST BE USED to establish and maintain an organized digital asset management system. It catalogues raw video footage, audio, graphics, and music into a structured directory for easy access."
-      ],
-      "variants": [
-        {
-          "id": "digital-asset-manager-agent",
-          "name": "digital-asset-manager-agent",
-          "description": "MUST BE USED to establish and maintain an organized digital asset management system. It catalogues raw video footage, audio, graphics, and music into a structured directory for easy access.",
-          "path": "/Users/<owner>/.codex/skills/imported-claude-agents/digital-asset-manager-agent",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "ce931e82a9c79dad4ea5b44a832ca51e245d7a9dd710e065eb57a67b2dcdabaa",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-03T08:03:26.620Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/digital-asset-manager-agent-ce931e82"
-        },
-        {
-          "id": "digital-asset-manager-agent",
-          "name": "digital-asset-manager-agent",
-          "description": "MUST BE USED to establish and maintain an organized digital asset management system. It catalogues raw video footage, audio, graphics, and music into a structured directory for easy access.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/digital-asset-manager-agent",
-          "pathFromRepo": ".agent/skills/imported-claude-agents/digital-asset-manager-agent",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "ce931e82a9c79dad4ea5b44a832ca51e245d7a9dd710e065eb57a67b2dcdabaa",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:45.055Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/digital-asset-manager-agent-ce931e82"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
-      }
-    },
-    {
-      "id": "digital-product-creator-agent",
-      "canonicalName": "digital-product-creator-agent",
-      "descriptions": [
-        "MUST BE USED to oversee the creation and sale of proprietary digital products like eBooks or online courses. It handles topic validation, content outlining, and e-commerce platform integration."
-      ],
-      "variants": [
-        {
-          "id": "digital-product-creator-agent",
-          "name": "digital-product-creator-agent",
-          "description": "MUST BE USED to oversee the creation and sale of proprietary digital products like eBooks or online courses. It handles topic validation, content outlining, and e-commerce platform integration.",
-          "path": "/Users/<owner>/.codex/skills/imported-claude-agents/digital-product-creator-agent",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "52a5207532322ba5ac52859bec4090bde66c05f5bf1cf53f2596476dff2b0617",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-03T08:03:27.137Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/digital-product-creator-agent-52a52075"
-        },
-        {
-          "id": "digital-product-creator-agent",
-          "name": "digital-product-creator-agent",
-          "description": "MUST BE USED to oversee the creation and sale of proprietary digital products like eBooks or online courses. It handles topic validation, content outlining, and e-commerce platform integration.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/digital-product-creator-agent",
-          "pathFromRepo": ".agent/skills/imported-claude-agents/digital-product-creator-agent",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "52a5207532322ba5ac52859bec4090bde66c05f5bf1cf53f2596476dff2b0617",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:45.056Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/digital-product-creator-agent-52a52075"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
-      }
-    },
-    {
-      "id": "digital-product-factory-agent",
-      "canonicalName": "digital-product-factory-agent",
-      "descriptions": [
-        "MUST BE USED to oversee the end-to-end creation of digital products. For eBooks, this includes topic research, writing, formatting, and cover design. For online courses, it includes curriculum outlining and content packaging."
-      ],
-      "variants": [
-        {
-          "id": "digital-product-factory-agent",
-          "name": "digital-product-factory-agent",
-          "description": "MUST BE USED to oversee the end-to-end creation of digital products. For eBooks, this includes topic research, writing, formatting, and cover design. For online courses, it includes curriculum outlining and content packaging.",
-          "path": "/Users/<owner>/.codex/skills/imported-claude-agents/digital-product-factory-agent",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "7cb7dd444b1274caa0df8b31aaa0493571daec478bc42fe7bee5022c2b3701de",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-03T08:03:28.047Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/digital-product-factory-agent-7cb7dd44"
-        },
-        {
-          "id": "digital-product-factory-agent",
-          "name": "digital-product-factory-agent",
-          "description": "MUST BE USED to oversee the end-to-end creation of digital products. For eBooks, this includes topic research, writing, formatting, and cover design. For online courses, it includes curriculum outlining and content packaging.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/digital-product-factory-agent",
-          "pathFromRepo": ".agent/skills/imported-claude-agents/digital-product-factory-agent",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "7cb7dd444b1274caa0df8b31aaa0493571daec478bc42fe7bee5022c2b3701de",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:45.057Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/digital-product-factory-agent-7cb7dd44"
+          "updatedAt": "2026-01-28T20:58:01.607Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/design-md-7dea32e6"
         }
       ],
       "llms": {
@@ -4967,7 +4732,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.906Z",
+          "updatedAt": "2026-01-22T11:24:18.484Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/doc-coauthoring-0a186345"
         },
         {
@@ -5071,7 +4836,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.907Z",
+          "updatedAt": "2026-01-22T11:24:18.548Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/docx-ab845132"
         },
         {
@@ -5358,28 +5123,10 @@
           "format": "folder",
           "updatedAt": "2026-02-27T14:59:09.210Z",
           "snapshotPath": ".agent/skill-bank/snapshots/codex/enhance-prompt-ccb200c7"
-        },
-        {
-          "id": "enhance-prompt",
-          "name": "enhance-prompt",
-          "description": "Transforms vague UI ideas into polished, Stitch-optimized prompts. Enhances specificity, adds UI/UX keywords, injects design system context, and structures output for better generation results.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/enhance-prompt",
-          "pathFromRepo": ".agent/skills/enhance-prompt",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "ccb200c798072438b642b1fa6a5c515563159e2fab3d56e813d76d8afa9a7ce6",
-          "hasAgents": false,
-          "hasReferences": true,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:44.536Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/enhance-prompt-ccb200c7"
         }
       ],
       "llms": {
-        "codex": 1,
-        "project-agent": 1
+        "codex": 1
       }
     },
     {
@@ -6085,8 +5832,8 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-10T10:40:44.284Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/framework-consciousness-7531f778"
+          "updatedAt": "2026-02-22T17:55:51.569Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/codex/framework-consciousness-816c1e30"
         },
         {
           "id": "framework-consciousness",
@@ -6202,83 +5949,6 @@
       ],
       "variants": [
         {
-          "id": "freeride",
-          "name": "freeride",
-          "description": "Manages free AI models from OpenRouter for OpenClaw. Automatically ranks models by quality, configures fallbacks for rate-limit handling, and updates openclaw.json. Use when the user mentions free AI, OpenRouter, model switching, rate limits, or wants to reduce AI costs.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/free-ride",
-          "pathFromRepo": ".agent/skills/free-ride",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "06e07f2a2ca0cb8d39a2c0d70daf0c6c58a546715bee32471bb787f94ce96c89",
-          "hasAgents": false,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:44.552Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/freeride-06e07f2a"
-        }
-      ],
-      "llms": {
-        "project-agent": 1
-      }
-    },
-    {
-      "id": "frontend-debugger-agent",
-      "canonicalName": "frontend-debugger-agent",
-      "descriptions": [
-        "Use when Codex needs to execute the frontend-debugger-agent workflow imported from a Claude agent definition."
-      ],
-      "variants": [
-        {
-          "id": "frontend-debugger-agent",
-          "name": "frontend-debugger-agent",
-          "description": "Use when Codex needs to execute the frontend-debugger-agent workflow imported from a Claude agent definition.",
-          "path": "/Users/<owner>/.codex/skills/imported-claude-agents/frontend-debugger-agent",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "1abea2a6fbd70988cdd00573b0297c475546dafb070c0c33d715f415bfdffd2a",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-03T08:03:35.729Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/frontend-debugger-agent-1abea2a6"
-        },
-        {
-          "id": "frontend-debugger-agent",
-          "name": "frontend-debugger-agent",
-          "description": "Use when Codex needs to execute the frontend-debugger-agent workflow imported from a Claude agent definition.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/frontend-debugger-agent",
-          "pathFromRepo": ".agent/skills/imported-claude-agents/frontend-debugger-agent",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "1abea2a6fbd70988cdd00573b0297c475546dafb070c0c33d715f415bfdffd2a",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:45.265Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/frontend-debugger-agent-1abea2a6"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
-      }
-    },
-    {
-      "id": "frontend-design",
-      "canonicalName": "frontend-design",
-      "descriptions": [
-        "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.",
-        "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, or applications. Generates creative, polished code that avoids generic AI aesthetics."
-      ],
-      "variants": [
-        {
           "id": "frontend-design",
           "name": "frontend-design",
           "description": "",
@@ -6292,7 +5962,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.908Z",
+          "updatedAt": "2026-01-22T11:24:18.532Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/frontend-design-00f6a198"
         },
         {
@@ -6331,7 +6001,7 @@
         }
       ],
       "llms": {
-        "project-agent": 3
+        "project-agent": 2
       }
     },
     {
@@ -6804,27 +6474,8 @@
     {
       "id": "github",
       "canonicalName": "github",
-      "descriptions": [
-        "Interact with GitHub using the `gh` CLI. Use `gh issue`, `gh pr`, `gh run`, and `gh api` for issues, PRs, CI runs, and advanced queries."
-      ],
+      "descriptions": [],
       "variants": [
-        {
-          "id": "github",
-          "name": "github",
-          "description": "Interact with GitHub using the `gh` CLI. Use `gh issue`, `gh pr`, `gh run`, and `gh api` for issues, PRs, CI runs, and advanced queries.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/github",
-          "pathFromRepo": ".agent/skills/github",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "51b28818a6f0359287d5c8244a6fdc59a4ac5504596deb193b28b81832221c86",
-          "hasAgents": false,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:44.957Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/github-51b28818"
-        },
         {
           "id": "github",
           "name": "github",
@@ -6844,7 +6495,6 @@
         }
       ],
       "llms": {
-        "project-agent": 1,
         "picoclaw": 1
       }
     },
@@ -7010,121 +6660,10 @@
       }
     },
     {
-      "id": "guest-booking-agent",
-      "canonicalName": "guest-booking-agent",
-      "descriptions": [
-        "MUST BE USED for interview-based shows to identify potential guests, handle outreach and scheduling, and crucially, manage the distribution and collection of a PodcastGuestReleaseForm."
-      ],
-      "variants": [
-        {
-          "id": "guest-booking-agent",
-          "name": "guest-booking-agent",
-          "description": "MUST BE USED for interview-based shows to identify potential guests, handle outreach and scheduling, and crucially, manage the distribution and collection of a PodcastGuestReleaseForm.",
-          "path": "/Users/<owner>/.codex/skills/imported-claude-agents/guest-booking-agent",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "94a4662d2e348abafa798cb4bf772e4866eb23c9a38d164400de9f7a84b7a72c",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-03T08:03:39.767Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/guest-booking-agent-94a4662d"
-        },
-        {
-          "id": "guest-booking-agent",
-          "name": "guest-booking-agent",
-          "description": "MUST BE USED for interview-based shows to identify potential guests, handle outreach and scheduling, and crucially, manage the distribution and collection of a PodcastGuestReleaseForm.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/guest-booking-agent",
-          "pathFromRepo": ".agent/skills/imported-claude-agents/guest-booking-agent",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "94a4662d2e348abafa798cb4bf772e4866eb23c9a38d164400de9f7a84b7a72c",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:45.293Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/guest-booking-agent-94a4662d"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
-      }
-    },
-    {
-      "id": "guest-relationship-manager-agent",
-      "canonicalName": "guest-relationship-manager-agent",
-      "descriptions": [
-        "MUST BE USED to nurture long-term relationships with podcast guests after their appearance. It sends a thank-you email with promotional assets and schedules a future check-in to maintain the network."
-      ],
-      "variants": [
-        {
-          "id": "guest-relationship-manager-agent",
-          "name": "guest-relationship-manager-agent",
-          "description": "MUST BE USED to nurture long-term relationships with podcast guests after their appearance. It sends a thank-you email with promotional assets and schedules a future check-in to maintain the network.",
-          "path": "/Users/<owner>/.codex/skills/imported-claude-agents/guest-relationship-manager-agent",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "8617c6cbfc991b2400b4c7580a76fae1ed2ada18bd3b21346364b36a830a80f1",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-03T08:03:41.181Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/guest-relationship-manager-agent-8617c6cb"
-        },
-        {
-          "id": "guest-relationship-manager-agent",
-          "name": "guest-relationship-manager-agent",
-          "description": "MUST BE USED to nurture long-term relationships with podcast guests after their appearance. It sends a thank-you email with promotional assets and schedules a future check-in to maintain the network.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/guest-relationship-manager-agent",
-          "pathFromRepo": ".agent/skills/imported-claude-agents/guest-relationship-manager-agent",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "8617c6cbfc991b2400b4c7580a76fae1ed2ada18bd3b21346364b36a830a80f1",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:45.293Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/guest-relationship-manager-agent-8617c6cb"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
-      }
-    },
-    {
       "id": "hardware",
       "canonicalName": "hardware",
-      "descriptions": ["|"],
+      "descriptions": [],
       "variants": [
-        {
-          "id": "hardware",
-          "name": "hardware",
-          "description": "|",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/ops/hardware/hardware",
-          "pathFromRepo": ".agent/skills/ops/hardware/hardware",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "84584f988f7fb53301f6eda1dcc6747cd0a63097890b817af2383003ec28bd0c",
-          "hasAgents": false,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-24T07:42:50.431Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/hardware-84584f98"
-        },
         {
           "id": "hardware",
           "name": "hardware",
@@ -7144,37 +6683,7 @@
         }
       ],
       "llms": {
-        "project-agent": 1,
         "picoclaw": 1
-      }
-    },
-    {
-      "id": "himalaya",
-      "canonicalName": "himalaya",
-      "descriptions": [
-        "CLI to manage emails via IMAP/SMTP. Use `himalaya` to list, read, write, reply, forward, search, and organize emails from the terminal. Supports multiple accounts and message composition with MML (MIME Meta Language)."
-      ],
-      "variants": [
-        {
-          "id": "himalaya",
-          "name": "himalaya",
-          "description": "CLI to manage emails via IMAP/SMTP. Use `himalaya` to list, read, write, reply, forward, search, and organize emails from the terminal. Supports multiple accounts and message composition with MML (MIME Meta Language).",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/himalaya",
-          "pathFromRepo": ".agent/skills/himalaya",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "2265054da976a3d9ec3d55b66888233cb39509ea4703abed8066382e5b4fc14f",
-          "hasAgents": false,
-          "hasReferences": true,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:44.963Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/himalaya-2265054d"
-        }
-      ],
-      "llms": {
-        "project-agent": 1
       }
     },
     {
@@ -7728,7 +7237,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.909Z",
+          "updatedAt": "2026-01-22T11:24:18.504Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/internal-comms-c00ae6a7"
         },
         {
@@ -7941,7 +7450,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.924Z",
+          "updatedAt": "2026-02-22T12:24:53.077Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/jules-delegation-04a64dc2"
         }
       ],
@@ -8449,6 +7958,23 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
+          "updatedAt": "2026-01-22T11:24:18.477Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/library-of-living-knowledge-16ac5182"
+        },
+        {
+          "id": "library-of-living-knowledge",
+          "name": "library-of-living-knowledge",
+          "description": "",
+          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/library-of-living-knowledge",
+          "pathFromRepo": "apps/openclaw/skills/library-of-living-knowledge",
+          "llm": "openclaw",
+          "scope": "project",
+          "hash": "16ac518242689d5fc1708f661ddb0d19512ac39b8c4711f6dbba06402ba16bfd",
+          "hasAgents": false,
+          "hasReferences": false,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "folder",
           "updatedAt": "2026-02-22T20:11:53.204Z",
           "snapshotPath": ".agent/skill-bank/snapshots/openclaw/library-of-living-knowledge-16ac5182"
         },
@@ -8493,147 +8019,6 @@
         "openclaw": 1,
         "picoclaw": 1,
         "claude": 1
-      }
-    },
-    {
-      "id": "limitation-challenge-schema-loop",
-      "canonicalName": "limitation-challenge-schema-loop",
-      "descriptions": [
-        "Convert ambiguous constraints into adaptive, node-based workflows with explicit data handoff schemas. Use when users describe a limitation, blocker, or failed approach and need a resilient execution design that maps node responsibilities, input/output contracts, and parsed-content transfer formats."
-      ],
-      "variants": [
-        {
-          "id": "limitation-challenge-schema-loop",
-          "name": "limitation-challenge-schema-loop",
-          "description": "Convert ambiguous constraints into adaptive, node-based workflows with explicit data handoff schemas. Use when users describe a limitation, blocker, or failed approach and need a resilient execution design that maps node responsibilities, input/output contracts, and parsed-content transfer formats.",
-          "path": "/Users/<owner>/.codex/skills/limitation-challenge-schema-loop",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "c996685ae3ea2369172d9fe8df795ecc3f10df9317e4dab9c10c7d17ef7fa580",
-          "hasAgents": true,
-          "hasReferences": true,
-          "hasScripts": true,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-05T15:14:12.121Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/limitation-challenge-schema-loop-c996685a"
-        },
-        {
-          "id": "limitation-challenge-schema-loop",
-          "name": "limitation-challenge-schema-loop",
-          "description": "Convert ambiguous constraints into adaptive, node-based workflows with explicit data handoff schemas. Use when users describe a limitation, blocker, or failed approach and need a resilient execution design that maps node responsibilities, input/output contracts, and parsed-content transfer formats.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/limitation-challenge-schema-loop",
-          "pathFromRepo": ".agent/skills/limitation-challenge-schema-loop",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "c996685ae3ea2369172d9fe8df795ecc3f10df9317e4dab9c10c7d17ef7fa580",
-          "hasAgents": true,
-          "hasReferences": true,
-          "hasScripts": true,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:45.782Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/limitation-challenge-schema-loop-c996685a"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
-      }
-    },
-    {
-      "id": "linear",
-      "canonicalName": "linear",
-      "descriptions": [
-        "Manage issues, projects & team workflows in Linear. Use when the user wants to read, create or updates tickets in Linear."
-      ],
-      "variants": [
-        {
-          "id": "linear",
-          "name": "linear",
-          "description": "Manage issues, projects & team workflows in Linear. Use when the user wants to read, create or updates tickets in Linear.",
-          "path": "/Users/<owner>/.codex/skills/linear",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "ce0f39c95b6c9190f8ea33614393cdb556b2684dd8388ded394e9cb915f42601",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": true,
-          "format": "folder",
-          "updatedAt": "2026-03-03T02:43:57.421Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/linear-ce0f39c9"
-        },
-        {
-          "id": "linear",
-          "name": "linear",
-          "description": "Manage issues, projects & team workflows in Linear. Use when the user wants to read, create or updates tickets in Linear.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/linear",
-          "pathFromRepo": ".agent/skills/linear",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "ce0f39c95b6c9190f8ea33614393cdb556b2684dd8388ded394e9cb915f42601",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": true,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:45.785Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/linear-ce0f39c9"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
-      }
-    },
-    {
-      "id": "link-building-agent",
-      "canonicalName": "link-building-agent",
-      "descriptions": [
-        "MUST BE USED for off-page SEO to build a blog's domain authority. It identifies guest posting opportunities, develops pitch ideas, and initiates collaborations with other bloggers."
-      ],
-      "variants": [
-        {
-          "id": "link-building-agent",
-          "name": "link-building-agent",
-          "description": "MUST BE USED for off-page SEO to build a blog's domain authority. It identifies guest posting opportunities, develops pitch ideas, and initiates collaborations with other bloggers.",
-          "path": "/Users/<owner>/.codex/skills/imported-claude-agents/link-building-agent",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "539a8631317d8b44677440e8f8cf00d09fffac904c07fe734d438c34e91fb87e",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-03T08:03:52.329Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/link-building-agent-539a8631"
-        },
-        {
-          "id": "link-building-agent",
-          "name": "link-building-agent",
-          "description": "MUST BE USED for off-page SEO to build a blog's domain authority. It identifies guest posting opportunities, develops pitch ideas, and initiates collaborations with other bloggers.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/link-building-agent",
-          "pathFromRepo": ".agent/skills/imported-claude-agents/link-building-agent",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "539a8631317d8b44677440e8f8cf00d09fffac904c07fe734d438c34e91fb87e",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:45.322Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/link-building-agent-539a8631"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
       }
     },
     {
@@ -9075,7 +8460,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.909Z",
+          "updatedAt": "2026-01-22T11:24:18.535Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/mcp-builder-57b671c1"
         },
         {
@@ -10681,6 +10066,184 @@
       }
     },
     {
+      "id": "openclaw-oauth-rotation",
+      "canonicalName": "openclaw-oauth-rotation",
+      "descriptions": [],
+      "variants": [
+        {
+          "id": "openclaw-oauth-rotation",
+          "name": "openclaw-oauth-rotation",
+          "description": "",
+          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-oauth-rotation",
+          "pathFromRepo": ".agent/skills/openclaw-oauth-rotation",
+          "llm": "project-agent",
+          "scope": "project",
+          "hash": "643129dfb60325e48506faa71a67a89878073d9b780c9b6e836cceb3bef66f76",
+          "hasAgents": false,
+          "hasReferences": false,
+          "hasScripts": true,
+          "hasAssets": false,
+          "format": "folder",
+          "updatedAt": "2026-02-26T21:16:40.767Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-oauth-rotation-643129df"
+        }
+      ],
+      "llms": {
+        "project-agent": 1
+      }
+    },
+    {
+      "id": "openclaw-provider-rollout",
+      "canonicalName": "openclaw-provider-rollout",
+      "descriptions": [],
+      "variants": [
+        {
+          "id": "openclaw-provider-rollout",
+          "name": "openclaw-provider-rollout",
+          "description": "",
+          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-provider-rollout",
+          "pathFromRepo": ".agent/skills/openclaw-provider-rollout",
+          "llm": "project-agent",
+          "scope": "project",
+          "hash": "ff60b48f2be3925b247a4116817d25a5f640ed283cc3d3df94fb13cc3b19e974",
+          "hasAgents": false,
+          "hasReferences": false,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "folder",
+          "updatedAt": "2026-02-26T21:16:40.849Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-provider-rollout-ff60b48f"
+        }
+      ],
+      "llms": {
+        "project-agent": 1
+      }
+    },
+    {
+      "id": "openclaw-universal-knowledge",
+      "canonicalName": "openclaw-universal-knowledge",
+      "descriptions": [
+        "Universal OpenClaw knowledge skill for TNF agents. Use when working on OpenClaw/PicoClaw architecture, gateway, providers/models, skills authoring, tools, channels, installation, operations, troubleshooting, or cross-agent skill portability (.agent/.claude/.gemini/.kilo/OpenClaw).",
+        "Shared TNF OpenClaw docs-wide knowledge skill for gateway, providers, tools/skills policy, and cross-agent portability.",
+        "Shared TNF OpenClaw knowledge skill for PicoClaw agents; covers tools/skills spec, docs-wide navigation, and operational consistency.",
+        "Shared TNF skill adapter for OpenClaw docs-wide operations, including tools/skills rules, gateway/provider setup, and cross-agent skill portability.",
+        "Shared TNF skill adapter for OpenClaw full-docs operations, skills semantics, gateway/provider execution, and multi-agent portability.",
+        "Shared TNF adapter for OpenClaw-wide docs knowledge, skill format policy, and cross-agent execution consistency."
+      ],
+      "variants": [
+        {
+          "id": "openclaw-universal-knowledge",
+          "name": "openclaw-universal-knowledge",
+          "description": "Universal OpenClaw knowledge skill for TNF agents. Use when working on OpenClaw/PicoClaw architecture, gateway, providers/models, skills authoring, tools, channels, installation, operations, troubleshooting, or cross-agent skill portability (.agent/.claude/.gemini/.kilo/OpenClaw).",
+          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/openclaw-universal-knowledge",
+          "pathFromRepo": ".agent/skills/openclaw-universal-knowledge",
+          "llm": "project-agent",
+          "scope": "project",
+          "hash": "619530e2be4302fcdb600b7099a437077c649f4ac5f7512486a5ec9f79455095",
+          "hasAgents": true,
+          "hasReferences": true,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "folder",
+          "updatedAt": "2026-03-03T01:04:27.520Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/openclaw-universal-knowledge-619530e2"
+        },
+        {
+          "id": "openclaw-universal-knowledge",
+          "name": "openclaw-universal-knowledge",
+          "description": "Shared TNF OpenClaw docs-wide knowledge skill for gateway, providers, tools/skills policy, and cross-agent portability.",
+          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/openclaw-universal-knowledge",
+          "pathFromRepo": "apps/openclaw/skills/openclaw-universal-knowledge",
+          "llm": "openclaw",
+          "scope": "project",
+          "hash": "8f4ca0c3b530a66efcffc6683625cd0c098fd83e2deb391e73a6a71ef1d01975",
+          "hasAgents": false,
+          "hasReferences": true,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "folder",
+          "updatedAt": "2026-03-03T01:04:28.001Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/openclaw/openclaw-universal-knowledge-8f4ca0c3"
+        },
+        {
+          "id": "openclaw-universal-knowledge",
+          "name": "openclaw-universal-knowledge",
+          "description": "Shared TNF OpenClaw knowledge skill for PicoClaw agents; covers tools/skills spec, docs-wide navigation, and operational consistency.",
+          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/openclaw-universal-knowledge",
+          "pathFromRepo": "apps/picoclaw-overseer/workspace/skills/openclaw-universal-knowledge",
+          "llm": "picoclaw",
+          "scope": "project",
+          "hash": "94afd0396652e43ce66a11815114b93e5217306e2da04da958af2db24e28d164",
+          "hasAgents": false,
+          "hasReferences": true,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "folder",
+          "updatedAt": "2026-03-03T01:04:28.009Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/openclaw-universal-knowledge-94afd039"
+        },
+        {
+          "id": "openclaw-universal-knowledge",
+          "name": "openclaw-universal-knowledge",
+          "description": "Shared TNF skill adapter for OpenClaw docs-wide operations, including tools/skills rules, gateway/provider setup, and cross-agent skill portability.",
+          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/openclaw-universal-knowledge.md",
+          "pathFromRepo": ".claude/skills/openclaw-universal-knowledge.md",
+          "llm": "claude",
+          "scope": "project",
+          "hash": "693943051c6ecd6fd7b2c79648189304386dd1f105db7dc1045e6268e1512b4c",
+          "hasAgents": false,
+          "hasReferences": false,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "flat",
+          "updatedAt": "2026-03-03T01:04:27.970Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/claude/openclaw-universal-knowledge-69394305"
+        },
+        {
+          "id": "openclaw-universal-knowledge",
+          "name": "openclaw-universal-knowledge",
+          "description": "Shared TNF skill adapter for OpenClaw full-docs operations, skills semantics, gateway/provider execution, and multi-agent portability.",
+          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.gemini/skills/openclaw-universal-knowledge.md",
+          "pathFromRepo": ".gemini/skills/openclaw-universal-knowledge.md",
+          "llm": "gemini",
+          "scope": "project",
+          "hash": "6abdd4de09a94c5c5bb10660a81a2cf72e10136c70fb5120c58ef88be118eaea",
+          "hasAgents": false,
+          "hasReferences": false,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "flat",
+          "updatedAt": "2026-03-03T01:04:27.985Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/gemini/openclaw-universal-knowledge-6abdd4de"
+        },
+        {
+          "id": "openclaw-universal-knowledge",
+          "name": "openclaw-universal-knowledge",
+          "description": "Shared TNF adapter for OpenClaw-wide docs knowledge, skill format policy, and cross-agent execution consistency.",
+          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.kilo/skills/openclaw-universal-knowledge.md",
+          "pathFromRepo": ".kilo/skills/openclaw-universal-knowledge.md",
+          "llm": "kilo",
+          "scope": "project",
+          "hash": "5485b322e6aff36d3add97f93fd0d6059ac0d75a2b8effe32bb66d7d98fe3b9a",
+          "hasAgents": false,
+          "hasReferences": false,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "flat",
+          "updatedAt": "2026-03-03T01:04:27.994Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/kilo/openclaw-universal-knowledge-5485b322"
+        }
+      ],
+      "llms": {
+        "project-agent": 1,
+        "openclaw": 1,
+        "picoclaw": 1,
+        "claude": 1,
+        "gemini": 1,
+        "kilo": 1
+      }
+    },
+    {
       "id": "orchestrator",
       "canonicalName": "orchestrator",
       "descriptions": [],
@@ -10699,7 +10262,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.925Z",
+          "updatedAt": "2026-01-22T11:24:18.737Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/orchestrator-f5edcb88"
         }
       ],
@@ -10708,168 +10271,10 @@
       }
     },
     {
-      "id": "orchestrator-agent",
-      "canonicalName": "orchestrator-agent",
-      "descriptions": [
-        "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish."
-      ],
-      "variants": [
-        {
-          "id": "orchestrator-agent",
-          "name": "orchestrator-agent",
-          "description": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
-          "path": "/Users/<owner>/.codex/skills/imported-claude-agents/orchestrator-agent",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "ee5085370f4b916ba33a4cc458ffc82cfe9141cf97f066ec21d6933552e7aa66",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-03T08:03:57.366Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/orchestrator-agent-ee508537"
-        },
-        {
-          "id": "orchestrator-agent",
-          "name": "orchestrator-agent",
-          "description": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/orchestrator-agent",
-          "pathFromRepo": ".agent/skills/imported-claude-agents/orchestrator-agent",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "ee5085370f4b916ba33a4cc458ffc82cfe9141cf97f066ec21d6933552e7aa66",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:45.516Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/orchestrator-agent-ee508537"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
-      }
-    },
-    {
-      "id": "orchestrator-agent-copy",
-      "canonicalName": "orchestrator-agent-copy",
-      "descriptions": [
-        "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish."
-      ],
-      "variants": [
-        {
-          "id": "orchestrator-agent-copy",
-          "name": "orchestrator-agent-copy",
-          "description": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
-          "path": "/Users/<owner>/.codex/skills/imported-claude-agents/orchestrator-agent-copy",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "72648f330ff36ad6e2f81529626e064f5674722df2c92c4a0fb2000059e0d8c6",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-03T08:03:56.728Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/orchestrator-agent-copy-72648f33"
-        },
-        {
-          "id": "orchestrator-agent-copy",
-          "name": "orchestrator-agent-copy",
-          "description": "This is the master agent. It MUST BE USED to interpret high-level user goals, create project plans, and delegate tasks to specialized sub-agents. It manages the entire workflow from start to finish.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/orchestrator-agent-copy",
-          "pathFromRepo": ".agent/skills/imported-claude-agents/orchestrator-agent-copy",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "72648f330ff36ad6e2f81529626e064f5674722df2c92c4a0fb2000059e0d8c6",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:45.332Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/orchestrator-agent-copy-72648f33"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
-      }
-    },
-    {
-      "id": "oto-sequence-architect-agent",
-      "canonicalName": "oto-sequence-architect-agent",
-      "descriptions": [
-        "MUST BE USED to design a complex, multi-step One-Time Offer (OTO) sequence with upsells and downsells. It creates a logical flowchart to maximize Average Order Value (AOV) post-purchase."
-      ],
-      "variants": [
-        {
-          "id": "oto-sequence-architect-agent",
-          "name": "oto-sequence-architect-agent",
-          "description": "MUST BE USED to design a complex, multi-step One-Time Offer (OTO) sequence with upsells and downsells. It creates a logical flowchart to maximize Average Order Value (AOV) post-purchase.",
-          "path": "/Users/<owner>/.codex/skills/imported-claude-agents/oto-sequence-architect-agent",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "ac5089a7bc5776edc0b11e036f8ee6b28638dc3fe5e0d92e57a4b69acda9c3d9",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-03T08:03:57.865Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/oto-sequence-architect-agent-ac5089a7"
-        },
-        {
-          "id": "oto-sequence-architect-agent",
-          "name": "oto-sequence-architect-agent",
-          "description": "MUST BE USED to design a complex, multi-step One-Time Offer (OTO) sequence with upsells and downsells. It creates a logical flowchart to maximize Average Order Value (AOV) post-purchase.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/oto-sequence-architect-agent",
-          "pathFromRepo": ".agent/skills/imported-claude-agents/oto-sequence-architect-agent",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "ac5089a7bc5776edc0b11e036f8ee6b28638dc3fe5e0d92e57a4b69acda9c3d9",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:45.520Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/oto-sequence-architect-agent-ac5089a7"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
-      }
-    },
-    {
       "id": "overwatch",
       "canonicalName": "overwatch",
-      "descriptions": ["|"],
+      "descriptions": [],
       "variants": [
-        {
-          "id": "overwatch",
-          "name": "overwatch",
-          "description": "|",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/ops/monitoring/overwatch",
-          "pathFromRepo": ".agent/skills/ops/monitoring/overwatch",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "cab92a71ac7c36ad49646c716d97ea62c5be93ab81831b226f5af85afec66fdc",
-          "hasAgents": false,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-24T07:42:50.433Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/overwatch-cab92a71"
-        },
         {
           "id": "overwatch",
           "name": "overwatch",
@@ -10889,7 +10294,6 @@
         }
       ],
       "llms": {
-        "project-agent": 1,
         "picoclaw": 1
       }
     },
@@ -11077,7 +10481,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.910Z",
+          "updatedAt": "2026-01-22T11:24:18.495Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/pdf-34b41cb8"
         },
         {
@@ -11117,7 +10521,7 @@
       ],
       "llms": {
         "codex": 1,
-        "project-agent": 3
+        "project-agent": 2
       }
     },
     {
@@ -12302,7 +11706,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.912Z",
+          "updatedAt": "2026-01-22T11:24:18.519Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/pptx-093cc68c"
         },
         {
@@ -12825,19 +12229,19 @@
         {
           "id": "react-components",
           "name": "react:components",
-          "description": "Converts Stitch designs into modular Vite and React components using system-level networking and AST-based validation.",
+          "description": "",
           "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/react-components",
           "pathFromRepo": ".agent/skills/react-components",
           "llm": "project-agent",
           "scope": "project",
-          "hash": "f0473659edcdda6edf9aa78fb705c01937196034fac1a76d24b8700b24481c03",
+          "hash": "2e1fdd128725b5f612e3679d08be3aaba6c4bfa44f447786ab65f287fd07a92f",
           "hasAgents": false,
           "hasReferences": false,
           "hasScripts": true,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-23T11:54:47.007Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/react-components-f0473659"
+          "updatedAt": "2026-01-28T20:58:01.624Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/react-components-2e1fdd12"
         }
       ],
       "llms": {
@@ -13087,28 +12491,10 @@
           "format": "folder",
           "updatedAt": "2026-02-27T14:59:09.216Z",
           "snapshotPath": ".agent/skill-bank/snapshots/codex/remotion-34fde6f0"
-        },
-        {
-          "id": "remotion",
-          "name": "remotion",
-          "description": "Generate walkthrough videos from Stitch projects using Remotion with smooth transitions, zooming, and text overlays",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/remotion",
-          "pathFromRepo": ".agent/skills/remotion",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "34fde6f0d4ffe9d1f170f311da2ee91691e1c85018653bddf2eb55d50ccaf27f",
-          "hasAgents": false,
-          "hasReferences": false,
-          "hasScripts": true,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:47.018Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/remotion-34fde6f0"
         }
       ],
       "llms": {
-        "codex": 1,
-        "project-agent": 1
+        "codex": 1
       }
     },
     {
@@ -14100,28 +13486,10 @@
           "format": "folder",
           "updatedAt": "2026-02-27T14:59:09.220Z",
           "snapshotPath": ".agent/skill-bank/snapshots/codex/shadcn-ui-2ddfe599"
-        },
-        {
-          "id": "shadcn-ui",
-          "name": "shadcn-ui",
-          "description": "Expert guidance for integrating and building applications with shadcn/ui components, including component discovery, installation, customization, and best practices.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/shadcn-ui",
-          "pathFromRepo": ".agent/skills/shadcn-ui",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "2ddfe599ac2ba631ca019f7b6e37ee5df9cd34f83fc016f6ea9d4ba5bbfa0304",
-          "hasAgents": false,
-          "hasReferences": false,
-          "hasScripts": true,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:47.400Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/shadcn-ui-2ddfe599"
         }
       ],
       "llms": {
-        "codex": 1,
-        "project-agent": 1
+        "codex": 1
       }
     },
     {
@@ -14321,8 +13689,25 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-23T11:54:47.417Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/skill-builder-5b4aa2ab"
+          "updatedAt": "2026-02-22T17:55:51.536Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/codex/skill-builder-5b4aa2ab"
+        },
+        {
+          "id": "skill-builder",
+          "name": "skill-builder",
+          "description": "",
+          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/skill-builder",
+          "pathFromRepo": "apps/openclaw/skills/skill-builder",
+          "llm": "openclaw",
+          "scope": "project",
+          "hash": "7a715f0fac3f1ca0f7edde226a4be9209797c61a82c13221100d2b84e93f615f",
+          "hasAgents": false,
+          "hasReferences": false,
+          "hasScripts": false,
+          "hasAssets": false,
+          "format": "folder",
+          "updatedAt": "2026-01-22T11:24:18.445Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/skill-builder-7a715f0f"
         },
         {
           "id": "skill-builder",
@@ -14412,23 +13797,6 @@
         {
           "id": "skill-creator",
           "name": "skill-creator",
-          "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Codex's capabilities with specialized knowledge, workflows, or tool integrations.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/.system/skill-creator",
-          "pathFromRepo": ".agent/skills/.system/skill-creator",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "faf5931f553dc9f19b061f8049dd4d31e00232b14eed2577d95795ac1c5ab8de",
-          "hasAgents": true,
-          "hasReferences": true,
-          "hasScripts": true,
-          "hasAssets": true,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:43.174Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/skill-creator-faf5931f"
-        },
-        {
-          "id": "skill-creator",
-          "name": "skill-creator",
           "description": "",
           "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/anthropic/skill-creator",
           "pathFromRepo": ".agent/skills/anthropic/skill-creator",
@@ -14440,7 +13808,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.913Z",
+          "updatedAt": "2026-01-22T11:24:18.509Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/skill-creator-e8047445"
         },
         {
@@ -14458,23 +13826,6 @@
           "hasAssets": false,
           "format": "folder",
           "updatedAt": "2026-02-09T14:37:23.283Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/skill-creator-b2e3d83f"
-        },
-        {
-          "id": "skill-creator",
-          "name": "skill-creator",
-          "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/skill-creator",
-          "pathFromRepo": ".agent/skills/skill-creator",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "b2e3d83f60425c2d0b9d4162efb8f9aa322b45843497340f2289f42be422801c",
-          "hasAgents": false,
-          "hasReferences": true,
-          "hasScripts": true,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:47.420Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/skill-creator-b2e3d83f"
         },
         {
@@ -14514,7 +13865,7 @@
       ],
       "llms": {
         "codex": 1,
-        "project-agent": 4,
+        "project-agent": 2,
         "openclaw": 1,
         "picoclaw": 1
       }
@@ -14674,7 +14025,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.914Z",
+          "updatedAt": "2026-01-22T11:24:18.526Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/slack-gif-creator-502ccf80"
         },
         {
@@ -15209,95 +14560,19 @@
         {
           "id": "stitch-loop",
           "name": "stitch-loop",
-          "description": "Teaches agents to iteratively build websites using Stitch with an autonomous baton-passing loop pattern",
+          "description": "",
           "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/stitch-loop",
           "pathFromRepo": ".agent/skills/stitch-loop",
           "llm": "project-agent",
           "scope": "project",
-          "hash": "22611f4c294fed0f390c1c1e25d5c1056eedfb4a9f707ba6aee797bcdb22e830",
+          "hash": "15a10c5cdb0dfcb69a4a4d22656111e38ef261fce3b56edb4f6e357aa16a879d",
           "hasAgents": false,
           "hasReferences": false,
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-23T11:54:47.832Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/stitch-loop-22611f4c"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
-      }
-    },
-    {
-      "id": "stock-analysis",
-      "canonicalName": "stock-analysis",
-      "descriptions": [
-        "Analyze stocks and cryptocurrencies using Yahoo Finance data. Supports portfolio management, watchlists with alerts, dividend analysis, 8-dimension stock scoring, viral trend detection (Hot Scanner), and rumor/early signal detection. Use for stock analysis, portfolio tracking, earnings reactions, crypto monitoring, trending stocks, or finding rumors before they hit mainstream."
-      ],
-      "variants": [
-        {
-          "id": "stock-analysis",
-          "name": "stock-analysis",
-          "description": "Analyze stocks and cryptocurrencies using Yahoo Finance data. Supports portfolio management, watchlists with alerts, dividend analysis, 8-dimension stock scoring, viral trend detection (Hot Scanner), and rumor/early signal detection. Use for stock analysis, portfolio tracking, earnings reactions, crypto monitoring, trending stocks, or finding rumors before they hit mainstream.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/stock-analysis",
-          "pathFromRepo": ".agent/skills/stock-analysis",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "6ae566bdf7f099f0926c58966a5d9d11531c366264217237de281387bf47964d",
-          "hasAgents": false,
-          "hasReferences": false,
-          "hasScripts": true,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:47.919Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/stock-analysis-6ae566bd"
-        }
-      ],
-      "llms": {
-        "project-agent": 1
-      }
-    },
-    {
-      "id": "storyboard-artist-agent",
-      "canonicalName": "storyboard-artist-agent",
-      "descriptions": [
-        "MUST BE USED to translate a video script into a visual storyboard. It outlines each scene, camera angle, required B-roll footage, and on-screen graphics to ensure an efficient filming process."
-      ],
-      "variants": [
-        {
-          "id": "storyboard-artist-agent",
-          "name": "storyboard-artist-agent",
-          "description": "MUST BE USED to translate a video script into a visual storyboard. It outlines each scene, camera angle, required B-roll footage, and on-screen graphics to ensure an efficient filming process.",
-          "path": "/Users/<owner>/.codex/skills/imported-claude-agents/storyboard-artist-agent",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "07efc17875dfd970c64848d7244980421ca69ce3b3b14e92b1196ee0009d2f24",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-03T08:04:21.704Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/storyboard-artist-agent-07efc178"
-        },
-        {
-          "id": "storyboard-artist-agent",
-          "name": "storyboard-artist-agent",
-          "description": "MUST BE USED to translate a video script into a visual storyboard. It outlines each scene, camera angle, required B-roll footage, and on-screen graphics to ensure an efficient filming process.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/storyboard-artist-agent",
-          "pathFromRepo": ".agent/skills/imported-claude-agents/storyboard-artist-agent",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "07efc17875dfd970c64848d7244980421ca69ce3b3b14e92b1196ee0009d2f24",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:45.560Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/storyboard-artist-agent-07efc178"
+          "updatedAt": "2026-01-28T20:58:01.847Z",
+          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/stitch-loop-15a10c5c"
         }
       ],
       "llms": {
@@ -15366,27 +14641,8 @@
     {
       "id": "summarize",
       "canonicalName": "summarize",
-      "descriptions": [
-        "Summarize URLs or files with the summarize CLI (web, PDFs, images, audio, YouTube)."
-      ],
+      "descriptions": [],
       "variants": [
-        {
-          "id": "summarize",
-          "name": "summarize",
-          "description": "Summarize URLs or files with the summarize CLI (web, PDFs, images, audio, YouTube).",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/summarize",
-          "pathFromRepo": ".agent/skills/summarize",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "e7cdf499cee3e4ffefdbdca842b4716796cdd983b1f11e1314f295895eeb8161",
-          "hasAgents": false,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:48.017Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/summarize-e7cdf499"
-        },
         {
           "id": "summarize",
           "name": "summarize",
@@ -15406,7 +14662,6 @@
         }
       ],
       "llms": {
-        "project-agent": 1,
         "picoclaw": 1
       }
     },
@@ -15802,33 +15057,6 @@
       }
     },
     {
-      "id": "template-skill",
-      "canonicalName": "template-skill",
-      "descriptions": ["|"],
-      "variants": [
-        {
-          "id": "template-skill",
-          "name": "template-skill",
-          "description": "|",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/meta/templates/template-skill",
-          "pathFromRepo": ".agent/skills/meta/templates/template-skill",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "5569f4b38be6d5711d33e24b40a79e1f32f6cb4d340425d490596d4294e747f0",
-          "hasAgents": false,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-24T07:42:50.431Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/template-skill-5569f4b3"
-        }
-      ],
-      "llms": {
-        "project-agent": 1
-      }
-    },
-    {
       "id": "templates",
       "canonicalName": "templates",
       "descriptions": [
@@ -16012,7 +15240,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.915Z",
+          "updatedAt": "2026-01-22T11:24:18.480Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/theme-factory-b3bc756f"
         },
         {
@@ -16065,74 +15293,10 @@
       }
     },
     {
-      "id": "tiktok-strategy-agent",
-      "canonicalName": "tiktok-strategy-agent",
-      "descriptions": [
-        "MUST BE USED to create a content strategy specifically for TikTok's algorithm. It focuses on creating videos with strong hooks, leveraging trending sounds, and using features like Duets and Stitches."
-      ],
-      "variants": [
-        {
-          "id": "tiktok-strategy-agent",
-          "name": "tiktok-strategy-agent",
-          "description": "MUST BE USED to create a content strategy specifically for TikTok's algorithm. It focuses on creating videos with strong hooks, leveraging trending sounds, and using features like Duets and Stitches.",
-          "path": "/Users/<owner>/.codex/skills/imported-claude-agents/tiktok-strategy-agent",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "c9bdcc155c3338933e51dc6515386728c8393d6d925dcdbc4018d86a35b48edd",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-03T08:04:28.137Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/tiktok-strategy-agent-c9bdcc15"
-        },
-        {
-          "id": "tiktok-strategy-agent",
-          "name": "tiktok-strategy-agent",
-          "description": "MUST BE USED to create a content strategy specifically for TikTok's algorithm. It focuses on creating videos with strong hooks, leveraging trending sounds, and using features like Duets and Stitches.",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents/tiktok-strategy-agent",
-          "pathFromRepo": ".agent/skills/imported-claude-agents/tiktok-strategy-agent",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "c9bdcc155c3338933e51dc6515386728c8393d6d925dcdbc4018d86a35b48edd",
-          "hasAgents": true,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:45.567Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/tiktok-strategy-agent-c9bdcc15"
-        }
-      ],
-      "llms": {
-        "codex": 1,
-        "project-agent": 1
-      }
-    },
-    {
       "id": "tmux",
       "canonicalName": "tmux",
-      "descriptions": ["|"],
+      "descriptions": [],
       "variants": [
-        {
-          "id": "tmux",
-          "name": "tmux",
-          "description": "|",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/ops/tooling/tmux",
-          "pathFromRepo": ".agent/skills/ops/tooling/tmux",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "687ca395020c2825f854aa0e05a96c0b9abbad9fcc7704e6a20534ed94c596cc",
-          "hasAgents": false,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-24T07:42:50.436Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/tmux-687ca395"
-        },
         {
           "id": "tmux",
           "name": "tmux",
@@ -16152,240 +15316,7 @@
         }
       ],
       "llms": {
-        "project-agent": 1,
         "picoclaw": 1
-      }
-    },
-    {
-      "id": "tnf-execution-audit-trail",
-      "canonicalName": "tnf-execution-audit-trail",
-      "descriptions": [
-        "Implement or repair per-task execution audit logging across The New Fuse stack. Use when requests involve task execution visibility, audit trails, timeline logging, or “what happened during task/workflow execution” features in TNF. Trigger for tasks that require wiring logs through backend API endpoints, workflow engine telemetry/router/worker events, and Task Detail frontend filtering/presets/shareable log views."
-      ],
-      "variants": [
-        {
-          "id": "tnf-execution-audit-trail",
-          "name": "tnf-execution-audit-trail",
-          "description": "Implement or repair per-task execution audit logging across The New Fuse stack. Use when requests involve task execution visibility, audit trails, timeline logging, or “what happened during task/workflow execution” features in TNF. Trigger for tasks that require wiring logs through backend API endpoints, workflow engine telemetry/router/worker events, and Task Detail frontend filtering/presets/shareable log views.",
-          "path": "/Users/<owner>/.codex/skills/tnf-execution-audit-trail",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "663495e6dc6c77e723f8d27c50dbf705f302b42d78199848253a2db4d974bbb2",
-          "hasAgents": true,
-          "hasReferences": true,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-03T10:35:24.496Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-execution-audit-trail-663495e6"
-        }
-      ],
-      "llms": {
-        "codex": 1
-      }
-    },
-    {
-      "id": "tnf-frontload-protocols",
-      "canonicalName": "tnf-frontload-protocols",
-      "descriptions": [
-        "TNF frontloading system design and operations. Use when Codex must build, verify, repair, or explain the frontload banner and context refresh for terminal shells (zsh) and OpenClaw, including cache regeneration, hook placement, and reproducible verification of what the user sees at session start."
-      ],
-      "variants": [
-        {
-          "id": "tnf-frontload-protocols",
-          "name": "tnf-frontload-protocols",
-          "description": "TNF frontloading system design and operations. Use when Codex must build, verify, repair, or explain the frontload banner and context refresh for terminal shells (zsh) and OpenClaw, including cache regeneration, hook placement, and reproducible verification of what the user sees at session start.",
-          "path": "/Users/<owner>/.codex/skills/tnf-frontload-protocols",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "4fe326621aef6b44e98baf5427ec638adcdb66bc854a23293f8a78452a3e13d0",
-          "hasAgents": true,
-          "hasReferences": true,
-          "hasScripts": true,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-10T19:18:01.501Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-frontload-protocols-4fe32662"
-        }
-      ],
-      "llms": {
-        "codex": 1
-      }
-    },
-    {
-      "id": "tnf-live-session-coordination",
-      "canonicalName": "tnf-live-session-coordination",
-      "descriptions": [
-        "Use when coordinating multiple live TNF/Codex sessions, polling active terminal windows, checking whether another agent is already working an edge, establishing lane splits, or handling A2A coordination incidents. Prefer shared thread context and repo artifacts over raw TTY writes; treat terminal injection as an emergency fallback only."
-      ],
-      "variants": [
-        {
-          "id": "tnf-live-session-coordination",
-          "name": "tnf-live-session-coordination",
-          "description": "Use when coordinating multiple live TNF/Codex sessions, polling active terminal windows, checking whether another agent is already working an edge, establishing lane splits, or handling A2A coordination incidents. Prefer shared thread context and repo artifacts over raw TTY writes; treat terminal injection as an emergency fallback only.",
-          "path": "/Users/<owner>/.codex/skills/tnf-live-session-coordination",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "8e91ba778ccf7e79bae80ae49a8a9be0f782cfd33b98925d56804c7a0dbfa308",
-          "hasAgents": true,
-          "hasReferences": true,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-21T13:16:23.305Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-live-session-coordination-8e91ba77"
-        }
-      ],
-      "llms": {
-        "codex": 1
-      }
-    },
-    {
-      "id": "tnf-master-clock-sync",
-      "canonicalName": "tnf-master-clock-sync",
-      "descriptions": [
-        "Sync TNF reliability and self-improvement audit loops with master clock cron protocols, including schedule mapping, trigger contracts, escalation paths, and verification checks. Use when Codex must operationalize or harden scheduled TNF loops beyond ad hoc CI triggers."
-      ],
-      "variants": [
-        {
-          "id": "tnf-master-clock-sync",
-          "name": "tnf-master-clock-sync",
-          "description": "Sync TNF reliability and self-improvement audit loops with master clock cron protocols, including schedule mapping, trigger contracts, escalation paths, and verification checks. Use when Codex must operationalize or harden scheduled TNF loops beyond ad hoc CI triggers.",
-          "path": "/Users/<owner>/.codex/skills/tnf-master-clock-sync",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "d81f511a1d8074b5c7b3f553347530cd8f4a67238c7c815d41f38f7fc6144b6a",
-          "hasAgents": true,
-          "hasReferences": true,
-          "hasScripts": true,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-09T11:17:45.253Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-master-clock-sync-d81f511a"
-        }
-      ],
-      "llms": {
-        "codex": 1
-      }
-    },
-    {
-      "id": "tnf-skill-bridging",
-      "canonicalName": "tnf-skill-bridging",
-      "descriptions": [
-        "Define and implement skill-bridges between TNF skills. Use when Codex must connect skill inputs/outputs, define handoff contracts, or create bridge artifacts that let multiple skills execute as a cohesive workflow."
-      ],
-      "variants": [
-        {
-          "id": "tnf-skill-bridging",
-          "name": "tnf-skill-bridging",
-          "description": "Define and implement skill-bridges between TNF skills. Use when Codex must connect skill inputs/outputs, define handoff contracts, or create bridge artifacts that let multiple skills execute as a cohesive workflow.",
-          "path": "/Users/<owner>/.codex/skills/tnf-skill-bridging",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "413b3297a1a1eaecbf5b01a5bbf617b8f773158bf7ff4bf46b6e18c87cd2b758",
-          "hasAgents": false,
-          "hasReferences": true,
-          "hasScripts": true,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-10T19:28:10.827Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-skill-bridging-413b3297"
-        }
-      ],
-      "llms": {
-        "codex": 1
-      }
-    },
-    {
-      "id": "tnf-skill-types",
-      "canonicalName": "tnf-skill-types",
-      "descriptions": [
-        "Define and apply TNF skill taxonomy. Use when Codex must classify skills by type, enforce type-specific rules, design new skill types, or validate a skill’s type selection and requirements."
-      ],
-      "variants": [
-        {
-          "id": "tnf-skill-types",
-          "name": "tnf-skill-types",
-          "description": "Define and apply TNF skill taxonomy. Use when Codex must classify skills by type, enforce type-specific rules, design new skill types, or validate a skill’s type selection and requirements.",
-          "path": "/Users/<owner>/.codex/skills/tnf-skill-types",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "ffd840d1b07aed22caa185b03bc6080c42a5ae83078f561d60dcfa39660a16f7",
-          "hasAgents": true,
-          "hasReferences": true,
-          "hasScripts": true,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-10T19:27:09.504Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-skill-types-ffd840d1"
-        }
-      ],
-      "llms": {
-        "codex": 1
-      }
-    },
-    {
-      "id": "tnf-stack-self-improvement-loop",
-      "canonicalName": "tnf-stack-self-improvement-loop",
-      "descriptions": [
-        "Construct, verify, run, and continuously improve the TNF full-stack reliability loop with deterministic build checks, deep link and semantic route audits, auth pathway validation, logging artifacts, architecture diagram generation, specialist-agent audit coverage, and iterative skill refinement. Use when Codex must harden or operate TNF as an ongoing self-improving system."
-      ],
-      "variants": [
-        {
-          "id": "tnf-stack-self-improvement-loop",
-          "name": "tnf-stack-self-improvement-loop",
-          "description": "Construct, verify, run, and continuously improve the TNF full-stack reliability loop with deterministic build checks, deep link and semantic route audits, auth pathway validation, logging artifacts, architecture diagram generation, specialist-agent audit coverage, and iterative skill refinement. Use when Codex must harden or operate TNF as an ongoing self-improving system.",
-          "path": "/Users/<owner>/.codex/skills/tnf-stack-self-improvement-loop",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "5e9d92f6bceb4355d4300ca652d0abda319f89146719f779ba4ed054e16e2193",
-          "hasAgents": true,
-          "hasReferences": true,
-          "hasScripts": true,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-09T11:17:33.478Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-stack-self-improvement-loop-5e9d92f6"
-        }
-      ],
-      "llms": {
-        "codex": 1
-      }
-    },
-    {
-      "id": "tnf-task-production-pipeline",
-      "canonicalName": "tnf-task-production-pipeline",
-      "descriptions": [
-        "Operate and validate the TNF task execution production pipeline end-to-end. Use when requests involve running or hardening TNF task APIs, execution-log ingestion, unified timeline mirroring, stuck-task monitoring on a 30-minute cadence, production readiness checks, or rollout verification in The New Fuse."
-      ],
-      "variants": [
-        {
-          "id": "tnf-task-production-pipeline",
-          "name": "tnf-task-production-pipeline",
-          "description": "Operate and validate the TNF task execution production pipeline end-to-end. Use when requests involve running or hardening TNF task APIs, execution-log ingestion, unified timeline mirroring, stuck-task monitoring on a 30-minute cadence, production readiness checks, or rollout verification in The New Fuse.",
-          "path": "/Users/<owner>/.codex/skills/tnf-task-production-pipeline",
-          "pathFromRepo": null,
-          "llm": "codex",
-          "scope": "global",
-          "hash": "d748bf2d49292dc1cd251c378af14b35fc583566dce93f4a4bf51d3f2c1123e4",
-          "hasAgents": true,
-          "hasReferences": true,
-          "hasScripts": true,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-03T10:39:32.268Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/codex/tnf-task-production-pipeline-d748bf2d"
-        }
-      ],
-      "llms": {
-        "codex": 1
       }
     },
     {
@@ -16660,7 +15591,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "flat",
-          "updatedAt": "2026-03-20T23:12:01.943Z",
+          "updatedAt": "2026-01-22T11:23:47.638Z",
           "snapshotPath": ".agent/skill-bank/snapshots/claude/ui-automation-with-context-e87b6bb4"
         }
       ],
@@ -17334,23 +16265,6 @@
           "id": "weather",
           "name": "weather",
           "description": "Get current weather and forecasts (no API key required).",
-          "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/weather",
-          "pathFromRepo": ".agent/skills/weather",
-          "llm": "project-agent",
-          "scope": "project",
-          "hash": "1ca0c8d768ad603ea8d5d47f56a9b435fe575f7f34e719eda85c82003d740e93",
-          "hasAgents": false,
-          "hasReferences": false,
-          "hasScripts": false,
-          "hasAssets": false,
-          "format": "folder",
-          "updatedAt": "2026-03-23T11:54:48.066Z",
-          "snapshotPath": ".agent/skill-bank/snapshots/project-agent/weather-1ca0c8d7"
-        },
-        {
-          "id": "weather",
-          "name": "weather",
-          "description": "Get current weather and forecasts (no API key required).",
           "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/weather",
           "pathFromRepo": "apps/picoclaw-overseer/workspace/skills/weather",
           "llm": "picoclaw",
@@ -17366,7 +16280,6 @@
         }
       ],
       "llms": {
-        "project-agent": 1,
         "picoclaw": 1
       }
     },
@@ -17391,7 +16304,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.916Z",
+          "updatedAt": "2026-01-22T11:24:18.551Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/web-artifacts-builder-d39fbe76"
         },
         {
@@ -17542,7 +16455,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.918Z",
+          "updatedAt": "2026-01-22T11:24:18.529Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/webapp-testing-58d4b02e"
         },
         {
@@ -17827,7 +16740,7 @@
           "hasScripts": false,
           "hasAssets": false,
           "format": "folder",
-          "updatedAt": "2026-03-20T23:12:01.919Z",
+          "updatedAt": "2026-01-22T11:24:18.487Z",
           "snapshotPath": ".agent/skill-bank/snapshots/project-agent/xlsx-6b335e58"
         },
         {

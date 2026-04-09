@@ -146,17 +146,19 @@ export class UnifiedWorkflowEngine extends EventEmitter {
 
       for (const dbExecution of interruptedExecutions) {
         try {
-          if (this.workflowQueue) {
-            await this.workflowQueue.addStartWorkflowJob({
-              executionId: dbExecution.id,
-              workflowId: dbExecution.workflowId,
-            });
-            this.logger.info(`🔄 Re-queued interrupted execution: ${dbExecution.id}`);
-          } else {
-            this.logger.warn(
-              `Cannot recover execution ${dbExecution.id}: WorkflowQueue not initialized.`
-            );
-          }
+            if (this.workflowQueue) {
+                await this.workflowQueue.addStartWorkflowJob({
+                    executionId: dbExecution.id,
+                    workflowId: dbExecution.workflowId,
+                    taskId:
+                      typeof (dbExecution.metadata as any)?.taskId === 'string'
+                        ? ((dbExecution.metadata as any).taskId as string)
+                        : undefined
+                });
+                this.logger.info(`🔄 Re-queued interrupted execution: ${dbExecution.id}`);
+            } else {
+                this.logger.warn(`Cannot recover execution ${dbExecution.id}: WorkflowQueue not initialized.`);
+            }
         } catch (err) {
           this.logger.error(
             `❌ Failed to recover execution ${dbExecution.id}: ${getErrorMessage(err)}`
@@ -293,6 +295,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
       },
       logs: [],
       metadata: {
+        taskId: this.extractTaskId(input),
         workflowVersion: workflow.version,
         engineVersion: '1.0.0',
       },
@@ -323,6 +326,10 @@ export class UnifiedWorkflowEngine extends EventEmitter {
       await this.workflowQueue.addStartWorkflowJob({
         executionId: execution.id,
         workflowId: execution.workflowId,
+        taskId:
+          typeof (execution.metadata as any)?.taskId === 'string'
+            ? ((execution.metadata as any).taskId as string)
+            : undefined
       });
     } else {
       this.logger.warn('WorkflowQueue not initialized. Execution will not start automatically.');
@@ -362,6 +369,34 @@ export class UnifiedWorkflowEngine extends EventEmitter {
       }
 
       return await this.executor.executeStep(node, context, execution);
+    });
+  }
+
+  public async updateExecutionState(
+    executionId: string,
+    updatedContext: ExecutionContext
+  ): Promise<void> {
+    const execution = await this.getExecutionStatus(executionId);
+    if (!execution) {
+      throw new Error(`Execution ${executionId} not found`);
+    }
+
+    execution.context = updatedContext;
+    if (execution.status === WorkflowExecutionStatus.PENDING) {
+      execution.status = WorkflowExecutionStatus.RUNNING;
+    }
+    this.activeExecutions.set(executionId, execution);
+
+    await this.drizzle.workflowExecution.update({
+      where: { id: executionId },
+      data: {
+        status: execution.status,
+        context: this.serializeContext(updatedContext),
+        nodeExecutions: execution.nodeExecutions,
+        statistics: execution.statistics,
+        logs: execution.logs,
+        metadata: execution.metadata,
+      },
     });
   }
 
@@ -480,6 +515,11 @@ export class UnifiedWorkflowEngine extends EventEmitter {
       variables[variable.name] = variable.defaultValue;
     }
     return variables;
+  }
+
+  private extractTaskId(input: Record<string, any>): string | undefined {
+    const candidate = input?.taskId || input?.recordId || input?.integrationId || input?.id;
+    return typeof candidate === 'string' && candidate.length > 0 ? candidate : undefined;
   }
 
   private convertDbWorkflowToUnified(dbWorkflow: any): UnifiedWorkflow {

@@ -161,7 +161,7 @@ export const A2AControl: React.FC = () => {
       {/* Topology Overlay */}
       {showTopology && (
         <GlassCard className="h-[500px] border-indigo-500/30 overflow-hidden relative">
-          <div className="absolute top-4 left-4 z-10 bg-black/60 backdrop-blur-md p-2 rounded-md border border-white/10">
+          <div className="absolute top-4 left-4 z-10 bg-black/60 backdrop-blur-md p-2 rounded-lg border border-white/10">
             <div className="text-[10px] font-bold text-indigo-400 uppercase">Swarm Topology</div>
             <div className="text-white text-xs font-bold">Active Protocol: Relay Mesh</div>
           </div>
@@ -192,17 +192,17 @@ export const A2AControl: React.FC = () => {
           <GlassCard className="overflow-hidden border-cyan-500/10">
             <div className="max-h-[600px] overflow-y-auto divide-y divide-white/5 scrollbar-thin scrollbar-thumb-white/10">
               {loading ? (
-                <div className="p-4 text-sm text-gray-400">Loading live broker telemetry...</div>
+                <div className="p-6 text-sm text-gray-400">Loading live broker telemetry...</div>
               ) : messages.length === 0 ? (
-                <div className="p-4 text-sm text-gray-400">No live A2A messages available.</div>
+                <div className="p-6 text-sm text-gray-400">No live A2A messages available.</div>
               ) : (
                 messages.map((msg) => (
                   <div
                     key={msg.id}
-                    className="p-4 hover:bg-transparent/5 transition-colors flex items-center gap-4 group"
+                    className="p-4 hover:bg-white/5 transition-colors flex items-center gap-4 group"
                   >
                     <div className="flex flex-col items-center justify-center w-8 shrink-0">
-                      <div className="text-[10px] text-muted-foreground font-mono">
+                      <div className="text-[10px] text-gray-500 font-mono">
                         {new Date(msg.timestamp).toLocaleTimeString([], {
                           hour12: false,
                           minute: '2-digit',
@@ -213,13 +213,13 @@ export const A2AControl: React.FC = () => {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="bg-transparent/5 border border-white/10 text-[10px] font-mono text-cyan-300 px-1.5 py-0.5 rounded">
+                        <span className="bg-white/5 border border-white/10 text-[10px] font-mono text-cyan-300 px-1.5 py-0.5 rounded">
                           {msg.type}
                         </span>
                         <span className="text-xs text-gray-400 truncate max-w-[100px] font-mono">
                           {msg.senderId}
                         </span>
-                        <ArrowRight className="w-3 h-3 text-muted-foreground" />
+                        <ArrowRight className="w-3 h-3 text-gray-600" />
                         <span className="text-xs text-gray-400 truncate max-w-[100px] font-mono">
                           {msg.receiverId}
                         </span>
@@ -235,7 +235,7 @@ export const A2AControl: React.FC = () => {
                           ? 'bg-emerald-500/10 text-emerald-400'
                           : msg.status === 'failed'
                             ? 'bg-red-500/10 text-red-400'
-                            : 'bg-transparent0/10 text-gray-400'
+                            : 'bg-gray-500/10 text-gray-400'
                       }`}
                     >
                       {msg.status}
@@ -254,7 +254,7 @@ export const A2AControl: React.FC = () => {
             Network Strategy
           </h2>
 
-          <GlassCard className="p-4 space-y-4">
+          <GlassCard className="p-6 space-y-4">
             <div className="space-y-1">
               <div className="text-xs text-muted-foreground font-bold uppercase mb-2">
                 Protocol Mode
@@ -319,7 +319,7 @@ const ProtocolBadge: React.FC<{ label: string; active?: boolean }> = ({ label, a
     className={`px-2 py-1 rounded text-[10px] font-bold border ${
       active
         ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400'
-        : 'bg-transparent/5 border-white/10 text-muted-foreground'
+        : 'bg-white/5 border-white/10 text-gray-500'
     }`}
   >
     {label}
@@ -330,10 +330,10 @@ const ControlToggle: React.FC<{ label: string; active?: boolean }> = ({ label, a
   <div className="flex items-center justify-between">
     <span className="text-xs text-gray-300">{label}</span>
     <div
-      className={`w-8 h-4 rounded-full relative transition-colors ${active ? 'bg-emerald-500/40' : 'bg-transparent/10'}`}
+      className={`w-8 h-4 rounded-full relative transition-colors ${active ? 'bg-emerald-500/40' : 'bg-white/10'}`}
     >
       <div
-        className={`absolute top-0.5 w-3 h-3 rounded-full transition-all ${active ? 'right-0.5 bg-emerald-400' : 'left-0.5 bg-transparent0'}`}
+        className={`absolute top-0.5 w-3 h-3 rounded-full transition-all ${active ? 'right-0.5 bg-emerald-400' : 'left-0.5 bg-gray-500'}`}
       />
     </div>
   </div>

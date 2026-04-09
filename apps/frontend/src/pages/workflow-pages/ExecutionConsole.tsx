@@ -132,28 +132,26 @@ export const ExecutionConsole: React.FC = () => {
             <tbody className="divide-y divide-white/5">
               {loading ? (
                 <tr>
-                  <td className="px-3 py-8 text-sm text-gray-400" colSpan={5}>
+                  <td className="px-6 py-8 text-sm text-gray-400" colSpan={5}>
                     Loading live execution telemetry...
                   </td>
                 </tr>
               ) : executions.length === 0 ? (
                 <tr>
-                  <td className="px-3 py-8 text-sm text-gray-400" colSpan={5}>
+                  <td className="px-6 py-8 text-sm text-gray-400" colSpan={5}>
                     No live workflow executions available.
                   </td>
                 </tr>
               ) : (
                 executions.map((exec) => (
-                  <tr key={exec.id} className="hover:bg-transparent/5 transition-colors group">
-                    <td className="px-3 py-2">
+                  <tr key={exec.id} className="hover:bg-white/5 transition-colors group">
+                    <td className="px-6 py-4">
                       <div className="flex flex-col">
                         <span className="text-sm font-bold text-white">{exec.workflowName}</span>
-                        <span className="text-[10px] font-mono text-muted-foreground">
-                          {exec.id}
-                        </span>
+                        <span className="text-[10px] font-mono text-gray-500">{exec.id}</span>
                       </div>
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-6 py-4">
                       <div
                         className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase ${
                           exec.status === 'running'
@@ -162,7 +160,7 @@ export const ExecutionConsole: React.FC = () => {
                               ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
                               : exec.status === 'failed'
                                 ? 'bg-rose-500/10 border-rose-500/50 text-rose-400'
-                                : 'bg-transparent0/10 border-gray-500/50 text-gray-400'
+                                : 'bg-gray-500/10 border-gray-500/50 text-gray-400'
                         }`}
                       >
                         {exec.status === 'running' && (
@@ -171,9 +169,9 @@ export const ExecutionConsole: React.FC = () => {
                         {exec.status}
                       </div>
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-6 py-4">
                       <div className="w-48 space-y-1.5">
-                        <div className="flex justify-between text-[10px] text-muted-foreground">
+                        <div className="flex justify-between text-[10px] text-gray-500">
                           <span>Step Progress</span>
                           <span>{exec.progress}%</span>
                         </div>
@@ -185,19 +183,19 @@ export const ExecutionConsole: React.FC = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-2 text-xs text-gray-400">
                         <Clock className="w-3.5 h-3.5" />
                         {exec.duration}
                       </div>
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-6 py-4">
                       <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="p-2 rounded-md bg-transparent/5 hover:bg-transparent/10 text-white transition-all">
+                        <button className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white transition-all">
                           <History className="w-4 h-4" />
                         </button>
                         {exec.status === 'running' && (
-                          <button className="p-2 rounded-md bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-all">
+                          <button className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-all">
                             <StopCircle className="w-4 h-4" />
                           </button>
                         )}

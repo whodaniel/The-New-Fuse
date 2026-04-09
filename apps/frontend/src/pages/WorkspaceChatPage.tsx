@@ -393,6 +393,29 @@ const WorkspaceChat: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const formatTime = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit' }).format(date);
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'sending':
+        return <Clock className="w-3 h-3 text-gray-400" />;
+      case 'sent':
+      case 'delivered':
+      case 'read':
+        return (
+          <CheckCheck
+            className={`w-3 h-3 ${status === 'read' ? 'text-blue-400' : 'text-gray-400'}`}
+          />
+        );
+      case 'failed':
+        return <X className="w-3 h-3 text-red-400" />;
+      default:
+        return null;
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
