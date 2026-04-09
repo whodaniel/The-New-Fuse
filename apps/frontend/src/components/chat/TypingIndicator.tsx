@@ -24,8 +24,9 @@ export const TypingIndicator: React.FC<TypingIndicatorProps> = ({
   };
 
   return (
-    <div className={cn('flex items-center gap-2', className)}>
-      <div className="flex items-center gap-1">
+    <div className={cn('flex items-center gap-2', className)} role="status" aria-live="polite">
+      <span className="sr-only">{label}</span>
+      <div className="flex items-center gap-1" aria-hidden="true">
         {[0, 1, 2].map((i) => (
           <motion.div
             key={i}
@@ -43,7 +44,7 @@ export const TypingIndicator: React.FC<TypingIndicatorProps> = ({
           />
         ))}
       </div>
-      {showLabel && <span className="text-sm text-muted-foreground animate-pulse">{label}</span>}
+      {showLabel && <span className="text-sm text-muted-foreground animate-pulse" aria-hidden="true">{label}</span>}
     </div>
   );
 };
