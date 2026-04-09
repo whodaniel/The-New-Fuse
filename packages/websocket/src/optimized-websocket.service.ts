@@ -1,7 +1,10 @@
 // Optimized WebSocket Service - Connection pooling, message batching, and performance optimization
 // Handles real-time communication for multi-agent systems with intelligent load balancing
 
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import * as crypto from 'crypto';
+import { Server, Socket } from 'socket.io';
 import { ConfigService } from '@nestjs/config';
 import {
   OnGatewayConnection,
