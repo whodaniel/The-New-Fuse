@@ -17,7 +17,10 @@ interface MessageBubbleProps {
   className?: string;
 }
 
-export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, className }) => {
+// ⚡ Bolt: Wrapped MessageBubble in React.memo to prevent O(n) re-renders
+// of the entire message list on every keystroke or update in the chat interface.
+// This significantly improves performance in chat applications with long message histories.
+export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({ message, className }) => {
   const isAgent = message.sender === 'agent';
 
   const renderContent = () => {
@@ -57,4 +60,5 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, className
       </div>
     </div>
   );
-};
+});
+MessageBubble.displayName = 'MessageBubble';
