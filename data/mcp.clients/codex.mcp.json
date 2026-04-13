@@ -1,13 +1,17 @@
 {
   "$schema": "https://json.schemastore.org/mcp-config.json",
   "generatedBy": "scripts/tnf-generate-mcp-clients.cjs",
-  "generatedAt": "2026-03-16T20:35:42.775Z",
+  "generatedAt": "2026-04-11T18:24:33.707Z",
   "source": "data/mcp_config.json",
   "client": "codex",
   "mcpServers": {
     "tnf-enhanced-mcp-server": {
       "command": "node",
-      "args": ["--import", "tsx", "./src/mcp/enhanced-tnf-mcp-server.ts"],
+      "args": [
+        "--import",
+        "tsx",
+        "./src/mcp/enhanced-tnf-mcp-server.ts"
+      ],
       "env": {
         "TNF_API_BASE_URL": "http://localhost:8080/v1",
         "NODE_ENV": "development"
@@ -15,7 +19,13 @@
       "description": "Enhanced The New Fuse MCP Server - combines existing functionality with direct API Gateway integration",
       "managed_by": "enhanced-mcp-config-manager",
       "priority": 11,
-      "tags": ["enhanced", "api", "platform", "unified", "core"],
+      "tags": [
+        "enhanced",
+        "api",
+        "platform",
+        "unified",
+        "core"
+      ],
       "capabilities": [
         "Legacy MCP tool compatibility",
         "Direct API Gateway integration",
@@ -30,7 +40,11 @@
     },
     "tnf-complete-api-wrapper": {
       "command": "node",
-      "args": ["--import", "tsx", "./src/mcp/complete-api-mcp-server.ts"],
+      "args": [
+        "--import",
+        "tsx",
+        "./src/mcp/complete-api-mcp-server.ts"
+      ],
       "env": {
         "TNF_API_BASE_URL": "http://localhost:8080/v1",
         "NODE_ENV": "development"
@@ -38,7 +52,13 @@
       "description": "Complete API wrapper for The New Fuse platform - provides 80+ MCP tools for full platform access",
       "managed_by": "enhanced-mcp-config-manager",
       "priority": 10,
-      "tags": ["api", "wrapper", "platform", "tools", "core"],
+      "tags": [
+        "api",
+        "wrapper",
+        "platform",
+        "tools",
+        "core"
+      ],
       "capabilities": [
         "Authentication management",
         "Agent CRUD operations",
@@ -55,7 +75,9 @@
     },
     "tnf-mcp-config-manager": {
       "command": "node",
-      "args": ["./scripts/mcp-config-manager-server.cjs"],
+      "args": [
+        "./scripts/mcp-config-manager-server.cjs"
+      ],
       "env": {
         "TNF_CORE_PATH": "./data",
         "LOG_LEVEL": "info"
@@ -89,7 +111,12 @@
       ],
       "description": "Official Anthropic filesystem server - secure file operations with configurable access controls",
       "priority": 8,
-      "tags": ["official", "filesystem", "storage", "core"]
+      "tags": [
+        "official",
+        "filesystem",
+        "storage",
+        "core"
+      ]
     },
     "git": {
       "command": "npx",
@@ -101,41 +128,78 @@
       ],
       "description": "Official Anthropic Git server - tools to read, search, and manipulate Git repositories",
       "priority": 8,
-      "tags": ["official", "git", "version-control", "development"]
+      "tags": [
+        "official",
+        "git",
+        "version-control",
+        "development"
+      ]
     },
     "memory": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
       "description": "Official Anthropic memory server - knowledge graph-based persistent memory system for context across sessions",
       "priority": 7,
-      "tags": ["official", "memory", "knowledge-graph", "persistence"]
+      "tags": [
+        "official",
+        "memory",
+        "knowledge-graph",
+        "persistence"
+      ]
     },
     "fetch": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-fetch"
+      ],
       "description": "Official Anthropic fetch server - web content fetching and conversion for efficient LLM usage",
       "priority": 7,
-      "tags": ["official", "web", "fetch", "content"]
+      "tags": [
+        "official",
+        "web",
+        "fetch",
+        "content"
+      ]
     },
     "github": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": ""
       },
       "description": "Official Anthropic GitHub server - repository management, issues, PRs, and code search (requires GitHub PAT)",
       "priority": 8,
-      "tags": ["official", "github", "development", "collaboration"]
+      "tags": [
+        "official",
+        "github",
+        "development",
+        "collaboration"
+      ]
     },
     "brave-search": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-brave-search"
+      ],
       "env": {
         "BRAVE_API_KEY": ""
       },
       "description": "Official Anthropic Brave Search server - powerful web search and scraping (requires free Brave API key)",
       "priority": 6,
-      "tags": ["official", "search", "web", "research"]
+      "tags": [
+        "official",
+        "search",
+        "web",
+        "research"
+      ]
     },
     "postgres": {
       "command": "npx",
@@ -146,68 +210,160 @@
       ],
       "description": "Official Anthropic Postgres server - database operations and schema management",
       "priority": 7,
-      "tags": ["official", "database", "postgres", "storage"]
+      "tags": [
+        "official",
+        "database",
+        "postgres",
+        "storage"
+      ]
     },
     "slack": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-slack"
+      ],
       "env": {
         "SLACK_BOT_TOKEN": "",
         "SLACK_TEAM_ID": ""
       },
       "description": "Official Anthropic Slack server - channel access, thread summarization, and messaging (requires Slack bot token)",
       "priority": 5,
-      "tags": ["official", "slack", "communication", "collaboration"]
+      "tags": [
+        "official",
+        "slack",
+        "communication",
+        "collaboration"
+      ]
     },
     "google-drive": {
       "command": "npx",
-      "args": ["-y", "@piotr-agier/google-drive-mcp"],
+      "args": [
+        "-y",
+        "@piotr-agier/google-drive-mcp"
+      ],
       "description": "Google Drive MCP server - secure integration with Drive, Docs, Sheets, and Slides (requires OAuth)",
       "priority": 5,
-      "tags": ["google", "drive", "storage", "documents"]
+      "tags": [
+        "google",
+        "drive",
+        "storage",
+        "documents"
+      ]
     },
     "puppeteer": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-puppeteer"
+      ],
       "description": "Official Anthropic Puppeteer server - browser automation for testing and web scraping",
       "priority": 6,
-      "tags": ["official", "automation", "browser", "testing"]
+      "tags": [
+        "official",
+        "automation",
+        "browser",
+        "testing"
+      ]
     },
     "browsermcp": {
       "command": "npx",
-      "args": ["-y", "@browsermcp/mcp@latest"],
+      "args": [
+        "-y",
+        "@browsermcp/mcp@latest"
+      ],
       "description": "BrowserMCP - advanced browser automation and web scraping with headless Chrome",
       "priority": 6,
-      "tags": ["browser", "automation", "scraping", "testing"]
+      "tags": [
+        "browser",
+        "automation",
+        "scraping",
+        "testing"
+      ]
+    },
+    "chrome-browser": {
+      "command": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "args": [
+        "--remote-debugging-port=9222",
+        "--headless",
+        "--disable-gpu",
+        "--no-sandbox"
+      ],
+      "description": "Chrome Browser MCP Server - provides direct Chrome browser control for web automation and testing",
+      "priority": 9,
+      "tags": [
+        "browser",
+        "chrome",
+        "automation",
+        "testing"
+      ],
+      "capabilities": [
+        "Browser navigation",
+        "DOM inspection",
+        "Element interaction",
+        "Screenshot capture",
+        "Console log retrieval",
+        "Network monitoring"
+      ]
     },
     "sequential-thinking": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
       "description": "Official Anthropic sequential thinking server - dynamic problem-solving through thought sequences",
       "priority": 5,
-      "tags": ["official", "reasoning", "problem-solving", "ai"]
+      "tags": [
+        "official",
+        "reasoning",
+        "problem-solving",
+        "ai"
+      ]
     },
     "time": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-time"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-time"
+      ],
       "description": "Official Anthropic time server - time and timezone conversion capabilities",
       "priority": 4,
-      "tags": ["official", "time", "utility", "conversion"]
+      "tags": [
+        "official",
+        "time",
+        "utility",
+        "conversion"
+      ]
     },
     "stitch": {
       "command": "pnpm",
-      "args": ["dlx", "@_davideast/stitch-mcp", "proxy"],
+      "args": [
+        "dlx",
+        "@_davideast/stitch-mcp",
+        "proxy"
+      ],
       "env": {
         "STITCH_API_KEY": "AQ.Ab8RN6Jy4emO-PLLzW889iOMCtl3ftCjRbN6p5upHEei3AQ5uA",
         "STITCH_USE_SYSTEM_GCLOUD": "1"
       },
       "description": "Google Stitch MCP proxy - generate and retrieve Stitch UI screens for design-to-code workflows",
       "priority": 6,
-      "tags": ["stitch", "design", "ui", "mcp", "google"]
+      "tags": [
+        "stitch",
+        "design",
+        "ui",
+        "mcp",
+        "google"
+      ]
     },
     "unified-config-server": {
       "command": "npx",
-      "args": ["tsx", "./src/mcp/unified-config-server.ts", "--no-oauth"],
+      "args": [
+        "tsx",
+        "./src/mcp/unified-config-server.ts",
+        "--no-oauth"
+      ],
       "env": {
         "HTTP_PORT": "3773",
         "LOG_LEVEL": "info",
@@ -215,21 +371,41 @@
       },
       "description": "TNF unified configuration server - centralized MCP config management",
       "priority": 4,
-      "tags": ["tnf", "configuration", "management"]
+      "tags": [
+        "tnf",
+        "configuration",
+        "management"
+      ]
     },
     "agent-communication": {
       "command": "npx",
-      "args": ["tsx", "src/agent_with_mcp_example.ts"],
+      "args": [
+        "tsx",
+        "src/agent_with_mcp_example.ts"
+      ],
       "description": "TNF agent communication example server - demonstrates MCP agent integration",
       "priority": 3,
-      "tags": ["tnf", "agents", "example", "development"]
+      "tags": [
+        "tnf",
+        "agents",
+        "example",
+        "development"
+      ]
     },
     "applescript_execute": {
       "command": "npx",
-      "args": ["-y", "@peakmojo/applescript-mcp"],
+      "args": [
+        "-y",
+        "@peakmojo/applescript-mcp"
+      ],
       "description": "AppleScript MCP server - macOS automation and system control",
       "priority": 4,
-      "tags": ["macos", "automation", "applescript", "system"]
+      "tags": [
+        "macos",
+        "automation",
+        "applescript",
+        "system"
+      ]
     },
     "context7-server": {
       "command": "node",
@@ -238,7 +414,11 @@
       ],
       "description": "Context7 server - context management and agent routing",
       "priority": 3,
-      "tags": ["context", "routing", "agents"]
+      "tags": [
+        "context",
+        "routing",
+        "agents"
+      ]
     },
     "MCP_DOCKER": {
       "command": "docker",
@@ -254,7 +434,11 @@
       ],
       "description": "Docker MCP relay - enables MCP communication through Docker containers",
       "priority": 2,
-      "tags": ["docker", "relay", "infrastructure"]
+      "tags": [
+        "docker",
+        "relay",
+        "infrastructure"
+      ]
     }
   }
 }

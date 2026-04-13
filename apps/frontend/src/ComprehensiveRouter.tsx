@@ -290,9 +290,6 @@ const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
 );
 
 // Redirect component to force reload to static HTML pages
-const RedirectToStatic = ({ to }: { to: string }) => {
-  if (typeof window !== 'undefined') {
-    window.location.href = to;
   }
   return null;
 };
@@ -314,19 +311,11 @@ const MarketplaceRootRoute = () => {
   );
 };
 
-const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
-  <RequireAuth>
-    <RequireMembership>{children}</RequireMembership>
-  </RequireAuth>
-);
 
 // Redirect component to force reload to static HTML pages
 const RedirectToStatic = ({ to }: { to: string }) => {
   if (typeof window !== 'undefined') {
     window.location.href = to;
-  }
-  return null;
-};
 
 const MarketplaceRootRoute = () => {
   if (typeof window === 'undefined') {
@@ -345,19 +334,11 @@ const MarketplaceRootRoute = () => {
   );
 };
 
-const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
-  <RequireAuth>
-    <RequireMembership>{children}</RequireMembership>
-  </RequireAuth>
-);
 
 // Redirect component to force reload to static HTML pages
 const RedirectToStatic = ({ to }: { to: string }) => {
   if (typeof window !== 'undefined') {
     window.location.href = to;
-  }
-  return null;
-};
 
 const MarketplaceRootRoute = () => {
   if (typeof window === 'undefined') {
@@ -376,19 +357,11 @@ const MarketplaceRootRoute = () => {
   );
 };
 
-const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
-  <RequireAuth>
-    <RequireMembership>{children}</RequireMembership>
-  </RequireAuth>
-);
 
 // Redirect component to force reload to static HTML pages
 const RedirectToStatic = ({ to }: { to: string }) => {
   if (typeof window !== 'undefined') {
     window.location.href = to;
-  }
-  return null;
-};
 
 const MarketplaceRootRoute = () => {
   if (typeof window === 'undefined') {
@@ -407,11 +380,6 @@ const MarketplaceRootRoute = () => {
   );
 };
 
-const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
-  <RequireAuth>
-    <RequireMembership>{children}</RequireMembership>
-  </RequireAuth>
-);
 
 // Remove the old ComprehensiveNavigation component and replace with SmartNavigation
 export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRouterProps) {

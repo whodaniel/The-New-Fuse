@@ -103,7 +103,8 @@ export const AgentNFTRevenueDashboard: React.FC<AgentNFTRevenueDashboardProps> =
 
       const response = await fetch(url);
       const data = await response.json();
-      setRevenueStreams(data);
+      // Always coerce to valid array to prevent .map() crash
+      setRevenueStreams(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to load revenue streams:', error);
     } finally {

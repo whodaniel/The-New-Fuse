@@ -245,7 +245,7 @@ export class TNFRelayServer extends EventEmitter {
 
     // Initialize stall detector for conversation recovery
     this.stallDetector = createStallDetector(this.logger, {
-      stallThresholdMs: 3600000, // 60 minutes (increased from 45s)
+      stallThresholdMs: 45000, // 45 seconds (restored from 60m)
       checkIntervalMs: 5000, // Check every 5 seconds
       maxRecoveryAttempts: 3,
       autoRecover: true,
@@ -301,7 +301,7 @@ export class TNFRelayServer extends EventEmitter {
     });
 
     if (this.activityPersistenceEnabled) {
-      this.activityRedis = createClient({
+      this.activityRedis = createStandaloneRedisClient({
         url: process.env.ACTIVITY_REDIS_URL || process.env.REDIS_URL || 'redis://localhost:6379',
       });
       this.activityRedis.on('error', (err: Error) => {
@@ -954,6 +954,9 @@ export class TNFRelayServer extends EventEmitter {
           this.channels.delete(channelId);
           // Remove from all agent channel sets
           this.agentChannels.forEach((channels) => channels.delete(channelId));
+
+          // FIX: Clear conversation manager for the deleted channel to prevent memory leak
+          this.conversationManagers.delete(channelId);
 
           fmt.channelDeleted(channelId);
 

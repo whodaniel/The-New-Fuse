@@ -491,20 +491,11 @@ export async function getTaskExecutionLogs(
   taskId: string
 ): Promise<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }> {
   return parse<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }>(
-    await apiFetch(`/api/tasks/${taskId}/execution-logs`)
+    await fetch(`/api/tasks/${taskId}/execution-logs`)
   );
 }
 
-export async function appendTaskExecutionLog(
-  taskId: string,
-  input: {
-    level: 'info' | 'warn' | 'error';
-    message: string;
-    actor: string;
-    source: string;
-    stage?: string;
-    metadata?: Record<string, unknown>;
-  }
+
 ): Promise<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }> {
   return parse<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }>(
     await apiFetch(`/api/tasks/${taskId}/execution-logs`, {

@@ -66,6 +66,7 @@ export declare class TNFRelayServer extends EventEmitter {
     private conversationManagers;
     private subscriptionRegistry;
     private activityRedis;
+    private activityUpstash;
     private activityRedisConnectPromise;
     private activityPersistenceEnabled;
     private activityPersistenceRequired;
@@ -129,90 +130,6 @@ export declare class TNFRelayServer extends EventEmitter {
      * Toggle bridge gate on/off
      */
     setBridgeGateEnabled(enabled: boolean, operator?: BridgeOperatorContext): void;
-    /**
-     * Approve an agent for bridge access (operator action)
-     */
-    approveBridgeAccess(agentId: string): boolean;
-    /**
-     * Deny an agent bridge access (operator action)
-     */
-    denyBridgeAccess(agentId: string, reason?: string): boolean;
-    /**
-     * Get list of pending bridge access requests
-     */
-    getPendingBridgeRequests(): Array<{
-        agentId: string;
-        name: string;
-        platform: string;
-        requestedAt: number;
-    }>;
-    /**
-     * Toggle bridge gate on/off
-     */
-    setBridgeGateEnabled(enabled: boolean): void;
-    /**
-     * Approve an agent for bridge access (operator action)
-     */
-    approveBridgeAccess(agentId: string): boolean;
-    /**
-     * Deny an agent bridge access (operator action)
-     */
-    denyBridgeAccess(agentId: string, reason?: string): boolean;
-    /**
-     * Get list of pending bridge access requests
-     */
-    getPendingBridgeRequests(): Array<{
-        agentId: string;
-        name: string;
-        platform: string;
-        requestedAt: number;
-    }>;
-    /**
-     * Toggle bridge gate on/off
-     */
-    setBridgeGateEnabled(enabled: boolean): void;
-    /**
-     * Approve an agent for bridge access (operator action)
-     */
-    approveBridgeAccess(agentId: string): boolean;
-    /**
-     * Deny an agent bridge access (operator action)
-     */
-    denyBridgeAccess(agentId: string, reason?: string): boolean;
-    /**
-     * Get list of pending bridge access requests
-     */
-    getPendingBridgeRequests(): Array<{
-        agentId: string;
-        name: string;
-        platform: string;
-        requestedAt: number;
-    }>;
-    /**
-     * Toggle bridge gate on/off
-     */
-    setBridgeGateEnabled(enabled: boolean): void;
-    /**
-     * Approve an agent for bridge access (operator action)
-     */
-    approveBridgeAccess(agentId: string): boolean;
-    /**
-     * Deny an agent bridge access (operator action)
-     */
-    denyBridgeAccess(agentId: string, reason?: string): boolean;
-    /**
-     * Get list of pending bridge access requests
-     */
-    getPendingBridgeRequests(): Array<{
-        agentId: string;
-        name: string;
-        platform: string;
-        requestedAt: number;
-    }>;
-    /**
-     * Toggle bridge gate on/off
-     */
-    setBridgeGateEnabled(enabled: boolean): void;
     /**
      * Send a recovery message to wake up stalled conversations
      */

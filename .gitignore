@@ -237,3 +237,28 @@ logs/*.jsonl
 
 # Stripe Projects
 .projects/
+
+# Stale worktree directories
+pull-create/
+
+# LLVM Forge build artifacts
+bin/
+forge/
+
+# Debug screenshots at repo root
+ai_vision_input.png
+debug_full_screen.png
+discord_search_1.png
+iphone_live_verification.png
+iphone_screenshot.png
+spotlight_active.png
+
+# Root-level experimental/debug scripts
+iphone_vision_bridge.py
+tnf_audio_bridge.py
+
+# Agent runtime PIDs
+scripts/.agent-network-pids
+
+# LLM provider runtime state
+data/llm-provider-status.json

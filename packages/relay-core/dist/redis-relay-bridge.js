@@ -34,9 +34,7 @@ class RedisRelayBridge extends events_1.EventEmitter {
     constructor(config = {}) {
         super();
         this.config = {
-            redisUrl: config.redisUrl ||
-                process.env.REDIS_URL ||
-                'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+            redisUrl: config.redisUrl || process.env.REDIS_URL || 'redis://localhost:6379',
             ingressChannel: config.ingressChannel || 'tnf:bus:ingress',
             egressChannelPrefix: config.egressChannelPrefix || 'tnf:bus:egress',
             enableLegacyShim: config.enableLegacyShim ?? true,
@@ -127,13 +125,7 @@ class RedisRelayBridge extends events_1.EventEmitter {
         // Publish to ingress
         try {
             const normalizedEnvelope = (0, tnf_envelope_1.validateTNFEnvelope)(envelope);
-            const payloadStr = JSON.stringify(normalizedEnvelope);
-            if (this.upstashClient) {
-                await this.upstashClient.publish(this.config.ingressChannel, payloadStr);
-            }
-            else {
-                await this.redisClient.publish(this.config.ingressChannel, payloadStr);
-            }
+            await this.redisClient.publish(this.config.ingressChannel, JSON.stringify(normalizedEnvelope));
             console.log(`[Redis-Bridge] Published to ${this.config.ingressChannel}:`, normalizedEnvelope.id);
             this.emit('ingress', normalizedEnvelope);
         }
@@ -219,13 +211,7 @@ class RedisRelayBridge extends events_1.EventEmitter {
             throw new Error('Not connected to Redis');
         }
         const normalizedEnvelope = (0, tnf_envelope_1.validateTNFEnvelope)(envelope);
-        const payloadStr = JSON.stringify(normalizedEnvelope);
-        if (this.upstashClient) {
-            await this.upstashClient.publish(this.config.ingressChannel, payloadStr);
-        }
-        else {
-            await this.redisClient.publish(this.config.ingressChannel, payloadStr);
-        }
+        await this.redisClient.publish(this.config.ingressChannel, JSON.stringify(normalizedEnvelope));
         console.log(`[Redis-Bridge] Published to ingress:`, normalizedEnvelope.id);
     }
     /**
@@ -237,13 +223,7 @@ class RedisRelayBridge extends events_1.EventEmitter {
         }
         const channel = `${this.config.egressChannelPrefix}:${agentId}`;
         const normalizedEnvelope = (0, tnf_envelope_1.validateTNFEnvelope)(envelope);
-        const payloadStr = JSON.stringify(normalizedEnvelope);
-        if (this.upstashClient) {
-            await this.upstashClient.publish(channel, payloadStr);
-        }
-        else {
-            await this.redisClient.publish(channel, payloadStr);
-        }
+        await this.redisClient.publish(channel, JSON.stringify(normalizedEnvelope));
         console.log(`[Redis-Bridge] Published to ${channel}:`, normalizedEnvelope.id);
     }
     /**

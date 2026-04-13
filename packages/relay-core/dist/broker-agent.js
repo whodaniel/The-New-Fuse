@@ -36,7 +36,6 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const promises_1 = require("node:fs/promises");
 const path = __importStar(require("node:path"));
-const redis_1 = require("redis");
 const tnf_envelope_1 = require("./protocol/tnf-envelope");
 const CONFIG = {
     REDIS_URL: process.env.REDIS_URL ||
@@ -44,7 +43,7 @@ const CONFIG = {
         process.env.LIVE_REDIS_URL ||
         process.env.REDIS_PRIVATE_URL ||
         process.env.REDIS_TLS_URL ||
-        'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+        'redis://localhost:6379',
     LEDGER_API_BASE: process.env.LEDGER_API_BASE ||
         process.env.RAILWAY_API_URL ||
         process.env.LIVE_API_BASE_URL ||
@@ -91,20 +90,20 @@ class BrokerAgent {
     twipSnapshotCache = null;
     constructor() {
         // Use unified standalone utilities
-        this.redis = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
-        this.redisBlocking = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
-        this.upstash = (0, infrastructure_1.createUpstashRestClient)();
-        if (this.redis instanceof ioredis_1.Redis) {
+        this.redis = createStandaloneRedisClient({ lazyConnect: true });
+        this.redisBlocking = createStandaloneRedisClient({ lazyConnect: true });
+        this.upstash = createUpstashRestClient();
+        if (this.redis instanceof Redis) {
             this.redis.on('error', (err) => console.error('[Broker] Redis error:', err?.message || err));
         }
-        if (this.redisBlocking instanceof ioredis_1.Redis) {
+        if (this.redisBlocking instanceof Redis) {
             this.redisBlocking.on('error', (err) => console.error('[Broker] Redis blocking error:', err?.message || err));
         }
     }
     async start() {
-        if (this.redis instanceof ioredis_1.Redis)
+        if (this.redis instanceof Redis)
             await this.redis.connect();
-        if (this.redisBlocking instanceof ioredis_1.Redis)
+        if (this.redisBlocking instanceof Redis)
             await this.redisBlocking.connect();
         this.running = true;
         await this.registerBroker();
@@ -589,13 +588,38 @@ class BrokerAgent {
                 body: JSON.stringify(payload),
             });
             const body = (await response.json().catch(() => null));
+            if (response.status >= 500) {
+                return {
+                    ok: true,
+                    reasons: [
+                        `external gate worker unavailable (HTTP ${response.status}); local fallback used`,
+                    ],
+                    fallbackUsed: true,
+                };
+            }
+            if (response.ok && body === null) {
+                return {
+                    ok: true,
+                    reasons: [
+                        `external gate worker returned invalid JSON (HTTP ${response.status}); local fallback used`,
+                    ],
+                    fallbackUsed: true,
+                };
+            }
             const reasons = Array.isArray(body?.reasons)
                 ? body.reasons.map((entry) => String(entry))
                 : [];
+            if (!response.ok && reasons.length === 0) {
+                reasons.push(`external gate returned HTTP ${response.status}`);
+            }
             return { ok: response.ok && body?.ok === true, reasons };
         }
         catch (error) {
-            return { ok: false, reasons: [`external gate check failed: ${error.message}`] };
+            return {
+                ok: true,
+                reasons: [`external gate check failed: ${error.message}; local fallback used`],
+                fallbackUsed: true,
+            };
         }
     }
     async evaluatePolicy(task, targetAgentId) {
@@ -640,7 +664,10 @@ class BrokerAgent {
                 console.warn(`[Broker] WARN ${task.id}: ${reason}`);
             }
             else {
-                await this.recordFederationGateTelemetry(task, 'external', gateMode, externalGate.reasons, contextSignal);
+                await this.recordFederationGateTelemetry(task, 'external', gateMode, externalGate.reasons, contextSignal, externalGate.fallbackUsed ? 'warn' : undefined);
+                if (externalGate.fallbackUsed && externalGate.reasons.length > 0) {
+                    console.warn(`[Broker] WARN ${task.id}: ${externalGate.reasons.join('; ')}`);
+                }
             }
         }
         if (!lane) {
@@ -707,8 +734,7 @@ class BrokerAgent {
         let registry = {};
         if (this.upstash) {
             // @ts-ignore TS2347 Temporary fix for TypeScript 5.9 regression
-            registry =
-                (await this.upstash.hgetall(CONFIG.AGENT_REGISTRY_KEY)) || {};
+            registry = (await this.upstash.hgetall(CONFIG.AGENT_REGISTRY_KEY)) || {};
         }
         else if (this.redis) {
             registry = await this.redis.hgetall(CONFIG.AGENT_REGISTRY_KEY);
@@ -890,10 +916,10 @@ class BrokerAgent {
             console.warn('[Broker] Failed to persist dispatch:', error.message);
         }
     }
-    async recordFederationGateTelemetry(task, stage, mode, reasons, contextSignal) {
+    async recordFederationGateTelemetry(task, stage, mode, reasons, contextSignal, outcomeOverride) {
         if (mode === 'off')
             return;
-        const outcome = reasons.length === 0 ? 'allow' : mode === 'enforce' ? 'deny' : 'warn';
+        const outcome = outcomeOverride || (reasons.length === 0 ? 'allow' : mode === 'enforce' ? 'deny' : 'warn');
         const tenantId = this.getScopeTenant(task) || 'unknown';
         const timestamp = new Date().toISOString();
         const keys = new Set([
@@ -967,6 +993,16 @@ class BrokerAgent {
             return 'missing_cumulative_tenant';
         if (normalized.includes('missing twid'))
             return 'missing_twid';
+        if (normalized.includes('external gate worker unavailable')) {
+            return 'external_worker_unavailable';
+        }
+        if (normalized.includes('external gate worker returned invalid json')) {
+            return 'external_worker_invalid_json';
+        }
+        if (normalized.includes('external gate check failed'))
+            return 'external_worker_request_failed';
+        if (normalized.includes('external gate returned http'))
+            return 'external_worker_http_error';
         if (normalized.includes('twip context signal unavailable'))
             return 'twip_context_unavailable';
         if (normalized.includes('twip context stale'))

@@ -170,7 +170,7 @@ class TNFRelayServer extends events_1.EventEmitter {
         this.createDefaultChannel();
         // Initialize stall detector for conversation recovery
         this.stallDetector = (0, stall_detector_1.createStallDetector)(this.logger, {
-            stallThresholdMs: 3600000, // 60 minutes (increased from 45s)
+            stallThresholdMs: 45000, // 45 seconds (restored from 60m)
             checkIntervalMs: 5000, // Check every 5 seconds
             maxRecoveryAttempts: 3,
             autoRecover: true,
@@ -211,25 +211,15 @@ class TNFRelayServer extends events_1.EventEmitter {
             this.bridge = null;
         });
         if (this.activityPersistenceEnabled) {
-            this.activityRedis = (0, redis_1.createClient)({
-                url: process.env.ACTIVITY_REDIS_URL ||
-                    process.env.REDIS_URL ||
-                    'redis://default:mDNmtwseaVHcQsCHaIoZapjlWrvAjtot@tramway.proxy.rlwy.net:13570',
+            this.activityRedis = (0, infrastructure_1.createStandaloneRedisClient)({
+                url: process.env.ACTIVITY_REDIS_URL || process.env.REDIS_URL || 'redis://localhost:6379',
             });
             this.activityRedis.on('error', (err) => {
                 console.error('[Relay] Activity Redis client error:', err.message);
             });
-            this.activityRedisConnectPromise = this.activityRedis
-                .connect()
-                .then(() => {
-                TerminalFormatter_1.relay.activityPersistenceEnabled(this.activityStreamKey);
-            })
-                .catch((err) => {
-                console.error('[Relay] Failed to connect activity Redis:', err.message);
-                this.activityPersistenceEnabled = false;
-                this.activityRedis = null;
-                throw err;
-            });
+            // ioredis handles connection automatically, but we can wrap it in a promise if needed
+            this.activityRedisConnectPromise = Promise.resolve();
+            TerminalFormatter_1.relay.activityPersistenceEnabled(this.activityStreamKey);
         }
     }
     handleHttpRequest(req, res) {
@@ -557,6 +547,9 @@ class TNFRelayServer extends events_1.EventEmitter {
                 payload: {
                     agent: {
                         id: regId,
+                        operationalHandle: regId,
+                        runtimeSessionId: regId,
+                        aliases: [regId],
                         name: regName,
                         platform: regPayload.type || regPayload.clientType || 'unknown',
                         status: 'active',
@@ -1593,282 +1586,6 @@ class TNFRelayServer extends events_1.EventEmitter {
         }
     }
     /**
-     * Approve an agent for bridge access (operator action)
-     */
-    approveBridgeAccess(agentId) {
-        const pending = this.pendingBridgeAgents.get(agentId);
-        if (!pending && !this.agents.has(agentId)) {
-            console.warn('[Relay] Cannot approve unknown agent: ' + agentId);
-            return false;
-        }
-        this.approvedBridgeAgents.add(agentId);
-        this.pendingBridgeAgents.delete(agentId);
-        console.log('[Relay] Agent ' + agentId + ' approved for bridge access');
-        // Subscribe them to the bridge
-        this.ensureBridgeSubscription(agentId);
-        // Notify the agent
-        const socket = this.sockets.get(agentId);
-        if (socket) {
-            this.send(socket, {
-                type: 'BRIDGE_APPROVED',
-                payload: { agentId, approvedAt: Date.now() },
-            });
-        }
-        return true;
-    }
-    /**
-     * Deny an agent bridge access (operator action)
-     */
-    denyBridgeAccess(agentId, reason) {
-        const pending = this.pendingBridgeAgents.get(agentId);
-        if (!pending) {
-            console.warn('[Relay] No pending bridge request for agent: ' + agentId);
-            return false;
-        }
-        this.pendingBridgeAgents.delete(agentId);
-        console.log('[Relay] Agent ' + agentId + ' denied bridge access');
-        // Notify the agent
-        const socket = this.sockets.get(agentId);
-        if (socket) {
-            this.send(socket, {
-                type: 'BRIDGE_DENIED',
-                payload: { agentId, reason: reason || 'Access denied by operator', deniedAt: Date.now() },
-            });
-        }
-        return true;
-    }
-    /**
-     * Get list of pending bridge access requests
-     */
-    getPendingBridgeRequests() {
-        return Array.from(this.pendingBridgeAgents.values()).map(({ agent, requestedAt }) => ({
-            agentId: agent.id,
-            name: agent.name,
-            platform: agent.platform,
-            requestedAt,
-        }));
-    }
-    /**
-     * Toggle bridge gate on/off
-     */
-    setBridgeGateEnabled(enabled) {
-        this.bridgeGateEnabled = enabled;
-        console.log('[Relay] Bridge gate ' + (enabled ? 'ENABLED' : 'DISABLED'));
-        // If disabling, auto-approve all pending
-        if (!enabled) {
-            for (const [agentId] of this.pendingBridgeAgents) {
-                this.approveBridgeAccess(agentId);
-            }
-        }
-    }
-    /**
-     * Approve an agent for bridge access (operator action)
-     */
-    approveBridgeAccess(agentId) {
-        const pending = this.pendingBridgeAgents.get(agentId);
-        if (!pending && !this.agents.has(agentId)) {
-            console.warn('[Relay] Cannot approve unknown agent: ' + agentId);
-            return false;
-        }
-        this.approvedBridgeAgents.add(agentId);
-        this.pendingBridgeAgents.delete(agentId);
-        console.log('[Relay] Agent ' + agentId + ' approved for bridge access');
-        // Subscribe them to the bridge
-        this.ensureBridgeSubscription(agentId);
-        // Notify the agent
-        const socket = this.sockets.get(agentId);
-        if (socket) {
-            this.send(socket, {
-                type: 'BRIDGE_APPROVED',
-                payload: { agentId, approvedAt: Date.now() },
-            });
-        }
-        return true;
-    }
-    /**
-     * Deny an agent bridge access (operator action)
-     */
-    denyBridgeAccess(agentId, reason) {
-        const pending = this.pendingBridgeAgents.get(agentId);
-        if (!pending) {
-            console.warn('[Relay] No pending bridge request for agent: ' + agentId);
-            return false;
-        }
-        this.pendingBridgeAgents.delete(agentId);
-        console.log('[Relay] Agent ' + agentId + ' denied bridge access');
-        // Notify the agent
-        const socket = this.sockets.get(agentId);
-        if (socket) {
-            this.send(socket, {
-                type: 'BRIDGE_DENIED',
-                payload: { agentId, reason: reason || 'Access denied by operator', deniedAt: Date.now() },
-            });
-        }
-        return true;
-    }
-    /**
-     * Get list of pending bridge access requests
-     */
-    getPendingBridgeRequests() {
-        return Array.from(this.pendingBridgeAgents.values()).map(({ agent, requestedAt }) => ({
-            agentId: agent.id,
-            name: agent.name,
-            platform: agent.platform,
-            requestedAt,
-        }));
-    }
-    /**
-     * Toggle bridge gate on/off
-     */
-    setBridgeGateEnabled(enabled) {
-        this.bridgeGateEnabled = enabled;
-        console.log('[Relay] Bridge gate ' + (enabled ? 'ENABLED' : 'DISABLED'));
-        // If disabling, auto-approve all pending
-        if (!enabled) {
-            for (const [agentId] of this.pendingBridgeAgents) {
-                this.approveBridgeAccess(agentId);
-            }
-        }
-    }
-    /**
-     * Approve an agent for bridge access (operator action)
-     */
-    approveBridgeAccess(agentId) {
-        const pending = this.pendingBridgeAgents.get(agentId);
-        if (!pending && !this.agents.has(agentId)) {
-            console.warn('[Relay] Cannot approve unknown agent: ' + agentId);
-            return false;
-        }
-        this.approvedBridgeAgents.add(agentId);
-        this.pendingBridgeAgents.delete(agentId);
-        console.log('[Relay] Agent ' + agentId + ' approved for bridge access');
-        // Subscribe them to the bridge
-        this.ensureBridgeSubscription(agentId);
-        // Notify the agent
-        const socket = this.sockets.get(agentId);
-        if (socket) {
-            this.send(socket, {
-                type: 'BRIDGE_APPROVED',
-                payload: { agentId, approvedAt: Date.now() },
-            });
-        }
-        return true;
-    }
-    /**
-     * Deny an agent bridge access (operator action)
-     */
-    denyBridgeAccess(agentId, reason) {
-        const pending = this.pendingBridgeAgents.get(agentId);
-        if (!pending) {
-            console.warn('[Relay] No pending bridge request for agent: ' + agentId);
-            return false;
-        }
-        this.pendingBridgeAgents.delete(agentId);
-        console.log('[Relay] Agent ' + agentId + ' denied bridge access');
-        // Notify the agent
-        const socket = this.sockets.get(agentId);
-        if (socket) {
-            this.send(socket, {
-                type: 'BRIDGE_DENIED',
-                payload: { agentId, reason: reason || 'Access denied by operator', deniedAt: Date.now() },
-            });
-        }
-        return true;
-    }
-    /**
-     * Get list of pending bridge access requests
-     */
-    getPendingBridgeRequests() {
-        return Array.from(this.pendingBridgeAgents.values()).map(({ agent, requestedAt }) => ({
-            agentId: agent.id,
-            name: agent.name,
-            platform: agent.platform,
-            requestedAt,
-        }));
-    }
-    /**
-     * Toggle bridge gate on/off
-     */
-    setBridgeGateEnabled(enabled) {
-        this.bridgeGateEnabled = enabled;
-        console.log('[Relay] Bridge gate ' + (enabled ? 'ENABLED' : 'DISABLED'));
-        // If disabling, auto-approve all pending
-        if (!enabled) {
-            for (const [agentId] of this.pendingBridgeAgents) {
-                this.approveBridgeAccess(agentId);
-            }
-        }
-    }
-    /**
-     * Approve an agent for bridge access (operator action)
-     */
-    approveBridgeAccess(agentId) {
-        const pending = this.pendingBridgeAgents.get(agentId);
-        if (!pending && !this.agents.has(agentId)) {
-            console.warn('[Relay] Cannot approve unknown agent: ' + agentId);
-            return false;
-        }
-        this.approvedBridgeAgents.add(agentId);
-        this.pendingBridgeAgents.delete(agentId);
-        console.log('[Relay] Agent ' + agentId + ' approved for bridge access');
-        // Subscribe them to the bridge
-        this.ensureBridgeSubscription(agentId);
-        // Notify the agent
-        const socket = this.sockets.get(agentId);
-        if (socket) {
-            this.send(socket, {
-                type: 'BRIDGE_APPROVED',
-                payload: { agentId, approvedAt: Date.now() },
-            });
-        }
-        return true;
-    }
-    /**
-     * Deny an agent bridge access (operator action)
-     */
-    denyBridgeAccess(agentId, reason) {
-        const pending = this.pendingBridgeAgents.get(agentId);
-        if (!pending) {
-            console.warn('[Relay] No pending bridge request for agent: ' + agentId);
-            return false;
-        }
-        this.pendingBridgeAgents.delete(agentId);
-        console.log('[Relay] Agent ' + agentId + ' denied bridge access');
-        // Notify the agent
-        const socket = this.sockets.get(agentId);
-        if (socket) {
-            this.send(socket, {
-                type: 'BRIDGE_DENIED',
-                payload: { agentId, reason: reason || 'Access denied by operator', deniedAt: Date.now() },
-            });
-        }
-        return true;
-    }
-    /**
-     * Get list of pending bridge access requests
-     */
-    getPendingBridgeRequests() {
-        return Array.from(this.pendingBridgeAgents.values()).map(({ agent, requestedAt }) => ({
-            agentId: agent.id,
-            name: agent.name,
-            platform: agent.platform,
-            requestedAt,
-        }));
-    }
-    /**
-     * Toggle bridge gate on/off
-     */
-    setBridgeGateEnabled(enabled) {
-        this.bridgeGateEnabled = enabled;
-        console.log('[Relay] Bridge gate ' + (enabled ? 'ENABLED' : 'DISABLED'));
-        // If disabling, auto-approve all pending
-        if (!enabled) {
-            for (const [agentId] of this.pendingBridgeAgents) {
-                this.approveBridgeAccess(agentId);
-            }
-        }
-    }
-    /**
      * Send a recovery message to wake up stalled conversations
      */
     sendRecoveryMessage(channelId, message, metadata) {
@@ -1889,7 +1606,6 @@ class TNFRelayServer extends events_1.EventEmitter {
                 ...metadata,
                 isSystemMessage: true,
                 isRecoveryAttempt: true,
-                forceInject: true, // Ensure this reaches the chat input field
             }, {
                 source: 'standalone-relay',
                 actor: 'stall-detector',
@@ -1984,6 +1700,8 @@ class TNFRelayServer extends events_1.EventEmitter {
                                 this.activityRedis = null;
                             }
                         }
+                        // Upstash REST client doesn't need explicit closing as it is HTTP-based
+                        this.activityUpstash = null;
                         TerminalFormatter_1.relay.serverStopped();
                         this.emit('stopped');
                         resolve();

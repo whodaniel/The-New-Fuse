@@ -15,7 +15,9 @@
 
 // @ts-ignore
 import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
+import { Redis as UpstashRedis } from '@upstash/redis';
 import { EventEmitter } from 'events';
+import Redis, { Cluster } from 'ioredis';
 import { createClient, RedisClientType } from 'redis';
 import { createAgentIdentityRecord } from './contracts/identity';
 import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from './protocol/tnf-envelope';

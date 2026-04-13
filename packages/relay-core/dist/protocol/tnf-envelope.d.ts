@@ -184,8 +184,6 @@ export declare const StateSyncPayload: z.ZodObject<{
     version: z.ZodNumber;
     operation: z.ZodEnum<{
         set: "set";
-        get: "get";
-        delete: "delete";
         update: "update";
         delete: "delete";
         get: "get";

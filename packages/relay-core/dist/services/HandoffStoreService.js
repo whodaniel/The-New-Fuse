@@ -169,14 +169,7 @@ class HandoffStoreService {
     }
     async listBySession(sessionKey, limit = 50) {
         await this.connect();
-        const key = this.sessionIndexKey(sessionKey);
-        let ids = [];
-        if (this.upstash) {
-            ids = await this.upstash.lrange(key, 0, Math.max(limit, 1) - 1);
-        }
-        else if (this.client) {
-            ids = await this.client.lrange(key, 0, Math.max(limit, 1) - 1);
-        }
+        const ids = await this.client.lRange(this.sessionIndexKey(sessionKey), 0, Math.max(limit, 1) - 1);
         const packets = [];
         for (const id of ids) {
             const packet = await this.getPacket(id);

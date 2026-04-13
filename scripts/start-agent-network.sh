@@ -246,7 +246,6 @@ START_JULES=false
 while [[ $# -gt 0 ]]; do
     case $1 in
         --all)
-            START_CLAUDE=true
             START_GEMINI=true
             START_JULES=true
             shift

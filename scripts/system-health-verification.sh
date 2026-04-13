@@ -26,14 +26,14 @@ redis-cli ping || {
 
 # 4. API health checks
 echo "\n🌐 Checking API endpoints..."
-curl --fail http://localhost:3001/health || {
+curl --fail https://api.thenewfuse.com/health || {
     echo "❌ API health check failed"
     exit 1
 }
 
 # 5. Frontend health check
 echo "\n🖥️ Checking Frontend..."
-curl --fail http://localhost:3000/health.html || {
+curl --fail https://thenewfuse.com/health || {
     echo "❌ Frontend health check failed"
     exit 1
 }

@@ -62,6 +62,7 @@ import { randomUUID } from 'crypto';
 import { existsSync, promises as fs } from 'fs';
 import { execFile } from 'node:child_process';
 import path from 'path';
+import { Redis, Cluster } from 'ioredis';
 import { createClient } from 'redis';
 import { promisify } from 'util';
 import WebSocket from 'ws';
@@ -563,10 +564,11 @@ class MasterClock {
     log('info', 'REDIS', 'Connecting to Redis for cloud coordination...');
 
     try {
-      // Use unified standalone utilities
-      this.redis = createStandaloneRedisClient({ lazyConnect: true });
-      this.redisSub = createStandaloneRedisClient({ lazyConnect: true });
-      this.upstash = createUpstashRestClient();
+      // Use unified standalone utilities via dynamic import for ESM/CJS compatibility
+      const infra = await import('@the-new-fuse/infrastructure');
+      this.redis = infra.createStandaloneRedisClient({ lazyConnect: true });
+      this.redisSub = infra.createStandaloneRedisClient({ lazyConnect: true });
+      this.upstash = infra.createUpstashRestClient();
 
       if (this.redis instanceof Redis) {
         this.redis.on('error', (err: any) => log('error', 'REDIS', `Client error: ${err.message}`));
@@ -725,6 +727,50 @@ class MasterClock {
   }
 
   // --------------------------------------------------------------------------
+  // MEMORY MANAGEMENT
+  // --------------------------------------------------------------------------
+
+  private pruneTrackingMaps(now: number) {
+    const COOLDOWN_MAX_AGE = 24 * 60 * 60 * 1000; // 24 hours
+
+    // Prune recentQueuedTasks
+    let prunedTasks = 0;
+    for (const [taskId, timestamp] of this.recentQueuedTasks.entries()) {
+      if (now - timestamp > COOLDOWN_MAX_AGE) {
+        this.recentQueuedTasks.delete(taskId);
+        prunedTasks++;
+      }
+    }
+
+    // Prune selfPromptCooldowns
+    let prunedCooldowns = 0;
+    for (const [key, timestamp] of this.selfPromptCooldowns.entries()) {
+      if (now - timestamp > COOLDOWN_MAX_AGE) {
+        this.selfPromptCooldowns.delete(key);
+        prunedCooldowns++;
+      }
+    }
+
+    // Prune recoveryAttempts for offline agents
+    let prunedRecovery = 0;
+    for (const agentId of this.recoveryAttempts.keys()) {
+      if (!this.registry.getAgentBySource(agentId)) {
+        this.recoveryAttempts.delete(agentId);
+        prunedRecovery++;
+      }
+    }
+
+    // Safety: Clear dtfCache if it grows too large
+    if (this.dtfCache.size > 100) {
+      this.dtfCache.clear();
+    }
+
+    if (prunedTasks > 0 || prunedCooldowns > 0 || prunedRecovery > 0) {
+      log('debug', 'MEMORY', `Pruned tracking data: ${prunedTasks} tasks, ${prunedCooldowns} cooldowns, ${prunedRecovery} recovery attempts`);
+    }
+  }
+
+  // --------------------------------------------------------------------------
   // THE ETERNAL HEARTBEAT
   // --------------------------------------------------------------------------
 
@@ -743,6 +789,10 @@ class MasterClock {
 
   sendHeartbeat() {
     const now = Date.now();
+
+    // Memory Leak Prevention: Prune old tracking data
+    this.pruneTrackingMaps(now);
+
     const stats = this.registry.getStats();
     const superCycleStats = this.getSuperCycleStats();
     const orchestrator = this.getOrchestratorEnvelopeIdentity();
@@ -2211,7 +2261,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         correlation_id: randomUUID(),
         causation_id: null,
         handoff_packet_id: null,
-        twid: null,
+        twid: params.targetSourceId || null,
         task_id: null,
       },
       federation: {

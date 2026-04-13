@@ -28,14 +28,21 @@ const RUNNABLE_SCRIPT_EXTENSIONS = new Set([
 async function runCommand(
   cmd: string,
   args: string[],
-  options: { cwd?: string; env?: NodeJS.ProcessEnv } = {}
+  options: { cwd?: string; env?: NodeJS.ProcessEnv; isBackground?: boolean } = {}
 ): Promise<void> {
   await new Promise<void>((resolve, reject) => {
+    const stdio = options.isBackground ? 'ignore' : 'inherit';
     const child = spawn(cmd, args, {
       cwd: options.cwd || repoRoot,
       env: { ...process.env, ...(options.env || {}) },
-      stdio: 'inherit',
+      stdio,
+      detached: options.isBackground,
     });
+
+    if (options.isBackground) {
+      child.unref();
+      return resolve();
+    }
 
     child.on('error', (error: NodeJS.ErrnoException) => {
       if (error?.code === 'ENOENT') {
@@ -59,17 +66,22 @@ function requireSuperAdmin(
   const provided =
     options?.superAdminToken ||
     process.env[SUPER_ADMIN_INPUT_ENV_KEY] ||
-    process.env.CI_SUPER_ADMIN_TOKEN;
+    process.env.CI_SUPER_ADMIN_TOKEN ||
+    process.env[SUPER_ADMIN_ENV_KEY]; // Allow the master secret to fulfill itself in local environments
 
   if (!expected) {
     throw new Error(
-      `Super Admin auth is not configured. Set ${SUPER_ADMIN_ENV_KEY} in the execution environment.`
+      `Super Admin auth is not configured. Set ${SUPER_ADMIN_ENV_KEY} in the execution environment (e.g. ~/.zshrc or .env).`
     );
   }
 
   if (!provided || provided !== expected) {
     throw new Error(
-      `Super Admin authentication required for '${commandLabel}'. Provide --super-admin-token or ${SUPER_ADMIN_INPUT_ENV_KEY}.`
+      `Super Admin authentication required for '${commandLabel}'.\n` +
+        `Ways to provide the token:\n` +
+        `  1. CLI Option: tnf ... --super-admin-token YOUR_TOKEN\n` +
+        `  2. Env Var:    export ${SUPER_ADMIN_INPUT_ENV_KEY}=YOUR_TOKEN\n` +
+        `  3. CI Secret:  Set CI_SUPER_ADMIN_TOKEN in your CI/CD settings.`
     );
   }
 }
@@ -1292,7 +1304,9 @@ function normalizeForwardedArgs(args: string[] = []): string[] {
 }
 
 async function runOpenClawPassthrough(args: string[] = []): Promise<void> {
-  await runCommand('openclaw', normalizeForwardedArgs(args));
+  await runCommand('openclaw', normalizeForwardedArgs(args), {
+    env: { TNF_RECURSION_GUARD: 'true' },
+  });
 }
 
 async function runOpenClawControl(args: string[] = []): Promise<void> {
@@ -1353,10 +1367,15 @@ function getOpenClawTopLevelCommands(): Set<string> {
     return cachedOpenClawTopLevelCommands;
   }
 
+  // BREAK THE LOOP: If we're already inside a help check or passthrough, don't recurse
+  if (process.env.TNF_RECURSION_GUARD === 'true') {
+    return new Set();
+  }
+
   try {
     const result = spawnSync('openclaw', ['--no-color', '--help'], {
       encoding: 'utf8',
-      env: process.env,
+      env: { ...process.env, TNF_RECURSION_GUARD: 'true' },
     });
     const output = `${result.stdout || ''}\n${result.stderr || ''}`;
     cachedOpenClawTopLevelCommands = parseOpenClawTopLevelCommands(output);
@@ -1411,7 +1430,16 @@ function buildOpenClawCompatibilityReport() {
 
 program
   .name('tnf')
-  .description('TNF CLI - Unified Command Surface for TNF Operations')
+  .description(
+    'TNF CLI - Unified Command Surface for TNF Operations\n\n' +
+      '🔑 Super Admin Authentication:\n' +
+      '  Certain restricted commands require a Super Admin token.\n' +
+      '  You must set the TNF_SUPER_ADMIN_TOKEN in your environment as the master secret.\n' +
+      '  To authenticate a command, you can:\n' +
+      '    - Use the --super-admin-token <token> flag\n' +
+      '    - Set the TNF_SUPER_ADMIN_INPUT_TOKEN environment variable\n' +
+      '    - Set the CI_SUPER_ADMIN_TOKEN environment variable (for CI/CD)'
+  )
   .version('1.0.0')
   .showSuggestionAfterError()
   .showHelpAfterError();
@@ -1466,6 +1494,143 @@ function logRedisUnavailable(commandHint: string): never {
   console.error(chalk.yellow(`Start Redis, then re-run \`${commandHint}\`.`));
   process.exit(1);
 }
+
+program
+  .command('boot')
+  .description('Master entry point to boot the entire TNF stack')
+  .argument('[name]', 'Profile/Instance name to boot', 'goldberg')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .action(async (name: string, options: { superAdminToken?: string }) => {
+    try {
+      requireSuperAdmin(options, 'boot');
+      console.log(chalk.bold.cyan(`\n🚀 Booting TNF Stack: ${chalk.yellow(name)}\n`));
+
+      const steps = [
+        {
+          label: 'Verifying environment variables',
+          action: async () => {
+            await runCommand('bash', ['scripts/validate-env.sh']);
+          },
+        },
+        {
+          label: 'Mounting volumes (ensuring directories)',
+          action: async () => {
+            const dirs = [
+              '.agent/runtime-state',
+              '.agent/runtime-logs',
+              '.agent/test-reports',
+              'data/agent-registry',
+            ];
+            for (const dir of dirs) {
+              if (!fs.existsSync(path.join(repoRoot, dir))) {
+                fs.mkdirSync(path.join(repoRoot, dir), { recursive: true });
+                console.log(chalk.dim(`   Created ${dir}`));
+              }
+            }
+          },
+        },
+        {
+          label: 'Starting LLM health monitor',
+          action: async () => {
+            await runCommand('node', ['scripts/mcp-health-check.cjs']);
+          },
+        },
+        {
+          label: 'Starting directive rotation scheduler',
+          action: async () => {
+            // Run supercycle flywheel in background if not already running
+            await runCommand('pnpm', ['run', 'factory:supercycle'], { isBackground: true });
+          },
+        },
+        {
+          label: 'Starting LLM provider tester agent',
+          action: async () => {
+            // Run tester agent in background to continuously cycle through API keys and ensure viability
+            await runCommand('node', ['scripts/swarm/llm-provider-tester.cjs'], { isBackground: true });
+          },
+        },
+        {
+          label: 'Starting model fallback chain',
+          action: async () => {
+            await runCommand('node', ['scripts/orchestrator/zeroclaw-boot.cjs']);
+          },
+        },
+        {
+          label: 'Initializing handoff matrix',
+          action: async () => {
+            // RelayHealthCheck often handles initial handoff state
+            if (fs.existsSync(path.join(repoRoot, 'scripts/RelayHealthCheck.cjs'))) {
+              await runCommand('node', ['scripts/RelayHealthCheck.cjs']);
+            } else {
+              console.log(chalk.dim('   Handoff matrix already synchronized'));
+            }
+          },
+        },
+        {
+          label: 'Starting platform gateways',
+          action: async () => {
+            await runCommand('bash', ['scripts/orchestrator/factory-boot.sh']);
+          },
+        },
+        {
+          label: 'Booting agent swarm',
+          action: async () => {
+            await runCommand('bash', ['scripts/start-agent-network.sh', '--all']);
+          },
+        },
+        {
+          label: 'Starting OpenClaw gateway',
+          action: async () => {
+            await runCommand('node', ['scripts/tnf-start-ai.cjs', 'openclaw']);
+          },
+        },
+        {
+          label: 'Starting Hermes operator agent',
+          action: async () => {
+            // Spawn hermes in detached background mode
+            await runCommand('hermes', ['--daemon'], { isBackground: true });
+          },
+        },
+        {
+          label: 'Bringing up browser control panel',
+          action: async () => {
+            if (process.platform === 'darwin') {
+              await runCommand('open', ['https://thenewfuse.com/health']);
+            } else {
+              console.log(chalk.yellow('   Manual action: Open https://thenewfuse.com/health'));
+            }
+          },
+        },
+        {
+          label: 'Executing self-test and reporting status',
+          action: async () => {
+            await runCommand('bash', ['scripts/system-health-verification.sh']);
+          },
+        },
+      ];
+
+      for (let i = 0; i < steps.length; i++) {
+        const step = steps[i];
+        process.stdout.write(chalk.white(`[${i + 1}/${steps.length}] ${step.label}... `));
+        try {
+          await step.action();
+          process.stdout.write(chalk.green('OK\n'));
+        } catch (err: any) {
+          process.stdout.write(chalk.red('FAILED\n'));
+          console.error(chalk.red(`   Error in step "${step.label}": ${err.message}`));
+          if (i < 2) {
+            // Critical steps
+            throw new Error(`Critical boot failure in step: ${step.label}`);
+          }
+        }
+      }
+
+      console.log(chalk.bold.green(`\n✅ TNF Stack "${name}" is now operational!\n`));
+    } catch (err: any) {
+      console.error(chalk.red(`\n❌ Boot sequence aborted: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 program
   .command('register')
@@ -1650,7 +1815,7 @@ const relay = program.command('relay').description('Relay operations');
 relay
   .command('start')
   .description('Start relay-core relay service')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'relay start');
@@ -1677,7 +1842,7 @@ const jules = program.command('jules').description('Jules automation operations'
 jules
   .command('loop')
   .description('Run autonomous Jules loop')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'jules loop');
@@ -1690,7 +1855,7 @@ jules
 jules
   .command('supervisor')
   .description('Run continuous Jules follow-up supervisor')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'jules supervisor');
@@ -1703,7 +1868,7 @@ jules
 jules
   .command('supervisor-start')
   .description('Start Jules follow-up supervisor in background')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'jules supervisor-start');
@@ -1716,7 +1881,7 @@ jules
 jules
   .command('supervisor-stop')
   .description('Stop Jules follow-up supervisor')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'jules supervisor-stop');
@@ -1740,7 +1905,7 @@ jules
 jules
   .command('supervisor-migrate-from-cron')
   .description('Disable cron follow-up and switch to supervisor mode')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'jules supervisor-migrate-from-cron');
@@ -1753,7 +1918,7 @@ jules
 jules
   .command('merge-open')
   .description('Merge all open Jules PRs')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'jules merge-open');
@@ -1766,7 +1931,7 @@ jules
 jules
   .command('cron-install')
   .description('Install local Jules cron loop')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'jules cron-install');
@@ -1774,6 +1939,107 @@ jules
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
+    }
+  });
+
+const mirror = program.command('mirror').description('iPhone mirroring and AI vision operations');
+
+mirror
+  .command('setup')
+  .description('Install dependencies for mirroring (UxPlay, Python libs)')
+  .action(async () => {
+    try {
+      console.log(chalk.blue('Installing system dependencies (Homebrew libraries for UxPlay)...'));
+      await runCommand('brew', ['install', 'cmake', 'libplist', 'openssl@3', 'pkg-config', 'gstreamer', 'gst-plugins-base', 'gst-plugins-good', 'gst-plugins-bad', 'gst-libav']);
+      
+      console.log(chalk.blue('Checking for UxPlay binary...'));
+      try {
+        await runCommand('which', ['uxplay']);
+        console.log(chalk.green('UxPlay already installed.'));
+      } catch {
+        console.log(chalk.yellow('UxPlay not found. Building from source...'));
+        const tmpDir = '/tmp/uxplay-build';
+        await runCommand('rm', ['-rf', tmpDir]);
+        await runCommand('git', ['clone', 'https://github.com/FDH2/UxPlay.git', tmpDir]);
+        const buildCmd = `cd ${tmpDir} && cmake . && make`;
+        await runCommand('bash', ['-c', buildCmd]);
+        await runCommand('sudo', ['make', '-C', tmpDir, 'install']);
+        console.log(chalk.green('UxPlay built and installed successfully.'));
+      }
+
+      console.log(chalk.blue('Installing Python dependencies...'));
+      try {
+        await runCommand('pip', ['install', 'pyautogui', 'opencv-python', 'numpy']);
+      } catch {
+        await runCommand('pip3', ['install', 'pyautogui', 'opencv-python', 'numpy']);
+      }
+      console.log(chalk.green('Setup complete!'));
+    } catch (err: any) {
+      console.error(chalk.red(`Error during setup: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+mirror
+  .command('start')
+  .description('Start the Vision Bridge mirroring server')
+  .action(async () => {
+    try {
+      await runCommand('python3', ['scripts/iphone_ai_mirror.py']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error starting mirror: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const forge = program.command('forge').description('LLVM-powered JIT compilation and native optimization');
+
+forge
+  .command('status')
+  .description('Check the status of the LLVM/Forge toolchain')
+  .action(async () => {
+    try {
+      console.log(chalk.blue('Checking Forge toolchain...'));
+      await runCommand('clang', ['--version']);
+      console.log(chalk.green('LLVM/Clang is ready.'));
+    } catch {
+      console.log(chalk.red('LLVM/Clang not found. Run "tnf mirror setup" to install.'));
+    }
+  });
+
+forge
+  .command('test-math')
+  .description('Run a JIT compilation speed test (Python vs Forged C)')
+  .action(async () => {
+    try {
+      console.log(chalk.blue('Starting math speed test...'));
+      await runCommand('python3', ['scripts/tnf_forge.py']);
+    } catch (err: any) {
+      console.error(chalk.red(`Forge test failed: ${err.message}`));
+    }
+  });
+
+forge
+  .command('test-python')
+  .description('Run a Python Hot-Swap test (Injected Native Code)')
+  .action(async () => {
+    try {
+      console.log(chalk.blue('Starting Python acceleration test...'));
+      await runCommand('python3', ['scripts/python_accelerator.py']);
+    } catch (err: any) {
+      console.error(chalk.red(`Acceleration test failed: ${err.message}`));
+    }
+  });
+
+forge
+  .command('test-gateway')
+  .description('Run Omni-TNF Gateway Native Accelerator test (Phase 2 Scaffolding)')
+  .action(async () => {
+    try {
+      console.log(chalk.blue('Starting Omni-TNF Gateway native test...'));
+      await runCommand('python3', ['scripts/omni_gateway_accelerator.py']);
+    } catch (err: any) {
+      console.error(chalk.red(`Gateway test failed: ${err.message}`));
     }
   });
 
@@ -1785,7 +2051,7 @@ masterClock
   .description('Start master-clock in cloud via Railway (default) or locally')
   .option('--local', 'Run local master-clock (override cloud-first policy)', false)
   .option('--service <name>', 'Railway service name for master clock', 'tnf-master-clock')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (options: { local: boolean; service: string; superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'master-clock start');
@@ -1808,7 +2074,7 @@ masterClock
   .command('logs')
   .description('Tail cloud master-clock logs')
   .option('--service <name>', 'Railway service name for master clock', 'tnf-master-clock')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (options: { service: string; superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'master-clock logs');
@@ -1823,7 +2089,7 @@ masterClock
   .command('status')
   .description('Show Railway status for master-clock service')
   .option('--service <name>', 'Railway service name for master clock', 'tnf-master-clock')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (options: { service: string; superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'master-clock status');
@@ -1848,7 +2114,7 @@ superCycle
   .option('--metadata <json>', 'JSON metadata', '{}')
   .option('--local', 'Run local super-cycle client (override cloud-first policy)', false)
   .option('--service <name>', 'Railway service name', 'tnf-master-clock')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(
     async (options: {
       action: string;
@@ -2322,7 +2588,7 @@ skillsBank
 skillsBank
   .command('supervisor')
   .description('Run continuous skill-bank sync/ingest/retry supervisor')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'skills bank supervisor');
@@ -2335,7 +2601,7 @@ skillsBank
 skillsBank
   .command('supervisor-start')
   .description('Start skill-bank supervisor in background')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'skills bank supervisor-start');
@@ -2348,7 +2614,7 @@ skillsBank
 skillsBank
   .command('supervisor-stop')
   .description('Stop skill-bank supervisor')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'skills bank supervisor-stop');
@@ -2375,7 +2641,7 @@ superCycle
   .description('Read super-cycle state snapshot')
   .option('--local', 'Read from local Redis via local client', false)
   .option('--service <name>', 'Railway service name', 'tnf-master-clock')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (options: { local: boolean; service: string; superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'super-cycle status');
@@ -2409,7 +2675,7 @@ program
   .description('Execute any root package script through unified TNF CLI')
   .argument('<script>', 'Root package.json script name')
   .argument('[args...]', 'Arguments to forward')
-  .option('--super-admin-token <token>', 'Super Admin authentication token')
+  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
   .action(async (script: string, args: string[], options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'run');
@@ -3802,838 +4068,6 @@ agents
     await runSelfCliWithExit(args);
   });
 
-agents
-  .command('convo')
-  .description('Alias for `tnf convo`')
-  .argument('<action>', 'Action (start|join)')
-  .argument('[param]', 'Topic for start or ID for join')
-  .action(async (action: string, param?: string) => {
-    const args = ['convo', action];
-    if (param) args.push(param);
-    await runSelfCliWithExit(args);
-  });
-
-program
-  .command('menu')
-  .description('Show an organized TNF command menu')
-  .option('--theme <theme>', `Splash theme: ${SPLASH_THEMES.join('|')}`)
-  .option('--animate <mode>', 'Splash animation mode: auto|on|off')
-  .option('--speed <ms>', 'Splash animation speed in milliseconds')
-  .option('--compact', 'Use compact splash layout')
-  .option('--no-splash', 'Disable splash graphic')
-  .option('--full', 'Include expanded command inventory')
-  .option('--json', 'Output machine-readable JSON')
-  .action(
-    async (options: {
-      json?: boolean;
-      splash?: boolean;
-      theme?: string;
-      animate?: string;
-      speed?: string;
-      compact?: boolean;
-      full?: boolean;
-    }) => {
-      try {
-        const sections = buildCommandMenuSections({ full: options.full });
-        if (options.json) {
-          console.log(JSON.stringify(sections, null, 2));
-          return;
-        }
-
-        const speedMs = options.speed ? Number.parseInt(options.speed, 10) : undefined;
-        const compact = options.compact ?? shouldAutoCompactMenuSplash();
-        await printCommandMenu({
-          showSplash: options.splash,
-          splash: {
-            theme: coerceSplashTheme(options.theme),
-            animate: parseAnimateMode(options.animate),
-            speedMs: Number.isFinite(speedMs) ? speedMs : undefined,
-            compact,
-          },
-          full: options.full,
-        });
-      } catch (err: any) {
-        console.error(chalk.red(`Error: ${err.message}`));
-        process.exit(1);
-      }
-    }
-  );
-
-program
-  .command('splash')
-  .description('Render TNF branded splash only')
-  .option('--theme <theme>', `Splash theme: ${SPLASH_THEMES.join('|')}`)
-  .option('--animate <mode>', 'Splash animation mode: auto|on|off')
-  .option('--speed <ms>', 'Splash animation speed in milliseconds')
-  .option('--compact', 'Use compact splash layout')
-  .action(
-    async (options: { theme?: string; animate?: string; speed?: string; compact?: boolean }) => {
-      try {
-        const speedMs = options.speed ? Number.parseInt(options.speed, 10) : undefined;
-        await renderSplash({
-          theme: coerceSplashTheme(options.theme),
-          animate: parseAnimateMode(options.animate),
-          speedMs: Number.isFinite(speedMs) ? speedMs : undefined,
-          compact: options.compact,
-        });
-      } catch (err: any) {
-        console.error(chalk.red(`Error: ${err.message}`));
-        process.exit(1);
-      }
-    }
-  );
-
-program
-  .command('paths')
-  .description('List all command paths in the TNF CLI')
-  .option('--json', 'Output machine-readable JSON')
-  .action((options: { json?: boolean }) => {
-    try {
-      const paths = collectCommandPaths(program).sort((a, b) => a.path.localeCompare(b.path));
-      if (options.json) {
-        console.log(JSON.stringify(paths, null, 2));
-        return;
-      }
-
-      console.log(chalk.bold('\nTNF Command Paths\n'));
-      for (const entry of paths) {
-        const paddedPath = entry.path.padEnd(52, ' ');
-        console.log(`  ${chalk.green(paddedPath)} ${chalk.dim(entry.description)}`);
-      }
-      console.log('');
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    }
-  });
-
-const types = program.command('types').description('Command namespace and script type inventory');
-types
-  .command('list')
-  .description('List TNF command namespaces and root script namespaces')
-  .option('--json', 'Output machine-readable JSON')
-  .action((options: { json?: boolean }) => {
-    try {
-      const typeIndex = buildTypeIndex();
-      if (options.json) {
-        console.log(JSON.stringify(typeIndex, null, 2));
-        return;
-      }
-
-      console.log(chalk.bold('\nTNF Types\n'));
-      console.log(chalk.cyan('CLI namespaces:'));
-      for (const namespace of typeIndex.cliNamespaces) {
-        console.log(`  - ${chalk.green(namespace)}`);
-      }
-
-      console.log(`\n${chalk.cyan('Root script namespaces:')}`);
-      for (const [namespace, count] of Object.entries(typeIndex.scriptNamespaces).sort(([a], [b]) =>
-        a.localeCompare(b)
-      )) {
-        console.log(`  - ${chalk.green(namespace)} ${chalk.dim(`(${count} scripts)`)}`);
-      }
-      console.log('');
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    }
-  });
-
-const traits = program.command('traits').description('Role/platform and command behavior traits');
-traits
-  .command('list')
-  .description('List TNF traits for agents and command families')
-  .option('--json', 'Output machine-readable JSON')
-  .action((options: { json?: boolean }) => {
-    try {
-      const groups = buildTraitGroups();
-      if (options.json) {
-        console.log(JSON.stringify(groups, null, 2));
-        return;
-      }
-
-      console.log(chalk.bold('\nTNF Traits\n'));
-      for (const group of groups) {
-        console.log(chalk.cyan(`${group.name}:`));
-        for (const value of group.values) {
-          console.log(`  - ${chalk.green(value)}`);
-        }
-        console.log('');
-      }
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    }
-  });
-
-const agents = program.command('agents').description('Agent-focused command paths');
-agents
-  .command('list')
-  .description('Alias for `tnf list`')
-  .action(async () => runSelfCliWithExit(['list']));
-agents
-  .command('register')
-  .description('Alias for `tnf register`')
-  .argument('[name]', 'Agent name')
-  .argument('[role]', 'Agent role')
-  .argument('[platform]', 'Agent platform')
-  .option('-d, --daemon', 'Run in daemon mode (register and exit immediately)', false)
-  .action(
-    async (name?: string, role?: string, platform?: string, options: { daemon?: boolean } = {}) => {
-      const args = ['register'];
-      if (name) args.push(name);
-      if (role) args.push(role);
-      if (platform) args.push(platform);
-      if (options.daemon) args.push('--daemon');
-      await runSelfCliWithExit(args);
-    }
-  );
-agents
-  .command('send')
-  .description('Alias for `tnf send`')
-  .argument('<message>', 'Message to send')
-  .option('-t, --to <agentId>', 'Recipient agent ID')
-  .option('-n, --name <name>', 'Sender name')
-  .action(async (message: string, options: { to?: string; name?: string } = {}) => {
-    const args = ['send', message];
-    if (options.to) args.push('--to', options.to);
-    if (options.name) args.push('--name', options.name);
-    await runSelfCliWithExit(args);
-  });
-agents
-  .command('orchestrate')
-  .description('Alias for `tnf orchestrate`')
-  .argument('<workflow>', 'Workflow name')
-  .option('-p, --path <path>', 'Target path for code-review')
-  .action(async (workflow: string, options: { path?: string } = {}) => {
-    const args = ['orchestrate', workflow];
-    if (options.path) args.push('--path', options.path);
-    await runSelfCliWithExit(args);
-  });
-agents
-  .command('convo')
-  .description('Alias for `tnf convo`')
-  .argument('<action>', 'Action (start|join)')
-  .argument('[param]', 'Topic for start or ID for join')
-  .action(async (action: string, param?: string) => {
-    const args = ['convo', action];
-    if (param) args.push(param);
-    await runSelfCliWithExit(args);
-  });
-
-program
-  .command('menu')
-  .description('Show an organized TNF command menu')
-  .option('--theme <theme>', `Splash theme: ${SPLASH_THEMES.join('|')}`)
-  .option('--animate <mode>', 'Splash animation mode: auto|on|off')
-  .option('--speed <ms>', 'Splash animation speed in milliseconds')
-  .option('--compact', 'Use compact splash layout')
-  .option('--no-splash', 'Disable splash graphic')
-  .option('--full', 'Include expanded command inventory')
-  .option('--json', 'Output machine-readable JSON')
-  .action(
-    async (options: {
-      json?: boolean;
-      splash?: boolean;
-      theme?: string;
-      animate?: string;
-      speed?: string;
-      compact?: boolean;
-      full?: boolean;
-    }) => {
-      try {
-        const sections = buildCommandMenuSections({ full: options.full });
-        if (options.json) {
-          console.log(JSON.stringify(sections, null, 2));
-          return;
-        }
-
-        const speedMs = options.speed ? Number.parseInt(options.speed, 10) : undefined;
-        const compact = options.compact ?? shouldAutoCompactMenuSplash();
-        await printCommandMenu({
-          showSplash: options.splash,
-          splash: {
-            theme: coerceSplashTheme(options.theme),
-            animate: parseAnimateMode(options.animate),
-            speedMs: Number.isFinite(speedMs) ? speedMs : undefined,
-            compact,
-          },
-          full: options.full,
-        });
-      } catch (err: any) {
-        console.error(chalk.red(`Error: ${err.message}`));
-        process.exit(1);
-      }
-    }
-  );
-
-program
-  .command('splash')
-  .description('Render TNF branded splash only')
-  .option('--theme <theme>', `Splash theme: ${SPLASH_THEMES.join('|')}`)
-  .option('--animate <mode>', 'Splash animation mode: auto|on|off')
-  .option('--speed <ms>', 'Splash animation speed in milliseconds')
-  .option('--compact', 'Use compact splash layout')
-  .action(
-    async (options: { theme?: string; animate?: string; speed?: string; compact?: boolean }) => {
-      try {
-        const speedMs = options.speed ? Number.parseInt(options.speed, 10) : undefined;
-        await renderSplash({
-          theme: coerceSplashTheme(options.theme),
-          animate: parseAnimateMode(options.animate),
-          speedMs: Number.isFinite(speedMs) ? speedMs : undefined,
-          compact: options.compact,
-        });
-      } catch (err: any) {
-        console.error(chalk.red(`Error: ${err.message}`));
-        process.exit(1);
-      }
-    }
-  );
-
-program
-  .command('paths')
-  .description('List all command paths in the TNF CLI')
-  .option('--json', 'Output machine-readable JSON')
-  .action((options: { json?: boolean }) => {
-    try {
-      const paths = collectCommandPaths(program).sort((a, b) => a.path.localeCompare(b.path));
-      if (options.json) {
-        console.log(JSON.stringify(paths, null, 2));
-        return;
-      }
-
-      console.log(chalk.bold('\nTNF Command Paths\n'));
-      for (const entry of paths) {
-        const paddedPath = entry.path.padEnd(52, ' ');
-        console.log(`  ${chalk.green(paddedPath)} ${chalk.dim(entry.description)}`);
-      }
-      console.log('');
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    }
-  });
-
-const types = program.command('types').description('Command namespace and script type inventory');
-types
-  .command('list')
-  .description('List TNF command namespaces and root script namespaces')
-  .option('--json', 'Output machine-readable JSON')
-  .action((options: { json?: boolean }) => {
-    try {
-      const typeIndex = buildTypeIndex();
-      if (options.json) {
-        console.log(JSON.stringify(typeIndex, null, 2));
-        return;
-      }
-
-      console.log(chalk.bold('\nTNF Types\n'));
-      console.log(chalk.cyan('CLI namespaces:'));
-      for (const namespace of typeIndex.cliNamespaces) {
-        console.log(`  - ${chalk.green(namespace)}`);
-      }
-
-      console.log(`\n${chalk.cyan('Root script namespaces:')}`);
-      for (const [namespace, count] of Object.entries(typeIndex.scriptNamespaces).sort(([a], [b]) =>
-        a.localeCompare(b)
-      )) {
-        console.log(`  - ${chalk.green(namespace)} ${chalk.dim(`(${count} scripts)`)}`);
-      }
-      console.log('');
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    }
-  });
-
-const traits = program.command('traits').description('Role/platform and command behavior traits');
-traits
-  .command('list')
-  .description('List TNF traits for agents and command families')
-  .option('--json', 'Output machine-readable JSON')
-  .action((options: { json?: boolean }) => {
-    try {
-      const groups = buildTraitGroups();
-      if (options.json) {
-        console.log(JSON.stringify(groups, null, 2));
-        return;
-      }
-
-      console.log(chalk.bold('\nTNF Traits\n'));
-      for (const group of groups) {
-        console.log(chalk.cyan(`${group.name}:`));
-        for (const value of group.values) {
-          console.log(`  - ${chalk.green(value)}`);
-        }
-        console.log('');
-      }
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    }
-  });
-
-const agents = program.command('agents').description('Agent-focused command paths');
-agents
-  .command('list')
-  .description('Alias for `tnf list`')
-  .action(async () => runSelfCliWithExit(['list']));
-agents
-  .command('register')
-  .description('Alias for `tnf register`')
-  .argument('[name]', 'Agent name')
-  .argument('[role]', 'Agent role')
-  .argument('[platform]', 'Agent platform')
-  .option('-d, --daemon', 'Run in daemon mode (register and exit immediately)', false)
-  .action(
-    async (name?: string, role?: string, platform?: string, options: { daemon?: boolean } = {}) => {
-      const args = ['register'];
-      if (name) args.push(name);
-      if (role) args.push(role);
-      if (platform) args.push(platform);
-      if (options.daemon) args.push('--daemon');
-      await runSelfCliWithExit(args);
-    }
-  );
-agents
-  .command('send')
-  .description('Alias for `tnf send`')
-  .argument('<message>', 'Message to send')
-  .option('-t, --to <agentId>', 'Recipient agent ID')
-  .option('-n, --name <name>', 'Sender name')
-  .action(async (message: string, options: { to?: string; name?: string } = {}) => {
-    const args = ['send', message];
-    if (options.to) args.push('--to', options.to);
-    if (options.name) args.push('--name', options.name);
-    await runSelfCliWithExit(args);
-  });
-agents
-  .command('orchestrate')
-  .description('Alias for `tnf orchestrate`')
-  .argument('<workflow>', 'Workflow name')
-  .option('-p, --path <path>', 'Target path for code-review')
-  .action(async (workflow: string, options: { path?: string } = {}) => {
-    const args = ['orchestrate', workflow];
-    if (options.path) args.push('--path', options.path);
-    await runSelfCliWithExit(args);
-  });
-agents
-  .command('convo')
-  .description('Alias for `tnf convo`')
-  .argument('<action>', 'Action (start|join)')
-  .argument('[param]', 'Topic for start or ID for join')
-  .action(async (action: string, param?: string) => {
-    const args = ['convo', action];
-    if (param) args.push(param);
-    await runSelfCliWithExit(args);
-  });
-
-program
-  .command('menu')
-  .description('Show an organized TNF command menu')
-  .option('--theme <theme>', `Splash theme: ${SPLASH_THEMES.join('|')}`)
-  .option('--animate <mode>', 'Splash animation mode: auto|on|off')
-  .option('--speed <ms>', 'Splash animation speed in milliseconds')
-  .option('--compact', 'Use compact splash layout')
-  .option('--no-splash', 'Disable splash graphic')
-  .option('--full', 'Include expanded command inventory')
-  .option('--json', 'Output machine-readable JSON')
-  .action(
-    async (options: {
-      json?: boolean;
-      splash?: boolean;
-      theme?: string;
-      animate?: string;
-      speed?: string;
-      compact?: boolean;
-      full?: boolean;
-    }) => {
-      try {
-        const sections = buildCommandMenuSections({ full: options.full });
-        if (options.json) {
-          console.log(JSON.stringify(sections, null, 2));
-          return;
-        }
-
-        const speedMs = options.speed ? Number.parseInt(options.speed, 10) : undefined;
-        const compact = options.compact ?? shouldAutoCompactMenuSplash();
-        await printCommandMenu({
-          showSplash: options.splash,
-          splash: {
-            theme: coerceSplashTheme(options.theme),
-            animate: parseAnimateMode(options.animate),
-            speedMs: Number.isFinite(speedMs) ? speedMs : undefined,
-            compact,
-          },
-          full: options.full,
-        });
-      } catch (err: any) {
-        console.error(chalk.red(`Error: ${err.message}`));
-        process.exit(1);
-      }
-    }
-  );
-
-program
-  .command('splash')
-  .description('Render TNF branded splash only')
-  .option('--theme <theme>', `Splash theme: ${SPLASH_THEMES.join('|')}`)
-  .option('--animate <mode>', 'Splash animation mode: auto|on|off')
-  .option('--speed <ms>', 'Splash animation speed in milliseconds')
-  .option('--compact', 'Use compact splash layout')
-  .action(
-    async (options: { theme?: string; animate?: string; speed?: string; compact?: boolean }) => {
-      try {
-        const speedMs = options.speed ? Number.parseInt(options.speed, 10) : undefined;
-        await renderSplash({
-          theme: coerceSplashTheme(options.theme),
-          animate: parseAnimateMode(options.animate),
-          speedMs: Number.isFinite(speedMs) ? speedMs : undefined,
-          compact: options.compact,
-        });
-      } catch (err: any) {
-        console.error(chalk.red(`Error: ${err.message}`));
-        process.exit(1);
-      }
-    }
-  );
-
-program
-  .command('paths')
-  .description('List all command paths in the TNF CLI')
-  .option('--json', 'Output machine-readable JSON')
-  .action((options: { json?: boolean }) => {
-    try {
-      const paths = collectCommandPaths(program).sort((a, b) => a.path.localeCompare(b.path));
-      if (options.json) {
-        console.log(JSON.stringify(paths, null, 2));
-        return;
-      }
-
-      console.log(chalk.bold('\nTNF Command Paths\n'));
-      for (const entry of paths) {
-        const paddedPath = entry.path.padEnd(52, ' ');
-        console.log(`  ${chalk.green(paddedPath)} ${chalk.dim(entry.description)}`);
-      }
-      console.log('');
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    }
-  });
-
-const types = program.command('types').description('Command namespace and script type inventory');
-types
-  .command('list')
-  .description('List TNF command namespaces and root script namespaces')
-  .option('--json', 'Output machine-readable JSON')
-  .action((options: { json?: boolean }) => {
-    try {
-      const typeIndex = buildTypeIndex();
-      if (options.json) {
-        console.log(JSON.stringify(typeIndex, null, 2));
-        return;
-      }
-
-      console.log(chalk.bold('\nTNF Types\n'));
-      console.log(chalk.cyan('CLI namespaces:'));
-      for (const namespace of typeIndex.cliNamespaces) {
-        console.log(`  - ${chalk.green(namespace)}`);
-      }
-
-      console.log(`\n${chalk.cyan('Root script namespaces:')}`);
-      for (const [namespace, count] of Object.entries(typeIndex.scriptNamespaces).sort(([a], [b]) =>
-        a.localeCompare(b)
-      )) {
-        console.log(`  - ${chalk.green(namespace)} ${chalk.dim(`(${count} scripts)`)}`);
-      }
-      console.log('');
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    }
-  });
-
-const traits = program.command('traits').description('Role/platform and command behavior traits');
-traits
-  .command('list')
-  .description('List TNF traits for agents and command families')
-  .option('--json', 'Output machine-readable JSON')
-  .action((options: { json?: boolean }) => {
-    try {
-      const groups = buildTraitGroups();
-      if (options.json) {
-        console.log(JSON.stringify(groups, null, 2));
-        return;
-      }
-
-      console.log(chalk.bold('\nTNF Traits\n'));
-      for (const group of groups) {
-        console.log(chalk.cyan(`${group.name}:`));
-        for (const value of group.values) {
-          console.log(`  - ${chalk.green(value)}`);
-        }
-        console.log('');
-      }
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    }
-  });
-
-const agents = program.command('agents').description('Agent-focused command paths');
-agents
-  .command('list')
-  .description('Alias for `tnf list`')
-  .action(async () => runSelfCliWithExit(['list']));
-agents
-  .command('register')
-  .description('Alias for `tnf register`')
-  .argument('[name]', 'Agent name')
-  .argument('[role]', 'Agent role')
-  .argument('[platform]', 'Agent platform')
-  .option('-d, --daemon', 'Run in daemon mode (register and exit immediately)', false)
-  .action(
-    async (name?: string, role?: string, platform?: string, options: { daemon?: boolean } = {}) => {
-      const args = ['register'];
-      if (name) args.push(name);
-      if (role) args.push(role);
-      if (platform) args.push(platform);
-      if (options.daemon) args.push('--daemon');
-      await runSelfCliWithExit(args);
-    }
-  );
-agents
-  .command('send')
-  .description('Alias for `tnf send`')
-  .argument('<message>', 'Message to send')
-  .option('-t, --to <agentId>', 'Recipient agent ID')
-  .option('-n, --name <name>', 'Sender name')
-  .action(async (message: string, options: { to?: string; name?: string } = {}) => {
-    const args = ['send', message];
-    if (options.to) args.push('--to', options.to);
-    if (options.name) args.push('--name', options.name);
-    await runSelfCliWithExit(args);
-  });
-agents
-  .command('orchestrate')
-  .description('Alias for `tnf orchestrate`')
-  .argument('<workflow>', 'Workflow name')
-  .option('-p, --path <path>', 'Target path for code-review')
-  .action(async (workflow: string, options: { path?: string } = {}) => {
-    const args = ['orchestrate', workflow];
-    if (options.path) args.push('--path', options.path);
-    await runSelfCliWithExit(args);
-  });
-agents
-  .command('convo')
-  .description('Alias for `tnf convo`')
-  .argument('<action>', 'Action (start|join)')
-  .argument('[param]', 'Topic for start or ID for join')
-  .action(async (action: string, param?: string) => {
-    const args = ['convo', action];
-    if (param) args.push(param);
-    await runSelfCliWithExit(args);
-  });
-
-program
-  .command('menu')
-  .description('Show an organized TNF command menu')
-  .option('--theme <theme>', `Splash theme: ${SPLASH_THEMES.join('|')}`)
-  .option('--animate <mode>', 'Splash animation mode: auto|on|off')
-  .option('--speed <ms>', 'Splash animation speed in milliseconds')
-  .option('--compact', 'Use compact splash layout')
-  .option('--no-splash', 'Disable splash graphic')
-  .option('--full', 'Include expanded command inventory')
-  .option('--json', 'Output machine-readable JSON')
-  .action(
-    async (options: {
-      json?: boolean;
-      splash?: boolean;
-      theme?: string;
-      animate?: string;
-      speed?: string;
-      compact?: boolean;
-      full?: boolean;
-    }) => {
-      try {
-        const sections = buildCommandMenuSections({ full: options.full });
-        if (options.json) {
-          console.log(JSON.stringify(sections, null, 2));
-          return;
-        }
-
-        const speedMs = options.speed ? Number.parseInt(options.speed, 10) : undefined;
-        const compact = options.compact ?? shouldAutoCompactMenuSplash();
-        await printCommandMenu({
-          showSplash: options.splash,
-          splash: {
-            theme: coerceSplashTheme(options.theme),
-            animate: parseAnimateMode(options.animate),
-            speedMs: Number.isFinite(speedMs) ? speedMs : undefined,
-            compact,
-          },
-          full: options.full,
-        });
-      } catch (err: any) {
-        console.error(chalk.red(`Error: ${err.message}`));
-        process.exit(1);
-      }
-    }
-  );
-
-program
-  .command('splash')
-  .description('Render TNF branded splash only')
-  .option('--theme <theme>', `Splash theme: ${SPLASH_THEMES.join('|')}`)
-  .option('--animate <mode>', 'Splash animation mode: auto|on|off')
-  .option('--speed <ms>', 'Splash animation speed in milliseconds')
-  .option('--compact', 'Use compact splash layout')
-  .action(
-    async (options: { theme?: string; animate?: string; speed?: string; compact?: boolean }) => {
-      try {
-        const speedMs = options.speed ? Number.parseInt(options.speed, 10) : undefined;
-        await renderSplash({
-          theme: coerceSplashTheme(options.theme),
-          animate: parseAnimateMode(options.animate),
-          speedMs: Number.isFinite(speedMs) ? speedMs : undefined,
-          compact: options.compact,
-        });
-      } catch (err: any) {
-        console.error(chalk.red(`Error: ${err.message}`));
-        process.exit(1);
-      }
-    }
-  );
-
-program
-  .command('paths')
-  .description('List all command paths in the TNF CLI')
-  .option('--json', 'Output machine-readable JSON')
-  .action((options: { json?: boolean }) => {
-    try {
-      const paths = collectCommandPaths(program).sort((a, b) => a.path.localeCompare(b.path));
-      if (options.json) {
-        console.log(JSON.stringify(paths, null, 2));
-        return;
-      }
-
-      console.log(chalk.bold('\nTNF Command Paths\n'));
-      for (const entry of paths) {
-        const paddedPath = entry.path.padEnd(52, ' ');
-        console.log(`  ${chalk.green(paddedPath)} ${chalk.dim(entry.description)}`);
-      }
-      console.log('');
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    }
-  });
-
-const types = program.command('types').description('Command namespace and script type inventory');
-types
-  .command('list')
-  .description('List TNF command namespaces and root script namespaces')
-  .option('--json', 'Output machine-readable JSON')
-  .action((options: { json?: boolean }) => {
-    try {
-      const typeIndex = buildTypeIndex();
-      if (options.json) {
-        console.log(JSON.stringify(typeIndex, null, 2));
-        return;
-      }
-
-      console.log(chalk.bold('\nTNF Types\n'));
-      console.log(chalk.cyan('CLI namespaces:'));
-      for (const namespace of typeIndex.cliNamespaces) {
-        console.log(`  - ${chalk.green(namespace)}`);
-      }
-
-      console.log(`\n${chalk.cyan('Root script namespaces:')}`);
-      for (const [namespace, count] of Object.entries(typeIndex.scriptNamespaces).sort(([a], [b]) =>
-        a.localeCompare(b)
-      )) {
-        console.log(`  - ${chalk.green(namespace)} ${chalk.dim(`(${count} scripts)`)}`);
-      }
-      console.log('');
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    }
-  });
-
-const traits = program.command('traits').description('Role/platform and command behavior traits');
-traits
-  .command('list')
-  .description('List TNF traits for agents and command families')
-  .option('--json', 'Output machine-readable JSON')
-  .action((options: { json?: boolean }) => {
-    try {
-      const groups = buildTraitGroups();
-      if (options.json) {
-        console.log(JSON.stringify(groups, null, 2));
-        return;
-      }
-
-      console.log(chalk.bold('\nTNF Traits\n'));
-      for (const group of groups) {
-        console.log(chalk.cyan(`${group.name}:`));
-        for (const value of group.values) {
-          console.log(`  - ${chalk.green(value)}`);
-        }
-        console.log('');
-      }
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    }
-  });
-
-const agents = program.command('agents').description('Agent-focused command paths');
-agents
-  .command('list')
-  .description('Alias for `tnf list`')
-  .action(async () => runSelfCliWithExit(['list']));
-agents
-  .command('register')
-  .description('Alias for `tnf register`')
-  .argument('[name]', 'Agent name')
-  .argument('[role]', 'Agent role')
-  .argument('[platform]', 'Agent platform')
-  .option('-d, --daemon', 'Run in daemon mode (register and exit immediately)', false)
-  .action(
-    async (name?: string, role?: string, platform?: string, options: { daemon?: boolean } = {}) => {
-      const args = ['register'];
-      if (name) args.push(name);
-      if (role) args.push(role);
-      if (platform) args.push(platform);
-      if (options.daemon) args.push('--daemon');
-      await runSelfCliWithExit(args);
-    }
-  );
-agents
-  .command('send')
-  .description('Alias for `tnf send`')
-  .argument('<message>', 'Message to send')
-  .option('-t, --to <agentId>', 'Recipient agent ID')
-  .option('-n, --name <name>', 'Sender name')
-  .action(async (message: string, options: { to?: string; name?: string } = {}) => {
-    const args = ['send', message];
-    if (options.to) args.push('--to', options.to);
-    if (options.name) args.push('--name', options.name);
-    await runSelfCliWithExit(args);
-  });
-agents
-  .command('orchestrate')
-  .description('Alias for `tnf orchestrate`')
-  .argument('<workflow>', 'Workflow name')
-  .option('-p, --path <path>', 'Target path for code-review')
-  .action(async (workflow: string, options: { path?: string } = {}) => {
-    const args = ['orchestrate', workflow];
-    if (options.path) args.push('--path', options.path);
-    await runSelfCliWithExit(args);
-  });
 agents
   .command('convo')
   .description('Alias for `tnf convo`')

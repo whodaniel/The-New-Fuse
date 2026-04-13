@@ -12,15 +12,7 @@
     "128": "icons/icon128.png"
   },
 
-  "action": {
-    "default_popup": "popup/index.html",
-    "default_icon": {
-      "16": "icons/icon16.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
-    },
-    "default_title": "TNF Gemini Bridge"
-  },
+
 
   "background": {
     "service_worker": "background/index.js",
@@ -93,15 +85,7 @@
     "https://*.usercontent.goog/*"
   ],
 
-  "commands": {
-    "toggle-panel": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+G",
-        "mac": "Command+Shift+G"
-      },
-      "description": "Toggle the Gemini Bridge panel"
-    }
-  },
+
 
   "web_accessible_resources": [
     {

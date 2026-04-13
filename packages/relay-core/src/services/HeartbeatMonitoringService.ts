@@ -105,6 +105,19 @@ export class HeartbeatMonitoringService extends EventEmitter {
   }
 
   /**
+   * Unregister agent from monitoring
+   */
+  unregisterAgent(agentId: string): void {
+    if (this.agentHeartbeats.has(agentId)) {
+      this.agentHeartbeats.delete(agentId);
+      this.stagnationAlerts.delete(agentId);
+      this.fallbackActions.delete(agentId);
+      this.logger.info(`Unregistered agent from heartbeat monitoring: ${agentId}`);
+      this.emit('agent_unregistered', agentId);
+    }
+  }
+
+  /**
    * Record heartbeat from agent
    */
   recordHeartbeat(agentId: string, taskId?: string): void {
@@ -153,10 +166,18 @@ export class HeartbeatMonitoringService extends EventEmitter {
   private performHealthCheck(): void {
     const now = new Date();
     const stagnationThreshold = this.config.stagnationThresholdMs;
+    const PRUNE_THRESHOLD = 60 * 60 * 1000; // 1 hour inactivity = prune
 
     for (const [agentId, heartbeat] of this.agentHeartbeats.entries()) {
       const timeSinceLastHeartbeat = now.getTime() - heartbeat.lastHeartbeat.getTime();
       const timeSinceLastActivity = now.getTime() - heartbeat.lastActivity.getTime();
+
+      // AUTO-PRUNE: If agent has been inactive for a long time, remove it to prevent memory leak
+      if (timeSinceLastHeartbeat > PRUNE_THRESHOLD) {
+        this.logger.info(`🧹 Auto-pruning long-inactive agent from heartbeat monitoring: ${agentId}`);
+        this.unregisterAgent(agentId);
+        continue;
+      }
 
       // Check for heartbeat timeout
       if (timeSinceLastHeartbeat > this.config.timeoutMs) {

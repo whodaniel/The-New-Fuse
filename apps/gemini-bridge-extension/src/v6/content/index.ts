@@ -10,10 +10,10 @@
 
 import { simpleChatBridge } from './adapters/SimpleChatBridge';
 import './guard'; // MUST BE FIRST - Patches customElements.define
-import { createEnhancedFloatingPanel, EnhancedFloatingPanel } from './injectable/FloatingPanel';
 import { accessibilityTree } from './utils/AccessibilityTree';
 import { captchaHandler } from './utils/CaptchaHandler';
 import { humanSimulator } from './utils/HumanBehaviorSimulator';
+import { registerPokerServiceHandlers } from '../services/PokerTechnicianService';
 
 const shouldSkipForPage = (): boolean => {
   const host = window.location.hostname;

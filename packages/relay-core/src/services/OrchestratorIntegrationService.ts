@@ -79,6 +79,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
   private handoffService: AgentHandoffTemplateService;
   private taskStates: Map<string, TaskState> = new Map();
   private isInitialized: boolean = false;
+  private pruneInterval?: NodeJS.Timeout;
 
   constructor(config: OrchestratorConfig, logger: Logger) {
     super();
@@ -117,6 +118,11 @@ export class OrchestratorIntegrationService extends EventEmitter {
       this.stallDetector.start();
       this.logger.info('Stall detection service started');
 
+      // Start periodic pruning of completed/failed tasks
+      this.pruneInterval = setInterval(() => {
+        this.pruneTaskStates();
+      }, 30 * 60 * 1000); // Every 30 minutes
+
       // Initialize state preservation systems
       if (this.config.enableStatePreservation) {
         await this.initializeStatePreservation();
@@ -145,17 +151,47 @@ export class OrchestratorIntegrationService extends EventEmitter {
     if (this.config.enableHeartbeatMonitoring) {
       this.heartbeatService.stop();
     }
+// Stop stall detection
+this.stallDetector.stop();
 
-    // Stop stall detection
-    this.stallDetector.stop();
+if (this.pruneInterval) {
+  clearInterval(this.pruneInterval);
+  this.pruneInterval = undefined;
+}
 
-    // Final cleanup if needed
-    if (this.config.enableCleanup) {
-      await this.performFinalCleanup();
-    }
+// Final cleanup if needed
+if (this.config.enableCleanup) {
+  await this.performFinalCleanup();
+}
 
-    this.isInitialized = false;
-    this.emit('orchestrator_shutdown');
+this.isInitialized = false;
+this.emit('orchestrator_shutdown');
+}
+
+/**
+* Prune completed and failed tasks from memory to prevent memory leaks
+* Keeps active tasks and recently completed tasks (last 1 hour)
+*/
+public pruneTaskStates(maxAgeMs: number = 60 * 60 * 1000): number {
+const now = Date.now();
+let prunedCount = 0;
+
+for (const [taskId, state] of this.taskStates.entries()) {
+  const isTerminal = state.status === 'completed' || state.status === 'failed';
+  const age = now - state.lastUpdate.getTime();
+
+  if (isTerminal && age > maxAgeMs) {
+    this.taskStates.delete(taskId);
+    prunedCount++;
+  }
+}
+
+if (prunedCount > 0) {
+  this.logger.info(`🧹 Memory Leak Prevention: Pruned ${prunedCount} terminal tasks from orchestrator state`);
+}
+
+return prunedCount;
+}
     this.logger.info('Orchestrator Integration Service shutdown complete');
   }
 

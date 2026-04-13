@@ -26,8 +26,9 @@ async function bootSandbox() {
     const parsedStatus = JSON.parse(status);
     
     // Check if the sandbox service is currently 'removed' or 'sleeping'
-    // This is a placeholder for the actual service name in your Railway project
-    const sandboxService = parsedStatus.services?.find(s => s.name.toLowerCase().includes('sandbox'));
+    // Railway status --json has services at .services.edges[].node
+    const services = parsedStatus.services?.edges?.map(edge => edge.node) || [];
+    const sandboxService = services.find(s => s.name.toLowerCase().includes('sandbox'));
 
     if (sandboxService) {
       console.log(`🚀 [ZeroClaw] Found sandbox service: ${sandboxService.id}. Triggering deployment...`);

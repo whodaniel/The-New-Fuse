@@ -270,6 +270,11 @@ export class MasterAgentRegistry extends EventEmitter {
   private web3Provider: JsonRpcProvider | null = null;
   private wallet: Wallet | null = null;
 
+  // Interval handles for cleanup
+  private healthCheckInterval?: NodeJS.Timeout;
+  private verificationInterval?: NodeJS.Timeout;
+  private spreadsheetSyncInterval?: NodeJS.Timeout;
+
   constructor(
     drizzle: any,
     logger: Logger,
@@ -960,8 +965,11 @@ export class MasterAgentRegistry extends EventEmitter {
    * Continuous monitoring of all agents and system state
    */
   private startPeriodicVerification(): void {
+    // Clear any existing intervals
+    this.stop();
+
     // System health check every 2 minutes
-    setInterval(
+    this.healthCheckInterval = setInterval(
       () => {
         this.performSystemHealthCheck();
       },
@@ -969,7 +977,7 @@ export class MasterAgentRegistry extends EventEmitter {
     );
 
     // Full verification every 30 minutes
-    setInterval(
+    this.verificationInterval = setInterval(
       () => {
         this.performFullSystemVerification();
       },
@@ -977,7 +985,7 @@ export class MasterAgentRegistry extends EventEmitter {
     );
 
     // Spreadsheet sync every hour
-    setInterval(
+    this.spreadsheetSyncInterval = setInterval(
       () => {
         this.syncAllAgentsToSpreadsheet();
       },
@@ -985,8 +993,48 @@ export class MasterAgentRegistry extends EventEmitter {
     );
   }
 
+  /**
+   * Stop all periodic tasks
+   */
+  public stop(): void {
+    if (this.healthCheckInterval) clearInterval(this.healthCheckInterval);
+    if (this.verificationInterval) clearInterval(this.verificationInterval);
+    if (this.spreadsheetSyncInterval) clearInterval(this.spreadsheetSyncInterval);
+    
+    this.healthCheckInterval = undefined;
+    this.verificationInterval = undefined;
+    this.spreadsheetSyncInterval = undefined;
+  }
+
+  /**
+   * Prune inactive agents from in-memory cache to prevent memory leaks
+   * Default: 24 hours
+   */
+  public pruneInactiveAgents(maxAgeMs: number = 24 * 60 * 60 * 1000): number {
+    const now = Date.now();
+    let prunedCount = 0;
+
+    for (const [agentId, profile] of this.agentProfiles.entries()) {
+      const lastSeenTime = profile.lastSeen.getTime();
+      if (now - lastSeenTime > maxAgeMs) {
+        this.agentProfiles.delete(agentId);
+        prunedCount++;
+      }
+    }
+
+    if (prunedCount > 0) {
+      this.logger.info(`🧹 Memory Leak Prevention: Pruned ${prunedCount} inactive agents from registry cache`);
+    }
+
+    return prunedCount;
+  }
+
   private performSystemHealthCheck(): void {
     const now = new Date();
+    
+    // Prune inactive agents first to keep cache size under control
+    this.pruneInactiveAgents();
+
     let healthScore = 100;
     let activeAgents = 0;
     let onlineAgents = 0;
