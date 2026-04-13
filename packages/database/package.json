@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/database",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "0.1.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -49,7 +51,7 @@
     "@nestjs/config": "^4.0.2",
     "@the-new-fuse/infrastructure": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
-    "drizzle-orm": "^0.38.3",
+    "drizzle-orm": "^0.45.2",
     "pg": "^8.16.3",
     "postgres": "^3.4.5",
     "reflect-metadata": "^0.2.2",
@@ -62,7 +64,7 @@
     "@types/pg": "^8.11.10",
     "bcrypt": "^5.1.1",
     "dotenv": "^17.2.3",
-    "drizzle-kit": "^0.30.1",
+    "drizzle-kit": "^0.31.0",
     "eslint": "^9.38.0",
     "jest": "^30.3.0",
     "rimraf": "^6.0.1",
