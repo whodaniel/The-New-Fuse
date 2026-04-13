@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "outDir": "./dist",
     "rootDir": "./src",
     "module": "ESNext",
@@ -9,11 +10,7 @@
     "noEmit": false,
     "baseUrl": ".",
     "jsx": "react-jsx",
-    "types": [
-      "jest",
-      "node",
-      "react"
-    ],
+    "types": ["jest", "node", "react"],
     "esModuleInterop": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -23,9 +20,7 @@
     "noImplicitAny": false,
     "strict": false
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "exclude": [
     "node_modules",
     "dist",

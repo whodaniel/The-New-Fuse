@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "sourceMap": false,
     "removeComments": true,
     "noEmitOnError": true,
@@ -10,15 +11,6 @@
     "declaration": true,
     "declarationMap": false
   },
-  "include": [
-    "src/**/*",
-    "packages/**/*",
-    "apps/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ]
+  "include": ["src/**/*", "packages/**/*", "apps/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

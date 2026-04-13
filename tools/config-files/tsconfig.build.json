@@ -1,13 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "noEmit": false,
     "skipLibCheck": true
   },
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "dist"
-  ]
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "dist"]
 }

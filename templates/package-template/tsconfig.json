@@ -1,14 +1,11 @@
 {
   "extends": "../../tsconfig.standard.json",
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "rootDir": "./src",
     "outDir": "./dist",
     "composite": true
   },
-  "include": [
-    "src/**/*"
-  ],
-  "references": [
-    { "path": "../types" }
-  ]
+  "include": ["src/**/*"],
+  "references": [{ "path": "../types" }]
 }

@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "target": "ES2022",
     "module": "ES2022",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "node",
     "lib": ["ES2022"],
     "types": ["@cloudflare/workers-types"],
     "strict": true,

@@ -1,16 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "types": ["jest", "node", "selenium-webdriver"],
     "esModuleInterop": true,
     "module": "commonjs"
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/test/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/test/**/*.ts"],
+  "exclude": ["node_modules"]
 }

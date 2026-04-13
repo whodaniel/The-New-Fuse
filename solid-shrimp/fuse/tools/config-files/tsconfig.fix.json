@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -24,11 +25,5 @@
     "packages/**/*.ts",
     "packages/**/*.tsx"
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build",
-    "**/*.spec.ts",
-    "**/*.test.ts"
-  ]
+  "exclude": ["node_modules", "dist", "build", "**/*.spec.ts", "**/*.test.ts"]
 }
