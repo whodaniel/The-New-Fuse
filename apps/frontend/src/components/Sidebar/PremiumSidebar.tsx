@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, LogOut, X, Zap } from 'lucide-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { SIDEBAR_NAVIGATION, type SidebarNavItem } from '../../config/sidebarNavigation';
 import { useAuth } from '../../hooks/useAuth';
@@ -36,69 +36,8 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
   const advancedItems = navigation.filter((item) => item.section === 'advanced');
   const hasAdvancedItems = advancedItems.length > 0;
 
-  // State for collapsible groups, open items, and advanced toggle
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
-  const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
+  // State for advanced toggle
   const [showAdvanced, setShowAdvanced] = useState(false);
-
-  // Group navigation items by section for auto-expand logic
-  const groupedNavigation = useMemo(
-    () =>
-      sections
-        .map((section) => ({
-          id: section.key,
-          label: section.label,
-          items: navigation.filter((item) => item.section === section.key),
-        }))
-        .filter((group) => group.items.length > 0),
-    [navigation, sections]
-  );
-
-  // Check if a nav item's route is currently active
-  const isItemRouteActive = useCallback(
-    (item: SidebarNavItem): boolean =>
-      item.href === '/'
-        ? pathname === '/'
-        : pathname === item.href || pathname.startsWith(`${item.href}/`),
-    [pathname]
-  );
-
-  React.useEffect(() => {
-    setOpenGroups((prev: Record<string, boolean>) => {
-      let changed = false;
-      const next = { ...prev };
-
-      for (const group of groupedNavigation) {
-        const groupHasActiveRoute = group.items.some(isItemRouteActive);
-        if (groupHasActiveRoute && !next[group.id]) {
-          next[group.id] = true;
-          changed = true;
-        }
-      }
-
-      return changed ? next : prev;
-    });
-  }, [groupedNavigation, isItemRouteActive]);
-
-  React.useEffect(() => {
-    setOpenItems((prev: Record<string, boolean>) => {
-      let changed = false;
-      const next = { ...prev };
-
-      for (const item of navigation) {
-        if (!item.children || item.children.length === 0) {
-          continue;
-        }
-
-        if (isItemRouteActive(item) && next[item.name] !== true) {
-          next[item.name] = true;
-          changed = true;
-        }
-      }
-
-      return changed ? next : prev;
-    });
-  }, [isItemRouteActive, navigation]);
 
   const handleLogout = async () => {
     try {
