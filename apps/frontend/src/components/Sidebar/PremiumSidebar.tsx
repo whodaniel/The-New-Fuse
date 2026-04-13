@@ -1,11 +1,7 @@
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, LogOut, X, Zap } from 'lucide-react';
-import React from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import {
-  SIDEBAR_NAVIGATION,
-  SIDEBAR_SECTION_GROUPS,
-  type SidebarNavItem,
-} from '../../config/sidebarNavigation';
+import { SIDEBAR_NAVIGATION, type SidebarNavItem } from '../../config/sidebarNavigation';
 import { useAuth } from '../../hooks/useAuth';
 import { useAuthorization } from '../../hooks/useAuthorization';
 
@@ -23,7 +19,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
   setIsCollapsed,
 }) => {
   const { pathname } = useLocation();
-  const { logout, isAuthenticated } = useAuth();
+  const { logout } = useAuth();
   const { hasRole } = useAuthorization();
 
   const navigation = SIDEBAR_NAVIGATION.filter((item) => {
@@ -39,14 +35,36 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
   ];
   const advancedItems = navigation.filter((item) => item.section === 'advanced');
   const hasAdvancedItems = advancedItems.length > 0;
-  const isAdvancedRouteActive = advancedItems.some((item) =>
-    item.href === '/'
-      ? pathname === '/'
-      : pathname === item.href || pathname.startsWith(`${item.href}/`)
+
+  // State for collapsible groups, open items, and advanced toggle
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  // Group navigation items by section for auto-expand logic
+  const groupedNavigation = useMemo(
+    () =>
+      sections
+        .map((section) => ({
+          id: section.key,
+          label: section.label,
+          items: navigation.filter((item) => item.section === section.key),
+        }))
+        .filter((group) => group.items.length > 0),
+    [navigation, sections]
+  );
+
+  // Check if a nav item's route is currently active
+  const isItemRouteActive = useCallback(
+    (item: SidebarNavItem): boolean =>
+      item.href === '/'
+        ? pathname === '/'
+        : pathname === item.href || pathname.startsWith(`${item.href}/`),
+    [pathname]
   );
 
   React.useEffect(() => {
-    setOpenGroups((prev) => {
+    setOpenGroups((prev: Record<string, boolean>) => {
       let changed = false;
       const next = { ...prev };
 
@@ -63,7 +81,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
   }, [groupedNavigation, isItemRouteActive]);
 
   React.useEffect(() => {
-    setOpenItems((prev) => {
+    setOpenItems((prev: Record<string, boolean>) => {
       let changed = false;
       const next = { ...prev };
 

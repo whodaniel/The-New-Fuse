@@ -166,34 +166,11 @@ export const useAuthorization = () => {
     filterByTenancy: <T extends { tenantId?: string; agencyId?: string }>(items: T[]): T[] => {
       if (hasRole(['SUPER_ADMIN', 'ADMIN'])) return items;
 
-  return React.useMemo(
-    () => ({
-      hasRole: hasRoleCallback,
-      canAccess: canAccessCallback,
-      // Master admin checks
-      isSuperAdmin: isBizSynthMasterAdmin || hasRoleCallback(['SUPER_ADMIN']),
-      isBizSynthMasterAdmin,
-      // Agency admin checks
-      isAgencyOwner: hasRoleCallback(['AGENCY_OWNER']),
-      isAgencyAdmin: hasRoleCallback(['AGENCY_ADMIN', 'AGENCY_MANAGER']),
-      isAnyAgencyAdmin: hasRoleCallback(['AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER']),
-      // Legacy checks
-      isAdmin: hasRoleCallback(['SUPER_ADMIN', 'ADMIN']),
-      isDeveloper: hasRoleCallback(['DEVELOPER']),
-      // User info
-      userRole: isBizSynthMasterAdmin ? 'SUPER_ADMIN' : normalizeRole(user?.role) || undefined,
-      userRoles: effectiveRoles,
-      // Helper to filter items by tenancy
-      filterByTenancy: <T extends { tenantId?: string; agencyId?: string }>(items: T[]): T[] => {
-        if (hasRoleCallback(['SUPER_ADMIN', 'ADMIN'])) return items;
+      if (hasRole(['AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER'])) {
+        return items.filter((item) => !item.agencyId || item.agencyId === (user as any).agencyId);
+      }
 
-        if (hasRoleCallback(['AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER'])) {
-          return items.filter((item) => !item.agencyId || item.agencyId === (user as any).agencyId);
-        }
-
-        return items.filter((item) => !item.tenantId || item.tenantId === (user as any).tenantId);
-      },
-    }),
-    [user, isBizSynthMasterAdmin, hasRoleCallback, canAccessCallback, effectiveRoles]
-  );
+      return items.filter((item) => !item.tenantId || item.tenantId === (user as any).tenantId);
+    },
+  };
 };

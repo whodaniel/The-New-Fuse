@@ -5,7 +5,6 @@ import {
   type Message,
   type SynthesisJob,
 } from '@/services/chatApi';
-import OpsPageHeader from '@/components/ops/OpsPageHeader';
 import {
   Copy,
   Lightbulb,
@@ -547,13 +546,11 @@ function ChatPage() {
     <div className="h-[calc(100vh-64px)] w-full p-4 bg-background text-foreground flex flex-col">
       {/* Header */}
       <div className="mb-6 flex-none">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-2xl font-bold text-foreground mb-2">💬 Chat Center</h1>
             <p className="text-muted-foreground">Communicate with AI agents and get instant help</p>
           </div>
-        }
-        actions={
           <div className="flex flex-wrap gap-2 md:justify-end">
             <button
               onClick={() => setIsAgentModalOpen(true)}
@@ -584,8 +581,8 @@ function ChatPage() {
               {isSynthesizing ? 'Synthesizing...' : 'Creative Synthesis'}
             </button>
           </div>
-        }
-      />
+        </div>
+      </div>
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-4 overflow-hidden">
         {/* Agent Selection Sidebar */}
@@ -643,7 +640,7 @@ function ChatPage() {
                   <button
                     onClick={() => setIsPaused(!isPaused)}
                     className="p-2 text-muted-foreground hover:text-foreground rounded-full"
-                    aria-label={isPaused ? "Resume auto-responses" : "Pause auto-responses"}
+                    aria-label={isPaused ? 'Resume auto-responses' : 'Pause auto-responses'}
                   >
                     {isPaused ? <Play size={16} /> : <Pause size={16} />}
                   </button>
@@ -716,10 +713,16 @@ function ChatPage() {
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  <button aria-label="Attach file" className="p-2 text-muted-foreground hover:text-foreground rounded transition-colors">
+                  <button
+                    aria-label="Attach file"
+                    className="p-2 text-muted-foreground hover:text-foreground rounded transition-colors"
+                  >
                     <Paperclip size={20} />
                   </button>
-                  <button aria-label="Settings" className="p-2 text-muted-foreground hover:text-foreground rounded transition-colors">
+                  <button
+                    aria-label="Settings"
+                    className="p-2 text-muted-foreground hover:text-foreground rounded transition-colors"
+                  >
                     <Settings size={20} />
                   </button>
                 </div>
@@ -832,26 +835,50 @@ function ChatPage() {
 
       {/* ═══════════ AGENT MODAL ═══════════ */}
       {isAgentModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setIsAgentModalOpen(false)}>
-          <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[80vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setIsAgentModalOpen(false)}
+        >
+          <div
+            className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[80vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="p-5 border-b border-border flex items-center justify-between">
-              <h2 className="text-lg font-bold text-foreground flex items-center gap-2"><Users size={20} /> Active Agents</h2>
-              <button onClick={() => setIsAgentModalOpen(false)} className="text-muted-foreground hover:text-foreground text-xl leading-none">&times;</button>
+              <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                <Users size={20} /> Active Agents
+              </h2>
+              <button
+                onClick={() => setIsAgentModalOpen(false)}
+                className="text-muted-foreground hover:text-foreground text-xl leading-none"
+              >
+                &times;
+              </button>
             </div>
             <div className="p-5 space-y-3 overflow-y-auto max-h-[60vh]">
               {agents.map((agent) => (
-                <div key={agent.id} className="flex items-center gap-3 p-3 rounded-lg border border-border bg-secondary/30">
+                <div
+                  key={agent.id}
+                  className="flex items-center gap-3 p-3 rounded-lg border border-border bg-secondary/30"
+                >
                   <span className="text-2xl">{agent.avatar}</span>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-foreground truncate">{agent.name}</div>
-                    <div className="text-xs text-muted-foreground">{agent.model} · {agent.type}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {agent.model} · {agent.type}
+                    </div>
                   </div>
-                  <span className={`px-2 py-0.5 text-xs rounded-full border ${getStatusBadge(agent.status)}`}>
+                  <span
+                    className={`px-2 py-0.5 text-xs rounded-full border ${getStatusBadge(agent.status)}`}
+                  >
                     {getStatusIcon(agent.status)} {agent.status}
                   </span>
                 </div>
               ))}
-              {agents.length === 0 && <p className="text-muted-foreground text-sm text-center py-4">No agents configured.</p>}
+              {agents.length === 0 && (
+                <p className="text-muted-foreground text-sm text-center py-4">
+                  No agents configured.
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -859,11 +886,24 @@ function ChatPage() {
 
       {/* ═══════════ GOAL MODAL ═══════════ */}
       {isGoalModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setIsGoalModalOpen(false)}>
-          <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setIsGoalModalOpen(false)}
+        >
+          <div
+            className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-md mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="p-5 border-b border-border flex items-center justify-between">
-              <h2 className="text-lg font-bold text-foreground flex items-center gap-2"><Lightbulb size={20} /> Conversation Goal</h2>
-              <button onClick={() => setIsGoalModalOpen(false)} className="text-muted-foreground hover:text-foreground text-xl leading-none">&times;</button>
+              <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                <Lightbulb size={20} /> Conversation Goal
+              </h2>
+              <button
+                onClick={() => setIsGoalModalOpen(false)}
+                className="text-muted-foreground hover:text-foreground text-xl leading-none"
+              >
+                &times;
+              </button>
             </div>
             <div className="p-5 space-y-4">
               {conversationGoal && (
@@ -873,7 +913,9 @@ function ChatPage() {
                 </div>
               )}
               <div>
-                <label className="text-sm font-medium text-foreground block mb-1">Set New Goal</label>
+                <label className="text-sm font-medium text-foreground block mb-1">
+                  Set New Goal
+                </label>
                 <textarea
                   value={newGoalInput}
                   onChange={(e) => setNewGoalInput(e.target.value)}
@@ -884,7 +926,11 @@ function ChatPage() {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => { setConversationGoal(newGoalInput.trim()); setNewGoalInput(''); setIsGoalModalOpen(false); }}
+                  onClick={() => {
+                    setConversationGoal(newGoalInput.trim());
+                    setNewGoalInput('');
+                    setIsGoalModalOpen(false);
+                  }}
                   disabled={!newGoalInput.trim()}
                   className="flex-1 bg-slate-800 text-slate-100 border border-slate-600 px-4 py-2 rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50"
                 >
@@ -892,7 +938,10 @@ function ChatPage() {
                 </button>
                 {conversationGoal && (
                   <button
-                    onClick={() => { setConversationGoal(''); setIsGoalModalOpen(false); }}
+                    onClick={() => {
+                      setConversationGoal('');
+                      setIsGoalModalOpen(false);
+                    }}
                     className="px-4 py-2 rounded-md border border-border text-muted-foreground hover:text-foreground transition-colors"
                   >
                     Clear
@@ -906,24 +955,47 @@ function ChatPage() {
 
       {/* ═══════════ RULES MODAL ═══════════ */}
       {isRuleModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setIsRuleModalOpen(false)}>
-          <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[80vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setIsRuleModalOpen(false)}
+        >
+          <div
+            className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[80vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="p-5 border-b border-border flex items-center justify-between">
-              <h2 className="text-lg font-bold text-foreground flex items-center gap-2"><Copy size={20} /> Conversation Rules</h2>
-              <button onClick={() => setIsRuleModalOpen(false)} className="text-muted-foreground hover:text-foreground text-xl leading-none">&times;</button>
+              <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                <Copy size={20} /> Conversation Rules
+              </h2>
+              <button
+                onClick={() => setIsRuleModalOpen(false)}
+                className="text-muted-foreground hover:text-foreground text-xl leading-none"
+              >
+                &times;
+              </button>
             </div>
             <div className="p-5 space-y-4 overflow-y-auto max-h-[50vh]">
-              <p className="text-sm text-muted-foreground">Rules define how agents chain responses in Auto mode. When Agent A finishes, Agent B responds next.</p>
+              <p className="text-sm text-muted-foreground">
+                Rules define how agents chain responses in Auto mode. When Agent A finishes, Agent B
+                responds next.
+              </p>
               {rules.map((rule, idx) => {
                 const source = getAgentById(rule.sourceId);
                 const target = getAgentById(rule.targetId);
                 return (
-                  <div key={rule.id || idx} className="flex items-center gap-2 p-3 rounded-lg border border-border bg-secondary/30">
+                  <div
+                    key={rule.id || idx}
+                    className="flex items-center gap-2 p-3 rounded-lg border border-border bg-secondary/30"
+                  >
                     <span className="text-lg">{source?.avatar || '❓'}</span>
-                    <span className="text-sm font-medium text-foreground">{source?.name || rule.sourceId}</span>
+                    <span className="text-sm font-medium text-foreground">
+                      {source?.name || rule.sourceId}
+                    </span>
                     <span className="text-muted-foreground">→</span>
                     <span className="text-lg">{target?.avatar || '❓'}</span>
-                    <span className="text-sm font-medium text-foreground">{target?.name || rule.targetId}</span>
+                    <span className="text-sm font-medium text-foreground">
+                      {target?.name || rule.targetId}
+                    </span>
                     <button
                       onClick={() => setRules((prev) => prev.filter((r) => r !== rule))}
                       className="ml-auto text-rose-300 hover:text-rose-200 text-sm"
@@ -933,21 +1005,45 @@ function ChatPage() {
                   </div>
                 );
               })}
-              {rules.length === 0 && <p className="text-muted-foreground text-sm text-center py-2">No rules defined yet.</p>}
+              {rules.length === 0 && (
+                <p className="text-muted-foreground text-sm text-center py-2">
+                  No rules defined yet.
+                </p>
+              )}
             </div>
             <div className="p-5 border-t border-border space-y-3">
               <p className="text-sm font-medium text-foreground">Add Rule</p>
               <div className="flex gap-2 items-center">
-                <select value={newRuleSource} onChange={(e) => setNewRuleSource(e.target.value)} className="flex-1 p-2 border rounded-md bg-secondary text-secondary-foreground border-input text-sm">
+                <select
+                  value={newRuleSource}
+                  onChange={(e) => setNewRuleSource(e.target.value)}
+                  className="flex-1 p-2 border rounded-md bg-secondary text-secondary-foreground border-input text-sm"
+                >
                   <option value="">Source Agent</option>
-                  {agents.map((a) => <option key={a.id} value={a.id}>{a.avatar} {a.name}</option>)}
+                  {agents.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.avatar} {a.name}
+                    </option>
+                  ))}
                 </select>
                 <span className="text-muted-foreground font-bold">→</span>
-                <select value={newRuleTarget} onChange={(e) => setNewRuleTarget(e.target.value)} className="flex-1 p-2 border rounded-md bg-secondary text-secondary-foreground border-input text-sm">
+                <select
+                  value={newRuleTarget}
+                  onChange={(e) => setNewRuleTarget(e.target.value)}
+                  className="flex-1 p-2 border rounded-md bg-secondary text-secondary-foreground border-input text-sm"
+                >
                   <option value="">Target Agent</option>
-                  {agents.map((a) => <option key={a.id} value={a.id}>{a.avatar} {a.name}</option>)}
+                  {agents.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.avatar} {a.name}
+                    </option>
+                  ))}
                 </select>
-                <button onClick={handleAddRule} disabled={!newRuleSource || !newRuleTarget || newRuleSource === newRuleTarget} className="bg-slate-800 text-slate-100 border border-slate-600 px-3 py-2 rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50 text-sm font-medium">
+                <button
+                  onClick={handleAddRule}
+                  disabled={!newRuleSource || !newRuleTarget || newRuleSource === newRuleTarget}
+                  className="bg-slate-800 text-slate-100 border border-slate-600 px-3 py-2 rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50 text-sm font-medium"
+                >
                   Add
                 </button>
               </div>
@@ -958,26 +1054,54 @@ function ChatPage() {
 
       {/* ═══════════ SYNTHESIS GALLERY MODAL ═══════════ */}
       {isGalleryOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setIsGalleryOpen(false)}>
-          <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-2xl mx-4 max-h-[80vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setIsGalleryOpen(false)}
+        >
+          <div
+            className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-2xl mx-4 max-h-[80vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="p-5 border-b border-border flex items-center justify-between">
-              <h2 className="text-lg font-bold text-foreground flex items-center gap-2"><Sparkles size={20} /> Synthesis Gallery</h2>
-              <button onClick={() => setIsGalleryOpen(false)} className="text-muted-foreground hover:text-foreground text-xl leading-none">&times;</button>
+              <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                <Sparkles size={20} /> Synthesis Gallery
+              </h2>
+              <button
+                onClick={() => setIsGalleryOpen(false)}
+                className="text-muted-foreground hover:text-foreground text-xl leading-none"
+              >
+                &times;
+              </button>
             </div>
             <div className="p-5 overflow-y-auto max-h-[65vh]">
               {synthesisJobs.length > 0 ? (
                 <div className="space-y-4">
                   {synthesisJobs.map((job) => (
-                    <div key={job.id} className="p-4 rounded-lg border border-border bg-secondary/30">
+                    <div
+                      key={job.id}
+                      className="p-4 rounded-lg border border-border bg-secondary/30"
+                    >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-foreground">{job.type || 'Synthesis'}</span>
-                        <span className={`px-2 py-0.5 text-xs rounded-full ${
-                          job.status === 'completed' ? 'bg-emerald-500/12 text-emerald-200 border border-emerald-500/25' :
-                          job.status === 'running' ? 'bg-cyan-500/12 text-cyan-200 border border-cyan-500/25' :
-                          'bg-slate-500/12 text-slate-200 border border-slate-500/25'
-                        }`}>{job.status}</span>
+                        <span className="text-sm font-medium text-foreground">
+                          {job.type || 'Synthesis'}
+                        </span>
+                        <span
+                          className={`px-2 py-0.5 text-xs rounded-full ${
+                            job.status === 'completed'
+                              ? 'bg-emerald-500/12 text-emerald-200 border border-emerald-500/25'
+                              : job.status === 'running'
+                                ? 'bg-cyan-500/12 text-cyan-200 border border-cyan-500/25'
+                                : 'bg-slate-500/12 text-slate-200 border border-slate-500/25'
+                          }`}
+                        >
+                          {job.status}
+                        </span>
                       </div>
-                      {job.result && <p className="text-sm text-muted-foreground whitespace-pre-wrap">{job.result}</p>}
+                      {job.result && (
+                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                          {job.result}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -985,7 +1109,9 @@ function ChatPage() {
                 <div className="text-center py-12">
                   <Sparkles size={48} className="mx-auto text-muted-foreground/40 mb-4" />
                   <p className="text-muted-foreground">No synthesis jobs yet.</p>
-                  <p className="text-sm text-muted-foreground mt-1">Use Creative Synthesis to generate insights from conversations.</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Use Creative Synthesis to generate insights from conversations.
+                  </p>
                 </div>
               )}
             </div>

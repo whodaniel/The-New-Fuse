@@ -296,7 +296,7 @@ export const SystemObservatory: React.FC = () => {
         orchestratorHealth: formatSource(orchestratorHealthResult),
         systemHealth: formatSource(systemHealthResult),
         systemMetrics: formatSource(systemMetricsResult),
-      }));
+      });
 
       const agentsData = unwrap(agentsResult?.data);
       const orchestratorHealth = unwrap(orchestratorHealthResult?.data);

@@ -1,13 +1,14 @@
 import {
   Activity,
+  BarChart3,
   Bot,
   Boxes,
   ChevronDown,
   ClipboardList,
   Compass,
+  CreditCard,
   Database,
   Eye,
-  FolderOpen,
   Globe,
   Layout,
   Lightbulb,
@@ -15,9 +16,11 @@ import {
   Menu,
   Network,
   Package,
+  Plus,
   Settings,
   Shield,
   SquareTerminal,
+  User,
   Users,
   Workflow,
   Zap,
@@ -34,6 +37,7 @@ interface DomainMenuItem {
   label: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
+  requiredRoles?: string[];
 }
 
 interface DomainMenu {
@@ -54,8 +58,8 @@ function SmartNavigation() {
   const navRef = useRef<HTMLDivElement>(null);
 
   // Check roles for menu gating
-  const isAdmin = isAnyAdmin || user?.role === 'admin';
-  const isAgencyRole = hasRole(['AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER']);
+  const _isAdmin = isAnyAdmin || user?.role === 'admin';
+  const _isAgencyRole = hasRole(['AGENCY_OWNER', 'AGENCY_ADMIN', 'AGENCY_MANAGER']);
 
   const isPublicPage =
     [
@@ -227,7 +231,7 @@ function SmartNavigation() {
   }, [location.pathname]);
 
   // Render logic for menu items with role gating
-  const renderMenuItem = (item: DomainMenuItem) => {
+  const _renderMenuItem = (item: DomainMenuItem) => {
     const lifecycle = lifecycleByPath.get(item.to);
     const ItemIcon = item.icon;
 
@@ -506,7 +510,10 @@ function SmartNavigation() {
               )}
             </div>
 
-            <button aria-label="Open mobile menu" className="lg:hidden w-10 h-10 flex items-center justify-center rounded-md bg-transparent/5 text-slate-400 hover:text-white transition-colors">
+            <button
+              aria-label="Open mobile menu"
+              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-md bg-transparent/5 text-slate-400 hover:text-white transition-colors"
+            >
               <Menu className="w-6 h-6" />
             </button>
           </div>
