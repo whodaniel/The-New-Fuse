@@ -3,7 +3,6 @@
   "compilerOptions": {
     "outDir": "./dist/test",
     "types": ["jest", "node"],
-    "baseUrl": "./",
     "paths": {
       "@the-new-fuse/*": ["../*/src"]
     }

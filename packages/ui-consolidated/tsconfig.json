@@ -18,7 +18,6 @@
     "composite": false,
     "declaration": true,
     "declarationDir": "dist",
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@the-new-fuse/a2a-core": ["../a2a-core/src"],

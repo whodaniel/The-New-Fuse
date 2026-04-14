@@ -15,8 +15,6 @@
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "noImplicitAny": false,
     "strictFunctionTypes": false,
-
-    "baseUrl": ".",
     "paths": {
       "@the-new-fuse/infrastructure": ["../infrastructure/dist"],
       "@the-new-fuse/database": ["../database/dist"],

@@ -15,7 +15,6 @@
     "declaration": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": ".",
     "lib": ["ES2016", "DOM"],
     "types": ["node"],
     "experimentalDecorators": true,

@@ -9,7 +9,6 @@
     "composite": true,
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
-    "baseUrl": ".",
     "paths": {
       "@the-new-fuse/utils": ["../utils/dist/index.d.ts"]
     }

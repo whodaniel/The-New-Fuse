@@ -12,7 +12,6 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "types": ["node"],
-    "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
       "@the-new-fuse/core-monitoring": ["../core-monitoring/dist/index.d.ts"],

@@ -23,7 +23,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
-    "baseUrl": "./",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {

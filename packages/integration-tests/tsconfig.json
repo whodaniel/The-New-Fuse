@@ -17,7 +17,6 @@
     "jsx": "react-jsx",
     "declaration": true,
     "composite": true,
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@the-new-fuse/*": ["../../packages/*"]

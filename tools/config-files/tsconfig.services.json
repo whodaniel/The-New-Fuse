@@ -19,7 +19,6 @@
     "declarationMap": true,
     "sourceMap": true,
     "removeComments": false,
-    "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
       "@the-new-fuse/*": ["packages/*/src"],

@@ -4,7 +4,6 @@
     "module": "NodeNext",
     "outDir": "./dist",
     "rootDir": "./src",
-    "baseUrl": ".",
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "noEmitOnError": false,

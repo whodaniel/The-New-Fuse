@@ -12,4 +12,5 @@ export * from './styles/brand-tokens';
 export * from './styles/theme';
 
 // Import CSS
+// @ts-ignore
 import './styles/theme.css';
