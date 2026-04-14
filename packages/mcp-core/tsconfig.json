@@ -13,7 +13,7 @@
     "moduleResolution": "bundler",
     "types": ["node"],
     "paths": {
-      "@/*": ["src/*"],
+      "@/*": ["./src/*"],
       "@the-new-fuse/core-monitoring": ["../core-monitoring/dist/index.d.ts"],
       "@the-new-fuse/core-error-handling": [
         "../core-error-handling/dist/index.d.ts"
