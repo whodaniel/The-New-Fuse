@@ -110,13 +110,13 @@ class MCPService {
   ): Promise<MCPExecutionResult> {
     const startTime = Date.now();
 
-    if (!serverId) {
-      throw new Error('serverId is required for MCP tool execution');
-    }
-
-    const result = await this.request<any>(`/mcp/servers/${serverId}/tools/${toolId}/execute`, {
+    const result = await this.request<any>('/mcp/execute', {
       method: 'POST',
-      body: JSON.stringify(parameters),
+      body: JSON.stringify({
+        toolId,
+        parameters,
+        serverId,
+      }),
     });
 
     const executionTime = Date.now() - startTime;

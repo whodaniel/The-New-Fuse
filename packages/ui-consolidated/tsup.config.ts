@@ -28,6 +28,8 @@ export default defineConfig({
     '@radix-ui/react-scroll-area',
     '@radix-ui/react-tooltip',
     '@radix-ui/react-slot',
+    '*.css',
+    '*.module.css',
   ],
   treeshake: true,
   minify: true,
