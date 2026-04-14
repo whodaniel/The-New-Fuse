@@ -8,8 +8,8 @@
     "declaration": true,
     "declarationMap": true,
     "skipLibCheck": true,
-    "moduleResolution": "node",
-    "module": "commonjs",
+    "module": "Node16",
+    "moduleResolution": "Node16",
     "strict": true
   },
   "include": ["src/**/*", "generated/**/*"],

@@ -6,8 +6,8 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "moduleResolution": "node",
-    "module": "CommonJS",
+    "moduleResolution": "Node16",
+    "module": "Node16",
     "types": ["node"]
   },
   "include": ["src/**/*"],

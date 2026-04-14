@@ -24,8 +24,8 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "baseUrl": "./",
-    "moduleResolution": "node",
-    "module": "commonjs",
+    "module": "Node16",
+    "moduleResolution": "Node16",
     "paths": {
       "@/*": ["src/*"],
       "@the-new-fuse/*": ["../*/src"],

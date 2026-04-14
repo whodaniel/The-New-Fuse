@@ -58,7 +58,6 @@ export {
   workflows,
   workspaceMembers,
   workspaces,
-  workspaceMembers,
 } from './drizzle/schema';
 
 // Export Drizzle inferred types
@@ -108,7 +107,6 @@ export {
   DrizzleWorkflowRepository,
   DrizzleWorkspaceMemberRepository,
   DrizzleWorkspaceRepository,
-  DrizzleWorkspaceMemberRepository,
   agentNftRepository,
   agentPromptVersionRepository,
   drizzleAgentApiGrantRepository,
@@ -125,7 +123,6 @@ export {
   drizzleWorkflowRepository,
   drizzleWorkspaceMemberRepository,
   drizzleWorkspaceRepository,
-  drizzleWorkspaceMemberRepository,
   fractionalShareRepository,
   optimizationJobRepository,
   revenueDistributionRepository,
