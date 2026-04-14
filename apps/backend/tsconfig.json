@@ -19,51 +19,29 @@
     "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@the-new-fuse/database": [
-        "../../packages/database/dist"
-      ],
+      "@/*": ["src/*"],
+      "@the-new-fuse/database": ["../../packages/database/dist"],
       "@the-new-fuse/database/drizzle/schema": [
         "../../packages/database/dist/drizzle/schema"
       ],
       "@the-new-fuse/database/drizzle": [
         "../../packages/database/dist/drizzle"
       ],
-      "@the-new-fuse/types": [
-        "../../packages/types/dist"
-      ],
-      "@the-new-fuse/mcp-core": [
-        "../../packages/mcp-core/dist"
-      ],
-      "@the-new-fuse/mcp-core/*": [
-        "../../packages/mcp-core/dist/*"
-      ],
-      "@the-new-fuse/a2a-core": [
-        "../../packages/a2a-core/dist"
-      ],
-      "@the-new-fuse/a2a-react": [
-        "../../packages/a2a-react/dist"
-      ],
-      "ox": [
-        "../../node_modules/ox/_types/index.d.ts"
-      ],
-      "ox/*": [
-        "../../node_modules/ox/_types/*"
-      ]
+      "@the-new-fuse/types": ["../../packages/types/dist"],
+      "@the-new-fuse/mcp-core": ["../../packages/mcp-core/dist"],
+      "@the-new-fuse/mcp-core/*": ["../../packages/mcp-core/dist/*"],
+      "@the-new-fuse/a2a-core": ["../../packages/a2a-core/dist"],
+      "@the-new-fuse/a2a-react": ["../../packages/a2a-react/dist"],
+      "ox": ["../../node_modules/ox/_types/index.d.ts"],
+      "ox/*": ["../../node_modules/ox/_types/*"]
     }
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "exclude": [
     "node_modules",
     "dist",

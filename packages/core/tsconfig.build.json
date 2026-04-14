@@ -26,44 +26,16 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@the-new-fuse/*": [
-        "../*/src"
-      ],
-      "@config/*": [
-        "./src/config/*"
-      ],
-      "@lib/*": [
-        "./src/lib/*"
-      ]
+      "@/*": ["src/*"],
+      "@the-new-fuse/*": ["../*/src"],
+      "@config/*": ["src/config/*"],
+      "@lib/*": ["src/lib/*"]
     },
     "preserveSymlinks": true,
     "composite": true,
-    "types": [
-      "node",
-      "jest",
-      "reflect-metadata",
-      "express",
-      "typeorm"
-    ]
+    "types": ["node", "jest", "reflect-metadata", "express", "typeorm"]
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "test",
-    "**/*spec.ts"
-  ],
-  "references": [
-    {
-      "path": "../types"
-    },
-    {
-      "path": "../database"
-    }
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"],
+  "references": [{ "path": "../types" }, { "path": "../database" }]
 }

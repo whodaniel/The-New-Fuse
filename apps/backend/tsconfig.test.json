@@ -5,26 +5,13 @@
     "module": "ESNext",
     "rootDir": "../..",
     "paths": {
-      "@/*": [
-        "./apps/backend/src/*"
-      ],
-      "@the-new-fuse/mcp-core": [
-        "./packages/mcp-core/src"
-      ],
-      "@the-new-fuse/mcp-core/*": [
-        "./packages/mcp-core/src/*"
-      ],
-      "@the-new-fuse/database": [
-        "./packages/database/src"
-      ],
-      "@the-new-fuse/database/*": [
-        "./packages/database/src/*"
-      ]
+      "@/*": ["apps/backend/src/*"],
+      "@the-new-fuse/mcp-core": ["packages/mcp-core/src"],
+      "@the-new-fuse/mcp-core/*": ["packages/mcp-core/src/*"],
+      "@the-new-fuse/database": ["packages/database/src"],
+      "@the-new-fuse/database/*": ["packages/database/src/*"]
     },
     "allowJs": true
   },
-  "include": [
-    "src/**/*",
-    "../../packages/mcp-core/src/**/*"
-  ]
+  "include": ["src/**/*", "../../packages/mcp-core/src/**/*"]
 }
