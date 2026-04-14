@@ -46,7 +46,8 @@ export class ResourcesController {
     private readonly marketplaceService: MarketplaceService,
     private readonly resourceSearchPolicyService: ResourceSearchPolicyService,
     private readonly resourceSearchProtocolService: ResourceSearchProtocolService,
-    private readonly resourceInteractionService: ResourceInteractionService
+    private readonly resourceInteractionService: ResourceInteractionService,
+    private readonly personalSkillsService: PersonalSkillsService
   ) {}
 
   private resolveUserId(req: Request, fallbackUserId?: string): string {
@@ -194,7 +195,9 @@ export class ResourcesController {
     return result;
   }
 
-  private inferKindFromRegistryPayload(payload: Record<string, unknown>): MarketplaceCatalogItem['kind'] {
+  private inferKindFromRegistryPayload(
+    payload: Record<string, unknown>
+  ): MarketplaceCatalogItem['kind'] {
     const categoryHint = this.normalizeText(payload.category).toUpperCase();
     const typeHint = this.normalizeText(payload.type).toUpperCase();
     const tagHints = this.normalizeTextList(payload.tags).join(' ');
@@ -269,7 +272,8 @@ export class ResourcesController {
     const existing = items.find(
       (item) =>
         this.normalizeText(item.name).toLowerCase() === submission.name.toLowerCase() &&
-        this.normalizeText(item.description).toLowerCase() === submission.description.toLowerCase() &&
+        this.normalizeText(item.description).toLowerCase() ===
+          submission.description.toLowerCase() &&
         this.normalizeText(item.createdBy).toLowerCase() === submission.createdBy?.toLowerCase()
     );
     if (existing) {
@@ -354,6 +358,16 @@ export class ResourcesController {
   async getPersonalSkills(@Req() req: Request) {
     const userId = this.resolveUserId(req);
     return this.personalSkillsService.listByUser(userId);
+  }
+
+  @Get('personal-skills/:id')
+  @UseGuards(SecureAuthGuard)
+  @JwtAuth()
+  @ApiOperation({ summary: 'Get a specific private/personal AI skill for the authenticated user' })
+  @ApiOkResponse({ type: PersonalSkillDto })
+  async getPersonalSkill(@Param('id') id: string, @Req() req: Request) {
+    const userId = this.resolveUserId(req);
+    return this.personalSkillsService.getByUser(userId, id);
   }
 
   @Post('personal-skills')

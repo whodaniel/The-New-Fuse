@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import {
   DatabaseService,
@@ -53,6 +52,19 @@ export class PersonalSkillsService {
     return rows.map((row) => this.toRecord(row));
   }
 
+  async getByUser(userId: string, skillId: string): Promise<PersonalSkillRecord> {
+    const normalizedUserId = this.validateUuid(userId, 'userId');
+    const normalizedSkillId = this.validateUuid(skillId, 'skillId');
+    await this.ensureInitialized();
+
+    const existing = await this.findOwnedSkill(normalizedUserId, normalizedSkillId);
+    if (!existing) {
+      throw new NotFoundException(`Personal skill not found: ${normalizedSkillId}`);
+    }
+
+    return this.toRecord(existing);
+  }
+
   async createByUser(userId: string, input: CreatePersonalSkillDto): Promise<PersonalSkillRecord> {
     const normalizedUserId = this.validateUuid(userId, 'userId');
     await this.ensureInitialized();
@@ -80,7 +92,7 @@ export class PersonalSkillsService {
         instructions,
         tags,
         metadata,
-        isPrivate: true,
+        isPrivate: input?.isPrivate !== undefined ? Boolean(input.isPrivate) : true,
         createdAt: now,
         updatedAt: now,
       })
@@ -102,9 +114,14 @@ export class PersonalSkillsService {
     const normalizedSkillId = this.validateUuid(skillId, 'skillId');
     await this.ensureInitialized();
 
-    const hasUpdates = ['name', 'description', 'instructions', 'tags', 'metadata'].some(
-      (key) => (input as Record<string, unknown> | undefined)?.[key] !== undefined
-    );
+    const hasUpdates = [
+      'name',
+      'description',
+      'instructions',
+      'tags',
+      'metadata',
+      'isPrivate',
+    ].some((key) => (input as Record<string, unknown> | undefined)?.[key] !== undefined);
     if (!hasUpdates) {
       throw new BadRequestException(
         'At least one of name, description, instructions, tags, or metadata must be provided'
@@ -133,6 +150,8 @@ export class PersonalSkillsService {
       input?.metadata !== undefined
         ? this.normalizeMetadata(input.metadata)
         : this.normalizeMetadata(existing.metadata);
+    const isPrivate =
+      input?.isPrivate !== undefined ? Boolean(input.isPrivate) : existing.isPrivate;
     const nextSlug =
       input?.name !== undefined
         ? await this.ensureUniqueSlug(normalizedUserId, this.slugify(name), normalizedSkillId)
@@ -148,6 +167,7 @@ export class PersonalSkillsService {
         instructions,
         tags,
         metadata,
+        isPrivate,
         updatedAt: now,
       })
       .where(

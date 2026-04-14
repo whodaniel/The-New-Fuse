@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "types": ["jest", "node", "@testing-library/jest-dom"],
     "skipLibCheck": true,
     "noEmit": true

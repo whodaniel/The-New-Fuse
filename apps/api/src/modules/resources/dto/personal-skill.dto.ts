@@ -52,6 +52,9 @@ export class CreatePersonalSkillDto {
 
   @ApiPropertyOptional({ type: Object })
   metadata?: Record<string, unknown>;
+
+  @ApiPropertyOptional({ default: true })
+  isPrivate?: boolean;
 }
 
 export class UpdatePersonalSkillDto {
@@ -69,4 +72,7 @@ export class UpdatePersonalSkillDto {
 
   @ApiPropertyOptional({ type: Object })
   metadata?: Record<string, unknown>;
+
+  @ApiPropertyOptional()
+  isPrivate?: boolean;
 }
