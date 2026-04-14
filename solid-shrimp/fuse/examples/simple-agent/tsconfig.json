@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "ignoreDeprecations": "5.0",
     "target": "ES2016",
     "module": "CommonJS",
     "outDir": "./dist",

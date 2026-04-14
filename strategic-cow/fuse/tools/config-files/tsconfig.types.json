@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "ignoreDeprecations": "5.0",
     "module": "commonjs",
     "declaration": true,
     "emitDeclarationOnly": true,

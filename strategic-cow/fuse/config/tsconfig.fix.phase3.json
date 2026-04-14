@@ -1,7 +1,6 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "ignoreDeprecations": "5.0",
     "noEmit": true,
     "strict": false,
     "skipLibCheck": true,

@@ -6,7 +6,6 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx",
-    "ignoreDeprecations": "5.0",
     "skipLibCheck": true,
     "types": ["node"]
   },

@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/types",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -37,6 +39,6 @@
     "eslint-config-custom": "workspace:*",
     "prettier": "^3.4.2",
     "rimraf": "^6.0.1",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   }
 }

@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "ignoreDeprecations": "5.0",
     "target": "es2018",
     "module": "commonjs",
     "lib": ["es2018", "dom"],
