@@ -101,16 +101,6 @@ watchPatterns = ["apps/casin8-games/**"]
 [services.casin8-games-backend.deploy]
 healthcheckPath = "/api/health"
 
-# Casin8 Games Backend (Poker engine / game server)
-[services.casin8-games-backend]
-builder = "DOCKERFILE"
-[services.casin8-games-backend.build]
-dockerfilePath = "apps/casin8-games/Dockerfile"
-dockerBuildArgs = { SERVICE_PATH = "apps/casin8-games", PACKAGE_NAME = "@the-new-fuse/casin8-games" }
-watchPatterns = ["apps/casin8-games/**"]
-[services.casin8-games-backend.deploy]
-healthcheckPath = "/api/health"
-
 # Fuse Theia IDE
 [services.fuse-theia-ide]
 builder = "DOCKERFILE"
