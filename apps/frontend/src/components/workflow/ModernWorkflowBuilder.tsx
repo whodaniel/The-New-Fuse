@@ -17,41 +17,21 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './ModernWorkflowBuilder.css';
-
-// Custom Node Components
-const AgentNode = ({ data }: { data: any }) => (
-  <div className="agent-node relative">
-    <StatusDecorator status={data.status} />
-    <div className="node-header">
-      <div className="node-icon">🤖</div>
-      <div className="node-title">{data.label}</div>
-    </div>
-    <div className="node-content">
-      <div className="node-field">
-        <label>Agent Type:</label>
-        <select
-          value={data.agentType || 'claude'}
-          onChange={(e) => data.onChange?.('agentType', e.target.value)}
-        >
-          <option value="claude">Claude AI</option>
-          <option value="gemini">Gemini</option>
-          <option value="chatgpt">ChatGPT</option>
-          <option value="perplexity">Perplexity</option>
-        </select>
-      </div>
-      <div className="node-field">
-        <label>Prompt:</label>
-        <textarea
-          value={data.prompt || ''}
-          onChange={(e) => data.onChange?.('prompt', e.target.value)}
-          placeholder="Enter your prompt here..."
-        />
-      </div>
-    </div>
-  </div>
-);
-
-const MCPToolNode = ({ data }: { data: any }) => {
+import { StatusDecorator } from './StatusDecorator';
+import {
+  AgentNode,
+  A2ANode,
+  ConditionNode,
+  InputNode,
+  MCPToolNode,
+  NotificationNode,
+  OutputNode,
+  SubworkflowNode,
+  TransformNode,
+  LoopNode,
+} from './lazy';
+// AgentNode imported from './lazy'
+// MCPToolNode imported from './lazy'
   const { servers, loading, source, setSource, resetSource } = useMcpTools();
   const selectedServer = servers.find((server) => server.name === data.mcpServer);
   const tools = selectedServer?.tools || [];
@@ -479,7 +459,7 @@ const WorkflowBuilderContent = () => {
           onChange: (field: string, value: any) => {
             setNodes((nds) =>
               nds.map((node) =>
-                node.id === newNode.id ? { ...node, data: { ...node.data, ...updates } } : node
+                node.id === newNode.id ? { ...node, data: { ...node.data, [field]: value } } : node
               )
             );
           },

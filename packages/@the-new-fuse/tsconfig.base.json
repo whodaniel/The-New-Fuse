@@ -2,15 +2,22 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
-    "lib": ["ES2022", "DOM"],
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
     "jsx": "react-jsx",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "bundler",
     "paths": {
-      "@/*": ["src/*"],
-      "@the-new-fuse/*": ["packages/*/src"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@the-new-fuse/*": [
+        "./packages/*/src"
+      ]
     },
     "allowJs": true,
     "checkJs": true,
@@ -18,7 +25,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "types": ["jest", "node", "react"],
+    "types": [
+      "jest",
+      "node",
+      "react"
+    ],
     "composite": true,
     "declaration": true,
     "declarationMap": true,
@@ -27,6 +38,12 @@
     "emitDecoratorMetadata": true,
     "strictPropertyInitialization": false
   },
-  "include": ["src/**/*", "packages/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*",
+    "packages/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

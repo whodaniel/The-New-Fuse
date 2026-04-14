@@ -2,7 +2,11 @@
   "compilerOptions": {
     "target": "ES2021",
     "module": "ESNext",
-    "lib": ["ES2021", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2021",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "moduleResolution": "bundler",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -17,14 +21,33 @@
     "jsx": "react-jsx",
     "allowImportingTsExtensions": true,
     "paths": {
-      "@utils/*": ["utils/*"],
-      "@styles/*": ["styles/*"],
-      "@components/*": ["components/*"],
-      "@packages/types": ["../../../packages/types/src/index"],
-      "@packages/utils": ["../../../packages/utils/src/index"]
+      "@utils/*": [
+        "./utils/*"
+      ],
+      "@styles/*": [
+        "./styles/*"
+      ],
+      "@components/*": [
+        "./components/*"
+      ],
+      "@packages/types": [
+        "../../../packages/types/src/index"
+      ],
+      "@packages/utils": [
+        "../../../packages/utils/src/index"
+      ]
     },
-    "types": ["chrome", "node"]
+    "types": [
+      "chrome",
+      "node"
+    ]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

@@ -11,20 +11,32 @@
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "paths": {
-      "@/*": ["src/*"],
-      "@the-new-fuse/core-monitoring": ["../core-monitoring/dist/index.d.ts"],
+      "@/*": [
+        "./src/*"
+      ],
+      "@the-new-fuse/core-monitoring": [
+        "../core-monitoring/dist/index.d.ts"
+      ],
       "@the-new-fuse/core-error-handling": [
         "../core-error-handling/dist/index.d.ts"
       ],
-      "@the-new-fuse/types": ["../types/src"],
-      "@the-new-fuse/relay-core": ["../relay-core/src"]
+      "@the-new-fuse/types": [
+        "../types/src"
+      ],
+      "@the-new-fuse/relay-core": [
+        "../relay-core/src"
+      ]
     },
     "isolatedModules": true,
     "downlevelIteration": true
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
     "node_modules",
     "dist",
