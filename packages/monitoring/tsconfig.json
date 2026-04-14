@@ -1,10 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "moduleResolution": "bundler",
     "outDir": "./dist",
     "rootDir": "./src",
-    "module": "NodeNext",
+    "module": "ESNext",
     "declaration": true,
     "composite": true,
     "paths": {

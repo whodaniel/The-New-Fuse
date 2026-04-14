@@ -1,7 +1,8 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "moduleResolution": "bundler",
+    "module": "ESNext",
     "declaration": true,
     "removeComments": false,
     "emitDecoratorMetadata": true,

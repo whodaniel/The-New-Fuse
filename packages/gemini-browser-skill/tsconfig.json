@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "moduleResolution": "bundler",
     "target": "es2018",
-    "module": "commonjs",
+    "module": "ESNext",
     "lib": ["es2018", "dom"],
     "declaration": true,
     "strict": true,

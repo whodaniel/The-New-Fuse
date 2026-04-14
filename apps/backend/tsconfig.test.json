@@ -1,7 +1,8 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "moduleResolution": "bundler",
+    "module": "ESNext",
     "rootDir": "../..",
     "paths": {
       "@/*": ["apps/backend/src/*"],
