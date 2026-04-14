@@ -12,7 +12,5 @@ declare module '*.module.css' {
   export default classes;
 }
 
-declare module '*.css' {
-  const content: any;
-  export default content;
-}
+declare module '*.css' {}
+
