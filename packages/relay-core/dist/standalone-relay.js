@@ -771,6 +771,8 @@ class TNFRelayServer extends events_1.EventEmitter {
                     this.channels.delete(channelId);
                     // Remove from all agent channel sets
                     this.agentChannels.forEach((channels) => channels.delete(channelId));
+                    // FIX: Clear conversation manager for the deleted channel to prevent memory leak
+                    this.conversationManagers.delete(channelId);
                     TerminalFormatter_1.relay.channelDeleted(channelId);
                     this.broadcast({
                         type: 'CHANNEL_LIST',

@@ -2,7 +2,7 @@ import { createHash } from 'crypto';
 import * as fs from 'fs/promises';
 import OpenAI from 'openai';
 import * as path from 'path';
-import { disconnect as dbDisconnect, query } from './db/connection';
+import { disconnect as dbDisconnect, query } from './db/connection.js';
 
 interface CodeEntity {
   filePath: string;

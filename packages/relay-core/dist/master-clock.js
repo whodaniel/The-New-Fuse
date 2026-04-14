@@ -545,6 +545,43 @@ class MasterClock {
         setTimeout(() => this.broadcastDiscovery(), 2000);
     }
     // --------------------------------------------------------------------------
+    // MEMORY MANAGEMENT
+    // --------------------------------------------------------------------------
+    pruneTrackingMaps(now) {
+        const COOLDOWN_MAX_AGE = 24 * 60 * 60 * 1000; // 24 hours
+        // Prune recentQueuedTasks
+        let prunedTasks = 0;
+        for (const [taskId, timestamp] of this.recentQueuedTasks.entries()) {
+            if (now - timestamp > COOLDOWN_MAX_AGE) {
+                this.recentQueuedTasks.delete(taskId);
+                prunedTasks++;
+            }
+        }
+        // Prune selfPromptCooldowns
+        let prunedCooldowns = 0;
+        for (const [key, timestamp] of this.selfPromptCooldowns.entries()) {
+            if (now - timestamp > COOLDOWN_MAX_AGE) {
+                this.selfPromptCooldowns.delete(key);
+                prunedCooldowns++;
+            }
+        }
+        // Prune recoveryAttempts for offline agents
+        let prunedRecovery = 0;
+        for (const agentId of this.recoveryAttempts.keys()) {
+            if (!this.registry.getAgentBySource(agentId)) {
+                this.recoveryAttempts.delete(agentId);
+                prunedRecovery++;
+            }
+        }
+        // Safety: Clear dtfCache if it grows too large
+        if (this.dtfCache.size > 100) {
+            this.dtfCache.clear();
+        }
+        if (prunedTasks > 0 || prunedCooldowns > 0 || prunedRecovery > 0) {
+            log('debug', 'MEMORY', `Pruned tracking data: ${prunedTasks} tasks, ${prunedCooldowns} cooldowns, ${prunedRecovery} recovery attempts`);
+        }
+    }
+    // --------------------------------------------------------------------------
     // THE ETERNAL HEARTBEAT
     // --------------------------------------------------------------------------
     startHeartbeat() {
@@ -559,6 +596,8 @@ class MasterClock {
     }
     sendHeartbeat() {
         const now = Date.now();
+        // Memory Leak Prevention: Prune old tracking data
+        this.pruneTrackingMaps(now);
         const stats = this.registry.getStats();
         const superCycleStats = this.getSuperCycleStats();
         const orchestrator = this.getOrchestratorEnvelopeIdentity();

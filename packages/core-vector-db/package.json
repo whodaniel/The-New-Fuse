@@ -3,6 +3,7 @@
   "files": [
     "dist"
   ],
+  "type": "module",
   "version": "0.1.0",
   "description": "Core Vector Database Service with gRPC and MCP interfaces",
   "main": "dist/index.js",

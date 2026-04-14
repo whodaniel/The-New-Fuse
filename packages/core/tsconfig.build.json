@@ -24,8 +24,8 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "baseUrl": "./",
-    "module": "Node16",
-    "moduleResolution": "Node16",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "paths": {
       "@/*": ["src/*"],
       "@the-new-fuse/*": ["../*/src"],

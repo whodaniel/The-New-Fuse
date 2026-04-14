@@ -4,20 +4,22 @@
  */
 
 import axios from 'axios';
-import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer';
-import { WorkflowFetcher } from '../fetcher/WorkflowFetcher';
-import { WorkflowParser } from '../parser/WorkflowParser';
-import { RegistryConfig, WorkflowRegistry } from '../registry/WorkflowRegistry';
+import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer.js';
+import { WorkflowFetcher } from '../fetcher/WorkflowFetcher.js';
+import { WorkflowParser } from '../parser/WorkflowParser.js';
+import { RegistryConfig, WorkflowRegistry } from '../registry/WorkflowRegistry.js';
 import {
+  CategoryConfig,
   N8nWorkflow,
   WorkflowCategory,
+  WorkflowFetchResult,
   WorkflowImportRequest,
   WorkflowImportResponse,
   WorkflowSearchQuery,
   WorkflowSearchResult,
   WorkflowSource,
   WorkflowStats,
-} from '../types';
+} from '../types/index.js';
 
 export class WorkflowService {
   private fetcher: WorkflowFetcher;
@@ -69,7 +71,7 @@ export class WorkflowService {
     await this.registry.saveToDisk();
 
     const stats = this.registry.getStats();
-    const errors = results.flatMap((r) => r.errors);
+    const errors = results.flatMap((r: WorkflowFetchResult) => r.errors);
 
     console.log(`Sync complete. Total workflows: ${workflows.length}`);
 
@@ -91,7 +93,7 @@ export class WorkflowService {
 
     // Remove existing workflows from this source
     const existing = this.registry.getBySource(source);
-    existing.forEach((w) => this.registry.deleteWorkflow(w.id));
+    existing.forEach((w: N8nWorkflow) => this.registry.deleteWorkflow(w.id));
 
     // Add new workflows
     this.registry.addWorkflows(workflows);
@@ -158,7 +160,7 @@ export class WorkflowService {
     const stats = this.registry.getStats();
     const configs = this.categorizer.getCategoryConfigs();
 
-    const categories = configs.map((config) => ({
+    const categories = configs.map((config: CategoryConfig) => ({
       name: config.name,
       count: stats.byCategory[config.name] || 0,
       displayName: config.displayName,

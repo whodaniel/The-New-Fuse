@@ -1,7 +1,7 @@
 // Re-export schemas from interface file for convenience
 export {
+  CollectionConfigSchema,
   VectorDocumentSchema,
   VectorQuerySchema,
   VectorSearchResultSchema,
-  CollectionConfigSchema,
-} from "./interface/vector-database.interface";
+} from './interface/vector-database.interface.js';

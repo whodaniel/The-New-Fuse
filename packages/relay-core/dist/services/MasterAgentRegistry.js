@@ -66,6 +66,10 @@ class MasterAgentRegistry extends events_1.EventEmitter {
     agentNFTContract = null;
     web3Provider = null;
     wallet = null;
+    // Interval handles for cleanup
+    healthCheckInterval;
+    verificationInterval;
+    spreadsheetSyncInterval;
     constructor(drizzle, logger, blockchainConfig, vcPrivateKey) {
         super();
         this.logger = logger;
@@ -665,21 +669,58 @@ class MasterAgentRegistry extends events_1.EventEmitter {
      * Continuous monitoring of all agents and system state
      */
     startPeriodicVerification() {
+        // Clear any existing intervals
+        this.stop();
         // System health check every 2 minutes
-        setInterval(() => {
+        this.healthCheckInterval = setInterval(() => {
             this.performSystemHealthCheck();
         }, 2 * 60 * 1000);
         // Full verification every 30 minutes
-        setInterval(() => {
+        this.verificationInterval = setInterval(() => {
             this.performFullSystemVerification();
         }, 30 * 60 * 1000);
         // Spreadsheet sync every hour
-        setInterval(() => {
+        this.spreadsheetSyncInterval = setInterval(() => {
             this.syncAllAgentsToSpreadsheet();
         }, 60 * 60 * 1000);
     }
+    /**
+     * Stop all periodic tasks
+     */
+    stop() {
+        if (this.healthCheckInterval)
+            clearInterval(this.healthCheckInterval);
+        if (this.verificationInterval)
+            clearInterval(this.verificationInterval);
+        if (this.spreadsheetSyncInterval)
+            clearInterval(this.spreadsheetSyncInterval);
+        this.healthCheckInterval = undefined;
+        this.verificationInterval = undefined;
+        this.spreadsheetSyncInterval = undefined;
+    }
+    /**
+     * Prune inactive agents from in-memory cache to prevent memory leaks
+     * Default: 24 hours
+     */
+    pruneInactiveAgents(maxAgeMs = 24 * 60 * 60 * 1000) {
+        const now = Date.now();
+        let prunedCount = 0;
+        for (const [agentId, profile] of this.agentProfiles.entries()) {
+            const lastSeenTime = profile.lastSeen.getTime();
+            if (now - lastSeenTime > maxAgeMs) {
+                this.agentProfiles.delete(agentId);
+                prunedCount++;
+            }
+        }
+        if (prunedCount > 0) {
+            this.logger.info(`🧹 Memory Leak Prevention: Pruned ${prunedCount} inactive agents from registry cache`);
+        }
+        return prunedCount;
+    }
     performSystemHealthCheck() {
         const now = new Date();
+        // Prune inactive agents first to keep cache size under control
+        this.pruneInactiveAgents();
         let healthScore = 100;
         let activeAgents = 0;
         let onlineAgents = 0;
