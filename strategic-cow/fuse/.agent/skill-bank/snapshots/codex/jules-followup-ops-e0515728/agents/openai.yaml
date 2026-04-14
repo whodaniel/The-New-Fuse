@@ -1,4 +1,0 @@
-interface:
-  display_name: "Jules Follow-up Ops"
-  short_description: "Stabilize Jules follow-up and merges"
-  default_prompt: "Oversee Jules session follow-up, resolve stalled REVIEW/COMPLETED sessions without PRs, and keep supervisor plus alerts healthy."

@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Redis as UpstashRedis } from '@upstash/redis';
-import Redis, { Cluster } from 'ioredis';
+import { Cluster, Redis } from 'ioredis';
 import { RedisConfig } from './RedisConfig.js';
 import {
   CacheOptions,
@@ -109,11 +109,11 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
     try {
       if (this.redisConfig.isClusterMode()) {
         const nodes = this.redisConfig.getClusterNodes();
-        this.mainClient = new Redis.Cluster(nodes, {
+        this.mainClient = new Cluster(nodes, {
           redisOptions: config,
           ...this.redisConfig.getConfiguration().cluster,
         });
-        this.pubSubClient = new Redis.Cluster(nodes, {
+        this.pubSubClient = new Cluster(nodes, {
           redisOptions: config,
           ...this.redisConfig.getConfiguration().cluster,
         });
@@ -167,7 +167,7 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
       this.metrics.connections.active++;
     });
 
-    this.mainClient.on('error', (err) => {
+    this.mainClient.on('error', (err: any) => {
       this.logger.error('Main Redis client error', err);
       this.metrics.performance.errorRate++;
     });
@@ -176,7 +176,7 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
       this.logger.log('PubSub Redis client connected');
     });
 
-    this.pubSubClient.on('error', (err) => {
+    this.pubSubClient.on('error', (err: any) => {
       this.logger.error('PubSub Redis client error', err);
     });
   }
@@ -617,8 +617,8 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
       }
 
       const subscriber =
-        this.pubSubClient instanceof Redis.Cluster
-          ? new Redis.Cluster(this.redisConfig.getClusterNodes(), {
+        this.pubSubClient instanceof Cluster
+          ? new Cluster(this.redisConfig.getClusterNodes(), {
               redisOptions: config,
             })
           : new Redis(config);
@@ -654,8 +654,8 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
       }
 
       const subscriber =
-        this.pubSubClient instanceof Redis.Cluster
-          ? new Redis.Cluster(this.redisConfig.getClusterNodes(), {
+        this.pubSubClient instanceof Cluster
+          ? new Cluster(this.redisConfig.getClusterNodes(), {
               redisOptions: config,
             })
           : new Redis(config);
@@ -709,7 +709,7 @@ export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {
       if (keys.length === 0) return [];
 
       const values = await this.mainClient.mget(...keys);
-      return values.filter((value) => value !== null) as string[];
+      return values.filter((value: any) => value !== null) as string[];
     });
   }
 

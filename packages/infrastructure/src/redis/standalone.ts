@@ -1,5 +1,5 @@
 import { Redis as UpstashRedis } from '@upstash/redis';
-import Redis, { Cluster, RedisOptions } from 'ioredis';
+import { Cluster, Redis, type RedisOptions } from 'ioredis';
 
 export interface StandaloneRedisConfig {
   host: string;
@@ -93,7 +93,7 @@ export function createStandaloneRedisClient(
   };
 
   if (fullConfig.clusterMode && fullConfig.clusterNodes.length > 0) {
-    return new Redis.Cluster(fullConfig.clusterNodes, {
+    return new Cluster(fullConfig.clusterNodes, {
       redisOptions,
     });
   }

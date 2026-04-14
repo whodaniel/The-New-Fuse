@@ -50,8 +50,6 @@ import {
   DrizzleWorkspaceMemberRepository,
   drizzleWorkspaceRepository,
   DrizzleWorkspaceRepository,
-  drizzleWorkspaceMemberRepository,
-  DrizzleWorkspaceMemberRepository,
 } from './repositories';
 
 @Injectable()

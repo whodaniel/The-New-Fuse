@@ -63,6 +63,8 @@ import {
   workflows,
   workflowSteps,
   workflowTemplates,
+  workspaceBookmarks,
+  workspaceDomains,
   workspaceMembers,
   workspaces,
 } from './schema';
@@ -279,6 +281,12 @@ export type Workspace = InferSelectModel<typeof workspaces>;
 export type NewWorkspace = InferInsertModel<typeof workspaces>;
 export type WorkspaceMember = InferSelectModel<typeof workspaceMembers>;
 export type NewWorkspaceMember = InferInsertModel<typeof workspaceMembers>;
+
+export type WorkspaceBookmark = InferSelectModel<typeof workspaceBookmarks>;
+export type NewWorkspaceBookmark = InferInsertModel<typeof workspaceBookmarks>;
+
+export type WorkspaceDomain = InferSelectModel<typeof workspaceDomains>;
+export type NewWorkspaceDomain = InferInsertModel<typeof workspaceDomains>;
 
 export type Project = InferSelectModel<typeof projects>;
 export type NewProject = InferInsertModel<typeof projects>;

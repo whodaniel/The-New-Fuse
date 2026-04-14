@@ -262,3 +262,7 @@ scripts/.agent-network-pids
 
 # LLM provider runtime state
 data/llm-provider-status.json
+.kilo/
+pull-create/
+solid-shrimp/
+strategic-cow/

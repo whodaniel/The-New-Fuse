@@ -262,3 +262,7 @@ deployments.txt
 #
 # If it's larger, review this file and ensure all unnecessary files are excluded.
 # ============================================================================
+.kilo/
+pull-create/
+solid-shrimp/
+strategic-cow/

@@ -1,4 +1,0 @@
-interface:
-  display_name: "OpenClaw Universal Knowledge"
-  short_description: "Cross-agent OpenClaw docs, skills spec, and ops reference for TNF."
-  default_prompt: "Use this skill to execute OpenClaw work with accurate docs-backed guidance across skills, gateway, providers, tools, and cross-agent portability."

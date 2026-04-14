@@ -3,7 +3,6 @@
  * Provides the database connection and client instance
  */
 // @ts-ignore
-import { loadDatabaseConfig } from '@the-new-fuse/infrastructure';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
@@ -16,16 +15,10 @@ const connectionString =
 
 // Create the postgres.js client connection
 // For query purposes (used by Drizzle ORM)
-export const queryClient = postgres(config.url, {
-  host: config.host,
-  port: config.port,
-  user: config.user,
-  password: config.password,
-  database: config.database,
-  ssl: config.ssl,
-  max: config.maxConnections,
-  idle_timeout: config.idleTimeout,
-  connect_timeout: config.connectTimeout,
+export const queryClient = postgres(connectionString, {
+  max: 10,
+  idle_timeout: 20,
+  connect_timeout: 10,
 });
 
 // Create the Drizzle ORM instance with schema
