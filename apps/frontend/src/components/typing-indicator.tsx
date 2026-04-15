@@ -7,16 +7,12 @@ export function TypingIndicator() {
       role="status"
       aria-live="polite"
     >
-      <span className="sr-only">Typing...</span>
-      <div className="w-2 h-2 rounded-full bg-neutral-400 animate-bounce" aria-hidden="true" />
-      <div
-        className="w-2 h-2 rounded-full bg-neutral-400 animate-bounce delay-100"
-        aria-hidden="true"
-      />
-      <div
-        className="w-2 h-2 rounded-full bg-neutral-400 animate-bounce delay-200"
-        aria-hidden="true"
-      />
+      <span className="sr-only">Agent is typing...</span>
+      <div className="flex items-center space-x-2" aria-hidden="true">
+        <div className="w-2 h-2 rounded-full bg-neutral-400 animate-bounce" />
+        <div className="w-2 h-2 rounded-full bg-neutral-400 animate-bounce delay-100" />
+        <div className="w-2 h-2 rounded-full bg-neutral-400 animate-bounce delay-200" />
+      </div>
     </div>
   );
 }
