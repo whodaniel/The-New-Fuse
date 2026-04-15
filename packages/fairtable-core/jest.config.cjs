@@ -10,6 +10,9 @@ module.exports = {
       'ts-jest',
       {
         useESM: true,
+        tsconfig: {
+          ignoreDeprecations: "6.0"
+        }
       },
     ],
   },
