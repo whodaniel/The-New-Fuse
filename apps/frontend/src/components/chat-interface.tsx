@@ -15,7 +15,7 @@ import input_1 from './ui/input';
 import scroll_area_1 from './ui/scroll-area';
 // ⚡ Bolt: Extract message item and wrap in React.memo to prevent O(n) re-renders
 // during frequent state updates like typing in the message input.
-const MessageItem = react_1.memo<{ message: any, agents: any }>(({ message, agents }) => {
+const MessageItem = react_1.memo<{ message: any; agents: any }>(({ message, agents }) => {
   var _a;
   return (
     <EnhancedChatBubble_1.EnhancedChatBubble
@@ -30,8 +30,7 @@ const MessageItem = react_1.memo<{ message: any, agents: any }>(({ message, agen
           name:
             message.sender === 'User'
               ? 'User'
-              : (_a = agents.find((a) => a.id === message.agentId)) === null ||
-                  _a === void 0
+              : (_a = agents.find((a) => a.id === message.agentId)) === null || _a === void 0
                 ? void 0
                 : _a.name,
         },
@@ -108,9 +107,11 @@ export function ChatInterface() {
               selectedAgent={selectedAgent}
               onSelect={selectAgent}
             />
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2" role="status" aria-live="polite">
+              <span className="sr-only">Connection status: </span>
               <div
                 className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
+                aria-hidden="true"
               />
               <span className="text-sm text-neutral-600 dark:text-muted-foreground">
                 {isConnected ? 'Connected' : 'Disconnected'}
