@@ -22,7 +22,8 @@
 **Vulnerability:** Unsanitized collection parameter directly interpolated into SQL query via pg_total_relation_size() and FROM clause
 **Learning:** A sanitizeIdentifier function existed but was missed for one specific method query where a dynamic parameter was evaluated directly in string template literals, leading to an easy SQL Injection.
 **Prevention:** Ensure that anytime string interpolations are required (since table names cannot be parameterized in Postgres), the variables are strictly run through identifier sanitizers or whitelist validators.
-## 2025-05-24 - Cryptographically Insecure Random ID Generation
-**Vulnerability:** Found `Math.random().toString(36)` used for generating task and message IDs in the core agent package (`packages/core/src/agents/AgentCommunicationManager.ts` and `AgentSwarmOrchestrationService.ts`).
-**Learning:** `Math.random()` generates pseudo-random numbers that are predictable and can be exploited to guess message IDs or task IDs, which could potentially lead to session hijacking or spoofing in a multi-agent system relying on unique correlation IDs.
-**Prevention:** Always use cryptographically secure random number generators (CSPRNG) such as `crypto.randomBytes(4).toString('hex')` or UUIDv4 for generating sensitive identifiers.
+## $(date +%Y-%m-%d) - Hardcoded Fallback Secret in Cloud Sandbox
+
+**Vulnerability:** The `CloudSandboxAuthGuard` used a hardcoded fallback string (`'dev-secret'`) for the `JWT_SECRET` when validating incoming agent and user connections.
+**Learning:** Hardcoded fallback secrets are a dangerous antipattern that can easily slip into production environments if configuration variables are missed, completely bypassing authentication security.
+**Prevention:** Fail fast on initialization. The constructor must validate that security-critical environment variables (like `JWT_SECRET`) are present and cryptographically strong (e.g., length >= 32). If not, it should throw an error to prevent the service from starting in a vulnerable state.
