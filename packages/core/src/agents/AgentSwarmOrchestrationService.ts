@@ -4,6 +4,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
+import * as crypto from 'crypto';
 import { SwarmExecution, SwarmCoordinationStrategy, Agent, AgentStatus } from '../types/agent';
 import { Task, TaskStatus } from '../types/core';
 import { ServiceState } from '../constants/types';
@@ -159,12 +160,12 @@ export class AgentSwarmOrchestrationService extends EventEmitter {
     tasks: Omit<SwarmTask, 'id' | 'status' | 'createdAt'>[],
     config: SwarmConfiguration,
   ): Promise<string> {
-    const executionId = `swarm_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const executionId = `swarm_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
 
     // Create tasks
     const swarmTasks = tasks.map((task) => ({
       ...task,
-      id: `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `task_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`,
       status: TaskStatus.PENDING,
       createdAt: new Date(),
     }));

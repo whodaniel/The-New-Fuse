@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import { Injectable, Logger } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { MetricsProcessor } from '../security/metricsProcessor';
 import { AgentCommunicationBridge, AgentMessage } from './AgentCommunicationBridge';
 interface CommunicationConfig {
@@ -150,6 +151,6 @@ export class AgentCommunicationManager extends EventEmitter {
   }
 
   private generateMessageId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `msg_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
   }
 }

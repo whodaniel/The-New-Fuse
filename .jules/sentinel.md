@@ -22,3 +22,7 @@
 **Vulnerability:** Unsanitized collection parameter directly interpolated into SQL query via pg_total_relation_size() and FROM clause
 **Learning:** A sanitizeIdentifier function existed but was missed for one specific method query where a dynamic parameter was evaluated directly in string template literals, leading to an easy SQL Injection.
 **Prevention:** Ensure that anytime string interpolations are required (since table names cannot be parameterized in Postgres), the variables are strictly run through identifier sanitizers or whitelist validators.
+## 2025-05-24 - Cryptographically Insecure Random ID Generation
+**Vulnerability:** Found `Math.random().toString(36)` used for generating task and message IDs in the core agent package (`packages/core/src/agents/AgentCommunicationManager.ts` and `AgentSwarmOrchestrationService.ts`).
+**Learning:** `Math.random()` generates pseudo-random numbers that are predictable and can be exploited to guess message IDs or task IDs, which could potentially lead to session hijacking or spoofing in a multi-agent system relying on unique correlation IDs.
+**Prevention:** Always use cryptographically secure random number generators (CSPRNG) such as `crypto.randomBytes(4).toString('hex')` or UUIDv4 for generating sensitive identifiers.
