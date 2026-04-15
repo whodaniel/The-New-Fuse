@@ -110,6 +110,7 @@ watchPatterns = ["apps/skideancer-ide/**"]
 [services.fuse-theia-ide.deploy]
 healthcheckPath = "/"
 
+
 # TNF Cloud Sandbox (MCP Server for Tauri bridge)
 # Uses shared Dockerfile.railway from repository root
 [services.tnf-cloud-sandbox]

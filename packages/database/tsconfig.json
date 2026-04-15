@@ -11,8 +11,16 @@
     "moduleResolution": "bundler",
     "strict": true
   },
-  "include": ["src/**/*", "generated/**/*"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
+  "include": [
+    "src/**/*",
+    "generated/**/*"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ],
   "references": [
     {
       "path": "../types"

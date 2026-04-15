@@ -2,7 +2,11 @@
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
@@ -19,19 +23,39 @@
     "declaration": true,
     "declarationDir": "dist",
     "paths": {
-      "@/*": ["./src/*"],
-      "@the-new-fuse/a2a-core": ["../a2a-core/src"],
-      "@the-new-fuse/api-client": ["../api-client/src"],
-      "@the-new-fuse/api-types": ["../api-types/src"],
-      "@the-new-fuse/hooks": ["../hooks/src"],
-      "@the-new-fuse/types": ["../types/src"],
-      "@the-new-fuse/utils": ["../utils/src"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@the-new-fuse/a2a-core": [
+        "../a2a-core/src"
+      ],
+      "@the-new-fuse/api-client": [
+        "../api-client/src"
+      ],
+      "@the-new-fuse/api-types": [
+        "../api-types/src"
+      ],
+      "@the-new-fuse/hooks": [
+        "../hooks/src"
+      ],
+      "@the-new-fuse/types": [
+        "../types/src"
+      ],
+      "@the-new-fuse/utils": [
+        "../utils/src"
+      ]
     },
-    "types": ["node", "jest", "react"],
+    "types": [
+      "node",
+      "jest",
+      "react"
+    ],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
     "node_modules",
     "dist",
