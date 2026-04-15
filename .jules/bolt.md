@@ -15,3 +15,11 @@
 ## 2026-03-03 - O(n) Array Loops in High-Frequency Input Handlers
 **Learning:** Functions evaluating entirely new object arrays (`groupMessagesByDate`) or wrapping items blindly (`MessageGroup`) can unintentionally cause an O(n) re-evaluation block that stalls input rendering. Even though nested items (`HistoricalMessage`) were memoized, the array transformation itself on keystroke (triggered by state in parent `ChatContainer`) was a major CPU block.
 **Action:** When a parent container has high-frequency updates (e.g., text inputs), always ensure derived complex arrays and mapping wrapper components are shielded with `useMemo` and `React.memo` respectively, to prevent unnecessary object instantiations from freezing the main thread.
+
+## 2024-05-24 - [Fix TS5107 Deprecation and Database Schema Builds]
+**Learning:** Fixing TypeScript `moduleResolution: node10` deprecation in older packages by using `bundler` and `ESNext` requires updating `jest.config` to use `ts-jest/presets/default-esm` and mapping `.js` extensions.
+**Action:** Updated `core-vector-db` tsconfig and package.json to resolve build and test failures.
+
+## 2024-05-24 - [Fix TS5107 Deprecation and Database Schema Builds]
+**Learning:** Fixing TypeScript `moduleResolution: node10` deprecation in older packages by using `bundler` and `ESNext` requires updating `jest.config` to use `ts-jest/presets/default-esm` and mapping `.js` extensions.
+**Action:** Updated `core-vector-db` tsconfig and package.json to resolve build and test failures.

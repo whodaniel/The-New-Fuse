@@ -3,6 +3,8 @@
  * Provides inferred types from the Drizzle schema for use across the monorepo
  */
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import { workspaceBookmarks, workspaceDomains } from './schema';
+
 import {
   agentApiGrants,
   agentApiGrantUsage,
@@ -277,6 +279,13 @@ export type NewAgentApiGrantUsage = InferInsertModel<typeof agentApiGrantUsage>;
 
 export type Workspace = InferSelectModel<typeof workspaces>;
 export type NewWorkspace = InferInsertModel<typeof workspaces>;
+
+export type WorkspaceBookmark = InferSelectModel<typeof workspaceBookmarks>;
+export type NewWorkspaceBookmark = InferInsertModel<typeof workspaceBookmarks>;
+
+export type WorkspaceDomain = InferSelectModel<typeof workspaceDomains>;
+export type NewWorkspaceDomain = InferInsertModel<typeof workspaceDomains>;
+
 export type WorkspaceMember = InferSelectModel<typeof workspaceMembers>;
 export type NewWorkspaceMember = InferInsertModel<typeof workspaceMembers>;
 
