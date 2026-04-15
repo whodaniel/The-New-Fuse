@@ -202,7 +202,7 @@ pyperclip==1.9.0
 PyPika==0.48.9
 pyproject_hooks==1.2.0
 pytesseract==0.3.13
-pytest==8.3.3
+pytest==9.0.3
 pytest-trio==0.8.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
