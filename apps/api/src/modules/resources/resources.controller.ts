@@ -46,8 +46,7 @@ export class ResourcesController {
     private readonly marketplaceService: MarketplaceService,
     private readonly resourceSearchPolicyService: ResourceSearchPolicyService,
     private readonly resourceSearchProtocolService: ResourceSearchProtocolService,
-    private readonly resourceInteractionService: ResourceInteractionService,
-    private readonly personalSkillsService: PersonalSkillsService
+    private readonly resourceInteractionService: ResourceInteractionService
   ) {}
 
   private resolveUserId(req: Request, fallbackUserId?: string): string {

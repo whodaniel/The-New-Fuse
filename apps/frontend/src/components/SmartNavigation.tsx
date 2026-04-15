@@ -6,7 +6,6 @@ import {
   ChevronDown,
   ClipboardList,
   Compass,
-  CreditCard,
   Database,
   Eye,
   Globe,
@@ -37,7 +36,6 @@ interface DomainMenuItem {
   label: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
-  requiredRoles?: string[];
 }
 
 interface DomainMenu {
@@ -510,10 +508,7 @@ function SmartNavigation() {
               )}
             </div>
 
-            <button
-              aria-label="Open mobile menu"
-              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-md bg-transparent/5 text-slate-400 hover:text-white transition-colors"
-            >
+            <button aria-label="Open mobile menu" className="lg:hidden w-10 h-10 flex items-center justify-center rounded-md bg-transparent/5 text-slate-400 hover:text-white transition-colors">
               <Menu className="w-6 h-6" />
             </button>
           </div>

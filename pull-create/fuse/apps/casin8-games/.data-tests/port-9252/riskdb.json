@@ -1,0 +1,183 @@
+{
+  "schemaVersion": 4,
+  "migrations": [
+    {
+      "version": 1,
+      "name": "init-risk-tables",
+      "at": "2026-02-28T22:39:14.366Z"
+    },
+    {
+      "version": 2,
+      "name": "add-funding-attempts",
+      "at": "2026-02-28T22:39:14.366Z"
+    },
+    {
+      "version": 3,
+      "name": "normalize-provider-fraud-signals",
+      "at": "2026-02-28T22:39:14.366Z"
+    },
+    {
+      "version": 4,
+      "name": "add-trait-control-plane-tables",
+      "at": "2026-02-28T22:39:14.366Z"
+    }
+  ],
+  "createdAt": "2026-02-28T22:39:14.366Z",
+  "updatedAt": "2026-02-28T22:39:15.414Z",
+  "tables": {
+    "compliance_profiles": [
+      {
+        "playerId": "p-1772318354671",
+        "kycStatus": "approved",
+        "countryCode": "US",
+        "amlRiskLevel": "low",
+        "banned": false,
+        "notes": "",
+        "updatedAt": "2026-02-28T22:39:14.713Z"
+      },
+      {
+        "playerId": "s-1772318354671",
+        "kycStatus": "pending",
+        "countryCode": "UNSPECIFIED",
+        "amlRiskLevel": "low",
+        "banned": false,
+        "notes": "",
+        "updatedAt": "2026-02-28T22:39:14.747Z"
+      }
+    ],
+    "payment_orders": [
+      {
+        "orderId": "ord-1772318354671",
+        "provider": "stripe",
+        "playerId": "p-1772318354671",
+        "fiatCurrency": "USD",
+        "fiatAmountMinor": 999,
+        "tokenUnits": "500",
+        "ledgerId": "default",
+        "status": "paid",
+        "createdAt": "2026-02-28T22:39:14.830Z",
+        "updatedAt": "2026-02-28T22:39:14.836Z",
+        "ledgerDepositIdempotencyKey": "webhook:stripe:evt-1772318354832",
+        "providerEventId": "evt-1772318354832",
+        "providerPaymentId": "pi_test_123",
+        "providerFraudSignals": {
+          "riskLevel": "normal",
+          "riskScore": 12,
+          "cvcCheck": "pass",
+          "avsPostalCheck": "pass"
+        }
+      }
+    ],
+    "webhook_events": [
+      {
+        "eventId": "evt-1772318354832",
+        "provider": "stripe",
+        "orderId": "ord-1772318354671",
+        "timestamp": 1772318354,
+        "providerPaymentId": "pi_test_123",
+        "providerFraudSignals": {
+          "riskLevel": "normal",
+          "riskScore": 12,
+          "cvcCheck": "pass",
+          "avsPostalCheck": "pass"
+        },
+        "receivedAt": "2026-02-28T22:39:14.837Z"
+      }
+    ],
+    "velocity_events": [
+      {
+        "id": "s-1772318354671:1772318354817:2d3d84f3",
+        "playerId": "s-1772318354671",
+        "tsMs": 1772318354817,
+        "amountUnits": {
+          "__type": "bigint",
+          "value": "5000"
+        },
+        "action": "deposit"
+      },
+      {
+        "id": "p-1772318354671:1772318354829:d2d54dc7",
+        "playerId": "p-1772318354671",
+        "tsMs": 1772318354829,
+        "amountUnits": {
+          "__type": "bigint",
+          "value": "500"
+        },
+        "action": "intent"
+      }
+    ],
+    "risk_alerts": [],
+    "sponsorship_positions": [
+      {
+        "positionId": "pos-1772318354671",
+        "agentId": "agent-1772318354839",
+        "status": "open",
+        "stakeForSaleBps": 7000,
+        "markupBps": 11000,
+        "maxExposureUnits": {
+          "__type": "bigint",
+          "value": "500000"
+        },
+        "fundedPrincipalUnits": {
+          "__type": "bigint",
+          "value": "300"
+        },
+        "totalBuyCostUnits": {
+          "__type": "bigint",
+          "value": "330"
+        },
+        "totalMarkupRevenueUnits": {
+          "__type": "bigint",
+          "value": "30"
+        },
+        "defaults": {
+          "platformMarkupFeeBps": 250,
+          "platformSettlementFeeBps": 50
+        },
+        "sponsors": {
+          "s-1772318354671": {
+            "sponsorId": "s-1772318354671",
+            "principalUnits": {
+              "__type": "bigint",
+              "value": "300"
+            },
+            "buyCostUnits": {
+              "__type": "bigint",
+              "value": "330"
+            },
+            "markupPaidUnits": {
+              "__type": "bigint",
+              "value": "30"
+            },
+            "claimsUnits": {
+              "__type": "bigint",
+              "value": "0"
+            },
+            "claimedTotalUnits": {
+              "__type": "bigint",
+              "value": "0"
+            }
+          }
+        },
+        "settlements": [],
+        "createdAt": "2026-02-28T22:39:14.841Z",
+        "updatedAt": "2026-02-28T22:39:14.851Z"
+      }
+    ],
+    "funding_attempts": [
+      {
+        "id": "pos-1772318354671::s-1772318354671",
+        "positionId": "pos-1772318354671",
+        "sponsorId": "s-1772318354671",
+        "lastAttemptMs": 1772318354847,
+        "dayStartMs": 1772318354847,
+        "dayCount": 1,
+        "dayTotalPrincipalUnits": "300"
+      }
+    ],
+    "trait_rollouts": [],
+    "trait_observations": [],
+    "trait_recommendations": [],
+    "trait_policy_events": []
+  }
+}

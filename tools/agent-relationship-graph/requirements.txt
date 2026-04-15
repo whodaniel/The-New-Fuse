@@ -165,7 +165,7 @@ packaging==24.1
 pandas==2.2.3
 pathspec==0.12.1
 pexpect==4.9.0
-pillow==12.2.0
+pillow==12.1.1
 pip-tools==7.4.1
 pkginfo==1.11.2
 platformdirs==4.3.6
@@ -202,7 +202,7 @@ pyperclip==1.9.0
 PyPika==0.48.9
 pyproject_hooks==1.2.0
 pytesseract==0.3.13
-pytest==9.0.3
+pytest==8.3.3
 pytest-trio==0.8.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1

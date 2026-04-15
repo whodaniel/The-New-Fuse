@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 4,
+  "migrations": [
+    {
+      "version": 1,
+      "name": "init-risk-tables",
+      "at": "2026-02-27T23:20:13.305Z"
+    },
+    {
+      "version": 2,
+      "name": "add-funding-attempts",
+      "at": "2026-02-27T23:20:13.305Z"
+    },
+    {
+      "version": 3,
+      "name": "normalize-provider-fraud-signals",
+      "at": "2026-02-27T23:20:13.306Z"
+    },
+    {
+      "version": 4,
+      "name": "add-trait-control-plane-tables",
+      "at": "2026-02-27T23:20:13.306Z"
+    }
+  ],
+  "createdAt": "2026-02-27T23:20:13.305Z",
+  "updatedAt": "2026-02-27T23:20:13.434Z",
+  "tables": {
+    "compliance_profiles": [
+      {
+        "playerId": "owner-cfr",
+        "kycStatus": "pending",
+        "countryCode": "UNSPECIFIED",
+        "amlRiskLevel": "low",
+        "banned": false,
+        "notes": "",
+        "updatedAt": "2026-02-27T23:20:13.404Z"
+      },
+      {
+        "playerId": "owner-risk",
+        "kycStatus": "pending",
+        "countryCode": "UNSPECIFIED",
+        "amlRiskLevel": "low",
+        "banned": false,
+        "notes": "",
+        "updatedAt": "2026-02-27T23:20:13.427Z"
+      }
+    ],
+    "payment_orders": [],
+    "webhook_events": [],
+    "velocity_events": [],
+    "risk_alerts": [],
+    "sponsorship_positions": [],
+    "funding_attempts": [],
+    "trait_rollouts": [],
+    "trait_observations": [],
+    "trait_recommendations": [
+      {
+        "agentId": "agent-cfr-integ",
+        "source": "cfr_profile",
+        "diagnostics": {
+          "exploitabilityBb100": 3.8,
+          "sampleHands": 28000,
+          "actionMix": {
+            "fold": 0.14,
+            "check": 0.12,
+            "call": 0.22,
+            "raise": 0.42,
+            "bet": 0.07,
+            "allin": 0.03
+          },
+          "confidence": 0.912
+        },
+        "recommended": {
+          "style": "tight_aggressive",
+          "temperament": "tight_aggressive",
+          "maxRiskBps": 1053,
+          "styleOverrides": {
+            "vpipBps": 6512,
+            "pfrBps": 4680,
+            "bluffBps": 4760,
+            "icmDisciplineBps": 6630
+          }
+        },
+        "phaseAdjustment": {
+          "applied": true,
+          "gameType": "mtt",
+          "phase": "final_table",
+          "baseRiskBps": 1462,
+          "adjustedRiskBps": 1053
+        },
+        "complianceCap": {
+          "maxRiskBps": 1053,
+          "capped": false,
+          "reasons": [],
+          "complianceProfileRef": "owner-cfr"
+        },
+        "lineage": {
+          "traitVersion": "v1",
+          "provider": "cfr_profile",
+          "generatedAt": "2026-02-27T23:20:13.419Z",
+          "sourceProvenance": null,
+          "signature": {
+            "verified": false,
+            "reason": "missing"
+          },
+          "serverBuildRef": "local",
+          "seed": "",
+          "artifactId": "cfr_profile:local:agent-cfr-integ"
+        }
+      },
+      {
+        "agentId": "agent-risk-integ",
+        "source": "risk_profile",
+        "diagnostics": {
+          "riskScore": 88,
+          "collusionScore": 72,
+          "tiltIndexBps": 8000,
+          "abuseFlags": ["soft_play_cluster", "rapid_dump_pattern"],
+          "confidence": 0.74
+        },
+        "recommended": {
+          "style": "tight_passive",
+          "temperament": "tight_passive",
+          "maxRiskBps": 250,
+          "styleOverrides": {
+            "vpipBps": 677,
+            "pfrBps": 168,
+            "bluffBps": 0,
+            "icmDisciplineBps": 9617
+          }
+        },
+        "complianceCap": {
+          "maxRiskBps": 250,
+          "capped": false,
+          "reasons": [],
+          "complianceProfileRef": "owner-risk"
+        },
+        "lineage": {
+          "traitVersion": "v1",
+          "provider": "risk_profile",
+          "generatedAt": "2026-02-27T23:20:13.432Z",
+          "sourceProvenance": null,
+          "signature": {
+            "verified": false,
+            "reason": "missing"
+          },
+          "serverBuildRef": "local",
+          "seed": "",
+          "artifactId": "risk_profile:local:agent-risk-integ"
+        }
+      }
+    ],
+    "trait_policy_events": [
+      {
+        "id": "7fbaa9e5-ed50-4a53-b73f-8d7b192fdc8c",
+        "ts": "2026-02-27T23:20:13.434Z",
+        "type": "trait.applied",
+        "agentId": "agent-risk-integ",
+        "provider": "risk_profile",
+        "artifactId": "risk_profile:local:agent-risk-integ",
+        "signatureVerified": false
+      },
+      {
+        "id": "f6835b03-1589-43a5-be0c-616127c2db1f",
+        "ts": "2026-02-27T23:20:13.422Z",
+        "type": "trait.applied",
+        "agentId": "agent-cfr-integ",
+        "provider": "cfr_profile",
+        "artifactId": "cfr_profile:local:agent-cfr-integ",
+        "signatureVerified": false
+      }
+    ]
+  }
+}

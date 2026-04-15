@@ -1,0 +1,809 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&display=swap');
+
+:root {
+  color-scheme: dark;
+  --bg: #0b071a;
+  --panel: #130c29;
+  --text: #f4f8ff;
+  --muted: #8b81b0;
+  --accent: #00dfff; /* Cyan */
+  --accent-2: #8a2be2; /* Purple */
+  --line: #2a1f4c;
+  --danger: #ff2a55;
+  --success: #00fa9a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--text);
+  background:
+    linear-gradient(rgba(7, 5, 16, 0.72), rgba(7, 5, 16, 0.72)),
+    url('/assets/poker/pkr_shell_bg_main_desktop_idle_v01.png'),
+    radial-gradient(circle at 12% 10%, rgba(138, 43, 226, 0.18), transparent 36%),
+    radial-gradient(circle at 86% 0%, rgba(0, 223, 255, 0.2), transparent 30%),
+    linear-gradient(160deg, #0b071a 0%, #100a26 100%);
+  background-size: cover, cover, auto, auto, auto;
+  background-position: center, center, center, center, center;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.app-shell {
+  width: min(1080px, 100%);
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+}
+
+.header {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 16px;
+  margin-bottom: 8px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  letter-spacing: 0.07em;
+  font-family: 'Bebas Neue', sans-serif;
+  line-height: 0.95;
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(0, 223, 255, 0.4);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo::before {
+  content: '';
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  background: url('/assets/poker/pkr_brand_logo_mark_idle_v01.png') center/contain no-repeat;
+  filter: drop-shadow(0 0 8px rgba(0, 223, 255, 0.35));
+}
+
+.subtitle {
+  color: var(--muted);
+  margin: 0;
+  font-size: 0.98rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding-right: 160px;
+  background: url('/assets/poker/pkr_brand_wordmark_light_v01.png') right center / 148px 46px
+    no-repeat;
+}
+
+.toolbar,
+.panel {
+  background: rgba(19, 12, 41, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(138, 43, 226, 0.25);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.05);
+}
+
+.toolbar {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.panel h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: var(--accent);
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.hidden,
+.hidden-inputs .hidden {
+  display: none !important;
+}
+
+select,
+input,
+textarea {
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+  font-size: 0.95rem;
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--text);
+  transition: all 140ms ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 223, 255, 0.15);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: monospace;
+  width: 100%;
+  max-width: 600px;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 8px 14px;
+  font-size: 0.95rem;
+  font-family: 'Space Grotesk', sans-serif;
+  background: linear-gradient(120deg, var(--accent-2), #6633ff);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(102, 51, 255, 0.25);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 140ms ease;
+}
+
+button:hover {
+  filter: brightness(1.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 51, 255, 0.4);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button.btn-primary {
+  background: linear-gradient(120deg, var(--accent), #00ffcc);
+  color: #0b071a;
+  box-shadow: 0 4px 14px rgba(0, 223, 255, 0.25);
+}
+button.btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(0, 223, 255, 0.4);
+}
+
+button.btn-outline {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  box-shadow: none;
+}
+button.btn-outline:hover {
+  background: rgba(0, 223, 255, 0.1);
+  box-shadow: 0 0 10px rgba(0, 223, 255, 0.2);
+}
+
+.action-bar {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+button.btn-action {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #f5fbff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+}
+
+button.action-fold {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.34)),
+    url('/assets/poker/pkr_btn_fold_set_v01.png');
+  border: 1px solid rgba(255, 92, 92, 0.35);
+  color: #ffd0d0;
+}
+button.action-fold:hover {
+  border-color: rgba(255, 92, 92, 0.65);
+  color: #ffe6e6;
+}
+
+button.action-check,
+button.action-call {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.32)),
+    url('/assets/poker/pkr_btn_checkcall_set_v01.png');
+}
+
+button.action-raise {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.28)),
+    url('/assets/poker/pkr_btn_raise_primary_set_v01.png');
+  border: 1px solid rgba(0, 223, 255, 0.55);
+  color: #e9ffff;
+}
+
+.result {
+  margin: 0;
+  white-space: pre-wrap;
+  color: #00dfff;
+  line-height: 1.5;
+  border: 1px solid var(--accent-2);
+  border-radius: 10px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.55);
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+#fairness-receipt {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.58)),
+    url('/assets/poker/pkr_panel_fairness_idle_v01.png') center/cover no-repeat;
+}
+
+#ledger-list {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.56), rgba(0, 0, 0, 0.56)),
+    url('/assets/poker/pkr_panel_ledger_row_set_v01.png') center/cover no-repeat;
+}
+
+#chain-status {
+  padding-left: 34px;
+  background: url('/assets/poker/pkr_panel_network_health_set_v01.png') left center / 26px 26px
+    no-repeat;
+}
+
+.sponsor-panel pre.result {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.56), rgba(0, 0, 0, 0.56)),
+    url('/assets/poker/pkr_panel_sponsor_market_card_v01.png') center/cover no-repeat;
+}
+
+.stats {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: var(--muted);
+}
+
+.text-cyan {
+  color: var(--accent) !important;
+  text-shadow: 0 0 5px rgba(0, 223, 255, 0.4);
+}
+.text-purple {
+  color: var(--accent-2) !important;
+  text-shadow: 0 0 5px rgba(138, 43, 226, 0.5);
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.controls-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.account-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.glass-bg {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.feed-list {
+  margin: 0;
+  padding-left: 30px;
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  max-height: 180px;
+  overflow: auto;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.52), rgba(0, 0, 0, 0.52)),
+    url('/assets/poker/pkr_panel_chat_feed_bg_v01.png') center/cover no-repeat;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 223, 255, 0.2);
+}
+
+.game-showcase {
+  min-height: 86px;
+  border-radius: 12px;
+  border: 1px solid var(--accent-2);
+  margin-bottom: 10px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.showcase-empty {
+  margin: 0;
+  color: var(--muted);
+}
+
+.showcase-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.showcase-icons {
+  margin-top: 6px;
+}
+
+.showcase-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 223, 255, 0.25);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px;
+}
+
+.showcase-skin {
+  position: relative;
+  min-height: 120px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.showcase-bg-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.28;
+}
+
+.showcase-badge-art {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.showcase-content {
+  position: relative;
+  z-index: 1;
+}
+
+.card-chip,
+.slot-chip {
+  min-width: 52px;
+  text-align: center;
+  border-radius: 9px;
+  border: 1px solid rgba(0, 223, 255, 0.3);
+  padding: 6px;
+  background: linear-gradient(180deg, rgba(138, 43, 226, 0.1), rgba(0, 0, 0, 0.4));
+  font-weight: 700;
+}
+
+.card-chip.dealer {
+  border-color: #f7be52;
+}
+
+.card-chip img {
+  width: 48px;
+  height: 68px;
+  object-fit: contain;
+  border-radius: 6px;
+  display: block;
+  margin: 0 auto 4px;
+  background: #fff;
+}
+
+.card-chip span {
+  font-size: 0.75rem;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.showcase-labeled > span {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.showcase-meta {
+  margin-top: 8px;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.table-seat {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(138, 43, 226, 0.5);
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 0.78rem;
+}
+
+.table-seat.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 10px rgba(0, 223, 255, 0.4);
+}
+
+.table-seat.folded {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+.live-table {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 12px 0;
+  --live-felt-image: url('/assets/poker/pkr_table_felt_6max_topdown_idle_v01.png');
+  background:
+    radial-gradient(circle at 50% 40%, rgba(0, 223, 255, 0.09), transparent 46%),
+    linear-gradient(rgba(0, 0, 0, 0.46), rgba(0, 0, 0, 0.46)), var(--live-felt-image),
+    rgba(0, 0, 0, 0.5);
+  background-size: auto, auto, cover, auto;
+  background-position: center, center, center, center;
+  background-repeat: no-repeat;
+}
+
+.live-seat-art {
+  position: relative;
+  width: 78px;
+  height: 78px;
+  margin: 0 auto 8px;
+}
+
+.live-seat-frame {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.live-seat-dealer {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(247, 190, 82, 0.45));
+}
+
+.live-seat.hero .live-seat-frame {
+  filter: drop-shadow(0 0 8px rgba(0, 223, 255, 0.35));
+}
+
+.live-seat.acting .live-seat-frame {
+  filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.38));
+}
+
+.live-header {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+
+.live-seats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.live-seat {
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  border-radius: 10px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.live-seat.hero {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 15px rgba(0, 223, 255, 0.15);
+}
+
+.live-seat.acting {
+  border-color: var(--accent-2);
+  transform: scale(1.02);
+  box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+}
+
+.live-seat.folded {
+  opacity: 0.3;
+}
+
+.live-seat-title {
+  font-size: 0.86rem;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.live-seat-meta {
+  font-size: 0.8rem;
+  color: var(--accent);
+}
+
+.live-state-banner {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.live-state-banner img {
+  max-width: 260px;
+  width: 100%;
+  max-height: 68px;
+  object-fit: contain;
+  opacity: 0.95;
+}
+
+.live-state-subtle img {
+  max-width: 120px;
+  max-height: 46px;
+  opacity: 0.75;
+}
+
+.nurture-card {
+  border: 1px solid rgba(0, 223, 255, 0.35);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(0, 223, 255, 0.12), transparent 36%),
+    rgba(0, 0, 0, 0.45);
+}
+
+.nurture-title {
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 6px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.nurture-sub {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.nurture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.nurture-pill {
+  border: 1px solid rgba(138, 43, 226, 0.35);
+  border-radius: 8px;
+  padding: 8px;
+  background: rgba(11, 7, 26, 0.7);
+}
+
+.nurture-label {
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.nurture-value {
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.nurture-list {
+  margin: 10px 0 0;
+  padding-left: 16px;
+  color: var(--text);
+  font-size: 0.84rem;
+  display: grid;
+  gap: 5px;
+}
+
+.nurture-stage-rail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.nurture-stage {
+  border: 1px solid rgba(138, 43, 226, 0.4);
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.nurture-stage.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.nurture-stage.done {
+  border-color: rgba(0, 250, 154, 0.5);
+  color: var(--success);
+}
+
+.nurture-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.nurture-chart-wrap {
+  border: 1px solid rgba(0, 223, 255, 0.25);
+  border-radius: 8px;
+  padding: 8px;
+  background: rgba(8, 5, 20, 0.7);
+}
+
+.nurture-chart {
+  height: 56px;
+}
+
+.nurture-compare-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.nurture-compare-card {
+  border: 1px solid rgba(138, 43, 226, 0.35);
+  border-radius: 10px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.nurture-compare-card.main {
+  border-color: rgba(0, 223, 255, 0.5);
+  box-shadow: inset 0 0 16px rgba(0, 223, 255, 0.12);
+}
+
+.nurture-compare-card.fail {
+  border-color: rgba(255, 42, 85, 0.5);
+}
+
+.nurture-compare-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.nurture-compare-stage {
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.nurture-compare-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text);
+}
+
+.nurture-compare-deltas {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.delta-pill {
+  font-size: 0.72rem;
+  border-radius: 999px;
+  border: 1px solid rgba(138, 43, 226, 0.4);
+  padding: 3px 8px;
+  color: var(--muted);
+}
+
+.delta-pill.up {
+  border-color: rgba(0, 250, 154, 0.55);
+  color: var(--success);
+}
+
+.delta-pill.down {
+  border-color: rgba(255, 42, 85, 0.55);
+  color: var(--danger);
+}
+
+@media (max-width: 720px) {
+  body {
+    padding: 12px;
+    background:
+      linear-gradient(rgba(7, 5, 16, 0.75), rgba(7, 5, 16, 0.75)),
+      url('/assets/poker/pkr_shell_bg_main_mobile_idle_v01.png') center/cover no-repeat,
+      linear-gradient(160deg, #0b071a 0%, #100a26 100%);
+  }
+  .app-shell {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+  .action-bar {
+    background:
+      linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+      url('/assets/poker/pkr_mobile_bottom_action_sheet_v01.png') center/cover no-repeat;
+    border-radius: 14px;
+    padding: 10px;
+  }
+  .header {
+    background: url('/assets/poker/pkr_mobile_table_header_compact_v01.png') center/cover no-repeat;
+    border-radius: 12px;
+    padding: 12px;
+  }
+  .toolbar::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 40px;
+    margin-top: 8px;
+    background: url('/assets/poker/pkr_mobile_tabbar_pokerroom_v01.png') center/contain no-repeat;
+    opacity: 0.9;
+  }
+  .panel:last-of-type::after {
+    content: '';
+    display: block;
+    width: 64px;
+    height: 20px;
+    margin: 8px auto 0;
+    background: url('/assets/poker/pkr_mobile_hud_drawer_handle_v01.png') center/contain no-repeat;
+    opacity: 0.9;
+  }
+}

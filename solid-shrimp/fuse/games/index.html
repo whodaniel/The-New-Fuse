@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Video Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            display: block;
+        }
+        #instructions {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+            pointer-events: none;
+            font-size: 12px;
+        }
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        #overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        #overlay .content {
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        #overlay button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="instructions">
+        <p>Press 'I' for Instructions.</p>
+    </div>
+    <div id="overlay">
+        <div class="content">
+            <h2>Instructions:</h2>
+            <p>Use Arrow Keys to Move.</p>
+            <p>Press Spacebar to Shoot.</p>
+            <p>Toggle Graphics: Press 'G' for Emojis or 'R' for Rectangles.</p>
+            <button onclick="closeOverlay()">Close</button>
+        </div>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let player = {
+            x: 40,
+            y: canvas.height - 60,
+            width: 20,
+            height: 20,
+            color: 'blue',
+            speed: 5,
+            dx: 0,
+            dy: 0,
+            health: 100,
+            alive: true,
+            reachedEnd: false
+        };
+
+        let enemies = [];
+        let bullets = [];
+        let score = 0;
+        let useEmojis = false;
+        let gameRunning = false;
+        let mazeSpeed = 0.2; // Speed at which the maze moves downwards
+
+        function generateRandomMaze(rows, cols) {
+            const maze = [];
+            for (let row = 0; row < rows; row++) {
+                maze[row] = [];
+                for (let col = 0; col < cols; col++) {
+                    if (row === 0 || row === rows - 1 || col === 0 || col === cols - 1) {
+                        maze[row][col] = 1; // Border walls
+                    } else if (Math.random() < 0.3 && !(row === rows - 2 && col === cols - 2)) {
+                        maze[row][col] = 1; // Random walls
+                    } else {
+                        maze[row][col] = 0; // Paths
+                    }
+                }
+            }
+            return maze;
+        }
+
+        let mazeLayout = generateRandomMaze(13, 20);
+        let maze = [];
+
+        function generateMaze() {
+            const wallWidth = 40;
+            const wallHeight = 40;
+            maze = [];
+            for (let row = 0; row < mazeLayout.length; row++) {
+                for (let col = 0; col < mazeLayout[row].length; col++) {
+                    if (mazeLayout[row][col] === 1) {
+                        maze.push({ x: col * wallWidth, y: row * wallHeight, width: wallWidth, height: wallHeight, color: 'green' });
+                    }
+                }
+            }
+        }
+
+        function drawPlayer() {
+            if (useEmojis) {
+                ctx.font = "32px serif";
+                ctx.fillText('😊', player.x + player.width / 2 - 10, player.y + player.height / 2 + 10);
+            } else {
+                ctx.beginPath();
+                ctx.rect(player.x, player.y, player.width, player.height);
+                ctx.fillStyle = player.color;
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        function updatePlayer() {
+            const oldX = player.x;
+            const oldY = player.y;
+
+            player.x += player.dx;
+            player.y += player.dy;
+
+            // Collision detection with walls
+            let canMove = true;
+            maze.forEach(wall => {
+                if (
+                    player.x < wall.x + wall.width &&
+                    player.x + player.width > wall.x &&
+                    player.y < wall.y + wall.height &&
+                    player.y + player.height > wall.y
+                ) {
+                    canMove = false;
+                }
+            });
+
+            if (!canMove) {
+                player.x = oldX;
+                player.y = oldY;
+            }
+
+            // Maze movement downwards
+            maze.forEach(wall => {
+                wall.y += mazeSpeed;
+                if (wall.y > canvas.height) {
+                    wall.y = -wall.height;
+                }
+            });
+
+            if (player.x < 0) player.x = 0;
+            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+            if (player.y < 0) player.y = 0;
+            if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+
+            // Check if player reaches the end of the maze
+            if (player.y <= 0 && !player.reachedEnd) {
+                player.reachedEnd = true;
+                alert("You've reached the end! Congratulations!");
+            }
+        }
+
+        function createEnemy() {
+            let enemy = {
+                x: Math.random() * (canvas.width - 40),
+                y: 0,
+                width: 40,
+                height: 40,
+                color: 'red',
+                speed: Math.random() * 3 + 1
+            };
+            enemies.push(enemy);
+        }
+
+        function drawEnemies() {
+            enemies.forEach(enemy => {
+                if (useEmojis) {
+                    ctx.font = "32px serif";
+                    ctx.fillText('😡', enemy.x + enemy.width / 2 - 10, enemy.y + enemy.height / 2 + 10);
+                } else {
+                    ctx.beginPath();
+                    ctx.rect(enemy.x, enemy.y, enemy.width, enemy.height);
+                    ctx.fillStyle = enemy.color;
+                    ctx.fill();
+                    ctx.closePath();
+                }
+                enemy.y += enemy.speed;
+            });
+        }
+
+        function updateEnemies() {
+            enemies = enemies.filter(enemy => enemy.y < canvas.height);
+        }
+
+        function checkCollisions() {
+            enemies.forEach((enemy, index) => {
+                if (
+                    player.x < enemy.x + enemy.width &&
+                    player.x + player.width > enemy.x &&
+                    player.y < enemy.y + enemy.height &&
+                    player.y + player.height > enemy.y
+                ) {
+                    player.health -= 10;
+                    if (player.health <= 0) {
+                        player.alive = false;
+                    }
+                    enemies.splice(index, 1);
+                }
+            });
+
+            bullets.forEach((bullet, bIndex) => {
+                enemies.forEach((enemy, eIndex) => {
+                    if (
+                        bullet.x < enemy.x + enemy.width &&
+                        bullet.x + 5 > enemy.x &&
+                        bullet.y < enemy.y + enemy.height &&
+                        bullet.y + 5 > enemy.y
+                    ) {
+                        score++;
+                        enemies.splice(eIndex, 1);
+                        bullets.splice(bIndex, 1);
+                    }
+                });
+            });
+        }
+
+        function shoot() {
+            let bullet = {
+                x: player.x + player.width / 2 - 2.5,
+                y: player.y,
+                width: 5,
+                height: 5,
+                color: 'yellow'
+            };
+            bullets.push(bullet);
+        }
+
+        function drawBullets() {
+            bullets.forEach(bullet => {
+                if (useEmojis) {
+                    ctx.font = "16px serif";
+                    ctx.fillText('💥', bullet.x + 2, bullet.y + 10);
+                } else {
+                    ctx.beginPath();
+                    ctx.rect(bullet.x, bullet.y, bullet.width, bullet.height);
+                    ctx.fillStyle = 'yellow';
+                    ctx.fill();
+                    ctx.closePath();
+                }
+                bullet.y -= 10;
+            });
+        }
+
+        function updateBullets() {
+            bullets = bullets.filter(bullet => bullet.y > 0);
+        }
+
+        function drawWalls() {
+            maze.forEach(wall => {
+                ctx.beginPath();
+                ctx.rect(wall.x, wall.y, wall.width, wall.height);
+                ctx.fillStyle = wall.color;
+                ctx.fill();
+                ctx.closePath();
+            });
+        }
+
+        function gameLoop() {
+            if (!gameRunning) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (Math.random() < 0.01) createEnemy();
+
+            updatePlayer();
+            drawPlayer();
+
+            drawEnemies();
+            updateEnemies();
+
+            drawBullets();
+            updateBullets();
+
+            drawWalls();
+
+            checkCollisions();
+
+            ctx.fillStyle = 'white';
+            ctx.fillText(`Health: ${player.health}`, 10, 20);
+            ctx.fillText(`Score: ${score}`, 10, 40);
+
+            if (!player.alive) {
+                ctx.fillText('Game Over', canvas.width / 2 - 50, canvas.height / 2);
+                gameRunning = false;
+                showOverlay();
+                return;
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function moveUp() { player.dy = -player.speed; }
+        function moveDown() { player.dy = player.speed; }
+        function moveLeft() { player.dx = -player.speed; }
+        function moveRight() { player.dx = player.speed; }
+
+        function keyDown(e) {
+            if (e.key === 'ArrowUp' || e.key === 'Up') moveUp();
+            else if (e.key === 'ArrowDown' || e.key === 'Down') moveDown();
+            else if (e.key === 'ArrowLeft' || e.key === 'Left') moveLeft();
+            else if (e.key === 'ArrowRight' || e.key === 'Right') moveRight();
+            else if (e.key === ' ') shoot();
+            else if (e.key === 'g' || e.key === 'G') useEmojis = !useEmojis;
+            else if (e.key === 'r' || e.key === 'R') useEmojis = false;
+            else if (e.key === 'i' || e.key === 'I') showOverlay();
+        }
+
+        function keyUp(e) {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Up', 'Down', 'Left', 'Right'].indexOf(e.key) > -1) {
+                player.dx = 0;
+                player.dy = 0;
+            }
+        }
+
+        function startNewGame() {
+            player = {
+                x: 40,
+                y: canvas.height - 60,
+                width: 20,
+                height: 20,
+                color: 'blue',
+                speed: 5,
+                dx: 0,
+                dy: 0,
+                health: 100,
+                alive: true,
+                reachedEnd: false
+            };
+            enemies = [];
+            bullets = [];
+            score = 0;
+            mazeLayout = generateRandomMaze(13, 20);
+            maze = [];
+            generateMaze();
+            gameRunning = true;
+            hideOverlay();
+            gameLoop();
+        }
+
+        function showOverlay() {
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        function hideOverlay() {
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        function closeOverlay() {
+            hideOverlay();
+            if (!gameRunning) startNewGame();
+        }
+
+        document.addEventListener('keydown', keyDown);
+        document.addEventListener('keyup', keyUp);
+
+        showOverlay();
+    </script>
+</body>
+</html>

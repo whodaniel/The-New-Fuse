@@ -480,7 +480,9 @@ function EnhancedMultiAgentChatUI() {
       </header>
 
       <main className="p-4 overflow-y-auto flex flex-col space-y-4">
-        {renderedMessages}
+        {messages.map((msg) => (
+          <MessageBubble key={msg.id} msg={msg} agents={agents} />
+        ))}
         {messages.length === 0 && connectionState.authenticated && (
           <div className="text-center text-muted-foreground mt-8">
             <SystemIcon />

@@ -1,0 +1,51 @@
+.custom-node {
+  padding: 10px;
+  border-radius: 8px;
+  background: white;
+  border: 2px solid #ddd;
+  min-width: 150px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.custom-node-header {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.custom-node-label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.custom-node-params {
+  font-size: 12px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+}
+
+.param-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.param-key {
+  color: #666;
+  margin-right: 8px;
+}
+
+.param-value {
+  color: #333;
+  font-family: monospace;
+}
+
+.custom-node .react-flow__handle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #555;
+}

@@ -1,0 +1,30 @@
+import React, { createContext, useContext, ReactNode } from 'react';
+import { useDashboard } from '@the-new-fuse/hooks/useDashboard';
+import { DashboardState } from '@the-new-fuse/collaboration/types';
+import { CoreFeatures } from '@the-new-fuse/core';
+
+interface DashboardContextValue {
+  state: DashboardState;
+  features: CoreFeatures;
+  updateState: (newState: Partial<DashboardState>) => Promise<void>;
+  toggleFeature: (featureName: keyof CoreFeatures) => Promise<void>;
+}
+
+const DashboardContext: { children: ReactNode }): unknown {
+  const dashboard: unknown {
+  const context  = createContext<DashboardContextValue | null>(null);
+
+export function DashboardProvider({ children } useDashboard();
+
+  return (
+    <(DashboardContext as unknown).Provider value={dashboard}>
+      {children}
+    </(DashboardContext as unknown).Provider>
+  );
+}
+
+export function useDashboardContext(): unknown) {
+    throw new Error('useDashboardContext must be used within a DashboardProvider');
+  }
+  return context;
+}

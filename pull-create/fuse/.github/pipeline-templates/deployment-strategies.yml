@@ -1,0 +1,196 @@
+# Deployment Strategies Configuration
+# This file defines different deployment strategies for various environments
+
+deployment_strategies:
+  # Rolling Update Strategy
+  rolling_update:
+    name: "Rolling Update"
+    description: "Gradually replace old instances with new ones"
+    type: "rolling"
+    parameters:
+      max_unavailable: "25%"
+      max_surge: "25%"
+      progress_deadline_seconds: 600
+      revision_history_limit: 10
+    health_checks:
+      - type: "readiness"
+        initial_delay_seconds: 30
+        period_seconds: 10
+        timeout_seconds: 5
+        failure_threshold: 3
+      - type: "liveness"
+        initial_delay_seconds: 60
+        period_seconds: 30
+        timeout_seconds: 10
+        failure_threshold: 3
+    rollback:
+      enabled: true
+      automatic: true
+      failure_threshold: 50
+      timeout_seconds: 300
+      
+  # Blue-Green Deployment Strategy
+  blue_green:
+    name: "Blue-Green Deployment"
+    description: "Deploy to parallel environment and switch traffic"
+    type: "blue-green"
+    parameters:
+      preview_replica_count: 3
+      auto_promotion_enabled: false
+      scale_down_delay_seconds: 300
+      pre_promotion_analysis: true
+      post_promotion_analysis: true
+    health_checks:
+      - type: "readiness"
+        initial_delay_seconds: 30
+        period_seconds: 5
+        timeout_seconds: 3
+        failure_threshold: 2
+      - type: "http"
+        path: "/health"
+        port: 8080
+        timeout_seconds: 10
+        failure_threshold: 3
+    traffic_routing:
+      canary_weight: 0
+      stable_weight: 100
+      header_routing:
+        - header: "x-canary"
+          value: "true"
+          weight: 100
+    rollback:
+      enabled: true
+      automatic: true
+      failure_threshold: 25
+      timeout_seconds: 180
+      
+  # Canary Deployment Strategy
+  canary:
+    name: "Canary Deployment"
+    description: "Gradually shift traffic to new version"
+    type: "canary"
+    parameters:
+      canary_replica_count: 1
+      stable_replica_count: 3
+      max_unavailable: 0
+      max_surge: "100%"
+    traffic_steps:
+      - weight: 5
+        duration: "5m"
+      - weight: 10
+        duration: "10m"
+      - weight: 25
+        duration: "15m"
+      - weight: 50
+        duration: "20m"
+      - weight: 100
+        duration: "0m"
+    analysis:
+      - name: "success-rate"
+        provider: "prometheus"
+        query: "sum(rate(http_requests_total{status!~'5..'}[5m])) / sum(rate(http_requests_total[5m]))"
+        threshold: 0.95
+        interval: "1m"
+        count: 5
+      - name: "error-rate"
+        provider: "prometheus"
+        query: "sum(rate(http_requests_total{status=~'5..'}[5m])) / sum(rate(http_requests_total[5m]))"
+        threshold: 0.05
+        interval: "1m"
+        count: 5
+      - name: "response-time"
+        provider: "prometheus"
+        query: "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))"
+        threshold: 0.5
+        interval: "1m"
+        count: 5
+    rollback:
+      enabled: true
+      automatic: true
+      failure_threshold: 10
+      timeout_seconds: 120
+
+# Environment-specific strategy mappings
+environment_strategies:
+  development:
+    default_strategy: "rolling_update"
+    allowed_strategies: ["rolling_update", "recreate"]
+    
+  staging:
+    default_strategy: "blue_green"
+    allowed_strategies: ["rolling_update", "blue_green", "canary"]
+    
+  production:
+    default_strategy: "canary"
+    allowed_strategies: ["blue_green", "canary"]
+    approval_required: true
+    
+# Service-specific strategy overrides
+service_strategies:
+  api:
+    development: "rolling_update"
+    staging: "blue_green"
+    production: "canary"
+    
+  frontend:
+    development: "rolling_update"
+    staging: "blue_green"
+    production: "blue_green"
+    
+  worker:
+    development: "rolling_update"
+    staging: "rolling_update"
+    production: "rolling_update"
+
+# Rollback configurations
+rollback_policies:
+  automatic:
+    enabled: true
+    triggers:
+      - type: "health_check_failure"
+        threshold: 3
+        window: "5m"
+      - type: "error_rate"
+        threshold: 0.1
+        window: "2m"
+      - type: "response_time"
+        threshold: 2.0
+        window: "3m"
+    actions:
+      - type: "rollback"
+        timeout: "5m"
+      - type: "notify"
+        channels: ["slack", "email"]
+        
+  manual:
+    enabled: true
+    approval_required: false
+    timeout: "30m"
+    
+# Monitoring and alerting during deployments
+deployment_monitoring:
+  metrics:
+    - name: "deployment_duration"
+      type: "histogram"
+      labels: ["environment", "service", "strategy"]
+      
+    - name: "deployment_success_rate"
+      type: "counter"
+      labels: ["environment", "service", "strategy", "status"]
+      
+    - name: "rollback_count"
+      type: "counter"
+      labels: ["environment", "service", "reason"]
+      
+  alerts:
+    - name: "deployment_taking_too_long"
+      condition: "deployment_duration > 30m"
+      severity: "warning"
+      
+    - name: "deployment_failed"
+      condition: "deployment_success_rate{status='failed'} > 0"
+      severity: "critical"
+      
+    - name: "frequent_rollbacks"
+      condition: "rate(rollback_count[1h]) > 3"
+      severity: "warning"

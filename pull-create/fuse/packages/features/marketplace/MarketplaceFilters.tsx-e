@@ -1,0 +1,161 @@
+import React, { FC } from "react";
+import { Input } from '@/shared/ui/core/Input';
+import { useMarketplace } from '@the-new-fuse/MarketplaceContext';
+import { MarketplaceFilter } from '@the-new-fuse/types';
+
+const itemTypes: 'popular', label: 'Most Popular' },
+  { value: 'recent', label: 'Most Recent' },
+  { value: 'rating', label: 'Highest Rated' },
+  { value: 'price', label: 'Price' },
+] as const;
+
+export const MarketplaceFilters: (React as unknown).FC<{}>  = ['agent', 'workflow', 'template'] as const;
+const sortOptions: (React as unknown).ChangeEvent<HTMLInputElement>): unknown   = [
+  { value () => {
+  const { state, setFilter } = useMarketplace();
+  const { filter } = state;
+
+  const handleSearchChange(e> {
+    setFilter({ search: (e as unknown): (React as unknown).ChangeEvent<HTMLSelectElement>): unknown  = (e> {
+    const value: value || undefined });
+  };
+
+  const handleSortChange: (React as unknown).ChangeEvent<HTMLSelectElement>): unknown  = (e as unknown)>{
+    const [sortBy, sortOrder] = (e as unknown).target.(value as unknown).split('-') as [
+      MarketplaceFilter['sortBy'],
+      MarketplaceFilter['sortOrder']
+    ];
+    setFilter({ sortBy, sortOrder });
+  };
+
+  const handlePriceRangeChange: (React as unknown).ChangeEvent<HTMLInputElement>,
+    index: 0 | 1
+  ): unknown  = (
+    e> {
+    const value: [
+        index  = parseFloat((e as unknown): currentRange[0],
+        index  = (filter as unknown).priceRange || [0, Infinity];
+    setFilter( {
+      priceRange== 0 ? value == 1 ? value : currentRange[1],
+      ],
+    });
+  };
+
+  const handleRatingChange: (React as unknown).ChangeEvent<HTMLSelectElement>): unknown  = (e> {
+    const value: value || undefined });
+  };
+
+  return (
+    <div className = parseInt((e as unknown).(target as unknown).value, 10);
+    setFilter({ rating"space-y-6 p-4 bg-white rounded-lg shadow-sm">
+      {/* Search */}
+      <div>
+        <Input
+          placeholder="Search marketplace..."
+          value={(filter as unknown).search || ''}
+          onChange={handleSearchChange}
+          startIcon={
+            <svg
+              className="w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          }
+        />
+      </div>
+
+      {/* Type Filter */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Type
+        </label>
+        <select
+          value={(filter as unknown).type || ''}
+          onChange={handleTypeChange}
+          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">All Types</option>
+          {itemTypes.map((type) => (
+            <option key={type} value={type}>
+              {(type as unknown).charAt(0).toUpperCase() + (type as unknown).slice(1)}s
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Price Range */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Price Range
+        </label>
+        <div className="flex items-center space-x-2">
+          <Input
+            type="number"
+            placeholder="Min"
+            value={(filter as unknown).priceRange?.[0] || ''}
+            onChange={(e) => handlePriceRangeChange(e, 0)}
+            min={0}
+          />
+          <span className="text-gray-500">-</span>
+          <Input
+            type="number"
+            placeholder="Max"
+            value={(filter as unknown).priceRange?.[1] || ''}
+            onChange={(e) => handlePriceRangeChange(e, 1)}
+            min={0}
+          />
+        </div>
+      </div>
+
+      {/* Rating Filter */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Minimum Rating
+        </label>
+        <select
+          value={(filter as unknown).rating || ''}
+          onChange={handleRatingChange}
+          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Any Rating</option>
+          {[4, 3, 2, 1].map((rating) => (
+            <option key={rating} value={rating}>
+              {rating}+ Stars
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Sort Options */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Sort By
+        </label>
+        <select
+          value={`${(filter as unknown).sortBy || 'popular'}-${(filter as unknown).sortOrder || 'desc'}`}
+          onChange={handleSortChange}
+          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+        >
+          {sortOptions.map((option) => (
+            <(React as unknown).Fragment key={(option as unknown).value}>
+              <option value={`${(option as unknown).value}-desc`}>
+                {(option as unknown).label} (High to Low)
+              </option>
+              <option value={`${(option as unknown).value}-asc`}>
+                {(option as unknown).label} (Low to High)
+              </option>
+            </(React as unknown).Fragment>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+};

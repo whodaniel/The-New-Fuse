@@ -1,0 +1,26 @@
+{
+  "name": "@the-new-fuse/api-types",
+  "version": "1.0.0",
+  "description": "Shared type definitions for The New Fuse API",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "dev": "tsc -b --watch",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@the-new-fuse/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.8.1",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,7 +1,7 @@
 import type { Metadata, ServerUnaryCall } from '@grpc/grpc-js';
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod, GrpcService } from '@nestjs/microservices';
-import { VectorDatabaseService } from '../vector-database.service.js';
+import { VectorDatabaseService } from '../vector-database.service';
 
 // Proto message interfaces (will be generated)
 interface CreateCollectionRequest {

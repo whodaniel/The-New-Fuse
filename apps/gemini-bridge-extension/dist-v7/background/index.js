@@ -1,2 +1,3155 @@
-(()=>{"use strict";const e=new class{constructor(){this.accessToken=null,this.tokenExpiry=null,this.baseUrl="https://www.googleapis.com/youtube/v3"}async authenticate(){try{console.log("Starting YouTube OAuth2 authentication...");const e=await chrome.identity.getAuthToken({interactive:!0});return!!e&&(this.accessToken=e,this.tokenExpiry=Date.now()+36e5,await chrome.storage.local.set({youtubeToken:e,youtubeTokenExpiry:this.tokenExpiry}),console.log("YouTube authentication successful"),!0)}catch(e){throw console.error("YouTube authentication failed:",e),new Error(`Authentication failed: ${e.message}`)}}async isAuthenticated(){if(!this.accessToken||!this.tokenExpiry){const e=await chrome.storage.local.get(["youtubeToken","youtubeTokenExpiry"]);return!!(e.youtubeToken&&e.youtubeTokenExpiry>Date.now())&&(this.accessToken=e.youtubeToken,this.tokenExpiry=e.youtubeTokenExpiry,!0)}return this.tokenExpiry>Date.now()}async ensureAuthenticated(){await this.isAuthenticated()||await this.authenticate()}async makeRequest(e,t={}){const s=await this.isAuthenticated();let a=this.apiKey;a||(a=(await chrome.storage.local.get("youtubeApiKey")).youtubeApiKey,this.apiKey=a);const n=["POST","PUT","DELETE"].includes(t.method||"GET");if(!s&&!a)throw new Error("Quota Protection: You must specific a YouTube API Key in settings OR Sign In.");if(n&&!this.accessToken)throw new Error("Write operations require Google Sign-In (OAuth)");const i=new URL(`${this.baseUrl}/${e}`);a&&i.searchParams.append("key",a),Object.keys(t).forEach(e=>{"method"!==e&&"body"!==e&&i.searchParams.append(e,t[e])});const o={Accept:"application/json"};this.accessToken&&(o.Authorization=`Bearer ${this.accessToken}`);const r={method:t.method||"GET",headers:o};t.body&&(r.body="string"==typeof t.body?t.body:JSON.stringify(t.body),o["Content-Type"]="application/json");const c=await fetch(i.toString(),r);if(!c.ok){if(!this.accessToken&&403===c.status)throw new Error("API Key Quota Exceeded or Invalid. Please sign in with Google.");throw new Error(`YouTube API error: ${c.status} ${c.statusText}`)}return await c.json()}async getPlaylists(){try{return(await this.makeRequest("playlists",{part:"snippet,contentDetails",mine:"true",maxResults:50})).items.map(e=>({id:e.id,title:e.snippet.title,description:e.snippet.description,videoCount:e.contentDetails.itemCount,thumbnail:e.snippet.thumbnails?.default?.url}))}catch(e){throw console.error("Failed to fetch playlists:",e),e}}async getPlaylistVideos(e,t=50){try{let s=[],a=null;do{const n={part:"snippet,contentDetails",playlistId:e,maxResults:t};a&&(n.pageToken=a);const i=await this.makeRequest("playlistItems",n),o=i.items.map(e=>({id:e.snippet.resourceId.videoId,playlistItemId:e.id,title:e.snippet.title,description:e.snippet.description,thumbnail:e.snippet.thumbnails?.default?.url,channelTitle:e.snippet.channelTitle,publishedAt:e.snippet.publishedAt,position:e.snippet.position}));s=s.concat(o),a=i.nextPageToken}while(a);return s}catch(e){throw console.error("Failed to fetch playlist videos:",e),e}}async getVideoDetails(e){try{const t=[];for(let s=0;s<e.length;s+=50)t.push(e.slice(s,s+50));let s=[];for(const e of t){const t=(await this.makeRequest("videos",{part:"contentDetails,snippet,statistics",id:e.join(",")})).items.map(e=>({id:e.id,duration:this.parseDuration(e.contentDetails.duration),durationISO:e.contentDetails.duration,title:e.snippet.title,channelTitle:e.snippet.channelTitle,viewCount:e.statistics?.viewCount,likeCount:e.statistics?.likeCount}));s=s.concat(t)}return s}catch(e){throw console.error("Failed to fetch video details:",e),e}}parseDuration(e){const t=e.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);return t?3600*parseInt(t[1]||0)+60*parseInt(t[2]||0)+parseInt(t[3]||0):0}formatDuration(e){const t=Math.floor(e/3600),s=Math.floor(e%3600/60),a=e%60;return t>0?`${t}h ${s}m`:s>0?`${s}m ${a}s`:`${a}s`}async addToPlaylist(e,t){try{const s=await fetch(`${this.baseUrl}/playlistItems?part=snippet`,{method:"POST",headers:{Authorization:`Bearer ${this.accessToken}`,"Content-Type":"application/json"},body:JSON.stringify({snippet:{playlistId:e,resourceId:{kind:"youtube#video",videoId:t}}})});if(!s.ok)throw new Error(`Failed to add video to playlist: ${s.statusText}`);return await s.json()}catch(e){throw console.error("Failed to add video to playlist:",e),e}}async removeFromPlaylist(e){try{const t=await fetch(`${this.baseUrl}/playlistItems?id=${e}`,{method:"DELETE",headers:{Authorization:`Bearer ${this.accessToken}`}});if(!t.ok)throw new Error(`Failed to remove video from playlist: ${t.statusText}`);return!0}catch(e){throw console.error("Failed to remove video from playlist:",e),e}}async moveVideo(e,t,s){try{return await this.addToPlaylist(s,e),await this.removeFromPlaylist(t),!0}catch(e){throw console.error("Failed to move video:",e),e}}async createPlaylist(e,t="",s="private"){try{const a=await fetch(`${this.baseUrl}/playlists?part=snippet,status`,{method:"POST",headers:{Authorization:`Bearer ${this.accessToken}`,"Content-Type":"application/json"},body:JSON.stringify({snippet:{title:e,description:t},status:{privacyStatus:s}})});if(!a.ok)throw new Error(`Failed to create playlist: ${a.statusText}`);const n=await a.json();return{id:n.id,title:n.snippet.title,description:n.snippet.description}}catch(e){throw console.error("Failed to create playlist:",e),e}}async getWatchLaterPlaylistId(){try{const e=await this.makeRequest("channels",{part:"contentDetails",mine:"true"});return e.items&&e.items.length>0?e.items[0].contentDetails.relatedPlaylists.watchLater:null}catch(e){throw console.error("Failed to get Watch Later playlist:",e),e}}async getLikedVideos(e=50){try{return(await this.makeRequest("videos",{part:"snippet,contentDetails",myRating:"like",maxResults:e})).items.map(e=>({id:e.id,title:e.snippet.title,description:e.snippet.description,thumbnail:e.snippet.thumbnails?.default?.url,channelTitle:e.snippet.channelTitle,publishedAt:e.snippet.publishedAt,url:`https://www.youtube.com/watch?v=${e.id}`}))}catch(e){throw console.error("Failed to fetch liked videos:",e),e}}generateWatchHistoryPrompt(e=50){return`Using your Personal Intelligence access to my YouTube watch history,\nprovide my last ${e} watched videos.\n\nFilter out political content.\n\nFormat as JSON array:\n[\n  {\n    "title": "Video Title",\n    "url": "https://www.youtube.com/watch?v=...",\n    "channel": "Channel Name",\n    "description": "Brief description"\n  }\n]`}};function t(e){let t=0;for(let s=0;s<e.length;s++)t=(t<<5)-t+e.charCodeAt(s),t&=t;return t.toString(36)}const s="gemini_bridge_settings",a="gemini_bridge_agent_id",n="gemini_bridge_channels",i="gemini_bridge_joined_channels",o="gemini_bridge_tab_active_channels",r="gemini_bridge_tab_paused_channels",c="gemini_bridge_auto_connect",l="gemini_bridge_auto_monitor",d="gemini_bridge_auto_master_clock",h="gemini_bridge_auto_wake_ping",u="gemini_bridge_event_log",g="ws://localhost:3000/ws",m="ai_video_process_tick";new class{constructor(){this.connections=new Map,this.nodeStatus=new Map,this.primaryConnection=null,this.agentId="",this.agents=new Map,this.channels=new Map,this.joinedChannels=new Set,this.tabActiveChannels=new Map,this.tabPausedChannels=new Map,this.messageQueue=[],this.pendingPageAgents=[],this.autoConnect=!0,this.autoMonitor=!0,this.autoMasterClock=!0,this.autoWakePing=!1,this.lastAutonomyStartAt=0,this.lastWakePingAt=new Map,this.channelLastActivityAt=new Map,this.connectionAttempts=0,this.maxInitialAttempts=1,this.recentMessageHashes=new Map,this.MESSAGE_DEDUP_WINDOW_MS=1e4,this.reconnectTimers=new Map,this.heartbeatTimer=null,this.healthCheckTimer=null,this.cleanupTimer=null,this.stallWatchdogTimer=null,this.nativeHostUnavailable=!1,this.nativeHostMissingLogged=!1,this.extensionEventLog=[],this.EVENT_LOG_LIMIT=4e3,this.eventLogFlushTimer=null,this.eventLoggingEnabled=!0,this.automationRunning=!1,this.automationPaused=!1,this.pendingTaskResolve=null,this.init()}async init(){console.log("[GeminiBridge v7] Background service initializing..."),this.setupMessageHandlers(),this.setupCommands(),this.setupTabLifecycleHandlers(),this.setupAlarmHandlers(),this.registerWebMCPTools(),this.agentId=await this.getOrCreateAgentId(),await this.loadSavedState(),this.logEvent("extension","background_loaded_state",{channels:this.channels.size,joinedChannels:this.joinedChannels.size,tabChannelBindings:this.tabActiveChannels.size}),this.startHealthChecks(),this.startCleanupTimer(),this.autoConnect?this.tryInitialConnection():this.updateNodeStatus("relay",g,"disconnected"),console.log("[GeminiBridge v7] Background service ready"),this.logEvent("extension","background_ready",{autoConnect:this.autoConnect,autoMonitor:this.autoMonitor,autoMasterClock:this.autoMasterClock,autoWakePing:this.autoWakePing})}startCleanupTimer(){this.cleanupTimer=setInterval(()=>{const e=Date.now();let t=0;for(const[s,a]of this.recentMessageHashes.entries())e-a>this.MESSAGE_DEDUP_WINDOW_MS&&(this.recentMessageHashes.delete(s),t++);t>0&&console.log(`[GeminiBridge v7] Cleaned up ${t} stale message hashes`)},3e4)}async tryInitialConnection(){await this.checkRelayHealth()?this.connectToNode("relay",g):(console.log("[GeminiBridge v7] Relay not available - attempting autonomous startup"),this.updateNodeStatus("relay",g,"disconnected"),this.sendNativeMessage({action:"start",service:"relay"}).then(e=>{e?.error||setTimeout(()=>{this.connectionAttempts=0,this.connectToNode("relay",g),this.ensureAutonomousServices("relay_auto_bootstrap")},3e3)}))}async checkRelayHealth(){try{const e=await fetch("http://localhost:3000/health",{method:"GET",signal:AbortSignal.timeout(2e3)});return"ok"===(await e.json()).status}catch(e){return!1}}async getOrCreateAgentId(){let e=(await chrome.storage.local.get([a]))[a];return e||(e=`browser-${Date.now()}-${Math.random().toString(36).substr(2,9)}`,await chrome.storage.local.set({[a]:e})),e}async loadSavedState(){const e=await chrome.storage.local.get([n,i,o,"gemini_bridge_known_nodes",c,l,d,h,r,u,s]);if(e[n]&&e[n].forEach(e=>{this.channels.set(e.id,e)}),e[i]&&(this.joinedChannels=new Set(e[i])),e[o]){const t=e[o];for(const[e,s]of Object.entries(t)){const t=Number(e);Number.isFinite(t)&&s&&this.tabActiveChannels.set(t,s)}}if(e[r]){const t=e[r];for(const[e,s]of Object.entries(t)){const t=Number(e);if(!Number.isFinite(t)||!Array.isArray(s))continue;const a=new Set(s.map(e=>String(e||"").trim()).filter(e=>e.length>0));a.size>0&&this.tabPausedChannels.set(t,a)}}if(Array.isArray(e[u])){const t=e[u];this.extensionEventLog=t.slice(-this.EVENT_LOG_LIMIT)}this.joinedChannels.add("green"),this.autoConnect=e[c]??!0,this.autoMonitor=e[l]??!0,this.autoMasterClock=e[d]??!0,this.autoWakePing=e[h]??!1,void 0!==e[s]?.autoReconnect&&(this.autoConnect=e[s].autoReconnect),void 0!==e[s]?.autoMonitor&&(this.autoMonitor=!!e[s].autoMonitor),void 0!==e[s]?.autoMasterClock&&(this.autoMasterClock=!!e[s].autoMasterClock),void 0!==e[s]?.autoWakePing&&(this.autoWakePing=!!e[s].autoWakePing)}connectToNode(e,t){if(this.connections.has(e)){const t=this.connections.get(e);if(t?.readyState===WebSocket.OPEN)return void console.log(`[GeminiBridge v7] Already connected to ${e}`);t?.close(),this.connections.delete(e)}console.log(`[GeminiBridge v7] Connecting to ${e} at ${t}...`),this.updateNodeStatus(e,t,"connecting");try{const s=new WebSocket(t);s.onopen=()=>{console.log(`[GeminiBridge v7] Connected to ${e}`),this.connections.set(e,s),this.updateNodeStatus(e,t,"connected"),this.connectionAttempts=0,this.primaryConnection||(this.primaryConnection=s),this.registerAgent(s),this.startHeartbeat(),this.ensureAutonomousServices("relay_connected"),this.flushMessageQueue(),this.flushPendingPageAgents(),this.reRegisterAllAgents(s),this.requestSync(s)},s.onmessage=t=>{try{const s=JSON.parse(t.data);this.handleRelayMessage(s,e)}catch(e){console.error("[GeminiBridge v7] Failed to parse message:",e)}},s.onclose=()=>{if(console.log(`[GeminiBridge v7] Disconnected from ${e}`),this.connections.delete(e),this.updateNodeStatus(e,t,"disconnected"),this.primaryConnection===s){this.primaryConnection=null;for(const[,e]of this.connections)if(e.readyState===WebSocket.OPEN){this.primaryConnection=e;break}}this.autoConnect&&0===this.connectionAttempts&&this.scheduleReconnect(e,t),"relay"===e&&this.stopStallWatchdog()},s.onerror=()=>{this.connectionAttempts++,this.updateNodeStatus(e,t,"disconnected"),this.autoConnect&&this.connectionAttempts<3&&this.scheduleReconnect(e,t)}}catch(s){console.log(`[GeminiBridge v7] Unable to connect to ${e} - relay may not be running`),this.updateNodeStatus(e,t,"disconnected")}}updateNodeStatus(e,t,s){const a={id:e,type:e,url:t,status:s,lastConnected:"connected"===s?Date.now():this.nodeStatus.get(e)?.lastConnected||null,latency:null,features:this.getNodeFeatures(e)};this.nodeStatus.set(e,a),this.broadcastToTabs({type:"CONNECTION_STATUS",status:s,node:a}),this.notifyPopup({type:"CONNECTION_STATUS",status:s,node:a})}getNodeFeatures(e){return{relay:["websocket","agents","messages","channels"],"api-gateway":["rest","auth","workflows"],backend:["agents","persistence","workflows"],saas:["cloud","auth","multi-tenant"],redis:["pubsub","cache"],websocket:["realtime"]}[e]||[]}scheduleReconnect(e,t){const s=this.reconnectTimers.get(e);s&&clearTimeout(s);const a=Math.min(5e3*Math.pow(2,this.connectionAttempts),3e4);console.log(`[GeminiBridge v7] Will retry ${e} in ${a}ms...`);const n=setTimeout(()=>{this.connectToNode(e,t)},a);this.reconnectTimers.set(e,n)}registerAgent(e){const t={id:crypto.randomUUID(),type:"AGENT_REGISTER",timestamp:Date.now(),source:this.agentId,payload:{agent:{id:this.agentId,name:"Browser Agent",platform:"chrome-extension",status:"active",capabilities:["chat-injection","dom-reading","universal-detection","streaming-detection","notifications"],channels:Array.from(this.joinedChannels),metadata:{node:{type:"browser",platform:navigator.platform,userAgent:navigator.userAgent,language:navigator.language}}}}};e.send(JSON.stringify(t))}registerPageAgent(e,t,s,a){const n={id:e,name:t,platform:"browser-page",status:"active",capabilities:["chat-injection","dom-reading"],channels:[],metadata:{node:{type:"browser-tab",platform:s},tabId:a},lastSeen:Date.now()};if(this.agents.set(e,n),this.primaryConnection?.readyState===WebSocket.OPEN){const s={id:crypto.randomUUID(),type:"AGENT_REGISTER",timestamp:Date.now(),source:this.agentId,payload:{agent:n}};this.primaryConnection.send(JSON.stringify(s)),console.log(`[GeminiBridge v7] Registered Page Agent: ${t} (${e})`);for(const t of this.joinedChannels){const s={id:crypto.randomUUID(),type:"CHANNEL_JOIN",timestamp:Date.now(),source:e,payload:{channelId:t}};this.primaryConnection.send(JSON.stringify(s)),console.log(`[GeminiBridge v7] Auto-joined Page Agent ${e} to channel ${t}`),n.channels.push(t)}}else console.log(`[GeminiBridge v7] Queued Page Agent for later registration: ${t} (${e})`),this.pendingPageAgents.push(n);this.broadcastToTabs({type:"AGENTS_UPDATE",agents:Array.from(this.agents.values())}),this.frontloadPageAgentContext(n),this.sendActivityEvent("page_agent_registered",{pageAgentId:e,tabId:a||null,platform:s,channels:n.channels})}requestSync(e){this.send({type:"AGENT_LIST"},e),this.send({type:"CHANNEL_LIST"},e)}send(e,t){const s=t||this.primaryConnection;let a;a="MESSAGE_SEND"===e.type?{id:crypto.randomUUID(),type:"MESSAGE_SEND",timestamp:Date.now(),source:this.agentId,channel:e.channel||"general",payload:{to:e.to,content:e.content,messageType:e.messageType||"text",metadata:e.metadata}}:{id:crypto.randomUUID(),type:e.type,timestamp:Date.now(),source:this.agentId,channel:e.channel||"general",payload:e},s?.readyState===WebSocket.OPEN?(s.send(JSON.stringify(a)),console.log("[GeminiBridge v7] Sent to relay:",a.type,a.channel)):(this.messageQueue.push(a),console.log("[GeminiBridge v7] Queued message (not connected):",a.type))}flushMessageQueue(){for(;this.messageQueue.length>0&&this.primaryConnection?.readyState===WebSocket.OPEN;){const e=this.messageQueue.shift();e&&this.primaryConnection.send(JSON.stringify(e))}}flushPendingPageAgents(){if(this.primaryConnection?.readyState===WebSocket.OPEN)for(console.log(`[GeminiBridge v7] Flushing ${this.pendingPageAgents.length} pending page agent registrations`);this.pendingPageAgents.length>0;){const e=this.pendingPageAgents.shift();if(e){const t={id:crypto.randomUUID(),type:"AGENT_REGISTER",timestamp:Date.now(),source:this.agentId,payload:{agent:e}};this.primaryConnection.send(JSON.stringify(t)),console.log(`[GeminiBridge v7] Registered queued Page Agent: ${e.name} (${e.id})`);for(const t of this.joinedChannels){const s={id:crypto.randomUUID(),type:"CHANNEL_JOIN",timestamp:Date.now(),source:e.id,payload:{channelId:t}};this.primaryConnection.send(JSON.stringify(s)),e.channels.push(t)}}}}reRegisterAllAgents(e){if(e.readyState===WebSocket.OPEN){console.log(`[GeminiBridge v7] Re-registering ${this.agents.size} existing agents on new connection`);for(const[t,s]of this.agents){if(t===this.agentId)continue;const a={id:crypto.randomUUID(),type:"AGENT_REGISTER",timestamp:Date.now(),source:this.agentId,payload:{agent:s}};if(e.send(JSON.stringify(a)),console.log(`[GeminiBridge v7] Re-announced Page Agent: ${s.name} (${t})`),s.channels&&s.channels.length>0)for(const a of s.channels){const s={id:crypto.randomUUID(),type:"CHANNEL_JOIN",timestamp:Date.now(),source:t,payload:{channelId:a}};e.send(JSON.stringify(s))}}}}startHeartbeat(){this.heartbeatTimer||(this.heartbeatTimer=setInterval(()=>{this.send({type:"HEARTBEAT"});for(const[e,t]of this.agents)if(e!==this.agentId&&"browser-page"===t.platform){const s=t.metadata?.tabId;s&&chrome.tabs.get(s,t=>{if(chrome.runtime.lastError||!t)return console.log(`[GeminiBridge v7] Tab ${s} for agent ${e} is gone. Removing.`),this.agents.delete(e),this.send({type:"AGENT_UNREGISTER",agentId:e}),void this.broadcastToTabs({type:"AGENTS_UPDATE",agents:Array.from(this.agents.values())});const a={id:crypto.randomUUID(),type:"HEARTBEAT",timestamp:Date.now(),source:e,payload:{}};this.primaryConnection?.readyState===WebSocket.OPEN&&this.primaryConnection.send(JSON.stringify(a))})}},3e4))}startHealthChecks(){this.healthCheckTimer=setInterval(()=>{for(const[e,t]of this.nodeStatus){const s=this.connections.get(e);s&&s.readyState!==WebSocket.OPEN&&"connected"===t.status&&this.updateNodeStatus(e,t.url,"disconnected")}},1e4)}handleRelayMessage(e,t){switch(console.log(`[GeminiBridge v7] Received from ${t}:`,e.type),this.logEvent("relay","message_in",{nodeType:t,type:e.type,source:e.source||null,channel:e.channel||null}),e.type){case"WELCOME":console.log("[GeminiBridge v7] Welcome received");break;case"AGENT_LIST":{const t=e.payload.agents||[];this.agents.clear(),t.forEach(e=>this.agents.set(e.id,e)),this.broadcastToTabs({type:"AGENTS_UPDATE",agents:t}),this.notifyPopup({type:"AGENTS_UPDATE",agents:t});break}case"AGENT_STATUS":{const t=e.payload.agent;if(t){if("offline"===t.status||"disconnected"===t.status||"unregistered"===t.status)console.log(`[GeminiBridge v7] Agent ${t.id} went offline/removed`),this.agents.delete(t.id);else{const e=this.agents.get(t.id);e&&e.metadata?.tabId&&!t.metadata?.tabId&&(t.metadata={...t.metadata,tabId:e.metadata.tabId}),this.agents.set(t.id,t)}this.broadcastToTabs({type:"AGENTS_UPDATE",agents:Array.from(this.agents.values())}),this.notifyPopup({type:"AGENTS_UPDATE",agents:Array.from(this.agents.values())}),"active"===t.status&&this.createNotification("agent_joined","Agent Connected",`${t.name} is now online`)}break}case"AGENT_UNREGISTER":{const t=e.payload.agentId;t&&(console.log(`[GeminiBridge v7] UNREGISTER received for ${t}`),this.agents.delete(t),this.broadcastToTabs({type:"AGENTS_UPDATE",agents:Array.from(this.agents.values())}),this.notifyPopup({type:"AGENTS_UPDATE",agents:Array.from(this.agents.values())}));break}case"CHANNEL_LIST":{const t=e.payload.channels||[];t.length>0&&(t.forEach(e=>{const t=this.findChannelByName(e.name);if(t&&t.id!==e.id){if(!this.shouldPreferIncomingChannel(t,e))return;this.channels.delete(t.id),this.remapChannelReferences(t.id,e.id)}this.channels.set(e.id,e)}),this.broadcastToTabs({type:"CHANNELS_UPDATE",channels:Array.from(this.channels.values())}),this.notifyPopup({type:"CHANNELS_UPDATE",channels:Array.from(this.channels.values())}),this.saveChannels());break}case"CHANNEL_MESSAGE":case"MESSAGE_RECEIVE":const t=e.payload;if(t?.channel&&this.channelLastActivityAt.set(t.channel,Date.now()),this.appendTranscriptFromRelay(t),this.handleAgentMessage(t),t&&t.content){const e=this.channels.get(t.channel||"")?.name||"";"green"!==t.channel&&"green"!==e.toLowerCase()||this.broadcastToTabs({type:"INJECT_MESSAGE",content:t.content,metadata:t.metadata})}break;case"MESSAGE_STREAM_START":this.broadcastToTabs({type:"STREAMING_START",messageId:e.payload.messageId});break;case"MESSAGE_STREAM_CHUNK":this.broadcastToTabs({type:"STREAMING_CHUNK",messageId:e.payload.messageId,chunk:e.payload.chunk});break;case"MESSAGE_STREAM_END":this.broadcastToTabs({type:"STREAMING_END",messageId:e.payload.messageId});break;case"ERROR":console.error("[GeminiBridge v7] Relay error:",e.payload),this.createNotification("error","Error",e.payload.message||"Unknown error");break;case"TASK_ASSIGN":this.broadcastToTabs({type:"TASK_ASSIGN",task:e.payload.task,channel:e.channel,timestamp:e.timestamp}),this.createNotification("info","New Task Assigned",`Task: ${e.payload.task.title}`)}}async appendTranscriptFromRelay(e){const s=e.channel||"",a=this.channels.get(s)?.name||"",n=(a||s).toString();if(!("NFT Alpha 1"===n||"nft-alpha-1"===n.toLowerCase()||n.toLowerCase().includes("nft")&&n.toLowerCase().includes("alpha")))return;const i="system"===e.type?"system":"response"===e.type?"assistant":"command"===e.type?"tool":"user",o="relay:NFT Alpha 1",r={id:t(`${o}|${e.id}|${e.from}|${e.to}|${e.timestamp}|${s}`),ts:e.timestamp||Date.now(),role:i,content:e.content||"",meta:{source:"tnf-relay",channelId:s,channelName:a,channel:n,from:e.from,to:e.to,msgType:e.type}};if(r.content)try{const e=`https://tnf-agent-orchestration.bizsynth.workers.dev/transcript/append?sessionKey=${encodeURIComponent(o)}`;await fetch(e,{method:"POST",headers:{"Content-Type":"application/json","X-Session-Key":o},body:JSON.stringify({entries:[r]})})}catch(e){}}handleAgentMessage(e){try{const t=Date.now(),s=this.__loopGuard||{counts:new Map,mutedUntil:new Map};this.__loopGuard=s;const a=e.from||"",n=e.channel||"",i=e.content||"",o=s.mutedUntil.get(a)||0;if(o&&t<o)return;const r=`${a}:${n}:${i.slice(0,280)}`,c=s.counts.get(r)||{firstTs:t,n:0};if(t-c.firstTs>1e4&&(c.firstTs=t,c.n=0),c.n+=1,s.counts.set(r,c),c.n>5)return s.mutedUntil.set(a,t+6e4),void console.debug("[GeminiBridge v7] Loop guard muted source for 60s:",a)}catch{}if(e.from===this.agentId||"Browser Agent"===e.from){if(!e.channel)return void console.log("[GeminiBridge v7] Skipping direct self-message echo");const s=t(`${e.from}:${e.content}:${Math.floor(e.timestamp/1e3)}`);if(this.recentMessageHashes.has(s))return void console.log("[GeminiBridge v7] Skipping duplicate self-message on channel")}const s=t(`${e.from}:${e.content}:${Math.floor(e.timestamp/1e3)}`),a=Date.now();if(this.recentMessageHashes.has(s))console.log("[GeminiBridge v7] Skipping duplicate message");else{this.recentMessageHashes.set(s,a);for(const[e,t]of this.recentMessageHashes.entries())a-t>this.MESSAGE_DEDUP_WINDOW_MS&&this.recentMessageHashes.delete(e);this.broadcastToTabs({type:"NEW_MESSAGE",message:e}),this.notifyPopup({type:"NEW_MESSAGE",message:e}),e.to!==this.agentId&&"broadcast"!==e.to||this.createNotification("message",`Message from ${e.from}`,e.content.substring(0,100)),e.to!==this.agentId&&"broadcast"!==e.to||"command"!==e.type||this.executeCommand(e)}}async executeCommand(e){const t=e.content;if(t.startsWith("/inject ")){const e=t.slice(8);await this.injectMessageToActiveTab(e)}else if("/get-response"===t){const t=await this.getLastResponseFromActiveTab();this.send({type:"MESSAGE_SEND",to:e.from,content:t||"No response available",messageType:"response"})}else if("/get-status"===t){const t=await this.getTabChatStatus();this.send({type:"MESSAGE_SEND",to:e.from,content:JSON.stringify(t),messageType:"response"})}}createNotification(e,t,s){const a={id:crypto.randomUUID(),type:e,title:t,message:s,priority:"error"===e?"high":"normal",timestamp:Date.now(),read:!1};this.broadcastToTabs({type:"NOTIFICATION",notification:a})}async injectMessageToActiveTab(e){const t=await chrome.tabs.query({active:!0,currentWindow:!0});t[0]?.id&&(this.logEvent("chat","inject_active_tab",{tabId:t[0].id,preview:String(e||"").slice(0,120)}),this.safeSendMessage(t[0].id,{type:"INJECT_MESSAGE",content:e}))}safeSendMessage(e,t,s){try{chrome.tabs.sendMessage(e,t,e=>{chrome.runtime.lastError,s&&s(e)})}catch(e){}}async injectMessageToTab(e,t){this.logEvent("chat","inject_specific_tab",{tabId:e,preview:String(t||"").slice(0,120)}),this.safeSendMessage(e,{type:"INJECT_MESSAGE",content:t})}async getLastResponseFromActiveTab(){const e=await chrome.tabs.query({active:!0,currentWindow:!0});return e[0]?.id?new Promise(t=>{this.safeSendMessage(e[0].id,{type:"GET_LAST_RESPONSE"},e=>{t(e?.response||null)})}):null}async getTabChatStatus(){const e=await chrome.tabs.query({active:!0,currentWindow:!0});return e[0]?.id?new Promise(t=>{this.safeSendMessage(e[0].id,{type:"GET_CHAT_STATUS"},e=>{t(e||{})})}):{}}async broadcastToTabs(e){const t=await chrome.tabs.query({});for(const s of t)if(s.id)try{this.safeSendMessage(s.id,e,()=>{const e=chrome.runtime.lastError;!e||e.message?.includes("Receiving end does not exist")||e.message?.includes("Could not establish connection")||console.debug(`[GeminiBridge v7] Failed to broadcast to tab ${s.id}:`,e)})}catch(e){}}notifyPopup(e){try{chrome.runtime.sendMessage(e,()=>{chrome.runtime.lastError})}catch{}}async saveChannels(){await chrome.storage.local.set({[n]:Array.from(this.channels.values()),[i]:Array.from(this.joinedChannels)})}async saveTabActiveChannels(){const e={};for(const[t,s]of this.tabActiveChannels.entries())s&&(e[String(t)]=s);await chrome.storage.local.set({[o]:e})}async saveTabPausedChannels(){const e={};for(const[t,s]of this.tabPausedChannels.entries())s.size>0&&(e[String(t)]=Array.from(s));await chrome.storage.local.set({[r]:e})}setChannelPaused(e,t,s){if(!t)return;let a=this.tabPausedChannels.get(e);a||(a=new Set,this.tabPausedChannels.set(e,a)),s?a.add(t):a.delete(t),0===a.size&&this.tabPausedChannels.delete(e),this.saveTabPausedChannels()}getTabPausedChannels(e){return e?Array.from(this.tabPausedChannels.get(e)||[]):[]}isChannelPausedOnTab(e,t){return t&&this.tabPausedChannels.get(e)?.has(t)||!1}setTabActiveChannel(e,t){t?this.tabActiveChannels.set(e,t):this.tabActiveChannels.delete(e),this.saveTabActiveChannels()}getTabActiveChannel(e){return e&&this.tabActiveChannels.get(e)||null}normalizeChannelName(e){return String(e||"").trim().replace(/\s+/g," ").toLowerCase()}extractYouTubeUrls(e){const t=String(e||"").match(/https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=[\w-]{11}[\w=&-]*|youtu\.be\/[\w-]{11}[\w?=&-]*)/gi)||[];return Array.from(new Set(t.map(e=>e.trim())))}toQueueItems(e){return e.map((e,t)=>{const s=e.match(/(?:v=|youtu\.be\/)([\w-]{11})/i),a=s?.[1]||`vid-${Date.now()}-${t}`;return{id:a,title:`YouTube Video ${a}`,url:e,addedAt:Date.now()}})}getDefaultProcessingState(){return{isProcessing:!1,isPaused:!1,currentIndex:0,totalCount:0,currentVideo:null,lastUpdated:Date.now()}}setupAlarmHandlers(){chrome.alarms.onAlarm.addListener(e=>{e.name===m&&this.processAIVideoTick()})}async getYouTubeAuthToken(){const e=Date.now(),t=await chrome.storage.local.get(["ai_studio_token","youtubeToken","youtubeTokenExpiry"]),s=String(t.youtubeToken||"").trim(),a=String(t.ai_studio_token||"").trim(),n=Number(t.youtubeTokenExpiry||0);return s&&n>e?s:a&&(!n||n>e)?a:null}async validateYouTubeToken(e){if(!e)return!1;try{return await this.youtubeApiGet("channels?part=id&mine=true&maxResults=1",e),!0}catch{return!1}}async youtubeApiGet(e,t){const s=await fetch(`https://www.googleapis.com/youtube/v3/${e}`,{headers:{Authorization:`Bearer ${t}`}});if(!s.ok)throw new Error(`YouTube API ${s.status}`);return s.json()}async fetchYouTubeChannels(){const e=await this.getYouTubeAuthToken();if(!e)throw new Error("Not authenticated");const t=await this.youtubeApiGet("channels?part=snippet,contentDetails&mine=true&maxResults=50",e);return(Array.isArray(t?.items)?t.items:[]).map(e=>({id:String(e?.id||""),title:String(e?.snippet?.title||"Untitled Channel"),description:String(e?.snippet?.description||""),thumbnail:String(e?.snippet?.thumbnails?.default?.url||""),uploadsPlaylistId:String(e?.contentDetails?.relatedPlaylists?.uploads||"")}))}async fetchYouTubePlaylistsForChannel(e,t){const s=await this.youtubeApiGet(`playlists?part=snippet,contentDetails&channelId=${encodeURIComponent(t)}&maxResults=50`,e);return(Array.isArray(s?.items)?s.items:[]).map(e=>({id:String(e?.id||""),title:String(e?.snippet?.title||"Untitled Playlist"),description:String(e?.snippet?.description||""),videoCount:Number(e?.contentDetails?.itemCount||0),thumbnail:String(e?.snippet?.thumbnails?.medium?.url||""),channelId:String(t||"")}))}async fetchYouTubePlaylists(){if(!await this.getYouTubeAuthToken())throw new Error("Not authenticated");return(await e.getPlaylists()).map(e=>({id:String(e?.id||""),title:String(e?.title||"Untitled Playlist"),description:String(e?.description||""),videoCount:Number(e?.videoCount||0),thumbnail:String(e?.thumbnail||"")}))}async readSelectedYouTubeChannelId(){const e=await chrome.storage.local.get(["ai_studio_channel_id"]);return String(e.ai_studio_channel_id||"").trim()}async fetchYouTubePlaylistsBundle(){return{playlists:await this.fetchYouTubePlaylists(),channels:[],selectedChannelId:"",requiresChannelSelection:!1}}getOAuthDiagnostics(){const e=chrome.runtime.getManifest(),t=String(e.oauth2?.client_id||"").trim(),s=Array.isArray(e.oauth2?.scopes)?e.oauth2.scopes:[],a=chrome.identity.getRedirectURL();return{extensionId:chrome.runtime.id,clientId:t,redirectUri:a,scopes:s}}async getAuthTokenInteractive(e){const t=this.getOAuthDiagnostics(),s=encodeURIComponent(e.join(" ")),a=`https://accounts.google.com/o/oauth2/auth?client_id=${encodeURIComponent(t.clientId)}&response_type=token&redirect_uri=${encodeURIComponent(t.redirectUri)}&scope=${s}&prompt=select_account&include_granted_scopes=true`;return new Promise((e,t)=>{chrome.identity.launchWebAuthFlow({url:a,interactive:!0},s=>{if(!chrome.runtime.lastError&&s)try{const a=new URL(s),n=a.hash.startsWith("#")?a.hash.slice(1):a.hash,i=new URLSearchParams(n),o=String(i.get("access_token")||"").trim();if(!o){const e=String(i.get("error")||"oauth_error").trim();return void t(new Error(`OAuth failed: ${e}`))}e(o)}catch(e){t(new Error(e?.message||"OAuth redirect parse failed"))}else t(chrome.runtime.lastError||new Error("OAuth account chooser failed"))})})}async fetchGoogleUserProfile(e){const t=await fetch("https://www.googleapis.com/oauth2/v3/userinfo",{headers:{Authorization:`Bearer ${e}`}});if(!t.ok)throw new Error(`Failed to fetch Google profile (${t.status})`);const s=await t.json();return{email:String(s?.email||""),name:String(s?.name||""),picture:String(s?.picture||"")}}async authenticateYouTube(){const{scopes:e}=this.getOAuthDiagnostics(),t=await this.getAuthTokenInteractive(e);if(!await this.validateYouTubeToken(t))throw new Error("YouTube token validation failed after OAuth");const s=await this.fetchGoogleUserProfile(t),a=await chrome.storage.local.get(["lastAuthAccount"]),n=String(a.lastAuthAccount||"").trim().toLowerCase(),i=String(s.email||"").trim().toLowerCase(),o=!!n&&!!i&&n!==i;return o&&await chrome.storage.local.remove(["ai_studio_channel_id","cachedPlaylists","cachedVideos"]),{token:t,primaryProfile:s,accountSwitched:o}}normalizeOAuthError(e){const t=String(e?.message||e||"Authentication failed");if(t.includes("redirect_uri_mismatch")||t.includes("invalid_request")||t.includes("OAuth2 not granted or revoked")){const e=this.getOAuthDiagnostics();return new Error(`OAuth setup mismatch for extension identity. Ensure OAuth client is Chrome Extension type bound to extension ID ${e.extensionId} and client_id ${e.clientId}. Redirect URI should be ${e.redirectUri}`)}return new Error(t)}async authenticateYouTubeSafe(){try{const e=await chrome.storage.local.get(["youtubeToken","ai_studio_token"]),t=[e.youtubeToken,e.ai_studio_token].map(e=>String(e||"").trim()).filter(Boolean);for(const e of t)await new Promise(t=>{chrome.identity.removeCachedAuthToken({token:e},()=>t())});return await new Promise(e=>chrome.identity.clearAllCachedAuthTokens(()=>e())),await chrome.storage.local.remove(["ai_studio_token","youtubeToken","youtubeTokenExpiry"]),await this.authenticateYouTube()}catch(e){throw this.normalizeOAuthError(e)}}async signOutYouTube(){const e=await chrome.storage.local.get(["ai_studio_token","youtubeToken"]),t=[e.ai_studio_token,e.youtubeToken].map(e=>String(e||"").trim()).filter(Boolean);await new Promise(e=>{chrome.storage.local.remove(["ai_studio_token","youtubeToken","youtubeTokenExpiry","ai_studio_channel_id","userProfile","lastAuthAccount","isAuthenticated"],()=>e())});for(const e of Array.from(new Set(t)))await new Promise(t=>{chrome.identity.removeCachedAuthToken({token:e},()=>t())});await new Promise(e=>{chrome.identity.clearAllCachedAuthTokens(()=>e())})}async fetchPlaylistVideos(t){if(!await this.getYouTubeAuthToken())throw new Error("Not authenticated");if(!t)throw new Error("Missing playlist id");return(await e.getPlaylistVideos(t)).map(e=>{const t=String(e?.id||"").trim();return t?{id:t,title:String(e?.title||`YouTube Video ${t}`),url:`https://www.youtube.com/watch?v=${t}`,channelTitle:String(e?.channelTitle||""),thumbnail:String(e?.thumbnail||`https://i.ytimg.com/vi/${encodeURIComponent(t)}/mqdefault.jpg`),addedAt:Date.now()}:null}).filter(Boolean)}async fetchVideoDetails(t){if(!await this.getYouTubeAuthToken())throw new Error("Not authenticated");const s=t.map(e=>String(e||"").trim()).filter(Boolean);return 0===s.length?[]:(await e.getVideoDetails(s)).map(e=>({id:String(e?.id||""),title:String(e?.title||""),channelTitle:String(e?.channelTitle||""),durationISO:String(e?.durationISO||""),viewCount:Number(e?.viewCount||0),likeCount:Number(e?.likeCount||0)}))}async createYouTubePlaylist(t,s){await e.ensureAuthenticated();const a=await e.createPlaylist(t,s||"Created by Fuse Connect AIVI","private");return{id:String(a?.id||""),title:String(a?.snippet?.title||t),description:String(a?.snippet?.description||a?.description||"")}}async processAIVideoTick(){chrome.alarms.clear(m)}async createNewAIStudioTab(){console.log("🆕 Creating new AI Studio tab...");const e=await chrome.tabs.create({url:"https://aistudio.google.com/app/prompts/new_chat?model=gemini-3-flash-preview",active:!0});return await new Promise(t=>{const s=setInterval(async()=>{try{if(e.id){const a=await this.safeSendMessage(e.id,{action:"PING"});a?.alive&&(clearInterval(s),t())}}catch(e){}},1e3);setTimeout(()=>{clearInterval(s),t()},3e4)}),await new Promise(e=>setTimeout(e,2e3)),e}async sendTaskAndWait(e,t,s=7e5){return new Promise((a,n)=>{this.pendingTaskResolve=a,this.safeSendMessage(e,{action:"EXECUTE_TASK",task:t}).catch(e=>{console.error("Failed to send task:",e),a({error:e.message})}),setTimeout(()=>{this.pendingTaskResolve&&(this.pendingTaskResolve=null,a({timeout:!0}))},s)})}async closeTab(e){try{await chrome.tabs.remove(e)}catch(e){console.log("Tab already closed")}}async startAutomationOrchestrator(e,t,s=45,a="ai_studio"){this.automationRunning=!0,this.automationPaused=!1;const n=60*s;for(let s=0;s<e.length&&this.automationRunning;s++){for(;this.automationPaused;)await new Promise(e=>setTimeout(e,1e3));const i=e[s],o=String(i.id||""),r=String(i.title||"Untitled"),c=String(i.url||""),l={...t,currentIndex:s,currentVideo:i,lastUpdated:Date.now()};await chrome.storage.local.set({processingState:l}),this.broadcastToTabs({type:"AI_VIDEO_PROCESSING_UPDATE",state:l});try{if("ai_studio"!==a){const e=await this.buildLightweightReport(i,a),t={id:`report-${Date.now()}-${o}`,videoId:o,title:r,url:c,processedAt:Date.now(),processingLevel:a,summary:String(e).slice(0,1200),content:e,segmentIndex:0},s=await chrome.storage.local.get("ai_video_reports"),n=Array.isArray(s.ai_video_reports)?s.ai_video_reports:[];await chrome.storage.local.set({ai_video_reports:[t,...n].slice(0,500)});const l=await chrome.storage.local.get("ai_video_processed_count");await chrome.storage.local.set({ai_video_processed_count:(l.ai_video_processed_count||0)+1}),await new Promise(e=>setTimeout(e,400));continue}let e=i.duration||0;if(!e&&i.url){const t=await this.createNewAIStudioTab();if(t.id){const s=await this.sendTaskAndWait(t.id,{type:"GET_DURATION",url:i.url},6e4);await this.closeTab(t.id),s.duration&&(e=s.duration)}}const t=[];if(e>n){let s=0,a=0;for(;s<e;){const i=Math.min(s+n,e);t.push({index:a++,startTime:s,endTime:i}),s=i}}else t.push({index:0,startTime:0,endTime:null});for(const e of t){if(!this.automationRunning)break;for(;this.automationPaused;)await new Promise(e=>setTimeout(e,1e3));const t=await this.createNewAIStudioTab();if(t.id){const s=await this.sendTaskAndWait(t.id,{type:"PROCESS_SEGMENT",url:i.url,title:i.title,videoId:i.id,startTime:e.startTime,endTime:e.endTime,segmentIndex:e.index});if(await this.closeTab(t.id),s.success&&s.reportContent){const t={id:`report-${Date.now()}-${o}`,videoId:o,title:r,url:c,processedAt:Date.now(),processingLevel:a,summary:String(s.reportContent||"").slice(0,1200),content:s.reportContent,segmentIndex:e.index},n=await chrome.storage.local.get("ai_video_reports"),i=Array.isArray(n.ai_video_reports)?n.ai_video_reports:[];await chrome.storage.local.set({ai_video_reports:[t,...i].slice(0,500)});const l=await chrome.storage.local.get("ai_video_processed_count");await chrome.storage.local.set({ai_video_processed_count:(l.ai_video_processed_count||0)+1})}}await new Promise(e=>setTimeout(e,2e3))}}catch(e){console.error("Error processing video:",e.message)}await new Promise(e=>setTimeout(e,3e3))}this.automationRunning=!1;const i={isProcessing:!1,isPaused:!1,currentIndex:e.length,totalCount:e.length,currentVideo:null,lastUpdated:Date.now()};await chrome.storage.local.set({processingState:i}),this.broadcastToTabs({type:"AI_VIDEO_PROCESSING_UPDATE",state:i}),this.logEvent("ai-video","processing_completed",{totalCount:e.length})}extractYouTubeVideoId(e){const t=String(e||"").trim();if(/^[\w-]{11}$/.test(t))return t;const s=t.match(/(?:v=|youtu\.be\/)([\w-]{11})/i);return String(s?.[1]||"").trim()}parseTranscriptXml(e){return Array.from(String(e||"").matchAll(/<text[^>]*>([\s\S]*?)<\/text>/g)).map(e=>e[1]||"").map(e=>(e=>e.replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#39;/g,"'").replace(/&quot;/g,'"'))(String(e).replace(/<[^>]+>/g,"").trim())).filter(Boolean).join(" ").trim()}async fetchVideoTranscript(e){if(!e)return"";try{const t=await fetch(`https://www.youtube.com/api/timedtext?lang=en&v=${encodeURIComponent(e)}`);if(!t.ok)return"";const s=await t.text();return this.parseTranscriptXml(s)}catch{return""}}buildSentenceSummary(e,t){return String(e||"").split(/(?<=[.!?])\s+/).map(e=>e.trim()).filter(Boolean).slice(0,t).join(" ")}async buildLightweightReport(e,t){const s=this.extractYouTubeVideoId(String(e?.id||e?.url||"")),a=s?await this.fetchVideoDetails([s]).catch(()=>[]):[],n=Array.isArray(a)&&a.length>0?a[0]:null,i=await this.fetchVideoTranscript(s),o=[`# ${String(e?.title||n?.title||"Untitled Video")}`,"",`- URL: ${String(e?.url||(s?`https://www.youtube.com/watch?v=${s}`:""))}`,`- Channel: ${String(e?.channelTitle||n?.channelTitle||"Unknown")}`,`- Processing Level: ${t}`,""];if("transcript"===t)return`${o.join("\n")}## Transcript\n\n${i||"Transcript unavailable."}\n`;if("flash"===t){const e=this.buildSentenceSummary(i,6);return`${o.join("\n")}## Quick Summary\n\n${e||"Transcript unavailable for summary."}\n\n## Transcript Excerpt\n\n${String(i||"").slice(0,4e3)}\n`}const r=this.buildSentenceSummary(i,14);return`${o.join("\n")}## Extended Summary\n\n${r||"Transcript unavailable for summary."}\n\n## Key Details\n\n- Duration ISO: ${String(n?.durationISO||"Unknown")}\n- Views: ${Number(n?.viewCount||0).toLocaleString()}\n\n## Transcript Excerpt\n\n${String(i||"").slice(0,8e3)}\n`}findChannelByName(e){const t=this.normalizeChannelName(e);if(!t)return null;for(const e of this.channels.values())if(this.normalizeChannelName(e.name)===t)return e;return null}remapChannelReferences(e,t){if(e&&t&&e!==t){this.joinedChannels.delete(e)&&this.joinedChannels.add(t);for(const[s,a]of this.tabActiveChannels.entries())a===e&&(this.tabActiveChannels.set(s,t),this.safeSendMessage(s,{type:"CHANNEL_SELECTED",channelId:t}));this.saveTabActiveChannels()}}shouldPreferIncomingChannel(e,t){const s=e.id.startsWith("local-"),a=t.id.startsWith("local-");if(s!==a)return!a;const n=Number(e.createdAt||0);return Number(t.createdAt||0)>=n}setupTabLifecycleHandlers(){chrome.tabs.onCreated.addListener(e=>{this.logEvent("browser.tabs","created",{tabId:e.id||null,url:e.url||null,active:!!e.active})}),chrome.tabs.onUpdated.addListener((e,t,s)=>{(t.status||t.url)&&this.logEvent("browser.tabs","updated",{tabId:e,status:t.status||null,url:t.url||s.url||null})}),chrome.tabs.onActivated.addListener(e=>{this.logEvent("browser.tabs","activated",{tabId:e.tabId,windowId:e.windowId})}),chrome.tabs.onRemoved.addListener(e=>{this.tabActiveChannels.delete(e)&&this.saveTabActiveChannels(),this.tabPausedChannels.delete(e)&&this.saveTabPausedChannels(),this.logEvent("browser.tabs","removed",{tabId:e})})}logEvent(e,t,s={},a="info"){if(!this.eventLoggingEnabled)return;const n={id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,ts:Date.now(),level:a,category:e,event:t,details:s};this.extensionEventLog.push(n),this.extensionEventLog.length>this.EVENT_LOG_LIMIT&&(this.extensionEventLog=this.extensionEventLog.slice(this.extensionEventLog.length-this.EVENT_LOG_LIMIT)),this.eventLogFlushTimer&&clearTimeout(this.eventLogFlushTimer),this.eventLogFlushTimer=setTimeout(()=>{chrome.storage.local.set({[u]:this.extensionEventLog}),this.eventLogFlushTimer=null},750)}async sendNativeMessage(e){return this.nativeHostUnavailable?{error:"Specified native messaging host not found",unavailable:!0}:(console.log("[NativeMessaging] Sending:",e.action,e.service||""),new Promise(t=>{try{chrome.runtime.sendNativeMessage("com.thenewfuse.native_host",e,e=>{if(chrome.runtime.lastError){const e=chrome.runtime.lastError.message||"Native messaging error",s=e.includes("Specified native messaging host not found")||e.includes("No such native application");s&&(this.nativeHostUnavailable=!0,this.nativeHostMissingLogged||(this.nativeHostMissingLogged=!0,console.debug("[NativeMessaging] Native host not installed; native service controls disabled"))),t({error:e,unavailable:s})}else t(e||{})})}catch(e){console.error("[NativeMessaging] Exception:",e),t({error:"Native messaging not available"})}}))}async sendActivityEvent(e,t={},s="fuse-activity-log"){this.send({type:"MESSAGE_SEND",to:"broadcast",channel:s,content:`[ACTIVITY] ${e}`,messageType:"event",metadata:{senderId:this.agentId,eventType:e,ts:Date.now(),...t}})}async ensureAutonomousServices(e){Date.now()-this.lastAutonomyStartAt<15e3||(this.lastAutonomyStartAt=Date.now(),this.autoMonitor&&await this.sendNativeMessage({action:"start",service:"monitor"}),this.autoMasterClock&&await this.sendNativeMessage({action:"start",service:"masterClock"}),this.startStallWatchdog(),this.sendActivityEvent("autonomy_services_ensured",{reason:e,autoMonitor:this.autoMonitor,autoMasterClock:this.autoMasterClock,autoWakePing:this.autoWakePing}))}startStallWatchdog(){!this.stallWatchdogTimer&&this.autoWakePing&&(this.stallWatchdogTimer=setInterval(()=>{if(!this.primaryConnection||this.primaryConnection.readyState!==WebSocket.OPEN)return;const e=Date.now();for(const[t]of this.channels){if(!this.joinedChannels.has(t))continue;const s=this.channelLastActivityAt.get(t)||0;if(!s)continue;if(s&&e-s<9e4)continue;if(e-(this.lastWakePingAt.get(t)||0)<12e4)continue;const a=`wake-${t}-${e}`;this.lastWakePingAt.set(t,e),this.send({type:"MESSAGE_SEND",to:"broadcast",channel:t,content:`[WAKE_PING ${a}] Stall check from browser orchestrator`,messageType:"event",metadata:{senderId:this.agentId,eventType:"wake_ping",pingId:a,reason:"stall-watchdog"}}),this.sendActivityEvent("wake_ping_sent",{pingId:a,channelId:t,reason:"stall-watchdog"})}},3e4))}stopStallWatchdog(){this.stallWatchdogTimer&&(clearInterval(this.stallWatchdogTimer),this.stallWatchdogTimer=null)}frontloadPageAgentContext(e){if(!e.metadata?.tabId)return;const t=Array.from(this.joinedChannels);this.safeSendMessage(e.metadata.tabId,{type:"FUSE_ONBOARDING_CONTEXT",payload:{browserAgentId:this.agentId,pageAgentId:e.id,channels:t,knownAgents:Array.from(this.agents.values()).map(e=>({id:e.id,name:e.name,platform:e.platform,status:e.status})),capabilities:e.capabilities||[],relayUrl:g,policy:{heartbeat:!0,wakePing:this.autoWakePing,autonomous:!0}}})}setupMessageHandlers(){chrome.runtime.onMessage.addListener((e,s,a)=>{const n=String(e?.type||"unknown");switch(["GET_EVENT_LOGS","GET_STATE","PING"].includes(n)||this.logEvent("extension.message","runtime_inbound",{type:n,tabId:s.tab?.id??null,tabUrl:s.tab?.url??null}),e.type){case"TEST_PING":console.log("[GeminiBridge v7] Received TEST_PING"),a({success:!0,status:"online",version:"7.0.0",timestamp:Date.now()});break;case"PING":a({success:!0,pong:!0});break;case"CONNECT":this.connectionAttempts=0,this.connectToNode("relay",e.url||g),a({success:!0});break;case"DISCONNECT":this.disconnectAll(),a({success:!0});break;case"GET_STATE":{let e=null;if(s.tab?.id)for(const[t,a]of this.agents)if(a.metadata?.tabId===s.tab.id){e=t;break}a({connectionStatus:this.primaryConnection?.readyState===WebSocket.OPEN?"connected":"disconnected",agents:Array.from(this.agents.values()),channels:Array.from(this.channels.values()),joinedChannels:Array.from(this.joinedChannels),selectedChannel:this.getTabActiveChannel(s.tab?.id),tabId:s.tab?.id??null,nodes:Object.fromEntries(this.nodeStatus),agentId:e||this.agentId,browserAgentId:this.agentId,autoConnect:this.autoConnect,autoMonitor:this.autoMonitor,autoMasterClock:this.autoMasterClock,autoWakePing:this.autoWakePing,pausedChannels:this.getTabPausedChannels(s.tab?.id)});break}case"GET_EVENT_LOGS":{const t=Math.max(1,Math.min(5e3,Number(e.limit||500))),s=e.category?String(e.category):null,n=e.level?String(e.level):null,i=this.extensionEventLog.filter(e=>!(s&&e.category!==s||n&&e.level!==n));a({success:!0,total:i.length,logs:i.slice(-t)});break}case"CLEAR_EVENT_LOGS":this.extensionEventLog=[],chrome.storage.local.set({[u]:[]}),a({success:!0});break;case"SET_EVENT_LOGGING":this.eventLoggingEnabled=!!e.enabled,this.logEvent("extension","event_logging_toggle",{enabled:this.eventLoggingEnabled}),a({success:!0,enabled:this.eventLoggingEnabled});break;case"SET_AUTO_CONNECT":this.autoConnect=e.enabled,chrome.storage.local.set({[c]:e.enabled}),a({success:!0});break;case"SET_AUTONOMY_SETTINGS":void 0!==e.autoMonitor&&(this.autoMonitor=!!e.autoMonitor),void 0!==e.autoMasterClock&&(this.autoMasterClock=!!e.autoMasterClock),void 0!==e.autoWakePing&&(this.autoWakePing=!!e.autoWakePing),chrome.storage.local.set({[l]:this.autoMonitor,[d]:this.autoMasterClock,[h]:this.autoWakePing}),this.autoWakePing?this.startStallWatchdog():this.stopStallWatchdog(),a({success:!0});break;case"START_AUTONOMY":return this.ensureAutonomousServices("manual_start").then(()=>a({success:!0})),!0;case"STOP_AUTONOMY":return this.stopStallWatchdog(),Promise.all([this.sendNativeMessage({action:"stop",service:"monitor"}),this.sendNativeMessage({action:"stop",service:"masterClock"})]).then(()=>a({success:!0})),!0;case"GET_AUTONOMY_STATUS":return this.sendNativeMessage({action:"status"}).then(e=>{a({success:!0,settings:{autoMonitor:this.autoMonitor,autoMasterClock:this.autoMasterClock,autoWakePing:this.autoWakePing},monitor:e?.services?.monitor||null,masterClock:e?.services?.masterClock||null,relay:e?.services?.relay||null})}),!0;case"START_RELAY":return this.sendNativeMessage({action:"start",service:"relay"}).then(e=>{a(e),!e.result?.success&&e.error||setTimeout(()=>{this.connectionAttempts=0,this.connectToNode("relay",g),this.ensureAutonomousServices("relay_started")},3e3)}),!0;case"STOP_RELAY":return this.sendNativeMessage({action:"stop",service:"relay"}).then(e=>{this.disconnectAll(),a(e)}),!0;case"CHECK_RELAY_HEALTH":return this.checkRelayHealth().then(e=>{a({healthy:e})}),!0;case"AI_STUDIO_AUTH":case"YOUTUBE_AUTHENTICATE":return console.log("[GeminiBridge v7] Starting YouTube auth flow",this.getOAuthDiagnostics()),this.authenticateYouTubeSafe().then(({token:e,primaryProfile:t,accountSwitched:s})=>{const n=Date.now()+3e6;chrome.storage.local.set({ai_studio_token:e,youtubeToken:e,youtubeTokenExpiry:n,userProfile:t,lastAuthAccount:t?.email||"",ai_studio_channel_id:"",isAuthenticated:!0},()=>{chrome.storage.local.get(["firstAuthAt"],e=>{e.firstAuthAt||chrome.storage.local.set({firstAuthAt:Date.now()})}),a({success:!0,token:e,data:{authenticated:!0,primaryProfile:t},oauth:this.getOAuthDiagnostics(),channels:[],selectedChannelId:"",requiresChannelSelection:!1,accountSwitched:s})})}).catch(e=>{a({success:!1,error:e.message||"Authentication failed",oauth:this.getOAuthDiagnostics()})}),!0;case"YOUTUBE_SIGN_OUT":return this.signOutYouTube().then(()=>a({success:!0})).catch(e=>a({success:!1,error:String(e?.message||e)})),!0;case"YOUTUBE_CHECK_AUTH":return this.getYouTubeAuthToken().then(async e=>{const t=!!e&&await this.validateYouTubeToken(e);t||await chrome.storage.local.remove(["ai_studio_token","youtubeToken"]),a({success:!0,data:{authenticated:t}})}).catch(()=>{a({success:!0,data:{authenticated:!1}})}),!0;case"AI_STUDIO_GET_CHANNELS":return a({success:!0,channels:[],selectedChannelId:""}),!0;case"AI_STUDIO_SET_CHANNEL":return a({success:!0,channelId:""}),!0;case"AI_STUDIO_GET_PLAYLISTS":return this.fetchYouTubePlaylistsBundle().then(e=>{a({success:!0,...e})}).catch(e=>{const t=String(e?.message||e||""),s=t.includes("Quota Protection")?"Not authenticated":t;a({success:!1,error:s})}),!0;case"YOUTUBE_GET_PLAYLISTS":return this.fetchYouTubePlaylistsBundle().then(e=>{a({success:!0,data:e.playlists,...e})}).catch(e=>{const t=String(e?.message||e||""),s=t.includes("Quota Protection")?"Not authenticated":t;a({success:!1,error:s})}),!0;case"QUEUE_ADD":case"QUEUE_ADD_SINGLE":{const t="QUEUE_ADD_SINGLE"===e.type?[e.data?.video]:e.data?.videos;return chrome.storage.local.get(["videoQueue"],e=>{const s=[...Array.isArray(e.videoQueue)?e.videoQueue:[],...(Array.isArray(t)?t:[]).filter(e=>e&&(e.url||e.id)).map((e,t)=>{const s=String(e.url||(e.id?`https://www.youtube.com/watch?v=${e.id}`:"")).trim(),a=String(e.id||"").trim()||`vid-${Date.now()}-${t}`;return{id:a,title:String(e.title||`YouTube Video ${a}`),url:s,addedAt:Number(e.addedAt||Date.now())}})];chrome.storage.local.set({videoQueue:s,syncTimestamp:Date.now()},()=>{a({success:!0,data:s})})}),!0}case"QUEUE_REMOVE":{const t=Array.isArray(e.data?.videoIds)?e.data.videoIds.map(e=>String(e)):[];return chrome.storage.local.get(["videoQueue"],e=>{const s=(Array.isArray(e.videoQueue)?e.videoQueue:[]).filter(e=>!t.includes(String(e?.id||"")));chrome.storage.local.set({videoQueue:s,syncTimestamp:Date.now()},()=>{a({success:!0,data:s})})}),!0}case"QUEUE_CLEAR":return chrome.storage.local.set({videoQueue:[],syncTimestamp:Date.now()},()=>{a({success:!0,data:[]})}),!0;case"QUEUE_GET":return chrome.storage.local.get(["videoQueue"],e=>{const t=Array.isArray(e.videoQueue)?e.videoQueue:[];a({success:!0,data:t})}),!0;case"STORAGE_GET":return chrome.storage.local.get(e.data?.keys||null,e=>{a({success:!0,data:e})}),!0;case"STORAGE_SET":return chrome.storage.local.set(e.data?.items||{},()=>{a({success:!0,data:!0})}),!0;case"AI_STUDIO_READY":return a({success:!0,data:{ready:!0}}),!1;case"AI_STUDIO_PROGRESS":{const t=e.data||{};return chrome.storage.local.get(["processingState"],e=>{const s=e.processingState||this.getDefaultProcessingState(),n={...s,isProcessing:!0,isPaused:!1,currentIndex:Number(t.currentIndex||s.currentIndex||0),currentVideo:t.currentVideo||s.currentVideo||null,lastUpdated:Date.now()};chrome.storage.local.set({processingState:n},()=>{this.broadcastToTabs({type:"AI_VIDEO_PROCESSING_UPDATE",state:n}),a({success:!0,data:{updated:!0}})})}),!0}case"AI_STUDIO_COMPLETE":return chrome.storage.local.get(["processingState","ai_video_processed_count"],t=>{const s=t.processingState||this.getDefaultProcessingState(),n=Math.max(1,Number(e.data?.processedCount||1)),i={...s,isProcessing:!1,isPaused:!1,currentVideo:null,currentIndex:Math.max(s.totalCount||0,s.currentIndex||0),lastUpdated:Date.now()};chrome.storage.local.set({processingState:i,ai_video_processed_count:Number(t.ai_video_processed_count||0)+n},()=>{this.broadcastToTabs({type:"AI_VIDEO_PROCESSING_UPDATE",state:i}),a({success:!0,data:{completed:!0}})})}),!0;case"AI_STUDIO_ERROR":return this.logEvent("ai-video","automation_error",{error:String(e.data?.error||e.error||"Unknown error")},"error"),a({success:!0,data:{error:!0}}),!1;case"REPORTS_GET":return chrome.storage.local.get(["ai_video_reports"],e=>{const t=Array.isArray(e.ai_video_reports)?e.ai_video_reports:[];a({success:!0,data:t})}),!0;case"SUBSCRIPTION_CHECK":return a({success:!0,data:{tier:"free",canProcess:!0,notebooklmIntegration:!0}}),!1;case"SUBSCRIPTION_CAN_PROCESS":return a({success:!0,data:{allowed:!0,remaining:9999}}),!1;case"SUBSCRIPTION_UPGRADE":return a({success:!0,data:{redirected:!1}}),!1;case"AUTOMATION_START":return chrome.storage.local.set({processingLevel:String(e.data?.processingLevel||"ai_studio"),segmentDuration:Math.max(5,Math.min(300,Number(e.data?.segmentDuration||45))),reverseOrder:!!e.data?.reverseOrder,videoQueue:Array.isArray(e.data?.queue)?e.data.queue:[]},()=>{chrome.storage.local.get(["videoQueue"],e=>{const t=Array.isArray(e.videoQueue)?e.videoQueue:[];if(0===t.length)return void a({success:!1,error:"Queue is empty"});const s={isProcessing:!0,isPaused:!1,currentIndex:0,totalCount:t.length,currentVideo:null,lastUpdated:Date.now()};chrome.storage.local.set({processingState:s,ai_video_total_count:t.length},()=>{chrome.alarms.create(m,{periodInMinutes:.1}),this.broadcastToTabs({type:"AI_VIDEO_PROCESSING_UPDATE",state:s}),a({success:!0,data:{started:!0},state:s})})})}),!0;case"AUTOMATION_PAUSE":return chrome.storage.local.get(["processingState"],e=>{const t={...e.processingState||this.getDefaultProcessingState(),isPaused:!0,lastUpdated:Date.now()};chrome.storage.local.set({processingState:t},()=>{chrome.alarms.clear(m),this.broadcastToTabs({type:"AI_VIDEO_PROCESSING_UPDATE",state:t}),a({success:!0,data:{paused:!0},state:t})})}),!0;case"AUTOMATION_RESUME":return chrome.storage.local.get(["processingState"],e=>{const t={...e.processingState||this.getDefaultProcessingState(),isProcessing:!0,isPaused:!1,lastUpdated:Date.now()};chrome.storage.local.set({processingState:t},()=>{chrome.alarms.create(m,{periodInMinutes:.1}),this.broadcastToTabs({type:"AI_VIDEO_PROCESSING_UPDATE",state:t}),a({success:!0,data:{resumed:!0},state:t})})}),!0;case"AUTOMATION_STOP":return chrome.storage.local.get(["processingState"],e=>{const t={...e.processingState||this.getDefaultProcessingState(),isProcessing:!1,isPaused:!1,currentVideo:null,lastUpdated:Date.now()};chrome.storage.local.set({processingState:t},()=>{chrome.alarms.clear(m),this.broadcastToTabs({type:"AI_VIDEO_PROCESSING_UPDATE",state:t}),a({success:!0,data:{stopped:!0},state:t})})}),!0;case"AI_STUDIO_PROCESS_VIDEO":return chrome.storage.local.get(["videoQueue"],t=>{const s=Array.isArray(t.videoQueue)?t.videoQueue:[];e.video?.url&&s.push({id:e.video?.id||`vid-${Date.now()}`,title:e.video?.title||"YouTube Video",url:e.video.url,addedAt:Date.now()}),chrome.storage.local.set({videoQueue:s,syncTimestamp:Date.now()}),a({success:!0,queueLength:s.length})}),!0;case"AI_STUDIO_GET_PLAYLIST_VIDEOS":{const t=String(e.playlistId||"");return this.fetchPlaylistVideos(t).then(e=>{a({success:!0,videos:e})}).catch(e=>{const t=String(e?.message||e||""),s=t.includes("Quota Protection")?"Not authenticated":t;a({success:!1,error:s})}),!0}case"YOUTUBE_GET_PLAYLIST_VIDEOS":{const t=String(e.playlistId||"")||String(e.data?.playlistId||"");return this.fetchPlaylistVideos(t).then(e=>{a({success:!0,data:e})}).catch(e=>{const t=String(e?.message||e||""),s=t.includes("Quota Protection")?"Not authenticated":t;a({success:!1,error:s})}),!0}case"YOUTUBE_GET_VIDEO_DETAILS":{const t=Array.isArray(e.videoIds)?e.videoIds:Array.isArray(e.data?.videoIds)?e.data.videoIds:[];return this.fetchVideoDetails(t).then(e=>{a({success:!0,data:e})}).catch(e=>{const t=String(e?.message||e||""),s=t.includes("Quota Protection")?"Not authenticated":t;a({success:!1,error:s})}),!0}case"YOUTUBE_CREATE_PLAYLIST":{const t=String(e.title||e.data?.title||"").trim(),s=String(e.description||e.data?.description||"").trim();return t?(this.createYouTubePlaylist(t,s).then(e=>{a({success:!0,data:e})}).catch(e=>{a({success:!1,error:String(e?.message||e)})}),!0):(a({success:!1,error:"Missing playlist title"}),!1)}case"AI_VIDEO_GET_STATS":return chrome.storage.local.get(["ai_video_processed_count","ai_video_total_count","ai_video_estimated_cost","ai_studio_token","userProfile","videoQueue"],e=>{const t=String(e.userProfile?.email||"").trim();a({processed:e.ai_video_processed_count||0,total:e.ai_video_total_count||e.videoQueue?.length||0,cost:e.ai_video_estimated_cost||0,account:e.ai_studio_token?t||"Authenticated":"None"})}),!0;case"AI_VIDEO_GET_QUEUE":return chrome.storage.local.get(["videoQueue","reverseOrder","segmentDuration","processingState","syncTimestamp"],e=>{const t=Array.isArray(e.videoQueue)?e.videoQueue:[],s=e.processingState||null;a({success:!0,queueCount:t.length,queue:t,reverseOrder:!!e.reverseOrder,segmentDuration:Number(e.segmentDuration||45),processingState:s,syncTimestamp:e.syncTimestamp||null})}),!0;case"AI_VIDEO_SET_QUEUE":{const t=String(e.text||""),s=Array.isArray(e.urls)&&e.urls.length>0?e.urls.map(e=>String(e)):this.extractYouTubeUrls(t),n=this.toQueueItems(s);return chrome.storage.local.set({videoQueue:n,syncTimestamp:Date.now()},()=>{this.logEvent("ai-video","queue_set",{count:n.length}),a({success:!0,queueCount:n.length})}),!0}case"AI_VIDEO_CLEAR_QUEUE":return chrome.storage.local.set({videoQueue:[],processingState:{isProcessing:!1,isPaused:!1,currentIndex:0,totalCount:0,currentVideo:null,lastUpdated:Date.now()},syncTimestamp:Date.now()},()=>{this.logEvent("ai-video","queue_cleared"),a({success:!0})}),!0;case"AI_VIDEO_SET_PREFERENCES":{const t=!!e.reverseOrder,s=Math.max(5,Math.min(300,Number(e.segmentDuration||45))),n=String(e.processingLevel||"ai_studio");return chrome.storage.local.set({reverseOrder:t,segmentDuration:s,processingLevel:n},()=>{this.logEvent("ai-video","preferences_set",{reverseOrder:t,segmentDuration:s,processingLevel:n}),a({success:!0})}),!0}case"AI_VIDEO_PROCESS_CONTROL":{const t=String(e.action||"").toLowerCase();return chrome.storage.local.get(["videoQueue","processingState"],e=>{const s=Array.isArray(e.videoQueue)?e.videoQueue:[],n=e.processingState||this.getDefaultProcessingState();if("start"===t){if(0===s.length)return void a({success:!1,error:"Queue is empty"});const e={isProcessing:!0,isPaused:!1,currentIndex:0,totalCount:s.length,currentVideo:null,lastUpdated:Date.now()};return void chrome.storage.local.set({processingState:e,ai_video_total_count:s.length},()=>{this.logEvent("ai-video","processing_started",{totalCount:s.length}),chrome.storage.local.get(["segmentDuration","processingLevel"],t=>{this.startAutomationOrchestrator(s,e,t.segmentDuration||45,String(t.processingLevel||"ai_studio"))}),this.broadcastToTabs({type:"AI_VIDEO_PROCESSING_UPDATE",state:e}),a({success:!0,state:e})})}if("pause"===t){this.automationPaused=!0;const e={...n,isProcessing:n.isProcessing,isPaused:!0,lastUpdated:Date.now()};return void chrome.storage.local.set({processingState:e},()=>{this.logEvent("ai-video","processing_paused",{currentIndex:e.currentIndex}),this.broadcastToTabs({type:"AI_VIDEO_PROCESSING_UPDATE",state:e}),a({success:!0,state:e})})}if("resume"===t){if(!n.isProcessing)return void a({success:!1,error:"Processing is not running"});this.automationPaused=!1;const e={...n,isPaused:!1,lastUpdated:Date.now()};return void chrome.storage.local.set({processingState:e},()=>{this.logEvent("ai-video","processing_resumed",{currentIndex:e.currentIndex}),this.broadcastToTabs({type:"AI_VIDEO_PROCESSING_UPDATE",state:e}),a({success:!0,state:e})})}if("stop"===t||"clear"===t){this.automationRunning=!1;const e={...n,isProcessing:!1,isPaused:!1,currentVideo:null,lastUpdated:Date.now()};return void chrome.storage.local.set({processingState:e},()=>{this.logEvent("ai-video","processing_stopped",{currentIndex:e.currentIndex}),this.broadcastToTabs({type:"AI_VIDEO_PROCESSING_UPDATE",state:e}),a({success:!0,state:e})})}a({success:!1,error:`Unknown processing action: ${t}`})}),!0}case"AI_VIDEO_OPEN_PAGE":{const t=String(e.page||"ai-studio"),s="notebooklm"===t?"https://notebooklm.google.com/":"dashboard"===t?"https://connect.thenewfuse.com/":"https://aistudio.google.com/";return chrome.tabs.create({url:s},()=>{this.logEvent("ai-video","open_page",{page:t,pageUrl:s}),a({success:!0,pageUrl:s})}),!0}case"AI_VIDEO_GENERATE_HISTORY_PROMPT":a({prompt:'Using your Personal Intelligence access to my YouTube watch history,\nprovide my last 50 watched videos.\n\nFilter out political content.\n\nFormat as JSON array:\n[\n  {\n    "title": "Video Title",\n    "url": "https://www.youtube.com/watch?v=...",\n    "channel": "Channel Name",\n    "description": "Brief description"\n  }\n]'});break;case"AI_VIDEO_EXPORT":return chrome.storage.local.get(["videoQueue","ai_studio_queue","ai_video_reports"],t=>{let s="";const n=String(e.format||"urls");s="reports-md"===n?(Array.isArray(t.ai_video_reports)?t.ai_video_reports:[]).map(e=>`## ${String(e.title||"Untitled")}\n\n- URL: ${String(e.url||"")}\n- Processed: ${new Date(Number(e.processedAt||Date.now())).toISOString()}\n- Level: ${String(e.processingLevel||"ai_studio")}\n\n${String(e.summary||"")}\n`).join("\n"):"urls"===n?(t.videoQueue||[]).map(e=>e.url).join("\n"):JSON.stringify(t.videoQueue||[],null,2),a({content:s})}),!0;case"AI_VIDEO_GET_HISTORY":return chrome.storage.local.get(["ai_video_reports"],e=>{const t=Array.isArray(e.ai_video_reports)?e.ai_video_reports:[];a({success:!0,reports:t})}),!0;case"AI_VIDEO_CLEAR_HISTORY":return chrome.storage.local.set({ai_video_reports:[]},()=>{this.logEvent("ai-video","history_cleared"),a({success:!0})}),!0;case"TASK_COMPLETE":case"TASK_ERROR":this.pendingTaskResolve&&(this.pendingTaskResolve(e),this.pendingTaskResolve=null),this.broadcastToTabs(e),a({success:!0});break;case"CONTENT_SCRIPT_READY":console.log("📢 Content script ready on:",e.url),a({success:!0});break;case"BROADCAST_MESSAGE":this.send({type:"MESSAGE_SEND",to:"broadcast",channel:e.channel,content:e.content,messageType:"text",metadata:e.metadata}),this.sendActivityEvent("broadcast_message",{channel:e.channel||null,senderId:e.senderId||e.metadata?.senderId||null,contentPreview:String(e.content||"").substring(0,120)}),a({success:!0});break;case"SEND_TO_AGENT":this.send({type:"MESSAGE_SEND",to:e.agentId,content:e.content,messageType:e.messageType||"text"}),a({success:!0});break;case"CHANNEL_CREATE":{const t=String(e.name||"").trim().replace(/\s+/g," ");if(!t){a({success:!1,error:"Channel name is required"});break}const s=this.findChannelByName(t);if(s){a({success:!1,alreadyExists:!0,error:`Channel "${s.name}" already exists`,channel:s});break}const n={id:`local-${Date.now()}`,name:t,description:e.description||"",isPrivate:e.isPrivate||!1,createdAt:Date.now(),createdBy:this.agentId,members:[this.agentId]};this.channels.set(n.id,n),this.joinedChannels.add(n.id),this.broadcastToTabs({type:"CHANNELS_UPDATE",channels:Array.from(this.channels.values())}),this.notifyPopup({type:"CHANNELS_UPDATE",channels:Array.from(this.channels.values())}),this.saveChannels(),this.send({type:"CHANNEL_CREATE",name:t,description:e.description,isPrivate:e.isPrivate||!1}),this.sendActivityEvent("channel_create",{channelId:n.id,name:t}),a({success:!0,channel:n});break}case"CHANNEL_JOIN":this.joinedChannels.add(e.channelId),s.tab?.id&&(this.setTabActiveChannel(s.tab.id,e.channelId),this.safeSendMessage(s.tab.id,{type:"CHANNEL_SELECTED",channelId:e.channelId})),this.send({type:"CHANNEL_JOIN",channelId:e.channelId}),this.saveChannels(),this.broadcastToTabs({type:"JOINED_CHANNELS_UPDATE",joinedChannels:Array.from(this.joinedChannels)}),this.notifyPopup({type:"JOINED_CHANNELS_UPDATE",joinedChannels:Array.from(this.joinedChannels)}),this.sendActivityEvent("channel_join",{channelId:e.channelId}),this.logEvent("channel","join",{tabId:s.tab?.id??null,channelId:e.channelId}),a({success:!0});break;case"CHANNEL_LEAVE":this.joinedChannels.delete(e.channelId),s.tab?.id&&(this.setTabActiveChannel(s.tab.id,null),this.safeSendMessage(s.tab.id,{type:"CHANNEL_SELECTED",channelId:null})),this.send({type:"CHANNEL_LEAVE",channelId:e.channelId}),this.saveChannels(),this.broadcastToTabs({type:"JOINED_CHANNELS_UPDATE",joinedChannels:Array.from(this.joinedChannels)}),this.notifyPopup({type:"JOINED_CHANNELS_UPDATE",joinedChannels:Array.from(this.joinedChannels)}),this.sendActivityEvent("channel_leave",{channelId:e.channelId}),this.logEvent("channel","leave",{tabId:s.tab?.id??null,channelId:e.channelId}),a({success:!0});break;case"CHANNEL_PAUSE":{if(!s.tab?.id){a({success:!1,error:"Missing sender tab"});break}const t=String(e.channelId||"");return this.setChannelPaused(s.tab.id,t,!0),this.logEvent("channel","pause",{tabId:s.tab.id,channelId:t}),this.safeSendMessage(s.tab.id,{type:"CHANNEL_PAUSE_UPDATE",channelId:t,paused:!0,pausedChannels:this.getTabPausedChannels(s.tab.id)},()=>{const e=chrome.runtime.lastError;e&&this.logEvent("channel","pause_update_delivery_error",{tabId:s.tab?.id??null,channelId:t,error:e.message}),a({success:!0,delivered:!e})}),!0}case"CHANNEL_RESUME":{if(!s.tab?.id){a({success:!1,error:"Missing sender tab"});break}const t=String(e.channelId||"");return this.setChannelPaused(s.tab.id,t,!1),this.logEvent("channel","resume",{tabId:s.tab.id,channelId:t}),this.safeSendMessage(s.tab.id,{type:"CHANNEL_PAUSE_UPDATE",channelId:t,paused:!1,pausedChannels:this.getTabPausedChannels(s.tab.id)},()=>{const e=chrome.runtime.lastError;e&&this.logEvent("channel","resume_update_delivery_error",{tabId:s.tab?.id??null,channelId:t,error:e.message}),a({success:!0,delivered:!e})}),!0}case"CHANNEL_DELETE":{const t=e.channelId;if("general"===t){a({success:!1,error:"Cannot delete general channel"});break}this.channels.delete(t),this.joinedChannels.delete(t),this.broadcastToTabs({type:"CHANNELS_UPDATE",channels:Array.from(this.channels.values())}),this.notifyPopup({type:"CHANNELS_UPDATE",channels:Array.from(this.channels.values())}),this.saveChannels(),this.send({type:"CHANNEL_DELETE",channelId:t}),this.sendActivityEvent("channel_delete",{channelId:t}),a({success:!0});break}case"CONTENT_SCRIPT_READY":if(s.tab?.id){const e=this.primaryConnection?.readyState===WebSocket.OPEN?"connected":"disconnected";this.safeSendMessage(s.tab.id,{type:"CONNECTION_STATUS",status:e}),this.safeSendMessage(s.tab.id,{type:"AGENTS_UPDATE",agents:Array.from(this.agents.values())}),this.safeSendMessage(s.tab.id,{type:"CHANNELS_UPDATE",channels:Array.from(this.channels.values())}),this.safeSendMessage(s.tab.id,{type:"JOINED_CHANNELS_UPDATE",joinedChannels:Array.from(this.joinedChannels)}),this.safeSendMessage(s.tab.id,{type:"CHANNEL_SELECTED",channelId:this.getTabActiveChannel(s.tab.id)}),this.safeSendMessage(s.tab.id,{type:"CHANNEL_PAUSE_UPDATE",pausedChannels:this.getTabPausedChannels(s.tab.id)})}this.logEvent("extension","content_script_ready",{tabId:s.tab?.id??null,url:s.tab?.url??null}),a({success:!0});break;case"TOGGLE_PANEL":this.broadcastToTabs({type:"TOGGLE_PANEL"}),a({success:!0});break;case"ACTIVATE_ON_TAB":return chrome.tabs.query({active:!0,currentWindow:!0},async e=>{if(e[0]?.id)try{await this.safeSendMessage(e[0].id,{type:"PING"})?(this.safeSendMessage(e[0].id,{type:"SHOW_PANEL"}),a({success:!0,alreadyActive:!0})):(await chrome.scripting.executeScript({target:{tabId:e[0].id},files:["content/index.js"]}),console.log(`[GeminiBridge v7] Content script injected into tab ${e[0].id}`),setTimeout(()=>{e[0]?.id&&this.safeSendMessage(e[0].id,{type:"SHOW_PANEL"})},500),a({success:!0,injected:!0}))}catch(e){console.error("[GeminiBridge v7] Failed to activate on tab:",e),a({success:!1,error:e.message})}else a({success:!1,error:"No active tab found"})}),!0;case"REQUEST_SYNC":this.primaryConnection&&this.requestSync(this.primaryConnection),a({success:!0});break;case"DISCOVER_AGENTS":this.primaryConnection&&(this.send({type:"AGENT_LIST"}),this.send({type:"CHANNEL_LIST"})),a({success:!0});break;case"ACTIVITY_EVENT":this.sendActivityEvent(e.eventType||"unknown",{channel:e.channel||null,senderId:e.senderId||null,...e.metadata||{}}),a({success:!0});break;case"INJECT_MESSAGE":return(s.tab?.id?this.injectMessageToTab(s.tab.id,e.content):this.injectMessageToActiveTab(e.content)).then(()=>{this.logEvent("chat","inject_message",{tabId:s.tab?.id??null,preview:String(e.content||"").slice(0,120)}),a({success:!0})}).catch(e=>{console.error("[GeminiBridge v7] Error injecting message:",e),a({success:!1,error:e.message})}),!0;case"GET_LAST_RESPONSE":return this.getLastResponseFromActiveTab().then(e=>{a({response:e})}),!0;case"CHAT_DETECTED":if(s.tab?.id){let e=null;for(const[t,a]of this.agents)if(a.metadata?.tabId===s.tab.id){e=t;break}e||(e=`page-agent-${s.tab.id}-${Math.random().toString(36).substr(2,5)}`);const t=s.tab.url?new URL(s.tab.url).hostname:"page";let n=t;t.includes("gemini.google")?n="Gemini":t.includes("openai.com")?n="ChatGPT":t.includes("claude.ai")?n="Claude":t.includes("perplexity.ai")&&(n="Perplexity"),this.registerPageAgent(e,`AI Chat (${n})`,t,s.tab.id);const i={type:"AGENT_STATUS",agent:this.agents.get(e)};this.broadcastToTabs(i),a({success:!0,agentId:e})}else a({success:!0});break;case"STREAMING_UPDATE":break;case"RESPONSE_COMPLETE":if(this.broadcastToTabs(e),this.primaryConnection?.readyState===WebSocket.OPEN&&e.content){const a=t(`ai:${e.content.substring(0,500)}`),n=Date.now();if(this.recentMessageHashes.has(a))console.log("[GeminiBridge v7] Skipping duplicate AI response broadcast");else{this.recentMessageHashes.set(a,n);let t=e.metadata?.senderId||e.senderId;const i=e=>e?e.replace(/^(page-agent-|browser-|agent-)/,""):"";!t&&s.tab?.id&&(t=`page-agent-${s.tab.id}`,console.log("[GeminiBridge v7] Using tab-based senderId:",t)),t||(t=`ai-response-${Date.now()}`);const o=i(t),r=i(this.agentId);console.log("[GeminiBridge v7] AI Response from agent:",{senderId:t,normalizedSenderId:o,normalizedMyId:r});let c=e.channel||e.metadata?.channel;if(c||(this.joinedChannels.has("green")?c="green":this.joinedChannels.size>0&&(c=Array.from(this.joinedChannels)[0],console.log("[GeminiBridge v7] Using fallback channel:",c))),c){const a=s.tab?.url||"";let n=e.platform||"unknown";e.platform||(a.includes("gemini.google")?n="Gemini":a.includes("chat.openai")||a.includes("chatgpt")?n="ChatGPT":a.includes("claude.ai")?n="Claude":a.includes("copilot")&&(n="Copilot"));const i={senderId:t,senderType:"ai-agent",platform:n,isAIResponse:!0,timestamp:Date.now()};e.metadata?.correlationId&&(i.correlationId=e.metadata.correlationId,i.taskId=e.metadata.taskId,i.inResponseTo=e.metadata.inResponseTo,console.log("[GeminiBridge v7] 🔗 Including correlation in broadcast:",e.metadata.correlationId)),this.send({type:"MESSAGE_SEND",to:e.metadata?.inResponseTo||"broadcast",channel:c,content:e.content,messageType:"ai-response",metadata:i}),console.log("[GeminiBridge v7] AI response broadcast to channel:",{channel:c,senderId:t,platform:n,contentLength:e.content.length,hasCorrelation:!!e.metadata?.correlationId})}}}a({success:!0})}})}async registerWebMCPTools(){if(void 0!==chrome.ai&&chrome.ai.registerTools){console.log("[GeminiBridge] Registering WebMCP tools for Tactical Autonomy...");const e=[{name:"tnf_mouse_click",description:"Clicks at a specific X,Y coordinate on the local screen (Tactical Autonomy)",parameters:{type:"object",properties:{x:{type:"number"},y:{type:"number"}},required:["x","y"]}},{name:"tnf_type_text",description:"Types text into the focused field on the local computer",parameters:{type:"object",properties:{text:{type:"string"}},required:["text"]}},{name:"tnf_press_key",description:"Presses a specific key code on the local computer",parameters:{type:"object",properties:{keyCode:{type:"number",description:"AppleScript key code"}},required:["keyCode"]}},{name:"tnf_green_broadcast",description:"Broadcasts a message to the TNF Green federation channel",parameters:{type:"object",properties:{message:{type:"string"}},required:["message"]}},{name:"tnf_execute_workflow",description:"Executes a named TNF workflow across the federation",parameters:{type:"object",properties:{workflowId:{type:"string"},input:{type:"object"}},required:["workflowId"]}}];try{await chrome.ai.registerTools(e,(e,t)=>this.handleToolInvocation(e,t)),console.log("[GeminiBridge] Successfully registered 5 WebMCP tools")}catch(e){console.debug("[GeminiBridge] WebMCP registration failed (feature may be disabled)",e)}}}async handleToolInvocation(e,t){switch(console.log(`[GeminiBridge] Tool invocation from Gemini Sidebar: ${e}`,t),e){case"tnf_mouse_click":return await this.sendNativeMessage({action:"mouse-click",x:t.x,y:t.y});case"tnf_type_text":return await this.sendNativeMessage({action:"type-text",text:t.text});case"tnf_press_key":return await this.sendNativeMessage({action:"press-key",keyCode:t.keyCode});case"tnf_green_broadcast":return this.send({type:"MESSAGE_SEND",to:"broadcast",channel:"green",content:t.message,messageType:"text",metadata:{source:"gemini-sidebar-webmcp"}}),{success:!0,status:"broadcast_sent"};case"tnf_execute_workflow":return this.send({type:"WORKFLOW_EXECUTE",payload:{workflowId:t.workflowId,input:t.input}}),{success:!0,status:"workflow_queued"};default:return{error:"Unknown tool"}}}disconnectAll(){for(const[e,t]of this.connections)t.close();this.connections.clear(),this.primaryConnection=null;for(const e of this.reconnectTimers.values())clearTimeout(e);this.reconnectTimers.clear(),this.heartbeatTimer&&(clearInterval(this.heartbeatTimer),this.heartbeatTimer=null),this.stopStallWatchdog(),this.updateNodeStatus("relay",g,"disconnected")}setupCommands(){chrome.commands.onCommand.addListener(e=>{"toggle-panel"===e&&this.broadcastToTabs({type:"TOGGLE_PANEL"})})}}})();
+(() => {
+  'use strict';
+  const e = new (class {
+    constructor() {
+      ((this.accessToken = null),
+        (this.tokenExpiry = null),
+        (this.baseUrl = 'https://www.googleapis.com/youtube/v3'));
+    }
+    async authenticate() {
+      try {
+        console.log('Starting YouTube OAuth2 authentication...');
+        const e = await chrome.identity.getAuthToken({ interactive: !0 });
+        return (
+          !!e &&
+          ((this.accessToken = e),
+          (this.tokenExpiry = Date.now() + 36e5),
+          await chrome.storage.local.set({ youtubeToken: e, youtubeTokenExpiry: this.tokenExpiry }),
+          console.log('YouTube authentication successful'),
+          !0)
+        );
+      } catch (e) {
+        throw (
+          console.error('YouTube authentication failed:', e),
+          new Error(`Authentication failed: ${e.message}`)
+        );
+      }
+    }
+    async isAuthenticated() {
+      if (!this.accessToken || !this.tokenExpiry) {
+        const e = await chrome.storage.local.get(['youtubeToken', 'youtubeTokenExpiry']);
+        return (
+          !!(e.youtubeToken && e.youtubeTokenExpiry > Date.now()) &&
+          ((this.accessToken = e.youtubeToken), (this.tokenExpiry = e.youtubeTokenExpiry), !0)
+        );
+      }
+      return this.tokenExpiry > Date.now();
+    }
+    async ensureAuthenticated() {
+      (await this.isAuthenticated()) || (await this.authenticate());
+    }
+    async makeRequest(e, t = {}) {
+      const s = await this.isAuthenticated();
+      let a = this.apiKey;
+      a ||
+        ((a = (await chrome.storage.local.get('youtubeApiKey')).youtubeApiKey), (this.apiKey = a));
+      const n = ['POST', 'PUT', 'DELETE'].includes(t.method || 'GET');
+      if (!s && !a)
+        throw new Error(
+          'Quota Protection: You must specific a YouTube API Key in settings OR Sign In.'
+        );
+      if (n && !this.accessToken)
+        throw new Error('Write operations require Google Sign-In (OAuth)');
+      const i = new URL(`${this.baseUrl}/${e}`);
+      (a && i.searchParams.append('key', a),
+        Object.keys(t).forEach((e) => {
+          'method' !== e && 'body' !== e && i.searchParams.append(e, t[e]);
+        }));
+      const o = { Accept: 'application/json' };
+      this.accessToken && (o.Authorization = `Bearer ${this.accessToken}`);
+      const r = { method: t.method || 'GET', headers: o };
+      t.body &&
+        ((r.body = 'string' == typeof t.body ? t.body : JSON.stringify(t.body)),
+        (o['Content-Type'] = 'application/json'));
+      const c = await fetch(i.toString(), r);
+      if (!c.ok) {
+        if (!this.accessToken && 403 === c.status)
+          throw new Error('API Key Quota Exceeded or Invalid. Please sign in with Google.');
+        throw new Error(`YouTube API error: ${c.status} ${c.statusText}`);
+      }
+      return await c.json();
+    }
+    async getPlaylists() {
+      try {
+        return (
+          await this.makeRequest('playlists', {
+            part: 'snippet,contentDetails',
+            mine: 'true',
+            maxResults: 50,
+          })
+        ).items.map((e) => ({
+          id: e.id,
+          title: e.snippet.title,
+          description: e.snippet.description,
+          videoCount: e.contentDetails.itemCount,
+          thumbnail: e.snippet.thumbnails?.default?.url,
+        }));
+      } catch (e) {
+        throw (console.error('Failed to fetch playlists:', e), e);
+      }
+    }
+    async getPlaylistVideos(e, t = 50) {
+      try {
+        let s = [],
+          a = null;
+        do {
+          const n = { part: 'snippet,contentDetails', playlistId: e, maxResults: t };
+          a && (n.pageToken = a);
+          const i = await this.makeRequest('playlistItems', n),
+            o = i.items.map((e) => ({
+              id: e.snippet.resourceId.videoId,
+              playlistItemId: e.id,
+              title: e.snippet.title,
+              description: e.snippet.description,
+              thumbnail: e.snippet.thumbnails?.default?.url,
+              channelTitle: e.snippet.channelTitle,
+              publishedAt: e.snippet.publishedAt,
+              position: e.snippet.position,
+            }));
+          ((s = s.concat(o)), (a = i.nextPageToken));
+        } while (a);
+        return s;
+      } catch (e) {
+        throw (console.error('Failed to fetch playlist videos:', e), e);
+      }
+    }
+    async getVideoDetails(e) {
+      try {
+        const t = [];
+        for (let s = 0; s < e.length; s += 50) t.push(e.slice(s, s + 50));
+        let s = [];
+        for (const e of t) {
+          const t = (
+            await this.makeRequest('videos', {
+              part: 'contentDetails,snippet,statistics',
+              id: e.join(','),
+            })
+          ).items.map((e) => ({
+            id: e.id,
+            duration: this.parseDuration(e.contentDetails.duration),
+            durationISO: e.contentDetails.duration,
+            title: e.snippet.title,
+            channelTitle: e.snippet.channelTitle,
+            viewCount: e.statistics?.viewCount,
+            likeCount: e.statistics?.likeCount,
+          }));
+          s = s.concat(t);
+        }
+        return s;
+      } catch (e) {
+        throw (console.error('Failed to fetch video details:', e), e);
+      }
+    }
+    parseDuration(e) {
+      const t = e.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+      return t ? 3600 * parseInt(t[1] || 0) + 60 * parseInt(t[2] || 0) + parseInt(t[3] || 0) : 0;
+    }
+    formatDuration(e) {
+      const t = Math.floor(e / 3600),
+        s = Math.floor((e % 3600) / 60),
+        a = e % 60;
+      return t > 0 ? `${t}h ${s}m` : s > 0 ? `${s}m ${a}s` : `${a}s`;
+    }
+    async addToPlaylist(e, t) {
+      try {
+        const s = await fetch(`${this.baseUrl}/playlistItems?part=snippet`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${this.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            snippet: { playlistId: e, resourceId: { kind: 'youtube#video', videoId: t } },
+          }),
+        });
+        if (!s.ok) throw new Error(`Failed to add video to playlist: ${s.statusText}`);
+        return await s.json();
+      } catch (e) {
+        throw (console.error('Failed to add video to playlist:', e), e);
+      }
+    }
+    async removeFromPlaylist(e) {
+      try {
+        const t = await fetch(`${this.baseUrl}/playlistItems?id=${e}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${this.accessToken}` },
+        });
+        if (!t.ok) throw new Error(`Failed to remove video from playlist: ${t.statusText}`);
+        return !0;
+      } catch (e) {
+        throw (console.error('Failed to remove video from playlist:', e), e);
+      }
+    }
+    async moveVideo(e, t, s) {
+      try {
+        return (await this.addToPlaylist(s, e), await this.removeFromPlaylist(t), !0);
+      } catch (e) {
+        throw (console.error('Failed to move video:', e), e);
+      }
+    }
+    async createPlaylist(e, t = '', s = 'private') {
+      try {
+        const a = await fetch(`${this.baseUrl}/playlists?part=snippet,status`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${this.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            snippet: { title: e, description: t },
+            status: { privacyStatus: s },
+          }),
+        });
+        if (!a.ok) throw new Error(`Failed to create playlist: ${a.statusText}`);
+        const n = await a.json();
+        return { id: n.id, title: n.snippet.title, description: n.snippet.description };
+      } catch (e) {
+        throw (console.error('Failed to create playlist:', e), e);
+      }
+    }
+    async getWatchLaterPlaylistId() {
+      try {
+        const e = await this.makeRequest('channels', { part: 'contentDetails', mine: 'true' });
+        return e.items && e.items.length > 0
+          ? e.items[0].contentDetails.relatedPlaylists.watchLater
+          : null;
+      } catch (e) {
+        throw (console.error('Failed to get Watch Later playlist:', e), e);
+      }
+    }
+    async getLikedVideos(e = 50) {
+      try {
+        return (
+          await this.makeRequest('videos', {
+            part: 'snippet,contentDetails',
+            myRating: 'like',
+            maxResults: e,
+          })
+        ).items.map((e) => ({
+          id: e.id,
+          title: e.snippet.title,
+          description: e.snippet.description,
+          thumbnail: e.snippet.thumbnails?.default?.url,
+          channelTitle: e.snippet.channelTitle,
+          publishedAt: e.snippet.publishedAt,
+          url: `https://www.youtube.com/watch?v=${e.id}`,
+        }));
+      } catch (e) {
+        throw (console.error('Failed to fetch liked videos:', e), e);
+      }
+    }
+    generateWatchHistoryPrompt(e = 50) {
+      return `Using your Personal Intelligence access to my YouTube watch history,\nprovide my last ${e} watched videos.\n\nFilter out political content.\n\nFormat as JSON array:\n[\n  {\n    "title": "Video Title",\n    "url": "https://www.youtube.com/watch?v=...",\n    "channel": "Channel Name",\n    "description": "Brief description"\n  }\n]`;
+    }
+  })();
+  function t(e) {
+    let t = 0;
+    for (let s = 0; s < e.length; s++) ((t = (t << 5) - t + e.charCodeAt(s)), (t &= t));
+    return t.toString(36);
+  }
+  const s = 'gemini_bridge_settings',
+    a = 'gemini_bridge_agent_id',
+    n = 'gemini_bridge_channels',
+    i = 'gemini_bridge_joined_channels',
+    o = 'gemini_bridge_tab_active_channels',
+    r = 'gemini_bridge_tab_paused_channels',
+    c = 'gemini_bridge_auto_connect',
+    l = 'gemini_bridge_auto_monitor',
+    d = 'gemini_bridge_auto_master_clock',
+    h = 'gemini_bridge_auto_wake_ping',
+    u = 'gemini_bridge_event_log',
+    g = 'ws://localhost:3000/ws',
+    m = 'ai_video_process_tick';
+  new (class {
+    constructor() {
+      ((this.connections = new Map()),
+        (this.nodeStatus = new Map()),
+        (this.primaryConnection = null),
+        (this.agentId = ''),
+        (this.agents = new Map()),
+        (this.channels = new Map()),
+        (this.joinedChannels = new Set()),
+        (this.tabActiveChannels = new Map()),
+        (this.tabPausedChannels = new Map()),
+        (this.messageQueue = []),
+        (this.pendingPageAgents = []),
+        (this.autoConnect = !0),
+        (this.autoMonitor = !0),
+        (this.autoMasterClock = !0),
+        (this.autoWakePing = !1),
+        (this.lastAutonomyStartAt = 0),
+        (this.lastWakePingAt = new Map()),
+        (this.channelLastActivityAt = new Map()),
+        (this.connectionAttempts = 0),
+        (this.maxInitialAttempts = 1),
+        (this.recentMessageHashes = new Map()),
+        (this.MESSAGE_DEDUP_WINDOW_MS = 1e4),
+        (this.reconnectTimers = new Map()),
+        (this.heartbeatTimer = null),
+        (this.healthCheckTimer = null),
+        (this.cleanupTimer = null),
+        (this.stallWatchdogTimer = null),
+        (this.nativeHostUnavailable = !1),
+        (this.nativeHostMissingLogged = !1),
+        (this.extensionEventLog = []),
+        (this.EVENT_LOG_LIMIT = 4e3),
+        (this.eventLogFlushTimer = null),
+        (this.eventLoggingEnabled = !0),
+        (this.automationRunning = !1),
+        (this.automationPaused = !1),
+        (this.pendingTaskResolve = null),
+        this.init());
+    }
+    async init() {
+      (console.log('[GeminiBridge v7] Background service initializing...'),
+        this.setupMessageHandlers(),
+        this.setupCommands(),
+        this.setupTabLifecycleHandlers(),
+        this.setupAlarmHandlers(),
+        this.registerWebMCPTools(),
+        (this.agentId = await this.getOrCreateAgentId()),
+        await this.loadSavedState(),
+        this.logEvent('extension', 'background_loaded_state', {
+          channels: this.channels.size,
+          joinedChannels: this.joinedChannels.size,
+          tabChannelBindings: this.tabActiveChannels.size,
+        }),
+        this.startHealthChecks(),
+        this.startCleanupTimer(),
+        this.autoConnect
+          ? this.tryInitialConnection()
+          : this.updateNodeStatus('relay', g, 'disconnected'),
+        console.log('[GeminiBridge v7] Background service ready'),
+        this.logEvent('extension', 'background_ready', {
+          autoConnect: this.autoConnect,
+          autoMonitor: this.autoMonitor,
+          autoMasterClock: this.autoMasterClock,
+          autoWakePing: this.autoWakePing,
+        }));
+    }
+    startCleanupTimer() {
+      this.cleanupTimer = setInterval(() => {
+        const e = Date.now();
+        let t = 0;
+        for (const [s, a] of this.recentMessageHashes.entries())
+          e - a > this.MESSAGE_DEDUP_WINDOW_MS && (this.recentMessageHashes.delete(s), t++);
+        t > 0 && console.log(`[GeminiBridge v7] Cleaned up ${t} stale message hashes`);
+      }, 3e4);
+    }
+    async tryInitialConnection() {
+      (await this.checkRelayHealth())
+        ? this.connectToNode('relay', g)
+        : (console.log('[GeminiBridge v7] Relay not available - attempting autonomous startup'),
+          this.updateNodeStatus('relay', g, 'disconnected'),
+          this.sendNativeMessage({ action: 'start', service: 'relay' }).then((e) => {
+            e?.error ||
+              setTimeout(() => {
+                ((this.connectionAttempts = 0),
+                  this.connectToNode('relay', g),
+                  this.ensureAutonomousServices('relay_auto_bootstrap'));
+              }, 3e3);
+          }));
+    }
+    async checkRelayHealth() {
+      try {
+        const e = await fetch('http://localhost:3000/health', {
+          method: 'GET',
+          signal: AbortSignal.timeout(2e3),
+        });
+        return 'ok' === (await e.json()).status;
+      } catch (e) {
+        return !1;
+      }
+    }
+    async getOrCreateAgentId() {
+      let e = (await chrome.storage.local.get([a]))[a];
+      return (
+        e ||
+          ((e = `browser-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`),
+          await chrome.storage.local.set({ [a]: e })),
+        e
+      );
+    }
+    async loadSavedState() {
+      const e = await chrome.storage.local.get([
+        n,
+        i,
+        o,
+        'gemini_bridge_known_nodes',
+        c,
+        l,
+        d,
+        h,
+        r,
+        u,
+        s,
+      ]);
+      if (
+        (e[n] &&
+          e[n].forEach((e) => {
+            this.channels.set(e.id, e);
+          }),
+        e[i] && (this.joinedChannels = new Set(e[i])),
+        e[o])
+      ) {
+        const t = e[o];
+        for (const [e, s] of Object.entries(t)) {
+          const t = Number(e);
+          Number.isFinite(t) && s && this.tabActiveChannels.set(t, s);
+        }
+      }
+      if (e[r]) {
+        const t = e[r];
+        for (const [e, s] of Object.entries(t)) {
+          const t = Number(e);
+          if (!Number.isFinite(t) || !Array.isArray(s)) continue;
+          const a = new Set(s.map((e) => String(e || '').trim()).filter((e) => e.length > 0));
+          a.size > 0 && this.tabPausedChannels.set(t, a);
+        }
+      }
+      if (Array.isArray(e[u])) {
+        const t = e[u];
+        this.extensionEventLog = t.slice(-this.EVENT_LOG_LIMIT);
+      }
+      (this.joinedChannels.add('green'),
+        (this.autoConnect = e[c] ?? !0),
+        (this.autoMonitor = e[l] ?? !0),
+        (this.autoMasterClock = e[d] ?? !0),
+        (this.autoWakePing = e[h] ?? !1),
+        void 0 !== e[s]?.autoReconnect && (this.autoConnect = e[s].autoReconnect),
+        void 0 !== e[s]?.autoMonitor && (this.autoMonitor = !!e[s].autoMonitor),
+        void 0 !== e[s]?.autoMasterClock && (this.autoMasterClock = !!e[s].autoMasterClock),
+        void 0 !== e[s]?.autoWakePing && (this.autoWakePing = !!e[s].autoWakePing));
+    }
+    connectToNode(e, t) {
+      if (this.connections.has(e)) {
+        const t = this.connections.get(e);
+        if (t?.readyState === WebSocket.OPEN)
+          return void console.log(`[GeminiBridge v7] Already connected to ${e}`);
+        (t?.close(), this.connections.delete(e));
+      }
+      (console.log(`[GeminiBridge v7] Connecting to ${e} at ${t}...`),
+        this.updateNodeStatus(e, t, 'connecting'));
+      try {
+        const s = new WebSocket(t);
+        ((s.onopen = () => {
+          (console.log(`[GeminiBridge v7] Connected to ${e}`),
+            this.connections.set(e, s),
+            this.updateNodeStatus(e, t, 'connected'),
+            (this.connectionAttempts = 0),
+            this.primaryConnection || (this.primaryConnection = s),
+            this.registerAgent(s),
+            this.startHeartbeat(),
+            this.ensureAutonomousServices('relay_connected'),
+            this.flushMessageQueue(),
+            this.flushPendingPageAgents(),
+            this.reRegisterAllAgents(s),
+            this.requestSync(s));
+        }),
+          (s.onmessage = (t) => {
+            try {
+              const s = JSON.parse(t.data);
+              this.handleRelayMessage(s, e);
+            } catch (e) {
+              console.error('[GeminiBridge v7] Failed to parse message:', e);
+            }
+          }),
+          (s.onclose = () => {
+            if (
+              (console.log(`[GeminiBridge v7] Disconnected from ${e}`),
+              this.connections.delete(e),
+              this.updateNodeStatus(e, t, 'disconnected'),
+              this.primaryConnection === s)
+            ) {
+              this.primaryConnection = null;
+              for (const [, e] of this.connections)
+                if (e.readyState === WebSocket.OPEN) {
+                  this.primaryConnection = e;
+                  break;
+                }
+            }
+            (this.autoConnect && 0 === this.connectionAttempts && this.scheduleReconnect(e, t),
+              'relay' === e && this.stopStallWatchdog());
+          }),
+          (s.onerror = () => {
+            (this.connectionAttempts++,
+              this.updateNodeStatus(e, t, 'disconnected'),
+              this.autoConnect && this.connectionAttempts < 3 && this.scheduleReconnect(e, t));
+          }));
+      } catch (s) {
+        (console.log(`[GeminiBridge v7] Unable to connect to ${e} - relay may not be running`),
+          this.updateNodeStatus(e, t, 'disconnected'));
+      }
+    }
+    updateNodeStatus(e, t, s) {
+      const a = {
+        id: e,
+        type: e,
+        url: t,
+        status: s,
+        lastConnected:
+          'connected' === s ? Date.now() : this.nodeStatus.get(e)?.lastConnected || null,
+        latency: null,
+        features: this.getNodeFeatures(e),
+      };
+      (this.nodeStatus.set(e, a),
+        this.broadcastToTabs({ type: 'CONNECTION_STATUS', status: s, node: a }),
+        this.notifyPopup({ type: 'CONNECTION_STATUS', status: s, node: a }));
+    }
+    getNodeFeatures(e) {
+      return (
+        {
+          relay: ['websocket', 'agents', 'messages', 'channels'],
+          'api-gateway': ['rest', 'auth', 'workflows'],
+          backend: ['agents', 'persistence', 'workflows'],
+          saas: ['cloud', 'auth', 'multi-tenant'],
+          redis: ['pubsub', 'cache'],
+          websocket: ['realtime'],
+        }[e] || []
+      );
+    }
+    scheduleReconnect(e, t) {
+      const s = this.reconnectTimers.get(e);
+      s && clearTimeout(s);
+      const a = Math.min(5e3 * Math.pow(2, this.connectionAttempts), 3e4);
+      console.log(`[GeminiBridge v7] Will retry ${e} in ${a}ms...`);
+      const n = setTimeout(() => {
+        this.connectToNode(e, t);
+      }, a);
+      this.reconnectTimers.set(e, n);
+    }
+    registerAgent(e) {
+      const t = {
+        id: crypto.randomUUID(),
+        type: 'AGENT_REGISTER',
+        timestamp: Date.now(),
+        source: this.agentId,
+        payload: {
+          agent: {
+            id: this.agentId,
+            name: 'Browser Agent',
+            platform: 'chrome-extension',
+            status: 'active',
+            capabilities: [
+              'chat-injection',
+              'dom-reading',
+              'universal-detection',
+              'streaming-detection',
+              'notifications',
+            ],
+            channels: Array.from(this.joinedChannels),
+            metadata: {
+              node: {
+                type: 'browser',
+                platform: navigator.platform,
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+              },
+            },
+          },
+        },
+      };
+      e.send(JSON.stringify(t));
+    }
+    registerPageAgent(e, t, s, a) {
+      const n = {
+        id: e,
+        name: t,
+        platform: 'browser-page',
+        status: 'active',
+        capabilities: ['chat-injection', 'dom-reading'],
+        channels: [],
+        metadata: { node: { type: 'browser-tab', platform: s }, tabId: a },
+        lastSeen: Date.now(),
+      };
+      if ((this.agents.set(e, n), this.primaryConnection?.readyState === WebSocket.OPEN)) {
+        const s = {
+          id: crypto.randomUUID(),
+          type: 'AGENT_REGISTER',
+          timestamp: Date.now(),
+          source: this.agentId,
+          payload: { agent: n },
+        };
+        (this.primaryConnection.send(JSON.stringify(s)),
+          console.log(`[GeminiBridge v7] Registered Page Agent: ${t} (${e})`));
+        for (const t of this.joinedChannels) {
+          const s = {
+            id: crypto.randomUUID(),
+            type: 'CHANNEL_JOIN',
+            timestamp: Date.now(),
+            source: e,
+            payload: { channelId: t },
+          };
+          (this.primaryConnection.send(JSON.stringify(s)),
+            console.log(`[GeminiBridge v7] Auto-joined Page Agent ${e} to channel ${t}`),
+            n.channels.push(t));
+        }
+      } else
+        (console.log(`[GeminiBridge v7] Queued Page Agent for later registration: ${t} (${e})`),
+          this.pendingPageAgents.push(n));
+      (this.broadcastToTabs({ type: 'AGENTS_UPDATE', agents: Array.from(this.agents.values()) }),
+        this.frontloadPageAgentContext(n),
+        this.sendActivityEvent('page_agent_registered', {
+          pageAgentId: e,
+          tabId: a || null,
+          platform: s,
+          channels: n.channels,
+        }));
+    }
+    requestSync(e) {
+      (this.send({ type: 'AGENT_LIST' }, e), this.send({ type: 'CHANNEL_LIST' }, e));
+    }
+    send(e, t) {
+      const s = t || this.primaryConnection;
+      let a;
+      ((a =
+        'MESSAGE_SEND' === e.type
+          ? {
+              id: crypto.randomUUID(),
+              type: 'MESSAGE_SEND',
+              timestamp: Date.now(),
+              source: this.agentId,
+              channel: e.channel || 'general',
+              payload: {
+                to: e.to,
+                content: e.content,
+                messageType: e.messageType || 'text',
+                metadata: e.metadata,
+              },
+            }
+          : {
+              id: crypto.randomUUID(),
+              type: e.type,
+              timestamp: Date.now(),
+              source: this.agentId,
+              channel: e.channel || 'general',
+              payload: e,
+            }),
+        s?.readyState === WebSocket.OPEN
+          ? (s.send(JSON.stringify(a)),
+            console.log('[GeminiBridge v7] Sent to relay:', a.type, a.channel))
+          : (this.messageQueue.push(a),
+            console.log('[GeminiBridge v7] Queued message (not connected):', a.type)));
+    }
+    flushMessageQueue() {
+      for (
+        ;
+        this.messageQueue.length > 0 && this.primaryConnection?.readyState === WebSocket.OPEN;
+      ) {
+        const e = this.messageQueue.shift();
+        e && this.primaryConnection.send(JSON.stringify(e));
+      }
+    }
+    flushPendingPageAgents() {
+      if (this.primaryConnection?.readyState === WebSocket.OPEN)
+        for (
+          console.log(
+            `[GeminiBridge v7] Flushing ${this.pendingPageAgents.length} pending page agent registrations`
+          );
+          this.pendingPageAgents.length > 0;
+        ) {
+          const e = this.pendingPageAgents.shift();
+          if (e) {
+            const t = {
+              id: crypto.randomUUID(),
+              type: 'AGENT_REGISTER',
+              timestamp: Date.now(),
+              source: this.agentId,
+              payload: { agent: e },
+            };
+            (this.primaryConnection.send(JSON.stringify(t)),
+              console.log(`[GeminiBridge v7] Registered queued Page Agent: ${e.name} (${e.id})`));
+            for (const t of this.joinedChannels) {
+              const s = {
+                id: crypto.randomUUID(),
+                type: 'CHANNEL_JOIN',
+                timestamp: Date.now(),
+                source: e.id,
+                payload: { channelId: t },
+              };
+              (this.primaryConnection.send(JSON.stringify(s)), e.channels.push(t));
+            }
+          }
+        }
+    }
+    reRegisterAllAgents(e) {
+      if (e.readyState === WebSocket.OPEN) {
+        console.log(
+          `[GeminiBridge v7] Re-registering ${this.agents.size} existing agents on new connection`
+        );
+        for (const [t, s] of this.agents) {
+          if (t === this.agentId) continue;
+          const a = {
+            id: crypto.randomUUID(),
+            type: 'AGENT_REGISTER',
+            timestamp: Date.now(),
+            source: this.agentId,
+            payload: { agent: s },
+          };
+          if (
+            (e.send(JSON.stringify(a)),
+            console.log(`[GeminiBridge v7] Re-announced Page Agent: ${s.name} (${t})`),
+            s.channels && s.channels.length > 0)
+          )
+            for (const a of s.channels) {
+              const s = {
+                id: crypto.randomUUID(),
+                type: 'CHANNEL_JOIN',
+                timestamp: Date.now(),
+                source: t,
+                payload: { channelId: a },
+              };
+              e.send(JSON.stringify(s));
+            }
+        }
+      }
+    }
+    startHeartbeat() {
+      this.heartbeatTimer ||
+        (this.heartbeatTimer = setInterval(() => {
+          this.send({ type: 'HEARTBEAT' });
+          for (const [e, t] of this.agents)
+            if (e !== this.agentId && 'browser-page' === t.platform) {
+              const s = t.metadata?.tabId;
+              s &&
+                chrome.tabs.get(s, (t) => {
+                  if (chrome.runtime.lastError || !t)
+                    return (
+                      console.log(`[GeminiBridge v7] Tab ${s} for agent ${e} is gone. Removing.`),
+                      this.agents.delete(e),
+                      this.send({ type: 'AGENT_UNREGISTER', agentId: e }),
+                      void this.broadcastToTabs({
+                        type: 'AGENTS_UPDATE',
+                        agents: Array.from(this.agents.values()),
+                      })
+                    );
+                  const a = {
+                    id: crypto.randomUUID(),
+                    type: 'HEARTBEAT',
+                    timestamp: Date.now(),
+                    source: e,
+                    payload: {},
+                  };
+                  this.primaryConnection?.readyState === WebSocket.OPEN &&
+                    this.primaryConnection.send(JSON.stringify(a));
+                });
+            }
+        }, 3e4));
+    }
+    startHealthChecks() {
+      this.healthCheckTimer = setInterval(() => {
+        for (const [e, t] of this.nodeStatus) {
+          const s = this.connections.get(e);
+          s &&
+            s.readyState !== WebSocket.OPEN &&
+            'connected' === t.status &&
+            this.updateNodeStatus(e, t.url, 'disconnected');
+        }
+      }, 1e4);
+    }
+    handleRelayMessage(e, t) {
+      switch (
+        (console.log(`[GeminiBridge v7] Received from ${t}:`, e.type),
+        this.logEvent('relay', 'message_in', {
+          nodeType: t,
+          type: e.type,
+          source: e.source || null,
+          channel: e.channel || null,
+        }),
+        e.type)
+      ) {
+        case 'WELCOME':
+          console.log('[GeminiBridge v7] Welcome received');
+          break;
+        case 'AGENT_LIST': {
+          const t = e.payload.agents || [];
+          (this.agents.clear(),
+            t.forEach((e) => this.agents.set(e.id, e)),
+            this.broadcastToTabs({ type: 'AGENTS_UPDATE', agents: t }),
+            this.notifyPopup({ type: 'AGENTS_UPDATE', agents: t }));
+          break;
+        }
+        case 'AGENT_STATUS': {
+          const t = e.payload.agent;
+          if (t) {
+            if (
+              'offline' === t.status ||
+              'disconnected' === t.status ||
+              'unregistered' === t.status
+            )
+              (console.log(`[GeminiBridge v7] Agent ${t.id} went offline/removed`),
+                this.agents.delete(t.id));
+            else {
+              const e = this.agents.get(t.id);
+              (e &&
+                e.metadata?.tabId &&
+                !t.metadata?.tabId &&
+                (t.metadata = { ...t.metadata, tabId: e.metadata.tabId }),
+                this.agents.set(t.id, t));
+            }
+            (this.broadcastToTabs({
+              type: 'AGENTS_UPDATE',
+              agents: Array.from(this.agents.values()),
+            }),
+              this.notifyPopup({ type: 'AGENTS_UPDATE', agents: Array.from(this.agents.values()) }),
+              'active' === t.status &&
+                this.createNotification(
+                  'agent_joined',
+                  'Agent Connected',
+                  `${t.name} is now online`
+                ));
+          }
+          break;
+        }
+        case 'AGENT_UNREGISTER': {
+          const t = e.payload.agentId;
+          t &&
+            (console.log(`[GeminiBridge v7] UNREGISTER received for ${t}`),
+            this.agents.delete(t),
+            this.broadcastToTabs({
+              type: 'AGENTS_UPDATE',
+              agents: Array.from(this.agents.values()),
+            }),
+            this.notifyPopup({ type: 'AGENTS_UPDATE', agents: Array.from(this.agents.values()) }));
+          break;
+        }
+        case 'CHANNEL_LIST': {
+          const t = e.payload.channels || [];
+          t.length > 0 &&
+            (t.forEach((e) => {
+              const t = this.findChannelByName(e.name);
+              if (t && t.id !== e.id) {
+                if (!this.shouldPreferIncomingChannel(t, e)) return;
+                (this.channels.delete(t.id), this.remapChannelReferences(t.id, e.id));
+              }
+              this.channels.set(e.id, e);
+            }),
+            this.broadcastToTabs({
+              type: 'CHANNELS_UPDATE',
+              channels: Array.from(this.channels.values()),
+            }),
+            this.notifyPopup({
+              type: 'CHANNELS_UPDATE',
+              channels: Array.from(this.channels.values()),
+            }),
+            this.saveChannels());
+          break;
+        }
+        case 'CHANNEL_MESSAGE':
+        case 'MESSAGE_RECEIVE':
+          const t = e.payload;
+          if (
+            (t?.channel && this.channelLastActivityAt.set(t.channel, Date.now()),
+            this.appendTranscriptFromRelay(t),
+            this.handleAgentMessage(t),
+            t && t.content)
+          ) {
+            const e = this.channels.get(t.channel || '')?.name || '';
+            ('green' !== t.channel && 'green' !== e.toLowerCase()) ||
+              this.broadcastToTabs({
+                type: 'INJECT_MESSAGE',
+                content: t.content,
+                metadata: t.metadata,
+              });
+          }
+          break;
+        case 'MESSAGE_STREAM_START':
+          this.broadcastToTabs({ type: 'STREAMING_START', messageId: e.payload.messageId });
+          break;
+        case 'MESSAGE_STREAM_CHUNK':
+          this.broadcastToTabs({
+            type: 'STREAMING_CHUNK',
+            messageId: e.payload.messageId,
+            chunk: e.payload.chunk,
+          });
+          break;
+        case 'MESSAGE_STREAM_END':
+          this.broadcastToTabs({ type: 'STREAMING_END', messageId: e.payload.messageId });
+          break;
+        case 'ERROR':
+          (console.error('[GeminiBridge v7] Relay error:', e.payload),
+            this.createNotification('error', 'Error', e.payload.message || 'Unknown error'));
+          break;
+        case 'TASK_ASSIGN':
+          (this.broadcastToTabs({
+            type: 'TASK_ASSIGN',
+            task: e.payload.task,
+            channel: e.channel,
+            timestamp: e.timestamp,
+          }),
+            this.createNotification('info', 'New Task Assigned', `Task: ${e.payload.task.title}`));
+      }
+    }
+    async appendTranscriptFromRelay(e) {
+      const s = e.channel || '',
+        a = this.channels.get(s)?.name || '',
+        n = (a || s).toString();
+      if (
+        !(
+          'NFT Alpha 1' === n ||
+          'nft-alpha-1' === n.toLowerCase() ||
+          (n.toLowerCase().includes('nft') && n.toLowerCase().includes('alpha'))
+        )
+      )
+        return;
+      const i =
+          'system' === e.type
+            ? 'system'
+            : 'response' === e.type
+              ? 'assistant'
+              : 'command' === e.type
+                ? 'tool'
+                : 'user',
+        o = 'relay:NFT Alpha 1',
+        r = {
+          id: t(`${o}|${e.id}|${e.from}|${e.to}|${e.timestamp}|${s}`),
+          ts: e.timestamp || Date.now(),
+          role: i,
+          content: e.content || '',
+          meta: {
+            source: 'tnf-relay',
+            channelId: s,
+            channelName: a,
+            channel: n,
+            from: e.from,
+            to: e.to,
+            msgType: e.type,
+          },
+        };
+      if (r.content)
+        try {
+          const e = `https://tnf-agent-orchestration.bizsynth.workers.dev/transcript/append?sessionKey=${encodeURIComponent(o)}`;
+          await fetch(e, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Session-Key': o },
+            body: JSON.stringify({ entries: [r] }),
+          });
+        } catch (e) {}
+    }
+    handleAgentMessage(e) {
+      try {
+        const t = Date.now(),
+          s = this.__loopGuard || { counts: new Map(), mutedUntil: new Map() };
+        this.__loopGuard = s;
+        const a = e.from || '',
+          n = e.channel || '',
+          i = e.content || '',
+          o = s.mutedUntil.get(a) || 0;
+        if (o && t < o) return;
+        const r = `${a}:${n}:${i.slice(0, 280)}`,
+          c = s.counts.get(r) || { firstTs: t, n: 0 };
+        if (
+          (t - c.firstTs > 1e4 && ((c.firstTs = t), (c.n = 0)),
+          (c.n += 1),
+          s.counts.set(r, c),
+          c.n > 5)
+        )
+          return (
+            s.mutedUntil.set(a, t + 6e4),
+            void console.debug('[GeminiBridge v7] Loop guard muted source for 60s:', a)
+          );
+      } catch {}
+      if (e.from === this.agentId || 'Browser Agent' === e.from) {
+        if (!e.channel)
+          return void console.log('[GeminiBridge v7] Skipping direct self-message echo');
+        const s = t(`${e.from}:${e.content}:${Math.floor(e.timestamp / 1e3)}`);
+        if (this.recentMessageHashes.has(s))
+          return void console.log('[GeminiBridge v7] Skipping duplicate self-message on channel');
+      }
+      const s = t(`${e.from}:${e.content}:${Math.floor(e.timestamp / 1e3)}`),
+        a = Date.now();
+      if (this.recentMessageHashes.has(s))
+        console.log('[GeminiBridge v7] Skipping duplicate message');
+      else {
+        this.recentMessageHashes.set(s, a);
+        for (const [e, t] of this.recentMessageHashes.entries())
+          a - t > this.MESSAGE_DEDUP_WINDOW_MS && this.recentMessageHashes.delete(e);
+        (this.broadcastToTabs({ type: 'NEW_MESSAGE', message: e }),
+          this.notifyPopup({ type: 'NEW_MESSAGE', message: e }),
+          (e.to !== this.agentId && 'broadcast' !== e.to) ||
+            this.createNotification(
+              'message',
+              `Message from ${e.from}`,
+              e.content.substring(0, 100)
+            ),
+          (e.to !== this.agentId && 'broadcast' !== e.to) ||
+            'command' !== e.type ||
+            this.executeCommand(e));
+      }
+    }
+    async executeCommand(e) {
+      const t = e.content;
+      if (t.startsWith('/inject ')) {
+        const e = t.slice(8);
+        await this.injectMessageToActiveTab(e);
+      } else if ('/get-response' === t) {
+        const t = await this.getLastResponseFromActiveTab();
+        this.send({
+          type: 'MESSAGE_SEND',
+          to: e.from,
+          content: t || 'No response available',
+          messageType: 'response',
+        });
+      } else if ('/get-status' === t) {
+        const t = await this.getTabChatStatus();
+        this.send({
+          type: 'MESSAGE_SEND',
+          to: e.from,
+          content: JSON.stringify(t),
+          messageType: 'response',
+        });
+      }
+    }
+    createNotification(e, t, s) {
+      const a = {
+        id: crypto.randomUUID(),
+        type: e,
+        title: t,
+        message: s,
+        priority: 'error' === e ? 'high' : 'normal',
+        timestamp: Date.now(),
+        read: !1,
+      };
+      this.broadcastToTabs({ type: 'NOTIFICATION', notification: a });
+    }
+    async injectMessageToActiveTab(e) {
+      const t = await chrome.tabs.query({ active: !0, currentWindow: !0 });
+      t[0]?.id &&
+        (this.logEvent('chat', 'inject_active_tab', {
+          tabId: t[0].id,
+          preview: String(e || '').slice(0, 120),
+        }),
+        this.safeSendMessage(t[0].id, { type: 'INJECT_MESSAGE', content: e }));
+    }
+    safeSendMessage(e, t, s) {
+      try {
+        chrome.tabs.sendMessage(e, t, (e) => {
+          (chrome.runtime.lastError, s && s(e));
+        });
+      } catch (e) {}
+    }
+    async injectMessageToTab(e, t) {
+      (this.logEvent('chat', 'inject_specific_tab', {
+        tabId: e,
+        preview: String(t || '').slice(0, 120),
+      }),
+        this.safeSendMessage(e, { type: 'INJECT_MESSAGE', content: t }));
+    }
+    async getLastResponseFromActiveTab() {
+      const e = await chrome.tabs.query({ active: !0, currentWindow: !0 });
+      return e[0]?.id
+        ? new Promise((t) => {
+            this.safeSendMessage(e[0].id, { type: 'GET_LAST_RESPONSE' }, (e) => {
+              t(e?.response || null);
+            });
+          })
+        : null;
+    }
+    async getTabChatStatus() {
+      const e = await chrome.tabs.query({ active: !0, currentWindow: !0 });
+      return e[0]?.id
+        ? new Promise((t) => {
+            this.safeSendMessage(e[0].id, { type: 'GET_CHAT_STATUS' }, (e) => {
+              t(e || {});
+            });
+          })
+        : {};
+    }
+    async broadcastToTabs(e) {
+      const t = await chrome.tabs.query({});
+      for (const s of t)
+        if (s.id)
+          try {
+            this.safeSendMessage(s.id, e, () => {
+              const e = chrome.runtime.lastError;
+              !e ||
+                e.message?.includes('Receiving end does not exist') ||
+                e.message?.includes('Could not establish connection') ||
+                console.debug(`[GeminiBridge v7] Failed to broadcast to tab ${s.id}:`, e);
+            });
+          } catch (e) {}
+    }
+    notifyPopup(e) {
+      try {
+        chrome.runtime.sendMessage(e, () => {
+          chrome.runtime.lastError;
+        });
+      } catch {}
+    }
+    async saveChannels() {
+      await chrome.storage.local.set({
+        [n]: Array.from(this.channels.values()),
+        [i]: Array.from(this.joinedChannels),
+      });
+    }
+    async saveTabActiveChannels() {
+      const e = {};
+      for (const [t, s] of this.tabActiveChannels.entries()) s && (e[String(t)] = s);
+      await chrome.storage.local.set({ [o]: e });
+    }
+    async saveTabPausedChannels() {
+      const e = {};
+      for (const [t, s] of this.tabPausedChannels.entries())
+        s.size > 0 && (e[String(t)] = Array.from(s));
+      await chrome.storage.local.set({ [r]: e });
+    }
+    setChannelPaused(e, t, s) {
+      if (!t) return;
+      let a = this.tabPausedChannels.get(e);
+      (a || ((a = new Set()), this.tabPausedChannels.set(e, a)),
+        s ? a.add(t) : a.delete(t),
+        0 === a.size && this.tabPausedChannels.delete(e),
+        this.saveTabPausedChannels());
+    }
+    getTabPausedChannels(e) {
+      return e ? Array.from(this.tabPausedChannels.get(e) || []) : [];
+    }
+    isChannelPausedOnTab(e, t) {
+      return (t && this.tabPausedChannels.get(e)?.has(t)) || !1;
+    }
+    setTabActiveChannel(e, t) {
+      (t ? this.tabActiveChannels.set(e, t) : this.tabActiveChannels.delete(e),
+        this.saveTabActiveChannels());
+    }
+    getTabActiveChannel(e) {
+      return (e && this.tabActiveChannels.get(e)) || null;
+    }
+    normalizeChannelName(e) {
+      return String(e || '')
+        .trim()
+        .replace(/\s+/g, ' ')
+        .toLowerCase();
+    }
+    extractYouTubeUrls(e) {
+      const t =
+        String(e || '').match(
+          /https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=[\w-]{11}[\w=&-]*|youtu\.be\/[\w-]{11}[\w?=&-]*)/gi
+        ) || [];
+      return Array.from(new Set(t.map((e) => e.trim())));
+    }
+    toQueueItems(e) {
+      return e.map((e, t) => {
+        const s = e.match(/(?:v=|youtu\.be\/)([\w-]{11})/i),
+          a = s?.[1] || `vid-${Date.now()}-${t}`;
+        return { id: a, title: `YouTube Video ${a}`, url: e, addedAt: Date.now() };
+      });
+    }
+    getDefaultProcessingState() {
+      return {
+        isProcessing: !1,
+        isPaused: !1,
+        currentIndex: 0,
+        totalCount: 0,
+        currentVideo: null,
+        lastUpdated: Date.now(),
+      };
+    }
+    setupAlarmHandlers() {
+      chrome.alarms.onAlarm.addListener((e) => {
+        e.name === m && this.processAIVideoTick();
+      });
+    }
+    async getYouTubeAuthToken() {
+      const e = Date.now(),
+        t = await chrome.storage.local.get([
+          'ai_studio_token',
+          'youtubeToken',
+          'youtubeTokenExpiry',
+        ]),
+        s = String(t.youtubeToken || '').trim(),
+        a = String(t.ai_studio_token || '').trim(),
+        n = Number(t.youtubeTokenExpiry || 0);
+      return s && n > e ? s : a && (!n || n > e) ? a : null;
+    }
+    async validateYouTubeToken(e) {
+      if (!e) return !1;
+      try {
+        return (await this.youtubeApiGet('channels?part=id&mine=true&maxResults=1', e), !0);
+      } catch {
+        return !1;
+      }
+    }
+    async youtubeApiGet(e, t) {
+      const s = await fetch(`https://www.googleapis.com/youtube/v3/${e}`, {
+        headers: { Authorization: `Bearer ${t}` },
+      });
+      if (!s.ok) throw new Error(`YouTube API ${s.status}`);
+      return s.json();
+    }
+    async fetchYouTubeChannels() {
+      const e = await this.getYouTubeAuthToken();
+      if (!e) throw new Error('Not authenticated');
+      const t = await this.youtubeApiGet(
+        'channels?part=snippet,contentDetails&mine=true&maxResults=50',
+        e
+      );
+      return (Array.isArray(t?.items) ? t.items : []).map((e) => ({
+        id: String(e?.id || ''),
+        title: String(e?.snippet?.title || 'Untitled Channel'),
+        description: String(e?.snippet?.description || ''),
+        thumbnail: String(e?.snippet?.thumbnails?.default?.url || ''),
+        uploadsPlaylistId: String(e?.contentDetails?.relatedPlaylists?.uploads || ''),
+      }));
+    }
+    async fetchYouTubePlaylistsForChannel(e, t) {
+      const s = await this.youtubeApiGet(
+        `playlists?part=snippet,contentDetails&channelId=${encodeURIComponent(t)}&maxResults=50`,
+        e
+      );
+      return (Array.isArray(s?.items) ? s.items : []).map((e) => ({
+        id: String(e?.id || ''),
+        title: String(e?.snippet?.title || 'Untitled Playlist'),
+        description: String(e?.snippet?.description || ''),
+        videoCount: Number(e?.contentDetails?.itemCount || 0),
+        thumbnail: String(e?.snippet?.thumbnails?.medium?.url || ''),
+        channelId: String(t || ''),
+      }));
+    }
+    async fetchYouTubePlaylists() {
+      if (!(await this.getYouTubeAuthToken())) throw new Error('Not authenticated');
+      return (await e.getPlaylists()).map((e) => ({
+        id: String(e?.id || ''),
+        title: String(e?.title || 'Untitled Playlist'),
+        description: String(e?.description || ''),
+        videoCount: Number(e?.videoCount || 0),
+        thumbnail: String(e?.thumbnail || ''),
+      }));
+    }
+    async readSelectedYouTubeChannelId() {
+      const e = await chrome.storage.local.get(['ai_studio_channel_id']);
+      return String(e.ai_studio_channel_id || '').trim();
+    }
+    async fetchYouTubePlaylistsBundle() {
+      return {
+        playlists: await this.fetchYouTubePlaylists(),
+        channels: [],
+        selectedChannelId: '',
+        requiresChannelSelection: !1,
+      };
+    }
+    getOAuthDiagnostics() {
+      const e = chrome.runtime.getManifest(),
+        t = String(e.oauth2?.client_id || '').trim(),
+        s = Array.isArray(e.oauth2?.scopes) ? e.oauth2.scopes : [],
+        a = chrome.identity.getRedirectURL();
+      return { extensionId: chrome.runtime.id, clientId: t, redirectUri: a, scopes: s };
+    }
+    async getAuthTokenInteractive(e) {
+      const t = this.getOAuthDiagnostics(),
+        s = encodeURIComponent(e.join(' ')),
+        a = `https://accounts.google.com/o/oauth2/auth?client_id=${encodeURIComponent(t.clientId)}&response_type=token&redirect_uri=${encodeURIComponent(t.redirectUri)}&scope=${s}&prompt=select_account&include_granted_scopes=true`;
+      return new Promise((e, t) => {
+        chrome.identity.launchWebAuthFlow({ url: a, interactive: !0 }, (s) => {
+          if (!chrome.runtime.lastError && s)
+            try {
+              const a = new URL(s),
+                n = a.hash.startsWith('#') ? a.hash.slice(1) : a.hash,
+                i = new URLSearchParams(n),
+                o = String(i.get('access_token') || '').trim();
+              if (!o) {
+                const e = String(i.get('error') || 'oauth_error').trim();
+                return void t(new Error(`OAuth failed: ${e}`));
+              }
+              e(o);
+            } catch (e) {
+              t(new Error(e?.message || 'OAuth redirect parse failed'));
+            }
+          else t(chrome.runtime.lastError || new Error('OAuth account chooser failed'));
+        });
+      });
+    }
+    async fetchGoogleUserProfile(e) {
+      const t = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${e}` },
+      });
+      if (!t.ok) throw new Error(`Failed to fetch Google profile (${t.status})`);
+      const s = await t.json();
+      return {
+        email: String(s?.email || ''),
+        name: String(s?.name || ''),
+        picture: String(s?.picture || ''),
+      };
+    }
+    async authenticateYouTube() {
+      const { scopes: e } = this.getOAuthDiagnostics(),
+        t = await this.getAuthTokenInteractive(e);
+      if (!(await this.validateYouTubeToken(t)))
+        throw new Error('YouTube token validation failed after OAuth');
+      const s = await this.fetchGoogleUserProfile(t),
+        a = await chrome.storage.local.get(['lastAuthAccount']),
+        n = String(a.lastAuthAccount || '')
+          .trim()
+          .toLowerCase(),
+        i = String(s.email || '')
+          .trim()
+          .toLowerCase(),
+        o = !!n && !!i && n !== i;
+      return (
+        o &&
+          (await chrome.storage.local.remove([
+            'ai_studio_channel_id',
+            'cachedPlaylists',
+            'cachedVideos',
+          ])),
+        { token: t, primaryProfile: s, accountSwitched: o }
+      );
+    }
+    normalizeOAuthError(e) {
+      const t = String(e?.message || e || 'Authentication failed');
+      if (
+        t.includes('redirect_uri_mismatch') ||
+        t.includes('invalid_request') ||
+        t.includes('OAuth2 not granted or revoked')
+      ) {
+        const e = this.getOAuthDiagnostics();
+        return new Error(
+          `OAuth setup mismatch for extension identity. Ensure OAuth client is Chrome Extension type bound to extension ID ${e.extensionId} and client_id ${e.clientId}. Redirect URI should be ${e.redirectUri}`
+        );
+      }
+      return new Error(t);
+    }
+    async authenticateYouTubeSafe() {
+      try {
+        const e = await chrome.storage.local.get(['youtubeToken', 'ai_studio_token']),
+          t = [e.youtubeToken, e.ai_studio_token]
+            .map((e) => String(e || '').trim())
+            .filter(Boolean);
+        for (const e of t)
+          await new Promise((t) => {
+            chrome.identity.removeCachedAuthToken({ token: e }, () => t());
+          });
+        return (
+          await new Promise((e) => chrome.identity.clearAllCachedAuthTokens(() => e())),
+          await chrome.storage.local.remove([
+            'ai_studio_token',
+            'youtubeToken',
+            'youtubeTokenExpiry',
+          ]),
+          await this.authenticateYouTube()
+        );
+      } catch (e) {
+        throw this.normalizeOAuthError(e);
+      }
+    }
+    async signOutYouTube() {
+      const e = await chrome.storage.local.get(['ai_studio_token', 'youtubeToken']),
+        t = [e.ai_studio_token, e.youtubeToken].map((e) => String(e || '').trim()).filter(Boolean);
+      await new Promise((e) => {
+        chrome.storage.local.remove(
+          [
+            'ai_studio_token',
+            'youtubeToken',
+            'youtubeTokenExpiry',
+            'ai_studio_channel_id',
+            'userProfile',
+            'lastAuthAccount',
+            'isAuthenticated',
+          ],
+          () => e()
+        );
+      });
+      for (const e of Array.from(new Set(t)))
+        await new Promise((t) => {
+          chrome.identity.removeCachedAuthToken({ token: e }, () => t());
+        });
+      await new Promise((e) => {
+        chrome.identity.clearAllCachedAuthTokens(() => e());
+      });
+    }
+    async fetchPlaylistVideos(t) {
+      if (!(await this.getYouTubeAuthToken())) throw new Error('Not authenticated');
+      if (!t) throw new Error('Missing playlist id');
+      return (await e.getPlaylistVideos(t))
+        .map((e) => {
+          const t = String(e?.id || '').trim();
+          return t
+            ? {
+                id: t,
+                title: String(e?.title || `YouTube Video ${t}`),
+                url: `https://www.youtube.com/watch?v=${t}`,
+                channelTitle: String(e?.channelTitle || ''),
+                thumbnail: String(
+                  e?.thumbnail || `https://i.ytimg.com/vi/${encodeURIComponent(t)}/mqdefault.jpg`
+                ),
+                addedAt: Date.now(),
+              }
+            : null;
+        })
+        .filter(Boolean);
+    }
+    async fetchVideoDetails(t) {
+      if (!(await this.getYouTubeAuthToken())) throw new Error('Not authenticated');
+      const s = t.map((e) => String(e || '').trim()).filter(Boolean);
+      return 0 === s.length
+        ? []
+        : (await e.getVideoDetails(s)).map((e) => ({
+            id: String(e?.id || ''),
+            title: String(e?.title || ''),
+            channelTitle: String(e?.channelTitle || ''),
+            durationISO: String(e?.durationISO || ''),
+            viewCount: Number(e?.viewCount || 0),
+            likeCount: Number(e?.likeCount || 0),
+          }));
+    }
+    async createYouTubePlaylist(t, s) {
+      await e.ensureAuthenticated();
+      const a = await e.createPlaylist(t, s || 'Created by Fuse Connect AIVI', 'private');
+      return {
+        id: String(a?.id || ''),
+        title: String(a?.snippet?.title || t),
+        description: String(a?.snippet?.description || a?.description || ''),
+      };
+    }
+    async processAIVideoTick() {
+      chrome.alarms.clear(m);
+    }
+    async createNewAIStudioTab() {
+      console.log('🆕 Creating new AI Studio tab...');
+      const e = await chrome.tabs.create({
+        url: 'https://aistudio.google.com/app/prompts/new_chat?model=gemini-3-flash-preview',
+        active: !0,
+      });
+      return (
+        await new Promise((t) => {
+          const s = setInterval(async () => {
+            try {
+              if (e.id) {
+                const a = await this.safeSendMessage(e.id, { action: 'PING' });
+                a?.alive && (clearInterval(s), t());
+              }
+            } catch (e) {}
+          }, 1e3);
+          setTimeout(() => {
+            (clearInterval(s), t());
+          }, 3e4);
+        }),
+        await new Promise((e) => setTimeout(e, 2e3)),
+        e
+      );
+    }
+    async sendTaskAndWait(e, t, s = 7e5) {
+      return new Promise((a, n) => {
+        ((this.pendingTaskResolve = a),
+          this.safeSendMessage(e, { action: 'EXECUTE_TASK', task: t }).catch((e) => {
+            (console.error('Failed to send task:', e), a({ error: e.message }));
+          }),
+          setTimeout(() => {
+            this.pendingTaskResolve && ((this.pendingTaskResolve = null), a({ timeout: !0 }));
+          }, s));
+      });
+    }
+    async closeTab(e) {
+      try {
+        await chrome.tabs.remove(e);
+      } catch (e) {
+        console.log('Tab already closed');
+      }
+    }
+    async startAutomationOrchestrator(e, t, s = 45, a = 'ai_studio') {
+      ((this.automationRunning = !0), (this.automationPaused = !1));
+      const n = 60 * s;
+      for (let s = 0; s < e.length && this.automationRunning; s++) {
+        for (; this.automationPaused; ) await new Promise((e) => setTimeout(e, 1e3));
+        const i = e[s],
+          o = String(i.id || ''),
+          r = String(i.title || 'Untitled'),
+          c = String(i.url || ''),
+          l = { ...t, currentIndex: s, currentVideo: i, lastUpdated: Date.now() };
+        (await chrome.storage.local.set({ processingState: l }),
+          this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: l }));
+        try {
+          if ('ai_studio' !== a) {
+            const e = await this.buildLightweightReport(i, a),
+              t = {
+                id: `report-${Date.now()}-${o}`,
+                videoId: o,
+                title: r,
+                url: c,
+                processedAt: Date.now(),
+                processingLevel: a,
+                summary: String(e).slice(0, 1200),
+                content: e,
+                segmentIndex: 0,
+              },
+              s = await chrome.storage.local.get('ai_video_reports'),
+              n = Array.isArray(s.ai_video_reports) ? s.ai_video_reports : [];
+            await chrome.storage.local.set({ ai_video_reports: [t, ...n].slice(0, 500) });
+            const l = await chrome.storage.local.get('ai_video_processed_count');
+            (await chrome.storage.local.set({
+              ai_video_processed_count: (l.ai_video_processed_count || 0) + 1,
+            }),
+              await new Promise((e) => setTimeout(e, 400)));
+            continue;
+          }
+          let e = i.duration || 0;
+          if (!e && i.url) {
+            const t = await this.createNewAIStudioTab();
+            if (t.id) {
+              const s = await this.sendTaskAndWait(t.id, { type: 'GET_DURATION', url: i.url }, 6e4);
+              (await this.closeTab(t.id), s.duration && (e = s.duration));
+            }
+          }
+          const t = [];
+          if (e > n) {
+            let s = 0,
+              a = 0;
+            for (; s < e; ) {
+              const i = Math.min(s + n, e);
+              (t.push({ index: a++, startTime: s, endTime: i }), (s = i));
+            }
+          } else t.push({ index: 0, startTime: 0, endTime: null });
+          for (const e of t) {
+            if (!this.automationRunning) break;
+            for (; this.automationPaused; ) await new Promise((e) => setTimeout(e, 1e3));
+            const t = await this.createNewAIStudioTab();
+            if (t.id) {
+              const s = await this.sendTaskAndWait(t.id, {
+                type: 'PROCESS_SEGMENT',
+                url: i.url,
+                title: i.title,
+                videoId: i.id,
+                startTime: e.startTime,
+                endTime: e.endTime,
+                segmentIndex: e.index,
+              });
+              if ((await this.closeTab(t.id), s.success && s.reportContent)) {
+                const t = {
+                    id: `report-${Date.now()}-${o}`,
+                    videoId: o,
+                    title: r,
+                    url: c,
+                    processedAt: Date.now(),
+                    processingLevel: a,
+                    summary: String(s.reportContent || '').slice(0, 1200),
+                    content: s.reportContent,
+                    segmentIndex: e.index,
+                  },
+                  n = await chrome.storage.local.get('ai_video_reports'),
+                  i = Array.isArray(n.ai_video_reports) ? n.ai_video_reports : [];
+                await chrome.storage.local.set({ ai_video_reports: [t, ...i].slice(0, 500) });
+                const l = await chrome.storage.local.get('ai_video_processed_count');
+                await chrome.storage.local.set({
+                  ai_video_processed_count: (l.ai_video_processed_count || 0) + 1,
+                });
+              }
+            }
+            await new Promise((e) => setTimeout(e, 2e3));
+          }
+        } catch (e) {
+          console.error('Error processing video:', e.message);
+        }
+        await new Promise((e) => setTimeout(e, 3e3));
+      }
+      this.automationRunning = !1;
+      const i = {
+        isProcessing: !1,
+        isPaused: !1,
+        currentIndex: e.length,
+        totalCount: e.length,
+        currentVideo: null,
+        lastUpdated: Date.now(),
+      };
+      (await chrome.storage.local.set({ processingState: i }),
+        this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: i }),
+        this.logEvent('ai-video', 'processing_completed', { totalCount: e.length }));
+    }
+    extractYouTubeVideoId(e) {
+      const t = String(e || '').trim();
+      if (/^[\w-]{11}$/.test(t)) return t;
+      const s = t.match(/(?:v=|youtu\.be\/)([\w-]{11})/i);
+      return String(s?.[1] || '').trim();
+    }
+    parseTranscriptXml(e) {
+      return Array.from(String(e || '').matchAll(/<text[^>]*>([\s\S]*?)<\/text>/g))
+        .map((e) => e[1] || '')
+        .map((e) =>
+          ((e) =>
+            e
+              .replace(/&amp;/g, '&')
+              .replace(/&lt;/g, '<')
+              .replace(/&gt;/g, '>')
+              .replace(/&#39;/g, "'")
+              .replace(/&quot;/g, '"'))(
+            String(e)
+              .replace(/<[^>]+>/g, '')
+              .trim()
+          )
+        )
+        .filter(Boolean)
+        .join(' ')
+        .trim();
+    }
+    async fetchVideoTranscript(e) {
+      if (!e) return '';
+      try {
+        const t = await fetch(
+          `https://www.youtube.com/api/timedtext?lang=en&v=${encodeURIComponent(e)}`
+        );
+        if (!t.ok) return '';
+        const s = await t.text();
+        return this.parseTranscriptXml(s);
+      } catch {
+        return '';
+      }
+    }
+    buildSentenceSummary(e, t) {
+      return String(e || '')
+        .split(/(?<=[.!?])\s+/)
+        .map((e) => e.trim())
+        .filter(Boolean)
+        .slice(0, t)
+        .join(' ');
+    }
+    async buildLightweightReport(e, t) {
+      const s = this.extractYouTubeVideoId(String(e?.id || e?.url || '')),
+        a = s ? await this.fetchVideoDetails([s]).catch(() => []) : [],
+        n = Array.isArray(a) && a.length > 0 ? a[0] : null,
+        i = await this.fetchVideoTranscript(s),
+        o = [
+          `# ${String(e?.title || n?.title || 'Untitled Video')}`,
+          '',
+          `- URL: ${String(e?.url || (s ? `https://www.youtube.com/watch?v=${s}` : ''))}`,
+          `- Channel: ${String(e?.channelTitle || n?.channelTitle || 'Unknown')}`,
+          `- Processing Level: ${t}`,
+          '',
+        ];
+      if ('transcript' === t)
+        return `${o.join('\n')}## Transcript\n\n${i || 'Transcript unavailable.'}\n`;
+      if ('flash' === t) {
+        const e = this.buildSentenceSummary(i, 6);
+        return `${o.join('\n')}## Quick Summary\n\n${e || 'Transcript unavailable for summary.'}\n\n## Transcript Excerpt\n\n${String(i || '').slice(0, 4e3)}\n`;
+      }
+      const r = this.buildSentenceSummary(i, 14);
+      return `${o.join('\n')}## Extended Summary\n\n${r || 'Transcript unavailable for summary.'}\n\n## Key Details\n\n- Duration ISO: ${String(n?.durationISO || 'Unknown')}\n- Views: ${Number(n?.viewCount || 0).toLocaleString()}\n\n## Transcript Excerpt\n\n${String(i || '').slice(0, 8e3)}\n`;
+    }
+    findChannelByName(e) {
+      const t = this.normalizeChannelName(e);
+      if (!t) return null;
+      for (const e of this.channels.values()) if (this.normalizeChannelName(e.name) === t) return e;
+      return null;
+    }
+    remapChannelReferences(e, t) {
+      if (e && t && e !== t) {
+        this.joinedChannels.delete(e) && this.joinedChannels.add(t);
+        for (const [s, a] of this.tabActiveChannels.entries())
+          a === e &&
+            (this.tabActiveChannels.set(s, t),
+            this.safeSendMessage(s, { type: 'CHANNEL_SELECTED', channelId: t }));
+        this.saveTabActiveChannels();
+      }
+    }
+    shouldPreferIncomingChannel(e, t) {
+      const s = e.id.startsWith('local-'),
+        a = t.id.startsWith('local-');
+      if (s !== a) return !a;
+      const n = Number(e.createdAt || 0);
+      return Number(t.createdAt || 0) >= n;
+    }
+    setupTabLifecycleHandlers() {
+      (chrome.tabs.onCreated.addListener((e) => {
+        this.logEvent('browser.tabs', 'created', {
+          tabId: e.id || null,
+          url: e.url || null,
+          active: !!e.active,
+        });
+      }),
+        chrome.tabs.onUpdated.addListener((e, t, s) => {
+          (t.status || t.url) &&
+            this.logEvent('browser.tabs', 'updated', {
+              tabId: e,
+              status: t.status || null,
+              url: t.url || s.url || null,
+            });
+        }),
+        chrome.tabs.onActivated.addListener((e) => {
+          this.logEvent('browser.tabs', 'activated', { tabId: e.tabId, windowId: e.windowId });
+        }),
+        chrome.tabs.onRemoved.addListener((e) => {
+          (this.tabActiveChannels.delete(e) && this.saveTabActiveChannels(),
+            this.tabPausedChannels.delete(e) && this.saveTabPausedChannels(),
+            this.logEvent('browser.tabs', 'removed', { tabId: e }));
+        }));
+    }
+    logEvent(e, t, s = {}, a = 'info') {
+      if (!this.eventLoggingEnabled) return;
+      const n = {
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        ts: Date.now(),
+        level: a,
+        category: e,
+        event: t,
+        details: s,
+      };
+      (this.extensionEventLog.push(n),
+        this.extensionEventLog.length > this.EVENT_LOG_LIMIT &&
+          (this.extensionEventLog = this.extensionEventLog.slice(
+            this.extensionEventLog.length - this.EVENT_LOG_LIMIT
+          )),
+        this.eventLogFlushTimer && clearTimeout(this.eventLogFlushTimer),
+        (this.eventLogFlushTimer = setTimeout(() => {
+          (chrome.storage.local.set({ [u]: this.extensionEventLog }),
+            (this.eventLogFlushTimer = null));
+        }, 750)));
+    }
+    async sendNativeMessage(e) {
+      return this.nativeHostUnavailable
+        ? { error: 'Specified native messaging host not found', unavailable: !0 }
+        : (console.log('[NativeMessaging] Sending:', e.action, e.service || ''),
+          new Promise((t) => {
+            try {
+              chrome.runtime.sendNativeMessage('com.thenewfuse.native_host', e, (e) => {
+                if (chrome.runtime.lastError) {
+                  const e = chrome.runtime.lastError.message || 'Native messaging error',
+                    s =
+                      e.includes('Specified native messaging host not found') ||
+                      e.includes('No such native application');
+                  (s &&
+                    ((this.nativeHostUnavailable = !0),
+                    this.nativeHostMissingLogged ||
+                      ((this.nativeHostMissingLogged = !0),
+                      console.debug(
+                        '[NativeMessaging] Native host not installed; native service controls disabled'
+                      ))),
+                    t({ error: e, unavailable: s }));
+                } else t(e || {});
+              });
+            } catch (e) {
+              (console.error('[NativeMessaging] Exception:', e),
+                t({ error: 'Native messaging not available' }));
+            }
+          }));
+    }
+    async sendActivityEvent(e, t = {}, s = 'fuse-activity-log') {
+      this.send({
+        type: 'MESSAGE_SEND',
+        to: 'broadcast',
+        channel: s,
+        content: `[ACTIVITY] ${e}`,
+        messageType: 'event',
+        metadata: { senderId: this.agentId, eventType: e, ts: Date.now(), ...t },
+      });
+    }
+    async ensureAutonomousServices(e) {
+      Date.now() - this.lastAutonomyStartAt < 15e3 ||
+        ((this.lastAutonomyStartAt = Date.now()),
+        this.autoMonitor && (await this.sendNativeMessage({ action: 'start', service: 'monitor' })),
+        this.autoMasterClock &&
+          (await this.sendNativeMessage({ action: 'start', service: 'masterClock' })),
+        this.startStallWatchdog(),
+        this.sendActivityEvent('autonomy_services_ensured', {
+          reason: e,
+          autoMonitor: this.autoMonitor,
+          autoMasterClock: this.autoMasterClock,
+          autoWakePing: this.autoWakePing,
+        }));
+    }
+    startStallWatchdog() {
+      !this.stallWatchdogTimer &&
+        this.autoWakePing &&
+        (this.stallWatchdogTimer = setInterval(() => {
+          if (!this.primaryConnection || this.primaryConnection.readyState !== WebSocket.OPEN)
+            return;
+          const e = Date.now();
+          for (const [t] of this.channels) {
+            if (!this.joinedChannels.has(t)) continue;
+            const s = this.channelLastActivityAt.get(t) || 0;
+            if (!s) continue;
+            if (s && e - s < 9e4) continue;
+            if (e - (this.lastWakePingAt.get(t) || 0) < 12e4) continue;
+            const a = `wake-${t}-${e}`;
+            (this.lastWakePingAt.set(t, e),
+              this.send({
+                type: 'MESSAGE_SEND',
+                to: 'broadcast',
+                channel: t,
+                content: `[WAKE_PING ${a}] Stall check from browser orchestrator`,
+                messageType: 'event',
+                metadata: {
+                  senderId: this.agentId,
+                  eventType: 'wake_ping',
+                  pingId: a,
+                  reason: 'stall-watchdog',
+                },
+              }),
+              this.sendActivityEvent('wake_ping_sent', {
+                pingId: a,
+                channelId: t,
+                reason: 'stall-watchdog',
+              }));
+          }
+        }, 3e4));
+    }
+    stopStallWatchdog() {
+      this.stallWatchdogTimer &&
+        (clearInterval(this.stallWatchdogTimer), (this.stallWatchdogTimer = null));
+    }
+    frontloadPageAgentContext(e) {
+      if (!e.metadata?.tabId) return;
+      const t = Array.from(this.joinedChannels);
+      this.safeSendMessage(e.metadata.tabId, {
+        type: 'FUSE_ONBOARDING_CONTEXT',
+        payload: {
+          browserAgentId: this.agentId,
+          pageAgentId: e.id,
+          channels: t,
+          knownAgents: Array.from(this.agents.values()).map((e) => ({
+            id: e.id,
+            name: e.name,
+            platform: e.platform,
+            status: e.status,
+          })),
+          capabilities: e.capabilities || [],
+          relayUrl: g,
+          policy: { heartbeat: !0, wakePing: this.autoWakePing, autonomous: !0 },
+        },
+      });
+    }
+    setupMessageHandlers() {
+      chrome.runtime.onMessage.addListener((e, s, a) => {
+        const n = String(e?.type || 'unknown');
+        switch (
+          (['GET_EVENT_LOGS', 'GET_STATE', 'PING'].includes(n) ||
+            this.logEvent('extension.message', 'runtime_inbound', {
+              type: n,
+              tabId: s.tab?.id ?? null,
+              tabUrl: s.tab?.url ?? null,
+            }),
+          e.type)
+        ) {
+          case 'TEST_PING':
+            (console.log('[GeminiBridge v7] Received TEST_PING'),
+              a({ success: !0, status: 'online', version: '7.0.0', timestamp: Date.now() }));
+            break;
+          case 'PING':
+            a({ success: !0, pong: !0 });
+            break;
+          case 'CONNECT':
+            ((this.connectionAttempts = 0),
+              this.connectToNode('relay', e.url || g),
+              a({ success: !0 }));
+            break;
+          case 'DISCONNECT':
+            (this.disconnectAll(), a({ success: !0 }));
+            break;
+          case 'GET_STATE': {
+            let e = null;
+            if (s.tab?.id)
+              for (const [t, a] of this.agents)
+                if (a.metadata?.tabId === s.tab.id) {
+                  e = t;
+                  break;
+                }
+            a({
+              connectionStatus:
+                this.primaryConnection?.readyState === WebSocket.OPEN
+                  ? 'connected'
+                  : 'disconnected',
+              agents: Array.from(this.agents.values()),
+              channels: Array.from(this.channels.values()),
+              joinedChannels: Array.from(this.joinedChannels),
+              selectedChannel: this.getTabActiveChannel(s.tab?.id),
+              tabId: s.tab?.id ?? null,
+              nodes: Object.fromEntries(this.nodeStatus),
+              agentId: e || this.agentId,
+              browserAgentId: this.agentId,
+              autoConnect: this.autoConnect,
+              autoMonitor: this.autoMonitor,
+              autoMasterClock: this.autoMasterClock,
+              autoWakePing: this.autoWakePing,
+              pausedChannels: this.getTabPausedChannels(s.tab?.id),
+            });
+            break;
+          }
+          case 'GET_EVENT_LOGS': {
+            const t = Math.max(1, Math.min(5e3, Number(e.limit || 500))),
+              s = e.category ? String(e.category) : null,
+              n = e.level ? String(e.level) : null,
+              i = this.extensionEventLog.filter(
+                (e) => !((s && e.category !== s) || (n && e.level !== n))
+              );
+            a({ success: !0, total: i.length, logs: i.slice(-t) });
+            break;
+          }
+          case 'CLEAR_EVENT_LOGS':
+            ((this.extensionEventLog = []),
+              chrome.storage.local.set({ [u]: [] }),
+              a({ success: !0 }));
+            break;
+          case 'SET_EVENT_LOGGING':
+            ((this.eventLoggingEnabled = !!e.enabled),
+              this.logEvent('extension', 'event_logging_toggle', {
+                enabled: this.eventLoggingEnabled,
+              }),
+              a({ success: !0, enabled: this.eventLoggingEnabled }));
+            break;
+          case 'SET_AUTO_CONNECT':
+            ((this.autoConnect = e.enabled),
+              chrome.storage.local.set({ [c]: e.enabled }),
+              a({ success: !0 }));
+            break;
+          case 'SET_AUTONOMY_SETTINGS':
+            (void 0 !== e.autoMonitor && (this.autoMonitor = !!e.autoMonitor),
+              void 0 !== e.autoMasterClock && (this.autoMasterClock = !!e.autoMasterClock),
+              void 0 !== e.autoWakePing && (this.autoWakePing = !!e.autoWakePing),
+              chrome.storage.local.set({
+                [l]: this.autoMonitor,
+                [d]: this.autoMasterClock,
+                [h]: this.autoWakePing,
+              }),
+              this.autoWakePing ? this.startStallWatchdog() : this.stopStallWatchdog(),
+              a({ success: !0 }));
+            break;
+          case 'START_AUTONOMY':
+            return (
+              this.ensureAutonomousServices('manual_start').then(() => a({ success: !0 })),
+              !0
+            );
+          case 'STOP_AUTONOMY':
+            return (
+              this.stopStallWatchdog(),
+              Promise.all([
+                this.sendNativeMessage({ action: 'stop', service: 'monitor' }),
+                this.sendNativeMessage({ action: 'stop', service: 'masterClock' }),
+              ]).then(() => a({ success: !0 })),
+              !0
+            );
+          case 'GET_AUTONOMY_STATUS':
+            return (
+              this.sendNativeMessage({ action: 'status' }).then((e) => {
+                a({
+                  success: !0,
+                  settings: {
+                    autoMonitor: this.autoMonitor,
+                    autoMasterClock: this.autoMasterClock,
+                    autoWakePing: this.autoWakePing,
+                  },
+                  monitor: e?.services?.monitor || null,
+                  masterClock: e?.services?.masterClock || null,
+                  relay: e?.services?.relay || null,
+                });
+              }),
+              !0
+            );
+          case 'START_RELAY':
+            return (
+              this.sendNativeMessage({ action: 'start', service: 'relay' }).then((e) => {
+                (a(e),
+                  (!e.result?.success && e.error) ||
+                    setTimeout(() => {
+                      ((this.connectionAttempts = 0),
+                        this.connectToNode('relay', g),
+                        this.ensureAutonomousServices('relay_started'));
+                    }, 3e3));
+              }),
+              !0
+            );
+          case 'STOP_RELAY':
+            return (
+              this.sendNativeMessage({ action: 'stop', service: 'relay' }).then((e) => {
+                (this.disconnectAll(), a(e));
+              }),
+              !0
+            );
+          case 'CHECK_RELAY_HEALTH':
+            return (
+              this.checkRelayHealth().then((e) => {
+                a({ healthy: e });
+              }),
+              !0
+            );
+          case 'AI_STUDIO_AUTH':
+          case 'YOUTUBE_AUTHENTICATE':
+            return (
+              console.log(
+                '[GeminiBridge v7] Starting YouTube auth flow',
+                this.getOAuthDiagnostics()
+              ),
+              this.authenticateYouTubeSafe()
+                .then(({ token: e, primaryProfile: t, accountSwitched: s }) => {
+                  const n = Date.now() + 3e6;
+                  chrome.storage.local.set(
+                    {
+                      ai_studio_token: e,
+                      youtubeToken: e,
+                      youtubeTokenExpiry: n,
+                      userProfile: t,
+                      lastAuthAccount: t?.email || '',
+                      ai_studio_channel_id: '',
+                      isAuthenticated: !0,
+                    },
+                    () => {
+                      (chrome.storage.local.get(['firstAuthAt'], (e) => {
+                        e.firstAuthAt || chrome.storage.local.set({ firstAuthAt: Date.now() });
+                      }),
+                        a({
+                          success: !0,
+                          token: e,
+                          data: { authenticated: !0, primaryProfile: t },
+                          oauth: this.getOAuthDiagnostics(),
+                          channels: [],
+                          selectedChannelId: '',
+                          requiresChannelSelection: !1,
+                          accountSwitched: s,
+                        }));
+                    }
+                  );
+                })
+                .catch((e) => {
+                  a({
+                    success: !1,
+                    error: e.message || 'Authentication failed',
+                    oauth: this.getOAuthDiagnostics(),
+                  });
+                }),
+              !0
+            );
+          case 'YOUTUBE_SIGN_OUT':
+            return (
+              this.signOutYouTube()
+                .then(() => a({ success: !0 }))
+                .catch((e) => a({ success: !1, error: String(e?.message || e) })),
+              !0
+            );
+          case 'YOUTUBE_CHECK_AUTH':
+            return (
+              this.getYouTubeAuthToken()
+                .then(async (e) => {
+                  const t = !!e && (await this.validateYouTubeToken(e));
+                  (t || (await chrome.storage.local.remove(['ai_studio_token', 'youtubeToken'])),
+                    a({ success: !0, data: { authenticated: t } }));
+                })
+                .catch(() => {
+                  a({ success: !0, data: { authenticated: !1 } });
+                }),
+              !0
+            );
+          case 'AI_STUDIO_GET_CHANNELS':
+            return (a({ success: !0, channels: [], selectedChannelId: '' }), !0);
+          case 'AI_STUDIO_SET_CHANNEL':
+            return (a({ success: !0, channelId: '' }), !0);
+          case 'AI_STUDIO_GET_PLAYLISTS':
+            return (
+              this.fetchYouTubePlaylistsBundle()
+                .then((e) => {
+                  a({ success: !0, ...e });
+                })
+                .catch((e) => {
+                  const t = String(e?.message || e || ''),
+                    s = t.includes('Quota Protection') ? 'Not authenticated' : t;
+                  a({ success: !1, error: s });
+                }),
+              !0
+            );
+          case 'YOUTUBE_GET_PLAYLISTS':
+            return (
+              this.fetchYouTubePlaylistsBundle()
+                .then((e) => {
+                  a({ success: !0, data: e.playlists, ...e });
+                })
+                .catch((e) => {
+                  const t = String(e?.message || e || ''),
+                    s = t.includes('Quota Protection') ? 'Not authenticated' : t;
+                  a({ success: !1, error: s });
+                }),
+              !0
+            );
+          case 'QUEUE_ADD':
+          case 'QUEUE_ADD_SINGLE': {
+            const t = 'QUEUE_ADD_SINGLE' === e.type ? [e.data?.video] : e.data?.videos;
+            return (
+              chrome.storage.local.get(['videoQueue'], (e) => {
+                const s = [
+                  ...(Array.isArray(e.videoQueue) ? e.videoQueue : []),
+                  ...(Array.isArray(t) ? t : [])
+                    .filter((e) => e && (e.url || e.id))
+                    .map((e, t) => {
+                      const s = String(
+                          e.url || (e.id ? `https://www.youtube.com/watch?v=${e.id}` : '')
+                        ).trim(),
+                        a = String(e.id || '').trim() || `vid-${Date.now()}-${t}`;
+                      return {
+                        id: a,
+                        title: String(e.title || `YouTube Video ${a}`),
+                        url: s,
+                        addedAt: Number(e.addedAt || Date.now()),
+                      };
+                    }),
+                ];
+                chrome.storage.local.set({ videoQueue: s, syncTimestamp: Date.now() }, () => {
+                  a({ success: !0, data: s });
+                });
+              }),
+              !0
+            );
+          }
+          case 'QUEUE_REMOVE': {
+            const t = Array.isArray(e.data?.videoIds) ? e.data.videoIds.map((e) => String(e)) : [];
+            return (
+              chrome.storage.local.get(['videoQueue'], (e) => {
+                const s = (Array.isArray(e.videoQueue) ? e.videoQueue : []).filter(
+                  (e) => !t.includes(String(e?.id || ''))
+                );
+                chrome.storage.local.set({ videoQueue: s, syncTimestamp: Date.now() }, () => {
+                  a({ success: !0, data: s });
+                });
+              }),
+              !0
+            );
+          }
+          case 'QUEUE_CLEAR':
+            return (
+              chrome.storage.local.set({ videoQueue: [], syncTimestamp: Date.now() }, () => {
+                a({ success: !0, data: [] });
+              }),
+              !0
+            );
+          case 'QUEUE_GET':
+            return (
+              chrome.storage.local.get(['videoQueue'], (e) => {
+                const t = Array.isArray(e.videoQueue) ? e.videoQueue : [];
+                a({ success: !0, data: t });
+              }),
+              !0
+            );
+          case 'STORAGE_GET':
+            return (
+              chrome.storage.local.get(e.data?.keys || null, (e) => {
+                a({ success: !0, data: e });
+              }),
+              !0
+            );
+          case 'STORAGE_SET':
+            return (
+              chrome.storage.local.set(e.data?.items || {}, () => {
+                a({ success: !0, data: !0 });
+              }),
+              !0
+            );
+          case 'AI_STUDIO_READY':
+            return (a({ success: !0, data: { ready: !0 } }), !1);
+          case 'AI_STUDIO_PROGRESS': {
+            const t = e.data || {};
+            return (
+              chrome.storage.local.get(['processingState'], (e) => {
+                const s = e.processingState || this.getDefaultProcessingState(),
+                  n = {
+                    ...s,
+                    isProcessing: !0,
+                    isPaused: !1,
+                    currentIndex: Number(t.currentIndex || s.currentIndex || 0),
+                    currentVideo: t.currentVideo || s.currentVideo || null,
+                    lastUpdated: Date.now(),
+                  };
+                chrome.storage.local.set({ processingState: n }, () => {
+                  (this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: n }),
+                    a({ success: !0, data: { updated: !0 } }));
+                });
+              }),
+              !0
+            );
+          }
+          case 'AI_STUDIO_COMPLETE':
+            return (
+              chrome.storage.local.get(['processingState', 'ai_video_processed_count'], (t) => {
+                const s = t.processingState || this.getDefaultProcessingState(),
+                  n = Math.max(1, Number(e.data?.processedCount || 1)),
+                  i = {
+                    ...s,
+                    isProcessing: !1,
+                    isPaused: !1,
+                    currentVideo: null,
+                    currentIndex: Math.max(s.totalCount || 0, s.currentIndex || 0),
+                    lastUpdated: Date.now(),
+                  };
+                chrome.storage.local.set(
+                  {
+                    processingState: i,
+                    ai_video_processed_count: Number(t.ai_video_processed_count || 0) + n,
+                  },
+                  () => {
+                    (this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: i }),
+                      a({ success: !0, data: { completed: !0 } }));
+                  }
+                );
+              }),
+              !0
+            );
+          case 'AI_STUDIO_ERROR':
+            return (
+              this.logEvent(
+                'ai-video',
+                'automation_error',
+                { error: String(e.data?.error || e.error || 'Unknown error') },
+                'error'
+              ),
+              a({ success: !0, data: { error: !0 } }),
+              !1
+            );
+          case 'REPORTS_GET':
+            return (
+              chrome.storage.local.get(['ai_video_reports'], (e) => {
+                const t = Array.isArray(e.ai_video_reports) ? e.ai_video_reports : [];
+                a({ success: !0, data: t });
+              }),
+              !0
+            );
+          case 'SUBSCRIPTION_CHECK':
+            return (
+              a({ success: !0, data: { tier: 'free', canProcess: !0, notebooklmIntegration: !0 } }),
+              !1
+            );
+          case 'SUBSCRIPTION_CAN_PROCESS':
+            return (a({ success: !0, data: { allowed: !0, remaining: 9999 } }), !1);
+          case 'SUBSCRIPTION_UPGRADE':
+            return (a({ success: !0, data: { redirected: !1 } }), !1);
+          case 'AUTOMATION_START':
+            return (
+              chrome.storage.local.set(
+                {
+                  processingLevel: String(e.data?.processingLevel || 'ai_studio'),
+                  segmentDuration: Math.max(
+                    5,
+                    Math.min(300, Number(e.data?.segmentDuration || 45))
+                  ),
+                  reverseOrder: !!e.data?.reverseOrder,
+                  videoQueue: Array.isArray(e.data?.queue) ? e.data.queue : [],
+                },
+                () => {
+                  chrome.storage.local.get(['videoQueue'], (e) => {
+                    const t = Array.isArray(e.videoQueue) ? e.videoQueue : [];
+                    if (0 === t.length) return void a({ success: !1, error: 'Queue is empty' });
+                    const s = {
+                      isProcessing: !0,
+                      isPaused: !1,
+                      currentIndex: 0,
+                      totalCount: t.length,
+                      currentVideo: null,
+                      lastUpdated: Date.now(),
+                    };
+                    chrome.storage.local.set(
+                      { processingState: s, ai_video_total_count: t.length },
+                      () => {
+                        (chrome.alarms.create(m, { periodInMinutes: 0.1 }),
+                          this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: s }),
+                          a({ success: !0, data: { started: !0 }, state: s }));
+                      }
+                    );
+                  });
+                }
+              ),
+              !0
+            );
+          case 'AUTOMATION_PAUSE':
+            return (
+              chrome.storage.local.get(['processingState'], (e) => {
+                const t = {
+                  ...(e.processingState || this.getDefaultProcessingState()),
+                  isPaused: !0,
+                  lastUpdated: Date.now(),
+                };
+                chrome.storage.local.set({ processingState: t }, () => {
+                  (chrome.alarms.clear(m),
+                    this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: t }),
+                    a({ success: !0, data: { paused: !0 }, state: t }));
+                });
+              }),
+              !0
+            );
+          case 'AUTOMATION_RESUME':
+            return (
+              chrome.storage.local.get(['processingState'], (e) => {
+                const t = {
+                  ...(e.processingState || this.getDefaultProcessingState()),
+                  isProcessing: !0,
+                  isPaused: !1,
+                  lastUpdated: Date.now(),
+                };
+                chrome.storage.local.set({ processingState: t }, () => {
+                  (chrome.alarms.create(m, { periodInMinutes: 0.1 }),
+                    this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: t }),
+                    a({ success: !0, data: { resumed: !0 }, state: t }));
+                });
+              }),
+              !0
+            );
+          case 'AUTOMATION_STOP':
+            return (
+              chrome.storage.local.get(['processingState'], (e) => {
+                const t = {
+                  ...(e.processingState || this.getDefaultProcessingState()),
+                  isProcessing: !1,
+                  isPaused: !1,
+                  currentVideo: null,
+                  lastUpdated: Date.now(),
+                };
+                chrome.storage.local.set({ processingState: t }, () => {
+                  (chrome.alarms.clear(m),
+                    this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: t }),
+                    a({ success: !0, data: { stopped: !0 }, state: t }));
+                });
+              }),
+              !0
+            );
+          case 'AI_STUDIO_PROCESS_VIDEO':
+            return (
+              chrome.storage.local.get(['videoQueue'], (t) => {
+                const s = Array.isArray(t.videoQueue) ? t.videoQueue : [];
+                (e.video?.url &&
+                  s.push({
+                    id: e.video?.id || `vid-${Date.now()}`,
+                    title: e.video?.title || 'YouTube Video',
+                    url: e.video.url,
+                    addedAt: Date.now(),
+                  }),
+                  chrome.storage.local.set({ videoQueue: s, syncTimestamp: Date.now() }),
+                  a({ success: !0, queueLength: s.length }));
+              }),
+              !0
+            );
+          case 'AI_STUDIO_GET_PLAYLIST_VIDEOS': {
+            const t = String(e.playlistId || '');
+            return (
+              this.fetchPlaylistVideos(t)
+                .then((e) => {
+                  a({ success: !0, videos: e });
+                })
+                .catch((e) => {
+                  const t = String(e?.message || e || ''),
+                    s = t.includes('Quota Protection') ? 'Not authenticated' : t;
+                  a({ success: !1, error: s });
+                }),
+              !0
+            );
+          }
+          case 'YOUTUBE_GET_PLAYLIST_VIDEOS': {
+            const t = String(e.playlistId || '') || String(e.data?.playlistId || '');
+            return (
+              this.fetchPlaylistVideos(t)
+                .then((e) => {
+                  a({ success: !0, data: e });
+                })
+                .catch((e) => {
+                  const t = String(e?.message || e || ''),
+                    s = t.includes('Quota Protection') ? 'Not authenticated' : t;
+                  a({ success: !1, error: s });
+                }),
+              !0
+            );
+          }
+          case 'YOUTUBE_GET_VIDEO_DETAILS': {
+            const t = Array.isArray(e.videoIds)
+              ? e.videoIds
+              : Array.isArray(e.data?.videoIds)
+                ? e.data.videoIds
+                : [];
+            return (
+              this.fetchVideoDetails(t)
+                .then((e) => {
+                  a({ success: !0, data: e });
+                })
+                .catch((e) => {
+                  const t = String(e?.message || e || ''),
+                    s = t.includes('Quota Protection') ? 'Not authenticated' : t;
+                  a({ success: !1, error: s });
+                }),
+              !0
+            );
+          }
+          case 'YOUTUBE_CREATE_PLAYLIST': {
+            const t = String(e.title || e.data?.title || '').trim(),
+              s = String(e.description || e.data?.description || '').trim();
+            return t
+              ? (this.createYouTubePlaylist(t, s)
+                  .then((e) => {
+                    a({ success: !0, data: e });
+                  })
+                  .catch((e) => {
+                    a({ success: !1, error: String(e?.message || e) });
+                  }),
+                !0)
+              : (a({ success: !1, error: 'Missing playlist title' }), !1);
+          }
+          case 'AI_VIDEO_GET_STATS':
+            return (
+              chrome.storage.local.get(
+                [
+                  'ai_video_processed_count',
+                  'ai_video_total_count',
+                  'ai_video_estimated_cost',
+                  'ai_studio_token',
+                  'userProfile',
+                  'videoQueue',
+                ],
+                (e) => {
+                  const t = String(e.userProfile?.email || '').trim();
+                  a({
+                    processed: e.ai_video_processed_count || 0,
+                    total: e.ai_video_total_count || e.videoQueue?.length || 0,
+                    cost: e.ai_video_estimated_cost || 0,
+                    account: e.ai_studio_token ? t || 'Authenticated' : 'None',
+                  });
+                }
+              ),
+              !0
+            );
+          case 'AI_VIDEO_GET_QUEUE':
+            return (
+              chrome.storage.local.get(
+                [
+                  'videoQueue',
+                  'reverseOrder',
+                  'segmentDuration',
+                  'processingState',
+                  'syncTimestamp',
+                ],
+                (e) => {
+                  const t = Array.isArray(e.videoQueue) ? e.videoQueue : [],
+                    s = e.processingState || null;
+                  a({
+                    success: !0,
+                    queueCount: t.length,
+                    queue: t,
+                    reverseOrder: !!e.reverseOrder,
+                    segmentDuration: Number(e.segmentDuration || 45),
+                    processingState: s,
+                    syncTimestamp: e.syncTimestamp || null,
+                  });
+                }
+              ),
+              !0
+            );
+          case 'AI_VIDEO_SET_QUEUE': {
+            const t = String(e.text || ''),
+              s =
+                Array.isArray(e.urls) && e.urls.length > 0
+                  ? e.urls.map((e) => String(e))
+                  : this.extractYouTubeUrls(t),
+              n = this.toQueueItems(s);
+            return (
+              chrome.storage.local.set({ videoQueue: n, syncTimestamp: Date.now() }, () => {
+                (this.logEvent('ai-video', 'queue_set', { count: n.length }),
+                  a({ success: !0, queueCount: n.length }));
+              }),
+              !0
+            );
+          }
+          case 'AI_VIDEO_CLEAR_QUEUE':
+            return (
+              chrome.storage.local.set(
+                {
+                  videoQueue: [],
+                  processingState: {
+                    isProcessing: !1,
+                    isPaused: !1,
+                    currentIndex: 0,
+                    totalCount: 0,
+                    currentVideo: null,
+                    lastUpdated: Date.now(),
+                  },
+                  syncTimestamp: Date.now(),
+                },
+                () => {
+                  (this.logEvent('ai-video', 'queue_cleared'), a({ success: !0 }));
+                }
+              ),
+              !0
+            );
+          case 'AI_VIDEO_SET_PREFERENCES': {
+            const t = !!e.reverseOrder,
+              s = Math.max(5, Math.min(300, Number(e.segmentDuration || 45))),
+              n = String(e.processingLevel || 'ai_studio');
+            return (
+              chrome.storage.local.set(
+                { reverseOrder: t, segmentDuration: s, processingLevel: n },
+                () => {
+                  (this.logEvent('ai-video', 'preferences_set', {
+                    reverseOrder: t,
+                    segmentDuration: s,
+                    processingLevel: n,
+                  }),
+                    a({ success: !0 }));
+                }
+              ),
+              !0
+            );
+          }
+          case 'AI_VIDEO_PROCESS_CONTROL': {
+            const t = String(e.action || '').toLowerCase();
+            return (
+              chrome.storage.local.get(['videoQueue', 'processingState'], (e) => {
+                const s = Array.isArray(e.videoQueue) ? e.videoQueue : [],
+                  n = e.processingState || this.getDefaultProcessingState();
+                if ('start' === t) {
+                  if (0 === s.length) return void a({ success: !1, error: 'Queue is empty' });
+                  const e = {
+                    isProcessing: !0,
+                    isPaused: !1,
+                    currentIndex: 0,
+                    totalCount: s.length,
+                    currentVideo: null,
+                    lastUpdated: Date.now(),
+                  };
+                  return void chrome.storage.local.set(
+                    { processingState: e, ai_video_total_count: s.length },
+                    () => {
+                      (this.logEvent('ai-video', 'processing_started', { totalCount: s.length }),
+                        chrome.storage.local.get(['segmentDuration', 'processingLevel'], (t) => {
+                          this.startAutomationOrchestrator(
+                            s,
+                            e,
+                            t.segmentDuration || 45,
+                            String(t.processingLevel || 'ai_studio')
+                          );
+                        }),
+                        this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: e }),
+                        a({ success: !0, state: e }));
+                    }
+                  );
+                }
+                if ('pause' === t) {
+                  this.automationPaused = !0;
+                  const e = {
+                    ...n,
+                    isProcessing: n.isProcessing,
+                    isPaused: !0,
+                    lastUpdated: Date.now(),
+                  };
+                  return void chrome.storage.local.set({ processingState: e }, () => {
+                    (this.logEvent('ai-video', 'processing_paused', {
+                      currentIndex: e.currentIndex,
+                    }),
+                      this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: e }),
+                      a({ success: !0, state: e }));
+                  });
+                }
+                if ('resume' === t) {
+                  if (!n.isProcessing)
+                    return void a({ success: !1, error: 'Processing is not running' });
+                  this.automationPaused = !1;
+                  const e = { ...n, isPaused: !1, lastUpdated: Date.now() };
+                  return void chrome.storage.local.set({ processingState: e }, () => {
+                    (this.logEvent('ai-video', 'processing_resumed', {
+                      currentIndex: e.currentIndex,
+                    }),
+                      this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: e }),
+                      a({ success: !0, state: e }));
+                  });
+                }
+                if ('stop' === t || 'clear' === t) {
+                  this.automationRunning = !1;
+                  const e = {
+                    ...n,
+                    isProcessing: !1,
+                    isPaused: !1,
+                    currentVideo: null,
+                    lastUpdated: Date.now(),
+                  };
+                  return void chrome.storage.local.set({ processingState: e }, () => {
+                    (this.logEvent('ai-video', 'processing_stopped', {
+                      currentIndex: e.currentIndex,
+                    }),
+                      this.broadcastToTabs({ type: 'AI_VIDEO_PROCESSING_UPDATE', state: e }),
+                      a({ success: !0, state: e }));
+                  });
+                }
+                a({ success: !1, error: `Unknown processing action: ${t}` });
+              }),
+              !0
+            );
+          }
+          case 'AI_VIDEO_OPEN_PAGE': {
+            const t = String(e.page || 'ai-studio'),
+              s =
+                'notebooklm' === t
+                  ? 'https://notebooklm.google.com/'
+                  : 'dashboard' === t
+                    ? 'https://connect.thenewfuse.com/'
+                    : 'https://aistudio.google.com/';
+            return (
+              chrome.tabs.create({ url: s }, () => {
+                (this.logEvent('ai-video', 'open_page', { page: t, pageUrl: s }),
+                  a({ success: !0, pageUrl: s }));
+              }),
+              !0
+            );
+          }
+          case 'AI_VIDEO_GENERATE_HISTORY_PROMPT':
+            a({
+              prompt:
+                'Using your Personal Intelligence access to my YouTube watch history,\nprovide my last 50 watched videos.\n\nFilter out political content.\n\nFormat as JSON array:\n[\n  {\n    "title": "Video Title",\n    "url": "https://www.youtube.com/watch?v=...",\n    "channel": "Channel Name",\n    "description": "Brief description"\n  }\n]',
+            });
+            break;
+          case 'AI_VIDEO_EXPORT':
+            return (
+              chrome.storage.local.get(
+                ['videoQueue', 'ai_studio_queue', 'ai_video_reports'],
+                (t) => {
+                  let s = '';
+                  const n = String(e.format || 'urls');
+                  ((s =
+                    'reports-md' === n
+                      ? (Array.isArray(t.ai_video_reports) ? t.ai_video_reports : [])
+                          .map(
+                            (e) =>
+                              `## ${String(e.title || 'Untitled')}\n\n- URL: ${String(e.url || '')}\n- Processed: ${new Date(Number(e.processedAt || Date.now())).toISOString()}\n- Level: ${String(e.processingLevel || 'ai_studio')}\n\n${String(e.summary || '')}\n`
+                          )
+                          .join('\n')
+                      : 'urls' === n
+                        ? (t.videoQueue || []).map((e) => e.url).join('\n')
+                        : JSON.stringify(t.videoQueue || [], null, 2)),
+                    a({ content: s }));
+                }
+              ),
+              !0
+            );
+          case 'AI_VIDEO_GET_HISTORY':
+            return (
+              chrome.storage.local.get(['ai_video_reports'], (e) => {
+                const t = Array.isArray(e.ai_video_reports) ? e.ai_video_reports : [];
+                a({ success: !0, reports: t });
+              }),
+              !0
+            );
+          case 'AI_VIDEO_CLEAR_HISTORY':
+            return (
+              chrome.storage.local.set({ ai_video_reports: [] }, () => {
+                (this.logEvent('ai-video', 'history_cleared'), a({ success: !0 }));
+              }),
+              !0
+            );
+          case 'TASK_COMPLETE':
+          case 'TASK_ERROR':
+            (this.pendingTaskResolve &&
+              (this.pendingTaskResolve(e), (this.pendingTaskResolve = null)),
+              this.broadcastToTabs(e),
+              a({ success: !0 }));
+            break;
+          case 'CONTENT_SCRIPT_READY':
+            (console.log('📢 Content script ready on:', e.url), a({ success: !0 }));
+            break;
+          case 'BROADCAST_MESSAGE':
+            (this.send({
+              type: 'MESSAGE_SEND',
+              to: 'broadcast',
+              channel: e.channel,
+              content: e.content,
+              messageType: 'text',
+              metadata: e.metadata,
+            }),
+              this.sendActivityEvent('broadcast_message', {
+                channel: e.channel || null,
+                senderId: e.senderId || e.metadata?.senderId || null,
+                contentPreview: String(e.content || '').substring(0, 120),
+              }),
+              a({ success: !0 }));
+            break;
+          case 'SEND_TO_AGENT':
+            (this.send({
+              type: 'MESSAGE_SEND',
+              to: e.agentId,
+              content: e.content,
+              messageType: e.messageType || 'text',
+            }),
+              a({ success: !0 }));
+            break;
+          case 'CHANNEL_CREATE': {
+            const t = String(e.name || '')
+              .trim()
+              .replace(/\s+/g, ' ');
+            if (!t) {
+              a({ success: !1, error: 'Channel name is required' });
+              break;
+            }
+            const s = this.findChannelByName(t);
+            if (s) {
+              a({
+                success: !1,
+                alreadyExists: !0,
+                error: `Channel "${s.name}" already exists`,
+                channel: s,
+              });
+              break;
+            }
+            const n = {
+              id: `local-${Date.now()}`,
+              name: t,
+              description: e.description || '',
+              isPrivate: e.isPrivate || !1,
+              createdAt: Date.now(),
+              createdBy: this.agentId,
+              members: [this.agentId],
+            };
+            (this.channels.set(n.id, n),
+              this.joinedChannels.add(n.id),
+              this.broadcastToTabs({
+                type: 'CHANNELS_UPDATE',
+                channels: Array.from(this.channels.values()),
+              }),
+              this.notifyPopup({
+                type: 'CHANNELS_UPDATE',
+                channels: Array.from(this.channels.values()),
+              }),
+              this.saveChannels(),
+              this.send({
+                type: 'CHANNEL_CREATE',
+                name: t,
+                description: e.description,
+                isPrivate: e.isPrivate || !1,
+              }),
+              this.sendActivityEvent('channel_create', { channelId: n.id, name: t }),
+              a({ success: !0, channel: n }));
+            break;
+          }
+          case 'CHANNEL_JOIN':
+            (this.joinedChannels.add(e.channelId),
+              s.tab?.id &&
+                (this.setTabActiveChannel(s.tab.id, e.channelId),
+                this.safeSendMessage(s.tab.id, {
+                  type: 'CHANNEL_SELECTED',
+                  channelId: e.channelId,
+                })),
+              this.send({ type: 'CHANNEL_JOIN', channelId: e.channelId }),
+              this.saveChannels(),
+              this.broadcastToTabs({
+                type: 'JOINED_CHANNELS_UPDATE',
+                joinedChannels: Array.from(this.joinedChannels),
+              }),
+              this.notifyPopup({
+                type: 'JOINED_CHANNELS_UPDATE',
+                joinedChannels: Array.from(this.joinedChannels),
+              }),
+              this.sendActivityEvent('channel_join', { channelId: e.channelId }),
+              this.logEvent('channel', 'join', {
+                tabId: s.tab?.id ?? null,
+                channelId: e.channelId,
+              }),
+              a({ success: !0 }));
+            break;
+          case 'CHANNEL_LEAVE':
+            (this.joinedChannels.delete(e.channelId),
+              s.tab?.id &&
+                (this.setTabActiveChannel(s.tab.id, null),
+                this.safeSendMessage(s.tab.id, { type: 'CHANNEL_SELECTED', channelId: null })),
+              this.send({ type: 'CHANNEL_LEAVE', channelId: e.channelId }),
+              this.saveChannels(),
+              this.broadcastToTabs({
+                type: 'JOINED_CHANNELS_UPDATE',
+                joinedChannels: Array.from(this.joinedChannels),
+              }),
+              this.notifyPopup({
+                type: 'JOINED_CHANNELS_UPDATE',
+                joinedChannels: Array.from(this.joinedChannels),
+              }),
+              this.sendActivityEvent('channel_leave', { channelId: e.channelId }),
+              this.logEvent('channel', 'leave', {
+                tabId: s.tab?.id ?? null,
+                channelId: e.channelId,
+              }),
+              a({ success: !0 }));
+            break;
+          case 'CHANNEL_PAUSE': {
+            if (!s.tab?.id) {
+              a({ success: !1, error: 'Missing sender tab' });
+              break;
+            }
+            const t = String(e.channelId || '');
+            return (
+              this.setChannelPaused(s.tab.id, t, !0),
+              this.logEvent('channel', 'pause', { tabId: s.tab.id, channelId: t }),
+              this.safeSendMessage(
+                s.tab.id,
+                {
+                  type: 'CHANNEL_PAUSE_UPDATE',
+                  channelId: t,
+                  paused: !0,
+                  pausedChannels: this.getTabPausedChannels(s.tab.id),
+                },
+                () => {
+                  const e = chrome.runtime.lastError;
+                  (e &&
+                    this.logEvent('channel', 'pause_update_delivery_error', {
+                      tabId: s.tab?.id ?? null,
+                      channelId: t,
+                      error: e.message,
+                    }),
+                    a({ success: !0, delivered: !e }));
+                }
+              ),
+              !0
+            );
+          }
+          case 'CHANNEL_RESUME': {
+            if (!s.tab?.id) {
+              a({ success: !1, error: 'Missing sender tab' });
+              break;
+            }
+            const t = String(e.channelId || '');
+            return (
+              this.setChannelPaused(s.tab.id, t, !1),
+              this.logEvent('channel', 'resume', { tabId: s.tab.id, channelId: t }),
+              this.safeSendMessage(
+                s.tab.id,
+                {
+                  type: 'CHANNEL_PAUSE_UPDATE',
+                  channelId: t,
+                  paused: !1,
+                  pausedChannels: this.getTabPausedChannels(s.tab.id),
+                },
+                () => {
+                  const e = chrome.runtime.lastError;
+                  (e &&
+                    this.logEvent('channel', 'resume_update_delivery_error', {
+                      tabId: s.tab?.id ?? null,
+                      channelId: t,
+                      error: e.message,
+                    }),
+                    a({ success: !0, delivered: !e }));
+                }
+              ),
+              !0
+            );
+          }
+          case 'CHANNEL_DELETE': {
+            const t = e.channelId;
+            if ('general' === t) {
+              a({ success: !1, error: 'Cannot delete general channel' });
+              break;
+            }
+            (this.channels.delete(t),
+              this.joinedChannels.delete(t),
+              this.broadcastToTabs({
+                type: 'CHANNELS_UPDATE',
+                channels: Array.from(this.channels.values()),
+              }),
+              this.notifyPopup({
+                type: 'CHANNELS_UPDATE',
+                channels: Array.from(this.channels.values()),
+              }),
+              this.saveChannels(),
+              this.send({ type: 'CHANNEL_DELETE', channelId: t }),
+              this.sendActivityEvent('channel_delete', { channelId: t }),
+              a({ success: !0 }));
+            break;
+          }
+          case 'CONTENT_SCRIPT_READY':
+            if (s.tab?.id) {
+              const e =
+                this.primaryConnection?.readyState === WebSocket.OPEN
+                  ? 'connected'
+                  : 'disconnected';
+              (this.safeSendMessage(s.tab.id, { type: 'CONNECTION_STATUS', status: e }),
+                this.safeSendMessage(s.tab.id, {
+                  type: 'AGENTS_UPDATE',
+                  agents: Array.from(this.agents.values()),
+                }),
+                this.safeSendMessage(s.tab.id, {
+                  type: 'CHANNELS_UPDATE',
+                  channels: Array.from(this.channels.values()),
+                }),
+                this.safeSendMessage(s.tab.id, {
+                  type: 'JOINED_CHANNELS_UPDATE',
+                  joinedChannels: Array.from(this.joinedChannels),
+                }),
+                this.safeSendMessage(s.tab.id, {
+                  type: 'CHANNEL_SELECTED',
+                  channelId: this.getTabActiveChannel(s.tab.id),
+                }),
+                this.safeSendMessage(s.tab.id, {
+                  type: 'CHANNEL_PAUSE_UPDATE',
+                  pausedChannels: this.getTabPausedChannels(s.tab.id),
+                }));
+            }
+            (this.logEvent('extension', 'content_script_ready', {
+              tabId: s.tab?.id ?? null,
+              url: s.tab?.url ?? null,
+            }),
+              a({ success: !0 }));
+            break;
+          case 'TOGGLE_PANEL':
+            (this.broadcastToTabs({ type: 'TOGGLE_PANEL' }), a({ success: !0 }));
+            break;
+          case 'ACTIVATE_ON_TAB':
+            return (
+              chrome.tabs.query({ active: !0, currentWindow: !0 }, async (e) => {
+                if (e[0]?.id)
+                  try {
+                    (await this.safeSendMessage(e[0].id, { type: 'PING' }))
+                      ? (this.safeSendMessage(e[0].id, { type: 'SHOW_PANEL' }),
+                        a({ success: !0, alreadyActive: !0 }))
+                      : (await chrome.scripting.executeScript({
+                          target: { tabId: e[0].id },
+                          files: ['content/index.js'],
+                        }),
+                        console.log(
+                          `[GeminiBridge v7] Content script injected into tab ${e[0].id}`
+                        ),
+                        setTimeout(() => {
+                          e[0]?.id && this.safeSendMessage(e[0].id, { type: 'SHOW_PANEL' });
+                        }, 500),
+                        a({ success: !0, injected: !0 }));
+                  } catch (e) {
+                    (console.error('[GeminiBridge v7] Failed to activate on tab:', e),
+                      a({ success: !1, error: e.message }));
+                  }
+                else a({ success: !1, error: 'No active tab found' });
+              }),
+              !0
+            );
+          case 'REQUEST_SYNC':
+            (this.primaryConnection && this.requestSync(this.primaryConnection),
+              a({ success: !0 }));
+            break;
+          case 'DISCOVER_AGENTS':
+            (this.primaryConnection &&
+              (this.send({ type: 'AGENT_LIST' }), this.send({ type: 'CHANNEL_LIST' })),
+              a({ success: !0 }));
+            break;
+          case 'ACTIVITY_EVENT':
+            (this.sendActivityEvent(e.eventType || 'unknown', {
+              channel: e.channel || null,
+              senderId: e.senderId || null,
+              ...(e.metadata || {}),
+            }),
+              a({ success: !0 }));
+            break;
+          case 'INJECT_MESSAGE':
+            return (
+              (s.tab?.id
+                ? this.injectMessageToTab(s.tab.id, e.content)
+                : this.injectMessageToActiveTab(e.content)
+              )
+                .then(() => {
+                  (this.logEvent('chat', 'inject_message', {
+                    tabId: s.tab?.id ?? null,
+                    preview: String(e.content || '').slice(0, 120),
+                  }),
+                    a({ success: !0 }));
+                })
+                .catch((e) => {
+                  (console.error('[GeminiBridge v7] Error injecting message:', e),
+                    a({ success: !1, error: e.message }));
+                }),
+              !0
+            );
+          case 'GET_LAST_RESPONSE':
+            return (
+              this.getLastResponseFromActiveTab().then((e) => {
+                a({ response: e });
+              }),
+              !0
+            );
+          case 'CHAT_DETECTED':
+            if (s.tab?.id) {
+              let e = null;
+              for (const [t, a] of this.agents)
+                if (a.metadata?.tabId === s.tab.id) {
+                  e = t;
+                  break;
+                }
+              e || (e = `page-agent-${s.tab.id}-${Math.random().toString(36).substr(2, 5)}`);
+              const t = s.tab.url ? new URL(s.tab.url).hostname : 'page';
+              let n = t;
+              (t.includes('gemini.google')
+                ? (n = 'Gemini')
+                : t.includes('openai.com')
+                  ? (n = 'ChatGPT')
+                  : t.includes('claude.ai')
+                    ? (n = 'Claude')
+                    : t.includes('perplexity.ai') && (n = 'Perplexity'),
+                this.registerPageAgent(e, `AI Chat (${n})`, t, s.tab.id));
+              const i = { type: 'AGENT_STATUS', agent: this.agents.get(e) };
+              (this.broadcastToTabs(i), a({ success: !0, agentId: e }));
+            } else a({ success: !0 });
+            break;
+          case 'STREAMING_UPDATE':
+            break;
+          case 'RESPONSE_COMPLETE':
+            if (
+              (this.broadcastToTabs(e),
+              this.primaryConnection?.readyState === WebSocket.OPEN && e.content)
+            ) {
+              const a = t(`ai:${e.content.substring(0, 500)}`),
+                n = Date.now();
+              if (this.recentMessageHashes.has(a))
+                console.log('[GeminiBridge v7] Skipping duplicate AI response broadcast');
+              else {
+                this.recentMessageHashes.set(a, n);
+                let t = e.metadata?.senderId || e.senderId;
+                const i = (e) => (e ? e.replace(/^(page-agent-|browser-|agent-)/, '') : '');
+                (!t &&
+                  s.tab?.id &&
+                  ((t = `page-agent-${s.tab.id}`),
+                  console.log('[GeminiBridge v7] Using tab-based senderId:', t)),
+                  t || (t = `ai-response-${Date.now()}`));
+                const o = i(t),
+                  r = i(this.agentId);
+                console.log('[GeminiBridge v7] AI Response from agent:', {
+                  senderId: t,
+                  normalizedSenderId: o,
+                  normalizedMyId: r,
+                });
+                let c = e.channel || e.metadata?.channel;
+                if (
+                  (c ||
+                    (this.joinedChannels.has('green')
+                      ? (c = 'green')
+                      : this.joinedChannels.size > 0 &&
+                        ((c = Array.from(this.joinedChannels)[0]),
+                        console.log('[GeminiBridge v7] Using fallback channel:', c))),
+                  c)
+                ) {
+                  const a = s.tab?.url || '';
+                  let n = e.platform || 'unknown';
+                  e.platform ||
+                    (a.includes('gemini.google')
+                      ? (n = 'Gemini')
+                      : a.includes('chat.openai') || a.includes('chatgpt')
+                        ? (n = 'ChatGPT')
+                        : a.includes('claude.ai')
+                          ? (n = 'Claude')
+                          : a.includes('copilot') && (n = 'Copilot'));
+                  const i = {
+                    senderId: t,
+                    senderType: 'ai-agent',
+                    platform: n,
+                    isAIResponse: !0,
+                    timestamp: Date.now(),
+                  };
+                  (e.metadata?.correlationId &&
+                    ((i.correlationId = e.metadata.correlationId),
+                    (i.taskId = e.metadata.taskId),
+                    (i.inResponseTo = e.metadata.inResponseTo),
+                    console.log(
+                      '[GeminiBridge v7] 🔗 Including correlation in broadcast:',
+                      e.metadata.correlationId
+                    )),
+                    this.send({
+                      type: 'MESSAGE_SEND',
+                      to: e.metadata?.inResponseTo || 'broadcast',
+                      channel: c,
+                      content: e.content,
+                      messageType: 'ai-response',
+                      metadata: i,
+                    }),
+                    console.log('[GeminiBridge v7] AI response broadcast to channel:', {
+                      channel: c,
+                      senderId: t,
+                      platform: n,
+                      contentLength: e.content.length,
+                      hasCorrelation: !!e.metadata?.correlationId,
+                    }));
+                }
+              }
+            }
+            a({ success: !0 });
+        }
+      });
+    }
+    async registerWebMCPTools() {
+      if (void 0 !== chrome.ai && chrome.ai.registerTools) {
+        console.log('[GeminiBridge] Registering WebMCP tools for Tactical Autonomy...');
+        const e = [
+          {
+            name: 'tnf_mouse_click',
+            description:
+              'Clicks at a specific X,Y coordinate on the local screen (Tactical Autonomy)',
+            parameters: {
+              type: 'object',
+              properties: { x: { type: 'number' }, y: { type: 'number' } },
+              required: ['x', 'y'],
+            },
+          },
+          {
+            name: 'tnf_type_text',
+            description: 'Types text into the focused field on the local computer',
+            parameters: {
+              type: 'object',
+              properties: { text: { type: 'string' } },
+              required: ['text'],
+            },
+          },
+          {
+            name: 'tnf_press_key',
+            description: 'Presses a specific key code on the local computer',
+            parameters: {
+              type: 'object',
+              properties: { keyCode: { type: 'number', description: 'AppleScript key code' } },
+              required: ['keyCode'],
+            },
+          },
+          {
+            name: 'tnf_green_broadcast',
+            description: 'Broadcasts a message to the TNF Green federation channel',
+            parameters: {
+              type: 'object',
+              properties: { message: { type: 'string' } },
+              required: ['message'],
+            },
+          },
+          {
+            name: 'tnf_execute_workflow',
+            description: 'Executes a named TNF workflow across the federation',
+            parameters: {
+              type: 'object',
+              properties: { workflowId: { type: 'string' }, input: { type: 'object' } },
+              required: ['workflowId'],
+            },
+          },
+        ];
+        try {
+          (await chrome.ai.registerTools(e, (e, t) => this.handleToolInvocation(e, t)),
+            console.log('[GeminiBridge] Successfully registered 5 WebMCP tools'));
+        } catch (e) {
+          console.debug('[GeminiBridge] WebMCP registration failed (feature may be disabled)', e);
+        }
+      }
+    }
+    async handleToolInvocation(e, t) {
+      switch ((console.log(`[GeminiBridge] Tool invocation from Gemini Sidebar: ${e}`, t), e)) {
+        case 'tnf_mouse_click':
+          return await this.sendNativeMessage({ action: 'mouse-click', x: t.x, y: t.y });
+        case 'tnf_type_text':
+          return await this.sendNativeMessage({ action: 'type-text', text: t.text });
+        case 'tnf_press_key':
+          return await this.sendNativeMessage({ action: 'press-key', keyCode: t.keyCode });
+        case 'tnf_green_broadcast':
+          return (
+            this.send({
+              type: 'MESSAGE_SEND',
+              to: 'broadcast',
+              channel: 'green',
+              content: t.message,
+              messageType: 'text',
+              metadata: { source: 'gemini-sidebar-webmcp' },
+            }),
+            { success: !0, status: 'broadcast_sent' }
+          );
+        case 'tnf_execute_workflow':
+          return (
+            this.send({
+              type: 'WORKFLOW_EXECUTE',
+              payload: { workflowId: t.workflowId, input: t.input },
+            }),
+            { success: !0, status: 'workflow_queued' }
+          );
+        default:
+          return { error: 'Unknown tool' };
+      }
+    }
+    disconnectAll() {
+      for (const [e, t] of this.connections) t.close();
+      (this.connections.clear(), (this.primaryConnection = null));
+      for (const e of this.reconnectTimers.values()) clearTimeout(e);
+      (this.reconnectTimers.clear(),
+        this.heartbeatTimer && (clearInterval(this.heartbeatTimer), (this.heartbeatTimer = null)),
+        this.stopStallWatchdog(),
+        this.updateNodeStatus('relay', g, 'disconnected'));
+    }
+    setupCommands() {
+      chrome.commands.onCommand.addListener((e) => {
+        'toggle-panel' === e && this.broadcastToTabs({ type: 'TOGGLE_PANEL' });
+      });
+    }
+  })();
+})();
 //# sourceMappingURL=index.js.map

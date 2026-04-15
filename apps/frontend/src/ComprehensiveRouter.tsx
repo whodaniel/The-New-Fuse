@@ -289,6 +289,37 @@ const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
   </RequireAuth>
 );
 
+// Redirect component to force reload to static HTML pages
+const RedirectToStatic = ({ to }: { to: string }) => {
+  if (typeof window !== 'undefined') {
+    window.location.href = to;
+  }
+  return null;
+};
+
+const MarketplaceRootRoute = () => {
+  if (typeof window === 'undefined') {
+    return <RedirectToStatic to="/" />;
+  }
+
+  const host = window.location.hostname;
+  const isMarketplaceHost = host === 'marketplace.thenewfuse.com';
+
+  return isMarketplaceHost ? (
+    <Suspense fallback={<LoadingFallback name="Marketplace" />}>
+      <MarketplacePublicPage />
+    </Suspense>
+  ) : (
+    <RedirectToStatic to="/" />
+  );
+};
+
+const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
+  <RequireAuth>
+    <RequireMembership>{children}</RequireMembership>
+  </RequireAuth>
+);
+
 // Remove the old ComprehensiveNavigation component and replace with SmartNavigation
 export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRouterProps) {
   const location = useLocation();

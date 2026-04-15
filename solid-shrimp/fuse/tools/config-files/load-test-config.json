@@ -1,0 +1,78 @@
+{
+  "tests": [
+    {
+      "name": "API Health Check",
+      "url": "http://localhost:3000/api/health",
+      "method": "GET",
+      "duration": 30,
+      "rate": 50,
+      "connections": 10,
+      "assertions": {
+        "responseTime": 200,
+        "statusCode": 200,
+        "failureRate": 0.01
+      }
+    },
+    {
+      "name": "User Authentication",
+      "url": "http://localhost:3000/api/auth/login",
+      "method": "POST",
+      "duration": 60,
+      "rate": 20,
+      "connections": 5,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "test@example.com",
+        "password": "password123"
+      },
+      "assertions": {
+        "responseTime": 500,
+        "statusCode": 200,
+        "failureRate": 0.02
+      }
+    },
+    {
+      "name": "Get User Profile",
+      "url": "http://localhost:3000/api/users/profile",
+      "method": "GET",
+      "duration": 45,
+      "rate": 30,
+      "connections": 8,
+      "headers": {
+        "Authorization": "Bearer {{TOKEN}}"
+      },
+      "assertions": {
+        "responseTime": 300,
+        "statusCode": 200,
+        "failureRate": 0.01
+      }
+    },
+    {
+      "name": "Create Feature",
+      "url": "http://localhost:3000/api/features",
+      "method": "POST",
+      "duration": 45,
+      "rate": 10,
+      "connections": 5,
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer {{TOKEN}}"
+      },
+      "body": {
+        "name": "Test Feature",
+        "description": "This is a test feature",
+        "status": "active"
+      },
+      "assertions": {
+        "responseTime": 600,
+        "statusCode": 201,
+        "failureRate": 0.03
+      }
+    }
+  ],
+  "outputDir": "test-results/load-tests",
+  "parallel": false,
+  "verbose": true
+}

@@ -1,0 +1,21 @@
+{
+  "name": "relay-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server that bridges to the TNF relay for Claude integration",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "ws": "^8.14.2"
+  },
+  "keywords": [
+    "mcp",
+    "relay",
+    "claude",
+    "tnf"
+  ],
+  "license": "MIT"
+}

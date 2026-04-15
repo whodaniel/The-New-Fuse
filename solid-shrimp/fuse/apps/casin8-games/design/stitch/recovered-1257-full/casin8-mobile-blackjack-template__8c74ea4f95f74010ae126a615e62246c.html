@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Casin8 Mobile - Blackjack Template</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f4c025",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#12110a",
+                        "emerald-felt": "#064e3b",
+                        "navy-felt": "#0f172a",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Spline Sans', sans-serif;
+        }
+        .felt-gradient {
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            border: 4px solid #064e3b;
+        }
+        .card-shadow {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen flex justify-center items-center">
+<!-- Mobile Container (390px) -->
+<div class="relative w-[390px] h-[844px] bg-background-dark overflow-hidden flex flex-col shadow-2xl border-x border-slate-800">
+<!-- Header -->
+<header class="flex items-center justify-between px-4 py-3 bg-background-dark/80 backdrop-blur-md border-b border-primary/10 z-20">
+<div class="flex items-center gap-2">
+<div class="text-primary">
+<svg class="w-6 h-6" fill="currentColor" viewbox="0 0 48 48">
+<path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z"></path>
+</svg>
+</div>
+<span class="font-bold text-lg tracking-tight">Casin8</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="bg-primary px-3 py-1 rounded-full flex items-center gap-1.5">
+<span class="text-xs font-bold text-background-dark">$2,450.00</span>
+</div>
+<div class="bg-slate-800 px-2 py-1 rounded-full border border-slate-700">
+<span class="text-[10px] font-bold text-slate-300">MAINNET</span>
+</div>
+</div>
+</header>
+<!-- Main Stage (Blackjack Table) -->
+<main class="flex-1 relative felt-gradient m-2 rounded-xl overflow-hidden flex flex-col p-4 shadow-inner">
+<!-- Dealer Side -->
+<div class="flex flex-col items-center mb-8 pt-4">
+<div class="text-[10px] font-bold text-primary/60 tracking-[0.2em] mb-4 uppercase">Dealer Stands on 17</div>
+<div class="flex gap-2 justify-center relative">
+<!-- Dealer Cards -->
+<div class="w-16 h-24 bg-white rounded-lg card-shadow flex flex-col p-2 relative overflow-hidden">
+<span class="text-red-600 font-bold text-sm">A</span>
+<span class="material-symbols-outlined text-red-600 text-sm">favorite</span>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-red-600 text-3xl opacity-20">favorite</span>
+</div>
+</div>
+<div class="w-16 h-24 bg-primary rounded-lg card-shadow flex items-center justify-center border-2 border-primary/50 overflow-hidden relative" data-alt="Gold foiled card back with geometric pattern" style="background-image: linear-gradient(45deg, #f4c025 25%, #d9a40e 25%, #d9a40e 50%, #f4c025 50%, #f4c025 75%, #d9a40e 75%, #d9a40e 100%); background-size: 10px 10px;">
+<div class="bg-background-dark/20 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm">
+<svg class="w-6 h-6 text-primary" fill="currentColor" viewbox="0 0 48 48"><path d="M24 45.8C19.6 45.8 15.4 44.5 11.8 42.1C8.2 39.7 5.5 36.3 3.8 32.3C2.1 28.3 1.7 23.9 2.6 19.7C3.4 15.5 5.5 11.6 8.5 8.5C11.6 5.5 15.5 3.4 19.7 2.6C23.9 1.7 28.3 2.1 32.3 3.8C36.3 5.5 39.7 8.2 42.1 11.8C44.5 15.4 45.8 19.6 45.8 24L24 24L24 45.8Z"></path></svg>
+</div>
+</div>
+</div>
+<div class="mt-4 bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
+<span class="text-xs font-medium text-slate-300">Dealer Hand: <span class="text-white font-bold">11</span></span>
+</div>
+</div>
+<!-- Table Centerpiece -->
+<div class="flex-1 flex items-center justify-center opacity-10">
+<div class="border-2 border-primary w-48 h-48 rounded-full flex items-center justify-center">
+<span class="text-primary font-bold text-4xl italic">CASIN8</span>
+</div>
+</div>
+<!-- Player Side -->
+<div class="flex flex-col items-center mt-auto pb-4">
+<div class="mb-4 bg-primary/20 border border-primary/30 px-4 py-1 rounded-full">
+<span class="text-xs font-bold text-primary">YOUR HAND: 20</span>
+</div>
+<div class="flex gap-2 justify-center">
+<!-- Player Cards -->
+<div class="w-20 h-32 bg-white rounded-lg card-shadow flex flex-col p-2 relative">
+<span class="text-slate-900 font-bold text-lg leading-none">10</span>
+<span class="material-symbols-outlined text-slate-900 text-lg">type_specimen</span>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-900 text-5xl opacity-10">type_specimen</span>
+</div>
+</div>
+<div class="w-20 h-32 bg-white rounded-lg card-shadow flex flex-col p-2 relative -translate-y-2 rotate-3">
+<span class="text-slate-900 font-bold text-lg leading-none">K</span>
+<span class="material-symbols-outlined text-slate-900 text-lg">diamond</span>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-900 text-5xl opacity-10">diamond</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- System Feedback Toast -->
+<div class="absolute top-20 left-4 right-4 z-50">
+<div class="bg-emerald-900/90 backdrop-blur-md border border-emerald-500/50 p-3 rounded-lg flex items-center gap-3 shadow-xl">
+<div class="bg-emerald-500 rounded-full p-1">
+<span class="material-symbols-outlined text-white text-sm">check</span>
+</div>
+<div class="flex-1">
+<p class="text-xs font-bold text-white">Payout Confirmed</p>
+<p class="text-[10px] text-emerald-100/70">On-chain transaction successful</p>
+</div>
+<div class="text-[10px] font-mono text-emerald-300">0x4a...f21</div>
+</div>
+</div>
+<!-- Action Bar -->
+<div class="bg-background-dark/95 border-t border-slate-800 p-4 grid grid-cols-3 gap-3">
+<button class="bg-slate-800 hover:bg-slate-700 text-white py-4 rounded-xl flex flex-col items-center justify-center transition-all border border-slate-700">
+<span class="text-xs font-bold uppercase tracking-wider">Stand</span>
+<span class="text-[10px] opacity-50">Keep 20</span>
+</button>
+<button class="bg-primary hover:bg-primary/90 text-background-dark py-4 rounded-xl flex flex-col items-center justify-center transition-all shadow-lg shadow-primary/20">
+<span class="text-xs font-bold uppercase tracking-wider">Hit</span>
+<span class="text-[10px] font-bold opacity-70">Take Card</span>
+</button>
+<button class="bg-slate-800 hover:bg-slate-700 text-white py-4 rounded-xl flex flex-col items-center justify-center transition-all border border-slate-700">
+<span class="text-xs font-bold uppercase tracking-wider">Double</span>
+<span class="text-[10px] opacity-50">2x Stake</span>
+</button>
+</div>
+<!-- Bottom Navigation -->
+<nav class="bg-background-dark border-t border-slate-800 px-6 py-2 flex justify-between items-center pb-8">
+<button class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-medium">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">playing_cards</span>
+<span class="text-[10px] font-bold">Games</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-[10px] font-medium">Wallet</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</button>
+</nav>
+<!-- Dynamic Visual Accents -->
+<div class="absolute -bottom-20 -right-20 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="absolute -top-20 -left-20 w-64 h-64 bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+</div>
+</body></html>

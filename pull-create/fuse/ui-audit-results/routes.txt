@@ -1,0 +1,9 @@
+./packages/frontend/src/App.tsx
+./apps/frontend/src/components/flow/FlowContainer.tsx
+./apps/frontend/src/Router.tsx
+./apps/frontend/src/pages/settings/index.tsx
+./apps/frontend/src/pages/auth/index.tsx
+./apps/frontend/src/pages/auth/__tests__/GoogleCallback.test.tsx
+./apps/frontend/src/pages/workspace/index.tsx
+./apps/frontend/src/pages/Admin/index.tsx
+./src/App.tsx

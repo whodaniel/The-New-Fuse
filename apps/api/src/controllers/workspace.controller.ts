@@ -48,6 +48,9 @@ type WorkspaceManageableRole = Exclude<WorkspaceAccessRole, 'owner'>;
 type WorkspaceAccessRole = 'owner' | 'admin' | 'member' | 'viewer';
 type WorkspaceManageableRole = Exclude<WorkspaceAccessRole, 'owner'>;
 
+type WorkspaceAccessRole = 'owner' | 'admin' | 'member' | 'viewer';
+type WorkspaceManageableRole = Exclude<WorkspaceAccessRole, 'owner'>;
+
 /**
  * DTO for creating a new workspace
  */
@@ -1545,6 +1548,198 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
     };
   }
 
+  private normalizeRole(role?: string): WorkspaceManageableRole {
+    return role === 'admin' || role === 'member' || role === 'viewer' ? role : 'member';
+  }
+
+  private async listAccessibleWorkspaces(userId: string) {
+    const owned = await this.db.workspaces.findByOwnerWithOwner(userId);
+    const memberRows = await this.db.workspaceMembers.listByUser(userId);
+    const ownedIds = new Set(owned.map((workspace) => workspace.id));
+    const memberIds = memberRows.map((row) => row.workspaceId).filter((id) => !ownedIds.has(id));
+    const memberWorkspaces = await this.db.workspaces.findByIdsWithOwner(memberIds);
+    const roleByWorkspace = new Map(memberRows.map((row) => [row.workspaceId, row.role]));
+
+    return [
+      ...owned.map((workspace) => ({ ...workspace, membershipRole: 'owner' })),
+      ...memberWorkspaces.map((workspace) => ({
+        ...workspace,
+        membershipRole: roleByWorkspace.get(workspace.id) || 'member',
+      })),
+    ];
+  }
+
+  private async ensureWorkspaceAccess(workspaceId: string, userId: string) {
+    const workspace = (await this.db.workspaces.findByIdWithOwner(
+      workspaceId
+    )) as WorkspaceWithOwner;
+    if (!workspace) {
+      throw new NotFoundException('Workspace not found');
+    }
+
+    const membership = await this.db.workspaceMembers.findMembership(workspaceId, userId);
+    const isOwner = workspace.ownerId === userId;
+    const isAdmin = membership?.role === 'admin' || membership?.role === 'owner';
+    if (!isOwner && !membership) {
+      throw new ForbiddenException('You do not have access to this workspace');
+    }
+
+    return { workspace, membership, isOwner, isAdmin };
+  }
+
+  private async ensureWorkspaceMemberManagement(workspaceId: string, userId: string) {
+    const access = await this.ensureWorkspaceAccess(workspaceId, userId);
+    if (!access.isOwner && !access.isAdmin) {
+      throw new ForbiddenException('Only workspace owners or admins can manage members');
+    }
+    return access;
+  }
+
+  private async resolveTargetUserId(memberData: AddWorkspaceMemberDto): Promise<string> {
+    if (memberData.userId?.trim()) {
+      const existingById = await this.db.users.findById(memberData.userId.trim());
+      if (!existingById) {
+        throw new NotFoundException('User not found');
+      }
+      return existingById.id;
+    }
+
+    if (memberData.email?.trim()) {
+      const normalizedEmail = memberData.email.trim().toLowerCase();
+      const existingByEmail = await this.db.users.findByEmail(normalizedEmail);
+      if (!existingByEmail) {
+        throw new NotFoundException(
+          'User with this email was not found. Ask them to create an account first.'
+        );
+      }
+      return existingByEmail.id;
+    }
+
+    throw new BadRequestException('Either userId or email is required');
+  }
+
+  private async listWorkspaceMembersInternal(
+    workspaceId: string,
+    userId: string
+  ): Promise<WorkspaceMemberView[]> {
+    const { workspace } = await this.ensureWorkspaceAccess(workspaceId, userId);
+    const members = await this.db.workspaceMembers.listByWorkspaceWithUsers(workspaceId);
+    const hasOwner = members.some((member) => member.userId === workspace.ownerId);
+
+    const formatted: WorkspaceMemberView[] = members.map((member) => ({
+      userId: member.userId,
+      email: member.userEmail,
+      role: member.role as WorkspaceAccessRole,
+      joinedAt: member.createdAt,
+    }));
+
+    if (!hasOwner) {
+      formatted.unshift({
+        userId: workspace.ownerId,
+        email: workspace.owner?.email ?? null,
+        role: 'owner',
+        joinedAt: workspace.createdAt,
+      });
+    }
+
+    return formatted;
+  }
+
+  private async addWorkspaceMemberInternal(
+    workspaceId: string,
+    memberData: AddWorkspaceMemberDto,
+    actingUserId: string
+  ) {
+    const { workspace } = await this.ensureWorkspaceMemberManagement(workspaceId, actingUserId);
+    const targetUserId = await this.resolveTargetUserId(memberData);
+
+    if (targetUserId === workspace.ownerId) {
+      throw new ForbiddenException('Workspace owner already has full access');
+    }
+
+    const role = this.normalizeRole(memberData.role);
+    const member = await this.db.workspaceMembers.upsertMember({
+      workspaceId,
+      userId: targetUserId,
+      role,
+      addedByUserId: actingUserId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const targetUser = await this.db.users.findById(targetUserId);
+
+    return {
+      message: 'Workspace member added',
+      member: {
+        userId: member.userId,
+        email: targetUser?.email ?? null,
+        role: member.role,
+        joinedAt: member.createdAt,
+      },
+    };
+  }
+
+  private async updateWorkspaceMemberRoleInternal(
+    workspaceId: string,
+    memberUserId: string,
+    roleData: UpdateWorkspaceMemberRoleDto,
+    actingUserId: string
+  ) {
+    const { workspace } = await this.ensureWorkspaceMemberManagement(workspaceId, actingUserId);
+    if (memberUserId === workspace.ownerId) {
+      throw new ForbiddenException('Cannot change role for the workspace owner');
+    }
+
+    const existingMember = await this.db.workspaceMembers.findMembership(workspaceId, memberUserId);
+    if (!existingMember) {
+      throw new NotFoundException('Workspace member not found');
+    }
+
+    const role = this.normalizeRole(roleData.role);
+    const updatedMember = await this.db.workspaceMembers.updateRole(
+      workspaceId,
+      memberUserId,
+      role
+    );
+    if (!updatedMember) {
+      throw new NotFoundException('Workspace member not found');
+    }
+
+    const targetUser = await this.db.users.findById(memberUserId);
+
+    return {
+      message: 'Workspace member role updated',
+      member: {
+        userId: updatedMember.userId,
+        email: targetUser?.email ?? null,
+        role: updatedMember.role,
+        joinedAt: updatedMember.createdAt,
+      },
+    };
+  }
+
+  private async removeWorkspaceMemberInternal(
+    workspaceId: string,
+    memberUserId: string,
+    actingUserId: string
+  ) {
+    const { workspace } = await this.ensureWorkspaceMemberManagement(workspaceId, actingUserId);
+    if (memberUserId === workspace.ownerId) {
+      throw new ForbiddenException('Cannot remove the workspace owner. Transfer ownership first.');
+    }
+
+    const removed = await this.db.workspaceMembers.removeMember(workspaceId, memberUserId);
+    if (!removed) {
+      throw new NotFoundException('Workspace member not found');
+    }
+
+    return {
+      message: 'Workspace member removed',
+      memberId: memberUserId,
+    };
+  }
+
   /**
    * Get all workspaces accessible by the current user
    */
@@ -1746,6 +1941,69 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
           ...member,
           accessLevel: member.role,
         })),
+    };
+  }
+
+  /**
+   * Grant delegated sub-access (VA access) using email or userId.
+   */
+  @Post(':id/sub-access')
+  @ApiOperation({ summary: 'Grant delegated sub-access to workspace' })
+  @ApiResponse({ status: 201, description: 'Sub-access granted' })
+  @HttpCode(HttpStatus.CREATED)
+  async grantWorkspaceSubAccess(
+    @Param('id') id: string,
+    @Body() accessData: SetWorkspaceSubAccessDto,
+    @CurrentUser('id') userId: string
+  ) {
+    const result = await this.addWorkspaceMemberInternal(id, accessData, userId);
+    return {
+      message: 'Sub-access granted',
+      member: result.member,
+      accessLevel: result.member.role,
+    };
+  }
+
+  /**
+   * Update delegated sub-access role.
+   */
+  @Patch(':id/sub-access/:userId')
+  @ApiOperation({ summary: 'Update delegated sub-access level' })
+  @ApiResponse({ status: 200, description: 'Sub-access updated' })
+  async updateWorkspaceSubAccess(
+    @Param('id') id: string,
+    @Param('userId') memberUserId: string,
+    @Body() accessData: UpdateWorkspaceSubAccessDto,
+    @CurrentUser('id') userId: string
+  ) {
+    const result = await this.updateWorkspaceMemberRoleInternal(
+      id,
+      memberUserId,
+      accessData,
+      userId
+    );
+    return {
+      message: 'Sub-access updated',
+      member: result.member,
+      accessLevel: result.member.role,
+    };
+  }
+
+  /**
+   * Revoke delegated sub-access.
+   */
+  @Delete(':id/sub-access/:userId')
+  @ApiOperation({ summary: 'Revoke delegated sub-access' })
+  @ApiResponse({ status: 200, description: 'Sub-access revoked' })
+  async revokeWorkspaceSubAccess(
+    @Param('id') id: string,
+    @Param('userId') memberUserId: string,
+    @CurrentUser('id') userId: string
+  ) {
+    const result = await this.removeWorkspaceMemberInternal(id, memberUserId, userId);
+    return {
+      message: 'Sub-access revoked',
+      memberId: result.memberId,
     };
   }
 

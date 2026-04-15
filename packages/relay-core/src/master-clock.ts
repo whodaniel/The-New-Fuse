@@ -2261,7 +2261,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         correlation_id: randomUUID(),
         causation_id: null,
         handoff_packet_id: null,
-        twid: params.targetSourceId || null,
+        twid: null,
         task_id: null,
       },
       federation: {

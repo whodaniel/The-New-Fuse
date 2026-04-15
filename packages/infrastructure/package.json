@@ -21,7 +21,6 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@google-cloud/storage": "7.19.0",
     "@nestjs/common": "^11.1.16",
     "@nestjs/config": "^4.0.2",
     "@upstash/redis": "^1.37.0",

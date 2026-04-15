@@ -1,0 +1,48 @@
+name: Traits Intelligence Nightly
+
+on:
+  schedule:
+    - cron: "20 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  traits-nightly:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/casin8-games
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+        working-directory: .
+
+      - name: Run trait intelligence jobs
+        run: |
+          node scripts/traits/export-cfr-profile.mjs
+          node scripts/traits/ingest-risk-profile.mjs
+          node scripts/traits/eval-league.mjs
+
+      - name: Validate trait pipeline tests
+        run: |
+          node --test swarm/trait-providers.test.mjs swarm/trait-payload-schema.test.mjs
+
+      - name: Upload trait artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: traits-nightly-artifacts
+          path: |
+            apps/casin8-games/.data/traits/*.json

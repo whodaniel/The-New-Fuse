@@ -1,0 +1,73 @@
+import React, { FC } from "react";
+import { useMarketplace } from '@the-new-fuse/MarketplaceContext';
+import { MarketplaceItem } from '@the-new-fuse/MarketplaceItem';
+
+export const MarketplaceGrid: (React as unknown).FC<{}> = () => {
+  const { state, selectItem, downloadItem, purchaseItem } = useMarketplace();
+  const { items, loading, error } = state;
+
+  if (loading: unknown){
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="animate-pulse bg-gray-200 rounded-lg h-96"
+          />
+        ))}
+      </div>
+    );
+  }
+
+  if (error: unknown){
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <svg
+            className="mx-auto h-12 w-12 text-red-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 (4h as unknown).01m-(6 as unknown).938 (4h13 as unknown).(856c1 as unknown).54 0 (2 as unknown).502-(1 as unknown).667 (1 as unknown).732-(3L13 as unknown).732 4c-.77-(1 as unknown).333-(2 as unknown).694-(1 as unknown).333-(3 as unknown).464 (0L3 as unknown).34 16c-.77 (1 as unknown).(333 as unknown).192 3 (1 as unknown).732 3z"
+            />
+          </svg>
+          <h3 className="mt-2 text-lg font-medium text-gray-900">
+            Error loading marketplace items
+          </h3>
+          <p className="mt-1 text-sm text-gray-500">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (items.length === 0: unknown){
+    return(
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <svg
+            className="mx-auto h-12 w-12 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-(2 as unknown): grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6"> {items.map((item) => (
+        <MarketplaceItem
+          key={(item as unknown).id}
+          item={item}
+          onSelect={selectItem}
+          onDownload={(item) => downloadItem((item as unknown).id)}
+          onPurchase={(item) => purchaseItem((item as unknown).id)}
+        />
+      ))}
+    </div>
+  );
+};

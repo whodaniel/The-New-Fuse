@@ -1,0 +1,162 @@
+{
+  "timestamp": "2026-03-03T02:36:22.615Z",
+  "phase": "Phase 2: Deep Pattern Recognition",
+  "status": "Complete",
+  "input": {
+    "foundationReportPresent": true,
+    "foundationTimestamp": "2026-03-03T02:36:15.173Z"
+  },
+  "protocolAnalysis": {
+    "requiredProtocols": 6,
+    "discoveredProtocols": 4,
+    "coveragePct": 66.7,
+    "catalog": [
+      {
+        "protocol": "PROTOCOL_ALIGNMENT_FRAMEWORK.md",
+        "found": true,
+        "path": "docs/PROTOCOL_ALIGNMENT_FRAMEWORK.md",
+        "lineCount": 722,
+        "firstHeading": "1:# The New Fuse - Protocol Alignment & Skill Sequencing Framework",
+        "sizeBytes": 27944
+      },
+      {
+        "protocol": "INFORMATION_SEQUENCING_PROTOCOL.md",
+        "found": true,
+        "path": "docs/INFORMATION_SEQUENCING_PROTOCOL.md",
+        "lineCount": 368,
+        "firstHeading": "1:# 🧠 THE NEW FUSE - INFORMATION SEQUENCING PROTOCOL",
+        "sizeBytes": 14159
+      },
+      {
+        "protocol": "MASTER_ORCHESTRATOR_COORDINATION_PROTOCOLS.md",
+        "found": true,
+        "path": "docs/MASTER_ORCHESTRATOR_COORDINATION_PROTOCOLS.md",
+        "lineCount": 177,
+        "firstHeading": "1:# Master Orchestrator Critical Coordination Protocols",
+        "sizeBytes": 6276
+      },
+      {
+        "protocol": "AGENT_COMMUNICATION_PROTOCOL.md",
+        "found": true,
+        "path": "docs/AGENT_COMMUNICATION_PROTOCOL.md",
+        "lineCount": 4,
+        "firstHeading": "1:# Agent Communication Protocol",
+        "sizeBytes": 239
+      },
+      {
+        "protocol": "DACC-v1.md",
+        "found": false
+      },
+      {
+        "protocol": "MCP.md",
+        "found": false
+      }
+    ]
+  },
+  "architecturePatterns": {
+    "monorepo": {
+      "detected": true,
+      "workspaceDeclCount": 4
+    },
+    "patterns": [
+      {
+        "name": "NestJS service architecture",
+        "detected": true,
+        "signalCount": 128
+      },
+      {
+        "name": "WebSocket relay pattern",
+        "detected": true,
+        "signalCount": 3845
+      },
+      {
+        "name": "MCP integration pattern",
+        "detected": true,
+        "signalCount": 5088
+      }
+    ]
+  },
+  "dataFlowSignals": [
+    {
+      "name": "WebSocket message routing",
+      "signalCount": 25,
+      "sampleRefs": [
+        "apps/ai-arcade/src/services/MechanismDesign.ts:9:  immediatePotShare: number; // 0..1 of sidepot for fast draws",
+        "apps/ai-arcade/src/services/MechanismDesign.ts:83:    feature: 'Persistent carry-forward tickets across unrelated draws',",
+        "apps/ai-arcade/src/services/WebSocketService.ts:22:  private ws: WebSocket | null = null;",
+        "apps/ai-arcade/src/services/WebSocketService.ts:37:      if (this.ws?.readyState === WebSocket.OPEN) {",
+        "apps/ai-arcade/src/services/WebSocketService.ts:51:        const wsUrl = this.getWebSocketUrl(token);",
+        "apps/ai-arcade/src/services/WebSocketService.ts:52:        this.ws = new WebSocket(wsUrl);",
+        "apps/ai-arcade/src/services/WebSocketService.ts:54:        this.ws.onopen = () => {",
+        "apps/ai-arcade/src/services/WebSocketService.ts:55:          console.log('WebSocket connected to', wsUrl);",
+        "apps/ai-arcade/src/services/WebSocketService.ts:68:        this.ws.onmessage = (event) => {",
+        "apps/ai-arcade/src/services/WebSocketService.ts:77:        this.ws.onerror = (error) => {"
+      ]
+    },
+    {
+      "name": "Agent-to-agent communication",
+      "signalCount": 25,
+      "sampleRefs": [
+        "docs/RAILWAY_CRON_SETUP.md:132:  results.checks.relay = await checkService('http://localhost:3001/health');",
+        "docs/RAILWAY_CRON_SETUP.md:161:    analysis.recommendations.push('Consider scaling relay server');",
+        "docs/RAILWAY_CRON_SETUP.md:238:- **Redis Pub/Sub**: Publishes to `tnf:self-improvement` channel",
+        "docs/TNF_AGENTIC_INFRASTRUCTURE_VISION.md:53:│  │  │  (a2a-core)  │  │  (mcp-core)  │  │  (relay-core)│                   │   │",
+        "docs/TNF_AGENTIC_INFRASTRUCTURE_VISION.md:341:Your `a2a-core` package defines the inter-agent communication standard:",
+        "docs/TNF_AGENTIC_INFRASTRUCTURE_VISION.md:454:│  ├─ Test inter-agent communication                                       │",
+        "docs/TNF_AGENTIC_INFRASTRUCTURE_VISION.md:502:│  │ (relay-core)    │                      │ (workflow-engine)           │",
+        "docs/FEDERATION_ARCHITECTURE.md:6:ChatGPT, Claude, Gemini) into **channels**, enabling coordinated multi-AI",
+        "docs/FEDERATION_ARCHITECTURE.md:18:│  │  tnf:channels   │  │  Message Queue  │  │  VS Code         │              │",
+        "docs/FEDERATION_ARCHITECTURE.md:64:A communication pathway within a federation. Tabs/agents in the same channel"
+      ]
+    },
+    {
+      "name": "Browser extension to backend",
+      "signalCount": 25,
+      "sampleRefs": [
+        "apps/casin8-games/server.js:1348:  const res = await fetch(rpcUrl, {",
+        "apps/casin8-games/server.js:4248:  const res = await fetch('https://api.stripe.com/v1/payment_intents', {",
+        "apps/casin8-games/server.js:4274:  const res = await fetch(`${baseUrl}/v1/oauth2/token`, {",
+        "apps/casin8-games/server.js:4319:  const res = await fetch(`${auth.baseUrl}/v2/checkout/orders`, {",
+        "apps/casin8-games/swarm_g_h_i.test.mjs:14:      const res = await fetch(`${baseUrl}/api/health`);",
+        "apps/casin8-games/swarm_g_h_i.test.mjs:46:  const res = await fetch(`${baseUrl}${pathName}`, {",
+        "apps/casin8-games/swarm_g_h_i.test.mjs:127:  const webhook1 = await fetch(`${baseUrl}/api/payments/webhook/stripe`, {",
+        "apps/casin8-games/swarm_g_h_i.test.mjs:180:  const webhookReplay = await fetch(`${baseUrl}/api/payments/webhook/stripe`, {",
+        "docs/THEIA_502_FIX.md:70:Error: Cannot find module 'src-gen/backend/server.js'",
+        "docs/THEIA_502_FIX.md:94:node src-gen/backend/server.js --hostname=0.0.0.0 --port=3007"
+      ]
+    },
+    {
+      "name": "Database persistence patterns",
+      "signalCount": 25,
+      "sampleRefs": [
+        "data/mcp_config.json:94:        \"--repository\",",
+        "data/mcp_config.json:104:      \"description\": \"Official Anthropic memory server - knowledge graph-based persistent memory system for context across sessions\",",
+        "data/mcp_config.json:106:      \"tags\": [\"official\", \"memory\", \"knowledge-graph\", \"persistence\"]",
+        "data/mcp_config.json:121:      \"description\": \"Official Anthropic GitHub server - repository management, issues, PRs, and code search (requires GitHub PAT)\",",
+        "data/mcp_config.json:135:    \"postgres\": {",
+        "data/mcp_config.json:139:        \"@modelcontextprotocol/server-postgres\",",
+        "data/mcp_config.json:140:        \"postgresql://localhost:5433/tnf_dev\"",
+        "data/mcp_config.json:144:      \"tags\": [\"official\", \"database\", \"postgres\", \"storage\"]",
+        "data/mcp_config.json:274:      \"postgres\",",
+        "data/mcp.clients/gemini.mcp.json:99:        \"--repository\","
+      ]
+    },
+    {
+      "name": "Cache and invalidation",
+      "signalCount": 25,
+      "sampleRefs": [
+        "packages/database/drizzle/0001_add_webhooks_analytics.sql:13:\t\"expires_at\" timestamp,",
+        "packages/database/drizzle/0001_add_webhooks_analytics.sql:56:\t\"expires_at\" timestamp",
+        "packages/database/drizzle/meta/0001_snapshot.json:840:        \"expires_at\": {",
+        "packages/database/drizzle/meta/0001_snapshot.json:841:          \"name\": \"expires_at\",",
+        "packages/database/drizzle/meta/0001_snapshot.json:1048:        \"expires_at\": {",
+        "packages/database/drizzle/meta/0001_snapshot.json:1049:          \"name\": \"expires_at\",",
+        "packages/database/drizzle/meta/0001_snapshot.json:1263:        \"expires_at\": {",
+        "packages/database/drizzle/meta/0001_snapshot.json:1264:          \"name\": \"expires_at\",",
+        "packages/database/drizzle/meta/0001_snapshot.json:1448:        \"expires_at\": {",
+        "packages/database/drizzle/meta/0001_snapshot.json:1449:          \"name\": \"expires_at\","
+      ]
+    }
+  ],
+  "nextPhase": "Phase 3: Integration Intelligence"
+}

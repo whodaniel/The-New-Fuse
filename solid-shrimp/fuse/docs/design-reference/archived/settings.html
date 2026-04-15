@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - TNF Browser Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #60a5fa;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .settings-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+
+        .settings-sidebar {
+            background: #2d3748;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #4a5568;
+            height: fit-content;
+        }
+
+        .settings-nav {
+            list-style: none;
+        }
+
+        .settings-nav li {
+            margin-bottom: 10px;
+        }
+
+        .settings-nav a {
+            display: block;
+            padding: 12px 16px;
+            color: #cbd5e0;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .settings-nav a:hover,
+        .settings-nav a.active {
+            background: #4a5568;
+            color: #60a5fa;
+        }
+
+        .settings-content {
+            background: #2d3748;
+            border-radius: 12px;
+            padding: 30px;
+            border: 2px solid #4a5568;
+        }
+
+        .settings-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #60a5fa;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4a5568;
+        }
+
+        .setting-group {
+            margin-bottom: 25px;
+        }
+
+        .setting-label {
+            display: block;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .setting-description {
+            color: #a0aec0;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .setting-input {
+            width: 100%;
+            padding: 12px;
+            background: #4a5568;
+            border: 1px solid #718096;
+            border-radius: 6px;
+            color: #e2e8f0;
+            font-size: 1rem;
+        }
+
+        .setting-input:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .setting-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #718096;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #48bb78;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .setting-select {
+            width: 100%;
+            padding: 12px;
+            background: #4a5568;
+            border: 1px solid #718096;
+            border-radius: 6px;
+            color: #e2e8f0;
+            font-size: 1rem;
+        }
+
+        .save-button {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .save-button:hover {
+            background: #38a169;
+            transform: translateY(-1px);
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #4a5568;
+            color: #e2e8f0;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            background: #6b7280;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background: #48bb78;
+        }
+
+        .status-offline {
+            background: #f56565;
+        }
+
+        .advanced-section {
+            background: #1a202c;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #4a5568;
+        }
+
+        .warning-text {
+            color: #fbb6ce;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="goBack()">← Back to Browser Hub</button>
+    
+    <div class="header">
+        <h1>
+            <span>⚙️</span>
+            <span>Settings</span>
+        </h1>
+        <p style="color: #a0aec0; font-size: 1.1rem;">Configure your Browser Hub experience</p>
+    </div>
+
+    <div class="settings-container">
+        <div class="settings-sidebar">
+            <ul class="settings-nav">
+                <li><a href="#general" class="nav-link active" data-section="general">🏠 General</a></li>
+                <li><a href="#browser" class="nav-link" data-section="browser">🌐 Browser</a></li>
+                <li><a href="#automation" class="nav-link" data-section="automation">🤖 Automation</a></li>
+                <li><a href="#extensions" class="nav-link" data-section="extensions">🧩 Extensions</a></li>
+                <li><a href="#security" class="nav-link" data-section="security">🔒 Security</a></li>
+                <li><a href="#advanced" class="nav-link" data-section="advanced">⚡ Advanced</a></li>
+                <li><a href="#about" class="nav-link" data-section="about">ℹ️ About</a></li>
+            </ul>
+        </div>
+
+        <div class="settings-content">
+            <!-- General Settings -->
+            <div class="settings-section active" id="general">
+                <h2 class="section-title">General Settings</h2>
+                
+                <div class="setting-group">
+                    <label class="setting-label">Default Browser Hub Theme</label>
+                    <div class="setting-description">Choose your preferred visual theme for the Browser Hub interface</div>
+                    <select class="setting-select" id="theme-select">
+                        <option value="dark">Dark Mode</option>
+                        <option value="light">Light Mode</option>
+                        <option value="auto">System Default</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Startup Behavior</label>
+                    <div class="setting-description">What should happen when Browser Hub starts</div>
+                    <select class="setting-select" id="startup-behavior">
+                        <option value="hub">Show Browser Hub</option>
+                        <option value="blank">Start with blank page</option>
+                        <option value="last">Restore last session</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="notifications-enabled" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <div>
+                            <label class="setting-label">Enable Notifications</label>
+                            <div class="setting-description">Show system notifications for important events</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Browser Settings -->
+            <div class="settings-section" id="browser">
+                <h2 class="section-title">Browser Settings</h2>
+                
+                <div class="setting-group">
+                    <label class="setting-label">Default Search Engine</label>
+                    <div class="setting-description">Search engine to use for address bar searches</div>
+                    <select class="setting-select" id="search-engine">
+                        <option value="google">Google</option>
+                        <option value="bing">Bing</option>
+                        <option value="duckduckgo">DuckDuckGo</option>
+                        <option value="yahoo">Yahoo</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Home Page URL</label>
+                    <div class="setting-description">URL to load when clicking the home button</div>
+                    <input type="url" class="setting-input" id="home-url" value="about:blank" placeholder="https://example.com">
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="popup-blocker" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <div>
+                            <label class="setting-label">Block Pop-ups</label>
+                            <div class="setting-description">Prevent websites from opening unwanted pop-up windows</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="dev-tools" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <div>
+                            <label class="setting-label">Enable Developer Tools</label>
+                            <div class="setting-description">Allow access to browser developer tools</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Automation Settings -->
+            <div class="settings-section" id="automation">
+                <h2 class="section-title">Browser Automation</h2>
+                
+                <div class="setting-group">
+                    <label class="setting-label">MCP Server Status</label>
+                    <div class="setting-description">
+                        <span class="status-indicator status-online"></span>
+                        Browser MCP server is running and ready for automation
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Automation Timeout (seconds)</label>
+                    <div class="setting-description">Maximum time to wait for automation actions to complete</div>
+                    <input type="number" class="setting-input" id="automation-timeout" value="30" min="1" max="300">
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="auto-screenshots" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <div>
+                            <label class="setting-label">Automatic Screenshots</label>
+                            <div class="setting-description">Take screenshots automatically during automation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="verbose-logging">
+                            <span class="slider"></span>
+                        </label>
+                        <div>
+                            <label class="setting-label">Verbose Logging</label>
+                            <div class="setting-description">Enable detailed logging for automation debugging</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Extensions Settings -->
+            <div class="settings-section" id="extensions">
+                <h2 class="section-title">Extensions Management</h2>
+                
+                <div class="setting-group">
+                    <div class="setting-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="extensions-enabled" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <div>
+                            <label class="setting-label">Enable Chrome Extensions</label>
+                            <div class="setting-description">Allow Chrome extensions to run in Browser Hub</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Extension Directory</label>
+                    <div class="setting-description">Location where extensions are stored</div>
+                    <input type="text" class="setting-input" id="extension-dir" value="/extensions" readonly>
+                </div>
+
+                <div class="setting-group">
+                    <button class="save-button" onclick="manageExtensions()">🧩 Manage Extensions</button>
+                </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="settings-section" id="security">
+                <h2 class="section-title">Security & Privacy</h2>
+                
+                <div class="setting-group">
+                    <div class="setting-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="https-only" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <div>
+                            <label class="setting-label">HTTPS-Only Mode</label>
+                            <div class="setting-description">Prefer secure connections when available</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="clear-on-exit">
+                            <span class="slider"></span>
+                        </label>
+                        <div>
+                            <label class="setting-label">Clear Data on Exit</label>
+                            <div class="setting-description">Clear browsing data when closing the application</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Cookie Policy</label>
+                    <div class="setting-description">How to handle website cookies</div>
+                    <select class="setting-select" id="cookie-policy">
+                        <option value="allow">Allow all cookies</option>
+                        <option value="block-third-party">Block third-party cookies</option>
+                        <option value="block-all">Block all cookies</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Advanced Settings -->
+            <div class="settings-section" id="advanced">
+                <h2 class="section-title">Advanced Settings</h2>
+                <div class="warning-text">⚠️ Warning: These settings are for advanced users only. Incorrect changes may affect stability.</div>
+                
+                <div class="advanced-section">
+                    <div class="setting-group">
+                        <label class="setting-label">Debug Port</label>
+                        <div class="setting-description">Port for Chrome DevTools debugging</div>
+                        <input type="number" class="setting-input" id="debug-port" value="9222" min="1024" max="65535">
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">User Agent Override</label>
+                        <div class="setting-description">Custom user agent string (leave blank for default)</div>
+                        <input type="text" class="setting-input" id="user-agent" placeholder="Mozilla/5.0 (compatible; Browser Hub)">
+                    </div>
+
+                    <div class="setting-group">
+                        <div class="setting-toggle">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="experimental-features">
+                                <span class="slider"></span>
+                            </label>
+                            <div>
+                                <label class="setting-label">Experimental Features</label>
+                                <div class="setting-description">Enable experimental browser features (may be unstable)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Settings -->
+            <div class="settings-section" id="about">
+                <h2 class="section-title">About Browser Hub</h2>
+                
+                <div class="setting-group">
+                    <label class="setting-label">Version Information</label>
+                    <div class="setting-description">
+                        <strong>TNF Browser Hub:</strong> v1.0.0<br>
+                        <strong>Electron:</strong> <span id="electron-version">Loading...</span><br>
+                        <strong>Chrome:</strong> <span id="chrome-version">Loading...</span><br>
+                        <strong>Node.js:</strong> <span id="node-version">Loading...</span>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">System Information</label>
+                    <div class="setting-description">
+                        <strong>Platform:</strong> <span id="platform">Loading...</span><br>
+                        <strong>Architecture:</strong> <span id="arch">Loading...</span><br>
+                        <strong>Memory Usage:</strong> <span id="memory-usage">Loading...</span>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <button class="save-button" onclick="checkForUpdates()">🔄 Check for Updates</button>
+                    <button class="save-button" onclick="exportSettings()">📤 Export Settings</button>
+                    <button class="save-button" onclick="resetSettings()">🔄 Reset to Defaults</button>
+                </div>
+            </div>
+
+            <button class="save-button" onclick="saveSettings()">💾 Save All Settings</button>
+        </div>
+    </div>
+
+    <script>
+        // Navigation handling
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Update active nav item
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                // Show corresponding section
+                document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(e.target.dataset.section).classList.add('active');
+            });
+        });
+
+        // Settings functions
+        function goBack() {
+            if (window.electronAPI && window.electronAPI.navigateToRoute) {
+                window.electronAPI.navigateToRoute('/');
+            } else {
+                window.history.back();
+            }
+        }
+
+        function saveSettings() {
+            // Collect all settings
+            const settings = {
+                theme: document.getElementById('theme-select').value,
+                startupBehavior: document.getElementById('startup-behavior').value,
+                notifications: document.getElementById('notifications-enabled').checked,
+                searchEngine: document.getElementById('search-engine').value,
+                homeUrl: document.getElementById('home-url').value,
+                popupBlocker: document.getElementById('popup-blocker').checked,
+                devTools: document.getElementById('dev-tools').checked,
+                automationTimeout: document.getElementById('automation-timeout').value,
+                autoScreenshots: document.getElementById('auto-screenshots').checked,
+                verboseLogging: document.getElementById('verbose-logging').checked,
+                extensionsEnabled: document.getElementById('extensions-enabled').checked,
+                httpsOnly: document.getElementById('https-only').checked,
+                clearOnExit: document.getElementById('clear-on-exit').checked,
+                cookiePolicy: document.getElementById('cookie-policy').value,
+                debugPort: document.getElementById('debug-port').value,
+                userAgent: document.getElementById('user-agent').value,
+                experimentalFeatures: document.getElementById('experimental-features').checked
+            };
+
+            // Save settings (in real implementation, this would save to file/database)
+            localStorage.setItem('browserHubSettings', JSON.stringify(settings));
+            
+            // Show confirmation
+            alert('Settings saved successfully!');
+        }
+
+        function loadSettings() {
+            try {
+                const saved = localStorage.getItem('browserHubSettings');
+                if (saved) {
+                    const settings = JSON.parse(saved);
+                    
+                    // Apply saved settings to UI
+                    Object.keys(settings).forEach(key => {
+                        const element = document.getElementById(key.replace(/([A-Z])/g, '-$1').toLowerCase());
+                        if (element) {
+                            if (element.type === 'checkbox') {
+                                element.checked = settings[key];
+                            } else {
+                                element.value = settings[key];
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+
+        function manageExtensions() {
+            if (window.electronAPI && window.electronAPI.navigateToRoute) {
+                window.electronAPI.navigateToRoute('/extensions');
+            } else {
+                alert('Extension management interface would open here.');
+            }
+        }
+
+        function checkForUpdates() {
+            alert('Checking for updates...\nYou are running the latest version!');
+        }
+
+        function exportSettings() {
+            const settings = localStorage.getItem('browserHubSettings');
+            const blob = new Blob([settings || '{}'], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'browser-hub-settings.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function resetSettings() {
+            if (confirm('Are you sure you want to reset all settings to defaults?')) {
+                localStorage.removeItem('browserHubSettings');
+                location.reload();
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+            
+            // Load version information if available
+            if (window.electronAPI) {
+                document.getElementById('electron-version').textContent = window.electronVersion || 'Unknown';
+                document.getElementById('chrome-version').textContent = window.chromeVersion || 'Unknown';
+                document.getElementById('node-version').textContent = window.nodeVersion || 'Unknown';
+            }
+            
+            // Load system information
+            document.getElementById('platform').textContent = navigator.platform;
+            document.getElementById('arch').textContent = navigator.hardwareConcurrency + ' cores';
+            
+            if (navigator.deviceMemory) {
+                document.getElementById('memory-usage').textContent = navigator.deviceMemory + ' GB';
+            } else {
+                document.getElementById('memory-usage').textContent = 'Unknown';
+            }
+        });
+    </script>
+</body>
+</html>

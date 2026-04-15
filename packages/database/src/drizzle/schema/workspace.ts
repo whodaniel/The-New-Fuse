@@ -57,39 +57,6 @@ export const workspaceMembers = pgTable(
   })
 );
 
-export const workspaceDomainStatusEnum = pgEnum('workspace_domain_status', [
-  'pending',
-  'verified',
-  'error',
-]);
-
-export const workspaceDomains = pgTable('workspace_domains', {
-  id: text('id').primaryKey(),
-  workspaceId: text('workspace_id')
-    .notNull()
-    .references(() => workspaces.id, { onDelete: 'cascade' }),
-  domain: varchar('domain', { length: 255 }).notNull(),
-  status: workspaceDomainStatusEnum('status').default('pending').notNull(),
-  verificationMessage: text('verification_message'),
-  createdByUserId: text('created_by_user_id').references(() => users.id, { onDelete: 'set null' }),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});
-
-export const workspaceBookmarks = pgTable('workspace_bookmarks', {
-  id: text('id').primaryKey(),
-  workspaceId: text('workspace_id')
-    .notNull()
-    .references(() => workspaces.id, { onDelete: 'cascade' }),
-  title: varchar('title', { length: 255 }).notNull(),
-  url: text('url').notNull(),
-  tags: jsonb('tags').$type<string[]>().default([]).notNull(),
-  note: text('note'),
-  createdByUserId: text('created_by_user_id').references(() => users.id, { onDelete: 'set null' }),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});
-
 // =============================================================================
 // PROJECT
 // =============================================================================
@@ -254,30 +221,6 @@ export const workspacesRelations = relations(workspaces, ({ one, many }) => ({
   }),
   projects: many(projects),
   members: many(workspaceMembers),
-  domains: many(workspaceDomains),
-  bookmarks: many(workspaceBookmarks),
-}));
-
-export const workspaceDomainsRelations = relations(workspaceDomains, ({ one }) => ({
-  workspace: one(workspaces, {
-    fields: [workspaceDomains.workspaceId],
-    references: [workspaces.id],
-  }),
-  createdBy: one(users, {
-    fields: [workspaceDomains.createdByUserId],
-    references: [users.id],
-  }),
-}));
-
-export const workspaceBookmarksRelations = relations(workspaceBookmarks, ({ one }) => ({
-  workspace: one(workspaces, {
-    fields: [workspaceBookmarks.workspaceId],
-    references: [workspaces.id],
-  }),
-  createdBy: one(users, {
-    fields: [workspaceBookmarks.createdByUserId],
-    references: [users.id],
-  }),
 }));
 
 export const workspaceMembersRelations = relations(workspaceMembers, ({ one }) => ({

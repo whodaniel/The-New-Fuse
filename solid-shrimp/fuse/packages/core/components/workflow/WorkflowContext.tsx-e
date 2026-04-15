@@ -1,0 +1,113 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import React, { createContext, useContext, useState, useCallback } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { WorkflowContextType, WorkflowData, Node, Edge } from '@the-new-fuse/types';
+
+const defaultWorkflow: WorkflowData = {
+  nodes: [],
+  edges: [],
+};
+
+const WorkflowContext = createContext<WorkflowContextType | undefined>(undefined);
+
+export const WorkflowProvider: (React as unknown).FC<{ children: (React as unknown).ReactNode }> = ({ children }) => {
+  const [workflow, setWorkflowState] = useState<WorkflowData>(defaultWorkflow);
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
+
+  const setWorkflow = useCallback((newWorkflow: WorkflowData) => {
+    setWorkflowState(newWorkflow);
+  }, []);
+
+  const addNode = useCallback((node: Node) => {
+    setWorkflowState((prev) ): JSX.Element => ({
+      ...prev,
+      nodes: [...(prev as unknown).nodes, node],
+    }));
+  }, []);
+
+  const updateNode = useCallback((nodeId: string, data: Partial<Node>) => {
+    setWorkflowState((prev) ): JSX.Element => ({
+      ...prev,
+      nodes: (prev as unknown).nodes.map((node) =>
+        (node as unknown).id === nodeId ? { ...node, ...data } : node
+      ),
+    }));
+  }, []);
+
+  const removeNode = useCallback((nodeId: string) => {
+    setWorkflowState((prev) ): JSX.Element => ({
+      edges: (prev as unknown).edges.filter(
+        (edge) ): JSX.Element => (edge as unknown).source !== nodeId && (edge as unknown).target !== nodeId
+      ),
+      nodes: (prev as unknown).nodes.filter((node) ): JSX.Element => (node as unknown).id !== nodeId),
+    }));
+  }, []);
+
+  const addEdge = useCallback((edge: Edge) => {
+    setWorkflowState((prev) ): JSX.Element => ({
+      ...prev,
+      edges: [...(prev as unknown).edges, edge],
+    }));
+  }, []);
+
+  const updateEdge = useCallback((edgeId: string, data: Partial<Edge>) => {
+    setWorkflowState((prev) ): JSX.Element => ({
+      ...prev,
+      edges: (prev as unknown).edges.map((edge) =>
+        (edge as unknown).id === edgeId ? { ...edge, ...data } : edge
+      ),
+    }));
+  }, []);
+
+  const removeEdge = useCallback((edgeId: string) => {
+    setWorkflowState((prev) ): JSX.Element => ({
+      ...prev,
+      edges: (prev as unknown).edges.filter((edge) ): JSX.Element => (edge as unknown).id !== edgeId),
+    }));
+  }, []);
+
+  const selectNode = useCallback((node: Node | null) => {
+    setSelectedNode(node);
+  }, []);
+
+  const selectEdge = useCallback((edge: Edge | null) => {
+    setSelectedEdge(edge);
+  }, []);
+
+  const value: WorkflowContextType = {
+    workflow,
+    selectedNode,
+    selectedEdge,
+    setWorkflow,
+    addNode,
+    updateNode,
+    removeNode,
+    addEdge,
+    updateEdge,
+    removeEdge,
+    selectNode,
+    selectEdge,
+  };
+
+  return (
+    <(WorkflowContext as unknown).Provider value={value}>
+      {children}
+    </(WorkflowContext as unknown).Provider>
+  );
+};
+
+export const useWorkflow = (): WorkflowContextType => {
+  const context = useContext(WorkflowContext);
+  if (context === undefined: unknown){
+    throw new Error('useWorkflow must be used within a WorkflowProvider');
+  }
+  return context;
+};

@@ -36,6 +36,7 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const promises_1 = require("node:fs/promises");
 const path = __importStar(require("node:path"));
+const redis_1 = require("redis");
 const tnf_envelope_1 = require("./protocol/tnf-envelope");
 const CONFIG = {
     REDIS_URL: process.env.REDIS_URL ||
@@ -588,38 +589,13 @@ class BrokerAgent {
                 body: JSON.stringify(payload),
             });
             const body = (await response.json().catch(() => null));
-            if (response.status >= 500) {
-                return {
-                    ok: true,
-                    reasons: [
-                        `external gate worker unavailable (HTTP ${response.status}); local fallback used`,
-                    ],
-                    fallbackUsed: true,
-                };
-            }
-            if (response.ok && body === null) {
-                return {
-                    ok: true,
-                    reasons: [
-                        `external gate worker returned invalid JSON (HTTP ${response.status}); local fallback used`,
-                    ],
-                    fallbackUsed: true,
-                };
-            }
             const reasons = Array.isArray(body?.reasons)
                 ? body.reasons.map((entry) => String(entry))
                 : [];
-            if (!response.ok && reasons.length === 0) {
-                reasons.push(`external gate returned HTTP ${response.status}`);
-            }
             return { ok: response.ok && body?.ok === true, reasons };
         }
         catch (error) {
-            return {
-                ok: true,
-                reasons: [`external gate check failed: ${error.message}; local fallback used`],
-                fallbackUsed: true,
-            };
+            return { ok: false, reasons: [`external gate check failed: ${error.message}`] };
         }
     }
     async evaluatePolicy(task, targetAgentId) {
@@ -664,10 +640,7 @@ class BrokerAgent {
                 console.warn(`[Broker] WARN ${task.id}: ${reason}`);
             }
             else {
-                await this.recordFederationGateTelemetry(task, 'external', gateMode, externalGate.reasons, contextSignal, externalGate.fallbackUsed ? 'warn' : undefined);
-                if (externalGate.fallbackUsed && externalGate.reasons.length > 0) {
-                    console.warn(`[Broker] WARN ${task.id}: ${externalGate.reasons.join('; ')}`);
-                }
+                await this.recordFederationGateTelemetry(task, 'external', gateMode, externalGate.reasons, contextSignal);
             }
         }
         if (!lane) {
@@ -916,10 +889,10 @@ class BrokerAgent {
             console.warn('[Broker] Failed to persist dispatch:', error.message);
         }
     }
-    async recordFederationGateTelemetry(task, stage, mode, reasons, contextSignal, outcomeOverride) {
+    async recordFederationGateTelemetry(task, stage, mode, reasons, contextSignal) {
         if (mode === 'off')
             return;
-        const outcome = outcomeOverride || (reasons.length === 0 ? 'allow' : mode === 'enforce' ? 'deny' : 'warn');
+        const outcome = reasons.length === 0 ? 'allow' : mode === 'enforce' ? 'deny' : 'warn';
         const tenantId = this.getScopeTenant(task) || 'unknown';
         const timestamp = new Date().toISOString();
         const keys = new Set([
@@ -993,16 +966,6 @@ class BrokerAgent {
             return 'missing_cumulative_tenant';
         if (normalized.includes('missing twid'))
             return 'missing_twid';
-        if (normalized.includes('external gate worker unavailable')) {
-            return 'external_worker_unavailable';
-        }
-        if (normalized.includes('external gate worker returned invalid json')) {
-            return 'external_worker_invalid_json';
-        }
-        if (normalized.includes('external gate check failed'))
-            return 'external_worker_request_failed';
-        if (normalized.includes('external gate returned http'))
-            return 'external_worker_http_error';
         if (normalized.includes('twip context signal unavailable'))
             return 'twip_context_unavailable';
         if (normalized.includes('twip context stale'))

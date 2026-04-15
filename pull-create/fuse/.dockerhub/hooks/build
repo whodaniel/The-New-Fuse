@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Docker Hub automated build hook for The New Fuse API
+# This script builds the API service with proper tagging
+
+set -e
+
+echo "=== Docker Hub Build Hook for The New Fuse API ==="
+echo "Building image: $IMAGE_NAME"
+echo "Source branch: $SOURCE_BRANCH"
+echo "Source commit: $SOURCE_COMMIT"
+echo "Docker tag: $DOCKER_TAG"
+
+# Build the API service
+docker build \
+  --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+  --build-arg VCS_REF=$SOURCE_COMMIT \
+  --build-arg VERSION=$DOCKER_TAG \
+  --file apps/api/Dockerfile.production \
+  --tag $IMAGE_NAME \
+  .
+
+echo "=== Build completed successfully ==="

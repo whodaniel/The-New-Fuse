@@ -1,0 +1,136 @@
+# Secure Cloud Sandbox - Railway Deployment
+# Optimized for The New Fuse monorepo with full security features
+
+ARG NODE_VERSION=22
+ARG PNPM_VERSION=10.22.0
+
+#------------------------------------------------------------------------------
+# Builder Stage
+#------------------------------------------------------------------------------
+FROM node:${NODE_VERSION}-alpine AS builder
+
+# Install build dependencies
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    git \
+    curl
+
+# Install pnpm
+RUN npm i -g pnpm@${PNPM_VERSION}
+
+WORKDIR /app
+
+# Copy workspace configuration
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY tsconfig.json tsconfig.base.json ./
+
+# Copy all package.json files for dependency resolution
+COPY apps/cloud-sandbox/package.json ./apps/cloud-sandbox/
+COPY packages/database/package.json ./packages/database/
+COPY packages/types/package.json ./packages/types/
+COPY packages/infrastructure/package.json ./packages/infrastructure/
+COPY packages/core/package.json ./packages/core/
+
+# Install all dependencies
+RUN pnpm install --frozen-lockfile || \
+    (echo "Lockfile compatibility issue, forcing install..." && pnpm install --force)
+
+# Copy source files
+COPY apps/cloud-sandbox ./apps/cloud-sandbox
+COPY packages/database ./packages/database
+COPY packages/types ./packages/types
+COPY packages/infrastructure ./packages/infrastructure
+COPY packages/core ./packages/core
+
+# Build dependencies in correct order
+RUN pnpm --filter @the-new-fuse/types build
+RUN pnpm --filter @the-new-fuse/infrastructure build || echo "Infrastructure build skipped"
+RUN pnpm --filter @the-new-fuse/database build || echo "Database build skipped"
+RUN pnpm --filter @the-new-fuse/core build || echo "Core build skipped"
+
+# Build cloud sandbox
+RUN pnpm --filter tnf-cloud-sandbox build
+
+# Verify build outputs
+RUN ls -la /app/apps/cloud-sandbox/dist || (echo "Build failed - no dist directory!" && exit 1)
+
+#------------------------------------------------------------------------------
+# Runtime Stage with Playwright
+#------------------------------------------------------------------------------
+FROM mcr.microsoft.com/playwright:v1.40.0-jammy AS runtime
+
+# Install Node.js, Python, and runtime tools
+RUN apt-get update && apt-get install -y \
+    curl \
+    python3 \
+    python3-pip \
+    netcat-openbsd \
+    ca-certificates \
+    tini \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g pnpm@10.22.0 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN groupadd --system --gid 1000 app-user && \
+    useradd --system --uid 1000 --gid app-user --create-home app-user
+
+# Create directories with proper permissions
+RUN mkdir -p \
+    /app \
+    /home/app-user/pw-browsers \
+    /home/app-user/workspace \
+    /tmp/cloud-sandbox \
+    /var/log/cloud-sandbox && \
+    chown -R app-user:app-user \
+    /app \
+    /home/app-user \
+    /tmp/cloud-sandbox \
+    /var/log/cloud-sandbox
+
+WORKDIR /app
+
+# Copy built files from builder
+COPY --from=builder --chown=app-user:app-user /app/node_modules ./node_modules
+COPY --from=builder --chown=app-user:app-user /app/packages ./packages
+COPY --from=builder --chown=app-user:app-user /app/apps/cloud-sandbox ./apps/cloud-sandbox
+COPY --from=builder --chown=app-user:app-user /app/package.json ./
+COPY --from=builder --chown=app-user:app-user /app/pnpm-workspace.yaml ./
+
+# Verify critical files exist
+RUN test -f /app/apps/cloud-sandbox/dist/server.js || \
+    (echo "ERROR: server.js not found!" && exit 1)
+
+# Copy startup script
+COPY --chown=app-user:app-user apps/cloud-sandbox/scripts/start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+# Switch to non-root user
+USER app-user
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV HOME=/home/app-user
+ENV PLAYWRIGHT_BROWSERS_PATH=/home/app-user/pw-browsers
+ENV PORT=8080
+ENV WS_PORT=8080
+
+# Working directory for execution
+WORKDIR /app/apps/cloud-sandbox
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
+
+# Expose ports
+EXPOSE 8080
+
+# Use tini as init process for proper signal handling
+ENTRYPOINT ["/usr/bin/tini", "--"]
+
+# Start server
+CMD ["/app/start.sh"]

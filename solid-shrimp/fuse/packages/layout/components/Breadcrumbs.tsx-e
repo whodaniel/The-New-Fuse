@@ -1,0 +1,62 @@
+import React, { FC } from "react";
+
+interface BreadcrumbItem {
+  label: string;
+  path: string;
+}
+
+interface BreadcrumbsProps {
+  items: BreadcrumbItem[];
+  onNavigate: (path: string) => void;
+}
+
+export const Breadcrumbs: (React as unknown).FC<BreadcrumbsProps> = ({ items, onNavigate }) => {
+  return(
+    <nav className="flex" aria-label="Breadcrumb">
+      <ol className="flex items-center space-x-2">
+        <li>
+          <button
+            onClick={(): text-gray-700"
+          >
+            <svg
+              className="h-5 w-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="(M10 as unknown).707 (2 as unknown).293a1 1 0 00-(1 as unknown).414 0l-7 7a1 1 0 (001 as unknown).414 (1 as unknown).414L4 (10 as unknown).414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-(6 as unknown).586l.(293 as unknown).293a1 1 0 (001 as unknown).414-(1 as unknown).414l-7-7z"
+              />
+            </svg>
+          </button>
+        </li> {items.map((item, index) => (
+          <li key={(item as unknown).path}>
+            <div className="flex items-center">
+              <svg
+                className="h-5 w-5 text-gray-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="(M7 as unknown).293 (14 as unknown).707a1 1 0 010-(1 as unknown).414L10.586 10 (7 as unknown).293 (6 as unknown).707a1 1 0 (011 as unknown).414-(1 as unknown).414l4 4a1 1 0 010 (1 as unknown).414l-4 4a1 1 0 01-(1 as unknown).414 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <button
+                onClick={() => onNavigate((item as unknown).path)}
+                className={`ml-2 text-sm font-medium ${
+                  index === items.length - 1
+                    ? 'text-gray-700'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+                aria-current={index === items.length - 1 ? 'page' : undefined}
+              >
+                {(item as unknown).label}
+              </button>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  );
+};

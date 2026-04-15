@@ -1,0 +1,295 @@
+{
+  "mcpServers": {
+    "tnf-enhanced-mcp-server": {
+      "command": "node",
+      "args": ["--import", "tsx", "./src/mcp/enhanced-tnf-mcp-server.ts"],
+      "env": {
+        "TNF_API_BASE_URL": "http://localhost:8080/v1",
+        "NODE_ENV": "development"
+      },
+      "description": "Enhanced The New Fuse MCP Server - combines existing functionality with direct API Gateway integration",
+      "managed_by": "enhanced-mcp-config-manager",
+      "priority": 11,
+      "tags": ["enhanced", "api", "platform", "unified", "core"],
+      "capabilities": [
+        "Legacy MCP tool compatibility",
+        "Direct API Gateway integration",
+        "Enhanced authentication management",
+        "Real-time platform monitoring",
+        "Advanced webhook management",
+        "Comprehensive system administration",
+        "Unified session management",
+        "Performance monitoring",
+        "Security enhancements"
+      ]
+    },
+    "tnf-complete-api-wrapper": {
+      "command": "node",
+      "args": ["--import", "tsx", "./src/mcp/complete-api-mcp-server.ts"],
+      "env": {
+        "TNF_API_BASE_URL": "http://localhost:8080/v1",
+        "NODE_ENV": "development"
+      },
+      "description": "Complete API wrapper for The New Fuse platform - provides 80+ MCP tools for full platform access",
+      "managed_by": "enhanced-mcp-config-manager",
+      "priority": 10,
+      "tags": ["api", "wrapper", "platform", "tools", "core"],
+      "capabilities": [
+        "Authentication management",
+        "Agent CRUD operations",
+        "Chat session management",
+        "Webhook configuration",
+        "MCP server management",
+        "Workflow execution",
+        "User management",
+        "Marketplace operations",
+        "Agency hub administration",
+        "System monitoring",
+        "Integration management"
+      ]
+    },
+    "tnf-mcp-config-manager": {
+      "command": "node",
+      "args": ["--import", "tsx", "./src/mcp/tnf-mcp-config-manager.ts"],
+      "env": {
+        "TNF_CORE_PATH": "./data",
+        "LOG_LEVEL": "info"
+      },
+      "description": "The New Fuse MCP Configuration Manager - Universal MCP config management for any client + TNF Agent Builder integration",
+      "managed_by": "tnf-core",
+      "priority": 9,
+      "tags": [
+        "tnf-core",
+        "configuration",
+        "universal",
+        "agent-builder",
+        "passthrough"
+      ],
+      "capabilities": [
+        "Universal MCP client configuration",
+        "TNF Agent Builder integration",
+        "Passthrough configuration generation",
+        "Multi-client support",
+        "TNF registry synchronization",
+        "Configuration validation",
+        "Health monitoring"
+      ]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "description": "Official Anthropic filesystem server - secure file operations with configurable access controls",
+      "priority": 8,
+      "tags": ["official", "filesystem", "storage", "core"]
+    },
+    "git": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-git",
+        "--repository",
+        "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+      ],
+      "description": "Official Anthropic Git server - tools to read, search, and manipulate Git repositories",
+      "priority": 8,
+      "tags": ["official", "git", "version-control", "development"]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "description": "Official Anthropic memory server - knowledge graph-based persistent memory system for context across sessions",
+      "priority": 7,
+      "tags": ["official", "memory", "knowledge-graph", "persistence"]
+    },
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "description": "Official Anthropic fetch server - web content fetching and conversion for efficient LLM usage",
+      "priority": 7,
+      "tags": ["official", "web", "fetch", "content"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+      },
+      "description": "Official Anthropic GitHub server - repository management, issues, PRs, and code search (requires GitHub PAT)",
+      "priority": 8,
+      "tags": ["official", "github", "development", "collaboration"]
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": ""
+      },
+      "description": "Official Anthropic Brave Search server - powerful web search and scraping (requires free Brave API key)",
+      "priority": 6,
+      "tags": ["official", "search", "web", "research"]
+    },
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://localhost:5433/tnf_dev"
+      ],
+      "description": "Official Anthropic Postgres server - database operations and schema management",
+      "priority": 7,
+      "tags": ["official", "database", "postgres", "storage"]
+    },
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "",
+        "SLACK_TEAM_ID": ""
+      },
+      "description": "Official Anthropic Slack server - channel access, thread summarization, and messaging (requires Slack bot token)",
+      "priority": 5,
+      "tags": ["official", "slack", "communication", "collaboration"]
+    },
+    "google-drive": {
+      "command": "npx",
+      "args": ["-y", "@piotr-agier/google-drive-mcp"],
+      "description": "Google Drive MCP server - secure integration with Drive, Docs, Sheets, and Slides (requires OAuth)",
+      "priority": 5,
+      "tags": ["google", "drive", "storage", "documents"]
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "description": "Official Anthropic Puppeteer server - browser automation for testing and web scraping",
+      "priority": 6,
+      "tags": ["official", "automation", "browser", "testing"]
+    },
+    "browsermcp": {
+      "command": "npx",
+      "args": ["-y", "@browsermcp/mcp@latest"],
+      "description": "BrowserMCP - advanced browser automation and web scraping with headless Chrome",
+      "priority": 6,
+      "tags": ["browser", "automation", "scraping", "testing"]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Official Anthropic sequential thinking server - dynamic problem-solving through thought sequences",
+      "priority": 5,
+      "tags": ["official", "reasoning", "problem-solving", "ai"]
+    },
+    "time": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-time"],
+      "description": "Official Anthropic time server - time and timezone conversion capabilities",
+      "priority": 4,
+      "tags": ["official", "time", "utility", "conversion"]
+    },
+    "stitch": {
+      "command": "pnpm",
+      "args": ["dlx", "@_davideast/stitch-mcp", "proxy"],
+      "env": {
+        "STITCH_API_KEY": "AQ.Ab8RN6Jy4emO-PLLzW889iOMCtl3ftCjRbN6p5upHEei3AQ5uA",
+        "STITCH_USE_SYSTEM_GCLOUD": "1"
+      },
+      "description": "Google Stitch MCP proxy - generate and retrieve Stitch UI screens for design-to-code workflows",
+      "priority": 6,
+      "tags": ["stitch", "design", "ui", "mcp", "google"]
+    },
+    "unified-config-server": {
+      "command": "npx",
+      "args": ["tsx", "./src/mcp/unified-config-server.ts", "--no-oauth"],
+      "env": {
+        "HTTP_PORT": "3773",
+        "LOG_LEVEL": "info",
+        "CONFIG_PATH": "./data/mcp_config.json"
+      },
+      "description": "TNF unified configuration server - centralized MCP config management",
+      "priority": 4,
+      "tags": ["tnf", "configuration", "management"]
+    },
+    "agent-communication": {
+      "command": "npx",
+      "args": ["tsx", "src/agent_with_mcp_example.ts"],
+      "description": "TNF agent communication example server - demonstrates MCP agent integration",
+      "priority": 3,
+      "tags": ["tnf", "agents", "example", "development"]
+    },
+    "applescript_execute": {
+      "command": "npx",
+      "args": ["-y", "@peakmojo/applescript-mcp"],
+      "description": "AppleScript MCP server - macOS automation and system control",
+      "priority": 4,
+      "tags": ["macos", "automation", "applescript", "system"]
+    },
+    "context7-server": {
+      "command": "node",
+      "args": [
+        "/path/to/Documents/Cline/MCP/context7-server/build/index.js"
+      ],
+      "description": "Context7 server - context management and agent routing",
+      "priority": 3,
+      "tags": ["context", "routing", "agents"]
+    },
+    "MCP_DOCKER": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-l",
+        "mcp.client=claude-desktop",
+        "--rm",
+        "-i",
+        "alpine/socat",
+        "STDIO",
+        "TCP:host.docker.internal:8811"
+      ],
+      "description": "Docker MCP relay - enables MCP communication through Docker containers",
+      "priority": 2,
+      "tags": ["docker", "relay", "infrastructure"]
+    }
+  },
+  "_readme": {
+    "description": "The New Fuse MCP Configuration - Optimized for Google Antigravity IDE",
+    "last_updated": "2025-01-07",
+    "note": "Servers are prioritized by importance. Fill in API keys/tokens for services you want to use.",
+    "required_api_keys": {
+      "GITHUB_PERSONAL_ACCESS_TOKEN": "Get from https://github.com/settings/tokens",
+      "BRAVE_API_KEY": "Get free API key from https://brave.com/search/api/",
+      "SLACK_BOT_TOKEN": "Get from https://api.slack.com/apps",
+      "SLACK_TEAM_ID": "Your Slack workspace ID",
+      "GOOGLE_DRIVE_CREDENTIALS": "OAuth setup required - see @piotr-agier/google-drive-mcp docs",
+      "STITCH_API_KEY": "From Stitch/Google Cloud setup (optional if using gcloud OAuth via stitch-mcp init)"
+    },
+    "official_servers": [
+      "filesystem",
+      "git",
+      "memory",
+      "fetch",
+      "github",
+      "brave-search",
+      "postgres",
+      "slack",
+      "puppeteer",
+      "sequential-thinking",
+      "time"
+    ],
+    "tnf_servers": [
+      "tnf-enhanced-mcp-server",
+      "tnf-complete-api-wrapper",
+      "tnf-mcp-config-manager",
+      "unified-config-server",
+      "agent-communication"
+    ],
+    "community_servers": [
+      "google-drive",
+      "browsermcp",
+      "stitch",
+      "applescript_execute",
+      "context7-server"
+    ]
+  }
+}

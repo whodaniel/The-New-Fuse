@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #log {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 250px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        .info {
+            color: blue;
+        }
+        button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #3367d6;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            position: relative;
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            width: 80%;
+            max-width: 600px;
+            animation: modalopen 0.4s;
+        }
+        
+        @keyframes modalopen {
+            from {opacity: 0; transform: translateY(-50px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close-modal:hover {
+            color: black;
+        }
+        
+        .modal-title {
+            margin-top: 0;
+            color: #4285f4;
+        }
+        
+        .modal-body {
+            margin: 15px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .ai-message {
+            white-space: pre-line;
+            font-family: 'Courier New', monospace;
+            padding: 10px;
+            border-left: 4px solid #4285f4;
+            background-color: #f8f9fa;
+            margin-bottom: 10px;
+        }
+        
+        .typing-indicator {
+            display: inline-block;
+        }
+        
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #4285f4;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: blink 1.4s infinite both;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 0.2; }
+            20% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+        
+        .code-input {
+            width: 100%;
+            height: 100px;
+            padding: 8px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Connection Test</h1>
+    <div>
+        <label for="wsUrl">WebSocket URL:</label>
+        <input type="text" id="wsUrl" value="ws://localhost:3712" style="width: 300px;">
+        <button id="connectBtn">Connect</button>
+        <button id="disconnectBtn" disabled>Disconnect</button>
+    </div>
+    <div style="margin-top: 10px;">
+        <button id="pingBtn" disabled>Send Ping</button>
+        <button id="authBtn" disabled>Send Auth</button>
+        <button id="codeBtn" disabled>Send Code</button>
+        <button id="showAiModal" disabled>Show AI Response</button>
+    </div>
+    <h2>Connection Log</h2>
+    <div id="log"></div>
+    
+    <!-- Code Input Modal -->
+    <div id="codeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeCodeModal">&times;</span>
+            <h3 class="modal-title">Send Code to AI</h3>
+            <textarea id="codeInput" class="code-input" placeholder="Enter code here..."></textarea>
+            <div style="margin-top: 15px; text-align: right;">
+                <button id="sendCodeBtn">Send Code</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AI Response Modal -->
+    <div id="aiResponseModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeAiModal">&times;</span>
+            <h3 class="modal-title">AI Response</h3>
+            <div id="aiTypingIndicator" class="typing-indicator" style="display: none;">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div id="aiResponseContainer" class="modal-body"></div>
+            <div style="margin-top: 15px; text-align: right;">
+                <button id="clearAiResponseBtn">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let ws = null;
+        const logElement = document.getElementById('log');
+        const wsUrlInput = document.getElementById('wsUrl');
+        const connectBtn = document.getElementById('connectBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const pingBtn = document.getElementById('pingBtn');
+        const authBtn = document.getElementById('authBtn');
+        const codeBtn = document.getElementById('codeBtn');
+        const showAiModalBtn = document.getElementById('showAiModal');
+        
+        // Modal elements
+        const codeModal = document.getElementById('codeModal');
+        const closeCodeModalBtn = document.getElementById('closeCodeModal');
+        const sendCodeBtn = document.getElementById('sendCodeBtn');
+        const codeInput = document.getElementById('codeInput');
+        
+        const aiResponseModal = document.getElementById('aiResponseModal');
+        const closeAiModalBtn = document.getElementById('closeAiModal');
+        const aiResponseContainer = document.getElementById('aiResponseContainer');
+        const aiTypingIndicator = document.getElementById('aiTypingIndicator');
+        const clearAiResponseBtn = document.getElementById('clearAiResponseBtn');
+        
+        // Store AI responses
+        let aiResponses = [];
+
+        function log(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = type;
+            entry.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+            logElement.appendChild(entry);
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        // Show modal function
+        function showModal(modal) {
+            modal.style.display = 'block';
+        }
+        
+        // Hide modal function
+        function hideModal(modal) {
+            modal.style.display = 'none';
+        }
+        
+        // Add AI response to modal
+        function addAiResponse(message) {
+            const responseDiv = document.createElement('div');
+            responseDiv.className = 'ai-message';
+            responseDiv.textContent = message;
+            aiResponseContainer.appendChild(responseDiv);
+            aiResponses.push(message);
+            
+            // Automatically show the modal when receiving a response
+            showModal(aiResponseModal);
+        }
+        
+        // Show typing indicator
+        function showTypingIndicator() {
+            aiTypingIndicator.style.display = 'inline-block';
+        }
+        
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            aiTypingIndicator.style.display = 'none';
+        }
+
+        connectBtn.addEventListener('click', () => {
+            const url = wsUrlInput.value.trim();
+            if (!url) {
+                log('Please enter a WebSocket URL', 'error');
+                return;
+            }
+
+            try {
+                log(`Connecting to ${url}...`);
+                ws = new WebSocket(url);
+                
+                ws.onopen = () => {
+                    log('Connection established', 'success');
+                    connectBtn.disabled = true;
+                    disconnectBtn.disabled = false;
+                    pingBtn.disabled = false;
+                    authBtn.disabled = false;
+                    codeBtn.disabled = false;
+                    showAiModalBtn.disabled = false;
+                };
+                
+                ws.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        log(`Received: ${JSON.stringify(data)}`, 'info');
+                        
+                        // Handle AI response messages
+                        if (data.type === 'AI_OUTPUT' && data.data && data.data.output) {
+                            addAiResponse(data.data.output);
+                        }
+                    } catch (error) {
+                        log(`Received raw message: ${event.data}`, 'info');
+                    }
+                };
+                
+                ws.onclose = (event) => {
+                    log(`Connection closed. Code: ${event.code}, Reason: ${event.reason || 'No reason provided'}`, 'error');
+                    connectBtn.disabled = false;
+                    disconnectBtn.disabled = true;
+                    pingBtn.disabled = true;
+                    authBtn.disabled = true;
+                    codeBtn.disabled = true;
+                    showAiModalBtn.disabled = true;
+                };
+                
+                ws.onerror = (error) => {
+                    log(`WebSocket error: ${error}`, 'error');
+                };
+            } catch (error) {
+                log(`Error creating WebSocket: ${error.message}`, 'error');
+            }
+        });
+
+        disconnectBtn.addEventListener('click', () => {
+            if (ws) {
+                ws.close();
+                log('Disconnecting...', 'info');
+            }
+        });
+
+        pingBtn.addEventListener('click', () => {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                const pingMessage = {
+                    type: 'PING',
+                    timestamp: Date.now()
+                };
+                ws.send(JSON.stringify(pingMessage));
+                log(`Sent: ${JSON.stringify(pingMessage)}`, 'info');
+            } else {
+                log('WebSocket is not connected', 'error');
+            }
+        });
+
+        authBtn.addEventListener('click', () => {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                const authMessage = {
+                    type: 'AUTH',
+                    token: 'test-token'
+                };
+                ws.send(JSON.stringify(authMessage));
+                log(`Sent: ${JSON.stringify(authMessage)}`, 'info');
+            } else {
+                log('WebSocket is not connected', 'error');
+            }
+        });
+        
+        // Code button opens the code modal
+        codeBtn.addEventListener('click', () => {
+            showModal(codeModal);
+        });
+        
+        // Show AI modal button
+        showAiModalBtn.addEventListener('click', () => {
+            showModal(aiResponseModal);
+        });
+        
+        // Close code modal
+        closeCodeModalBtn.addEventListener('click', () => {
+            hideModal(codeModal);
+        });
+        
+        // Close AI response modal
+        closeAiModalBtn.addEventListener('click', () => {
+            hideModal(aiResponseModal);
+        });
+        
+        // Send code button
+        sendCodeBtn.addEventListener('click', () => {
+            const code = codeInput.value.trim();
+            if (!code) {
+                log('Please enter some code', 'error');
+                return;
+            }
+            
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                const codeMessage = {
+                    type: 'CODE_INPUT',
+                    code: code
+                };
+                ws.send(JSON.stringify(codeMessage));
+                log(`Sent code message`, 'info');
+                hideModal(codeModal);
+                
+                // Show typing indicator when sending code
+                showTypingIndicator();
+                
+                // Simulate receiving a response after a delay (will be replaced by actual WebSocket response)
+                setTimeout(hideTypingIndicator, 2000);
+            } else {
+                log('WebSocket is not connected', 'error');
+            }
+        });
+        
+        // Clear AI responses
+        clearAiResponseBtn.addEventListener('click', () => {
+            aiResponseContainer.innerHTML = '';
+            aiResponses = [];
+        });
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', (event) => {
+            if (event.target === codeModal) {
+                hideModal(codeModal);
+            }
+            if (event.target === aiResponseModal) {
+                hideModal(aiResponseModal);
+            }
+        });
+    </script>
+</body>
+</html>

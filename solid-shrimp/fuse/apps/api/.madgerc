@@ -1,0 +1,10 @@
+{
+  "ts": {
+    "include": {
+      "declaration": false
+    }
+  },
+  "detectiveOptions": {
+    "mixedImports": false
+  }
+}

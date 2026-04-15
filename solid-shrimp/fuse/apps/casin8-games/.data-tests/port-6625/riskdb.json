@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 4,
+  "migrations": [
+    {
+      "version": 1,
+      "name": "init-risk-tables",
+      "at": "2026-02-28T22:34:33.159Z"
+    },
+    {
+      "version": 2,
+      "name": "add-funding-attempts",
+      "at": "2026-02-28T22:34:33.159Z"
+    },
+    {
+      "version": 3,
+      "name": "normalize-provider-fraud-signals",
+      "at": "2026-02-28T22:34:33.159Z"
+    },
+    {
+      "version": 4,
+      "name": "add-trait-control-plane-tables",
+      "at": "2026-02-28T22:34:33.159Z"
+    }
+  ],
+  "createdAt": "2026-02-28T22:34:33.159Z",
+  "updatedAt": "2026-02-28T22:34:33.944Z",
+  "tables": {
+    "compliance_profiles": [],
+    "payment_orders": [],
+    "webhook_events": [],
+    "velocity_events": [],
+    "risk_alerts": [],
+    "sponsorship_positions": [],
+    "funding_attempts": [],
+    "trait_rollouts": [
+      {
+        "rolloutId": "persist-rollout-1",
+        "createdAt": "2026-02-28T22:34:33.245Z",
+        "status": "canary",
+        "canaryPercent": 50,
+        "canaryAgents": ["a1"],
+        "allAgents": ["a1", "a2"],
+        "rollback": {
+          "maxLossBps": 500,
+          "maxVolatilityBps": 2200,
+          "maxFairnessAlerts": 3
+        },
+        "telemetry": []
+      }
+    ],
+    "trait_observations": [],
+    "trait_recommendations": [],
+    "trait_policy_events": [
+      {
+        "id": "7cbbc8af-7a52-4e96-9508-b989176bcb15",
+        "ts": "2026-02-28T22:34:33.256Z",
+        "type": "artifact.revoked",
+        "artifactId": "persist-artifact-1"
+      },
+      {
+        "id": "e96d77c4-6ad7-4610-8465-24a106a3d3d7",
+        "ts": "2026-02-28T22:34:33.251Z",
+        "type": "policy.freeze"
+      },
+      {
+        "id": "77316886-a2c7-4a23-b465-0febc554d0b7",
+        "ts": "2026-02-28T22:34:33.247Z",
+        "type": "rollout.created",
+        "rolloutId": "persist-rollout-1",
+        "canaryPercent": 50,
+        "canarySize": 1
+      }
+    ]
+  }
+}

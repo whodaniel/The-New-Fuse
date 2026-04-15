@@ -1,0 +1,16 @@
+{
+  "default": {
+    "enabled": true,
+    "liabilityCapUnits": "1000000000000",
+    "pendingWithdrawalCapUnits": "250000000000",
+    "maxPayoutPerSettlementUnits": "10000000000",
+    "maxWithdrawalPerRequestUnits": "5000000000",
+    "maxUtilizationBps": 9000,
+    "autoTripMs": 300000,
+    "manualTrip": false,
+    "tripReason": "",
+    "trippedAtMs": 0,
+    "trippedUntilMs": 0,
+    "updatedAt": "2026-02-28T22:39:07.716Z"
+  }
+}

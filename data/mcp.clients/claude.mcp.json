@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/mcp-config.json",
   "generatedBy": "scripts/tnf-generate-mcp-clients.cjs",
-  "generatedAt": "2026-04-11T18:24:33.711Z",
+  "generatedAt": "2026-03-16T20:35:42.782Z",
   "source": "data/mcp_config.json",
   "client": "claude",
   "mcpServers": {
@@ -75,9 +75,7 @@
     },
     "tnf-mcp-config-manager": {
       "command": "node",
-      "args": [
-        "./scripts/mcp-config-manager-server.cjs"
-      ],
+      "args": ["./scripts/mcp-config-manager-server.cjs"],
       "env": {
         "TNF_CORE_PATH": "./data",
         "LOG_LEVEL": "info"
@@ -356,6 +354,17 @@
         "mcp",
         "google"
       ]
+    },
+    "stitch": {
+      "command": "pnpm",
+      "args": ["dlx", "@_davideast/stitch-mcp", "proxy"],
+      "env": {
+        "STITCH_API_KEY": "AQ.Ab8RN6Jy4emO-PLLzW889iOMCtl3ftCjRbN6p5upHEei3AQ5uA",
+        "STITCH_USE_SYSTEM_GCLOUD": "1"
+      },
+      "description": "Google Stitch MCP proxy - generate and retrieve Stitch UI screens for design-to-code workflows",
+      "priority": 6,
+      "tags": ["stitch", "design", "ui", "mcp", "google"]
     },
     "unified-config-server": {
       "command": "npx",

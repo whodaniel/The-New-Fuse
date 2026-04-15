@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider.js';
-import { PgVectorDriver } from './drivers/pgvector.driver.js';
-import { QdrantDriver } from './drivers/qdrant.driver.js';
+import { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider';
+import { PgVectorDriver } from './drivers/pgvector.driver';
+import { QdrantDriver } from './drivers/qdrant.driver';
 import type {
   CollectionConfig,
   EmbeddingConfig,
@@ -11,7 +11,7 @@ import type {
   VectorDocument,
   VectorQuery,
   VectorSearchResult,
-} from './interface/vector-database.interface.js';
+} from './interface/vector-database.interface';
 
 @Injectable()
 export class VectorDatabaseService implements OnModuleInit {

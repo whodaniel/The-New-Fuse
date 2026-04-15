@@ -1,0 +1,266 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [
+    "**/.env.*local",
+    ".env",
+    ".env.local",
+    ".env.test",
+    "jest.config.*",
+    "vitest.config.*",
+    "playwright.config.*",
+    "cypress.config.*"
+  ],
+  "globalEnv": [
+    "NODE_ENV",
+    "CI",
+    "TEST_ENV",
+    "DATABASE_URL",
+    "REDIS_URL",
+    "JWT_SECRET",
+    "API_PORT", 
+    "FRONTEND_PORT",
+    "API_URL",       
+    "BACKEND_URL"
+  ],
+  "remoteCache": {
+    "signature": true
+  },
+  "concurrency": "50%",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build", "^db:generate"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "*.config.{ts,js,mjs}",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**",
+        "lib/**",
+        "build/**",
+        "out/**",
+        "types/**",
+        "esm/**",
+        "cjs/**",
+        "*.tsbuildinfo"
+      ],
+      "env": ["NODE_ENV", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY", "BUILD_STRATEGY"],
+      "passThroughEnv": ["NODE_ENV", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY", "BUILD_STRATEGY"],
+      "cache": true
+    },
+    "db:generate": {
+      "inputs": [
+        "drizzle/schema.drizzle",
+        "drizzle.config.*",
+        "src/db/schema/**/*.{ts,js}",
+        "migrations/**/*.sql"
+      ],
+      "outputs": [
+        "src/generated/**",
+        "drizzle/generated/**",
+        "drizzle/**"
+      ],
+      "cache": true
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "test/**/*.{js,ts,jsx,tsx}",
+        "tests/**/*.{js,ts,jsx,tsx}",
+        "__tests__/**/*.{js,ts,jsx,tsx}",
+        "*.config.{js,ts}",
+        "package.json"
+      ],
+      "outputs": [
+        "coverage/**",
+        "test-results/**",
+        ".nyc_output/**"
+      ],
+      "env": ["NODE_ENV", "CI"],
+      "cache": true
+    },
+    "test:unit": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "test/**/*.{js,ts,jsx,tsx}",
+        "tests/**/*.{js,ts,jsx,tsx}",
+        "__tests__/**/*.{js,ts,jsx,tsx}",
+        "*.config.{js,ts}",
+        "package.json"
+      ],
+      "outputs": [
+        "coverage/**",
+        "test-results/**"
+      ],
+      "env": ["NODE_ENV"],
+      "cache": true
+    },
+    "test:integration": {
+      "dependsOn": ["^build", "test:unit"],
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "test/**/*.{js,ts,jsx,tsx}",
+        "tests/**/*.{js,ts,jsx,tsx}",
+        "__tests__/**/*.{js,ts,jsx,tsx}",
+        "*.config.{js,ts}",
+        "package.json"
+      ],
+      "outputs": [
+        "coverage/**",
+        "test-results/**"
+      ],
+      "env": ["NODE_ENV", "DATABASE_URL", "REDIS_URL"],
+      "cache": true
+    },
+    "test:e2e": {
+      "dependsOn": ["^build", "test:integration"],
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "e2e/**/*.{js,ts,jsx,tsx}",
+        "tests/e2e/**/*.{js,ts,jsx,tsx}",
+        "playwright.config.*",
+        "cypress.config.*",
+        "package.json"
+      ],
+      "outputs": [
+        "test-results/**",
+        "playwright-report/**",
+        "cypress/videos/**",
+        "cypress/screenshots/**"
+      ],
+      "env": ["NODE_ENV", "BASE_URL", "DATABASE_URL"],
+      "cache": false
+    },
+    "test:watch": {
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "test/**/*.{js,ts,jsx,tsx}",
+        "tests/**/*.{js,ts,jsx,tsx}",
+        "__tests__/**/*.{js,ts,jsx,tsx}",
+        "*.config.{js,ts}",
+        "package.json"
+      ],
+      "cache": false,
+      "persistent": true
+    },
+    "test:coverage": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "test/**/*.{js,ts,jsx,tsx}",
+        "tests/**/*.{js,ts,jsx,tsx}",
+        "__tests__/**/*.{js,ts,jsx,tsx}",
+        "*.config.{js,ts}",
+        "package.json"
+      ],
+      "outputs": [
+        "coverage/**",
+        "test-results/**"
+      ],
+      "env": ["NODE_ENV", "CI"],
+      "cache": true
+    },
+    "test:ci": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "test/**/*.{js,ts,jsx,tsx}",
+        "tests/**/*.{js,ts,jsx,tsx}",
+        "__tests__/**/*.{js,ts,jsx,tsx}",
+        "*.config.{js,ts}",
+        "package.json"
+      ],
+      "outputs": [
+        "coverage/**",
+        "test-results/**",
+        ".nyc_output/**"
+      ],
+      "env": ["NODE_ENV", "CI", "DATABASE_URL", "REDIS_URL"],
+      "cache": true
+    },
+    "test:memory-optimized": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "test/**/*.{js,ts,jsx,tsx}",
+        "tests/**/*.{js,ts,jsx,tsx}",
+        "__tests__/**/*.{js,ts,jsx,tsx}",
+        "*.config.{js,ts}",
+        "package.json"
+      ],
+      "outputs": [
+        "coverage/**",
+        "test-results/**"
+      ],
+      "env": ["NODE_ENV"],
+      "cache": true
+    },
+    "test:fast": {
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "test/**/*.{js,ts,jsx,tsx}",
+        "tests/**/*.{js,ts,jsx,tsx}",
+        "__tests__/**/*.{js,ts,jsx,tsx}",
+        "*.config.{js,ts}",
+        "package.json"
+      ],
+      "outputs": [
+        "test-results/**"
+      ],
+      "env": ["NODE_ENV"],
+      "cache": true
+    },
+    "test:changed": {
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "test/**/*.{js,ts,jsx,tsx}",
+        "tests/**/*.{js,ts,jsx,tsx}",
+        "__tests__/**/*.{js,ts,jsx,tsx}",
+        "*.config.{js,ts}",
+        "package.json"
+      ],
+      "outputs": [
+        "test-results/**"
+      ],
+      "env": ["NODE_ENV"],
+      "cache": false
+    },
+    "test:affected": {
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "test/**/*.{js,ts,jsx,tsx}",
+        "tests/**/*.{js,ts,jsx,tsx}",
+        "__tests__/**/*.{js,ts,jsx,tsx}",
+        "*.config.{js,ts}",
+        "package.json"
+      ],
+      "outputs": [
+        "test-results/**"
+      ],
+      "env": ["NODE_ENV"],
+      "cache": false
+    },
+    "test:debug": {
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "test/**/*.{js,ts,jsx,tsx}",
+        "tests/**/*.{js,ts,jsx,tsx}",
+        "__tests__/**/*.{js,ts,jsx,tsx}",
+        "*.config.{js,ts}",
+        "package.json"
+      ],
+      "outputs": [
+        "test-results/**"
+      ],
+      "env": ["NODE_ENV", "DEBUG"],
+      "cache": false
+    }
+  }
+}

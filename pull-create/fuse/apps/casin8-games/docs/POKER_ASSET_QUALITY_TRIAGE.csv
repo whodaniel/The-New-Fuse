@@ -1,0 +1,59 @@
+priority,filename,bytes,kb,groupName,expected
+1,pkr_mobile_bottom_action_sheet_v01.png,8412,8.2,Mobile-First Specific Assets,1600x900
+2,pkr_blind_level_timeline_v01.png,9049,8.8,Tournament-Specific Graphics,1600x900
+3,pkr_panel_ledger_row_set_v01.png,9270,9.1,HUD Panels and Utility Components,1600x900
+4,pkr_mobile_tabbar_pokerroom_v01.png,9285,9.1,Mobile-First Specific Assets,1600x900
+5,pkr_panel_network_health_set_v01.png,9345,9.1,HUD Panels and Utility Components,1600x900
+6,pkr_panel_sponsor_market_card_v01.png,9362,9.1,HUD Panels and Utility Components,1600x900
+7,pkr_mobile_table_header_compact_v01.png,9435,9.2,Mobile-First Specific Assets,1600x900
+8,pkr_mobile_hud_drawer_handle_v01.png,23018,22.5,Mobile-First Specific Assets,2048x2048
+9,pkr_state_duplicate_action_guard_v01.png,23038,22.5,"Trust, Error, and Resilience States",2048x2048
+10,pkr_state_settlement_pending_overlay_v01.png,23150,22.6,"Trust, Error, and Resilience States",2048x2048
+11,pkr_btn_fold_set_v01.png,335981,328.1,Action Controls,2048x2048
+12,pkr_btn_checkcall_set_v01.png,647322,632.2,Action Controls,2048x2048
+13,pkr_quickbet_chip_row_v01.png,753181,735.5,Action Controls,2048x2048
+14,pkr_slider_raise_track_set_v01.png,831740,812.2,Action Controls,2048x2048
+15,pkr_panel_tx_lifecycle_idle_v01.png,1061847,1037.0,HUD Panels and Utility Components,1600x900
+16,pkr_state_reconnecting_banner_v01.png,1118495,1092.3,"Trust, Error, and Resilience States",1600x900
+17,pkr_btn_raise_primary_set_v01.png,1294787,1264.4,Action Controls,2048x2048
+18,pkr_panel_fairness_idle_v01.png,1431504,1398.0,HUD Panels and Utility Components,1600x900
+19,pkr_payout_ladder_panel_v01.png,1778968,1737.3,Tournament-Specific Graphics,1600x900
+20,pkr_final_table_banner_v01.png,2046495,1998.5,Tournament-Specific Graphics,1600x900
+21,pkr_elimination_burst_fx_v01.png,2118938,2069.3,Tournament-Specific Graphics,2048x2048
+22,pkr_state_chain_mismatch_card_v01.png,2283966,2230.4,"Trust, Error, and Resilience States",2048x2048
+23,pkr_panel_chat_feed_bg_v01.png,2344128,2289.2,HUD Panels and Utility Components,2560x1440
+24,pkr_state_insufficient_funds_card_v01.png,3691923,3605.4,"Trust, Error, and Resilience States",2048x2048
+25,pkr_tourney_lobby_hero_bg_v01.png,3821422,3731.9,Tournament-Specific Graphics,2560x1440
+26,pkr_chip_denom_5_idle_v01.png,3836345,3746.4,"Chips, Pot, and Markers",2048x2048
+27,pkr_card_shadow_soft_idle_v01.png,3961496,3868.6,Cards and Card Motion Props,2048x2048
+28,pkr_badge_agent_tier_a_v01.png,4304028,4203.2,"Seats, Avatars, Agent Identity",2048x2048
+29,pkr_shell_bg_main_mobile_idle_v01.png,4478749,4373.8,Brand + Shell,1290x2796
+30,pkr_chip_denom_500_idle_v01.png,4506737,4401.1,"Chips, Pot, and Markers",2048x2048
+31,pkr_chip_stack_small_idle_v01.png,4546905,4440.3,"Chips, Pot, and Markers",2048x2048
+32,pkr_marker_allin_badge_set_v01.png,4632364,4523.8,"Chips, Pot, and Markers",2048x2048
+33,pkr_badge_sponsored_player_v01.png,4664749,4555.4,"Seats, Avatars, Agent Identity",2048x2048
+34,pkr_chip_denom_25_idle_v01.png,4679009,4569.3,"Chips, Pot, and Markers",2048x2048
+35,pkr_badge_agent_tier_c_v01.png,4685235,4575.4,"Seats, Avatars, Agent Identity",2048x2048
+36,pkr_avatar_frame_human_idle_v01.png,4738323,4627.3,"Seats, Avatars, Agent Identity",2048x2048
+37,pkr_seat_ring_active_turn_v01.png,4781619,4669.5,"Seats, Avatars, Agent Identity",2048x2048
+38,pkr_marker_dealer_button_idle_v01.png,4856100,4742.3,"Chips, Pot, and Markers",2048x2048
+39,pkr_card_flip_frame_01_v01.png,4980706,4864.0,Cards and Card Motion Props,2048x2048
+40,pkr_chip_denom_100_idle_v01.png,5010956,4893.5,"Chips, Pot, and Markers",2048x2048
+41,pkr_card_glow_win_fx_v01.png,5154150,5033.3,Cards and Card Motion Props,2048x2048
+42,pkr_table_felt_6max_topdown_idle_v01.png,5160571,5039.6,Poker Table and Environment,2048x2048
+43,pkr_shell_bg_main_desktop_idle_v01.png,5257324,5134.1,Brand + Shell,2560x1440
+44,pkr_brand_wordmark_light_v01.png,5290323,5166.3,Brand + Shell,2048x2048
+45,pkr_brand_logo_mark_idle_v01.png,5399172,5272.6,Brand + Shell,2048x2048
+46,pkr_stage_cinematic_table_scene_v01.png,5449707,5322.0,Poker Table and Environment,2560x1440
+47,pkr_card_flip_frame_03_v01.png,5459371,5331.4,Cards and Card Motion Props,2048x2048
+48,pkr_table_rail_material_closeup_v01.png,5493594,5364.8,Poker Table and Environment,2048x2048
+49,pkr_badge_agent_tier_b_v01.png,5552331,5422.2,"Seats, Avatars, Agent Identity",2048x2048
+50,pkr_chip_denom_1_idle_v01.png,5793649,5657.9,"Chips, Pot, and Markers",2048x2048
+51,pkr_chip_stack_large_idle_v01.png,5803884,5667.9,"Chips, Pot, and Markers",2048x2048
+52,pkr_marker_sb_bb_set_idle_v01.png,5974630,5834.6,"Chips, Pot, and Markers",2048x2048
+53,pkr_card_back_primary_idle_v01.png,6261543,6114.8,Cards and Card Motion Props,2048x2048
+54,pkr_card_flip_frame_02_v01.png,6317554,6169.5,Cards and Card Motion Props,2048x2048
+55,pkr_avatar_frame_agent_idle_v01.png,6402974,6252.9,"Seats, Avatars, Agent Identity",2048x2048
+56,pkr_seat_ring_idle_v01.png,6467723,6316.1,"Seats, Avatars, Agent Identity",2048x2048
+57,pkr_card_back_alt_royal_idle_v01.png,6703739,6546.6,Cards and Card Motion Props,2048x2048
+58,pkr_table_felt_9max_topdown_idle_v01.png,7154771,6987.1,Poker Table and Environment,2048x2048

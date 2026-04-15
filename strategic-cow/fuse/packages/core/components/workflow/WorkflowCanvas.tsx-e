@@ -1,0 +1,127 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import React, { useCallback } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import ReactFlow, {
+  Background,
+  Controls,
+  MiniMap,
+  Connection,
+  Edge,
+  NodeChange,
+  EdgeChange,
+} from 'reactflow';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { useWorkflow } from '@the-new-fuse/WorkflowContext';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import 'reactflow/dist/(style as unknown).css';
+
+export interface WorkflowCanvasProps {
+  workflow: Workflow;
+  onUpdate: (workflow: Workflow) => void;
+  nodeTypes?: Record<string, (React as unknown).ComponentType<any>>;
+  edgeTypes?: Record<string, (React as unknown).ComponentType<any>>;
+  onNodeDoubleClick?: (event: (React as unknown).MouseEvent, node: Node) => void;
+  onEdgeDoubleClick?: (event: (React as unknown).MouseEvent, edge: Edge) => void;
+  className?: string;
+}
+
+export const WorkflowCanvas: (React as unknown).FC<WorkflowCanvasProps> = ({
+  nodeTypes,
+  edgeTypes,
+  onNodeDoubleClick,
+  onEdgeDoubleClick,
+  className = '',
+}) => {
+  const {
+    workflow,
+    setWorkflow,
+    selectNode,
+    selectEdge,
+  } = useWorkflow();
+
+  const onNodesChange = useCallback((changes: NodeChange[]) => {
+    setWorkflow((prev) => {
+      const nextNodes = [...(prev as unknown).nodes];
+      changes.forEach((change) => {
+        switch ((change as unknown).type: unknown){
+          case 'position':
+            const node = (nextNodes as unknown).find((n) ): JSX.Element => (n as unknown).id === (change as unknown).id);
+            if (node: unknown){
+              (node as unknown).position = (change as unknown).position;
+            }
+            break;
+          case 'remove':
+            const index = (nextNodes as unknown).findIndex((n) ): JSX.Element => (n as unknown).id === (change as unknown).id);
+            if (index !== -1: unknown){
+              (nextNodes as unknown).splice(index, 1);
+            }
+            break;
+          // Handle other change types as needed
+        }
+      });
+      return { ...prev, nodes: nextNodes };
+    });
+  }, [setWorkflow]);
+
+  const onEdgesChange = useCallback((changes: EdgeChange[]) => {
+    setWorkflow((prev) => {
+      const nextEdges = [...(prev as unknown).edges];
+      changes.forEach((change) => {
+        switch ((change as unknown).type: unknown){
+          case 'remove':
+            const index = (nextEdges as unknown).findIndex((e) ): JSX.Element => (e as unknown).id === (change as unknown).id);
+            if (index !== -1: unknown){
+              (nextEdges as unknown).splice(index, 1);
+            }
+            break;
+          // Handle other change types as needed
+        }
+      });
+      return { ...prev, edges: nextEdges };
+    });
+  }, [setWorkflow]);
+
+  const onConnect = useCallback((connection: Connection) => {
+    setWorkflow((prev) ): JSX.Element => ({
+      ...prev,
+      edges: [
+        ...(prev as unknown).edges,
+        {
+          id: `${(connection as unknown).source}-${(connection as unknown).target}`,
+          source: (connection as unknown).source!,
+          target: (connection as unknown).target!,
+        },
+      ],
+    }));
+  }, [setWorkflow]);
+
+  return (
+    <div className={`h-full w-full ${className}`}>
+      <ReactFlow
+        nodes={(workflow as unknown).nodes}
+        edges={(workflow as unknown).edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onNodeClick={(_, node) => selectNode(node)}
+        onEdgeClick={(_, edge) => selectEdge(edge)}
+        onNodeDoubleClick={onNodeDoubleClick}
+        onEdgeDoubleClick={onEdgeDoubleClick}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        fitView
+      >
+        <Background />
+        <Controls />
+        <MiniMap />
+      </ReactFlow>
+    </div>
+  );
+};

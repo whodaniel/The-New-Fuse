@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Casin8 - System Sync &amp; Recovery</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#7f13ec",
+                        "primary-content": "#ffffff",
+                        "primary-dark": "#5e0eb0",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                        "surface-dark": "#2d1b3d",
+                        "surface-darker": "#231530",
+                        "text-main": "#ffffff",
+                        "text-muted": "#ad92c9",
+                        "success": "#0bda73",
+                        "error": "#ef4444",
+                        "warning": "#f59e0b",
+                    },
+                    fontFamily: {
+                        display: ["Space Grotesk", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px",
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hide for cleaner look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col antialiased selection:bg-primary selection:text-white">
+<!-- Top Header -->
+<div class="sticky top-0 z-30 flex items-center bg-background-dark/90 backdrop-blur-md p-4 pb-2 justify-between border-b border-white/5">
+<button class="text-white flex size-12 shrink-0 items-center justify-center rounded-full hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-[24px]">menu</span>
+</button>
+<h2 class="text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center">Casin8 Slots</h2>
+<button class="flex items-center gap-2 justify-end bg-surface-dark px-3 py-1.5 rounded-full border border-primary/20">
+<span class="material-symbols-outlined text-primary text-[18px]">account_balance_wallet</span>
+<p class="text-white text-sm font-bold leading-normal tracking-[0.015em] shrink-0">$12,450</p>
+</button>
+</div>
+<!-- Main Content Area -->
+<main class="flex-1 relative w-full flex flex-col overflow-hidden">
+<!-- Status Banner -->
+<div class="bg-warning/10 border-b border-warning/20 px-4 py-3 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-warning text-[20px] animate-pulse">wifi_off</span>
+<p class="text-warning text-sm font-bold">Unstable Connection - Syncing with Chain</p>
+</div>
+<!-- Network Stats Graph Section -->
+<div class="flex flex-col gap-4 px-4 py-6 bg-surface-darker/50">
+<div class="flex justify-between items-end">
+<div class="flex flex-col">
+<p class="text-text-muted text-sm font-medium">Network Latency</p>
+<div class="flex items-baseline gap-2">
+<p class="text-white text-3xl font-bold leading-tight">350ms</p>
+<span class="text-error text-xs font-bold bg-error/10 px-1.5 py-0.5 rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">arrow_upward</span> 120%
+                        </span>
+</div>
+</div>
+<div class="flex gap-2">
+<span class="size-2 rounded-full bg-success animate-ping"></span>
+<p class="text-text-muted text-xs">Live Node</p>
+</div>
+</div>
+<!-- Simplified Graph SVG -->
+<div class="w-full h-32 relative overflow-hidden rounded-xl border border-white/5 bg-background-dark">
+<svg class="absolute inset-0 w-full h-full" fill="none" preserveaspectratio="none" viewbox="0 0 478 150" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 109C18.15 109 18.15 80 36.3 80C54.46 80 54.46 100 72.6 100C90.77 100 90.77 120 108.9 120C127.08 120 127.08 60 145.2 60C163.38 60 163.38 101 181.5 101C199.7 101 199.7 61 217.8 61C236 61 236 45 254.1 45C272.3 45 272.3 121 290.4 121C308.6 121 308.6 149 326.7 149C344.9 149 344.9 10 363 10C381.2 10 381.2 81 399.3 81C417.5 81 417.5 129 435.6 129C453.8 129 453.8 25 472 25V150H0V109Z" fill="url(#paint0_linear)" fill-opacity="0.3"></path>
+<path d="M0 109C18.15 109 18.15 80 36.3 80C54.46 80 54.46 100 72.6 100C90.77 100 90.77 120 108.9 120C127.08 120 127.08 60 145.2 60C163.38 60 163.38 101 181.5 101C199.7 101 199.7 61 217.8 61C236 61 236 45 254.1 45C272.3 45 272.3 121 290.4 121C308.6 121 308.6 149 326.7 149C344.9 149 344.9 10 363 10C381.2 10 381.2 81 399.3 81C417.5 81 417.5 129 435.6 129C453.8 129 453.8 25 472 25" stroke="#ad92c9" stroke-linecap="round" stroke-width="2"></path>
+<defs>
+<lineargradient gradientunits="userSpaceOnUse" id="paint0_linear" x1="236" x2="236" y1="10" y2="150">
+<stop stop-color="#7f13ec"></stop>
+<stop offset="1" stop-color="#7f13ec" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+</svg>
+</div>
+</div>
+<!-- Game Grid (Background Context) -->
+<div class="grid grid-cols-2 gap-4 p-4 opacity-50 pointer-events-none filter grayscale-[50%]">
+<div class="relative aspect-[3/2] rounded-xl overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+<div class="w-full h-full bg-cover bg-center" data-alt="cyberpunk neon slot machine interface" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuChEahyJ0l_4xkPLrAllCo9_yhQfamtWsARBk4FQQRAVsKnmskTjJkO9LWtMV9UibhtVfK7H-JzanvA8QqeZPoJ7V4DzbwMEqnTwHXt5sLdDpJC_sF-lOtO041pxpFsHgINnB0MhXFDr44eG9PrGOR33Iv0W98AKThFGNNCOsjdW7qQvjAsLe19hn7M1nRGmCeJ235gAK7JPw16QVrF9fCpJ8TBEUT0G040NBGqXoKAzRUkxwo9SbtixUlGAsZT3fwq4NFnGIvhM7g');"></div>
+<div class="absolute bottom-3 left-3 z-20">
+<p class="text-white text-sm font-bold">Neon Nights</p>
+<p class="text-text-muted text-xs">JP: 4500x</p>
+</div>
+</div>
+<div class="relative aspect-[3/2] rounded-xl overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+<div class="w-full h-full bg-cover bg-center" data-alt="golden ancient coins slot game" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuArcfPwkp9Qy8OTStwcsLF_FQTvcnhjo6btzVjf1n6Q_A58F3AnQF4bIZhYhLlCHmar7-nCocDrc_XuztmVoOZy8LAH0Rj8TzMjMN62BJ3KIwVN534YkFVuW3qhYHD_QKG2Kat1JySqWB1OMlUYsmIBsEiF6DhoGQcqWiehvgHo06HQyupUrFDASQYch3DkBlO9eTv6Y3Mw5eVFdV1xNua7FYAKpQ5EoPHJJfRzk7SxmiHGDySBF4d-mQ7Hu8Ap0_H9985sQ0rCMaQ');"></div>
+<div class="absolute bottom-3 left-3 z-20">
+<p class="text-white text-sm font-bold">Golden Aztec</p>
+<p class="text-text-muted text-xs">JP: 8000x</p>
+</div>
+</div>
+<div class="relative aspect-[3/2] rounded-xl overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+<div class="w-full h-full bg-cover bg-center" data-alt="futuristic digital poker chips" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDOj3gm3Iwo42FyQw3ZCsNqVD7Mt7BXhCq3RMNyQ6oyPav5fT8DBdTMSfInjZ53tig8OGaJybreEJynL8gxQnOpOWmZaJjFdKeGp79CYyc5BFmh-icp8W0FmubAAw-WFRE46JzEfnxcN1Gib-GkGaczBByyUyBc2ETjfM0oIS00OONr7ulewn41-QQQucR5Uj7An2ATI8WYtgpf4KJLgaCsdfF1b6mtxpsHRk9vg22__rLwhvBbFnv66ZfxaPDWs_XfWtCGkBSIRhY');"></div>
+<div class="absolute bottom-3 left-3 z-20">
+<p class="text-white text-sm font-bold">Cyber Hold'em</p>
+<p class="text-text-muted text-xs">Live Table</p>
+</div>
+</div>
+<div class="relative aspect-[3/2] rounded-xl overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+<div class="w-full h-full bg-cover bg-center" data-alt="abstract purple crypto blockchain nodes" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCtEHdq804PqBu1hWOxQrbO1cKQte92DFPTk-BQ2bgKQAQrExqk0a62AodzY-cVrhbKtOkb5RK-pM1UF5J4mavi-8vJR9vp7jn7DawP6bLkf-rJwc-ScInYQfqOGOqwrPsOqHSp2pQbQe-gic9sLFaTy1-PmM33A0qVgmd5-ejvbo79KfBoltk5xREhdh8fNjRAPfqdV8yYHPPv5eqqPzO9SS5oxaYEf1xFqJzcbmdMCSbW_D4urcZX8l9lTPb-Z4gzFcWrmOktuUo');"></div>
+<div class="absolute bottom-3 left-3 z-20">
+<p class="text-white text-sm font-bold">Block Miner</p>
+<p class="text-text-muted text-xs">Instant Win</p>
+</div>
+</div>
+</div>
+<!-- Spin Button Area (Disabled State) -->
+<div class="p-4 flex justify-center pb-8 opacity-60 pointer-events-none">
+<button class="w-full max-w-sm h-14 rounded-full bg-surface-dark border border-white/10 flex items-center justify-center gap-3 shadow-lg" disabled="">
+<span class="material-symbols-outlined text-text-muted animate-spin">sync</span>
+<span class="text-text-muted font-bold text-lg tracking-widest uppercase">Syncing...</span>
+</button>
+</div>
+<!-- Session Recovery Modal Overlay -->
+<div class="absolute inset-0 z-40 bg-background-dark/80 backdrop-blur-sm flex items-center justify-center px-6 animate-in fade-in duration-300">
+<div class="w-full max-w-sm bg-[#231530] border border-primary/30 rounded-2xl shadow-2xl shadow-primary/10 overflow-hidden transform transition-all">
+<!-- Modal Header -->
+<div class="bg-primary/10 p-5 flex items-center gap-4 border-b border-primary/20">
+<div class="size-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[24px]">shield_lock</span>
+</div>
+<div>
+<h3 class="text-white font-bold text-lg leading-tight">Session Paused</h3>
+<p class="text-primary text-xs font-medium uppercase tracking-wider">State Protected</p>
+</div>
+</div>
+<!-- Modal Body -->
+<div class="p-6 space-y-6">
+<p class="text-text-muted text-sm leading-relaxed">
+                        We detected a break in the blockchain sync. Your last spin result <span class="text-white font-bold">#84920A</span> has been secured and funds are safe.
+                    </p>
+<div class="bg-background-dark rounded-lg p-3 border border-white/5 flex justify-between items-center">
+<div class="flex flex-col">
+<span class="text-xs text-text-muted">Last Hash</span>
+<span class="text-xs font-mono text-white truncate w-32">0x71...c92f</span>
+</div>
+<div class="h-8 w-[1px] bg-white/10"></div>
+<div class="flex flex-col items-end">
+<span class="text-xs text-text-muted">Wallet Balance</span>
+<span class="text-sm font-bold text-success">$12,450.00</span>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2 group">
+<span class="material-symbols-outlined group-hover:rotate-180 transition-transform duration-500">refresh</span>
+                        Refresh Stream
+                    </button>
+<button class="w-full text-text-muted text-sm font-medium hover:text-white transition-colors">
+                        View Transaction History
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation -->
+<nav class="sticky bottom-0 z-50 flex gap-2 border-t border-white/5 bg-background-dark/95 backdrop-blur-xl px-4 pb-safe pt-2">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 rounded-full text-primary group" href="#">
+<div class="text-primary group-hover:scale-110 transition-transform duration-200 flex h-8 items-center justify-center">
+<span class="material-symbols-outlined text-[28px] fill-1">casino</span>
+</div>
+<p class="text-primary text-[10px] font-bold leading-normal tracking-wide uppercase">Slots</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-text-muted group" href="#">
+<div class="text-text-muted group-hover:text-white group-hover:scale-110 transition-all duration-200 flex h-8 items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">videocam</span>
+</div>
+<p class="text-text-muted group-hover:text-white text-[10px] font-medium leading-normal tracking-wide uppercase">Live</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-text-muted group" href="#">
+<div class="text-text-muted group-hover:text-white group-hover:scale-110 transition-all duration-200 flex h-8 items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">receipt_long</span>
+</div>
+<p class="text-text-muted group-hover:text-white text-[10px] font-medium leading-normal tracking-wide uppercase">Bets</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-text-muted group" href="#">
+<div class="text-text-muted group-hover:text-white group-hover:scale-110 transition-all duration-200 flex h-8 items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">account_balance_wallet</span>
+</div>
+<p class="text-text-muted group-hover:text-white text-[10px] font-medium leading-normal tracking-wide uppercase">Wallet</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-text-muted group" href="#">
+<div class="text-text-muted group-hover:text-white group-hover:scale-110 transition-all duration-200 flex h-8 items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">account_circle</span>
+</div>
+<p class="text-text-muted group-hover:text-white text-[10px] font-medium leading-normal tracking-wide uppercase">Profile</p>
+</a>
+</nav>
+<!-- Safe Area Spacing for iOS Home Indicator -->
+<div class="h-6 bg-background-dark w-full"></div>
+</body></html>

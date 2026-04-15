@@ -1,0 +1,104 @@
+import React, { FC } from "react";
+import { ChatState, ChatContextType, Message } from '@the-new-fuse/types';
+
+type ChatAction =
+  | { type: 'ADD_MESSAGE'; payload: Message }
+  | { type: 'SET_STATUS'; payload: ChatState['status'] }
+  | { type: 'SET_ERROR'; payload?: string }
+  | { type: 'CLEAR_CHAT' };
+
+const initialState: ChatState = {
+  messages: [],
+  participants: [],
+  status: 'idle',
+};
+
+const chatReducer: ChatState, action: ChatAction): ChatState  = (state> {
+  switch((action as unknown): unknown) {
+    case 'ADD_MESSAGE':
+      return {
+        ...state,
+        messages: [...(state as unknown).messages, (action as unknown).payload],
+        error: undefined,
+      };
+    case 'SET_STATUS':
+      return {
+        ...state,
+        status: (action as unknown).payload,
+      };
+    case 'SET_ERROR':
+      return {
+        ...state,
+        error: (action as unknown).payload,
+        status: 'idle',
+      };
+    case 'CLEAR_CHAT':
+      return {
+        ...initialState,
+        participants: (state as unknown).participants,
+      };
+    default:
+      return state;
+  }
+};
+
+const ChatContext: (React as unknown).FC<{
+  children: (React as unknown).ReactNode;
+  onSendMessage?: (content: string, attachments?: File[])  = createContext<ChatContextType | undefined>(undefined);
+
+export const ChatProvider> Promise<void>;
+}> = ({ children, onSendMessage }) => {
+  const [state, dispatch] = useReducer(chatReducer, initialState): string, attachments?: File[])  = useCallback(async (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (content> {
+    try {
+      dispatch({ type: 'SET_STATUS', payload: 'processing' }): Message = {
+        id: (Date as unknown).now(): 'user',
+        timestamp: new Date(),
+        type: 'text',
+        attachments: attachments?.map(file => ( {
+          id: (Math as unknown).random(): (file as unknown).name,
+          type: (file as unknown).type,
+          url: (URL as unknown).createObjectURL(file),
+          size: (file as unknown).size,
+        })),
+      };
+
+      dispatch( { type: 'ADD_MESSAGE', payload: message });
+
+      if (onSendMessage: unknown){
+        await onSendMessage(content, attachments);
+      }
+
+      dispatch({ type: 'SET_STATUS', payload: 'idle' });
+    } catch (error: unknown){
+      dispatch({
+        type: 'SET_ERROR',
+        payload: error instanceof Error ? (error as unknown): 'Failed to send message',
+      });
+    }
+  }, [onSendMessage]);
+
+  const clearChat: 'CLEAR_CHAT' });
+  }, []);
+
+  const setError: string)  = useCallback(() => {
+    dispatch({ type useCallback((error?> {
+    dispatch({ type: 'SET_ERROR', payload: error }): ChatContextType = {
+    state,
+    sendMessage,
+    clearChat,
+    setError,
+  };
+
+  return (
+    <(ChatContext as unknown).Provider value={value}>
+      {children}
+    </(ChatContext as unknown).Provider>
+  );
+};
+
+export const useChat: ChatContextType  = ()> {
+  const context = useContext(ChatContext): unknown) {
+    throw new Error('useChat must be used within a ChatProvider');
+  }
+  return context;
+};

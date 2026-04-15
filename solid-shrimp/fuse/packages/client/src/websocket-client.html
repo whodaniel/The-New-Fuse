@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VSCode Extension WebSocket Client</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        .control-panel {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        .status {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .connecting {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .log-container {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        .log-entry.roo-output {
+            background-color: #e6f7ff;
+            border-left: 3px solid #1890ff;
+        }
+        .log-entry.roo-related {
+            background-color: #f6ffed;
+            border-left: 3px solid #52c41a;
+        }
+        .log-entry.error {
+            background-color: #fff2f0;
+            border-left: 3px solid #ff4d4f;
+        }
+        .log-entry.system {
+            background-color: #f0f0f0;
+            border-left: 3px solid #666;
+        }
+        .timestamp {
+            color: #888;
+            font-size: 0.8em;
+            margin-right: 5px;
+        }
+        button {
+            background-color: #1890ff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #40a9ff;
+        }
+        button:disabled {
+            background-color: #d9d9d9;
+            cursor: not-allowed;
+        }
+        input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 300px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>VSCode Extension WebSocket Client</h1>
+        
+        <div class="control-panel">
+            <div class="status disconnected" id="connection-status">Disconnected</div>
+            
+            <div>
+                <label for="auth-token">Authentication Token:</label>
+                <input type="text" id="auth-token" value="YOUR_SECRET_AUTH_TOKEN" />
+            </div>
+            
+            <div style="margin-top: 10px;">
+                <button id="connect-btn">Connect</button>
+                <button id="disconnect-btn" disabled>Disconnect</button>
+                <button id="ping-btn" disabled>Send Ping</button>
+                <button id="clear-btn">Clear Log</button>
+            </div>
+        </div>
+        
+        <div class="log-container" id="log-container"></div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const connectBtn = document.getElementById('connect-btn');
+        const disconnectBtn = document.getElementById('disconnect-btn');
+        const pingBtn = document.getElementById('ping-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const authTokenInput = document.getElementById('auth-token');
+        const connectionStatus = document.getElementById('connection-status');
+        const logContainer = document.getElementById('log-container');
+        
+        // WebSocket connection
+        let ws = null;
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+        let reconnectTimeout = null;
+        
+        // Connect to WebSocket server
+        function connect() {
+            if (ws && (ws.readyState === WebSocket.CONNECTING || ws.readyState === WebSocket.OPEN)) {
+                return;
+            }
+            
+            const authToken = authTokenInput.value.trim();
+            if (!authToken) {
+                addLogEntry('Please enter an authentication token', 'error');
+                return;
+            }
+            
+            updateConnectionStatus('connecting');
+            addLogEntry('Connecting to WebSocket server...', 'system');
+            
+            try {
+                ws = new WebSocket('ws://localhost:3710');
+                
+                ws.onopen = () => {
+                    reconnectAttempts = 0;
+                    addLogEntry('Connection established', 'system');
+                    
+                    // Send authentication message
+                    const authMessage = {
+                        type: 'AUTH',
+                        token: authToken
+                    };
+                    ws.send(JSON.stringify(authMessage));
+                    addLogEntry('Sent authentication request', 'system');
+                    
+                    // Update UI
+                    connectBtn.disabled = true;
+                    disconnectBtn.disabled = false;
+                    pingBtn.disabled = false;
+                };
+                
+                ws.onmessage = (event) => {
+                    try {
+                        const message = JSON.parse(event.data);
+                        handleMessage(message);
+                    } catch (error) {
+                        addLogEntry(`Error parsing message: ${error.message}`, 'error');
+                        addLogEntry(`Raw message: ${event.data}`, 'system');
+                    }
+                };
+                
+                ws.onclose = (event) => {
+                    handleDisconnect(event);
+                };
+                
+                ws.onerror = (error) => {
+                    addLogEntry(`WebSocket error: ${error.message || 'Unknown error'}`, 'error');
+                };
+            } catch (error) {
+                addLogEntry(`Failed to create WebSocket: ${error.message}`, 'error');
+                updateConnectionStatus('disconnected');
+            }
+        }
+        
+        // Handle incoming messages
+        function handleMessage(message) {
+            switch (message.type) {
+                case 'AUTH_RESPONSE':
+                    if (message.success) {
+                        addLogEntry('Authentication successful', 'system');
+                        updateConnectionStatus('connected');
+                    } else {
+                        addLogEntry('Authentication failed', 'error');
+                        disconnect();
+                    }
+                    break;
+                    
+                case 'PONG':
+                    addLogEntry('Received PONG response', 'system');
+                    break;
+                    
+                case 'roo_output':
+                    addLogEntry(`${message.content}`, 'roo-output', message.timestamp, message.source);
+                    break;
+                    
+                case 'roo_related_output':
+                    addLogEntry(`${message.content}`, 'roo-related', message.timestamp, message.source);
+                    break;
+                    
+                case 'roo_terminal_detected':
+                    addLogEntry(`${message.content}`, 'system', message.timestamp);
+                    break;
+                    
+                case 'ERROR':
+                    addLogEntry(`Error: ${message.message}`, 'error');
+                    break;
+                    
+                case 'AI_OUTPUT':
+                    addLogEntry(`AI Output: ${message.code}`, 'roo-output');
+                    break;
+                    
+                default:
+                    addLogEntry(`Received message of type: ${message.type}`, 'system');
+                    addLogEntry(`Content: ${JSON.stringify(message)}`, 'system');
+            }
+        }
+        
+        // Handle disconnection
+        function handleDisconnect(event) {
+            const wasConnected = ws && ws.readyState === WebSocket.OPEN;
+            
+            // Update UI
+            updateConnectionStatus('disconnected');
+            connectBtn.disabled = false;
+            disconnectBtn.disabled = true;
+            pingBtn.disabled = true;
+            
+            // Log the disconnection
+            if (wasConnected) {
+                addLogEntry(`Connection closed: ${event.reason || 'No reason provided'} (Code: ${event.code})`, 'system');
+            }
+            
+            // Clean up
+            ws = null;
+            
+            // Attempt to reconnect if it wasn't a manual disconnection
+            if (wasConnected && event.code !== 1000 && reconnectAttempts < maxReconnectAttempts) {
+                reconnectAttempts++;
+                const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+                addLogEntry(`Attempting to reconnect in ${delay/1000} seconds... (Attempt ${reconnectAttempts}/${maxReconnectAttempts})`, 'system');
+                
+                clearTimeout(reconnectTimeout);
+                reconnectTimeout = setTimeout(connect, delay);
+            }
+        }
+        
+        // Manually disconnect
+        function disconnect() {
+            if (ws) {
+                addLogEntry('Disconnecting...', 'system');
+                ws.close(1000, 'Manual disconnection');
+                // handleDisconnect will be called by the onclose event
+            }
+        }
+        
+        // Send a ping message
+        function sendPing() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                const pingMessage = {
+                    type: 'PING'
+                };
+                ws.send(JSON.stringify(pingMessage));
+                addLogEntry('Sent PING message', 'system');
+            } else {
+                addLogEntry('Cannot send PING: Not connected', 'error');
+            }
+        }
+        
+        // Add a log entry to the log container
+        function addLogEntry(message, type = 'system', timestamp = null, source = null) {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            
+            let content = '';
+            
+            // Add timestamp
+            if (timestamp) {
+                const time = new Date(timestamp);
+                content += `<span class="timestamp">[${time.toLocaleTimeString()}]</span>`;
+            } else {
+                const now = new Date();
+                content += `<span class="timestamp">[${now.toLocaleTimeString()}]</span>`;
+            }
+            
+            // Add source if provided
+            if (source) {
+                content += `<span class="source">[${source}]</span> `;
+            }
+            
+            // Add message content
+            content += message;
+            
+            entry.innerHTML = content;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // Update the connection status display
+        function updateConnectionStatus(status) {
+            connectionStatus.className = `status ${status}`;
+            
+            switch (status) {
+                case 'connected':
+                    connectionStatus.textContent = 'Connected';
+                    break;
+                case 'disconnected':
+                    connectionStatus.textContent = 'Disconnected';
+                    break;
+                case 'connecting':
+                    connectionStatus.textContent = 'Connecting...';
+                    break;
+            }
+        }
+        
+        // Clear the log container
+        function clearLog() {
+            logContainer.innerHTML = '';
+            addLogEntry('Log cleared', 'system');
+        }
+        
+        // Event listeners
+        connectBtn.addEventListener('click', connect);
+        disconnectBtn.addEventListener('click', disconnect);
+        pingBtn.addEventListener('click', sendPing);
+        clearBtn.addEventListener('click', clearLog);
+        
+        // Initial log entry
+        addLogEntry('WebSocket client initialized. Click "Connect" to start.', 'system');
+    </script>
+</body>
+</html>

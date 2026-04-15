@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chrome Extension Server Management Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .test-section {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .chat-container {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .chat-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            margin: 10px 0;
+        }
+        .chat-input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+        .send-button {
+            background: rgba(52,199,89,0.6);
+            border: 1px solid rgba(52,199,89,0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .send-button:hover {
+            background: rgba(52,199,89,0.8);
+        }
+        .status-display {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .instructions {
+            background: rgba(255,193,7,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .feature-list li:before {
+            content: "✨ ";
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 The New Fuse - Enhanced Server Management Test</h1>
+        
+        <div class="instructions">
+            <h3>📋 Test Instructions</h3>
+            <p>This page is designed to test the enhanced Chrome extension features:</p>
+            <ul class="feature-list">
+                <li>Start/Stop Server Button with Visual Feedback</li>
+                <li>Server State Management (Starting, Running, Stopping, Stopped)</li>
+                <li>Enhanced Chat Input Routing</li>
+                <li>Container Responsiveness</li>
+                <li>Connection State Indicators</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>🔧 Server Management Testing</h2>
+            <div class="status-display" id="server-status">
+                Server Status: Ready for testing
+            </div>
+            <p><strong>Test Steps:</strong></p>
+            <ol>
+                <li>Open the floating panel (right-click → "Toggle The New Fuse Panel")</li>
+                <li>Click "Start Server" - should show "Starting..." with loading animation</li>
+                <li>Button should change to "Stop Server" when running</li>
+                <li>Server status should update with connection indicator</li>
+                <li>Click "Stop Server" - should show "Stopping..." then "Start Server"</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h2>💬 Chat Input Routing Test</h2>
+            <div class="chat-container">
+                <p><strong>Test Chat Input:</strong></p>
+                <input type="text" class="chat-input" placeholder="Type a message here..." id="test-chat-input">
+                <button class="send-button" onclick="sendTestMessage()">Send Message</button>
+                
+                <p><strong>Alternative Chat Input (Textarea):</strong></p>
+                <textarea class="chat-input" placeholder="Alternative message input..." id="test-chat-textarea" rows="3"></textarea>
+                <button class="send-button" onclick="sendTestMessage2()">Send Alternative</button>
+                
+                <div class="status-display" id="chat-status">
+                    No messages sent yet
+                </div>
+            </div>
+            <p><strong>Test Steps:</strong></p>
+            <ol>
+                <li>Use the extension's chat input to send a message</li>
+                <li>The message should appear in one of the inputs above</li>
+                <li>Test both manual selection and auto-detection</li>
+                <li>Verify submit buttons are auto-clicked when available</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h2>📱 Responsiveness Testing</h2>
+            <p><strong>Test Steps:</strong></p>
+            <ol>
+                <li>Resize the browser window (make it narrow, then wide)</li>
+                <li>Drag the floating panel to different positions</li>
+                <li>Resize the panel using the corner handles</li>
+                <li>Verify all content remains accessible and readable</li>
+                <li>Check that chat components scale properly</li>
+            </ol>
+            <div class="status-display">
+                Responsive design should adapt to window size changes
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔗 Connection State Testing</h2>
+            <p><strong>Test Steps:</strong></p>
+            <ol>
+                <li>Start the server and verify green connection indicator</li>
+                <li>Connect WebSocket and check status updates</li>
+                <li>Stop the server and verify indicators update</li>
+                <li>Try connecting when server is off - should show appropriate error</li>
+            </ol>
+            <div class="status-display" id="connection-status">
+                Connection Status: Ready for testing
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>🎯 Expected Results</h3>
+            <ul class="feature-list">
+                <li>Start Server button shows loading state and toggles to Stop Server</li>
+                <li>Server status indicator updates with proper colors and states</li>
+                <li>Chat messages are routed to page inputs with auto-submit</li>
+                <li>Panel remains responsive on all screen sizes</li>
+                <li>Connection indicators reflect actual server/WebSocket state</li>
+                <li>All animations and transitions work smoothly</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let messageCount = 0;
+        
+        function sendTestMessage() {
+            const input = document.getElementById('test-chat-input');
+            const status = document.getElementById('chat-status');
+            messageCount++;
+            status.textContent = `Message ${messageCount} received: "${input.value}"`;
+            input.value = '';
+        }
+        
+        function sendTestMessage2() {
+            const textarea = document.getElementById('test-chat-textarea');
+            const status = document.getElementById('chat-status');
+            messageCount++;
+            status.textContent = `Alternative message ${messageCount} received: "${textarea.value}"`;
+            textarea.value = '';
+        }
+        
+        // Monitor for extension messages
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'extension-test') {
+                console.log('Extension test message received:', event.data);
+            }
+        });
+        
+        // Update status periodically
+        setInterval(() => {
+            const serverStatus = document.getElementById('server-status');
+            const connectionStatus = document.getElementById('connection-status');
+            const now = new Date().toLocaleTimeString();
+            
+            serverStatus.textContent = `Server Status: Ready for testing - ${now}`;
+            connectionStatus.textContent = `Connection Status: Ready for testing - ${now}`;
+        }, 5000);
+        
+        console.log('🧪 Chrome Extension Test Page Loaded');
+        console.log('📋 Use this page to test the enhanced server management features');
+    </script>
+</body>
+</html>

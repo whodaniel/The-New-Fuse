@@ -18,12 +18,3 @@
 **Vulnerability:** Widespread use of `Math.random().toString(36).substr(2, 9)` to generate unique IDs across the `packages/agent/src` directory, including execution IDs, message IDs, and session IDs.
 **Learning:** This pattern was likely copy-pasted across multiple files during initial development for convenience. `Math.random()` is not cryptographically secure, making these IDs predictable and vulnerable to guessing attacks, which is especially concerning for session and execution IDs.
 **Prevention:** Always use cryptographically secure methods like `crypto.randomBytes(4).toString('hex')` or `crypto.randomUUID()` when generating unique identifiers for security-sensitive or session-related context.
-## 2026-04-09 - Fix SQL injection in pgvector driver getStats method
-**Vulnerability:** Unsanitized collection parameter directly interpolated into SQL query via pg_total_relation_size() and FROM clause
-**Learning:** A sanitizeIdentifier function existed but was missed for one specific method query where a dynamic parameter was evaluated directly in string template literals, leading to an easy SQL Injection.
-**Prevention:** Ensure that anytime string interpolations are required (since table names cannot be parameterized in Postgres), the variables are strictly run through identifier sanitizers or whitelist validators.
-## $(date +%Y-%m-%d) - Hardcoded Fallback Secret in Cloud Sandbox
-
-**Vulnerability:** The `CloudSandboxAuthGuard` used a hardcoded fallback string (`'dev-secret'`) for the `JWT_SECRET` when validating incoming agent and user connections.
-**Learning:** Hardcoded fallback secrets are a dangerous antipattern that can easily slip into production environments if configuration variables are missed, completely bypassing authentication security.
-**Prevention:** Fail fast on initialization. The constructor must validate that security-critical environment variables (like `JWT_SECRET`) are present and cryptographically strong (e.g., length >= 32). If not, it should throw an error to prevent the service from starting in a vulnerable state.

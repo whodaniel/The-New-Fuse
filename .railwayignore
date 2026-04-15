@@ -3,21 +3,10 @@ nixpacks.toml
 
 # Ignore development files
 .env*
-.git
-node_modules
-*/node_modules
-*/*/node_modules
-.turbo
-.kilo
-.next
+.git/
+**/node_modules/
+*.log
 .DS_Store
-dist
-*/dist
-*/*/dist
-apps/*/node_modules
-packages/*/node_modules
-apps/*/dist
-packages/*/dist
 apps/casin8-games/AI-ARCADE.XYZ---POKER-ROOM/
 apps/casin8-games/.data-tests/
 # Exclude large non-build artifacts from upload context
@@ -41,4 +30,8 @@ apps/casin8-games/.data-tests/
 /apps/gemini-bridge-extension/
 /apps/chrome-extension/
 /apps/tauri-desktop/
+/apps/picoclaw-overseer/
+/apps/skideancer-ide/
+/apps/poker-room/
+/apps/casin8-games/
 /apps/electron-desktop/

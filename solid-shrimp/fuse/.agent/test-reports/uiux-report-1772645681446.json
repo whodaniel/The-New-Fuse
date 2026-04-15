@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-03-04T17:34:40.724Z",
+  "components": {
+    "passed": 4,
+    "failed": 0,
+    "errors": []
+  },
+  "accessibility": {
+    "passed": 5,
+    "failed": 0,
+    "errors": []
+  },
+  "design": {
+    "passed": 7,
+    "failed": 0,
+    "errors": []
+  },
+  "routing": {
+    "passed": 2,
+    "failed": 0,
+    "errors": []
+  },
+  "overall": {
+    "score": 100,
+    "status": "healthy"
+  }
+}

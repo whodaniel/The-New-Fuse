@@ -1,0 +1,810 @@
+
+> @the-new-fuse/theia-ide@2.0.0 build:prod:memsafe ./apps/theia-ide
+> NODE_OPTIONS=--max_old_space_size=6144 pnpm exec theia build --mode production --stats-error-details
+
+assets by status 18.1 MiB [cached] 25 assets
+Entrypoint bundle = bundle.js 16 auxiliary assets
+Entrypoint editor.worker =
+orphan modules 224 KiB [orphan] 33 modules
+runtime modules 7.32 KiB 20 modules
+javascript modules 25.1 MiB
+  modules by path ../../node_modules/.pnpm/ 25.1 MiB
+    cacheable modules 25 MiB 3045 modules
+    + 3 modules
+  + 6 modules
+json modules 1.76 MiB 73 modules
+asset modules 1.93 MiB (asset) 4.08 KiB (javascript)
+  modules by path ../../node_modules/.pnpm/ 1.93 MiB (asset) 630 bytes (javascript) 15 modules
+  modules by mime type image/svg+xml 3.2 KiB
+    data:image/svg+xml;base64,PHN2ZyB3aWR0aD0i.. 1.6 KiB [built] [code generated]
+    data:image/svg+xml;base64,PHN2ZyB3aWR0aD0i.. 1.6 KiB [built] [code generated]
+  data:image/png;base64,iVBORw0KGgoAAAAN.. 268 bytes [built] [code generated]
+  
+
+WARNING in ./src-gen/frontend/index.js 79:30-111
+Module not found: Error: Can't resolve '@theia/variable-resolver/lib/browser/variable-resolver-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/variable-resolver/lib/browser/variable-resolver-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/variable-resolver doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/variable-resolver doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/variable-resolver doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 91:30-88
+Module not found: Error: Can't resolve '@theia/process/lib/common/process-common-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/process/lib/common/process-common-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/process doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/process doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/process doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 92:30-99
+Module not found: Error: Can't resolve '@theia/file-search/lib/browser/file-search-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/file-search/lib/browser/file-search-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/file-search doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/file-search doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/file-search doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 97:30-91
+Module not found: Error: Can't resolve '@theia/console/lib/browser/console-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/console/lib/browser/console-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/console doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/Desktop/A1-Inter-LLM-Com/The-New
+-Fuse/node_modules
+        ./node_modules/@theia/console doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/console doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 99:30-100
+Module not found: Error: Can't resolve '@theia/userstorage/lib/browser/user-storage-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/userstorage/lib/browser/user-storage-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/userstorage doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/userstorage doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/userstorage doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 100:30-85
+Module not found: Error: Can't resolve '@theia/task/lib/browser/task-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/task/lib/browser/task-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/task doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/task doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/task doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 102:30-95
+Module not found: Error: Can't resolve '@theia/test/lib/browser/view/test-view-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/test/lib/browser/view/test-view-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/test doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/test doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/test doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 105:30-91
+Module not found: Error: Can't resolve '@theia/keymaps/lib/browser/keymaps-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/keymaps/lib/browser/keymaps-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/keymaps doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/keymaps doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for mo
+dules in /path/to/node_modules
+        /path/to/node_modules/@theia/keymaps doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 106:30-101
+Module not found: Error: Can't resolve '@theia/mini-browser/lib/browser/mini-browser-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/mini-browser/lib/browser/mini-browser-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/mini-browser doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/mini-browser doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/mini-browser doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 107:30-116
+Module not found: Error: Can't resolve '@theia/mini-browser/lib/browser/environment/mini-browser-environment-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/mini-browser/lib/browser/environment/mini-browser-environment-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/mini-browser doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/mini-browser doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/mini-browser doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 108:30-91
+Module not found: Error: Can't resolve '@theia/preview/lib/browser/preview-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/preview/lib/browser/preview-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/preview doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/preview doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/preview doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 111:30-86
+Module not found: Error: Can't resolve '@theia/ai-mcp/lib/browser/mcp-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/ai-mcp/lib/browser/mcp-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/ai-mcp doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/ai-mcp doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/ai-mcp doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen
+/frontend/index.js 112:30-95
+Module not found: Error: Can't resolve '@theia/bulk-edit/lib/browser/bulk-edit-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/bulk-edit/lib/browser/bulk-edit-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/bulk-edit doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/bulk-edit doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/bulk-edit doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 113:30-103
+Module not found: Error: Can't resolve '@theia/callhierarchy/lib/browser/callhierarchy-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/callhierarchy/lib/browser/callhierarchy-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/callhierarchy doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/callhierarchy doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/callhierarchy doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 114:30-105
+Module not found: Error: Can't resolve '@theia/editor-preview/lib/browser/editor-preview-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/editor-preview/lib/browser/editor-preview-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/editor-preview doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/editor-preview doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/editor-preview doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 115:30-93
+Module not found: Error: Can't resolve '@theia/notebook/lib/browser/notebook-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/notebook/lib/browser/notebook-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/notebook doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/notebook doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/notebook doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 118:30-93
+Module not found: Error: Can't resolve '@theia/timeline/lib/browser/timeline-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@
+theia/timeline/lib/browser/timeline-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/timeline doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/timeline doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/timeline doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ./src-gen/frontend/index.js 119:30-103
+Module not found: Error: Can't resolve '@theia/typehierarchy/lib/browser/typehierarchy-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/typehierarchy/lib/browser/typehierarchy-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/typehierarchy doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/typehierarchy doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/typehierarchy doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+WARNING in ../../node_modules/.pnpm/@theia+monaco-editor-core@1.96.302/node_modules/@theia/monaco-editor-core/esm/vs/base/common/worker/simpleWorker.js 439:56-66
+Critical dependency: the request of a dependency is an expression
+    at CommonJsRequireContextDependency.getWarnings (./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/dependencies/ContextDependency.js:121:18)
+    at Compilation.reportDependencyErrorsAndWarnings (./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/Compilation.js:3506:24)
+    at ./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/Compilation.js:3071:28
+    at _next2 (eval at create (./node_modules/.pnpm/tapable@2.3.0/node_modules/tapable/lib/HookCodeFactory.js:31:10), <anonymous>:25:1)
+    at eval (eval at create (./node_modules/.pnpm/tapable@2.3.0/node_modules/tapable/lib/HookCodeFactory.js:31:10), <anonymous>:52:1)
+    at ./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/FlagDependencyExportsPlugin.js:404:10
+    at ./node_modules/.pnpm/neo-async@2.6.2/node_modules/neo-async/async.js:2830:7
+    at Object.each (./node_modules/.pnpm/neo-async@2.6.2/node_modules/neo-async/async.js:2850:39)
+    at ./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/FlagDependencyExportsPlugin.js:374:17
+    at ./node_modules/.pnpm/neo-async@2.6.2/node_modules/neo-async/async.js:2830:7
+ @ ../../node_modules/.pnpm/@theia+monaco-editor-core@1.96.302/node_modules/@theia/monaco-editor-core/esm/vs/editor/browser/services/editorWorkerService.js 19:26-80
+ @ ../../node_modules/.pnpm/@theia+monaco-editor-core@1.96.302/node_modules/@theia/monaco-editor-core/esm/vs/editor/standalone/browser/standaloneServices.js 72:33-89
+ @ ../../node_modules/.pnpm/@theia+monaco@1.65.2_@theia+electron@1.65.2_electron@38.3.0__bufferutil@4.0.9_typescript@5.9.3_utf-8-validate@5.0.7/node_modules/@theia/monaco/lib/browser/monaco-init.js 62:29-117
+ @ ./src-gen/frontend/index.js 60:27-75
+
+WARNING in ../../node_modules/.pnpm/@theia+monaco-editor-core@1.96.302/node_modules/@theia/monaco-editor-core/esm/vs/editor/common/services/editorSimpleWorker.js 420:53-63
+Critical dependency: the request of a dependency is an expression
+    at CommonJsRequireContextDependency.getWarnings (./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/dependencies/ContextDependency.js:121:18)
+    at Compilation.reportDependencyErrorsAndWarnings (./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/Compilation.js:3506:24)
+    at ./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/Compilation.js:3071:28
+    at _next2 (eval at create (./node_modules/.pnpm/tapable@2.3.0/node_modules/tapable/lib/HookCodeFactory.js:31:10), <anonymous>:25:1)
+    at eval (eval at create (./node_modules/.pnpm/tapable@2.3.0/node_modules/tapable/lib/HookCodeFactory.js:31:10), <anonymous>:52:1)
+    at ./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/FlagDependencyExportsPlugin.js:404:10
+    at ./node_modules/.pnpm/neo-async@2.6.2/node_modules/neo-async/async.js:2830:7
+    at Object.each (./node_modules/.pnpm/neo-async@2.6.2/node_modules/neo-async/async.js:2850:39)
+    at ./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules
+/webpack/lib/FlagDependencyExportsPlugin.js:374:17
+    at ./node_modules/.pnpm/neo-async@2.6.2/node_modules/neo-async/async.js:2830:7
+ @ ../../node_modules/.pnpm/@theia+monaco-editor-core@1.96.302/node_modules/@theia/monaco-editor-core/esm/vs/editor/browser/services/editorWorkerService.js 23:32-86
+ @ ../../node_modules/.pnpm/@theia+monaco-editor-core@1.96.302/node_modules/@theia/monaco-editor-core/esm/vs/editor/standalone/browser/standaloneServices.js 72:33-89
+ @ ../../node_modules/.pnpm/@theia+monaco@1.65.2_@theia+electron@1.65.2_electron@38.3.0__bufferutil@4.0.9_typescript@5.9.3_utf-8-validate@5.0.7/node_modules/@theia/monaco/lib/browser/monaco-init.js 62:29-117
+ @ ./src-gen/frontend/index.js 60:27-75
+
+ERROR in editor.worker
+Module not found: Error: Can't resolve '@theia/monaco-editor-core/esm/vs/editor/editor.worker.js' in './apps/theia-ide'
+resolve '@theia/monaco-editor-core/esm/vs/editor/editor.worker.js' in './apps/theia-ide'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: .)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/monaco-editor-core doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/monaco-editor-core doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/monaco-editor-core doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+webpack 5.102.1 compiled with 1 error and 20 warnings in 233575 ms
+
+assets by status 12 MiB [cached] 16 assets
+Entrypoint secondary-window = secondary-window.css secondary-window.js 16 auxiliary assets
+runtime modules 105 KiB 466 modules
+orphan modules 1.43 MiB (javascript) 1.48 MiB (asset) [orphan] 194 modules
+javascript modules 17.7 MiB
+  cacheable modules 17.7 MiB 1986 modules
+  ../../node_modules/.pnpm/@theia+core@1.65.2_@theia+electron@1.65.2_electron@38.3...(truncated) 1.39 KiB [built] [code generated]
+  ../../node_modules/.pnpm/@theia+monaco-editor-core@1.96.302/node_modules/@theia/...(truncated) 160 bytes [built] [code generated]
+  ../../node_modules/.pnpm/@theia+monaco-editor-core@1.96.302/node_modules/@theia/...(truncated) 160 bytes [built] [code generated]
+css modules 469 KiB 150 modules
+json modules 1.76 MiB
+  modules by path ../../node_modules/.pnpm/@theia+core@1.65.2_@theia+electron@1.65.2_electron@38.3...(truncated) 1.61 MiB 50 modules
+  modules by path ../../node_modules/.pnpm/@theia+monaco@1.65.2_@theia+electron@1.65.2_electron@38...(truncated) 34.5 KiB 10 modules
+  modules by path ../../node_modules/.pnpm/iconv-lite@0.6.3/node_modules/iconv-lite/ 86.7 KiB 8 modules
+  modules by path ../../node_modules/.pnpm/ajv@6.12.6/node_modules/ajv/lib/ 3.12 KiB 2 modules
+  + 1 module
+../../node_modules/.pnpm/vscode-oniguruma@2.0.1/node_modules/vscode-oniguruma/re...(truncated) 462 KiB (asset) 42 bytes (javascript) [built] [code generated]
+  
+
+WARNING in ../../node_modules/.pnpm/@theia+monaco-editor-core@1.96.302/node_modules/@theia/monaco-editor-core/esm/vs/base/common/worker/simpleWorker.js 439:56-66
+Critical dependency: the request of a dependency is an expression
+    at CommonJsRequireContextDependency.getWarnings (./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/dependencies/ContextDependency.js:121:18)
+    at Compilation.reportDependencyErrorsAndWarnings (./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/Compilation.js:3506:24)
+    at ./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/Compilation.js:3071:28
+    at _next2 (eval at create (./node_modules/.pnpm/tapable@2.3.0/node_modules/tapable/lib/HookCodeFactory.js:31:10), <anonymous>:25:1)
+    at eval (eval at create (./node_modules/.pnpm/tapable@2.3.0/node_modules/tapable/lib/HookCodeFactory.js:31:10), <anonymous>:52:1)
+    at ./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/FlagDependencyExportsPlugin.js:404:10
+    at ./node_modules/.pnpm/neo-async@2.6.2/node_modules/neo-async/async.js:2830:7
+    at Object.each (./node_modules/.pnpm/neo-async@2.6.2/node_modules/neo-async/async.js:2850:39)
+    at ./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/FlagDependencyExportsPlugin.js:374:17
+    at ./node_modules/.pnpm/neo-async@2.6.2/node_modules/neo-async/async.js:2830:7
+ @ ../../node_modules/.pnpm/@theia+monaco-editor-core@1.96.302/node_modules/@theia/monaco-editor-core/esm/vs/editor/browser/services/editorWorkerService.js 19:26-80
+ @ ../../node_modules/.pnpm/@theia+monaco-editor-core@1.96.302/node_modules/@theia/monaco-editor-core/esm/vs/editor/standalone/browser/standaloneServices.js 72:33-89
+ @ ../../node_modules/.pnpm/@theia+monaco@1.65.2_@theia+electron@1.65.2_electron@38.3.0__bufferutil@4.0.9_typescript@5.9.3_utf-8-validate@5.0.7/node_modules/@theia/monaco/lib/browser/monaco-frontend-module.js 65:29-117
+ @ ./src-gen/frontend/secondary-index.js 11:19-86
+
+WARNING in ../../node_modules/.pnpm/@theia+monaco-editor-core@1.96.302/node_modules/@theia/monaco-editor-core/esm/vs/editor/common/services/editorSimpleWorker.js 420:53-63
+Critical dependency: the request of a dependency is an expression
+    at CommonJsRequireContextDependency.getWarnings (./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/dependencies/ContextDependency.js:121:18)
+    at Compilation.reportDependencyErrorsAndWarnings (./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/Compilation.js:3506:24)
+    at ./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/Compilation.js:3071:28
+    at _next2 (eval at create (./node_modules/.pnpm/tapable@2.3.0/node_modules/tapable/lib/HookCodeFactory.js:31:10), <anonymous>:25:1)
+    at eval (eval at create (./node_modules/.pnpm/tapable@2.3.0/node_modules/tapable/lib/HookCodeFactory.js:31:10), <anonymous>:52:1)
+    at ./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/FlagDependencyExportsPlugin.js:404:10
+    at ./node_modules/.pnpm/neo-async@2.6.2/node_modules/neo-async/async.js:2830:7
+    at Object.each (./node_modules/.pnpm/neo
+-async@2.6.2/node_modules/neo-async/async.js:2850:39)
+    at ./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/lib/FlagDependencyExportsPlugin.js:374:17
+    at ./node_modules/.pnpm/neo-async@2.6.2/node_modules/neo-async/async.js:2830:7
+ @ ../../node_modules/.pnpm/@theia+monaco-editor-core@1.96.302/node_modules/@theia/monaco-editor-core/esm/vs/editor/browser/services/editorWorkerService.js 23:32-86
+ @ ../../node_modules/.pnpm/@theia+monaco-editor-core@1.96.302/node_modules/@theia/monaco-editor-core/esm/vs/editor/standalone/browser/standaloneServices.js 72:33-89
+ @ ../../node_modules/.pnpm/@theia+monaco@1.65.2_@theia+electron@1.65.2_electron@38.3.0__bufferutil@4.0.9_typescript@5.9.3_utf-8-validate@5.0.7/node_modules/@theia/monaco/lib/browser/monaco-frontend-module.js 65:29-117
+ @ ./src-gen/frontend/secondary-index.js 11:19-86
+
+ERROR in ./src-gen/frontend/secondary-index.js 14:19-88
+Module not found: Error: Can't resolve '@theia/preview/lib/browser/preview-frontend-module' in './apps/theia-ide/src-gen/frontend'
+resolve '@theia/preview/lib/browser/preview-frontend-module' in './apps/theia-ide/src-gen/frontend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/frontend)
+    Field 'browser' doesn't contain a valid alias configuration
+    resolve as module
+      ./apps/theia-ide/src-gen/frontend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/preview doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/preview doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/preview doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+
+webpack 5.102.1 compiled with 1 error and 2 warnings in 190859 ms
+
+assets by status 7.01 MiB [cached] 17 assets
+runtime modules 21.7 KiB 60 modules
+orphan modules 148 KiB [orphan] 34 modules
+cacheable modules 11.5 MiB
+  javascript modules 9.13 MiB
+    modules by path ../../node_modules/.pnpm/ 9.12 MiB 1733 modules
+    modules by path ./ 9.33 KiB
+      modules by path ./src-gen/backend/*.js 9.14 KiB 2 modules
+      modules by path ./lib/backend/native-webpack-plugin/*.js 198 bytes 2 modules
+  json modules 2.4 MiB
+    modules by path ../../node_modules/.pnpm/@theia+core@1.65.2_@theia+electron@1.65.2_electron@38.3...(truncated) 2.05 MiB 16 modules
+    modules by path ../../node_modules/.pnpm/iconv-lite@0.6.3/node_modules/iconv-lite/ 86.7 KiB 8 modules
+    modules by path ../../node_modules/.pnpm/iconv-lite@0.4.24/node_modules/iconv-lite/ 86.7 KiB 8 modules
+    + 7 modules
++ 45 modules
+
+WARNING in ./src-gen/backend/server.js 63:19-77
+Module not found: Error: Can't resolve '@theia/process/lib/common/process-common-module' in './apps/theia-ide/src-gen/backend'
+resolve '@theia/process/lib/common/process-common-module' in './apps/theia-ide/src-gen/backend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/backend)
+    resolve as module
+      ./apps/theia-ide/src-gen/backend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/process doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/process doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/process doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+ @ ./src-gen/backend/main.js 190:21-40
+
+WARNING in ./src-gen/backend/server.js 64:19-76
+Module not found: Error: Can't resolve '@theia/process/lib/node/process-backend-module' in './apps/theia-ide/src-gen/backend'
+resolve '@theia/process/lib/node/process-backend-module' in './apps/theia-ide/src-gen/backend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/backend)
+    resolve as module
+      ./apps/theia-ide/src-gen/backend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/process doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/process doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/process doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+ @ ./src-gen/backend/main.js 190:21-40
+
+WARNING in ./src-gen/backend/server.js 65:19-84
+Module not found: Error: Can't resolve '@theia/file-search/lib/node/file-search-backend-module' in './apps/theia-ide/src-gen/backend'
+resolve '@theia/file-search/lib/node/file-search-backend-module' in './apps/theia-ide/src-gen/backend'
+  Parsed request is a module
+  using description file: /path/to/Desktop/A1-Inter-LLM
+-Com/The-New-Fuse/apps/theia-ide/package.json (relative path: ./src-gen/backend)
+    resolve as module
+      ./apps/theia-ide/src-gen/backend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/file-search doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/file-search doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/file-search doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+ @ ./src-gen/backend/main.js 190:21-40
+
+WARNING in ./src-gen/backend/server.js 71:19-70
+Module not found: Error: Can't resolve '@theia/task/lib/node/task-backend-module' in './apps/theia-ide/src-gen/backend'
+resolve '@theia/task/lib/node/task-backend-module' in './apps/theia-ide/src-gen/backend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/backend)
+    resolve as module
+      ./apps/theia-ide/src-gen/backend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/task doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/task doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/task doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+ @ ./src-gen/backend/main.js 190:21-40
+
+WARNING in ./src-gen/backend/server.js 73:19-70
+Module not found: Error: Can't resolve '@theia/test/lib/node/test-backend-module' in './apps/theia-ide/src-gen/backend'
+resolve '@theia/test/lib/node/test-backend-module' in './apps/theia-ide/src-gen/backend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/backend)
+    resolve as module
+      ./apps/theia-ide/src-gen/backend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/test doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/test doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/test doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+ @ ./src-gen/backend/main.js 190:21-40
+
+WARNING in ./src-gen/backend/server.js 76:19-86
+Module not found: Error: Can't resolve '@theia/mini-browser/lib/node/mini-browser-backend-module' in './apps/theia-ide/src-gen/backend'
+resolve '@theia/mini-browser/lib/node/mini-browser-backend-module' in './apps/theia-ide/src-gen/backend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/backend)
+    resolve as module
+      ./apps/theia-ide/src-gen/backend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/mini-browser doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/mini-browser doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/mini-browser doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+ @ ./src-gen/backend/main.js 190:21-40
+
+WARNING in ./src-gen/backend/server.js 77:19-76
+Module not found: Error: Can't resolve '@theia/preview/lib/node/preview-backend-module' in './apps/theia-ide/src-gen/backend'
+resolve '@theia/preview/lib/node/preview-backend-module' in './apps/theia-ide/src-gen/backend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/backend)
+    resolve as module
+      ./apps/theia-ide/src-gen/backend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/
+node_modules
+        ./apps/theia-ide/node_modules/@theia/preview doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/preview doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/preview doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+ @ ./src-gen/backend/main.js 190:21-40
+
+WARNING in ./src-gen/backend/server.js 80:19-71
+Module not found: Error: Can't resolve '@theia/ai-mcp/lib/node/mcp-backend-module' in './apps/theia-ide/src-gen/backend'
+resolve '@theia/ai-mcp/lib/node/mcp-backend-module' in './apps/theia-ide/src-gen/backend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/backend)
+    resolve as module
+      ./apps/theia-ide/src-gen/backend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/ai-mcp doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/ai-mcp doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/ai-mcp doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+ @ ./src-gen/backend/main.js 190:21-40
+
+WARNING in ./src-gen/backend/server.js 81:19-90
+Module not found: Error: Can't resolve '@theia/editor-preview/lib/node/editor-preview-backend-module' in './apps/theia-ide/src-gen/backend'
+resolve '@theia/editor-preview/lib/node/editor-preview-backend-module' in './apps/theia-ide/src-gen/backend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/backend)
+    resolve as module
+      ./apps/theia-ide/src-gen/backend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/editor-preview doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/editor-preview doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/editor-preview doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+ @ ./src-gen/backend/main.js 190:21-40
+
+WARNING in ./src-gen/backend/server.js 82:19-78
+Module not found: Error: Can't resolve '@theia/notebook/lib/node/notebook-backend-module' in './apps/theia-ide/src-gen/backend'
+resolve '@theia/notebook/lib/node/notebook-backend-module' in './apps/theia-ide/src-gen/backend'
+  Parsed request is a module
+  using description file: ./apps/theia-ide/package.json (relative path: ./src-gen/backend)
+    resolve as module
+      ./apps/theia-ide/src-gen/backend/node_modules doesn't exist or is not a directory
+      ./apps/theia-ide/src-gen/node_modules doesn't exist or is not a directory
+      looking for modules in ./apps/theia-ide/node_modules
+        ./apps/theia-ide/node_modules/@theia/notebook doesn't exist
+      ./apps/node_modules doesn't exist or is not a directory
+      looking for modules in ./node_modules
+        ./node_modules/@theia/notebook doesn't exist
+      /path/to/Desktop/A1-Inter-LLM-Com/node_modules doesn't exist or is not a directory
+      /path/to/Desktop/node_modules doesn't exist or is not a directory
+      looking for modules in /path/to/node_modules
+        /path/to/node_modules/@theia/notebook doesn't exist
+      /Users/node_modules doesn't exist or is not a directory
+      /node_modules doesn't exist or is not a directory
+ @ ./src-gen/backend/main.js 190:21-40
+
+ERROR in ../../node_modules/.pnpm/drivelist@12.0.2/node_modules/drivelist/js/index.js 22:17-36
+Module not found: Error: Cannot find module 'drivelist/build/Release/drivelist.node'
+Require stack:
+- ./node_modules/.pnpm/@theia+native-webpack-plugin@1.65.2_webpack-cli@4.7.0/node_modules/@theia/native-webpack-plugin/lib/native-webpack-plugin.js
+- ./node_modules/.pnpm/@theia+native-webpack-plugin@1.65.2_webpack-cli@4.7.0/node_modules/@theia/native-webpack-plugin/lib/index.js
+- ./apps/theia-ide/gen-webpack.node.config.js
+- ./apps/theia-ide/webpack.config.js
+- ./node_modules/.pnpm/webpack-cli@4.7.0_webpack@5.102.1/node_modules/webpack-cli/lib/webpack-cli.js
+- ./node_modules/.pnpm/webpack-cli@4.7.0_webpack@5.102.1/node_modules/webpack-cli/lib/bootstrap.js
+- ./node_modules/.pnpm/webpack-cli@4.7.0_webpack@5.102.1/node_modules/webpack-cli/bin/cli.js
+- ./node_modules/.pnpm/webpack@5.102.1_webpack-cli@4.7.0/node_modules/webpack/bin/webpack.js
+ @ ../../node_modu
+les/.pnpm/@theia+core@1.65.2_@theia+electron@1.65.2_electron@38.3.0__bufferutil@4.0.9_utf-8-validate@5.0.7/node_modules/@theia/core/lib/node/env-variables/env-variables-server.js 23:18-38
+ @ ../../node_modules/.pnpm/@theia+core@1.65.2_@theia+electron@1.65.2_electron@38.3.0__bufferutil@4.0.9_utf-8-validate@5.0.7/node_modules/@theia/core/lib/node/env-variables/index.js 19:21-54
+ @ ../../node_modules/.pnpm/@theia+core@1.65.2_@theia+electron@1.65.2_electron@38.3.0__bufferutil@4.0.9_utf-8-validate@5.0.7/node_modules/@theia/core/lib/node/backend-application-module.js 29:24-50
+ @ ./src-gen/backend/server.js 14:37-95
+ @ ./src-gen/backend/main.js 190:21-40
+
+webpack 5.102.1 compiled with 1 error and 10 warnings in 49190 ms
+
+Error: webpack exited with an unexpected code: 1.
+    at ChildProcess.<anonymous> (./node_modules/.pnpm/@theia+application-manager@1.65.2_@theia+electron@1.65.2_electron@38.3.0_/node_modules/@theia/application-manager/lib/application-process.js:86:28)
+    at ChildProcess.emit (node:events:518:28)
+    at maybeClose (node:internal/child_process:1101:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5)
+ ELIFECYCLE  Command failed with exit code 1.
+      242.96 real       310.38 user        27.19 sys
+          6679846912  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             5099147  page reclaims
+                 611  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                  12  messages sent
+                  11  messages received
+                   2  signals received
+               24921  voluntary context switches
+             1001626  involuntary context switches
+          3204331214  instructions retired
+          2902536597  cycles elapsed
+            63905792  peak memory footprint

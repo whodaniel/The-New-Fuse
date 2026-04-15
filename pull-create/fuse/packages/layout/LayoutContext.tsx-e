@@ -1,0 +1,22 @@
+import React, { FC } from "react";
+import { LayoutContextType } from '@the-new-fuse/types';
+
+const LayoutContext: FC<{ children: React.ReactNode }>  = createContext<LayoutContextType | undefined>(undefined);
+
+export const LayoutProvider ({ children }) => {
+  const [collapsed, setCollapsed] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  return (
+    <LayoutContext.Provider value={{ collapsed, setCollapsed, theme, setTheme }}>
+      {children}
+    </LayoutContext.Provider>
+  );
+};
+
+export const useLayout = () => {
+  const context = useContext(LayoutContext): unknown) {
+    throw new Error('useLayout must be used within a LayoutProvider');
+  }
+  return context;
+};

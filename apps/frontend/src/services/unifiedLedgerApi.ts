@@ -90,6 +90,17 @@ export interface RecordConnections {
   plans: ProjectPlanRecord[];
 }
 
+export interface TaskExecutionLogEntry {
+  id: string;
+  level: 'info' | 'warn' | 'error';
+  message: string;
+  actor: string;
+  source: string;
+  stage?: string;
+  metadata: Record<string, unknown>;
+  timestamp: string;
+}
+
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
 function getAuthHeaders(): Record<string, string> {
@@ -469,6 +480,34 @@ export async function addFeedbackIteration(
 ): Promise<LedgerRecord | null> {
   return parse<LedgerRecord | null>(
     await apiFetch(`/api/unified-ledger/records/${recordId}/feedback`, {
+      method: 'POST',
+      headers: JSON_HEADERS,
+      body: JSON.stringify(input),
+    })
+  );
+}
+
+export async function getTaskExecutionLogs(
+  taskId: string
+): Promise<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }> {
+  return parse<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }>(
+    await apiFetch(`/api/tasks/${taskId}/execution-logs`)
+  );
+}
+
+export async function appendTaskExecutionLog(
+  taskId: string,
+  input: {
+    level: 'info' | 'warn' | 'error';
+    message: string;
+    actor: string;
+    source: string;
+    stage?: string;
+    metadata?: Record<string, unknown>;
+  }
+): Promise<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }> {
+  return parse<{ taskId: string; logs: TaskExecutionLogEntry[]; count: number }>(
+    await apiFetch(`/api/tasks/${taskId}/execution-logs`, {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),

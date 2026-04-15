@@ -301,7 +301,7 @@ export class TNFRelayServer extends EventEmitter {
     });
 
     if (this.activityPersistenceEnabled) {
-      this.activityRedis = createStandaloneRedisClient({
+      this.activityRedis = createClient({
         url: process.env.ACTIVITY_REDIS_URL || process.env.REDIS_URL || 'redis://localhost:6379',
       });
       this.activityRedis.on('error', (err: Error) => {

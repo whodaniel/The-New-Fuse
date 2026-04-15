@@ -1,0 +1,62 @@
+{
+  "urls": {
+    "ARCADE_URL": "https://ai-arcade.xyz",
+    "MUSIC_URL": "https://open-audio-deck-production.up.railway.app"
+  },
+  "desktop": {
+    "featuredOpenAudioDeck": {
+      "pass": true,
+      "detail": "Open Audio Deck visible"
+    },
+    "musicFilter": {
+      "pass": true,
+      "detail": "Music filter retains Open Audio Deck"
+    },
+    "cardCtaListen": {
+      "pass": true,
+      "detail": "LISTEN CTA present on card"
+    },
+    "modalCopy": {
+      "pass": false,
+      "detail": "locator.waitFor: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=/FREEs*/s*OPEN/i').first() to be visible\u001b[22m\n"
+    },
+    "newTabLaunch": {
+      "pass": false,
+      "detail": "browserContext.waitForEvent: Timeout 15000ms exceeded while waiting for event \"page\""
+    }
+  },
+  "mobile": {
+    "featuredOpenAudioDeck": {
+      "pass": true,
+      "detail": "Open Audio Deck visible on mobile"
+    },
+    "musicFilter": {
+      "pass": true,
+      "detail": "Music filter works on mobile"
+    }
+  },
+  "music": {
+    "homepageLoads": {
+      "pass": true,
+      "detail": "title: The New Fuse"
+    },
+    "trendingLoads": {
+      "pass": true,
+      "detail": "trendingText=true, mediaNodes=2"
+    },
+    "searchWorks": {
+      "pass": true,
+      "detail": "Search input accepted query \"lofi\""
+    },
+    "playbackStarts": {
+      "pass": false,
+      "detail": "locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button[aria-label*=\"Play\" i], button:has-text(\"Play\"), button:has-text(\"▶\")').first()\u001b[22m\n"
+    }
+  },
+  "launchNewTabUrl": null,
+  "errors": [
+    "modalCopy: locator.waitFor: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=/FREEs*/s*OPEN/i').first() to be visible\u001b[22m\n",
+    "newTabLaunch: browserContext.waitForEvent: Timeout 15000ms exceeded while waiting for event \"page\"",
+    "musicPlaybackStarts: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button[aria-label*=\"Play\" i], button:has-text(\"Play\"), button:has-text(\"▶\")').first()\u001b[22m\n"
+  ]
+}

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Casin8 Desktop - Poker Interface</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#19e680",
+              "background-light": "#f6f8f7",
+              "background-dark": "#112119",
+              "navy-deep": "#0a1410",
+              "glass": "rgba(255, 255, 255, 0.05)",
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .poker-table-gradient {
+            background: radial-gradient(circle, #1a3a32 0%, #0a1410 80%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .gold-foil {
+            background: linear-gradient(135deg, #d4af37 0%, #f9e29c 50%, #d4af37 100%);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-hidden h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between border-b border-white/10 px-6 py-3 bg-navy-deep z-50">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-primary">
+<div class="size-8 rounded-lg bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">casino</span>
+</div>
+<h2 class="text-xl font-extrabold tracking-tight">Casin8</h2>
+</div>
+<nav class="hidden lg:flex items-center gap-6 ml-8">
+<a class="text-slate-400 hover:text-primary text-sm font-semibold transition-colors" href="#">Lobby</a>
+<a class="text-primary text-sm font-semibold border-b-2 border-primary pb-1" href="#">Poker</a>
+<a class="text-slate-400 hover:text-primary text-sm font-semibold transition-colors" href="#">Tournaments</a>
+<a class="text-slate-400 hover:text-primary text-sm font-semibold transition-colors" href="#">VIP</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
+<span class="material-symbols-outlined text-xs text-primary" style="font-variation-settings: 'FILL' 1">shield</span>
+<span class="text-xs font-mono text-slate-400 uppercase tracking-widest">Provably Fair</span>
+</div>
+<div class="h-8 w-px bg-white/10 mx-2"></div>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-navy-deep text-sm font-bold hover:brightness-110 transition-all">
+<span>Deposit</span>
+</button>
+<button class="flex items-center gap-2 px-4 rounded-lg h-10 bg-white/5 border border-white/10 text-white text-sm font-bold">
+<span class="material-symbols-outlined text-blue-400 text-lg">currency_bitcoin</span>
+<span>4.20550 BTC</span>
+</button>
+</div>
+<div class="size-10 rounded-full border-2 border-primary p-0.5 overflow-hidden">
+<img class="w-full h-full object-cover rounded-full" data-alt="User profile avatar close up" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXRQ9SzGzAeZ9lpuNXZVdiKPK3da6ULDfMfyy0KNVnRoGU5OPuoclO5dA_whKsJ6QUHqZF4_F5nfTzndplWZJgF5PF3QwIJyPEyfGFz1esffDglERyOrBPiYixwyfS6dQy3luBIWM9jxuCWxB2N4mAiggMEfxClnswTEhEZIzctk97Jp0aCfQ86PayN-oCRWvMEzPvKxzdZWwLUWCUptq1D2fdQ_1yjFCArbnCPwb-jQ_gVnHHXRE7LriQxgzA4sRYSx2MJmBupRYq"/>
+</div>
+</div>
+</header>
+<main class="flex-1 flex overflow-hidden">
+<!-- Left Rail: Game Modes -->
+<aside class="w-64 bg-navy-deep border-r border-white/5 flex flex-col p-4">
+<div class="mb-6">
+<h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Table Selection</h3>
+<div class="space-y-1">
+<button class="w-full flex items-center gap-3 px-3 py-3 rounded-lg bg-primary/10 text-primary border border-primary/20">
+<span class="material-symbols-outlined text-xl">style</span>
+<span class="text-sm font-semibold">Cash Games</span>
+</button>
+<button class="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-slate-400 hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-xl">timer</span>
+<span class="text-sm font-semibold">Sit &amp; Go</span>
+</button>
+<button class="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-slate-400 hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-xl">trophy</span>
+<span class="text-sm font-semibold">Tournaments</span>
+</button>
+<button class="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-slate-400 hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-xl">bolt</span>
+<span class="text-sm font-semibold">Spin &amp; Win</span>
+</button>
+</div>
+</div>
+<div class="mt-auto">
+<div class="bg-white/5 rounded-xl p-4 border border-white/10">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs text-slate-400">Total Players</span>
+<span class="text-xs font-bold text-primary">12,842</span>
+</div>
+<div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[65%]"></div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Center Stage: Poker Table -->
+<section class="flex-1 relative bg-background-dark flex flex-col items-center justify-center p-8 overflow-hidden">
+<!-- Table Container -->
+<div class="relative w-full max-w-5xl aspect-[16/9] poker-table-gradient rounded-[200px] border-[12px] border-[#2c2c2c] shadow-2xl flex items-center justify-center">
+<!-- Inner Border Detail -->
+<div class="absolute inset-4 rounded-[180px] border border-primary/10 pointer-events-none"></div>
+<!-- Center Logo -->
+<div class="opacity-10 text-white flex flex-col items-center">
+<span class="material-symbols-outlined text-8xl">casino</span>
+<span class="text-2xl font-black tracking-[0.5em] uppercase">Casin8</span>
+</div>
+<!-- Community Cards -->
+<div class="absolute flex gap-3">
+<div class="w-20 h-28 bg-white rounded-lg flex flex-col justify-between p-2 text-red-600 shadow-xl border-2 border-white/20">
+<span class="text-xl font-bold">A<br/>♥</span>
+<span class="material-symbols-outlined self-center text-4xl">favorite</span>
+</div>
+<div class="w-20 h-28 bg-white rounded-lg flex flex-col justify-between p-2 text-slate-900 shadow-xl border-2 border-white/20">
+<span class="text-xl font-bold">K<br/>♠</span>
+<span class="material-symbols-outlined self-center text-4xl">playing_cards</span>
+</div>
+<div class="w-20 h-28 bg-white rounded-lg flex flex-col justify-between p-2 text-slate-900 shadow-xl border-2 border-white/20">
+<span class="text-xl font-bold">10<br/>♣</span>
+<span class="material-symbols-outlined self-center text-4xl">eco</span>
+</div>
+<!-- Face Down Cards (Remaining) -->
+<div class="w-20 h-28 gold-foil rounded-lg shadow-xl border-2 border-white/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-navy-deep/40 text-4xl">casino</span>
+</div>
+<div class="w-20 h-28 gold-foil rounded-lg shadow-xl border-2 border-white/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-navy-deep/40 text-4xl">casino</span>
+</div>
+</div>
+<!-- Pot Display -->
+<div class="absolute top-[20%] glass-card px-6 py-2 rounded-full border border-white/20">
+<div class="flex items-center gap-2">
+<span class="text-slate-400 text-xs font-bold uppercase tracking-wider">Total Pot:</span>
+<span class="text-primary font-mono font-bold">$1,245.50</span>
+</div>
+</div>
+<!-- Player Positions (Glassmorphism Cards) -->
+<!-- Top Player -->
+<div class="absolute -top-12 glass-card p-2 rounded-xl flex items-center gap-3 w-44">
+<div class="size-12 rounded-lg bg-slate-800 overflow-hidden relative border border-white/10">
+<img class="w-full h-full object-cover grayscale" data-alt="Opponent poker player avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqFBsEY2vuR6BDyW6jHyc9fJjyDpfJkeTy5Xj0TTLVCknhG4pus30QYmcB5Hp7Zvqb1Hhw0q9indrgOATgODPmYMe1OvSvFAOUiloMUopn-i98POGWb2KmBZ5_c6YZr16_QdOSdsMnLi2ynkIh0Fj58F9hoXwVhpZ6Fl2oQS-sAHjuVBLUnyJP8H_YTDY3dC-gOJseI8mBG4Z6W0QM3tucLDvam2gjVIlllaiNGrTCltYvl6LsX2t6I2uSAVbLItIcmxoB-iAPvVtL"/>
+</div>
+<div class="flex-1">
+<p class="text-xs font-bold text-white truncate">TheShark99</p>
+<p class="text-xs text-primary font-mono">$820.00</p>
+</div>
+</div>
+<!-- Right Player (Thinking State) -->
+<div class="absolute -right-12 glass-card p-2 rounded-xl flex flex-col items-center gap-2 w-36 border-primary/50 ring-4 ring-primary/10">
+<div class="size-12 rounded-lg bg-slate-800 overflow-hidden relative border-2 border-primary">
+<img class="w-full h-full object-cover" data-alt="Active thinking poker player" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBd6823iP7tHT6vLT4gTXa9qsYHJvHVimx0wwp3lCkxxmJQCzt4FmvZUw_ly8jEfT1-nuRtr5pYNeiz7-IMThJOj2z8qZQnwUn_t2J4DbuQFIXGB5dDsBPL0BGiFOLkSiduHhtYzox826b_ST2QXXKLAPUgUUBEz2hlF0s-s5oXDhnlL6ejctmrxz409eoJ2VOnUvU6HsA0pB0-ZAQSjBlF49v6WwmltIHcQY3l9O8b11snBH8UsvRpn8ys3kCUYXK8qdQuX4mKcwuE"/>
+<div class="absolute inset-0 bg-primary/20 flex items-center justify-center">
+<span class="animate-pulse w-2 h-2 bg-primary rounded-full"></span>
+</div>
+</div>
+<div class="text-center">
+<p class="text-xs font-bold text-white">Crypt0Queen</p>
+<span class="text-[10px] text-primary uppercase font-black tracking-widest animate-pulse">Thinking...</span>
+</div>
+</div>
+<!-- Left Player -->
+<div class="absolute -left-12 glass-card p-2 rounded-xl flex flex-col items-center gap-2 w-36">
+<div class="size-12 rounded-lg bg-slate-800 overflow-hidden border border-white/10">
+<img class="w-full h-full object-cover" data-alt="Opponent poker player profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqW4MgbKutfLnoCNd4_ObbpCWSX0mOL83AWsn1MhRCufy69lKQKsCBrtbbYJitR_QVquNYuUPsgcx8Cn2JfQWqYESk2FDgdXmKqgi65vabFRi1FzzS7VUctpxXawaMtW-1rgV8K6wZtZ2ZQGh3Mw6f7ha25cp8NM_WC4RQXm_GTriqKH1NYlYhs2qUNBZElqTA1lRACIPxKHIm-LKtrJN-oRyTeO8IREu3R109k0iAxTAxkV86j_mZSf8m-vAJjhtGYw7-ERHCq0xt"/>
+</div>
+<div class="text-center">
+<p class="text-xs font-bold text-white">MobyDick</p>
+<p class="text-xs text-slate-400 font-mono">$2,100.00</p>
+</div>
+</div>
+<!-- Main Player (Bottom) -->
+<div class="absolute -bottom-16 flex flex-col items-center">
+<div class="glass-card p-4 rounded-2xl flex items-center gap-6 shadow-2xl border-primary/30 ring-8 ring-background-dark">
+<!-- Player Avatar -->
+<div class="size-16 rounded-xl bg-slate-800 border-2 border-primary overflow-hidden shadow-lg shadow-primary/20">
+<img class="w-full h-full object-cover" data-alt="Main player profile photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJgXNLqK5xGRtHK-OCvQ7PPGrh2QGbXBdNQC8hF1Z6VDTwmWjttpiJHnXKAr9kcMVAAPFOheCxeZZUHVTtC49X7iIBQE88bDij1MLE3YsmY3ClU8xFw6lmaGwtoNhANJnojcVdQijTK6UZreLMbsrXv5a4J-3qcG3OlFWSgD302Qv-HSsBPhJNRfBLfCSRHOb-S33ozLuDD8B701MTmRXKabGyWhw-KSRFQvWypDGHF2n2f3KMZWve12fFt5ntw0DOB3Lh5BUd6Qnw"/>
+</div>
+<!-- Cards -->
+<div class="flex gap-2">
+<div class="w-16 h-24 bg-white rounded-lg flex flex-col justify-between p-2 text-red-600 shadow-xl transform -rotate-6">
+<span class="text-lg font-bold leading-tight">Q<br/>♦</span>
+<span class="material-symbols-outlined self-center">diamond</span>
+</div>
+<div class="w-16 h-24 bg-white rounded-lg flex flex-col justify-between p-2 text-slate-900 shadow-xl transform rotate-6">
+<span class="text-lg font-bold leading-tight">Q<br/>♠</span>
+<span class="material-symbols-outlined self-center">playing_cards</span>
+</div>
+</div>
+<!-- Info -->
+<div class="pr-4">
+<p class="text-sm font-bold text-white">Alex_Crypto</p>
+<p class="text-xl font-mono font-bold text-primary">$4,205.50</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Rail: Feed & History -->
+<aside class="w-80 bg-navy-deep border-l border-white/5 flex flex-col">
+<!-- Tabs -->
+<div class="flex border-b border-white/5">
+<button class="flex-1 py-4 text-xs font-bold text-primary border-b-2 border-primary bg-primary/5 uppercase tracking-wider">Activity</button>
+<button class="flex-1 py-4 text-xs font-bold text-slate-500 hover:text-white transition-colors uppercase tracking-wider">Stats</button>
+<button class="flex-1 py-4 text-xs font-bold text-slate-500 hover:text-white transition-colors uppercase tracking-wider">Fair</button>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-4">
+<!-- Activity Feed -->
+<div class="space-y-3">
+<div class="flex items-start gap-3 text-xs leading-relaxed">
+<span class="text-slate-500 font-mono">22:41:02</span>
+<p class="text-slate-300"><span class="text-white font-bold">TheShark99</span> calls $20.00</p>
+</div>
+<div class="flex items-start gap-3 text-xs leading-relaxed">
+<span class="text-slate-500 font-mono">22:41:05</span>
+<p class="text-slate-300"><span class="text-white font-bold">Crypt0Queen</span> is thinking...</p>
+</div>
+<div class="flex items-start gap-3 text-xs leading-relaxed bg-primary/5 p-2 rounded-lg border border-primary/10">
+<span class="text-slate-500 font-mono">22:41:08</span>
+<p class="text-primary font-bold">Dealer: Flop dealt [A♥, K♠, 10♣]</p>
+</div>
+</div>
+<!-- Server Seed Info -->
+<div class="mt-8 p-4 bg-white/5 rounded-xl border border-white/10">
+<h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3">Server Seed (Hashed)</h4>
+<div class="flex items-center gap-2">
+<code class="text-[10px] text-slate-400 break-all font-mono">7f8c9b2d1e0a...f4a3e2d1</code>
+<button class="material-symbols-outlined text-slate-500 hover:text-white text-sm">content_copy</button>
+</div>
+</div>
+<!-- Recent Hands -->
+<div class="space-y-2 mt-6">
+<h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Recent Winners</h4>
+<div class="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">emoji_events</span>
+<span class="text-xs font-bold">MobyDick</span>
+</div>
+<span class="text-xs font-mono text-primary">+$452.00</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-500 text-sm">emoji_events</span>
+<span class="text-xs font-bold">Crypt0Queen</span>
+</div>
+<span class="text-xs font-mono text-primary">+$120.50</span>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<!-- Bottom Action Bar -->
+<footer class="h-28 bg-navy-deep border-t border-white/10 px-8 flex items-center justify-between z-50">
+<div class="flex items-center gap-4">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Current Call</span>
+<span class="text-2xl font-black text-white">$40.00</span>
+</div>
+</div>
+<div class="flex items-center gap-4 h-full py-4">
+<button class="h-full px-12 rounded-xl bg-slate-800 text-white font-bold text-lg hover:bg-slate-700 transition-colors border-2 border-slate-700 shadow-lg">
+                FOLD
+            </button>
+<button class="h-full px-12 rounded-xl bg-slate-800 text-white font-bold text-lg hover:bg-slate-700 transition-colors border-2 border-slate-700 shadow-lg">
+                CALL $40
+            </button>
+<div class="h-full w-px bg-white/10 mx-4"></div>
+<div class="flex flex-col gap-2 w-80">
+<div class="flex justify-between items-end">
+<span class="text-[10px] font-bold text-slate-500 uppercase">Raise Amount</span>
+<span class="text-xl font-black text-primary">$120.00</span>
+</div>
+<div class="relative w-full h-10 flex items-center">
+<div class="absolute w-full h-3 bg-white/5 rounded-full border border-white/10"></div>
+<div class="absolute w-[30%] h-3 bg-primary rounded-full shadow-[0_0_15px_rgba(25,230,128,0.3)]"></div>
+<div class="absolute left-[30%] -ml-3 size-7 bg-white rounded-full shadow-xl border-4 border-primary cursor-pointer active:scale-95 transition-transform"></div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 py-1 rounded bg-white/5 text-[10px] font-bold text-slate-400 hover:text-white hover:bg-white/10 border border-white/5">1/2 POT</button>
+<button class="flex-1 py-1 rounded bg-white/5 text-[10px] font-bold text-slate-400 hover:text-white hover:bg-white/10 border border-white/5">3/4 POT</button>
+<button class="flex-1 py-1 rounded bg-white/5 text-[10px] font-bold text-slate-400 hover:text-white hover:bg-white/10 border border-white/5">POT</button>
+<button class="flex-1 py-1 rounded bg-white/5 text-[10px] font-bold text-slate-400 hover:text-white hover:bg-white/10 border border-white/5">MAX</button>
+</div>
+</div>
+<button class="h-full px-16 rounded-xl bg-primary text-navy-deep font-black text-xl hover:brightness-110 shadow-[0_0_30px_rgba(25,230,128,0.2)] transition-all uppercase">
+                RAISE
+            </button>
+</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-slate-400 hover:text-white text-3xl">chat</button>
+<button class="material-symbols-outlined text-slate-400 hover:text-white text-3xl">settings</button>
+</div>
+</footer>
+</body></html>

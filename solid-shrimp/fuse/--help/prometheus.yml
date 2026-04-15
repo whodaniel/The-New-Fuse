@@ -1,0 +1,96 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: production-monitor
+    replica: 1
+rule_files:
+- alert_rules.yml
+- recording_rules.yml
+alerting:
+  alertmanagers:
+  - 
+      static_configs:
+      - 
+          targets:
+          - alertmanager:9093
+    scrape_configs:
+- 
+    job_name: prometheus
+    static_configs:
+    - 
+        targets:
+        - localhost:9090
+    - 
+    job_name: api-gateway
+    static_configs:
+    - 
+        targets:
+        - localhost:8080
+      metrics_path: /health
+    scrape_interval: 15s
+    scrape_timeout: 10s
+  - 
+    job_name: user-service
+    static_configs:
+    - 
+        targets:
+        - localhost:3001
+      metrics_path: /api/users/health
+    scrape_interval: 15s
+    scrape_timeout: 10s
+  - 
+    job_name: message-service
+    static_configs:
+    - 
+        targets:
+        - localhost:3002
+      metrics_path: /api/messages/health
+    scrape_interval: 15s
+    scrape_timeout: 10s
+  - 
+    job_name: authentication-service
+    static_configs:
+    - 
+        targets:
+        - localhost:3003
+      metrics_path: /api/auth/health
+    scrape_interval: 15s
+    scrape_timeout: 10s
+  - 
+    job_name: database
+    static_configs:
+    - 
+        targets:
+        - localhost:5432
+      metrics_path: /metrics
+    scrape_interval: 15s
+    scrape_timeout: 10s
+  - 
+    job_name: redis-cache
+    static_configs:
+    - 
+        targets:
+        - localhost:6379
+      metrics_path: /metrics
+    scrape_interval: 15s
+    scrape_timeout: 10s
+  - 
+    job_name: message-queue
+    static_configs:
+    - 
+        targets:
+        - localhost:5672
+      metrics_path: /metrics
+    scrape_interval: 15s
+    scrape_timeout: 10s
+  - 
+    job_name: frontend
+    static_configs:
+    - 
+        targets:
+        - localhost:3000
+      metrics_path: /
+    scrape_interval: 15s
+    scrape_timeout: 10s
+  

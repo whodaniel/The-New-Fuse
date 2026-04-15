@@ -1,0 +1,158 @@
+{
+  "generatedAt": "2026-03-04T19:08:44.437Z",
+  "counts": {
+    "sidebarPaths": 21,
+    "missingRoutes": 0,
+    "adminUnguarded": 0,
+    "unguardedReview": 0
+  },
+  "sidebarGuardReport": [
+    {
+      "path": "/admin",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/admin/audit-logs",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/agents",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/ai-command-center",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/ai-portal",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/analytics",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/chat",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/dashboard",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/debug",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/docs",
+      "access": "public",
+      "status": "ok",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/hub",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/knowledge-hub",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/marketplace",
+      "access": "public",
+      "status": "ok",
+      "guard": "none",
+      "redirect": false
+    },
+    {
+      "path": "/mcp-hub",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/observatory",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequirePermission",
+      "redirect": false
+    },
+    {
+      "path": "/settings",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/suggestions",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/tasks",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/timeline",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/workflows",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    },
+    {
+      "path": "/workspace/overview",
+      "access": "authenticated",
+      "status": "ok",
+      "guard": "RequireAuth",
+      "redirect": false
+    }
+  ]
+}

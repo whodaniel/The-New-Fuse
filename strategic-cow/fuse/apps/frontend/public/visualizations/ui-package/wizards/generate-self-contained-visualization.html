@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Self-Contained Visualization - Setup Wizard</title>
+    <style>
+        /* Wizard styles */
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            background: #f7fafc;
+        }
+        .wizard-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+        }
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-bottom: 3px solid #e2e8f0;
+        }
+        .step.active {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        .step.completed {
+            border-color: #10b981;
+            color: #10b981;
+        }
+        .wizard-content {
+            min-height: 300px;
+        }
+        .wizard-step {
+            display: none;
+        }
+        .wizard-step.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard-container">
+        <h1>Generate Self-Contained Visualization</h1>
+        <div class="steps">
+            <!-- Step indicators generated dynamically -->
+        </div>
+        <div class="wizard-content">
+            <!-- Step content -->
+        </div>
+        <div class="wizard-navigation">
+            <button onclick="previousStep()">← Back</button>
+            <button onclick="nextStep()">Next →</button>
+            <button onclick="finish()" style="display:none">Finish</button>
+        </div>
+    </div>
+
+    <script>
+        // Wizard navigation logic
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateWizard();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateWizard();
+            }
+        }
+
+        function updateWizard() {
+            // Update UI based on current step
+        }
+
+        function finish() {
+            // Execute capability with all collected data
+        }
+    </script>
+</body>
+</html>

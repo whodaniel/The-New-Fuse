@@ -110,6 +110,15 @@ watchPatterns = ["apps/skideancer-ide/**"]
 [services.fuse-theia-ide.deploy]
 healthcheckPath = "/"
 
+# Casin8 Games Backend (Poker engine / game server)
+[services.casin8-games-backend]
+builder = "DOCKERFILE"
+[services.casin8-games-backend.build]
+dockerfilePath = "apps/casin8-games/Dockerfile"
+watchPatterns = ["apps/casin8-games/**"]
+[services.casin8-games-backend.deploy]
+healthcheckPath = "/api/health"
+
 
 # TNF Cloud Sandbox (MCP Server for Tauri bridge)
 # Uses shared Dockerfile.railway from repository root

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{TITLE}}</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: {{BACKGROUND_GRADIENT}};
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    header {
+      color: white;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    header p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    main {
+      flex: 1;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+    }
+
+    #controls {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    #controls label {
+      font-weight: 600;
+      color: #4a5568;
+    }
+
+    #controls select,
+    #controls button {
+      padding: 8px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 14px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    #controls select:hover,
+    #controls button:hover {
+      border-color: {{PRIMARY_COLOR}};
+      background: #f7fafc;
+    }
+
+    #controls button {
+      background: {{PRIMARY_COLOR}};
+      color: white;
+      border-color: {{PRIMARY_COLOR}};
+      font-weight: 600;
+    }
+
+    #controls button:hover {
+      background: {{PRIMARY_COLOR_DARK}};
+      border-color: {{PRIMARY_COLOR_DARK}};
+    }
+
+    #chart {
+      flex: 1;
+      position: relative;
+      min-height: 400px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .node {
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .node:hover {
+      opacity: 0.8;
+    }
+
+    .node rect {
+      stroke: white;
+      stroke-width: 2px;
+    }
+
+    .node text {
+      pointer-events: none;
+      font-size: 11px;
+      font-weight: 600;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+    }
+
+    #tooltip {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      max-width: 300px;
+    }
+
+    #tooltip.visible {
+      opacity: 1;
+    }
+
+    #tooltip strong {
+      color: #fbbf24;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    #tooltip .stat {
+      margin: 4px 0;
+    }
+
+    .breadcrumb {
+      font-size: 14px;
+      color: #4a5568;
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      background: #f7fafc;
+      border-radius: 6px;
+    }
+
+    .breadcrumb span {
+      cursor: pointer;
+      color: {{PRIMARY_COLOR}};
+      transition: color 0.2s;
+    }
+
+    .breadcrumb span:hover {
+      color: {{PRIMARY_COLOR_DARK}};
+      text-decoration: underline;
+    }
+
+    .breadcrumb .separator {
+      margin: 0 8px;
+      color: #a0aec0;
+      cursor: default;
+    }
+
+    {{CUSTOM_CSS}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{HEADER_TITLE}}</h1>
+    <p>{{HEADER_SUBTITLE}}</p>
+  </header>
+
+  <main>
+    <div id="controls">
+      {{CONTROLS_HTML}}
+    </div>
+
+    <div id="breadcrumb" class="breadcrumb"></div>
+
+    <div id="chart"></div>
+    <div id="tooltip"></div>
+  </main>
+
+  <!-- Embedded D3.js Library -->
+  <script>
+    {{D3_LIBRARY}}
+  </script>
+
+  <!-- Embedded Data -->
+  <script>
+    const VISUALIZATION_DATA = {{DATA_JSON}};
+    const CONFIG = {{CONFIG_JSON}};
+  </script>
+
+  <!-- Visualization Logic -->
+  <script>
+    // Configuration
+    const config = {
+      width: 0,
+      height: 0,
+      padding: CONFIG.padding || 2,
+      topPadding: CONFIG.topPadding || 20,
+      colorScheme: CONFIG.colorScheme || 'schemeSet3'
+    };
+
+    // State
+    let currentRoot = null;
+    let currentMetric = CONFIG.defaultMetric || Object.keys(CONFIG.metrics)[0];
+    let svg, tooltip, breadcrumb;
+
+    // Color scale
+    const colorScale = d3.scaleOrdinal(d3[config.colorScheme]);
+
+    // Initialize
+    function init() {
+      const container = document.getElementById('chart');
+      tooltip = document.getElementById('tooltip');
+      breadcrumb = document.getElementById('breadcrumb');
+
+      // Get container dimensions
+      const rect = container.getBoundingClientRect();
+      config.width = rect.width;
+      config.height = rect.height;
+
+      // Create SVG
+      svg = d3.select('#chart')
+        .append('svg')
+        .attr('width', config.width)
+        .attr('height', config.height);
+
+      // Setup event listeners
+      setupEventListeners();
+
+      // Handle window resize
+      window.addEventListener('resize', debounce(() => {
+        const rect = container.getBoundingClientRect();
+        config.width = rect.width;
+        config.height = rect.height;
+        svg.attr('width', config.width).attr('height', config.height);
+        render(currentRoot || VISUALIZATION_DATA);
+      }, 250));
+
+      // Initial render
+      render(VISUALIZATION_DATA);
+    }
+
+    function setupEventListeners() {
+      // Metric selector
+      const metricSelect = document.getElementById('sizeMetric');
+      if (metricSelect) {
+        metricSelect.addEventListener('change', (e) => {
+          currentMetric = e.target.value;
+          render(currentRoot || VISUALIZATION_DATA);
+        });
+      }
+
+      // Reset button
+      const resetBtn = document.getElementById('resetBtn');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          render(VISUALIZATION_DATA);
+        });
+      }
+
+      {{CUSTOM_EVENT_LISTENERS}}
+    }
+
+    // Main render function
+    function render(data) {
+      currentRoot = data;
+
+      // Create hierarchy
+      const root = d3.hierarchy(data)
+        .sum(d => d[currentMetric] || 0)
+        .sort((a, b) => b.value - a.value);
+
+      // Create treemap layout
+      const treemap = d3.treemap()
+        .size([config.width, config.height])
+        .padding(config.padding)
+        .paddingTop(config.topPadding)
+        .round(true);
+
+      treemap(root);
+
+      // Update breadcrumb
+      updateBreadcrumb(data);
+
+      // Clear previous content
+      svg.selectAll('*').remove();
+
+      // Create groups for each node
+      const nodes = svg.selectAll('g')
+        .data(root.leaves())
+        .join('g')
+        .attr('class', 'node')
+        .attr('transform', d => `translate(${d.x0},${d.y0})`);
+
+      // Add rectangles
+      nodes.append('rect')
+        .attr('width', d => d.x1 - d.x0)
+        .attr('height', d => d.y1 - d.y0)
+        .attr('fill', d => {
+          // Color based on top-level category
+          let topLevel = d;
+          while (topLevel.parent && topLevel.parent.parent) {
+            topLevel = topLevel.parent;
+          }
+          return colorScale(topLevel.data.name);
+        })
+        .on('click', (event, d) => {
+          if (d.parent) {
+            render(d.parent.data);
+          }
+        })
+        .on('mouseenter', (event, d) => showTooltip(event, d))
+        .on('mousemove', (event) => moveTooltip(event))
+        .on('mouseleave', hideTooltip);
+
+      // Add text labels
+      nodes.append('text')
+        .attr('x', 4)
+        .attr('y', 14)
+        .text(d => {
+          const width = d.x1 - d.x0;
+          const height = d.y1 - d.y0;
+          if (width > 40 && height > 20) {
+            const maxLength = Math.floor(width / 7);
+            return d.data.name.length > maxLength
+              ? d.data.name.slice(0, maxLength - 3) + '...'
+              : d.data.name;
+          }
+          return '';
+        })
+        .attr('fill', '#2d3748');
+
+      {{CUSTOM_RENDER_CODE}}
+    }
+
+    // Breadcrumb navigation
+    function updateBreadcrumb(data) {
+      const path = [];
+      let current = data;
+      path.unshift(current);
+
+      breadcrumb.innerHTML = path.map((item, index) => {
+        const isLast = index === path.length - 1;
+        const name = item.name === 'root' ? '🏠 Home' : item.name;
+        return `
+          <span onclick="navigateTo(${index})">${name}</span>
+          ${!isLast ? '<span class="separator">›</span>' : ''}
+        `;
+      }).join('');
+    }
+
+    window.navigateTo = function(index) {
+      if (index === 0) {
+        render(VISUALIZATION_DATA);
+      }
+    };
+
+    // Tooltip functions
+    function showTooltip(event, d) {
+      const totalValue = d3.hierarchy(VISUALIZATION_DATA)
+        .sum(n => n[currentMetric] || 0).value;
+      const percentage = ((d.value / totalValue) * 100).toFixed(2);
+
+      let tooltipContent = `<strong>${d.data.name}</strong>`;
+
+      // Add metrics
+      Object.entries(CONFIG.metrics).forEach(([key, label]) => {
+        if (d.data[key] !== undefined) {
+          const formatter = CONFIG.formatters[key] || ((v) => v);
+          tooltipContent += `
+            <div class="stat">${label}: ${formatter(d.data[key])}</div>
+          `;
+        }
+      });
+
+      tooltipContent += `
+        <div class="stat">Percentage: ${percentage}%</div>
+        <div class="stat" style="margin-top: 8px; color: #a0aec0; font-size: 11px;">
+          Click to zoom out
+        </div>
+      `;
+
+      tooltip.innerHTML = tooltipContent;
+      tooltip.classList.add('visible');
+      moveTooltip(event);
+    }
+
+    function moveTooltip(event) {
+      const x = event.clientX + 15;
+      const y = event.clientY + 15;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+    }
+
+    function hideTooltip() {
+      tooltip.classList.remove('visible');
+    }
+
+    // Utility functions
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
+    }
+
+    function formatNumber(num) {
+      return num.toLocaleString();
+    }
+
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    {{CUSTOM_FUNCTIONS}}
+
+    // Start the application
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  </script>
+
+  <!-- Metadata -->
+  <!--
+    Generated: {{GENERATED_DATE}}
+    Generator: Self-Contained Visualization Tool v{{VERSION}}
+    Data Source: {{DATA_SOURCE}}
+
+    Configuration:
+    {{CONFIG_YAML}}
+  -->
+</body>
+</html>

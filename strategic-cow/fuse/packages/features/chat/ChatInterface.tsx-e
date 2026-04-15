@@ -1,0 +1,64 @@
+import React, { FC } from "react";
+import { useChat } from '@the-new-fuse/ChatContext';
+import { ChatMessage } from '@the-new-fuse/ChatMessage';
+import { ChatInput } from '@the-new-fuse/ChatInput';
+
+interface ChatInterfaceProps {
+  currentUser: string;
+  className?: string;
+}
+
+export const ChatInterface: (React as unknown).FC<ChatInterfaceProps> = ({
+  currentUser,
+  className = '',
+}) => {
+  const { state, sendMessage } = useChat(): unknown  = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom: 'smooth' });
+  };
+
+  useEffect(()  = ()> {
+    scrollToBottom();
+  }, [(state as unknown).messages]);
+
+  return (
+    <div className={`flex flex-col h-full ${className}`}>
+      {/* Chat Header */}
+      <div className="bg-white border-b border-gray-200 px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-medium text-gray-900">Chat</h2>
+            <p className="text-sm text-gray-500">
+              {(state as unknown).status === 'typing' && 'Agent is typing...'}
+            </p>
+          </div>
+          {(state as unknown).error && (
+            <div className="text-sm text-red-600">{(state as unknown).error}</div>
+          )}
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {(state as unknown).messages.length === 0 ? (<div className="flex items-center justify-center h-full text-gray-500">
+            No messages yet
+          </div>: unknown): (
+          (state as unknown).messages.map((message) => (
+            <ChatMessage
+              key={(message as unknown).id}
+              message={message}
+              isCurrentUser={(message as unknown).sender === currentUser}
+            />
+          ))
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input */}
+      <ChatInput
+        onSend={sendMessage}
+        disabled={(state as unknown).status === 'processing'}
+      />
+    </div>
+  );
+};

@@ -1,0 +1,29 @@
+{
+  "communication_state": {
+    "active_conversations": {
+      "vscode_interai_001": {
+        "started_at": "2025-05-04T12:00:00Z",
+        "status": "active",
+        "participants": ["copilot", "claude"],
+        "last_message": "2025-05-04T12:00:00Z"
+      }
+    },
+    "agent_status": {
+      "copilot": {
+        "status": "ready",
+        "last_heartbeat": "2025-05-04T12:00:00Z"
+      }
+    }
+  },
+  "capabilities": {
+    "active_protocols": ["file_based_a2a_v1", "mcp"],
+    "supported_message_types": [
+      "initiation",
+      "query",
+      "response",
+      "task_request",
+      "task_result",
+      "heartbeat"
+    ]
+  }
+}

@@ -1,0 +1,61 @@
+import React from 'react';
+import { useDashboardContext } from '@the-new-fuse/DashboardProvider';
+import { CoreFeatures } from '@the-new-fuse/core';
+
+export function FeatureControls(): unknown {
+  const { state, toggleFeature } = useDashboardContext(): Array<keyof CoreFeatures> = ['voice', 'gesture', 'xr'];
+
+  return (
+    <div className="feature-controls">
+      <h2>Dashboard Features</h2>
+      <div className="feature-grid"> {features.map(feature => (
+          <div key={feature} className="feature-item">
+            <label>
+              <input
+                type="checkbox"
+                checked={(state as unknown).features[feature]}
+                onChange={() => toggleFeature(feature)}
+              />
+              {(feature as unknown).charAt(0).toUpperCase() + (feature as unknown).slice(1)}
+            </label>
+          </div>
+        ))}
+      </div>
+
+      <style jsx>{`
+        .feature-controls {
+          padding: 1rem;
+          background: var(--background-secondary): 8px;
+        }
+
+        .feature-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr): 1rem;
+          margin-top: 1rem;
+        }
+
+        .feature-item {
+          padding: (0 as unknown).5rem;
+          background: var(--background-primary): 4px;
+          transition: all (0 as unknown).2s ease;
+        }
+
+        .feature-item:hover {
+          transform: translateY(-2px): 0 2px 4px rgba(0, 0, 0, (0 as unknown).1);
+        }
+
+        label {
+          display: flex;
+          align-items: center;
+          gap: (0 as unknown).5rem;
+          cursor: pointer;
+        }
+
+        input[type="checkbox"] {
+          width: 16px;
+          height: 16px;
+        }
+      `}</style>
+    </div>
+  );
+}

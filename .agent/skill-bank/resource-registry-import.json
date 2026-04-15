@@ -296,6 +296,20 @@
       }
     },
     {
+      "name": "design-md",
+      "description": "Analyze Stitch projects and synthesize a semantic design system into DESIGN.md files",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["codex", "global", "skill-bank"],
+      "source": "/path/to/.codex/skills/design-md",
+      "metadata": {
+        "hash": "eb15f44646528f3a087ce023329ae699c1b6e803662af68338e1eb1c0406b59b",
+        "id": "design-md",
+        "snapshotPath": ".agent/skill-bank/snapshots/codex/design-md-eb15f446"
+      }
+    },
+    {
       "name": "doc",
       "description": "Use when the task involves reading, creating, or editing `.docx` documents, especially when formatting or layout fidelity matters; prefer `python-docx` plus the bundled `scripts/render_docx.py` for visual checks.",
       "category": "CLAUDE_SKILL",
@@ -10425,6 +10439,440 @@
       "visibility": "AGENTS_ONLY",
       "tags": ["kilo", "project", "skill-bank"],
       "source": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.kilo/skills/openclaw-universal-knowledge.md",
+      "metadata": {
+        "hash": "5485b322e6aff36d3add97f93fd0d6059ac0d75a2b8effe32bb66d7d98fe3b9a",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/kilo/openclaw-universal-knowledge-5485b322"
+      }
+    },
+    {
+      "name": "context-frontloader",
+      "description": "|",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/context-frontloader",
+      "metadata": {
+        "hash": "e9af66b3c10f6878fbef8f4ce7d58787d3040b3aca249af16f5f8d99618ddbd8",
+        "id": "context-frontloader",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/context-frontloader-e9af66b3"
+      }
+    },
+    {
+      "name": "continuous-improvement",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/continuous-improvement",
+      "metadata": {
+        "hash": "6d8a7bb020a89e658ac8bdb303c1d64364c65470099b7d6e6dc859794b8c4062",
+        "id": "continuous-improvement",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/continuous-improvement-6d8a7bb0"
+      }
+    },
+    {
+      "name": "framework-consciousness",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/framework-consciousness",
+      "metadata": {
+        "hash": "77af4dd6ec5b83449ea025e580b0135a443af513d75776858a80089c996a3de1",
+        "id": "framework-consciousness",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/framework-consciousness-77af4dd6"
+      }
+    },
+    {
+      "name": "library-of-living-knowledge",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/library-of-living-knowledge",
+      "metadata": {
+        "hash": "16ac518242689d5fc1708f661ddb0d19512ac39b8c4711f6dbba06402ba16bfd",
+        "id": "library-of-living-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/library-of-living-knowledge-16ac5182"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF OpenClaw docs-wide knowledge skill for gateway, providers, tools/skills policy, and cross-agent portability.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/openclaw-universal-knowledge",
+      "metadata": {
+        "hash": "8f4ca0c3b530a66efcffc6683625cd0c098fd83e2deb391e73a6a71ef1d01975",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/openclaw-universal-knowledge-8f4ca0c3"
+      }
+    },
+    {
+      "name": "skill-builder",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/skill-builder",
+      "metadata": {
+        "hash": "7a715f0fac3f1ca0f7edde226a4be9209797c61a82c13221100d2b84e93f615f",
+        "id": "skill-builder",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/skill-builder-7a715f0f"
+      }
+    },
+    {
+      "name": "skill-creator",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["openclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/openclaw/skills/skill-creator",
+      "metadata": {
+        "hash": "e8047445aaabb76ba0e71455a708db041d0d20b96a88fc3891c9e0c0b85b4844",
+        "id": "skill-creator",
+        "snapshotPath": ".agent/skill-bank/snapshots/openclaw/skill-creator-e8047445"
+      }
+    },
+    {
+      "name": "context-frontloader",
+      "description": "|",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/context-frontloader",
+      "metadata": {
+        "hash": "e9af66b3c10f6878fbef8f4ce7d58787d3040b3aca249af16f5f8d99618ddbd8",
+        "id": "context-frontloader",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/context-frontloader-e9af66b3"
+      }
+    },
+    {
+      "name": "continuous-improvement",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/continuous-improvement",
+      "metadata": {
+        "hash": "6d8a7bb020a89e658ac8bdb303c1d64364c65470099b7d6e6dc859794b8c4062",
+        "id": "continuous-improvement",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/continuous-improvement-6d8a7bb0"
+      }
+    },
+    {
+      "name": "framework-consciousness",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/framework-consciousness",
+      "metadata": {
+        "hash": "77af4dd6ec5b83449ea025e580b0135a443af513d75776858a80089c996a3de1",
+        "id": "framework-consciousness",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/framework-consciousness-77af4dd6"
+      }
+    },
+    {
+      "name": "github",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/github",
+      "metadata": {
+        "hash": "10a44ac238bbb7b3e92a78a2712ac89436cdaac4593b8642e9a8cd1e0fe2e683",
+        "id": "github",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/github-10a44ac2"
+      }
+    },
+    {
+      "name": "hardware",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/hardware",
+      "metadata": {
+        "hash": "74f161217308f656f38ea7fd7d7a3765dac35101822dd2e66f1325dbddaf3499",
+        "id": "hardware",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/hardware-74f16121"
+      }
+    },
+    {
+      "name": "library-of-living-knowledge",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/library-of-living-knowledge",
+      "metadata": {
+        "hash": "16ac518242689d5fc1708f661ddb0d19512ac39b8c4711f6dbba06402ba16bfd",
+        "id": "library-of-living-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/library-of-living-knowledge-16ac5182"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF OpenClaw knowledge skill for PicoClaw agents; covers tools/skills spec, docs-wide navigation, and operational consistency.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/openclaw-universal-knowledge",
+      "metadata": {
+        "hash": "94afd0396652e43ce66a11815114b93e5217306e2da04da958af2db24e28d164",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/openclaw-universal-knowledge-94afd039"
+      }
+    },
+    {
+      "name": "overwatch",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/overwatch",
+      "metadata": {
+        "hash": "3581432c11379017e539f8dd999d744716e1f40748d217a20cf4ea0b17f6f496",
+        "id": "overwatch",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/overwatch-3581432c"
+      }
+    },
+    {
+      "name": "skill-builder",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/skill-builder",
+      "metadata": {
+        "hash": "7a715f0fac3f1ca0f7edde226a4be9209797c61a82c13221100d2b84e93f615f",
+        "id": "skill-builder",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/skill-builder-7a715f0f"
+      }
+    },
+    {
+      "name": "skill-creator",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/skill-creator",
+      "metadata": {
+        "hash": "e8047445aaabb76ba0e71455a708db041d0d20b96a88fc3891c9e0c0b85b4844",
+        "id": "skill-creator",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/skill-creator-e8047445"
+      }
+    },
+    {
+      "name": "summarize",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/summarize",
+      "metadata": {
+        "hash": "680a539f5b5f8acaacf8d17e21bce4911451d032a2c19fb97c2898402b367022",
+        "id": "summarize",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/summarize-680a539f"
+      }
+    },
+    {
+      "name": "tmux",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/tmux",
+      "metadata": {
+        "hash": "417e5e425aa70e2ad57fbc3484a042443ead225e51095446d3c07cf4eb49dd2a",
+        "id": "tmux",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/tmux-417e5e42"
+      }
+    },
+    {
+      "name": "weather",
+      "description": "Get current weather and forecasts (no API key required).",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["picoclaw", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/picoclaw-overseer/workspace/skills/weather",
+      "metadata": {
+        "hash": "98412aadcfd828ceb3cf10bb3914895b6a4ef6024786e3ba56c2fb2df492ba34",
+        "id": "weather",
+        "snapshotPath": ".agent/skill-bank/snapshots/picoclaw/weather-98412aad"
+      }
+    },
+    {
+      "name": "README",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "global", "skill-bank"],
+      "source": "/path/to/.claude/skills/README.md",
+      "metadata": {
+        "hash": "d7c5c2f9b248c7c0b31f093cf22b9a7407f5b093c8ca9ebe75a5b6845b02b76e",
+        "id": "readme",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/readme-d7c5c2f9"
+      }
+    },
+    {
+      "name": "THIRD_PARTY_NOTICES",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "global", "skill-bank"],
+      "source": "/path/to/.claude/skills/THIRD_PARTY_NOTICES.md",
+      "metadata": {
+        "hash": "a8ff7a84dee9dfb42ab448de281784387ceafdf63881b7c070ee2de7f6ed865c",
+        "id": "third_party_notices",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/third_party_notices-a8ff7a84"
+      }
+    },
+    {
+      "name": "context-frontloader",
+      "description": "|",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/context-frontloader.md",
+      "metadata": {
+        "hash": "e9af66b3c10f6878fbef8f4ce7d58787d3040b3aca249af16f5f8d99618ddbd8",
+        "id": "context-frontloader",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/context-frontloader-e9af66b3"
+      }
+    },
+    {
+      "name": "continuous-improvement",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/continuous-improvement.md",
+      "metadata": {
+        "hash": "6d8a7bb020a89e658ac8bdb303c1d64364c65470099b7d6e6dc859794b8c4062",
+        "id": "continuous-improvement",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/continuous-improvement-6d8a7bb0"
+      }
+    },
+    {
+      "name": "framework-consciousness",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/framework-consciousness.md",
+      "metadata": {
+        "hash": "77af4dd6ec5b83449ea025e580b0135a443af513d75776858a80089c996a3de1",
+        "id": "framework-consciousness",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/framework-consciousness-77af4dd6"
+      }
+    },
+    {
+      "name": "library-of-living-knowledge",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/library-of-living-knowledge.md",
+      "metadata": {
+        "hash": "16ac518242689d5fc1708f661ddb0d19512ac39b8c4711f6dbba06402ba16bfd",
+        "id": "library-of-living-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/library-of-living-knowledge-16ac5182"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF skill adapter for OpenClaw docs-wide operations, including tools/skills rules, gateway/provider setup, and cross-agent skill portability.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/openclaw-universal-knowledge.md",
+      "metadata": {
+        "hash": "693943051c6ecd6fd7b2c79648189304386dd1f105db7dc1045e6268e1512b4c",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/openclaw-universal-knowledge-69394305"
+      }
+    },
+    {
+      "name": "skill-builder",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/skill-builder.md",
+      "metadata": {
+        "hash": "7a715f0fac3f1ca0f7edde226a4be9209797c61a82c13221100d2b84e93f615f",
+        "id": "skill-builder",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/skill-builder-7a715f0f"
+      }
+    },
+    {
+      "name": "ui-automation-with-context",
+      "description": "",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["claude", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/skills/ui-automation-with-context.md",
+      "metadata": {
+        "hash": "e87b6bb4c9b5823a9c3fe468524281db999a113cb5012fcc568503b8c2e38874",
+        "id": "ui-automation-with-context",
+        "snapshotPath": ".agent/skill-bank/snapshots/claude/ui-automation-with-context-e87b6bb4"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF skill adapter for OpenClaw full-docs operations, skills semantics, gateway/provider execution, and multi-agent portability.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["gemini", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.gemini/skills/openclaw-universal-knowledge.md",
+      "metadata": {
+        "hash": "6abdd4de09a94c5c5bb10660a81a2cf72e10136c70fb5120c58ef88be118eaea",
+        "id": "openclaw-universal-knowledge",
+        "snapshotPath": ".agent/skill-bank/snapshots/gemini/openclaw-universal-knowledge-6abdd4de"
+      }
+    },
+    {
+      "name": "openclaw-universal-knowledge",
+      "description": "Shared TNF adapter for OpenClaw-wide docs knowledge, skill format policy, and cross-agent execution consistency.",
+      "category": "CLAUDE_SKILL",
+      "type": "MARKDOWN",
+      "visibility": "AGENTS_ONLY",
+      "tags": ["kilo", "project", "skill-bank"],
+      "source": "/path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.kilo/skills/openclaw-universal-knowledge.md",
       "metadata": {
         "hash": "5485b322e6aff36d3add97f93fd0d6059ac0d75a2b8effe32bb66d7d98fe3b9a",
         "id": "openclaw-universal-knowledge",

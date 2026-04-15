@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Casin8 Ledger Filtered View</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#eccb13",
+                        "primary-dark": "#bfa30f",
+                        "background-light": "#f8f8f6",
+                        "background-dark": "#221f10",
+                        "surface-dark": "#2d2918",
+                        "surface-light": "#3d3822",
+                    },
+                    fontFamily: {
+                        display: ["Space Grotesk", "sans-serif"],
+                        sans: ["Space Grotesk", "sans-serif"],
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        /* Custom scrollbar for horizontal scrolling areas */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-display selection:bg-primary selection:text-background-dark">
+<div class="relative flex flex-col flex-1 w-full max-w-md mx-auto bg-background-light dark:bg-background-dark shadow-2xl overflow-hidden min-h-screen">
+<!-- Header -->
+<header class="flex items-center justify-between p-4 sticky top-0 z-20 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-primary/10">
+<button class="p-2 -ml-2 rounded-full hover:bg-surface-dark/50 text-slate-500 dark:text-slate-400 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold tracking-tight text-center flex-1">Ledger</h1>
+<button class="text-primary font-bold text-sm tracking-wide uppercase hover:text-primary-dark transition-colors">
+                Export
+            </button>
+</header>
+<!-- Network Status & Total Balance Context -->
+<div class="px-4 py-3 flex justify-between items-center bg-gradient-to-r from-surface-dark to-background-dark">
+<div class="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+<span class="material-symbols-outlined text-primary text-[18px]">wifi</span>
+<span class="text-xs font-medium text-primary uppercase tracking-wider">Network: Optimal</span>
+</div>
+<div class="text-right">
+<p class="text-[10px] text-slate-400 uppercase tracking-widest">Available Balance</p>
+<p class="text-sm font-bold text-white">24,500.00 <span class="text-primary">USDC</span></p>
+</div>
+</div>
+<!-- Filters Section -->
+<div class="py-4">
+<div class="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide snap-x">
+<!-- Active Filter -->
+<button class="snap-start flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-background-dark font-bold shadow-[0_0_15px_rgba(236,203,19,0.3)] transition-transform active:scale-95 whitespace-nowrap">
+<span class="material-symbols-outlined text-[20px]">check</span>
+<span class="text-sm">All</span>
+</button>
+<!-- Inactive Filters -->
+<button class="snap-start flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-dark border border-white/5 text-slate-300 hover:bg-surface-light hover:text-white transition-colors whitespace-nowrap">
+<span class="material-symbols-outlined text-[20px]">token</span>
+<span class="text-sm">Table Buy-ins</span>
+</button>
+<button class="snap-start flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-dark border border-white/5 text-slate-300 hover:bg-surface-light hover:text-white transition-colors whitespace-nowrap">
+<span class="material-symbols-outlined text-[20px]">emoji_events</span>
+<span class="text-sm">Tournaments</span>
+</button>
+<button class="snap-start flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-dark border border-white/5 text-slate-300 hover:bg-surface-light hover:text-white transition-colors whitespace-nowrap">
+<span class="material-symbols-outlined text-[20px]">diamond</span>
+<span class="text-sm">Jackpots</span>
+</button>
+<button class="snap-start flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-dark border border-white/5 text-slate-300 hover:bg-surface-light hover:text-white transition-colors whitespace-nowrap">
+<span class="material-symbols-outlined text-[20px]">account_balance</span>
+<span class="text-sm">Withdrawals</span>
+</button>
+</div>
+</div>
+<!-- Section Title -->
+<div class="px-4 pb-2">
+<h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Transaction History</h2>
+</div>
+<!-- Transaction List -->
+<div class="flex-1 overflow-y-auto px-4 pb-24 space-y-3">
+<!-- Highlighted Card: Progressive Jackpot Payout -->
+<div class="relative group p-0.5 rounded-2xl bg-gradient-to-br from-[#eccb13] via-[#bfa30f] to-transparent shadow-[0_0_30px_rgba(236,203,19,0.15)] mb-6 mt-2">
+<div class="absolute inset-0 bg-primary/20 blur-xl rounded-2xl opacity-50 group-hover:opacity-75 transition-opacity duration-500"></div>
+<div class="relative bg-surface-dark rounded-xl p-4 overflow-hidden">
+<!-- Glow effect inside -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+<div class="flex justify-between items-start mb-1">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-background-dark shadow-lg">
+<span class="material-symbols-outlined">diamond</span>
+</div>
+<div>
+<h3 class="font-bold text-white text-base">Progressive Jackpot</h3>
+<p class="text-xs text-primary/80 font-medium">Royal Flush • Table #8821</p>
+</div>
+</div>
+<div class="text-right">
+<span class="block text-lg font-bold text-primary">+ $12,500.00</span>
+<span class="text-[10px] text-slate-400">Today, 10:42 AM</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Standard Transaction Item -->
+<div class="flex items-center justify-between p-4 rounded-xl bg-surface-dark border border-white/5 hover:bg-surface-light transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined">token</span>
+</div>
+<div>
+<p class="font-medium text-slate-200">Table Buy-in</p>
+<p class="text-xs text-slate-500">NL Hold'em 5/10</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-white">- $500.00</p>
+<p class="text-[10px] text-slate-500">Today, 09:15 AM</p>
+</div>
+</div>
+<!-- Highlighted Transaction: Tournament Entry -->
+<div class="relative p-4 rounded-xl bg-surface-dark border border-primary/30">
+<div class="absolute top-2 right-2">
+<span class="flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/50 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+</div>
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary border border-primary/20">
+<span class="material-symbols-outlined">emoji_events</span>
+</div>
+<div>
+<p class="font-bold text-white">Tournament Entry Fee</p>
+<p class="text-xs text-slate-400 font-mono">ID: #TN-992-ALPHA</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-white">- $1,050.00</p>
+<p class="text-[10px] text-slate-500">Yesterday, 11:30 PM</p>
+</div>
+</div>
+<div class="mt-3 pt-3 border-t border-white/5 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+<span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Confirmed</span>
+</div>
+<a class="flex items-center gap-1 text-xs text-primary hover:text-white transition-colors group/link" href="#">
+<span>Verify on Chain</span>
+<span class="material-symbols-outlined text-[14px] group-hover/link:translate-x-0.5 transition-transform">open_in_new</span>
+</a>
+</div>
+</div>
+<!-- Standard Transaction Item -->
+<div class="flex items-center justify-between p-4 rounded-xl bg-surface-dark border border-white/5 hover:bg-surface-light transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<div>
+<p class="font-medium text-slate-200">Withdrawal</p>
+<p class="text-xs text-slate-500">To External Wallet (...x892)</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-white">- $2,500.00</p>
+<p class="text-[10px] text-slate-500">Yesterday, 08:45 PM</p>
+</div>
+</div>
+<!-- Standard Transaction Item -->
+<div class="flex items-center justify-between p-4 rounded-xl bg-surface-dark border border-white/5 hover:bg-surface-light transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined">add_card</span>
+</div>
+<div>
+<p class="font-medium text-slate-200">Deposit</p>
+<p class="text-xs text-slate-500">From Bank Transfer</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-primary">+ $5,000.00</p>
+<p class="text-[10px] text-slate-500">Oct 24, 02:15 PM</p>
+</div>
+</div>
+<!-- Standard Transaction Item -->
+<div class="flex items-center justify-between p-4 rounded-xl bg-surface-dark border border-white/5 hover:bg-surface-light transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined">token</span>
+</div>
+<div>
+<p class="font-medium text-slate-200">Table Buy-in</p>
+<p class="text-xs text-slate-500">PLO 10/20</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-white">- $2,000.00</p>
+<p class="text-[10px] text-slate-500">Oct 24, 01:10 PM</p>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 w-full max-w-md bg-surface-dark border-t border-white/5 backdrop-blur-lg pb-safe z-30">
+<div class="flex justify-around items-center px-2 py-3">
+<a class="flex flex-col items-center gap-1 min-w-[64px] group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors text-[24px]">account_balance_wallet</span>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary transition-colors">Wallet</span>
+</a>
+<a class="flex flex-col items-center gap-1 min-w-[64px] group" href="#">
+<div class="bg-primary/20 px-4 py-1 rounded-full flex flex-col items-center">
+<span class="material-symbols-outlined text-primary text-[24px]">receipt_long</span>
+</div>
+<span class="text-[10px] font-medium text-primary">Ledger</span>
+</a>
+<a class="flex flex-col items-center gap-1 min-w-[64px] group" href="#">
+<div class="relative">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors text-[24px]">playing_cards</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+</div>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary transition-colors">Games</span>
+</a>
+<a class="flex flex-col items-center gap-1 min-w-[64px] group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors text-[24px]">person</span>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary transition-colors">Profile</span>
+</a>
+</div>
+<!-- iOS Home Indicator Safe Area spacing -->
+<div class="h-4 w-full"></div>
+</nav>
+</div>
+</body></html>

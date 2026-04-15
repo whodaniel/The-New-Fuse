@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Landing Page Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #1f2937;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            background: #374151;
+            padding: 15px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .device-btn {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+            min-width: 120px;
+        }
+
+        .device-btn:hover {
+            background: #4f46e5;
+        }
+
+        .device-btn.active {
+            background: #10b981;
+        }
+
+        .viewport-info {
+            background: #f9fafb;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .info-item {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .info-item strong {
+            color: #1f2937;
+        }
+
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+            min-height: 600px;
+            background: #e5e7eb;
+        }
+
+        .device-frame {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .device-frame iframe {
+            border: none;
+            display: block;
+            background: white;
+        }
+
+        .rotate-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            z-index: 10;
+        }
+
+        .rotate-btn:hover {
+            background: #4f46e5;
+        }
+
+        .test-checklist {
+            padding: 20px;
+            background: #f9fafb;
+        }
+
+        .test-checklist h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+
+        .checklist-item {
+            padding: 10px;
+            background: white;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+
+            .device-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>The New Fuse - Responsive Landing Page Tester</h1>
+            <p>Test the landing page at different breakpoints</p>
+        </div>
+
+        <div class="controls">
+            <button class="device-btn" data-width="320" data-height="568" data-name="iPhone SE">
+                📱 iPhone SE (320px)
+            </button>
+            <button class="device-btn active" data-width="375" data-height="667" data-name="iPhone 12/13">
+                📱 iPhone 12 (375px)
+            </button>
+            <button class="device-btn" data-width="768" data-height="1024" data-name="iPad">
+                📱 iPad (768px)
+            </button>
+            <button class="device-btn" data-width="1024" data-height="768" data-name="iPad Landscape">
+                💻 iPad Landscape (1024px)
+            </button>
+            <button class="device-btn" data-width="1440" data-height="900" data-name="Desktop">
+                🖥️ Desktop (1440px)
+            </button>
+        </div>
+
+        <div class="viewport-info">
+            <div class="info-item">
+                <strong>Device:</strong> <span id="device-name">iPhone 12/13</span>
+            </div>
+            <div class="info-item">
+                <strong>Width:</strong> <span id="current-width">375</span>px
+            </div>
+            <div class="info-item">
+                <strong>Height:</strong> <span id="current-height">667</span>px
+            </div>
+            <div class="info-item">
+                <strong>Breakpoint:</strong> <span id="breakpoint">sm</span>
+            </div>
+        </div>
+
+        <div class="iframe-container">
+            <button class="rotate-btn" id="rotate-btn">🔄 Rotate</button>
+            <div class="device-frame" id="device-frame">
+                <iframe
+                    id="preview-iframe"
+                    src="http://localhost:5173"
+                    width="375"
+                    height="667"
+                ></iframe>
+            </div>
+        </div>
+
+        <div class="test-checklist">
+            <h2>Testing Checklist</h2>
+            <div class="checklist-item">
+                <input type="checkbox" id="check1">
+                <label for="check1">Hamburger menu appears and functions on mobile (< 768px)</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="check2">
+                <label for="check2">Desktop navigation appears on larger screens (≥ 768px)</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="check3">
+                <label for="check3">All text is readable (minimum 16px base size)</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="check4">
+                <label for="check4">Buttons are touch-friendly (minimum 44x44px)</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="check5">
+                <label for="check5">No horizontal scrolling occurs</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="check6">
+                <label for="check6">Layout adapts correctly at each breakpoint</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="check7">
+                <label for="check7">Animations are smooth and respect reduced motion</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="check8">
+                <label for="check8">Feature cards grid adjusts (1 col → 2 col → 3 col)</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="check9">
+                <label for="check9">Footer columns stack correctly on mobile</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="check10">
+                <label for="check10">Images and icons scale appropriately</label>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const iframe = document.getElementById('preview-iframe');
+        const deviceFrame = document.getElementById('device-frame');
+        const deviceNameEl = document.getElementById('device-name');
+        const currentWidthEl = document.getElementById('current-width');
+        const currentHeightEl = document.getElementById('current-height');
+        const breakpointEl = document.getElementById('breakpoint');
+        const rotateBtn = document.getElementById('rotate-btn');
+        const buttons = document.querySelectorAll('.device-btn');
+
+        function getBreakpoint(width) {
+            if (width < 375) return 'xs';
+            if (width < 768) return 'sm';
+            if (width < 1024) return 'md';
+            if (width < 1440) return 'lg';
+            if (width < 1920) return 'xl';
+            return '2xl';
+        }
+
+        function setDevice(width, height, name) {
+            iframe.width = width;
+            iframe.height = height;
+            deviceNameEl.textContent = name;
+            currentWidthEl.textContent = width;
+            currentHeightEl.textContent = height;
+            breakpointEl.textContent = getBreakpoint(width);
+
+            // Update active button
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const width = parseInt(btn.dataset.width);
+                const height = parseInt(btn.dataset.height);
+                const name = btn.dataset.name;
+                setDevice(width, height, name);
+            });
+        });
+
+        rotateBtn.addEventListener('click', () => {
+            const currentWidth = parseInt(iframe.width);
+            const currentHeight = parseInt(iframe.height);
+            const currentName = deviceNameEl.textContent;
+
+            setDevice(currentHeight, currentWidth, currentName + ' (Rotated)');
+
+            // Don't update active button state on rotation
+            event.stopPropagation();
+        });
+
+        // Save checklist state
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const completed = document.querySelectorAll('input[type="checkbox"]:checked').length;
+                const total = checkboxes.length;
+                console.log(`Testing Progress: ${completed}/${total} (${Math.round(completed/total*100)}%)`);
+            });
+        });
+    </script>
+</body>
+</html>

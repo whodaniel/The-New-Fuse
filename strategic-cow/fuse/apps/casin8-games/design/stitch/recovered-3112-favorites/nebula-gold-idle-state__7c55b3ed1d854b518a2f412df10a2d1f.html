@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nebula Gold - Idle State</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#7f13ec",
+                        "primary-content": "#ffffff",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                        "glass-dark": "rgba(25, 16, 34, 0.65)",
+                        "glass-border": "rgba(255, 255, 255, 0.1)",
+                        "accent-gold": "#FFD700",
+                        "accent-red": "#D92534",
+                    },
+                    fontFamily: {
+                        display: ["Space Grotesk", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        "2xl": "1rem",
+                        full: "9999px",
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .slot-reel-gradient {
+            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.8) 100%);
+        }
+        .neon-glow {
+            box-shadow: 0 0 10px rgba(127, 19, 236, 0.3);
+        }
+        .spin-btn-shadow {
+            box-shadow: 0 4px 0 #9f1c27, 0 10px 20px rgba(217, 37, 52, 0.4);
+        }
+        .spin-btn-shadow:active {
+            box-shadow: 0 0 0 #9f1c27, inset 0 2px 5px rgba(0,0,0,0.3);
+            transform: translateY(4px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen overflow-x-hidden flex flex-col">
+<!-- Header / Top Bar -->
+<header class="sticky top-0 z-50 flex items-center justify-between p-4 bg-background-dark/90 backdrop-blur-md border-b border-white/5">
+<div class="flex items-center gap-3">
+<button class="p-2 -ml-2 rounded-full hover:bg-white/5 text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="flex flex-col">
+<h1 class="text-base font-bold leading-tight tracking-tight text-white">Nebula Gold</h1>
+<div class="flex items-center gap-1 text-xs text-slate-400">
+<span class="material-symbols-outlined text-[14px]">verified_user</span>
+<span>Provably Fair</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="hidden sm:flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg border border-white/5">
+<span class="text-xs text-accent-gold">RTP</span>
+<span class="text-xs font-bold">96.5%</span>
+</div>
+<button class="p-2 rounded-full hover:bg-white/5 text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</header>
+<!-- Main Game Area -->
+<main class="flex-1 relative flex flex-col justify-center w-full max-w-md mx-auto px-4 py-6">
+<!-- Background Ambient Effects -->
+<div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+<div class="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/20 rounded-full blur-[100px]"></div>
+<div class="absolute bottom-1/3 right-1/4 w-48 h-48 bg-accent-gold/10 rounded-full blur-[80px]"></div>
+</div>
+<!-- Slot Machine Container -->
+<div class="relative z-10 bg-slate-900/50 rounded-2xl border border-white/10 p-1 shadow-2xl backdrop-blur-sm neon-glow">
+<!-- Win Line Indicator (Hidden by default or subtle) -->
+<div class="absolute left-0 top-1/2 w-full h-0.5 bg-accent-gold/50 z-20 hidden"></div>
+<!-- Reels Grid -->
+<div class="grid grid-cols-5 gap-1 bg-black/40 rounded-xl overflow-hidden border border-white/5 relative h-[300px]">
+<!-- Gradient Overlay for Cylinder Effect -->
+<div class="absolute inset-0 pointer-events-none z-10 slot-reel-gradient"></div>
+<!-- Reel 1 -->
+<div class="flex flex-col gap-0 items-center justify-around py-2">
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center opacity-40 blur-[1px]">
+<span class="material-symbols-outlined text-white/50">hexagon</span>
+</div>
+<div class="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-purple-900 border border-primary/30 flex items-center justify-center shadow-lg transform scale-100">
+<span class="material-symbols-outlined text-white text-2xl drop-shadow-md">diamond</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center opacity-40 blur-[1px]">
+<span class="material-symbols-outlined text-white/50">token</span>
+</div>
+</div>
+<!-- Reel 2 -->
+<div class="flex flex-col gap-0 items-center justify-around py-2">
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center opacity-40 blur-[1px]">
+<span class="material-symbols-outlined text-white/50">bolt</span>
+</div>
+<div class="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-900 border border-emerald-500/30 flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-emerald-100 text-2xl drop-shadow-md">deployed_code</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center opacity-40 blur-[1px]">
+<span class="material-symbols-outlined text-white/50">pentagon</span>
+</div>
+</div>
+<!-- Reel 3 -->
+<div class="flex flex-col gap-0 items-center justify-around py-2">
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center opacity-40 blur-[1px]">
+<span class="material-symbols-outlined text-white/50">star</span>
+</div>
+<div class="w-14 h-14 rounded-xl bg-gradient-to-br from-accent-gold to-orange-600 border border-yellow-300/30 flex items-center justify-center shadow-lg ring-2 ring-accent-gold/20">
+<span class="material-symbols-outlined text-white text-3xl drop-shadow-md">hotel_class</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center opacity-40 blur-[1px]">
+<span class="material-symbols-outlined text-white/50">diamond</span>
+</div>
+</div>
+<!-- Reel 4 -->
+<div class="flex flex-col gap-0 items-center justify-around py-2">
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center opacity-40 blur-[1px]">
+<span class="material-symbols-outlined text-white/50">token</span>
+</div>
+<div class="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-600 to-blue-900 border border-cyan-500/30 flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-cyan-100 text-2xl drop-shadow-md">smart_toy</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center opacity-40 blur-[1px]">
+<span class="material-symbols-outlined text-white/50">bolt</span>
+</div>
+</div>
+<!-- Reel 5 -->
+<div class="flex flex-col gap-0 items-center justify-around py-2">
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center opacity-40 blur-[1px]">
+<span class="material-symbols-outlined text-white/50">pentagon</span>
+</div>
+<div class="w-14 h-14 rounded-xl bg-gradient-to-br from-rose-600 to-rose-900 border border-rose-500/30 flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-rose-100 text-2xl drop-shadow-md">rocket_launch</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center opacity-40 blur-[1px]">
+<span class="material-symbols-outlined text-white/50">hexagon</span>
+</div>
+</div>
+</div>
+<!-- Paylines Info / Jackpot Ticker -->
+<div class="mt-2 flex justify-between items-center px-2">
+<div class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">25 Lines</div>
+<div class="text-xs text-accent-gold font-bold flex items-center gap-1">
+<span>GRAND</span>
+<span class="bg-accent-gold/10 px-1 rounded text-accent-gold">$14,205.92</span>
+</div>
+</div>
+</div>
+<!-- Recent Wins Mini-Log (Sidebar/Floating) -->
+<div class="absolute -right-2 top-20 bottom-32 w-12 hidden lg:flex flex-col gap-2 z-0 opacity-50 hover:opacity-100 transition-opacity">
+<div class="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-[10px] text-emerald-400 font-bold">2x</div>
+<div class="w-10 h-10 rounded-full bg-slate-800/50 border border-white/10 flex items-center justify-center text-[10px] text-slate-400">0.5</div>
+<div class="w-10 h-10 rounded-full bg-accent-gold/20 border border-accent-gold/30 flex items-center justify-center text-[10px] text-accent-gold font-bold">15x</div>
+<div class="w-10 h-10 rounded-full bg-slate-800/50 border border-white/10 flex items-center justify-center text-[10px] text-slate-400">0</div>
+</div>
+</main>
+<!-- Glassmorphic Controls Section -->
+<section class="relative z-20 pb-4 px-4 w-full max-w-md mx-auto">
+<div class="bg-glass-dark backdrop-blur-xl border border-glass-border rounded-t-3xl rounded-b-2xl p-4 shadow-2xl">
+<!-- Bet Control Row -->
+<div class="flex items-center justify-between mb-4">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase text-slate-400 font-bold tracking-wider mb-1">Total Bet</span>
+<div class="flex items-center gap-2 bg-black/40 rounded-full p-1 pl-3 border border-white/10">
+<span class="material-symbols-outlined text-accent-gold text-[16px]">monetization_on</span>
+<input class="w-12 bg-transparent border-none text-white font-bold text-center focus:ring-0 p-0" readonly="" type="text" value="2.50"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 active:scale-95 transition-all">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<div class="flex flex-col items-center">
+<div class="h-1 w-16 bg-slate-700 rounded-full overflow-hidden">
+<div class="h-full w-1/3 bg-primary"></div>
+</div>
+</div>
+<button class="w-10 h-10 rounded-full bg-primary border border-white/10 flex items-center justify-center text-white hover:bg-primary/90 active:scale-95 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<!-- Spin and Toggles Row -->
+<div class="flex items-center justify-between gap-4">
+<!-- Toggles -->
+<div class="flex flex-col gap-2">
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 transition-colors group">
+<div class="w-3 h-3 rounded-full border border-slate-500 group-hover:border-primary transition-colors"></div>
+<span class="text-xs text-slate-300 font-medium">Turbo</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 transition-colors group">
+<div class="w-3 h-3 rounded-full bg-primary border border-primary shadow-[0_0_8px_rgba(127,19,236,0.6)]"></div>
+<span class="text-xs text-white font-medium">Auto</span>
+</button>
+</div>
+<!-- SPIN Button -->
+<button class="relative group outline-none focus:outline-none">
+<div class="absolute inset-0 bg-accent-red rounded-full blur-md opacity-40 group-hover:opacity-60 transition-opacity duration-300"></div>
+<div class="relative w-24 h-24 rounded-full bg-gradient-to-b from-[#ff4d5e] to-[#9f1c27] flex items-center justify-center spin-btn-shadow border-4 border-[#5a0c13] transition-transform duration-100">
+<div class="w-20 h-20 rounded-full border border-white/20 flex items-center justify-center bg-gradient-to-t from-transparent to-white/10">
+<span class="material-symbols-outlined text-4xl text-white drop-shadow-md animate-pulse">cached</span>
+</div>
+</div>
+</button>
+<!-- Max Bet / Info -->
+<div class="flex flex-col gap-2 items-end">
+<button class="text-xs font-bold text-slate-400 hover:text-white uppercase tracking-wider transition-colors">Max Bet</button>
+<div class="text-right">
+<span class="block text-[10px] text-slate-500">Balance</span>
+<span class="text-sm font-bold text-white tracking-wide">1,250.00</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom Navigation Bar -->
+<nav class="bg-background-dark border-t border-white/5 px-2 pb-safe pt-2">
+<div class="flex justify-around items-end w-full">
+<a class="flex flex-col items-center justify-end gap-1 p-2 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">home</span>
+<span class="text-[10px] font-medium">Lobby</span>
+</a>
+<a class="flex flex-col items-center justify-end gap-1 p-2 text-primary" href="#">
+<span class="material-symbols-outlined text-[24px] fill-current">casino</span>
+<span class="text-[10px] font-medium">Slots</span>
+</a>
+<a class="flex flex-col items-center justify-end gap-1 p-2 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">videocam</span>
+<span class="text-[10px] font-medium">Live</span>
+</a>
+<a class="flex flex-col items-center justify-end gap-1 p-2 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">account_circle</span>
+<span class="text-[10px] font-medium">Profile</span>
+</a>
+</div>
+</nav>
+<!-- Background Decoration Image -->
+<img alt="" class="fixed inset-0 w-full h-full object-cover opacity-10 pointer-events-none z-[-1] mix-blend-overlay" data-alt="Abstract dark cinematic nebula background pattern" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgL6-6gLSyzwBI45yFEn0CgMAe-h8sKKiWg3GiUODCdsn2UBfVbYFVAs43Otg_FrEfi7rYMnzjhVFGtPQAG9elLvRWpKUfqSYIjlKxRP2EsTm3lwsx3S5LHTfhNr9HH9GX9BTVrtgy9C4FDg5Mlj9efLflIFIZQEpIpcSUPoKDioWLa6SYPQZjSkS1-apqdzYHw5t_JYOXC8pq3cc9iwgaiL14Mp9voZoICPjW4HfLx14-yc3_Lpa6Tzfpwr5Ok9kMWn6xCQlbWeU"/>
+</body></html>

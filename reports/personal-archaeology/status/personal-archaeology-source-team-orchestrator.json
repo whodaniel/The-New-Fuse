@@ -1,0 +1,10 @@
+{
+  "agentId": "personal-archaeology-source-team-orchestrator",
+  "role": "team_orchestrator",
+  "teamId": "source-acquisition",
+  "status": "active",
+  "lastHeartbeatAt": "2026-03-22T17:00:32.749Z",
+  "summary": "Investigators 4; active 3; blocked 1; pending human 1",
+  "findingsPath": null,
+  "blockedReason": null
+}

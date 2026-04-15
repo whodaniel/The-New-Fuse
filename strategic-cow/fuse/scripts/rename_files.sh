@@ -1,0 +1,12 @@
+mv apps/frontend/src/pages/workspace/Members.js apps/frontend/src/pages/workspace/Members.jsx
+mv apps/frontend/src/pages/workspace/Overview.js apps/frontend/src/pages/workspace/Overview.jsx
+mv apps/frontend/src/components/Sidebar/index.js apps/frontend/src/components/Sidebar/index.jsx
+mv apps/frontend/src/components/Preloader.js apps/frontend/src/components/Preloader.jsx
+mv apps/frontend/src/components/analytics/Analytics.js apps/frontend/src/components/analytics/Analytics.jsx
+mv apps/frontend/src/components/Modals/Password/SingleUserAuth.js apps/frontend/src/components/Modals/Password/SingleUserAuth.jsx
+mv apps/frontend/src/components/Modals/Password/MultiUserAuth.js apps/frontend/src/components/Modals/Password/MultiUserAuth.jsx
+mv apps/frontend/src/components/ModalWrapper/ModalWrapper.js apps/frontend/src/components/ModalWrapper/ModalWrapper.jsx
+mv apps/frontend/src/AuthContext.js apps/frontend/src/AuthContext.jsx
+mv apps/frontend/src/components/Footer/Footer.js apps/frontend/src/components/Footer/Footer.jsx
+mv apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.js apps/frontend/src/components/CanViewChatHistory/CanViewChatHistory.jsx
+mv apps/frontend/src/LogoContext.js apps/frontend/src/LogoContext.jsx

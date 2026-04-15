@@ -1,0 +1,7 @@
+{
+  "name": "com.thenewfuse.native_host",
+  "description": "Fuse Connect v6 - Controls TNF services from Chrome Extension",
+  "path": "NATIVE_HOST_PATH_PLACEHOLDER",
+  "type": "stdio",
+  "allowed_origins": ["chrome-extension://fkbcklmcikdhpggaimfhomgncneppkbj/"]
+}

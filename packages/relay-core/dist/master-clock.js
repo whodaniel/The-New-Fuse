@@ -63,10 +63,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const crypto_1 = require("crypto");
+const node_child_process_1 = require("node:child_process");
 const fs_1 = require("fs");
 const node_child_process_1 = require("node:child_process");
 const path_1 = __importDefault(require("path"));
-const ioredis_1 = require("ioredis");
+const redis_1 = require("redis");
 const util_1 = require("util");
 const ws_1 = __importDefault(require("ws"));
 const audit_1 = require("./contracts/audit");
@@ -1839,7 +1840,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
                 correlation_id: (0, crypto_1.randomUUID)(),
                 causation_id: null,
                 handoff_packet_id: null,
-                twid: params.targetSourceId || null,
+                twid: null,
                 task_id: null,
             },
             federation: {
@@ -2024,6 +2025,78 @@ Acknowledge by sending: [${agentId}] Ready for duty!
                 await this.redis.hset(CONFIG.REDIS_KEYS.SUPER_CYCLE, processState);
             }
         }
+    }
+    parseTimestampMs(value) {
+        if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+            return value;
+        }
+        if (typeof value === 'string') {
+            const isoValue = Date.parse(value);
+            if (Number.isFinite(isoValue) && isoValue > 0)
+                return isoValue;
+            const numericValue = Number.parseInt(value, 10);
+            if (Number.isFinite(numericValue) && numericValue > 0)
+                return numericValue;
+        }
+        return undefined;
+    }
+    readCadenceMs(source) {
+        if (!source || typeof source !== 'object')
+            return undefined;
+        const valueMs = Number(source.intendedIntervalMs ||
+            source.expectedIntervalMs ||
+            source.intervalMs ||
+            source.heartbeatIntervalMs ||
+            0);
+        if (Number.isFinite(valueMs) && valueMs > 0)
+            return valueMs;
+        const valueSeconds = Number(source.intendedIntervalSeconds ||
+            source.intervalSeconds ||
+            source.heartbeatIntervalSeconds ||
+            source.cadenceSeconds ||
+            0);
+        if (Number.isFinite(valueSeconds) && valueSeconds > 0)
+            return valueSeconds * 1000;
+        return undefined;
+    }
+    resolveScheduledProcessInterval(payload, metadata, existing) {
+        const producerInterval = this.readCadenceMs(payload);
+        if (producerInterval) {
+            return {
+                intendedIntervalMs: producerInterval,
+                intervalSource: 'producer',
+                intervalExact: true,
+            };
+        }
+        const metadataInterval = this.readCadenceMs(metadata);
+        if (metadataInterval) {
+            return {
+                intendedIntervalMs: metadataInterval,
+                intervalSource: 'metadata',
+                intervalExact: true,
+            };
+        }
+        if (existing?.intendedIntervalMs) {
+            return {
+                intendedIntervalMs: existing.intendedIntervalMs,
+                intervalSource: existing.intervalSource || 'inferred',
+                intervalExact: Boolean(existing.intervalExact),
+            };
+        }
+        return {
+            intendedIntervalMs: undefined,
+            intervalSource: 'inferred',
+            intervalExact: false,
+        };
+    }
+    resolveNextExpectedAt(payload, anchorMs, intervalMs) {
+        const explicit = this.parseTimestampMs(payload.nextExpectedAt);
+        if (explicit)
+            return explicit;
+        if (anchorMs && intervalMs && intervalMs > 0) {
+            return anchorMs + intervalMs;
+        }
+        return undefined;
     }
     parseTimestampMs(value) {
         if (typeof value === 'number' && Number.isFinite(value) && value > 0) {

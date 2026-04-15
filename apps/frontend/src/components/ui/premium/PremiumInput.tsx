@@ -22,11 +22,14 @@ export const PremiumInput: React.FC<PremiumInputProps> = ({
   iconPosition = 'left',
   className = '',
   containerClassName = '',
-  id,
+  id: providedId,
   ...props
 }) => {
   // Check if icon is a React element or a component (defensive check)
   const IconComponent = Icon ? (Icon as React.ElementType) : null;
+  const generatedId = React.useId();
+  const id = providedId || generatedId;
+  const helperId = error || hint ? `${id}-helper` : undefined;
 
   return (
     <div className={`space-y-2 ${containerClassName}`}>
@@ -45,6 +48,8 @@ export const PremiumInput: React.FC<PremiumInputProps> = ({
 
         <input
           id={id}
+          aria-invalid={!!error}
+          aria-describedby={helperId}
           className={`w-full px-4 py-2 bg-black/20 border border-white/10 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed ${
             IconComponent && iconPosition === 'left' ? 'pl-10' : ''
           } ${IconComponent && iconPosition === 'right' ? 'pr-10' : ''} ${error ? 'border-red-500/50' : ''} ${className}`}
@@ -58,8 +63,16 @@ export const PremiumInput: React.FC<PremiumInputProps> = ({
         )}
       </div>
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
-      {hint && !error && <p className="text-sm text-muted-foreground">{hint}</p>}
+      {error && (
+        <p id={helperId} className="text-sm text-red-400">
+          {error}
+        </p>
+      )}
+      {hint && !error && (
+        <p id={helperId} className="text-sm text-muted-foreground">
+          {hint}
+        </p>
+      )}
     </div>
   );
 };
@@ -78,23 +91,39 @@ export const PremiumTextarea: React.FC<PremiumTextareaProps> = ({
   error,
   hint,
   className = '',
+  id: providedId,
   ...props
 }) => {
+  const generatedId = React.useId();
+  const id = providedId || generatedId;
+  const helperId = error || hint ? `${id}-helper` : undefined;
+
   return (
     <div className="space-y-2">
       {label && (
-        <label className="block text-sm font-medium text-gray-300" htmlFor={props.id}>
+        <label className="block text-sm font-medium text-gray-300" htmlFor={id}>
           {label}
         </label>
       )}
 
       <textarea
+        id={id}
+        aria-invalid={!!error}
+        aria-describedby={helperId}
         className={`w-full px-4 py-2 bg-black/20 border border-white/10 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm resize-none disabled:opacity-50 disabled:cursor-not-allowed ${error ? 'border-red-500/50' : ''} ${className}`}
         {...props}
       />
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
-      {hint && !error && <p className="text-sm text-muted-foreground">{hint}</p>}
+      {error && (
+        <p id={helperId} className="text-sm text-red-400">
+          {error}
+        </p>
+      )}
+      {hint && !error && (
+        <p id={helperId} className="text-sm text-muted-foreground">
+          {hint}
+        </p>
+      )}
     </div>
   );
 };
@@ -116,17 +145,25 @@ export const PremiumSelect: React.FC<PremiumSelectProps> = ({
   options = [],
   className = '',
   children,
+  id: providedId,
   ...props
 }) => {
+  const generatedId = React.useId();
+  const id = providedId || generatedId;
+  const helperId = error || hint ? `${id}-helper` : undefined;
+
   return (
     <div className="space-y-2">
       {label && (
-        <label className="block text-sm font-medium text-gray-300" htmlFor={props.id}>
+        <label className="block text-sm font-medium text-gray-300" htmlFor={id}>
           {label}
         </label>
       )}
 
       <select
+        id={id}
+        aria-invalid={!!error}
+        aria-describedby={helperId}
         className={`w-full px-4 py-2 bg-black/20 border border-white/10 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-200 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed ${error ? 'border-red-500/50' : ''} ${className}`}
         {...props}
       >
@@ -138,8 +175,16 @@ export const PremiumSelect: React.FC<PremiumSelectProps> = ({
         ))}
       </select>
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
-      {hint && !error && <p className="text-sm text-muted-foreground">{hint}</p>}
+      {error && (
+        <p id={helperId} className="text-sm text-red-400">
+          {error}
+        </p>
+      )}
+      {hint && !error && (
+        <p id={helperId} className="text-sm text-muted-foreground">
+          {hint}
+        </p>
+      )}
     </div>
   );
 };
@@ -169,8 +214,16 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   return (
     <div className="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-md backdrop-blur-sm">
       <div className="flex-1">
-        {label && <p id={labelId} className="text-sm font-medium text-white">{label}</p>}
-        {description && <p id={descId} className="text-xs text-gray-400 mt-1">{description}</p>}
+        {label && (
+          <p id={labelId} className="text-sm font-medium text-white">
+            {label}
+          </p>
+        )}
+        {description && (
+          <p id={descId} className="text-xs text-gray-400 mt-1">
+            {description}
+          </p>
+        )}
       </div>
 
       <button

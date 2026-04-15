@@ -1,0 +1,35 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true }): 'Verification Email Sent',
+            description: 'Please check your email to verify your account.',
+        });
+    };
+    return (<div className = require("react");
+const AuthContext_1: 'Your email is not verified. Please verify your email to continue.'}
+      </p> {!user?.emailVerified && (<Button_1.Button onClick = require("@/contexts/AuthContext");
+const useToast_1 = require("@/hooks/useToast");
+const Button_1 = require("../ui/Button/Button");
+const EmailVerification = () => {
+    const { user, sendVerificationEmail } = react_1.default.useContext(AuthContext_1.AuthContext);
+    const toast = (0, useToast_1.default)();
+    const handleSendVerificationEmail = () => {
+        sendVerificationEmail();
+        toast({
+            title"space-y-4">
+      <h2 className="text-lg font-semibold">Email Verification</h2>
+      <p>
+        {user?.emailVerified
+            ? 'Your email is verified.'
+            {handleSendVerificationEmail}>
+          Resend Verification Email
+        </Button_1.Button>)}
+    </div>);
+};
+exports.default = EmailVerification;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiRW1haWxWZXJpZmljYXRpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJFbWFpbFZlcmlmaWNhdGlvbi50c3giXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQSxpQ0FBMEI7QUFDMUIsd0RBQXFEO0FBQ3JELCtDQUF3QztBQUN4QyxnREFBNkM7QUFFN0MsTUFBTSxpQkFBaUIsR0FBYSxHQUFHLEVBQUU7SUFDdkMsTUFBTSxFQUFFLElBQUksRUFBRSxxQkFBcUIsRUFBRSxHQUFHLGVBQUssQ0FBQyxVQUFVLENBQUMseUJBQVcsQ0FBQyxDQUFDO0lBQ3RFLE1BQU0sS0FBSyxHQUFHLElBQUEsa0JBQVEsR0FBRSxDQUFDO0lBRXpCLE1BQU0sMkJBQTJCLEdBQUcsR0FBRyxFQUFFO1FBQ3ZDLHFCQUFxQixFQUFFLENBQUM7UUFDeEIsS0FBSyxDQUFDO1lBQ0osS0FBSyxFQUFFLHlCQUF5QjtZQUNoQyxXQUFXLEVBQUUsaURBQWlEO1NBQy9ELENBQUMsQ0FBQztJQUNMLENBQUMsQ0FBQztJQUVGLE9BQU8sQ0FDTCxDQUFDLEdBQUcsQ0FBQyxTQUFTLENBQUMsV0FBVyxDQUN4QjtNQUFBLENBQUMsRUFBRSxDQUFDLFNBQVMsQ0FBQyx1QkFBdUIsQ0FBQyxrQkFBa0IsRUFBRSxFQUFFLENBQzVEO01BQUEsQ0FBQyxDQUFDLENBQ0E7UUFBQSxDQUFDLElBQUksRUFBRSxhQUFhO1lBQ2xCLENBQUMsQ0FBQyx5QkFBeUI7WUFDM0IsQ0FBQyxDQUFDLG1FQUFtRSxDQUN6RTtNQUFBLEVBQUUsQ0FBQyxDQUNIO01BQUEsQ0FBQyxDQUFDLElBQUksRUFBRSxhQUFhLElBQUksQ0FDdkIsQ0FBQyxlQUFNLENBQUMsT0FBTyxDQUFDLENBQUMsMkJBQTJCLENBQUMsQ0FDM0M7O1FBQ0YsRUFBRSxlQUFNLENBQUMsQ0FDVixDQUNIO0lBQUEsRUFBRSxHQUFHLENBQUMsQ0FDUCxDQUFDO0FBQ0osQ0FBQyxDQUFDO0FBRUYsa0JBQWUsaUJBQWlCLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgUmVhY3QgZnJvbSAncmVhY3QnO1xuaW1wb3J0IHsgQXV0aENvbnRleHQgfSBmcm9tICdAL2NvbnRleHRzL0F1dGhDb250ZXh0JztcbmltcG9ydCB1c2VUb2FzdCBmcm9tICdAL2hvb2tzL3VzZVRvYXN0JztcbmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gJy4uL3VpL0J1dHRvbi9CdXR0b24nO1xuXG5jb25zdCBFbWFpbFZlcmlmaWNhdGlvbjogUmVhY3QuRkMgPSAoKSA9PiB7XG4gIGNvbnN0IHsgdXNlciwgc2VuZFZlcmlmaWNhdGlvbkVtYWlsIH0gPSBSZWFjdC51c2VDb250ZXh0KEF1dGhDb250ZXh0KTtcbiAgY29uc3QgdG9hc3QgPSB1c2VUb2FzdCgpO1xuXG4gIGNvbnN0IGhhbmRsZVNlbmRWZXJpZmljYXRpb25FbWFpbCA9ICgpID0+IHtcbiAgICBzZW5kVmVyaWZpY2F0aW9uRW1haWwoKTtcbiAgICB0b2FzdCh7XG4gICAgICB0aXRsZTogJ1ZlcmlmaWNhdGlvbiBFbWFpbCBTZW50JyxcbiAgICAgIGRlc2NyaXB0aW9uOiAnUGxlYXNlIGNoZWNrIHlvdXIgZW1haWwgdG8gdmVyaWZ5IHlvdXIgYWNjb3VudC4nLFxuICAgIH0pO1xuICB9O1xuXG4gIHJldHVybiAoXG4gICAgPGRpdiBjbGFzc05hbWU9XCJzcGFjZS15LTRcIj5cbiAgICAgIDxoMiBjbGFzc05hbWU9XCJ0ZXh0LWxnIGZvbnQtc2VtaWJvbGRcIj5FbWFpbCBWZXJpZmljYXRpb248L2gyPlxuICAgICAgPHA+XG4gICAgICAgIHt1c2VyPy5lbWFpbFZlcmlmaWVkXG4gICAgICAgICAgPyAnWW91ciBlbWFpbCBpcyB2ZXJpZmllZC4nXG4gICAgICAgICAgOiAnWW91ciBlbWFpbCBpcyBub3QgdmVyaWZpZWQuIFBsZWFzZSB2ZXJpZnkgeW91ciBlbWFpbCB0byBjb250aW51ZS4nfVxuICAgICAgPC9wPlxuICAgICAgeyF1c2VyPy5lbWFpbFZlcmlmaWVkICYmIChcbiAgICAgICAgPEJ1dHRvbiBvbkNsaWNrPXtoYW5kbGVTZW5kVmVyaWZpY2F0aW9uRW1haWx9PlxuICAgICAgICAgIFJlc2VuZCBWZXJpZmljYXRpb24gRW1haWxcbiAgICAgICAgPC9CdXR0b24+XG4gICAgICApfVxuICAgIDwvZGl2PlxuICApO1xufTtcblxuZXhwb3J0IGRlZmF1bHQgRW1haWxWZXJpZmljYXRpb247XG4iXX0=
+export {};

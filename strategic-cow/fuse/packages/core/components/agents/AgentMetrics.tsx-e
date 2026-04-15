@@ -1,0 +1,104 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import React from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { AgentMetrics as Metrics } from '@the-new-fuse/types';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { Card } from '@the-new-fuse/ui/Card';
+
+interface AgentMetricsProps {
+  metrics: Metrics;
+  className?: string;
+}
+
+export const AgentMetrics: (React as unknown).FC<AgentMetricsProps> = ({
+  metrics,
+  className = '',
+}) => {
+  const formatNumber = (num: number): string => {
+    return (num as unknown).toLocaleString(undefined, { maximumFractionDigits: 2 });
+  };
+
+  const formatPercentage = (num: number): string => {
+    return `${(num * 100).toFixed(1)}%`;
+  };
+
+  const formatTime = (ms: number): string => {
+    if (ms < 1000) return `${ms}ms`;
+    const seconds = ms / 1000;
+    if (seconds < 60) return `${(seconds as unknown).toFixed(1)}s`;
+    const minutes = seconds / 60;
+    return `${(minutes as unknown).toFixed(1)}m`;
+  };
+
+  return (
+    <Card className={className}>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium text-gray-500">Tasks Completed</h4>
+          <p className="text-2xl font-semibold text-gray-900">
+            {formatNumber((metrics as unknown).tasksCompleted)}
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium text-gray-500">Average Response Time</h4>
+          <p className="text-2xl font-semibold text-gray-900">
+            {formatTime((metrics as unknown).averageResponseTime)}
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium text-gray-500">Success Rate</h4>
+          <div className="flex items-center">
+            <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-green-500 rounded-full"
+                style={{ width: `${(metrics as unknown).successRate * 100}%` }}
+              />
+            </div>
+            <span className="ml-2 text-sm font-medium text-gray-700">
+              {formatPercentage((metrics as unknown).successRate)}
+            </span>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium text-gray-500">Error Rate</h4>
+          <div className="flex items-center">
+            <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-red-500 rounded-full"
+                style={{ width: `${(metrics as unknown).errorRate * 100}%` }}
+              />
+            </div>
+            <span className="ml-2 text-sm font-medium text-gray-700">
+              {formatPercentage((metrics as unknown).errorRate)}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <h4 className="text-sm font-medium text-gray-500">Uptime</h4>
+        <div className="mt-2 flex items-center">
+          <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-blue-500 rounded-full"
+              style={{ width: `${((metrics as unknown).uptime / 100) * 100}%` }}
+            />
+          </div>
+          <span className="ml-2 text-sm font-medium text-gray-700">
+            {formatPercentage((metrics as unknown).uptime / 100)}
+          </span>
+        </div>
+      </div>
+    </Card>
+  );
+};

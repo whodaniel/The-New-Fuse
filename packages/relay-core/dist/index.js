@@ -39,9 +39,6 @@ Object.defineProperty(exports, "TNFRelayServer", { enumerable: true, get: functi
 // Stall detection and recovery
 __exportStar(require("./services/stall-detector"), exports);
 // Protocol
-__exportStar(require("./contracts/audit"), exports);
-__exportStar(require("./contracts/identity"), exports);
-__exportStar(require("./contracts/lifecycle"), exports);
 __exportStar(require("./protocol/handoff-protocol"), exports);
 __exportStar(require("./protocol/resource-protocol"), exports);
 __exportStar(require("./protocol/task-protocol"), exports);

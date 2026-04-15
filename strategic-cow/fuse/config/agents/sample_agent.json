@@ -1,0 +1,7 @@
+{
+  "name": "SampleAgent",
+  "traits": ["Aggressive", "Passive"],
+  "abilities": ["Data Analysis", "Natural Language Processing"],
+  "tools": ["FileLogger", "ChecklistManager"],
+  "template": "sample_template"
+}

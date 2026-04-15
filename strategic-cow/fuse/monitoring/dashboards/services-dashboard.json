@@ -1,0 +1,44 @@
+{
+  "dashboard": {
+    "id": "service-health",
+    "title": "Service Health Dashboard",
+    "panels": [
+      {
+        "title": "Service Discovery Health",
+        "type": "graph",
+        "metrics": [
+          "service_registration_count",
+          "service_discovery_latency",
+          "service_health_status"
+        ]
+      },
+      {
+        "title": "Workflow Orchestration",
+        "type": "graph",
+        "metrics": [
+          "workflow_success_rate",
+          "workflow_execution_time",
+          "active_workflows"
+        ]
+      },
+      {
+        "title": "Resource Utilization",
+        "type": "gauge",
+        "metrics": [
+          "cpu_usage",
+          "memory_usage",
+          "network_throughput"
+        ]
+      },
+      {
+        "title": "State Synchronization",
+        "type": "status",
+        "metrics": [
+          "state_sync_latency",
+          "state_conflicts",
+          "sync_success_rate"
+        ]
+      }
+    ]
+  }
+}

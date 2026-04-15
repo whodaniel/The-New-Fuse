@@ -1,0 +1,9 @@
+sourceFile,pixelWidth,pixelHeight,classification,suggestedTargetAssetCode,confidence,notes
+Create_productionready_game_ui_art_for_a_multiplay_delpmaspu (1).png,,,full_scene_composite,,low,General scene composite; no high-confidence one-to-one canonical mapping.
+Create_productionready_game_ui_art_for_a_multiplay_delpmaspu (2).png,,,full_scene_composite,,low,General scene composite; no high-confidence one-to-one canonical mapping.
+Create_productionready_game_ui_art_for_a_multiplay_delpmaspu (3).png,,,full_scene_composite,pkr_tourney_lobby_hero_bg_v01,medium-low,Lobby-style full-screen composition; could be used as temporary tournament lobby hero background.
+Create_productionready_game_ui_art_for_a_multiplay_delpmaspu (4).png,,,full_scene_composite,,low,In-table scene composite; not an isolated component.
+Create_productionready_game_ui_art_for_a_multiplay_delpmaspu.png,,,playing_card_face,,low,Single 5-of-clubs card art; excluded from non-card-face UI component set.
+Denomination_5_chip_70acbe688f.jpeg,,,chip_render,,low,"Denomination 5 chip; required missing chip is denomination 25, so no safe mapping."
+They_have_to_be_in_a_line_and_frames_only__pkr_car_delpmaspu (1).png,,,frame_strip,,low,Horizontal strip of 5 frame placeholders; does not clearly match any single required canonical asset.
+They_have_to_be_in_a_line_and_frames_only__pkr_car_delpmaspu.png,,,frame_strip,,low,Horizontal strip of 5 frame placeholders; does not clearly match any single required canonical asset.

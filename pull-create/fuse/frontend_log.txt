@@ -1,0 +1,219 @@
+
+> the-new-fuse@ dev /app
+> turbo run dev --filter=@the-new-fuse/api-gateway --filter=@the-new-fuse/frontend-app --concurrency=5 --filter @the-new-fuse/frontend-app
+
+• turbo 2.7.5
+• Packages in scope: @the-new-fuse/api-gateway, @the-new-fuse/frontend-app
+• Running dev in 2 packages
+• Remote caching disabled
+@the-new-fuse/utils:build: cache hit, replaying logs 9990a0e0171c1249
+@the-new-fuse/utils:build:
+@the-new-fuse/utils:build: > @the-new-fuse/utils@1.0.0 build /app/packages/utils
+@the-new-fuse/utils:build: > rimraf dist && tsc --project tsconfig.build.json
+@the-new-fuse/utils:build:
+@the-new-fuse/ap2-protocol:build: cache hit, replaying logs f1ceca8297572214
+@the-new-fuse/ap2-protocol:build:
+@the-new-fuse/ap2-protocol:build: > @the-new-fuse/ap2-protocol@1.0.0 build /app/packages/ap2-protocol
+@the-new-fuse/ap2-protocol:build: > tsc
+@the-new-fuse/ap2-protocol:build:
+@the-new-fuse/infrastructure:build: cache hit, replaying logs 778a624cbd7220cd
+@the-new-fuse/infrastructure:build:
+@the-new-fuse/infrastructure:build: > @the-new-fuse/infrastructure@1.0.0 build /app/packages/infrastructure
+@the-new-fuse/infrastructure:build: > tsc
+@the-new-fuse/infrastructure:build:
+@the-new-fuse/types:build: cache hit, replaying logs c8d4bb3c39d1b787
+@the-new-fuse/types:build:
+@the-new-fuse/types:build: > @the-new-fuse/types@1.0.0 prebuild /app/packages/types
+@the-new-fuse/types:build: > rm -rf dist tsconfig.tsbuildinfo 2>/dev/null || true
+@the-new-fuse/types:build:
+@the-new-fuse/types:build:
+@the-new-fuse/types:build: > @the-new-fuse/types@1.0.0 build /app/packages/types
+@the-new-fuse/types:build: > tsc --build --verbose
+@the-new-fuse/types:build:
+@the-new-fuse/types:build: 10:39:21 AM - Projects in this build:
+@the-new-fuse/types:build:     * tsconfig.json
+@the-new-fuse/types:build:
+@the-new-fuse/types:build: 10:39:22 AM - Project 'tsconfig.json' is out of date because output file 'tsconfig.tsbuildinfo' does not exist
+@the-new-fuse/types:build:
+@the-new-fuse/types:build: 10:39:22 AM - Building project '/app/packages/types/tsconfig.json'...
+@the-new-fuse/types:build:
+@the-new-fuse/fairtable-core:build: cache hit, replaying logs f840cf3bc430372a
+@the-new-fuse/fairtable-core:build:
+@the-new-fuse/fairtable-core:build: > @the-new-fuse/fairtable-core@1.0.0 build /app/packages/fairtable-core
+@the-new-fuse/fairtable-core:build: > tsc
+@the-new-fuse/fairtable-core:build:
+@the-new-fuse/a2a-core:build: cache miss, executing 9174e7497d477e63
+@the-new-fuse/core-vector-db:build: cache hit, replaying logs a4e67a4fc3aa2efd
+@the-new-fuse/core-vector-db:build:
+@the-new-fuse/core-vector-db:build: > @the-new-fuse/core-vector-db@0.1.0 build /app/packages/core-vector-db
+@the-new-fuse/core-vector-db:build: > tsc
+@the-new-fuse/core-vector-db:build:
+@the-new-fuse/api-types:build: cache hit, replaying logs e2fe8b3fb161aa0d
+@the-new-fuse/api-types:build:
+@the-new-fuse/api-types:build: > @the-new-fuse/api-types@1.0.0 build /app/packages/api-types
+@the-new-fuse/api-types:build: > tsc -b
+@the-new-fuse/api-types:build:
+@the-new-fuse/database:build: cache miss, executing e47d0e175c4c14e5
+@the-new-fuse/port-management:build: cache miss, executing cfc1af7dfa96fd85
+@the-new-fuse/api-client:build: cache miss, executing c8044b28dd38b6e5
+@the-new-fuse/database:build:
+@the-new-fuse/database:build: > @the-new-fuse/database@0.1.1 build /app/packages/database
+@the-new-fuse/database:build: > tsc -b
+@the-new-fuse/database:build:
+@the-new-fuse/port-management:build:
+@the-new-fuse/port-management:build: > @the-new-fuse/port-management@1.0.0 build /app/packages/port-management
+@the-new-fuse/port-management:build: > tsc
+@the-new-fuse/port-management:build:
+@the-new-fuse/a2a-core:build:
+@the-new-fuse/a2a-core:build: > @the-new-fuse/a2a-core@0.3.0 build /app/packages/a2a-core
+@the-new-fuse/a2a-core:build: > tsc
+@the-new-fuse/a2a-core:build:
+@the-new-fuse/api-client:build:
+@the-new-fuse/api-client:build: > @the-new-fuse/api-client@1.0.0 build /app/packages/api-client
+@the-new-fuse/api-client:build: > tsc -b
+@the-new-fuse/api-client:build:
+@the-new-fuse/a2a-react:build: cache miss, executing 4b1be198181d6471
+@the-new-fuse/hooks:build: cache miss, executing 928fc2b156236ce2
+@the-new-fuse/a2a-react:build:
+@the-new-fuse/a2a-react:build: > @the-new-fuse/a2a-react@0.1.0 build /app/packages/a2a-react
+@the-new-fuse/a2a-react:build: > tsc
+@the-new-fuse/a2a-react:build:
+@the-new-fuse/hooks:build:
+@the-new-fuse/hooks:build: > @the-new-fuse/hooks@1.0.0 build /app/packages/hooks
+@the-new-fuse/hooks:build: > tsc --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'
+@the-new-fuse/hooks:build:
+@the-new-fuse/ui-consolidated:build: cache miss, executing 978d723cf32b8b13
+@the-new-fuse/ui-consolidated:build:
+@the-new-fuse/ui-consolidated:build: > @the-new-fuse/ui-consolidated@1.0.0 build /app/packages/ui-consolidated
+@the-new-fuse/ui-consolidated:build: > tsup
+@the-new-fuse/ui-consolidated:build:
+@the-new-fuse/ui-consolidated:build: CLI Building entry: src/index.ts
+@the-new-fuse/ui-consolidated:build: CLI Using tsconfig: tsconfig.json
+@the-new-fuse/ui-consolidated:build: CLI tsup v8.5.1
+@the-new-fuse/ui-consolidated:build: CLI Using tsup config: /app/packages/ui-consolidated/tsup.config.ts
+@the-new-fuse/ui-consolidated:build: CLI Target: es2020
+@the-new-fuse/ui-consolidated:build: CLI Cleaning output folder
+@the-new-fuse/ui-consolidated:build: ESM Build start
+@the-new-fuse/ui-consolidated:build: CJS Build start
+@the-new-fuse/ui-consolidated:build: DTS Build start
+@the-new-fuse/prompt-templating:build: cache miss, executing eeb05bf50168af92
+@the-new-fuse/core:build: cache miss, executing 712cfe358927fb7b
+@the-new-fuse/core:build:
+@the-new-fuse/core:build: > @the-new-fuse/core@1.0.0 build /app/packages/core
+@the-new-fuse/core:build: > tsc -p tsconfig.clean.json
+@the-new-fuse/core:build:
+@the-new-fuse/prompt-templating:build:
+@the-new-fuse/prompt-templating:build: > @the-new-fuse/prompt-templating@1.0.0 build /app/packages/prompt-templating
+@the-new-fuse/prompt-templating:build: > tsc
+@the-new-fuse/prompt-templating:build:
+@the-new-fuse/ui-consolidated:build: ESM dist/index.css     46.81 KB
+@the-new-fuse/ui-consolidated:build: ESM dist/index.css.map 98.57 KB
+@the-new-fuse/ui-consolidated:build: ESM dist/index.js      66.97 KB
+@the-new-fuse/ui-consolidated:build: ESM dist/index.js.map  267.13 KB
+@the-new-fuse/ui-consolidated:build: ESM ⚡️ Build success in 3525ms
+@the-new-fuse/ui-consolidated:build: CJS dist/index.css     46.81 KB
+@the-new-fuse/ui-consolidated:build: CJS dist/index.css.map 98.86 KB
+@the-new-fuse/ui-consolidated:build: CJS dist/index.cjs     73.10 KB
+@the-new-fuse/ui-consolidated:build: CJS dist/index.cjs.map 267.25 KB
+@the-new-fuse/ui-consolidated:build: CJS ⚡️ Build success in 3537ms
+@the-new-fuse/ui-consolidated:build: DTS ⚡️ Build success in 8761ms
+@the-new-fuse/ui-consolidated:build: DTS dist/index.d.ts  68.12 KB
+@the-new-fuse/ui-consolidated:build: DTS dist/index.d.cts 68.12 KB
+@the-new-fuse/api-gateway:dev: cache bypass, force executing cdbe5093f51bef13
+@the-new-fuse/feature-tracker:build: cache miss, executing 2123c3bc82ea293b
+@the-new-fuse/api-gateway:dev:
+@the-new-fuse/api-gateway:dev: > @the-new-fuse/api-gateway@1.0.2 dev /app/apps/api-gateway
+@the-new-fuse/api-gateway:dev: > nest start --watch
+@the-new-fuse/api-gateway:dev:
+@the-new-fuse/feature-tracker:build:
+@the-new-fuse/feature-tracker:build: > @the-new-fuse/feature-tracker@1.0.0 build /app/packages/feature-tracker
+@the-new-fuse/feature-tracker:build: > tsc --build
+@the-new-fuse/feature-tracker:build:
+@the-new-fuse/api-gateway:dev: [2J[3J[H[[90m10:41:18 AM[0m] Starting compilation in watch mode...
+@the-new-fuse/api-gateway:dev:
+@the-new-fuse/api-gateway:dev: [96msrc/gateway/jules-webhook.controller.ts[0m:[93m9[0m:[93m37[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/jules-integration' or its corresponding type declarations.
+@the-new-fuse/api-gateway:dev:
+@the-new-fuse/api-gateway:dev: [7m9[0m import { JulesWebhookHandler } from '@the-new-fuse/jules-integration';
+@the-new-fuse/api-gateway:dev: [7m [0m [91m                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+@the-new-fuse/api-gateway:dev:
+@the-new-fuse/api-gateway:dev: [96msrc/gateway/jules-webhook.controller.ts[0m:[93m33[0m:[93m69[0m - [91merror[0m[90m TS2339: [0mProperty 'message' does not exist on type 'unknown'.
+@the-new-fuse/api-gateway:dev:
+@the-new-fuse/api-gateway:dev: [7m33[0m         `[JulesWebhookController] Failed to handle webhook: ${error.message}`,
+@the-new-fuse/api-gateway:dev: [7m  [0m [91m                                                                    ~~~~~~~[0m
+@the-new-fuse/api-gateway:dev:
+@the-new-fuse/api-gateway:dev: [96msrc/gateway/jules-webhook.controller.ts[0m:[93m34[0m:[93m15[0m - [91merror[0m[90m TS2339: [0mProperty 'stack' does not exist on type 'unknown'.
+@the-new-fuse/api-gateway:dev:
+@the-new-fuse/api-gateway:dev: [7m34[0m         error.stack
+@the-new-fuse/api-gateway:dev: [7m  [0m [91m              ~~~~~[0m
+@the-new-fuse/api-gateway:dev:
+@the-new-fuse/api-gateway:dev: [96msrc/gateway/jules-webhook.module.ts[0m:[93m2[0m:[93m30[0m - [91merror[0m[90m TS2307: [0mCannot find module '@drizzle/client' or its corresponding type declarations.
+@the-new-fuse/api-gateway:dev:
+@the-new-fuse/api-gateway:dev: [7m2[0m import { DrizzleClient } from '@drizzle/client';
+@the-new-fuse/api-gateway:dev: [7m [0m [91m                             ~~~~~~~~~~~~~~~~[0m
+@the-new-fuse/api-gateway:dev:
+@the-new-fuse/api-gateway:dev: [96msrc/gateway/jules-webhook.module.ts[0m:[93m3[0m:[93m37[0m - [91merror[0m[90m TS2307: [0mCannot find module '@the-new-fuse/jules-integration' or its corresponding type declarations.
+@the-new-fuse/api-gateway:dev:
+@the-new-fuse/api-gateway:dev: [7m3[0m import { JulesWebhookHandler } from '@the-new-fuse/jules-integration';
+@the-new-fuse/api-gateway:dev: [7m [0m [91m                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+@the-new-fuse/api-gateway:dev:
+@the-new-fuse/api-gateway:dev: [[90m10:41:26 AM[0m] Found 5 errors. Watching for file changes.
+@the-new-fuse/api-gateway:dev:
+@the-new-fuse/feature-suggestions:build: cache miss, executing e1e13d59376dfe94
+@the-new-fuse/feature-suggestions:build:
+@the-new-fuse/feature-suggestions:build: > @the-new-fuse/feature-suggestions@1.0.0 build /app/packages/feature-suggestions
+@the-new-fuse/feature-suggestions:build: > tsc --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'
+@the-new-fuse/feature-suggestions:build:
+@the-new-fuse/frontend-app:dev: cache bypass, force executing a87ef23fc4d55ab0
+@the-new-fuse/frontend-app:dev:
+@the-new-fuse/frontend-app:dev: > @the-new-fuse/frontend-app@0.0.0 dev /app/apps/frontend
+@the-new-fuse/frontend-app:dev: > vite --host 0.0.0.0 --port 3000
+@the-new-fuse/frontend-app:dev:
+@the-new-fuse/frontend-app:dev:
+@the-new-fuse/frontend-app:dev:   VITE v7.3.1  ready in 761 ms
+@the-new-fuse/frontend-app:dev:
+@the-new-fuse/frontend-app:dev:   ➜  Local:   http://localhost:3000/
+@the-new-fuse/frontend-app:dev:   ➜  Network: http://192.168.0.2:3000/
+@the-new-fuse/frontend-app:dev:
+@the-new-fuse/frontend-app:dev: A PostCSS plugin did not pass the `from` option to `postcss.parse`. This may cause imported assets to be incorrectly transformed. If you've recently added a PostCSS plugin that raised this warning, please contact the package author to fix the issue.
+@the-new-fuse/frontend-app:dev: 10:42:16 AM [vite] (client) ✨ new dependencies optimized: vite-plugin-node-polyfills/shims/buffer, vite-plugin-node-polyfills/shims/global, vite-plugin-node-polyfills/shims/process
+@the-new-fuse/frontend-app:dev: 10:42:16 AM [vite] (client) ✨ optimized dependencies changed. reloading
+@the-new-fuse/frontend-app:dev: 10:43:30 AM [vite] http proxy error: /api/agents
+@the-new-fuse/frontend-app:dev: AggregateError [ECONNREFUSED]:
+@the-new-fuse/frontend-app:dev:     at internalConnectMultiple (node:net:1134:18)
+@the-new-fuse/frontend-app:dev:     at afterConnectMultiple (node:net:1715:7)
+@the-new-fuse/frontend-app:dev: 10:43:30 AM [vite] http proxy error: /api/agents
+@the-new-fuse/frontend-app:dev: AggregateError [ECONNREFUSED]:
+@the-new-fuse/frontend-app:dev:     at internalConnectMultiple (node:net:1134:18)
+@the-new-fuse/frontend-app:dev:     at afterConnectMultiple (node:net:1715:7)
+@the-new-fuse/frontend-app:dev: 10:47:16 AM [vite] http proxy error: /api/agents
+@the-new-fuse/frontend-app:dev: AggregateError [ECONNREFUSED]:
+@the-new-fuse/frontend-app:dev:     at internalConnectMultiple (node:net:1134:18)
+@the-new-fuse/frontend-app:dev:     at afterConnectMultiple (node:net:1715:7)
+@the-new-fuse/frontend-app:dev: 10:47:16 AM [vite] http proxy error: /api/agents
+@the-new-fuse/frontend-app:dev: AggregateError [ECONNREFUSED]:
+@the-new-fuse/frontend-app:dev:     at internalConnectMultiple (node:net:1134:18)
+@the-new-fuse/frontend-app:dev:     at afterConnectMultiple (node:net:1715:7)
+@the-new-fuse/frontend-app:dev: 10:48:45 AM [vite] (client) hmr update /src/styles/globals.css
+@the-new-fuse/frontend-app:dev: 10:49:03 AM [vite] (client) hmr update /src/styles/globals.css
+@the-new-fuse/frontend-app:dev: 10:49:17 AM [vite] (client) hmr update /src/styles/globals.css
+@the-new-fuse/frontend-app:dev: 10:49:26 AM [vite] (client) hmr update /src/styles/globals.css
+@the-new-fuse/frontend-app:dev: 10:49:42 AM [vite] http proxy error: /api/agents
+@the-new-fuse/frontend-app:dev: AggregateError [ECONNREFUSED]:
+@the-new-fuse/frontend-app:dev:     at internalConnectMultiple (node:net:1134:18)
+@the-new-fuse/frontend-app:dev:     at afterConnectMultiple (node:net:1715:7)
+@the-new-fuse/frontend-app:dev: 10:49:42 AM [vite] http proxy error: /api/agents
+@the-new-fuse/frontend-app:dev: AggregateError [ECONNREFUSED]:
+@the-new-fuse/frontend-app:dev:     at internalConnectMultiple (node:net:1134:18)
+@the-new-fuse/frontend-app:dev:     at afterConnectMultiple (node:net:1715:7)
+@the-new-fuse/frontend-app:dev:  ELIFECYCLE  Command failed.
+@the-new-fuse/frontend-app:dev: ERROR: command finished with error: command (/app/apps/frontend) /home/jules/.local/share/pnpm/.tools/pnpm/10.22.0/bin/pnpm run dev was killed (exit code 137), likely due to running out of memory
+@the-new-fuse/api-gateway:dev:  ELIFECYCLE  Command failed.
+@the-new-fuse/frontend-app#dev: command (/app/apps/frontend) /home/jules/.local/share/pnpm/.tools/pnpm/10.22.0/bin/pnpm run dev exited (137)
+
+ Tasks:    18 successful, 20 total
+Cached:    7 cached, 20 total
+  Time:    9m38.034s
+Failed:    @the-new-fuse/frontend-app#dev
+
+ ERROR  run failed: command  exited (137)
+ ELIFECYCLE  Command failed with exit code 137.

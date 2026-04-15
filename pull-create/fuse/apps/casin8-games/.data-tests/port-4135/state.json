@@ -1,0 +1,790 @@
+{
+  "sessions": {
+    "7dfd3960-f90c-4cdd-838a-aeae311b6e57": {
+      "id": "7dfd3960-f90c-4cdd-838a-aeae311b6e57",
+      "playerName": "Tester",
+      "bankroll": 990,
+      "rounds": 1,
+      "wins": 0,
+      "losses": 1,
+      "clientSeed": "seed-12345",
+      "serverSeed": "c97d4dd6ce1926afd5da39e4c3119817681f5ae6c32caff417ba01f02e177b3d",
+      "serverSeedHash": "a15654e39652bf992723d7425c4a7c0676169936a79ff878da0479245947f5c6",
+      "nonce": 1,
+      "tableId": "qa-table",
+      "ledger": [
+        {
+          "id": "4183de2f-d5f2-46b3-a957-8d61d56c8434",
+          "ts": "2026-02-27T23:12:07.635Z",
+          "game": "poker",
+          "bet": 10,
+          "payout": 0,
+          "delta": -10,
+          "bankroll": 990,
+          "receipt": {
+            "digest": "97fb40d9173a0ae356da89499351e5e8a273d1b616ba8572e335c302e5d8bdb0",
+            "digestAlgorithm": "sha256",
+            "receiptVersion": 2,
+            "game": "poker",
+            "bet": 10,
+            "options": {},
+            "serverSeedHash": "95a9b832bd7392eb3d70ced0c695ab8ba93a31b37c625084f0685e82ceea5b41",
+            "clientSeed": "seed-12345",
+            "nonce": 1
+          },
+          "detail": {
+            "hand": ["A♦", "9♠", "6♠", "J♦", "4♠"],
+            "rank": "High Card"
+          },
+          "onchain": null,
+          "onchainVerification": null
+        }
+      ],
+      "createdAt": "2026-02-27T23:12:07.583Z",
+      "updatedAt": "2026-02-27T23:12:07.653Z"
+    }
+  },
+  "tables": {
+    "qa-table": {
+      "id": "qa-table",
+      "events": [
+        {
+          "type": "table_action_accepted",
+          "tableId": "qa-table",
+          "handId": "qa-hand-1",
+          "intent": {
+            "type": "player.action",
+            "seat": 1,
+            "action": "fold",
+            "amount": 0
+          },
+          "reason": "OK",
+          "pot": 30,
+          "actingSeat": 0,
+          "terminal": true,
+          "street": "showdown",
+          "currentBet": 20,
+          "cursor": "qa-table:3",
+          "ts": "2026-02-27T23:12:07.924Z"
+        },
+        {
+          "type": "table_state_init",
+          "tableId": "qa-table",
+          "handId": "qa-hand-1",
+          "actingSeat": 1,
+          "pot": 30,
+          "street": "preflop",
+          "cursor": "qa-table:1",
+          "ts": "2026-02-27T23:12:07.915Z"
+        },
+        {
+          "type": "round",
+          "ts": "2026-02-27T23:12:07.635Z",
+          "tableId": "qa-table",
+          "playerName": "Tester",
+          "game": "poker",
+          "bet": 10,
+          "payout": 0,
+          "delta": -10,
+          "bankroll": 990
+        },
+        {
+          "type": "join",
+          "tableId": "qa-table",
+          "playerName": "Tester",
+          "ts": "2026-02-27T23:12:07.583Z"
+        }
+      ],
+      "snapshot": {
+        "eventType": "table.snapshot",
+        "tableId": "qa-table",
+        "handId": "qa-hand-1",
+        "actingSeat": 0,
+        "pot": 30,
+        "street": "showdown",
+        "seats": [
+          { "seat": 0, "folded": false, "stack": 980, "invested": 20 },
+          { "seat": 1, "folded": true, "stack": 990, "invested": 10 }
+        ],
+        "seq": 1,
+        "cursor": "qa-table:1",
+        "terminal": true,
+        "variant": "holdem-cash",
+        "communityCards": [],
+        "deckCards": [
+          "K♥",
+          "J♥",
+          "6♠",
+          "J♦",
+          "Q♠",
+          "J♠",
+          "9♠",
+          "3♥",
+          "K♣",
+          "10♥",
+          "6♦",
+          "10♣",
+          "4♣",
+          "5♥",
+          "7♦",
+          "2♣",
+          "6♥",
+          "A♥",
+          "K♦",
+          "A♠",
+          "5♠",
+          "8♥",
+          "10♠",
+          "7♠",
+          "2♦",
+          "5♣",
+          "8♠",
+          "A♦",
+          "3♣",
+          "3♠",
+          "4♦",
+          "2♠",
+          "10♦",
+          "K♠",
+          "Q♥",
+          "6♣",
+          "Q♣",
+          "2♥",
+          "4♥",
+          "7♥",
+          "J♣",
+          "7♣",
+          "Q♦",
+          "A♣",
+          "8♣",
+          "3♦",
+          "4♠",
+          "5♦"
+        ],
+        "holeCards": { "0": ["8♦", "9♦"], "1": ["9♥", "9♣"] },
+        "actionCountStreet": 1,
+        "settled": true,
+        "winnerSeat": 0,
+        "payoutUnits": 30,
+        "showdown": [{ "seat": 0, "scoreTuple": [99] }],
+        "actedSeats": [1],
+        "streetBets": { "0": 20, "1": 10 },
+        "currentBet": 20,
+        "sessionBySeat": null,
+        "buttonSeat": 0,
+        "blinds": {
+          "smallBlind": 10,
+          "bigBlind": 20,
+          "sbSeat": 1,
+          "bbSeat": 0
+        },
+        "minRaise": 20,
+        "lastRaiseSize": 20,
+        "payoutBySeat": { "0": 30 }
+      },
+      "snapshotUpdatedAt": "2026-02-27T23:12:07.921Z"
+    },
+    "qa-table-settle": {
+      "id": "qa-table-settle",
+      "events": [
+        {
+          "type": "table_settled",
+          "tableId": "qa-table-settle",
+          "handId": "qa-hand-settle",
+          "winnerSeat": 0,
+          "payoutUnits": 50,
+          "cursor": "qa-table-settle:2",
+          "ts": "2026-02-27T23:12:07.955Z"
+        },
+        {
+          "type": "table_state_init",
+          "tableId": "qa-table-settle",
+          "handId": "qa-hand-settle",
+          "actingSeat": 1,
+          "pot": 80,
+          "street": "preflop",
+          "cursor": "qa-table-settle:1",
+          "ts": "2026-02-27T23:12:07.951Z"
+        }
+      ],
+      "snapshot": {
+        "eventType": "table.snapshot",
+        "tableId": "qa-table-settle",
+        "handId": "qa-hand-settle",
+        "actingSeat": 1,
+        "pot": 80,
+        "street": "preflop",
+        "seats": [
+          { "seat": 0, "folded": false, "stack": 980, "invested": 20 },
+          { "seat": 1, "folded": false, "stack": 990, "invested": 10 }
+        ],
+        "seq": 2,
+        "cursor": "qa-table-settle:2",
+        "terminal": true,
+        "variant": "holdem-cash",
+        "communityCards": [],
+        "deckCards": [
+          "5♥",
+          "6♥",
+          "J♦",
+          "3♦",
+          "A♥",
+          "8♠",
+          "8♥",
+          "4♦",
+          "8♣",
+          "A♠",
+          "7♥",
+          "8♦",
+          "6♦",
+          "4♠",
+          "5♣",
+          "Q♠",
+          "J♥",
+          "2♥",
+          "Q♦",
+          "5♦",
+          "K♥",
+          "A♣",
+          "3♠",
+          "7♣",
+          "9♦",
+          "Q♣",
+          "K♦",
+          "10♦",
+          "2♦",
+          "J♣",
+          "10♣",
+          "6♣",
+          "6♠",
+          "K♣",
+          "10♠",
+          "9♥",
+          "9♣",
+          "J♠",
+          "4♥",
+          "7♦",
+          "4♣",
+          "3♥",
+          "7♠",
+          "10♥",
+          "9♠",
+          "2♠",
+          "2♣",
+          "3♣"
+        ],
+        "holeCards": { "0": ["Q♥", "K♠"], "1": ["5♠", "A♦"] },
+        "actionCountStreet": 0,
+        "settled": true,
+        "winnerSeat": 0,
+        "payoutUnits": 50,
+        "showdown": null,
+        "actedSeats": [],
+        "streetBets": { "0": 20, "1": 10 },
+        "currentBet": 20,
+        "sessionBySeat": null,
+        "buttonSeat": 0,
+        "blinds": {
+          "smallBlind": 10,
+          "bigBlind": 20,
+          "sbSeat": 1,
+          "bbSeat": 0
+        },
+        "minRaise": 20,
+        "lastRaiseSize": 20,
+        "settleIdempotencyKey": "354cd7a5-ba7c-44ba-a3cd-7632ac57c04d",
+        "lastSettlementArtifacts": {
+          "handResult": {
+            "eventType": "hand.result",
+            "tableId": "qa-table-settle",
+            "handId": "qa-hand-settle",
+            "winnerSeat": 0
+          },
+          "payoutDirective": {
+            "eventType": "payout.directive",
+            "tableId": "qa-table-settle",
+            "handId": "qa-hand-settle",
+            "winnerSeat": 0,
+            "payoutUnits": 50
+          },
+          "fairnessMaterial": {
+            "eventType": "fairness.material",
+            "tableId": "qa-table-settle",
+            "handId": "qa-hand-settle",
+            "cursor": "qa-table-settle:0",
+            "seq": 0
+          }
+        }
+      },
+      "snapshotUpdatedAt": "2026-02-27T23:12:07.954Z"
+    },
+    "qa-table-auto": {
+      "id": "qa-table-auto",
+      "events": [
+        {
+          "type": "table_auto_action",
+          "tableId": "qa-table-auto",
+          "accepted": true,
+          "reason": "OK",
+          "agentId": "agent-seat-1",
+          "action": "call",
+          "amount": 22,
+          "pot": 64,
+          "actingSeat": 0,
+          "policy": {
+            "allowed": true,
+            "code": "OK",
+            "policy": {
+              "tier": "B",
+              "style": "tight_aggressive",
+              "styleConfig": {
+                "vpipBps": 1800,
+                "pfrBps": 1500,
+                "bluffBps": 900,
+                "icmDisciplineBps": 8200
+              }
+            }
+          },
+          "terminal": false,
+          "cursor": "qa-table-auto:8",
+          "mutationSeq": 7,
+          "ts": "2026-02-27T23:12:07.979Z"
+        },
+        {
+          "type": "table_auto_action",
+          "tableId": "qa-table-auto",
+          "accepted": true,
+          "reason": "OK",
+          "agentId": "agent-seat-0",
+          "action": "call",
+          "amount": 19,
+          "pot": 42,
+          "actingSeat": 1,
+          "policy": {
+            "allowed": true,
+            "code": "OK",
+            "policy": {
+              "tier": "B",
+              "style": "tight_aggressive",
+              "styleConfig": {
+                "vpipBps": 1800,
+                "pfrBps": 1500,
+                "bluffBps": 900,
+                "icmDisciplineBps": 8200
+              }
+            }
+          },
+          "terminal": false,
+          "cursor": "qa-table-auto:6",
+          "mutationSeq": 5,
+          "ts": "2026-02-27T23:12:07.979Z"
+        },
+        {
+          "type": "table_auto_action",
+          "tableId": "qa-table-auto",
+          "accepted": true,
+          "reason": "OK",
+          "agentId": "agent-seat-1",
+          "action": "call",
+          "amount": 23,
+          "pot": 23,
+          "actingSeat": 0,
+          "policy": {
+            "allowed": true,
+            "code": "OK",
+            "policy": {
+              "tier": "B",
+              "style": "tight_aggressive",
+              "styleConfig": {
+                "vpipBps": 1800,
+                "pfrBps": 1500,
+                "bluffBps": 900,
+                "icmDisciplineBps": 8200
+              }
+            }
+          },
+          "terminal": false,
+          "cursor": "qa-table-auto:4",
+          "mutationSeq": 3,
+          "ts": "2026-02-27T23:12:07.978Z"
+        },
+        {
+          "type": "table_auto_action",
+          "tableId": "qa-table-auto",
+          "accepted": true,
+          "reason": "OK",
+          "agentId": "agent-seat-0",
+          "action": "check",
+          "amount": 0,
+          "pot": 0,
+          "actingSeat": 1,
+          "policy": {
+            "allowed": true,
+            "code": "OK",
+            "policy": {
+              "tier": "B",
+              "style": "tight_aggressive",
+              "styleConfig": {
+                "vpipBps": 1800,
+                "pfrBps": 1500,
+                "bluffBps": 900,
+                "icmDisciplineBps": 8200
+              }
+            }
+          },
+          "terminal": false,
+          "cursor": "qa-table-auto:2",
+          "mutationSeq": 1,
+          "ts": "2026-02-27T23:12:07.978Z"
+        }
+      ],
+      "snapshot": {
+        "eventType": "table.snapshot",
+        "tableId": "qa-table-auto",
+        "handId": "qa-hand-auto",
+        "actingSeat": 0,
+        "pot": 64,
+        "street": "preflop",
+        "seats": [{ "seat": 0 }, { "seat": 1 }],
+        "seq": 4,
+        "cursor": "qa-table-auto:4",
+        "terminal": false
+      },
+      "snapshotUpdatedAt": "2026-02-27T23:12:07.979Z"
+    }
+  },
+  "v2": {
+    "holdemTables": {
+      "v2-table-1": {
+        "version": 2,
+        "tableId": "v2-table-1",
+        "mode": "cash",
+        "blinds": { "smallBlind": 50, "bigBlind": 100, "ante": 10 },
+        "buttonSeat": 0,
+        "seats": [
+          {
+            "seat": 0,
+            "playerId": "hv2-a",
+            "stack": 2900,
+            "joinedAt": "2026-02-27T23:12:08.030Z",
+            "waitingForBigBlind": false,
+            "waitingForSmallBlind": false,
+            "deadBlindDue": 0,
+            "autoPostBlinds": true,
+            "connected": true,
+            "straddleRequested": 0
+          },
+          {
+            "seat": 1,
+            "playerId": "hv2-b",
+            "stack": 2950,
+            "joinedAt": "2026-02-27T23:12:08.032Z",
+            "waitingForBigBlind": false,
+            "waitingForSmallBlind": false,
+            "deadBlindDue": 0,
+            "autoPostBlinds": true,
+            "connected": true,
+            "straddleRequested": 0
+          },
+          {
+            "seat": 2,
+            "playerId": "hv2-c",
+            "stack": 1100,
+            "joinedAt": "2026-02-27T23:12:08.032Z",
+            "waitingForBigBlind": false,
+            "waitingForSmallBlind": false,
+            "deadBlindDue": 0,
+            "autoPostBlinds": true,
+            "connected": true,
+            "straddleRequested": 0
+          }
+        ],
+        "riskCapsBySeat": {},
+        "hand": {
+          "handId": "v2-hand-1",
+          "status": "active",
+          "startedAt": "2026-02-27T23:12:08.173Z",
+          "street": "preflop",
+          "buttonSeat": 0,
+          "sbSeat": 1,
+          "bbSeat": 2,
+          "actingSeat": 1,
+          "pot": 280,
+          "currentBet": 100,
+          "minRaise": 100,
+          "lastAggressiveDelta": 100,
+          "lastAggressorSeat": null,
+          "committedBySeat": { "0": 110, "1": 60, "2": 110 },
+          "streetCommitted": { "0": 100, "1": 50, "2": 100 },
+          "foldedSeats": [],
+          "allInSeats": [],
+          "actedSinceAggression": [0],
+          "forcedPosts": [
+            { "seat": 0, "kind": "ante", "amount": 10, "live": false },
+            { "seat": 1, "kind": "ante", "amount": 10, "live": false },
+            { "seat": 2, "kind": "ante", "amount": 10, "live": false },
+            { "seat": 1, "kind": "small_blind", "amount": 50, "live": true },
+            { "seat": 2, "kind": "big_blind", "amount": 100, "live": true }
+          ],
+          "actionLog": [
+            {
+              "seat": 0,
+              "playerId": "hv2-a",
+              "action": "call",
+              "amount": 0,
+              "spend": 100,
+              "target": 100,
+              "toCallBefore": 100,
+              "potAfter": 280,
+              "currentBetAfter": 100
+            }
+          ],
+          "sidePots": [],
+          "payoutBySeat": {},
+          "readyForSettlement": false,
+          "settled": false,
+          "settlement": null,
+          "replayHash": "v2-table-1-seed:v2-hand-1",
+          "auditHash": "cab3954639461566eecaa422e3536c09a4df3a6b0d7f55db66446bbc15571f08",
+          "auditTrail": [
+            {
+              "index": 1,
+              "tag": "hand.started",
+              "prevHash": "v2-table-1-seed:v2-hand-1:genesis",
+              "hash": "8a2485f840ace31497906afdec9d9e74e5d4aaebc64c13e76dd2b3ecdd2c4f74"
+            },
+            {
+              "index": 2,
+              "tag": "hand.action",
+              "prevHash": "8a2485f840ace31497906afdec9d9e74e5d4aaebc64c13e76dd2b3ecdd2c4f74",
+              "hash": "cab3954639461566eecaa422e3536c09a4df3a6b0d7f55db66446bbc15571f08"
+            }
+          ]
+        },
+        "pendingSeatMoves": [],
+        "audit": {
+          "lastEventHash": "e0e89a2a79e655f2346e990ec61cfd5b3638e3efc3023c5e4fa782728254d4d4"
+        },
+        "seq": 5,
+        "events": [
+          {
+            "seq": 1,
+            "ts": "2026-02-27T23:12:08.030Z",
+            "type": "player.seated",
+            "payload": {
+              "seat": 0,
+              "playerId": "hv2-a",
+              "stack": 3000,
+              "joinedAt": "2026-02-27T23:12:08.030Z",
+              "waitingForBigBlind": false,
+              "waitingForSmallBlind": false,
+              "deadBlindDue": 0,
+              "autoPostBlinds": true,
+              "connected": true,
+              "straddleRequested": 0
+            },
+            "prevHash": "genesis",
+            "hash": "5a933b2fb27a9f380f2113351cbc01e2ccc81022764891639bd3e0d1b9099e08"
+          },
+          {
+            "seq": 2,
+            "ts": "2026-02-27T23:12:08.032Z",
+            "type": "player.seated",
+            "payload": {
+              "seat": 1,
+              "playerId": "hv2-b",
+              "stack": 3000,
+              "joinedAt": "2026-02-27T23:12:08.032Z",
+              "waitingForBigBlind": false,
+              "waitingForSmallBlind": false,
+              "deadBlindDue": 0,
+              "autoPostBlinds": true,
+              "connected": true,
+              "straddleRequested": 0
+            },
+            "prevHash": "5a933b2fb27a9f380f2113351cbc01e2ccc81022764891639bd3e0d1b9099e08",
+            "hash": "0b04093183a67503ad0e48f76ec8ae110da20db1d61c37911ef8b8de8eea6227"
+          },
+          {
+            "seq": 3,
+            "ts": "2026-02-27T23:12:08.032Z",
+            "type": "player.seated",
+            "payload": {
+              "seat": 2,
+              "playerId": "hv2-c",
+              "stack": 1200,
+              "joinedAt": "2026-02-27T23:12:08.032Z",
+              "waitingForBigBlind": false,
+              "waitingForSmallBlind": false,
+              "deadBlindDue": 0,
+              "autoPostBlinds": true,
+              "connected": true,
+              "straddleRequested": 0
+            },
+            "prevHash": "0b04093183a67503ad0e48f76ec8ae110da20db1d61c37911ef8b8de8eea6227",
+            "hash": "7ace13f4d24c498deac69731ddf4071c52cd3d457d18053af5519b243751e5c8"
+          },
+          {
+            "seq": 4,
+            "ts": "2026-02-27T23:12:08.175Z",
+            "type": "hand.started",
+            "payload": {
+              "handId": "v2-hand-1",
+              "idempotencyKey": "v2-start-1",
+              "buttonSeat": 0,
+              "sbSeat": 1,
+              "bbSeat": 2,
+              "forcedPosts": [
+                { "seat": 0, "kind": "ante", "amount": 10, "live": false },
+                { "seat": 1, "kind": "ante", "amount": 10, "live": false },
+                { "seat": 2, "kind": "ante", "amount": 10, "live": false },
+                {
+                  "seat": 1,
+                  "kind": "small_blind",
+                  "amount": 50,
+                  "live": true
+                },
+                { "seat": 2, "kind": "big_blind", "amount": 100, "live": true }
+              ],
+              "actingSeat": 0
+            },
+            "prevHash": "7ace13f4d24c498deac69731ddf4071c52cd3d457d18053af5519b243751e5c8",
+            "hash": "cf3f551b5aa518b1a6e5624b5916366d3d0ee1bf125359409992e4c3936cd312"
+          },
+          {
+            "seq": 5,
+            "ts": "2026-02-27T23:12:08.219Z",
+            "type": "hand.action",
+            "payload": {
+              "handId": "v2-hand-1",
+              "idempotencyKey": "v2-a1",
+              "row": {
+                "seat": 0,
+                "playerId": "hv2-a",
+                "action": "call",
+                "amount": 0,
+                "spend": 100,
+                "target": 100,
+                "toCallBefore": 100,
+                "potAfter": 280,
+                "currentBetAfter": 100
+              },
+              "street": "preflop",
+              "actingSeat": 1,
+              "readyForSettlement": false
+            },
+            "prevHash": "cf3f551b5aa518b1a6e5624b5916366d3d0ee1bf125359409992e4c3936cd312",
+            "hash": "e0e89a2a79e655f2346e990ec61cfd5b3638e3efc3023c5e4fa782728254d4d4"
+          }
+        ]
+      }
+    },
+    "holdemTournaments": {
+      "v2-mtt-1": {
+        "version": 2,
+        "tournamentId": "v2-mtt-1",
+        "type": "mtt",
+        "status": "running",
+        "pausedReason": "",
+        "maxPlayers": 12,
+        "tableSize": 6,
+        "buyInUnits": 1000,
+        "startStack": 20000,
+        "blindSchedule": [
+          { "level": 1, "durationSec": 600, "sb": 50, "bb": 100, "ante": 0 },
+          { "level": 2, "durationSec": 600, "sb": 75, "bb": 150, "ante": 0 },
+          { "level": 3, "durationSec": 600, "sb": 100, "bb": 200, "ante": 25 },
+          { "level": 4, "durationSec": 600, "sb": 150, "bb": 300, "ante": 25 },
+          { "level": 5, "durationSec": 600, "sb": 200, "bb": 400, "ante": 50 },
+          { "level": 6, "durationSec": 600, "sb": 300, "bb": 600, "ante": 75 }
+        ],
+        "levelIndex": 1,
+        "levelElapsedSec": 0,
+        "elapsedSec": 600,
+        "breakConfig": { "everyLevels": 3, "breakDurationSec": 300 },
+        "onBreak": false,
+        "breakRemainingSec": 0,
+        "lateReg": { "byLevelInclusive": 4, "open": true },
+        "rebuy": {
+          "enabled": true,
+          "maxPerPlayer": 1,
+          "untilLevelInclusive": 3,
+          "chipsPerRebuy": 12000
+        },
+        "addon": { "enabled": true, "level": 3, "chips": 20000 },
+        "payoutBps": [3500, 2200, 1500, 1100, 800, 500, 400],
+        "prizePoolUnits": 2000,
+        "tableCounter": 1,
+        "startedAt": "2026-02-27T23:12:08.245Z",
+        "completedAt": null,
+        "players": [
+          {
+            "playerId": "tv2-1",
+            "chips": 20000,
+            "status": "active",
+            "entries": 1,
+            "rebuys": 0,
+            "addonTaken": false,
+            "tableId": "v2-mtt-1-table-1",
+            "seat": 0,
+            "finishPosition": null
+          },
+          {
+            "playerId": "tv2-2",
+            "chips": 20000,
+            "status": "active",
+            "entries": 1,
+            "rebuys": 0,
+            "addonTaken": false,
+            "tableId": "v2-mtt-1-table-1",
+            "seat": 1,
+            "finishPosition": null
+          }
+        ],
+        "eliminationOrder": [],
+        "tables": [
+          { "tableId": "v2-mtt-1-table-1", "seats": ["tv2-1", "tv2-2"] }
+        ],
+        "eventLog": [
+          {
+            "type": "tournament.created",
+            "ts": "2026-02-27T23:12:08.232Z",
+            "payload": { "type": "mtt", "maxPlayers": 12, "tableSize": 6 }
+          },
+          {
+            "type": "player.registered",
+            "ts": "2026-02-27T23:12:08.236Z",
+            "payload": { "playerId": "tv2-1" }
+          },
+          {
+            "type": "player.registered",
+            "ts": "2026-02-27T23:12:08.239Z",
+            "payload": { "playerId": "tv2-2" }
+          },
+          {
+            "type": "tournament.started",
+            "ts": "2026-02-27T23:12:08.387Z",
+            "payload": { "players": 2 }
+          },
+          {
+            "type": "clock.advanced",
+            "ts": "2026-02-27T23:12:08.391Z",
+            "payload": {
+              "seconds": 600,
+              "levelIndex": 1,
+              "level": {
+                "level": 2,
+                "durationSec": 600,
+                "sb": 75,
+                "bb": 150,
+                "ante": 0
+              },
+              "onBreak": false,
+              "lateRegOpen": true
+            }
+          }
+        ]
+      }
+    }
+  }
+}
