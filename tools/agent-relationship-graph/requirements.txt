@@ -165,7 +165,7 @@ packaging==24.1
 pandas==2.2.3
 pathspec==0.12.1
 pexpect==4.9.0
-pillow==12.1.1
+pillow==12.2.0
 pip-tools==7.4.1
 pkginfo==1.11.2
 platformdirs==4.3.6
