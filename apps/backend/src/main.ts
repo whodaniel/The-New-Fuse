@@ -52,6 +52,10 @@ async function bootstrap(): Promise<void> {
   // Monitoring
   // await monitoringService.onModuleInit();
 
+  // Root health check endpoint
+  app.getHttpAdapter().get('/', (req, res) => res.json({ status: 'healthy', service: 'backend' }));
+  app.getHttpAdapter().get('/health', (req, res) => res.json({ status: 'healthy', service: 'backend' }));
+
   const port = configService.get('PORT') || 3001;
   await app.listen(port, '0.0.0.0');
   console.log(`🚀 Backend application is running on port ${port} and host 0.0.0.0`);
