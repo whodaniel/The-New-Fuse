@@ -7,8 +7,8 @@
       "service": "openclaw-cloud",
       "provider": "openai-codex",
       "authFile": "~/.codex-tenants/openclaw-cloud-account/auth.json",
-      "primaryModel": "openai-codex/gpt-5.3-codex",
-      "fallbackModels": "openai-codex/gpt-5.2-codex",
+      "primaryModel": "model-auto",
+      "fallbackModels": "fallback-auto",
       "paths": {
         "access": ".tokens.access_token",
         "refresh": ".tokens.refresh_token",
@@ -22,8 +22,8 @@
       "service": "openclaw-primary",
       "provider": "openai-codex",
       "authFile": "~/.codex-tenants/proof-tenant-a/auth.json",
-      "primaryModel": "openai-codex/gpt-5.3-codex",
-      "fallbackModels": "openai-codex/gpt-5.2-codex",
+      "primaryModel": "model-auto",
+      "fallbackModels": "fallback-auto",
       "paths": {
         "access": ".tokens.access_token",
         "refresh": ".tokens.refresh_token",
@@ -37,8 +37,8 @@
       "service": "openclaw-sandbox-cloud",
       "provider": "openai-codex",
       "authFile": "~/.codex-tenants/windsurfree19/auth.json",
-      "primaryModel": "openai-codex/gpt-5.3-codex",
-      "fallbackModels": "openai-codex/gpt-5.2-codex",
+      "primaryModel": "model-auto",
+      "fallbackModels": "fallback-auto",
       "paths": {
         "access": ".tokens.access_token",
         "refresh": ".tokens.refresh_token",
@@ -52,8 +52,8 @@
       "service": "openclaw-oc004",
       "provider": "openai-codex",
       "authFile": "~/.codex-tenants/windsurfree2/auth.json",
-      "primaryModel": "openai-codex/gpt-5.3-codex",
-      "fallbackModels": "openai-codex/gpt-5.2-codex",
+      "primaryModel": "model-auto",
+      "fallbackModels": "fallback-auto",
       "paths": {
         "access": ".tokens.access_token",
         "refresh": ".tokens.refresh_token",

@@ -33,14 +33,14 @@ function loadEnv() {
 
 const PROVIDERS = [
   { id: 'ollama', name: 'Local Ollama', tier: 'free', type: 'local', testUrl: 'http://localhost:11434/api/tags' },
-  { id: 'gemini', name: 'Google Gemini', tier: 'free', type: 'cloud', envKey: 'GEMINI_API_KEY', testUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent' },
-  { id: 'groq', name: 'Groq', tier: 'free', type: 'cloud', envKey: 'GROQ_API_KEY', testUrl: 'https://api.groq.com/openai/v1/chat/completions' },
-  { id: 'openrouter', name: 'OpenRouter (Free Tier)', tier: 'free', type: 'cloud', envKey: 'OPENROUTER_API_KEY', testUrl: 'https://openrouter.ai/api/v1/chat/completions' },
-  { id: 'sambanova', name: 'SambaNova', tier: 'free', type: 'cloud', envKey: 'SAMBANOVA_API_KEY', testUrl: 'https://api.sambanova.ai/v1/chat/completions' },
-  { id: 'moonshot', name: 'Moonshot', tier: 'cheap', type: 'cloud', envKey: 'MOONSHOT_API_KEY', testUrl: 'https://api.moonshot.cn/v1/chat/completions' },
-  { id: 'deepseek', name: 'DeepSeek', tier: 'cheap', type: 'cloud', envKey: 'DEEPSEEK_API_KEY', testUrl: 'https://api.deepseek.com/v1/chat/completions' },
-  { id: 'openai', name: 'OpenAI', tier: 'premium', type: 'cloud', envKey: 'OPENAI_API_KEY', testUrl: 'https://api.openai.com/v1/models' },
-  { id: 'anthropic', name: 'Anthropic Claude', tier: 'premium', type: 'cloud', envKey: 'ANTHROPIC_API_KEY', testUrl: 'https://api.anthropic.com/v1/messages' }
+  { id: 'gemini', name: 'Google Gemini', tier: 'free', type: 'cloud', envKey: 'GEMINI_API_KEY', testUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', defaultModel: 'gemini-pro' },
+  { id: 'groq', name: 'Groq', tier: 'free', type: 'cloud', envKey: 'GROQ_API_KEY', testUrl: 'https://api.groq.com/openai/v1/chat/completions', defaultModel: 'llama3-8b-8192' },
+  { id: 'openrouter', name: 'OpenRouter (Free Tier)', tier: 'free', type: 'cloud', envKey: 'OPENROUTER_API_KEY', testUrl: 'https://openrouter.ai/api/v1/chat/completions', defaultModel: 'openrouter/auto' },
+  { id: 'sambanova', name: 'SambaNova', tier: 'free', type: 'cloud', envKey: 'SAMBANOVA_API_KEY', testUrl: 'https://api.sambanova.ai/v1/chat/completions', defaultModel: 'Meta-Llama-3.1-8B-Instruct' },
+  { id: 'moonshot', name: 'Moonshot', tier: 'cheap', type: 'cloud', envKey: 'MOONSHOT_API_KEY', testUrl: 'https://api.moonshot.cn/v1/chat/completions', defaultModel: 'moonshot-v1-8k' },
+  { id: 'deepseek', name: 'DeepSeek', tier: 'cheap', type: 'cloud', envKey: 'DEEPSEEK_API_KEY', testUrl: 'https://api.deepseek.com/v1/chat/completions', defaultModel: 'deepseek-chat' },
+  { id: 'openai', name: 'OpenAI', tier: 'premium', type: 'cloud', envKey: 'OPENAI_API_KEY', testUrl: 'https://api.openai.com/v1/models', defaultModel: 'gpt-4o-mini' },
+  { id: 'anthropic', name: 'Anthropic Claude', tier: 'premium', type: 'cloud', envKey: 'ANTHROPIC_API_KEY', testUrl: 'https://api.anthropic.com/v1/messages', defaultModel: 'claude-3-haiku-20240307' }
 ];
 
 async function testProvider(provider) {
@@ -59,6 +59,8 @@ async function testProvider(provider) {
   const key = process.env[provider.envKey];
   if (!key) return false;
 
+  const model = process.env[`${provider.id.toUpperCase()}_MODEL`] || provider.defaultModel;
+
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -70,7 +72,7 @@ async function testProvider(provider) {
       res = await fetch(provider.testUrl, { 
         method: 'POST', 
         headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-        body: JSON.stringify({ model: 'claude-3-haiku-20240307', messages: [{role: 'user', content: 'hi'}], max_tokens: 10 }),
+        body: JSON.stringify({ model: model, messages: [{role: 'user', content: 'hi'}], max_tokens: 10 }),
         signal: controller.signal
       });
     } else if (provider.id === 'gemini') {
@@ -80,33 +82,12 @@ async function testProvider(provider) {
         body: JSON.stringify({ contents: [{ parts: [{ text: 'hi' }] }] }),
         signal: controller.signal
       });
-    } else if (provider.id === 'groq') {
-      res = await fetch(provider.testUrl, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${key}`, 'content-type': 'application/json' },
-        body: JSON.stringify({ model: 'llama-3.1-8b-instant', messages: [{role: 'user', content: 'hi'}] }),
-        signal: controller.signal
-      });
-    } else if (provider.id === 'moonshot') {
-      res = await fetch(provider.testUrl, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${key}`, 'content-type': 'application/json' },
-        body: JSON.stringify({ model: 'moonshot-v1-8k', messages: [{role: 'user', content: 'hi'}] }),
-        signal: controller.signal
-      });
-    } else if (provider.id === 'sambanova') {
-      res = await fetch(provider.testUrl, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${key}`, 'content-type': 'application/json' },
-        body: JSON.stringify({ model: 'Meta-Llama-3.1-8B-Instruct', messages: [{role: 'user', content: 'hi'}] }),
-        signal: controller.signal
-      });
     } else {
-      // openrouter, deepseek
+      // standard openai-compatible providers
       res = await fetch(provider.testUrl, {
         method: 'POST',
         headers: { Authorization: `Bearer ${key}`, 'content-type': 'application/json' },
-        body: JSON.stringify({ model: provider.id === 'openrouter' ? 'openrouter/auto' : 'deepseek-chat', messages: [{role: 'user', content: 'hi'}] }),
+        body: JSON.stringify({ model: model, messages: [{role: 'user', content: 'hi'}] }),
         signal: controller.signal
       });
     }

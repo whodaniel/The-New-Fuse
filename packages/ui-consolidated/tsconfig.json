@@ -9,6 +9,10 @@
     ],
     "module": "ESNext",
     "skipLibCheck": true,
+<<<<<<< HEAD
+=======
+    "ignoreDeprecations": "5.0",
+>>>>>>> 0e3167973 (chore(config): fix invalid ignoreDeprecations in tsconfig and other recent updates)
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": false,
     "resolveJsonModule": true,

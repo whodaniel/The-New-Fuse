@@ -7,6 +7,10 @@
     "noImplicitAny": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+<<<<<<< HEAD
+=======
+    "ignoreDeprecations": "5.0",
+>>>>>>> 0e3167973 (chore(config): fix invalid ignoreDeprecations in tsconfig and other recent updates)
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,

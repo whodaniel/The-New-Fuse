@@ -1,6 +1,7 @@
 import { defaultLexicon } from '../config/default-lexicon';
 import { defaultRules } from '../config/default-rules';
 import { env } from '../config/env';
+import { AgentRouter } from '../services/agent-router';
 import { AudioGateway } from '../services/audio-gateway';
 import { Enricher } from '../services/enricher';
 import { GroupingFilter } from '../services/grouping-filter';
@@ -32,6 +33,8 @@ export class AudioTriggerRuntime {
     env.batcher.flushIntervalMs,
     env.batcher.maxItems
   );
+  private readonly agentRouter = new AgentRouter();
+  private currentUtterance: string = '';
 
   private readonly startedAtMs = Date.now();
   private readonly recentRuleFires: RuleFireEvent[] = [];
@@ -51,6 +54,7 @@ export class AudioTriggerRuntime {
       this.processedHits += 1;
       this.hitStore.set(hit.eventId, hit);
       this.groupingFilter.push(hit);
+      this.agentRouter.processHit(hit, this.currentUtterance, hit.streamId);
     });
     this.groupingFilter.on('grouped_hit', (hit: HitEvent) => this.ruleEngine.push(hit));
     this.ruleEngine.on('rule_fired', async (ruleFire: RuleFireEvent) => {
@@ -85,6 +89,7 @@ export class AudioTriggerRuntime {
   }
 
   ingestText(streamId: string, utterance: string): void {
+    this.currentUtterance = utterance;
     this.gateway.ingestMockUtterance(streamId, utterance);
   }
 

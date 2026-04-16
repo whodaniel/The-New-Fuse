@@ -1,0 +1,9 @@
+{
+  "started": "",
+  "status": "running",
+  "agents": {
+    "scout": 9261,
+    "tester": 9263,
+    "worker": 9265
+  }
+}

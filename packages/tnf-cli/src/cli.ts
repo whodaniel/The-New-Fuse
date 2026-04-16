@@ -1492,7 +1492,10 @@ program
   .command('boot')
   .description('Master entry point to boot the entire TNF stack')
   .argument('[name]', 'Profile/Instance name to boot', 'goldberg')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (name: string, options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'boot');
@@ -1539,7 +1542,9 @@ program
           label: 'Starting LLM provider tester agent',
           action: async () => {
             // Run tester agent in background to continuously cycle through API keys and ensure viability
-            await runCommand('node', ['scripts/swarm/llm-provider-tester.cjs'], { isBackground: true });
+            await runCommand('node', ['scripts/swarm/llm-provider-tester.cjs'], {
+              isBackground: true,
+            });
           },
         },
         {
@@ -1794,6 +1799,27 @@ ai.command('start')
     }
   });
 
+ai.command('models')
+  .description('List available models for the current provider')
+  .action(async () => {
+    try {
+      const { LLMClient } = await import('./utils/llm-client.ts');
+      const client = new LLMClient();
+      console.log(chalk.blue('\nFetching available models...'));
+      const models = await client.fetchAvailableModels();
+      if (models.length === 0) {
+        console.log(chalk.yellow('No models found or provider does not support listing.'));
+      } else {
+        console.log(chalk.green(`\nAvailable models:`));
+        models.forEach((m) => console.log(`  - ${m}`));
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
 program
   .command('openclaw')
   .description('Pass through any OpenClaw CLI command')
@@ -1808,7 +1834,10 @@ const relay = program.command('relay').description('Relay operations');
 relay
   .command('start')
   .description('Start relay-core relay service')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'relay start');
@@ -1835,7 +1864,10 @@ const jules = program.command('jules').description('Jules automation operations'
 jules
   .command('loop')
   .description('Run autonomous Jules loop')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'jules loop');
@@ -1848,7 +1880,10 @@ jules
 jules
   .command('supervisor')
   .description('Run continuous Jules follow-up supervisor')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'jules supervisor');
@@ -1861,7 +1896,10 @@ jules
 jules
   .command('supervisor-start')
   .description('Start Jules follow-up supervisor in background')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'jules supervisor-start');
@@ -1874,7 +1912,10 @@ jules
 jules
   .command('supervisor-stop')
   .description('Stop Jules follow-up supervisor')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'jules supervisor-stop');
@@ -1898,7 +1939,10 @@ jules
 jules
   .command('supervisor-migrate-from-cron')
   .description('Disable cron follow-up and switch to supervisor mode')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'jules supervisor-migrate-from-cron');
@@ -1911,7 +1955,10 @@ jules
 jules
   .command('merge-open')
   .description('Merge all open Jules PRs')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'jules merge-open');
@@ -1924,7 +1971,10 @@ jules
 jules
   .command('cron-install')
   .description('Install local Jules cron loop')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'jules cron-install');
@@ -1943,8 +1993,19 @@ mirror
   .action(async () => {
     try {
       console.log(chalk.blue('Installing system dependencies (Homebrew libraries for UxPlay)...'));
-      await runCommand('brew', ['install', 'cmake', 'libplist', 'openssl@3', 'pkg-config', 'gstreamer', 'gst-plugins-base', 'gst-plugins-good', 'gst-plugins-bad', 'gst-libav']);
-      
+      await runCommand('brew', [
+        'install',
+        'cmake',
+        'libplist',
+        'openssl@3',
+        'pkg-config',
+        'gstreamer',
+        'gst-plugins-base',
+        'gst-plugins-good',
+        'gst-plugins-bad',
+        'gst-libav',
+      ]);
+
       console.log(chalk.blue('Checking for UxPlay binary...'));
       try {
         await runCommand('which', ['uxplay']);
@@ -1985,7 +2046,9 @@ mirror
     }
   });
 
-const forge = program.command('forge').description('LLVM-powered JIT compilation and native optimization');
+const forge = program
+  .command('forge')
+  .description('LLVM-powered JIT compilation and native optimization');
 
 forge
   .command('status')
@@ -2044,7 +2107,10 @@ masterClock
   .description('Start master-clock in cloud via Railway (default) or locally')
   .option('--local', 'Run local master-clock (override cloud-first policy)', false)
   .option('--service <name>', 'Railway service name for master clock', 'tnf-master-clock')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (options: { local: boolean; service: string; superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'master-clock start');
@@ -2067,7 +2133,10 @@ masterClock
   .command('logs')
   .description('Tail cloud master-clock logs')
   .option('--service <name>', 'Railway service name for master clock', 'tnf-master-clock')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (options: { service: string; superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'master-clock logs');
@@ -2082,7 +2151,10 @@ masterClock
   .command('status')
   .description('Show Railway status for master-clock service')
   .option('--service <name>', 'Railway service name for master clock', 'tnf-master-clock')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (options: { service: string; superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'master-clock status');
@@ -2107,7 +2179,10 @@ superCycle
   .option('--metadata <json>', 'JSON metadata', '{}')
   .option('--local', 'Run local super-cycle client (override cloud-first policy)', false)
   .option('--service <name>', 'Railway service name', 'tnf-master-clock')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(
     async (options: {
       action: string;
@@ -2581,7 +2656,10 @@ skillsBank
 skillsBank
   .command('supervisor')
   .description('Run continuous skill-bank sync/ingest/retry supervisor')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'skills bank supervisor');
@@ -2594,7 +2672,10 @@ skillsBank
 skillsBank
   .command('supervisor-start')
   .description('Start skill-bank supervisor in background')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'skills bank supervisor-start');
@@ -2607,7 +2688,10 @@ skillsBank
 skillsBank
   .command('supervisor-stop')
   .description('Stop skill-bank supervisor')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'skills bank supervisor-stop');
@@ -2634,7 +2718,10 @@ superCycle
   .description('Read super-cycle state snapshot')
   .option('--local', 'Read from local Redis via local client', false)
   .option('--service <name>', 'Railway service name', 'tnf-master-clock')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (options: { local: boolean; service: string; superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'super-cycle status');
@@ -2668,7 +2755,10 @@ program
   .description('Execute any root package script through unified TNF CLI')
   .argument('<script>', 'Root package.json script name')
   .argument('[args...]', 'Arguments to forward')
-  .option('--super-admin-token <token>', 'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)')
+  .option(
+    '--super-admin-token <token>',
+    'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
+  )
   .action(async (script: string, args: string[], options: { superAdminToken?: string }) => {
     try {
       requireSuperAdmin(options, 'run');

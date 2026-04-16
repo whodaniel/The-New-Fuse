@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>NoSuchBucket</Code><Message>The specified bucket does not exist</Message><BucketName>tnf-assets</BucketName><RequestId>1N45E93W3QZP74A0</RequestId><HostId>NOQfyw0hJWd+w6dzNegc3nGUE3KcJY36Nvd3jMOAnlkkD+oEQLy60H2xwMzti2ni/ezNnboznrg=</HostId></Error>
