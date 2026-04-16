@@ -8,7 +8,7 @@ async function seed() {
 
   // 1. Ensure a user exists
   const email = 'admin@thenewfuse.com';
-  let user = await db.query.users.findFirst({
+  let user = await (db.query.users.findFirst as any)({
     where: eq(users.email, email),
   });
 
@@ -71,7 +71,7 @@ async function seed() {
   ];
 
   for (const wf of workflowData) {
-    const existing = await db.query.workflows.findFirst({
+    const existing = await (db.query.workflows.findFirst as any)({
       where: eq(workflows.name, wf.name),
     });
 
@@ -148,8 +148,8 @@ async function createExecution(
   // To avoid clutter, let's just insert.
 
   // Actually, to avoid infinite growth on multiple runs, let's check recent count
-  const recent = await db.query.workflowExecutions.findFirst({
-    where: (ex, { eq, and }) => and(eq(ex.workflowId, workflowId), eq(ex.status, status as any)),
+  const recent = await (db.query.workflowExecutions.findFirst as any)({
+    where: (ex: any, { eq, and }: any) => and(eq(ex.workflowId, workflowId), eq(ex.status, status as any)),
   });
 
   if (!recent || true) {
