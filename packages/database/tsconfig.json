@@ -7,7 +7,7 @@
     "declaration": true,
     "declarationMap": true,
     "skipLibCheck": true,
-    "module": "CommonJS",
+    "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "strict": true
   },
