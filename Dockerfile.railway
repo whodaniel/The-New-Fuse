@@ -70,7 +70,7 @@ RUN if [ -n "${SERVICE_NAME}" ]; then \
       echo "SERVICE_NAME not set; building API app via fallback package filter"; \
       pnpm --filter @the-new-fuse/api-server build || \
         (echo "WARN: API fallback build failed" && exit 1); \
-    elif [ "${SERVICE_ROOT}" = "apps" ] && [ "${SERVICE_PATH}" = "api-gateway" ]; then \
+    elif [ "${SERVICE_ROOT}" = "apps" ] && { [ "${SERVICE_PATH}" = "api-gateway" ] || [ "${SERVICE_PATH}" = "api-gateway-app" ]; }; then \
       echo "SERVICE_NAME not set; building API gateway app via fallback package filter"; \
       pnpm --filter @the-new-fuse/api-gateway build || \
         (echo "WARN: API gateway fallback build failed" && exit 1); \
@@ -84,6 +84,8 @@ RUN if [ -n "${SERVICE_NAME}" ]; then \
         (echo "WARN: Frontend fallback build failed" && exit 1); \
     else \
       echo "No SERVICE_NAME provided and no known fallback for ${SERVICE_ROOT}/${SERVICE_PATH}"; \
+      # List apps to help debug
+      ls -la apps/; \
     fi
 
 # Verify critical package builds (warn-only to avoid blocking service deploy on optional artifacts)
