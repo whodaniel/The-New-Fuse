@@ -28,9 +28,10 @@
   "dependencies": {
     "@the-new-fuse/infrastructure": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
+    "@upstash/redis": "^1.37.0",
+    "ioredis": "^5.8.1",
     "react": "^19.2.5",
-    "react-hot-toast": "^2.4.1",
-    "redis": "^5.11.0"
+    "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

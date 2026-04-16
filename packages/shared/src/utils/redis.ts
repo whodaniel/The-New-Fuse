@@ -1,4 +1,6 @@
-import { createClient } from 'redis';
+import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
+import type { Redis as UpstashRedis } from '@upstash/redis';
+import { Cluster, Redis } from 'ioredis';
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 
