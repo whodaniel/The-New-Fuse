@@ -7,10 +7,8 @@
     "noImplicitAny": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-<<<<<<< HEAD
-=======
+    "useDefineForClassFields": false,
     "ignoreDeprecations": "5.0",
->>>>>>> 0e3167973 (chore(config): fix invalid ignoreDeprecations in tsconfig and other recent updates)
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
@@ -21,14 +19,7 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }
