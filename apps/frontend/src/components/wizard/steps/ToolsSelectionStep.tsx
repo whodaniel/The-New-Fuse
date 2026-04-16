@@ -7,7 +7,6 @@ import {
   Cpu,
   Database,
   File,
-  Github,
   Globe,
   Terminal,
 } from 'lucide-react';
@@ -138,7 +137,7 @@ export const ToolsSelectionStep: React.FC = () => {
   const integrationCategories = [
     {
       name: 'Development Tools',
-      icon: Github,
+      icon: Code,
       integrations: [
         {
           id: 'github-api',
