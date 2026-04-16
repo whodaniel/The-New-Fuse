@@ -3,7 +3,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import {
   ArrowRight,
   BarChart3,
-  Chrome,
   Code,
   Database,
   Globe,
@@ -235,7 +234,7 @@ const FrontendShowcase: React.FC = () => {
               <span>PNPM Package Manager</span>
             </div>
             <div className="flex items-center space-x-2">
-              <Chrome className="h-4 w-4" />
+              <Globe className="h-4 w-4" />
               <span>localhost:3001</span>
             </div>
           </div>
