@@ -4,7 +4,7 @@ import {
   Bot,
   BrainCircuit,
   Check,
-  Chrome,
+  Globe,
   Code2,
   Cpu,
   ExternalLink,
@@ -436,7 +436,7 @@ export default function ConnectExtensionPage() {
             transition={{ duration: 0.6 }}
             className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-cyan-500/25 bg-cyan-500/[0.06] px-5 py-2 text-sm font-semibold text-cyan-400"
           >
-            <Chrome className="h-4 w-4" />
+            <Globe className="h-4 w-4" />
             <span>The New Fuse · Chrome Extension</span>
           </motion.div>
 
@@ -476,7 +476,7 @@ export default function ConnectExtensionPage() {
               rel="noreferrer"
               className="group relative inline-flex items-center gap-2.5 rounded-md bg-gradient-to-r from-cyan-500 to-purple-500 px-8 py-2 text-base font-bold text-white shadow-none shadow-cyan-500/20 transition-all duration-200 hover:shadow-cyan-500/30 hover:scale-[1.03] active:scale-[0.97]"
             >
-              <Chrome className="h-5 w-5" />
+              <Globe className="h-5 w-5" />
               Add to Chrome — Free
             </a>
             <a
@@ -692,7 +692,7 @@ export default function ConnectExtensionPage() {
           <div className="grid gap-12 sm:grid-cols-3">
             <StepCard
               step={1}
-              icon={Chrome}
+              icon={Globe}
               title="Install Extension"
               description="Add Fuse Connect from the Chrome Web Store. Zero config — it just works."
               delay={0.1}
