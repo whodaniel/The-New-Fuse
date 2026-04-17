@@ -137,7 +137,7 @@
   "portManagement.monitorInterval": 30000,
 
   // Jest (configured in workspace file for multi-root workspace)
-  "jest.autoRun": "off",
+  "jest.runMode": "off",
 
   // Search
   "search.exclude": {
