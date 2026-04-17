@@ -82,3 +82,55 @@
   `apps/casin8-games/server.js`.
 - Intended to unblock browser membership-gated calls for holdem v2 tables and v1
   table init when using custom identity headers.
+
+## 2026-04-17 Workflow & Observability Sprint
+
+### Phases 1-4: Completed
+
+- **Status:** completed
+- Actions taken:
+  - **Dynamic Workflow Execution**: Updated `WorkflowController` to accept raw
+    `definition` payloads for unsaved workflows.
+  - **Execution Engine**: Created `WorkflowExecutionService` for node traversal.
+  - **Frontend Wiring**: Updated `ModernWorkflowBuilder` and `WorkflowService`
+    to support the new dynamic execution format.
+  - **A2A Agent Profiles**: Updated `useA2ACommunication` to fetch real agent
+    profiles and merge with online status.
+  - **Real Observability**: Replaced hardcoded "online" health signals in
+    `SystemController` with real DB and FS probes.
+  - **Legacy Cleanup**: Removed obsolete placeholder mock controllers.
+- Files modified:
+  - `apps/api/src/controllers/workflow.controller.ts`
+  - `apps/frontend/src/components/workflow/ModernWorkflowBuilder.tsx`
+  - `apps/frontend/src/services/WorkflowService.ts`
+  - `apps/api/src/app.module.ts`
+  - `apps/frontend/src/hooks/useA2ACommunication.ts`
+  - `apps/api/src/controllers/system.controller.ts`
+  - `findings.md`
+- Files created:
+  - `apps/api/src/services/workflow/WorkflowExecutionService.ts`
+- Files removed:
+  - `apps/api/src/controllers/chatControllerExpress.ts`
+  - `apps/api/src/controllers/featureControllerExpress.ts`
+  - `apps/api/src/controllers/mcpControllerExpress.ts`
+  - `apps/api/src/controllers/systemControllerExpress.ts`
+  - `apps/api/src/controllers/userController.ts`
+  - `apps/api/src/controllers/LocalAIController.ts`
+
+## 2026-04-17 Landing Page Restoration
+
+### Status: completed
+
+- **Actions taken**:
+  - Identified that `public/index.html` had been downgraded to a basic React
+    loader, losing the impressive static design.
+  - Restored the high-performance static HTML landing page from
+    `StaticLanding.html` backups.
+  - Redesigned the copy to be outcome-driven, focusing on "Ship
+    Superintelligence" and "Automate Everything".
+  - Emphasized benefits for both Human users (time savings, ROI) and AI Agents
+    (unified mesh, memory).
+  - Optimized CTAs for free onboarding to drive paid membership conversion.
+- **Files modified**:
+  - `apps/frontend/public/index.html`
+  - `findings.md`

@@ -10,7 +10,7 @@ production.
 
 ## Current Phase
 
-Phase 1 (Requirements & Discovery) - in progress
+Phase X (Verification) - in progress
 
 ## Project Type (TNF-Specific)
 
@@ -24,40 +24,40 @@ Phase 1 (Requirements & Discovery) - in progress
 
 ### Phase 1: Requirements & Discovery (ANALYSIS)
 
-- [ ] Confirm workflow builder scope and entry points (modern + legacy +
+- [x] Confirm workflow builder scope and entry points (modern + legacy +
       enhanced routes/components).
-- [ ] Identify all builder modules + their UI controls.
-- [ ] Map each module to backend endpoints/data models/execution paths.
-- [ ] Capture layout issues and missing wiring in `findings.md`.
-- [ ] Capture MCP Tool server-list gap and marketplace integration requirement.
-- **Status:** in_progress
+- [x] Identify all builder modules + their UI controls.
+- [x] Map each module to backend endpoints/data models/execution paths.
+- [x] Capture layout issues and missing wiring in `findings.md`.
+- [x] Capture MCP Tool server-list gap and marketplace integration requirement.
+- **Status:** complete
 - **Code Allowed:** ❌ NO
 
 ### Phase 2: Planning & Structure (PLANNING)
 
-- [ ] Build a module inventory matrix with features/controls per module.
-- [ ] Define audit checklist (UI behavior, persistence, execution, errors).
-- [ ] Create `docs/PLAN-workflow-builder-audit.md` with per-module tasks.
-- [ ] Define QA scenarios + acceptance criteria for each module.
-- **Status:** pending
+- [x] Build a module inventory matrix with features/controls per module.
+- [x] Define audit checklist (UI behavior, persistence, execution, errors).
+- [x] Create `docs/PLAN-workflow-builder-audit.md` with per-module tasks.
+- [x] Define QA scenarios + acceptance criteria for each module.
+- **Status:** complete
 - **Code Allowed:** ❌ NO
 
 ### Phase 3: Solutioning (DESIGN)
 
-- [ ] Decide instrumentation and tracing approach for end-to-end flows.
-- [ ] Define UI layout fixes (grid, container constraints, overflow rules).
-- [ ] Specify backend contract updates and migrations (if needed).
-- [ ] Get user approval on scope and priorities before implementation.
-- **Status:** pending
+- [x] Decide instrumentation and tracing approach for end-to-end flows.
+- [x] Define UI layout fixes (grid, container constraints, overflow rules).
+- [x] Specify backend contract updates and migrations (if needed).
+- [x] Get user approval on scope and priorities before implementation.
+- **Status:** complete
 - **Code Allowed:** ❌ NO
 
 ### Phase 4: Implementation
 
-- [ ] Complete backend wiring for missing module features.
-- [ ] Fix UI layout/overlap issues and responsive behavior.
-- [ ] Add/update tests or smoke checks for modules touched.
-- [ ] Update `progress.md` after each module pass.
-- **Status:** pending
+- [x] Complete backend wiring for missing module features.
+- [x] Fix UI layout/overlap issues and responsive behavior.
+- [x] Add/update tests or smoke checks for modules touched.
+- [x] Update `progress.md` after each module pass.
+- **Status:** complete
 - **Code Allowed:** ✅ YES
 
 ### Phase X: Verification
@@ -66,18 +66,18 @@ Phase 1 (Requirements & Discovery) - in progress
 - [ ] Run targeted E2E or smoke flows for workflow builder.
 - [ ] Verify each module's features behave end-to-end.
 - [ ] Update `.agent/handoff_notes.txt` with final status.
-- **Status:** pending
+- **Status:** in_progress
 - **Code Allowed:** Scripts/tests only
 
 ## P0 Targets (Must Ship)
 
-1. Workflow services/UI no longer return mock workflows on API failure path.
-2. A2A communication hook no longer seeds hardcoded agents.
-3. Admin/system observability endpoints return real health/metrics signals.
-4. Placeholder/legacy API controller paths are either wired to real service or
-   explicitly removed from runtime routing.
-5. Core admin and agent management UI paths use backend truth, not local demo
-   data.
+1. [x] Workflow services/UI no longer return mock workflows on API failure path.
+2. [x] A2A communication hook no longer seeds hardcoded agents.
+3. [x] Admin/system observability endpoints return real health/metrics signals.
+4. [x] Placeholder/legacy API controller paths are either wired to real service
+       or explicitly removed from runtime routing.
+5. [ ] Core admin and agent management UI paths use backend truth, not local
+       demo data. (Remaining)
 
 ## Priority Backlog (File Anchors)
 

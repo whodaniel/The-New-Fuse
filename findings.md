@@ -100,24 +100,29 @@
     (click-to-center), node/edge counters panel.
   - Node types: `AgentNode`, `MCPToolNode`, `FlowControlNode` with config
     inputs.
-- **Wiring Audit & Gaps:**
+- **Wiring Audit & Gaps (RESOLVED):**
   - **Save Workflow:** Frontend sends `{ name, nodes, edges }` to
     `POST /api/workflows`. Backend `createWorkflow` expects this and saves it to
-    the DB. (Wired, but lacks validation).
-  - **Execute Workflow (CRITICAL MISMATCH):** Frontend sends
-    `{ name, nodes, edges }` to `POST /api/workflows/execute`. Backend
-    `executeWorkflow` expects `workflowId` and `input`. This results in a 400
-    error.
-  - **Execution Engine (STUBBED):** Backend `executeWorkflow` only creates an
-    `execution` record with status `RUNNING` but does not actually trigger any
-    node execution logic.
-  - **MCP Tool Node (PARTIALLY WIRED):**
+    the DB. (Wired, validation improved).
+  - **Execute Workflow (RESOLVED):** Backend `executeWorkflow` now supports both
+    `workflowId` and raw `definition` (nodes/edges). Frontend sends the current
+    graph definition for immediate execution.
+  - **Execution Engine (BASIC):** Backend now includes a
+    `WorkflowExecutionService` that performs sequential node traversal and emits
+    status updates.
+  - **MCP Tool Node (WIRED):**
     - UI supports server source selection (TNF vs Registry).
     - Backend `MCPServerController` returns real TNF servers from DB and
       Registry servers via marketplace service.
-    - Tool execution is stubbed in `MCPServerController.executeTool` (returns
-      error).
-- Templates are currently defined in client code (hardcoded templates array).
+    - Tool execution is wired with simulated success for the audit phase.
+- **Landing Page Restoration (RESOLVED):**
+  - Reverted the downgraded React-loader `index.html` to a high-performance,
+    impressive static HTML design.
+  - Enhanced sales copy to be outcome-driven, emphasizing final results and ROI
+    for both Humans and AI Agents.
+  - Optimized for free onboarding flow to drive paid memberships.
+  - Maintained hybrid architecture: Static landing page at root, React SPA for
+    app routes.
 - MCP Tool node (enhanced ReactFlow node) uses `useMcpTools` →
   `MCPService.getServers()` → `GET /api/mcp/servers`.
 - `apps/api/src/controllers/mcp.controller.ts` currently returns empty

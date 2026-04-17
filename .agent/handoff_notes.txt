@@ -526,3 +526,11 @@ Timestamp: 2026-04-05T19:47:00-04:00
 3. 🟡 Establish an ESLint rule preventing new hardcoded hex colors in `.tsx` files.
 
 --- Agent Beta execution finalized ---
+Session 2026-04-17: Completed Workflow Builder Module Audit & System Observability Wiring. 
+- Updated WorkflowController to support raw definition payloads for draft execution.
+- Created WorkflowExecutionService for sequential node traversal.
+- Updated ModernWorkflowBuilder frontend to use the new execution payload.
+- Fixed A2A Agent List to fetch real profiles and merge with online status.
+- Implemented real health probes (DB/FS) in SystemController.
+- Removed legacy placeholder mock controllers.
+- Verified structural correctness with API server build.

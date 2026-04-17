@@ -44,7 +44,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { sql } from '@the-new-fuse/database';
+import { DatabaseService, sql } from '@the-new-fuse/database';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -115,7 +115,8 @@ export class SystemController {
     private readonly swarmService: AgentSwarmOrchestrationService,
     private readonly brokerService: A2AMessageBrokerService,
     private readonly promptService: PromptTemplatesService,
-    private readonly cacheService: CacheService
+    private readonly cacheService: CacheService,
+    private readonly db: DatabaseService
   ) {}
 
   @Get('master-clock')
@@ -1197,6 +1198,56 @@ export class SystemController {
       message: line.trim(),
       service,
     };
+  }
+
+  /**
+   * Get current memory usage status
+   */
+  private getMemoryStatus(): string {
+    const usage = (os.totalmem() - os.freemem()) / os.totalmem();
+    if (usage > 0.9) return 'critical';
+    if (usage > 0.8) return 'warning';
+    return 'normal';
+  }
+
+  /**
+   * Get current CPU usage percentage
+   */
+  private async getCPUUsage(): Promise<number> {
+    return new Promise((resolve) => {
+      const startUsage = process.cpuUsage();
+      const startTime = process.hrtime();
+
+      setTimeout(() => {
+        const currentUsage = process.cpuUsage(startUsage);
+        const currentTime = process.hrtime(startTime);
+
+        const totalTime = currentTime[0] * 1000000 + currentTime[1] / 1000;
+        const totalUsage = currentUsage.user + currentUsage.system;
+
+        const cpuPercent = Math.round((totalUsage / totalTime) * 100);
+        resolve(Math.min(cpuPercent, 100));
+      }, 100);
+    });
+  }
+
+  /**
+   * Get disk usage information
+   */
+  private async getDiskUsage(): Promise<any> {
+    try {
+      const stats = fs.statSync(process.cwd());
+      return {
+        path: process.cwd(),
+        available: 'unknown',
+        used: 'unknown',
+        total: 'unknown',
+      };
+    } catch (error) {
+      return {
+        error: 'Unable to get disk usage',
+      };
+    }
   }
 
   /**
