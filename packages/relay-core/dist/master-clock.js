@@ -59,9 +59,9 @@
  */
 import { randomUUID } from 'crypto';
 import { existsSync, promises as fs } from 'fs';
+import { Redis } from 'ioredis';
 import { execFile } from 'node:child_process';
 import path from 'path';
-import { Redis } from 'ioredis';
 import { promisify } from 'util';
 import WebSocket from 'ws';
 import { attachAuditTrace } from './contracts/audit';

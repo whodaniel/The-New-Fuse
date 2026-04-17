@@ -24,7 +24,7 @@ import { Request, Response } from 'express';
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore
-import { workflows, workflowExecutions, workflowSteps } from '@the-new-fuse/database/drizzle/schema'; 
+import { workflowExecutions, workflows } from '@the-new-fuse/database/drizzle/schema';
 
 type DatabaseWhere = Record<string, any>;
 
@@ -270,23 +270,27 @@ export class WorkflowController {
   @Post('execute')
   async executeWorkflow(@Body() body: any, @Res() res: Response): Promise<void> {
     try {
-      const { workflowId, input = {} } = body;
+      const { workflowId, definition, input = {} } = body;
 
-      if (!workflowId) {
-        res.status(400).json({ error: 'workflowId is required' });
+      if (!workflowId && !definition) {
+        res.status(400).json({ error: 'Either workflowId or definition is required' });
         return;
       }
 
-      const workflow = await this.db.workflows.findWorkflowById(workflowId);
+      let workflow;
+      let targetDefinition = definition;
 
-      if (!workflow) {
-        res.status(404).json({ error: 'Workflow not found' });
-        return;
+      if (workflowId) {
+        workflow = await this.db.workflows.findWorkflowById(workflowId);
+        if (!workflow) {
+          res.status(404).json({ error: 'Workflow not found' });
+          return;
+        }
+        targetDefinition = definition || workflow.definition;
       }
 
       // Basic validation - ensure workflow has definition
-      const definition = workflow.definition as any;
-      const nodes = definition?.nodes || [];
+      const nodes = (targetDefinition as any)?.nodes || [];
       if (!nodes || nodes.length === 0) {
         res.status(400).json({
           error: 'Cannot execute workflow without nodes',
@@ -296,13 +300,22 @@ export class WorkflowController {
 
       // Create execution record
       const execution = await this.db.workflows.createExecution({
-        workflowId: workflowId,
+        workflowId: workflowId || null,
         status: 'RUNNING',
         input: input,
+        definition: targetDefinition, // Store definition used for this execution
         startedAt: new Date(),
       } as any);
 
-      this.logger.log(`Started execution: ${execution.id} for workflow: ${workflowId}`);
+      this.logger.log(
+        `Started execution: ${execution.id} for ${
+          workflowId ? `workflow: ${workflowId}` : 'dynamic definition'
+        }`
+      );
+
+      // TODO: Trigger real execution engine here
+      // this.executionService.run(execution.id, targetDefinition, input);
+
       res.status(201).json(execution);
     } catch (error: unknown) {
       this.logger.error(`Failed to execute workflow: ${error}`);

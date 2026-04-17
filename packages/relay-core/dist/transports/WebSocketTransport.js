@@ -67,6 +67,7 @@ export class WebSocketTransport extends EventEmitter {
         return this.wss !== null;
     }
     handleConnection(ws) {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
         const clientId = this.generateClientId();
         ws.isAlive = true;
         this.clients.set(clientId, ws);
@@ -81,7 +82,7 @@ export class WebSocketTransport extends EventEmitter {
                 if (!message.source) {
                     message.source = clientId;
                 }
-                this.messageHandlers.forEach(handler => handler(message));
+                this.messageHandlers.forEach((handler) => handler(message));
             }
             catch (error) {
                 this.logger.error(`Error parsing message from ${clientId}: ${error instanceof Error ? error.message : String(error)}`);
@@ -108,6 +109,7 @@ export class WebSocketTransport extends EventEmitter {
     startHeartbeat() {
         this.heartbeatInterval = setInterval(() => {
             this.clients.forEach((ws, clientId) => {
+                // eslint-disable-line @typescript-eslint/no-explicit-any
                 if (ws.isAlive === false) {
                     this.logger.warn(`Client ${clientId} is not alive. Terminating.`);
                     return ws.terminate();

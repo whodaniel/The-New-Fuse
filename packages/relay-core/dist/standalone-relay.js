@@ -17,8 +17,8 @@
 import { EventEmitter } from 'events';
 import http from 'http';
 import { Redis } from 'ioredis';
-import WebSocket, { WebSocketServer } from 'ws';
 import { createClient } from 'redis';
+import WebSocket, { WebSocketServer } from 'ws';
 // @ts-ignore
 import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 import { createAuthService } from './auth/JWTAuthService';
