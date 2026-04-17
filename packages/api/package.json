@@ -8,7 +8,7 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "prebuild": "pnpm --filter @the-new-fuse/types build && pnpm --filter @the-new-fuse/core build",
+    "prebuild": "pnpm --filter @the-new-fuse/types build && pnpm --filter @the-new-fuse/core build && pnpm --filter @the-new-fuse/ap2-protocol build",
     "build": "tsc -b",
     "build:api": "tsc",
     "build:force": "tsc --build --force",
