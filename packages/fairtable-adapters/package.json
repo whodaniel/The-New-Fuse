@@ -1,12 +1,14 @@
 {
   "name": "@the-new-fuse/fairtable-adapters",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Migration adapters for transitioning from legacy components to fairtable-based implementations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "dev": "tsc --watch",
     "test": "jest --passWithNoTests",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",

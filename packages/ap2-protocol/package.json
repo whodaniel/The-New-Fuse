@@ -1,12 +1,14 @@
 {
   "name": "@the-new-fuse/ap2-protocol",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "AP2 Protocol Integration",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "build:watch": "tsc --watch",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "prepublishOnly": "npm run build",

@@ -20,7 +20,7 @@
     // CONFIGURATION
     // ============================================
     const MAX_SEGMENT_DURATION = /* unused pure expression or super */ null && 45 * 60; // 45 minutes in seconds
-    const GEMINI_MODEL = 'gemini-1.5-flash'; // Stable model for production, can be changed to gemini-3-flash-preview if available
+    const GEMINI_MODEL = 'gemini-3-flash-preview'; // Latest model as of Jan 2026
     const PROMPT_TEMPLATE = `Extract all key points of information from this video. Focus specifically on AI-related concepts, technical innovations, and implementation details. Provide a dense, structured bulleted list of the provided key information in a downloadable .md format.`;
 
     // Error recovery configuration
@@ -78,11 +78,97 @@
       return `${secs}s`;
     }
 
+    function findInsertButton() {
+      // Strategy 1: Explicit data-test-id
+      let btn =
+        document.querySelector('[data-test-id="add-media-button"]') ||
+        document.querySelector('[data-test="selectMediaMenu"]');
+      if (btn) return btn;
+
+      // Strategy 2: Robust search
+      const buttons = Array.from(
+        document.querySelectorAll('button, [role="button"], .mat-mdc-icon-button, .mat-icon-button')
+      );
+      return buttons.find((b) => {
+        const text = b.textContent?.trim() || '';
+        const innerHtml = b.innerHTML || '';
+        const ariaLabel = (b.getAttribute('aria-label') || '').toLowerCase();
+
+        // Exact match for Material Icons often used in Google products
+        const hasAddIcon = text === 'add' || text === 'add_circle' || text === 'note_add';
+
+        // Check for specific SVG shapes or classes if common
+        const hasSvgPlus =
+          innerHtml.includes('<path') &&
+          (innerHtml.includes('d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"') ||
+            innerHtml.includes(
+              'd="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h5v2z"'
+            ));
+
+        return (
+          hasAddIcon ||
+          hasSvgPlus ||
+          text.includes('add_circle') ||
+          innerHtml.includes('add_circle') ||
+          ariaLabel.includes('insert') ||
+          ariaLabel.includes('add to prompt') ||
+          ariaLabel.includes('select media')
+        );
+      });
+    }
+
     // ============================================
     // ERROR DETECTION HELPER
     // ============================================
 
+    // ============================================
+    // OVERLAY DISMISSAL HELPER
+    // ============================================
+
+    async function dismissOverlays() {
+      const dismissButtons = [
+        // Terms of Service / Updates dismiss
+        ...Array.from(document.querySelectorAll('button')).filter(
+          (b) =>
+            b.textContent?.toLowerCase().includes('dismiss') ||
+            b.getAttribute('aria-label')?.toLowerCase().includes('dismiss') ||
+            b.textContent?.toLowerCase().includes('got it')
+        ),
+        // Close / X buttons on modals that might be in the way
+        ...Array.from(document.querySelectorAll('button')).filter(
+          (b) =>
+            b.getAttribute('aria-label') === 'Close' ||
+            b.getAttribute('aria-label')?.toLowerCase() === 'close dialog' ||
+            b.textContent.trim() === 'close'
+        ),
+      ];
+
+      for (const btn of dismissButtons) {
+        if (btn.offsetParent !== null) {
+          // Only if visible
+          sendLog('Dismissing overlay/notification...', 'info');
+          try {
+            btn.click();
+          } catch (e) {
+            // Ignore if click fails
+          }
+          await sleep(500);
+        }
+      }
+    }
+
     async function checkForErrors() {
+      await dismissOverlays();
+
+      // Also check if we're on a sign-in or project selection page
+      if (
+        document.body.innerText.includes('Sign in to') ||
+        document.body.innerText.includes('Choose a project')
+      ) {
+        sendLog('Detected sign-in or project selection page - automation blocked', 'error');
+        throw new Error('AUTH_OR_PROJECT_REQUIRED');
+      }
+
       const errorElements = document.querySelectorAll(
         '[role="alert"], .error-message, .mat-error, .mat-snack-bar-container'
       );
@@ -251,32 +337,90 @@
         `Adding video: ${url} (${formatTime(startTime)} - ${endTime ? formatTime(endTime) : 'end'})`,
         'info'
       );
+      sendLog(`Current URL: ${window.location.href}`, 'debug');
 
+      // Ensure any blocking overlays are gone first
+      await dismissOverlays();
+
+      // Try to find the button with multiple attempts (internal retry)
+      let insertBtn = null;
+      for (let attempt = 0; attempt < 15; attempt++) {
+        insertBtn = findInsertButton();
+
+        if (insertBtn) break;
+
+        // If not found, check for overlays again and wait
+        await dismissOverlays();
+        await sleep(2000);
+        if (attempt % 3 === 0)
+          sendLog(`Waiting for Insert button (attempt ${attempt + 1}/15)...`, 'info');
+      }
+
+      if (!insertBtn) {
+        // Log detailed page state for debugging
+        const allButtons = Array.from(document.querySelectorAll('button'));
+        const buttonInfo = allButtons
+          .map((b) => ({
+            text: b.textContent?.trim().substring(0, 30),
+            aria: b.getAttribute('aria-label')?.substring(0, 50),
+            dataTest: b.getAttribute('data-test-id') || b.getAttribute('data-test'),
+            visible: b.offsetParent !== null,
+          }))
+          .slice(0, 20);
+
+        sendLog(`Page context: URL=${window.location.href}, Title=${document.title}`, 'debug');
+        sendLog(`Available buttons (first 20): ${JSON.stringify(buttonInfo)}`, 'debug');
+        throw new Error('Insert button not found after multiple attempts and strategies');
+      }
+
+      sendLog(
+        `Found Insert button: ${insertBtn.getAttribute('aria-label') || 'icon-search'}`,
+        'success'
+      );
+      await clickElement(insertBtn, 'Insert button');
       await sleep(1500);
 
-      let insertBtn = document.querySelector(
-        'button[aria-label="Insert images, videos, audio, or files"]'
-      );
-      if (!insertBtn) {
-        const buttons = Array.from(document.querySelectorAll('button'));
-        insertBtn = buttons.find(
-          (b) =>
-            b.querySelector('span')?.textContent?.includes('note_add') ||
-            b.textContent.includes('note_add')
-        );
-      }
+      // Search for the YouTube Video option in the menu (Robust search)
+      let ytBtn =
+        document.querySelector('.youtube-video-menu-item') ||
+        document.querySelector('[data-test-id="youtube-video-menu-item"]');
 
-      if (!insertBtn) {
-        throw new Error('Insert button not found');
-      }
-
-      await clickElement(insertBtn, 'Insert button');
-      await sleep(1200);
-
-      const menuItems = Array.from(document.querySelectorAll('button'));
-      const ytBtn = menuItems.find((el) => el.textContent?.includes('YouTube Video'));
       if (!ytBtn) {
-        throw new Error('YouTube Video option not found');
+        const menuItems = Array.from(
+          document.querySelectorAll('button, [role="menuitem"], .mat-mdc-menu-item')
+        );
+        ytBtn = menuItems.find((el) => {
+          const text = (el.textContent || '').toLowerCase();
+          const aria = (el.getAttribute('aria-label') || '').toLowerCase();
+          // "youtube" is the critical keyword
+          return (
+            (text.includes('youtube') && text.includes('video')) ||
+            (aria.includes('youtube') && aria.includes('video'))
+          );
+        });
+      }
+
+      if (!ytBtn) {
+        // Fallback: just look for "YouTube" if "YouTube Video" is too specific
+        const menuItems = Array.from(
+          document.querySelectorAll('button, [role="menuitem"], .mat-mdc-menu-item')
+        );
+        ytBtn = menuItems.find((el) => {
+          const text = (el.textContent || '').toLowerCase();
+          return text.includes('youtube');
+        });
+      }
+
+      if (!ytBtn) {
+        // Debug: log all menu items
+        const allMenu = Array.from(
+          document.querySelectorAll('[role="menuitem"], .mat-mdc-menu-item')
+        );
+        sendLog(
+          `Available menu items: ${JSON.stringify(allMenu.map((el) => el.textContent.trim()))}`,
+          'debug'
+        );
+        throw new Error('YouTube Video option not found in menu');
       }
 
       await clickElement(ytBtn, 'YouTube Video option');
@@ -298,7 +442,20 @@
         throw new Error('No inputs found in dialog');
       }
 
-      await typeText(inputs[0], url);
+      // Find the URL input specifically (by label, placeholder, or type)
+      let urlInput = inputs[0]; // Default to first
+      if (inputs.length > 1) {
+        const foundInput = Array.from(inputs).find((input) => {
+          const ph = (input.placeholder || '').toLowerCase();
+          const type = (input.type || '').toLowerCase();
+          return (
+            ph.includes('url') || ph.includes('link') || ph.includes('youtube') || type === 'url'
+          );
+        });
+        if (foundInput) urlInput = foundInput;
+      }
+
+      await typeText(urlInput, url);
 
       if (inputs.length >= 2 && startTime > 0) {
         await typeText(inputs[1], formatTime(startTime));
@@ -311,16 +468,31 @@
       await sleep(500);
 
       const dialogButtons = Array.from(dialog.querySelectorAll('button'));
-      const saveBtn = dialogButtons.find((b) => b.textContent?.toLowerCase().includes('save'));
+      const saveBtn = dialogButtons.find(
+        (b) =>
+          b.textContent?.toLowerCase().includes('save') ||
+          b.textContent?.toLowerCase().includes('insert') ||
+          b.getAttribute('data-test-id') === 'save-button'
+      );
+
       if (!saveBtn) {
-        throw new Error('Save button not found');
+        throw new Error('Save button not found in video dialog');
+      }
+
+      // Double check if enabled (sometimes take a split second to enable after typing)
+      if (saveBtn.disabled) {
+        await sleep(800);
       }
 
       await clickElement(saveBtn, 'Save button');
-      await sleep(3000);
+      await sleep(3500); // Allow more time for video to process in the prompt area
 
       sendLog('Video added successfully', 'success');
     }
+
+    // ============================================
+    // PHASE 3: RUN ANALYSIS (WITH ERROR DETECTION)
+    // ============================================
 
     // ============================================
     // PHASE 2.5: ENSURE PAID API KEY
@@ -389,10 +561,6 @@
       }
     }
 
-    // ============================================
-    // PHASE 3: RUN ANALYSIS (WITH ERROR DETECTION)
-    // ============================================
-
     async function runAnalysis() {
       sendLog('Adding prompt and running analysis...', 'info');
 
@@ -420,14 +588,31 @@
       await typeText(promptArea, PROMPT_TEMPLATE);
       await sleep(800);
 
-      let runBtn = document.querySelector('button[aria-label*="Run" i]');
+      let runBtn = document.querySelector('[data-test-id="run-button"]');
+
       if (!runBtn) {
+        // Strategy: Look for specific aria-label "Run" or "Generate response"
+        // Crucially, exclude "Run settings", "Run history", etc. to avoid side menus.
         const buttons = Array.from(document.querySelectorAll('button'));
-        runBtn = buttons.find(
-          (b) =>
-            b.textContent?.toLowerCase().includes('run') ||
-            b.getAttribute('aria-label')?.toLowerCase().includes('run')
-        );
+        runBtn = buttons.find((b) => {
+          const text = b.textContent?.trim().toLowerCase() || '';
+          const aria = b.getAttribute('aria-label')?.toLowerCase() || '';
+          const isSideMenu =
+            aria.includes('settings') || text.includes('settings') || aria.includes('history');
+
+          if (isSideMenu) return false;
+
+          // Primary check: exact or strong match
+          if (text === 'run' || aria === 'run') return true;
+          if (aria === 'run prompt' || aria === 'generate response') return true;
+
+          // Secondary check: contains "run" but not as part of another word like "truncate"
+          return (
+            (text.includes('run') || aria.includes('run')) &&
+            !text.includes('truncate') &&
+            !aria.includes('truncate')
+          );
+        });
       }
 
       if (!runBtn) {
@@ -537,7 +722,7 @@
       if (downloadBtn) {
         await clickElement(downloadBtn, 'Download button');
         sendLog('Report downloaded', 'success');
-        return true;
+        return { success: true, content: null };
       }
 
       const copyBtn = buttons.find((b) => {
@@ -562,14 +747,16 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             sendLog('Report saved as markdown file', 'success');
-            return true;
+
+            // Return the content so it can be sent to backend
+            return { success: true, content: text };
           }
         } catch (e) {
           sendLog('Could not auto-save report from clipboard', 'warning');
         }
       }
 
-      return false;
+      return { success: false, content: null };
     }
 
     // ============================================
@@ -640,16 +827,20 @@
               throw new Error(result.error);
             }
 
+            let reportData = null;
             if (result.complete) {
-              await downloadReport(videoId, segmentIndex);
+              reportData = await downloadReport(videoId, segmentIndex);
             }
 
             safeSendMessage({
               type: 'TASK_COMPLETE',
               taskType: 'PROCESS_SEGMENT',
               url: url,
+              title: title,
+              videoId: videoId,
               segmentIndex: segmentIndex,
               success: result.complete,
+              reportContent: reportData?.content || null,
             });
             break;
 
@@ -680,9 +871,7 @@
       } else if (message.action === 'PING') {
         sendResponse({ alive: true, url: window.location.href, model: GEMINI_MODEL });
       } else if (message.action === 'GET_PAGE_STATE') {
-        const insertBtn = document.querySelector(
-          'button[aria-label="Insert images, videos, audio, or files"]'
-        );
+        const insertBtn = findInsertButton();
         const isReady = !!insertBtn;
         sendResponse({ ready: isReady, url: window.location.href, model: GEMINI_MODEL });
       } else if (message.action === 'CHECK_ERRORS') {

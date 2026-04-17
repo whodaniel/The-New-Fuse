@@ -3,7 +3,7 @@
  * Unified endpoint for Theia IDE operations
  */
 
-import { All, Controller, Get, Headers, HttpStatus, Req, Res } from '@nestjs/common';
+import { All, Controller, Get, Headers, HttpStatus, Req, Res, Version } from '@nestjs/common';
 // @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';

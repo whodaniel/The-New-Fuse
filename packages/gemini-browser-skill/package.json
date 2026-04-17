@@ -1,12 +1,14 @@
 {
   "name": "@the-new-fuse/gemini-browser-skill",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "TNF Skill for automating Chrome's built-in Gemini AI",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "dev": "tsc --watch",
     "test": "jest --passWithNoTests"
   },

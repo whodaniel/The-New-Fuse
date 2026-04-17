@@ -1,13 +1,15 @@
 {
   "name": "@tnf/build-optimization",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Memory-efficient build optimization tools for The New Fuse monorepo",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "build:memory-optimized": "BUILD_ENABLE_MONITORING=true tsc --incremental",
     "build:staged": "tsc --incremental --build",
     "dev": "tsc --watch",

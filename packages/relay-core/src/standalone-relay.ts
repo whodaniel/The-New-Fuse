@@ -6,7 +6,7 @@
  * Part of @the-new-fuse/relay-core package
  *
  * Usage:
- *   pnpm run relay         # Start on default port 3000
+ *   pnpm run relay          # Start on default port 3000
  *   PORT=3002 pnpm run relay  # Start on custom port
  *
  * Endpoints:
@@ -21,6 +21,7 @@ import http from 'http';
 
 import { Redis as UpstashRedis } from '@upstash/redis';
 import { Cluster, Redis } from 'ioredis';
+import { createClient, RedisClientType } from 'redis';
 import WebSocket, { WebSocketServer } from 'ws';
 
 // @ts-ignore
@@ -183,7 +184,7 @@ export class TNFRelayServer extends EventEmitter {
   private logger: Logger;
   private conversationManagers: Map<string, ConversationStateMachine> = new Map();
   private subscriptionRegistry: SubscriptionRegistry;
-  private activityRedis: Redis | Cluster | null = null;
+  private activityRedis: Redis | Cluster | RedisClientType | null = null;
   private activityUpstash: UpstashRedis | null = null;
   private activityRedisConnectPromise: Promise<void> | null = null;
   private activityPersistenceEnabled: boolean;
@@ -551,7 +552,13 @@ export class TNFRelayServer extends EventEmitter {
       : this.activityStreamKey;
 
     try {
-      const entries = await this.activityRedis.xrevrange(streamKey, '+', '-', 'COUNT', count);
+      const entries = await (this.activityRedis as any).xrevrange(
+        streamKey,
+        '+',
+        '-',
+        'COUNT',
+        count
+      );
       const events = (entries as any[]).map((entry) => {
         const [streamId, flatFields] = entry;
         const fields: Record<string, string> = {};
@@ -1213,7 +1220,7 @@ export class TNFRelayServer extends EventEmitter {
         }
       } else if (this.activityRedis) {
         const flatFields = Object.entries(fields).flat();
-        const streamId = await this.activityRedis.xadd(
+        const streamId = await (this.activityRedis as any).xadd(
           this.activityStreamKey,
           'MAXLEN',
           '~',
@@ -1224,7 +1231,7 @@ export class TNFRelayServer extends EventEmitter {
         event.streamId = streamId || '';
 
         if (resolvedChannel) {
-          await this.activityRedis.xadd(
+          await (this.activityRedis as any).xadd(
             `${this.activityChannelPrefix}${resolvedChannel}`,
             'MAXLEN',
             '~',

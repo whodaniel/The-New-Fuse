@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/prompt-templating",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Modular prompt templating system for The New Fuse",
   "private": true,
@@ -15,7 +17,7 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "build:foundation": "tsc",
     "dev": "tsc --watch",
     "test": "jest",

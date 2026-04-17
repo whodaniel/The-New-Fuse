@@ -1,12 +1,14 @@
 {
   "name": "@the-new-fuse/ag-ui-core",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "AG-UI Protocol integration for The New Fuse - Connect AI agents to self-contained visualizations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "dev": "tsc --watch",
     "test": "jest --passWithNoTests",
     "lint": "eslint src/**/*.ts"

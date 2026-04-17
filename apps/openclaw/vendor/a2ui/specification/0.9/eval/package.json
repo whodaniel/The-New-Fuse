@@ -4,7 +4,7 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "tsc -b",
     "eval": "dotenv -- tsx src/index.ts",
     "evalAll": "pnpm run eval --clean-results",
     "evalGemini": "pnpm run eval --model=gemini-2.5-flash-lite --clean-results",

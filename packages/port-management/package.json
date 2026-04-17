@@ -1,13 +1,15 @@
 {
   "name": "@the-new-fuse/port-management",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Port management and configuration system for The New Fuse",
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "dev": "tsc --watch",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "lint": "eslint src",

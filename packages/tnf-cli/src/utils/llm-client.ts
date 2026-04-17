@@ -13,9 +13,9 @@ export interface LLMOptions {
 }
 
 export class LLMClient {
-  private apiKey: string;
-  private baseUrl: string;
-  private model: string;
+  private apiKey!: string;
+  public baseUrl!: string;
+  public model!: string;
   private readonly role: 'orchestrator' | 'worker' | 'reviewer' | 'subagent';
 
   constructor(role: 'orchestrator' | 'worker' | 'reviewer' | 'subagent' = 'worker') {
@@ -23,7 +23,7 @@ export class LLMClient {
     this.resolveProvider();
   }
 
-  private resolveProvider(): void {
+  public resolveProvider(): void {
     // 0. Load env vars if not already loaded (simple manual parse if dotenv not handy)
     try {
       const currentDir = path.dirname(fileURLToPath(import.meta.url));

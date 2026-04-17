@@ -87,6 +87,7 @@ server.tool('list_agents', 'List all registered agents currently in the network.
 });
 
 // Tool: broadcast_message
+// @ts-ignore
 server.tool(
   'broadcast_message',
   'Broadcast a message to all agents or a specific channel.',

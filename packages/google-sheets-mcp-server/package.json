@@ -1,11 +1,13 @@
 {
   "name": "@the-new-fuse/google-sheets-mcp-server",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "MCP server for Google Sheets integration",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "start": "node dist/index.js",
     "dev": "tsc --watch"
   },

@@ -100,9 +100,23 @@
     (click-to-center), node/edge counters panel.
   - Node types: `AgentNode`, `MCPToolNode`, `FlowControlNode` with config
     inputs.
-- Save endpoint target: `POST /api/workflows` with `{ name, nodes, edges }`.
-- Execute endpoint target: `POST /api/workflows/execute` with
-  `{ name, nodes, edges }`.
+- **Wiring Audit & Gaps:**
+  - **Save Workflow:** Frontend sends `{ name, nodes, edges }` to
+    `POST /api/workflows`. Backend `createWorkflow` expects this and saves it to
+    the DB. (Wired, but lacks validation).
+  - **Execute Workflow (CRITICAL MISMATCH):** Frontend sends
+    `{ name, nodes, edges }` to `POST /api/workflows/execute`. Backend
+    `executeWorkflow` expects `workflowId` and `input`. This results in a 400
+    error.
+  - **Execution Engine (STUBBED):** Backend `executeWorkflow` only creates an
+    `execution` record with status `RUNNING` but does not actually trigger any
+    node execution logic.
+  - **MCP Tool Node (PARTIALLY WIRED):**
+    - UI supports server source selection (TNF vs Registry).
+    - Backend `MCPServerController` returns real TNF servers from DB and
+      Registry servers via marketplace service.
+    - Tool execution is stubbed in `MCPServerController.executeTool` (returns
+      error).
 - Templates are currently defined in client code (hardcoded templates array).
 - MCP Tool node (enhanced ReactFlow node) uses `useMcpTools` →
   `MCPService.getServers()` → `GET /api/mcp/servers`.

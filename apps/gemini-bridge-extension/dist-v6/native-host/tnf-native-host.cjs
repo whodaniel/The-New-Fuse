@@ -19,8 +19,8 @@ function findProjectRoot() {
 
   // Also check common locations
   const possibleRoots = [
-    path.resolve(currentDir, '../../../..'), // From dist-v5/native-host
-    path.resolve(currentDir, '../../..'), // From src/v5/native-host
+    path.resolve(currentDir, '../../../..'), // From dist-v7/native-host
+    path.resolve(currentDir, '../../..'), // From src/v6/native-host
     path.resolve(os.homedir(), 'Desktop/A1-Inter-LLM-Com/The-New-Fuse'),
     path.resolve(os.homedir(), 'projects/The-New-Fuse'),
     path.resolve(os.homedir(), 'The-New-Fuse'),
@@ -454,6 +454,15 @@ async function handleMessage(message) {
         // Open Finder at the project root or specified path
         return await openFolder(message.path || PROJECT_ROOT);
 
+      case 'mouse-click':
+        return await executeAppleScript(`click at {${message.x}, ${message.y}}`);
+
+      case 'type-text':
+        return await executeAppleScript(`keystroke "${message.text.replace(/"/g, '\\"')}"`);
+
+      case 'press-key':
+        return await executeAppleScript(`key code ${message.keyCode}`);
+
       default:
         return { action: 'error', message: `Unknown action: ${message.action}` };
     }
@@ -461,6 +470,20 @@ async function handleMessage(message) {
     log(`Error handling message: ${error.message}`);
     return { action: 'error', message: error.message };
   }
+}
+
+async function executeAppleScript(script) {
+  const fullScript = `tell application "System Events" to ${script}`;
+  return new Promise((resolve) => {
+    exec(`osascript -e '${fullScript.replace(/'/g, "'\"'\"'")}'`, (error, stdout, stderr) => {
+      if (error) {
+        log(`AppleScript Error: ${error.message}`);
+        resolve({ success: false, error: error.message });
+      } else {
+        resolve({ success: true, output: stdout.trim() });
+      }
+    });
+  });
 }
 
 // Main

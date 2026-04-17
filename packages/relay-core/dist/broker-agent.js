@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 import { readFile } from 'node:fs/promises';
 import * as path from 'node:path';
+// @ts-ignore
+import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
+import { Redis } from 'ioredis';
 import { createTNFEnvelope } from './protocol/tnf-envelope';
 const CONFIG = {
     REDIS_URL: process.env.REDIS_URL ||
@@ -906,7 +909,7 @@ class BrokerAgent {
         try {
             const tx = this.redis.multi();
             for (const key of keys) {
-                tx.hIncrBy(CONFIG.GATE_METRICS_HASH, key, 1);
+                tx.hincrby(CONFIG.GATE_METRICS_HASH, key, 1);
             }
             await tx.exec();
             await this.redis.publish(CONFIG.DECISION_CHANNEL, JSON.stringify({

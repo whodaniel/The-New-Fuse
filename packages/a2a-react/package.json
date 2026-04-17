@@ -1,13 +1,15 @@
 {
   "name": "@the-new-fuse/a2a-react",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "0.1.0",
   "description": "React components and hooks for Agent-to-Agent (A2A) communication protocol",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "dev": "tsc --watch",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",

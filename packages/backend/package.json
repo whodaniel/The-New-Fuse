@@ -1,10 +1,12 @@
 {
   "name": "@the-new-fuse/backend",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "dev": "nodemon --exec ts-node src/index.ts",
     "start": "node dist/index.js",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",

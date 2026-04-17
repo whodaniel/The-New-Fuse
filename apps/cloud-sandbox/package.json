@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "npx tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "tsc -b",
     "start": "npx tsx src/server.ts"
   },
   "dependencies": {

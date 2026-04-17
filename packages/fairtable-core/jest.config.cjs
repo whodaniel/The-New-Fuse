@@ -11,7 +11,7 @@ module.exports = {
       {
         useESM: true,
         tsconfig: {
-          ignoreDeprecations: "6.0"
+          ignoreDeprecations: "5.0"
         }
       },
     ],

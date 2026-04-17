@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import { readFile } from 'node:fs/promises';
 import * as path from 'node:path';
-import { createClient, type RedisClientType } from 'redis';
+// @ts-ignore
+import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
+import { Cluster, Redis } from 'ioredis';
 import { createTNFEnvelope } from './protocol/tnf-envelope';
 
 type QueueTask = {
@@ -1139,7 +1141,7 @@ class BrokerAgent {
     try {
       const tx = this.redis.multi();
       for (const key of keys) {
-        tx.hIncrBy(CONFIG.GATE_METRICS_HASH, key, 1);
+        tx.hincrby(CONFIG.GATE_METRICS_HASH, key, 1);
       }
       await tx.exec();
       await this.redis.publish(

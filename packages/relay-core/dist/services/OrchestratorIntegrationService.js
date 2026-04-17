@@ -11,8 +11,8 @@
 import { EventEmitter } from 'events';
 import { CleanupService } from './CleanupService';
 import { HeartbeatMonitoringService } from './HeartbeatMonitoringService';
-import { StallDetector } from './stall-detector';
 import { AgentHandoffTemplateService } from './shared/StubServices';
+import { StallDetector } from './stall-detector';
 export class OrchestratorIntegrationService extends EventEmitter {
     constructor(config, logger) {
         super();
@@ -172,7 +172,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
         this.emit('redis_state_preservation_ready', {
             host: this.config.redis.host,
             port: this.config.redis.port,
-            features: ['task_state', 'agent_context', 'handoff_history', 'workflow_state']
+            features: ['task_state', 'agent_context', 'handoff_history', 'workflow_state'],
         });
     }
     /**
@@ -182,7 +182,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
         this.logger.info('Initializing todo/task management integration');
         // Integration with existing todo systems
         this.emit('todo_management_ready', {
-            features: ['task_tracking', 'progress_monitoring', 'state_persistence']
+            features: ['task_tracking', 'progress_monitoring', 'state_persistence'],
         });
     }
     /**
@@ -192,7 +192,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
         this.logger.info('Initializing RAG integration for context preservation');
         // RAG system for maintaining conversational context across handoffs
         this.emit('rag_integration_ready', {
-            features: ['context_embedding', 'semantic_search', 'handoff_context_retrieval']
+            features: ['context_embedding', 'semantic_search', 'handoff_context_retrieval'],
         });
     }
     /**
@@ -202,7 +202,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
         this.logger.info('Initializing Graph database integration');
         // Graph database for agent relationship mapping and workflow dependencies
         this.emit('graph_integration_ready', {
-            features: ['agent_relationships', 'task_dependencies', 'workflow_graphs']
+            features: ['agent_relationships', 'task_dependencies', 'workflow_graphs'],
         });
     }
     /**
@@ -250,7 +250,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
             agentId: alert.agentId,
             taskId: alert.taskId,
             handoffPrompt,
-            stagnationType: alert.stagnationType
+            stagnationType: alert.stagnationType,
         });
     }
     /**
@@ -263,11 +263,11 @@ export class OrchestratorIntegrationService extends EventEmitter {
             agentId: data.agentId,
             taskId: data.taskId,
             reason: data.reason,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
         });
         this.emit('agent_wake_up_prompt_created', {
             agentId: data.agentId,
-            prompt: wakeUpPrompt
+            prompt: wakeUpPrompt,
         });
     }
     /**
@@ -282,12 +282,12 @@ export class OrchestratorIntegrationService extends EventEmitter {
             taskId: data.taskId,
             severity: data.severity,
             requiresDirectorIntervention: data.requiresDirectorIntervention,
-            preservedContext: await this.getTaskContext(data.taskId)
+            preservedContext: await this.getTaskContext(data.taskId),
         });
         this.emit('director_broker_handoff_created', {
             originalAgent: data.originalAgent,
             escalationHandoff,
-            priority: 'high'
+            priority: 'high',
         });
     }
     /**
@@ -303,7 +303,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
             message: data.message,
             recommendedActions: await this.generateHumanActionRecommendations(data.alert),
             taskContext: await this.getTaskContext(data.alert.taskId),
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
         };
         this.emit('human_notification_ready', humanNotification);
     }
@@ -319,12 +319,12 @@ export class OrchestratorIntegrationService extends EventEmitter {
             taskId: data.taskId,
             reason: data.reassignmentReason,
             preservedContext: taskContext,
-            contextPreservationEnabled: data.preserveContext
+            contextPreservationEnabled: data.preserveContext,
         });
         this.emit('task_reassignment_handoff_created', {
             originalAgent: data.originalAgent,
             reassignmentHandoff,
-            preservedContext: taskContext
+            preservedContext: taskContext,
         });
     }
     /**
@@ -340,7 +340,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
             detectedAt: alert.detectedAt.toISOString(),
             taskContext: await this.getTaskContext(alert.taskId),
             antiStagnationStrategies: this.getAntiStagnationStrategies(alert.stagnationType),
-            fallbackOptions: this.getFallbackOptions(alert.severity)
+            fallbackOptions: this.getFallbackOptions(alert.severity),
         };
         return await this.handoffService.createHandoffPrompt('anti-stagnation-recovery', stagnationPromptData);
     }
@@ -349,40 +349,44 @@ export class OrchestratorIntegrationService extends EventEmitter {
      */
     getAntiStagnationStrategies(stagnationType) {
         const strategies = {
-            'no_heartbeat': [
+            no_heartbeat: [
                 'Send immediate ping/wake-up message',
                 'Verify agent connectivity',
-                'Check for system resource constraints'
+                'Check for system resource constraints',
             ],
-            'no_progress': [
+            no_progress: [
                 'Request detailed progress report',
                 'Analyze task complexity',
                 'Provide additional context or resources',
-                'Break task into smaller subtasks'
+                'Break task into smaller subtasks',
             ],
-            'circular_communication': [
+            circular_communication: [
                 'Analyze communication loop',
                 'Introduce external context',
                 'Reset conversation state',
-                'Apply task reframing'
+                'Apply task reframing',
             ],
-            'timeout': [
+            timeout: [
                 'Extend timeout parameters',
                 'Simplify task requirements',
                 'Provide step-by-step guidance',
-                'Consider task reassignment'
-            ]
+                'Consider task reassignment',
+            ],
         };
-        return strategies[stagnationType] || ['Apply generic recovery protocol'];
+        return (strategies[stagnationType] || ['Apply generic recovery protocol']);
     }
     /**
      * Get fallback options based on severity
      */
     getFallbackOptions(severity) {
         const options = {
-            'warning': ['Retry with modified parameters', 'Provide additional guidance'],
-            'critical': ['Escalate to supervisor', 'Task reassignment', 'Human consultation'],
-            'emergency': ['Immediate human intervention', 'Emergency stop protocol', 'System failsafe activation']
+            warning: ['Retry with modified parameters', 'Provide additional guidance'],
+            critical: ['Escalate to supervisor', 'Task reassignment', 'Human consultation'],
+            emergency: [
+                'Immediate human intervention',
+                'Emergency stop protocol',
+                'System failsafe activation',
+            ],
         };
         return options[severity] || ['Standard recovery protocol'];
     }
@@ -398,7 +402,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
             lastUpdate: new Date(),
             context: taskData.context || {},
             handoffHistory: [],
-            stagnationCount: 0
+            stagnationCount: 0,
         };
         this.taskStates.set(taskData.taskId, taskState);
         this.heartbeatService.registerAgent(taskData.agentId, taskData.expectedDuration);
@@ -443,7 +447,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
             duration: Date.now() - taskState.startTime.getTime(),
             context: taskState.context,
             handoffHistory: taskState.handoffHistory,
-            stagnationCount: taskState.stagnationCount
+            stagnationCount: taskState.stagnationCount,
         };
     }
     /**
@@ -454,7 +458,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
             `Review agent ${alert.agentId} current state and logs`,
             `Analyze task ${alert.taskId} requirements and complexity`,
             `Consider manual intervention or task simplification`,
-            `Evaluate system resources and agent capabilities`
+            `Evaluate system resources and agent capabilities`,
         ];
         if (alert.severity === 'emergency') {
             recommendations.unshift('Immediate system review required');
@@ -471,7 +475,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
             dryRun: this.config.cleanup.dryRun,
             createBackups: this.config.cleanup.createBackups,
             backupDirectory: this.config.cleanup.backupDirectory,
-            confirmationRequired: false
+            confirmationRequired: false,
         });
         this.logger.info(`Final cleanup completed: ${cleanupResult.cleaned.length} files cleaned, ${cleanupResult.errors.length} errors`);
     }
@@ -480,20 +484,21 @@ export class OrchestratorIntegrationService extends EventEmitter {
      */
     getOrchestrationMetrics() {
         const tasks = Array.from(this.taskStates.values());
-        const completedTasks = tasks.filter(t => t.status === 'completed');
-        const stalledTasks = tasks.filter(t => t.status === 'stalled');
+        const completedTasks = tasks.filter((t) => t.status === 'completed');
+        const stalledTasks = tasks.filter((t) => t.status === 'stalled');
         const avgDuration = completedTasks.length > 0
-            ? completedTasks.reduce((sum, t) => sum + (Date.now() - t.startTime.getTime()), 0) / completedTasks.length
+            ? completedTasks.reduce((sum, t) => sum + (Date.now() - t.startTime.getTime()), 0) /
+                completedTasks.length
             : 0;
         return {
             totalTasks: tasks.length,
-            activeTasks: tasks.filter(t => t.status === 'in_progress').length,
+            activeTasks: tasks.filter((t) => t.status === 'in_progress').length,
             stalledTasks: stalledTasks.length,
             completedTasks: completedTasks.length,
             averageTaskDuration: avgDuration,
             handoffSuccessRate: tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0,
             stagnationRate: tasks.length > 0 ? (stalledTasks.length / tasks.length) * 100 : 0,
-            cleanupEfficiency: this.cleanupService.getCleanupSummary().totalTargets
+            cleanupEfficiency: this.cleanupService.getCleanupSummary().totalTargets,
         };
     }
     /**
@@ -505,7 +510,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
             heartbeatMonitoring: this.heartbeatService.getMonitoringStatus(),
             cleanup: this.cleanupService.getCleanupSummary(),
             taskStates: this.taskStates.size,
-            metrics: this.getOrchestrationMetrics()
+            metrics: this.getOrchestrationMetrics(),
         };
     }
 }

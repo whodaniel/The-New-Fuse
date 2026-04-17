@@ -1,4 +1,3 @@
-
 /**
  * WebSocket Transport for The New Fuse Relay System
  *
@@ -7,8 +6,8 @@
  */
 
 import { EventEmitter } from 'events';
-import WebSocket, { Server } from 'ws';
-import { Transport, RelayMessage } from '../types/index.js';
+import WebSocket, { WebSocketServer } from 'ws';
+import { RelayMessage, Transport } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
 
 export interface WebSocketTransportConfig {
@@ -20,7 +19,7 @@ export class WebSocketTransport extends EventEmitter implements Transport {
   public readonly name = 'websocket';
   private config: WebSocketTransportConfig;
   private logger: Logger;
-  private wss: Server | null = null;
+  private wss: WebSocketServer | null = null;
   private clients: Map<string, WebSocket> = new Map();
   private messageHandlers: ((message: RelayMessage) => void)[] = [];
   private heartbeatInterval?: NodeJS.Timeout;
@@ -38,7 +37,7 @@ export class WebSocketTransport extends EventEmitter implements Transport {
     }
 
     try {
-      this.wss = new Server({ port: this.config.port });
+      this.wss = new WebSocketServer({ port: this.config.port });
       this.logger.info(`WebSocket server started on port ${this.config.port}`);
 
       this.wss.on('connection', this.handleConnection.bind(this));
@@ -46,7 +45,9 @@ export class WebSocketTransport extends EventEmitter implements Transport {
 
       return true;
     } catch (error) {
-      this.logger.error(`Failed to start WebSocket server: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to start WebSocket server: ${error instanceof Error ? error.message : String(error)}`
+      );
       return false;
     }
   }
@@ -88,7 +89,8 @@ export class WebSocketTransport extends EventEmitter implements Transport {
     return this.wss !== null;
   }
 
-  private handleConnection(ws: any): void { // eslint-disable-line @typescript-eslint/no-explicit-any
+  private handleConnection(ws: any): void {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const clientId = this.generateClientId();
     ws.isAlive = true;
     this.clients.set(clientId, ws);
@@ -105,9 +107,11 @@ export class WebSocketTransport extends EventEmitter implements Transport {
         if (!message.source) {
           message.source = clientId;
         }
-        this.messageHandlers.forEach(handler => handler(message));
+        this.messageHandlers.forEach((handler) => handler(message));
       } catch (error) {
-        this.logger.error(`Error parsing message from ${clientId}: ${error instanceof Error ? error.message : String(error)}`);
+        this.logger.error(
+          `Error parsing message from ${clientId}: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
     });
 
@@ -134,7 +138,8 @@ export class WebSocketTransport extends EventEmitter implements Transport {
 
   private startHeartbeat(): void {
     this.heartbeatInterval = setInterval(() => {
-      this.clients.forEach((ws: any, clientId: string) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+      this.clients.forEach((ws: any, clientId: string) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
         if (ws.isAlive === false) {
           this.logger.warn(`Client ${clientId} is not alive. Terminating.`);
           return ws.terminate();

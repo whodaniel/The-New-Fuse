@@ -237,7 +237,7 @@ export class HandoffStoreService {
   async listBySession(sessionKey: string, limit = 50): Promise<HandoffPacketType[]> {
     await this.connect();
 
-    const ids = await this.client.lRange(
+    const ids = await this.client.lrange(
       this.sessionIndexKey(sessionKey),
       0,
       Math.max(limit, 1) - 1

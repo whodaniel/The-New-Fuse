@@ -1,13 +1,15 @@
 {
   "name": "@the-new-fuse/api",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
     "prebuild": "pnpm --filter @the-new-fuse/types build && pnpm --filter @the-new-fuse/core build",
-    "build": "tsc",
+    "build": "tsc -b",
     "build:api": "tsc",
     "build:force": "tsc --build --force",
     "build:ignore-errors": "tsc --skipLibCheck --skipDefaultLibCheck --noEmitOnError",

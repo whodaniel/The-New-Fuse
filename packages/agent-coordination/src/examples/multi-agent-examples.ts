@@ -42,7 +42,7 @@ export async function example1_MapReduceDataProcessing() {
     taskTimeout: 60000,
   });
 
-  const sharedCache = new SharedCache(redisUrl);
+  const sharedCache = new SharedCache(redisUrl as any);
   const mapReduce = new MapReducePattern(coordinator);
 
   // Register 5 data processing agents
@@ -394,7 +394,7 @@ export async function example4_SwarmOptimization() {
   });
 
   const coordinator = new Coordinator(redisUrl, agentPool);
-  const sharedCache = new SharedCache(redisUrl);
+  const sharedCache = new SharedCache(redisUrl as any);
   const swarm = new SwarmPattern(coordinator, sharedCache);
 
   // Register 5 optimizer agents
@@ -472,8 +472,8 @@ export async function example5_ComplexWorkflow() {
   });
 
   const coordinator = new Coordinator(redisUrl, agentPool);
-  const sharedCache = new SharedCache(redisUrl);
-  const lock = new DistributedLock(redisUrl);
+  const sharedCache = new SharedCache(redisUrl as any);
+  const lock = new DistributedLock(redisUrl as any);
   const metricsCollector = new MetricsCollector();
   const taskQueue = new TaskQueue(redisUrl);
   const activityMonitor = new ActivityMonitor(coordinator, agentPool, taskQueue, metricsCollector);

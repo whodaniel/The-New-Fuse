@@ -5,7 +5,7 @@
  * Part of @the-new-fuse/relay-core package
  *
  * Usage:
- *   pnpm run relay         # Start on default port 3000
+ *   pnpm run relay          # Start on default port 3000
  *   PORT=3002 pnpm run relay  # Start on custom port
  *
  * Endpoints:
@@ -18,6 +18,7 @@ import { EventEmitter } from 'events';
 import http from 'http';
 import { Redis } from 'ioredis';
 import WebSocket, { WebSocketServer } from 'ws';
+import { createClient } from 'redis';
 // @ts-ignore
 import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 import { createAuthService } from './auth/JWTAuthService';

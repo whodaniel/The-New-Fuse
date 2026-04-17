@@ -1,7 +1,35 @@
+# TNF Directive Rotation Matrix
+# Auto-updated by directive-rotation cron
+# Rotation: 2026-04-17T17:34:19.000Z
+
 active_directives_count: 0
-handoff_sequence: 1
-last_handoff: "2026-04-16T15:01:05.563632"
+handoff_sequence: 2
+last_handoff: "2026-04-17T17:34:19.000Z"
+last_rotation: "2026-04-17T17:34:19.000Z"
+rotation_status: completed
+
+# Agent Tiers (handoff priority order)
 tiers:
   - scout
   - tester
   - validation
+  - orchestrator
+
+# Active Protocols Injected
+protocols:
+  - heartbeat-protocol
+  - relay-protocol
+  - task-system
+  - agent-onboarding
+
+# Pruned Entries (stale > 7 days)
+pruned:
+  count: 0
+  last_prune: "2026-04-17T17:34:19.000Z"
+
+# Validation Results
+validation:
+  handoff_matrix: valid
+  runtime_state: valid
+  protocol_snapshot: valid
+  agent_registry: valid

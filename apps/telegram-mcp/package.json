@@ -1,0 +1,28 @@
+{
+  "name": "@tnf/telegram-mcp",
+  "version": "2.0.0",
+  "description": "Telegram MCP integration with TNF agent push notifications",
+  "main": "dist/index.js",
+  "scripts": {
+    "daemon": "python3 bot_daemon.py",
+    "mcp": "python3 server.py",
+    "push-service": "npx ts-node agent-push-service.ts",
+    "start": "python3 bot_daemon.py & npx ts-node agent-push-service.ts"
+  },
+  "keywords": [
+    "telegram",
+    "mcp",
+    "tnf",
+    "bot",
+    "push",
+    "handoff"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0"
+  }
+}

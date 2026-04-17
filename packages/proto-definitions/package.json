@@ -9,7 +9,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "dev": "tsc --watch",
     "test": "jest --passWithNoTests",
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint src/**/*.ts",

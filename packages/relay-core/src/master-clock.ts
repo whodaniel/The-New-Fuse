@@ -60,10 +60,9 @@
 
 import { randomUUID } from 'crypto';
 import { existsSync, promises as fs } from 'fs';
+import { Cluster, Redis } from 'ioredis';
 import { execFile } from 'node:child_process';
 import path from 'path';
-import { Redis, Cluster } from 'ioredis';
-import { createClient } from 'redis';
 import { promisify } from 'util';
 import WebSocket from 'ws';
 import { attachAuditTrace, type TnfAuditTrace } from './contracts/audit';
@@ -766,7 +765,11 @@ class MasterClock {
     }
 
     if (prunedTasks > 0 || prunedCooldowns > 0 || prunedRecovery > 0) {
-      log('debug', 'MEMORY', `Pruned tracking data: ${prunedTasks} tasks, ${prunedCooldowns} cooldowns, ${prunedRecovery} recovery attempts`);
+      log(
+        'debug',
+        'MEMORY',
+        `Pruned tracking data: ${prunedTasks} tasks, ${prunedCooldowns} cooldowns, ${prunedRecovery} recovery attempts`
+      );
     }
   }
 
@@ -1122,7 +1125,7 @@ class MasterClock {
 
     if (!this.redis && !this.upstash) return;
     try {
-      await this.redis.lPush(
+      await this.redis.lpush(
         CONFIG.REDIS_KEYS.LOGS,
         JSON.stringify({
           timestamp: new Date().toISOString(),
@@ -1132,7 +1135,7 @@ class MasterClock {
           metadata: auditedMetadata,
         })
       );
-      await this.redis.lTrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
+      await this.redis.ltrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
     } catch {
       // non-fatal
     }
@@ -2320,7 +2323,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
 
     try {
       await this.redis.publish(CONFIG.REDIS_KEYS.INGRESS, JSON.stringify(broadcastEnvelope));
-      await this.redis.lPush(
+      await this.redis.lpush(
         CONFIG.REDIS_KEYS.SELF_PROMPTS,
         JSON.stringify({
           sessionId: this.sessionId,
@@ -2329,7 +2332,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
           issuedAt: now,
         })
       );
-      await this.redis.lTrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
+      await this.redis.ltrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
     } catch (error: any) {
       log('warn', 'SELF-PROMPT', `Failed to publish self-prompt: ${error.message}`);
     }

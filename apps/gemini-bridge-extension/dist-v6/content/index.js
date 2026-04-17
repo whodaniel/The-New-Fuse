@@ -3,14 +3,17 @@
   /******/ 'use strict'; // ./src/v6/shared/constants.ts
 
   /**
-   * Fuse Connect v7 - Constants and Configuration
+   * Gemini Bridge v7 - Constants and Configuration
+   *
+   * Note: This extension is designed to work alongside Fuse Connect
+   * without conflict. All storage keys use 'gemini_bridge_' prefix.
    */
   // ============================================
   // EXTENSION METADATA
   // ============================================
-  const EXTENSION_NAME = 'Fuse Connect';
-  const EXTENSION_VERSION = '7.0.0';
-  const EXTENSION_ID = 'fuse-connect-v7';
+  const EXTENSION_NAME = 'Gemini Bridge';
+  const EXTENSION_VERSION = '7.2.0';
+  const EXTENSION_ID = 'gemini-bridge-v7';
   // ============================================
   // NODE ENDPOINTS
   // ============================================
@@ -115,7 +118,7 @@
       recordNetworkTraffic: false,
     },
     shortcuts: {
-      togglePanel: 'Ctrl+Shift+F',
+      togglePanel: 'Ctrl+Shift+G',
       quickMessage: 'Ctrl+Shift+M',
       focusInput: 'Ctrl+Shift+I',
     },
@@ -123,15 +126,17 @@
   // ============================================
   // STORAGE KEYS
   // ============================================
+  // IMPORTANT: These keys use 'gemini_bridge_' prefix to avoid
+  // conflicts with Fuse Connect extension storage
   const STORAGE_KEYS = {
-    settings: 'fuse_settings',
-    agentId: 'fuse_agent_id',
-    panelState: 'fuse_panel_state',
-    channels: 'fuse_channels',
-    joinedChannels: 'fuse_joined_channels',
-    notifications: 'fuse_notifications',
-    knownNodes: 'fuse_known_nodes',
-    recentMessages: 'fuse_recent_messages',
+    settings: 'gemini_bridge_settings',
+    agentId: 'gemini_bridge_agent_id',
+    panelState: 'gemini_bridge_panel_state',
+    channels: 'gemini_bridge_channels',
+    joinedChannels: 'gemini_bridge_joined_channels',
+    notifications: 'gemini_bridge_notifications',
+    knownNodes: 'gemini_bridge_known_nodes',
+    recentMessages: 'gemini_bridge_recent_messages',
   };
   // ============================================
   // UI CONSTANTS
@@ -158,50 +163,9 @@
     retryInterval: 1000,
     heartbeatInterval: 30000,
     healthCheckInterval: 10000,
-    reconnectDelay: 5000,
-    streamingTimeout: 2000,
-    responsePollingInterval: 500,
-    maxResponseWait: 60000,
-  };
-  // ============================================
-  // MESSAGE TYPES
-  // ============================================
-  const MESSAGE_TYPES = {
-    // Agent lifecycle
-    AGENT_REGISTER: 'AGENT_REGISTER',
-    AGENT_UNREGISTER: 'AGENT_UNREGISTER',
-    AGENT_LIST: 'AGENT_LIST',
-    AGENT_STATUS: 'AGENT_STATUS',
-    AGENT_HEARTBEAT: 'AGENT_HEARTBEAT',
-    // Messaging
-    MESSAGE_SEND: 'MESSAGE_SEND',
-    MESSAGE_RECEIVE: 'MESSAGE_RECEIVE',
-    BROADCAST_MESSAGE: 'BROADCAST_MESSAGE',
-    // Streaming
-    MESSAGE_STREAM_START: 'MESSAGE_STREAM_START',
-    MESSAGE_STREAM_CHUNK: 'MESSAGE_STREAM_CHUNK',
-    MESSAGE_STREAM_END: 'MESSAGE_STREAM_END',
-    // Channels
-    CHANNEL_CREATE: 'CHANNEL_CREATE',
-    CHANNEL_JOIN: 'CHANNEL_JOIN',
-    CHANNEL_LEAVE: 'CHANNEL_LEAVE',
-    CHANNEL_LIST: 'CHANNEL_LIST',
-    CHANNEL_MESSAGE: 'CHANNEL_MESSAGE',
-    // Chat injection
-    INJECT_MESSAGE: 'INJECT_MESSAGE',
-    INJECT_RESULT: 'INJECT_RESULT',
-    CHAT_DETECTED: 'CHAT_DETECTED',
-    RESPONSE_DETECTED: 'RESPONSE_DETECTED',
-    RESPONSE_COMPLETE: 'RESPONSE_COMPLETE',
-    STREAMING_UPDATE: 'STREAMING_UPDATE',
-    // System
-    HEARTBEAT: 'HEARTBEAT',
-    WELCOME: 'WELCOME',
-    ERROR: 'ERROR',
-    CONNECTION_STATUS: 'CONNECTION_STATUS',
-    CONTENT_SCRIPT_READY: 'CONTENT_SCRIPT_READY',
-    TOGGLE_PANEL: 'TOGGLE_PANEL',
-    REQUEST_SYNC: 'REQUEST_SYNC',
+    reconnectBaseDelay: 1000,
+    reconnectMaxDelay: 30000,
+    messageDedupWindow: 5000,
   }; // ./src/v6/content/utils/TnfTranscriptClient.ts
 
   /**
@@ -258,6 +222,7 @@
       this.callbacks = {};
       this.isWaitingForResponse = false;
       this.responseCheckInterval = null;
+      this.responseTimeoutTimer = null;
       this._sendingGuard = false; // Safety guard for UI lag between click and streaming state
       // TNF Transcript polling (Cloudflare DO)
       this.transcriptClient = null;
@@ -267,6 +232,7 @@
       this.cachedElements = null;
       this.cacheValidUntil = 0;
       this.CACHE_DURATION = 10000; // 10 seconds
+      this.lastSentText = '';
       // Supported AI chat platforms for element detection logging
       // NOTE: Only include actual AI chat interfaces - thenewfuse.com is NOT a chat interface
       this.SUPPORTED_CHAT_PLATFORMS = [
@@ -286,16 +252,29 @@
       this.customSites = [];
     }
     /**
+     * Guard against matching Fuse extension UI elements while scanning the page.
+     * We only want host-page chat inputs/buttons, not our own floating panel controls.
+     */
+    isExtensionUiElement(el) {
+      if (!el) return false;
+      return !!el.closest(
+        [
+          '#fuse-connect-panel-v7',
+          '#fuse-connect-panel',
+          '#fuse-panel-minimized',
+          '[data-testid="fuse-connect-panel"]',
+          '[data-testid="fuse-panel-content"]',
+          '.fcp6-panel',
+          '.fcp6-input-row',
+        ].join(', ')
+      );
+    }
+    /**
      * Check if current page is a supported chat platform
      * Used to suppress noisy logging on non-chat sites
      */
     isSupportedPlatform() {
-      const hostname = window.location.hostname.toLowerCase();
-      const isDefault = this.SUPPORTED_CHAT_PLATFORMS.some(
-        (platform) => hostname === platform || hostname.endsWith('.' + platform)
-      );
-      if (isDefault) return true;
-      return this.customSites.some((site) => hostname === site || hostname.endsWith('.' + site));
+      return true; // Gemini Bridge extension supports all platforms it is injected into
     }
     /**
      * Initialize the bridge with callbacks
@@ -326,7 +305,7 @@
      */
     loadCustomSites() {
       if (typeof chrome !== 'undefined' && chrome.storage) {
-        chrome.storage.local.get(['fuse_settings'], (result) => {
+        chrome.storage.local.get(['gemini_bridge_settings'], (result) => {
           if (result.fuse_settings && result.fuse_settings.allowedSites) {
             this.customSites = result.fuse_settings.allowedSites;
             if (window.__FUSE_DEBUG_SELECTORS) {
@@ -411,15 +390,32 @@
       }
       // Enable debug mode via console: window.__FUSE_DEBUG_SELECTORS = true
       const DEBUG = window.__FUSE_DEBUG_SELECTORS || false;
-      // Avoid noisy probing on non-chat pages (e.g., thenewfuse.com auth pages).
-      if (!this.isSupportedPlatform() && !DEBUG) {
-        const unsupportedResult = { input: null, sendButton: null, isReady: false };
-        this.cachedElements = unsupportedResult;
-        this.cacheValidUntil = now + 30000;
-        return unsupportedResult;
-      }
+      // IMPORTANT: Always attempt generic detection, including unknown sites.
+      // We only use support status to tune logging verbosity, not to disable detection.
+      const isSupportedSite = this.isSupportedPlatform();
+      const hostname = window.location.hostname.toLowerCase();
+      const isQwenHost = hostname === 'chat.qwen.ai' || hostname.endsWith('.qwen.ai');
       // Platform-specific selectors (most reliable first)
       const inputSelectors = [
+        // Qwen-specific (activate when on qwen host)
+        ...(isQwenHost
+          ? [
+              'textarea[data-testid*="chat" i]',
+              'textarea[data-testid*="input" i]',
+              'textarea[data-testid*="compose" i]',
+              'textarea[data-testid*="prompt" i]',
+              'textarea[placeholder*="Send" i]',
+              'textarea[placeholder*="message" i]',
+              'textarea[aria-label*="chat" i]',
+              'textarea[aria-label*="message" i]',
+              'form textarea',
+              'main textarea',
+              'textarea',
+              'div[contenteditable="true"][role="textbox"]',
+              'div[contenteditable="true"][data-testid*="input" i]',
+              'div[role="textbox"][contenteditable="true"]',
+            ]
+          : []),
         // The New Fuse (Custom App) - High Priority
         'input[placeholder="Type a message..."]',
         'input[placeholder="Type a message..."][type="text"]',
@@ -432,6 +428,10 @@
         'textarea[placeholder*="follow-up" i]',
         'div[class*="search-bar-input"] textarea',
         // Gemini 2025+ patterns (highest priority - latest interface)
+        'side-panel-chat textarea',
+        'side-panel-chat [contenteditable="true"]',
+        'gemini-sidebar-input textarea',
+        '#gemini-chat-input',
         'rich-textarea p[contenteditable="true"]',
         'rich-textarea p[data-placeholder]',
         'rich-textarea div[contenteditable="true"]',
@@ -463,11 +463,23 @@
         'div[contenteditable="true"][data-placeholder]',
         'div[contenteditable="true"]:not([role="button"])',
         'textarea[placeholder*="Ask" i]',
+        'form textarea',
+        'main textarea',
+        'textarea',
         // Ultra-broad fallback (use with caution)
         'textarea[contenteditable="true"]',
         'div.textarea[contenteditable="true"]',
       ];
       const sendButtonSelectors = [
+        // Qwen-specific (activate when on qwen host)
+        ...(isQwenHost
+          ? [
+              'button[data-testid*="send" i]',
+              'button[aria-label*="Send" i]',
+              'button[title*="Send" i]',
+              'form button[type="submit"]',
+            ]
+          : []),
         // The New Fuse (Custom App) - High Priority
         'button:has(svg path[d="M5 12h14M12 5l7 7-7 7"])', // Exact path match
         'button:has(svg[stroke="currentColor"])', // Generic SVG button match for our app
@@ -532,11 +544,15 @@
       // First try: visible elements only
       for (const selector of inputSelectors) {
         try {
-          const el = document.querySelector(selector);
-          if (el && this.isVisible(el)) {
-            input = el;
-            break;
+          const candidates = this.queryAllIncludingShadow(selector);
+          for (const el of candidates) {
+            if (this.isExtensionUiElement(el)) continue;
+            if (this.isVisible(el)) {
+              input = el;
+              break;
+            }
           }
+          if (input) break;
         } catch (e) {
           // Invalid selector, skip
         }
@@ -545,8 +561,9 @@
       if (!input) {
         for (const selector of inputSelectors) {
           try {
-            const el = document.querySelector(selector);
-            if (el) {
+            const candidates = this.queryAllIncludingShadow(selector);
+            for (const el of candidates) {
+              if (this.isExtensionUiElement(el)) continue;
               input = el;
               if (DEBUG) {
                 console.log(
@@ -556,6 +573,7 @@
               }
               break;
             }
+            if (input) break;
           } catch (e) {
             // Invalid selector, skip
           }
@@ -565,11 +583,15 @@
       let sendButton = null;
       for (const selector of sendButtonSelectors) {
         try {
-          const el = document.querySelector(selector);
-          if (el && this.isVisible(el)) {
-            sendButton = el;
-            break;
+          const candidates = this.queryAllIncludingShadow(selector);
+          for (const el of candidates) {
+            if (this.isExtensionUiElement(el)) continue;
+            if (this.isVisible(el)) {
+              sendButton = el;
+              break;
+            }
           }
+          if (sendButton) break;
         } catch (e) {
           // Invalid selector, skip
         }
@@ -578,8 +600,9 @@
       if (!sendButton) {
         for (const selector of sendButtonSelectors) {
           try {
-            const el = document.querySelector(selector);
-            if (el) {
+            const candidates = this.queryAllIncludingShadow(selector);
+            for (const el of candidates) {
+              if (this.isExtensionUiElement(el)) continue;
               sendButton = el;
               if (DEBUG) {
                 console.log(
@@ -589,8 +612,20 @@
               }
               break;
             }
+            if (sendButton) break;
           } catch (e) {
             // Invalid selector, skip
+          }
+        }
+      }
+      // Non-debug fallback: accept any visible textarea outside extension UI.
+      if (!input) {
+        const allTextareas = this.queryAllIncludingShadow('textarea');
+        for (const el of allTextareas) {
+          if (this.isExtensionUiElement(el)) continue;
+          if (this.isVisible(el) && !el.disabled) {
+            input = el;
+            break;
           }
         }
       }
@@ -602,6 +637,7 @@
         );
         const allEditable = Array.from(document.querySelectorAll('[contenteditable="true"]'));
         for (const el of allEditable) {
+          if (this.isExtensionUiElement(el)) continue;
           if (this.isVisible(el)) {
             input = el;
             console.warn('[SimpleChatBridge] Ultra fallback input found:', {
@@ -612,11 +648,24 @@
             break;
           }
         }
+        if (!input) {
+          console.warn('[SimpleChatBridge] Ultra fallback: Looking for ANY visible textarea...');
+          const allTextareas = Array.from(document.querySelectorAll('textarea'));
+          for (const el of allTextareas) {
+            if (this.isExtensionUiElement(el)) continue;
+            if (this.isVisible(el) && !el.disabled) {
+              input = el;
+              console.warn('[SimpleChatBridge] Ultra fallback textarea found');
+              break;
+            }
+          }
+        }
       }
       if (!sendButton && DEBUG) {
         console.warn('[SimpleChatBridge] Ultra fallback: Looking for ANY button...');
         const allButtons = Array.from(document.querySelectorAll('button'));
         for (const btn of allButtons) {
+          if (this.isExtensionUiElement(btn)) continue;
           const ariaLabel = btn.getAttribute('aria-label')?.toLowerCase() || '';
           const title = btn.getAttribute('title')?.toLowerCase() || '';
           if ((ariaLabel.includes('send') || title.includes('send')) && this.isVisible(btn)) {
@@ -671,7 +720,6 @@
         if (!isReady) {
           // Only log on supported AI chat platforms AND when DEBUG is enabled
           // This prevents confusing users on non-chat sites
-          const isSupportedSite = this.isSupportedPlatform();
           if (stateChanged && isSupportedSite && DEBUG) {
             // Add platform info to help debugging
             logData.isKnownPlatform = isSupportedSite;
@@ -703,6 +751,32 @@
         this.cacheValidUntil = 0; // Force re-scan next time if not ready
       }
       return result;
+    }
+    queryAllIncludingShadow(selector) {
+      const results = [];
+      const seen = new Set();
+      const collect = (root) => {
+        const matches = root.querySelectorAll(selector);
+        for (const node of matches) {
+          if (seen.has(node)) continue;
+          seen.add(node);
+          if (node instanceof HTMLElement) {
+            results.push(node);
+          }
+        }
+        const allInRoot = root.querySelectorAll('*');
+        for (const node of allInRoot) {
+          if (node instanceof HTMLElement && node.shadowRoot) {
+            collect(node.shadowRoot);
+          }
+        }
+      };
+      try {
+        collect(document);
+      } catch {
+        // Ignore invalid selector/root traversal issues and return partial results.
+      }
+      return results;
     }
     /**
      * Check if element is visible (relaxed check with multiple strategies)
@@ -744,8 +818,16 @@
      * Count model responses (for detecting new responses)
      */
     countModelResponses() {
+      // Qwen-specific assistant message count
+      if (this.isQwenHost()) {
+        const strictNodes = this.getQwenResponseNodes(false);
+        if (strictNodes.length > 0) return strictNodes.length;
+        // If strict assistant-role matching fails on current Qwen DOM, use relaxed candidates.
+        const relaxedNodes = this.getQwenResponseNodes(true);
+        if (relaxedNodes.length > 0) return relaxedNodes.length;
+      }
       // Primary path for Gemini-style UIs
-      const modelResponses = document.querySelectorAll('model-response').length;
+      const modelResponses = this.queryAllIncludingShadow('model-response').length;
       if (modelResponses > 0) return modelResponses;
       // OpenClaw chat UI fallback
       const openClawThread = document.querySelector('.chat-thread');
@@ -762,41 +844,39 @@
       ).length;
       if (perplexity > 0) return perplexity;
       // Generic assistant-like message fallback
-      const generic = document.querySelectorAll(
-        '[data-message-author-role="assistant"], [class*="assistant-message"], [class*="model-response"]'
-      ).length;
+      const generic = this.getGenericAssistantResponseNodes(true).length;
       return generic;
     }
     /**
      * Get latest response text
      */
     getLatestResponse() {
-      const cleanText = (node) => {
-        if (!node) return null;
-        const clone = node.cloneNode(true);
-        clone
-          .querySelectorAll('button, [role="button"], .chip, [class*="action"], .chat-compose')
-          .forEach((el) => el.remove());
-        const text = (clone.textContent || '').replace(/\s+/g, ' ').trim();
-        if (!text) return null;
-        // Avoid false positives like lone branding emoji or tiny fragments
-        if (text.length < 8) return null;
-        return text;
-      };
       // Primary path for Gemini-style UIs
-      const responses = document.querySelectorAll('model-response');
+      const responses = this.queryAllIncludingShadow(
+        'model-response, side-panel-response, gemini-sidebar-output, .gemini-response-content'
+      );
       if (responses.length > 0) {
         const lastResponse = responses[responses.length - 1];
-        const markdown = lastResponse.querySelector('.markdown');
-        const txt = cleanText(markdown || lastResponse);
+        const markdown = lastResponse.querySelector(
+          '.markdown, .message-content, side-panel-chat-message'
+        );
+        const txt = this.extractCleanText(markdown || lastResponse);
         if (txt) return txt;
+      }
+      // Qwen fallback: assistant-tagged message nodes.
+      if (this.isQwenHost()) {
+        const strict = this.getLatestQwenResponse(false);
+        if (strict) return strict;
+        // Relaxed fallback for guest/new Qwen layouts where assistant role attrs are absent.
+        const relaxed = this.getLatestQwenResponse(true);
+        if (relaxed) return relaxed;
       }
       // OpenClaw chat UI fallback: only inspect chat-thread scoped entries
       const openClawThread = document.querySelector('.chat-thread');
       if (openClawThread) {
         const candidates = Array.from(openClawThread.querySelectorAll(':scope > *'));
         for (let i = candidates.length - 1; i >= 0; i--) {
-          const text = cleanText(candidates[i]);
+          const text = this.extractCleanText(candidates[i]);
           if (!text) continue;
           // Skip obvious non-reply/system status text
           const low = text.toLowerCase();
@@ -820,15 +900,18 @@
       if (perplexityResponses.length > 0) {
         // Get the last one
         const last = perplexityResponses[perplexityResponses.length - 1];
-        const text = cleanText(last);
+        const text = this.extractCleanText(last);
         // Perplexity often has "Sources" or "Related" sections at the bottom, we might need to be careful
         // But usually 'prose' contains the main answer.
         if (text) return text;
       }
-      // Narrow generic fallback to assistant-role only
-      const generic = document.querySelectorAll('[data-message-author-role="assistant"]');
-      if (generic.length > 0) {
-        return cleanText(generic[generic.length - 1]);
+      // Generic assistant fallback across regular + shadow DOM.
+      const generic = this.getGenericAssistantResponseNodes(true);
+      for (let i = generic.length - 1; i >= 0; i--) {
+        const text = this.extractCleanText(generic[i]);
+        if (!text) continue;
+        if (this.lastSentText && text.trim() === this.lastSentText.trim()) continue;
+        return text;
       }
       return null;
     }
@@ -837,14 +920,37 @@
      */
     isStreaming() {
       if (this._sendingGuard) return true; // Force streaming state if we recently sent a message
+      // Qwen can keep generic "loading/thinking" classes mounted even after completion.
+      // Use stricter indicators there to avoid permanent streaming=true.
+      if (this.isQwenHost()) {
+        const qwenStreamingIndicators = [
+          '[data-testid*="stop" i]',
+          'button[aria-label*="Stop generating" i]',
+          'button[aria-label*="Stop response" i]',
+          'button[aria-label*="Stop" i]',
+          'button[title*="Stop" i]',
+        ];
+        for (const selector of qwenStreamingIndicators) {
+          const matches = this.queryAllIncludingShadow(selector);
+          for (const el of matches) {
+            if (this.isExtensionUiElement(el)) continue;
+            if (this.isVisible(el)) return true;
+          }
+        }
+        return false;
+      }
       const streamingIndicators = [
         'span[class*="cursor"][class*="blink"]',
         '[class*="thinking"]',
         '[class*="loading-spinner"]',
         '[class*="generating"]',
+        '[data-testid*="generat" i]',
+        '[data-testid*="typing" i]',
         'button[aria-label*="Stop response"]',
         'button[aria-label*="Stop generating"]',
         '[data-testid*="stop-button"]',
+        'button[aria-label*="Stop" i]',
+        'button[title*="Stop" i]',
       ];
       for (const selector of streamingIndicators) {
         const el = document.querySelector(selector);
@@ -856,8 +962,18 @@
      * Send a message to the AI - Enhanced with button re-fetch and robust clicking
      */
     async sendMessage(text) {
-      const initialElements = this.findElements();
-      if (!initialElements.isReady || !initialElements.input) {
+      this.lastSentText = text.trim();
+      let initialElements = this.findElements();
+      if (!initialElements.input) {
+        const maxWaitMs = 4000;
+        const intervalMs = 250;
+        const start = Date.now();
+        while (!initialElements.input && Date.now() - start < maxWaitMs) {
+          await this.delay(intervalMs);
+          initialElements = this.findElements();
+        }
+      }
+      if (!initialElements.input) {
         console.error('[SimpleChatBridge] Chat elements not ready');
         this.callbacks.onError?.('Chat elements not found');
         return false;
@@ -922,8 +1038,8 @@
           }
         } else {
           // Textarea/Input handling
-          // Reverting to stable v5 logic: direct value + input event
-          input.value = text;
+          // Use native setter for React-controlled inputs (ChatGPT, Perplexity, etc.)
+          setNativeValue(input, text);
           input.dispatchEvent(
             new InputEvent('input', {
               bubbles: true,
@@ -946,23 +1062,19 @@
           await this.delay(200);
           sendButton = this.findElements().sendButton;
         }
-        if (!sendButton) {
-          console.error('[SimpleChatBridge] Send button still not found');
-          this.callbacks.onError?.('Send button not found');
-          return false;
-        }
-        // Wait for button to be enabled (check disabled attribute)
-        let attempts = 0;
-        while (sendButton.hasAttribute('disabled') && attempts < 10) {
-          await this.delay(100);
-          sendButton = this.findElements().sendButton;
-          if (!sendButton) break;
-          attempts++;
-        }
-        if (!sendButton || sendButton.hasAttribute('disabled')) {
-          console.error('[SimpleChatBridge] Send button is disabled');
-          this.callbacks.onError?.('Send button is disabled');
-          return false;
+        if (sendButton) {
+          // Wait for button to be enabled (check disabled attribute)
+          let attempts = 0;
+          while (sendButton.hasAttribute('disabled') && attempts < 10) {
+            await this.delay(100);
+            sendButton = this.findElements().sendButton;
+            if (!sendButton) break;
+            attempts++;
+          }
+        } else {
+          console.warn(
+            '[SimpleChatBridge] Send button not found; attempting Enter-only submission'
+          );
         }
         // Count responses before sending
         const responsesBefore = this.countModelResponses();
@@ -978,17 +1090,26 @@
           return !input.value || input.value.trim().length === 0;
         };
         // Method 1: Simulate Enter key press on the input (most reliable for Gemini)
-        const enterEvent = new KeyboardEvent('keydown', {
+        const enterKeyInit = {
           key: 'Enter',
           code: 'Enter',
           keyCode: 13,
           which: 13,
           bubbles: true,
           cancelable: true,
-        });
-        input.dispatchEvent(enterEvent);
-        console.log('[SimpleChatBridge] Dispatched Enter keydown on input');
-        console.log('[SimpleChatBridge] Dispatched Enter keydown on input');
+        };
+        input.dispatchEvent(new KeyboardEvent('keydown', enterKeyInit));
+        input.dispatchEvent(new KeyboardEvent('keypress', enterKeyInit));
+        input.dispatchEvent(new KeyboardEvent('keyup', enterKeyInit));
+        console.log('[SimpleChatBridge] Dispatched Enter key sequence on input');
+        // Some textarea-based UIs submit only on form submit handlers.
+        if (!isContentEditable) {
+          const form = input.closest('form');
+          if (form) {
+            form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+            console.log('[SimpleChatBridge] Dispatched form submit fallback');
+          }
+        }
         // Wait and check if it worked - INCREASED DELAY to prevent double-sending
         await this.delay(500);
         const wasCleared = inputWasCleared();
@@ -1053,13 +1174,21 @@
      * ENHANCED: Longer timeout for image/video generation, better content detection
      */
     startWatchingForResponse(responsesBefore) {
+      this.stopWatching();
       this.isWaitingForResponse = true;
       let stableCount = 0;
       let lastContent = '';
+      let lastChangeAt = Date.now();
+      const startAt = Date.now();
       const initialContent = this.getLatestResponse() || '';
+      const INACTIVITY_TIMEOUT_MS = 180000;
+      const HARD_TIMEOUT_MS = 600000;
       this.responseCheckInterval = window.setInterval(() => {
         const currentResponseCount = this.countModelResponses();
-        const content = this.getLatestResponse();
+        let content = this.getLatestResponse();
+        if (!content && this.isQwenHost()) {
+          content = this.getLatestQwenResponse(true);
+        }
         // Check if a new response appeared OR existing latest response content changed
         const hasNewResponse = currentResponseCount > responsesBefore;
         const hasUpdatedLatest = !!content && content !== initialContent;
@@ -1076,15 +1205,18 @@
           });
           if (content || hasMedia) {
             const currentContentSignature = `${content || ''}-${hasMedia}`;
-            if (currentContentSignature !== lastContent || streaming) {
-              // Still streaming or content changed
+            if (currentContentSignature !== lastContent) {
+              // Content changed
               stableCount = 0;
               lastContent = currentContentSignature;
+              lastChangeAt = Date.now();
             } else {
               // Content is stable
               stableCount++;
-              if (stableCount >= 3) {
-                // Increased from 2 to 3 for more stability
+              const streamStalled = streaming && Date.now() - lastChangeAt > 12000;
+              if (stableCount >= 3 && (!streaming || streamStalled)) {
+                // If streaming appears stuck but content has been stable for long enough,
+                // finalize anyway (Qwen occasionally leaves stop indicators mounted).
                 this.stopWatching();
                 // For media responses, create a placeholder message
                 const finalContent = content || (hasMedia ? '[AI generated media content]' : null);
@@ -1101,13 +1233,21 @@
           }
         }
       }, 1000);
-      // Timeout after 180 seconds (3 minutes) - enough for image/video generation
-      setTimeout(() => {
+      this.responseTimeoutTimer = window.setInterval(() => {
         if (this.isWaitingForResponse) {
-          console.warn('[SimpleChatBridge] Response timeout (after 180s)');
+          const elapsedMs = Date.now() - startAt;
+          const inactiveMs = Date.now() - lastChangeAt;
+          if (elapsedMs < HARD_TIMEOUT_MS && inactiveMs < INACTIVITY_TIMEOUT_MS) {
+            return;
+          }
+          const timeoutReason =
+            elapsedMs >= HARD_TIMEOUT_MS
+              ? `hard timeout after ${Math.round(elapsedMs / 1000)}s`
+              : `inactivity timeout after ${Math.round(inactiveMs / 1000)}s`;
+          console.warn(`[SimpleChatBridge] Response timeout (${timeoutReason})`);
           this.stopWatching();
           // Even on timeout, try to get whatever response is there
-          const finalContent = this.getLatestResponse();
+          const finalContent = this.getLatestResponse() || this.getLatestQwenResponse(true);
           if (finalContent && finalContent !== this.lastResponseText) {
             console.log(
               '[SimpleChatBridge] Captured response on timeout:',
@@ -1119,15 +1259,21 @@
             this.callbacks.onError?.('Response timeout');
           }
         }
-      }, 180000); // 3 minutes
+      }, 1000);
     }
     /**
      * Check if the latest response contains media (images, videos)
      */
     checkForMediaContent() {
-      const responses = document.querySelectorAll('model-response');
-      if (responses.length === 0) return false;
-      const lastResponse = responses[responses.length - 1];
+      const modelResponses = this.queryAllIncludingShadow('model-response');
+      let lastResponse = modelResponses.length ? modelResponses[modelResponses.length - 1] : null;
+      if (!lastResponse) {
+        const assistantNodes = this.getGenericAssistantResponseNodes(true);
+        if (assistantNodes.length > 0) {
+          lastResponse = assistantNodes[assistantNodes.length - 1];
+        }
+      }
+      if (!lastResponse) return false;
       // Check for various media elements
       const hasImage = lastResponse.querySelector('img') !== null;
       const hasVideo = lastResponse.querySelector('video') !== null;
@@ -1148,6 +1294,10 @@
       if (this.responseCheckInterval) {
         clearInterval(this.responseCheckInterval);
         this.responseCheckInterval = null;
+      }
+      if (this.responseTimeoutTimer) {
+        clearInterval(this.responseTimeoutTimer);
+        this.responseTimeoutTimer = null;
       }
     }
     /**
@@ -1171,6 +1321,169 @@
      */
     delay(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+    extractCleanText(node) {
+      if (!node) return null;
+      const clone = node.cloneNode(true);
+      clone
+        .querySelectorAll(
+          'button, [role="button"], .chip, [class*="action"], .chat-compose, textarea, input'
+        )
+        .forEach((el) => el.remove());
+      const text = (clone.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!text) return null;
+      if (text.length < 8) return null;
+      return text;
+    }
+    getQwenResponseNodes(relaxed) {
+      const strictSelectors = [
+        '[data-message-author-role="assistant"]',
+        '[data-role="assistant"]',
+        '[data-author-role="assistant"]',
+        '[data-testid*="assistant" i]',
+        '[class*="assistant-message" i]',
+        '[class*="assistant" i]',
+        '[class*="bot" i]',
+      ];
+      const relaxedSelectors = [
+        '[data-testid*="message" i]',
+        '[data-testid*="chat-message" i]',
+        '[class*="message-content" i]',
+        '[class*="markdown" i]',
+        '[class*="chat-message" i]',
+        '[role="article"]',
+        'article',
+        'main p',
+      ];
+      const selectors = relaxed ? [...strictSelectors, ...relaxedSelectors] : strictSelectors;
+      const candidates = [];
+      const seen = new Set();
+      for (const selector of selectors) {
+        for (const node of this.queryAllIncludingShadow(selector)) {
+          if (seen.has(node)) continue;
+          seen.add(node);
+          candidates.push(node);
+        }
+      }
+      const filtered = [];
+      for (const node of candidates) {
+        if (this.isExtensionUiElement(node)) continue;
+        if (!this.isVisible(node)) continue;
+        if (this.isLikelyUserMessageNode(node)) continue;
+        if (this.isLikelyNonConversationNode(node)) continue;
+        const text = this.extractCleanText(node);
+        if (!text) continue;
+        filtered.push(node);
+      }
+      // Deduplicate identical text blocks, keeping the last DOM occurrence.
+      const bySignature = new Map();
+      for (const node of filtered) {
+        const text = this.extractCleanText(node) || '';
+        const signature = `${text.slice(0, 240)}|${text.length}`;
+        bySignature.set(signature, node);
+      }
+      return Array.from(bySignature.values());
+    }
+    getGenericAssistantResponseNodes(relaxed) {
+      const strictSelectors = [
+        '[data-message-author-role="assistant"]',
+        '[data-role="assistant"]',
+        '[data-author-role="assistant"]',
+        '[data-testid*="assistant" i]',
+        '[class*="assistant-message" i]',
+        '[class*="assistant-response" i]',
+        '[class*="assistant" i]',
+        '[class*="bot-message" i]',
+        '[class*="bot-response" i]',
+      ];
+      const relaxedSelectors = [
+        '[data-testid*="message" i]',
+        '[data-testid*="chat-message" i]',
+        '[class*="message-content" i]',
+        '[class*="message-body" i]',
+        '[class*="markdown" i]',
+        '[role="article"]',
+        'article',
+        'main p',
+      ];
+      const selectors = relaxed ? [...strictSelectors, ...relaxedSelectors] : strictSelectors;
+      const candidates = [];
+      const seen = new Set();
+      for (const selector of selectors) {
+        for (const node of this.queryAllIncludingShadow(selector)) {
+          if (seen.has(node)) continue;
+          seen.add(node);
+          candidates.push(node);
+        }
+      }
+      const filtered = [];
+      const bySignature = new Map();
+      for (const node of candidates) {
+        if (this.isExtensionUiElement(node)) continue;
+        if (!this.isVisible(node)) continue;
+        if (this.isLikelyUserMessageNode(node)) continue;
+        if (this.isLikelyNonConversationNode(node)) continue;
+        const text = this.extractCleanText(node);
+        const hasMedia =
+          node.querySelector(
+            'img, video, canvas, iframe, [data-generated-image], .generated-image'
+          ) !== null;
+        if (!text && !hasMedia) continue;
+        filtered.push(node);
+        const signature = text
+          ? `${text.slice(0, 240)}|${text.length}`
+          : `media:${filtered.length}`;
+        bySignature.set(signature, node);
+      }
+      return Array.from(bySignature.values());
+    }
+    getLatestQwenResponse(relaxed) {
+      const nodes = this.getQwenResponseNodes(relaxed);
+      for (let i = nodes.length - 1; i >= 0; i--) {
+        const text = this.extractCleanText(nodes[i]);
+        if (!text) continue;
+        if (this.lastSentText && text.trim() === this.lastSentText.trim()) continue;
+        return text;
+      }
+      return null;
+    }
+    isQwenHost() {
+      const host = window.location.hostname.toLowerCase();
+      return host === 'chat.qwen.ai' || host.endsWith('.qwen.ai');
+    }
+    isLikelyUserMessageNode(node) {
+      const role =
+        node.getAttribute('data-message-author-role') ||
+        node.getAttribute('data-role') ||
+        node.getAttribute('data-author-role') ||
+        '';
+      if (role.toLowerCase() === 'user') return true;
+      const cls = `${node.className || ''}`.toLowerCase();
+      if (cls.includes('user') || cls.includes('human') || cls.includes('me-message')) return true;
+      if (node.matches('textarea, input, [contenteditable="true"]')) return true;
+      if (node.closest('form')) return true;
+      return false;
+    }
+    isLikelyNonConversationNode(node) {
+      if (node.closest('header, nav, aside, footer, [role="navigation"], [role="complementary"]')) {
+        return true;
+      }
+      if (node.matches('button, [role="button"], a, label')) {
+        return true;
+      }
+      if (node.querySelector('textarea, input, [contenteditable="true"]')) {
+        return true;
+      }
+      const aria = `${node.getAttribute('aria-label') || ''}`.toLowerCase();
+      if (
+        aria.includes('send') ||
+        aria.includes('new chat') ||
+        aria.includes('search') ||
+        aria.includes('history')
+      ) {
+        return true;
+      }
+      return false;
     }
   }
   // Export singleton instance
@@ -1283,8 +1596,8 @@
    */
   const PANEL_MIN_WIDTH = 300;
   const PANEL_MIN_HEIGHT = 200;
-  const PANEL_MAX_WIDTH = 600;
-  const PANEL_MAX_HEIGHT = 800;
+  const PANEL_MAX_WIDTH = 1200;
+  const PANEL_MAX_HEIGHT = 1000;
   const COLLAPSED_HEIGHT = 48;
   class EnhancedFloatingPanel {
     constructor(options = {}) {
@@ -1296,6 +1609,8 @@
         startY: 0,
         startWidth: 0,
         startHeight: 0,
+        startPosX: 0,
+        startPosY: 0,
         edge: '',
       };
       this.myAgentId = null;
@@ -1306,6 +1621,7 @@
       this.agents = [];
       this.channels = [];
       this.currentChannel = null;
+      this.pausedChannels = new Set();
       this.messages = [];
       this.notifications = [];
       this.tasks = [];
@@ -1322,12 +1638,34 @@
       // Track Chrome message listener for cleanup
       this.chromeMessageListener = null;
       this.storageListener = null;
+      this.containerClickListener = null;
+      this.containerKeydownListener = null;
       // Flag to track if extension context is valid
       this.isContextValid = true;
       // Cleanup timer to prevent memory leaks
       this.cleanupInterval = null;
       this.CLEANUP_INTERVAL_MS = 30000; // 30 seconds
       this.BROADCAST_DEDUP_WINDOW_MS = 10000; // 10 seconds
+      this.aiVideoState = {
+        account: 'None',
+        processed: 0,
+        total: 0,
+        cost: 0,
+        queue: [],
+        queueCount: 0,
+        reverseOrder: false,
+        segmentDuration: 45,
+        processingLevel: 'ai_studio',
+        isProcessing: false,
+        isPaused: false,
+        currentIndex: 0,
+        totalCount: 0,
+        playlists: [],
+        selectedPlaylistId: '',
+        channels: [],
+        selectedChannelId: '',
+        history: [],
+      };
       // Generate unique panel ID based on hostname and random suffix
       this.hostName = window.location.hostname.replace(/\./g, '-');
       this.panelId = `${this.hostName}-${Math.random().toString(36).substring(2, 8)}`;
@@ -1341,7 +1679,7 @@
         isPinned: false,
         opacity: 1,
       };
-      console.log(`[FuseConnect] Panel initialized with ID: ${this.panelId}`);
+      console.log(`[GeminiBridge] Panel initialized with ID: ${this.panelId}`);
       this.loadState();
       this.inject();
       this.setupListeners();
@@ -1386,6 +1724,9 @@
         if (response.selectedChannel !== undefined) {
           this.currentChannel = response.selectedChannel || null;
         }
+        if (Array.isArray(response.pausedChannels)) {
+          this.pausedChannels = new Set(response.pausedChannels.map((id) => String(id)));
+        }
         // Save Browser Agent ID for loop prevention
         if (response.browserAgentId) {
           this.browserAgentId = response.browserAgentId;
@@ -1401,7 +1742,7 @@
      */
     async loadState() {
       try {
-        const result = await chrome.storage.local.get(['fuse_panel_state']);
+        const result = await chrome.storage.local.get(['gemini_bridge_panel_state']);
         if (result.fuse_panel_state) {
           this.state = { ...this.state, ...result.fuse_panel_state };
         }
@@ -1499,7 +1840,8 @@
         display: flex !important;
         align-items: center !important;
         justify-content: space-between !important;
-        padding: 10px 14px !important;
+        gap: 8px !important;
+        padding: 10px 12px !important;
         background: linear-gradient(90deg, rgba(0,217,255,0.15) 0%, rgba(157,78,221,0.15) 100%) !important;
         border-bottom: 1px solid rgba(0,217,255,0.2) !important;
         cursor: move !important;
@@ -1510,6 +1852,8 @@
         display: flex !important;
         align-items: center !important;
         gap: 8px !important;
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
       }
 
       .fcp6-icon {
@@ -1531,6 +1875,9 @@
         -webkit-background-clip: text !important;
         -webkit-text-fill-color: transparent !important;
         background-clip: text !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
       }
 
       .fcp6-status-dot {
@@ -1552,6 +1899,8 @@
       .fcp6-controls {
         display: flex !important;
         gap: 4px !important;
+        align-items: center !important;
+        flex-shrink: 0 !important;
       }
 
       .fcp6-btn {
@@ -1649,72 +1998,136 @@
 
       /* Input area */
       .fcp6-input-area {
-        padding: 10px !important;
-        border-top: 1px solid rgba(255,255,255,0.05) !important;
-        background: rgba(0,0,0,0.2) !important;
+        padding: 10px 12px 12px !important;
+        border-top: 1px solid rgba(0,217,255,0.22) !important;
+        background: linear-gradient(180deg, rgba(13,20,30,0.94) 0%, rgba(9,14,22,0.98) 100%) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04) !important;
       }
 
       .fcp6-input-row {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        gap: 10px !important;
+        align-items: stretch !important;
+      }
+
+      .fcp6-input-shell {
+        flex: 1 !important;
         display: flex !important;
-        gap: 8px !important;
+        align-items: flex-end !important;
+        padding: 6px !important;
+        border: 1px solid rgba(0,217,255,0.28) !important;
+        border-radius: 12px !important;
+        background: linear-gradient(145deg, rgba(3,8,16,0.9), rgba(5,11,20,0.98)) !important;
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.05),
+          0 8px 18px rgba(0,0,0,0.26) !important;
       }
 
       .fcp6-input {
-        flex: 1 !important;
-        padding: 10px 12px !important;
-        border: 1px solid rgba(0,217,255,0.2) !important;
+        width: 100% !important;
+        min-height: 42px !important;
+        max-height: 120px !important;
+        padding: 8px 10px !important;
+        border: none !important;
         border-radius: 8px !important;
-        background: rgba(0,0,0,0.3) !important;
-        color: #fff !important;
+        background: transparent !important;
+        color: rgba(255,255,255,0.96) !important;
         font-size: 13px !important;
         outline: none !important;
+        line-height: 1.35 !important;
         resize: none !important;
       }
 
+      .fcp6-input-shell:focus-within {
+        border-color: rgba(0,217,255,0.65) !important;
+        box-shadow:
+          0 0 0 2px rgba(0,217,255,0.2),
+          0 0 24px rgba(0,217,255,0.14),
+          inset 0 1px 0 rgba(255,255,255,0.07) !important;
+      }
+
       .fcp6-input:focus {
-        border-color: #00D9FF !important;
-        box-shadow: 0 0 0 2px rgba(0,217,255,0.2) !important;
+        box-shadow: none !important;
+      }
+
+      .fcp6-input::placeholder {
+        color: rgba(196,210,230,0.62) !important;
       }
 
       .fcp6-send-btn {
-        padding: 10px 16px !important;
+        min-width: 46px !important;
+        min-height: 46px !important;
+        padding: 0 !important;
         border: none !important;
-        border-radius: 8px !important;
-        background: linear-gradient(135deg, #00D9FF 0%, #9D4EDD 100%) !important;
+        border-radius: 12px !important;
+        background: linear-gradient(140deg, #00D9FF 0%, #00A3FF 45%, #7A5CFF 100%) !important;
         color: #fff !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
+        font-size: 16px !important;
+        line-height: 1 !important;
         cursor: pointer !important;
         transition: all 0.2s ease !important;
       }
 
       .fcp6-send-btn:hover {
-        box-shadow: 0 0 20px rgba(0,217,255,0.5) !important;
+        box-shadow: 0 0 24px rgba(0,217,255,0.45) !important;
         transform: translateY(-1px) !important;
       }
 
-      .fcp6-inject-btn {
-        padding: 10px !important;
-        border: none !important;
-        border-radius: 8px !important;
-        background: linear-gradient(135deg, #00FF88 0%, #00D9FF 100%) !important;
-        color: #fff !important;
-        font-size: 16px !important;
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-      }
-
-      .fcp6-inject-btn:hover {
-        box-shadow: 0 0 20px rgba(0,255,136,0.5) !important;
-        transform: translateY(-1px) !important;
+      .fcp6-send-btn:active {
+        transform: translateY(0) !important;
       }
 
       .fcp6-input-hint {
-        margin-top: 6px !important;
+        margin-top: 8px !important;
         font-size: 10px !important;
-        color: rgba(255,255,255,0.5) !important;
+        color: rgba(196,210,230,0.62) !important;
         display: flex !important;
         align-items: center !important;
-        gap: 4px !important;
+        justify-content: space-between !important;
+        gap: 8px !important;
+        flex-wrap: wrap !important;
+      }
+
+      .fcp6-input-action {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        padding: 4px 8px !important;
+        border: 1px solid rgba(0,255,136,0.32) !important;
+        border-radius: 8px !important;
+        background: rgba(0,255,136,0.12) !important;
+        color: #86ffd0 !important;
+        font-size: 10px !important;
+        line-height: 1 !important;
+      }
+
+      .fcp6-input-action:hover {
+        background: rgba(0,255,136,0.2) !important;
+        border-color: rgba(0,255,136,0.44) !important;
+      }
+
+      .fcp6-shortcut-hint {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        margin-left: auto !important;
+      }
+
+      .fcp6-shortcut-key {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-width: 18px !important;
+        height: 16px !important;
+        padding: 0 5px !important;
+        border-radius: 5px !important;
+        border: 1px solid rgba(255,255,255,0.22) !important;
+        background: rgba(255,255,255,0.08) !important;
+        color: rgba(255,255,255,0.88) !important;
+        font-size: 9px !important;
+        line-height: 1 !important;
       }
 
       /* Chat card */
@@ -1780,6 +2193,29 @@
       .fcp6-channel-members {
         font-size: 11px !important;
         color: rgba(255,255,255,0.4) !important;
+      }
+
+      .fcp6-channel-actions {
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        flex-shrink: 0 !important;
+      }
+
+      .fcp6-channel-delete {
+        width: 24px !important;
+        height: 24px !important;
+        border-radius: 999px !important;
+        border: 1px solid rgba(255,51,102,0.42) !important;
+        background: rgba(255,51,102,0.18) !important;
+        color: #ff5f86 !important;
+        font-weight: 700 !important;
+        line-height: 1 !important;
+      }
+
+      .fcp6-channel-delete:hover {
+        background: rgba(255,51,102,0.28) !important;
+        color: #ffd9e4 !important;
       }
 
       /* Agent card */
@@ -1875,30 +2311,78 @@
       .fcp6-resize-handle {
         position: absolute !important;
         background: transparent !important;
+        z-index: 5 !important;
       }
 
-      .fcp6-resize-handle.left {
-        left: 0 !important;
+      .fcp6-resize-handle.left, .fcp6-resize-handle.right {
         top: 10% !important;
-        width: 6px !important;
+        width: 8px !important;
         height: 80% !important;
         cursor: ew-resize !important;
       }
 
-      .fcp6-resize-handle.bottom {
-        bottom: 0 !important;
+      .fcp6-resize-handle.left {
+        left: 0 !important;
+      }
+
+      .fcp6-resize-handle.right {
+        right: 0 !important;
+      }
+
+      .fcp6-resize-handle.top, .fcp6-resize-handle.bottom {
         left: 10% !important;
         width: 80% !important;
-        height: 6px !important;
+        height: 8px !important;
         cursor: ns-resize !important;
       }
 
-      .fcp6-resize-handle.corner {
+      .fcp6-resize-handle.top {
+        top: 0 !important;
+      }
+
+      .fcp6-resize-handle.bottom {
+        bottom: 0 !important;
+      }
+
+      .fcp6-resize-handle.corner-nw,
+      .fcp6-resize-handle.corner-ne,
+      .fcp6-resize-handle.corner-sw,
+      .fcp6-resize-handle.corner-se {
+        width: 14px !important;
+        height: 14px !important;
+      }
+
+      .fcp6-resize-handle.corner-nw {
+        left: 0 !important;
+        top: 0 !important;
+        cursor: nwse-resize !important;
+      }
+
+      .fcp6-resize-handle.corner-ne {
+        right: 0 !important;
+        top: 0 !important;
+        cursor: nesw-resize !important;
+      }
+
+      .fcp6-resize-handle.corner-sw {
         left: 0 !important;
         bottom: 0 !important;
-        width: 16px !important;
-        height: 16px !important;
         cursor: nwse-resize !important;
+      }
+
+      .fcp6-resize-handle.corner-se {
+        right: 0 !important;
+        bottom: 0 !important;
+        cursor: nesw-resize !important;
+      }
+
+      @media (max-width: 540px) {
+        .fcp6-header {
+          padding: 8px 10px !important;
+        }
+        .fcp6-title {
+          max-width: 128px !important;
+        }
       }
     `;
     }
@@ -1907,7 +2391,15 @@
      */
     applyPositionAndSize() {
       if (!this.container) return;
-      const { position, size, mode } = this.state;
+      const { position, mode } = this.state;
+      const size = {
+        width: Math.min(this.getMaxPanelWidth(), Math.max(PANEL_MIN_WIDTH, this.state.size.width)),
+        height: Math.min(
+          this.getMaxPanelHeight(),
+          Math.max(PANEL_MIN_HEIGHT, this.state.size.height)
+        ),
+      };
+      this.state.size = size;
       const isCollapsed = mode === 'collapsed';
       const isMinimized = mode === 'minimized';
       if (isMinimized) {
@@ -1943,6 +2435,19 @@
      */
     setupListeners() {
       if (!this.container) return;
+      // Prevent duplicate handler accumulation across update() re-renders.
+      if (this.containerClickListener) {
+        this.container.removeEventListener('click', this.containerClickListener);
+        this.containerClickListener = null;
+      }
+      if (this.containerKeydownListener) {
+        this.container.removeEventListener('keydown', this.containerKeydownListener);
+        this.containerKeydownListener = null;
+      }
+      if (this.storageListener) {
+        chrome.storage.onChanged.removeListener(this.storageListener);
+        this.storageListener = null;
+      }
       // Drag handling
       const header = this.container.querySelector('[data-drag-handle]');
       if (header) {
@@ -1959,7 +2464,7 @@
         });
       });
       // Content clicks (delegation)
-      this.container.addEventListener('click', (e) => {
+      this.containerClickListener = (e) => {
         const target = e.target;
         // Handle action buttons
         const actionBtn = target.closest('[data-action]');
@@ -1975,6 +2480,44 @@
           this.switchTab(tab);
           return;
         }
+        // Handle Poker Technician actions
+        if (target.id === 'poker-activate-tech') {
+          const techPrompt = `STEM: You are now the most prolific poker technician that ever lived. 
+        Your reasoning is grounded in GTO (Game Theory Optimal) balance but your edge comes from elite exploitative adjustments. 
+        Analyze all incoming hand histories and board states with absolute technical precision. 
+        Focus on: Range vs Range equity, polarized vs condensed distributions, and board texture advantage. 
+        You are connected to the TNF Federation Green Channel. Broadcast your high-level insights there. 
+        Acknowledge your technical activation now.`;
+          chrome.runtime.sendMessage({
+            type: 'BROADCAST_MESSAGE',
+            channel: 'green',
+            content: techPrompt,
+            metadata: { isSystemMessage: true },
+          });
+          chrome.runtime.sendMessage({
+            type: 'INJECT_MESSAGE',
+            content: techPrompt,
+          });
+          target.textContent = 'Technician Active!';
+          target.style.background = '#34a853';
+          return;
+        }
+        if (target.id === 'poker-push-context') {
+          chrome.runtime.sendMessage({
+            type: 'ACTIVITY_EVENT',
+            eventType: 'GAME_STATE_PUSH',
+            channel: 'green',
+            metadata: {
+              url: window.location.href,
+              timestamp: Date.now(),
+            },
+          });
+          target.textContent = 'State Pushed!';
+          setTimeout(() => {
+            if (target) target.textContent = 'Push Game State to Green';
+          }, 2000);
+          return;
+        }
         // Handle channel selection
         if (target.matches('.fcp6-channel')) {
           const channelId = target.dataset.channel;
@@ -1983,21 +2526,24 @@
             this.selectChannel(channelId);
           }
         }
-      });
+      };
+      this.container.addEventListener('click', this.containerClickListener);
       // Input handling
-      this.container.addEventListener('keydown', (e) => {
+      this.containerKeydownListener = (e) => {
+        const keyEvent = e;
         const target = e.target;
         // Send message on Enter (without Shift)
-        if (target.dataset.input === 'message' && e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
+        if (target.dataset.input === 'message' && keyEvent.key === 'Enter' && !keyEvent.shiftKey) {
+          keyEvent.preventDefault();
           this.sendMessage();
         }
         // Create channel on Enter
-        if (target.id === 'fuse-new-channel-name' && e.key === 'Enter') {
-          e.preventDefault();
+        if (target.id === 'fuse-new-channel-name' && keyEvent.key === 'Enter') {
+          keyEvent.preventDefault();
           this.submitCreateChannel();
         }
-      });
+      };
+      this.container.addEventListener('keydown', this.containerKeydownListener);
       // Channel selector change
       const channelSelect = this.container.querySelector('#fuse-channel-select');
       if (channelSelect) {
@@ -2015,7 +2561,7 @@
           if (changes.fuse_channels) {
             const newChannels = changes.fuse_channels.newValue;
             if (newChannels && Array.isArray(newChannels)) {
-              console.log('[FuseConnect] Syncing channels list from storage:', newChannels.length);
+              console.log('[GeminiBridge] Syncing channels list from storage:', newChannels.length);
               this.channels = newChannels;
               this.update();
             }
@@ -2091,8 +2637,13 @@
     renderResizeHandles() {
       return `
       <div class="fcp6-resize-handle left" data-resize="left"></div>
+      <div class="fcp6-resize-handle right" data-resize="right"></div>
+      <div class="fcp6-resize-handle top" data-resize="top"></div>
       <div class="fcp6-resize-handle bottom" data-resize="bottom"></div>
-      <div class="fcp6-resize-handle corner" data-resize="corner"></div>
+      <div class="fcp6-resize-handle corner-nw" data-resize="corner-nw"></div>
+      <div class="fcp6-resize-handle corner-ne" data-resize="corner-ne"></div>
+      <div class="fcp6-resize-handle corner-sw" data-resize="corner-sw"></div>
+      <div class="fcp6-resize-handle corner-se" data-resize="corner-se"></div>
     `;
     }
     // ...
@@ -2106,6 +2657,8 @@
         startY: e.clientY,
         startWidth: this.state.size.width,
         startHeight: this.state.size.height,
+        startPosX: this.state.position.x,
+        startPosY: this.state.position.y,
         edge,
       };
       let rafId = null;
@@ -2115,24 +2668,43 @@
         const clientY = e.clientY;
         if (rafId) return;
         rafId = requestAnimationFrame(() => {
-          const deltaX = this.resizeState.startX - clientX;
-          const deltaY = clientY - this.resizeState.startY;
-          if (edge.includes('left') || edge === 'corner') {
-            const newWidth = Math.min(
-              PANEL_MAX_WIDTH,
-              Math.max(PANEL_MIN_WIDTH, this.resizeState.startWidth + deltaX)
-            );
-            this.state.size.width = newWidth;
-            this.container.style.width = `${newWidth}px`;
+          const dx = clientX - this.resizeState.startX;
+          const dy = clientY - this.resizeState.startY;
+          const maxWidth = this.getMaxPanelWidth();
+          const maxHeight = this.getMaxPanelHeight();
+          let newWidth = this.resizeState.startWidth;
+          let newHeight = this.resizeState.startHeight;
+          let newX = this.resizeState.startPosX;
+          let newY = this.resizeState.startPosY;
+          const resizingLeft = edge.includes('left') || edge.includes('nw') || edge.includes('sw');
+          const resizingRight =
+            edge.includes('right') || edge.includes('ne') || edge.includes('se');
+          const resizingTop = edge.includes('top') || edge.includes('nw') || edge.includes('ne');
+          const resizingBottom =
+            edge.includes('bottom') || edge.includes('sw') || edge.includes('se');
+          if (resizingLeft) {
+            const proposedWidth = this.resizeState.startWidth - dx;
+            newWidth = Math.min(maxWidth, Math.max(PANEL_MIN_WIDTH, proposedWidth));
+            newX = this.resizeState.startPosX + (this.resizeState.startWidth - newWidth);
+          } else if (resizingRight) {
+            const proposedWidth = this.resizeState.startWidth + dx;
+            newWidth = Math.min(maxWidth, Math.max(PANEL_MIN_WIDTH, proposedWidth));
           }
-          if (edge.includes('bottom') || edge === 'corner') {
-            const newHeight = Math.min(
-              PANEL_MAX_HEIGHT,
-              Math.max(PANEL_MIN_HEIGHT, this.resizeState.startHeight + deltaY)
-            );
-            this.state.size.height = newHeight;
-            this.container.style.height = `${newHeight}px`;
+          if (resizingTop) {
+            const proposedHeight = this.resizeState.startHeight - dy;
+            newHeight = Math.min(maxHeight, Math.max(PANEL_MIN_HEIGHT, proposedHeight));
+            newY = this.resizeState.startPosY + (this.resizeState.startHeight - newHeight);
+          } else if (resizingBottom) {
+            const proposedHeight = this.resizeState.startHeight + dy;
+            newHeight = Math.min(maxHeight, Math.max(PANEL_MIN_HEIGHT, proposedHeight));
           }
+          newX = Math.max(0, Math.min(window.innerWidth - newWidth, newX));
+          newY = Math.max(0, Math.min(window.innerHeight - newHeight, newY));
+          this.state.position.x = newX;
+          this.state.position.y = newY;
+          this.state.size.width = newWidth;
+          this.state.size.height = newHeight;
+          this.applyPositionAndSize();
           rafId = null;
         });
       };
@@ -2149,6 +2721,12 @@
       document.addEventListener('mousemove', onMove);
       document.addEventListener('mouseup', onUp);
     }
+    getMaxPanelWidth() {
+      return Math.max(PANEL_MIN_WIDTH, Math.min(PANEL_MAX_WIDTH, window.innerWidth - 16));
+    }
+    getMaxPanelHeight() {
+      return Math.max(PANEL_MIN_HEIGHT, Math.min(PANEL_MAX_HEIGHT, window.innerHeight - 16));
+    }
     /**
      * Render input area
      */
@@ -2156,23 +2734,26 @@
       return `
       <div class="fcp6-input-area">
         <div class="fcp6-input-row">
-          <textarea
-            class="fcp6-input"
-            data-input="message"
-            placeholder="Type a message..."
-            rows="1"
-            style="min-height: 42px;"
-          ></textarea>
+          <div class="fcp6-input-shell">
+            <textarea
+              class="fcp6-input"
+              data-input="message"
+              placeholder="Message the channel..."
+              rows="1"
+            ></textarea>
+          </div>
           <button class="fcp6-send-btn" data-action="send" title="Send">
             ➤
           </button>
         </div>
         <div class="fcp6-input-hint">
-          <button class="fcp6-btn" data-action="inject-to-chat" style="padding: 2px 6px; height: auto; font-size: 10px;">
+          <button class="fcp6-btn fcp6-input-action" data-action="inject-to-chat" title="Inject only to the page chat">
             Inject to Page
           </button>
-          <span style="flex: 1;"></span>
-          <span>Press Enter to send</span>
+          <span class="fcp6-shortcut-hint">
+            <span class="fcp6-shortcut-key">Enter</span>
+            <span>to send</span>
+          </span>
         </div>
       </div>
     `;
@@ -2218,8 +2799,7 @@
      * Render channel selector bar
      */
     renderChannelSelector() {
-      const currentChannelName =
-        this.channels.find((c) => c.id === this.currentChannel)?.name || 'No channel';
+      const isPaused = !!(this.currentChannel && this.pausedChannels.has(this.currentChannel));
       return `
       <div class="fcp6-channel-selector" style="
         padding: 6px 12px;
@@ -2255,6 +2835,15 @@
         <span style="color: ${this.currentChannel ? '#0f8' : 'rgba(255,255,255,0.3)'}; font-size: 10px;">
           ${this.currentChannel ? '● Syncing' : '○ Local'}
         </span>
+        ${
+          this.currentChannel
+            ? `
+          <button class="fcp6-btn" data-action="toggle-channel-pause" title="${isPaused ? 'Resume channel' : 'Pause channel'}" style="width:auto; padding:4px 8px; font-size:11px; ${isPaused ? 'background:rgba(255,184,0,0.2); color:#FFB800;' : 'background:rgba(255,255,255,0.08);'}">
+            ${isPaused ? '▶ Resume' : '⏸ Pause'}
+          </button>
+        `
+            : ''
+        }
       </div>
     `;
     }
@@ -2264,6 +2853,7 @@
     renderTabs() {
       const tabs = [
         { id: 'chat', icon: '💬', label: 'Chat' },
+        { id: 'poker', icon: '🃏', label: 'Poker' },
         { id: 'agents', icon: '🤖', label: 'Agents' },
         { id: 'channels', icon: '📢', label: 'Channels' },
         { id: 'tasks', icon: '📋', label: 'Tasks' },
@@ -2294,6 +2884,8 @@
       switch (tab) {
         case 'chat':
           return this.renderChatTab();
+        case 'poker':
+          return this.renderPokerTab();
         case 'channels':
           return this.renderChannelsTab();
         case 'agents':
@@ -2309,6 +2901,50 @@
         default:
           return '';
       }
+    }
+    /**
+     * Render Poker tab
+     */
+    renderPokerTab() {
+      return `
+      <div class="fcp6-poker-tab" style="padding: 16px; display: flex; flex-direction: column; gap: 16px; color: #fff;">
+        <div style="text-align: center; margin-bottom: 8px;">
+          <div style="font-size: 24px;">🃏</div>
+          <h3 style="margin: 8px 0 4px 0; color: #fff;">Poker Technician</h3>
+          <p style="font-size: 11px; color: rgba(255,255,255,0.5); margin: 0;">Elite GTO & Exploitative Analysis</p>
+        </div>
+
+        <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+          <h4 style="margin: 0 0 8px 0; font-size: 12px; color: #00D9FF;">Technician Actions</h4>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="fcp6-btn" id="poker-activate-tech" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #1a73e8, #4285f4); color: white; font-weight: bold; border-radius: 8px; border: none; cursor: pointer;">
+              Stem as Prolific Technician
+            </button>
+            <button class="fcp6-btn" id="poker-push-context" style="width: 100%; padding: 8px; background: rgba(52, 168, 83, 0.2); color: #34a853; border: 1px solid rgba(52, 168, 83, 0.3); border-radius: 8px; cursor: pointer;">
+              Push Game State to Green
+            </button>
+          </div>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px;">
+          <h4 style="margin: 0 0 8px 0; font-size: 12px; color: #FFB800;">Real-time HUD</h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px;">
+            <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;">
+              <span style="color: rgba(255,255,255,0.4);">VPIP:</span> 24.5%
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;">
+              <span style="color: rgba(255,255,255,0.4);">PFR:</span> 19.2%
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;">
+              <span style="color: rgba(255,255,255,0.4);">3-Bet:</span> 8.1%
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;">
+              <span style="color: rgba(255,255,255,0.4);">AF:</span> 3.4
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
     }
     /**
      * Render chat tab
@@ -2421,9 +3057,9 @@
               <div class="fcp6-channel-name">${this.escapeHtml(ch.name)}</div>
               <div class="fcp6-channel-members">${ch.members.length} active agents</div>
             </div>
-            <div style="display:flex; gap:4px; align-items:center;">
+            <div class="fcp6-channel-actions">
               ${this.currentChannel === ch.id ? '<div class="fcp6-badge" style="position:static; margin:0;">✓</div>' : ''}
-              ${ch.id !== 'general' ? `<button class="fcp6-btn" data-action="delete-channel" data-channel-id="${ch.id}" title="Delete Channel" style="background:rgba(255,51,102,0.1); color:#ff3366; width:22px; height:22px;">×</button>` : ''}
+              ${ch.id !== 'general' ? `<button class="fcp6-btn fcp6-channel-delete" data-action="delete-channel" data-channel-id="${ch.id}" title="Delete Channel">×</button>` : ''}
             </div>
           </div>
         `
@@ -2474,186 +3110,10 @@
      * Render services tab
      */
     renderServicesTab() {
-      const services = [
-        { id: 'relay', name: 'Relay Server', icon: '📡' },
-        { id: 'vector-db', name: 'Vector DB', icon: '🧠' },
-        { id: 'fs-server', name: 'File System', icon: '📂' },
-      ];
-      // Get AI Studio state from storage or defaults
-      const aiStudioAuth = false; // TODO: Load from storage
-      const videoQueueCount = 0; // TODO: Load from storage
-      const processingStatus = 'idle'; // TODO: Load from storage
       return `
-      <div class="fcp6-section-title">Core Services</div>
-      <div class="fcp6-list">
-        ${services
-          .map((svc) => {
-            const status = this.serviceStatuses.get(svc.id) || 'unknown';
-            return `
-          <div class="fcp6-agent">
-            <div class="fcp6-agent-avatar" style="background: rgba(255,255,255,0.1);">${svc.icon}</div>
-            <div class="fcp6-channel-info">
-              <div class="fcp6-agent-name">${svc.name}</div>
-              <div class="fcp6-agent-platform">
-                <span class="fcp6-status-dot ${status === 'online' ? 'connected' : 'disconnected'}"></span>
-                ${status.toUpperCase()}
-              </div>
-            </div>
-            <div style="display:flex; gap:4px;">
-               <button class="fcp6-btn" data-action="restart-${svc.id}-service" title="Restart">↺</button>
-            </div>
-          </div>
-        `;
-          })
-          .join('')}
-      </div>
-      <div style="margin-top:12px; display:flex; gap:8px;">
-        <button class="fcp6-btn" data-action="check-health" style="flex:1; width:auto;">Check Health</button>
-        <button class="fcp6-btn" data-action="start-all-services" style="flex:1; width:auto;">Start All</button>
-      </div>
-       <div style="margin-top:12px;">
-        <button class="fcp6-btn" data-action="open-terminal" style="width:100%;">Open Terminal</button>
-      </div>
-
-      <!-- AI Video Intelligence Section -->
-      <div style="margin-top:20px; padding-top:16px; border-top: 1px solid rgba(255,255,255,0.1);">
-        <div class="fcp6-section-title">🎬 AI Video Intelligence</div>
-
-        ${
-          !aiStudioAuth
-            ? `
-          <div style="padding:12px; background:rgba(0,217,255,0.05); border-radius:8px; margin-top:8px;">
-            <div style="font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:8px;">
-              Process YouTube videos through AI Studio
-            </div>
-            <button class="fcp6-btn" data-action="ai-studio-auth" style="width:100%;">
-              🔐 Sign in with Google
-            </button>
-          </div>
-        `
-            : `
-          <!-- Authenticated View -->
-          <div style="margin-top:8px;">
-            <!-- Playlist Selector -->
-            <div style="margin-bottom:8px;">
-              <label style="font-size:11px; color:rgba(255,255,255,0.6); display:block; margin-bottom:4px;">
-                📺 Playlist
-              </label>
-              <select class="fcp6-input" data-action="ai-studio-select-playlist" style="width:100%; padding:6px;">
-                <option value="">Select playlist...</option>
-              </select>
-            </div>
-
-            <!-- Video Queue -->
-            <div style="margin-bottom:8px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                <label style="font-size:11px; color:rgba(255,255,255,0.6);">
-                  📋 Queue (${videoQueueCount})
-                </label>
-                <button class="fcp6-btn" data-action="ai-studio-load-videos" style="padding:4px 8px; font-size:11px;">
-                  Load
-                </button>
-              </div>
-              <div style="max-height:120px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:6px; padding:6px;">
-                ${
-                  videoQueueCount === 0
-                    ? `
-                  <div style="font-size:11px; color:rgba(255,255,255,0.4); text-align:center; padding:12px;">
-                    No videos in queue
-                  </div>
-                `
-                    : `
-                  <!-- Video items will be rendered here -->
-                  <div class="fcp6-video-item">Video 1</div>
-                `
-                }
-              </div>
-            </div>
-
-            <!-- Processing Tier -->
-            <div style="margin-bottom:8px;">
-              <label style="font-size:11px; color:rgba(255,255,255,0.6); display:block; margin-bottom:4px;">
-                🎯 Processing
-              </label>
-              <select class="fcp6-input" data-action="ai-studio-select-tier" style="width:100%; padding:6px; font-size:11px;">
-                <option value="metadata">Metadata (FREE)</option>
-                <option value="transcript">Transcript (FREE)</option>
-                <option value="flash" selected>Gemini Flash ($0.01)</option>
-                <option value="pro">Gemini Pro ($0.15)</option>
-                <option value="vision">Gemini Vision ($0.30)</option>
-                <option value="ai-studio">AI Studio (FREE*)</option>
-              </select>
-            </div>
-
-            <!-- Controls -->
-            <div style="display:flex; gap:6px; margin-bottom:8px;">
-              ${
-                processingStatus === 'idle'
-                  ? `
-                <button class="fcp6-btn" data-action="ai-studio-start" style="flex:1; background:rgba(0,255,136,0.2); border:1px solid rgba(0,255,136,0.4);">
-                  ▶ Start
-                </button>
-              `
-                  : `
-                <button class="fcp6-btn" data-action="ai-studio-pause" style="flex:1; background:rgba(255,187,0,0.2);">
-                  ⏸ Pause
-                </button>
-                <button class="fcp6-btn" data-action="ai-studio-stop" style="flex:1; background:rgba(255,51,102,0.2);">
-                  ⏹ Stop
-                </button>
-              `
-              }
-            </div>
-
-            <!-- Progress -->
-            ${
-              processingStatus !== 'idle'
-                ? `
-              <div style="margin-bottom:8px;">
-                <div style="height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden;">
-                  <div style="height:100%; width:75%; background:linear-gradient(90deg,#00D9FF,#9D4EDD); transition:width 0.3s;"></div>
-                </div>
-                <div style="font-size:10px; color:rgba(255,255,255,0.5); margin-top:4px; text-align:center;">
-                  Processing: "How to Build Apps..." (8/10)
-                </div>
-              </div>
-            `
-                : ''
-            }
-
-            <!-- Knowledge Base -->
-            <div style="padding:10px; background:rgba(157,78,221,0.1); border-radius:6px; margin-bottom:8px;">
-              <div style="font-size:11px; color:rgba(255,255,255,0.6); margin-bottom:6px;">
-                🧠 Knowledge Base
-              </div>
-              <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:6px;">
-                <span style="color:rgba(255,255,255,0.7);">Concepts: <strong>0</strong></span>
-                <span style="color:rgba(255,255,255,0.7);">Videos: <strong>0</strong></span>
-              </div>
-              <div style="display:flex; gap:4px;">
-                <button class="fcp6-btn" data-action="ai-studio-export-kb" style="flex:1; font-size:10px; padding:4px;">
-                  📄 Export
-                </button>
-                <button class="fcp6-btn" data-action="ai-studio-sync-notebook" style="flex:1; font-size:10px; padding:4px;">
-                  🎙️ Podcast
-                </button>
-              </div>
-            </div>
-
-            <!-- Cost Tracking -->
-            <div style="padding:8px; background:rgba(0,0,0,0.3); border-radius:6px; font-size:10px;">
-              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.6);">
-                <span>Session:</span>
-                <span style="color:#00ff88;">$0.00</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; color:rgba(255,255,255,0.6); margin-top:2px;">
-                <span>Total:</span>
-                <span style="color:#00D9FF;">$0.00</span>
-              </div>
-            </div>
-          </div>
-        `
-        }
+      <div class="fcp6-section-title">✨ Services</div>
+      <div style="padding:16px; text-align:center; color:rgba(255,255,255,0.7); font-size:12px; margin-top:20px;">
+        <div>Please open the main <strong>Fuse Connect Extension popup</strong> from your browser toolbar to access AI Video Intelligence and other connected services.</div>
       </div>
     `;
     }
@@ -2773,6 +3233,17 @@
           <label style="display:block; font-size:11px; margin-bottom:4px; opacity:0.7;">Relay Server URL</label>
           <input type="text" data-setting="relayUrl" value="ws://localhost:3000/ws" class="fcp6-input" style="width:100%; margin-bottom:8px;">
        </div>
+
+      <div class="fcp6-section-title" style="margin-top:16px;">Event Logs</div>
+      <div style="padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+        <div style="display:flex; gap:8px; margin-bottom:8px;">
+          <button class="fcp6-btn" data-action="copy-event-logs" style="flex:1; width:auto;">Copy JSON</button>
+          <button class="fcp6-btn" data-action="clear-event-logs" style="flex:1; width:auto;">Clear</button>
+        </div>
+        <div style="font-size:10px; color:rgba(255,255,255,0.55);">
+          Captures extension message flow and browser tab lifecycle events.
+        </div>
+      </div>
     `;
     }
     sendMessage() {
@@ -2800,7 +3271,7 @@
         },
         (response) => {
           if (!response?.success) {
-            console.warn('[FuseConnect] Failed to inject message to page:', response?.error);
+            console.warn('[GeminiBridge] Failed to inject message to page:', response?.error);
           }
         }
       );
@@ -2849,7 +3320,7 @@
             });
             this.update();
           } else {
-            console.warn('[FuseConnect] Failed to inject message:', response?.error);
+            console.warn('[GeminiBridge] Failed to inject message:', response?.error);
           }
         }
       );
@@ -2865,7 +3336,7 @@
       // CRITICAL: Ensure we have a valid page agent ID before sending
       // Without this, the message will have wrong senderId and cause self-injection loops
       if (!this.myAgentId || !this.myAgentId.startsWith('page-agent-')) {
-        console.error('[FuseConnect] Cannot send message: myAgentId is not set correctly!', {
+        console.error('[GeminiBridge] Cannot send message: myAgentId is not set correctly!', {
           myAgentId: this.myAgentId,
           expected: 'page-agent-XXXXX',
         });
@@ -2874,7 +3345,7 @@
         input.value = content; // Put the content back
         return;
       }
-      console.log('[FuseConnect] Sending unified message:', {
+      console.log('[GeminiBridge] Sending unified message:', {
         content: content.substring(0, 50),
         myAgentId: this.myAgentId,
       });
@@ -2914,7 +3385,7 @@
             metadata,
           });
         } else {
-          console.log('[FuseConnect] Skipping duplicate user message broadcast');
+          console.log('[GeminiBridge] Skipping duplicate user message broadcast');
         }
       }
       // Inject message into page chat
@@ -2926,7 +3397,7 @@
         },
         (response) => {
           if (!response?.success) {
-            console.warn('[FuseConnect] Failed to inject message:', response?.error);
+            console.warn('[GeminiBridge] Failed to inject message:', response?.error);
             // Update message to show error
             const msg = this.messages.find((m) => m.content === content);
             if (msg) {
@@ -2957,7 +3428,7 @@
       const previousChannel = this.currentChannel;
       this.currentChannel = channelId;
       console.log(
-        `[FuseConnect] Panel ${this.panelId} switching channel: ${previousChannel} → ${channelId}`
+        `[GeminiBridge] Panel ${this.panelId} switching channel: ${previousChannel} → ${channelId}`
       );
       if (channelId) {
         this.safeSendMessage({
@@ -2992,18 +3463,28 @@
     submitCreateChannel() {
       const input = this.container?.querySelector('#fuse-new-channel-name');
       console.log(
-        '[FuseConnect] submitCreateChannel called. Input found:',
+        '[GeminiBridge] submitCreateChannel called. Input found:',
         !!input,
         'Value:',
         input?.value
       );
       if (!input || !input.value.trim()) {
-        console.warn('[FuseConnect] No channel name entered');
+        console.warn('[GeminiBridge] No channel name entered');
         return;
       }
-      const name = input.value.trim();
+      const normalizedName = input.value.trim().replace(/\s+/g, ' ');
+      const existing = this.channels.find(
+        (ch) => ch.name.trim().replace(/\s+/g, ' ').toLowerCase() === normalizedName.toLowerCase()
+      );
+      if (existing) {
+        console.warn('[GeminiBridge] Duplicate channel name blocked:', normalizedName);
+        input.value = '';
+        this.selectChannel(existing.id);
+        return;
+      }
+      const name = normalizedName;
       input.value = ''; // Clear input
-      console.log('[FuseConnect] Creating channel:', name);
+      console.log('[GeminiBridge] Creating channel:', name);
       // Use safe send with error handling
       this.safeSendMessage(
         {
@@ -3012,22 +3493,13 @@
         },
         (response) => {
           if (response?.success || response?.channelId) {
-            console.log('[FuseConnect] Channel created successfully:', response.channelId);
+            console.log('[GeminiBridge] Channel created successfully:', response.channelId);
             // The channels will be updated via CHANNELS_UPDATE message
+          } else if (response?.alreadyExists && response?.channel?.id) {
+            this.selectChannel(response.channel.id);
           }
         }
       );
-      // Optimistically add the channel to local state for immediate feedback
-      const newChannel = {
-        id: `local-${Date.now()}`,
-        name,
-        members: [],
-        isPrivate: false,
-        createdAt: Date.now(),
-      };
-      this.channels.push(newChannel);
-      this.currentChannel = newChannel.id;
-      this.update();
     }
     /**
      * Delete a channel (Admin only or creator - enforced by relay)
@@ -3042,7 +3514,7 @@
       if (!confirm(`Are you sure you want to delete the channel "${name}"?`)) {
         return;
       }
-      console.log('[FuseConnect] Deleting channel:', channelId);
+      console.log('[GeminiBridge] Deleting channel:', channelId);
       this.safeSendMessage(
         {
           type: 'CHANNEL_DELETE',
@@ -3050,7 +3522,7 @@
         },
         (response) => {
           if (response?.success) {
-            console.log('[FuseConnect] Channel delete request sent');
+            console.log('[GeminiBridge] Channel delete request sent');
             // Optimistically remove from local list
             this.channels = this.channels.filter((c) => c.id !== channelId);
             if (this.currentChannel === channelId) {
@@ -3077,7 +3549,7 @@
           }
         })
         .catch((err) => {
-          console.error('[FuseConnect] Failed to copy:', err);
+          console.error('[GeminiBridge] Failed to copy:', err);
         });
     }
     /**
@@ -3085,7 +3557,7 @@
      */
     safeSendMessage(message, callback) {
       if (!this.isContextValid) {
-        console.warn('[FuseConnect] Extension context is invalid, cannot send message');
+        console.warn('[GeminiBridge] Extension context is invalid, cannot send message');
         this.showContextInvalidatedWarning();
         return;
       }
@@ -3098,19 +3570,19 @@
               errorMessage.includes('Extension context invalidated') ||
               errorMessage.includes('Receiving end does not exist')
             ) {
-              console.error('[FuseConnect] Extension context invalidated:', errorMessage);
+              console.error('[GeminiBridge] Extension context invalidated:', errorMessage);
               this.isContextValid = false;
               this.showContextInvalidatedWarning();
               return;
             }
-            console.warn('[FuseConnect] Chrome runtime error:', errorMessage);
+            console.warn('[GeminiBridge] Chrome runtime error:', errorMessage);
           }
           if (callback) {
             callback(response);
           }
         });
       } catch (error) {
-        console.error('[FuseConnect] Failed to send message:', error);
+        console.error('[GeminiBridge] Failed to send message:', error);
         this.isContextValid = false;
         this.showContextInvalidatedWarning();
       }
@@ -3365,22 +3837,38 @@
             const isFromSelfFallback = msg.from === 'You' || msg.from === 'You (Fuse)';
             const isOwnMessage = isFromSelf || isFromSelfFallback;
             if (isOwnMessage) {
-              console.log('[FuseConnect] Identified self-message');
+              console.log('[GeminiBridge] Identified self-message');
             }
-            // DEDUPE LOCK: Prevent doubled Human input.
-            // Check if we already have a message with this content from ourselves in a short window.
-            // This stops the "Optimistic UI" local push from colliding with the "Relay Roundtrip" back-broadcast.
+            // DEDUPE LOCK: Prevent optimistic local entries + relay roundtrip echoes from rendering twice.
+            const normalizeContent = (value) =>
+              String(value || '')
+                .replace(/\s+/g, ' ')
+                .trim();
+            const incomingContent = normalizeContent(msg.content);
+            const incomingTs = typeof msg.timestamp === 'number' ? msg.timestamp : Date.now();
+            const incomingSender =
+              (msg.metadata?.senderId || msg.from || '').toString().trim().toLowerCase() ||
+              'unknown';
             const isDuplicate = this.messages.some((m) => {
-              // Match by ID if both have one
               if (msg.id && m.id === msg.id) return true;
-              // Match by content + sender + time window (fallback for optimistic local IDs)
-              const sameContent = m.content === msg.content;
-              const sameSender = m.from === msg.from || (isOwnMessage && m.from === 'You');
-              const withinWindow = Math.abs((m.timestamp || 0) - (msg.timestamp || 0)) < 10000;
-              return sameContent && sameSender && withinWindow;
+              const storedContent = normalizeContent(m.content);
+              if (!storedContent || storedContent !== incomingContent) return false;
+              const storedSender =
+                (m.metadata?.senderId || m.from || '').toString().trim().toLowerCase() || 'unknown';
+              const sameSender =
+                storedSender === incomingSender ||
+                (isOwnMessage &&
+                  (m.from === 'You' ||
+                    m.from === 'You (Fuse)' ||
+                    m.from === this.myAgentId ||
+                    storedSender === (this.myAgentId || '').toLowerCase()));
+              if (!sameSender) return false;
+              const storedTs = typeof m.timestamp === 'number' ? m.timestamp : 0;
+              // Some relay messages may omit timestamp; compare against "now" in that case.
+              return Math.abs(storedTs - incomingTs) < 15000 || Date.now() - storedTs < 15000;
             });
             if (isDuplicate) {
-              console.log('[FuseConnect] Deduped message (already shown):', msg.id || 'local');
+              console.log('[GeminiBridge] Deduped message (already shown):', msg.id || 'local');
               break;
             }
             // Add ALL messages to chat display (this is a chatroom - everyone sees everything)
@@ -3393,7 +3881,7 @@
             //
             // The key distinction: isOwnMessage means this message originated from THIS tab.
             // If it's from another tab/agent, we want our AI to see it and potentially respond.
-            console.log('[FuseConnect] NEW_MESSAGE processing:', {
+            console.log('[GeminiBridge] NEW_MESSAGE processing:', {
               from: msg.from,
               isOwnMessage,
               senderId: msg.metadata?.senderId,
@@ -3414,12 +3902,12 @@
               // This double injection causes race conditions where messages get cleared/overwritten
               // and often results in the message getting "stuck" in the input field.
               console.log(
-                '[FuseConnect] External message received (display only):',
+                '[GeminiBridge] External message received (display only):',
                 msg.from,
                 msg.metadata?.platform
               );
             } else if (isOwnMessage) {
-              console.log('[FuseConnect] Not injecting own message (self-detection)');
+              console.log('[GeminiBridge] Not injecting own message (self-detection)');
             }
           }
           break;
@@ -3430,11 +3918,21 @@
         case 'JOINED_CHANNELS_UPDATE':
           // Update any local state tracking joined channels if necessary
           // For now, we mainly rely on currentChannel, but this ensures we have the data
-          console.log('[FuseConnect] Joined channels updated:', message.joinedChannels);
+          console.log('[GeminiBridge] Joined channels updated:', message.joinedChannels);
           this.update();
           break;
         case 'CHANNEL_SELECTED':
           this.currentChannel = message.channelId || null;
+          this.update();
+          break;
+        case 'CHANNEL_PAUSE_UPDATE':
+          if (Array.isArray(message.pausedChannels)) {
+            this.pausedChannels = new Set(message.pausedChannels.map((id) => String(id)));
+          } else if (message.channelId) {
+            const channelId = String(message.channelId);
+            if (message.paused) this.pausedChannels.add(channelId);
+            else this.pausedChannels.delete(channelId);
+          }
           this.update();
           break;
         case 'NOTIFICATION':
@@ -3472,13 +3970,30 @@
           this.streamingState = message.state;
           this.update();
           break;
+        case 'AI_VIDEO_PROCESSING_UPDATE':
+          this.aiVideoState.isProcessing = !!message.state?.isProcessing;
+          this.aiVideoState.isPaused = !!message.state?.isPaused;
+          this.aiVideoState.currentIndex = Number(message.state?.currentIndex || 0);
+          this.aiVideoState.totalCount = Number(message.state?.totalCount || 0);
+          this.aiVideoState.queueCount = Math.max(
+            this.aiVideoState.queueCount,
+            this.aiVideoState.totalCount
+          );
+          this.update();
+          break;
         case 'RESPONSE_COMPLETE':
           // RESTORED FROM BACKUP: Only add to local UI, do NOT broadcast
-          console.log('[FuseConnect] RESPONSE_COMPLETE received:', {
+          console.log('[GeminiBridge] RESPONSE_COMPLETE received:', {
             hasContent: !!message.content,
             connectionStatus: this.connectionStatus,
             currentChannel: this.currentChannel,
           });
+          // When relay is connected, this response will come back via NEW_MESSAGE.
+          // Skip local append here to avoid duplicate AI messages.
+          if (this.connectionStatus === 'connected' && this.currentChannel) {
+            console.log('[GeminiBridge] Skipping local RESPONSE_COMPLETE append (relay-connected)');
+            break;
+          }
           if (message.content) {
             let responseContent =
               typeof message.content === 'string'
@@ -3497,7 +4012,7 @@
               responseContent.includes('[AI → User]') ||
               responseContent.includes('[AI Response]')
             ) {
-              console.log('[FuseConnect] Skipping response with embedded prefixes');
+              console.log('[GeminiBridge] Skipping response with embedded prefixes');
               break;
             }
             // Check for duplicate
@@ -3518,7 +4033,7 @@
               });
               this.update();
             } else {
-              console.log('[FuseConnect] Skipping duplicate response');
+              console.log('[GeminiBridge] Skipping duplicate response');
             }
             // NOTE: We do NOT broadcast AI responses automatically.
             // This was causing the self-injection loop.
@@ -3651,7 +4166,7 @@
      * Set the Page Agent ID for this panel
      */
     setAgentId(id) {
-      console.log('[FuseConnect] Panel assigned Agent ID:', id);
+      console.log('[GeminiBridge] Panel assigned Agent ID:', id);
       this.myAgentId = id;
       this.update(); // Update UI if needed (e.g. to show ID)
     }
@@ -3717,6 +4232,14 @@
         chrome.storage.onChanged.removeListener(this.storageListener);
         this.storageListener = null;
       }
+      if (this.container && this.containerClickListener) {
+        this.container.removeEventListener('click', this.containerClickListener);
+        this.containerClickListener = null;
+      }
+      if (this.container && this.containerKeydownListener) {
+        this.container.removeEventListener('keydown', this.containerKeydownListener);
+        this.containerKeydownListener = null;
+      }
       // Clear health poll interval
       if (this.healthPollInterval) {
         clearInterval(this.healthPollInterval);
@@ -3761,6 +4284,9 @@
           break;
         case 'inject-to-chat':
           this.injectToPageChat();
+          break;
+        case 'toggle-channel-pause':
+          this.toggleCurrentChannelPause();
           break;
         case 'accept-task':
           if (element && element.dataset.taskId) {
@@ -3818,19 +4344,76 @@
             this.saveSettings();
           } else if (action === 'reset-settings') {
             this.resetSettings();
+          } else if (action === 'copy-event-logs') {
+            this.copyEventLogs();
+          } else if (action === 'clear-event-logs') {
+            this.clearEventLogs();
           } else if (action === 'submit-create-channel') {
             this.submitCreateChannel();
           }
       }
     }
-    /**
-     * Switch tab
-     */
     switchTab(tab) {
       this.state.activeTab = tab;
       // Persist active tab
       this.saveState();
       this.update();
+    }
+    toggleCurrentChannelPause() {
+      if (!this.currentChannel) return;
+      const channelId = this.currentChannel;
+      const isPaused = this.pausedChannels.has(channelId);
+      this.safeSendMessage(
+        {
+          type: isPaused ? 'CHANNEL_RESUME' : 'CHANNEL_PAUSE',
+          channelId,
+        },
+        (response) => {
+          if (!response?.success) {
+            console.warn('[GeminiBridge] Failed to toggle channel pause:', response?.error);
+          }
+        }
+      );
+    }
+    copyEventLogs() {
+      this.safeSendMessage({ type: 'GET_EVENT_LOGS', limit: 1000 }, async (response) => {
+        if (!response?.success) {
+          console.warn('[GeminiBridge] Failed to fetch event logs');
+          return;
+        }
+        const payload = JSON.stringify(response.logs || [], null, 2);
+        try {
+          await navigator.clipboard.writeText(payload);
+          this.addNotification({
+            id: Date.now().toString(),
+            type: 'success',
+            title: 'Event Logs Copied',
+            message: `Copied ${(response.logs || []).length} log entries`,
+            priority: 'normal',
+            timestamp: Date.now(),
+            read: false,
+          });
+        } catch (e) {
+          console.error('[GeminiBridge] Failed to copy event logs:', e);
+        }
+      });
+    }
+    clearEventLogs() {
+      this.safeSendMessage({ type: 'CLEAR_EVENT_LOGS' }, (response) => {
+        if (response?.success) {
+          this.addNotification({
+            id: Date.now().toString(),
+            type: 'info',
+            title: 'Event Logs Cleared',
+            message: 'Background event log storage has been reset',
+            priority: 'normal',
+            timestamp: Date.now(),
+            read: false,
+          });
+        } else {
+          console.warn('[GeminiBridge] Failed to clear event logs:', response?.error);
+        }
+      });
     }
     /**
      * Toggle pin state
@@ -4175,7 +4758,7 @@
         }
       }
       // Create new ref
-      const refId = `fuse_ref_${++this.refCounter}`;
+      const refId = `gemini_bridge_ref_${++this.refCounter}`;
       this.elementMap.set(refId, {
         ref: new WeakRef(element),
         role: this.getRole(element),
@@ -5240,13 +5823,13 @@
   const captchaHandler = new CaptchaHandler(); // ./src/v6/content/index.ts
 
   /**
-   * Fuse Connect v7 - Content Script Entry Point
+   * Gemini Bridge v7 - Content Script Entry Point
    *
    * SIMPLIFIED VERSION - Uses SimpleChatBridge for direct Gemini interaction.
    *
    * The floating panel is NOT auto-injected. It only appears when:
    * 1. User clicks "Open Panel" button in popup
-   * 2. User presses Ctrl+Shift+F keyboard shortcut
+   * 2. User presses Ctrl+Shift+G keyboard shortcut
    */
 
   // MUST BE FIRST - Patches customElements.define
@@ -5267,13 +5850,15 @@
     }
     return false;
   };
-  class FuseConnectContentScript {
+  class GeminiBridgeContentScript {
     constructor() {
       this.panel = null;
       this.isInitialized = false;
       this.panelVisible = false;
       this.chatReady = false;
       this.pageAgentId = null;
+      this.currentChannel = null;
+      this.pausedChannels = new Set();
       // DEDUPE GUARD: Track message IDs we have already processed (injected or shown)
       // to prevent infinite loops from the relay-Cloudflare-Extension circle.
       this.processedMessageIds = new Set();
@@ -5295,17 +5880,17 @@
     setup() {
       if (this.isInitialized) return;
       this.isInitialized = true;
-      console.debug('[FuseConnect v7] Content script initialized (panel AUTO-OPEN disabled)');
+      console.debug('[GeminiBridge v7] Content script initialized (panel AUTO-OPEN disabled)');
       // Auto-open panel disabled by default per user request
       // try {
       //   this.showPanel();
       // } catch (e) {
-      //   console.error('[FuseConnect v7] Failed to auto-open panel:', e);
+      //   console.error('[GeminiBridge v7] Failed to auto-open panel:', e);
       // }
       // Initialize the simple chat bridge with callbacks
       simpleChatBridge.init({
         onResponse: (content) => {
-          console.log('[FuseConnect v7] AI Response received, length:', content.length);
+          console.log('[GeminiBridge v7] AI Response received, length:', content.length);
           // Forward to panel
           if (this.panel) {
             this.panel.handleMessage({
@@ -5317,7 +5902,7 @@
           const pendingRequest = this.getOldestPendingRequest();
           if (!this.pageAgentId) {
             console.warn(
-              '[FuseConnect v7] ⚠️ Page Agent ID missing during response! This may cause message drop.'
+              '[GeminiBridge v7] ⚠️ Page Agent ID missing during response! This may cause message drop.'
             );
           }
           // Get current channel from panel for proper routing
@@ -5334,7 +5919,7 @@
             responseMetadata.taskId = pendingRequest.taskId;
             responseMetadata.inResponseTo = pendingRequest.from;
             console.log(
-              '[FuseConnect v7] 🔗 Correlating response to request:',
+              '[GeminiBridge v7] 🔗 Correlating response to request:',
               pendingRequest.correlationId
             );
             this.pendingRequests.delete(pendingRequest.correlationId);
@@ -5361,7 +5946,7 @@
           }
         },
         onError: (error) => {
-          console.error('[FuseConnect v7] Chat bridge error:', error);
+          console.error('[GeminiBridge v7] Chat bridge error:', error);
         },
       });
       // Check for chat elements periodically
@@ -5391,7 +5976,7 @@
         const elements = simpleChatBridge.findElements();
         if (elements.isReady && !this.chatReady) {
           this.chatReady = true;
-          console.log('[FuseConnect v7] Chat is ready!');
+          console.log('[GeminiBridge v7] Chat is ready!');
           // Notify background
           this.safeSendMessage(
             {
@@ -5406,7 +5991,7 @@
             (response) => {
               if (response?.agentId) {
                 this.pageAgentId = response.agentId;
-                console.log('[FuseConnect v7] Assigned Page Agent ID:', this.pageAgentId);
+                console.log('[GeminiBridge v7] Assigned Page Agent ID:', this.pageAgentId);
               }
             }
           );
@@ -5436,33 +6021,33 @@
      * Setup debug utilities accessible from browser console
      */
     setupDebugUtils() {
-      window.__FUSE_DEBUG = {
+      window.__GEMINI_BRIDGE_DEBUG = {
         getLastResponse: () => {
           const response = simpleChatBridge.getLastResponse();
-          console.log('[FuseConnect Debug] Last response:', response);
+          console.log('[GeminiBridge Debug] Last response:', response);
           return response;
         },
         sendTestMessage: (msg) => {
-          console.log('[FuseConnect Debug] Sending test message:', msg);
+          console.log('[GeminiBridge Debug] Sending test message:', msg);
           simpleChatBridge.sendMessage(msg);
         },
         checkExtensionContext: () => {
           try {
             const isValid = !!chrome.runtime?.id;
-            console.log('[FuseConnect Debug] Extension context valid:', isValid);
+            console.log('[GeminiBridge Debug] Extension context valid:', isValid);
             return isValid;
           } catch (e) {
-            console.error('[FuseConnect Debug] Extension context check failed:', e);
+            console.error('[GeminiBridge Debug] Extension context check failed:', e);
             return false;
           }
         },
         findElements: () => {
           const elements = simpleChatBridge.findElements();
-          console.log('[FuseConnect Debug] Found elements:', elements);
+          console.log('[GeminiBridge Debug] Found elements:', elements);
           return elements;
         },
       };
-      console.debug('[FuseConnect v7] Debug utils available at window.__FUSE_DEBUG');
+      console.debug('[GeminiBridge v7] Debug utils available at window.__GEMINI_BRIDGE_DEBUG');
     }
     /**
      * Show or create the floating panel
@@ -5494,7 +6079,7 @@
       }
       this.panel.show();
       this.panelVisible = true;
-      console.log('[FuseConnect v7] Panel shown');
+      console.log('[GeminiBridge v7] Panel shown');
     }
     /**
      * Hide the floating panel
@@ -5503,7 +6088,7 @@
       if (this.panel) {
         this.panel.hide();
         this.panelVisible = false;
-        console.log('[FuseConnect v7] Panel hidden');
+        console.log('[GeminiBridge v7] Panel hidden');
       }
     }
     /**
@@ -5530,7 +6115,7 @@
             }
           } catch (e) {
             // Ignore context invalidation errors - expected during reloads
-            console.debug('[FuseConnect] Context invalidated during response sending');
+            console.debug('[GeminiBridge] Context invalidated during response sending');
           }
         };
         try {
@@ -5548,7 +6133,7 @@
                 this.showPanel();
                 safeSendResponse({ success: true });
               } catch (e) {
-                console.error('[FuseConnect] Failed to show panel:', e);
+                console.error('[GeminiBridge] Failed to show panel:', e);
                 safeSendResponse({ success: false, error: e.message });
               }
               return true;
@@ -5564,11 +6149,12 @@
                 safeSendResponse({ success });
               });
               return true;
-            case 'GET_LAST_RESPONSE':
+            case 'GET_LAST_RESPONSE': {
               const response = simpleChatBridge.getLastResponse();
               safeSendResponse({ response });
               return true;
-            case 'GET_CHAT_STATUS':
+            }
+            case 'GET_CHAT_STATUS': {
               const elements = simpleChatBridge.findElements();
               safeSendResponse({
                 detected: elements.isReady,
@@ -5576,8 +6162,9 @@
                 isStreaming: false,
               });
               return true;
+            }
             // Accessibility tree commands
-            case 'GET_ACCESSIBILITY_TREE':
+            case 'GET_ACCESSIBILITY_TREE': {
               const treeResult = accessibilityTree.generateTree({
                 filter: message.filter,
                 maxDepth: message.maxDepth,
@@ -5585,6 +6172,7 @@
               });
               safeSendResponse(treeResult);
               return true;
+            }
             case 'CLICK_ELEMENT':
               accessibilityTree.clickElement(message.refId).then((success) => {
                 safeSendResponse({ success });
@@ -5599,7 +6187,7 @@
                   safeSendResponse({ success });
                 });
               return true;
-            case 'GET_ELEMENT_BY_REF':
+            case 'GET_ELEMENT_BY_REF': {
               const el = accessibilityTree.getElementByRefId(message.refId);
               safeSendResponse({
                 found: !!el,
@@ -5607,8 +6195,9 @@
                 textContent: el?.textContent?.substring(0, 200),
               });
               return true;
+            }
             // Human simulation commands
-            case 'HUMAN_TYPE':
+            case 'HUMAN_TYPE': {
               const typeElements = simpleChatBridge.findElements();
               const typeTarget = message.refId
                 ? accessibilityTree.getElementByRefId(message.refId)
@@ -5625,7 +6214,8 @@
                 safeSendResponse({ success: false, error: 'No target element' });
               }
               return true;
-            case 'HUMAN_CLICK':
+            }
+            case 'HUMAN_CLICK': {
               const clickTarget = message.refId
                 ? accessibilityTree.getElementByRefId(message.refId)
                 : null;
@@ -5637,16 +6227,18 @@
                 safeSendResponse({ success: false, error: 'No target element' });
               }
               return true;
+            }
             case 'HUMAN_SCROLL':
               humanSimulator.humanScroll(message.target || message.y || 500).then(() => {
                 safeSendResponse({ success: true });
               });
               return true;
             // CAPTCHA handling commands
-            case 'DETECT_CAPTCHA':
+            case 'DETECT_CAPTCHA': {
               const detection = captchaHandler.detectCaptcha();
               safeSendResponse(detection);
               return true;
+            }
             case 'BYPASS_CAPTCHA':
               captchaHandler.attemptBypass().then((result) => {
                 safeSendResponse(result);
@@ -5662,15 +6254,25 @@
             case 'AGENTS_UPDATE':
             case 'CHANNELS_UPDATE':
             case 'JOINED_CHANNELS_UPDATE':
+            case 'CHANNEL_PAUSE_UPDATE':
             case 'CHANNEL_SELECTED':
             case 'NOTIFICATION':
             case 'TASK_ASSIGN':
+              if (message.type === 'CHANNEL_SELECTED') {
+                this.currentChannel = message.channelId || null;
+              }
+              if (message.type === 'CHANNEL_PAUSE_UPDATE') {
+                const paused = Array.isArray(message.pausedChannels)
+                  ? message.pausedChannels.map((id) => String(id))
+                  : [];
+                this.pausedChannels = new Set(paused);
+              }
               if (this.panel) {
                 this.panel.handleMessage(message);
               }
               safeSendResponse({ success: true });
               return true;
-            case 'NEW_MESSAGE':
+            case 'NEW_MESSAGE': {
               if (message.message) {
                 const msg = message.message;
                 // DEDUPE GUARD: Never process the same message ID twice.
@@ -5681,17 +6283,37 @@
                 }
                 if (msg.id) this.processedMessageIds.add(msg.id);
                 const myChannel = this.panel?.getCurrentChannel();
+                const effectiveChannel = myChannel || this.currentChannel;
                 const messageChannel = msg.channel || msg.metadata?.channel;
+                const messageChannelId = messageChannel ? String(messageChannel) : '';
+                // Hard mute for paused channels on this tab:
+                // do not render into panel and do not auto-inject while paused.
+                if (
+                  msg.to === 'broadcast' &&
+                  messageChannelId &&
+                  this.isChannelPaused(messageChannelId) &&
+                  msg.metadata?.forceInject !== true
+                ) {
+                  console.log('[GeminiBridge v7] ⏸️ Skipping paused-channel message', {
+                    messageChannel: messageChannelId,
+                    pausedChannels: Array.from(this.pausedChannels),
+                  });
+                  safeSendResponse({ success: true, reason: 'paused_channel' });
+                  return true;
+                }
                 // CHANNEL FILTERING:
                 // Only process messages for OUR channel (or if no channel filtering needed)
                 // Direct messages (to specific agentId) always bypass channel filtering.
                 const isBroadcast = msg.to === 'broadcast';
                 const isForMyChannel =
-                  !isBroadcast || !messageChannel || !myChannel || messageChannel === myChannel;
+                  !isBroadcast ||
+                  !messageChannel ||
+                  !effectiveChannel ||
+                  messageChannel === effectiveChannel;
                 if (!isForMyChannel) {
-                  console.log('[FuseConnect v7] ⏭️ Skipping message for different channel:', {
+                  console.log('[GeminiBridge v7] ⏭️ Skipping message for different channel:', {
                     messageChannel,
-                    myChannel,
+                    myChannel: effectiveChannel,
                     contentPreview: msg.content?.substring(0, 30),
                   });
                   safeSendResponse({ success: true });
@@ -5704,39 +6326,70 @@
                 // Handle message injection (works even if panel isn't open)
                 // TARGETED INJECTION: If addressed specifically to this page agent
                 if (this.pageAgentId && msg.to === this.pageAgentId && msg.content) {
-                  console.log('[FuseConnect v7] Injecting targeted message:', msg.content);
+                  if (!this.canAutoInjectRelayMessage(msg)) {
+                    console.log(
+                      '[GeminiBridge v7] ⏭️ Skipping targeted auto-injection (panel hidden on this tab)'
+                    );
+                    safeSendResponse({ success: true, reason: 'panel_hidden' });
+                    return true;
+                  }
+                  if (!this.shouldInjectRelayMessage(msg)) {
+                    console.log(
+                      '[GeminiBridge v7] ⏭️ Skipping non-conversational targeted message',
+                      msg.metadata?.eventType || msg.messageType || 'unknown'
+                    );
+                    safeSendResponse({ success: true, reason: 'filtered_system_message' });
+                    return true;
+                  }
+                  console.log('[GeminiBridge v7] Injecting targeted message:', msg.content);
                   this.injectMessage(msg.content).then((success) => {
-                    if (success) console.log('[FuseConnect v7] Injection successful');
-                    else console.warn('[FuseConnect v7] Injection failed');
+                    if (success) console.log('[GeminiBridge v7] Injection successful');
+                    else console.warn('[GeminiBridge v7] Injection failed');
                   });
                 }
                 // CHANNEL BROADCAST INJECTION: If from external agent on same channel
                 else if (msg.to === 'broadcast' && msg.content && msg.from) {
+                  if (!this.canAutoInjectRelayMessage(msg)) {
+                    console.log(
+                      '[GeminiBridge v7] ⏭️ Skipping broadcast auto-injection (panel hidden on this tab)'
+                    );
+                    safeSendResponse({ success: true, reason: 'panel_hidden' });
+                    return true;
+                  }
+                  if (!this.shouldInjectRelayMessage(msg)) {
+                    console.log(
+                      '[GeminiBridge v7] ⏭️ Skipping non-conversational broadcast message',
+                      msg.metadata?.eventType || msg.messageType || 'unknown'
+                    );
+                    safeSendResponse({ success: true, reason: 'filtered_system_message' });
+                    return true;
+                  }
                   // CRITICAL FIX: Check both msg.from AND metadata.senderId for self-identification
                   // The senderId in metadata is more reliable as it's set when the message originates
                   const senderFromMetadata = msg.metadata?.senderId;
                   const isStreaming = simpleChatBridge.isStreaming();
-                  console.log('[FuseConnect v7] 🔍 Msg Check:', {
-                    from: msg.from,
-                    metaSender: senderFromMetadata,
-                    myId: this.pageAgentId,
-                    channel: messageChannel,
-                    myChannel: myChannel,
-                    streaming: isStreaming,
-                  });
-                  // FIXED: Only exact matches count as self-messages
-                  // Check BOTH msg.from AND senderId metadata
-                  // The senderId in metadata is the ORIGINAL sender (the tab/agent that initiated the message)
+                  // NORMALIZE IDs for comparison (strip common prefixes)
+                  const normalizeId = (id) =>
+                    id ? id.replace(/^(page-agent-|browser-|agent-)/, '') : '';
+                  const myNormalizedId = normalizeId(this.pageAgentId || '');
+                  const fromNormalizedId = normalizeId(msg.from || '');
+                  const metaSenderNormalizedId = normalizeId(senderFromMetadata || '');
                   const isFromSelf =
-                    msg.from === this.pageAgentId ||
-                    senderFromMetadata === this.pageAgentId ||
+                    (myNormalizedId &&
+                      fromNormalizedId &&
+                      myNormalizedId.startsWith(fromNormalizedId) &&
+                      fromNormalizedId.length > 5) ||
+                    (myNormalizedId &&
+                      metaSenderNormalizedId &&
+                      myNormalizedId.startsWith(metaSenderNormalizedId) &&
+                      metaSenderNormalizedId.length > 5) ||
                     msg.from === 'You';
                   const isFromYou = msg.from === 'You';
                   // Also check browser agent ID if we can get it from storage or background
                   // This is a safety margin against late pageAgentId assignment
                   const isExternalAgent = !isFromSelf;
                   // Debug logging to trace agent identification
-                  console.log('[FuseConnect v7] 📨 Message received:', {
+                  console.log('[GeminiBridge v7] 📨 Message received:', {
                     from: msg.from,
                     senderId: senderFromMetadata,
                     myAgentId: this.pageAgentId,
@@ -5750,7 +6403,7 @@
                   // - AI responses from OTHER agents SHOULD be injected so our AI can see/respond to them
                   // - This enables true multi-AI conversation
                   if (!isExternalAgent) {
-                    console.log('[FuseConnect v7] ⏭️ Skipping message:', {
+                    console.log('[GeminiBridge v7] ⏭️ Skipping message:', {
                       from: msg.from,
                       senderId: senderFromMetadata,
                       myAgentId: this.pageAgentId,
@@ -5761,7 +6414,7 @@
                     // Instead, add to queue.
                     if (isStreaming) {
                       console.log(
-                        '[FuseConnect v7] ⏳ AI is streaming, QUEUING message for later injection:',
+                        '[GeminiBridge v7] ⏳ AI is streaming, QUEUING message for later injection:',
                         msg.content.substring(0, 50)
                       );
                       this.queueMessage(msg.content, msg.metadata);
@@ -5769,7 +6422,7 @@
                     }
                     // This is from an external agent - inject it!
                     // (Even if it's an AI response - we WANT to inject other AIs' responses)
-                    console.log('[FuseConnect v7] ✅ Injecting message from external agent:', {
+                    console.log('[GeminiBridge v7] ✅ Injecting message from external agent:', {
                       from: msg.from,
                       isAIResponse: msg.messageType === 'ai-response' || msg.metadata?.isAIResponse,
                       contentPreview: msg.content.substring(0, 50),
@@ -5782,7 +6435,7 @@
                       msg.metadata?.requiresResponse;
                     if (isOrchestratorTask) {
                       console.log(
-                        '[FuseConnect v7] 🎯 Orchestrator task detected:',
+                        '[GeminiBridge v7] 🎯 Orchestrator task detected:',
                         msg.metadata?.taskId
                       );
                       // Register this as a pending request so we can correlate the AI response
@@ -5793,17 +6446,18 @@
                       });
                     }
                     this.injectMessage(msg.content).then((success) => {
-                      if (success) console.log('[FuseConnect v7] ✅ Injection successful');
-                      else console.warn('[FuseConnect v7] ⚠️ Injection failed');
+                      if (success) console.log('[GeminiBridge v7] ✅ Injection successful');
+                      else console.warn('[GeminiBridge v7] ⚠️ Injection failed');
                     });
                   }
                 }
               }
               safeSendResponse({ success: true });
               return true;
+            }
           }
         } catch (e) {
-          console.error('[FuseConnect] Content script message handler error:', e);
+          console.error('[GeminiBridge] Content script message handler error:', e);
           // Don't call sendResponse here for async cases as it might be too late,
           // but for sync cases it prevents the "closed prematurely" error.
           try {
@@ -5834,7 +6488,7 @@
     setupKeyboardShortcuts() {
       document.addEventListener('keydown', (e) => {
         // Ctrl/Cmd + Shift + F to toggle panel
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'F') {
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'G') {
           e.preventDefault();
           this.togglePanel();
         }
@@ -5847,13 +6501,43 @@
         }
       });
     }
+    /**
+     * Only conversational payloads should be auto-injected into page chat.
+     * Control-plane events (activity/wake/heartbeat) must stay out of model input.
+     */
+    shouldInjectRelayMessage(msg) {
+      const content = String(msg?.content || '').trim();
+      if (!content) return false;
+      const messageType = String(msg?.messageType || '').toLowerCase();
+      const eventType = String(msg?.metadata?.eventType || '').toLowerCase();
+      const lower = content.toLowerCase();
+      if (messageType === 'event') return false;
+      const blockedEventTypes = new Set([
+        'activity',
+        'wake_ping',
+        'wake_ack',
+        'monitor_idle',
+        'page_agent_registered',
+        'agent_registered',
+        'heartbeat',
+      ]);
+      if (blockedEventTypes.has(eventType)) return false;
+      if (
+        lower.startsWith('[activity]') ||
+        lower.startsWith('[wake_ping') ||
+        lower.startsWith('[wake_ack')
+      ) {
+        return false;
+      }
+      return true;
+    }
     async injectMessage(content, metadata) {
-      console.log('[FuseConnect v7] Injecting message:', content.substring(0, 50));
+      console.log('[GeminiBridge v7] Injecting message:', content.substring(0, 50));
       const success = await simpleChatBridge.sendMessage(content);
       if (success) {
-        console.log('[FuseConnect v7] Message sent successfully');
+        console.log('[GeminiBridge v7] Message sent successfully');
       } else {
-        console.error('[FuseConnect v7] Message send failed');
+        console.error('[GeminiBridge v7] Message send failed');
       }
       return success;
     }
@@ -5865,7 +6549,7 @@
         ...request,
         timestamp: Date.now(),
       });
-      console.log('[FuseConnect v7] 📝 Tracking pending request:', request.correlationId);
+      console.log('[GeminiBridge v7] 📝 Tracking pending request:', request.correlationId);
       // Clean up old requests (older than 5 minutes)
       const now = Date.now();
       for (const [id, req] of this.pendingRequests) {
@@ -5893,7 +6577,7 @@
       const detection = captchaHandler.detectCaptcha();
       if (detection.detected) {
         console.log(
-          `[FuseConnect v7] CAPTCHA detected: ${detection.type} (confidence: ${detection.confidence})`
+          `[GeminiBridge v7] CAPTCHA detected: ${detection.type} (confidence: ${detection.confidence})`
         );
         this.safeSendMessage({
           type: 'CAPTCHA_DETECTED',
@@ -5925,13 +6609,19 @@
       if (this.isProcessingQueue) return;
       this.isProcessingQueue = true;
       const process = async () => {
+        if (!this.panelVisible) {
+          // Per-tab safety: never auto-inject relay queue while panel is hidden.
+          this.injectionQueue = [];
+          this.isProcessingQueue = false;
+          return;
+        }
         if (this.injectionQueue.length === 0) {
           this.isProcessingQueue = false;
           return;
         }
         if (simpleChatBridge.isStreaming()) {
           // Still streaming, wait and retry
-          console.debug('[FuseConnect v7] Queue paused (AI streaming)...');
+          console.debug('[GeminiBridge v7] Queue paused (AI streaming)...');
           setTimeout(process, 1000);
           return;
         }
@@ -5939,7 +6629,7 @@
         const item = this.injectionQueue.shift();
         if (item) {
           console.log(
-            '[FuseConnect v7] 🚀 Processing queued message:',
+            '[GeminiBridge v7] 🚀 Processing queued message:',
             item.content.substring(0, 30)
           );
           // If it's an orchestrator task, track it again (timestamp refresh)
@@ -5964,15 +6654,35 @@
       };
       process();
     }
+    /**
+     * Auto relay injection is opt-in per tab: only when that tab's panel is open.
+     * Allows explicit override for system workflows by setting metadata.forceInject=true.
+     */
+    canAutoInjectRelayMessage(msg) {
+      if (msg?.metadata?.forceInject === true) return true;
+      const channelId = msg?.channel || msg?.metadata?.channel || this.currentChannel;
+      if (channelId && this.isChannelPaused(String(channelId))) return false;
+      return this.panelVisible;
+    }
+    isChannelPaused(channelId) {
+      if (!channelId) return false;
+      if (this.pausedChannels.has(channelId)) return true;
+      const normalized = channelId.trim().toLowerCase();
+      if (!normalized) return false;
+      for (const pausedId of this.pausedChannels) {
+        if (String(pausedId).trim().toLowerCase() === normalized) return true;
+      }
+      return false;
+    }
   }
   // Initialize with guard to prevent multiple instances
   if (shouldSkipForPage()) {
-    console.log('[FuseConnect v7] Skipping content script on auth/challenge/IDE page');
-  } else if (!window.__FUSE_CONNECT_INITIALIZED__) {
-    window.__FUSE_CONNECT_INITIALIZED__ = true;
-    new FuseConnectContentScript();
+    console.log('[GeminiBridge v7] Skipping content script on auth/challenge/IDE page');
+  } else if (!window.__GEMINI_BRIDGE_INITIALIZED__) {
+    window.__GEMINI_BRIDGE_INITIALIZED__ = true;
+    new GeminiBridgeContentScript();
   } else {
-    console.log('[FuseConnect v7] Content script already initialized, skipping duplicate');
+    console.log('[GeminiBridge v7] Content script already initialized, skipping duplicate');
   }
 
   /******/

@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/claude-skills",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Integration layer for Anthropic's Claude Skills into The New Fuse",
   "main": "dist/index.js",
@@ -39,7 +41,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "dev": "tsc --watch",
     "clean": "rm -rf dist coverage *.tsbuildinfo tsconfig.tsbuildinfo",
     "type-check": "tsc --noEmit",
@@ -84,7 +86,9 @@
   "license": "MIT",
   "author": {
     "name": "The New Fuse Team",
-  "files": ["dist"],
+    "files": [
+      "dist"
+    ],
     "url": "https://github.com/the-new-fuse"
   },
   "engines": {

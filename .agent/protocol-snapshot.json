@@ -1,6 +1,7 @@
 {
   "protocol": "TNF / OpenClaw Unified Agent Mesh",
-  "version": "2026.03.18",
+  "version": "2026.04.17",
+  "rotation_timestamp": "2026-04-17T17:34:19.000Z",
   "identity_standards": {
     "id_format": "agent_${Name}_${Timestamp}",
     "registry_key": "tnf:agent-registry",

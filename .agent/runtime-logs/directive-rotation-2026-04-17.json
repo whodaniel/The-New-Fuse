@@ -1,0 +1,45 @@
+{
+  "rotation_id": "directive-rotation-2026-04-17T17:34:19",
+  "timestamp": "2026-04-17T17:34:19.000Z",
+  "status": "completed",
+  "actions": [
+    {
+      "action": "validate_handoff_matrix",
+      "status": "success",
+      "details": "handoff-matrix.yaml validated and refreshed"
+    },
+    {
+      "action": "refresh_active_directives",
+      "status": "success",
+      "details": "protocol-snapshot.json version updated to 2026.04.17"
+    },
+    {
+      "action": "prune_stale_entries",
+      "status": "success",
+      "details": "3 stale PID files identified (scout, tester, worker), heartbeat.json reset"
+    },
+    {
+      "action": "inject_protocols",
+      "status": "success",
+      "details": "runtime-state.json refreshed with rotation timestamp"
+    }
+  ],
+  "validations": {
+    "handoff_matrix": "valid",
+    "runtime_state": "valid",
+    "protocol_snapshot": "valid",
+    "agent_registry": "valid - 202 agents registered"
+  },
+  "pruned": {
+    "stale_pids": 3,
+    "stale_logs": 0,
+    "stale_jules_logs": 0
+  },
+  "protocols_injected": [
+    "heartbeat-protocol",
+    "relay-protocol",
+    "task-system",
+    "agent-onboarding"
+  ],
+  "failures": []
+}

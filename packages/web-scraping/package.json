@@ -1,12 +1,14 @@
 {
   "name": "@the-new-fuse/web-scraping",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Web scraping and proxy tools for AI agents",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "dev": "tsc --watch",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",

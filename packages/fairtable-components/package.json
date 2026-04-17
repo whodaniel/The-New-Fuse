@@ -1,12 +1,14 @@
 {
   "name": "@the-new-fuse/fairtable-components",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "React components for Fairtable functionality",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "dev": "tsc --watch",
     "clean": "rm -rf dist .tsbuildinfo tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",

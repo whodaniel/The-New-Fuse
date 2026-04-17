@@ -1,5 +1,5 @@
-import { EventEmitter } from 'events';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import { EventEmitter } from 'events';
 
 /**
  * Shared cache for agent collaboration
@@ -8,7 +8,7 @@ export class SharedCache extends EventEmitter {
   private redisService: UnifiedRedisService;
   private readonly prefix: string;
 
-  constructor(redisUrl: string = 'redis://localhost:6379', prefix: string = 'cache') {
+  constructor(redisService: UnifiedRedisService, prefix: string = 'cache') {
     super();
     this.redisService = redisService;
     this.prefix = prefix;
@@ -312,7 +312,7 @@ export class SharedCache extends EventEmitter {
     const keys = await this.redisService.keys(pattern);
     // Info('memory') is not yet in UnifiedRedisService, falling back to a dummy or extending it.
     // For now, let's keep it simple or skip the memory info if not critical.
-    
+
     return {
       keyCount: keys.length,
       memoryUsed: 'unknown (managed)',

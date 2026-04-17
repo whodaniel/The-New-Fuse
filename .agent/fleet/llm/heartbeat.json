@@ -1,9 +1,6 @@
 {
   "started": "",
-  "status": "running",
-  "agents": {
-    "scout": 9261,
-    "tester": 9263,
-    "worker": 9265
-  }
+  "status": "stopped",
+  "last_rotation": "2026-04-17T17:34:19.000Z",
+  "agents": {}
 }

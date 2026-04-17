@@ -859,14 +859,14 @@ class MasterClock {
         if (!this.redis && !this.upstash)
             return;
         try {
-            await this.redis.lPush(CONFIG.REDIS_KEYS.LOGS, JSON.stringify({
+            await this.redis.lpush(CONFIG.REDIS_KEYS.LOGS, JSON.stringify({
                 timestamp: new Date().toISOString(),
                 sessionId: this.sessionId,
                 eventType,
                 content,
                 metadata: auditedMetadata,
             }));
-            await this.redis.lTrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
+            await this.redis.ltrim(CONFIG.REDIS_KEYS.LOGS, 0, 999);
         }
         catch {
             // non-fatal
@@ -1861,13 +1861,13 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         });
         try {
             await this.redis.publish(CONFIG.REDIS_KEYS.INGRESS, JSON.stringify(broadcastEnvelope));
-            await this.redis.lPush(CONFIG.REDIS_KEYS.SELF_PROMPTS, JSON.stringify({
+            await this.redis.lpush(CONFIG.REDIS_KEYS.SELF_PROMPTS, JSON.stringify({
                 sessionId: this.sessionId,
                 ...params,
                 cumulativeId,
                 issuedAt: now,
             }));
-            await this.redis.lTrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
+            await this.redis.ltrim(CONFIG.REDIS_KEYS.SELF_PROMPTS, 0, 499);
         }
         catch (error) {
             log('warn', 'SELF-PROMPT', `Failed to publish self-prompt: ${error.message}`);

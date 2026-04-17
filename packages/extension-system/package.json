@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/extension-system",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Unified Extension System for The New Fuse Framework - Consolidates modules, plugins, and extensions",
   "main": "dist/index.js",
@@ -39,7 +41,7 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "build:watch": "tsc --watch",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "dev": "tsc --watch",

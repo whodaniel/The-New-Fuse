@@ -9,7 +9,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "build:foundation": "tsc",
     "dev": "tsc --watch",
     "test": "echo \"No tests for this package\"",

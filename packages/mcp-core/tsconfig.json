@@ -21,8 +21,7 @@
       "@the-new-fuse/types": ["../types/src"],
       "@the-new-fuse/relay-core": ["../relay-core/src"]
     },
-    "isolatedModules": true,
-    "downlevelIteration": true
+    "isolatedModules": true
   },
   "include": ["src/**/*"],
   "exclude": [

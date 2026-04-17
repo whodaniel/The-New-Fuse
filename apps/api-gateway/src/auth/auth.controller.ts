@@ -1,4 +1,13 @@
-import { BadRequestException, Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  UseGuards,
+  Version,
+} from '@nestjs/common';
 // @ts-ignore
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';

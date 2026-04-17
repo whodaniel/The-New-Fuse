@@ -1,12 +1,14 @@
 {
   "name": "@the-new-fuse/sync-core",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "0.1.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "private": true,
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "lint": "eslint src",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "start": "node dist/server.js",

@@ -1,12 +1,14 @@
 {
   "name": "@the-new-fuse/deployment-core",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Core deployment and CI/CD pipeline functionality",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "build:watch": "tsc --watch",
     "test": "echo \"Tests temporarily disabled for this package\"",
     "test:watch": "jest --watch",

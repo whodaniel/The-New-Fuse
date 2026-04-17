@@ -163,5 +163,6 @@
   "scm.defaultViewMode": "tree",
 
   // Python
+  "python.envFile": "${workspaceFolder}/.env",
   "python.terminal.useEnvFile": true
 }

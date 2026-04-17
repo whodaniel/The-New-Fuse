@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/workflow-engine",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Unified Workflow Engine for The New Fuse Framework - Consolidates all workflow execution capabilities",
   "main": "dist/index.js",
@@ -44,7 +46,7 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "build:watch": "tsc --watch",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "dev": "tsc --watch",

@@ -8,7 +8,7 @@
   "scripts": {
     "generate-icons": "node generate-icons.cjs",
     "generate-notification-icons": "node scripts/generate-notification-icons.cjs",
-    "build": "webpack --config webpack.config.cjs --mode production",
+    "build": "pnpm run build:v6",
     "build:v5": "webpack --config webpack.v5.config.cjs --mode production",
     "build:v6": "webpack --config webpack.v6.config.cjs --mode production",
     "build:v7": "webpack --config webpack.v7.config.cjs --mode production",

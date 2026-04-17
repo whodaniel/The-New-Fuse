@@ -5,7 +5,7 @@
  * Handles real-time communication with agents and extensions.
  */
 import { EventEmitter } from 'events';
-import WebSocket from 'ws';
+import WebSocket, { WebSocketServer } from 'ws';
 export class WebSocketTransport extends EventEmitter {
     constructor(config) {
         super();
@@ -22,7 +22,7 @@ export class WebSocketTransport extends EventEmitter {
             return true;
         }
         try {
-            this.wss = new Server({ port: this.config.port });
+            this.wss = new WebSocketServer({ port: this.config.port });
             this.logger.info(`WebSocket server started on port ${this.config.port}`);
             this.wss.on('connection', this.handleConnection.bind(this));
             this.startHeartbeat();

@@ -1,5 +1,5 @@
-import { EventEmitter } from 'events';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import { EventEmitter } from 'events';
 
 /**
  * Distributed lock implementation using Redis
@@ -8,7 +8,7 @@ export class DistributedLock extends EventEmitter {
   private redisService: UnifiedRedisService;
   private locks: Map<string, { token: string; expiresAt: number }> = new Map();
 
-  constructor(redisUrl: string = 'redis://localhost:6379') {
+  constructor(redisService: UnifiedRedisService) {
     super();
     this.redisService = redisService;
   }

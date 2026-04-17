@@ -1,12 +1,14 @@
 {
   "name": "@the-new-fuse/agent-coordination",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Redis-based agent-to-agent communication and coordination system",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "build:watch": "tsc --watch",
     "dev": "tsc --watch",
     "test": "echo \"Tests temporarily disabled for this package\"",
