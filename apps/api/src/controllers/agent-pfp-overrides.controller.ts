@@ -5,11 +5,12 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Query,
   ServiceUnavailableException,
-  UseGuards,
 } from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
@@ -18,14 +19,9 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore
-import { DatabaseService } from '@the-new-fuse/database';
+import { DatabaseService, User } from '@the-new-fuse/database';
 import { CurrentUser } from '../decorators/current-user.decorator';
-import {
-  JwtAuth,
-  RateLimitTier,
-  SecureAuthGuard,
-  SetRateLimitTier,
-} from '../guards/secure-auth.guard';
+import { JwtAuth, RateLimitTier, SetRateLimitTier } from '../guards/secure-auth.guard';
 import {
   AgentPfpOverrideRecord,
   AgentPfpOverridesService,
@@ -59,7 +55,6 @@ interface GenerateImageBody {
 
 @ApiTags('agent-pfp-overrides')
 @Controller('agent-pfp-overrides')
-@UseGuards(SecureAuthGuard)
 @JwtAuth()
 @SetRateLimitTier(RateLimitTier.API)
 export class AgentPfpOverridesController {
@@ -71,118 +66,202 @@ export class AgentPfpOverridesController {
   @Get('access')
   @ApiOperation({ summary: 'Returns whether current user can save cloud PFP overrides' })
   @ApiResponse({ status: 200, description: 'Cloud access status' })
-  async access(@CurrentUser() user: AuthUser) {
-    return this.overridesService.getCloudAccess(user.id);
+  async access(@CurrentUser() user: User) {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
+    try {
+      return await this.overridesService.getCloudAccess(user.id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to check cloud access',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   @Get()
   @ApiOperation({ summary: 'List cloud PFP overrides for current user namespace' })
   @ApiResponse({ status: 200, description: 'Override map' })
-  async list(@CurrentUser() user: AuthUser, @Query('namespace') namespace?: string) {
-    const normalizedNamespace = this.normalizeNamespace(namespace);
-    const overrides = await this.overridesService.listOverrides(user.id, normalizedNamespace);
-    return { namespace: normalizedNamespace, overrides };
+  async list(@CurrentUser() user: User, @Query('namespace') namespace?: string) {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
+    try {
+      const normalizedNamespace = this.normalizeNamespace(namespace);
+      const overrides = await this.overridesService.listOverrides(user.id, normalizedNamespace);
+      return { namespace: normalizedNamespace, overrides };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to list overrides',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   @Post()
   @ApiOperation({ summary: 'Upsert a cloud PFP override for current user (paid members)' })
   @ApiResponse({ status: 200, description: 'Override persisted' })
-  async upsert(@CurrentUser() user: AuthUser, @Body() body: UpsertOverrideBody) {
-    if (!body?.agentId || !body?.override?.imageUrl) {
-      throw new BadRequestException('agentId and override.imageUrl are required');
+  async upsert(@CurrentUser() user: User, @Body() body: UpsertOverrideBody) {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
     }
 
-    const normalizedNamespace = this.normalizeNamespace(body.namespace);
-    await this.overridesService.upsertOverride(
-      user.id,
-      normalizedNamespace,
-      body.agentId,
-      body.override,
-      { requirePaid: true }
-    );
+    try {
+      if (!body?.agentId || !body?.override?.imageUrl) {
+        throw new BadRequestException('agentId and override.imageUrl are required');
+      }
 
-    return { success: true };
+      const normalizedNamespace = this.normalizeNamespace(body.namespace);
+      await this.overridesService.upsertOverride(
+        user.id,
+        normalizedNamespace,
+        body.agentId,
+        body.override,
+        { requirePaid: true }
+      );
+
+      return { success: true };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to upsert override',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   @Post('batch')
   @ApiOperation({ summary: 'Batch upsert cloud PFP overrides for current user (paid members)' })
   @ApiResponse({ status: 200, description: 'Batch persisted' })
-  async upsertBatch(@CurrentUser() user: AuthUser, @Body() body: BatchUpsertOverrideBody) {
-    const updates = Array.isArray(body?.updates) ? body.updates : [];
-    if (updates.length === 0) {
-      throw new BadRequestException('updates is required');
+  async upsertBatch(@CurrentUser() user: User, @Body() body: BatchUpsertOverrideBody) {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
     }
 
-    const normalizedNamespace = this.normalizeNamespace(body.namespace);
-
-    for (const update of updates) {
-      if (!update?.agentId || !update?.override?.imageUrl) {
-        continue;
+    try {
+      const updates = Array.isArray(body?.updates) ? body.updates : [];
+      if (updates.length === 0) {
+        throw new BadRequestException('updates is required');
       }
-      await this.overridesService.upsertOverride(
-        user.id,
-        normalizedNamespace,
-        update.agentId,
-        update.override,
-        { requirePaid: true }
+
+      const normalizedNamespace = this.normalizeNamespace(body.namespace);
+
+      for (const update of updates) {
+        if (!update?.agentId || !update?.override?.imageUrl) {
+          continue;
+        }
+        await this.overridesService.upsertOverride(
+          user.id,
+          normalizedNamespace,
+          update.agentId,
+          update.override,
+          { requirePaid: true }
+        );
+      }
+
+      return { success: true, updated: updates.length };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to upsert batch overrides',
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
-
-    return { success: true, updated: updates.length };
   }
 
   @Delete(':agentId')
   @ApiOperation({ summary: 'Delete cloud PFP override for current user (paid members)' })
   @ApiResponse({ status: 200, description: 'Override deleted' })
   async remove(
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: User,
     @Param('agentId') agentId: string,
     @Query('namespace') namespace?: string
   ) {
-    if (!agentId?.trim()) {
-      throw new BadRequestException('agentId is required');
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
     }
 
-    const normalizedNamespace = this.normalizeNamespace(namespace);
-    await this.overridesService.removeOverride(user.id, normalizedNamespace, agentId, {
-      requirePaid: true,
-    });
+    try {
+      if (!agentId?.trim()) {
+        throw new BadRequestException('agentId is required');
+      }
 
-    return { success: true };
+      const normalizedNamespace = this.normalizeNamespace(namespace);
+      await this.overridesService.removeOverride(user.id, normalizedNamespace, agentId, {
+        requirePaid: true,
+      });
+
+      return { success: true };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to remove override',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   @Post('generate')
   @ApiOperation({ summary: 'Generate PFP image through backend provider bridge' })
   @ApiResponse({ status: 200, description: 'Generated image data URL' })
-  async generate(@CurrentUser() user: AuthUser, @Body() body: GenerateImageBody) {
-    const providerId = String(body?.providerId || '') as GenerateImageBody['providerId'];
-    const prompt = String(body?.prompt || '').trim();
-    const modelId = String(body?.modelId || '').trim();
-    const customEndpoint = String(body?.customEndpoint || '').trim();
-
-    if (!prompt) {
-      throw new BadRequestException('prompt is required');
+  async generate(@CurrentUser() user: User, @Body() body: GenerateImageBody) {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
     }
 
-    if (!providerId) {
-      throw new BadRequestException('providerId is required');
+    try {
+      const providerId = String(body?.providerId || '') as GenerateImageBody['providerId'];
+      const prompt = String(body?.prompt || '').trim();
+      const modelId = String(body?.modelId || '').trim();
+      const customEndpoint = String(body?.customEndpoint || '').trim();
+
+      if (!prompt) {
+        throw new BadRequestException('prompt is required');
+      }
+
+      if (!providerId) {
+        throw new BadRequestException('providerId is required');
+      }
+
+      const image = await this.generateImage({
+        userId: user.id,
+        providerId,
+        modelId,
+        prompt,
+        apiKey: body?.apiKey,
+        customEndpoint,
+      });
+
+      return {
+        providerId,
+        modelId: modelId || this.defaultModel(providerId),
+        mimeType: image.mimeType,
+        imageDataUrl: `data:${image.mimeType};base64,${image.buffer.toString('base64')}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to generate image',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
-
-    const image = await this.generateImage({
-      userId: user.id,
-      providerId,
-      modelId,
-      prompt,
-      apiKey: body?.apiKey,
-      customEndpoint,
-    });
-
-    return {
-      providerId,
-      modelId: modelId || this.defaultModel(providerId),
-      mimeType: image.mimeType,
-      imageDataUrl: `data:${image.mimeType};base64,${image.buffer.toString('base64')}`,
-    };
   }
 
   private async generateImage(input: {

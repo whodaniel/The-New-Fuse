@@ -1,7 +1,6 @@
 import { BadRequestException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { GooseCliBridgeService } from '@the-new-fuse/relay-core/dist/services/GooseCliBridgeService.js';
-import { LogLevel, Logger as RelayLogger } from '@the-new-fuse/relay-core/dist/utils/Logger.js';
+import { GooseCliBridgeService, LogLevel, Logger as RelayLogger } from '@the-new-fuse/relay-core';
 import * as path from 'path';
 
 import { hasAuthorizationLevel } from '../../../auth/auth-policy';

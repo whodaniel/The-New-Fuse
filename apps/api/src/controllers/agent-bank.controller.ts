@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpException, HttpStatus, Param, Query } from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore
@@ -8,7 +8,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 // @ts-ignore
 import { User } from '@the-new-fuse/database';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { JwtAuth, SecureAuthGuard } from '../guards/secure-auth.guard';
+import { JwtAuth } from '../guards/secure-auth.guard';
 import { AgentBankService } from '../services/agent-bank.service';
 
 /**
@@ -20,7 +20,6 @@ import { AgentBankService } from '../services/agent-bank.service';
  */
 @ApiTags('Agents')
 @Controller('agents/bank')
-@UseGuards(SecureAuthGuard)
 @JwtAuth()
 export class AgentBankController {
   constructor(private readonly agentBankService: AgentBankService) {}
@@ -39,7 +38,21 @@ export class AgentBankController {
     @CurrentUser() user: User,
     @Query('bank') bank: 'tnf' | 'claude' | 'all' = 'all'
   ) {
-    return this.agentBankService.listTemplates(bank, user.id, user.role);
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
+    try {
+      return await this.agentBankService.listTemplates(bank, user.id, user.role);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to list templates',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   /**
@@ -56,12 +69,26 @@ export class AgentBankController {
     @Param('bank') bank: 'tnf' | 'claude',
     @Param('filename') filename: string
   ) {
-    const content = await this.agentBankService.getTemplateContent(
-      bank,
-      filename,
-      user.id,
-      user.role
-    );
-    return { content };
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
+    try {
+      const content = await this.agentBankService.getTemplateContent(
+        bank,
+        filename,
+        user.id,
+        user.role
+      );
+      return { content };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to get template',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 }

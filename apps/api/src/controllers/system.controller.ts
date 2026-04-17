@@ -44,7 +44,6 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -572,8 +571,18 @@ export class SystemController {
       this.logger.error('Health check failed:', error);
       return {
         status: 'unhealthy',
-        error: 'Health check failed',
-      });
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        version: process.version,
+        environment: process.env.NODE_ENV || 'development',
+        services: {
+          api: 'error',
+          database: 'unknown',
+          filesystem: 'unknown',
+          memory: 'unknown',
+        },
+        error: (error as Error).message || 'Health check failed',
+      };
     }
   }
 
@@ -1031,7 +1040,7 @@ export class SystemController {
       const response = {
         message: 'System restart initiated',
         timestamp: new Date().toISOString(),
-      });
+      };
 
       // Graceful shutdown and restart
       setTimeout(() => {

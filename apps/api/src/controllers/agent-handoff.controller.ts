@@ -4,30 +4,31 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
   Query,
-  Req,
 } from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import type { Request } from 'express';
+import { User } from '@the-new-fuse/database';
 
 import { hasPermission, isPrivilegedUser } from '../auth/auth-policy';
+
+type AuthUser = User & {
+  tenantId?: string;
+  agencyId?: string;
+  roles?: string[];
+  permissions?: string[];
+};
+
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard';
 import { AgentHandoffService } from '../services/agent-handoff.service';
-
-type AuthenticatedRequest = Request & {
-  user?: {
-    id?: string;
-    tenantId?: string;
-    roles?: string[];
-    permissions?: string[];
-  };
-};
 
 @ApiTags('agent-handoffs')
 @Controller('handoffs')
@@ -38,11 +39,25 @@ export class AgentHandoffController {
   @Post('publish')
   @ApiOperation({ summary: 'Publish a targeted handoff packet to one or more agents' })
   @ApiResponse({ status: 201, description: 'Handoff packet published' })
-  async publish(@Body() input: unknown, @Req() req: AuthenticatedRequest) {
-    this.assertCanPublish(req);
-    const bodyTenant = this.readTenantFromBody(input);
-    const tenantId = this.resolveTenantId(req, bodyTenant);
-    return this.handoffService.publishForTenant(input, tenantId);
+  async publish(@Body() input: unknown, @CurrentUser() user: AuthUser) {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
+    try {
+      this.assertCanPublish(user);
+      const bodyTenant = this.readTenantFromBody(input);
+      const tenantId = this.resolveTenantId(user, bodyTenant);
+      return await this.handoffService.publishForTenant(input, tenantId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to publish handoff',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   @Get('agent/:agentId')
@@ -50,33 +65,61 @@ export class AgentHandoffController {
   @ApiResponse({ status: 200, description: 'Agent handoff inbox listed' })
   async listAgentInbox(
     @Param('agentId') agentId: string,
-    @Req() req: AuthenticatedRequest,
+    @CurrentUser() user: AuthUser,
     @Query('tenantId') tenantIdParam?: string,
     @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
     @Query('includeAcknowledged') includeAcknowledged?: string
   ) {
-    this.assertCanReadAgentInbox(req, agentId);
-    const tenantId = this.resolveTenantId(req, tenantIdParam);
-    const rows = await this.handoffService.listForAgent(agentId, tenantId, {
-      limit: limit ?? 20,
-      includeAcknowledged: includeAcknowledged === 'true',
-    });
-    return {
-      agentId,
-      tenantId,
-      count: rows.length,
-      items: rows,
-    };
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
+    try {
+      this.assertCanReadAgentInbox(user, agentId);
+      const tenantId = this.resolveTenantId(user, tenantIdParam);
+      const rows = await this.handoffService.listForAgent(agentId, tenantId, {
+        limit: limit ?? 20,
+        includeAcknowledged: includeAcknowledged === 'true',
+      });
+      return {
+        agentId,
+        tenantId,
+        count: rows.length,
+        items: rows,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to list agent inbox',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   @Post('ack')
   @ApiOperation({ summary: 'Acknowledge a handoff packet from a target agent' })
   @ApiResponse({ status: 200, description: 'Handoff packet acknowledged' })
-  async acknowledge(@Body() input: unknown, @Req() req: AuthenticatedRequest) {
-    this.assertCanAcknowledge(req, input);
-    const bodyTenant = this.readTenantFromBody(input);
-    const tenantId = this.resolveTenantId(req, bodyTenant);
-    return this.handoffService.acknowledgeForTenant(input, tenantId);
+  async acknowledge(@Body() input: unknown, @CurrentUser() user: AuthUser) {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
+    try {
+      this.assertCanAcknowledge(user, input);
+      const bodyTenant = this.readTenantFromBody(input);
+      const tenantId = this.resolveTenantId(user, bodyTenant);
+      return await this.handoffService.acknowledgeForTenant(input, tenantId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to acknowledge handoff',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   @Get('session/:sessionKey')
@@ -84,38 +127,66 @@ export class AgentHandoffController {
   @ApiResponse({ status: 200, description: 'Session handoff packets listed' })
   async listBySession(
     @Param('sessionKey') sessionKey: string,
-    @Req() req: AuthenticatedRequest,
+    @CurrentUser() user: AuthUser,
     @Query('tenantId') tenantIdParam?: string,
     @Query('limit', new ParseIntPipe({ optional: true })) limit?: number
   ) {
-    this.assertCanReadSession(req);
-    const tenantId = this.resolveTenantId(req, tenantIdParam);
-    const packets = await this.handoffService.listBySession(sessionKey, tenantId, limit ?? 50);
-    return {
-      sessionKey,
-      tenantId,
-      count: packets.length,
-      packets,
-    };
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
+    try {
+      this.assertCanReadSession(user);
+      const tenantId = this.resolveTenantId(user, tenantIdParam);
+      const packets = await this.handoffService.listBySession(sessionKey, tenantId, limit ?? 50);
+      return {
+        sessionKey,
+        tenantId,
+        count: packets.length,
+        packets,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to list by session',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
-  @Get(':packetId')
-  @ApiOperation({ summary: 'Get a single handoff packet by ID' })
-  @ApiResponse({ status: 200, description: 'Handoff packet found' })
+  @Get('packets/:id')
+  @ApiOperation({ summary: 'Get a specific handoff packet' })
+  @ApiResponse({ status: 200, description: 'Handoff packet retrieved' })
   async getPacket(
-    @Param('packetId') packetId: string,
-    @Req() req: AuthenticatedRequest,
-    @Query('tenantId') tenantIdParam?: string
+    @Param('id') packetId: string,
+    @Query('tenantId') tenantIdParam: string,
+    @CurrentUser() user: AuthUser
   ) {
-    this.assertCanReadSession(req);
-    const tenantId = this.resolveTenantId(req, tenantIdParam);
-    return this.handoffService.getPacket(packetId, tenantId);
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
+    try {
+      this.assertCanReadSession(user);
+      const tenantId = this.resolveTenantId(user, tenantIdParam);
+      return await this.handoffService.getPacket(packetId, tenantId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to get packet',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
-  private resolveTenantId(req: AuthenticatedRequest, requestedTenantId?: string): string {
+  private resolveTenantId(user: AuthUser, requestedTenantId?: string): string {
     const userTenantId =
-      typeof req.user?.tenantId === 'string' && req.user.tenantId.trim().length > 0
-        ? req.user.tenantId.trim()
+      typeof user?.tenantId === 'string' && user.tenantId.trim().length > 0
+        ? user.tenantId.trim()
         : undefined;
     const paramTenantId =
       typeof requestedTenantId === 'string' && requestedTenantId.trim().length > 0
@@ -155,16 +226,16 @@ export class AgentHandoffController {
     return typeof agentId === 'string' ? agentId : undefined;
   }
 
-  private isPrivileged(req: AuthenticatedRequest): boolean {
-    return isPrivilegedUser(req.user || {});
+  private isPrivileged(user: AuthUser): boolean {
+    return isPrivilegedUser(user || {});
   }
 
-  private hasPermission(req: AuthenticatedRequest, permission: string): boolean {
-    return hasPermission(req.user || {}, permission);
+  private hasPermission(user: AuthUser, permission: string): boolean {
+    return hasPermission(user || {}, permission);
   }
 
-  private assertCanPublish(req: AuthenticatedRequest): void {
-    if (this.isPrivileged(req) || this.hasPermission(req, 'handoff:publish')) {
+  private assertCanPublish(user: AuthUser): void {
+    if (this.isPrivileged(user) || this.hasPermission(user, 'handoff:publish')) {
       return;
     }
     throw new ForbiddenException(
@@ -172,29 +243,29 @@ export class AgentHandoffController {
     );
   }
 
-  private assertCanReadAgentInbox(req: AuthenticatedRequest, agentId: string): void {
-    if (this.isPrivileged(req) || this.hasPermission(req, 'handoff:read:any')) {
+  private assertCanReadAgentInbox(user: AuthUser, agentId: string): void {
+    if (this.isPrivileged(user) || this.hasPermission(user, 'handoff:read:any')) {
       return;
     }
-    if (req.user?.id && req.user.id === agentId) {
+    if (user?.id && user.id === agentId) {
       return;
     }
     throw new ForbiddenException('Reading another agent inbox requires elevated privileges');
   }
 
-  private assertCanAcknowledge(req: AuthenticatedRequest, input: unknown): void {
-    if (this.isPrivileged(req) || this.hasPermission(req, 'handoff:ack:any')) {
+  private assertCanAcknowledge(user: AuthUser, input: unknown): void {
+    if (this.isPrivileged(user) || this.hasPermission(user, 'handoff:ack:any')) {
       return;
     }
     const requestedAgentId = this.readAgentIdFromBody(input);
-    if (requestedAgentId && req.user?.id && requestedAgentId === req.user.id) {
+    if (requestedAgentId && user?.id && requestedAgentId === user.id) {
       return;
     }
     throw new ForbiddenException('Acknowledging for another agent requires elevated privileges');
   }
 
-  private assertCanReadSession(req: AuthenticatedRequest): void {
-    if (this.isPrivileged(req) || this.hasPermission(req, 'handoff:read:any')) {
+  private assertCanReadSession(user: AuthUser): void {
+    if (this.isPrivileged(user) || this.hasPermission(user, 'handoff:read:any')) {
       return;
     }
     throw new ForbiddenException('Session-level handoff visibility requires elevated privileges');

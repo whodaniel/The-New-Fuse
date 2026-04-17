@@ -9,7 +9,6 @@ import {
   Post,
   Put,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
@@ -26,12 +25,7 @@ import {
 import { AgentProfileDto } from '../agents/dto/agent.dto';
 import { isPrivilegedUser } from '../auth/auth-policy';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import {
-  JwtAuth,
-  RateLimitTier,
-  SecureAuthGuard,
-  SetRateLimitTier,
-} from '../guards/secure-auth.guard';
+import { JwtAuth, RateLimitTier, SetRateLimitTier } from '../guards/secure-auth.guard';
 import { AgentService } from '../services/agent.service';
 
 /**
@@ -82,7 +76,6 @@ type AuthUser = User & {
 
 @ApiTags('Agents')
 @Controller('agents')
-@UseGuards(SecureAuthGuard)
 @JwtAuth()
 @SetRateLimitTier(RateLimitTier.API)
 export class AgentController {
@@ -115,6 +108,10 @@ export class AgentController {
       deployedAt: string;
     };
   }> {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
     try {
       return await this.agentService.deployAgent(id, user.id, payload?.target || 'cloud');
     } catch (error) {
@@ -123,7 +120,7 @@ export class AgentController {
       }
       throw new HttpException(
         (error as Error).message || 'Failed to deploy agent',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -196,6 +193,10 @@ export class AgentController {
     @Body() createAgentDto: CreateAgentDto,
     @CurrentUser() user: User
   ): Promise<AgentResponseDto> {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
     try {
       const metadata = this.normalizeMetadata(createAgentDto.metadata);
       await this.assertMetadataScope(metadata, user);
@@ -206,9 +207,12 @@ export class AgentController {
       };
       return await this.agentService.createAgent(agentData, user.id);
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException(
         (error as Error).message || 'Failed to create agent',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -272,6 +276,10 @@ export class AgentController {
     @Query('page') page?: string,
     @Query('limit') limit?: string
   ): Promise<AgentResponseDto[]> {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
     try {
       const pageNum = page ? parseInt(page) : 1;
       const limitNum = limit ? parseInt(limit) : 50;
@@ -290,6 +298,9 @@ export class AgentController {
       const result = await this.agentService.findAgentsByUserId(user.id, pageNum, limitNum);
       return result.data;
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException(
         (error as Error).message || 'Failed to fetch agents',
         HttpStatus.INTERNAL_SERVER_ERROR
@@ -340,9 +351,16 @@ export class AgentController {
   @ApiOperation({ summary: 'Get active agents' })
   @ApiResponse({ status: HttpStatus.OK, type: [AgentResponseDto] })
   async getActiveAgents(@CurrentUser() user: User): Promise<AgentResponseDto[]> {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
     try {
       return this.agentService.getActiveAgents(user.id);
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException(
         (error as Error).message || 'Failed to fetch active agents',
         HttpStatus.INTERNAL_SERVER_ERROR
@@ -384,9 +402,16 @@ export class AgentController {
   @ApiOperation({ summary: 'Get agent count by type' })
   @ApiResponse({ status: HttpStatus.OK })
   async getAgentTypeCounts(@CurrentUser() user: User): Promise<Record<string, number>> {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
     try {
       return this.agentService.getAgentTypeCounts(user.id);
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException(
         (error as Error).message || 'Failed to fetch agent type counts',
         HttpStatus.INTERNAL_SERVER_ERROR
@@ -455,6 +480,10 @@ export class AgentController {
     @Param('id') id: string,
     @CurrentUser() user: User
   ): Promise<AgentResponseDto> {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
     try {
       return await this.agentService.findAgentById(id, user.id);
     } catch (error) {
@@ -521,6 +550,10 @@ export class AgentController {
   @ApiOperation({ summary: 'Get agent statistics' })
   @ApiResponse({ status: HttpStatus.OK })
   async getAgentStats(@Param('id') id: string, @CurrentUser() user: User): Promise<any> {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
     try {
       return await this.agentService.getAgentStats(id, user.id);
     } catch (error) {
@@ -581,6 +614,10 @@ export class AgentController {
     @Body() updateAgentDto: UpdateAgentDto,
     @CurrentUser() user: User
   ): Promise<AgentResponseDto> {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
     try {
       const metadata = this.normalizeMetadata(updateAgentDto.metadata);
       await this.assertMetadataScope(metadata, user);
@@ -591,7 +628,7 @@ export class AgentController {
       }
       throw new HttpException(
         (error as Error).message || 'Failed to update agent',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -638,6 +675,10 @@ export class AgentController {
     @Param('id') id: string,
     @CurrentUser() user: User
   ): Promise<AgentResponseDto> {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
     try {
       return await this.agentService.activateAgent(id, user.id);
     } catch (error) {
@@ -646,7 +687,7 @@ export class AgentController {
       }
       throw new HttpException(
         (error as Error).message || 'Failed to activate agent',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -684,6 +725,10 @@ export class AgentController {
     @Param('id') id: string,
     @CurrentUser() user: User
   ): Promise<AgentResponseDto> {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
     try {
       return await this.agentService.deactivateAgent(id, user.id);
     } catch (error) {
@@ -692,7 +737,7 @@ export class AgentController {
       }
       throw new HttpException(
         (error as Error).message || 'Failed to deactivate agent',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -727,6 +772,10 @@ export class AgentController {
   @ApiOperation({ summary: 'Pause agent' })
   @ApiResponse({ status: HttpStatus.OK, type: AgentResponseDto })
   async pauseAgent(@Param('id') id: string, @CurrentUser() user: User): Promise<AgentResponseDto> {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
     try {
       return await this.agentService.pauseAgent(id, user.id);
     } catch (error) {
@@ -735,7 +784,7 @@ export class AgentController {
       }
       throw new HttpException(
         (error as Error).message || 'Failed to pause agent',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -773,6 +822,10 @@ export class AgentController {
     @Param('id') id: string,
     @CurrentUser() user: User
   ): Promise<AgentResponseDto> {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
     try {
       return await this.agentService.markAgentBusy(id, user.id);
     } catch (error) {
@@ -781,7 +834,7 @@ export class AgentController {
       }
       throw new HttpException(
         (error as Error).message || 'Failed to mark agent as busy',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -820,6 +873,10 @@ export class AgentController {
     @Param('id') id: string,
     @CurrentUser() user: User
   ): Promise<AgentResponseDto> {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
     try {
       return await this.agentService.markAgentError(id, user.id);
     } catch (error) {
@@ -828,7 +885,7 @@ export class AgentController {
       }
       throw new HttpException(
         (error as Error).message || 'Failed to mark agent as error',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -877,6 +934,10 @@ export class AgentController {
     @Body() profileDto: AgentProfileDto,
     @CurrentUser() user: User
   ): Promise<AgentResponseDto> {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
     try {
       return await this.agentService.updateAgentProfile(id, profileDto, user.id);
     } catch (error) {
@@ -885,7 +946,7 @@ export class AgentController {
       }
       throw new HttpException(
         (error as Error).message || 'Failed to update agent profile',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -921,6 +982,10 @@ export class AgentController {
   @ApiOperation({ summary: 'Delete agent' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   async deleteAgent(@Param('id') id: string, @CurrentUser() user: User): Promise<void> {
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
     try {
       await this.agentService.deleteAgent(id, user.id);
     } catch (error) {

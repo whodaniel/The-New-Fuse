@@ -22,11 +22,11 @@ export class ChatService {
     try {
       // Get chats directly using Drizzle Query API
       // Assuming 'chats' schema is available via client.query
-      return await this.db.client.query.chats.findMany({
-        where: (chats, { eq }) => eq(chats.userId, userId),
+      return await (this.db.client.query.chats as any).findMany({
+        where: (chats: any, { eq }: any) => eq(chats.userId, userId),
         with: {
           messages: {
-            orderBy: (messages, { asc }) => [asc(messages.timestamp)],
+            orderBy: (messages: any, { asc }: any) => [asc(messages.timestamp)],
             with: {
               agent: true,
               sender: true,
@@ -46,11 +46,11 @@ export class ChatService {
    */
   async findOne(id: string, userId: string) {
     try {
-      const chat = await this.db.client.query.chats.findFirst({
-        where: (chats, { eq, and }) => and(eq(chats.id, id), eq(chats.userId, userId)),
+      const chat = await (this.db.client.query.chats as any).findFirst({
+        where: (chats: any, { eq, and }: any) => and(eq(chats.id, id), eq(chats.userId, userId)),
         with: {
           messages: {
-            orderBy: (messages, { asc }) => [asc(messages.timestamp)],
+            orderBy: (messages: any, { asc }: any) => [asc(messages.timestamp)],
             with: {
               agent: true,
               sender: true,
@@ -73,8 +73,9 @@ export class ChatService {
   async create(userId: string, agentId: string, title?: string) {
     try {
       // Verify the agent belongs to the user
-      const agent = await this.db.client.query.agents.findFirst({
-        where: (agents, { eq, and }) => and(eq(agents.id, agentId), eq(agents.userId, userId)),
+      const agent = await (this.db.client.query.agents as any).findFirst({
+        where: (agents: any, { eq, and }: any) =>
+          and(eq(agents.id, agentId), eq(agents.userId, userId)),
       });
 
       if (!agent) {
@@ -130,8 +131,8 @@ export class ChatService {
       } as any);
 
       // Re-fetch with relations
-      const fullMessage = await this.db.client.query.messages.findFirst({
-        where: (m, { eq }) => eq(m.id, message.id),
+      const fullMessage = await (this.db.client.query.messages as any).findFirst({
+        where: (m: any, { eq }: any) => eq(m.id, message.id),
         with: {
           agent: true,
           sender: true,
@@ -153,8 +154,8 @@ export class ChatService {
       // Drizzle Query API with limit
       // Cursor pagination is trickier in generic Drizzle without explicit 'where' logic
       // But we can use limit.
-      const messages = await this.db.client.query.messages.findMany({
-        where: (msg, { eq, and, lt }) => {
+      const messages = await (this.db.client.query.messages as any).findMany({
+        where: (msg: any, { eq, and, lt }: any) => {
           const conditions = [eq(msg.chatId, chatId)];
           // If cursor provided, assuming cursor is an ID ?? Or timestamp based?
           // Drizzle cursor: { id: cursor }, skip: 1
@@ -165,7 +166,7 @@ export class ChatService {
           return and(...conditions);
         },
         limit: options?.limit || 50,
-        orderBy: (msg, { desc }) => [desc(msg.timestamp)],
+        orderBy: (msg: any, { desc }: any) => [desc(msg.timestamp)],
         with: {
           agent: true,
           sender: true,
@@ -185,8 +186,9 @@ export class ChatService {
   async generateAgentResponse(_prompt: string, agentId: string, userId: string) {
     try {
       // Get the agent details
-      const agent = await this.db.client.query.agents.findFirst({
-        where: (agents, { eq, and }) => and(eq(agents.id, agentId), eq(agents.userId, userId)),
+      const agent = await (this.db.client.query.agents as any).findFirst({
+        where: (agents: any, { eq, and }: any) =>
+          and(eq(agents.id, agentId), eq(agents.userId, userId)),
       });
 
       if (!agent) {

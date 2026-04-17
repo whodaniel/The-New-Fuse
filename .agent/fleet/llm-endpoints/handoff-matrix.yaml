@@ -1,0 +1,7 @@
+active_directives_count: 0
+handoff_sequence: 1
+last_handoff: "2026-04-16T15:01:05.563632"
+tiers:
+  - scout
+  - tester
+  - validation

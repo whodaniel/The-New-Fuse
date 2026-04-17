@@ -13,10 +13,8 @@ import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger';
 import { CleanupService } from './CleanupService';
 import { HeartbeatMonitoringService } from './HeartbeatMonitoringService';
-import { StallDetector } from './stall-detector';
 import { AgentHandoffTemplateService } from './shared/StubServices';
-
-
+import { StallDetector } from './stall-detector';
 
 export interface OrchestratorConfig {
   workspaceRoot: string;
@@ -119,9 +117,12 @@ export class OrchestratorIntegrationService extends EventEmitter {
       this.logger.info('Stall detection service started');
 
       // Start periodic pruning of completed/failed tasks
-      this.pruneInterval = setInterval(() => {
-        this.pruneTaskStates();
-      }, 30 * 60 * 1000); // Every 30 minutes
+      this.pruneInterval = setInterval(
+        () => {
+          this.pruneTaskStates();
+        },
+        30 * 60 * 1000
+      ); // Every 30 minutes
 
       // Initialize state preservation systems
       if (this.config.enableStatePreservation) {
@@ -135,7 +136,9 @@ export class OrchestratorIntegrationService extends EventEmitter {
 
       return true;
     } catch (error) {
-      this.logger.error(`Failed to initialize orchestrator: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to initialize orchestrator: ${error instanceof Error ? error.message : String(error)}`
+      );
       this.emit('orchestrator_error', error);
       return false;
     }
@@ -151,48 +154,49 @@ export class OrchestratorIntegrationService extends EventEmitter {
     if (this.config.enableHeartbeatMonitoring) {
       this.heartbeatService.stop();
     }
-// Stop stall detection
-this.stallDetector.stop();
+    // Stop stall detection
+    this.stallDetector.stop();
 
-if (this.pruneInterval) {
-  clearInterval(this.pruneInterval);
-  this.pruneInterval = undefined;
-}
+    if (this.pruneInterval) {
+      clearInterval(this.pruneInterval);
+      this.pruneInterval = undefined;
+    }
 
-// Final cleanup if needed
-if (this.config.enableCleanup) {
-  await this.performFinalCleanup();
-}
+    // Final cleanup if needed
+    if (this.config.enableCleanup) {
+      await this.performFinalCleanup();
+    }
 
-this.isInitialized = false;
-this.emit('orchestrator_shutdown');
-}
-
-/**
-* Prune completed and failed tasks from memory to prevent memory leaks
-* Keeps active tasks and recently completed tasks (last 1 hour)
-*/
-public pruneTaskStates(maxAgeMs: number = 60 * 60 * 1000): number {
-const now = Date.now();
-let prunedCount = 0;
-
-for (const [taskId, state] of this.taskStates.entries()) {
-  const isTerminal = state.status === 'completed' || state.status === 'failed';
-  const age = now - state.lastUpdate.getTime();
-
-  if (isTerminal && age > maxAgeMs) {
-    this.taskStates.delete(taskId);
-    prunedCount++;
-  }
-}
-
-if (prunedCount > 0) {
-  this.logger.info(`🧹 Memory Leak Prevention: Pruned ${prunedCount} terminal tasks from orchestrator state`);
-}
-
-return prunedCount;
-}
+    this.isInitialized = false;
+    this.emit('orchestrator_shutdown');
     this.logger.info('Orchestrator Integration Service shutdown complete');
+  }
+
+  /**
+   * Prune completed and failed tasks from memory to prevent memory leaks
+   * Keeps active tasks and recently completed tasks (last 1 hour)
+   */
+  public pruneTaskStates(maxAgeMs: number = 60 * 60 * 1000): number {
+    const now = Date.now();
+    let prunedCount = 0;
+
+    for (const [taskId, state] of this.taskStates.entries()) {
+      const isTerminal = state.status === 'completed' || state.status === 'failed';
+      const age = now - state.lastUpdate.getTime();
+
+      if (isTerminal && age > maxAgeMs) {
+        this.taskStates.delete(taskId);
+        prunedCount++;
+      }
+    }
+
+    if (prunedCount > 0) {
+      this.logger.info(
+        `🧹 Memory Leak Prevention: Pruned ${prunedCount} terminal tasks from orchestrator state`
+      );
+    }
+
+    return prunedCount;
   }
 
   /**
@@ -274,7 +278,7 @@ return prunedCount;
     this.emit('redis_state_preservation_ready', {
       host: this.config.redis.host,
       port: this.config.redis.port,
-      features: ['task_state', 'agent_context', 'handoff_history', 'workflow_state']
+      features: ['task_state', 'agent_context', 'handoff_history', 'workflow_state'],
     });
   }
 
@@ -286,7 +290,7 @@ return prunedCount;
 
     // Integration with existing todo systems
     this.emit('todo_management_ready', {
-      features: ['task_tracking', 'progress_monitoring', 'state_persistence']
+      features: ['task_tracking', 'progress_monitoring', 'state_persistence'],
     });
   }
 
@@ -298,7 +302,7 @@ return prunedCount;
 
     // RAG system for maintaining conversational context across handoffs
     this.emit('rag_integration_ready', {
-      features: ['context_embedding', 'semantic_search', 'handoff_context_retrieval']
+      features: ['context_embedding', 'semantic_search', 'handoff_context_retrieval'],
     });
   }
 
@@ -310,7 +314,7 @@ return prunedCount;
 
     // Graph database for agent relationship mapping and workflow dependencies
     this.emit('graph_integration_ready', {
-      features: ['agent_relationships', 'task_dependencies', 'workflow_graphs']
+      features: ['agent_relationships', 'task_dependencies', 'workflow_graphs'],
     });
   }
 
@@ -333,7 +337,11 @@ return prunedCount;
   /**
    * Record conversation activity
    */
-  public recordConversationActivity(channelId: string, agentId?: string, hasContent: boolean = true): void {
+  public recordConversationActivity(
+    channelId: string,
+    agentId?: string,
+    hasContent: boolean = true
+  ): void {
     if (this.isInitialized) {
       this.stallDetector.recordActivity(channelId, agentId, hasContent);
     }
@@ -367,7 +375,7 @@ return prunedCount;
       agentId: alert.agentId,
       taskId: alert.taskId,
       handoffPrompt,
-      stagnationType: alert.stagnationType
+      stagnationType: alert.stagnationType,
     });
   }
 
@@ -378,19 +386,16 @@ return prunedCount;
     this.logger.info(`Ping required for agent ${data.agentId}`);
 
     // Generate wake-up prompt using handoff template system
-    const wakeUpPrompt = await this.handoffService.createHandoffPrompt(
-      'agent-wake-up',
-      {
-        agentId: data.agentId,
-        taskId: data.taskId,
-        reason: data.reason,
-        timestamp: new Date().toISOString()
-      }
-    );
+    const wakeUpPrompt = await this.handoffService.createHandoffPrompt('agent-wake-up', {
+      agentId: data.agentId,
+      taskId: data.taskId,
+      reason: data.reason,
+      timestamp: new Date().toISOString(),
+    });
 
     this.emit('agent_wake_up_prompt_created', {
       agentId: data.agentId,
-      prompt: wakeUpPrompt
+      prompt: wakeUpPrompt,
     });
   }
 
@@ -409,14 +414,14 @@ return prunedCount;
         taskId: data.taskId,
         severity: data.severity,
         requiresDirectorIntervention: data.requiresDirectorIntervention,
-        preservedContext: await this.getTaskContext(data.taskId)
+        preservedContext: await this.getTaskContext(data.taskId),
       }
     );
 
     this.emit('director_broker_handoff_created', {
       originalAgent: data.originalAgent,
       escalationHandoff,
-      priority: 'high'
+      priority: 'high',
     });
   }
 
@@ -434,7 +439,7 @@ return prunedCount;
       message: data.message,
       recommendedActions: await this.generateHumanActionRecommendations(data.alert),
       taskContext: await this.getTaskContext(data.alert.taskId),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     this.emit('human_notification_ready', humanNotification);
@@ -448,21 +453,18 @@ return prunedCount;
 
     // Preserve task context and create reassignment handoff
     const taskContext = await this.getTaskContext(data.taskId);
-    const reassignmentHandoff = await this.handoffService.createHandoffPrompt(
-      'task-reassignment',
-      {
-        originalAgent: data.originalAgent,
-        taskId: data.taskId,
-        reason: data.reassignmentReason,
-        preservedContext: taskContext,
-        contextPreservationEnabled: data.preserveContext
-      }
-    );
+    const reassignmentHandoff = await this.handoffService.createHandoffPrompt('task-reassignment', {
+      originalAgent: data.originalAgent,
+      taskId: data.taskId,
+      reason: data.reassignmentReason,
+      preservedContext: taskContext,
+      contextPreservationEnabled: data.preserveContext,
+    });
 
     this.emit('task_reassignment_handoff_created', {
       originalAgent: data.originalAgent,
       reassignmentHandoff,
-      preservedContext: taskContext
+      preservedContext: taskContext,
     });
   }
 
@@ -479,7 +481,7 @@ return prunedCount;
       detectedAt: alert.detectedAt.toISOString(),
       taskContext: await this.getTaskContext(alert.taskId),
       antiStagnationStrategies: this.getAntiStagnationStrategies(alert.stagnationType),
-      fallbackOptions: this.getFallbackOptions(alert.severity)
+      fallbackOptions: this.getFallbackOptions(alert.severity),
     };
 
     return await this.handoffService.createHandoffPrompt(
@@ -493,32 +495,34 @@ return prunedCount;
    */
   private getAntiStagnationStrategies(stagnationType: string): string[] {
     const strategies = {
-      'no_heartbeat': [
+      no_heartbeat: [
         'Send immediate ping/wake-up message',
         'Verify agent connectivity',
-        'Check for system resource constraints'
+        'Check for system resource constraints',
       ],
-      'no_progress': [
+      no_progress: [
         'Request detailed progress report',
         'Analyze task complexity',
         'Provide additional context or resources',
-        'Break task into smaller subtasks'
+        'Break task into smaller subtasks',
       ],
-      'circular_communication': [
+      circular_communication: [
         'Analyze communication loop',
         'Introduce external context',
         'Reset conversation state',
-        'Apply task reframing'
+        'Apply task reframing',
       ],
-      'timeout': [
+      timeout: [
         'Extend timeout parameters',
         'Simplify task requirements',
         'Provide step-by-step guidance',
-        'Consider task reassignment'
-      ]
+        'Consider task reassignment',
+      ],
     };
 
-    return strategies[stagnationType as keyof typeof strategies] || ['Apply generic recovery protocol'];
+    return (
+      strategies[stagnationType as keyof typeof strategies] || ['Apply generic recovery protocol']
+    );
   }
 
   /**
@@ -526,9 +530,13 @@ return prunedCount;
    */
   private getFallbackOptions(severity: string): string[] {
     const options = {
-      'warning': ['Retry with modified parameters', 'Provide additional guidance'],
-      'critical': ['Escalate to supervisor', 'Task reassignment', 'Human consultation'],
-      'emergency': ['Immediate human intervention', 'Emergency stop protocol', 'System failsafe activation']
+      warning: ['Retry with modified parameters', 'Provide additional guidance'],
+      critical: ['Escalate to supervisor', 'Task reassignment', 'Human consultation'],
+      emergency: [
+        'Immediate human intervention',
+        'Emergency stop protocol',
+        'System failsafe activation',
+      ],
     };
 
     return options[severity as keyof typeof options] || ['Standard recovery protocol'];
@@ -546,7 +554,7 @@ return prunedCount;
       lastUpdate: new Date(),
       context: taskData.context || {},
       handoffHistory: [],
-      stagnationCount: 0
+      stagnationCount: 0,
     };
 
     this.taskStates.set(taskData.taskId, taskState);
@@ -563,11 +571,7 @@ return prunedCount;
       taskState.context = { ...taskState.context, ...taskData.progress };
 
       // Record activity in heartbeat service
-      this.heartbeatService.recordActivity(
-        taskState.agentId,
-        'task_progress',
-        taskData.progress
-      );
+      this.heartbeatService.recordActivity(taskState.agentId, 'task_progress', taskData.progress);
     }
   }
 
@@ -581,11 +585,7 @@ return prunedCount;
       taskState.lastUpdate = new Date();
 
       // Record final activity
-      this.heartbeatService.recordActivity(
-        taskState.agentId,
-        'task_completed',
-        taskData.result
-      );
+      this.heartbeatService.recordActivity(taskState.agentId, 'task_completed', taskData.result);
     }
   }
 
@@ -605,7 +605,7 @@ return prunedCount;
       duration: Date.now() - taskState.startTime.getTime(),
       context: taskState.context,
       handoffHistory: taskState.handoffHistory,
-      stagnationCount: taskState.stagnationCount
+      stagnationCount: taskState.stagnationCount,
     };
   }
 
@@ -617,7 +617,7 @@ return prunedCount;
       `Review agent ${alert.agentId} current state and logs`,
       `Analyze task ${alert.taskId} requirements and complexity`,
       `Consider manual intervention or task simplification`,
-      `Evaluate system resources and agent capabilities`
+      `Evaluate system resources and agent capabilities`,
     ];
 
     if (alert.severity === 'emergency') {
@@ -638,10 +638,12 @@ return prunedCount;
       dryRun: this.config.cleanup.dryRun,
       createBackups: this.config.cleanup.createBackups,
       backupDirectory: this.config.cleanup.backupDirectory,
-      confirmationRequired: false
+      confirmationRequired: false,
     });
 
-    this.logger.info(`Final cleanup completed: ${cleanupResult.cleaned.length} files cleaned, ${cleanupResult.errors.length} errors`);
+    this.logger.info(
+      `Final cleanup completed: ${cleanupResult.cleaned.length} files cleaned, ${cleanupResult.errors.length} errors`
+    );
   }
 
   /**
@@ -649,22 +651,24 @@ return prunedCount;
    */
   getOrchestrationMetrics(): OrchestrationMetrics {
     const tasks = Array.from(this.taskStates.values());
-    const completedTasks = tasks.filter(t => t.status === 'completed');
-    const stalledTasks = tasks.filter(t => t.status === 'stalled');
+    const completedTasks = tasks.filter((t) => t.status === 'completed');
+    const stalledTasks = tasks.filter((t) => t.status === 'stalled');
 
-    const avgDuration = completedTasks.length > 0
-      ? completedTasks.reduce((sum, t) => sum + (Date.now() - t.startTime.getTime()), 0) / completedTasks.length
-      : 0;
+    const avgDuration =
+      completedTasks.length > 0
+        ? completedTasks.reduce((sum, t) => sum + (Date.now() - t.startTime.getTime()), 0) /
+          completedTasks.length
+        : 0;
 
     return {
       totalTasks: tasks.length,
-      activeTasks: tasks.filter(t => t.status === 'in_progress').length,
+      activeTasks: tasks.filter((t) => t.status === 'in_progress').length,
       stalledTasks: stalledTasks.length,
       completedTasks: completedTasks.length,
       averageTaskDuration: avgDuration,
       handoffSuccessRate: tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0,
       stagnationRate: tasks.length > 0 ? (stalledTasks.length / tasks.length) * 100 : 0,
-      cleanupEfficiency: this.cleanupService.getCleanupSummary().totalTargets
+      cleanupEfficiency: this.cleanupService.getCleanupSummary().totalTargets,
     };
   }
 
@@ -683,7 +687,7 @@ return prunedCount;
       heartbeatMonitoring: this.heartbeatService.getMonitoringStatus(),
       cleanup: this.cleanupService.getCleanupSummary(),
       taskStates: this.taskStates.size,
-      metrics: this.getOrchestrationMetrics()
+      metrics: this.getOrchestrationMetrics(),
     };
   }
 }

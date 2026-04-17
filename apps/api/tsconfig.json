@@ -10,6 +10,7 @@
     "noEmitOnError": false,
     "noImplicitAny": false,
     "types": ["node", "jest"],
+    "typeRoots": ["./node_modules/@types", "../../node_modules/@types"],
     "paths": {
       "@/*": ["./src/*"],
       "@the-new-fuse/database/drizzle/*": ["../../packages/database/drizzle/*"],

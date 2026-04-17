@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Headers, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore
@@ -21,16 +30,26 @@ export class AgentProxyController {
     @Headers('authorization') authorization: string | undefined,
     @Body() body: any
   ) {
-    const target = typeof body?.target === 'string' ? body.target.trim() : '';
-    if (target) {
-      const payload =
-        body && typeof body === 'object'
-          ? Object.fromEntries(Object.entries(body).filter(([k]) => k !== 'target'))
-          : body;
-      return this.grantsService.adaptiveProxy(target, authorization, payload);
-    }
+    try {
+      const target = typeof body?.target === 'string' ? body.target.trim() : '';
+      if (target) {
+        const payload =
+          body && typeof body === 'object'
+            ? Object.fromEntries(Object.entries(body).filter(([k]) => k !== 'target'))
+            : body;
+        return await this.grantsService.adaptiveProxy(target, authorization, payload);
+      }
 
-    return this.grantsService.proxy(provider, authorization, body);
+      return await this.grantsService.proxy(provider, authorization, body);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Proxy request failed',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   @Post('adaptive/:target')
@@ -44,7 +63,17 @@ export class AgentProxyController {
     @Headers('authorization') authorization: string | undefined,
     @Body() body: any
   ) {
-    return this.grantsService.adaptiveProxy(target, authorization, body);
+    try {
+      return await this.grantsService.adaptiveProxy(target, authorization, body);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Adaptive proxy request failed',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   @Get('adaptive/config/:target')
@@ -54,6 +83,16 @@ export class AgentProxyController {
   })
   @ApiResponse({ status: 200, description: 'Resolved adaptive routing config' })
   async adaptiveConfig(@Param('target') target: string) {
-    return this.grantsService.getAdaptiveConfig(target);
+    try {
+      return await this.grantsService.getAdaptiveConfig(target);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to fetch adaptive config',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 }

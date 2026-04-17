@@ -3,22 +3,18 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  HttpException,
+  HttpStatus,
   Logger,
   NotFoundException,
   Param,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DatabaseService } from '@the-new-fuse/database';
 import { isPrivilegedUser } from '../auth/auth-policy';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import {
-  JwtAuth,
-  RateLimitTier,
-  SecureAuthGuard,
-  SetRateLimitTier,
-} from '../guards/secure-auth.guard';
+import { JwtAuth, RateLimitTier, SetRateLimitTier } from '../guards/secure-auth.guard';
 
 // Mirroring the constants from apps/casin8-games/swarm/agent-strategy/index.mjs
 export const TEMPERAMENTS = {
@@ -30,7 +26,6 @@ export const TEMPERAMENTS = {
 
 @ApiTags('agent-crafting')
 @Controller('agent-crafting')
-@UseGuards(SecureAuthGuard)
 @JwtAuth()
 @SetRateLimitTier(RateLimitTier.API)
 export class AgentCraftingController {
@@ -41,27 +36,41 @@ export class AgentCraftingController {
   @Get('templates')
   @ApiOperation({ summary: 'Get available agent strategy templates' })
   async getTemplates(@CurrentUser() user: any) {
-    // In a real scenario, we would filter based on user membership levels
-    return [
-      {
-        id: TEMPERAMENTS.BALANCED,
-        name: 'Balanced (GTO)',
-        description: 'A solid, reliable strategy that avoids major mistakes.',
-        minLevel: 'FREE',
-      },
-      {
-        id: TEMPERAMENTS.TIGHT_AGGRESSIVE,
-        name: 'Tight Aggressive (TAG)',
-        description: 'Plays few hands but plays them strongly.',
-        minLevel: 'PREMIUM',
-      },
-      {
-        id: TEMPERAMENTS.LOOSE_AGGRESSIVE,
-        name: 'Loose Aggressive (LAG)',
-        description: 'High variance, high pressure strategy.',
-        minLevel: 'WHALE',
-      },
-    ];
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
+
+    try {
+      // In a real scenario, we would filter based on user membership levels
+      return [
+        {
+          id: TEMPERAMENTS.BALANCED,
+          name: 'Balanced (GTO)',
+          description: 'A solid, reliable strategy that avoids major mistakes.',
+          minLevel: 'FREE',
+        },
+        {
+          id: TEMPERAMENTS.TIGHT_AGGRESSIVE,
+          name: 'Tight Aggressive (TAG)',
+          description: 'Plays few hands but plays them strongly.',
+          minLevel: 'PREMIUM',
+        },
+        {
+          id: TEMPERAMENTS.LOOSE_AGGRESSIVE,
+          name: 'Loose Aggressive (LAG)',
+          description: 'High variance, high pressure strategy.',
+          minLevel: 'WHALE',
+        },
+      ];
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to get templates',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   @Post('craft/:workspaceId')
@@ -76,37 +85,51 @@ export class AgentCraftingController {
     },
     @CurrentUser() user: any
   ) {
-    await this.assertWorkspaceAccess(workspaceId, user);
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
 
-    const temperament = body.temperament || TEMPERAMENTS.BALANCED;
+    try {
+      await this.assertWorkspaceAccess(workspaceId, user);
 
-    // Create the agent using the standard agent repository
-    const agent = await this.db.agents.create({
-      name: body.name,
-      description: body.description || `Poker Agent (${temperament})`,
-      type: 'poker' as any,
-      userId: user.id,
-      config: {
-        poker: {
-          temperament,
-          nurtureStage: 'bootstrap',
-          maxRiskBps: 800,
+      const temperament = body.temperament || TEMPERAMENTS.BALANCED;
+
+      // Create the agent using the standard agent repository
+      const agent = await this.db.agents.create({
+        name: body.name,
+        description: body.description || `Poker Agent (${temperament})`,
+        type: 'poker' as any,
+        userId: user.id,
+        config: {
+          poker: {
+            temperament,
+            nurtureStage: 'bootstrap',
+            maxRiskBps: 800,
+          },
         },
-      },
-      status: 'INACTIVE' as any,
-    });
+        status: 'INACTIVE' as any,
+      });
 
-    // Explicitly link to workspace via metadata JSONB field
-    await this.db.agents.upsertMetadata(agent.id, {
-      metadata: {
-        workspaceId,
-        tenantId: user.tenantId,
-        craftedAt: new Date().toISOString(),
-        craftedBy: user.id,
-      },
-    });
+      // Explicitly link to workspace via metadata JSONB field
+      await this.db.agents.upsertMetadata(agent.id, {
+        metadata: {
+          workspaceId,
+          tenantId: user.tenantId,
+          craftedAt: new Date().toISOString(),
+          craftedBy: user.id,
+        },
+      });
 
-    return agent;
+      return agent;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to craft agent',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   @Post('nurture/:agentId')
@@ -116,25 +139,39 @@ export class AgentCraftingController {
     @Body() body: { workspaceId: string },
     @CurrentUser() user: any
   ) {
-    await this.assertWorkspaceAccess(body.workspaceId, user);
+    if (!user || !user.id) {
+      throw new HttpException('Authentication required', HttpStatus.UNAUTHORIZED);
+    }
 
-    const agent = await this.db.agents.findById(agentId);
-    if (!agent) throw new NotFoundException('Agent not found');
+    try {
+      await this.assertWorkspaceAccess(body.workspaceId, user);
 
-    // Update agent config with nurture program defaults
-    const updatedConfig = {
-      ...(agent.config as any),
-      poker: {
-        ...(agent.config as any)?.poker,
-        nurtureProgram: {
-          targetBbps: 2.0,
-          episodes: 0,
-          startedAt: new Date().toISOString(),
+      const agent = await this.db.agents.findById(agentId);
+      if (!agent) throw new NotFoundException('Agent not found');
+
+      // Update agent config with nurture program defaults
+      const updatedConfig = {
+        ...(agent.config as any),
+        poker: {
+          ...(agent.config as any)?.poker,
+          nurtureProgram: {
+            targetBbps: 2.0,
+            episodes: 0,
+            startedAt: new Date().toISOString(),
+          },
         },
-      },
-    };
+      };
 
-    return await this.db.agents.update(agentId, { config: updatedConfig });
+      return await this.db.agents.update(agentId, { config: updatedConfig });
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        (error as Error).message || 'Failed to initialize nurture',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   private async assertWorkspaceAccess(workspaceId: string, user: any) {

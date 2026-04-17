@@ -189,23 +189,6 @@ export class AgentRegistryController {
   }
 
   // ============================================================================
-  // IMPORT ENDPOINTS
-  // ============================================================================
-
-  @Post('import/snapshot')
-  @ApiOperation({ summary: 'Import agent registry snapshot JSON into database' })
-  async importSnapshot(
-    @Body() body: { snapshotPath?: string; onlyType?: string },
-    @Headers('x-admin-token') adminToken?: string,
-  ) {
-    return this.catalogImportService.importSnapshot({
-      snapshotPath: body?.snapshotPath,
-      onlyType: body?.onlyType,
-      adminToken,
-    });
-  }
-
-  // ============================================================================
   // METRICS ENDPOINTS
   // ============================================================================
 

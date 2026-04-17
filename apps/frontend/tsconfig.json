@@ -24,6 +24,7 @@
       "@lib/*": ["./lib/*"]
     },
     "types": ["jest", "node", "react", "react-dom", "vite/client"],
+    "typeRoots": ["./node_modules/@types", "../../node_modules/@types"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "outDir": "./dist",
