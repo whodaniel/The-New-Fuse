@@ -40,7 +40,6 @@ import { OrchestrationController } from './controllers/orchestration.controller'
 import { ProviderKeysController } from './controllers/provider-keys.controller';
 import { SystemController } from './controllers/system.controller';
 import { UserManagementController } from './controllers/user-management.controller';
-import { VisualizationsController } from './controllers/visualizations.controller';
 import { WebSocketController } from './controllers/websocket.controller';
 import { WorkflowController } from './controllers/workflow.controller';
 import { WorkspaceController } from './controllers/workspace.controller';
@@ -90,6 +89,8 @@ import { EnhancedErrorHandlerMiddleware } from './middleware/enhanced-error-hand
 import { EnhancedSecurityMiddleware } from './middleware/enhanced-security.middleware';
 import { SecurityValidationMiddleware } from './middleware/security-validation.middleware';
 import { SecurityModule as GlobalSecurityModule } from './security/security.module';
+
+import { WorkflowExecutionService } from './services/workflow/WorkflowExecutionService';
 
 @Module({
   imports: [
@@ -197,6 +198,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     OpenClawOAuthRotationService,
     AgentApiGrantsService,
     AgentHandoffService,
+    WorkflowExecutionService,
     // Middleware
     SecurityValidationMiddleware,
     CsrfProtectionMiddleware,

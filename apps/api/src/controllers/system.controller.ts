@@ -44,6 +44,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { sql } from '@the-new-fuse/database';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -1200,188 +1201,55 @@ export class SystemController {
 
   /**
    * Check database connectivity and health
-   *
-   * Performs a connectivity test to the primary database. This is a simple
-   * check that would be extended in production to include more sophisticated
-   * health checks like query performance, connection pool status, and
-   * replication lag.
-   *
-   * @returns Promise resolving to health status string
-   * @returns 'online' - Database is healthy and responsive
-   * @returns 'offline' - Database is unreachable or not responding
-   *
-   * @example
-   * const dbStatus = await this.checkDatabaseHealth();
-   * console.log(dbStatus); // "online"
    */
   private async checkDatabaseHealth(): Promise<string> {
     try {
-      // This would check database connectivity
-      // For now, return online
+      // Run a simple query to verify connection
+      await this.db.client.execute(sql`SELECT 1`);
       return 'online';
     } catch (error) {
+      this.logger.warn(`Database health check failed: ${error}`);
       return 'offline';
     }
   }
 
   /**
    * Check filesystem health and write permissions
-   *
-   * Tests filesystem write and delete operations to ensure the filesystem
-   * is functioning properly. This is important for file uploads, logging,
-   * and temporary file operations.
-   *
-   * @returns Promise resolving to health status string
-   * @returns 'online' - Filesystem is healthy and writable
-   * @returns 'offline' - Filesystem has issues or is read-only
-   *
-   * @example
-   * const fsStatus = await this.checkFilesystemHealth();
-   * console.log(fsStatus); // "online"
    */
   private async checkFilesystemHealth(): Promise<string> {
     try {
-      const testFile = path.join(os.tmpdir(), 'health-check.tmp');
+      const testFile = path.join(os.tmpdir(), `health-check-${Date.now()}.tmp`);
       fs.writeFileSync(testFile, 'test');
       fs.unlinkSync(testFile);
       return 'online';
     } catch (error) {
+      this.logger.warn(`Filesystem health check failed: ${error}`);
       return 'offline';
-    }
-  }
-
-  /**
-   * Get current memory usage status
-   *
-   * Analyzes system memory usage and categorizes it into status levels
-   * for monitoring and alerting purposes. Uses thresholds to classify
-   * memory usage as normal, warning, or critical.
-   *
-   * @returns Memory status string
-   * @returns 'normal' - Memory usage is healthy (< 80%)
-   * @returns 'warning' - Memory usage is elevated (80-90%)
-   * @returns 'critical' - Memory usage is very high (> 90%)
-   *
-   * @example
-   * const memStatus = this.getMemoryStatus();
-   * console.log(memStatus); // "normal"
-   */
-  private getMemoryStatus(): string {
-    const usage = (os.totalmem() - os.freemem()) / os.totalmem();
-    if (usage > 0.9) return 'critical';
-    if (usage > 0.8) return 'warning';
-    return 'normal';
-  }
-
-  /**
-   * Get current CPU usage percentage
-   *
-   * Measures CPU usage over a 100ms sample period and calculates the
-   * percentage of CPU time used. This provides a snapshot of current
-   * CPU utilization.
-   *
-   * @returns Promise resolving to CPU usage percentage (0-100)
-   *
-   * @example
-   * const cpuUsage = await this.getCPUUsage();
-   * console.log(cpuUsage); // 25
-   */
-  private async getCPUUsage(): Promise<number> {
-    return new Promise((resolve) => {
-      const startUsage = process.cpuUsage();
-      const startTime = process.hrtime();
-
-      setTimeout(() => {
-        const currentUsage = process.cpuUsage(startUsage);
-        const currentTime = process.hrtime(startTime);
-
-        const totalTime = currentTime[0] * 1000000 + currentTime[1] / 1000;
-        const totalUsage = currentUsage.user + currentUsage.system;
-
-        const cpuPercent = Math.round((totalUsage / totalTime) * 100);
-        resolve(Math.min(cpuPercent, 100));
-      }, 100);
-    });
-  }
-
-  /**
-   * Get disk usage information
-   *
-   * Collects disk usage statistics for the application directory.
-   * Currently returns limited information but would be extended in
-   * production to include detailed disk metrics across all mounted
-   * filesystems.
-   *
-   * @returns Promise resolving to disk usage object
-   * @returns.path - Disk path being monitored
-   * @returns.available - Available space (when implemented)
-   * @returns.used - Used space (when implemented)
-   * @returns.total - Total space (when implemented)
-   * @returns.error - Error message if collection fails
-   *
-   * @example
-   * const diskInfo = await this.getDiskUsage();
-   * console.log(diskInfo);
-   */
-  private async getDiskUsage(): Promise<any> {
-    try {
-      const stats = fs.statSync(process.cwd());
-      return {
-        path: process.cwd(),
-        available: 'unknown', // Would need platform-specific implementation
-        used: 'unknown',
-        total: 'unknown',
-      };
-    } catch (error) {
-      return {
-        error: 'Unable to get disk usage',
-      };
     }
   }
 
   /**
    * Check workflow engine health
-   *
-   * Monitors the health and availability of the workflow engine service.
-   * This would include checks for engine responsiveness, active workflows,
-   * and queue status in a production environment.
-   *
-   * @returns Promise resolving to health status string
-   * @returns 'online' - Workflow engine is healthy
-   * @returns 'offline' - Workflow engine is not responding
-   *
-   * @example
-   * const workflowStatus = await this.checkWorkflowEngineHealth();
-   * console.log(workflowStatus); // "online"
    */
   private async checkWorkflowEngineHealth(): Promise<string> {
     try {
-      // This would check workflow engine status
+      // Check if workflow execution counts are available in cache or DB
+      const [count] = await this.db.client.execute(
+        sql`SELECT count(*) FROM workflow_executions WHERE status = 'RUNNING'`
+      );
       return 'online';
     } catch (error) {
-      return 'offline';
+      return 'degraded';
     }
   }
 
   /**
    * Check agent system health
-   *
-   * Monitors the health and status of the distributed agent system.
-   * This would include checks for agent connectivity, active agents,
-   * and system throughput in a production environment.
-   *
-   * @returns Promise resolving to health status string
-   * @returns 'online' - Agent system is healthy
-   * @returns 'offline' - Agent system is not responding
-   *
-   * @example
-   * const agentStatus = await this.checkAgentSystemHealth();
-   * console.log(agentStatus); // "online"
    */
   private async checkAgentSystemHealth(): Promise<string> {
     try {
-      // This would check agent system status
-      return 'online';
+      const onlineAgents = this.brokerService.getOnlineAgents();
+      return onlineAgents.length >= 0 ? 'online' : 'degraded';
     } catch (error) {
       return 'offline';
     }
@@ -1389,25 +1257,14 @@ export class SystemController {
 
   /**
    * Check MCP (Model Context Protocol) health
-   *
-   * Monitors the health and connectivity of MCP server components.
-   * MCP servers may be partially available, hence the 'partial' status.
-   *
-   * @returns Promise resolving to health status string
-   * @returns 'online' - All MCP servers are healthy
-   * @returns 'partial' - Some MCP servers are available
-   * @returns 'offline' - No MCP servers are responding
-   *
-   * @example
-   * const mcpStatus = await this.checkMCPHealth();
-   * console.log(mcpStatus); // "partial"
    */
   private async checkMCPHealth(): Promise<string> {
     try {
-      // This would check MCP server status
-      return 'partial';
+      // For now, check if we can reach the registry or local servers
+      const servers = await this.db.client.execute(sql`SELECT count(*) FROM tnf_mcp_servers`);
+      return 'online';
     } catch (error) {
-      return 'offline';
+      return 'partial';
     }
   }
 }

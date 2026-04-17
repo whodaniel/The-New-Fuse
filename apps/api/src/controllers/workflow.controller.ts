@@ -26,13 +26,18 @@ import { Request, Response } from 'express';
 // @ts-ignore
 import { workflowExecutions, workflows } from '@the-new-fuse/database/drizzle/schema';
 
+import { WorkflowExecutionService } from '../services/workflow/WorkflowExecutionService';
+
 type DatabaseWhere = Record<string, any>;
 
 @Controller('workflows')
 export class WorkflowController {
   private logger = new Logger(WorkflowController.name);
 
-  constructor(private readonly db: DatabaseService) {}
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly executionService: WorkflowExecutionService
+  ) {}
 
   // GET /api/workflows
   @Get()
@@ -313,8 +318,8 @@ export class WorkflowController {
         }`
       );
 
-      // TODO: Trigger real execution engine here
-      // this.executionService.run(execution.id, targetDefinition, input);
+      // Trigger real execution engine here (background)
+      void this.executionService.run(execution.id, targetDefinition, input);
 
       res.status(201).json(execution);
     } catch (error: unknown) {

@@ -23,29 +23,50 @@ export const useA2ACommunication = () => {
 
     try {
       const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api';
-      const response = await fetch(`${apiBaseUrl}/a2a/status`, {
+
+      // 1. Fetch online agent IDs from A2A broker
+      const statusResponse = await fetch(`${apiBaseUrl}/a2a/status`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to load A2A agents: ${response.status} ${response.statusText}`);
+      // 2. Fetch full agent profiles
+      const agentsResponse = await fetch(`${apiBaseUrl}/agents`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!statusResponse.ok) {
+        throw new Error(`Failed to load A2A status: ${statusResponse.status}`);
       }
 
-      const payload = await response.json();
-      const onlineAgentIds: string[] = Array.isArray(payload?.onlineAgents)
-        ? payload.onlineAgents
+      const statusPayload = await statusResponse.json();
+      const onlineAgentIds: string[] = Array.isArray(statusPayload?.onlineAgents)
+        ? statusPayload.onlineAgents
         : [];
 
-      const liveAgents: A2AAgent[] = onlineAgentIds.map((agentId) => ({
-        id: agentId,
-        name: agentId,
-        capabilities: [],
-        status: 'online',
-        lastSeen: Date.now(),
-      }));
+      let allProfiles: any[] = [];
+      if (agentsResponse.ok) {
+        allProfiles = await agentsResponse.json();
+      }
+
+      // Map profiles for quick lookup
+      const profileMap = new Map(allProfiles.map((p) => [p.id, p]));
+
+      const liveAgents: A2AAgent[] = onlineAgentIds.map((agentId) => {
+        const profile = profileMap.get(agentId);
+        return {
+          id: agentId,
+          name: profile?.name || agentId,
+          capabilities: profile?.capabilities || [],
+          status: 'online',
+          lastSeen: Date.now(),
+        };
+      });
 
       setAgents(liveAgents);
     } catch (err) {

@@ -159,20 +159,22 @@ class WorkflowService {
 
   // Workflow execution
   async executeWorkflow(
-    workflowId: string,
-    input?: Record<string, any>
+    workflowId?: string,
+    input?: Record<string, any>,
+    definition?: { nodes: Node[]; edges: Edge[] }
   ): Promise<WorkflowExecution> {
     try {
-      const execution = await this.request<any>('/workflows/execute', {
+      const response = await this.request<any>('/workflows/execute', {
         method: 'POST',
         body: JSON.stringify({
           workflowId,
           input,
+          definition,
         }),
       });
-      return this.transformExecution(execution);
+      return this.transformExecution(response);
     } catch (error) {
-      console.error(`Failed to execute workflow ${workflowId}:`, error);
+      console.error(`Failed to execute workflow ${workflowId || 'dynamic'}:`, error);
       throw error;
     }
   }

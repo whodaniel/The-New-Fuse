@@ -528,22 +528,31 @@ const WorkflowBuilderContent = () => {
     setExecutionLog(['🚀 Starting workflow execution...']);
 
     try {
-      const workflow = { name: workflowName, nodes, edges };
+      const definition = { nodes, edges };
       const response = await fetch(`${apiBaseUrl}/api/workflows/execute`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(workflow),
+        body: JSON.stringify({
+          name: workflowName,
+          definition,
+        }),
       });
 
       if (response.ok) {
         const result = await response.json();
         setExecutionLog((prev) => [
           ...prev,
-          '✅ Workflow executed successfully!',
+          '✅ Execution record created!',
+          `ID: ${result.id}`,
+          'Processing nodes...',
           JSON.stringify(result, null, 2),
         ]);
       } else {
-        setExecutionLog((prev) => [...prev, '❌ Workflow execution failed']);
+        const errData = await response.json().catch(() => ({}));
+        setExecutionLog((prev) => [
+          ...prev,
+          `❌ Workflow execution failed: ${errData.error || response.statusText}`,
+        ]);
       }
     } catch (error) {
       console.error('Error executing workflow:', error);
