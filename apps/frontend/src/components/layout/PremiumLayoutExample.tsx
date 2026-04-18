@@ -1,6 +1,6 @@
 import { Activity, BarChart2, Plus, TrendingUp, Users, Zap } from 'lucide-react';
 import React from 'react';
-import { ActionCard, GlassCard, StatsCard } from '../ui/premium/index';
+import { ActionCard, GlassCard, StatsCard } from '../ui/premium';
 import { PremiumLayout } from './PremiumLayout';
 
 /**

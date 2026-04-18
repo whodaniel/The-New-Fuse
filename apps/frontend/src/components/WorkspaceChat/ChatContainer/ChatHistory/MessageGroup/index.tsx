@@ -1,11 +1,11 @@
+import { WorkspaceData } from '@/types/workspace';
+import { TimeStamp } from '@/utils/TimeStamp';
 import React from 'react';
-import { TimeStamp } from "@/utils/TimeStamp";
-import HistoricalMessage from '../HistoricalMessage/index';
-import { WorkspaceData } from "@/types/workspace";
+import HistoricalMessage from '../HistoricalMessage';
 
 interface Message {
   id: string;
-  role: "user" | "assistant" | "system";
+  role: 'user' | 'assistant' | 'system';
   content: string;
   createdAt: string | Date | number;
   editedAt?: string | Date | number;
@@ -22,7 +22,7 @@ interface MessageGroupProps {
   onEditMessage?: (params: {
     editedMessage: string;
     chatId: string;
-    role: "user" | "assistant";
+    role: 'user' | 'assistant';
     attachments?: File[];
   }) => void;
   onRegenerateMessage?: (chatId: string) => void;
@@ -37,13 +37,13 @@ const MessageGroup = ({
   chatId,
   onEditMessage,
   onRegenerateMessage,
-  onForkThread
+  onForkThread,
 }: MessageGroupProps): React.ReactElement | null => {
   if (messages.length === 0) return null;
 
   // Get timestamp of first message in group
   const groupTimestamp = new TimeStamp(messages[0].createdAt);
-  
+
   // Determine if we should show date header
   const showDateHeader = () => {
     if (groupTimestamp.isToday()) {
@@ -62,7 +62,7 @@ const MessageGroup = ({
           {showDateHeader()}
         </div>
       </div>
-      
+
       {messages.map((message, index) => (
         <HistoricalMessage
           key={message.id}

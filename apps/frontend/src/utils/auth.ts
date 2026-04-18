@@ -1,8 +1,7 @@
-;
 // exports.AuthManagerImpl = void 0; // Cleaned up exports
 import bcryptjs_1 from 'bcryptjs';
 import jsonwebtoken_1 from 'jsonwebtoken';
-// const { AuthenticationError } = require('../../../types/error.js'); // Use AuthenticationError
+// const { AuthenticationError } = require('../../../types/error'); // Use AuthenticationError
 class AuthenticationError extends Error {
   constructor(
     message: string,
@@ -68,4 +67,3 @@ export { AuthManagerImpl };
 // The line `exports.AuthManagerImpl = exports.UserExistsError = exports.AuthError = void 0;`
 // should ideally become `exports.AuthManagerImpl = void 0;` or be handled by the build system.
 // For now, I will leave it and it can be cleaned in a separate step if needed.
-;

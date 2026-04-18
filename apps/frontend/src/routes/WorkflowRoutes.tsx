@@ -8,7 +8,7 @@ import { Route, Routes } from 'react-router-dom';
 import { WorkflowProvider } from '../contexts/WorkflowContext';
 
 // Lazy load components for better performance
-const WorkflowsPage = React.lazy(() => import('../pages/Workflows/index'));
+const WorkflowsPage = React.lazy(() => import('../pages/Workflows'));
 const WorkflowBuilder = React.lazy(() => import('../pages/Workflows/Builder'));
 const ModernBuilder = React.lazy(() => import('../pages/Workflows/ModernBuilder'));
 const WorkflowDetail = React.lazy(() => import('../pages/Workflows/Detail'));

@@ -1,7 +1,7 @@
 import { Search } from 'lucide-react';
 import React, { ReactNode, useMemo, useState } from 'react';
 import { Resource } from '../../types/resources';
-import { PremiumInput, PremiumSelect } from '../ui/premium/index';
+import { PremiumInput, PremiumSelect } from '../ui/premium';
 
 // Filter configuration types
 export interface FilterOption {

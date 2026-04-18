@@ -9,7 +9,7 @@ const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
 
 // Core components (keep loaded)
 import LoginPage from './pages/auth/Login';
-import RegisterPage from './pages/auth/Register/index';
+import RegisterPage from './pages/auth/Register';
 
 import ErrorBoundary from './components/ErrorBoundary';
 import RequireAuth from './components/RequireAuth';
@@ -52,7 +52,7 @@ const SettingsSecurity = lazy(() => import('./pages/settings/Security'));
 const SettingsAPI = lazy(() => import('./pages/settings/API'));
 const WorkspaceOverview = lazy(() => import('./pages/workspace/Overview'));
 const WorkspaceMembers = lazy(() => import('./pages/workspace/Members'));
-const WorkspaceChatPage = lazy(() => import('./pages/WorkspaceChat/index'));
+const WorkspaceChatPage = lazy(() => import('./pages/WorkspaceChat'));
 const NFTMarketplacePage = lazy(() => import('./pages/Agents/NFTMarketplacePage'));
 const RevenueDashboardPage = lazy(() => import('./pages/Agents/RevenueDashboardPage'));
 const UnifiedAgentCreator = lazy(() => import('./pages/Agents/UnifiedAgentCreator'));
@@ -85,7 +85,7 @@ import AllPages from './pages/AllPages';
 import BuildInfoPage from './pages/BuildInfo';
 import DebugPageComponent from './pages/Debug';
 import DebugRoutingComponent from './pages/DebugRouting';
-import TestPage from './pages/Test/index';
+import TestPage from './pages/Test';
 
 // Suggestions components
 const SuggestionsPage = lazy(() => import('./pages/Suggestions'));
@@ -121,7 +121,7 @@ const SuperAdminControlPanel = lazy(() => import('./pages/Admin/SuperAdminContro
 const NexusVisualizer = lazy(() => import('./pages/SystemObservatory'));
 
 // Auth components
-const AuthIndexPage = lazy(() => import('./pages/auth/index'));
+const AuthIndexPage = lazy(() => import('./pages/auth'));
 const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPassword'));
 const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPassword'));
 const SSOPage = lazy(() => import('./pages/auth/SSO'));
@@ -160,7 +160,7 @@ const NewTaskPage = lazy(() => import('./pages/Tasks/New'));
 
 // Additional pages
 const UnauthorizedPage = lazy(() => import('./pages/Unauthorized'));
-const AIAgentRegistration = lazy(() => import('./pages/AIAgentPortal/index'));
+const AIAgentRegistration = lazy(() => import('./pages/AIAgentPortal'));
 const FrontendShowcasePage = lazy(() => import('./pages/FrontendShowcase'));
 const SimpleTestPage = lazy(() => import('./pages/SimpleTest'));
 
@@ -202,7 +202,7 @@ const WebSearchSelection = lazy(() => import('./pages/Admin/Agents/WebSearchSele
 const GeneralSettingsEmbeddingPage = lazy(
   () => import('./pages/GeneralSettings/EmbeddingPreference')
 );
-const GeneralSettings = lazy(() => import('./pages/GeneralSettings/index'));
+const GeneralSettings = lazy(() => import('./pages/GeneralSettings'));
 const AdminSettings = lazy(() => import('./pages/Admin/AdminSettings'));
 const WorkspaceManagement = lazy(() => import('./pages/Admin/WorkspaceManagement'));
 const AgentDashboard = lazy(() => import('./pages/dashboard/AgentDashboard'));

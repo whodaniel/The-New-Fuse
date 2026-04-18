@@ -10,15 +10,15 @@ export type {
   UUID,
   UnknownRecord,
   ValidationResult,
-} from './core/base-types.js';
+} from './core/base-types';
 
 // User types
-export type { UserPreferences, UserRole } from './user.js';
+export type { UserPreferences, UserRole } from './user';
 
-export { Permission } from './user.js';
+export { Permission } from './user';
 
 // Common types
-export type { ApiResponse, Handler } from './common-types.js';
+export type { ApiResponse, Handler } from './common-types';
 
 // Agent types
 export {
@@ -31,12 +31,12 @@ export {
   AgentType,
   CreateAgentDto,
   UpdateAgentDto,
-} from './agent.js';
+} from './agent';
 // Also export the AgentCapability type for TS consumers
 
 // Messaging types
-export { PriorityQueue } from './messaging.js';
-export type { AgentMessage, AgentResponse } from './messaging.js';
+export { PriorityQueue } from './messaging';
+export type { AgentMessage, AgentResponse } from './messaging';
 
 // Workflow types
 export type {
@@ -53,9 +53,9 @@ export type {
   WorkflowInstance,
   WorkflowService,
   WorkflowStep,
-} from './workflow.js';
+} from './workflow';
 
-export { WorkflowStatus } from './workflow.js';
+export { WorkflowStatus } from './workflow';
 
 // Task types
 export type {
@@ -70,7 +70,7 @@ export type {
   TaskStatusType,
   TaskTypeValue,
   UpdateTaskDto,
-} from './tasks.js';
+} from './tasks';
 
 // MCP types
 export type {
@@ -81,15 +81,15 @@ export type {
   MCPTool,
   RegisteredEntity,
   UpdateEntityDto,
-} from './mcp.js';
+} from './mcp';
 
-export { createMCPError, createMCPResponse, parseMCPMessage } from './mcp.js';
+export { createMCPError, createMCPResponse, parseMCPMessage } from './mcp';
 
 // WebSocket types
-export type { WebSocketConfig, WebSocketHandler, WebSocketMessage } from './websocket.js';
+export type { WebSocketConfig, WebSocketHandler, WebSocketMessage } from './websocket';
 
 // Message and Communication types
-export { MessageType } from './message.js';
+export { MessageType } from './message';
 export type {
   Message,
   MessageBroker,
@@ -97,11 +97,11 @@ export type {
   MessageOptions,
   MessageQueue,
   MessageRouter,
-} from './message.js';
+} from './message';
 
 // Communication types
-export { WebSocketError } from './communication.js';
-export type { Channel, ChannelOptions, CommunicationProtocol } from './communication.js';
+export { WebSocketError } from './communication';
+export type { Channel, ChannelOptions, CommunicationProtocol } from './communication';
 
 // Command and Notification types
 export type {
@@ -110,14 +110,14 @@ export type {
   Notification,
   NotificationAction,
   NotificationOptions,
-} from './commands.js';
+} from './commands';
 
 // Task types (additional exports)
-export { TaskStatus, TaskType } from './task.js';
-export type { TaskResult as CoreTaskResult, Task } from './task.js';
+export { TaskStatus, TaskType } from './task';
+export type { TaskResult as CoreTaskResult, Task } from './task';
 
 // Service types
-export type { ServiceStatus } from './services.js';
+export type { ServiceStatus } from './services';
 
 // MASS Framework types
 export type {
@@ -143,24 +143,24 @@ export type {
   WorkflowEdge,
   WorkflowNode,
   WorkflowTopology,
-} from './mass.js';
+} from './mass';
 
 // Other core exports
-export * from './chat.js';
-export * from './export.js';
-export * from './llm.js';
-export * from './marketplace.js';
-export * from './metrics.js';
-export * from './resource-search-protocol.js';
-export * from './resource-search.js';
-export * from './security.js';
-export type { SecurityScheme } from './security.js';
-export * from './session.js';
-export * from './state.js';
-export * from './suggestion.js';
-export * from './user.js';
-export * from './validation.js';
-export * from './webhooks.js';
+export * from './chat';
+export * from './export';
+export * from './llm';
+export * from './marketplace';
+export * from './metrics';
+export * from './resource-search';
+export * from './resource-search-protocol';
+export * from './security';
+export type { SecurityScheme } from './security';
+export * from './session';
+export * from './state';
+export * from './suggestion';
+export * from './user';
+export * from './validation';
+export * from './webhooks';
 
 // Core enums
-export { SuggestionPriority, SuggestionStatus } from './core/enums.js';
+export { SuggestionPriority, SuggestionStatus } from './core/enums';

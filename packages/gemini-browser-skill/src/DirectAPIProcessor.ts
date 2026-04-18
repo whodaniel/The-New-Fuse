@@ -14,8 +14,9 @@ import * as path from 'path';
 
 const LIBRARY_FILE = path.join(process.cwd(), '..', '..', 'ai_video_library.html');
 const DATA_DIR = path.join(process.cwd(), '..', '..', 'data');
-const REPORTS_DIR = path.join(DATA_DIR, 'video-reports');
+const REPORTS_DIR = '/Users/<owner>/Documents/Video-Intelligence-Archive/';
 const STATE_FILE = path.join(process.cwd(), 'data', 'processing_state.json');
+const MASTER_INDEX_FILE = path.join(REPORTS_DIR, 'MASTER_CHRONOLOGICAL_INDEX.md');
 
 // Get API key from environment
 const API_KEY = process.env.GEMINI_API_KEY || '';
@@ -161,11 +162,65 @@ ${response}
     fs.writeFileSync(reportPath, report, 'utf-8');
     console.log(`[API] ✅ Report saved: ${path.basename(reportPath)}\n`);
 
+    // Update master index
+    appendVideoToIndex(video, path.basename(reportPath));
+
     return true;
   } catch (error) {
     console.error(`[API] ❌ Error processing video:`, error);
     return false;
   }
+}
+
+/**
+ * Appends a video summary to the master chronological index
+ */
+function appendVideoToIndex(video: VideoEntry, reportFilename: string) {
+  if (!fs.existsSync(MASTER_INDEX_FILE)) {
+    fs.writeFileSync(
+      MASTER_INDEX_FILE,
+      '# Master Chronological Video Intelligence Index\n\n',
+      'utf-8'
+    );
+  }
+
+  const content = fs.readFileSync(MASTER_INDEX_FILE, 'utf-8');
+  const entryHeader = `## Video #${video.index}: ${video.title}`;
+
+  if (content.includes(entryHeader)) return;
+
+  const reportPath = path.join(REPORTS_DIR, reportFilename);
+  const reportContent = fs.readFileSync(reportPath, 'utf-8');
+
+  // Extract key points from the report if available
+  let keyPoints = '';
+  const keyPointsMatch = reportContent.match(/## Key Points[\s\S]*?(?=\n##|$)/);
+  if (keyPointsMatch) {
+    keyPoints = keyPointsMatch[0].replace('## Key Points', '').trim();
+  } else {
+    // Try to find in JSON
+    const jsonMatch = reportContent.match(/```json\n([\s\S]*?)\n```/);
+    if (jsonMatch) {
+      try {
+        const json = JSON.parse(jsonMatch[1]);
+        if (json.keyPoints) {
+          keyPoints = json.keyPoints.map((p: string) => `- ${p}`).join('\n');
+        }
+      } catch (e) {}
+    }
+  }
+
+  const entry = `
+${entryHeader}
+- **URL**: ${video.url}
+- **Report**: [Link](./${reportFilename})
+- **Summary Points**:
+${keyPoints || '- No key points extracted yet.'}
+
+---
+`;
+
+  fs.appendFileSync(MASTER_INDEX_FILE, entry, 'utf-8');
 }
 
 async function main() {
@@ -202,13 +257,22 @@ async function main() {
   let errors = 0;
 
   for (const video of videos) {
-    // Check if already processed
-    const reportExists = fs.existsSync(
-      path.join(REPORTS_DIR, `api_${video.index}_${video.videoId}.md`)
-    );
-    if (reportExists) {
-      console.log(`⏭️ Skipping #${video.index} (already processed)`);
+    // Check if already processed (check for api_, transcript_, or v2_ prefixes)
+    const existingReports = fs
+      .readdirSync(REPORTS_DIR)
+      .filter(
+        (f) =>
+          f.startsWith(`api_${video.index}_`) ||
+          f.startsWith(`transcript_${video.index}_`) ||
+          f.startsWith(`v2_${video.index}_`)
+      );
+
+    if (existingReports.length > 0) {
+      console.log(`⏭️ Skipping #${video.index} (Found: ${existingReports[0]})`);
       completed++;
+
+      // Update master index if needed
+      appendVideoToIndex(video, existingReports[0]);
       continue;
     }
 

@@ -12,7 +12,7 @@ import { Route } from 'react-router-dom';
 
 const LoginPage = lazy(() => import('../pages/auth/Login'));
 const RegisterPage = lazy(() => import('../pages/auth/Register'));
-const AuthIndexPage = lazy(() => import('../pages/auth/index'));
+const AuthIndexPage = lazy(() => import('../pages/auth'));
 const ForgotPasswordPage = lazy(() => import('../pages/auth/ForgotPassword'));
 const ResetPasswordPage = lazy(() => import('../pages/auth/ResetPassword'));
 const SSOPage = lazy(() => import('../pages/auth/SSO'));
@@ -33,15 +33,27 @@ export const authRoutes: ReactElement[] = [
   <Route key="auth-register" path="/auth/register" element={<RegisterPage />} />,
 
   // Password management
-  <Route key="auth-forgot-password" path="/auth/forgot-password" element={<ForgotPasswordPage />} />,
+  <Route
+    key="auth-forgot-password"
+    path="/auth/forgot-password"
+    element={<ForgotPasswordPage />}
+  />,
   <Route key="auth-reset-password" path="/auth/reset-password" element={<ResetPasswordPage />} />,
 
   // SSO
   <Route key="auth-sso" path="/auth/sso" element={<SSOPage />} />,
 
   // OAuth callbacks
-  <Route key="auth-google-callback" path="/auth/google-callback" element={<GoogleCallbackPage />} />,
-  <Route key="auth-google-callback-alt" path="/auth/google/callback" element={<GoogleCallbackPage />} />,
+  <Route
+    key="auth-google-callback"
+    path="/auth/google-callback"
+    element={<GoogleCallbackPage />}
+  />,
+  <Route
+    key="auth-google-callback-alt"
+    path="/auth/google/callback"
+    element={<GoogleCallbackPage />}
+  />,
   <Route key="auth-callback" path="/auth/callback" element={<OAuthCallbackPage />} />,
   <Route key="auth-oauth-callback" path="/auth/oauth-callback" element={<OAuthCallbackPage />} />,
 ];

@@ -18,5 +18,5 @@ export * from './select';
 export * from './switch';
 export * from './tabs';
 export * from './textarea';
-export { Toaster } from './toast/index';
+export { Toaster } from './toast';
 export * from './use-toast';

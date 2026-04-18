@@ -17,7 +17,7 @@ import React, { useState } from 'react';
 
 // Lazy load the sub-pages to keep the bundle lean
 import AIAgentPortal from './AIAgentDashboard';
-import AICommandCenter from './AICommandCenter/index';
+import AICommandCenter from './AICommandCenter';
 import TNFCommandCenter from './TNFCommandCenter';
 
 const CommandCore: React.FC = () => {

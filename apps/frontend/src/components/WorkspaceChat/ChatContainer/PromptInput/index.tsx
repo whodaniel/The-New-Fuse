@@ -4,13 +4,13 @@ import { PaperPlaneRight } from '@phosphor-icons/react';
 import debounce from 'lodash.debounce';
 import React, { useEffect, useRef, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
-import { PASTE_ATTACHMENT_EVENT } from '../DnDWrapper/index';
+import { PASTE_ATTACHMENT_EVENT } from '../DnDWrapper';
 import AvailableAgentsButton, { AvailableAgents, useAvailableAgents } from './AgentMenu';
 import AttachItem from './AttachItem';
 import AttachmentManager from './Attachments';
-import SlashCommandsButton, { SlashCommands, useSlashCommands } from './SlashCommands/index';
+import SlashCommandsButton, { SlashCommands, useSlashCommands } from './SlashCommands';
 import SpeechToText from './SpeechToText';
-import StopGenerationButton from './StopGenerationButton/index';
+import StopGenerationButton from './StopGenerationButton';
 import TextSizeButton from './TextSizeMenu';
 
 export const PROMPT_INPUT_EVENT = 'set_prompt_input';

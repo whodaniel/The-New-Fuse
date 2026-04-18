@@ -1,2 +1,2 @@
-export * from './ErrorBoundary/index';
-export * from '../ui/index';
+export * from '../ui';
+export * from './ErrorBoundary';

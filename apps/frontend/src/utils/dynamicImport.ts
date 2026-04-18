@@ -136,7 +136,7 @@ const ComponentImports = {
   // Page Components (legacy support for old router)
   pages: {
     Home: () => import('../pages/Home'),
-    Dashboard: () => import('../pages/dashboard/index'),
+    Dashboard: () => import('../pages/dashboard'),
     Login: () => import('../pages/auth/Login'),
     Register: () => import('../pages/auth/Register'),
     NotFound: () => import('../pages/NotFound'),

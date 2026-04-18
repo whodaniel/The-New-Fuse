@@ -21,11 +21,11 @@ export {
   type DrizzleClient,
   type DrizzleModuleOptions,
   type Transaction,
-} from './drizzle/index.js';
+} from './drizzle';
 
-export { DatabaseService } from './drizzle/database.service.js';
+export { DatabaseService } from './drizzle/database.service';
 
-export * as drizzleSchema from './drizzle/schema/index.js';
+export * as drizzleSchema from './drizzle/schema';
 
 export {
   agentCapabilityRegistry,
@@ -55,7 +55,7 @@ export {
   workflows,
   workspaceMembers,
   workspaces,
-} from './drizzle/schema/index.js';
+} from './drizzle/schema';
 
 // Export Drizzle inferred types
 export type {
@@ -87,7 +87,7 @@ export type {
   WorkflowExecution,
   Workspace,
   WorkspaceMember,
-} from './drizzle/types.js';
+} from './drizzle/types';
 
 export {
   DrizzleAgentApiGrantRepository,
@@ -127,7 +127,7 @@ export {
   workflowTopologyRepository,
   type AuditLogEntry,
   type AuditLogQuery,
-} from './drizzle/repositories/index.js';
+} from './drizzle/repositories';
 
 export {
   AgentRepository,
@@ -137,7 +137,7 @@ export {
   UserRepository,
   WorkflowExecutionRepository,
   WorkflowRepository,
-} from './drizzle/compatibility.js';
+} from './drizzle/compatibility';
 
 export {
   and,
@@ -168,7 +168,7 @@ export {
   userRoleEnum,
   workflowExecutionStatusEnum,
   workflowStatusEnum,
-} from './drizzle/schema/index.js';
+} from './drizzle/schema';
 
 export type {
   AgentStatus,
@@ -183,4 +183,4 @@ export type {
   WalletType,
   WorkflowExecutionStatus,
   WorkflowStatus,
-} from './drizzle/types.js';
+} from './drizzle/types';
