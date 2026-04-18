@@ -9,7 +9,7 @@ import {
   desc,
   eq,
 } from '@the-new-fuse/database';
-import { ICapabilityTestResult, IOnboardingContext } from '../interfaces/agent-registry.interfaces.js';
+import { ICapabilityTestResult, IOnboardingContext } from '../interfaces/agent-registry.interfaces';
 
 @Injectable()
 export class AgentOnboardingService {

@@ -16,12 +16,12 @@ import {
   workflows,
   workflowSteps,
 } from '@the-new-fuse/database/drizzle/schema';
-import { eq, sql } from 'drizzle-orm.js';
+import { eq, sql } from 'drizzle-orm';
 import {
   MassBlockConfig,
   MassBlocksService,
-} from '../modules/mass/building-blocks/mass-blocks.service.js';
-import { WorkflowExecutionGateway } from './workflow-execution.gateway.js';
+} from '../modules/mass/building-blocks/mass-blocks.service';
+import { WorkflowExecutionGateway } from './workflow-execution.gateway';
 
 // Types
 export type WorkflowStatus = 'DRAFT' | 'PUBLISHED' | 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'FAILED';

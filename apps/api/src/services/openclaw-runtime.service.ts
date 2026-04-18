@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { execFile } from 'node:child_process.js';
+import { execFile } from 'node:child_process';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { promisify } from 'node:util.js';
+import { promisify } from 'node:util';
 
 const execFileAsync = promisify(execFile);
 

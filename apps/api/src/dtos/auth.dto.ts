@@ -11,7 +11,7 @@ import {
   Max,
   Min,
   MinLength,
-} from 'class-validator.js';
+} from 'class-validator';
 
 export class LoginDto {
   @ApiProperty()

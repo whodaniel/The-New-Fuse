@@ -12,11 +12,11 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
-import { IsEmail, IsString } from 'class-validator.js';
-import { Request, Response } from 'express.js';
-import { RegisterDto } from '../dto/register.dto.js';
-import { AuthService } from './auth.service.js';
-import { SupabaseAuthGuard } from './supabase-auth.guard.js';
+import { IsEmail, IsString } from 'class-validator';
+import { Request, Response } from 'express';
+import { RegisterDto } from '../dto/register.dto';
+import { AuthService } from './auth.service';
+import { SupabaseAuthGuard } from './supabase-auth.guard';
 
 class LoginDto {
   @IsEmail()

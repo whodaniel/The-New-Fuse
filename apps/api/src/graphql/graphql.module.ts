@@ -9,24 +9,24 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 // @ts-ignore
 import { GraphQLModule } from '@nestjs/graphql';
 import { JwtModule } from '@nestjs/jwt';
-import { Request, Response } from 'express.js';
+import { Request, Response } from 'express';
 import { join } from 'path';
 
 // Resolvers
-import { AgentResolver } from './resolvers/agent.resolver.js';
-import { UserResolver } from './resolvers/user.resolver.js';
-import { WorkflowResolver } from './resolvers/workflow.resolver.js';
+import { AgentResolver } from './resolvers/agent.resolver';
+import { UserResolver } from './resolvers/user.resolver';
+import { WorkflowResolver } from './resolvers/workflow.resolver';
 
 // Loaders
-import { AgentLoader } from './loaders/agent.loader.js';
-import { UserLoader } from './loaders/user.loader.js';
-import { WorkflowLoader } from './loaders/workflow.loader.js';
+import { AgentLoader } from './loaders/agent.loader';
+import { UserLoader } from './loaders/user.loader';
+import { WorkflowLoader } from './loaders/workflow.loader';
 
 // Guards
-import { GqlAuthGuard } from './guards/gql-auth.guard.js';
+import { GqlAuthGuard } from './guards/gql-auth.guard';
 
 // Security
-import { SecurityLoggingService } from '../security/security-logging.service.js';
+import { SecurityLoggingService } from '../security/security-logging.service';
 
 @Module({
   imports: [

@@ -1,4 +1,4 @@
-import { createClient } from 'redis.js';
+import { createClient } from 'redis';
 
 // Message to send to the agent
 const initializationMessage = {

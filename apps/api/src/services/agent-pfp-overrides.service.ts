@@ -3,8 +3,8 @@ import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@the-new-fuse/database';
 // @ts-ignore
 import { StorageService } from '@the-new-fuse/infrastructure';
-import { randomUUID } from 'crypto.js';
-import { PayPalService } from '../modules/billing/paypal.service.js';
+import { randomUUID } from 'node:crypto';
+import { PayPalService } from '../modules/billing/paypal.service';
 
 export type PfpSource = 'generated' | 'upload' | 'cloud';
 

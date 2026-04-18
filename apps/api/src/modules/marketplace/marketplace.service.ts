@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { drizzleMarketplaceCatalogRepository } from '@the-new-fuse/database';
-import { spawn } from 'child_process.js';
-import { randomUUID } from 'crypto.js';
-import postgres, { Sql } from 'postgres.js';
+import { spawn } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
+import postgres, { Sql } from 'postgres';
 import {
   MarketplaceCatalogItem,
   MarketplaceCatalogQuery,
@@ -10,7 +10,7 @@ import {
   MarketplaceExperienceSubmissionInput,
   MarketplaceKind,
   MarketplacePublicationStatus,
-} from './marketplace.types.js';
+} from './marketplace.types';
 
 const NOW = new Date().toISOString();
 const MAX_TEXT_LENGTH = 400;

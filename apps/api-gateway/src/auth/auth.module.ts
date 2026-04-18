@@ -6,9 +6,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthController } from './auth.controller.js';
-import { GatewayAuthGuard } from './gateway-auth.guard.js';
-import { GatewayAuthService } from './gateway-auth.service.js';
+import { AuthController } from './auth.controller';
+import { GatewayAuthGuard } from './gateway-auth.guard';
+import { GatewayAuthService } from './gateway-auth.service';
 
 @Module({
   imports: [

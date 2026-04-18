@@ -1,7 +1,7 @@
 import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express.js';
+import { Request, Response, NextFunction } from 'express';
 import { ConfigService } from '@nestjs/config';
-import * as crypto from 'crypto.js';
+import * as crypto from 'node:crypto';
 
 @Injectable()
 export class CsrfProtectionMiddleware implements NestMiddleware {

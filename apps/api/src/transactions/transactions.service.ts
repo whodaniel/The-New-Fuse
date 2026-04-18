@@ -11,7 +11,7 @@ import type { Wallet } from '@the-new-fuse/database';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import type { Address, Hex } from 'viem.js';
+import type { Address, Hex } from 'viem';
 import {
   createPublicClient,
   createWalletClient,
@@ -19,10 +19,10 @@ import {
   http,
   parseAbi,
   parseEther,
-} from 'viem.js';
-import { mainnet } from 'viem/chains.js';
-import { SmartAccountService } from '../smart-accounts/smart-account.service.js';
-import { Web3authService } from '../web3auth/web3auth.service.js';
+} from 'viem';
+import { mainnet } from 'viem/chains';
+import { SmartAccountService } from '../smart-accounts/smart-account.service';
+import { Web3authService } from '../web3auth/web3auth.service';
 import {
   BundlerResponse,
   ComplianceCheckResult as ImportedComplianceCheckResult,
@@ -31,7 +31,7 @@ import {
   TransactionCallData,
   UserOperation,
   WalletWithAgent,
-} from './user-operation.types.js';
+} from './user-operation.types';
 
 type ComplianceCheckResult = ImportedComplianceCheckResult;
 

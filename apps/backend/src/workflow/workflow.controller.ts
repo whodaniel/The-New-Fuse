@@ -16,9 +16,9 @@ import {
 } from '@nestjs/common';
 import { db } from '@the-new-fuse/database';
 import { workflows, workflowSteps } from '@the-new-fuse/database/drizzle/schema';
-import { eq } from 'drizzle-orm.js';
-import { SupabaseAuthGuard } from '../auth/supabase-auth.guard.js';
-import { WorkflowExecutionService } from './workflow-execution.service.js';
+import { eq } from 'drizzle-orm';
+import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';
+import { WorkflowExecutionService } from './workflow-execution.service';
 
 interface CreateWorkflowDto {
   name: string;

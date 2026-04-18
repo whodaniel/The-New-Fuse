@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { credentials } from '@grpc/grpc-js.js';
-import { promisify } from 'util.js';
+import { credentials } from '@grpc/grpc-js';
+import { promisify } from 'node:util';
 import { join } from 'path';
 
 // Import generated proto types (these will be generated from the proto files)

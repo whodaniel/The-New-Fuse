@@ -1,5 +1,5 @@
-import { IsString, IsOptional, IsArray, IsObject, ValidateNested } from 'class-validator.js';
-import { Type } from 'class-transformer.js';
+import { IsString, IsOptional, IsArray, IsObject, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore

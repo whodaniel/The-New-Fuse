@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AdvancedCacheManager } from './advanced-cache.manager.js';
+import { AdvancedCacheManager } from './advanced-cache.manager';
 
 export interface SessionData {
   userId: string;

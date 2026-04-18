@@ -4,7 +4,7 @@ import {
   FileListQueryDto,
   FileListResponseDto,
   FileUploadResponseDto,
-} from './dto/file.dto.js';
+} from './dto/file.dto';
 
 @Injectable()
 export class FilesService {

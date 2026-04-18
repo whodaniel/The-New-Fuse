@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { DrizzleModule } from '@the-new-fuse/database';
-import { AgentController } from './agent.controller.js';
-import { AgentService } from './agent.service.js';
+import { AgentController } from './agent.controller';
+import { AgentService } from './agent.service';
 
 @Module({
   imports: [DrizzleModule.forRootAsync()],

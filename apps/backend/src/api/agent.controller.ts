@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { db, drizzleAgentRepository, drizzleUserRepository } from '@the-new-fuse/database';
-import { IsArray, IsEnum, IsObject, IsOptional, IsString } from 'class-validator.js';
-import { TnfRegistryService } from './tnf-registry.service.js';
+import { IsArray, IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
+import { TnfRegistryService } from './tnf-registry.service';
 
 // Define local enums to avoid Drizzle dependency
 export enum AgentType {

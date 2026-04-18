@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto.js';
+import { randomUUID } from 'node:crypto';
 
 type JsonObject = Record<string, unknown>;
 

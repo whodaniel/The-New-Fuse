@@ -1,5 +1,5 @@
-import { describe, expect, it, jest } from '@jest/globals.js';
-import { AgentHandoffService } from './agent-handoff.service.js';
+import { describe, expect, it, jest } from '@jest/globals';
+import { AgentHandoffService } from './agent-handoff.service';
 
 describe('AgentHandoffService lifecycle audit logging', () => {
   const baseGateDecisions = [

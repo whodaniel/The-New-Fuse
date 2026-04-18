@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthLevel, RequireAuthLevel } from '../../../guards/secure-auth.guard.js';
+import { AuthLevel, RequireAuthLevel } from '../../../guards/secure-auth.guard';
 import {
   A2AMessageBrokerService,
   A2AMessageType,
   A2APriority,
-} from '../services/a2a-message-broker.service.js';
+} from '../services/a2a-message-broker.service';
 
 @ApiTags('a2a-broker')
 @Controller('a2a')

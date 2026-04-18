@@ -3,11 +3,11 @@ import { Injectable, Logger } from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
 import { DrizzleService } from '@the-new-fuse/database';
-import { exec } from 'child_process.js';
-import * as fs from 'fs/promises.js';
+import { exec } from 'node:child_process';
+import * as fs from 'fs/promises';
 import * as path from 'path';
-import { promisify } from 'util.js';
-import { resolveCodebaseRoot } from './codebase-root.js';
+import { promisify } from 'node:util';
+import { resolveCodebaseRoot } from './codebase-root';
 
 const execAsync = promisify(exec);
 
@@ -266,7 +266,7 @@ export class ${className}Service {
     const className = feature.name.replace(/\s+/g, '');
     const route = feature.name.toLowerCase().replace(/\s+/g, '-');
     return `import { Controller, Post, Get, Logger } from '@nestjs/common';
-import { ${className}Service } from '../services/${route}.service.js';
+import { ${className}Service } from '../services/${route}.service';
 
 @Controller('${route}')
 export class ${className}Controller {
@@ -290,7 +290,7 @@ export class ${className}Controller {
     const serviceName = feature.name.toLowerCase().replace(/\s+/g, '-');
 
     const testContent = `import { Test, TestingModule } from '@nestjs/testing';
-import { ${className}Service } from './${serviceName}.service.js';
+import { ${className}Service } from './${serviceName}.service';
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore

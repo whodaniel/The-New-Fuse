@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
-import { PayPalService } from '../modules/billing/paypal.service.js';
+import { PayPalService } from '../modules/billing/paypal.service';
 
 /**
  * AgentTemplate interface representing a persona template in the bank

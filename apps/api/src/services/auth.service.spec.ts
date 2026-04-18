@@ -1,6 +1,6 @@
-import { describe, expect, it, jest } from '@jest/globals.js';
+import { describe, expect, it, jest } from '@jest/globals';
 
-import { AuthService } from './auth.service.js';
+import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   const createService = () => {

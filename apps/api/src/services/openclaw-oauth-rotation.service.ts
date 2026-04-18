@@ -5,13 +5,13 @@ import { Injectable } from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
 import { drizzleConfigurationRepository } from '@the-new-fuse/database/drizzle/repositories';
-import * as crypto from 'crypto.js';
-import { execFile } from 'node:child_process.js';
-import { promisify } from 'node:util.js';
+import * as crypto from 'node:crypto';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import {
   OpenClawProvider,
   UpsertOpenClawOAuthBindingDto,
-} from '../dto/openclaw-oauth-rotation.dto.js';
+} from '../dto/openclaw-oauth-rotation.dto';
 
 const execFileAsync = promisify(execFile);
 

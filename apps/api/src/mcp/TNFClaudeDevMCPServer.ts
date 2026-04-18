@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ClaudeDevAutomationService, AutomationRequest, AutomationResult, ClaudeDevTemplate } from '../services/ClaudeDevAutomationService.js';
+import { ClaudeDevAutomationService, AutomationRequest, AutomationResult, ClaudeDevTemplate } from '../services/ClaudeDevAutomationService';
 
 // MCP (Model Context Protocol) Server for The New Fuse Claude Dev Integration
 // This server exposes Claude Dev automation capabilities through a standardized protocol

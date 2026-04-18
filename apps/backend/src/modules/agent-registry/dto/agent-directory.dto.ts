@@ -1,6 +1,6 @@
-import { IsString, IsOptional, IsBoolean, IsArray, IsNumber, Min, Max } from 'class-validator.js';
+import { IsString, IsOptional, IsBoolean, IsArray, IsNumber, Min, Max } from 'class-validator';
 import { ApiPropertyOptional, ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer.js';
+import { Type } from 'class-transformer';
 
 export class SearchAgentsDto {
   @ApiPropertyOptional({ description: 'Search query' })

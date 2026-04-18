@@ -3,9 +3,9 @@ import { Injectable, Logger } from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
 import { DrizzleService } from '@the-new-fuse/database';
-import * as fs from 'fs/promises.js';
+import * as fs from 'fs/promises';
 import * as path from 'path';
-import { resolveCodebaseRoot } from './codebase-root.js';
+import { resolveCodebaseRoot } from './codebase-root';
 
 interface CodeReview {
   implementationId: string;

@@ -33,10 +33,10 @@ import {
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import { CurrentUser } from '../../../auth/decorators/current-user.decorator.js';
+import { CurrentUser } from '../../../auth/decorators/current-user.decorator';
 
 // Local services
-import { AgentSwarmOrchestrationService } from '../services/agent-swarm-orchestration.service.js';
+import { AgentSwarmOrchestrationService } from '../services/agent-swarm-orchestration.service';
 
 // ============================================================================
 // INLINE TYPES (from @the-new-fuse/core/services/agency.service)

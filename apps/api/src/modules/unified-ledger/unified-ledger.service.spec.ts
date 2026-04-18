@@ -1,7 +1,7 @@
-import { describe, expect, it } from '@jest/globals.js';
-import * as fs from 'fs/promises.js';
+import { describe, expect, it } from '@jest/globals';
+import * as fs from 'fs/promises';
 import * as path from 'path';
-import { UnifiedLedgerService } from './unified-ledger.service.js';
+import { UnifiedLedgerService } from './unified-ledger.service';
 
 describe('UnifiedLedgerService personal timeline ownership', () => {
   it('enforces owner scoping for unified records and aggregates', async () => {

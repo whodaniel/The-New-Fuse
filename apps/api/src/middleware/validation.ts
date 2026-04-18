@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express.js';
-import { Schema } from 'joi.js';
+import { Request, Response, NextFunction } from 'express';
+import { Schema } from 'joi';
 
 // Create simple validation error
 class ValidationError extends Error {

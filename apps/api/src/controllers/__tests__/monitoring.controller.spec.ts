@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import request from 'supertest.js';
-import { AppModule } from '../../app.module.js';
+import request from 'supertest';
+import { AppModule } from '../../app.module';
 
 describe('MonitoringController (e2e)', () => {
   let app: any; // Cast to any to bypass INestApplication type mismatch

@@ -1,11 +1,11 @@
 import { Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
-import { Job } from 'bull.js';
-import { QueueName } from '../constants/queue-names.js';
-import { CleanupJobData } from '../interfaces/job-data.interface.js';
+import { Job } from 'bull';
+import { QueueName } from '../constants/queue-names';
+import { CleanupJobData } from '../interfaces/job-data.interface';
 import { DatabaseService } from '@the-new-fuse/database';
 import { authSessions } from '@the-new-fuse/database';
-import { lt } from 'drizzle-orm.js';
+import { lt } from 'drizzle-orm';
 
 /**
  * Cleanup job processor

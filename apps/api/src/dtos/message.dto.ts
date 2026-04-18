@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsObject, IsArray } from 'class-validator.js';
+import { IsString, IsOptional, IsObject, IsArray } from 'class-validator';
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore

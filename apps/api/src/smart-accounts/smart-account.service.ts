@@ -7,10 +7,10 @@ import { Injectable, Logger } from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import { createHash } from 'crypto.js';
-import { createPublicClient, http, parseAbi } from 'viem.js';
-import { mainnet } from 'viem/chains.js';
-import { Web3authService } from '../web3auth/web3auth.service.js';
+import { createHash } from 'node:crypto';
+import { createPublicClient, http, parseAbi } from 'viem';
+import { mainnet } from 'viem/chains';
+import { Web3authService } from '../web3auth/web3auth.service';
 
 export interface SmartAccountDeploymentResult {
   smartAccountAddress: string;

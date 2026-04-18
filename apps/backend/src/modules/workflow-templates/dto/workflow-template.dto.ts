@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsArray, IsObject, MaxLength, IsBoolean } from 'class-validator.js';
+import { IsString, IsNotEmpty, IsOptional, IsArray, IsObject, MaxLength, IsBoolean } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateWorkflowTemplateDto {

@@ -1,4 +1,4 @@
-import { IsString, MaxLength, MinLength } from 'class-validator.js';
+import { IsString, MaxLength, MinLength } from 'class-validator';
 
 export class SaveProviderKeyDto {
   @IsString()

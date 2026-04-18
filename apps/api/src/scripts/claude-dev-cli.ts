@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import yargs from 'yargs.js';
-import chalk from 'chalk.js';
-import ora from 'ora.js';
+import yargs from 'yargs';
+import chalk from 'chalk';
+import ora from 'ora';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';

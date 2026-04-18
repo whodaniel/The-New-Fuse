@@ -6,9 +6,9 @@ import {
 } from '@nestjs/common';
 // @ts-ignore
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators.js';
-import { Request, Response } from 'express.js';
-import * as crypto from 'crypto.js';
+import { tap } from 'rxjs/operators';
+import { Request, Response } from 'express';
+import * as crypto from 'node:crypto';
 
 /**
  * ETag Interceptor for conditional request handling

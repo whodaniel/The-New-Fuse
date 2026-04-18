@@ -10,7 +10,7 @@ import type { Agent } from '@the-new-fuse/database';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import DataLoader from 'dataloader.js';
+import DataLoader from 'dataloader';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AgentLoader {

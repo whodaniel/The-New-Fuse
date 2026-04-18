@@ -10,7 +10,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import * as crypto from 'crypto.js';
+import * as crypto from 'node:crypto';
 
 // In-memory storage for prompt templates until full schema is created
 interface PromptTemplate {

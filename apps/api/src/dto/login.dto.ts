@@ -1,4 +1,4 @@
-import { IsString, IsEmail } from 'class-validator.js';
+import { IsString, IsEmail } from 'class-validator';
 
 export class LoginDto {
   @IsEmail()

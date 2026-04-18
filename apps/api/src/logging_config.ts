@@ -1,4 +1,4 @@
-import { createLogger, format, transports } from 'winston.js';
+import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 
 export function setupLogging(): any {

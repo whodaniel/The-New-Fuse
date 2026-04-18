@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 // @ts-ignore
 import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators.js';
-import { Request } from 'express.js';
-import { RedisService } from '../services/redis.service.js';
+import { tap } from 'rxjs/operators';
+import { Request } from 'express';
+import { RedisService } from '../services/redis.service';
 
 /**
  * Cache Interceptor for GET requests

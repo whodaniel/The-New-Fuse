@@ -1,6 +1,6 @@
 import { Controller, Post, Get, Body, Param, Logger } from '@nestjs/common';
-import { WalletsService } from './wallets.service.js';
-import { SmartAccountDeploymentResult } from '../smart-accounts/smart-account.service.js';
+import { WalletsService } from './wallets.service';
+import { SmartAccountDeploymentResult } from '../smart-accounts/smart-account.service';
 
 @Controller('wallets')
 export class WalletsController {

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { drizzleUserRepository } from '@the-new-fuse/database';
-import { RedisService } from '../services/redis.service.js';
+import { RedisService } from '../services/redis.service';
 
 @Injectable()
 export class UsersService {

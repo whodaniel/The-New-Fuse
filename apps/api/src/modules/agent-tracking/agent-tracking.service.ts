@@ -8,7 +8,7 @@
  */
 
 import { Injectable, Logger, Inject, Optional } from '@nestjs/common';
-import { eq, and, desc, gt, lt, sql } from 'drizzle-orm.js';
+import { eq, and, desc, gt, lt, sql } from 'drizzle-orm';
 // @ts-ignore
 // @ts-ignore
 import { DRIZZLE_CLIENT, DrizzleClient } from '@the-new-fuse/database';
@@ -24,7 +24,7 @@ import {
   ReputationFactors,
   AbuseCheckStatus,
 } from '@the-new-fuse/database';
-import { randomBytes } from 'crypto.js';
+import { randomBytes } from 'node:crypto';
 
 // ============================================================================
 // INTERFACES

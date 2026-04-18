@@ -1,4 +1,4 @@
-import { AgentCoordinator } from '../services/agent/agent-coordinator.js';
+import { AgentCoordinator } from '../services/agent/agent-coordinator';
 
 // Simple mock FeatureTracker for testing
 class MockFeatureTracker {

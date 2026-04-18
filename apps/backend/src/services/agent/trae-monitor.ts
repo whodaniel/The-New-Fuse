@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { Redis } from 'ioredis.js';
+import { Redis } from 'ioredis';
 
 interface MetricData {
   messageType: string;

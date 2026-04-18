@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer.js';
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
@@ -11,8 +11,8 @@ import {
   MaxLength,
   Min,
   ValidateNested,
-} from 'class-validator.js';
-import { AgentCapabilityDto, AgentStatus } from './create-agent.dto.js';
+} from 'class-validator';
+import { AgentCapabilityDto, AgentStatus } from './create-agent.dto';
 
 /**
  * Data Transfer Object for updating an existing agent

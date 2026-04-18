@@ -2,7 +2,7 @@
 // @ts-ignore
 // @ts-ignore
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer.js';
+import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
   IsArray,
@@ -19,7 +19,7 @@ import {
   Matches,
   MaxLength,
   MinLength,
-} from 'class-validator.js';
+} from 'class-validator';
 
 export class PaginationDto {
   @ApiPropertyOptional({ minimum: 1, maximum: 100, default: 10 })

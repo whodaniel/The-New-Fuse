@@ -3,7 +3,7 @@
  * Proper TypeScript interfaces to replace `any` types
  */
 
-import type { WalletClient, Account, Address, Chain, Transport } from 'viem.js';
+import type { WalletClient, Account, Address, Chain, Transport } from 'viem';
 
 /**
  * Web3Auth Node SDK initialization options

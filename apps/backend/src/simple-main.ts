@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import 'dotenv/config';
-import { enforceCloudRootPolicy } from './config/cloud-root-policy.js';
-import { SimpleAppModule } from './simple-app.module.js';
+import { enforceCloudRootPolicy } from './config/cloud-root-policy';
+import { SimpleAppModule } from './simple-app.module';
 const cors = require('cors');
 
 async function bootstrap() {

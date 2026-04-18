@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthLevel, RequireAuthLevel } from '../../guards/secure-auth.guard.js';
-import { AccessService } from './access.service.js';
+import { AuthLevel, RequireAuthLevel } from '../../guards/secure-auth.guard';
+import { AccessService } from './access.service';
 
 type ResolveAccessDto = {
   gameId?: string;

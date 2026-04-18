@@ -1,4 +1,4 @@
-import { IsBoolean, IsIn, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator.js';
+import { IsBoolean, IsIn, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 
 export const OPENCLAW_PROVIDERS = [
   'openai-codex',

@@ -2,8 +2,8 @@
  * Validation Middleware - Request validation using Joi
  */
 
-import { Request, Response, NextFunction } from 'express.js';
-import Joi from 'joi.js';
+import { Request, Response, NextFunction } from 'express';
+import Joi from 'joi';
 
 interface ValidationSchema {
   body?: Joi.ObjectSchema;

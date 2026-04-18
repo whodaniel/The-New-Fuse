@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
-import * as crypto from 'crypto.js';
-import { StripeService } from './stripe.service.js';
+import * as crypto from 'node:crypto';
+import { StripeService } from './stripe.service';
 
 @Controller('billing/stripe')
 export class StripeController {

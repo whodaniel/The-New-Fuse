@@ -1,11 +1,11 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { AuditLogEntry } from '@the-new-fuse/database';
-import { ChildProcessWithoutNullStreams, execFile, spawn } from 'node:child_process.js';
+import { ChildProcessWithoutNullStreams, execFile, spawn } from 'node:child_process';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { promisify } from 'node:util.js';
-import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service.js';
-import { AuditService } from './audit.service.js';
+import { promisify } from 'node:util';
+import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service';
+import { AuditService } from './audit.service';
 
 const execFileAsync = promisify(execFile);
 

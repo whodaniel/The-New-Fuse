@@ -23,9 +23,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
-import { FileListQueryDto, FileListResponseDto, FileUploadResponseDto } from './dto/file.dto.js';
-import { FilesService } from './files.service.js';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { FileListQueryDto, FileListResponseDto, FileUploadResponseDto } from './dto/file.dto';
+import { FilesService } from './files.service';
 
 @ApiTags('files')
 @Controller('files')

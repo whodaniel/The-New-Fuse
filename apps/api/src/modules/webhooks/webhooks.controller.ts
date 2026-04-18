@@ -26,11 +26,11 @@ import {
   WebhookRegistrationResponse,
   WebhookStatusResponse,
 } from '@the-new-fuse/types';
-import { Response } from 'express.js';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
-import { BusinessEventService } from './services/business-event.service.js';
-import { SSEService } from './services/sse.service.js';
-import { WebhooksService } from './webhooks.service.js';
+import { Response } from 'express';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { BusinessEventService } from './services/business-event.service';
+import { SSEService } from './services/sse.service';
+import { WebhooksService } from './webhooks.service';
 
 @ApiTags('webhooks')
 @Controller('webhooks')

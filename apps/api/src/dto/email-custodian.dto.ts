@@ -12,7 +12,7 @@ import {
   MaxLength,
   Min,
   MinLength,
-} from 'class-validator.js';
+} from 'class-validator';
 
 export class ProvisionManagedAccountDto {
   @IsString()

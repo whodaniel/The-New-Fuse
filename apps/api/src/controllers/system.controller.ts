@@ -46,22 +46,22 @@ import {
 } from '@nestjs/common';
 import { DatabaseService, sql } from '@the-new-fuse/database';
 import * as fs from 'fs';
-import * as os from 'os.js';
+import * as os from 'node:os';
 import * as path from 'path';
-import { CacheService } from '../cache/cache.service.js';
+import { CacheService } from '../cache/cache.service';
 import {
   AuthLevel,
   RateLimitTier,
   RequireAuthLevel,
   SetRateLimitTier,
-} from '../guards/secure-auth.guard.js';
+} from '../guards/secure-auth.guard';
 import {
   A2AMessageBrokerService,
   A2AMessageType,
   A2APriority,
-} from '../modules/agency-hub/services/a2a-message-broker.service.js';
-import { AgentSwarmOrchestrationService } from '../modules/agency-hub/services/agent-swarm-orchestration.service.js';
-import { PromptTemplatesService } from '../services/prompt-templates.service.js';
+} from '../modules/agency-hub/services/a2a-message-broker.service';
+import { AgentSwarmOrchestrationService } from '../modules/agency-hub/services/agent-swarm-orchestration.service';
+import { PromptTemplatesService } from '../services/prompt-templates.service';
 
 @Controller('system')
 export class SystemController {

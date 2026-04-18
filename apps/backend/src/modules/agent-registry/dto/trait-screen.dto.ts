@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer.js';
+import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
   IsArray,
@@ -10,7 +10,7 @@ import {
   IsString,
   Max,
   Min,
-} from 'class-validator.js';
+} from 'class-validator';
 
 export class TraitScreenRequestDto {
   @ApiProperty({

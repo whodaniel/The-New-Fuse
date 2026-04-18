@@ -1,11 +1,11 @@
 import { ValidationPipe } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module.js';
+import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import compression from 'compression.js';
-import helmet from 'helmet.js';
-import { AllExceptionsFilter } from './filters/all-exceptions.filter.js';
+import compression from 'compression';
+import helmet from 'helmet';
+import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);

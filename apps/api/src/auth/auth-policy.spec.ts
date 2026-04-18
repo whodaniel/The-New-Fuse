@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals.js';
+import { describe, expect, it } from '@jest/globals';
 
 import {
   hasAuthorizationLevel,
@@ -6,7 +6,7 @@ import {
   resolveInvitePolicy,
   resolvePermissionClaims,
   resolveRoleClaims,
-} from './auth-policy.js';
+} from './auth-policy';
 
 describe('auth-policy', () => {
   it('normalizes and expands SUPER_ADMIN role claims', () => {

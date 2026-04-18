@@ -11,9 +11,9 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { Request } from 'express.js';
-import { ExtractJwt, Strategy } from 'passport-jwt.js';
-import { AuthService } from './auth.service.js';
+import { Request } from 'express';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { AuthService } from './auth.service';
 
 export interface AgentJwtPayload {
   sub: string; // Agent ID

@@ -9,16 +9,16 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
-import type { Request } from 'express.js';
-import { MemberOrAdmin } from '../../guards/member-or-admin.guard.js';
-import { AdminOnly } from '../../guards/secure-auth.guard.js';
-import { MarketplaceService } from './marketplace.service.js';
+import type { Request } from 'express';
+import { MemberOrAdmin } from '../../guards/member-or-admin.guard';
+import { AdminOnly } from '../../guards/secure-auth.guard';
+import { MarketplaceService } from './marketplace.service';
 import {
   MarketplaceCatalogQuery,
   MarketplaceCatalogSubmissionInput,
   MarketplaceExperienceSubmissionInput,
   MarketplacePublicationStatus,
-} from './marketplace.types.js';
+} from './marketplace.types';
 
 type MarketplacePrincipal = {
   id?: string;

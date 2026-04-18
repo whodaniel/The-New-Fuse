@@ -5,11 +5,11 @@
  */
 
 // @ts-ignore
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { Server } from '@modelcontextprotocol/sdk/server/index';
 // @ts-ignore
-import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse';
 // @ts-ignore
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
 import {
   CallToolRequest,
   CallToolRequestSchema,
@@ -17,8 +17,8 @@ import {
   ListToolsRequestSchema,
   McpError,
   Tool,
-} from '@modelcontextprotocol/sdk/types.js';
-import express from 'express.js';
+} from '@modelcontextprotocol/sdk/types';
+import express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 

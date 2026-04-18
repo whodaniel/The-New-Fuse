@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Cron } from '@nestjs/schedule';
-import { parse as parseTypeScript } from '@typescript-eslint/typescript-estree.js';
-import * as fs from 'fs/promises.js';
-import { glob } from 'glob.js';
-import Redis from 'ioredis.js';
+import { parse as parseTypeScript } from '@typescript-eslint/typescript-estree';
+import * as fs from 'fs/promises';
+import { glob } from 'glob';
+import Redis from 'ioredis';
 import * as path from 'path';
-import { AgentInbox } from '../shared/agent-inbox.js';
+import { AgentInbox } from '../shared/agent-inbox';
 
 export interface Resource {
   id: string;

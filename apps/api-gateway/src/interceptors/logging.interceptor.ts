@@ -13,8 +13,8 @@ import {
 // @ts-ignore
 import { Observable } from 'rxjs';
 // @ts-ignore
-import { tap } from 'rxjs/operators.js';
-import { Request, Response } from 'express.js';
+import { tap } from 'rxjs/operators';
+import { Request, Response } from 'express';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {

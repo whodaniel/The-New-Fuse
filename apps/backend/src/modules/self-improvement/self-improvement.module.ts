@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
-import { SelfImprovementCronService } from './self-improvement-cron.service.js';
+import { SelfImprovementCronService } from './self-improvement-cron.service';
 
 @Module({
   imports: [

@@ -1,8 +1,8 @@
-import { describe, expect, it } from '@jest/globals.js';
-import * as fs from 'fs/promises.js';
-import * as os from 'os.js';
+import { describe, expect, it } from '@jest/globals';
+import * as fs from 'fs/promises';
+import * as os from 'node:os';
 import * as path from 'path';
-import { TerminalsService } from './terminals.service.js';
+import { TerminalsService } from './terminals.service';
 
 describe('TerminalsService', () => {
   it('returns unavailable when TWIP snapshot is missing', async () => {

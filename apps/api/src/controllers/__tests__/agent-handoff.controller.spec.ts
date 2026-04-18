@@ -1,6 +1,6 @@
-import { describe, expect, it, jest } from '@jest/globals.js';
+import { describe, expect, it, jest } from '@jest/globals';
 
-import { AgentHandoffController } from '../agent-handoff.controller.js';
+import { AgentHandoffController } from '../agent-handoff.controller';
 
 describe('AgentHandoffController', () => {
   const handoffService = {

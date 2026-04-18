@@ -1,5 +1,5 @@
-import { Contract, ethers } from 'ethers.js';
-import { MongoClient } from 'mongodb.js';
+import { Contract, ethers } from 'ethers';
+import { MongoClient } from 'mongodb';
 
 type Nullable<T> = T | null;
 

@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import * as fs from 'fs/promises.js';
+import * as fs from 'fs/promises';
 import * as path from 'path';
 import {
   FeedbackIteration,
@@ -17,7 +17,7 @@ import {
   UnifiedWorkHorizon,
   UnifiedWorkItinerary,
   UnifiedWorkLane,
-} from './unified-ledger.types.js';
+} from './unified-ledger.types';
 
 type CreateRecordInput = Partial<UnifiedTaskRecord> &
   Pick<UnifiedTaskRecord, 'title' | 'description'>;

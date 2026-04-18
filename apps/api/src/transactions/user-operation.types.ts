@@ -3,7 +3,7 @@
  * Proper TypeScript interfaces to replace `any` types in transaction handling
  */
 
-import type { Address, Hash, Hex } from 'viem.js';
+import type { Address, Hash, Hex } from 'viem';
 
 /**
  * ERC-4337 UserOperation structure

@@ -1,7 +1,7 @@
 import { Controller, Get, Headers, HttpStatus, Query, Res, Version } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express.js';
-import { ProxyService } from '../proxy/proxy.service.js';
+import { Response } from 'express';
+import { ProxyService } from '../proxy/proxy.service';
 
 @Controller('marketplace')
 @ApiTags('marketplace')

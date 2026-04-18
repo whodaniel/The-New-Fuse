@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { TaskService } from './task.service.js';
+import { TaskService } from './task.service';
 
 @Injectable()
 export class TaskHealthMonitorService implements OnModuleInit, OnModuleDestroy {

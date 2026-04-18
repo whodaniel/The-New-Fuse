@@ -1,6 +1,6 @@
 // @ts-ignore
 import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
-import { UserType } from './user.type.js';
+import { UserType } from './user.type';
 
 export enum AgentStatus {
   ACTIVE = 'ACTIVE',

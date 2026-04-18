@@ -18,8 +18,8 @@ import {
   Version,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express.js';
-import { ProxyService } from '../proxy/proxy.service.js';
+import { Response } from 'express';
+import { ProxyService } from '../proxy/proxy.service';
 
 @Controller('mcp')
 @ApiTags('mcp')

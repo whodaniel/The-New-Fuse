@@ -41,14 +41,14 @@
  */
 import { Controller, Get, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import * as os from 'os.js';
-import * as process from 'process.js';
+import * as os from 'node:os';
+import * as process from 'node:process';
 import {
   AdminOnly,
   RateLimitTier,
   SecureAuthGuard,
   SetRateLimitTier,
-} from '../guards/secure-auth.guard.js';
+} from '../guards/secure-auth.guard';
 
 @ApiTags('monitoring')
 @Controller('monitoring')

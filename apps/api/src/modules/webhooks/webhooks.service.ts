@@ -15,10 +15,10 @@ import {
   WebhookRegistrationResponse,
   WebhookStatusResponse,
 } from '@the-new-fuse/types';
-import { randomUUID } from 'crypto.js';
-import { BusinessEventService } from './services/business-event.service.js';
-import { IntegrationService } from './services/integration.service.js';
-import { WebhookSecurityService } from './services/webhook-security.service.js';
+import { randomUUID } from 'node:crypto';
+import { BusinessEventService } from './services/business-event.service';
+import { IntegrationService } from './services/integration.service';
+import { WebhookSecurityService } from './services/webhook-security.service';
 
 @Injectable()
 export class WebhooksService {

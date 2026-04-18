@@ -1,9 +1,9 @@
 import { Injectable, OnModuleDestroy, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { compare, hash } from 'bcrypt.js';
-import { randomUUID } from 'crypto.js';
-import postgres from 'postgres.js';
+import { compare, hash } from 'bcrypt';
+import { randomUUID } from 'node:crypto';
+import postgres from 'postgres';
 
 type DbUser = {
   id: string;

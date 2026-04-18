@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import request from 'supertest.js';
-import { AuthService } from '../services/auth.service.js';
-import { OnboardingController } from './onboarding.controller.js';
+import request from 'supertest';
+import { AuthService } from '../services/auth.service';
+import { OnboardingController } from './onboarding.controller';
 
 describe('OnboardingController integration', () => {
   let app: INestApplication;

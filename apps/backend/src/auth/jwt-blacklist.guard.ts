@@ -7,7 +7,7 @@
 
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { TokenBlacklistService } from './token-blacklist.service.js';
+import { TokenBlacklistService } from './token-blacklist.service';
 
 @Injectable()
 export class JwtBlacklistGuard implements CanActivate {

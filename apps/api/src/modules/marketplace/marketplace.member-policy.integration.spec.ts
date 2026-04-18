@@ -7,12 +7,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import request from 'supertest.js';
+import request from 'supertest';
 
-import { MemberOrAdminGuard } from '../../guards/member-or-admin.guard.js';
-import { PayPalService } from '../billing/paypal.service.js';
-import { MarketplaceController } from './marketplace.controller.js';
-import { MarketplaceService } from './marketplace.service.js';
+import { MemberOrAdminGuard } from '../../guards/member-or-admin.guard';
+import { PayPalService } from '../billing/paypal.service';
+import { MarketplaceController } from './marketplace.controller';
+import { MarketplaceService } from './marketplace.service';
 
 jest.mock('@nestjs/passport', () => ({
   AuthGuard: () =>

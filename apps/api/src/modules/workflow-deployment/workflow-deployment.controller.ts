@@ -1,5 +1,5 @@
 import { Controller, Post, Param, UseGuards, NotFoundException, Body } from '@nestjs/common';
-import { CloudflareDeploymentService } from './cloudflare-deployment.service.js';
+import { CloudflareDeploymentService } from './cloudflare-deployment.service';
 // @ts-ignore
 // @ts-ignore
 import { UnifiedWorkflow } from '@the-new-fuse/workflow-engine';

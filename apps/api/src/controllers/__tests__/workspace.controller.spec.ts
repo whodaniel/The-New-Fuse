@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, it, jest } from '@jest/globals.js';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { promises as dns } from 'dns.js';
-import { WorkspaceController } from '../workspace.controller.js';
+import { promises as dns } from 'node:dns';
+import { WorkspaceController } from '../workspace.controller';
 
 describe('WorkspaceController domain/bookmark flows', () => {
   let db: any;

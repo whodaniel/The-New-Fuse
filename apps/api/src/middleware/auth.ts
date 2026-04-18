@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from 'express.js';
-import * as jwt from 'jsonwebtoken.js';
-import { ApiError } from './errorHandler.js';
+import { NextFunction, Request, Response } from 'express';
+import * as jwt from 'jsonwebtoken';
+import { ApiError } from './errorHandler';
 
 /**
  * Authentication middleware

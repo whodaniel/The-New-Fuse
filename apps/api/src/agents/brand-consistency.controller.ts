@@ -7,8 +7,8 @@
  */
 
 import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
-import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard.js';
-import { BrandConsistencyAgentService } from './brand-consistency-agent.service.js';
+import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard';
+import { BrandConsistencyAgentService } from './brand-consistency-agent.service';
 
 @Controller('agents/brand-consistency')
 @RequireAuthLevel(AuthLevel.USER)
@@ -93,7 +93,7 @@ export class BrandConsistencyController {
     // Sample component code with various brand issues
     const sampleCode = `
 // Sample React Component with brand inconsistencies
-import React from 'react.js';
+import React from 'react';
 
 const DemoCard = () => {
   return (

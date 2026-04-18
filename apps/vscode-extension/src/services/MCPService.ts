@@ -5,8 +5,8 @@
  * Model Context Protocol (MCP) connection management
  */
 
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { Client } from '@modelcontextprotocol/sdk/client/index';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio';
 import * as vscode from 'vscode';
 import { ConfigManager } from '../core/config.js';
 import { MCPConnection, MCPResource, MCPServerConfig, MCPTool } from '../core/types.js';

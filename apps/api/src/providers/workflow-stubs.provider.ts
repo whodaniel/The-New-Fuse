@@ -1,5 +1,5 @@
 import { Logger, NotImplementedException } from '@nestjs/common';
-import { WorkflowEngine, WorkflowExecutor } from '../types/core.js';
+import { WorkflowEngine, WorkflowExecutor } from '../types/core';
 
 /**
  * Stub implementation of WorkflowEngine

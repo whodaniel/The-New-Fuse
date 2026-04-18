@@ -1,4 +1,4 @@
-import { TraeAgent } from '../services/agent/trae-agent.js';
+import { TraeAgent } from '../services/agent/trae-agent';
 
 async function main(): Promise<void> {
   const agent = new TraeAgent();

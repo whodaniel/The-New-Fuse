@@ -6,10 +6,10 @@ import {
 } from '@nestjs/common';
 // @ts-ignore
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators.js';
-import { Response } from 'express.js';
-import * as zlib from 'zlib.js';
-import { promisify } from 'util.js';
+import { tap } from 'rxjs/operators';
+import { Response } from 'express';
+import * as zlib from 'node:zlib';
+import { promisify } from 'node:util';
 
 const gzip = promisify(zlib.gzip);
 const brotliCompress = promisify(zlib.brotliCompress);

@@ -10,10 +10,10 @@ import {
 } from '@nestjs/common';
 // @ts-ignore
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator.js';
-import { Request } from 'express.js';
-import { GatewayAuthGuard } from './gateway-auth.guard.js';
-import { GatewayAuthService } from './gateway-auth.service.js';
+import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import { Request } from 'express';
+import { GatewayAuthGuard } from './gateway-auth.guard';
+import { GatewayAuthService } from './gateway-auth.service';
 
 class LoginDto {
   @IsEmail()

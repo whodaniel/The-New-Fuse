@@ -13,8 +13,8 @@ import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Cron } from '@nestjs/schedule';
 // @ts-ignore
-import { LRUCache } from 'lru-cache.js';
-import * as crypto from 'crypto.js';
+import { LRUCache } from 'lru-cache';
+import * as crypto from 'node:crypto';
 
 // Types for relay integration (we'll define these inline to avoid import issues)
 interface RelayConfig {

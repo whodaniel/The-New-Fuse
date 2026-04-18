@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ErrorRequestHandler, NextFunction, Request, Response } from 'express.js';
-import { SecurityLoggingService } from '../security/security-logging.service.js';
+import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
+import { SecurityLoggingService } from '../security/security-logging.service';
 
 export interface ApiErrorResponse {
   success: false;

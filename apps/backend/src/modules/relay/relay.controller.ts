@@ -19,7 +19,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { RelayService } from './relay.service.js';
+import { RelayService } from './relay.service';
 
 interface RegisterAgentDto {
   id: string;

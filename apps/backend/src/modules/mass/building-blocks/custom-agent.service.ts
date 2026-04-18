@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MassBlocksService } from './mass-blocks.service.js';
+import { MassBlocksService } from './mass-blocks.service';
 
 @Injectable()
 export class CustomAgentService {

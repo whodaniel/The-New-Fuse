@@ -6,7 +6,7 @@ import {
   RateLimitTier,
   RequireAuthLevel,
   SetRateLimitTier,
-} from '../guards/secure-auth.guard.js';
+} from '../guards/secure-auth.guard';
 
 @Controller('visualizations')
 export class VisualizationsController {

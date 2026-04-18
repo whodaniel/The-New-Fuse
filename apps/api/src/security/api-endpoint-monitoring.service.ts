@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { SecurityLoggingService } from './security-logging.service.js';
+import { SecurityLoggingService } from './security-logging.service';
 import { ConfigService } from '@nestjs/config';
 
 export interface ApiEndpointMetrics {

@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { drizzleAgentRepository } from '@the-new-fuse/database';
-import { randomBytes } from 'crypto.js';
-import { AgentRegistrationResponseDto, RegisterAgentDto } from '../dto/index.js';
+import { randomBytes } from 'node:crypto';
+import { AgentRegistrationResponseDto, RegisterAgentDto } from '../dto';
 
 @Injectable()
 export class AgentRegistrationService {

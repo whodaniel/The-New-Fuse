@@ -1,8 +1,8 @@
 import { Body, Controller, ForbiddenException, Post, Req } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Request } from 'express.js';
-import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard.js';
-import { AuthService } from '../services/auth.service.js';
+import { Request } from 'express';
+import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard';
+import { AuthService } from '../services/auth.service';
 
 type OnboardingStartDto = {
   inviteCode?: string;

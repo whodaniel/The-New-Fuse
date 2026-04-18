@@ -22,11 +22,11 @@ import {
   ClaudeDevAgent,
   ClaudeDevAutomationService,
   ClaudeDevStatistics,
-} from '../services/ClaudeDevAutomationService.js';
+} from '../services/ClaudeDevAutomationService';
 import {
   ClaudeDevTemplateRegistry,
   ClaudeDevTemplateUtils,
-} from '../services/claude-dev-templates.js';
+} from '../services/claude-dev-templates';
 
 // DTOs for API requests and responses
 export class ClaudeDevCreateAgentDto {

@@ -1,4 +1,4 @@
-import { EnhancedAgent } from '../services/agent/enhanced-agent.js';
+import { EnhancedAgent } from '../services/agent/enhanced-agent';
 
 async function testAgent(): Promise<void> {
   const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';

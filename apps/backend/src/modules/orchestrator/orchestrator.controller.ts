@@ -20,7 +20,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { OrchestratorService } from './orchestrator.service.js';
+import { OrchestratorService } from './orchestrator.service';
 
 interface RegisterAgentDto {
   agentId: string;

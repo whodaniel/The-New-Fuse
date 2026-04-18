@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AgentType } from '@the-new-fuse/types';
-import { AgentService } from '../agent/agent.service.js';
+import { AgentService } from '../agent/agent.service';
 
 @Injectable()
 export class UserBotsService {

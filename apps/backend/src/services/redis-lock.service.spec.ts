@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import Redis from 'ioredis.js';
-import { RedisLockService } from './redis-lock.service.js';
+import Redis from 'ioredis';
+import { RedisLockService } from './redis-lock.service';
 
 // Mock ioredis
 jest.mock('ioredis', () => require('ioredis-mock'));

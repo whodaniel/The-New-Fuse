@@ -1,11 +1,11 @@
-import { execFile } from 'node:child_process.js';
+import { execFile } from 'node:child_process';
 import * as fs from 'node:fs';
-import * as os from 'node:os.js';
+import * as os from 'node:os';
 import * as path from 'node:path';
 import {
   ChronologicalProcessesService,
   ProcessRunHistoryEntry,
-} from './chronological-processes.service.js';
+} from './chronological-processes.service';
 
 jest.mock('node:child_process', () => ({
   execFile: jest.fn(),

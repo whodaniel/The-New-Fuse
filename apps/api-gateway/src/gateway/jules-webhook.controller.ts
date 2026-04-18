@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 
 // This is a placeholder for the actual payload validation pipe
-import { JulesWebhookPayload } from './jules-webhook.payload.js';
+import { JulesWebhookPayload } from './jules-webhook.payload';
 
 type JulesWebhookHandlerLike = {
   handleWebhook: (payload: JulesWebhookPayload, encodedContext: string) => Promise<void>;

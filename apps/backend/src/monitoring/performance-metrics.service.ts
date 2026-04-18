@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Counter, Gauge, Histogram, Registry } from 'prom-client.js';
+import { Counter, Gauge, Histogram, Registry } from 'prom-client';
 
 /**
  * Performance Metrics Service

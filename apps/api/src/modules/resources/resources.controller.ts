@@ -23,33 +23,33 @@ import type {
   ResourceSearchProtocolResponseEnvelope,
   ResourceSearchResponse,
 } from '@the-new-fuse/types';
-import type { Request } from 'express.js';
-import { JwtAuth, SecureAuthGuard } from '../../guards/secure-auth.guard.js';
-import { MarketplaceService } from '../marketplace/marketplace.service.js';
+import type { Request } from 'express';
+import { JwtAuth, SecureAuthGuard } from '../../guards/secure-auth.guard';
+import { MarketplaceService } from '../marketplace/marketplace.service';
 import {
   MarketplaceCatalogItem,
   MarketplaceCatalogSubmissionInput,
-} from '../marketplace/marketplace.types.js';
+} from '../marketplace/marketplace.types';
 import {
   CreatePersonalSkillDto,
   PersonalSkillDto,
   UpdatePersonalSkillDto,
-} from './dto/personal-skill.dto.js';
+} from './dto/personal-skill.dto';
 import {
   ResourceSearchProtocolRequestEnvelopeDto,
   ResourceSearchProtocolResponseEnvelopeDto,
-} from './dto/resource-search-protocol.dto.js';
+} from './dto/resource-search-protocol.dto';
 import {
   ResourceDto,
   ResourceSearchEnvelopeDto,
   ResourceSearchMetaDto,
   ResourceSearchRequestDto,
-} from './dto/resource-search.dto.js';
-import { PersonalSkillsService } from './personal-skills.service.js';
-import { ResourceInteractionService } from './resource-interaction.service.js';
-import { ResourceRegistryApiKeyGuard } from './resource-registry-api-key.guard.js';
-import { ResourceSearchPolicyService } from './resource-search-policy.service.js';
-import { ResourceSearchProtocolService } from './resource-search-protocol.service.js';
+} from './dto/resource-search.dto';
+import { PersonalSkillsService } from './personal-skills.service';
+import { ResourceInteractionService } from './resource-interaction.service';
+import { ResourceRegistryApiKeyGuard } from './resource-registry-api-key.guard';
+import { ResourceSearchPolicyService } from './resource-search-policy.service';
+import { ResourceSearchProtocolService } from './resource-search-protocol.service';
 
 @ApiTags('resources')
 @Controller('resources')

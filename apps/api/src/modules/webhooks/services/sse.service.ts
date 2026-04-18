@@ -6,7 +6,7 @@ import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import { Response } from 'express.js';
+import { Response } from 'express';
 
 interface SSEClient {
   id: string;

@@ -1,4 +1,4 @@
-import Joi from 'joi.js';
+import Joi from 'joi';
 
 // Define role values since the enum isn't available as a runtime value
 const agentRoleValues = ['ADMIN', 'USER', 'GUEST'];

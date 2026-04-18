@@ -1,5 +1,5 @@
-import { describe, expect, it } from '@jest/globals.js';
-import { OrchestrationController } from '../orchestration.controller.js';
+import { describe, expect, it } from '@jest/globals';
+import { OrchestrationController } from '../orchestration.controller';
 
 describe('OrchestrationController (google-adk)', () => {
   const controller = new OrchestrationController({} as any);

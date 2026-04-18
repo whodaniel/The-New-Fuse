@@ -1,5 +1,5 @@
-import { EventEmitter } from 'events.js';
-import { Redis } from 'ioredis.js';
+import { EventEmitter } from 'node:events';
+import { Redis } from 'ioredis';
 
 export class EnhancedAgent extends EventEmitter {
     private pubClient: Redis;

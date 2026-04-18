@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsNumber, Min, IsEnum } from 'class-validator.js';
+import { IsString, IsOptional, IsNumber, Min, IsEnum } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export enum FileCategory {

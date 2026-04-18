@@ -19,9 +19,9 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { AgentSwarmService } from '../modules/director/agent-swarm.service.js';
-import { BMADService } from '../modules/director/bmad.service.js';
-import { DirectorService } from '../modules/director/director.service.js';
+import { AgentSwarmService } from '../modules/director/agent-swarm.service';
+import { BMADService } from '../modules/director/bmad.service';
+import { DirectorService } from '../modules/director/director.service';
 
 // DTOs
 interface RegisterAgentDto {

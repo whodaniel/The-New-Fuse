@@ -10,15 +10,15 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
-import { CurrentUser } from '../../decorators/current-user.decorator.js';
-import { UnifiedLedgerService } from './unified-ledger.service.js';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../../decorators/current-user.decorator';
+import { UnifiedLedgerService } from './unified-ledger.service';
 import {
   UnifiedRecordKind,
   UnifiedRecordStatus,
   UnifiedWorkHorizon,
   UnifiedWorkLane,
-} from './unified-ledger.types.js';
+} from './unified-ledger.types';
 
 @Controller()
 @UseGuards(JwtAuthGuard)

@@ -1,15 +1,15 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from './auth.service.js';
+import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
-import { LoggingService } from '../services/logging.service.js';
-import { EventBus } from '../events/event-bus.service.js';
-import { IdentityService } from '../services/identity.service.js';
+import { LoggingService } from '../services/logging.service';
+import { EventBus } from '../events/event-bus.service';
+import { IdentityService } from '../services/identity.service';
 import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException } from '@nestjs/common';
 import { drizzleUserRepository } from '@the-new-fuse/database';
-import { SiweMessage } from 'siwe.js';
-import { TokenBlacklistService } from './token-blacklist.service.js';
+import { SiweMessage } from 'siwe';
+import { TokenBlacklistService } from './token-blacklist.service';
 
 // We need to mock the module that exports drizzleUserRepository
 jest.mock('@the-new-fuse/database', () => ({

@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { AdvancedCacheManager } from './advanced-cache.manager.js';
+import { AdvancedCacheManager } from './advanced-cache.manager';
 
 export interface InvalidationRule {
   name: string;

@@ -1,5 +1,5 @@
-import { describe, expect, it, jest } from '@jest/globals.js';
-import { AgentProxyController } from '../agent-proxy.controller.js';
+import { describe, expect, it, jest } from '@jest/globals';
+import { AgentProxyController } from '../agent-proxy.controller';
 
 describe('AgentProxyController', () => {
   const grantsService = {

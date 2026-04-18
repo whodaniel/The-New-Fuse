@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthService } from './auth.service.js';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class SupabaseAuthGuard implements CanActivate {

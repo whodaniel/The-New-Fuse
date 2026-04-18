@@ -10,14 +10,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from '../../auth/decorators/current-user.decorator.js';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import {
   AgentDirectoryResponseDto,
   AgentRegistrationResponseDto,
   RegisterAgentDto,
   SearchAgentsDto,
   TraitScreenRequestDto,
-} from './dto/index.js';
+} from './dto';
 import {
   AgentDirectoryService,
   AgentOnboardingService,
@@ -25,7 +25,7 @@ import {
   AgentProfileVectorService,
   AgentRegistrationService,
   AgentRegistryImportService,
-} from './services/index.js';
+} from './services';
 
 @ApiTags('Agent Registry')
 @Controller('api/agent-registry')

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { DrizzleModule } from '@the-new-fuse/database';
-import { AgentRegistryController } from './agent-registry.controller.js';
+import { AgentRegistryController } from './agent-registry.controller';
 import {
   AgentDirectoryService,
   AgentOnboardingService,
@@ -9,7 +9,7 @@ import {
   AgentProfileVectorService,
   AgentRegistrationService,
   AgentRegistryImportService,
-} from './services/index.js';
+} from './services';
 
 @Module({
   imports: [DrizzleModule.forRootAsync(), EventEmitterModule],

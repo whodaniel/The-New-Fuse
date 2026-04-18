@@ -9,7 +9,7 @@ import type { Workflow } from '@the-new-fuse/database';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import DataLoader from 'dataloader.js';
+import DataLoader from 'dataloader';
 
 // WorkflowStep type from the database types
 type WorkflowStep = any; // Since WorkflowStep might not be directly exported

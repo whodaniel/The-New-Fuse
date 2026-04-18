@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { drizzleUserRepository } from '@the-new-fuse/database';
-import { OAuth2Client } from 'google-auth-library.js';
+import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class GoogleAuthService {

@@ -1,9 +1,9 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { MCPServer, MCPServerConfig } from '@the-new-fuse/mcp-core';
-import { EventEmitter } from 'events.js';
-import * as fs from 'fs/promises.js';
+import { EventEmitter } from 'node:events';
+import * as fs from 'fs/promises';
 import * as path from 'path';
-import { MCPToolRegistry } from './mcp-tool-registry.service.js';
+import { MCPToolRegistry } from './mcp-tool-registry.service';
 
 /**
  * MCP Server Service

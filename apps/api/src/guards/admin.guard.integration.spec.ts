@@ -8,8 +8,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import request from 'supertest.js';
-import { AdminGuard } from './admin.guard.js';
+import request from 'supertest';
+import { AdminGuard } from './admin.guard';
 
 class TestAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {

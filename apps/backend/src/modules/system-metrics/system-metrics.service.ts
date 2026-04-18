@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { db, drizzleApiLogsRepository } from '@the-new-fuse/database';
-import { exec } from 'child_process.js';
-import { sql } from 'drizzle-orm.js';
+import { exec } from 'node:child_process';
+import { sql } from 'drizzle-orm';
 import * as fs from 'fs';
-import * as os from 'os.js';
-import { promisify } from 'util.js';
-import { SystemMetricsResponseDto } from './dto/system-metrics.dto.js';
+import * as os from 'node:os';
+import { promisify } from 'node:util';
+import { SystemMetricsResponseDto } from './dto/system-metrics.dto';
 
 const execAsync = promisify(exec);
 

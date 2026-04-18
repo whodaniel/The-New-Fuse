@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { AdvancedCacheManager } from './advanced-cache.manager.js';
+import { AdvancedCacheManager } from './advanced-cache.manager';
 
 export interface WarmupTask {
   name: string;

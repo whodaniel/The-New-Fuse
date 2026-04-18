@@ -1,9 +1,9 @@
 import { Injectable, NestMiddleware, Logger, BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express.js';
-import { SecurityLoggingService } from '../security/security-logging.service.js';
-import { EnhancedRateLimitService } from '../security/enhanced-rate-limit.service.js';
-import { InputSanitizationService } from '../security/input-sanitization.service.js';
-import * as crypto from 'crypto.js';
+import { Request, Response, NextFunction } from 'express';
+import { SecurityLoggingService } from '../security/security-logging.service';
+import { EnhancedRateLimitService } from '../security/enhanced-rate-limit.service';
+import { InputSanitizationService } from '../security/input-sanitization.service';
+import * as crypto from 'node:crypto';
 
 declare global {
   namespace Express {

@@ -10,11 +10,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express.js';
-import { hasAuthorizationLevel } from '../auth/auth-policy.js';
-import { GenerateInviteCodeDto, LoginDto, RegisterDto, SupabaseAuthDto } from '../dtos/auth.dto.js';
-import { AuthGuard } from '../guards/auth.guard.js';
-import { AuthService } from '../services/auth.service.js';
+import { Request } from 'express';
+import { hasAuthorizationLevel } from '../auth/auth-policy';
+import { GenerateInviteCodeDto, LoginDto, RegisterDto, SupabaseAuthDto } from '../dtos/auth.dto';
+import { AuthGuard } from '../guards/auth.guard';
+import { AuthService } from '../services/auth.service';
 
 @ApiTags('auth')
 @Controller('auth')

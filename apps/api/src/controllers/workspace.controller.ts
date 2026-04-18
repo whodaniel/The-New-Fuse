@@ -34,14 +34,14 @@ import {
   sql,
   tasks,
 } from '@the-new-fuse/database';
-import { randomUUID } from 'crypto.js';
-import { promises as dns } from 'dns.js';
+import { randomUUID } from 'node:crypto';
+import { promises as dns } from 'node:dns';
 import { promises as fs } from 'fs';
-import * as os from 'os.js';
+import * as os from 'node:os';
 import * as path from 'path';
-import { CurrentUser } from '../decorators/current-user.decorator.js';
-import { SecureAuthGuard } from '../guards/secure-auth.guard.js';
-import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service.js';
+import { CurrentUser } from '../decorators/current-user.decorator';
+import { SecureAuthGuard } from '../guards/secure-auth.guard';
+import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service';
 
 type WorkspaceAccessRole = 'owner' | 'admin' | 'member' | 'viewer';
 type WorkspaceManageableRole = Exclude<WorkspaceAccessRole, 'owner'>;

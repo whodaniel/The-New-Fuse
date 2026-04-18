@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AgentRegistryController } from '../agent-registry.controller.js';
+import { AgentRegistryController } from '../agent-registry.controller';
 import {
   AgentRegistrationService,
   AgentOnboardingService,
   AgentOrientationService,
   AgentDirectoryService,
-} from '../services/index.js';
+} from '../services';
 
 describe('AgentRegistryController', () => {
   let controller: AgentRegistryController;

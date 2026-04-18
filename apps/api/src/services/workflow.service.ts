@@ -11,7 +11,7 @@ import { DatabaseService } from '@the-new-fuse/database';
 // @ts-ignore
 // @ts-ignore
 import { CreateWorkflowDto, Workflow, WorkflowExecution, WorkflowInput } from '@the-new-fuse/types';
-import { WorkflowEngine, WorkflowExecutor } from '../types/core.js';
+import { WorkflowEngine, WorkflowExecutor } from '../types/core';
 
 @Injectable()
 export class WorkflowService {

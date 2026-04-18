@@ -4,9 +4,9 @@ import { ConfigService } from '@nestjs/config';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import { UnifiedMonitoringService } from '../types/core.js';
-import { AgentFactory } from './agent.factory.js';
-import { CreateAgentDto, UpdateAgentDto } from './dto/agent.dto.js';
+import { UnifiedMonitoringService } from '../types/core';
+import { AgentFactory } from './agent.factory';
+import { CreateAgentDto, UpdateAgentDto } from './dto/agent.dto';
 
 @Injectable()
 export class AgentsService {

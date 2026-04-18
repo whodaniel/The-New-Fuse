@@ -26,7 +26,7 @@ const sampleComponents = [
   {
     path: 'apps/frontend/src/components/ui/Button.tsx',
     code: `
-import React from 'react.js';
+import React from 'react';
 
 export const Button = ({ children, variant = 'primary' }) => {
   const styles = {
@@ -46,7 +46,7 @@ export const Button = ({ children, variant = 'primary' }) => {
   {
     path: 'apps/frontend/src/components/cards/FeatureCard.tsx',
     code: `
-import React from 'react.js';
+import React from 'react';
 
 export const FeatureCard = ({ title, description }) => {
   return (
@@ -72,7 +72,7 @@ export const FeatureCard = ({ title, description }) => {
   {
     path: 'apps/frontend/src/components/layout/Sidebar.tsx',
     code: `
-import React from 'react.js';
+import React from 'react';
 
 export const Sidebar = ({ items }) => {
   return (

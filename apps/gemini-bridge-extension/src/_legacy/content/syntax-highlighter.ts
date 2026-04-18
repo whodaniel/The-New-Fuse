@@ -1,4 +1,4 @@
-import hljs from 'highlight.js';
+import hljs from 'highlight';
 import 'highlight.js/styles/github.css';
 // Also include dark theme
 import 'highlight.js/styles/github-dark.css';

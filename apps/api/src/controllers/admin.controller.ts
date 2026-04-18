@@ -3,7 +3,7 @@ import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/comm
 // @ts-ignore
 // @ts-ignore
 import { Permission } from '@the-new-fuse/types';
-import { execFileSync } from 'child_process.js';
+import { execFileSync } from 'node:child_process';
 import {
   AdminOnly,
   AuditLog,
@@ -11,10 +11,10 @@ import {
   RateLimitTier,
   SecureAuthGuard,
   SetRateLimitTier,
-} from '../guards/secure-auth.guard.js';
-import { AuditService } from '../services/audit.service.js';
-import { MetricsService } from '../services/metrics.service.js';
-import { RoleService } from '../services/role.service.js';
+} from '../guards/secure-auth.guard';
+import { AuditService } from '../services/audit.service';
+import { MetricsService } from '../services/metrics.service';
+import { RoleService } from '../services/role.service';
 
 /**
  * Admin Controller

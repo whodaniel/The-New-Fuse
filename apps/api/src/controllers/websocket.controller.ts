@@ -44,10 +44,10 @@
  * socket.emit('workflow:subscribe', 'workflow-123');
  * socket.on('workflow:update', (data: any) => console.log(data));
  */
-import { Request, Response } from 'express.js';
+import { Request, Response } from 'express';
 // @ts-ignore
-import { Server as SocketIOServer } from 'socket.io.js';
-import { createServer } from 'http.js';
+import { Server as SocketIOServer } from 'socket.io';
+import { createServer } from 'node:http';
 import { Controller, Logger } from '@nestjs/common';
 
 @Controller('websocket')

@@ -10,8 +10,8 @@ import { DatabaseService } from '@the-new-fuse/database';
 import {
   SmartAccountDeploymentResult,
   SmartAccountService,
-} from '../smart-accounts/smart-account.service.js';
-import { Web3authService } from '../web3auth/web3auth.service.js';
+} from '../smart-accounts/smart-account.service';
+import { Web3authService } from '../web3auth/web3auth.service';
 
 @Injectable()
 export class WalletsService {

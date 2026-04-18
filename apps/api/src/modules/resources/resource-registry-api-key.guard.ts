@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { Request } from 'express.js';
+import type { Request } from 'express';
 
 @Injectable()
 export class ResourceRegistryApiKeyGuard implements CanActivate {

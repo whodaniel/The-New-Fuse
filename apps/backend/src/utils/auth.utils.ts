@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { drizzleUserRepository } from '@the-new-fuse/database';
-import * as bcrypt from 'bcrypt.js';
-import * as jwt from 'jsonwebtoken.js';
-import { AppConfigService } from '../config/app-config.service.js';
+import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
+import { AppConfigService } from '../config/app-config.service';
 
 // Constants
 const SALT_ROUNDS = 10;

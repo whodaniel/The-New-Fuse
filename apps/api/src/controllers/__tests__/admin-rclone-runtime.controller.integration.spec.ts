@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from '@jest/globals.js';
+import { describe, expect, it, jest } from '@jest/globals';
 
 jest.mock(
   '@the-new-fuse/relay-core',
@@ -26,7 +26,7 @@ jest.mock('../../guards/secure-auth.guard', () => ({
   SecureAuthGuard: class SecureAuthGuard {},
 }));
 
-import { AdminRcloneRuntimeController } from '../admin-rclone-runtime.controller.js';
+import { AdminRcloneRuntimeController } from '../admin-rclone-runtime.controller';
 
 describe('AdminRcloneRuntimeController ArDrive integration contracts', () => {
   const service = {

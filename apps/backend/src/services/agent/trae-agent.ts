@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
-import { EventEmitter } from 'events.js';
-import { Redis } from 'ioredis.js';
+import { EventEmitter } from 'node:events';
+import { Redis } from 'ioredis';
 
 interface AgentMessage {
   type: string;

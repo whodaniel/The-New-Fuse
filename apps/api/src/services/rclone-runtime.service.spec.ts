@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals.js';
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 
-import { RcloneRuntimeService } from './rclone-runtime.service.js';
+import { RcloneRuntimeService } from './rclone-runtime.service';
 
 describe('RcloneRuntimeService provider guardrails', () => {
   let fetchMock: jest.Mock;

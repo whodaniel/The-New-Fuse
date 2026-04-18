@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsArray, IsObject, IsEnum } from 'class-validator.js';
+import { IsString, IsOptional, IsArray, IsObject, IsEnum } from 'class-validator';
 // @ts-ignore
 // @ts-ignore
 import { AgentType, AgentStatus } from '@the-new-fuse/types';

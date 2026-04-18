@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CloudflareDeploymentService } from './cloudflare-deployment.service.js';
-import { WorkflowDeploymentController } from './workflow-deployment.controller.js';
+import { CloudflareDeploymentService } from './cloudflare-deployment.service';
+import { WorkflowDeploymentController } from './workflow-deployment.controller';
 
 @Module({
   imports: [ConfigModule],

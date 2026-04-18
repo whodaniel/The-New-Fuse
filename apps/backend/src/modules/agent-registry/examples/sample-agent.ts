@@ -6,7 +6,7 @@
  */
 
 import axios, { AxiosInstance } from 'axios';
-import WebSocket from 'ws.js';
+import WebSocket from 'ws';
 
 interface AgentConfig {
   name: string;

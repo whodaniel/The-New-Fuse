@@ -1,5 +1,5 @@
 import { ForbiddenException } from '@nestjs/common';
-import { TerminalsController } from './terminals.controller.js';
+import { TerminalsController } from './terminals.controller';
 
 describe('TerminalsController', () => {
   const buildController = () =>

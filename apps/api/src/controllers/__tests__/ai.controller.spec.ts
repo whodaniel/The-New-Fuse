@@ -1,5 +1,5 @@
-import { describe, expect, it } from '@jest/globals.js';
-import { AiController } from '../ai.controller.js';
+import { describe, expect, it } from '@jest/globals';
+import { AiController } from '../ai.controller';
 
 describe('AiController (google-adk)', () => {
   const controller = new AiController({} as any);

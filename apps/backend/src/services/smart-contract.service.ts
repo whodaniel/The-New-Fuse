@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ethers, JsonRpcProvider, ZeroAddress, Contract, Wallet, BigNumberish, formatEther, parseEther, EventFragment, getAddress } from 'ethers.js';
+import { ethers, JsonRpcProvider, ZeroAddress, Contract, Wallet, BigNumberish, formatEther, parseEther, EventFragment, getAddress } from 'ethers';
 
 // Contract ABIs (would normally be imported from compiled contracts)
 export const AGENT_NFT_ABI = [

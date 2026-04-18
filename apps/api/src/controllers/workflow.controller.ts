@@ -19,14 +19,14 @@ import {
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService, and, desc, eq, ilike, or, sql } from '@the-new-fuse/database';
-import { Request, Response } from 'express.js';
+import { Request, Response } from 'express';
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore
 import { workflowExecutions, workflows } from '@the-new-fuse/database/drizzle/schema';
 
-import { WorkflowExecutionService } from '../services/workflow/WorkflowExecutionService.js';
+import { WorkflowExecutionService } from '../services/workflow/WorkflowExecutionService';
 
 type DatabaseWhere = Record<string, any>;
 

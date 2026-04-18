@@ -2,7 +2,7 @@ import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } fr
 import { Reflector } from '@nestjs/core';
 // @ts-ignore
 import { Observable, from } from 'rxjs';
-import { tap } from 'rxjs/operators.js';
+import { tap } from 'rxjs/operators';
 import {
   CACHEABLE_KEY,
   CACHE_EVICT_KEY,
@@ -10,8 +10,8 @@ import {
   CacheEvictOptions,
   CacheInvalidateOptions,
   CacheableOptions,
-} from '../decorators/cacheable.decorator.js';
-import { AdvancedCacheManager } from '../services/advanced-cache.manager.js';
+} from '../decorators/cacheable.decorator';
+import { AdvancedCacheManager } from '../services/advanced-cache.manager';
 
 @Injectable()
 export class CacheInterceptor implements NestInterceptor {

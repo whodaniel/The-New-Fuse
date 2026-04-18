@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 // @ts-ignore
 import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators.js';
-import { Request, Response } from 'express.js';
-import { AdvancedCacheManager } from '../services/advanced-cache.manager.js';
+import { tap } from 'rxjs/operators';
+import { Request, Response } from 'express';
+import { AdvancedCacheManager } from '../services/advanced-cache.manager';
 import { Reflector } from '@nestjs/core';
 
 export const HTTP_CACHE_KEY = 'http_cache';

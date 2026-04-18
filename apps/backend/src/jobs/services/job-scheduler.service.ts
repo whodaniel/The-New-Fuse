@@ -1,13 +1,13 @@
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Queue } from 'bull.js';
-import { JOB_ATTEMPTS, JOB_BACKOFF, JobPriority, QueueName } from '../constants/queue-names.js';
+import { Queue } from 'bull';
+import { JOB_ATTEMPTS, JOB_BACKOFF, JobPriority, QueueName } from '../constants/queue-names';
 import {
   CleanupJobData,
   DataSyncJobData,
   ReportGenerationJobData,
-} from '../interfaces/job-data.interface.js';
+} from '../interfaces/job-data.interface';
 
 /**
  * Job scheduler service

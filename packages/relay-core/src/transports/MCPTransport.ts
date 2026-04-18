@@ -8,11 +8,11 @@
 
 import { EventEmitter } from 'events';
 // @ts-ignore
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { Server } from '@modelcontextprotocol/sdk/server/index';
 // @ts-ignore
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
 // @ts-ignore
-import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types';
 import { Transport, RelayMessage } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
 

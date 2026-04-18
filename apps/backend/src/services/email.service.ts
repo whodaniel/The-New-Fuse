@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import nodemailer from 'nodemailer.js';
+import nodemailer from 'nodemailer';
 
 export interface EmailOptions {
   to: string;

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
-import { N8nIntegrationController } from './n8n-integration.controller.js';
-import { N8nMetadataService } from './n8n-metadata.service.js';
+import { N8nIntegrationController } from './n8n-integration.controller';
+import { N8nMetadataService } from './n8n-metadata.service';
 
 @Module({
   imports: [

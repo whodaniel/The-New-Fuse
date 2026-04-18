@@ -1,12 +1,12 @@
 import { Body, Controller, HttpException, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
 import { ExportFormat } from '@the-new-fuse/types';
-import { Response } from 'express.js';
+import { Response } from 'express';
 import {
   JwtAuth,
   RateLimitTier,
   SecureAuthGuard,
   SetRateLimitTier,
-} from '../guards/secure-auth.guard.js';
+} from '../guards/secure-auth.guard';
 
 /**
  * Export Service

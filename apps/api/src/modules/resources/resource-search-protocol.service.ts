@@ -6,7 +6,7 @@ import type {
   ResourceSearchRequest,
   ResourceSearchResponse,
 } from '@the-new-fuse/types';
-import { randomUUID } from 'crypto.js';
+import { randomUUID } from 'node:crypto';
 
 type ProtocolRequestDecodeResult = {
   filter: ResourceSearchRequest;

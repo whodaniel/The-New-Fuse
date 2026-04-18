@@ -20,12 +20,12 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService, User } from '@the-new-fuse/database';
-import { CurrentUser } from '../decorators/current-user.decorator.js';
-import { JwtAuth, RateLimitTier, SetRateLimitTier } from '../guards/secure-auth.guard.js';
+import { CurrentUser } from '../decorators/current-user.decorator';
+import { JwtAuth, RateLimitTier, SetRateLimitTier } from '../guards/secure-auth.guard';
 import {
   AgentPfpOverrideRecord,
   AgentPfpOverridesService,
-} from '../services/agent-pfp-overrides.service.js';
+} from '../services/agent-pfp-overrides.service';
 
 interface AuthUser {
   id: string;

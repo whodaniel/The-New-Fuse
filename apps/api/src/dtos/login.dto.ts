@@ -1,4 +1,4 @@
-import { IsString, IsEmail, MinLength } from 'class-validator.js';
+import { IsString, IsEmail, MinLength } from 'class-validator';
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore

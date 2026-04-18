@@ -4,8 +4,8 @@
  */
 
 import { Module } from '@nestjs/common';
-import { ProxyModule } from '../proxy/proxy.module.js';
-import { ChatGatewayController } from './chat-gateway.controller.js';
+import { ProxyModule } from '../proxy/proxy.module';
+import { ChatGatewayController } from './chat-gateway.controller';
 
 @Module({
   imports: [ProxyModule],

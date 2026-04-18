@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { Web3authService } from './web3auth.service.js';
+import { Web3authService } from './web3auth.service';
 
 @Module({
   providers: [Web3authService],

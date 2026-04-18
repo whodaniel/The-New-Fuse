@@ -6,7 +6,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { randomUUID } from 'crypto.js';
+import { randomUUID } from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 // @ts-ignore
@@ -23,7 +23,7 @@ import { drizzleConfigurationRepository } from '@the-new-fuse/database/drizzle/r
 // @ts-ignore
 // @ts-ignore
 import { agentApiGrants } from '@the-new-fuse/database/drizzle/schema';
-import { CreateAgentGrantDto } from '../dto/agent-grants.dto.js';
+import { CreateAgentGrantDto } from '../dto/agent-grants.dto';
 
 type GrantTokenPayload = {
   typ: 'agent-grant';

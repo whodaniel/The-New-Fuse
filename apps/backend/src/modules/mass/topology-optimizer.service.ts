@@ -12,7 +12,7 @@ import {
   WorkflowNode,
   WorkflowTopology,
 } from '@the-new-fuse/types';
-import { EvaluationHarnessService } from './prompt-optimizer.service.js';
+import { EvaluationHarnessService } from './prompt-optimizer.service';
 
 @Injectable()
 export class TopologyOptimizerService {

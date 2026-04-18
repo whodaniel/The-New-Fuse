@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { TerminalsController } from './terminals.controller.js';
-import { TerminalsService } from './terminals.service.js';
+import { TerminalsController } from './terminals.controller';
+import { TerminalsService } from './terminals.service';
 
 @Module({
   controllers: [TerminalsController],

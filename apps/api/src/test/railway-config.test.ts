@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { ConfigService } from '@nestjs/config';
-import { RailwayConfigService } from '../config/railway.config.js';
+import { RailwayConfigService } from '../config/railway.config';
 
 describe('RailwayConfigService', () => {
   let configService: ConfigService;

@@ -1,7 +1,7 @@
-import { describe, expect, it, jest } from '@jest/globals.js';
+import { describe, expect, it, jest } from '@jest/globals';
 import { ConfigService } from '@nestjs/config';
 import { DatabaseService } from '@the-new-fuse/database';
-import { EmailCustodianService } from './email-custodian.service.js';
+import { EmailCustodianService } from './email-custodian.service';
 
 describe('EmailCustodianService', () => {
   const createService = () => {

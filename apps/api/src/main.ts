@@ -3,13 +3,13 @@ import { NestFactory } from '@nestjs/core';
 // @ts-ignore
 // @ts-ignore
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as dotenv from 'dotenv.js';
+import * as dotenv from 'dotenv';
 dotenv.config();
 import * as fs from 'fs';
-import * as yaml from 'js-yaml.js';
+import * as yaml from 'js-yaml';
 import * as path from 'path';
-import { AppModule } from './app.module.js';
-import { validateGcpEnvironment } from './config/gcp.config.js';
+import { AppModule } from './app.module';
+import { validateGcpEnvironment } from './config/gcp.config';
 
 const logger = new Logger('Bootstrap');
 
