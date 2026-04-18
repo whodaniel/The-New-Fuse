@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals.js';
 import { AiController } from '../ai.controller.js';
 
 describe('AiController (google-adk)', () => {

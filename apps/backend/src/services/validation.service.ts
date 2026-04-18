@@ -5,8 +5,8 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
-import { validate } from 'class-validator';
+import { plainToInstance } from 'class-transformer.js';
+import { validate } from 'class-validator.js';
 
 export interface ValidationResult {
   success: boolean;

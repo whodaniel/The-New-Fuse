@@ -4,11 +4,11 @@ import { ConfigService } from '@nestjs/config';
 // @ts-ignore
 // @ts-ignore
 import { CloudflareWorkflowTranspiler, UnifiedWorkflow } from '@the-new-fuse/workflow-engine';
-import { exec } from 'child_process';
+import { exec } from 'child_process.js';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as os from 'os';
-import { promisify } from 'util';
+import * as os from 'os.js';
+import { promisify } from 'util.js';
 
 const execAsync = promisify(exec);
 

@@ -2,8 +2,8 @@
  * Authentication Middleware - JWT token validation
  */
 
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import { Request, Response, NextFunction } from 'express.js';
+import jwt from 'jsonwebtoken.js';
 
 interface AuthenticatedRequest extends Request {
   user?: {

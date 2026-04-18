@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals.js';
 
 import { RcloneRuntimeService } from './rclone-runtime.service.js';
 

@@ -7,7 +7,7 @@ import {
   JsonRpcProvider,
   Wallet,
   ZeroAddress,
-} from 'ethers';
+} from 'ethers.js';
 
 export interface TransactionOptions {
   gasLimit?: BigNumberish;

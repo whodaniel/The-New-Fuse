@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
+import { Request } from 'express.js';
 import { hasAuthorizationLevel } from '../auth/auth-policy.js';
 import { SecurityLoggingService } from '../security/security-logging.service.js';
 

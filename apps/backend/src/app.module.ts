@@ -13,7 +13,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { DrizzleModule } from '@the-new-fuse/database';
-import type { StringValue } from 'ms';
+import type { StringValue } from 'ms.js';
 import { ApiModule } from './api/api.module.js';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';

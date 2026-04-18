@@ -1,4 +1,4 @@
-import { Container } from 'inversify';
+import { Container } from 'inversify.js';
 
 // TODO: Implement test container with proper service mocks
 // See git history for previous ConfigService and DatabaseService bindings

@@ -8,7 +8,7 @@ import { IdentityService } from '../services/identity.service.js';
 import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException } from '@nestjs/common';
 import { drizzleUserRepository } from '@the-new-fuse/database';
-import { SiweMessage } from 'siwe';
+import { SiweMessage } from 'siwe.js';
 import { TokenBlacklistService } from './token-blacklist.service.js';
 
 // We need to mock the module that exports drizzleUserRepository

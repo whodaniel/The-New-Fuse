@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsOptional, IsEnum } from 'class-validator.js';
 import { ApiProperty } from '@nestjs/swagger';
 import { AgentType, AgentCapability } from '@the-new-fuse/types';
 

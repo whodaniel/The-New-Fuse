@@ -9,7 +9,7 @@ import {
   VERSION_NEUTRAL,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
+import { Response } from 'express.js';
 import { ProxyService } from '../proxy/proxy.service.js';
 
 @Controller('terminals')

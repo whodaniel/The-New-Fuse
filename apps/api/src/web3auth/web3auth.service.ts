@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { CHAIN_NAMESPACES } from '@web3auth/base';
-import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider';
-import { Web3Auth } from '@web3auth/node-sdk';
-import { createWalletClient, getAddress, http } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
-import { mainnet } from 'viem/chains';
+import { CHAIN_NAMESPACES } from '@web3auth/base.js';
+import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider.js';
+import { Web3Auth } from '@web3auth/node-sdk.js';
+import { createWalletClient, getAddress, http } from 'viem.js';
+import { privateKeyToAccount } from 'viem/accounts.js';
+import { mainnet } from 'viem/chains.js';
 import {
   PrivateKeyProvider,
   ProviderResult,

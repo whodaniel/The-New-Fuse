@@ -1,5 +1,5 @@
-import express from 'express';
-import type { Router, Request, Response, NextFunction } from 'express';
+import express from 'express.js';
+import type { Router, Request, Response, NextFunction } from 'express.js';
 
 export function createRouter(): Router {
   return express.Router();

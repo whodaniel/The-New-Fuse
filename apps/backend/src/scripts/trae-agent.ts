@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import axios from 'axios';
-import { Redis } from 'ioredis';
+import { Redis } from 'ioredis.js';
 
 /**
  * Interface for agent messages as specified in the onboarding instructions

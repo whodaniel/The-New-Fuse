@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { db, drizzleUserRepository, users } from '@the-new-fuse/database';
-import { desc, eq, inArray } from 'drizzle-orm';
+import { desc, eq, inArray } from 'drizzle-orm.js';
 import { EventBus } from '../events/event-bus.service.js';
 import { LoggingService } from '../services/logging.service.js';
 import { hashPassword } from '../utils/auth.utils.js';

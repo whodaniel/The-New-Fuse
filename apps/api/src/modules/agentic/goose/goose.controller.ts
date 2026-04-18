@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import type { Request } from 'express';
+import type { Request } from 'express.js';
 
 import { AuthLevel, RequireAuthLevel } from '../../../guards/secure-auth.guard.js';
 import { GooseDispatchDto } from './goose.dto.js';

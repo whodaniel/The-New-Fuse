@@ -9,7 +9,7 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
-import type { Request } from 'express';
+import type { Request } from 'express.js';
 import { MemberOrAdmin } from '../../guards/member-or-admin.guard.js';
 import { AdminOnly } from '../../guards/secure-auth.guard.js';
 import { MarketplaceService } from './marketplace.service.js';

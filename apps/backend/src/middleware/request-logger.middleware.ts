@@ -1,7 +1,7 @@
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { drizzleApiLogsRepository } from '@the-new-fuse/database';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express.js';
 
 @Injectable()
 export class RequestLoggerMiddleware implements NestMiddleware {

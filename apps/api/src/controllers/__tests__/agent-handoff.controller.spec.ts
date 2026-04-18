@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import { describe, expect, it, jest } from '@jest/globals.js';
 
 import { AgentHandoffController } from '../agent-handoff.controller.js';
 

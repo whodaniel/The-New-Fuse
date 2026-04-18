@@ -6,11 +6,11 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js.js';
 import { drizzleUserRepository } from '@the-new-fuse/database';
-import * as admin from 'firebase-admin';
-import { Address, Hex, verifyMessage } from 'viem';
-import { SiweMessage } from 'siwe';
+import * as admin from 'firebase-admin.js';
+import { Address, Hex, verifyMessage } from 'viem.js';
+import { SiweMessage } from 'siwe.js';
 import { EventBus } from '../events/event-bus.service.js';
 import { IdentityService } from '../services/identity.service.js';
 import { LoggingService } from '../services/logging.service.js';

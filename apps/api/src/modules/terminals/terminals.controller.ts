@@ -1,6 +1,6 @@
 import { Controller, ForbiddenException, Get, Query, Req } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import type { Request } from 'express';
+import type { Request } from 'express.js';
 import { hasAuthorizationLevel } from '../../auth/auth-policy.js';
 import { AuthLevel, RequireAuthLevel } from '../../guards/secure-auth.guard.js';
 import { TerminalGraphQueryDto } from './dto/terminal-graph-query.dto.js';

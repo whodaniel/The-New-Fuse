@@ -15,7 +15,7 @@ import { and, db, desc, drizzleSchema, eq, lt, sql, type Task } from '@the-new-f
 
 const { agents, tasks, agentRegistrations } = drizzleSchema;
 
-import * as fs from 'fs/promises';
+import * as fs from 'fs/promises.js';
 import * as path from 'path';
 
 interface PatternMatch {

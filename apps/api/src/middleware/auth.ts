@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from 'express';
-import * as jwt from 'jsonwebtoken';
+import { NextFunction, Request, Response } from 'express.js';
+import * as jwt from 'jsonwebtoken.js';
 import { ApiError } from './errorHandler.js';
 
 /**

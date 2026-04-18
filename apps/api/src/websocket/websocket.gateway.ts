@@ -7,7 +7,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 // @ts-ignore
-import { Server, Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io.js';
 import { WsAuthGuard } from '../auth/ws-auth.guard.js'; // Changed from @/auth/ws-auth.guard
 import { CacheService } from '../cache/cache.service.js'; // Changed from @/cache/cache.service
 import { UnifiedMonitoringService } from '../types/core.js';

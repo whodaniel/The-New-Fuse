@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js.js';
 // @ts-ignore
 import { v4 as uuidv4 } from 'uuid';
 

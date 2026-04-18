@@ -1,7 +1,7 @@
 // @ts-ignore
 // @ts-ignore
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsIn } from 'class-validator';
+import { IsString, IsNotEmpty, IsIn } from 'class-validator.js';
 
 export class CreateProviderDto {
   @ApiProperty({ description: 'User ID associated with the provider' })

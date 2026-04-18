@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Type } from 'class-transformer.js';
 import {
   IsIn,
   IsInt,
@@ -9,7 +9,7 @@ import {
   IsUUID,
   Max,
   Min,
-} from 'class-validator';
+} from 'class-validator.js';
 
 export class ListTasksQueryDto {
   @IsOptional()

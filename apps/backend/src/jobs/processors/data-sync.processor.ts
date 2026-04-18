@@ -1,12 +1,12 @@
 import { Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
-import { Job } from 'bull';
+import { Job } from 'bull.js';
 import { QueueName } from '../constants/queue-names.js';
 import { DataSyncJobData } from '../interfaces/job-data.interface.js';
 import { DatabaseService } from '@the-new-fuse/database';
 import { CacheService } from '../../cache/cache.service.js';
 import axios from 'axios';
-import { sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm.js';
 
 /**
  * Data synchronization job processor

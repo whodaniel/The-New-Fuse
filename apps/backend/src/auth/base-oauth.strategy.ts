@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { drizzleUserRepository } from '@the-new-fuse/database';
-import { VerifyCallback } from 'passport-oauth2';
+import { VerifyCallback } from 'passport-oauth2.js';
 
 /**
  * Base class for OAuth strategies (Google, GitHub, etc.)

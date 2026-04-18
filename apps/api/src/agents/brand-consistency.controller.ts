@@ -93,7 +93,7 @@ export class BrandConsistencyController {
     // Sample component code with various brand issues
     const sampleCode = `
 // Sample React Component with brand inconsistencies
-import React from 'react';
+import React from 'react.js';
 
 const DemoCard = () => {
   return (

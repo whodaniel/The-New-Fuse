@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Response } from 'express.js';
 
 export class StreamResponse {
   private res: Response;

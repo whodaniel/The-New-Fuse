@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from '@jest/globals';
+import { beforeEach, describe, expect, it } from '@jest/globals.js';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AgentDecision, AgentPerformanceMetrics, ReflectService } from './reflect.service.js';
 

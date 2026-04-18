@@ -4,8 +4,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import { hash } from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import { hash } from 'bcrypt.js';
+import jwt from 'jsonwebtoken.js';
 
 import { AuthGuard } from '../../guards/auth.guard.js';
 import { AuthService } from '../../services/auth.service.js';

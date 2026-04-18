@@ -1,5 +1,5 @@
-import { plainToInstance } from 'class-transformer';
-import { validate } from 'class-validator';
+import { plainToInstance } from 'class-transformer.js';
+import { validate } from 'class-validator.js';
 import { AgentStatus, CreateAgentDto } from './create-agent.dto.js';
 import { LoginDto } from './login.dto.js';
 import { RegisterDto } from './register.dto.js';

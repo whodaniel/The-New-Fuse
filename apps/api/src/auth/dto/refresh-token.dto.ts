@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsString } from 'class-validator.js';
 
 export class RefreshTokenDto {
   @IsString()

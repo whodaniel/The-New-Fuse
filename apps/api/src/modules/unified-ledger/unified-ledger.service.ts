@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import * as fs from 'fs/promises';
+import * as fs from 'fs/promises.js';
 import * as path from 'path';
 import {
   FeedbackIteration,

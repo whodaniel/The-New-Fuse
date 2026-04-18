@@ -1,8 +1,8 @@
-import * as fs from 'fs-extra';
-import { Redis } from 'ioredis';
+import * as fs from 'fs-extra.js';
+import { Redis } from 'ioredis.js';
 // @ts-ignore
 import { v4 as uuidv4 } from 'uuid';
-import * as winston from 'winston';
+import * as winston from 'winston.js';
 
 const createLogger = (label: string): winston.Logger => {
   return winston.createLogger({

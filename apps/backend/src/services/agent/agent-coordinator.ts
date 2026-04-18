@@ -1,5 +1,5 @@
 import { AgentCapability, AgentMessage, AgentResponse, PriorityQueue } from '@the-new-fuse/types';
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'events.js';
 // TODO: FeatureTracker package needs to be created for tracking agent feature progress
 // import { FeatureTracker } from '@the-new-fuse/feature-tracker';
 

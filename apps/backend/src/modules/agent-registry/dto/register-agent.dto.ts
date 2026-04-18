@@ -1,5 +1,5 @@
-import { IsString, IsNotEmpty, IsOptional, IsArray, IsObject, ValidateNested, IsEnum } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsString, IsNotEmpty, IsOptional, IsArray, IsObject, ValidateNested, IsEnum } from 'class-validator.js';
+import { Type } from 'class-transformer.js';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class AgentCapabilityDto {

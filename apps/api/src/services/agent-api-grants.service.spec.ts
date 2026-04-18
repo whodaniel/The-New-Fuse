@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, jest } from '@jest/globals';
+import { afterEach, describe, expect, it, jest } from '@jest/globals.js';
 import { AgentApiGrantsService } from './agent-api-grants.service.js';
 
 describe('AgentApiGrantsService', () => {

@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import { describe, expect, it, jest } from '@jest/globals.js';
 import { UnauthorizedException } from '@nestjs/common';
 
 import { UnifiedLedgerController } from './unified-ledger.controller.js';

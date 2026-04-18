@@ -1,6 +1,6 @@
 import { All, Body, Controller, HttpStatus, Query, Req, Res, Version } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Request, Response } from 'express';
+import { Request, Response } from 'express.js';
 import { ProxyService } from '../proxy/proxy.service.js';
 
 @ApiTags('analytics-gateway')

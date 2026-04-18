@@ -10,7 +10,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import type { Request } from 'express';
+import type { Request } from 'express.js';
 import { hasPermission, isPrivilegedUser } from '../../../auth/auth-policy.js';
 import { AuthLevel, RequireAuthLevel } from '../../../guards/secure-auth.guard.js';
 import {

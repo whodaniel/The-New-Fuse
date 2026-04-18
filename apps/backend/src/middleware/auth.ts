@@ -1,7 +1,7 @@
 import { drizzleUserRepository } from '@the-new-fuse/database';
 import { User } from '@the-new-fuse/types';
-import { NextFunction, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
+import { NextFunction, Request, Response } from 'express.js';
+import jwt from 'jsonwebtoken.js';
 
 import { AppConfigService } from '../config/app-config.service.js';
 import { RedisService } from '../services/redis.service.js';

@@ -1,4 +1,4 @@
-import { Server } from 'http';
+import { Server } from 'http.js';
 
 export const gracefulShutdown = (server: Server): any => {
   

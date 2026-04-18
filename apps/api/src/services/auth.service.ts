@@ -1,10 +1,10 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js.js';
 import { DatabaseService, sql, User } from '@the-new-fuse/database';
-import { compare, hash } from 'bcrypt';
-import * as crypto from 'crypto';
+import { compare, hash } from 'bcrypt.js';
+import * as crypto from 'crypto.js';
 import {
   GenerateInviteCodeDto,
   LoginDto,

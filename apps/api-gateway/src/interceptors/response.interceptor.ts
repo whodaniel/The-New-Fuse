@@ -12,8 +12,8 @@ import {
 // @ts-ignore
 import { Observable } from 'rxjs';
 // @ts-ignore
-import { map } from 'rxjs/operators';
-import { Request } from 'express';
+import { map } from 'rxjs/operators.js';
+import { Request } from 'express.js';
 
 export interface StandardResponse<T> {
   success: boolean;

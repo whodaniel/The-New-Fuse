@@ -6,7 +6,7 @@
 import { Body, Controller, Get, Headers, HttpStatus, Param, Post, Res } from '@nestjs/common';
 // @ts-ignore
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
+import { Response } from 'express.js';
 import { ProxyService } from '../proxy/proxy.service.js';
 
 @Controller('chat')

@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals.js';
 import { OrchestrationController } from '../orchestration.controller.js';
 
 describe('OrchestrationController (google-adk)', () => {

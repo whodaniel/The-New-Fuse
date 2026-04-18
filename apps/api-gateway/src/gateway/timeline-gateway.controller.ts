@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 // @ts-ignore
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Request, Response } from 'express';
+import { Request, Response } from 'express.js';
 import { ProxyService } from '../proxy/proxy.service.js';
 
 @ApiTags('timeline')

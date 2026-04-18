@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as winston from 'winston';
+import * as winston from 'winston.js';
 import 'winston-daily-rotate-file';
 
 export interface SecurityLogEntry {

@@ -8,8 +8,8 @@ import { DatabaseService } from '@the-new-fuse/database/drizzle';
 // @ts-ignore
 // @ts-ignore
 import { payPalSubscriptions } from '@the-new-fuse/database/drizzle/schema';
-import { eq } from 'drizzle-orm';
-import fetch from 'node-fetch'; // Standard fetch might be available in Node 18+
+import { eq } from 'drizzle-orm.js';
+import fetch from 'node-fetch.js'; // Standard fetch might be available in Node 18+
 
 @Injectable()
 export class PayPalService {

@@ -46,7 +46,7 @@ import {
 } from '@nestjs/common';
 import { DatabaseService, sql } from '@the-new-fuse/database';
 import * as fs from 'fs';
-import * as os from 'os';
+import * as os from 'os.js';
 import * as path from 'path';
 import { CacheService } from '../cache/cache.service.js';
 import {

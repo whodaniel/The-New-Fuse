@@ -6,7 +6,7 @@ import {
   drizzleUserRepository,
   drizzleWorkflowRepository,
 } from '@the-new-fuse/database';
-import * as os from 'os';
+import * as os from 'os.js';
 
 @Injectable()
 export class MetricsService {

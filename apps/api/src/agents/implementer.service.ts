@@ -3,10 +3,10 @@ import { Injectable, Logger } from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
 import { DrizzleService } from '@the-new-fuse/database';
-import { exec } from 'child_process';
-import * as fs from 'fs/promises';
+import { exec } from 'child_process.js';
+import * as fs from 'fs/promises.js';
 import * as path from 'path';
-import { promisify } from 'util';
+import { promisify } from 'util.js';
 import { resolveCodebaseRoot } from './codebase-root.js';
 
 const execAsync = promisify(exec);

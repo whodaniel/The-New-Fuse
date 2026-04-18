@@ -7,7 +7,7 @@ import {
   Max,
   MaxLength,
   Min,
-} from 'class-validator';
+} from 'class-validator.js';
 
 export class GooseDispatchDto {
   @IsString()

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
-import { Queue, JobOptions } from 'bull';
+import { Queue, JobOptions } from 'bull.js';
 import { QueueName, JobPriority, JOB_ATTEMPTS, JOB_BACKOFF } from '../constants/queue-names.js';
 import {
   EmailJobData,

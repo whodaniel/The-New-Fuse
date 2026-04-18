@@ -1,4 +1,4 @@
-import { Redis } from 'ioredis';
+import { Redis } from 'ioredis.js';
 import { Logger } from '@nestjs/common';
 
 interface AgentMessage {

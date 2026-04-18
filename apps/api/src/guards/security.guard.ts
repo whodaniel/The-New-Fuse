@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Request, Response } from 'express';
+import { Request, Response } from 'express.js';
 import { InputSanitizationService } from '../security/input-sanitization.service.js';
 import { ResponseSanitizationService } from '../security/response-sanitization.service.js';
 

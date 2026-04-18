@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as crypto from 'crypto';
-import { createPublicClient, createWalletClient, http, namehash } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
-import { polygon } from 'viem/chains';
+import * as crypto from 'crypto.js';
+import { createPublicClient, createWalletClient, http, namehash } from 'viem.js';
+import { privateKeyToAccount } from 'viem/accounts.js';
+import { polygon } from 'viem/chains.js';
 
 @Injectable()
 export class IdentityService {

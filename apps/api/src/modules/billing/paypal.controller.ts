@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import * as crypto from 'crypto';
+import * as crypto from 'crypto.js';
 import { CommunityApiKeyGuard } from '../../guards/community-api-key.guard.js';
 import { PayPalService } from './paypal.service.js';
 

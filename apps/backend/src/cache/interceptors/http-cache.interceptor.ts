@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 // @ts-ignore
 import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { Request, Response } from 'express';
+import { tap } from 'rxjs/operators.js';
+import { Request, Response } from 'express.js';
 import { AdvancedCacheManager } from '../services/advanced-cache.manager.js';
 import { Reflector } from '@nestjs/core';
 

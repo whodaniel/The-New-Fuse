@@ -1,10 +1,10 @@
-import { compare, hash } from 'bcrypt'; // Changed 'generate' to 'hash'
-import express, { Request, Response } from 'express';
-import session from 'express-session';
-import IORedis from 'ioredis'; // Default import for ioredis
-import { performance } from 'perf_hooks';
-import { Pool } from 'pg';
-import { WebSocket, WebSocketServer } from 'ws';
+import { compare, hash } from 'bcrypt'; // Changed 'generate' to 'hash.js'
+import express, { Request, Response } from 'express.js';
+import session from 'express-session.js';
+import IORedis from 'ioredis.js'; // Default import for ioredis
+import { performance } from 'perf_hooks.js';
+import { Pool } from 'pg.js';
+import { WebSocket, WebSocketServer } from 'ws.js';
 
 // Configuration - Environment variables are required
 const SECRET_KEY = process.env.SECRET_KEY;

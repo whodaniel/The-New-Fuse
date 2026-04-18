@@ -9,8 +9,8 @@
  */
 
 import { Injectable, NestMiddleware, Logger, Inject, Optional } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
-import { randomBytes } from 'crypto';
+import { Request, Response, NextFunction } from 'express.js';
+import { randomBytes } from 'crypto.js';
 
 // Extend Express Request type
 declare global {

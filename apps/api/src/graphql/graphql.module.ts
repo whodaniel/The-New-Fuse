@@ -9,7 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 // @ts-ignore
 import { GraphQLModule } from '@nestjs/graphql';
 import { JwtModule } from '@nestjs/jwt';
-import { Request, Response } from 'express';
+import { Request, Response } from 'express.js';
 import { join } from 'path';
 
 // Resolvers

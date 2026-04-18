@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { drizzleUserRepository } from '@the-new-fuse/database';
-import { encodeFunctionData, parseEther } from 'viem';
+import { encodeFunctionData, parseEther } from 'viem.js';
 
 @Injectable()
 export class AuctionRelayerService {

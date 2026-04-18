@@ -1,7 +1,7 @@
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Queue } from 'bull';
+import { Queue } from 'bull.js';
 import { JOB_ATTEMPTS, JOB_BACKOFF, JobPriority, QueueName } from '../constants/queue-names.js';
 import {
   CleanupJobData,

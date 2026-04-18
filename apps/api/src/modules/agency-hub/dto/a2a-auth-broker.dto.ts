@@ -9,7 +9,7 @@ import {
   MaxLength,
   Min,
   MinLength,
-} from 'class-validator';
+} from 'class-validator.js';
 
 export class RequestAgentTokenDto {
   @IsString()

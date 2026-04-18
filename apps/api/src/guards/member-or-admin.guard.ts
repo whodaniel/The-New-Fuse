@@ -8,7 +8,7 @@ import {
   applyDecorators,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import type { Request } from 'express';
+import type { Request } from 'express.js';
 
 import { hasAuthorizationLevel } from '../auth/auth-policy.js';
 import { PayPalService } from '../modules/billing/paypal.service.js';

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import createDOMPurify from 'dompurify';
-import { JSDOM } from 'jsdom';
+import createDOMPurify from 'dompurify.js';
+import { JSDOM } from 'jsdom.js';
 
 @Injectable()
 export class InputSanitizationService {

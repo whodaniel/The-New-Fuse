@@ -18,7 +18,7 @@ import {
   McpError,
   Tool,
 } from '@modelcontextprotocol/sdk/types.js';
-import express from 'express';
+import express from 'express.js';
 import * as fs from 'fs';
 import * as path from 'path';
 

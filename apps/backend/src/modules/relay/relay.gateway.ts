@@ -19,7 +19,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io.js';
 import { RelayService } from './relay.service.js';
 
 interface AgentSocket extends Socket {

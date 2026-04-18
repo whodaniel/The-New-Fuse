@@ -5,9 +5,9 @@ import { Injectable } from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
 import { drizzleConfigurationRepository } from '@the-new-fuse/database/drizzle/repositories';
-import * as crypto from 'crypto';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
+import * as crypto from 'crypto.js';
+import { execFile } from 'node:child_process.js';
+import { promisify } from 'node:util.js';
 import {
   OpenClawProvider,
   UpsertOpenClawOAuthBindingDto,

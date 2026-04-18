@@ -1,6 +1,6 @@
 import { Body, Controller, HttpException, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
 import { ExportFormat } from '@the-new-fuse/types';
-import { Response } from 'express';
+import { Response } from 'express.js';
 import {
   JwtAuth,
   RateLimitTier,

@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as crypto from 'crypto';
+import * as crypto from 'crypto.js';
 // @ts-ignore
 // @ts-ignore
 import { WebhookSecurityConfig } from '@the-new-fuse/types';

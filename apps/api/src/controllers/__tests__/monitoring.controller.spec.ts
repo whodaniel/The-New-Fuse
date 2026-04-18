@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import request from 'supertest';
+import request from 'supertest.js';
 import { AppModule } from '../../app.module.js';
 
 describe('MonitoringController (e2e)', () => {

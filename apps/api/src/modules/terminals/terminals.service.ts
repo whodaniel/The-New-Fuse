@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as fs from 'fs/promises';
+import * as fs from 'fs/promises.js';
 import * as path from 'path';
 import { TerminalGraphQueryDto } from './dto/terminal-graph-query.dto.js';
 

@@ -19,7 +19,7 @@ import {
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService, and, desc, eq, ilike, or, sql } from '@the-new-fuse/database';
-import { Request, Response } from 'express';
+import { Request, Response } from 'express.js';
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore

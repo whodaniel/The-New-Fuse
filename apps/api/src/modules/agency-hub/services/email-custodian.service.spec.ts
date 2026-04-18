@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import { describe, expect, it, jest } from '@jest/globals.js';
 import { ConfigService } from '@nestjs/config';
 import { DatabaseService } from '@the-new-fuse/database';
 import { EmailCustodianService } from './email-custodian.service.js';

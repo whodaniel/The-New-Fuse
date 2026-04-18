@@ -12,7 +12,7 @@ import {
   ConnectedSocket,
   MessageBody
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io.js';
 import { Logger, UseGuards } from '@nestjs/common';
 
 interface ExecutionUpdate {

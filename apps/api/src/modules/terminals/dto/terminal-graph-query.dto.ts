@@ -1,5 +1,5 @@
-import { Transform, Type } from 'class-transformer';
-import { IsBoolean, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { Transform, Type } from 'class-transformer.js';
+import { IsBoolean, IsInt, IsOptional, IsString, Max, Min } from 'class-validator.js';
 
 const toBoolean = (value: unknown, defaultValue: boolean): boolean => {
   if (typeof value === 'boolean') return value;

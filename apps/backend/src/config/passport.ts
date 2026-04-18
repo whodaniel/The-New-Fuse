@@ -1,6 +1,6 @@
 import { drizzleUserRepository } from '@the-new-fuse/database';
-import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import passport from 'passport.js';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20.js';
 
 passport.serializeUser((user: any, done) => {
   done(null, user.id);

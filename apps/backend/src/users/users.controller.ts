@@ -20,7 +20,7 @@ import { Roles } from '../auth/decorators/roles.decorator.js';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto.js';
 import { UpdateProfileDto, ProfileResponseDto } from './dto/profile.dto.js';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { Request } from 'express';
+import { Request } from 'express.js';
 
 @ApiTags('users')
 @Controller('users')

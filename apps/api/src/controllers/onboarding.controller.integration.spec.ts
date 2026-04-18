@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import request from 'supertest';
+import request from 'supertest.js';
 import { AuthService } from '../services/auth.service.js';
 import { OnboardingController } from './onboarding.controller.js';
 

@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NestMiddleware } from '@nestjs/common';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express.js';
 import { LoggingService } from '../services/logging.service.js';
 import { ValidationService } from '../services/validation.service.js';
 

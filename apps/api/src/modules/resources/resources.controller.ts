@@ -23,7 +23,7 @@ import type {
   ResourceSearchProtocolResponseEnvelope,
   ResourceSearchResponse,
 } from '@the-new-fuse/types';
-import type { Request } from 'express';
+import type { Request } from 'express.js';
 import { JwtAuth, SecureAuthGuard } from '../../guards/secure-auth.guard.js';
 import { MarketplaceService } from '../marketplace/marketplace.service.js';
 import {

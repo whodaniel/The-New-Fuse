@@ -34,10 +34,10 @@ import {
   sql,
   tasks,
 } from '@the-new-fuse/database';
-import { randomUUID } from 'crypto';
-import { promises as dns } from 'dns';
+import { randomUUID } from 'crypto.js';
+import { promises as dns } from 'dns.js';
 import { promises as fs } from 'fs';
-import * as os from 'os';
+import * as os from 'os.js';
 import * as path from 'path';
 import { CurrentUser } from '../decorators/current-user.decorator.js';
 import { SecureAuthGuard } from '../guards/secure-auth.guard.js';

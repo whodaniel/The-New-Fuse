@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import Redis from 'ioredis';
+import Redis from 'ioredis.js';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AgentInbox } from '../shared/agent-inbox.js';
 import axios from 'axios';
 // @ts-ignore
-import * as cheerio from 'cheerio';
+import * as cheerio from 'cheerio.js';
 
 export interface AIResource {
   id: string;

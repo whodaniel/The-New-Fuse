@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { drizzleMarketplaceCatalogRepository } from '@the-new-fuse/database';
-import { spawn } from 'child_process';
-import { randomUUID } from 'crypto';
-import postgres, { Sql } from 'postgres';
+import { spawn } from 'child_process.js';
+import { randomUUID } from 'crypto.js';
+import postgres, { Sql } from 'postgres.js';
 import {
   MarketplaceCatalogItem,
   MarketplaceCatalogQuery,

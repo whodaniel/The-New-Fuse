@@ -3,7 +3,7 @@ import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/comm
 // @ts-ignore
 // @ts-ignore
 import { Permission } from '@the-new-fuse/types';
-import { execFileSync } from 'child_process';
+import { execFileSync } from 'child_process.js';
 import {
   AdminOnly,
   AuditLog,

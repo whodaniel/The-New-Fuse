@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DatabaseService } from '@the-new-fuse/database';
-import { execFile as execFileCallback } from 'node:child_process';
-import { promisify } from 'node:util';
+import { execFile as execFileCallback } from 'node:child_process.js';
+import { promisify } from 'node:util.js';
 import {
   CreateManagedAccountGrantDto,
   ProvisionManagedAccountDto,

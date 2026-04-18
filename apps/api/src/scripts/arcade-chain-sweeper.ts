@@ -1,5 +1,5 @@
-import { Contract, ethers } from 'ethers';
-import { MongoClient } from 'mongodb';
+import { Contract, ethers } from 'ethers.js';
+import { MongoClient } from 'mongodb.js';
 
 const {
   ARCADE_RPC_HTTP_URL,

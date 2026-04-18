@@ -7,8 +7,8 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import Redis from 'ioredis';
-import * as crypto from 'crypto';
+import Redis from 'ioredis.js';
+import * as crypto from 'crypto.js';
 
 export interface StreamMessage {
   id: string;

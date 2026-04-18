@@ -9,8 +9,8 @@ import {
 } from '@nestjs/common';
 // @ts-ignore
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { Request, Response } from 'express';
+import { tap } from 'rxjs/operators.js';
+import { Request, Response } from 'express.js';
 import { PerformanceMetricsService } from '../monitoring/performance-metrics.service.js';
 
 /**

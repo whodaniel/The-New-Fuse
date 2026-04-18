@@ -1,5 +1,5 @@
-import { describe, expect, it } from '@jest/globals';
-import * as fs from 'fs/promises';
+import { describe, expect, it } from '@jest/globals.js';
+import * as fs from 'fs/promises.js';
 import * as path from 'path';
 import { UnifiedLedgerService } from './unified-ledger.service.js';
 

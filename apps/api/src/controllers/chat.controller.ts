@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Param, UseGuards, Query, Req } from '@nestjs/common';
-import { Request } from 'express';
+import { Request } from 'express.js';
 import { ChatService } from '../services/chat.service.js';
 import { CreateMessageDto } from '../dtos/message.dto.js';
 import { AuthGuard } from '../guards/auth.guard.js';

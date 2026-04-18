@@ -2,7 +2,7 @@ import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } fr
 import { Reflector } from '@nestjs/core';
 // @ts-ignore
 import { Observable, from } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators.js';
 import {
   CACHEABLE_KEY,
   CACHE_EVICT_KEY,

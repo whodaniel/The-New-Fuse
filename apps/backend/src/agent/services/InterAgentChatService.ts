@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import * as crypto from 'crypto';
+import * as crypto from 'crypto.js';
 import { RedisService } from '../../services/redis.service.js';
 import { AlertService } from './AlertService.js';
 import { MonitoringService } from './MonitoringService.js';

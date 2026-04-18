@@ -1,6 +1,6 @@
 import { ForbiddenException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { Request } from 'express';
+import type { Request } from 'express.js';
 import { AuthService } from '../services/auth.service.js';
 import { OnboardingController } from './onboarding.controller.js';
 

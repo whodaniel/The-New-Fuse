@@ -1,5 +1,5 @@
 import { BullModuleOptions } from '@nestjs/bull';
-import Redis from 'ioredis';
+import Redis from 'ioredis.js';
 import { QueueName } from './constants/queue-names.js';
 
 /**

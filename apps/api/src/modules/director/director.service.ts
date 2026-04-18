@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 // @ts-ignore
 // @ts-ignore
 import { CascadeMode, CascadeService } from '@the-new-fuse/core';
-import { Redis } from 'ioredis';
+import { Redis } from 'ioredis.js';
 import { TaskService } from '../task/task.service.js';
 import { AgentSwarmService } from './agent-swarm.service.js';
 import { BMADService } from './bmad.service.js';

@@ -3,8 +3,8 @@ import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module.js';
 import { ConfigService } from '@nestjs/config';
-import compression from 'compression';
-import helmet from 'helmet';
+import compression from 'compression.js';
+import helmet from 'helmet.js';
 import { AllExceptionsFilter } from './filters/all-exceptions.filter.js';
 
 async function bootstrap(): Promise<void> {

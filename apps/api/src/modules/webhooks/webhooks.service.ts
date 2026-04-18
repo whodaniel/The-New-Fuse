@@ -15,7 +15,7 @@ import {
   WebhookRegistrationResponse,
   WebhookStatusResponse,
 } from '@the-new-fuse/types';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'crypto.js';
 import { BusinessEventService } from './services/business-event.service.js';
 import { IntegrationService } from './services/integration.service.js';
 import { WebhookSecurityService } from './services/webhook-security.service.js';

@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Type } from 'class-transformer.js';
 import {
   IsArray,
   IsBoolean,
@@ -12,7 +12,7 @@ import {
   MaxLength,
   Min,
   ValidateNested,
-} from 'class-validator';
+} from 'class-validator.js';
 
 /**
  * Agent status enum

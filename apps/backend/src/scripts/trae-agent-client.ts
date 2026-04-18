@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { Redis } from 'ioredis';
+import { Redis } from 'ioredis.js';
 import { TraeMonitor } from '../services/agent/trae-monitor.js';
 
 interface AgentMessage {

@@ -1,0 +1,296 @@
+import { spawn, spawnSync } from 'child_process';
+import { createHash } from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
+
+export interface MCPServerConfig {
+  name: string;
+  command: string;
+  args?: string[];
+  env?: Record<string, string>;
+  cwd?: string;
+  transport?: 'stdio' | 'sse' | 'ws';
+  url?: string;
+  oauth?: {
+    enabled: boolean;
+    authorizeUrl?: string;
+    tokenUrl?: string;
+    scopes?: string[];
+  };
+}
+
+export interface MCPServerStatus {
+  name: string;
+  configured: boolean;
+  running: boolean;
+  pid?: number;
+  port?: number;
+  oauth?: {
+    enabled: boolean;
+    authenticated: boolean;
+    expiry?: string;
+  };
+}
+
+export interface OAuthCredential {
+  accessToken: string;
+  refreshToken?: string;
+  expiresAt?: number;
+  scopes?: string[];
+}
+
+export class MCPManagerService {
+  private configDir: string;
+  private servers: Map<string, MCPServerConfig> = new Map();
+  private processes: Map<string, { pid: number; process: ReturnType<typeof spawn> }> = new Map();
+  private credentials: Map<string, OAuthCredential> = new Map();
+
+  constructor(configDir?: string) {
+    this.configDir = configDir || path.join(os.homedir(), '.config', 'tnf', 'mcp');
+    this.loadConfig();
+    this.loadCredentials();
+  }
+
+  private loadConfig(): void {
+    const configPath = path.join(this.configDir, 'mcp.json');
+    if (fs.existsSync(configPath)) {
+      try {
+        const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        if (config.servers) {
+          for (const [name, serverConfig] of Object.entries(config.servers) as [string, MCPServerConfig][]) {
+            this.servers.set(name, { ...serverConfig, name });
+          }
+        }
+      } catch {
+        // Config doesn't exist or is invalid
+      }
+    }
+  }
+
+  private loadCredentials(): void {
+    const credPath = path.join(this.configDir, 'credentials.json');
+    if (fs.existsSync(credPath)) {
+      try {
+        const creds = JSON.parse(fs.readFileSync(credPath, 'utf8'));
+        for (const [name, cred] of Object.entries(creds) as [string, OAuthCredential][]) {
+          this.credentials.set(name, cred);
+        }
+      } catch {
+        // Credentials don't exist or are invalid
+      }
+    }
+  }
+
+  private saveCredentials(): void {
+    if (!fs.existsSync(this.configDir)) {
+      fs.mkdirSync(this.configDir, { recursive: true });
+    }
+    const credPath = path.join(this.configDir, 'credentials.json');
+    const credsObj: Record<string, OAuthCredential> = {};
+    for (const [name, cred] of this.credentials) {
+      credsObj[name] = cred;
+    }
+    fs.writeFileSync(credPath, JSON.stringify(credsObj, null, 2));
+  }
+
+  addServer(name: string, config: Omit<MCPServerConfig, 'name'>): void {
+    const fullConfig: MCPServerConfig = { ...config, name };
+    this.servers.set(name, fullConfig);
+    this.saveConfig();
+  }
+
+  private saveConfig(): void {
+    if (!fs.existsSync(this.configDir)) {
+      fs.mkdirSync(this.configDir, { recursive: true });
+    }
+    const configPath = path.join(this.configDir, 'mcp.json');
+    const serversObj: Record<string, MCPServerConfig> = {};
+    for (const [name, config] of this.servers) {
+      serversObj[name] = config;
+    }
+    fs.writeFileSync(configPath, JSON.stringify({ servers: serversObj }, null, 2));
+  }
+
+  removeServer(name: string): boolean {
+    const existed = this.servers.delete(name);
+    if (existed) {
+      this.saveConfig();
+      this.credentials.delete(name);
+      this.saveCredentials();
+    }
+    return existed;
+  }
+
+  listServers(): MCPServerStatus[] {
+    const statuses: MCPServerStatus[] = [];
+    for (const [name, config] of this.servers) {
+      const running = this.processes.has(name);
+      const proc = this.processes.get(name);
+      const cred = this.credentials.get(name);
+      statuses.push({
+        name,
+        configured: true,
+        running,
+        pid: proc?.pid,
+        oauth: config.oauth ? {
+          enabled: config.oauth.enabled,
+          authenticated: !!cred && (!cred.expiresAt || cred.expiresAt > Date.now()),
+          expiry: cred?.expiresAt ? new Date(cred.expiresAt).toISOString() : undefined,
+        } : undefined,
+      });
+    }
+    return statuses;
+  }
+
+  async startServer(name: string): Promise<{ pid: number }> {
+    const config = this.servers.get(name);
+    if (!config) {
+      throw new Error(`MCP server '${name}' not found`);
+    }
+
+    if (config.oauth?.enabled) {
+      const cred = this.credentials.get(name);
+      if (!cred || (cred.expiresAt && cred.expiresAt <= Date.now())) {
+        throw new Error(`MCP server '${name}' requires authentication. Run 'tnf mcp auth ${name}' first.`);
+      }
+    }
+
+    const proc = spawn(config.command, config.args || [], {
+      cwd: config.cwd,
+      env: { ...process.env, ...config.env },
+      stdio: ['pipe', 'pipe', 'pipe'],
+      detached: true,
+    });
+
+    proc.unref();
+
+    return new Promise((resolve, reject) => {
+      proc.on('spawn', () => {
+        this.processes.set(name, { pid: proc.pid!, process: proc });
+        resolve({ pid: proc.pid! });
+      });
+      proc.on('error', (err) => {
+        reject(err);
+      });
+    });
+  }
+
+  stopServer(name: string): boolean {
+    const proc = this.processes.get(name);
+    if (!proc) return false;
+
+    try {
+      process.kill(proc.pid, 'SIGTERM');
+    } catch {
+      // Process might already be dead
+    }
+    this.processes.delete(name);
+    return true;
+  }
+
+  async authenticate(name: string): Promise<{ url: string; code?: string }> {
+    const config = this.servers.get(name);
+    if (!config) {
+      throw new Error(`MCP server '${name}' not found`);
+    }
+
+    if (!config.oauth?.enabled) {
+      throw new Error(`MCP server '${name}' does not support OAuth`);
+    }
+
+    const state = createHash('sha256').update(`${name}:${Date.now()}`).digest('hex').slice(0, 16);
+
+    if (config.oauth.authorizeUrl) {
+      const authorizeUrl = new URL(config.oauth.authorizeUrl);
+      authorizeUrl.searchParams.set('state', state);
+      authorizeUrl.searchParams.set('redirect_uri', 'http://127.0.0.1:8765/callback');
+      if (config.oauth.scopes) {
+        authorizeUrl.searchParams.set('scope', config.oauth.scopes.join(' '));
+      }
+
+      return { url: authorizeUrl.toString(), code: state };
+    }
+
+    throw new Error('OAuth configuration incomplete');
+  }
+
+  setCredentials(name: string, cred: OAuthCredential): void {
+    this.credentials.set(name, cred);
+    this.saveCredentials();
+  }
+
+  getCredentials(name: string): OAuthCredential | undefined {
+    return this.credentials.get(name);
+  }
+
+  logout(name: string): boolean {
+    const existed = this.credentials.delete(name);
+    if (existed) {
+      this.saveCredentials();
+    }
+    return existed;
+  }
+
+  async debugConnection(name: string): Promise<{
+    server: MCPServerConfig | undefined;
+    status: MCPServerStatus | undefined;
+    credential: OAuthCredential | undefined;
+    diagnostics: string[];
+  }> {
+    const config = this.servers.get(name);
+    const status = this.listServers().find(s => s.name === name);
+    const credential = this.credentials.get(name);
+    const diagnostics: string[] = [];
+
+    if (!config) {
+      diagnostics.push('Server not configured');
+    } else {
+      if (config.command) {
+        try {
+          const result = spawnSync('which', [config.command], { encoding: 'utf8' });
+          if (result.status === 0) {
+            diagnostics.push(`Command found at: ${result.stdout.trim()}`);
+          } else {
+            diagnostics.push(`Command not found: ${config.command}`);
+          }
+        } catch (e) {
+          diagnostics.push(`Error checking command: ${(e as Error).message}`);
+        }
+      }
+
+      if (config.cwd) {
+        if (fs.existsSync(config.cwd)) {
+          diagnostics.push(`Working directory exists: ${config.cwd}`);
+        } else {
+          diagnostics.push(`Working directory not found: ${config.cwd}`);
+        }
+      }
+
+      if (config.oauth?.enabled) {
+        if (credential) {
+          if (credential.expiresAt && credential.expiresAt <= Date.now()) {
+            diagnostics.push('OAuth token expired');
+          } else {
+            diagnostics.push('OAuth credentials present');
+          }
+        } else {
+          diagnostics.push('OAuth credentials not found');
+        }
+      }
+    }
+
+    if (status?.running) {
+      diagnostics.push(`Server running with PID: ${status.pid}`);
+    } else {
+      diagnostics.push('Server not running');
+    }
+
+    return {
+      server: config,
+      status,
+      credential,
+      diagnostics,
+    };
+  }
+}

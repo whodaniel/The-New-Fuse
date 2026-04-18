@@ -10,7 +10,7 @@ import type { User } from '@the-new-fuse/database';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import DataLoader from 'dataloader';
+import DataLoader from 'dataloader.js';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserLoader {

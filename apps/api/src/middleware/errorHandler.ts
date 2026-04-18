@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express.js';
 
 export class ApiError extends Error {
   statusCode: number;

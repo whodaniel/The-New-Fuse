@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { Request } from 'express.js';
 
 export interface User {
   id: string;

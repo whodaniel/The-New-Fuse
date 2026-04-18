@@ -8,7 +8,7 @@ import { IdentityService } from '../services/identity.service.js';
 import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException } from '@nestjs/common';
 import { drizzleUserRepository } from '@the-new-fuse/database';
-import * as jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken.js';
 import { TokenBlacklistService } from './token-blacklist.service.js';
 
 // Mock the database repository

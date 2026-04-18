@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import { describe, expect, it, jest } from '@jest/globals.js';
 import { type ExecutionContext } from '@nestjs/common';
 import { type Reflector } from '@nestjs/core';
 import { RolesGuard } from './roles.guard.js';

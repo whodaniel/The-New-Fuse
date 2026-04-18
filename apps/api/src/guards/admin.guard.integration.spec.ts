@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import request from 'supertest';
+import request from 'supertest.js';
 import { AdminGuard } from './admin.guard.js';
 
 class TestAuthGuard implements CanActivate {

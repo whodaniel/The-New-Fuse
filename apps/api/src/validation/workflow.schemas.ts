@@ -2,7 +2,7 @@
  * Workflow Validation Schemas - Request validation using Joi
  */
 
-import Joi from 'joi';
+import Joi from 'joi.js';
 
 // Node schema
 const nodeSchema = Joi.object({

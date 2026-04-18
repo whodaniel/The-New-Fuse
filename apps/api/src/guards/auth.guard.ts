@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import { Request } from 'express';
+import { Request } from 'express.js';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

@@ -1,6 +1,6 @@
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { Request } from 'express';
+import type { Request } from 'express.js';
 import { ResourceRegistryApiKeyGuard } from './resource-registry-api-key.guard.js';
 
 type RequestShape = Pick<Request, 'get'>;

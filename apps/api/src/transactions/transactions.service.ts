@@ -11,7 +11,7 @@ import type { Wallet } from '@the-new-fuse/database';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import type { Address, Hex } from 'viem';
+import type { Address, Hex } from 'viem.js';
 import {
   createPublicClient,
   createWalletClient,
@@ -19,8 +19,8 @@ import {
   http,
   parseAbi,
   parseEther,
-} from 'viem';
-import { mainnet } from 'viem/chains';
+} from 'viem.js';
+import { mainnet } from 'viem/chains.js';
 import { SmartAccountService } from '../smart-accounts/smart-account.service.js';
 import { Web3authService } from '../web3auth/web3auth.service.js';
 import {

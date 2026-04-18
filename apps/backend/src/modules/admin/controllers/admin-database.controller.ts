@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { db } from '@the-new-fuse/database';
-import { sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm.js';
 import { Roles } from '../../../auth/decorators/roles.decorator.js';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard.js';
 import { RolesGuard } from '../../../auth/guards/roles.guard.js';

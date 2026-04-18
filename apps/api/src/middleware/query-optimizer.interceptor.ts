@@ -2,7 +2,7 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } fr
 // @ts-ignore
 import { Observable } from 'rxjs';
 // @ts-ignore
-import { tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators.js';
 
 /**
  * Query Optimization Interceptor

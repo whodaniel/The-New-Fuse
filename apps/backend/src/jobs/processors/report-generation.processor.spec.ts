@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Job } from 'bull';
+import { Job } from 'bull.js';
 import { SystemMetricsService } from '../../modules/system-metrics/system-metrics.service.js';
 import { EmailService } from '../../services/email.service.js';
 import { ReportGenerationProcessor } from './report-generation.processor.js';

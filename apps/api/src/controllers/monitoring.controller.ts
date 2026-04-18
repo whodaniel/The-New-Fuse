@@ -41,8 +41,8 @@
  */
 import { Controller, Get, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import * as os from 'os';
-import * as process from 'process';
+import * as os from 'os.js';
+import * as process from 'process.js';
 import {
   AdminOnly,
   RateLimitTier,

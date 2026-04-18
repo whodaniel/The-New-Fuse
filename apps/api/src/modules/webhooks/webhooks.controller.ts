@@ -26,7 +26,7 @@ import {
   WebhookRegistrationResponse,
   WebhookStatusResponse,
 } from '@the-new-fuse/types';
-import { Response } from 'express';
+import { Response } from 'express.js';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
 import { BusinessEventService } from './services/business-event.service.js';
 import { SSEService } from './services/sse.service.js';

@@ -5,11 +5,11 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { execFile } from 'node:child_process';
+import { execFile } from 'node:child_process.js';
 import * as fs from 'node:fs';
 import { promises as fsPromises } from 'node:fs';
 import * as path from 'node:path';
-import { promisify } from 'node:util';
+import { promisify } from 'node:util.js';
 
 const execFileAsync = promisify(execFile);
 
