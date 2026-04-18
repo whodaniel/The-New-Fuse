@@ -12,11 +12,14 @@ export interface AuthResponse {
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim() || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() || '';
 
-export const hasSupabaseConfig = Boolean(supabaseUrl && supabaseAnonKey);
+const isValidSupabaseUrl = supabaseUrl.length > 12 && supabaseUrl.includes('.supabase.co');
+const isValidSupabaseKey = supabaseAnonKey.length > 50 && supabaseAnonKey.startsWith('eyJ');
+
+export const hasSupabaseConfig = isValidSupabaseUrl && isValidSupabaseKey;
 
 if (!hasSupabaseConfig) {
-  console.error(
-    '[Auth] Missing Supabase config. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
+  console.warn(
+    '[Auth] Supabase not configured or invalid config. Falling back to API auth.'
   );
 }
 
