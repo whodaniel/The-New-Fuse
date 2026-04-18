@@ -9,8 +9,7 @@
     "skipLibCheck": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "strict": true,
-    "typeRoots": ["./node_modules/@types", "../../node_modules/@types"]
+    "strict": true
   },
   "include": ["src/**/*", "generated/**/*"],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
