@@ -230,6 +230,7 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 500,
       rollupOptions: {
         input: {
+          index: path.resolve(__dirname, 'index.html'),
           app: path.resolve(__dirname, 'app.html'),
         },
         // Optimize bundle size by eliminating unnecessary code
