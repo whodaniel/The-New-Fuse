@@ -128,8 +128,7 @@ const SSOPage = lazy(() => import('./pages/auth/SSO'));
 const GoogleCallbackPage = lazy(() => import('./pages/auth/GoogleCallback'));
 const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
 
-// Landing components archived to static HTML
-const OnboardingFlowPage = lazy(() => import('./pages/OnboardingFlow'));
+// Landing components archived to static HTML - These routes now redirect or are handled by static hosting
 const CommunityHubPage = lazy(() => import('./pages/Community/CommunityHub'));
 const SupportPage = lazy(() => import('./pages/Support'));
 const BrandIdentityPage = lazy(() => import('./pages/BrandIdentity'));
@@ -232,6 +231,8 @@ const WorkflowBrowser = lazy(() => import('./pages/Resources/WorkflowBrowser'));
 const TasksCalendar = lazy(() => import('./pages/Tasks/Calendar'));
 const CreateAgent = lazy(() => import('./pages/dashboard/CreateAgent'));
 
+// Archived or redundant components removed to resolve duplicates
+
 // Create fallback components for pages that might have import issues
 const LazyPage = ({ name, path }: { name: string; path: string }) => (
   <div className="p-8 max-w-4xl mx-auto">
@@ -245,7 +246,7 @@ const LazyPage = ({ name, path }: { name: string; path: string }) => (
 );
 
 const SmartNavigation = lazy(() => import('./components/SmartNavigation'));
-const OrphanAuditRouter = lazy(() => import('./routers/OrphanAuditRouter'));
+// Orphan audit router - reachable via specific debug paths
 
 // Redirect component to force reload to static HTML pages
 const RedirectToStatic = ({ to }: { to: string }) => {
@@ -275,12 +276,8 @@ const MarketplaceRootRoute = () => {
     );
   }
 
-  // ON MAIN SITE: / should render the landing page (OnboardingFlowPage)
-  return (
-    <Suspense fallback={<LoadingFallback name="Landing" />}>
-      <OnboardingFlowPage />
-    </Suspense>
-  );
+  // ON MAIN SITE: / should trigger a hard reload to the static landing page
+  return <RedirectToStatic to="/" />;
 };
 
 const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
@@ -289,10 +286,8 @@ const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
   </RequireAuth>
 );
 
-
-
 // Remove the old ComprehensiveNavigation component and replace with SmartNavigation
-export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRouterProps) {
+export default function ComprehensiveRouter({ isApp: _isApp = false }: ComprehensiveRouterProps) {
   const location = useLocation();
   const isPublicRoute =
     [
@@ -379,6 +374,30 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
                 }
               />
               <Route
+                path="/dashboard/launchpad"
+                element={
+                  <RequireMemberAccess>
+                    <LaunchpadDashboard />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/dashboard/files"
+                element={
+                  <RequireMemberAccess>
+                    <FilesWorkspacePage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/dashboard/datasets"
+                element={
+                  <RequireMemberAccess>
+                    <DatasetsWorkbenchPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
                 path="/dashboard/architecture"
                 element={
                   <RequireMemberAccess>
@@ -403,7 +422,63 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
                 }
               />
               <Route
-                path="/sophisticated-hub"
+                path="/dashboard/command-center"
+                element={
+                  <RequireMemberAccess>
+                    <TNFCommandCenter />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/dashboard/fairtable"
+                element={
+                  <RequireMemberAccess>
+                    <FairtableDashboard />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/dashboard/calendar"
+                element={
+                  <RequireMemberAccess>
+                    <TasksCalendar />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/resources/templates"
+                element={
+                  <RequireMemberAccess>
+                    <AgentTemplatesBrowser />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/resources/skills"
+                element={
+                  <RequireMemberAccess>
+                    <SkillsBrowser />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/resources/workflows"
+                element={
+                  <RequireMemberAccess>
+                    <WorkflowBrowser />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/agents/create"
+                element={
+                  <RequireMemberAccess>
+                    <CreateAgent />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/dashboard/hub/premium"
                 element={
                   <RequireMemberAccess>
                     <SophisticatedTNFHub />
@@ -573,6 +648,30 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
                 element={
                   <RequireMemberAccess>
                     <RevenueDashboardPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/agents/pfp-studio"
+                element={
+                  <RequireMemberAccess>
+                    <PfpStudioPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/agents/pfp-catalog"
+                element={
+                  <RequireMemberAccess>
+                    <PfpPromptCatalogPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/agents/catalog/:id"
+                element={
+                  <RequireMemberAccess>
+                    <CatalogProfilePage />
                   </RequireMemberAccess>
                 }
               />
@@ -1130,7 +1229,7 @@ export default function ComprehensiveRouter({ isApp = false }: ComprehensiveRout
               <Route path="/membership" element={<MembershipPage />} />
               <Route path="/support" element={<SupportPage />} />
               <Route path="/contact" element={<SupportPage />} />
-              <Route path="/onboarding" element={<OnboardingFlowPage />} />
+              <Route path="/onboarding" element={<RedirectToStatic to="/onboarding" />} />
               <Route path="/docs" element={<DocsPage />} />
               <Route path="/docs/*" element={<DocsPage />} />
               <Route path="/visualizations" element={<VisualizationsPage />} />
