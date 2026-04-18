@@ -18,6 +18,7 @@
 
 import { EventEmitter } from 'events';
 import http from 'http';
+import { fileURLToPath } from 'node:url';
 
 import { Redis as UpstashRedis } from '@upstash/redis';
 import { Cluster, Redis } from 'ioredis';
@@ -2132,7 +2133,17 @@ export class TNFRelayServer extends EventEmitter {
 }
 
 // CLI entry point
-if (require.main === module) {
+const isMainModule = () => {
+  if (typeof require !== 'undefined' && typeof module !== 'undefined' && require.main === module) return true;
+  if (typeof import.meta !== 'undefined' && import.meta.url) {
+    const mainPath = process.argv[1];
+    const modulePath = fileURLToPath(import.meta.url);
+    return mainPath === modulePath || mainPath?.endsWith('standalone-relay.js');
+  }
+  return false;
+};
+
+if (isMainModule()) {
   const relay = new TNFRelayServer(PORT);
 
   relay.start().catch((err) => {

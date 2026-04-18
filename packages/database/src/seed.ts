@@ -4,6 +4,7 @@
  */
 
 import { eq } from 'drizzle-orm';
+import { fileURLToPath } from 'node:url';
 import { db } from './drizzle/client.js';
 import { agents } from './drizzle/schema/agents.js';
 import { users } from './drizzle/schema/users.js';
@@ -473,8 +474,19 @@ async function seed() {
 // Export for use in other modules
 export { AGENT_CAPABILITIES, AGENT_STATUSES, AGENT_TYPES, seed, SEED_AGENTS };
 
+// CLI entry point
+const isMainModule = () => {
+  if (typeof require !== 'undefined' && typeof module !== 'undefined' && require.main === module) return true;
+  if (typeof import.meta !== 'undefined' && import.meta.url) {
+    const mainPath = process.argv[1];
+    const modulePath = fileURLToPath(import.meta.url);
+    return mainPath === modulePath || mainPath?.endsWith('seed.js');
+  }
+  return false;
+};
+
 // Run if executed directly
-if (require.main === module) {
+if (isMainModule()) {
   seed()
     .then(() => process.exit(0))
     .catch(() => process.exit(1));

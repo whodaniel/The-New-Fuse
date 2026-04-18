@@ -1,9 +1,11 @@
 // Simple health check endpoint
-const http = require('http');
+import http from 'http';
+import { fileURLToPath } from 'url';
+
 const port = process.env.PORT || 3000;
 
 // Basic health check function
-function healthCheck() {
+export function healthCheck() {
     return {
         status: 'healthy',
         timestamp: new Date().toISOString(),
@@ -14,7 +16,9 @@ function healthCheck() {
 }
 
 // If this is run directly, start a simple health server
-if (require.main === module) {
+const isMainModule = process.argv[1] === fileURLToPath(import.meta.url);
+
+if (isMainModule) {
     const server = http.createServer((req, res) => {
         if (req.url === '/health' || req.url === '/') {
             res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -29,5 +33,3 @@ if (require.main === module) {
         console.log(`Health check server running on port ${port}`);
     });
 }
-
-module.exports = { healthCheck };
