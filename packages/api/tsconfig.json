@@ -4,7 +4,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
-    "composite": false,
+    "composite": true,
     "allowJs": true,
     "checkJs": false,
     "resolveJsonModule": true,
@@ -25,5 +25,6 @@
     "**/*.test.ts",
     "**/*.spec.ts",
     "src/test-db.ts"
-  ]
+  ],
+  "references": [{ "path": "../../packages/types" }]
 }

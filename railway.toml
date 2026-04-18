@@ -22,7 +22,7 @@ watchPatterns = ["apps/api/**", "packages/**"]
 [services.api.deploy]
 healthcheckPath = "/api/v1/health"
 startCommand = "/bin/sh ./run-service.sh"
-port = 3001
+port = 5000
 restartPolicyType = "ON_FAILURE"
 # Redis service is linked - REDIS_URL will be automatically provided by Railway
 
@@ -35,7 +35,7 @@ dockerBuildArgs = { SERVICE_PATH = "backend", SERVICE_NAME = "@the-new-fuse/back
 watchPatterns = ["apps/backend/**", "packages/**"]
 [services.backend.deploy]
 healthcheckPath = "/health"
-port = 3001
+port = 5000
 # Redis service is linked - REDIS_URL will be automatically provided by Railway
 
 [[services.backend.cron]]
