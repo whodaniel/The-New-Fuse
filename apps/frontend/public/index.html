@@ -3,407 +3,807 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>The New Fuse — Self-Synthesizing AI OS & Orchestration</title>
-  <meta name="description" content="The world's first outcome-driven AI kernel. Achieve production-grade results with autonomous swarms, JIT LLVM acceleration, and the Attribution Cornerstone.">
-  <meta name="keywords" content="AI platform, LLVM forge, self-synthesizing kernel, agent orchestration, MCP protocol, A2A protocol, enterprise AI, superintelligence">
+  <title>The New Fuse — AI Agent Orchestration Platform</title>
+  <meta name="description" content="Orchestrate intelligent workflows, enable seamless agent communication, and unlock the full potential of AI automation with The New Fuse. Support for MCP and A2A protocols.">
+  <meta name="keywords" content="AI platform, workflow automation, AI agents, agent orchestration, MCP protocol, A2A protocol, enterprise AI, AI collaboration">
   <meta name="author" content="The New Fuse Team">
-  <meta name="theme-color" content="#020617">
+  <meta name="theme-color" content="#3b82f6">
 
   <!-- Favicons -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="The New Fuse — AI Agent Orchestration Platform">
+  <meta property="og:description" content="Build intelligent AI workflows. Orchestrate multi-agent systems with MCP protocol support.">
+  <meta property="og:site_name" content="The New Fuse">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script>
+    (function routeStaticHostingToSpa() {
+      var AUTH_LOGIN_URL = '/auth/login';
+      var AUTH_REGISTER_URL = '/auth/register';
+
+      // Keep auth links canonical while leaving app links as clean path-based routes.
+      // The frontend server handles SPA fallback to app.html.
+      document.addEventListener('DOMContentLoaded', function () {
+        var links = document.querySelectorAll('a[href^="/"]');
+        links.forEach(function (link) {
+          var href = link.getAttribute('href');
+          if (!href) return;
+          if (href === '/' || href.startsWith('/#') || href.startsWith('/visualizations/')) return;
+          if (href === '/auth/login' || href === '/login') {
+            link.setAttribute('href', AUTH_LOGIN_URL);
+            return;
+          }
+          if (href === '/auth/register' || href === '/register') {
+            link.setAttribute('href', AUTH_REGISTER_URL);
+            return;
+          }
+        });
+      });
+    })();
+  </script>
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
+    /* ═══════════════════════════════════════════════
+       CSS Variables — The New Fuse Design System
+       ═══════════════════════════════════════════════ */
     :root {
       --bg-deep: #020617;
       --bg-surface: #0f172a;
-      --bg-card: rgba(15, 23, 42, 0.5);
-      --border: rgba(148, 163, 184, 0.1);
-      --border-hover: rgba(59, 130, 246, 0.4);
+      --bg-card: rgba(15,23,42,0.6);
+      --border: rgba(148,163,184,0.08);
+      --border-hover: rgba(59,130,246,0.4);
       --text: #f8fafc;
       --text-secondary: #94a3b8;
       --text-muted: #64748b;
       --accent-blue: #3b82f6;
-      --accent-purple: #8b5cf6;
+      --accent-purple: #a855f7;
       --accent-pink: #ec4899;
+      --accent-cyan: #06b6d4;
       --accent-green: #22c55e;
-      --gradient-text: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
-      --radius-lg: 24px;
-      --radius-md: 12px;
+      --gradient-primary: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+      --gradient-btn: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #d946ef 100%);
+      --gradient-btn-hover: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
     }
 
-    /* Reset & Base */
+    /* ═══════════════════════════════════════════════
+       Reset & Base
+       ═══════════════════════════════════════════════ */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; color-scheme: dark; }
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg-deep);
       color: var(--text);
-      line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       overflow-x: hidden;
     }
-    h1, h2, h3 { font-family: 'Outfit', sans-serif; letter-spacing: -0.02em; }
-    a { text-decoration: none; color: inherit; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; height: auto; }
 
-    /* Atmospherics */
-    .noise {
-      position: fixed; inset: 0; z-index: 999; pointer-events: none;
-      opacity: 0.03; background: url('https://grainy-gradients.vercel.app/noise.svg');
-    }
-    .glow {
-      position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background: 
-        radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.15), transparent 40%),
-        radial-gradient(circle at 20% 90%, rgba(236, 72, 153, 0.1), transparent 40%);
+    /* ═══════════════════════════════════════════════
+       Background Effects
+       ═══════════════════════════════════════════════ */
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59,130,246,0.08), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 0%, rgba(168,85,247,0.05), transparent),
+        radial-gradient(ellipse 60% 40% at 20% 100%, rgba(236,72,153,0.04), transparent);
     }
 
-    /* Components */
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
-    
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-size: 60px 60px;
+      background-image:
+        linear-gradient(rgba(148,163,184,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148,163,184,0.03) 1px, transparent 1px);
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 20%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 20%, transparent 70%);
+    }
+
+    /* ═══════════════════════════════════════════════
+       Layout
+       ═══════════════════════════════════════════════ */
+    .wrapper { position: relative; z-index: 1; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 100px 0; }
+
+    /* ═══════════════════════════════════════════════
+       Navbar
+       ═══════════════════════════════════════════════ */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(2,6,23,0.7);
+      backdrop-filter: blur(20px) saturate(1.8);
+      -webkit-backdrop-filter: blur(20px) saturate(1.8);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 18px; font-weight: 800; letter-spacing: -0.5px;
+    }
+    .nav-logo {
+      width: 36px; height: 36px; border-radius: 8px;
+      object-fit: cover;
+      box-shadow: 0 0 20px rgba(59,130,246,0.3);
+    }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a {
+      font-size: 14px; font-weight: 500; color: var(--text-secondary);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
+
+    /* ═══════════════════════════════════════════════
+       Buttons
+       ═══════════════════════════════════════════════ */
     .btn {
-      display: inline-flex; align-items: center; justify-content: center;
-      padding: 0.8rem 1.8rem; border-radius: var(--radius-md);
-      font-weight: 700; font-size: 0.95rem; cursor: pointer; gap: 0.5rem;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px; border-radius: 12px;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer; border: none;
+      transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+      white-space: nowrap;
     }
     .btn-primary {
-      background: var(--gradient-text); color: #000;
-      box-shadow: 0 0 25px rgba(96, 165, 250, 0.4);
+      background: var(--gradient-btn); color: white;
+      box-shadow: 0 4px 20px rgba(59,130,246,0.2);
     }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(96, 165, 250, 0.6); }
+    .btn-primary:hover {
+      background: var(--gradient-btn-hover);
+      box-shadow: 0 8px 32px rgba(59,130,246,0.35);
+      transform: translateY(-1px);
+    }
     .btn-secondary {
-      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,0.05); color: var(--text);
+      border: 1px solid var(--border);
     }
-    .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: var(--text-secondary); }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.15);
+    }
+    .btn-ghost {
+      background: transparent; color: var(--text-secondary);
+      padding: 10px 16px;
+    }
+    .btn-ghost:hover { color: var(--text); }
+    .btn-lg { padding: 16px 32px; font-size: 16px; border-radius: 14px; }
+    .btn-sm { padding: 8px 16px; font-size: 13px; }
+    .btn-icon { font-size: 18px; }
 
-    .glass {
-      background: var(--bg-card); border: 1px solid var(--border);
-      backdrop-filter: blur(16px); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* ═══════════════════════════════════════════════
+       Hero
+       ═══════════════════════════════════════════════ */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 120px 24px 80px;
+      position: relative; overflow: hidden;
     }
-    .glass:hover { transform: translateY(-5px); border-color: var(--border-hover); background: rgba(15, 23, 42, 0.7); }
-
-    /* Navigation */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      padding: 1.5rem 0; transition: 0.4s;
-    }
-    nav.scrolled {
-      padding: 0.8rem 0; background: rgba(2, 6, 23, 0.8);
-      backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
-    }
-    nav .container { display: flex; align-items: center; justify-content: space-between; }
-    .logo { display: flex; align-items: center; gap: 0.8rem; font-weight: 900; font-size: 1.3rem; }
-    .logo img { width: 38px; border-radius: 10px; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
-
-    /* Hero */
-    .hero { padding: 12rem 0 8rem; text-align: center; }
     .hero-badge {
-      display: inline-flex; align-items: center; gap: 0.6rem;
-      padding: 0.5rem 1.2rem; border-radius: 99px;
-      background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);
-      color: var(--accent-blue); font-size: 0.75rem; font-weight: 800;
-      text-transform: uppercase; margin-bottom: 2rem;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 999px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      font-size: 13px; font-weight: 500; color: var(--text-secondary);
+      margin-bottom: 32px;
+      animation: fadeInUp 0.6s ease-out;
     }
-    .hero h1 { font-size: clamp(3.5rem, 8vw, 6rem); line-height: 1; margin-bottom: 1.5rem; font-weight: 900; }
-    .hero h1 span {
-      background: var(--gradient-text); -webkit-background-clip: text;
+    .hero-badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent-green);
+      animation: pulse-dot 2s infinite;
+    }
+    .hero h1 {
+      font-size: clamp(48px, 8vw, 88px);
+      font-weight: 900; line-height: 1.05;
+      letter-spacing: -3px; margin-bottom: 24px;
+      animation: fadeInUp 0.8s ease-out 0.1s both;
+    }
+    .hero h1 .gradient-text {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+    .gradient-text {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--text-secondary); max-width: 640px;
+      margin: 0 auto 40px; line-height: 1.7;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+    .hero-actions {
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease-out 0.3s both;
+    }
+    .hero-metrics {
+      display: flex; gap: 48px; justify-content: center;
+      margin-top: 64px; animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+    .hero-metric { text-align: center; }
+    .hero-metric .value {
+      font-size: 32px; font-weight: 800; letter-spacing: -1px;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text; background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .hero p { font-size: 1.25rem; color: var(--text-secondary); max-width: 750px; margin: 0 auto 3rem; }
-    
-    .mockup-container {
-      margin-top: 4rem; position: relative;
-      border-radius: var(--radius-lg); overflow: hidden;
-      box-shadow: 0 0 100px rgba(59, 130, 246, 0.15);
-      border: 1px solid var(--border);
-      max-width: 1000px; margin-left: auto; margin-right: auto;
-    }
-    .mockup-container img { width: 100%; display: block; filter: brightness(0.9); transition: 0.5s; }
-    .mockup-container:hover img { transform: scale(1.02); filter: brightness(1.1); }
+    .hero-metric .label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
-    /* Features / Outcomes */
-    .section-title { text-align: center; margin-bottom: 4rem; }
-    .section-title h2 { font-size: clamp(2.5rem, 5vw, 3.5rem); }
-    .section-title p { color: var(--text-secondary); margin-top: 1rem; }
-
-    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 6rem; }
-    .outcome-card { border-radius: var(--radius-lg); padding: 2.5rem; }
-    .outcome-card .icon { font-size: 2rem; margin-bottom: 1.5rem; display: block; }
-    .outcome-card h3 { font-size: 1.4rem; margin-bottom: 0.8rem; }
-    .outcome-card p { color: var(--text-secondary); font-size: 0.95rem; }
-
-    /* Bento */
-    .bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; margin-bottom: 6rem; }
-    .bento-item { grid-column: span 6; border-radius: var(--radius-lg); padding: 2.5rem; }
-    .bento-item.full { grid-column: span 12; }
-    .bento-item.narrow { grid-column: span 4; }
-    .bento-item.medium { grid-column: span 8; }
-
-    /* Proof Bar */
+    /* ═══════════════════════════════════════════════
+       Social Proof Bar
+       ═══════════════════════════════════════════════ */
     .proof-bar {
-      display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap;
-      padding: 3rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-      margin-bottom: 6rem;
+      display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
+      padding: 40px 24px; border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
     }
-    .proof-item { display: flex; align-items: center; gap: 0.75rem; font-weight: 700; color: var(--text-muted); font-size: 0.85rem; }
-    .proof-item span { color: var(--accent-green); }
+    .proof-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 14px; color: var(--text-muted); font-weight: 500;
+    }
+    .proof-item .icon { font-size: 18px; }
 
-    /* Pricing */
-    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; }
-    .price-card { padding: 3rem; border-radius: var(--radius-lg); position: relative; display: flex; flex-direction: column; }
-    .price-card.featured { border-color: var(--accent-purple); box-shadow: 0 0 50px rgba(139, 92, 246, 0.1); }
-    .price { font-size: 3.5rem; font-weight: 900; margin: 1.5rem 0 0.5rem; }
-    .price span { font-size: 1rem; color: var(--text-muted); font-weight: 500; }
-    .features-list { margin: 2rem 0; flex: 1; }
-    .features-list li { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; font-size: 0.95rem; color: var(--text-secondary); }
-    .features-list li::before { content: '✓'; color: var(--accent-green); font-weight: 900; }
+    /* ═══════════════════════════════════════════════
+       Section Headers
+       ═══════════════════════════════════════════════ */
+    .section-header { text-align: center; margin-bottom: 64px; }
+    .section-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 16px;
+    }
+    .section-tag.blue { color: var(--accent-blue); }
+    .section-tag.purple { color: var(--accent-purple); }
+    .section-tag.green { color: var(--accent-green); }
+    .section-title {
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 800; letter-spacing: -1.5px; margin-bottom: 16px;
+    }
+    .section-desc {
+      font-size: 18px; color: var(--text-secondary);
+      max-width: 600px; margin: 0 auto; line-height: 1.7;
+    }
 
-    /* Footer */
-    footer { border-top: 1px solid var(--border); padding: 6rem 0 3rem; }
-    .footer-grid { display: grid; grid-template-columns: 1.5fr repeat(3, 1fr); gap: 3rem; }
-    .footer-bottom { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); }
+    /* ═══════════════════════════════════════════════
+       Feature Grid
+       ═══════════════════════════════════════════════ */
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .feature-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 36px;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      position: relative; overflow: hidden;
+    }
+    .feature-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--card-accent, var(--accent-blue)), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .feature-card:hover { border-color: var(--border-hover); transform: translateY(-4px); }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-card.span-2 { grid-column: span 2; }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      display: grid; place-items: center; font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .feature-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
 
-    /* Animation */
-    [data-revealer] { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-    [data-revealer].revealed { opacity: 1; transform: translateY(0); }
+    /* ═══════════════════════════════════════════════
+       Bento Grid (Product Showcase)
+       ═══════════════════════════════════════════════ */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: auto;
+      gap: 16px;
+    }
+    .bento-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .bento-card:hover { border-color: var(--border-hover); }
+    .bento-card.b1 { grid-column: span 7; }
+    .bento-card.b2 { grid-column: span 5; }
+    .bento-card.b3 { grid-column: span 4; }
+    .bento-card.b4 { grid-column: span 4; }
+    .bento-card.b5 { grid-column: span 4; }
+    .bento-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .bento-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .bento-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+    .code-preview {
+      background: rgba(0,0,0,0.4); border-radius: 12px;
+      padding: 20px; margin-top: 20px;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 13px; line-height: 1.8; color: #7dd3fc;
+      border: 1px solid rgba(255,255,255,0.04);
+      overflow-x: auto;
+    }
+    .code-preview .kw { color: #c084fc; }
+    .code-preview .fn { color: #60a5fa; }
+    .code-preview .str { color: #4ade80; }
+    .code-preview .cm { color: #475569; }
+    .code-preview .num { color: #fbbf24; }
 
+    /* ═══════════════════════════════════════════════
+       Pricing
+       ═══════════════════════════════════════════════ */
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1000px; margin: 0 auto; }
+    .pricing-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 40px 32px;
+      display: flex; flex-direction: column;
+      transition: all 0.3s;
+    }
+    .pricing-card.featured {
+      border-color: rgba(139,92,246,0.4);
+      background: linear-gradient(180deg, rgba(139,92,246,0.08) 0%, var(--bg-card) 50%);
+      box-shadow: 0 0 60px -20px rgba(139,92,246,0.15);
+      transform: scale(1.02);
+    }
+    .pricing-card:hover { border-color: var(--border-hover); }
+    .pricing-badge {
+      display: inline-flex; padding: 4px 12px; border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      font-size: 11px; font-weight: 600; color: white;
+      margin-bottom: 16px; align-self: flex-start;
+    }
+    .pricing-card .name { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .pricing-card .desc { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+    .pricing-card .price {
+      font-size: 48px; font-weight: 900; letter-spacing: -2px;
+      margin-bottom: 4px;
+    }
+    .pricing-card .period { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+    .pricing-features { list-style: none; flex: 1; margin-bottom: 32px; }
+    .pricing-features li {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 14px; color: var(--text-secondary);
+      padding: 8px 0;
+    }
+    .pricing-features li::before {
+      content: '✓'; display: flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(34,197,94,0.12); color: var(--accent-green);
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════════════
+       CTA Section
+       ═══════════════════════════════════════════════ */
+    .cta-section {
+      text-align: center; padding: 120px 24px;
+      position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: ''; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(59,130,246,0.06), transparent);
+      pointer-events: none;
+    }
+    .cta-section h2 {
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 900; letter-spacing: -2px; margin-bottom: 20px;
+    }
+    .cta-section p { font-size: 18px; color: var(--text-secondary); margin-bottom: 40px; }
+
+    /* ═══════════════════════════════════════════════
+       Footer
+       ═══════════════════════════════════════════════ */
+    .footer {
+      border-top: 1px solid var(--border); padding: 64px 24px 32px;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 48px;
+    }
+    .footer-brand p { font-size: 14px; color: var(--text-muted); margin-top: 12px; line-height: 1.6; max-width: 280px; }
+    .footer-col h4 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 16px; }
+    .footer-col a { display: block; font-size: 14px; color: var(--text-muted); padding: 6px 0; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom {
+      max-width: 1200px; margin: 40px auto 0;
+      padding-top: 24px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 13px; color: var(--text-muted);
+    }
+
+    /* ═══════════════════════════════════════════════
+       Animations
+       ═══════════════════════════════════════════════ */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .fade-in { opacity: 0; transform: translateY(24px); transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* ═══════════════════════════════════════════════
+       Responsive
+       ═══════════════════════════════════════════════ */
     @media (max-width: 1024px) {
-      .bento-item, .bento-item.medium, .bento-item.narrow { grid-column: span 12; }
-      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .feature-grid { grid-template-columns: repeat(2, 1fr); }
+      .feature-card.span-2 { grid-column: span 2; }
+      .bento-card.b1, .bento-card.b2, .bento-card.b3,
+      .bento-card.b4, .bento-card.b5 { grid-column: span 6; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
+      .pricing-card.featured { transform: none; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 768px) {
-      .hero h1 { font-size: 3rem; }
-      .proof-bar { gap: 2rem; }
       .nav-links { display: none; }
-      .footer-grid { grid-template-columns: 1fr; text-align: center; }
-      .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+      .hero h1 { letter-spacing: -2px; }
+      .hero-metrics { gap: 24px; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .feature-card.span-2 { grid-column: span 1; }
+      .bento-card.b1, .bento-card.b2, .bento-card.b3,
+      .bento-card.b4, .bento-card.b5 { grid-column: span 12; }
+      .proof-bar { gap: 20px; }
+      .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
     }
   </style>
 </head>
 <body>
-  <div class="noise"></div>
-  <div class="glow"></div>
+  <div class="bg-glow"></div>
+  <div class="grid-bg"></div>
 
-  <nav id="nav">
-    <div class="container">
-      <a href="/" class="logo">
-        <img src="assets/brand/tnf-logo.png" alt="TNF Logo">
-        The New Fuse
-      </a>
-      <div class="nav-links">
-        <a href="#outcomes">Outcomes</a>
-        <a href="#forge">Self-Synthesis</a>
-        <a href="#pricing">Pricing</a>
-        <a href="/visualizations/dashboard.html">Insights</a>
-      </div>
-      <div class="nav-actions">
-        <a href="/auth/login" class="btn btn-secondary btn-sm">Sign In</a>
-        <a href="/auth/register" class="btn btn-primary btn-sm">Onboard Free</a>
-      </div>
-    </div>
-  </nav>
-
-  <main>
-    <!-- HERO -->
-    <section class="hero container">
-      <div class="hero-badge">Self-Synthesizing Kernel v2.0 is Live</div>
-      <h1>Own the <span>Outcome</span>.<br>Automate the Process.</h1>
-      <p>The world's first outcome-driven AI kernel. Orchestrate autonomous swarms that bridge reasoning with native LLVM execution to deliver results, not just tokens.</p>
-      
-      <div style="display: flex; gap: 1rem; justify-content: center;">
-        <a href="/auth/register" class="btn btn-primary btn-lg">🚀 Get Started Free</a>
-        <a href="#outcomes" class="btn btn-secondary btn-lg">Explore Outcomes</a>
-      </div>
-
-      <div class="mockup-container">
-        <img src="tnf_platform_mockup_1776470641976.png" alt="TNF Platform Showcase">
-      </div>
-    </section>
-
-    <!-- PROOF -->
-    <div class="container">
-      <div class="proof-bar">
-        <div class="proof-item"><span>✓</span> Outcomes First</div>
-        <div class="proof-item"><span>✓</span> LLVM Accelerated</div>
-        <div class="proof-item"><span>✓</span> Multi-Agent Mesh</div>
-        <div class="proof-item"><span>✓</span> Verifiable Truth</div>
-        <div class="proof-item"><span>✓</span> Zero-Trust Security</div>
-      </div>
-    </div>
-
-    <!-- OUTCOMES -->
-    <section id="outcomes" class="container">
-      <div class="section-title">
-        <div class="hero-badge">Success Matrix</div>
-        <h2>Designed for <span>Final Results</span></h2>
-        <p>Beyond assistive chat. We build the architecture for total autonomy.</p>
-      </div>
-
-      <div class="grid-3">
-        <div class="glass outcome-card" data-revealer>
-          <span class="icon">⚡</span>
-          <h3>Zero Integration Friction</h3>
-          <p>Instantly unite Claude, GPT-4, and custom local models via the Unified Synaptic Bus. No boilerplate, just intelligence.</p>
-        </div>
-        <div class="glass outcome-card" data-revealer>
-          <span class="icon">👁️</span>
-          <h3>Human-Level Reliability</h3>
-          <p>Lux Protocol bridges visual pixel-reasoning with DOM exactness. Your agents act with the precision of a master operator.</p>
-        </div>
-        <div class="glass outcome-card" data-revealer>
-          <span class="icon">🎯</span>
-          <h3>Autonomous Delivery</h3>
-          <p>The TNF Forge allows agents to JIT compile native code for 100x speedups. Requirement to production in a single loop.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- FORGE / SYNTHESIS -->
-    <section id="forge" class="container">
-      <div class="bento">
-        <div class="glass bento-item medium" data-revealer>
-          <div class="hero-badge" style="background: rgba(139, 92, 246, 0.1); color: var(--accent-purple);">Self-Synthesizing</div>
-          <h3>The LLVM Forge</h3>
-          <p>The New Fuse isn't just a platform; it's a kernel. Agents can hot-swap native C++/Rust code to scale beyond the limits of Python/JS. True high-performance agency.</p>
-          <div style="background: rgba(0,0,0,0.4); padding: 1.5rem; border-radius: 12px; margin-top: 2rem; font-family: monospace; font-size: 0.85rem; color: #a78bfa; border: 1px solid rgba(255,255,255,0.05);">
-            <span style="color: #64748b;">// JIT Forge Compilation</span><br>
-            <span style="color: #f8fafc;">tnf</span> forge <span style="color: #60a5fa;">--optimize</span> <span style="color: #4ade80;">"matrix_multiplication"</span><br>
-            <span style="color: #64748b;">>> Compiling native LLVM IR...</span><br>
-            <span style="color: #64748b;">>> Success. 142x speedup achieved.</span>
-          </div>
-        </div>
-        <div class="glass bento-item narrow" data-revealer>
-          <span class="icon" style="font-size: 2rem;">⚖️</span>
-          <h3>The Attribution Cornerstone</h3>
-          <p>Verification is non-negotiable. Every decision is tied to verifiable human knowledge, ensuring your AI never loses touch with reality.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- PRICING -->
-    <section id="pricing" class="container" style="padding: 6rem 0;">
-      <div class="section-title">
-        <h2>Start Free. <span>Scale Outcomes.</span></h2>
-        <p>Simple, result-based pricing for individuals and enterprises.</p>
-      </div>
-
-      <div class="pricing-grid">
-        <div class="glass price-card" data-revealer>
-          <h4>Starter</h4>
-          <div class="price">$0<span>/lifetime</span></div>
-          <p>Test the waters of autonomous agency.</p>
-          <ul class="features-list">
-            <li>5 AI Agents</li>
-            <li>Basic Synaptic Mesh</li>
-            <li>Community Support</li>
-            <li>Verifiable Logs</li>
-          </ul>
-          <a href="/auth/register" class="btn btn-secondary">Get Started Free</a>
-        </div>
-
-        <div class="glass price-card featured" data-revealer>
-          <div class="hero-badge" style="position: absolute; top: 1.5rem; right: 1.5rem; background: var(--accent-purple); color: white;">Popular</div>
-          <h4>Professional</h4>
-          <div class="price">$29<span>/mo</span></div>
-          <p>Full power for production-grade results.</p>
-          <ul class="features-list">
-            <li>25 AI Agents</li>
-            <li>Full Forge Access</li>
-            <li>Priority Synapse Bus</li>
-            <li>API & SDK Access</li>
-          </ul>
-          <a href="/auth/register" class="btn btn-primary">Start Pro Free</a>
-        </div>
-
-        <div class="glass price-card" data-revealer>
-          <h4>Enterprise</h4>
-          <div class="price">Custom</div>
-          <p>Infinite swarms, infinite outcomes.</p>
-          <ul class="features-list">
-            <li>Unlimited Agents</li>
-            <li>Isolated Kernel Instance</li>
-            <li>24/7 Dedicated Concierge</li>
-            <li>Custom Attribution Rules</li>
-          </ul>
-          <a href="mailto:sales@thenewfuse.com" class="btn btn-secondary">Talk to Sales</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- FINAL -->
-    <section class="container" style="text-align: center; padding: 10rem 0;">
-      <h2 style="font-size: clamp(3rem, 6vw, 4.5rem); margin-bottom: 2rem;">Ready to Ship <span>Superintelligence?</span></h2>
-      <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 3rem; font-size: 1.2rem;">Join the era of agency. Turn your goals into outcomes today.</p>
-      <div style="display: flex; gap: 1rem; justify-content: center;">
-        <a href="/auth/register" class="btn btn-primary btn-lg">🚀 Onboard Free Now</a>
-        <a href="/docs" class="btn btn-secondary btn-lg">Read Documentation</a>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container footer-grid">
-      <div>
-        <a href="/" class="logo" style="margin-bottom: 1.5rem;">
-          <img src="assets/brand/tnf-logo.png" alt="TNF Logo">
+  <div class="wrapper">
+    <!-- ═══ NAVBAR ═══ -->
+    <nav class="nav" id="navbar">
+      <div class="nav-inner">
+        <a href="/" class="nav-brand">
+          <img src="assets/brand/tnf-logo.png" alt="The New Fuse" class="nav-logo">
           The New Fuse
         </a>
-        <p style="color: var(--text-muted); font-size: 0.9rem;">Bridging human reasoning with machine execution. The world's first outcome-driven AI kernel.</p>
+        <div class="nav-links">
+          <a href="#features">Features</a>
+          <a href="#product">Product</a>
+          <a href="#pricing">Pricing</a>
+          <a href="/visualizations/dashboard.html">Visualizations</a>
+        </div>
+        <div class="nav-actions">
+          <a href="/auth/login" class="btn btn-ghost">Sign In</a>
+          <a href="/auth/register" class="btn btn-primary btn-sm">Get Started</a>
+        </div>
       </div>
-      <div>
-        <h4 style="margin-bottom: 1.5rem; font-size: 0.9rem;">Product</h4>
-        <ul style="color: var(--text-muted); font-size: 0.9rem;">
-          <li style="margin-bottom: 0.5rem;"><a href="#outcomes">Outcomes</a></li>
-          <li style="margin-bottom: 0.5rem;"><a href="#forge">LLVM Forge</a></li>
-          <li style="margin-bottom: 0.5rem;"><a href="#pricing">Pricing</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 style="margin-bottom: 1.5rem; font-size: 0.9rem;">Developers</h4>
-        <ul style="color: var(--text-muted); font-size: 0.9rem;">
-          <li style="margin-bottom: 0.5rem;"><a href="/docs">Docs</a></li>
-          <li style="margin-bottom: 0.5rem;"><a href="https://github.com/whodaniel">GitHub</a></li>
-          <li style="margin-bottom: 0.5rem;"><a href="/api">Synapse API</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 style="margin-bottom: 1.5rem; font-size: 0.9rem;">Legal</h4>
-        <ul style="color: var(--text-muted); font-size: 0.9rem;">
-          <li style="margin-bottom: 0.5rem;"><a href="/privacy">Privacy</a></li>
-          <li style="margin-bottom: 0.5rem;"><a href="/terms">Terms</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="container footer-bottom">
-      <p>&copy; 2026 The New Fuse. All rights reserved.</p>
-      <p>Built with 🫀 for the Sovereign Individual.</p>
-    </div>
-  </footer>
+    </nav>
 
+    <!-- ═══ HERO ═══ -->
+    <section class="hero">
+      <div>
+        <div class="hero-badge">
+          <span class="dot"></span>
+          Announcing The New Fuse 2.0
+        </div>
+        <h1>
+          Build Intelligent<br>
+          <span class="gradient-text">AI Workflows</span>
+        </h1>
+        <p class="hero-sub">
+          The autonomous development ecosystem where AI minds unite. Bridge high-level reasoning with native OS execution using the Lux Protocol, federate agents across browsers, and scale via the Redis Synaptic Bus.
+        </p>
+        <div class="hero-actions">
+          <a href="/auth/register" class="btn btn-primary btn-lg">
+            <span class="btn-icon">🚀</span> Start Building Free
+          </a>
+          <a href="/workflows/builder" class="btn btn-secondary btn-lg">
+            <span class="btn-icon">▶</span> Try Builder
+          </a>
+        </div>
+        <div class="hero-metrics">
+          <div class="hero-metric">
+            <div class="value">113</div>
+            <div class="label">AI Agents</div>
+          </div>
+          <div class="hero-metric">
+            <div class="value">&lt;100ms</div>
+            <div class="label">Latency</div>
+          </div>
+          <div class="hero-metric">
+            <div class="value">MCP + A2A</div>
+            <div class="label">Protocols</div>
+          </div>
+          <div class="hero-metric">
+            <div class="value">∞</div>
+            <div class="label">Scale</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SOCIAL PROOF BAR ═══ -->
+    <div class="proof-bar">
+      <div class="proof-item"><span class="icon">✅</span> Open Source</div>
+      <div class="proof-item"><span class="icon">👁️</span> Virtual + DOM Vision</div>
+      <div class="proof-item"><span class="icon">💻</span> Native Tauri Desktop</div>
+      <div class="proof-item"><span class="icon">🔌</span> Universal MCP Native</div>
+      <div class="proof-item"><span class="icon">🤝</span> A2A Redis Federation</div>
+    </div>
+
+    <!-- ═══ FEATURES ═══ -->
+    <section class="section" id="features">
+      <div class="container">
+        <div class="section-header fade-in">
+          <div class="section-tag blue">⚡ Why Developers Choose Us</div>
+          <h2 class="section-title">Stop duct-taping APIs.<br>Start orchestrating intelligence.</h2>
+          <p class="section-desc">Everything you need to build, deploy, and scale autonomous AI agent systems.</p>
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card span-2 fade-in" style="--card-accent: var(--accent-cyan)">
+            <div class="feature-icon" style="background: rgba(6,182,212,0.12)">🔌</div>
+            <h3>Universal MCP & A2A Integration</h3>
+            <p>Compatible with any Model Context Protocol agent out of the box. Connect to Claude, GPT-4, Gemini, and orchestrate them as a swarm via our A2A Redis Synaptic Bus.</p>
+          </div>
+          <div class="feature-card fade-in" style="--card-accent: var(--accent-purple)">
+            <div class="feature-icon" style="background: rgba(168,85,247,0.12)">👁️</div>
+            <h3>Lux Bridge Intelligence</h3>
+            <p>Combine "text-first" DOM exactness with OpenAGI Lux's "visual-first" pixel reasoning for unmatched desktop and browser automation.</p>
+          </div>
+          <div class="feature-card fade-in" style="--card-accent: var(--accent-green)">
+            <div class="feature-icon" style="background: rgba(34,197,94,0.12)">☁️</div>
+            <h3>SkIDEancer Cloud IDE</h3>
+            <p>The autonomous, AI-driven development environment where your agents code, test, and deploy seamlessly. Code smarter, not harder.</p>
+          </div>
+          <div class="feature-card span-2 fade-in" style="--card-accent: var(--accent-pink)">
+            <div class="feature-icon" style="background: rgba(236,72,153,0.12)">🧠</div>
+            <h3>Persistent Knowledge Graph (PKG)</h3>
+            <p>Cross-session memory that learns from every interaction. Your agent fleet shares context, recognizes patterns, and compounds evolutionary knowledge over time.</p>
+          </div>
+          <div class="feature-card fade-in" style="--card-accent: var(--accent-blue)">
+            <div class="feature-icon" style="background: rgba(59,130,246,0.12)">🌐</div>
+            <h3>Ecosystem Federation</h3>
+            <p>Group sessions across your Chrome tabs, VS Code workspaces, and the <strong>Fuse Desktop</strong> native app into unified, collaborative communication channels.</p>
+          </div>
+          <div class="feature-card fade-in">
+            <div class="feature-icon" style="background: rgba(245,158,11,0.12)">⚡</div>
+            <h3>Predictive Enhancement</h3>
+            <p>Go beyond assistive tools. The Autonomous Enhancement Engine (AEE) monitors telemetry and proactively proposes systemic performance and code improvements.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PRODUCT SHOWCASE (Bento) ═══ -->
+    <section class="section" id="product">
+      <div class="container">
+        <div class="section-header fade-in">
+          <div class="section-tag purple">🎯 Product</div>
+          <h2 class="section-title">Everything you need to build<br><span class="gradient-text">Superintelligence</span></h2>
+        </div>
+
+        <div class="bento-grid">
+          <div class="bento-card b1 fade-in">
+            <div class="bento-label" style="color: var(--accent-cyan)">WORKSPACE INTEGRATION</div>
+            <h3>The Central Nervous System</h3>
+            <p>Debug, deploy, and direct your swarm from the <strong>Fuse Connect</strong> Chrome Extension or our native VS Code package.</p>
+            <div class="code-preview">
+              <span class="cm">// Initialize swarm with Auto-Scaling & Quality selection</span><br>
+              <span class="kw">import</span> { <span class="fn">swarmService</span> } <span class="kw">from</span> <span class="str">'@the-new-fuse/core'</span>;<br><br>
+              <span class="kw">await</span> swarmService.<span class="fn">initializeAgencySwarm</span>(<span class="str">'my-agency'</span>);<br>
+              <span class="kw">const</span> agent = <span class="kw">await</span> swarmService.<span class="fn">registerAgent</span>(<span class="str">'my-agency'</span>, {<br>
+              &nbsp;&nbsp;name: <span class="str">'Architect'</span>,<br>
+              &nbsp;&nbsp;capabilities: [<span class="str">'planning'</span>, <span class="str">'delegation'</span>],<br>
+              &nbsp;&nbsp;qualityScore: <span class="num">0.95</span><br>
+              });<br><br>
+              <span class="kw">await</span> broker.<span class="fn">sendMessage</span>({ to: <span class="str">'worker-pool'</span>, action: <span class="str">'build'</span> });
+            </div>
+          </div>
+          <div class="bento-card b2 fade-in">
+            <div class="bento-label" style="color: var(--accent-purple)">MULTI-AGENT MESH</div>
+            <h3>Autonomous Collaboration</h3>
+            <p>An Orchestrator assigns tasks to Brokers who decompose them for Workers. The ecosystem determines the optimal team.</p>
+          </div>
+          <div class="bento-card b3 fade-in">
+            <div class="bento-label" style="color: var(--accent-green)">PREDICTIVE OPS</div>
+            <h3>Predictive Development</h3>
+            <p>Anticipates your needs before you ask. Preloads contexts, recommends refactoring, and auto-generates test suites proactively.</p>
+          </div>
+          <div class="bento-card b4 fade-in">
+            <div class="bento-label" style="color: var(--accent-blue)">DESKTOP NATIVE</div>
+            <h3>OS-Level Automation</h3>
+            <p>Beyond APIs. Fuse Desktop uses Rust/Tauri to inject mouse clicks, keyboard events, and screen captures exactly as a human would.</p>
+          </div>
+          <div class="bento-card b5 fade-in">
+            <div class="bento-label" style="color: var(--accent-pink)">ANALYTICS</div>
+            <h3>Relationship Visualizations</h3>
+            <p>Deep interactive mapping of agent topologies, system architectures, and live temporal diff tracking.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PRICING ═══ -->
+    <section class="section" id="pricing">
+      <div class="container">
+        <div class="section-header fade-in">
+          <div class="section-tag green">💰 Pricing</div>
+          <h2 class="section-title">Simple, Transparent Pricing</h2>
+          <p class="section-desc">Start free. Scale when you're ready.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <!-- Starter -->
+          <div class="pricing-card fade-in">
+            <div class="name">Starter</div>
+            <div class="desc">For individuals and side projects</div>
+            <div class="price">Free</div>
+            <div class="period">forever</div>
+            <ul class="pricing-features">
+              <li>Up to 5 AI Agents</li>
+              <li>Basic Workflow Automation</li>
+              <li>Community Support</li>
+              <li>1,000 Messages/Month</li>
+            </ul>
+            <a href="/auth/register" class="btn btn-secondary" style="width:100%; justify-content:center;">Get Started</a>
+          </div>
+
+          <!-- Professional -->
+          <div class="pricing-card featured fade-in">
+            <div class="pricing-badge">Most Popular</div>
+            <div class="name">Professional</div>
+            <div class="desc">For teams building production agents</div>
+            <div class="price">$30</div>
+            <div class="period">per month</div>
+            <ul class="pricing-features">
+              <li>Up to 25 AI Agents</li>
+              <li>Advanced Workflow Automation</li>
+              <li>Priority Support</li>
+              <li>10,000 Messages/Month</li>
+              <li>API Access</li>
+            </ul>
+            <a href="/auth/register" class="btn btn-primary" style="width:100%; justify-content:center;">Get Started</a>
+          </div>
+
+          <!-- Enterprise -->
+          <div class="pricing-card fade-in">
+            <div class="name">Enterprise</div>
+            <div class="desc">For organizations at scale</div>
+            <div class="price">Custom</div>
+            <div class="period">contact sales</div>
+            <ul class="pricing-features">
+              <li>Unlimited AI Agents</li>
+              <li>Enterprise Workflows</li>
+              <li>24/7 Dedicated Support</li>
+              <li>Custom Integrations</li>
+              <li>SLA Guarantees</li>
+            </ul>
+            <a href="mailto:sales@thenewfuse.com" class="btn btn-secondary" style="width:100%; justify-content:center;">Contact Sales</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ CTA ═══ -->
+    <section class="cta-section">
+      <h2>Ready to Build<br><span class="gradient-text">The Future?</span></h2>
+      <p>Join developers shipping AI-powered products with The New Fuse.</p>
+      <div class="hero-actions">
+        <a href="/auth/register" class="btn btn-primary btn-lg">
+          <span class="btn-icon">🚀</span> Start Building Now
+        </a>
+        <a href="https://github.com/whodaniel" class="btn btn-secondary btn-lg" target="_blank" rel="noopener">
+          <span class="btn-icon">⭐</span> Star on GitHub
+        </a>
+      </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="/" class="nav-brand">
+            <img src="assets/brand/tnf-logo.png" alt="The New Fuse" class="nav-logo">
+            The New Fuse
+          </a>
+          <p>The AI Agent Orchestration Platform. Build, deploy, and scale multi-agent systems with MCP and A2A protocols.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
+          <a href="/visualizations/dashboard.html">Visualizations</a>
+          <a href="/dashboard">Dashboard</a>
+        </div>
+        <div class="footer-col">
+          <h4>Developers</h4>
+          <a href="https://github.com/whodaniel" target="_blank" rel="noopener">GitHub</a>
+          <a href="/docs">Documentation</a>
+          <a href="/docs">API Reference</a>
+          <a href="/agents">Agent Registry</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="/about">About</a>
+          <a href="/blog">Blog</a>
+          <a href="/legal/privacy">Privacy</a>
+          <a href="/legal/terms">Terms</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 The New Fuse. All rights reserved.</span>
+        <span>Built with ⚡ for the AI era</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ═══ SCRIPTS ═══ -->
   <script>
-    const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 50) nav.classList.add('scrolled');
-      else nav.classList.remove('scrolled');
-    });
-
+    // Scroll-triggered fade-in animations
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
+          entry.target.classList.add('visible');
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-    document.querySelectorAll('[data-revealer]').forEach(el => observer.observe(el));
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.style.background = 'rgba(2,6,23,0.92)';
+        navbar.style.borderBottomColor = 'rgba(148,163,184,0.12)';
+      } else {
+        navbar.style.background = 'rgba(2,6,23,0.7)';
+        navbar.style.borderBottomColor = 'rgba(148,163,184,0.08)';
+      }
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
   </script>
 </body>
 </html>
