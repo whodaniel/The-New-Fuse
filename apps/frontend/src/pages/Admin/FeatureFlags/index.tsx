@@ -1,13 +1,7 @@
+import { Switch, Tabs, toast } from '@/components/ui';
 // @ts-nocheck
 import { FeatureFlagConditionsEditor } from '@/components/AdminPanel/FeatureFlagConditions';
-import {
-  PremiumButton as Button,
-  GlassCard as Card,
-  PremiumInput as Input,
-} from '@/components/ui/premium';
-import { Switch } from '@/components/ui/switch';
-import { Tabs } from '@/components/ui/tabs';
-import { toast } from '@/components/ui/toast';
+import { PremiumButton as Button, GlassCard as Card, PremiumInput as Input } from '@/components/ui';
 import { FeatureFlag, FeatureFlagConditions } from '@the-new-fuse/types/featureFlags';
 import { useEffect, useState } from 'react';
 

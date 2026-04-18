@@ -1,8 +1,12 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
+import Switch, {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Label,
   Select,
   SelectContent,
   SelectGroup,
@@ -10,8 +14,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import Switch from '@/components/ui/switch';
+} from '@/components/ui';
 import { getProviderById, getProvidersByCategory } from '@/data/llmProviders';
 import { apiService } from '@/services/api';
 import { CheckCircle2, Key, PlusCircle, Shield, Trash2 } from 'lucide-react';
@@ -218,37 +221,37 @@ export function ProviderApiKeyList() {
                   const meta = getProviderById(provider);
                   const providerLabel = meta?.name || provider;
                   return (
-                  <li
-                    key={id}
-                    className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center font-bold text-xs">
-                        {providerLabel.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <span className="font-semibold block">{providerLabel}</span>
-                        {meta?.description && (
-                          <span className="text-[10px] text-muted-foreground block">
-                            {meta.description}
-                          </span>
-                        )}
-                        <span className="text-[10px] text-green-600 dark:text-green-400 flex items-center gap-1">
-                          <CheckCircle2 className="w-3 h-3" /> Encrypted & Active
-                        </span>
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-all"
-                      onClick={() => handleDeleteApiKey(id, provider)}
-                      aria-label={`Delete API key for ${providerLabel}`}
+                    <li
+                      key={id}
+                      className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors group"
                     >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </li>
-                );
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center font-bold text-xs">
+                          {providerLabel.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <span className="font-semibold block">{providerLabel}</span>
+                          {meta?.description && (
+                            <span className="text-[10px] text-muted-foreground block">
+                              {meta.description}
+                            </span>
+                          )}
+                          <span className="text-[10px] text-green-600 dark:text-green-400 flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" /> Encrypted & Active
+                          </span>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-all"
+                        onClick={() => handleDeleteApiKey(id, provider)}
+                        aria-label={`Delete API key for ${providerLabel}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </li>
+                  );
                 })}
               </ul>
             )}

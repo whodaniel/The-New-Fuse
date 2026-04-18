@@ -1,1 +1,1 @@
-export { Alert, AlertDescription, AlertTitle } from '@the-new-fuse/ui-consolidated';
+export { Alert, AlertDescription, AlertTitle } from '@/components/ui';

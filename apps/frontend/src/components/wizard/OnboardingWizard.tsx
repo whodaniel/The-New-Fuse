@@ -1,4 +1,4 @@
-import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import { GlassCard, PremiumButton } from '@/components/ui';
 import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useWizard } from './WizardProvider';

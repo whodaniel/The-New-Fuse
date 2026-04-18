@@ -1,5 +1,5 @@
+import { TypingIndicator } from '@/components/ui';
 // @ts-nocheck
-import { TypingIndicator } from '@/components/ui/TypingIndicator';
 import { useChat } from '@/hooks/useChat';
 import { useState } from 'react';
 import { AgentInfo } from './AgentInfo';

@@ -1,11 +1,11 @@
+import { Button } from '@/components/ui';
 // @ts-nocheck
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui';
 import { Bell, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

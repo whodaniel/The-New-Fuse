@@ -1,9 +1,14 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
+import {
+  Button,
+  Input,
+  Label,
+  Select,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Textarea,
+} from '@/components/ui';
 import { useAgentsWorkflow, useMcpTools } from '@/hooks';
 import { Save, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';

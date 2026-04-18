@@ -1,6 +1,5 @@
+import { BarChart, GlassCard, LineChart } from '@/components/ui';
 // @ts-nocheck
-import { BarChart, LineChart } from '@/components/ui/charts';
-import { GlassCard } from '@/components/ui/premium';
 import { useAgentMetrics } from '@/hooks/useAgentMetrics';
 import React from 'react';
 

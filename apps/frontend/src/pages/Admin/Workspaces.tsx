@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui';
 import { Brain, MoreHorizontal, Search, Users } from 'lucide-react';
 import { useState } from 'react';
 const Workspaces = () => {

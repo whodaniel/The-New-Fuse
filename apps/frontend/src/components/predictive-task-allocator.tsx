@@ -1,16 +1,17 @@
-// @ts-nocheck
-'use client';
-import { GlassCard, PremiumButton } from '@/components/ui/premium';
 import {
+  GlassCard,
+  PremiumButton,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/components/ui';
 import { useEffect, useState } from 'react';
 import { webSocketService } from '../services/websocket';
+// @ts-nocheck
+('use client');
 
 interface TaskItem {
   id: string;

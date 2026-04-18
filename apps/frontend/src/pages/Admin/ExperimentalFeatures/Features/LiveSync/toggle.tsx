@@ -1,4 +1,4 @@
-import { Switch } from '@/components/ui/switch';
+import { Switch } from '@/components/ui';
 import React from 'react';
 
 interface LiveSyncToggleProps {

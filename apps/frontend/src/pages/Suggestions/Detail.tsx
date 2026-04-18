@@ -1,8 +1,4 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Badge, Button, Card, Input, Textarea } from '@/components/ui';
 import { useAuth } from '@/providers/AuthProvider';
 import {
   addFeedbackIteration,

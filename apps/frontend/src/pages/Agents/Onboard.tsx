@@ -1,3 +1,4 @@
+import { Badge, GlassCard, PremiumButton, PremiumInput, PremiumTextarea } from '@/components/ui';
 // @ts-nocheck
 /**
  * Agent Onboarding Page
@@ -9,9 +10,7 @@
  * @audience Humans and AI Agents alike
  */
 
-import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/providers/AuthProvider';
-import { GlassCard, PremiumButton, PremiumInput, PremiumTextarea } from '@/components/ui/premium';
 import { agentService } from '@/services/AgentService';
 import { AnimatePresence, motion } from 'framer-motion';
 import {

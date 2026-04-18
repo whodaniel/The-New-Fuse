@@ -1,3 +1,13 @@
+import {
+  FormControl,
+  FormLabel,
+  Input,
+  Select,
+  Textarea,
+  Tooltip,
+  useDisclosure,
+  useToast,
+} from '@/components/ui';
 // @ts-nocheck
 /**
  * Enhanced Workflow Builder for The New Fuse
@@ -18,6 +28,12 @@ import {
   Button,
   Card,
   CardContent,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
   LoadingSpinner,
   Modal,
   ModalBody,
@@ -26,22 +42,7 @@ import {
   ModalHeader,
   ModalOverlay,
   ProgressBar,
-} from '@/components/ui/design-system';
-import { useDisclosure } from '@/components/ui/disclosure';
-import {
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerHeader,
-  DrawerOverlay,
-} from '@/components/ui/drawer';
-import { FormControl, FormLabel } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/components/ui/toast';
-import { Tooltip } from '@/components/ui/tooltip';
+} from '@/components/ui';
 import { enhancedNodeTypes } from '@/components/workflow/EnhancedNodeTypes';
 import { useUndoRedo } from '@/hooks/useUndoRedo';
 import { getLayoutedElements } from '@/utils/workflowLayout';

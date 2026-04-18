@@ -1,6 +1,5 @@
 import { PayPalSubscriptionButton } from '@/components/billing/PayPalSubscriptionButton';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge, Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { ArrowRight, Check, Rocket } from 'lucide-react';

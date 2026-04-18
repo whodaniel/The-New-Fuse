@@ -1,14 +1,7 @@
+import { Button, Input } from '@/components/ui';
 // @ts-nocheck
 import RecoveryCodeModal from '@/components/Modals/DisplayRecoveryCodeModal';
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui';
 import { useModal } from '@/hooks/useModal';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

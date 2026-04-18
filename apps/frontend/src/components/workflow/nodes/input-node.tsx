@@ -1,15 +1,8 @@
+import { Label, Tooltip } from '@/components/ui';
 // @ts-nocheck
-import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Tooltip } from '@/components/ui/tooltip';
 import { Check, HelpCircle, Plus, Settings2, X } from 'lucide-react';
 import React, { memo, useState } from 'react';
 import { NodeProps } from 'reactflow';

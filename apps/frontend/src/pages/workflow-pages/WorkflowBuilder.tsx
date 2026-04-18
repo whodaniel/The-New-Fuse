@@ -1,3 +1,13 @@
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  FormLabel,
+  GlassCard,
+  Input,
+  Textarea,
+} from '@/components/ui';
 // @ts-nocheck
 import React, { DragEvent, useCallback, useEffect, useState } from 'react';
 import ReactFlow, {
@@ -16,11 +26,6 @@ import ReactFlow, {
 } from 'reactflow';
 // ReactFlow styles will be imported via the build system
 import { WorkflowApiService } from '@/api/workflow';
-import { Badge, Button, Card, CardContent } from '@/components/ui';
-import { GlassCard } from '@/components/ui/design-system';
-import { FormLabel } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/useToast';
 import {
   FiCalendar,

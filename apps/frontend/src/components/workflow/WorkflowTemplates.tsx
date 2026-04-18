@@ -1,6 +1,6 @@
+import { Button, ScrollArea, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 // @ts-nocheck
 import { WorkflowApiService, WorkflowTemplate } from '@/api/workflow';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -8,8 +8,6 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -17,9 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from '@/components/ui';
 import { ArrowRight, FileTemplate, Loader2, Plus } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 

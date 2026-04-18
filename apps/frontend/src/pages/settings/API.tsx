@@ -1,13 +1,23 @@
 import { AgentGrantList } from '@/components/ApiKeyManagement/AgentGrantList';
 import { ProviderApiKeyList } from '@/components/ApiKeyManagement/ProviderApiKeyList';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Switch from '@/components/ui/switch';
+import Switch, {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Label,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui';
 import { getProvidersByCategory } from '@/data/llmProviders';
 import { apiService } from '@/services/api';
 import { Key, Shield, Webhook } from 'lucide-react';
@@ -32,7 +42,10 @@ export default function API() {
 
   useEffect(() => {
     if (providerGroups.length === 0) return;
-    if (!activeProviderTab || !providerGroups.some((group) => group.category === activeProviderTab)) {
+    if (
+      !activeProviderTab ||
+      !providerGroups.some((group) => group.category === activeProviderTab)
+    ) {
       setActiveProviderTab(providerGroups[0].category);
     }
   }, [providerGroups, activeProviderTab]);

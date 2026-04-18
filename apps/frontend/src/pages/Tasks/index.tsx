@@ -1,11 +1,11 @@
-import { Badge } from '@/components/ui/badge';
 import {
+  Badge,
   GlassCard,
   PremiumButton,
   PremiumInput,
   PremiumSelect,
   StatsCard,
-} from '@/components/ui/premium';
+} from '@/components/ui';
 import { listTasks } from '@/services/unifiedLedgerApi';
 import { AnimatePresence, motion } from 'framer-motion';
 import {

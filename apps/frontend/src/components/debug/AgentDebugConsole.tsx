@@ -1,6 +1,5 @@
+import { Console, Timeline } from '@/components/ui';
 // @ts-nocheck
-import { Console } from '@/components/ui/console';
-import { Timeline } from '@/components/ui/timeline';
 import React from 'react';
 
 export const AgentDebugConsole: React.FC = () => {

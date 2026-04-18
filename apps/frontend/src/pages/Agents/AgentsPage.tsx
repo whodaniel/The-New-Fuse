@@ -1,12 +1,6 @@
+import { Badge } from '@/components/ui';
 // @ts-nocheck
-import { Badge } from '@/components/ui/badge';
-import {
-  GlassCard,
-  PremiumButton,
-  PremiumInput,
-  PremiumSelect,
-  StatsCard,
-} from '@/components/ui/premium';
+import { GlassCard, PremiumButton, PremiumInput, PremiumSelect, StatsCard } from '@/components/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Activity,

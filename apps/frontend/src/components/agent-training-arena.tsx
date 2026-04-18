@@ -1,14 +1,8 @@
+import { Progress } from '@/components/ui';
 // @ts-nocheck
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
-import { Progress } from '@/components/ui/progress';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useState } from 'react';
 export const AgentTrainingArena = ({ agentId }) => {
   const [selectedSkill, setSelectedSkill] = useState('');

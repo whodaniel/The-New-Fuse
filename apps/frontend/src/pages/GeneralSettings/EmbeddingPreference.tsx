@@ -3,8 +3,8 @@ import {
   GlassCard as Card,
   PremiumInput as Input,
   PremiumSelect as Select,
-} from '@/components/ui/premium';
-import { Switch } from '@/components/ui/switch';
+  Switch,
+} from '@/components/ui';
 const EmbeddingPreference = () => {
   return (
     <div className="container mx-auto py-6">

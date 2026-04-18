@@ -1,5 +1,14 @@
+import {
+  Button,
+  Input,
+  Label,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  toast,
+} from '@/components/ui';
 // @ts-nocheck
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -8,18 +17,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { toast } from '@/components/ui/toast';
+} from '@/components/ui';
 import { apiService } from '@/services/api';
 import { AlertCircle, CheckCircle, PlusCircle, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';

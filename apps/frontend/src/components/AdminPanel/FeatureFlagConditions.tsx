@@ -1,13 +1,8 @@
+import { Button, Card, DatePicker, Input, Select, Switch } from '@/components/ui';
 // @ts-nocheck
-import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
-import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
-import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
-import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
 // Temporarily using local components instead of ui-consolidated
-// import { Card, Input, Switch, Button, DatePicker, Select } from '@the-new-fuse/ui-consolidated';
 import { FeatureFlagConditions } from '@the-new-fuse/types/featureFlags';
-// import { MonacoEditor } from '@the-new-fuse/ui-consolidated';
 
 // Temporary placeholder components
 const DatePicker = ({

@@ -1,5 +1,5 @@
+import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui';
 // @ts-nocheck
-import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
 import { useAuth } from '@/hooks/useAuth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, CheckCircle, Mail } from 'lucide-react';

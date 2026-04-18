@@ -1,4 +1,4 @@
-import { GlassCard, PremiumButton, StatsCard } from '@/components/ui/premium';
+import { GlassCard, PremiumButton, StatsCard } from '@/components/ui';
 import { Activity, Bot, Eye, Loader2, PlayCircle, Sparkles, Target } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';

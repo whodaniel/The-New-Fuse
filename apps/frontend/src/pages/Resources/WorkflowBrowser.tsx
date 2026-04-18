@@ -1,7 +1,6 @@
+import { Badge, GlassCard, PremiumButton } from '@/components/ui';
 // @ts-nocheck
 import { BaseBrowser, FilterField, SortOption } from '@/components/browsers';
-import { Badge } from '@/components/ui/badge';
-import { GlassCard, PremiumButton } from '@/components/ui/premium';
 import { useAuth } from '@/providers/AuthProvider';
 import { resourcesService } from '@/services/resources.service';
 import { N8NWorkflow } from '@/types/resources';

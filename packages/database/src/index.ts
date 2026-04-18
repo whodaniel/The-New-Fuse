@@ -12,7 +12,7 @@
 export {
   DRIZZLE_CLIENT,
   DrizzleModule as DatabaseModule,
-  DrizzleModule, // Alias for backward compatibility
+  DrizzleModule,
   DrizzleService,
   db,
   queryClient,
@@ -21,15 +21,12 @@ export {
   type DrizzleClient,
   type DrizzleModuleOptions,
   type Transaction,
-} from './drizzle.js';
+} from './drizzle/index.js';
 
-// Export DatabaseService
 export { DatabaseService } from './drizzle/database.service.js';
 
-// Export Drizzle schema tables
-export * as drizzleSchema from './drizzle/schema.js';
+export * as drizzleSchema from './drizzle/schema/index.js';
 
-// Export commonly used schema tables directly for convenience
 export {
   agentCapabilityRegistry,
   agentDirectoryEntries,
@@ -58,7 +55,7 @@ export {
   workflows,
   workspaceMembers,
   workspaces,
-} from './drizzle/schema.js';
+} from './drizzle/schema/index.js';
 
 // Export Drizzle inferred types
 export type {
@@ -92,7 +89,6 @@ export type {
   WorkspaceMember,
 } from './drizzle/types.js';
 
-// Export Drizzle repositories
 export {
   DrizzleAgentApiGrantRepository,
   DrizzleAgentManagedAccountRepository,
@@ -131,9 +127,8 @@ export {
   workflowTopologyRepository,
   type AuditLogEntry,
   type AuditLogQuery,
-} from './drizzle/repositories.js';
+} from './drizzle/repositories/index.js';
 
-// Export backwards compatibility repository aliases
 export {
   AgentRepository,
   ChatMessageRepository,
@@ -144,7 +139,6 @@ export {
   WorkflowRepository,
 } from './drizzle/compatibility.js';
 
-// Export Drizzle query utilities
 export {
   and,
   asc,
@@ -166,8 +160,6 @@ export {
   sql,
 } from 'drizzle-orm';
 
-// Re-export pg enums from schema for backward compatibility
-// Note: These are pgEnum types, not TypeScript enums
 export {
   agentStatusEnum,
   agentTypeEnum,
@@ -176,9 +168,8 @@ export {
   userRoleEnum,
   workflowExecutionStatusEnum,
   workflowStatusEnum,
-} from './drizzle/schema.js';
+} from './drizzle/schema/index.js';
 
-// Re-export TypeScript enum type aliases for type annotations
 export type {
   AgentStatus,
   AgentType,

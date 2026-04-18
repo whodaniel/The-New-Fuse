@@ -1,9 +1,9 @@
-// @ts-nocheck
-'use client';
-import { GlassCard } from '@/components/ui/premium';
+import { GlassCard } from '@/components/ui';
 import { useEffect, useRef, useState } from 'react';
 import { ForceGraph3D } from 'react-force-graph';
 import { webSocketService } from '../services/websocket';
+// @ts-nocheck
+('use client');
 
 export function DynamicKnowledgeGraph() {
   const fgRef = useRef<any>();

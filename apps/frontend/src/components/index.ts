@@ -15,5 +15,5 @@ export * from './providers/index';
 export * from './layout/index';
 
 // Import renamed components
-export { Card, WorkflowControls, WorkflowVisualizer } from '@the-new-fuse/ui-consolidated';
+export { Card, WorkflowControls, WorkflowVisualizer } from '@/components/ui';
 export { default as MainLayout } from './layout/MainLayout.jsx';

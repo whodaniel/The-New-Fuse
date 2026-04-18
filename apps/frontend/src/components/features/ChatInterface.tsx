@@ -1,133 +1,135 @@
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Input,
+  ScrollArea,
+} from '@/components/ui';
+import { Bot, Loader2, Send, User } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
-import { LLMClient } from '../../../packages/tnf-cli/src/utils/llm-client';
+
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+}
 
 const ChatInterface = () => {
-  const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([
+    { role: 'assistant', content: 'Welcome to The New Fuse! How can I assist you today?' },
+  ]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  return React.createElement(
-    'div',
-    { className: 'p-4 h-full' },
-    React.createElement(
-      'div',
-      { className: 'grid grid-cols-1 md:grid-cols-4 gap-4 h-full' },
-      React.createElement(
-        'div',
-        { className: 'md:col-span-3' },
-        React.createElement(
-          'div',
-          { className: 'bg-transparent rounded-md shadow p-4 h-full' },
-          React.createElement(
-            'div',
-            { className: 'flex-1 flex items-center justify-center' },
-            React.createElement('p', { className: 'text-muted-foreground' }, 'Chat Interface Demo')
-          )
-        ),
-        React.createElement(
-          'div',
-          { className: 'mt-4 text-xs text-gray-500' },
-          'To enable AI chat, configure at least one LLM provider:',
-          React.createElement('br', null),
-          '• Set TNF_LLM_API_KEY environment variable',
-          React.createElement('br', null),
-          '• Or configure via tnf boot goldberg',
-          React.createElement('br', null),
-          '• Supported providers: OpenAI, Anthropic, Gemini, Ollama, local LLMs'
-        )
-      ),
-      React.createElement(
-        'div',
-        { className: 'space-y-4' },
-        React.createElement(
-          'div',
-          { className: 'bg-transparent rounded-md shadow p-4' },
-          React.createElement('h3', { className: 'font-semibold mb-2' }, 'Voice Control'),
-          React.createElement(
-            'button',
-            {
-              onClick: () => setIsVoiceEnabled(!isVoiceEnabled),
-              className: `px-4 py-2 rounded ${isVoiceEnabled ? 'bg-green-500 text-white' : 'bg-gray-200'}`,
-            },
-            isVoiceEnabled ? 'Voice On' : 'Voice Off'
-          )
-        ),
-        React.createElement(
-          'div',
-          { className: 'bg-transparent rounded-md shadow p-4' },
-          React.createElement('h3', { className: 'font-semibold mb-2' }, 'Status'),
-          React.createElement(
-            'p',
-            { className: 'text-sm text-muted-foreground' },
-            'Chat interface ready'
-          )
-        )
-      )
-    );
-  }
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+    }
+  }, [messages]);
 
-  return React.createElement(
-    'div',
-    { className: 'p-4 h-full flex flex-col' },
-    React.createElement(
-      'div',
-      { className: 'flex-1 overflow-y-auto pb-4' },
-      React.createElement(
-        'div',
-        { className: 'space-y-4' },
-        ...messages.map((msg, index) =>
-          React.createElement(
-            'div',
-            {
-              key: index,
-              className: `flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`,
-            },
-            React.createElement(
-              'div',
-              {
-                className: `max-w-[80%] px-4 py-2 rounded-lg ${msg.role === 'user' ? 'bg-blue-600 text-white ml-auto' : 'bg-gray-200 text-gray-900 mr-auto'}`,
-              },
-              React.createElement('p', { className: 'whitespace-pre-wrap' }, msg.content)
-            )
-          )
-        ),
-        isLoading
-          ? React.createElement(
-              'div',
-              { className: 'flex justify-center py-4' },
-              React.createElement('div', {
-                className:
-                  'animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent',
-              })
-            )
-          : null
-      ),
-      React.createElement('div', { ref: messagesEndRef })
-    ),
-    React.createElement(
-      'form',
-      {
-        onSubmit: handleSendMessage,
-        className: 'flex space-x-2 mt-4 pt-4 border-t',
-      },
-      React.createElement('textarea', {
-        value: input,
-        onChange: (e) => setInput(e.target.value),
-        onKeyDown: handleKeyDown,
-        placeholder: 'Type your message here... (Shift+Enter for new line)',
-        className:
-          'flex-1 min-h-[60px] resize-none border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500',
-        rows: 2,
-        disabled: isLoading || !llmClient,
-      }),
-      React.createElement(
-        'button',
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+
+    const userMessage: Message = { role: 'user', content: input };
+    setMessages((prev) => [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
+
+    // Simulated response - in production, this would use the TNF Envelope Protocol/Relay
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
         {
-          type: 'submit',
-          disabled: isLoading || !llmClient || !input.trim(),
-          className: `px-4 py-2 rounded-lg ${isLoading || !llmClient || !input.trim() ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 disabled:cursor-not-allowed'}`,
+          role: 'assistant',
+          content:
+            "I'm currently in 'Hybrid Preview' mode. Your message has been received, but the backend relay link is being consolidated.",
         },
-        isLoading ? 'Sending...' : 'Send'
-      )
-    )
+      ]);
+      setIsLoading(false);
+    }, 1000);
+  };
+
+  return (
+    <Card className="h-full flex flex-col border-none shadow-none bg-transparent">
+      <CardHeader className="pb-0">
+        <CardTitle className="text-xl font-bold flex items-center gap-2">
+          <Bot className="w-5 h-5 text-primary" />
+          TNF Assistant
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent className="flex-1 flex flex-col pt-4 overflow-hidden">
+        <ScrollArea className="flex-1 pr-4" ref={scrollRef}>
+          <div className="space-y-4 pb-4">
+            {messages.map((msg, index) => (
+              <div
+                key={index}
+                className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                {msg.role === 'assistant' && (
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <Bot className="w-4 h-4 text-primary" />
+                  </div>
+                )}
+
+                <div
+                  className={`
+                  max-w-[85%] px-4 py-2 rounded-2xl text-sm
+                  ${
+                    msg.role === 'user'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted/50 border border-border/40'
+                  }
+                `}
+                >
+                  {msg.content}
+                </div>
+
+                {msg.role === 'user' && (
+                  <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center shrink-0">
+                    <User className="w-4 h-4 text-secondary-foreground" />
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {isLoading && (
+              <div className="flex gap-3 justify-start">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <Bot className="w-4 h-4 text-primary" />
+                </div>
+                <div className="bg-muted/50 border border-border/40 px-4 py-2 rounded-2xl">
+                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                </div>
+              </div>
+            )}
+          </div>
+        </ScrollArea>
+
+        <form
+          onSubmit={handleSendMessage}
+          className="mt-4 flex gap-2 pt-4 border-t border-border/40"
+        >
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Ask anything..."
+            className="flex-1 bg-background/50"
+            disabled={isLoading}
+          />
+          <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 

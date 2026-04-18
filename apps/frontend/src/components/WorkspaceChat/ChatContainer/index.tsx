@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui';
 // @ts-nocheck
 import handleSocketResponse, {
   ABORT_STREAM_EVENT,
@@ -14,24 +15,24 @@ import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognitio
 import { v4 } from 'uuid';
 import { SidebarMobileHeader } from '../../Sidebar/index';
 import ChatHistory from './ChatHistory/index';
-import DnDFileUploaderWrapper, { CLEAR_ATTACHMENTS_EVENT, DndUploaderContext } from './DnDWrapper/index';
+import DnDFileUploaderWrapper, {
+  CLEAR_ATTACHMENTS_EVENT,
+  DndUploaderContext,
+} from './DnDWrapper/index';
 import PromptInput, { PROMPT_INPUT_EVENT } from './PromptInput/index';
 // import { ChatTooltips } from './ChatTooltips';
 import { LLMSelector } from '@/components/LLMSelection/LLMSelector';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui';
 import { WorkspaceData } from '@/types/workspace';
 import { TimeStamp } from '@/utils/TimeStamp';
 import { Bot, ChevronDown, MoreHorizontal, Settings } from 'lucide-react';

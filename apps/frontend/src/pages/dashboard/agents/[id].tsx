@@ -1,9 +1,8 @@
+import { GlassCard, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 // @ts-nocheck
 import AgentLogs from '@/components/agents/AgentLogs';
 import AgentSettings from '@/components/agents/AgentSettings';
 import AgentTasks from '@/components/agents/AgentTasks';
-import { GlassCard } from '@/components/ui/premium';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAgent } from '@/hooks/useAgent';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';

@@ -1,13 +1,16 @@
-import { Badge } from '@/components/ui/badge';
 import {
+  Badge,
   GlassCard,
   PremiumButton,
   PremiumInput,
   PremiumSelect,
   PremiumTextarea,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   ToggleSwitch,
-} from '@/components/ui/premium';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
 import { resourcesService } from '@/services/resources.service';
 import { AgentTemplate } from '@/types/resources';

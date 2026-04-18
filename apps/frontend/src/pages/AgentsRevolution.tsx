@@ -1,6 +1,5 @@
 import OpsPageHeader from '@/components/ops/OpsPageHeader';
-import { Badge } from '@/components/ui/badge';
-import { GlassCard, PremiumButton, PremiumInput, PremiumSelect } from '@/components/ui/premium';
+import { Badge, GlassCard, PremiumButton, PremiumInput, PremiumSelect } from '@/components/ui';
 import { useDebounce } from '@/hooks/useDebounce';
 import { agentService, type Agent, type SwarmCapabilityStatus } from '@/services/AgentService';
 import {

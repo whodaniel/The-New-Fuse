@@ -1,11 +1,11 @@
-import { Badge } from '@/components/ui/badge';
 import {
+  Badge,
   GlassCard,
   PremiumButton,
   PremiumInput,
   PremiumSelect,
   ToggleSwitch,
-} from '@/components/ui/premium';
+} from '@/components/ui';
 import { WorkflowCanvas } from '@/components/WorkflowBuilder/WorkflowCanvas';
 import { AnimatePresence, motion } from 'framer-motion';
 import {

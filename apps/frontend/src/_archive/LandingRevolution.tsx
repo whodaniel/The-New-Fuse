@@ -1,8 +1,8 @@
+import { Button } from '@/components/ui';
 /**
  * COMPLETELY REDESIGNED LANDING PAGE
  * Modern, Bold, Premium - Built from Scratch
  */
-import { Button } from '@/components/ui/button';
 import {
   ArrowRight,
   Bot,

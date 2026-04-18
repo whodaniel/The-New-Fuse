@@ -1,4 +1,4 @@
-import { Badge, Card, StatCard } from '@/components/ui/design-system';
+import { Badge, Card, StatCard } from '@/components/ui';
 import React from 'react';
 import { FiAlertTriangle, FiCheckCircle, FiLock, FiShield } from 'react-icons/fi';
 

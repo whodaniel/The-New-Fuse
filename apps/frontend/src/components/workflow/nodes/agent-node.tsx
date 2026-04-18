@@ -1,7 +1,5 @@
+import { Badge, Label } from '@/components/ui';
 // @ts-nocheck
-import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
-import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
 import {
   Select,
   SelectContent,
@@ -10,7 +8,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui';
+import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
 import { useAgentsWorkflow, WorkflowAgent } from '@/hooks/useAgentsWorkflow';
 import { Bot, Search, Sparkles } from 'lucide-react';
 import React, { memo, useEffect, useState } from 'react';

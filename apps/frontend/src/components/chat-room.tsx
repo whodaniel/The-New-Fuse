@@ -1,17 +1,21 @@
-// @ts-nocheck
-'use client';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useEffect, useState } from 'react';
-import React from 'react';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  GlassCard,
+  PremiumButton,
+  PremiumInput,
+  ScrollArea,
+} from '@/components/ui';
+import React, { useEffect, useState } from 'react';
 import { webSocketService } from '../services/websocket';
+// @ts-nocheck
+('use client');
 
 interface ChatMessage {
   agent: { name: string; avatar: string };
   content: string;
 }
-
 
 // ⚡ Bolt: Extract message item and wrap in React.memo to prevent O(n) re-renders
 // during frequent state updates like typing in the message input.

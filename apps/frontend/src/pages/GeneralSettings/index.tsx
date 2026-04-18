@@ -1,11 +1,6 @@
+import { Switch, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 // @ts-nocheck
-import {
-  PremiumButton as Button,
-  GlassCard as Card,
-  PremiumInput as Input,
-} from '@/components/ui/premium';
-import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { PremiumButton as Button, GlassCard as Card, PremiumInput as Input } from '@/components/ui';
 const GeneralSettings = () => {
   return (
     <div className="container mx-auto py-6">

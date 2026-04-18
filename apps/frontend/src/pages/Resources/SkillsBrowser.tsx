@@ -1,11 +1,10 @@
+import { Badge, GlassCard, PremiumButton } from '@/components/ui';
 // @ts-nocheck
 import { BaseBrowser, FilterField, SortOption } from '@/components/browsers';
-import { Badge } from '@/components/ui/badge';
-import { GlassCard, PremiumButton } from '@/components/ui/premium';
 import { useAuth } from '@/providers/AuthProvider';
 import { resourcesService } from '@/services/resources.service';
 import { ClaudeSkill, PersonalSkill, SkillExample } from '@/types/resources';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   BookOpen,
@@ -467,7 +466,12 @@ export default function SkillsBrowser() {
               {editingPersonalSkillId ? 'Update Skill' : 'Create Skill'}
             </PremiumButton>
             {editingPersonalSkillId && (
-              <PremiumButton type="button" variant="glass" size="sm" onClick={resetPersonalSkillForm}>
+              <PremiumButton
+                type="button"
+                variant="glass"
+                size="sm"
+                onClick={resetPersonalSkillForm}
+              >
                 Cancel Edit
               </PremiumButton>
             )}

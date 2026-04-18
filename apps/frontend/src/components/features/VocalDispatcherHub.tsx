@@ -1,5 +1,4 @@
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge, Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 import { Mic, Radio, Settings, Terminal } from 'lucide-react';
 import React, { useState } from 'react';
 

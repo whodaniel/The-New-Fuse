@@ -1,5 +1,5 @@
+import { Card } from '@/components/ui';
 // @ts-nocheck
-import { Card } from '@/components/ui/card';
 import { useEffect } from 'react';
 import { AgentCollaborationDashboard } from '../agent-collaboration-dashboard';
 import { AgentNetwork } from '../agent-network';

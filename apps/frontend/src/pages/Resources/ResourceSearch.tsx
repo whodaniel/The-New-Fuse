@@ -1,6 +1,4 @@
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import { Badge, GlassCard, Input, PremiumButton } from '@/components/ui';
 import { useAuth } from '@/providers/AuthProvider';
 import { resourcesService } from '@/services/resources.service';
 import { Resource, ResourceCategory, ResourceType } from '@/types/resources';

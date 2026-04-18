@@ -1,9 +1,9 @@
-'use client';
-import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
+import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { webSocketService } from '../services/websocket';
 import { Draggable } from './ui/draggable';
 import { ScrollArea } from './ui/scroll-area';
+('use client');
 
 interface Task {
   id: string;
@@ -13,22 +13,24 @@ interface Task {
 
 // ⚡ Bolt: Extract Draggable inner component and wrap in React.memo to prevent O(n) renders
 // on high-frequency state updates like input changes.
-const TaskItem = React.memo(({ task, onDragEnd }: { task: Task; onDragEnd: (taskId: string, status: string) => void }) => {
-  const handleDragEnd = useCallback(
-    (newStatus: string) => {
-      onDragEnd(task.id, newStatus);
-    },
-    [onDragEnd, task.id]
-  );
+const TaskItem = React.memo(
+  ({ task, onDragEnd }: { task: Task; onDragEnd: (taskId: string, status: string) => void }) => {
+    const handleDragEnd = useCallback(
+      (newStatus: string) => {
+        onDragEnd(task.id, newStatus);
+      },
+      [onDragEnd, task.id]
+    );
 
-  return (
-    <Draggable id={task.id} onDragEnd={handleDragEnd}>
-      <GlassCard className="mb-2 p-2">
-        <p>{task.title}</p>
-      </GlassCard>
-    </Draggable>
-  );
-});
+    return (
+      <Draggable id={task.id} onDragEnd={handleDragEnd}>
+        <GlassCard className="mb-2 p-2">
+          <p>{task.title}</p>
+        </GlassCard>
+      </Draggable>
+    );
+  }
+);
 TaskItem.displayName = 'TaskItem';
 
 export function TaskBoard() {

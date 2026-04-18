@@ -1,6 +1,6 @@
+import { Switch } from '@/components/ui';
 // @ts-nocheck
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/core';
-import { Switch } from '@/components/ui/switch';
 const Settings = () => {
   return (
     <div className="space-y-6">

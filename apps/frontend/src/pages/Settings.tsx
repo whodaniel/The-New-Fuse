@@ -7,7 +7,7 @@ import {
   PremiumInput,
   PremiumSelect,
   ToggleSwitch,
-} from '@/components/ui/premium';
+} from '@/components/ui';
 import { useAuth } from '@/providers/AuthProvider';
 import { useTheme } from '@/providers/ThemeProvider';
 import { AnimatePresence, motion } from 'framer-motion';

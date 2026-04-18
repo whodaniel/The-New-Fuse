@@ -1,10 +1,10 @@
-'use client';
-import { Label } from '@/components/ui/label';
+import { Label } from '@/components/ui';
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
 import { useState } from 'react';
 import { webSocketService } from '../services/websocket';
+('use client');
 
 export function WebhookManager() {
   const [webhookUrl, setWebhookUrl] = useState('');

@@ -1,8 +1,7 @@
+import { GlassCard, PremiumButton, useToast } from '@/components/ui';
 // @ts-nocheck
 import { NewAgentForm, agentFormSchema } from '@/components/forms/NewAgentForm';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { GlassCard, PremiumButton } from '@/components/ui/premium';
-import { useToast } from '@/components/ui/toast';
 import { agentService } from '@/services/agent';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft } from 'lucide-react';

@@ -1,11 +1,12 @@
-import { Badge } from '@/components/ui/badge';
 import {
+  Badge,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { PremiumButton, PremiumInput } from '@/components/ui/premium';
+  PremiumButton,
+  PremiumInput,
+} from '@/components/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Ban,

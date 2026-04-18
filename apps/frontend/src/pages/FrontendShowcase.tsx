@@ -1,5 +1,4 @@
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+import { Badge, Card, CardContent } from '@/components/ui';
 import {
   ArrowRight,
   BarChart3,

@@ -1,7 +1,5 @@
+import { Badge, Button, Card } from '@/components/ui';
 // @ts-nocheck
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,7 +7,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui';
 import { useWorkflow } from '@/contexts/WorkflowContext';
 import { MoreHorizontal, Play, Settings, Trash2 } from 'lucide-react';
 import React, { useCallback } from 'react';

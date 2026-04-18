@@ -1,10 +1,8 @@
+import { Alert, AlertDescription, Badge, Skeleton } from '@/components/ui';
 // @ts-nocheck
 import React, { useEffect } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Agent, useAgents } from '@/hooks/useAgents';
 
 interface AgentSelectorProps {

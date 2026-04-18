@@ -1,5 +1,5 @@
+import { PremiumButton as Button, GlassCard } from '@/components/ui';
 // @ts-nocheck
-import { PremiumButton as Button, GlassCard } from '@/components/ui/premium';
 import { useWorkflow } from '@/hooks';
 import {
   WorkflowExecution as IWorkflowExecution,

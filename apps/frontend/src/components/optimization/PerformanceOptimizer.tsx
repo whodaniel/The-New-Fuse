@@ -1,6 +1,5 @@
+import { MetricsChart, Recommendations } from '@/components/ui';
 // @ts-nocheck
-import { MetricsChart } from '@/components/ui/charts';
-import { Recommendations } from '@/components/ui/recommendations';
 import React from 'react';
 
 export const PerformanceOptimizer: React.FC = () => {

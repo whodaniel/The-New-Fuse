@@ -1,8 +1,12 @@
-import { Label } from '@/components/ui/label';
-import { Popover, PopoverBody } from '@/components/ui/popover';
-import { PremiumButton as Button, PremiumInput as Input } from '@/components/ui/premium';
-import WorkflowAIAssistantPanel from '@/components/workflow/WorkflowAIAssistantPanel';
+import {
+  PremiumButton as Button,
+  PremiumInput as Input,
+  Label,
+  Popover,
+  PopoverBody,
+} from '@/components/ui';
 import { NodeProperties, NodeToolbox, WorkflowCanvas } from '@/components/workflow';
+import WorkflowAIAssistantPanel from '@/components/workflow/WorkflowAIAssistantPanel';
 import { WorkflowProvider } from '@/contexts/WorkflowContext';
 import { useWorkflow } from '@/hooks';
 import {

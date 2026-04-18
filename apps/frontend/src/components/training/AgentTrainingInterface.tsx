@@ -1,6 +1,5 @@
+import { Card, ProgressBar } from '@/components/ui';
 // @ts-nocheck
-import { Card } from '@/components/ui/card';
-import { ProgressBar } from '@/components/ui/progress';
 import { useTraining } from '@/hooks/useTraining';
 import React, { useState } from 'react';
 

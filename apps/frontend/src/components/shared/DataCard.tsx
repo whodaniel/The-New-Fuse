@@ -1,11 +1,10 @@
+import { Alert, Card, LoadingSpinner, Tooltip } from '@/components/ui';
 // @ts-nocheck
 /**
  * DataCard Component - Reusable card for displaying data with loading/error states
  * Replaces corrupted Material-UI version with Tailwind + Custom Design System
  */
 
-import { Alert, Card, LoadingSpinner } from '@/components/ui/design-system';
-import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { ChevronDown, ChevronUp, Info, RefreshCw } from 'lucide-react';
 import { ReactNode, useState } from 'react';

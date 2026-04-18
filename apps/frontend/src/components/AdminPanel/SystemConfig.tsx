@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/design-system';
+import { Button } from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
 import React from 'react';
 import { useSystemConfig } from '../../hooks/useSystemConfig';

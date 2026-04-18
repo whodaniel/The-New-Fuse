@@ -1,8 +1,6 @@
+import { Card, CardContent, CardHeader, CardTitle, Input, Label } from '@/components/ui';
 // @ts-nocheck
 import { WorkspaceApiService, type WorkspaceProject } from '@/api/workspace';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { useEffect, useMemo, useState } from 'react';
 

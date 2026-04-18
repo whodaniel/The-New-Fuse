@@ -1,3 +1,4 @@
+import { CapabilityBadge } from '@/components/ui';
 /**
  * TNF Unified Command Center
  * Single pane of glass for entire TNF + OpenClaw mesh
@@ -11,7 +12,6 @@
  * - Quick Actions
  */
 
-import { CapabilityBadge } from '@/components/ui/CapabilityBadge';
 import { useFeatureCapabilities } from '@/hooks/useFeatureCapabilities';
 import {
   Activity,

@@ -1,6 +1,5 @@
+import { Badge, GlassCard, PremiumButton, PremiumInput } from '@/components/ui';
 // @ts-nocheck
-import { Badge } from '@/components/ui/badge';
-import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
 import { agentService, type Agent } from '@/services/AgentService';
 import { motion } from 'framer-motion';
 import {

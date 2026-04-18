@@ -1,6 +1,5 @@
+import { DiffViewer, Timeline } from '@/components/ui';
 // @ts-nocheck
-import { DiffViewer } from '@/components/ui/diff';
-import { Timeline } from '@/components/ui/timeline';
 import React from 'react';
 
 export const AgentVersionControl: React.FC = () => {

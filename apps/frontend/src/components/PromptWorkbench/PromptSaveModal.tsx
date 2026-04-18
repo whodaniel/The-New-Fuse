@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/design-system';
 import {
+  Button,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -7,7 +7,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-} from '@/components/ui/modal';
+} from '@/components/ui';
 import React, { useEffect, useState } from 'react';
 import { PromptTemplate } from '../../hooks/usePromptTemplates';
 

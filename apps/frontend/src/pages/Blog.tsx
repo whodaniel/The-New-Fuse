@@ -1,5 +1,4 @@
-import { Badge } from '@/components/ui/badge';
-import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import { Badge, GlassCard, PremiumButton } from '@/components/ui';
 import { ArrowRight, Calendar, Newspaper, Rocket, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

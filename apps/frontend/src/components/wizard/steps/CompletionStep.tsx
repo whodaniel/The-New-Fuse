@@ -1,4 +1,4 @@
-import { Button } from '@the-new-fuse/ui-consolidated';
+import { Button } from '@/components/ui';
 import { Book, CheckCircle, Code, Home, MessageSquare, Settings, Users } from 'lucide-react';
 import React from 'react';
 import { useWizard } from '../WizardProvider';

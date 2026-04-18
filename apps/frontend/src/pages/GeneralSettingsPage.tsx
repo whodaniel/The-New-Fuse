@@ -5,7 +5,7 @@ import {
   PremiumInput,
   PremiumSelect,
   ToggleSwitch,
-} from '@/components/ui/premium';
+} from '@/components/ui';
 import { Bell, Clock, Globe, Palette, Save, Shield, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
 

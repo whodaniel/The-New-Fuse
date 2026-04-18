@@ -1,5 +1,4 @@
-import { Badge } from '@/components/ui/badge';
-import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
+import { Badge, GlassCard, PremiumButton, PremiumInput } from '@/components/ui';
 import { AGENT_PFP_DEFAULT_COUNT, getAgentDefaultPfpUrl } from '@/data/agentPfpDefaults';
 import {
   agentVisualProfileCatalog,

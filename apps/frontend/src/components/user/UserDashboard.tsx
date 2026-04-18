@@ -1,6 +1,6 @@
-'use client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
+('use client');
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect, useMemo, useState } from 'react';
 
 interface UserApp {

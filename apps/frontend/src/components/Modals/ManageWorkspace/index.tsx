@@ -1,15 +1,8 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger, Textarea } from '@/components/ui';
 // @ts-nocheck
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui';
 import { PremiumButton as Button } from '@/components/ui/premium/PremiumButton';
 import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
 import { FileText, Link, Upload } from '@phosphor-icons/react';
 import React, { useState } from 'react';
 

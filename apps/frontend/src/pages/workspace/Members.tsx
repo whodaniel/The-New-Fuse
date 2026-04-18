@@ -1,3 +1,4 @@
+import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui';
 // @ts-nocheck
 import {
   Dialog,
@@ -6,14 +7,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
+} from '@/components/ui';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { webSocketService } from '@/services/websocket';
 import { MoreHorizontal, Plus } from 'lucide-react';

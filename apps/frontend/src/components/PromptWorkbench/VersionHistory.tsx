@@ -1,5 +1,5 @@
+import { Badge, Button, LoadingSpinner } from '@/components/ui';
 // @ts-nocheck
-import { Badge, Button, LoadingSpinner } from '@/components/ui/design-system';
 import {
   Modal,
   ModalBody,
@@ -8,7 +8,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-} from '@/components/ui/modal';
+} from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
 import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';

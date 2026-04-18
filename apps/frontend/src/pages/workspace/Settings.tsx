@@ -1,6 +1,6 @@
+import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui';
 // @ts-nocheck
-import * as Dialog from '@/components/ui/dialog';
-import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
+import * as Dialog from '@/components/ui';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { AlertTriangle } from 'lucide-react';
 import React, { useState } from 'react';

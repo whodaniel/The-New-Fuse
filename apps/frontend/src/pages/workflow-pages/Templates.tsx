@@ -1,4 +1,4 @@
-import { PremiumButton as Button, GlassCard, PremiumInput as Input } from '@/components/ui/premium';
+import { PremiumButton as Button, GlassCard, PremiumInput as Input } from '@/components/ui';
 import { useWorkflow } from '@/hooks';
 import { WorkflowTemplate } from '@/services/WorkflowService';
 import { ChevronLeft, Copy, Loader2, Plus, Search } from 'lucide-react';

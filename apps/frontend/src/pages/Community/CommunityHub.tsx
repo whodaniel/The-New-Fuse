@@ -1,4 +1,4 @@
-import { GlassCard } from '@/components/ui/premium';
+import { GlassCard } from '@/components/ui';
 import {
   ArrowDownIcon,
   ArrowUpIcon,

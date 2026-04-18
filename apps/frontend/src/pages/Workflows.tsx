@@ -1,5 +1,5 @@
 import OpsPageHeader from '@/components/ops/OpsPageHeader';
-import { ActionCard, GlassCard, PremiumButton } from '@/components/ui/premium';
+import { ActionCard, GlassCard, PremiumButton } from '@/components/ui';
 import useWorkflow from '@/hooks/useWorkflow';
 import { formatDistanceToNow } from 'date-fns';
 import { Activity, Clock, Edit, Loader2, Play, Rocket, TrendingUp, Zap } from 'lucide-react';

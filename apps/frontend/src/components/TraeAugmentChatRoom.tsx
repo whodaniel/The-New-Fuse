@@ -1,8 +1,7 @@
+import { Card, CardContent, CardHeader, CardTitle, ScrollArea } from '@/components/ui';
 // @ts-nocheck
-'use client';
+('use client');
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import React, { useEffect, useState } from 'react';
 import { webSocketService } from '../services/websocket';
 import AgentMessage from './agent-message';

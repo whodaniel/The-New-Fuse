@@ -1,5 +1,12 @@
-import { GlassCard, PremiumButton, StatsCard } from '@/components/ui/premium';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  GlassCard,
+  PremiumButton,
+  StatsCard,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui';
 import { resourcesService } from '@/services/resources.service';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';

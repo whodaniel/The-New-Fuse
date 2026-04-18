@@ -1,5 +1,4 @@
-import { Badge } from '@/components/ui/badge';
-import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import { Badge, GlassCard, PremiumButton } from '@/components/ui';
 import {
   ArrowRight,
   BarChart3,

@@ -1,13 +1,16 @@
 import OpsPageHeader from '@/components/ops/OpsPageHeader';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
+  Badge,
   GlassCard,
   PremiumButton,
   PremiumInput,
   PremiumSelect,
   StatsCard,
-} from '@/components/ui/premium';
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui';
 import {
   marketplaceService,
   type MarketplaceResearchSkillFile,
@@ -193,12 +196,7 @@ export default function DatasetsWorkbench() {
           icon={Layers3}
           gradient="blue"
         />
-        <StatsCard
-          label="Sources"
-          value={counts?.sources ?? 0}
-          icon={Link2}
-          gradient="purple"
-        />
+        <StatsCard label="Sources" value={counts?.sources ?? 0} icon={Link2} gradient="purple" />
         <StatsCard
           label="Source Links"
           value={counts?.sourceLinks ?? 0}
@@ -269,7 +267,9 @@ export default function DatasetsWorkbench() {
             {sourcesQuery.isLoading ? (
               <div className="py-14 text-center text-slate-400">Loading source catalog...</div>
             ) : categories.length === 0 ? (
-              <div className="py-14 text-center text-slate-400">No source catalog entries found.</div>
+              <div className="py-14 text-center text-slate-400">
+                No source catalog entries found.
+              </div>
             ) : (
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                 {categories.map((category) => (
@@ -293,9 +293,13 @@ export default function DatasetsWorkbench() {
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                              <p className="text-sm text-white font-medium truncate">{source.name}</p>
+                              <p className="text-sm text-white font-medium truncate">
+                                {source.name}
+                              </p>
                               {source.brief ? (
-                                <p className="text-xs text-slate-400 mt-1 line-clamp-2">{source.brief}</p>
+                                <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                                  {source.brief}
+                                </p>
                               ) : null}
                             </div>
                             <PremiumButton
@@ -330,17 +334,25 @@ export default function DatasetsWorkbench() {
             {indexedQuery.isLoading ? (
               <div className="py-14 text-center text-slate-400">Loading indexed entries...</div>
             ) : indexedFiles.length === 0 ? (
-              <div className="py-14 text-center text-slate-400">No indexed entries match this search.</div>
+              <div className="py-14 text-center text-slate-400">
+                No indexed entries match this search.
+              </div>
             ) : (
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                 {indexedFiles.map((item) => (
-                  <GlassCard key={item.id} className="p-4 space-y-3 border border-white/10" hover={false}>
+                  <GlassCard
+                    key={item.id}
+                    className="p-4 space-y-3 border border-white/10"
+                    hover={false}
+                  >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p className="text-white font-semibold truncate">
                           {item.title || getDisplayPath(item)}
                         </p>
-                        <p className="text-xs text-slate-400 truncate mt-1">{getDisplayPath(item)}</p>
+                        <p className="text-xs text-slate-400 truncate mt-1">
+                          {getDisplayPath(item)}
+                        </p>
                       </div>
                       <Badge className="bg-cyan-500/10 text-cyan-300 border-cyan-500/20">
                         <FileSpreadsheet className="w-3 h-3 mr-1" />
@@ -350,7 +362,9 @@ export default function DatasetsWorkbench() {
 
                     <div className="flex flex-wrap gap-2 text-xs">
                       <Badge>{item.sourceName || 'Unknown source'}</Badge>
-                      {item.categoryName ? <Badge variant="secondary">{item.categoryName}</Badge> : null}
+                      {item.categoryName ? (
+                        <Badge variant="secondary">{item.categoryName}</Badge>
+                      ) : null}
                       {item.license ? <Badge variant="outline">{item.license}</Badge> : null}
                       {parseTags(item.tags)
                         .slice(0, 2)
@@ -361,16 +375,26 @@ export default function DatasetsWorkbench() {
                         ))}
                     </div>
 
-                    <p className="text-sm text-slate-300 line-clamp-4">{item.snippet || item.content}</p>
+                    <p className="text-sm text-slate-300 line-clamp-4">
+                      {item.snippet || item.content}
+                    </p>
 
                     <div className="flex items-center justify-between text-xs text-slate-400">
                       <span>Updated: {formatDate(item.createdAt)}</span>
                       <div className="flex items-center gap-2">
-                        <PremiumButton size="sm" variant="outline" onClick={() => openInNewTab(item.fileUrl)}>
+                        <PremiumButton
+                          size="sm"
+                          variant="outline"
+                          onClick={() => openInNewTab(item.fileUrl)}
+                        >
                           Open
                         </PremiumButton>
                         {item.repoUrl ? (
-                          <PremiumButton size="sm" variant="ghost" onClick={() => openInNewTab(item.repoUrl)}>
+                          <PremiumButton
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => openInNewTab(item.repoUrl)}
+                          >
                             Repo
                           </PremiumButton>
                         ) : null}

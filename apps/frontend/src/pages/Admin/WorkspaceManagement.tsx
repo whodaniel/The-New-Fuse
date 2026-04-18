@@ -1,13 +1,19 @@
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
 import {
+  Badge,
   PremiumButton as Button,
   GlassCard as Card,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   PremiumInput as Input,
+  Label,
   PremiumSelect as Select,
-} from '@/components/ui/premium';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui';
 import { Eye, Lock, Plus, Search, Unlock, Users } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 

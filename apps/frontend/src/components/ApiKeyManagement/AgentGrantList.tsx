@@ -1,8 +1,11 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
+import Switch, {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Input,
+  Label,
   Select,
   SelectContent,
   SelectGroup,
@@ -10,8 +13,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import Switch from '@/components/ui/switch';
+} from '@/components/ui';
 import { getProviderById, getProvidersByCategory } from '@/data/llmProviders';
 import { apiService } from '@/services/api';
 import { useEffect, useMemo, useState } from 'react';
@@ -293,62 +295,62 @@ export function AgentGrantList() {
                 const providerMeta = getProviderById(grant.provider);
                 const providerLabel = providerMeta?.name || grant.provider;
                 return (
-                <li key={grant.id} className="p-4 hover:bg-muted/50 transition-colors">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-lg">{grant.agentId}</span>
-                        <span className="text-muted-foreground">→</span>
-                        <span className="font-medium badge bg-secondary px-2 py-0.5 rounded text-sm">
-                          {providerLabel}
-                        </span>
-                        {grant.revoked && (
-                          <span className="bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded">
-                            Revoked
+                  <li key={grant.id} className="p-4 hover:bg-muted/50 transition-colors">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-lg">{grant.agentId}</span>
+                          <span className="text-muted-foreground">→</span>
+                          <span className="font-medium badge bg-secondary px-2 py-0.5 rounded text-sm">
+                            {providerLabel}
                           </span>
+                          {grant.revoked && (
+                            <span className="bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded">
+                              Revoked
+                            </span>
+                          )}
+                        </div>
+                        {providerMeta?.description && (
+                          <div className="text-xs text-muted-foreground">
+                            {providerMeta.description}
+                          </div>
+                        )}
+
+                        <div className="text-sm grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-1 text-muted-foreground">
+                          <span>Limit: {grant.maxRequestsPerMinute} req/min</span>
+                          <span>Budget: ${(grant.monthlyUsdCap / 100).toFixed(2)}/mo</span>
+                          <span>Tokens: {(grant.dailyTokenBudget / 1000).toFixed(0)}k/day</span>
+                          <span>Exp: {new Date(grant.expiresAt).toLocaleDateString()}</span>
+                        </div>
+
+                        {grant.allowedModels.length > 0 && (
+                          <div className="text-xs text-muted-foreground">
+                            Models: {grant.allowedModels.join(', ')}
+                          </div>
                         )}
                       </div>
-                      {providerMeta?.description && (
-                        <div className="text-xs text-muted-foreground">
-                          {providerMeta.description}
-                        </div>
-                      )}
 
-                      <div className="text-sm grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-1 text-muted-foreground">
-                        <span>Limit: {grant.maxRequestsPerMinute} req/min</span>
-                        <span>Budget: ${(grant.monthlyUsdCap / 100).toFixed(2)}/mo</span>
-                        <span>Tokens: {(grant.dailyTokenBudget / 1000).toFixed(0)}k/day</span>
-                        <span>Exp: {new Date(grant.expiresAt).toLocaleDateString()}</span>
+                      <div className="flex gap-2 shrink-0">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleRotate(grant.id)}
+                          disabled={grant.revoked}
+                        >
+                          Rotate
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleRevoke(grant.id)}
+                          disabled={grant.revoked}
+                        >
+                          Revoke
+                        </Button>
                       </div>
-
-                      {grant.allowedModels.length > 0 && (
-                        <div className="text-xs text-muted-foreground">
-                          Models: {grant.allowedModels.join(', ')}
-                        </div>
-                      )}
                     </div>
-
-                    <div className="flex gap-2 shrink-0">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleRotate(grant.id)}
-                        disabled={grant.revoked}
-                      >
-                        Rotate
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleRevoke(grant.id)}
-                        disabled={grant.revoked}
-                      >
-                        Revoke
-                      </Button>
-                    </div>
-                  </div>
-                </li>
-              );
+                  </li>
+                );
               })}
             </ul>
           )}

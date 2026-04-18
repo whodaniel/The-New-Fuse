@@ -1,13 +1,16 @@
-import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
 import {
+  Badge,
   PremiumButton as Button,
   GlassCard as Card,
   PremiumInput as Input,
+  Label,
   PremiumSelect as Select,
-} from '@/components/ui/premium';
-import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+  Switch,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui';
 import { AlertCircle, Database, RefreshCw, Save, Server, Shield } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 

@@ -1,7 +1,4 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Badge, Button, Card, Input } from '@/components/ui';
 import { LedgerRecord, listSuggestions, voteSuggestion } from '@/services/unifiedLedgerApi';
 import { MessageSquare, Plus, Search, ThumbsDown, ThumbsUp } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';

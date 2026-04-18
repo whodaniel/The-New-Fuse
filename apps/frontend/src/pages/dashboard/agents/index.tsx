@@ -1,9 +1,9 @@
+import { GlassCard } from '@/components/ui';
 // @ts-nocheck
 import { AgentFilters } from '@/components/agents/AgentFilters';
 import { AgentForm } from '@/components/agents/AgentForm';
 import { AgentMetricsDisplay } from '@/components/agents/AgentMetrics';
 import { BaseLayout } from '@/components/layout/BaseLayout';
-import { GlassCard } from '@/components/ui/premium';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 export default function AgentsPage() {

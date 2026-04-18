@@ -1,10 +1,17 @@
+import {
+  GlassCard,
+  Label,
+  PremiumButton,
+  PremiumInput,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Textarea,
+  toast,
+} from '@/components/ui';
 // @ts-nocheck
 import { LLMSelector } from '@/components/LLMSelection/LLMSelector';
-import { Label } from '@/components/ui/label';
-import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
-import { toast } from '@/components/ui/toast';
 import { apiService } from '@/services/api';
 import { Bot, Code, Settings, Sparkles } from 'lucide-react';
 import React, { useState } from 'react';

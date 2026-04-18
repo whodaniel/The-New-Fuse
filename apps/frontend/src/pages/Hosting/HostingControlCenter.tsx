@@ -1,7 +1,6 @@
 import { WorkspaceApiService, type WorkspaceHostMariaSyncResponse } from '@/api/workspace';
 import OpsPageHeader from '@/components/ops/OpsPageHeader';
-import { Badge } from '@/components/ui/badge';
-import { GlassCard, PremiumButton, PremiumInput, StatsCard } from '@/components/ui/premium';
+import { Badge, GlassCard, PremiumButton, PremiumInput, StatsCard } from '@/components/ui';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { useWorkspaceDomains } from '@/hooks/useWorkspaceDomains';
 import { useAuth } from '@/providers/AuthProvider';

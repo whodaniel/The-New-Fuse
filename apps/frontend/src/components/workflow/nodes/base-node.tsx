@@ -1,6 +1,4 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip } from '@/components/ui/tooltip';
+import { Button, Card, CardContent, CardHeader, CardTitle, Tooltip } from '@/components/ui';
 import { AlertCircle, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import React, { memo, useState } from 'react';
 import { Handle, NodeProps, Position } from 'reactflow';

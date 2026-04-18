@@ -1,15 +1,7 @@
+import { Label, Tabs, TabsContent, TabsList, TabsTrigger, Textarea } from '@/components/ui';
 // @ts-nocheck
-import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
 import React, { memo } from 'react';
 import { NodeProps } from 'reactflow';
 import { BaseNode } from './base-node';

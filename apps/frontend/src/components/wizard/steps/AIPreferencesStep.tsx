@@ -1,5 +1,5 @@
+import { Button, Checkbox, Input, Select } from '@/components/ui';
 // @ts-nocheck
-import { Button, Checkbox, Input, Select } from '@the-new-fuse/ui-consolidated';
 import { Plus, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useWizard } from '../WizardProvider';

@@ -1,14 +1,16 @@
-'use client';
-import { Label } from '@/components/ui/label';
-import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
 import {
+  GlassCard,
+  Label,
+  PremiumButton,
+  PremiumInput,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui';
 import React, { useState } from 'react';
+('use client');
 
 export function CreateAgent() {
   const [name, setName] = useState('');

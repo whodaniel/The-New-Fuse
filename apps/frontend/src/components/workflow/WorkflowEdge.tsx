@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui';
 import { useWorkflow } from '@/contexts/WorkflowContext';
 import { X } from 'lucide-react';
 import React from 'react';

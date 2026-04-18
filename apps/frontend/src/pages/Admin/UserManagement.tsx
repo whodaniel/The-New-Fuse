@@ -1,5 +1,4 @@
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/design-system';
+import { Button, Card } from '@/components/ui';
 import { User, UserService } from '@/services/UserService';
 import { Users } from 'lucide-react';
 import { useEffect, useState } from 'react';

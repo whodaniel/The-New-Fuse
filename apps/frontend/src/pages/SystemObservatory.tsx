@@ -1,5 +1,5 @@
+import { CapabilityBadge } from '@/components/ui';
 // @ts-nocheck
-import { CapabilityBadge } from '@/components/ui/CapabilityBadge';
 import { useFeatureCapabilities } from '@/hooks/useFeatureCapabilities';
 import axios from 'axios';
 import {
@@ -26,8 +26,8 @@ import { GlassCard } from '../components/ui/premium/GlassCard';
 import { PremiumButton } from '../components/ui/premium/PremiumButton';
 // MemoryVisualizer kept for future “cluster view” mode; Semantic tab now primarily uses GraphVisualizer (ReactFlow)
 
-import { GraphVisualizerWrapper as GraphVisualizer } from '../components/wizard/graph/GraphVisualizer';
 import { ArtifactGraphViewer } from '../components/wizard/graph/ArtifactGraphViewer';
+import { GraphVisualizerWrapper as GraphVisualizer } from '../components/wizard/graph/GraphVisualizer';
 
 type AgentIndex = {
   generatedAt: string;
@@ -1094,7 +1094,9 @@ export const SystemObservatory: React.FC = () => {
                                 <button
                                   onClick={() => {
                                     setPreviewGraphUrl(dataset.graph.file);
-                                    setPreviewGraphTitle(`${dataset.title || dataset.id} (Full Graph)`);
+                                    setPreviewGraphTitle(
+                                      `${dataset.title || dataset.id} (Full Graph)`
+                                    );
                                   }}
                                   className="text-[9px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/20 transition-all font-bold uppercase tracking-tighter"
                                 >
@@ -1102,22 +1104,26 @@ export const SystemObservatory: React.FC = () => {
                                 </button>
                               </div>
                             )}
-                            {(dataset.subgraphs ?? []).map((sub, i) => (
-                              sub.files?.json && (
-                                <div key={i} className="flex items-center justify-between">
-                                  <ArtifactLink href={sub.files.json} label={`${sub.domain} subgraph`} />
-                                  <button
-                                    onClick={() => {
-                                      setPreviewGraphUrl(sub.files.json);
-                                      setPreviewGraphTitle(`${sub.domain} Subgraph`);
-                                    }}
-                                    className="text-[9px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/20 transition-all font-bold uppercase tracking-tighter"
-                                  >
-                                    Preview
-                                  </button>
-                                </div>
-                              )
-                            ))}
+                            {(dataset.subgraphs ?? []).map(
+                              (sub, i) =>
+                                sub.files?.json && (
+                                  <div key={i} className="flex items-center justify-between">
+                                    <ArtifactLink
+                                      href={sub.files.json}
+                                      label={`${sub.domain} subgraph`}
+                                    />
+                                    <button
+                                      onClick={() => {
+                                        setPreviewGraphUrl(sub.files.json);
+                                        setPreviewGraphTitle(`${sub.domain} Subgraph`);
+                                      }}
+                                      className="text-[9px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/20 transition-all font-bold uppercase tracking-tighter"
+                                    >
+                                      Preview
+                                    </button>
+                                  </div>
+                                )
+                            )}
                             {Object.entries(dataset.reports ?? {})
                               .filter(([, value]) => typeof value === 'string' && value)
                               .map(([key, value]) => (
@@ -1133,22 +1139,24 @@ export const SystemObservatory: React.FC = () => {
                       </div>
 
                       {/* Modal-like inline preview */}
-                      {previewGraphUrl && (previewGraphUrl.includes(dataset.id) || (dataset.graph?.file === previewGraphUrl)) && (
-                        <div className="mt-4 animate-in fade-in slide-in-from-top-4 duration-500">
-                          <ArtifactGraphViewer 
-                            artifactUrl={previewGraphUrl} 
-                            title={previewGraphTitle} 
-                          />
-                          <div className="flex justify-end mt-2">
-                            <button 
-                              onClick={() => setPreviewGraphUrl(null)}
-                              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
-                            >
-                              Close Preview
-                            </button>
+                      {previewGraphUrl &&
+                        (previewGraphUrl.includes(dataset.id) ||
+                          dataset.graph?.file === previewGraphUrl) && (
+                          <div className="mt-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                            <ArtifactGraphViewer
+                              artifactUrl={previewGraphUrl}
+                              title={previewGraphTitle}
+                            />
+                            <div className="flex justify-end mt-2">
+                              <button
+                                onClick={() => setPreviewGraphUrl(null)}
+                                className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                              >
+                                Close Preview
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
                       {!!dataset.subgraphs?.length && (
                         <details className="rounded-md border border-white/10 bg-black/20 p-3">

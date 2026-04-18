@@ -1,5 +1,5 @@
+import { Button, Label, Tabs, TabsContent, TabsList, TabsTrigger, Textarea } from '@/components/ui';
 // @ts-nocheck
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -7,17 +7,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
+} from '@/components/ui';
 import { workflowDatabaseService } from '@/services/WorkflowDatabaseService';
 import { workflowExecutionService } from '@/services/WorkflowExecutionService';
 import { Edit, Play } from 'lucide-react';

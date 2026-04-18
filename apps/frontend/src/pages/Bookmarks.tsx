@@ -1,6 +1,12 @@
 import OpsPageHeader from '@/components/ops/OpsPageHeader';
-import { Badge } from '@/components/ui/badge';
-import { GlassCard, PremiumButton, PremiumInput, PremiumSelect, StatsCard } from '@/components/ui/premium';
+import {
+  Badge,
+  GlassCard,
+  PremiumButton,
+  PremiumInput,
+  PremiumSelect,
+  StatsCard,
+} from '@/components/ui';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import {
   bookmarksService,
@@ -72,7 +78,8 @@ const normalizeBookmark = (value: unknown, fallbackWorkspaceId: string): Bookmar
 
   const createdAt = String(input.createdAt || new Date().toISOString());
   const updatedAt = String(input.updatedAt || createdAt);
-  const workspaceId = String(input.workspaceId || fallbackWorkspaceId).trim() || fallbackWorkspaceId;
+  const workspaceId =
+    String(input.workspaceId || fallbackWorkspaceId).trim() || fallbackWorkspaceId;
 
   return {
     id: String(input.id || `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`),
@@ -223,7 +230,8 @@ export default function BookmarksPage() {
     return map;
   }, [workspaces]);
 
-  const scopeWorkspaceId = scope === 'current' ? currentWorkspaceId : scope === 'all' ? 'all' : scope;
+  const scopeWorkspaceId =
+    scope === 'current' ? currentWorkspaceId : scope === 'all' ? 'all' : scope;
 
   const allBookmarks = useMemo(
     () =>
@@ -361,7 +369,10 @@ export default function BookmarksPage() {
         return;
       }
 
-      const importedMap = parseWorkspaceMap(asRecord(parsed)?.bookmarksByWorkspace || parsed, fallbackWorkspace);
+      const importedMap = parseWorkspaceMap(
+        asRecord(parsed)?.bookmarksByWorkspace || parsed,
+        fallbackWorkspace
+      );
       if (Object.keys(importedMap).length === 0) {
         toast.error('No valid bookmarks found in import file.');
         return;
@@ -440,7 +451,11 @@ export default function BookmarksPage() {
         }
         actions={
           <>
-            <PremiumButton size="sm" variant="outline" onClick={() => fileInputRef.current?.click()}>
+            <PremiumButton
+              size="sm"
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+            >
               <Import className="w-4 h-4" />
               Import
             </PremiumButton>
@@ -469,8 +484,18 @@ export default function BookmarksPage() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <StatsCard label="Total Bookmarks" value={allBookmarks.length} icon={Link2} gradient="blue" />
-        <StatsCard label="Scoped View" value={visibleBookmarks.length} icon={Search} gradient="purple" />
+        <StatsCard
+          label="Total Bookmarks"
+          value={allBookmarks.length}
+          icon={Link2}
+          gradient="blue"
+        />
+        <StatsCard
+          label="Scoped View"
+          value={visibleBookmarks.length}
+          icon={Search}
+          gradient="purple"
+        />
         <StatsCard
           label="Workspace Buckets"
           value={Object.keys(bookmarksByWorkspace).length}
@@ -482,7 +507,11 @@ export default function BookmarksPage() {
       <GlassCard className="p-4 space-y-4" hover={false}>
         <h2 className="text-lg font-semibold text-white">Add Bookmark</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <PremiumInput value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Title" />
+          <PremiumInput
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            placeholder="Title"
+          />
           <PremiumInput
             value={url}
             onChange={(event) => setUrl(event.target.value)}

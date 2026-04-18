@@ -1,4 +1,4 @@
-import { GlassCard, StatsCard } from '@/components/ui/premium';
+import { GlassCard, StatsCard } from '@/components/ui';
 import { motion } from 'framer-motion';
 import { Activity, CheckCircle, Cpu, Database, TrendingUp, Users } from 'lucide-react';
 import React from 'react';

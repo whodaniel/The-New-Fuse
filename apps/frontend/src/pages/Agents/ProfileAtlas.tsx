@@ -1,6 +1,5 @@
 import OpsPageHeader from '@/components/ops/OpsPageHeader';
-import { Badge } from '@/components/ui/badge';
-import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
+import { Badge, GlassCard, PremiumButton, PremiumInput } from '@/components/ui';
 import {
   agentVisualProfileCatalog,
   createAgentProfileFallbackAvatar,

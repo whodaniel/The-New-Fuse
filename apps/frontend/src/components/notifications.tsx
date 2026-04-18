@@ -1,7 +1,6 @@
 // @ts-nocheck
 'use client';
-import toast_1 from '@/components/ui/toast';
-import use_toast_1 from '@/components/ui/use-toast';
+import { default as toast_1, default as use_toast_1 } from '@/components/ui';
 import react_1 from 'react';
 import websocket_1 from '../services/websocket';
 export function Notifications(): any {

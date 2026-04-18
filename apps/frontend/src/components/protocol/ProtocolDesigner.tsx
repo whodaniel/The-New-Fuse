@@ -1,6 +1,5 @@
+import { Card, Select } from '@/components/ui';
 // @ts-nocheck
-import { Card } from '@/components/ui/card';
-import { Select } from '@/components/ui/select';
 import React from 'react';
 import { Flow } from 'reactflow';
 

@@ -1,14 +1,7 @@
+import { Label, Textarea } from '@/components/ui';
 // @ts-nocheck
-import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 import { PremiumInput as Input } from '@/components/ui/premium/PremiumInput';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { useMcpTools } from '@/hooks/useMcpTools';
 import { MCPServer, MCPTool } from '@/services/MCPService';
 import React, { memo, useEffect, useState } from 'react';

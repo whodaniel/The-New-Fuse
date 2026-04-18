@@ -1,4 +1,4 @@
-import { GlassCard } from '@/components/ui/premium';
+import { GlassCard } from '@/components/ui';
 const TermsOfService = () => {
   return (
     <div className="container mx-auto py-8 px-4">

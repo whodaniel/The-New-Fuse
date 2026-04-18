@@ -1,5 +1,4 @@
-import { GlassCard } from '@/components/ui/premium';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { GlassCard, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 import React, { useState } from 'react';
 
 interface PerformanceDataPoint {

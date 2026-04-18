@@ -1,4 +1,4 @@
-import { Badge, Button } from '@/components/ui/design-system';
+import { Badge, Button } from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
 import React from 'react';
 import { useUsers } from '../../hooks/useUsers';

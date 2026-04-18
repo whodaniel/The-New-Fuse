@@ -1,8 +1,8 @@
-'use client';
-import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
+import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui';
 import { Bot, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { webSocketService } from '../services/websocket';
+('use client');
 
 interface Message {
   type: 'user' | 'ai';

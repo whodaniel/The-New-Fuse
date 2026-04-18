@@ -1,12 +1,6 @@
+import { Button } from '@/components/ui';
 // @ts-nocheck
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui';
 import showToast from '@/utils/toast';
 import { DownloadSimple, Key } from '@phosphor-icons/react';
 import { saveAs } from 'file-saver';

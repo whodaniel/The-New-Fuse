@@ -1,6 +1,5 @@
+import { Card, SearchInput } from '@/components/ui';
 // @ts-nocheck
-import { Card } from '@/components/ui/card';
-import { SearchInput } from '@/components/ui/search';
 import { useAgentMarketplace } from '@/hooks/useAgentMarketplace';
 import React from 'react';
 

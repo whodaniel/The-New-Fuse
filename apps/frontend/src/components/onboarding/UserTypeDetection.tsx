@@ -1,4 +1,4 @@
-import { GlassCard } from '@/components/ui/premium';
+import { GlassCard } from '@/components/ui';
 import axios, { AxiosError } from 'axios';
 import { AlertCircle, Bot, Check, Loader2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';

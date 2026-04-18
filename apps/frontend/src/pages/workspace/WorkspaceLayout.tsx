@@ -1,12 +1,12 @@
+import { Button } from '@/components/ui';
 // @ts-nocheck
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { BarChart, ChevronDown, Home, Plus, Settings, Users } from 'lucide-react';
 import React from 'react';

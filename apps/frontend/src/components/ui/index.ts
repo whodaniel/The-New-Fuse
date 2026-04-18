@@ -1,6 +1,7 @@
 export * from './alert';
 export * from './badge';
 export * from './button';
+export * from './CapabilityBadge';
 export * from './card';
 export * from './checkbox';
 export * from './dialog';
@@ -9,12 +10,13 @@ export * from './form';
 export * from './graph-visualization';
 export * from './input';
 export * from './label';
+export * from './LifeSaverToken';
 export * from './LoadingSpinner';
+export * from './OptimizedImage';
 export * from './progress';
 export * from './select';
 export * from './switch';
 export * from './tabs';
 export * from './textarea';
-export * from './use-toast';
-// Export specific components from toast to avoid conflicts
 export { Toaster } from './toast/index';
+export * from './use-toast';

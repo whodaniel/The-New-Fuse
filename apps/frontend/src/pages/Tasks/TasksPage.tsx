@@ -1,13 +1,7 @@
+import { Badge } from '@/components/ui';
 // @ts-nocheck
 import OpsPageHeader from '@/components/ops/OpsPageHeader';
-import { Badge } from '@/components/ui/badge';
-import {
-  GlassCard,
-  IconButton,
-  PremiumButton,
-  PremiumInput,
-  PremiumSelect,
-} from '@/components/ui/premium';
+import { GlassCard, IconButton, PremiumButton, PremiumInput, PremiumSelect } from '@/components/ui';
 import { listTasks } from '@/services/unifiedLedgerApi';
 import { AnimatePresence, motion } from 'framer-motion';
 import {

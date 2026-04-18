@@ -2,7 +2,7 @@
 'use strict';
 'use client';
 Object.defineProperty(exports, '__esModule', { value: true });
-import button_1 from '@/components/ui/button';
+import button_1 from '@/components/ui';
 import framer_motion_1 from 'framer-motion';
 import lucide_react_1 from 'lucide-react';
 import react_1 from 'react';

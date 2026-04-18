@@ -1,8 +1,4 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Badge, Button, Card, Input, Textarea } from '@/components/ui';
 import { useAuth } from '@/providers/AuthProvider';
 import {
   appendTaskExecutionLog,
@@ -16,7 +12,6 @@ import {
   listGoals,
   listPlans,
   listTimelineEvents,
-  listTaskExecutionLogs,
   updateTask,
   type GoalRecord,
   type LedgerRecord,
@@ -303,7 +298,9 @@ const TaskDetail: React.FC = () => {
     new Set(executionLogs.map((log) => log.source).filter(Boolean))
   );
   const availableStages = Array.from(
-    new Set(executionLogs.map((log) => log.stage).filter((stage): stage is string => Boolean(stage)))
+    new Set(
+      executionLogs.map((log) => log.stage).filter((stage): stage is string => Boolean(stage))
+    )
   );
   const filteredExecutionLogs = executionLogs.filter((log) => {
     if (logLevelFilter !== 'all' && log.level !== logLevelFilter) return false;

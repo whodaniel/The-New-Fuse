@@ -1,12 +1,21 @@
 import OpsPageHeader from '@/components/ops/OpsPageHeader';
-import { Badge } from '@/components/ui/badge';
-import { GlassCard, PremiumButton, PremiumInput, PremiumSelect, StatsCard } from '@/components/ui/premium';
-import { resourcesService } from '@/services/resources.service';
+import {
+  Badge,
+  GlassCard,
+  PremiumButton,
+  PremiumInput,
+  PremiumSelect,
+  StatsCard,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui';
 import {
   marketplaceService,
   type MarketplaceResearchSkillFile,
 } from '@/services/marketplace.service';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { resourcesService } from '@/services/resources.service';
 import { useQuery } from '@tanstack/react-query';
 import {
   Database,
@@ -146,12 +155,7 @@ export default function FilesWorkspace() {
           icon={Files}
           gradient="blue"
         />
-        <StatsCard
-          label="Sources"
-          value={counts?.sources ?? 0}
-          icon={Link2}
-          gradient="purple"
-        />
+        <StatsCard label="Sources" value={counts?.sources ?? 0} icon={Link2} gradient="purple" />
         <StatsCard
           label="Categories"
           value={counts?.categories ?? 0}
@@ -223,36 +227,60 @@ export default function FilesWorkspace() {
             {indexedFilesQuery.isLoading ? (
               <div className="py-14 text-center text-slate-400">Loading indexed files...</div>
             ) : indexedFiles.length === 0 ? (
-              <div className="py-14 text-center text-slate-400">No indexed files match this search.</div>
+              <div className="py-14 text-center text-slate-400">
+                No indexed files match this search.
+              </div>
             ) : (
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                 {indexedFiles.map((item) => (
-                  <GlassCard key={item.id} className="p-4 space-y-3 border border-white/10" hover={false}>
+                  <GlassCard
+                    key={item.id}
+                    className="p-4 space-y-3 border border-white/10"
+                    hover={false}
+                  >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="text-white font-semibold truncate">{item.title || getDisplayPath(item)}</p>
-                        <p className="text-xs text-slate-400 truncate mt-1">{getDisplayPath(item)}</p>
+                        <p className="text-white font-semibold truncate">
+                          {item.title || getDisplayPath(item)}
+                        </p>
+                        <p className="text-xs text-slate-400 truncate mt-1">
+                          {getDisplayPath(item)}
+                        </p>
                       </div>
-                      <Badge className="bg-blue-500/10 text-blue-300 border-blue-500/20">Indexed</Badge>
+                      <Badge className="bg-blue-500/10 text-blue-300 border-blue-500/20">
+                        Indexed
+                      </Badge>
                     </div>
 
                     <div className="flex flex-wrap gap-2 text-xs">
                       <Badge>{item.sourceName || 'Unknown source'}</Badge>
-                      {item.categoryName ? <Badge variant="secondary">{item.categoryName}</Badge> : null}
+                      {item.categoryName ? (
+                        <Badge variant="secondary">{item.categoryName}</Badge>
+                      ) : null}
                       {item.license ? <Badge variant="outline">{item.license}</Badge> : null}
                     </div>
 
-                    <p className="text-sm text-slate-300 line-clamp-3">{item.snippet || item.content}</p>
+                    <p className="text-sm text-slate-300 line-clamp-3">
+                      {item.snippet || item.content}
+                    </p>
 
                     <div className="flex items-center justify-between text-xs text-slate-400">
                       <span>Updated: {formatDate(item.createdAt)}</span>
                       <div className="flex items-center gap-2">
-                        <PremiumButton size="sm" variant="outline" onClick={() => openInNewTab(item.fileUrl)}>
+                        <PremiumButton
+                          size="sm"
+                          variant="outline"
+                          onClick={() => openInNewTab(item.fileUrl)}
+                        >
                           <FileCode2 className="w-3 h-3" />
                           Open
                         </PremiumButton>
                         {item.repoUrl ? (
-                          <PremiumButton size="sm" variant="ghost" onClick={() => openInNewTab(item.repoUrl)}>
+                          <PremiumButton
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => openInNewTab(item.repoUrl)}
+                          >
                             <ExternalLink className="w-3 h-3" />
                             Repo
                           </PremiumButton>
@@ -269,15 +297,23 @@ export default function FilesWorkspace() {
             {resourcesQuery.isLoading ? (
               <div className="py-14 text-center text-slate-400">Loading resources...</div>
             ) : resources.length === 0 ? (
-              <div className="py-14 text-center text-slate-400">No resources match this search.</div>
+              <div className="py-14 text-center text-slate-400">
+                No resources match this search.
+              </div>
             ) : (
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                 {resources.slice(0, 24).map((resource) => (
-                  <GlassCard key={resource.id} className="p-4 space-y-3 border border-white/10" hover={false}>
+                  <GlassCard
+                    key={resource.id}
+                    className="p-4 space-y-3 border border-white/10"
+                    hover={false}
+                  >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p className="text-white font-semibold truncate">{resource.name}</p>
-                        <p className="text-xs text-slate-400 truncate mt-1">{resource.description}</p>
+                        <p className="text-xs text-slate-400 truncate mt-1">
+                          {resource.description}
+                        </p>
                       </div>
                       <Badge className="bg-cyan-500/10 text-cyan-300 border-cyan-500/20">
                         {resource.type}

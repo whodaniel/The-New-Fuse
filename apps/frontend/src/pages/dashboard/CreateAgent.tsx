@@ -1,12 +1,12 @@
+import { Badge } from '@/components/ui';
 // @ts-nocheck
-import { Badge } from '@/components/ui/badge';
 import {
   GlassCard,
   PremiumButton,
   PremiumInput,
   PremiumTextarea,
   ToggleSwitch,
-} from '@/components/ui/premium';
+} from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
 import { AnimatePresence, motion } from 'framer-motion';
 import {

@@ -1,9 +1,8 @@
 import { WorkspaceApiService } from '@/api/workspace';
 import OpsPageHeader from '@/components/ops/OpsPageHeader';
-import { Badge } from '@/components/ui/badge';
-import { GlassCard, PremiumButton, PremiumInput, StatsCard } from '@/components/ui/premium';
-import { useWorkspaceDomains } from '@/hooks/useWorkspaceDomains';
+import { Badge, GlassCard, PremiumButton, PremiumInput, StatsCard } from '@/components/ui';
 import { useWorkspace } from '@/hooks/useWorkspace';
+import { useWorkspaceDomains } from '@/hooks/useWorkspaceDomains';
 import { useQuery } from '@tanstack/react-query';
 import {
   Boxes,
@@ -79,8 +78,7 @@ export default function SpacesOverview() {
     removeDomain,
     verifyDomain,
     refreshDomains,
-  } =
-    useWorkspaceDomains();
+  } = useWorkspaceDomains();
 
   const workspaceRows = useMemo(
     () =>
@@ -92,7 +90,9 @@ export default function SpacesOverview() {
   );
 
   const selectedWorkspace =
-    workspaceRows.find((workspace) => workspace.id === currentWorkspace?.id) || workspaceRows[0] || null;
+    workspaceRows.find((workspace) => workspace.id === currentWorkspace?.id) ||
+    workspaceRows[0] ||
+    null;
   const selectedDomains = selectedWorkspace ? getDomainsForWorkspace(selectedWorkspace.id) : [];
 
   useEffect(() => {
@@ -116,7 +116,10 @@ export default function SpacesOverview() {
     const healthy = workspaceRows.filter((workspace) => workspace.health === 'healthy').length;
     const watch = workspaceRows.filter((workspace) => workspace.health === 'watch').length;
     const stale = workspaceRows.filter((workspace) => workspace.health === 'stale').length;
-    const totalMembers = workspaceRows.reduce((sum, workspace) => sum + (workspace.members || 0), 0);
+    const totalMembers = workspaceRows.reduce(
+      (sum, workspace) => sum + (workspace.members || 0),
+      0
+    );
 
     return {
       totalSpaces: workspaceRows.length,
@@ -320,7 +323,9 @@ export default function SpacesOverview() {
               {activeTab === 'routes' ? (
                 <div className="space-y-3">
                   {projectsQuery.isLoading ? (
-                    <div className="py-10 text-center text-slate-400">Loading routed projects...</div>
+                    <div className="py-10 text-center text-slate-400">
+                      Loading routed projects...
+                    </div>
                   ) : (projectsQuery.data?.length || 0) === 0 ? (
                     <div className="py-10 text-center text-slate-400">
                       No routed projects found for this space.
@@ -344,7 +349,9 @@ export default function SpacesOverview() {
                           </Badge>
                         </div>
                         <div className="mt-2 flex flex-wrap gap-2 text-xs">
-                          {project.status ? <Badge variant="secondary">{project.status}</Badge> : null}
+                          {project.status ? (
+                            <Badge variant="secondary">{project.status}</Badge>
+                          ) : null}
                           <Badge variant="outline">Updated {formatDate(project.updatedAt)}</Badge>
                         </div>
                       </div>
@@ -409,7 +416,9 @@ export default function SpacesOverview() {
                     </div>
                     <div className="mt-3 space-y-2">
                       {selectedDomains.length === 0 ? (
-                        <p className="text-xs text-slate-400">No custom domains yet for this space.</p>
+                        <p className="text-xs text-slate-400">
+                          No custom domains yet for this space.
+                        </p>
                       ) : (
                         selectedDomains.map((domain) => (
                           <div
@@ -491,7 +500,9 @@ export default function SpacesOverview() {
                   </div>
                   <div className="rounded-md border border-white/10 bg-black/20 px-3 py-3">
                     <p className="text-sm text-white font-medium">Created</p>
-                    <p className="text-xs text-slate-300 mt-1">{formatDate(selectedWorkspace.createdAt)}</p>
+                    <p className="text-xs text-slate-300 mt-1">
+                      {formatDate(selectedWorkspace.createdAt)}
+                    </p>
                   </div>
                   <div className="pt-1">
                     <Link to="/workspace/settings">

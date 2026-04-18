@@ -1,9 +1,4 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Badge, Button, Card, Input, Label, Textarea } from '@/components/ui';
 import { createSuggestion } from '@/services/unifiedLedgerApi';
 import { ChevronLeft, Plus, X } from 'lucide-react';
 import React, { useState } from 'react';

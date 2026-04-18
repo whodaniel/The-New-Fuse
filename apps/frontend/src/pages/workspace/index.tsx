@@ -1,4 +1,4 @@
-import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import { GlassCard, PremiumButton } from '@/components/ui';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { Plus } from 'lucide-react';
 import { Navigate, Route, Routes } from 'react-router-dom';

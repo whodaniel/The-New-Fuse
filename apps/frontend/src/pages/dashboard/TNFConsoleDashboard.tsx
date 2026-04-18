@@ -1,4 +1,4 @@
-import { ActionCard, GlassCard, StatsCard } from '@/components/ui/premium';
+import { ActionCard, GlassCard, StatsCard } from '@/components/ui';
 import { useAuthorization } from '@/hooks/useAuthorization';
 import {
   Activity,

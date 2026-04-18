@@ -1,11 +1,10 @@
+import { Button, Tooltip } from '@/components/ui';
 // @ts-nocheck
 /**
  * DataTable Component - Advanced data table with sorting, filtering, pagination
  * Replaces corrupted Material-UI version with Tailwind + Custom Design System
  */
 
-import { Button } from '@/components/ui/design-system';
-import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import {
   ChevronDown,

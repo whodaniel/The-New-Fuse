@@ -1,4 +1,4 @@
-import { LoadingSpinner, StatCard } from '@/components/ui/design-system';
+import { LoadingSpinner, StatCard } from '@/components/ui';
 import React from 'react';
 import { useSystemMetrics } from '../../hooks/useSystemMetrics';
 

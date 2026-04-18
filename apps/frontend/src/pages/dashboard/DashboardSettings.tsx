@@ -1,17 +1,18 @@
-// @ts-nocheck
-import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
-import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+  Badge,
+  GlassCard,
+  Label,
+  PremiumButton,
+  PremiumInput,
+  Separator,
+  Switch,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui';
+// @ts-nocheck
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 import {
   BarChart3,
   Bell,

@@ -1,6 +1,5 @@
 import { AgentNFTMarketplace } from '@/components/nft/AgentNFTMarketplace';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button, Card, CardContent } from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
 import { Activity, Coins, DollarSign, Plus, TrendingUp, Wallet } from 'lucide-react';
 import React, { useEffect, useState } from 'react';

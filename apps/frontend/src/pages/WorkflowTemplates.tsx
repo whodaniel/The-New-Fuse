@@ -1,11 +1,5 @@
 // @ts-nocheck
-import {
-  ActionCard,
-  GlassCard,
-  PremiumButton,
-  PremiumInput,
-  PremiumSelect,
-} from '@/components/ui/premium';
+import { ActionCard, GlassCard, PremiumButton, PremiumInput, PremiumSelect } from '@/components/ui';
 import { Filter, Search, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 

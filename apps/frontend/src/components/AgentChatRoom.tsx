@@ -1,10 +1,16 @@
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  ScrollArea,
+} from '@/components/ui';
 // @ts-nocheck
-'use client';
+('use client');
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { GlassCard as Card } from '@/components/ui/premium/GlassCard';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import React, { useEffect, useState } from 'react';
 
 import { webSocketService } from '../services/websocket';
@@ -109,9 +115,7 @@ export function AgentChatRoom({}: AgentChatRoomProps) {
           </Alert>
         )}
         <ScrollArea className="flex-grow pr-4">
-          <div className="space-y-4">
-            {renderedMessages}
-          </div>
+          <div className="space-y-4">{renderedMessages}</div>
         </ScrollArea>
       </CardContent>
     </Card>

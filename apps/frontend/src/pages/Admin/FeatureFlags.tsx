@@ -1,4 +1,4 @@
-import { Card } from '@/components/ui/design-system';
+import { Card } from '@/components/ui';
 import { FeatureFlag, FeatureFlagService } from '@/services/FeatureFlagService';
 import { Flag } from 'lucide-react';
 import { useEffect, useState } from 'react';

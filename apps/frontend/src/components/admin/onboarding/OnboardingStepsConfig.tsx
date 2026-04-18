@@ -1,5 +1,5 @@
+import { Button } from '@/components/ui';
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
-import { Button } from '@the-new-fuse/ui-consolidated';
 import { ArrowDown, ArrowUp, Edit2, Eye, Info, Plus, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { OnboardingAdminService } from '../../../services/onboarding-admin.service';

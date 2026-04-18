@@ -1,6 +1,8 @@
+import { Label } from '@/components/ui';
 // @ts-nocheck
 import { Sidebar } from '@/components/layout/Sidebar';
 import {
+  ActionCard,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -8,23 +10,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Label } from '@/components/ui/label';
-import {
-  ActionCard,
   GlassCard,
   PremiumButton,
   PremiumInput,
   PremiumTextarea,
-} from '@/components/ui/premium';
+} from '@/components/ui';
 import { useWorkflow } from '@/hooks';
 import {
   Activity,

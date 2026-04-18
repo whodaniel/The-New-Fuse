@@ -1,10 +1,5 @@
+import { Badge, Button, Card, Input, Label, Select } from '@/components/ui';
 // @ts-nocheck
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select } from '@/components/ui/select';
 import React, { useState } from 'react';
 
 // Simple placeholder components for demo
@@ -45,7 +40,7 @@ const Sidebar = ({ children, open, collapsed, onClose, className }: any) => (
 //   Split,
 //   Layout,
 //   Sidebar
-// } from '@the-new-fuse/ui-consolidated';
+// } from '@/components/ui';
 
 /**
  * ComponentsShowcase - A page to showcase all UI components
