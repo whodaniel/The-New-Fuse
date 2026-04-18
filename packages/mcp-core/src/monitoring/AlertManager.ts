@@ -3,10 +3,10 @@
  */
 
 import { EventEmitter } from 'events';
-import { IAlertManager, AlertRule } from '../interfaces/IMonitoring';
-import { Alert, AlertSeverity, AlertStatus } from '../types/monitoring';
-import { ErrorStatistics } from '../types/error';
-import { Logger } from '../utils/Logger';
+import { IAlertManager, AlertRule } from '../interfaces/IMonitoring.js';
+import { Alert, AlertSeverity, AlertStatus } from '../types/monitoring.js';
+import { ErrorStatistics } from '../types/error.js';
+import { Logger } from '../utils/Logger.js';
 
 export interface AlertManagerConfig {
   /** Alert check interval (ms) */

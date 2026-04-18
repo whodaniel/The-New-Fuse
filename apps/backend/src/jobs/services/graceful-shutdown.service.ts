@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { QueueName } from '../constants/queue-names';
+import { QueueName } from '../constants/queue-names.js';
 
 /**
  * Graceful shutdown service

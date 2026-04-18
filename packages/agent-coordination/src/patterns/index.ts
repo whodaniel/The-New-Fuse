@@ -2,7 +2,7 @@
  * Coordination patterns
  */
 
-export * from './MapReducePattern';
-export * from './PipelinePattern';
-export * from './ConsensusPattern';
-export * from './SwarmPattern';
+export * from './MapReducePattern.js';
+export * from './PipelinePattern.js';
+export * from './ConsensusPattern.js';
+export * from './SwarmPattern.js';

@@ -15,10 +15,10 @@
  */
 
 import { z } from 'genkit';
-import { ai } from './ai';
-import { logger } from './logger';
-import { ModelConfiguration } from './models';
-import { rateLimiter } from './rateLimiter';
+import { ai } from './ai.js';
+import { logger } from './logger.js';
+import { ModelConfiguration } from './models.js';
+import { rateLimiter } from './rateLimiter.js';
 
 // Define a UI component generator flow
 export const componentGeneratorFlow = ai.defineFlow(

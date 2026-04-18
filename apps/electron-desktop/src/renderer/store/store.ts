@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { connectionSlice } from './connectionSlice'
-import { elementsSlice } from './elementsSlice'
-import { chatSlice } from './chatSlice'
-import { portsSlice } from './portsSlice'
+import { connectionSlice } from './connectionSlice.js'
+import { elementsSlice } from './elementsSlice.js'
+import { chatSlice } from './chatSlice.js'
+import { portsSlice } from './portsSlice.js'
 
 export const store = configureStore({
   reducer: {

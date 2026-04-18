@@ -6,9 +6,9 @@
  */
 
 import { EventEmitter } from 'events';
-import { MCPServiceInfo, ServiceQuery, RegistryConfig } from '../types';
-import { ServiceStatus } from '../types/common';
-import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error';
+import { MCPServiceInfo, ServiceQuery, RegistryConfig } from '../types/index.js';
+import { ServiceStatus } from '../types/common.js';
+import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error.js';
 
 /**
  * Service Registry class for managing MCP service registration and discovery

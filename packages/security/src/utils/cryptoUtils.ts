@@ -32,7 +32,7 @@ export function getUUID(): string {
 
 /**
  * Example usage (remove direct crypto usage elsewhere):
- *   import { getUUID, encrypt, decrypt, sha256, hmacSha256, timingSafeEqual } from './cryptoUtils';
+ *   import { getUUID, encrypt, decrypt, sha256, hmacSha256, timingSafeEqual } from './cryptoUtils.js';
  */
 
 /**

@@ -1,5 +1,5 @@
-import { DashboardState } from '../collaboration/types';
-import { SearchConfig } from './types';
+import { DashboardState } from '../collaboration/types/index.js';
+import { SearchConfig } from './types.js';
 
 interface NLPQuery {
   type: search' | 'filter' | 'sort' | 'analyze';

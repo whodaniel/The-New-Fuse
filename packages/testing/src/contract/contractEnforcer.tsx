@@ -1,5 +1,5 @@
 import { Type } from '@nestjs/common';
-import { SchemaValidator } from './schemaValidator';
+import { SchemaValidator } from './schemaValidator.js';
 // Define ProtocolType locally since core package has issues
 type ProtocolType = 'http' | 'websocket' | 'mcp' | 'grpc';
 import { SecurityScheme } from '@the-new-fuse/types';
@@ -59,7 +59,7 @@ export class ContractEnforcer {
     return `
 import { Test } from '@nestjs/testing';
 import { ${contract.requestSchema.name}, ${contract.responseSchema.name} } from './types';
-import { SchemaValidator } from './schemaValidator';
+import { SchemaValidator } from './schemaValidator.js';
 
 describe('${contractName} Contract Tests', () => {
   let validator: SchemaValidator;

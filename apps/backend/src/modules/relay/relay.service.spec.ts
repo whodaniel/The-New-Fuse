@@ -1,6 +1,6 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { RelayService } from './relay.service';
+import { RelayService } from './relay.service.js';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 

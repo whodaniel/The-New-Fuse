@@ -3,11 +3,11 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { PerformanceMetrics, ApplicationMetrics } from '../types/monitoring';
-import { ServiceState } from '../constants/types';
-import { logger } from '../utils/logger';
-import { MetricsCollector } from './MetricsCollector';
-import { SystemMonitor } from './SystemMonitor';
+import { PerformanceMetrics, ApplicationMetrics } from '../types/monitoring.js';
+import { ServiceState } from '../constants/types.js';
+import { logger } from '../utils/logger.js';
+import { MetricsCollector } from './MetricsCollector.js';
+import { SystemMonitor } from './SystemMonitor.js';
 
 @Injectable()
 export class PerformanceMonitor {

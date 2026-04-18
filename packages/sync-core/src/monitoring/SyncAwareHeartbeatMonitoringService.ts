@@ -6,9 +6,9 @@ import {
   AgentHeartbeat, 
   StagnationAlert 
 } from '@the-new-fuse/relay-core';
-import { MasterClockService } from '../services/MasterClockService';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { ConflictManager } from '../services/ConflictManager';
+import { MasterClockService } from '../services/MasterClockService.js';
+import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
+import { ConflictManager } from '../services/ConflictManager.js';
 
 /**
  * Sync health metrics interface

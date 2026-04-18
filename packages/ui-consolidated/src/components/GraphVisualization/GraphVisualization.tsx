@@ -11,6 +11,7 @@ import ReactFlow, {
   NodeChange,
 } from "reactflow";
 import "reactflow/dist/style.css";
+import { Brain, Cpu, MessageSquare, Shield, Zap, Info, AlertCircle, Play } from 'lucide-react';
 import { useGraphWebSocket } from '../hooks/useGraphWebSocket';
 import { MemoryGraphAdapter } from '../memory/memory-graph-adapter';
 import styles from './graph-visualization.module.css';
@@ -49,18 +50,29 @@ interface GraphVisualizationProps {
 }
 
 const DefaultNode: React.FC<NodeProps<NodeData>> = ({ data }) => {
-  const nodeClass = `${styles.defaultNode} ${data.status === "running" ? "animate-pulse" : ""} ${
-    data.status === "error" ? "border-red-500" : ""
-  } ${data.priority === "high" ? "ring-2 ring-yellow-400" : ""}`;
-
   return (
-    <div className={nodeClass}>
-      <div className="font-medium">{data.label}</div>
+    <div className={styles.defaultNode}>
+      <div className={styles.nodeTitle}>
+        <div className="p-1.5 rounded-md bg-blue-500/10 border border-blue-500/20">
+          <Cpu className="w-4 h-4 text-blue-400" />
+        </div>
+        <span>{data.label}</span>
+      </div>
+      
+      <div className={styles.statusBadge}>
+        <div className={`${styles.statusIndicator} ${
+          data.status === "running" ? styles.statusRunning : 
+          data.status === "error" ? styles.statusError : styles.statusIdle
+        }`} />
+        <span>{data.status || 'idle'}</span>
+      </div>
+
       {data.metadata && (
         <div className={styles.metadataList}>
           {Object.entries(data.metadata).map(([key, value]) => (
-            <div key={key}>
-              {key}: {value}
+            <div key={key} className={styles.metadataItem}>
+              <span className="opacity-60">{key}:</span>
+              <span className={styles.metadataValue}>{value}</span>
             </div>
           ))}
         </div>
@@ -70,18 +82,29 @@ const DefaultNode: React.FC<NodeProps<NodeData>> = ({ data }) => {
 };
 
 const TaskNode: React.FC<NodeProps<NodeData>> = ({ data }) => {
-  const nodeClass = `${styles.taskNode} ${data.status === "running" ? "animate-pulse" : ""} ${
-    data.status === "error" ? "border-red-500" : ""
-  }`;
-
   return (
-    <div className={nodeClass}>
-      <div className="font-medium">{data.label}</div>
+    <div className={styles.taskNode}>
+      <div className={styles.nodeTitle}>
+        <div className="p-1.5 rounded-md bg-sky-500/10 border border-sky-500/20">
+          <Shield className="w-4 h-4 text-sky-300" />
+        </div>
+        <span>{data.label}</span>
+      </div>
+      
+      <div className={styles.statusBadge}>
+        <div className={`${styles.statusIndicator} ${
+          data.status === "running" ? styles.statusRunning : 
+          data.status === "error" ? styles.statusError : styles.statusIdle
+        }`} />
+        <span>{data.status || 'queued'}</span>
+      </div>
+
       {data.metadata && (
         <div className={styles.metadataList}>
           {Object.entries(data.metadata).map(([key, value]) => (
-            <div key={key}>
-              {key}: {value}
+            <div key={key} className={styles.metadataItem}>
+              <span className="opacity-60">{key}:</span>
+              <span className={styles.metadataValue}>{value}</span>
             </div>
           ))}
         </div>
@@ -93,17 +116,19 @@ const TaskNode: React.FC<NodeProps<NodeData>> = ({ data }) => {
 const AgentNode: React.FC<NodeProps<NodeData>> = ({ data }) => {
   return (
     <div className={styles.agentNode}>
-      <div className="font-medium">{data.label}</div>
-      {data.status && (
-        <div className="text-xs mt-1 flex items-center gap-2">
-          <div 
-            className={`${styles.statusIndicator} ${
-              data.status === "running" ? styles.statusRunning : styles.statusIdle
-            }`}
-          />
-          {data.status}
+      <div className={styles.nodeTitle}>
+        <div className="p-1.5 rounded-md bg-purple-500/10 border border-purple-500/20">
+          <Brain className="w-4 h-4 text-purple-300" />
         </div>
-      )}
+        <span>{data.label}</span>
+      </div>
+      
+      <div className={styles.statusBadge}>
+        <div className={`${styles.statusIndicator} ${
+          data.status === "running" ? styles.statusRunning : styles.statusIdle
+        }`} />
+        <span>{data.status || 'standby'}</span>
+      </div>
     </div>
   );
 };
@@ -124,13 +149,18 @@ function toReactFlowNode(node: GraphNode): Node<NodeData> {
 }
 
 function toReactFlowEdge(edge: GraphEdge): Edge {
+  const isAnimated = edge.animated ?? (edge.type === "message" || edge.type === "data-flow");
   return {
     id: edge.id || `${edge.source}-${edge.target}`,
     source: edge.source,
     target: edge.target,
-    type: edge.type || "default",
-    animated: edge.animated,
-    style: edge.style,
+    type: edge.type || "smoothstep",
+    animated: isAnimated,
+    style: {
+      ...edge.style,
+      strokeWidth: isAnimated ? 2 : 1,
+      stroke: isAnimated ? "#6366f1" : "rgba(255, 255, 255, 0.2)",
+    },
     label: edge.label,
   };
 }

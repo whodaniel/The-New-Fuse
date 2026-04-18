@@ -2,9 +2,9 @@
  * Unit tests for AuthenticationManager
  */
 
-import { AuthenticationManager, AuthResult, AuthContext, AuthPolicy } from './AuthenticationManager';
-import { AuthConfig } from '../interfaces/IMCPConnection';
-import { MCPErrorClass, MCPErrorCode } from '../types/error';
+import { AuthenticationManager, AuthResult, AuthContext, AuthPolicy } from './AuthenticationManager.js';
+import { AuthConfig } from '../interfaces/IMCPConnection.js';
+import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
 
 describe('AuthenticationManager', () => {
   let authManager: AuthenticationManager;

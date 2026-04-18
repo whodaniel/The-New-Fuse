@@ -2,7 +2,7 @@ import { Controller, Get, Headers, HttpStatus, Res, Version } from '@nestjs/comm
 // @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { ProxyService } from '../proxy/proxy.service';
+import { ProxyService } from '../proxy/proxy.service.js';
 
 @Controller('')
 @ApiTags('nexus-observability')

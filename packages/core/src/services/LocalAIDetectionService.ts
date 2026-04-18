@@ -3,10 +3,10 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { LocalAIProvider } from '../types/core';
-import { ServiceState } from '../constants/types';
-import { logger } from '../utils/logger';
-import { BaseError } from '../utils/errors';
+import { LocalAIProvider } from '../types/core.js';
+import { ServiceState } from '../constants/types.js';
+import { logger } from '../utils/logger.js';
+import { BaseError } from '../utils/errors.js';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 

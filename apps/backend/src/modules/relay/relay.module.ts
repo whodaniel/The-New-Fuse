@@ -8,9 +8,9 @@
  */
 
 import { Module, Global } from '@nestjs/common';
-import { RelayService } from './relay.service';
-import { RelayController } from './relay.controller';
-import { RelayGateway } from './relay.gateway';
+import { RelayService } from './relay.service.js';
+import { RelayController } from './relay.controller.js';
+import { RelayGateway } from './relay.gateway.js';
 
 @Global()
 @Module({

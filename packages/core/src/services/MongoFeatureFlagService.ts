@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { FeatureFlag, FeatureFlagDocument } from '../models/FeatureFlag';
-import { FeatureFlagContext, Environment, FeatureFlagUpdate, FeatureFlag as IFeatureFlag } from '../types/featureFlags';
-import { FeatureFlagService } from './FeatureFlagService';
+import { FeatureFlag, FeatureFlagDocument } from '../models/FeatureFlag.js';
+import { FeatureFlagContext, Environment, FeatureFlagUpdate, FeatureFlag as IFeatureFlag } from '../types/featureFlags.js';
+import { FeatureFlagService } from './FeatureFlagService.js';
 import * as crypto from 'crypto';
 
 @Injectable()

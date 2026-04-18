@@ -1,6 +1,6 @@
 import { Message, MessageType } from '@the-new-fuse/types'; // Import Message and MessageType
-import { BaseService } from '../core/BaseService'; // Corrected import path
-import { Logger } from '../types/core';
+import { BaseService } from '../core/BaseService.js'; // Corrected import path
+import { Logger } from '../types/core.js';
 
 // UUID type alias for clarity
 type UUID = string;

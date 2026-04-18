@@ -5,7 +5,7 @@ import { sql } from 'drizzle-orm';
 import * as fs from 'fs';
 import * as os from 'os';
 import { promisify } from 'util';
-import { SystemMetricsResponseDto } from './dto/system-metrics.dto';
+import { SystemMetricsResponseDto } from './dto/system-metrics.dto.js';
 
 const execAsync = promisify(exec);
 

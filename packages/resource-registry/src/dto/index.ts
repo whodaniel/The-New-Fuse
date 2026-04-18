@@ -1,3 +1,3 @@
-export * from './create-resource.dto';
-export * from './update-resource.dto';
-export * from './search-resource.dto';
+export * from './create-resource.dto.js';
+export * from './update-resource.dto.js';
+export * from './search-resource.dto.js';

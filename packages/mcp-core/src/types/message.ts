@@ -15,7 +15,7 @@ export type {
   MCPError,
   MCPMessage,
   JSONRPCMessage_Union
-} from '../interfaces/IMCPMessage';
+} from '../interfaces/IMCPMessage.js';
 
 /**
  * Message priority enumeration

@@ -1,4 +1,4 @@
-import { DashboardState } from '../collaboration/types';
+import { DashboardState } from '../collaboration/types/index.js';
 import { DatabaseService } from '@the-new-fuse/database';
 import { Logger } from '@the-new-fuse/utils';
 

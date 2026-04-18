@@ -8,9 +8,9 @@ import {
 } from '@nestjs/websockets';
 // @ts-ignore
 import { Server, Socket } from 'socket.io';
-import { WsAuthGuard } from '../auth/ws-auth.guard'; // Changed from @/auth/ws-auth.guard
-import { CacheService } from '../cache/cache.service'; // Changed from @/cache/cache.service
-import { UnifiedMonitoringService } from '../types/core';
+import { WsAuthGuard } from '../auth/ws-auth.guard.js'; // Changed from @/auth/ws-auth.guard
+import { CacheService } from '../cache/cache.service.js'; // Changed from @/cache/cache.service
+import { UnifiedMonitoringService } from '../types/core.js';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 

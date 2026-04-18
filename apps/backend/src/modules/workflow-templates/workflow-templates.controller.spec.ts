@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { WorkflowTemplatesController } from './workflow-templates.controller';
-import { WorkflowTemplatesService } from './workflow-templates.service';
-import { CreateWorkflowTemplateDto, UpdateWorkflowTemplateDto } from './dto/workflow-template.dto';
+import { WorkflowTemplatesController } from './workflow-templates.controller.js';
+import { WorkflowTemplatesService } from './workflow-templates.service.js';
+import { CreateWorkflowTemplateDto, UpdateWorkflowTemplateDto } from './dto/workflow-template.dto.js';
 
 describe('WorkflowTemplatesController', () => {
   let controller: WorkflowTemplatesController;

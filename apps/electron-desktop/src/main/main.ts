@@ -5,9 +5,9 @@ type IpcMain = import('electron').IpcMain;
 type Session = import('electron').Session;
 type Shell = import('electron').Shell;
 import { join } from 'path';
-import { CopilotLoop } from './CopilotLoop';
-import { HybridBackend } from './HybridBackend';
-import { getSecureStorage, SecureStorageService } from './SecureStorageService';
+import { CopilotLoop } from './CopilotLoop.js';
+import { HybridBackend } from './HybridBackend.js';
+import { getSecureStorage, SecureStorageService } from './SecureStorageService.js';
 
 const isDev = process.env.NODE_ENV === 'development' || process.env.ELECTRON_DEV === '1';
 const browserHubEntry = process.env.BROWSER_HUB_ENTRY || 'unified-hub.html';

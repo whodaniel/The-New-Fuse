@@ -7,7 +7,7 @@ import * as fs from 'fs/promises';
 // @ts-ignore
 import { glob } from 'glob';
 import * as path from 'path';
-import { resolveCodebaseRoot } from './codebase-root';
+import { resolveCodebaseRoot } from './codebase-root.js';
 
 export interface CodeIssue {
   id: string;

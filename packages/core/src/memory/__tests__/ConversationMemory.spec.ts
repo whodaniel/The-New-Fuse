@@ -1,8 +1,8 @@
 
 import { jest } from '@jest/globals';
-import { ConversationMemory, ConversationTurn } from '../ConversationMemory';
-import { VectorMemoryStore } from '../VectorMemoryStore';
-import { SearchResult } from '../MemoryTypes';
+import { ConversationMemory, ConversationTurn } from '../ConversationMemory.js';
+import { VectorMemoryStore } from '../VectorMemoryStore.js';
+import { SearchResult } from '../MemoryTypes.js';
 
 // Mock the VectorMemoryStore
 jest.mock('../VectorMemoryStore');

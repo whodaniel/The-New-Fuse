@@ -20,12 +20,12 @@ import type { Agent, NewAgent, User } from '@the-new-fuse/database';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import { GqlAuthGuard } from '../guards/gql-auth.guard';
-import { UserLoader } from '../loaders/user.loader';
-import { AgentStatus, AgentType } from '../types/agent.type';
-import { CreateAgentInput, UpdateAgentInput } from '../types/input.types';
-import { UserType } from '../types/user.type';
-import { isPrivilegedUser } from '../../auth/auth-policy';
+import { GqlAuthGuard } from '../guards/gql-auth.guard.js';
+import { UserLoader } from '../loaders/user.loader.js';
+import { AgentStatus, AgentType } from '../types/agent.type.js';
+import { CreateAgentInput, UpdateAgentInput } from '../types/input.types.js';
+import { UserType } from '../types/user.type.js';
+import { isPrivilegedUser } from '../../auth/auth-policy.js';
 
 @Resolver(() => AgentType)
 export class AgentResolver {

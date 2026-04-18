@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { DebateBlock } from './mass-blocks.service';
-import { AgentExecutorService } from './mass-blocks.service';
+import { DebateBlock } from './mass-blocks.service.js';
+import { AgentExecutorService } from './mass-blocks.service.js';
 
 @Injectable()
 export class DebateService {

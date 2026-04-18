@@ -4,8 +4,8 @@
  * User-friendly UI for accessing all TNF framework commands and processes
  */
 
-export { CommandPalette } from './CommandPalette';
-export type { Command, CommandCategory } from './CommandPalette';
+export { CommandPalette } from './CommandPalette.js';
+export type { Command, CommandCategory } from './CommandPalette.js';
 
-export { executeCommandAPI, executeCommandNode, useCommandPalette } from './useCommandPalette';
-export type { CommandExecutionResult, UseCommandPaletteOptions } from './useCommandPalette';
+export { executeCommandAPI, executeCommandNode, useCommandPalette } from './useCommandPalette.js';
+export type { CommandExecutionResult, UseCommandPaletteOptions } from './useCommandPalette.js';

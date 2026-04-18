@@ -14,21 +14,21 @@ import {
 // @ts-ignore
 // @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from '../decorators/current-user.decorator';
+import { CurrentUser } from '../decorators/current-user.decorator.js';
 import {
   ExecuteOpenClawOAuthBindingDto,
   OPENCLAW_PROVIDERS,
   OpenClawProvider,
   UpsertOpenClawOAuthBindingDto,
-} from '../dto/openclaw-oauth-rotation.dto';
-import { AdminGuard } from '../guards/admin.guard';
-import { SecureAuthGuard } from '../guards/secure-auth.guard';
-import { AuditService } from '../services/audit.service';
+} from '../dto/openclaw-oauth-rotation.dto.js';
+import { AdminGuard } from '../guards/admin.guard.js';
+import { SecureAuthGuard } from '../guards/secure-auth.guard.js';
+import { AuditService } from '../services/audit.service.js';
 import {
   OpenClawOAuthBindingSummary,
   OpenClawOAuthExecutionResult,
   OpenClawOAuthRotationService,
-} from '../services/openclaw-oauth-rotation.service';
+} from '../services/openclaw-oauth-rotation.service.js';
 
 @ApiTags('admin-openclaw-oauth')
 @Controller('admin/openclaw/oauth')

@@ -5,7 +5,7 @@
  * Manages resource quotas, rate limiting, and tenant-scoped data access.
  */
 
-import type { AuthenticatedUser } from './CloudSandboxAuthGuard';
+import type { AuthenticatedUser } from './CloudSandboxAuthGuard.js';
 
 export interface TenantQuota {
   tenantId: string;

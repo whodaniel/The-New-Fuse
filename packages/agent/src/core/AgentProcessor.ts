@@ -1,4 +1,4 @@
-import { Logger } from '../types/core';
+import { Logger } from '../types/core.js';
 import { Message, MessageType } from '@the-new-fuse/types';
 // @ts-ignore
 import { UUID } from '@the-new-fuse/api-types';

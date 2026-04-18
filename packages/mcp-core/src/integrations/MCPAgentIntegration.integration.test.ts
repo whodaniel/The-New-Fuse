@@ -6,9 +6,9 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MCPAgentIntegration } from './MCPAgentIntegration';
-import { AgentStatus } from '../interfaces/IMCPAgentIntegration';
-import type { Agent, IMCPBroker, IMCPClient } from '../interfaces';
+import { MCPAgentIntegration } from './MCPAgentIntegration.js';
+import { AgentStatus } from '../interfaces/IMCPAgentIntegration.js';
+import type { Agent, IMCPBroker, IMCPClient } from '../interfaces/index.js';
 
 // Mock implementations for integration testing
 const mockBroker: IMCPBroker = {

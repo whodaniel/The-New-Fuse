@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { CreateResourceDto, SearchResourceDto, UpdateResourceDto } from '../dto';
-import { Resource, ResourceAction, SearchResult } from '../types';
+import { CreateResourceDto, SearchResourceDto, UpdateResourceDto } from '../dto/index.js';
+import { Resource, ResourceAction, SearchResult } from '../types/index.js';
 
 @Injectable()
 export class ResourceRegistryService {

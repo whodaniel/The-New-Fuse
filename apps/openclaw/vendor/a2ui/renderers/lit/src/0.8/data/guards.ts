@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { BooleanValue, NumberValue, StringValue } from '../types/primitives';
+import { BooleanValue, NumberValue, StringValue } from '../types/primitives.js';
 import {
   AnyComponentNode,
   ComponentArrayReference,
@@ -38,7 +38,7 @@ import {
   ResolvedTextField,
   ResolvedVideo,
   ValueMap,
-} from '../types/types';
+} from '../types/types.js';
 
 export function isValueMap(value: unknown): value is ValueMap {
   return isObject(value) && 'key' in value;

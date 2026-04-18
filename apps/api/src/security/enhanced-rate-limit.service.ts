@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SecurityLoggingService } from './security-logging.service';
+import { SecurityLoggingService } from './security-logging.service.js';
 
 export interface RateLimitConfig {
   requests: number;

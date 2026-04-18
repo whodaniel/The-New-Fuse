@@ -1,5 +1,5 @@
 import React from 'react';
-import { toBeValidComponent, ComponentValidator } from '../toBeValidComponent';
+import { toBeValidComponent, ComponentValidator } from '../toBeValidComponent.js';
 
 describe('toBeValidComponent', () => {
   const TestComponent = (props: any) => <div {...props} />;

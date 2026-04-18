@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from '../decorators/current-user.decorator';
-import { AdminGuard } from '../guards/admin.guard';
-import { SecureAuthGuard } from '../guards/secure-auth.guard';
-import { RcloneRuntimeService } from '../services/rclone-runtime.service';
+import { CurrentUser } from '../decorators/current-user.decorator.js';
+import { AdminGuard } from '../guards/admin.guard.js';
+import { SecureAuthGuard } from '../guards/secure-auth.guard.js';
+import { RcloneRuntimeService } from '../services/rclone-runtime.service.js';
 
 @ApiTags('admin-rclone-runtime')
 @Controller('admin/rclone/runtime')

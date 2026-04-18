@@ -1,4 +1,4 @@
-export { ETagInterceptor } from './etag.interceptor';
-export { CacheInterceptor } from './cache.interceptor';
-export { CompressionInterceptor } from './compression.interceptor';
-export { PerformanceInterceptor } from './performance.interceptor';
+export { ETagInterceptor } from './etag.interceptor.js';
+export { CacheInterceptor } from './cache.interceptor.js';
+export { CompressionInterceptor } from './compression.interceptor.js';
+export { PerformanceInterceptor } from './performance.interceptor.js';

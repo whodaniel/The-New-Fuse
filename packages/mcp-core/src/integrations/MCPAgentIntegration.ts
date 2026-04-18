@@ -16,14 +16,14 @@ import type {
   AgentRegistrationResult,
   IMCPAgentIntegration,
   MCPCapability,
-} from '../interfaces/IMCPAgentIntegration';
-import { AgentStatus } from '../interfaces/IMCPAgentIntegration';
-import type { IMCPBroker } from '../interfaces/IMCPBroker';
-import type { IMCPClient } from '../interfaces/IMCPClient';
-import type { MCPMessage } from '../interfaces/IMCPMessage';
-import type { MCPServiceInfo } from '../types/broker';
-import { ServiceStatus } from '../types/common';
-import { MCPErrorClass, MCPErrorCode } from '../types/error';
+} from '../interfaces/IMCPAgentIntegration.js';
+import { AgentStatus } from '../interfaces/IMCPAgentIntegration.js';
+import type { IMCPBroker } from '../interfaces/IMCPBroker.js';
+import type { IMCPClient } from '../interfaces/IMCPClient.js';
+import type { MCPMessage } from '../interfaces/IMCPMessage.js';
+import type { MCPServiceInfo } from '../types/broker.js';
+import { ServiceStatus } from '../types/common.js';
+import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
 
 /**
  * Configuration for MCP Agent Integration

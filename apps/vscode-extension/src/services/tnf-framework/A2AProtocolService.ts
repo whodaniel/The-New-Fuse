@@ -6,8 +6,8 @@
  */
 
 import * as vscode from 'vscode';
-import { ConfigManager } from '../../core/config';
-import { log } from '../../utils/logger';
+import { ConfigManager } from '../../core/config.js';
+import { log } from '../../utils/logger.js';
 
 interface A2AAgent {
   id: string;

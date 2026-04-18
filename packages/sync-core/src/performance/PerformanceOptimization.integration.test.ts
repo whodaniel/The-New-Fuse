@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 const vi = jest;
-import { PerformanceOptimizationService } from './PerformanceOptimizationService';
-import { HorizontalScalingCoordinator } from './HorizontalScalingCoordinator';
-import { FileChangeBatcher } from './FileChangeBatcher';
-import { SyncLRUCache } from './SyncLRUCache';
-import { SyncPerformanceTelemetry } from './SyncPerformanceTelemetry';
-import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher';
+import { PerformanceOptimizationService } from './PerformanceOptimizationService.js';
+import { HorizontalScalingCoordinator } from './HorizontalScalingCoordinator.js';
+import { FileChangeBatcher } from './FileChangeBatcher.js';
+import { SyncLRUCache } from './SyncLRUCache.js';
+import { SyncPerformanceTelemetry } from './SyncPerformanceTelemetry.js';
+import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher.js';
 
 // Mock Redis for integration testing
 const mockRedis = {

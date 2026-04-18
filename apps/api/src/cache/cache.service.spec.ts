@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { ConfigService } from '@nestjs/config';
 import { Redis } from 'ioredis';
-import { CacheService } from './cache.service';
+import { CacheService } from './cache.service.js';
 
 jest.mock('ioredis', () => {
   return {

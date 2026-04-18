@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { unstoppableAuth, UnstoppableUser } from '../auth/unstoppable-domains-auth';
+import { unstoppableAuth, UnstoppableUser } from '../auth/unstoppable-domains-auth.js';
 
 interface UnstoppableLoginProps {
   onLoginSuccess?: (user: UnstoppableUser) => void;

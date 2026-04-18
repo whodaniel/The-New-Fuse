@@ -2,5 +2,5 @@
  * Orchestration components
  */
 
-export * from './Coordinator';
-export * from './TaskDecomposer';
+export * from './Coordinator.js';
+export * from './TaskDecomposer.js';

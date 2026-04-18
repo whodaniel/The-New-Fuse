@@ -1,10 +1,10 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { ClaudeDevAutomationService } from '../services/ClaudeDevAutomationService';
-import { AgentApiGrantsService } from '../services/agent-api-grants.service';
-import { AgentService } from '../services/agent.service';
-import { ChatService } from '../services/chat.service';
-import { WorkflowService } from '../services/workflow.service';
-import { TheNewFuseMCPServer } from './TheNewFuseMCPServer';
+import { ClaudeDevAutomationService } from '../services/ClaudeDevAutomationService.js';
+import { AgentApiGrantsService } from '../services/agent-api-grants.service.js';
+import { AgentService } from '../services/agent.service.js';
+import { ChatService } from '../services/chat.service.js';
+import { WorkflowService } from '../services/workflow.service.js';
+import { TheNewFuseMCPServer } from './TheNewFuseMCPServer.js';
 
 @Injectable()
 export class TNFMCPService implements OnModuleInit {

@@ -6,9 +6,9 @@
  * backward compatibility.
  */
 
-import { MCPServer } from '../server/MCPServer';
-import { MCPSystemFactory, MCPSystemConfig } from '../factory/MCPSystemFactory';
-import { LogLevel } from '../types/common';
+import { MCPServer } from '../server/MCPServer.js';
+import { MCPSystemFactory, MCPSystemConfig } from '../factory/MCPSystemFactory.js';
+import { LogLevel } from '../types/common.js';
 
 // Import types from relay-core for integration
 type Logger = {

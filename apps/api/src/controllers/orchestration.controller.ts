@@ -12,14 +12,14 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DatabaseService } from '@the-new-fuse/database';
-import { isPrivilegedUser } from '../auth/auth-policy';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { isPrivilegedUser } from '../auth/auth-policy.js';
+import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import {
   JwtAuth,
   RateLimitTier,
   SecureAuthGuard,
   SetRateLimitTier,
-} from '../guards/secure-auth.guard';
+} from '../guards/secure-auth.guard.js';
 
 interface OrchestrationChatRequest {
   message: string;

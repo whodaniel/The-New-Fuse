@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import type { ResourceSearchRequest } from '@the-new-fuse/types';
 import axios from 'axios';
-import { ResourceSearchPolicyService, SearchableResource } from './resource-search-policy.service';
+import { ResourceSearchPolicyService, SearchableResource } from './resource-search-policy.service.js';
 
 jest.mock('axios', () => ({
   __esModule: true,

@@ -6,7 +6,7 @@
  */
 
 import * as vscode from 'vscode';
-import { log } from '../../utils/logger';
+import { log } from '../../utils/logger.js';
 
 type ProtocolType = 'mcp' | 'langchain' | 'autogen' | 'crewai' | 'openai';
 

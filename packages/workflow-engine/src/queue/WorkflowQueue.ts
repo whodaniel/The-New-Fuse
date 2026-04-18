@@ -1,7 +1,7 @@
 import { Queue, QueueOptions, Job } from 'bullmq';
 import { Logger } from '@the-new-fuse/relay-core';
-import { WorkflowNode, ExecutionContext } from '../types/WorkflowTypes';
-import { telemetry } from '../telemetry/TelemetryService';
+import { WorkflowNode, ExecutionContext } from '../types/WorkflowTypes.js';
+import { telemetry } from '../telemetry/TelemetryService.js';
 
 export const WORKFLOW_QUEUE_NAME = 'tnf:workflow:queue';
 

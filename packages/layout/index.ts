@@ -1,7 +1,7 @@
 // Layout components
-export { Footer } from './Footer';
-export { Header } from './Header';
-export { Layout } from './Layout';
-export { LayoutProvider } from './LayoutContext';
-export { Sidebar } from './Sidebar';
-export type { FooterProps, HeaderProps, LayoutProps, SidebarProps } from './types';
+export { Footer } from './Footer.js';
+export { Header } from './Header.js';
+export { Layout } from './Layout.js';
+export { LayoutProvider } from './LayoutContext.js';
+export { Sidebar } from './Sidebar.js';
+export type { FooterProps, HeaderProps, LayoutProps, SidebarProps } from './types.js';

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { SmartAccountService } from './smart-account.service';
-import { SmartAccountController } from './smart-account.controller';
-import { Web3authModule } from '../web3auth/web3auth.module';
+import { SmartAccountService } from './smart-account.service.js';
+import { SmartAccountController } from './smart-account.controller.js';
+import { Web3authModule } from '../web3auth/web3auth.module.js';
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore

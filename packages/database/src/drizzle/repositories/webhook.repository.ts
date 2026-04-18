@@ -3,7 +3,7 @@
  * Provides data access for webhook configurations and business events
  */
 import { and, desc, eq, sql } from 'drizzle-orm';
-import { db } from '../client';
+import { db } from '../client.js';
 import {
   aiInsights,
   businessAnalytics,
@@ -11,7 +11,7 @@ import {
   sseSubscriptions,
   webhookConfigurations,
   webhookDeliveryLogs,
-} from '../schema';
+} from '../schema/index.js';
 
 // Type definitions for the repository
 export type WebhookConfiguration = typeof webhookConfigurations.$inferSelect;

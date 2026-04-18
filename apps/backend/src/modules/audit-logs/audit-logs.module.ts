@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AuditLogsService } from './audit-logs.service';
+import { AuditLogsService } from './audit-logs.service.js';
 
 @Module({
   providers: [AuditLogsService],

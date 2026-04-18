@@ -11,16 +11,16 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import type { NewTask } from '@the-new-fuse/database';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../../decorators/current-user.decorator';
-import { UnifiedLedgerService } from '../unified-ledger/unified-ledger.service';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
+import { CurrentUser } from '../../decorators/current-user.decorator.js';
+import { UnifiedLedgerService } from '../unified-ledger/unified-ledger.service.js';
 import {
   CreateTaskDto,
   CreateTaskExecutionLogDto,
   ListTasksQueryDto,
   UpdateTaskStatusDto,
-} from './dto/task.dto';
-import { TaskService } from './task.service';
+} from './dto/task.dto.js';
+import { TaskService } from './task.service.js';
 
 @Controller('tasks')
 @UseGuards(JwtAuthGuard)

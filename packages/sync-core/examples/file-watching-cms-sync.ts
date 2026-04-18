@@ -6,7 +6,7 @@
  */
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { SyncOrchestrator } from '../src/services/SyncOrchestrator';
+import { SyncOrchestrator } from '../src/services/SyncOrchestrator.js';
 import { EnhancedFileSystemWatcher } from '../src/services/EnhancedFileSystemWatcher';
 import * as path from 'path';
 import * as fs from 'fs/promises';

@@ -5,7 +5,7 @@ import * as path from 'node:path';
 import {
   ChronologicalProcessesService,
   ProcessRunHistoryEntry,
-} from './chronological-processes.service';
+} from './chronological-processes.service.js';
 
 jest.mock('node:child_process', () => ({
   execFile: jest.fn(),

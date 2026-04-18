@@ -10,7 +10,7 @@ import {
   DiscoveredAgent,
   CapabilityComposition,
   CapabilityDependency,
-} from '../types/agent-discovery.types';
+} from '../types/agent-discovery.types.js';
 
 export interface MatchScore {
   agent: DiscoveredAgent;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { assertSnapshot } from '@/test/helpers/snapshot';
 import { Tooltip } from '../Tooltip';
-import { Button } from '../../Button';
+import { Button } from '../../Button/index';
 
 describe('Tooltip Snapshots', () => {
   it('renders basic tooltip correctly', () => {

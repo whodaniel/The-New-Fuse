@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
-import { AgentInfo, AgentStatus, AgentPoolConfig } from './types';
+import { AgentInfo, AgentStatus, AgentPoolConfig } from './types.js';
 
 /**
  * Agent pool management

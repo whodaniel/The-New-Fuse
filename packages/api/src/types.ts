@@ -2,4 +2,4 @@
  * Re-export API-specific types
  */
 
-export * from './types/index';
+export * from './types/index.js';

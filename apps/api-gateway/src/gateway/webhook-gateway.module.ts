@@ -4,8 +4,8 @@
  */
 
 import { Module } from '@nestjs/common';
-import { ProxyModule } from '../proxy/proxy.module';
-import { WebhookGatewayController } from './webhook-gateway.controller';
+import { ProxyModule } from '../proxy/proxy.module.js';
+import { WebhookGatewayController } from './webhook-gateway.controller.js';
 
 @Module({
   imports: [ProxyModule],

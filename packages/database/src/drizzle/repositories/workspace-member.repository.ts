@@ -1,8 +1,8 @@
 import { randomUUID } from 'crypto';
 import { and, eq, inArray } from 'drizzle-orm';
-import { db } from '../client';
-import { users, workspaceMembers, workspaces } from '../schema';
-import type { NewWorkspaceMember, WorkspaceMember } from '../types';
+import { db } from '../client.js';
+import { users, workspaceMembers, workspaces } from '../schema/index.js';
+import type { NewWorkspaceMember, WorkspaceMember } from '../types.js';
 
 export class DrizzleWorkspaceMemberRepository {
   async addMember(

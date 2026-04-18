@@ -1,5 +1,5 @@
 import { VariantProps } from 'class-variance-authority';
-import { preloaderVariants } from './index';
+import { preloaderVariants } from './index.js';
 
 export type PreloaderSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type PreloaderVariant = 'default' | 'light' | 'dark' | 'muted';

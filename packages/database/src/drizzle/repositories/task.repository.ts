@@ -3,8 +3,8 @@
  * Provides data access for Task and Pipeline entities
  */
 import { and, desc, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
-import { db } from '../client';
-import { pipelines, taskExecutions, tasks } from '../schema';
+import { db } from '../client.js';
+import { pipelines, taskExecutions, tasks } from '../schema/index.js';
 import type {
   NewPipeline,
   NewTask,
@@ -12,7 +12,7 @@ import type {
   Pipeline,
   Task,
   TaskExecution,
-} from '../types';
+} from '../types.js';
 
 /**
  * Task Repository - provides data access for Task entities

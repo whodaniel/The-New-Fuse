@@ -4,20 +4,20 @@
  * All step components for the wizard system
  */
 
-import { ProfileSetup, type ProfileSetupProps } from './ProfileSetup';
-import { WelcomeScreen, type WelcomeScreenProps } from './WelcomeScreen';
-import { WorkspaceSetup, type WorkspaceSetupProps } from './WorkspaceSetup';
-import { AgentCapabilities, type AgentCapabilitiesProps } from './AgentCapabilities';
-import { AgentConfiguration, type AgentConfigurationProps } from './AgentConfiguration';
-import { AgentTesting, type AgentTestingProps } from './AgentTesting';
-import { DeploymentConfiguration, type DeploymentConfigurationProps } from './DeploymentConfiguration';
-import { DeploymentProgress, type DeploymentProgressProps } from './DeploymentProgress';
-import { RailwayConnection, type RailwayConnectionProps } from './RailwayConnection';
-import { PermissionMatrix, type PermissionMatrixProps } from './PermissionMatrix';
-import { RoleConfiguration, type RoleConfigurationProps } from './RoleConfiguration';
-import { DiagnosticsRunner, type DiagnosticsRunnerProps } from './DiagnosticsRunner';
-import { ProblemIdentification, type ProblemIdentificationProps } from './ProblemIdentification';
-import { SolutionSteps, type SolutionStepsProps } from './SolutionSteps';
+import { ProfileSetup, type ProfileSetupProps } from './ProfileSetup.js';
+import { WelcomeScreen, type WelcomeScreenProps } from './WelcomeScreen.js';
+import { WorkspaceSetup, type WorkspaceSetupProps } from './WorkspaceSetup.js';
+import { AgentCapabilities, type AgentCapabilitiesProps } from './AgentCapabilities.js';
+import { AgentConfiguration, type AgentConfigurationProps } from './AgentConfiguration.js';
+import { AgentTesting, type AgentTestingProps } from './AgentTesting.js';
+import { DeploymentConfiguration, type DeploymentConfigurationProps } from './DeploymentConfiguration.js';
+import { DeploymentProgress, type DeploymentProgressProps } from './DeploymentProgress.js';
+import { RailwayConnection, type RailwayConnectionProps } from './RailwayConnection.js';
+import { PermissionMatrix, type PermissionMatrixProps } from './PermissionMatrix.js';
+import { RoleConfiguration, type RoleConfigurationProps } from './RoleConfiguration.js';
+import { DiagnosticsRunner, type DiagnosticsRunnerProps } from './DiagnosticsRunner.js';
+import { ProblemIdentification, type ProblemIdentificationProps } from './ProblemIdentification.js';
+import { SolutionSteps, type SolutionStepsProps } from './SolutionSteps.js';
 
 // Re-export
 export {

@@ -8,8 +8,8 @@ dotenv.config();
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
-import { AppModule } from './app.module';
-import { validateGcpEnvironment } from './config/gcp.config';
+import { AppModule } from './app.module.js';
+import { validateGcpEnvironment } from './config/gcp.config.js';
 
 const logger = new Logger('Bootstrap');
 

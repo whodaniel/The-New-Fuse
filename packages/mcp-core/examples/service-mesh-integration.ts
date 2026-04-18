@@ -10,9 +10,9 @@ import {
   KubernetesServiceMeshProvider,
   ServiceMeshMonitor,
   ServiceMeshScaler
-} from '../src/integrations';
-import { MCPServiceInfo } from '../src/types/broker';
-import { ServiceStatus } from '../src/types/common';
+} from '../src/integrations/index.js';
+import { MCPServiceInfo } from '../src/types/broker.js';
+import { ServiceStatus } from '../src/types/common.js';
 
 async function demonstrateServiceMeshIntegration() {
   console.log('🚀 Starting MCP Service Mesh Integration Demo');

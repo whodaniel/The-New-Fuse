@@ -16,10 +16,10 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { componentGeneratorFlow } from './flows';
-import { modelsToTest } from './models';
-import { prompts, TestPrompt } from './prompts';
-import { validateSchema } from './validator';
+import { componentGeneratorFlow } from './flows.js';
+import { modelsToTest } from './models.js';
+import { prompts, TestPrompt } from './prompts.js';
+import { validateSchema } from './validator.js';
 
 interface InferenceResult {
   modelName: string;

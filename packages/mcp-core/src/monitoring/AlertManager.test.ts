@@ -3,9 +3,9 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { AlertManager } from './AlertManager';
-import { AlertSeverity, AlertStatus } from '../types/monitoring';
-import { Logger } from '../utils/Logger';
+import { AlertManager } from './AlertManager.js';
+import { AlertSeverity, AlertStatus } from '../types/monitoring.js';
+import { Logger } from '../utils/Logger.js';
 
 describe('AlertManager', () => {
   let alertManager: AlertManager;

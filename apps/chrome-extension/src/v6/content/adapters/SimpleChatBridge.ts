@@ -23,8 +23,8 @@ export interface ChatBridgeCallbacks {
   onTranscriptEntry?: (entry: { role: string; content: string; ts: number; seq?: number }) => void;
 }
 
-import { DEFAULT_NODES } from '../../shared/constants';
-import { TnfTranscriptClient } from '../utils/TnfTranscriptClient';
+import { DEFAULT_NODES } from '../../shared/constants.js';
+import { TnfTranscriptClient } from '../utils/TnfTranscriptClient.js';
 
 class SimpleChatBridge {
   private lastResponseText = '';

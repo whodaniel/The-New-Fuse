@@ -26,7 +26,7 @@ import {
   ExtensionEventType,
   ExtensionPermission,
   PermissionType
-} from '../types/ExtensionTypes';
+} from '../types/ExtensionTypes.js';
 
 export interface ExtensionLoaderConfig {
   extensionDirectories: string[];

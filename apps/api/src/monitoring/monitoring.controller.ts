@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
-import { WalletMonitoringService, SystemHealth, SecurityAlert } from './wallet-monitoring.service';
+import { WalletMonitoringService, SystemHealth, SecurityAlert } from './wallet-monitoring.service.js';
 
 @Controller('monitoring')
 export class MonitoringController {

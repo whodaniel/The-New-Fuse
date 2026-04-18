@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { TimelineEvent } from '../types/timeline';
+import { TimelineEvent } from '../types/timeline.js';
 
 /**
  * Type for any function with any parameters and return type

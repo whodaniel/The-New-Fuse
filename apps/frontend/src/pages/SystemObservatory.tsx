@@ -27,6 +27,7 @@ import { PremiumButton } from '../components/ui/premium/PremiumButton';
 // MemoryVisualizer kept for future “cluster view” mode; Semantic tab now primarily uses GraphVisualizer (ReactFlow)
 
 import { GraphVisualizerWrapper as GraphVisualizer } from '../components/wizard/graph/GraphVisualizer';
+import { ArtifactGraphViewer } from '../components/wizard/graph/ArtifactGraphViewer';
 
 type AgentIndex = {
   generatedAt: string;
@@ -204,6 +205,10 @@ export const SystemObservatory: React.FC = () => {
   const [agentSearch, setAgentSearch] = useState<string>('');
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
   const [selectedDocPath, setSelectedDocPath] = useState<string | null>(null);
+
+  // Graph artifact preview state
+  const [previewGraphUrl, setPreviewGraphUrl] = useState<string | null>(null);
+  const [previewGraphTitle, setPreviewGraphTitle] = useState<string | null>(null);
   const [topologyGraph, setTopologyGraph] = useState<{
     nodes: TopologyNode[];
     edges: TopologyEdge[];
@@ -1084,8 +1089,35 @@ export const SystemObservatory: React.FC = () => {
                           </div>
                           <div className="space-y-1">
                             {dataset.graph?.file && (
-                              <ArtifactLink href={dataset.graph.file} label="graph.json" />
+                              <div className="flex items-center justify-between">
+                                <ArtifactLink href={dataset.graph.file} label="graph.json" />
+                                <button
+                                  onClick={() => {
+                                    setPreviewGraphUrl(dataset.graph.file);
+                                    setPreviewGraphTitle(`${dataset.title || dataset.id} (Full Graph)`);
+                                  }}
+                                  className="text-[9px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/20 transition-all font-bold uppercase tracking-tighter"
+                                >
+                                  Preview
+                                </button>
+                              </div>
                             )}
+                            {(dataset.subgraphs ?? []).map((sub, i) => (
+                              sub.files?.json && (
+                                <div key={i} className="flex items-center justify-between">
+                                  <ArtifactLink href={sub.files.json} label={`${sub.domain} subgraph`} />
+                                  <button
+                                    onClick={() => {
+                                      setPreviewGraphUrl(sub.files.json);
+                                      setPreviewGraphTitle(`${sub.domain} Subgraph`);
+                                    }}
+                                    className="text-[9px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/20 transition-all font-bold uppercase tracking-tighter"
+                                  >
+                                    Preview
+                                  </button>
+                                </div>
+                              )
+                            ))}
                             {Object.entries(dataset.reports ?? {})
                               .filter(([, value]) => typeof value === 'string' && value)
                               .map(([key, value]) => (
@@ -1099,6 +1131,24 @@ export const SystemObservatory: React.FC = () => {
                           </div>
                         </div>
                       </div>
+
+                      {/* Modal-like inline preview */}
+                      {previewGraphUrl && (previewGraphUrl.includes(dataset.id) || (dataset.graph?.file === previewGraphUrl)) && (
+                        <div className="mt-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                          <ArtifactGraphViewer 
+                            artifactUrl={previewGraphUrl} 
+                            title={previewGraphTitle} 
+                          />
+                          <div className="flex justify-end mt-2">
+                            <button 
+                              onClick={() => setPreviewGraphUrl(null)}
+                              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                            >
+                              Close Preview
+                            </button>
+                          </div>
+                        </div>
+                      )}
 
                       {!!dataset.subgraphs?.length && (
                         <details className="rounded-md border border-white/10 bg-black/20 p-3">

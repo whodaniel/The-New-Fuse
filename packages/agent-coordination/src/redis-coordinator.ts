@@ -4,13 +4,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { A2APriority, AgentStatus } from '@the-new-fuse/a2a-core';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
-import { BroadcastManager } from './broadcast/broadcast-manager';
-import { RecoveryManager } from './coordination/RecoveryManager';
-import { SharedStateManager } from './coordination/shared-state-manager';
-import { PersistentMetricsCollector, SystemMetrics } from './monitoring/PersistentMetricsCollector';
-import { PresenceTracker } from './presence/presence-tracker';
-import { TaskQueueManager } from './queues/task-queue-manager';
-import { MessageSerializer } from './serializers/message-serializer';
+import { BroadcastManager } from './broadcast/broadcast-manager.js';
+import { RecoveryManager } from './coordination/RecoveryManager.js';
+import { SharedStateManager } from './coordination/shared-state-manager.js';
+import { PersistentMetricsCollector, SystemMetrics } from './monitoring/PersistentMetricsCollector.js';
+import { PresenceTracker } from './presence/presence-tracker.js';
+import { TaskQueueManager } from './queues/task-queue-manager.js';
+import { MessageSerializer } from './serializers/message-serializer.js';
 import {
   AgentTask,
   CoordinationChannel,
@@ -24,7 +24,7 @@ import {
   SerializationFormat,
   SharedState,
   TaskProcessor,
-} from './types/coordination.types';
+} from './types/coordination.types.js';
 
 /**
  * Redis-based agent coordination system

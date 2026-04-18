@@ -8,16 +8,16 @@ import { DatabaseModule } from '@the-new-fuse/database';
 import {
   WORKFLOW_ENGINE_PROVIDER,
   WORKFLOW_EXECUTOR_PROVIDER,
-} from '../providers/workflow-stubs.provider';
-import { AgentApiGrantsService } from '../services/agent-api-grants.service';
-import { AgentService } from '../services/agent.service';
-import { ChatService } from '../services/chat.service';
-import { ClaudeDevAutomationService } from '../services/ClaudeDevAutomationService';
-import { WorkflowService } from '../services/workflow.service';
-import { WebsocketGateway } from '../websocket/websocket.gateway';
-import { TNFMCPController } from './TNFMCPController';
-import { TNFMCPService } from './TNFMCPService';
-import { CacheService } from '../cache/cache.service';
+} from '../providers/workflow-stubs.provider.js';
+import { AgentApiGrantsService } from '../services/agent-api-grants.service.js';
+import { AgentService } from '../services/agent.service.js';
+import { ChatService } from '../services/chat.service.js';
+import { ClaudeDevAutomationService } from '../services/ClaudeDevAutomationService.js';
+import { WorkflowService } from '../services/workflow.service.js';
+import { WebsocketGateway } from '../websocket/websocket.gateway.js';
+import { TNFMCPController } from './TNFMCPController.js';
+import { TNFMCPService } from './TNFMCPService.js';
+import { CacheService } from '../cache/cache.service.js';
 
 @Module({
   // DatabaseModule provides DrizzleService (Drizzle-backed) for all services

@@ -2,4 +2,4 @@
  * MCP Core Examples
  */
 
-export { createBasicMCPServer } from './basic-server';
+export { createBasicMCPServer } from './basic-server.js';

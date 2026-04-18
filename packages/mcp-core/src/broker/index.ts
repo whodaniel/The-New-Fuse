@@ -5,10 +5,10 @@
  * service registry, discovery, health monitoring, and message routing.
  */
 
-export { MCPBroker } from './MCPBroker';
-export { ServiceRegistry } from './ServiceRegistry';
-export { HealthMonitor } from './HealthMonitor';
-export { LoadBalancer } from './LoadBalancer';
-export { MessageRouter } from './MessageRouter';
-export { MessageQueue } from './MessageQueue';
-export { EventSubscriptionManager } from './EventSubscriptionManager';
+export { MCPBroker } from './MCPBroker.js';
+export { ServiceRegistry } from './ServiceRegistry.js';
+export { HealthMonitor } from './HealthMonitor.js';
+export { LoadBalancer } from './LoadBalancer.js';
+export { MessageRouter } from './MessageRouter.js';
+export { MessageQueue } from './MessageQueue.js';
+export { EventSubscriptionManager } from './EventSubscriptionManager.js';

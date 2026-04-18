@@ -6,7 +6,7 @@ import {
   ClaudeSkillsManager,
   SkillCategory,
   SkillExecutionContext,
-} from '../src';
+} from '../src/index.js';
 
 async function main() {
   console.log('=== Claude Skills Integration - Basic Usage ===\n');

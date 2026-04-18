@@ -10,7 +10,7 @@
  * - Performance with large workflows
  */
 
-import { getTestEnvironment } from '../setup/test-setup';
+import { getTestEnvironment } from '../setup/test-setup.js';
 // import { WorkflowBuilder } from '@the-new-fuse/workflow-engine/builder'; // Removed workflow-engine dependency
 // import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
 import { performance } from 'perf_hooks';

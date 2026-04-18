@@ -1,5 +1,5 @@
-import { TestOrchestrator, TestExecutionPlan, TestType, TestPlanStatus } from './TestOrchestrator';
-import { TestFramework, TestStatus } from './TestRunner';
+import { TestOrchestrator, TestExecutionPlan, TestType, TestPlanStatus } from './TestOrchestrator.js';
+import { TestFramework, TestStatus } from './TestRunner.js';
 import winston from 'winston';
 
 // Mock the TestRunner

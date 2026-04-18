@@ -10,10 +10,10 @@ import {
   MCPRequest, 
   MCPResponse, 
   MCPNotification 
-} from '../interfaces/IMCPMessage';
-import { MCPConnection } from '../interfaces/IMCPConnection';
-import { MCPErrorClass, MCPErrorCode } from '../types/error';
-import { RetryPolicy, TimeoutConfig } from '../types/common';
+} from '../interfaces/IMCPMessage.js';
+import { MCPConnection } from '../interfaces/IMCPConnection.js';
+import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
+import { RetryPolicy, TimeoutConfig } from '../types/common.js';
 
 /**
  * Pending request information

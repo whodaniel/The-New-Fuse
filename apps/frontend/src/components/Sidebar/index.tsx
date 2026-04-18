@@ -7,10 +7,10 @@ import { Link } from 'react-router-dom';
 import useLogo from '@/hooks/useLogo';
 import useUser from '@/hooks/useUser';
 import paths from '@/utils/paths';
-import { Footer } from '../Footer';
+import { Footer } from '../Footer/index';
 import NewWorkspaceModal, { useNewWorkspaceModal } from '../Modals/NewWorkspace';
-import { SettingsButton } from '../SettingsButton';
-import ActiveWorkspaces from './ActiveWorkspaces';
+import { SettingsButton } from '../SettingsButton/index';
+import ActiveWorkspaces from './ActiveWorkspaces/index';
 
 const STYLES = {
   container: 'flex shrink-0 max-w-[55%] items-center justify-start mx-[38px] my-[18px]',

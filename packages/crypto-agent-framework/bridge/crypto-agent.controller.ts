@@ -16,7 +16,7 @@ import {
   Logger,
   UseGuards
 } from '@nestjs/common';
-import { CryptoAgentService, CryptoAgentTask } from './crypto-agent.service';
+import { CryptoAgentService, CryptoAgentTask } from './crypto-agent.service.js';
 
 // Assuming you have an auth guard in your TNF setup
 // import { JwtAuthGuard } from '../auth/jwt-auth.guard';

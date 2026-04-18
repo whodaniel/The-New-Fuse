@@ -14,16 +14,16 @@
  */
 
 import * as vscode from 'vscode';
-import { ConfigManager } from '../core/config';
+import { ConfigManager } from '../core/config.js';
 import {
   ChatMessage,
   LLMProviderConfig,
   LLMProviderType,
   LLMRequest,
   LLMResponse,
-} from '../core/types';
-import { generateId } from '../utils/helpers';
-import { log } from '../utils/logger';
+} from '../core/types.js';
+import { generateId } from '../utils/helpers.js';
+import { log } from '../utils/logger.js';
 
 interface ProviderStatus {
   available: boolean;

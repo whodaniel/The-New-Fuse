@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { db, desc, eq, notifications } from '@the-new-fuse/database';
 import axios from 'axios';
-import { EventBus } from '../events/event-bus.service';
-import { EmailService } from '../services/email.service';
-import { LoggingService } from '../services/logging.service';
-import { UsersService } from '../users/users.service';
+import { EventBus } from '../events/event-bus.service.js';
+import { EmailService } from '../services/email.service.js';
+import { LoggingService } from '../services/logging.service.js';
+import { UsersService } from '../users/users.service.js';
 
 @Injectable()
 export class NotificationService {

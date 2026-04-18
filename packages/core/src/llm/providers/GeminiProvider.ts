@@ -7,7 +7,7 @@ import {
   Part,
 // @ts-ignore
 } from '@google/generative-ai';
-import { LLMProvider } from '../LLMProvider';
+import { LLMProvider } from '../LLMProvider.js';
 import { LLMMessage, LLMResponse, LLMConfig } from '@the-new-fuse/types';
 
 export interface GeminiConfig extends LLMConfig {

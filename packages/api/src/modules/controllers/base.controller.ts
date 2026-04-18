@@ -5,7 +5,7 @@
 
 import { Logger } from '@nestjs/common';
 import { ApiResponse } from '@the-new-fuse/types';
-import { toError } from '../../utils/error'; // Import the helper
+import { toError } from '../../utils/error.js'; // Import the helper
 
 export abstract class BaseController {
   protected readonly logger: Logger;

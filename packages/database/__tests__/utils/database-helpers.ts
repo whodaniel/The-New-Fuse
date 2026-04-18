@@ -4,7 +4,7 @@
  */
 
 import { sql } from 'drizzle-orm';
-import { getTestDb } from '../setup';
+import { getTestDb } from '../setup.js';
 
 /**
  * Execute raw SQL query (for setup/cleanup tasks)

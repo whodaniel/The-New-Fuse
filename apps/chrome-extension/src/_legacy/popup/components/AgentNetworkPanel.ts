@@ -5,7 +5,7 @@
  * and allows sending messages between agents.
  */
 
-import { RedisAgentInfo, RedisAgentMessage, redisBridge } from '../../federation';
+import { RedisAgentInfo, RedisAgentMessage, redisBridge } from '../../federation/index.js';
 
 export class AgentNetworkPanel {
   private container: HTMLElement;

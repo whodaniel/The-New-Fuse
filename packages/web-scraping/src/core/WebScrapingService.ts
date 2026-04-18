@@ -16,7 +16,7 @@ import {
   ScrapingResult,
   SecurityPolicy,
   WebScrapingConfig,
-} from '../types';
+} from '../types/index.js';
 // Simple error and monitoring implementations for web scraping
 class BaseErrorHandler {
   async handleError(error: Error, context?: any): Promise<void> {

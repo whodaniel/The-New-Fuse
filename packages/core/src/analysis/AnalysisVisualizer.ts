@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AnalysisResult, AnalysisReport } from './AnalysisManager';
+import { AnalysisResult, AnalysisReport } from './AnalysisManager.js';
 
 export interface VisualizationOptions {
   format?: 'json' | 'html' | 'svg' | 'text';

@@ -1,5 +1,5 @@
 import { DatabaseService } from '@the-new-fuse/database/drizzle';
-import { ResourceInteractionService } from './resource-interaction.service';
+import { ResourceInteractionService } from './resource-interaction.service.js';
 
 describe('ResourceInteractionService', () => {
   it('creates a favorite when none exists', async () => {

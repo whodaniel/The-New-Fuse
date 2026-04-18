@@ -6,7 +6,7 @@ import {
   Annotation,
   ActivityEvent,
   CollaborationState,
-} from '../collaboration/types';
+} from '../collaboration/types.js';
 
 export function useCollaboration(
   websocketUrl: string,

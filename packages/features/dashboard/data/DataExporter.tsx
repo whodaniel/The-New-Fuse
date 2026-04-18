@@ -1,4 +1,4 @@
-import { DataExportOptions } from '../types/dataExport';
+import { DataExportOptions } from '../types/dataExport.js';
 
 interface DataExportOptions {
   format: csv' | 'json' | 'xml';

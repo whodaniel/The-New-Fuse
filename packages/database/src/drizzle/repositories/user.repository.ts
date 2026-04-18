@@ -1,7 +1,7 @@
 import { desc, eq, inArray, or } from 'drizzle-orm';
-import { db } from '../client';
-import { authSessions, users } from '../schema';
-import type { NewUser, User } from '../types';
+import { db } from '../client.js';
+import { authSessions, users } from '../schema/index.js';
+import type { NewUser, User } from '../types.js';
 
 /**
  * User Repository - provides data access for User entities

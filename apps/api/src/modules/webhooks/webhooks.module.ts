@@ -7,12 +7,12 @@ import { JwtModule } from '@nestjs/jwt';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseModule } from '@the-new-fuse/database';
-import { BusinessEventService } from './services/business-event.service';
-import { IntegrationService } from './services/integration.service';
-import { SSEService } from './services/sse.service';
-import { WebhookSecurityService } from './services/webhook-security.service';
-import { WebhooksController } from './webhooks.controller';
-import { WebhooksService } from './webhooks.service';
+import { BusinessEventService } from './services/business-event.service.js';
+import { IntegrationService } from './services/integration.service.js';
+import { SSEService } from './services/sse.service.js';
+import { WebhookSecurityService } from './services/webhook-security.service.js';
+import { WebhooksController } from './webhooks.controller.js';
+import { WebhooksService } from './webhooks.service.js';
 
 @Module({
   imports: [

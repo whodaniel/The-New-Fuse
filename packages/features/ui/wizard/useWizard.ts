@@ -5,7 +5,7 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
-import { WizardDefinition, WizardProgress, WizardStateManager, WizardStep } from './WizardSystem';
+import { WizardDefinition, WizardProgress, WizardStateManager, WizardStep } from './WizardSystem.js';
 
 export interface UseWizardOptions {
   wizardId: string;

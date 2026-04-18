@@ -5,7 +5,7 @@ import showToast from '@/utils/toast';
 import { CircleNotch, Plus, Trash } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import ThreadItem from './ThreadItem';
+import ThreadItem from './ThreadItem/index';
 export const THREAD_RENAME_EVENT = 'renameThread';
 const STYLES = {
   loadingContainer: 'flex flex-col bg-pulse w-full h-10 items-center justify-center',

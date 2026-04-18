@@ -3,8 +3,8 @@
  * Tests all 15 methods of the user repository
  */
 
-import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository';
-import { UserFactory, SessionFactory } from '../utils/factories';
+import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository.js';
+import { UserFactory, SessionFactory } from '../utils/factories.js';
 import {
   expectDatabaseRow,
   expectSoftDeleted,
@@ -14,8 +14,8 @@ import {
   expectValidEmail,
   expectNotDeleted,
   expectDeleted,
-} from '../utils/assertions';
-import { pastTimestamp, futureTimestamp } from '../utils/database-helpers';
+} from '../utils/assertions.js';
+import { pastTimestamp, futureTimestamp } from '../utils/database-helpers.js';
 
 describe('DrizzleUserRepository', () => {
   describe('create', () => {

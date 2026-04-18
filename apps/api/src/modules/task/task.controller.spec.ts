@@ -1,11 +1,11 @@
 import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { UnifiedLedgerService } from '../unified-ledger/unified-ledger.service';
-import { CreateTaskExecutionLogDto } from './dto/task.dto';
-import { TaskController } from './task.controller';
-import { TaskService } from './task.service';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
+import { UnifiedLedgerService } from '../unified-ledger/unified-ledger.service.js';
+import { CreateTaskExecutionLogDto } from './dto/task.dto.js';
+import { TaskController } from './task.controller.js';
+import { TaskService } from './task.service.js';
 
 describe('TaskController', () => {
   let controller: TaskController;

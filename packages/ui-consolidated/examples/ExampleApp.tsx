@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Card, Input, Select } from '../src';
-import { ConversationExportDemo } from '../src/components/ConversationExportDemo';
+import { Button, Card, Input, Select } from '../src/index.js';
+import { ConversationExportDemo } from '../src/components/ConversationExportDemo.js';
 import { Mail, Eye, EyeOff } from 'lucide-react';
 
 /**

@@ -1,2 +1,2 @@
-export * from './connection-pool';
-export * from './connection-manager';
+export * from './connection-pool.js';
+export * from './connection-manager.js';

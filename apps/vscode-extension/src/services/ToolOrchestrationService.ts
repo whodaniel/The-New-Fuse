@@ -6,10 +6,10 @@
  * Implements multi-turn orchestration loop for agentic behavior.
  */
 
-import type { ChatMessage, MCPTool, ToolDefinition, ToolUse } from '../core/types';
-import { log } from '../utils/logger';
-import { getAIService } from './AIService';
-import { getMCPService } from './MCPService';
+import type { ChatMessage, MCPTool, ToolDefinition, ToolUse } from '../core/types.js';
+import { log } from '../utils/logger.js';
+import { getAIService } from './AIService.js';
+import { getMCPService } from './MCPService.js';
 
 /**
  * Configuration for tool orchestration loop

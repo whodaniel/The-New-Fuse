@@ -2,7 +2,6 @@
 # NOTE: Do NOT set global [build] section - each service specifies its own builder
 
 # API Gateway Service (uses Docker)
-# API Gateway Service (uses Docker)
 [services.api-gateway]
 builder = "DOCKERFILE"
 [services.api-gateway.build]
@@ -10,7 +9,8 @@ dockerfilePath = "Dockerfile.railway"
 dockerBuildArgs = { SERVICE_PATH = "api-gateway", SERVICE_NAME = "@the-new-fuse/api-gateway" }
 watchPatterns = ["apps/api-gateway/**", "packages/**"]
 [services.api-gateway.deploy]
-healthcheckPath = "/health"
+healthcheckPath = "/api/v1/health"
+port = 8080
 
 # API Service (uses Docker)
 [services.api]
@@ -20,8 +20,9 @@ dockerfilePath = "Dockerfile.railway"
 dockerBuildArgs = { SERVICE_PATH = "api", SERVICE_NAME = "@the-new-fuse/api-server" }
 watchPatterns = ["apps/api/**", "packages/**"]
 [services.api.deploy]
-healthcheckPath = "/api/health"
+healthcheckPath = "/api/v1/health"
 startCommand = "/bin/sh ./run-service.sh"
+port = 3001
 restartPolicyType = "ON_FAILURE"
 # Redis service is linked - REDIS_URL will be automatically provided by Railway
 
@@ -34,6 +35,7 @@ dockerBuildArgs = { SERVICE_PATH = "backend", SERVICE_NAME = "@the-new-fuse/back
 watchPatterns = ["apps/backend/**", "packages/**"]
 [services.backend.deploy]
 healthcheckPath = "/health"
+port = 3001
 # Redis service is linked - REDIS_URL will be automatically provided by Railway
 
 [[services.backend.cron]]

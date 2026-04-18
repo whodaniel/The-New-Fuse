@@ -5,7 +5,7 @@
  * between browser tabs running AI chat sessions.
  */
 
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 
 // ============================================================================
 // TYPES (Inline to avoid import issues - mirrors shared types)

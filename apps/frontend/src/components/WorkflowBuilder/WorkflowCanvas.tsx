@@ -13,7 +13,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import { useWorkflow } from '../../hooks/useWorkflow';
 import { showNotification } from '../../utils/notifications';
-import { edgeTypes } from '../workflow/edges';
+import { edgeTypes } from '../workflow/edges/index';
 import { WorkflowToolbar } from '../workflow/WorkflowToolbar';
 import { nodeTypes } from './nodes';
 import { NodeToolbar } from './NodeToolbar';

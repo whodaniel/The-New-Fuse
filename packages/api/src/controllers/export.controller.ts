@@ -2,7 +2,7 @@ import { Controller, Post, Body, Res, HttpStatus, UseGuards } from '@nestjs/comm
 import { Response } from 'express';
 import { IsIn, IsNotEmpty, IsString } from 'class-validator';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard.js';
 
 type ExportFormat = 'pdf' | 'md' | 'txt';
 

@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import Redis from 'ioredis';
-import { AgentInbox } from '../../shared/agent-inbox';
-import { HeartbeatMonitoringService } from './orchestrator.service';
+import { AgentInbox } from '../../shared/agent-inbox.js';
+import { HeartbeatMonitoringService } from './orchestrator.service.js';
 
 export interface AgentRegistration {
   agentId: string;

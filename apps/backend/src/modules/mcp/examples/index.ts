@@ -4,13 +4,13 @@
  * Export all example agents and coordination patterns
  */
 
-export { CoordinatorAgent, runCoordinatorExample } from './coordinator-agent';
-export { DataProcessingAgent, runDataProcessingExample } from './data-processing-agent';
-export { APIIntegrationAgent, runAPIIntegrationExample } from './api-integration-agent';
+export { CoordinatorAgent, runCoordinatorExample } from './coordinator-agent.js';
+export { DataProcessingAgent, runDataProcessingExample } from './data-processing-agent.js';
+export { APIIntegrationAgent, runAPIIntegrationExample } from './api-integration-agent.js';
 export {
   runMultiAgentCoordination,
   AdvancedCoordinationPatterns,
-} from './multi-agent-coordination';
+} from './multi-agent-coordination.js';
 
 /**
  * Run all examples sequentially

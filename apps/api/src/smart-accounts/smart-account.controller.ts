@@ -1,5 +1,5 @@
 import { Controller, Post, Get, Body, Param, Logger } from '@nestjs/common';
-import { SmartAccountService } from './smart-account.service';
+import { SmartAccountService } from './smart-account.service.js';
 
 @Controller('smart-accounts')
 export class SmartAccountController {

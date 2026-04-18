@@ -6,10 +6,10 @@
  */
 
 import * as vscode from 'vscode';
-import { MCPMarketplaceServer } from '../core/types';
-import { log } from '../utils/logger';
-import { ConfigManager } from '../core/config';
-import { getMCPService } from './MCPService';
+import { MCPMarketplaceServer } from '../core/types.js';
+import { log } from '../utils/logger.js';
+import { ConfigManager } from '../core/config.js';
+import { getMCPService } from './MCPService.js';
 
 /**
  * Service for discovery and installation of MCP servers

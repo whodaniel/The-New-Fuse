@@ -1,4 +1,4 @@
-import { simpleChatBridge } from './adapters/SimpleChatBridge';
+import { simpleChatBridge } from './adapters/SimpleChatBridge.js';
 
 export class SelfPrompter {
   private readonly IDLE_THRESHOLD_MS = 45000; // 45 seconds

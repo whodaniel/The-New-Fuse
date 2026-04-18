@@ -5,8 +5,8 @@
  * for use across The New Fuse platform.
  */
 
-export * from './AnthropicProvider';
-export * from './GeminiProvider';
-export * from './GoogleADKProvider';
-export * from './OpenCodeApiProvider';
-export * from './OpenCodeCliProvider';
+export * from './AnthropicProvider.js';
+export * from './GeminiProvider.js';
+export * from './GoogleADKProvider.js';
+export * from './OpenCodeApiProvider.js';
+export * from './OpenCodeCliProvider.js';

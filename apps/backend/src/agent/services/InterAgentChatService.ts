@@ -2,9 +2,9 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import * as crypto from 'crypto';
-import { RedisService } from '../../services/redis.service';
-import { AlertService } from './AlertService';
-import { MonitoringService } from './MonitoringService';
+import { RedisService } from '../../services/redis.service.js';
+import { AlertService } from './AlertService.js';
+import { MonitoringService } from './MonitoringService.js';
 
 interface AgentMessage {
   id: string;

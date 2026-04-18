@@ -2,9 +2,9 @@
  * Message serialization utilities for MCP protocol
  */
 
-import { MCPMessage, MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
-import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
-import { MessageValidator } from './messageValidator';
+import { MCPMessage, MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage.js';
+import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error.js';
+import { MessageValidator } from './messageValidator.js';
 
 /**
  * Serialization options interface

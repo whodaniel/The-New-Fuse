@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 // Import from our mocks instead of the actual package
-import { AgentService, Agent, AgentCreateData, AgentUpdateData } from '../mocks/api-client';
+import { AgentService, Agent, AgentCreateData, AgentUpdateData } from '../mocks/api-client.js';
 
 /**
  * Agents hook result

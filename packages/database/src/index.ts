@@ -21,13 +21,13 @@ export {
   type DrizzleClient,
   type DrizzleModuleOptions,
   type Transaction,
-} from './drizzle';
+} from './drizzle/index.js';
 
 // Export DatabaseService
-export { DatabaseService } from './drizzle/database.service';
+export { DatabaseService } from './drizzle/database.service.js';
 
 // Export Drizzle schema tables
-export * as drizzleSchema from './drizzle/schema';
+export * as drizzleSchema from './drizzle/schema/index.js';
 
 // Export commonly used schema tables directly for convenience
 export {
@@ -58,7 +58,7 @@ export {
   workflows,
   workspaceMembers,
   workspaces,
-} from './drizzle/schema';
+} from './drizzle/schema/index.js';
 
 // Export Drizzle inferred types
 export type {
@@ -90,7 +90,7 @@ export type {
   WorkflowExecution,
   Workspace,
   WorkspaceMember,
-} from './drizzle/types';
+} from './drizzle/types.js';
 
 // Export Drizzle repositories
 export {
@@ -131,7 +131,7 @@ export {
   workflowTopologyRepository,
   type AuditLogEntry,
   type AuditLogQuery,
-} from './drizzle/repositories';
+} from './drizzle/repositories/index.js';
 
 // Export backwards compatibility repository aliases
 export {
@@ -142,7 +142,7 @@ export {
   UserRepository,
   WorkflowExecutionRepository,
   WorkflowRepository,
-} from './drizzle/compatibility';
+} from './drizzle/compatibility.js';
 
 // Export Drizzle query utilities
 export {
@@ -176,7 +176,7 @@ export {
   userRoleEnum,
   workflowExecutionStatusEnum,
   workflowStatusEnum,
-} from './drizzle/schema';
+} from './drizzle/schema/index.js';
 
 // Re-export TypeScript enum type aliases for type annotations
 export type {
@@ -192,4 +192,4 @@ export type {
   WalletType,
   WorkflowExecutionStatus,
   WorkflowStatus,
-} from './drizzle/types';
+} from './drizzle/types.js';

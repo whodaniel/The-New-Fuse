@@ -6,9 +6,9 @@
  */
 
 import { EventEmitter } from 'events';
-import { ServiceHealth, HealthCheckConfig } from '../types';
-import { ServiceStatus } from '../types/common';
-import { MCPErrorClass, MCPErrorCode } from '../types/error';
+import { ServiceHealth, HealthCheckConfig } from '../types/index.js';
+import { ServiceStatus } from '../types/common.js';
+import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
 
 /**
  * Service health tracking information

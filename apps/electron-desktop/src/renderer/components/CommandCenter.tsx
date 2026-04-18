@@ -14,11 +14,11 @@ import {
   HStack,
   useToast
 } from '@chakra-ui/react'
-import type { RootState } from '../store/store'
-import { ConnectionTab } from './tabs/ConnectionTab'
-import { ElementsTab } from './tabs/ElementsTab'
-import { ChatTab } from './tabs/ChatTab'
-import { LocalServicesTab } from './tabs/LocalServicesTab'
+import type { RootState } from '../store/store.js'
+import { ConnectionTab } from './tabs/ConnectionTab.js'
+import { ElementsTab } from './tabs/ElementsTab.js'
+import { ChatTab } from './tabs/ChatTab.js'
+import { LocalServicesTab } from './tabs/LocalServicesTab.js'
 
 export const CommandCenter: React.FC = () => {
   const dispatch = useDispatch()

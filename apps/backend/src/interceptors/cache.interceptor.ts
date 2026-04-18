@@ -9,7 +9,7 @@ import {
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Request } from 'express';
-import { RedisService } from '../services/redis.service';
+import { RedisService } from '../services/redis.service.js';
 
 /**
  * Cache Interceptor for GET requests

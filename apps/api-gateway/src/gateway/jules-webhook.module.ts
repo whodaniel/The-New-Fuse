@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common';
 import { DatabaseService } from '@the-new-fuse/database';
 // @ts-ignore
 import { RedisModule } from '@the-new-fuse/infrastructure';
-import { JulesWebhookController } from './jules-webhook.controller';
+import { JulesWebhookController } from './jules-webhook.controller.js';
 
 // Placeholder for the JulesUsageTracker
 class JulesUsageTracker {

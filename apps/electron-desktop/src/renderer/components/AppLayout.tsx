@@ -1,9 +1,9 @@
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import React, { useState } from 'react';
-import { ConsoleView } from './ConsoleView';
-import { QuickActionsDashboard } from './QuickActionsDashboard';
-import { Sidebar } from './Sidebar';
-import CredentialsTab from './tabs/CredentialsTab';
+import { ConsoleView } from './ConsoleView.js';
+import { QuickActionsDashboard } from './QuickActionsDashboard.js';
+import { Sidebar } from './Sidebar.js';
+import CredentialsTab from './tabs/CredentialsTab.js';
 
 export const AppLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);

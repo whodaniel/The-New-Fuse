@@ -26,9 +26,9 @@ const FiArrowLeftFixed = FiArrowLeft as any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const FiChevronRightFixed = FiChevronRight as any;
 
-import AgentFlowViewer from './components/AgentFlowViewer';
-import ServiceMapViewer from './components/ServiceMapViewer';
-import SystemKnowledgeMap from './components/SystemKnowledgeMap';
+import AgentFlowViewer from './components/AgentFlowViewer.js';
+import ServiceMapViewer from './components/ServiceMapViewer.js';
+import SystemKnowledgeMap from './components/SystemKnowledgeMap.js';
 
 function App() {
   const [view, setView] = useState('dashboard'); // dashboard | agent-flow | knowledge-map | service-map

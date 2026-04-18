@@ -6,7 +6,7 @@
 
 import { Check, Edit2, Shield, Trash2, UserPlus, Users } from 'lucide-react';
 import React, { useState } from 'react';
-import { WizardContext } from '../WizardSystem';
+import { WizardContext } from '../WizardSystem.js';
 
 export interface RoleConfigurationProps {
   context: WizardContext;

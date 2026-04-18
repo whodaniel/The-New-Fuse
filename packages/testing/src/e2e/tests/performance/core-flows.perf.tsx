@@ -1,4 +1,4 @@
-import { test, expect } from '../../fixtures/custom-test';
+import { test, expect } from '../../fixtures/custom-test.js';
 import { performance } from 'perf_hooks';
 
 test.describe('Performance Tests - Core Flows', () => {

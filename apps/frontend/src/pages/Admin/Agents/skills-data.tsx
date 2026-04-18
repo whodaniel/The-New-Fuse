@@ -6,8 +6,8 @@ import SummarizeImage from '@/media/agents/view-summarize.png';
 import { BarChart, Brain, File, FileSearch, Search } from 'lucide-react';
 import DefaultSkillPanel from './DefaultSkillPanel';
 import GenericSkillPanel from './GenericSkillPanel';
-import AgentSQLConnectorSelection from './SQLConnectorSelection';
-import AgentWebSearchSelection from './WebSearchSelection';
+import AgentSQLConnectorSelection from './SQLConnectorSelection/index';
+import AgentWebSearchSelection from './WebSearchSelection/index';
 
 export const defaultSkills = {
   'rag-memory': {

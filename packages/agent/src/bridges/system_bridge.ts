@@ -9,7 +9,7 @@
  * - Environment management
  */
 
-import { BaseBridge, MessageType, Priority } from './index';
+import { BaseBridge, MessageType, Priority } from './index.js';
 
 // ============================================================
 // SYSTEM TYPES

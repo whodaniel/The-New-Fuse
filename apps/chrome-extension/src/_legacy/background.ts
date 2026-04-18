@@ -6,12 +6,12 @@
 import {
   browserControlHandler,
   BrowserControlMessageType,
-} from './background/browser-control-handler';
-import { federationManager } from './federation/FederationManager';
-import { ConnectionStatusMessage } from './shared-protocol';
-import { FileTransferManager } from './utils/file-transfer';
-import { Logger } from './utils/logger';
-import { WebSocketManager } from './utils/websocket-manager';
+} from './background/browser-control-handler.js';
+import { federationManager } from './federation/FederationManager.js';
+import { ConnectionStatusMessage } from './shared-protocol.js';
+import { FileTransferManager } from './utils/file-transfer.js';
+import { Logger } from './utils/logger.js';
+import { WebSocketManager } from './utils/websocket-manager.js';
 
 // Initialize a background-specific logger
 const backgroundLogger = new Logger({

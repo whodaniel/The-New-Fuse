@@ -1,7 +1,7 @@
 import { Controller, Get, Logger, Param, Query } from '@nestjs/common';
 import { db, sql } from '@the-new-fuse/database';
 import type { MCPTool } from '@the-new-fuse/mcp-core';
-import { MCPToolRegistry } from './mcp-tool-registry.service';
+import { MCPToolRegistry } from './mcp-tool-registry.service.js';
 
 type McpParamType = 'string' | 'number' | 'boolean' | 'object' | 'array';
 

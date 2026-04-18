@@ -1,3 +1,3 @@
-export { PerformanceMetricsService } from './performance-metrics.service';
-export { PerformanceMetricsController } from './performance-metrics.controller';
-export { PerformanceMetricsModule } from './performance-metrics.module';
+export { PerformanceMetricsService } from './performance-metrics.service.js';
+export { PerformanceMetricsController } from './performance-metrics.controller.js';
+export { PerformanceMetricsModule } from './performance-metrics.module.js';

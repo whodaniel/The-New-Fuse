@@ -48,7 +48,7 @@ import {
   RateLimitTier,
   SecureAuthGuard,
   SetRateLimitTier,
-} from '../guards/secure-auth.guard';
+} from '../guards/secure-auth.guard.js';
 
 @ApiTags('monitoring')
 @Controller('monitoring')

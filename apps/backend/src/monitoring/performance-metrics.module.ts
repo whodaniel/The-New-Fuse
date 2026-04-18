@@ -1,9 +1,9 @@
 import { Global, Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { PerformanceInterceptor } from '../interceptors/performance.interceptor';
-import { MonitoringController } from './monitoring.controller';
-import { PerformanceMetricsController } from './performance-metrics.controller';
-import { PerformanceMetricsService } from './performance-metrics.service';
+import { PerformanceInterceptor } from '../interceptors/performance.interceptor.js';
+import { MonitoringController } from './monitoring.controller.js';
+import { PerformanceMetricsController } from './performance-metrics.controller.js';
+import { PerformanceMetricsService } from './performance-metrics.service.js';
 
 @Global()
 @Module({

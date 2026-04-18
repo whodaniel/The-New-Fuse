@@ -1,10 +1,10 @@
 import { Module, Global } from '@nestjs/common';
-import { SecurityLoggingService } from './security-logging.service';
-import { InputSanitizationService } from './input-sanitization.service';
-import { ResponseSanitizationService } from './response-sanitization.service';
-import { EnhancedRateLimitService } from './enhanced-rate-limit.service';
-import { ApiEndpointMonitoringService } from './api-endpoint-monitoring.service';
-import { SecurityIntegrationService } from './security-integration.service';
+import { SecurityLoggingService } from './security-logging.service.js';
+import { InputSanitizationService } from './input-sanitization.service.js';
+import { ResponseSanitizationService } from './response-sanitization.service.js';
+import { EnhancedRateLimitService } from './enhanced-rate-limit.service.js';
+import { ApiEndpointMonitoringService } from './api-endpoint-monitoring.service.js';
+import { SecurityIntegrationService } from './security-integration.service.js';
 
 /**
  * Global Security Module

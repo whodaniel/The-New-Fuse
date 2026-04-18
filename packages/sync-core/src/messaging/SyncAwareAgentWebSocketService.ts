@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { SyncRedisConfig } from '../config/SyncRedisConfig';
+import { SyncRedisConfig } from '../config/SyncRedisConfig.js';
 import {
   SyncAwareA2AMessage,
   SyncMetadata,
@@ -8,7 +8,7 @@ import {
   CrossTenantRoutingConfig,
   MessageDeliveryMetrics,
   SyncAwareMessageUtils
-} from './SyncAwareA2AMessage';
+} from './SyncAwareA2AMessage.js';
 
 export interface IAgentWebSocketService {
   sendMessage(agentId: string, message: any): Promise<boolean>;

@@ -1,18 +1,18 @@
 // @ts-nocheck
 // Core UI Components
-export * from './core';
+export * from './core/index';
 
 // Feature Components
-export * from './features';
+export * from './features/index';
 
 // Shared Components
-export * from './shared/ThemeToggle';
+export * from './shared/ThemeToggle/index';
 
 // Providers
-export * from './providers';
+export * from './providers/index';
 
 // Layout Components
-export * from './layout';
+export * from './layout/index';
 
 // Import renamed components
 export { Card, WorkflowControls, WorkflowVisualizer } from '@the-new-fuse/ui-consolidated';

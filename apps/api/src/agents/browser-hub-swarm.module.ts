@@ -4,8 +4,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseModule } from '@the-new-fuse/database';
-import { BrowserHubSwarmController } from './browser-hub-swarm.controller';
-import { BrowserHubSwarmService } from './browser-hub-swarm.service';
+import { BrowserHubSwarmController } from './browser-hub-swarm.controller.js';
+import { BrowserHubSwarmService } from './browser-hub-swarm.service.js';
 
 @Module({
   imports: [

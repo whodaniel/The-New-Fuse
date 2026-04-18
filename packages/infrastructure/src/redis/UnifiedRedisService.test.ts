@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { UnifiedRedisService } from './UnifiedRedisService';
-import { RedisConfig } from './RedisConfig';
+import { UnifiedRedisService } from './UnifiedRedisService.js';
+import { RedisConfig } from './RedisConfig.js';
 
 describe('UnifiedRedisService', () => {
   let service: UnifiedRedisService;

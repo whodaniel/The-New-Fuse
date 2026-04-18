@@ -5,25 +5,127 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Podcast Agent Subgraph</title>
   <style>
-    :root { --bg:#0f172a; --panel:#111827; --text:#e5e7eb; --muted:#9ca3af; }
-    body { margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial; background: radial-gradient(circle at 15% 20%, #1f2937, #0b1020 55%); color:var(--text); }
-    .wrap { display:grid; grid-template-columns: 320px 1fr; min-height:100vh; }
-    .side { background: rgba(17,24,39,0.95); border-right:1px solid #1f2937; padding:16px; }
-    .main { position:relative; }
-    h1 { font-size:18px; margin:0 0 8px; }
-    .meta { color:var(--muted); font-size:12px; margin-bottom:12px; }
-    .legend { font-size:12px; color:var(--muted); }
-    svg { width:100%; height:100vh; display:block; }
-    .tooltip { position:absolute; pointer-events:none; background:#0b1220; border:1px solid #334155; border-radius:6px; padding:6px 8px; font-size:12px; color:#e5e7eb; display:none; }
+    :root { 
+      --bg: #020617; 
+      --panel: rgba(15, 23, 42, 0.8); 
+      --accent: #6366f1; 
+      --text: #f8fafc; 
+      --muted: #64748b; 
+    }
+    * { box-sizing: border-box; }
+    body { 
+      margin: 0; 
+      font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+      background: var(--bg); 
+      color: var(--text);
+      overflow: hidden;
+    }
+    .wrap { display: grid; grid-template-columns: 360px 1fr; height: 100vh; }
+    .side { 
+      background: var(--panel); 
+      backdrop-filter: blur(12px); 
+      border-right: 1px solid rgba(255, 255, 255, 0.05); 
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+    }
+    .main { position: relative; background: radial-gradient(circle at 50% 50%, #0f172a, #020617); }
+    
+    h1 { 
+      font-size: 24px; 
+      font-weight: 800; 
+      margin: 0 0 12px; 
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .meta { 
+      color: var(--muted); 
+      font-size: 11px; 
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 24px; 
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .meta::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+    
+    .stats-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; font-family: monospace; }
+    .stat-label { color: var(--muted); }
+    .stat-value { color: var(--accent); font-weight: bold; }
+
+    .instruction { 
+      font-size: 12px; 
+      line-height: 1.6;
+      color: #94a3b8; 
+      background: rgba(99, 102, 241, 0.05);
+      border-left: 2px solid var(--accent);
+      padding: 12px;
+      border-radius: 0 8px 8px 0;
+    }
+    
+    svg { width: 100%; height: 100vh; display: block; }
+    
+    .tooltip { 
+      position: absolute; 
+      pointer-events: none; 
+      background: rgba(15, 23, 42, 0.95); 
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1); 
+      border-radius: 12px; 
+      padding: 12px 16px; 
+      font-size: 12px; 
+      color: #f8fafc; 
+      display: none; 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      z-index: 1000;
+      min-width: 200px;
+    }
+    .tooltip b { color: var(--accent); display: block; margin-bottom: 4px; font-size: 14px; }
+    .tooltip-kind { text-transform: uppercase; font-size: 10px; font-weight: 800; letter-spacing: 0.05em; color: var(--muted); }
   </style>
 </head>
 <body>
   <div class="wrap">
     <aside class="side">
       <h1>Podcast Agent Subgraph</h1>
-      <div class="meta">Generated 2026-03-12 14:01:56Z</div>
-      <div class="legend" id="counts"></div>
-      <div class="legend" style="margin-top:10px">Drag nodes to reposition. Hover nodes for details.</div>
+      <div class="meta">Generated 2026-04-18 01:23:51Z</div>
+      
+      <div class="stats-card">
+        <div class="stat-row">
+          <span class="stat-label">Synthesis Root:</span>
+          <span class="stat-value">Podcast</span>
+        </div>
+        <div class="stat-row" id="stat-nodes">
+          <span class="stat-label">Verified Nodes:</span>
+          <span class="stat-value">-</span>
+        </div>
+        <div class="stat-row" id="stat-edges">
+          <span class="stat-label">Neural Trajectories:</span>
+          <span class="stat-value">-</span>
+        </div>
+      </div>
+      
+      <div class="instruction">
+        <b>Interactive Controls</b><br/>
+        Drag nodes to stabilize the spatial distribution. Hover for detailed telemetry.
+      </div>
+
+      <div style="margin-top: auto;">
+        <div style="font-size: 10px; color: #334155; font-weight: 800; cursor: default;">THE NEW FUSE | VISUALIZATION ENGINE 1.0</div>
+      </div>
     </aside>
     <main class="main">
       <svg id="graph"></svg>
@@ -129,75 +231,114 @@
 </script>
 <script>
 const data = JSON.parse(document.getElementById('graph-data').textContent);
-const nodes = data.nodes.map(function(n){ return Object.assign({}, n, {x: Math.random()*900+100, y: Math.random()*600+100, vx:0, vy:0}); });
+const nodes = data.nodes.map(function(n){ 
+  return Object.assign({}, n, {x: Math.random()*w()*0.6+w()*0.2, y: Math.random()*h()*0.6+h()*0.2, vx:0, vy:0}); 
+});
 const byId = new Map(nodes.map(function(n){ return [n.id, n]; }));
-const links = data.edges.map(function(e){ return Object.assign({}, e, {s: byId.get(e.source), t: byId.get(e.target)}); }).filter(function(e){ return e.s && e.t; });
+const links = data.edges.map(function(e){ 
+  return Object.assign({}, e, {s: byId.get(e.source), t: byId.get(e.target)}); 
+}).filter(function(e){ return e.s && e.t; });
 
-document.getElementById('counts').textContent = 'Nodes: ' + nodes.length + ' | Edges: ' + links.length;
+document.getElementById('stat-nodes').querySelector('.stat-value').textContent = nodes.length;
+document.getElementById('stat-edges').querySelector('.stat-value').textContent = links.length;
+
 const svg = document.getElementById('graph');
 const tip = document.getElementById('tip');
 const NS = 'http://www.w3.org/2000/svg';
-const w = function(){ return svg.clientWidth; }, h = function(){ return svg.clientHeight; };
+function w(){ return svg.clientWidth; }
+function h(){ return svg.clientHeight; }
 
 function line(){ return document.createElementNS(NS,'line'); }
+function g(){ return document.createElementNS(NS,'g'); }
 function circle(){ return document.createElementNS(NS,'circle'); }
 function text(){ return document.createElementNS(NS,'text'); }
 
 const edgeEls = links.map(function(l){
   const el = line();
-  el.setAttribute('stroke', '#475569');
-  el.setAttribute('stroke-width', String(Math.max(1, (l.strength||0.5)*3)));
-  el.setAttribute('opacity', '0.8');
+  el.setAttribute('stroke', 'rgba(99, 102, 241, 0.2)');
+  el.setAttribute('stroke-width', '1.5');
   svg.appendChild(el);
   return el;
 });
 
 const nodeEls = nodes.map(function(n){
+  const group = g();
+  svg.appendChild(group);
+  
+  const halo = circle();
+  halo.setAttribute('r', '15');
+  halo.setAttribute('fill', 'rgba(99, 102, 241, 0.1)');
+  halo.setAttribute('opacity', '0');
+  group.appendChild(halo);
+  
   const el = circle();
-  el.setAttribute('r', n.kind === 'primary' ? '10' : '7');
-  el.setAttribute('fill', n.kind === 'primary' ? '#3b82f6' : '#64748b');
+  el.setAttribute('r', n.kind === 'primary' ? '12' : '8');
+  el.setAttribute('fill', n.kind === 'primary' ? '#6366f1' : '#334155');
+  el.setAttribute('stroke', 'rgba(255,255,255,0.1)');
+  el.setAttribute('stroke-width', '2');
   el.style.cursor = 'grab';
-  svg.appendChild(el);
+  group.appendChild(el);
+  
   const label = text();
   label.textContent = n.id;
-  label.setAttribute('font-size','11');
-  label.setAttribute('fill','#e5e7eb');
-  svg.appendChild(label);
-  return {el: el, label: label};
+  label.setAttribute('font-size','10');
+  label.setAttribute('font-weight','700');
+  label.setAttribute('fill','#94a3b8');
+  label.setAttribute('pointer-events', 'none');
+  group.appendChild(label);
+  
+  return { group, el, label, halo };
 });
 
 let drag = null;
 for (let i=0;i<nodes.length;i++) {
   const n = nodes[i];
-  const el = nodeEls[i].el;
-  el.addEventListener('pointerdown', function(e){ drag = n; el.setPointerCapture(e.pointerId); });
-  el.addEventListener('pointerup', function(){ drag = null; });
-  el.addEventListener('pointermove', function(e){
+  const item = nodeEls[i];
+  item.el.addEventListener('pointerdown', function(e){ 
+    drag = n; 
+    item.el.setPointerCapture(e.pointerId); 
+    item.el.setAttribute('fill', '#818cf8');
+  });
+  item.el.addEventListener('pointerup', function(){ 
+    drag = null; 
+    item.el.setAttribute('fill', n.kind === 'primary' ? '#6366f1' : '#334155');
+  });
+  item.el.addEventListener('pointermove', function(e){
     if (!drag) return;
     const rect = svg.getBoundingClientRect();
     n.x = e.clientX - rect.left;
     n.y = e.clientY - rect.top;
     n.vx = 0; n.vy = 0;
   });
-  el.addEventListener('mousemove', function(e){
+  item.el.addEventListener('mouseenter', function(e){
+    item.label.setAttribute('fill', '#fff');
+    item.halo.setAttribute('opacity', '1');
+    item.el.setAttribute('stroke', '#fff');
     tip.style.display = 'block';
-    tip.style.left = (e.clientX + 12) + 'px';
-    tip.style.top = (e.clientY + 12) + 'px';
-    tip.textContent = n.id + ' | ' + n.kind + ' | ' + n.cluster;
+    tip.innerHTML = '<b>' + n.id + '</b><div class="tooltip-kind">' + (n.kind || 'node') + ' | ' + (n.cluster || 'general') + '</div>';
   });
-  el.addEventListener('mouseleave', function(){ tip.style.display = 'none'; });
+  item.el.addEventListener('mousemove', function(e){
+    tip.style.left = (e.clientX + 20) + 'px';
+    tip.style.top = (e.clientY - 20) + 'px';
+  });
+  item.el.addEventListener('mouseleave', function(){ 
+    item.label.setAttribute('fill', '#94a3b8');
+    item.halo.setAttribute('opacity', '0');
+    item.el.setAttribute('stroke', 'rgba(255,255,255,0.1)');
+    tip.style.display = 'none'; 
+  });
 }
 
 function tick() {
   const width = w(), height = h();
   for (const n of nodes) {
-    n.vx += (width/2 - n.x) * 0.0007;
-    n.vy += (height/2 - n.y) * 0.0007;
+    n.vx += (width/2 - n.x) * 0.0006;
+    n.vy += (height/2 - n.y) * 0.0006;
   }
   for (const l of links) {
     const dx = l.t.x - l.s.x, dy = l.t.y - l.s.y;
     const d = Math.hypot(dx,dy) || 1;
-    const k = (d - 120) * 0.003;
+    const k = (d - 140) * 0.003;
     const fx = (dx/d)*k, fy=(dy/d)*k;
     l.s.vx += fx; l.s.vy += fy;
     l.t.vx -= fx; l.t.vy -= fy;
@@ -207,9 +348,9 @@ function tick() {
       const a = nodes[i], b = nodes[j];
       const dx = b.x-a.x, dy = b.y-a.y;
       const d2 = dx*dx + dy*dy;
-      if (d2 < 6400) {
+      if (d2 < 8000) {
         const d = Math.sqrt(d2) || 1;
-        const rep = 0.08 / d;
+        const rep = 0.12 / d;
         const fx = dx*rep, fy = dy*rep;
         a.vx -= fx; a.vy -= fy;
         b.vx += fx; b.vy += fy;
@@ -218,10 +359,10 @@ function tick() {
   }
   for (const n of nodes) {
     if (drag === n) continue;
-    n.vx *= 0.9; n.vy *= 0.9;
+    n.vx *= 0.88; n.vy *= 0.88;
     n.x += n.vx; n.y += n.vy;
-    n.x = Math.max(20, Math.min(width-20, n.x));
-    n.y = Math.max(20, Math.min(height-20, n.y));
+    n.x = Math.max(40, Math.min(width-40, n.x));
+    n.y = Math.max(40, Math.min(height-40, n.y));
   }
   links.forEach(function(l,i){
     edgeEls[i].setAttribute('x1', l.s.x); edgeEls[i].setAttribute('y1', l.s.y);
@@ -229,8 +370,9 @@ function tick() {
   });
   nodeEls.forEach(function(nv,i){
     const n = nodes[i];
+    nv.halo.setAttribute('cx', n.x); nv.halo.setAttribute('cy', n.y);
     nv.el.setAttribute('cx', n.x); nv.el.setAttribute('cy', n.y);
-    nv.label.setAttribute('x', n.x + 12); nv.label.setAttribute('y', n.y + 4);
+    nv.label.setAttribute('x', n.x + 16); nv.label.setAttribute('y', n.y + 4);
   });
   requestAnimationFrame(tick);
 }

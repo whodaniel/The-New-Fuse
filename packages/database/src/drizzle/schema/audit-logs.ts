@@ -5,7 +5,7 @@
  */
 import { relations } from 'drizzle-orm';
 import { index, jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
-import { users } from './users';
+import { users } from './users.js';
 
 // =============================================================================
 // AUDIT LOGS

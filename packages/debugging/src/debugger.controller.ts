@@ -37,7 +37,7 @@ import {
   DebugFilter,
   DebugSettings,
   MessageAnalysis,
-} from './a2a-debugger.service';
+} from './a2a-debugger.service.js';
 
 // DTOs for API requests
 interface CreateDebugSessionRequest {

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { TaskService } from './task.service';
+import { TaskService } from './task.service.js';
 
 describe('TaskService legacy schema compatibility', () => {
   let db: any;

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Command } from './CommandPalette';
+import { Command } from './CommandPalette.js';
 
 export interface CommandExecutionResult {
   success: boolean;

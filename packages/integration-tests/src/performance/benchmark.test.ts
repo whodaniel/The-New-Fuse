@@ -5,7 +5,7 @@
  * and provides benchmarks for optimization and regression testing
  */
 
-import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
+import { getTestEnvironment, TestHelpers } from '../setup/test-setup.js';
 // import { WorkflowNodeType, WorkflowExecutionStatus } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
 import { performance } from 'perf_hooks';
 

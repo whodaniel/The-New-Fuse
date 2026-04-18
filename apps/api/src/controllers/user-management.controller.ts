@@ -19,7 +19,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 
 @ApiTags('user-management')
 @Controller('users')

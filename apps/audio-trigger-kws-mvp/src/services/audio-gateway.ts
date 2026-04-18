@@ -1,5 +1,5 @@
 import { EventEmitter } from "node:events";
-import { AudioFrame } from "../types/events";
+import { AudioFrame } from '../types/events.js';
 
 const FRAME_INTERVAL_MS = 220;
 

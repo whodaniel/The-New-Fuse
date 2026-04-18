@@ -6,10 +6,10 @@ import { Ap2ProtocolModule, Ap2ProtocolService } from // @ts-ignore
 import { RedisModule, UnifiedRedisService } from // @ts-ignore
 '@the-new-fuse/infrastructure';
 
-import { A2AService } from './a2a.service';
-import { A2ARedisAdapter } from './redis-adapter';
-import { A2AConfig } from './types';
-import { A2AWebSocketAdapter } from './websocket-adapter';
+import { A2AService } from './a2a.service.js';
+import { A2ARedisAdapter } from './redis-adapter.js';
+import { A2AConfig } from './types.js';
+import { A2AWebSocketAdapter } from './websocket-adapter.js';
 
 @Global()
 @Module({})

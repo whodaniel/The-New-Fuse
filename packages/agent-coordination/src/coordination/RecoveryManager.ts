@@ -1,10 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { PresenceTracker } from '../presence/presence-tracker';
-import { SharedStateManager } from './shared-state-manager';
-import { TaskQueueManager } from '../queues/task-queue-manager';
-import { MessageSerializer } from '../serializers/message-serializer';
-import { AgentPresence, AgentStatus } from '../types/coordination.types';
+import { PresenceTracker } from '../presence/presence-tracker.js';
+import { SharedStateManager } from './shared-state-manager.js';
+import { TaskQueueManager } from '../queues/task-queue-manager.js';
+import { MessageSerializer } from '../serializers/message-serializer.js';
+import { AgentPresence, AgentStatus } from '../types/coordination.types.js';
 
 export class RecoveryManager {
   private readonly logger = new Logger(RecoveryManager.name);

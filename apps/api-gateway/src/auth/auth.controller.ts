@@ -12,8 +12,8 @@ import {
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
 import { Request } from 'express';
-import { GatewayAuthGuard } from './gateway-auth.guard';
-import { GatewayAuthService } from './gateway-auth.service';
+import { GatewayAuthGuard } from './gateway-auth.guard.js';
+import { GatewayAuthService } from './gateway-auth.service.js';
 
 class LoginDto {
   @IsEmail()

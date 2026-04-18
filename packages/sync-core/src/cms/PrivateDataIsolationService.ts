@@ -8,9 +8,9 @@
 
 import { DrizzleClient, UserRole } from '@the-new-fuse/database/generated/drizzle';
 import { createHash } from 'crypto';
-import { RedisService } from '../config/SyncRedisConfig';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { ContentItem, PrivacyBoundary, PrivacyLevel, Restriction, RestrictionType } from './types';
+import { RedisService } from '../config/SyncRedisConfig.js';
+import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
+import { ContentItem, PrivacyBoundary, PrivacyLevel, Restriction, RestrictionType } from './types.js';
 
 export class PrivateDataIsolationService {
   private drizzle: DrizzleClient;

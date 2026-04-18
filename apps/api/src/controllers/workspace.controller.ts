@@ -39,9 +39,9 @@ import { promises as dns } from 'dns';
 import { promises as fs } from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { CurrentUser } from '../decorators/current-user.decorator';
-import { SecureAuthGuard } from '../guards/secure-auth.guard';
-import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service';
+import { CurrentUser } from '../decorators/current-user.decorator.js';
+import { SecureAuthGuard } from '../guards/secure-auth.guard.js';
+import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service.js';
 
 type WorkspaceAccessRole = 'owner' | 'admin' | 'member' | 'viewer';
 type WorkspaceManageableRole = Exclude<WorkspaceAccessRole, 'owner'>;

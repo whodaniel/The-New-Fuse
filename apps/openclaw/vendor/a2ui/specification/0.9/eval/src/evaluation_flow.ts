@@ -15,9 +15,9 @@
  */
 
 import { z } from 'genkit';
-import { ai } from './ai';
-import { logger } from './logger';
-import { rateLimiter } from './rateLimiter';
+import { ai } from './ai.js';
+import { logger } from './logger.js';
+import { rateLimiter } from './rateLimiter.js';
 
 // Define an evaluation flow
 export const evaluationFlow = ai.defineFlow(

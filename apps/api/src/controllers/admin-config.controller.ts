@@ -19,9 +19,9 @@ import {
   drizzleConfigurationRepository,
   drizzleLLMConfigRepository,
 } from '@the-new-fuse/database/drizzle/repositories';
-import { AdminGuard } from '../guards/admin.guard';
-import { SecureAuthGuard } from '../guards/secure-auth.guard';
-import { AuditService } from '../services/audit.service';
+import { AdminGuard } from '../guards/admin.guard.js';
+import { SecureAuthGuard } from '../guards/secure-auth.guard.js';
+import { AuditService } from '../services/audit.service.js';
 
 interface ConfigItem {
   key: string;

@@ -15,10 +15,10 @@ import {
   HttpStatus,
   HttpCode
 } from '@nestjs/common';
-import { WorkflowService } from '../../services/workflow.service';
-import { BaseController } from './base.controller';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { CurrentUser } from '../decorators/current-user.decorator';
+import { WorkflowService } from '../../services/workflow.service.js';
+import { BaseController } from './base.controller.js';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard.js';
+import { CurrentUser } from '../decorators/current-user.decorator.js';
 // Local type definitions to avoid cross-package import issues
 interface WorkflowModel {
   id: string;
@@ -41,9 +41,9 @@ interface ApiResponse<T> {
   error?: string;
   meta?: Record<string, unknown>;
 }
-import { CreateWorkflowDto } from './dto/create-workflow.dto';
-import { UpdateWorkflowDto } from './dto/update-workflow.dto';
-import { WorkflowDto, WorkflowExecutionDto } from './dto/workflow.dto'; // Updated import path
+import { CreateWorkflowDto } from './dto/create-workflow.dto.js';
+import { UpdateWorkflowDto } from './dto/update-workflow.dto.js';
+import { WorkflowDto, WorkflowExecutionDto } from './dto/workflow.dto.js'; // Updated import path
 import { 
   ApiTags, 
   ApiOperation, 

@@ -8,15 +8,15 @@
 import { EventEmitter } from 'events';
 import { WebSocketServer, WebSocket } from 'ws';
 import { IncomingMessage } from 'http';
-import { IMCPServer } from '../interfaces/IMCPServer';
-import { MCPRequest, MCPResponse, MCPError } from '../interfaces/IMCPMessage';
-import { MCPResource } from '../interfaces/IMCPResource';
-import { MCPTool } from '../interfaces/IMCPTool';
-import { MCPCapability } from '../interfaces/IMCPCapability';
-import { MCPServerConfig, MCPServerInfo } from '../types/server';
-import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error';
-import { MessageValidator } from '../validation/messageValidator';
-import { LogLevel } from '../types/common';
+import { IMCPServer } from '../interfaces/IMCPServer.js';
+import { MCPRequest, MCPResponse, MCPError } from '../interfaces/IMCPMessage.js';
+import { MCPResource } from '../interfaces/IMCPResource.js';
+import { MCPTool } from '../interfaces/IMCPTool.js';
+import { MCPCapability } from '../interfaces/IMCPCapability.js';
+import { MCPServerConfig, MCPServerInfo } from '../types/server.js';
+import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error.js';
+import { MessageValidator } from '../validation/messageValidator.js';
+import { LogLevel } from '../types/common.js';
 
 /**
  * Core MCP Server implementation

@@ -3,8 +3,8 @@
 
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { A2ADebuggerService } from './a2a-debugger.service';
-import { DebuggerController } from './debugger.controller';
+import { A2ADebuggerService } from './a2a-debugger.service.js';
+import { DebuggerController } from './debugger.controller.js';
 
 // Import dependency modules
 import { CacheModule } from '../../cache/src/cache.module';

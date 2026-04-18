@@ -1,5 +1,5 @@
 import React from 'react';
-import { KanbanColumn, DraggableItem, TodoItem, FeatureSuggestion } from '../types';
+import { KanbanColumn, DraggableItem, TodoItem, FeatureSuggestion } from '../types/index.js';
 
 interface KanbanBoardProps {
   columns: KanbanColumn[];

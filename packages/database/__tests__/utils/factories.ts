@@ -13,7 +13,7 @@ import type {
   NewWorkflow,
   NewPipeline,
   NewTaskExecution,
-} from '../../src/drizzle/types';
+} from '../../src/drizzle/types.js';
 
 /**
  * Generate a unique timestamp-based ID suffix

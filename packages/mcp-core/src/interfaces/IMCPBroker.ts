@@ -1,7 +1,7 @@
 import { 
   MCPRequest, 
   MCPResponse
-} from './IMCPMessage';
+} from './IMCPMessage.js';
 import {
   MCPServiceInfo,
   ServiceQuery,
@@ -9,7 +9,7 @@ import {
   AdvancedServiceQuery,
   ServiceCompatibilityResult,
   ServiceRecommendationOptions
-} from '../types';
+} from '../types/index.js';
 
 /**
  * Core MCP Broker interface that defines the contract for MCP broker implementations.

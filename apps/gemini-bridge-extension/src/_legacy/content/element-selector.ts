@@ -3,7 +3,7 @@
  * Provides click-to-select interface element identification
  */
 
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 
 export interface ElementInfo {
   selector: string;

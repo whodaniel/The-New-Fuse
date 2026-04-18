@@ -5,9 +5,9 @@
  * with relay-core, workflow-engine, and other platform components.
  */
 
-import { MCPServer } from '../server/MCPServer';
-import { MCPServerConfig } from '../types/server';
-import { LogLevel } from '../types/common';
+import { MCPServer } from '../server/MCPServer.js';
+import { MCPServerConfig } from '../types/server.js';
+import { LogLevel } from '../types/common.js';
 // import { DrizzleClient } from '@drizzle/client';
 
 // Import types from relay-core for integration

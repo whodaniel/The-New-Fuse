@@ -3,8 +3,8 @@
  * Handles integration with various chat platforms and AI services
  */
 
-import { Logger } from '../utils/logger';
-import { AIElementDetector } from './ai-element-detector';
+import { Logger } from '../utils/logger.js';
+import { AIElementDetector } from './ai-element-detector.js';
 
 export interface ChatPlatform {
   name: string;

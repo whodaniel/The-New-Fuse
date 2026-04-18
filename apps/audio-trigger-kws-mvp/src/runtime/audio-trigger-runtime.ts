@@ -1,16 +1,16 @@
-import { defaultLexicon } from '../config/default-lexicon';
-import { defaultRules } from '../config/default-rules';
-import { env } from '../config/env';
-import { AgentRouter } from '../services/agent-router';
-import { AudioGateway } from '../services/audio-gateway';
-import { Enricher } from '../services/enricher';
-import { GroupingFilter } from '../services/grouping-filter';
-import { KwsEngine } from '../services/kws-engine';
-import { MiniOmniClient } from '../services/llm-backends/mini-omni-client';
-import { LlmBatcher } from '../services/llm-batcher';
-import { RuleEngine } from '../services/rule-engine';
-import { VadGate } from '../services/vad-gate';
-import { ContextPackage, HitEvent, LlmBatchResult, RuleFireEvent } from '../types/events';
+import { defaultLexicon } from '../config/default-lexicon.js';
+import { defaultRules } from '../config/default-rules.js';
+import { env } from '../config/env.js';
+import { AgentRouter } from '../services/agent-router.js';
+import { AudioGateway } from '../services/audio-gateway.js';
+import { Enricher } from '../services/enricher.js';
+import { GroupingFilter } from '../services/grouping-filter.js';
+import { KwsEngine } from '../services/kws-engine.js';
+import { MiniOmniClient } from '../services/llm-backends/mini-omni-client.js';
+import { LlmBatcher } from '../services/llm-batcher.js';
+import { RuleEngine } from '../services/rule-engine.js';
+import { VadGate } from '../services/vad-gate.js';
+import { ContextPackage, HitEvent, LlmBatchResult, RuleFireEvent } from '../types/events.js';
 
 const pushBounded = <T>(list: T[], item: T, maxItems: number): void => {
   list.push(item);

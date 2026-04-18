@@ -7,9 +7,9 @@
 
 import { Controller, Get, Query, Logger, Sse, MessageEvent } from '@nestjs/common';
 import { Observable, Subject, interval, takeUntil, mergeMap } from 'rxjs';
-import { WebScrapingService } from '../core/WebScrapingService';
-import { ProxyService } from '../proxy/ProxyService';
-import { ScrapingResult } from '../types';
+import { WebScrapingService } from '../core/WebScrapingService.js';
+import { ProxyService } from '../proxy/ProxyService.js';
+import { ScrapingResult } from '../types/index.js';
 
 interface StreamingSession {
   id: string;

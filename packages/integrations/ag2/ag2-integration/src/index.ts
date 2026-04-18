@@ -1,2 +1,2 @@
 
-export { AG2Bridge } from './ag2-bridge';
+export { AG2Bridge } from './ag2-bridge.js';

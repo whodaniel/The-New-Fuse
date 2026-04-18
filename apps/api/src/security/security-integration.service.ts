@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { hasAuthorizationLevel } from '../auth/auth-policy';
-import { ApiEndpointMonitoringService } from '../security/api-endpoint-monitoring.service';
-import { EnhancedRateLimitService } from '../security/enhanced-rate-limit.service';
-import { SecurityLoggingService } from '../security/security-logging.service';
+import { hasAuthorizationLevel } from '../auth/auth-policy.js';
+import { ApiEndpointMonitoringService } from '../security/api-endpoint-monitoring.service.js';
+import { EnhancedRateLimitService } from '../security/enhanced-rate-limit.service.js';
+import { SecurityLoggingService } from '../security/security-logging.service.js';
 
 @Injectable()
 export class SecurityIntegrationService {

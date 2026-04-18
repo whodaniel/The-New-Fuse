@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MCPServerService } from '../mcp-server.service';
-import { MCPToolRegistry } from '../mcp-tool-registry.service';
-import { WorkflowTemplatesService } from '../../workflow-templates/workflow-templates.service';
+import { MCPServerService } from '../mcp-server.service.js';
+import { MCPToolRegistry } from '../mcp-tool-registry.service.js';
+import { WorkflowTemplatesService } from '../../workflow-templates/workflow-templates.service.js';
 
 describe('MCPServerService', () => {
   let service: MCPServerService;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CaretUp, CaretDown } from "@phosphor-icons/react";
 import { Preloader } from "@/components/Preloader";
 import { useProviderEndpointAutoDiscovery } from "@/hooks/useProviderEndpointAutoDiscovery";
-import { BaseLLMOptionsProps, ModelSelectionProps, LLMModel } from '../../types';
+import { BaseLLMOptionsProps, ModelSelectionProps, LLMModel } from '../../types/index.js';
 import system from "@/models/system";
 
 interface FireworksAiSettings extends BaseLLMOptionsProps {

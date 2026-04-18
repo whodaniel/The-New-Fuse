@@ -2,8 +2,8 @@
  * Prompt Template Repository - Drizzle ORM Implementation
  */
 import { and, desc, eq, isNull, or, sql } from 'drizzle-orm';
-import { db } from '../client';
-import { promptExecutionResults, promptSnippets, promptTemplates, promptVersions } from '../schema';
+import { db } from '../client.js';
+import { promptExecutionResults, promptSnippets, promptTemplates, promptVersions } from '../schema/index.js';
 
 export class DrizzlePromptTemplateRepository {
   // ===========================================================================

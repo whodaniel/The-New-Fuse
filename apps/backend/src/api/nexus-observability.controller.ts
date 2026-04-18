@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
-import { OrchestratorService } from '../modules/orchestrator';
-import { SystemMetricsService } from '../modules/system-metrics/system-metrics.service';
+import { OrchestratorService } from '../modules/orchestrator/index.js';
+import { SystemMetricsService } from '../modules/system-metrics/system-metrics.service.js';
 
 type AgentStatusPayload = {
   agentId: string;

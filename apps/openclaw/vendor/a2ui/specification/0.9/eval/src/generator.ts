@@ -16,13 +16,13 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { componentGeneratorFlow } from './generation_flow';
-import { logger } from './logger';
-import { ModelConfiguration } from './models';
-import { TestPrompt } from './prompts';
-import { rateLimiter } from './rateLimiter';
-import { GeneratedResult } from './types';
-import { extractJsonFromMarkdown } from './utils';
+import { componentGeneratorFlow } from './generation_flow.js';
+import { logger } from './logger.js';
+import { ModelConfiguration } from './models.js';
+import { TestPrompt } from './prompts.js';
+import { rateLimiter } from './rateLimiter.js';
+import { GeneratedResult } from './types.js';
+import { extractJsonFromMarkdown } from './utils.js';
 
 export class Generator {
   constructor(

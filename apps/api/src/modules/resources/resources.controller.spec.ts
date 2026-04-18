@@ -1,8 +1,8 @@
-import { MarketplaceService } from '../marketplace/marketplace.service';
-import { ResourceInteractionService } from './resource-interaction.service';
-import { ResourceSearchPolicyService } from './resource-search-policy.service';
-import { ResourceSearchProtocolService } from './resource-search-protocol.service';
-import { ResourcesController } from './resources.controller';
+import { MarketplaceService } from '../marketplace/marketplace.service.js';
+import { ResourceInteractionService } from './resource-interaction.service.js';
+import { ResourceSearchPolicyService } from './resource-search-policy.service.js';
+import { ResourceSearchProtocolService } from './resource-search-protocol.service.js';
+import { ResourcesController } from './resources.controller.js';
 
 describe('ResourcesController /resources/search contract', () => {
   const defaultMeta = {

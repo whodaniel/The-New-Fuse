@@ -7,12 +7,12 @@ import { Warning } from '@phosphor-icons/react';
 import createDOMPurify from 'dompurify';
 import React, { memo, ReactElement } from 'react';
 import { v4 } from 'uuid';
-import UserIcon from '../../../../UserIcon';
-import Citations from '../Citation';
-import Actions from './Actions';
-import { useWatchDeleteMessage } from './Actions/DeleteMessage';
-import { EditMessageForm, useEditMessage } from './Actions/EditMessage';
-import TTSMessage from './Actions/TTSButton';
+import UserIcon from '../../../../UserIcon/index';
+import Citations from '../Citation/index';
+import Actions from './Actions/index';
+import { useWatchDeleteMessage } from './Actions/DeleteMessage/index';
+import { EditMessageForm, useEditMessage } from './Actions/EditMessage/index';
+import TTSMessage from './Actions/TTSButton/index';
 
 const DOMPurify = createDOMPurify(window);
 

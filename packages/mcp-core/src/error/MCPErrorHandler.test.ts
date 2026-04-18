@@ -2,9 +2,9 @@
  * Unit tests for MCPErrorHandler
  */
 
-import { MCPErrorHandler, ErrorHandlerConfig, ErrorContext, ErrorHandler } from './MCPErrorHandler';
-import { MCPErrorClass, ErrorCategory, ErrorSeverity, MCPErrorCode } from '../types/error';
-import { Logger } from '../utils/Logger';
+import { MCPErrorHandler, ErrorHandlerConfig, ErrorContext, ErrorHandler } from './MCPErrorHandler.js';
+import { MCPErrorClass, ErrorCategory, ErrorSeverity, MCPErrorCode } from '../types/error.js';
+import { Logger } from '../utils/Logger.js';
 
 describe('MCPErrorHandler', () => {
   let errorHandler: MCPErrorHandler;

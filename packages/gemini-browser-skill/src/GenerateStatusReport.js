@@ -5,65 +5,63 @@ const LIBRARY_FILE = path.join(process.cwd(), '..', '..', 'ai_video_library.html
 const IMPORT_DIR = path.join(process.cwd(), 'data', 'library_import');
 const OUT_FILE = path.join(process.cwd(), 'data', 'ProcessingStatusReport.md');
 function analyze() {
-  console.log('📊 Analyzing Processing Status...');
-  // 1. Load the original library
-  const libContent = fs.readFileSync(LIBRARY_FILE, 'utf-8');
-  const videos = [];
-  const rowRegex =
-    /<tr>\s*<td[^>]*>\s*(\d+)\s*<\/td>\s*<td[^>]*>\s*<a\s+href="([^"]+)"[^>]*>([^<]+)<\/a>\s*<\/td>/g;
-  let match;
-  while ((match = rowRegex.exec(libContent)) !== null) {
-    videos.push({
-      index: parseInt(match[1]),
-      url: match[2],
-      title: match[3].trim(),
-      isImported: false,
-      hasVisualGaps: false,
-      visualGapsCount: 0,
-      status: 'Pending',
-    });
-  }
-  console.log(`Library contains ${videos.length} total videos.`);
-  // 2. Map Imported Chats to Videos
-  // This is tricky because filenames are IDs, not video indices.
-  // We need to look inside each JSON file to match the Title or URL.
-  const files = fs.readdirSync(IMPORT_DIR).filter((f) => f.endsWith('.json'));
-  console.log(`Found ${files.length} imported chat files.`);
-  let matchCount = 0;
-  for (const file of files) {
-    const content = fs.readFileSync(path.join(IMPORT_DIR, file), 'utf-8');
-    const json = JSON.parse(content);
-    // We look at the first USER message or the first MODEL message title
-    // Usually the model starts with "Analysis: [Video Title]" based on our prompt structure
-    const text = JSON.stringify(json.turns);
-    // Find matching video
-    const video = videos.find((v) => {
-      // Simple title match (case insensitive, partial)
-      // This is heuristic but usually effective if titles agree
-      // Or if the URL appeared in the prompt (rare)
-      return (
-        typeof (v === null || v === void 0 ? void 0 : v.title) === 'string' &&
-        typeof text === 'string' &&
-        text.toLowerCase().includes(v.title.toLowerCase().substring(0, 20))
-      );
-    });
-    if (video) {
-      video.isImported = true;
-      matchCount++;
-      // Check for Visual Gaps
-      const gapMatches = text.match(/Need to see:/g);
-      if (gapMatches) {
-        video.hasVisualGaps = true;
-        video.visualGapsCount = gapMatches.length;
-        video.status = 'Needs Visual Review';
-      } else {
-        video.status = 'Complete';
-      }
+    console.log('📊 Analyzing Processing Status...');
+    // 1. Load the original library
+    const libContent = fs.readFileSync(LIBRARY_FILE, 'utf-8');
+    const videos = [];
+    const rowRegex = /<tr>\s*<td[^>]*>\s*(\d+)\s*<\/td>\s*<td[^>]*>\s*<a\s+href="([^"]+)"[^>]*>([^<]+)<\/a>\s*<\/td>/g;
+    let match;
+    while ((match = rowRegex.exec(libContent)) !== null) {
+        videos.push({
+            index: parseInt(match[1]),
+            url: match[2],
+            title: match[3].trim(),
+            isImported: false,
+            hasVisualGaps: false,
+            visualGapsCount: 0,
+            status: 'Pending',
+        });
     }
-  }
-  console.log(`Matched ${matchCount} videos with imported analysis.`);
-  // 3. Generate Report
-  let md = `# 📊 Video Processing Status Report
+    console.log(`Library contains ${videos.length} total videos.`);
+    // 2. Map Imported Chats to Videos
+    // This is tricky because filenames are IDs, not video indices.
+    // We need to look inside each JSON file to match the Title or URL.
+    const files = fs.readdirSync(IMPORT_DIR).filter((f) => f.endsWith('.json'));
+    console.log(`Found ${files.length} imported chat files.`);
+    let matchCount = 0;
+    for (const file of files) {
+        const content = fs.readFileSync(path.join(IMPORT_DIR, file), 'utf-8');
+        const json = JSON.parse(content);
+        // We look at the first USER message or the first MODEL message title
+        // Usually the model starts with "Analysis: [Video Title]" based on our prompt structure
+        const text = JSON.stringify(json.turns);
+        // Find matching video
+        const video = videos.find((v) => {
+            // Simple title match (case insensitive, partial)
+            // This is heuristic but usually effective if titles agree
+            // Or if the URL appeared in the prompt (rare)
+            return (typeof (v === null || v === void 0 ? void 0 : v.title) === 'string' &&
+                typeof text === 'string' &&
+                text.toLowerCase().includes(v.title.toLowerCase().substring(0, 20)));
+        });
+        if (video) {
+            video.isImported = true;
+            matchCount++;
+            // Check for Visual Gaps
+            const gapMatches = text.match(/Need to see:/g);
+            if (gapMatches) {
+                video.hasVisualGaps = true;
+                video.visualGapsCount = gapMatches.length;
+                video.status = 'Needs Visual Review';
+            }
+            else {
+                video.status = 'Complete';
+            }
+        }
+    }
+    console.log(`Matched ${matchCount} videos with imported analysis.`);
+    // 3. Generate Report
+    let md = `# 📊 Video Processing Status Report
 *Generated: ${new Date().toLocaleString()}*
 
 ## 🟢 Summary
@@ -90,17 +88,17 @@ function analyze() {
 | # | Title | Status | Visual Gaps |
 | :--- | :--- | :--- | :---: |
 `;
-  // Sort: Pending first, then Visual Review, then Complete
-  videos.sort((a, b) => {
-    const score = (s) => (s === 'Pending' ? 0 : s === 'Needs Visual Review' ? 1 : 2);
-    return score(a.status) - score(b.status);
-  });
-  for (const v of videos) {
-    const icon = v.status === 'Complete' ? '✅' : v.status === 'Needs Visual Review' ? '⚠️' : '⚪';
-    md += `| ${v.index} | ${v.title.substring(0, 60)}${v.title.length > 60 ? '...' : ''} | ${icon} ${v.status} | ${v.visualGapsCount || '-'} |\n`;
-  }
-  fs.writeFileSync(OUT_FILE, md);
-  console.log(`Report generated at: ${OUT_FILE}`);
+    // Sort: Pending first, then Visual Review, then Complete
+    videos.sort((a, b) => {
+        const score = (s) => (s === 'Pending' ? 0 : s === 'Needs Visual Review' ? 1 : 2);
+        return score(a.status) - score(b.status);
+    });
+    for (const v of videos) {
+        const icon = v.status === 'Complete' ? '✅' : v.status === 'Needs Visual Review' ? '⚠️' : '⚪';
+        md += `| ${v.index} | ${v.title.substring(0, 60)}${v.title.length > 60 ? '...' : ''} | ${icon} ${v.status} | ${v.visualGapsCount || '-'} |\n`;
+    }
+    fs.writeFileSync(OUT_FILE, md);
+    console.log(`Report generated at: ${OUT_FILE}`);
 }
 analyze();
 //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiR2VuZXJhdGVTdGF0dXNSZXBvcnQuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJHZW5lcmF0ZVN0YXR1c1JlcG9ydC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSxPQUFPLEtBQUssRUFBRSxNQUFNLElBQUksQ0FBQztBQUN6QixPQUFPLEtBQUssSUFBSSxNQUFNLE1BQU0sQ0FBQztBQUU3QixlQUFlO0FBQ2YsTUFBTSxZQUFZLEdBQUcsSUFBSSxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsR0FBRyxFQUFFLEVBQUUsSUFBSSxFQUFFLElBQUksRUFBRSx1QkFBdUIsQ0FBQyxDQUFDO0FBQ25GLE1BQU0sVUFBVSxHQUFHLElBQUksQ0FBQyxJQUFJLENBQUMsT0FBTyxDQUFDLEdBQUcsRUFBRSxFQUFFLE1BQU0sRUFBRSxnQkFBZ0IsQ0FBQyxDQUFDO0FBQ3RFLE1BQU0sUUFBUSxHQUFHLElBQUksQ0FBQyxJQUFJLENBQUMsT0FBTyxDQUFDLEdBQUcsRUFBRSxFQUFFLE1BQU0sRUFBRSwyQkFBMkIsQ0FBQyxDQUFDO0FBYS9FLFNBQVMsT0FBTztJQUNkLE9BQU8sQ0FBQyxHQUFHLENBQUMsbUNBQW1DLENBQUMsQ0FBQztJQUVqRCwrQkFBK0I7SUFDL0IsTUFBTSxVQUFVLEdBQUcsRUFBRSxDQUFDLFlBQVksQ0FBQyxZQUFZLEVBQUUsT0FBTyxDQUFDLENBQUM7SUFDMUQsTUFBTSxNQUFNLEdBQWtCLEVBQUUsQ0FBQztJQUNqQyxNQUFNLFFBQVEsR0FDWixpR0FBaUcsQ0FBQztJQUNwRyxJQUFJLEtBQUssQ0FBQztJQUVWLE9BQU8sQ0FBQyxLQUFLLEdBQUcsUUFBUSxDQUFDLElBQUksQ0FBQyxVQUFVLENBQUMsQ0FBQyxLQUFLLElBQUksRUFBRSxDQUFDO1FBQ3BELE1BQU0sQ0FBQyxJQUFJLENBQUM7WUFDVixLQUFLLEVBQUUsUUFBUSxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQztZQUN6QixHQUFHLEVBQUUsS0FBSyxDQUFDLENBQUMsQ0FBQztZQUNiLEtBQUssRUFBRSxLQUFLLENBQUMsQ0FBQyxDQUFDLENBQUMsSUFBSSxFQUFFO1lBQ3RCLFVBQVUsRUFBRSxLQUFLO1lBQ2pCLGFBQWEsRUFBRSxLQUFLO1lBQ3BCLGVBQWUsRUFBRSxDQUFDO1lBQ2xCLE1BQU0sRUFBRSxTQUFTO1NBQ2xCLENBQUMsQ0FBQztJQUNMLENBQUM7SUFFRCxPQUFPLENBQUMsR0FBRyxDQUFDLG9CQUFvQixNQUFNLENBQUMsTUFBTSxnQkFBZ0IsQ0FBQyxDQUFDO0lBRS9ELGtDQUFrQztJQUNsQywrREFBK0Q7SUFDL0QsbUVBQW1FO0lBRW5FLE1BQU0sS0FBSyxHQUFHLEVBQUUsQ0FBQyxXQUFXLENBQUMsVUFBVSxDQUFDLENBQUMsTUFBTSxDQUFDLENBQUMsQ0FBQyxFQUFFLEVBQUUsQ0FBQyxDQUFDLENBQUMsUUFBUSxDQUFDLE9BQU8sQ0FBQyxDQUFDLENBQUM7SUFDNUUsT0FBTyxDQUFDLEdBQUcsQ0FBQyxTQUFTLEtBQUssQ0FBQyxNQUFNLHVCQUF1QixDQUFDLENBQUM7SUFFMUQsSUFBSSxVQUFVLEdBQUcsQ0FBQyxDQUFDO0lBRW5CLEtBQUssTUFBTSxJQUFJLElBQUksS0FBSyxFQUFFLENBQUM7UUFDekIsTUFBTSxPQUFPLEdBQUcsRUFBRSxDQUFDLFlBQVksQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLFVBQVUsRUFBRSxJQUFJLENBQUMsRUFBRSxPQUFPLENBQUMsQ0FBQztRQUN0RSxNQUFNLElBQUksR0FBRyxJQUFJLENBQUMsS0FBSyxDQUFDLE9BQU8sQ0FBQyxDQUFDO1FBRWpDLHFFQUFxRTtRQUNyRSx3RkFBd0Y7UUFDeEYsTUFBTSxJQUFJLEdBQUcsSUFBSSxDQUFDLFNBQVMsQ0FBQyxJQUFJLENBQUMsS0FBSyxDQUFDLENBQUM7UUFFeEMsc0JBQXNCO1FBQ3RCLE1BQU0sS0FBSyxHQUFHLE1BQU0sQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDLEVBQUUsRUFBRTtZQUM5QixpREFBaUQ7WUFDakQsMERBQTBEO1lBQzFELDhDQUE4QztZQUM5QyxPQUFPLENBQ0wsT0FBTyxDQUFBLENBQUMsYUFBRCxDQUFDLHVCQUFELENBQUMsQ0FBRSxLQUFLLENBQUEsS0FBSyxRQUFRO2dCQUM1QixPQUFPLElBQUksS0FBSyxRQUFRO2dCQUN4QixJQUFJLENBQUMsV0FBVyxFQUFFLENBQUMsUUFBUSxDQUFDLENBQUMsQ0FBQyxLQUFLLENBQUMsV0FBVyxFQUFFLENBQUMsU0FBUyxDQUFDLENBQUMsRUFBRSxFQUFFLENBQUMsQ0FBQyxDQUNwRSxDQUFDO1FBQ0osQ0FBQyxDQUFDLENBQUM7UUFFSCxJQUFJLEtBQUssRUFBRSxDQUFDO1lBQ1YsS0FBSyxDQUFDLFVBQVUsR0FBRyxJQUFJLENBQUM7WUFDeEIsVUFBVSxFQUFFLENBQUM7WUFFYix3QkFBd0I7WUFDeEIsTUFBTSxVQUFVLEdBQUcsSUFBSSxDQUFDLEtBQUssQ0FBQyxlQUFlLENBQUMsQ0FBQztZQUMvQyxJQUFJLFVBQVUsRUFBRSxDQUFDO2dCQUNmLEtBQUssQ0FBQyxhQUFhLEdBQUcsSUFBSSxDQUFDO2dCQUMzQixLQUFLLENBQUMsZUFBZSxHQUFHLFVBQVUsQ0FBQyxNQUFNLENBQUM7Z0JBQzFDLEtBQUssQ0FBQyxNQUFNLEdBQUcscUJBQXFCLENBQUM7WUFDdkMsQ0FBQztpQkFBTSxDQUFDO2dCQUNOLEtBQUssQ0FBQyxNQUFNLEdBQUcsVUFBVSxDQUFDO1lBQzVCLENBQUM7UUFDSCxDQUFDO0lBQ0gsQ0FBQztJQUVELE9BQU8sQ0FBQyxHQUFHLENBQUMsV0FBVyxVQUFVLGlDQUFpQyxDQUFDLENBQUM7SUFFcEUscUJBQXFCO0lBQ3JCLElBQUksRUFBRSxHQUFHO2NBQ0csSUFBSSxJQUFJLEVBQUUsQ0FBQyxjQUFjLEVBQUU7Ozs7Ozt5QkFNaEIsTUFBTSxDQUFDLE1BQU07Z0NBQ04sVUFBVSxRQUFRLENBQUMsQ0FBQyxVQUFVLEdBQUcsTUFBTSxDQUFDLE1BQU0sQ0FBQyxHQUFHLEdBQUcsQ0FBQyxDQUFDLE9BQU8sQ0FBQyxDQUFDLENBQUM7NEJBQ3JFLE1BQU0sQ0FBQyxNQUFNLEdBQUcsVUFBVSxRQUFRLENBQUMsQ0FBQyxDQUFDLE1BQU0sQ0FBQyxNQUFNLEdBQUcsVUFBVSxDQUFDLEdBQUcsTUFBTSxDQUFDLE1BQU0sQ0FBQyxHQUFHLEdBQUcsQ0FBQyxDQUFDLE9BQU8sQ0FBQyxDQUFDLENBQUM7Z0NBQy9GLE1BQU0sQ0FBQyxNQUFNLENBQUMsQ0FBQyxDQUFDLEVBQUUsRUFBRSxDQUFDLENBQUMsQ0FBQyxhQUFhLENBQUMsQ0FBQyxNQUFNOzs7Ozs7OENBTTlCLE1BQU0sQ0FBQyxNQUFNLEdBQUcsVUFBVTs7c0NBRWxDLE1BQU0sQ0FBQyxNQUFNLENBQUMsQ0FBQyxDQUFDLEVBQUUsRUFBRSxDQUFDLENBQUMsQ0FBQyxhQUFhLENBQUMsQ0FBQyxNQUFNOzs7Ozs7OztDQVFqRixDQUFDO0lBRUEseURBQXlEO0lBQ3pELE1BQU0sQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDLEVBQUUsQ0FBQyxFQUFFLEVBQUU7UUFDbkIsTUFBTSxLQUFLLEdBQUcsQ0FBQyxDQUFTLEVBQUUsRUFBRSxDQUFDLENBQUMsQ0FBQyxLQUFLLFNBQVMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLEtBQUsscUJBQXFCLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUM7UUFDekYsT0FBTyxLQUFLLENBQUMsQ0FBQyxDQUFDLE1BQU0sQ0FBQyxHQUFHLEtBQUssQ0FBQyxDQUFDLENBQUMsTUFBTSxDQUFDLENBQUM7SUFDM0MsQ0FBQyxDQUFDLENBQUM7SUFFSCxLQUFLLE1BQU0sQ0FBQyxJQUFJLE1BQU0sRUFBRSxDQUFDO1FBQ3ZCLE1BQU0sSUFBSSxHQUFHLENBQUMsQ0FBQyxNQUFNLEtBQUssVUFBVSxDQUFDLENBQUMsQ0FBQyxHQUFHLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxNQUFNLEtBQUsscUJBQXFCLENBQUMsQ0FBQyxDQUFDLElBQUksQ0FBQyxDQUFDLENBQUMsR0FBRyxDQUFDO1FBQzdGLEVBQUUsSUFBSSxLQUFLLENBQUMsQ0FBQyxLQUFLLE1BQU0sQ0FBQyxDQUFDLEtBQUssQ0FBQyxTQUFTLENBQUMsQ0FBQyxFQUFFLEVBQUUsQ0FBQyxHQUFHLENBQUMsQ0FBQyxLQUFLLENBQUMsTUFBTSxHQUFHLEVBQUUsQ0FBQyxDQUFDLENBQUMsS0FBSyxDQUFDLENBQUMsQ0FBQyxFQUFFLE1BQU0sSUFBSSxJQUFJLENBQUMsQ0FBQyxNQUFNLE1BQU0sQ0FBQyxDQUFDLGVBQWUsSUFBSSxHQUFHLE1BQU0sQ0FBQztJQUNoSixDQUFDO0lBRUQsRUFBRSxDQUFDLGFBQWEsQ0FBQyxRQUFRLEVBQUUsRUFBRSxDQUFDLENBQUM7SUFDL0IsT0FBTyxDQUFDLEdBQUcsQ0FBQyx3QkFBd0IsUUFBUSxFQUFFLENBQUMsQ0FBQztBQUNsRCxDQUFDO0FBRUQsT0FBTyxFQUFFLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgKiBhcyBmcyBmcm9tICdmcyc7XG5pbXBvcnQgKiBhcyBwYXRoIGZyb20gJ3BhdGgnO1xuXG4vLyBEZWZpbmUgcGF0aHNcbmNvbnN0IExJQlJBUllfRklMRSA9IHBhdGguam9pbihwcm9jZXNzLmN3ZCgpLCAnLi4nLCAnLi4nLCAnYWlfdmlkZW9fbGlicmFyeS5odG1sJyk7XG5jb25zdCBJTVBPUlRfRElSID0gcGF0aC5qb2luKHByb2Nlc3MuY3dkKCksICdkYXRhJywgJ2xpYnJhcnlfaW1wb3J0Jyk7XG5jb25zdCBPVVRfRklMRSA9IHBhdGguam9pbihwcm9jZXNzLmN3ZCgpLCAnZGF0YScsICdQcm9jZXNzaW5nU3RhdHVzUmVwb3J0Lm1kJyk7XG5cbi8vIEludGVyZmFjZXNcbmludGVyZmFjZSBWaWRlb1N0YXR1cyB7XG4gIGluZGV4OiBudW1iZXI7XG4gIHRpdGxlOiBzdHJpbmc7XG4gIHVybDogc3RyaW5nO1xuICBpc0ltcG9ydGVkOiBib29sZWFuO1xuICBoYXNWaXN1YWxHYXBzOiBib29sZWFuO1xuICB2aXN1YWxHYXBzQ291bnQ6IG51bWJlcjtcbiAgc3RhdHVzOiAnQ29tcGxldGUnIHwgJ05lZWRzIFZpc3VhbCBSZXZpZXcnIHwgJ1BlbmRpbmcnO1xufVxuXG5mdW5jdGlvbiBhbmFseXplKCkge1xuICBjb25zb2xlLmxvZygn8J+TiiBBbmFseXppbmcgUHJvY2Vzc2luZyBTdGF0dXMuLi4nKTtcblxuICAvLyAxLiBMb2FkIHRoZSBvcmlnaW5hbCBsaWJyYXJ5XG4gIGNvbnN0IGxpYkNvbnRlbnQgPSBmcy5yZWFkRmlsZVN5bmMoTElCUkFSWV9GSUxFLCAndXRmLTgnKTtcbiAgY29uc3QgdmlkZW9zOiBWaWRlb1N0YXR1c1tdID0gW107XG4gIGNvbnN0IHJvd1JlZ2V4ID1cbiAgICAvPHRyPlxccyo8dGRbXj5dKj5cXHMqKFxcZCspXFxzKjxcXC90ZD5cXHMqPHRkW14+XSo+XFxzKjxhXFxzK2hyZWY9XCIoW15cIl0rKVwiW14+XSo+KFtePF0rKTxcXC9hPlxccyo8XFwvdGQ+L2c7XG4gIGxldCBtYXRjaDtcblxuICB3aGlsZSAoKG1hdGNoID0gcm93UmVnZXguZXhlYyhsaWJDb250ZW50KSkgIT09IG51bGwpIHtcbiAgICB2aWRlb3MucHVzaCh7XG4gICAgICBpbmRleDogcGFyc2VJbnQobWF0Y2hbMV0pLFxuICAgICAgdXJsOiBtYXRjaFsyXSxcbiAgICAgIHRpdGxlOiBtYXRjaFszXS50cmltKCksXG4gICAgICBpc0ltcG9ydGVkOiBmYWxzZSxcbiAgICAgIGhhc1Zpc3VhbEdhcHM6IGZhbHNlLFxuICAgICAgdmlzdWFsR2Fwc0NvdW50OiAwLFxuICAgICAgc3RhdHVzOiAnUGVuZGluZycsXG4gICAgfSk7XG4gIH1cblxuICBjb25zb2xlLmxvZyhgTGlicmFyeSBjb250YWlucyAke3ZpZGVvcy5sZW5ndGh9IHRvdGFsIHZpZGVvcy5gKTtcblxuICAvLyAyLiBNYXAgSW1wb3J0ZWQgQ2hhdHMgdG8gVmlkZW9zXG4gIC8vIFRoaXMgaXMgdHJpY2t5IGJlY2F1c2UgZmlsZW5hbWVzIGFyZSBJRHMsIG5vdCB2aWRlbyBpbmRpY2VzLlxuICAvLyBXZSBuZWVkIHRvIGxvb2sgaW5zaWRlIGVhY2ggSlNPTiBmaWxlIHRvIG1hdGNoIHRoZSBUaXRsZSBvciBVUkwuXG5cbiAgY29uc3QgZmlsZXMgPSBmcy5yZWFkZGlyU3luYyhJTVBPUlRfRElSKS5maWx0ZXIoKGYpID0+IGYuZW5kc1dpdGgoJy5qc29uJykpO1xuICBjb25zb2xlLmxvZyhgRm91bmQgJHtmaWxlcy5sZW5ndGh9IGltcG9ydGVkIGNoYXQgZmlsZXMuYCk7XG5cbiAgbGV0IG1hdGNoQ291bnQgPSAwO1xuXG4gIGZvciAoY29uc3QgZmlsZSBvZiBmaWxlcykge1xuICAgIGNvbnN0IGNvbnRlbnQgPSBmcy5yZWFkRmlsZVN5bmMocGF0aC5qb2luKElNUE9SVF9ESVIsIGZpbGUpLCAndXRmLTgnKTtcbiAgICBjb25zdCBqc29uID0gSlNPTi5wYXJzZShjb250ZW50KTtcblxuICAgIC8vIFdlIGxvb2sgYXQgdGhlIGZpcnN0IFVTRVIgbWVzc2FnZSBvciB0aGUgZmlyc3QgTU9ERUwgbWVzc2FnZSB0aXRsZVxuICAgIC8vIFVzdWFsbHkgdGhlIG1vZGVsIHN0YXJ0cyB3aXRoIFwiQW5hbHlzaXM6IFtWaWRlbyBUaXRsZV1cIiBiYXNlZCBvbiBvdXIgcHJvbXB0IHN0cnVjdHVyZVxuICAgIGNvbnN0IHRleHQgPSBKU09OLnN0cmluZ2lmeShqc29uLnR1cm5zKTtcblxuICAgIC8vIEZpbmQgbWF0Y2hpbmcgdmlkZW9cbiAgICBjb25zdCB2aWRlbyA9IHZpZGVvcy5maW5kKCh2KSA9PiB7XG4gICAgICAvLyBTaW1wbGUgdGl0bGUgbWF0Y2ggKGNhc2UgaW5zZW5zaXRpdmUsIHBhcnRpYWwpXG4gICAgICAvLyBUaGlzIGlzIGhldXJpc3RpYyBidXQgdXN1YWxseSBlZmZlY3RpdmUgaWYgdGl0bGVzIGFncmVlXG4gICAgICAvLyBPciBpZiB0aGUgVVJMIGFwcGVhcmVkIGluIHRoZSBwcm9tcHQgKHJhcmUpXG4gICAgICByZXR1cm4gKFxuICAgICAgICB0eXBlb2Ygdj8udGl0bGUgPT09ICdzdHJpbmcnICYmXG4gICAgICAgIHR5cGVvZiB0ZXh0ID09PSAnc3RyaW5nJyAmJlxuICAgICAgICB0ZXh0LnRvTG93ZXJDYXNlKCkuaW5jbHVkZXModi50aXRsZS50b0xvd2VyQ2FzZSgpLnN1YnN0cmluZygwLCAyMCkpXG4gICAgICApO1xuICAgIH0pO1xuXG4gICAgaWYgKHZpZGVvKSB7XG4gICAgICB2aWRlby5pc0ltcG9ydGVkID0gdHJ1ZTtcbiAgICAgIG1hdGNoQ291bnQrKztcblxuICAgICAgLy8gQ2hlY2sgZm9yIFZpc3VhbCBHYXBzXG4gICAgICBjb25zdCBnYXBNYXRjaGVzID0gdGV4dC5tYXRjaCgvTmVlZCB0byBzZWU6L2cpO1xuICAgICAgaWYgKGdhcE1hdGNoZXMpIHtcbiAgICAgICAgdmlkZW8uaGFzVmlzdWFsR2FwcyA9IHRydWU7XG4gICAgICAgIHZpZGVvLnZpc3VhbEdhcHNDb3VudCA9IGdhcE1hdGNoZXMubGVuZ3RoO1xuICAgICAgICB2aWRlby5zdGF0dXMgPSAnTmVlZHMgVmlzdWFsIFJldmlldyc7XG4gICAgICB9IGVsc2Uge1xuICAgICAgICB2aWRlby5zdGF0dXMgPSAnQ29tcGxldGUnO1xuICAgICAgfVxuICAgIH1cbiAgfVxuXG4gIGNvbnNvbGUubG9nKGBNYXRjaGVkICR7bWF0Y2hDb3VudH0gdmlkZW9zIHdpdGggaW1wb3J0ZWQgYW5hbHlzaXMuYCk7XG5cbiAgLy8gMy4gR2VuZXJhdGUgUmVwb3J0XG4gIGxldCBtZCA9IGAjIPCfk4ogVmlkZW8gUHJvY2Vzc2luZyBTdGF0dXMgUmVwb3J0XG4qR2VuZXJhdGVkOiAke25ldyBEYXRlKCkudG9Mb2NhbGVTdHJpbmcoKX0qXG5cbiMjIPCfn6IgU3VtbWFyeVxuXG58IE1ldHJpYyB8IENvdW50IHwgUGVyY2VudGFnZSB8XG58IDotLS0gfCA6LS0tOiB8IDotLS06IHxcbnwgKipUb3RhbCBWaWRlb3MqKiB8ICoqJHt2aWRlb3MubGVuZ3RofSoqIHwgMTAwJSB8XG58ICoqQW5hbHl6ZWQgKEltcG9ydGVkKSoqIHwgKioke21hdGNoQ291bnR9KiogfCAkeygobWF0Y2hDb3VudCAvIHZpZGVvcy5sZW5ndGgpICogMTAwKS50b0ZpeGVkKDEpfSUgfFxufCAqKlBlbmRpbmcgKFRvIERvKSoqIHwgKioke3ZpZGVvcy5sZW5ndGggLSBtYXRjaENvdW50fSoqIHwgJHsoKCh2aWRlb3MubGVuZ3RoIC0gbWF0Y2hDb3VudCkgLyB2aWRlb3MubGVuZ3RoKSAqIDEwMCkudG9GaXhlZCgxKX0lIHxcbnwgKipOZWVkcyBWaXN1YWwgUmV2aWV3KiogfCAqKiR7dmlkZW9zLmZpbHRlcigodikgPT4gdi5oYXNWaXN1YWxHYXBzKS5sZW5ndGh9KiogfCAtIHxcblxuLS0tXG5cbiMjIPCfn6EgQWN0aW9uIEl0ZW1zXG5cbjEuICAqKlJ1biBUcmFuc2NyaXB0UHJvY2Vzc29yVjIqKiBmb3IgdGhlICoqJHt2aWRlb3MubGVuZ3RoIC0gbWF0Y2hDb3VudH0qKiBwZW5kaW5nIHZpZGVvcy5cbiAgICAqICAgKkNvbW1hbmQ6KiBcXGAuL3NjcmlwdHMvcnVuLXYyLnNoIC0tc3RhcnQ9NjMzIC0tZW5kPTFcXGAgKEl0IHdpbGwgc2tpcCBjb21wbGV0ZWQgb25lcyBpZiB3ZSB1cGRhdGUgdGhlIHN0YXRlIGZpbGUsIGJ1dCBjdXJyZW50bHkgVjIgc3RhdGUgaXMgZnJlc2gpLlxuMi4gICoqUnVuIFZpc3VhbEFuYWx5c3QqKiBmb3IgdGhlICoqJHt2aWRlb3MuZmlsdGVyKCh2KSA9PiB2Lmhhc1Zpc3VhbEdhcHMpLmxlbmd0aH0qKiB2aWRlb3MgbWFya2VkIFwiTmVlZHMgVmlzdWFsIFJldmlld1wiLlxuXG4tLS1cblxuIyMg8J+TnSBEZXRhaWxlZCBTdGF0dXNcblxufCAjIHwgVGl0bGUgfCBTdGF0dXMgfCBWaXN1YWwgR2FwcyB8XG58IDotLS0gfCA6LS0tIHwgOi0tLSB8IDotLS06IHxcbmA7XG5cbiAgLy8gU29ydDogUGVuZGluZyBmaXJzdCwgdGhlbiBWaXN1YWwgUmV2aWV3LCB0aGVuIENvbXBsZXRlXG4gIHZpZGVvcy5zb3J0KChhLCBiKSA9PiB7XG4gICAgY29uc3Qgc2NvcmUgPSAoczogc3RyaW5nKSA9PiAocyA9PT0gJ1BlbmRpbmcnID8gMCA6IHMgPT09ICdOZWVkcyBWaXN1YWwgUmV2aWV3JyA/IDEgOiAyKTtcbiAgICByZXR1cm4gc2NvcmUoYS5zdGF0dXMpIC0gc2NvcmUoYi5zdGF0dXMpO1xuICB9KTtcblxuICBmb3IgKGNvbnN0IHYgb2YgdmlkZW9zKSB7XG4gICAgY29uc3QgaWNvbiA9IHYuc3RhdHVzID09PSAnQ29tcGxldGUnID8gJ+KchScgOiB2LnN0YXR1cyA9PT0gJ05lZWRzIFZpc3VhbCBSZXZpZXcnID8gJ+KaoO+4jycgOiAn4pqqJztcbiAgICBtZCArPSBgfCAke3YuaW5kZXh9IHwgJHt2LnRpdGxlLnN1YnN0cmluZygwLCA2MCl9JHt2LnRpdGxlLmxlbmd0aCA+IDYwID8gJy4uLicgOiAnJ30gfCAke2ljb259ICR7di5zdGF0dXN9IHwgJHt2LnZpc3VhbEdhcHNDb3VudCB8fCAnLSd9IHxcXG5gO1xuICB9XG5cbiAgZnMud3JpdGVGaWxlU3luYyhPVVRfRklMRSwgbWQpO1xuICBjb25zb2xlLmxvZyhgUmVwb3J0IGdlbmVyYXRlZCBhdDogJHtPVVRfRklMRX1gKTtcbn1cblxuYW5hbHl6ZSgpO1xuIl19

@@ -3,7 +3,7 @@
  * Implements Login with Unstoppable using UAuth protocol
  */
 
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 
 /**
  * UAuth Configuration

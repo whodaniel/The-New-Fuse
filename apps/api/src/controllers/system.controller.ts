@@ -48,20 +48,20 @@ import { DatabaseService, sql } from '@the-new-fuse/database';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { CacheService } from '../cache/cache.service';
+import { CacheService } from '../cache/cache.service.js';
 import {
   AuthLevel,
   RateLimitTier,
   RequireAuthLevel,
   SetRateLimitTier,
-} from '../guards/secure-auth.guard';
+} from '../guards/secure-auth.guard.js';
 import {
   A2AMessageBrokerService,
   A2AMessageType,
   A2APriority,
-} from '../modules/agency-hub/services/a2a-message-broker.service';
-import { AgentSwarmOrchestrationService } from '../modules/agency-hub/services/agent-swarm-orchestration.service';
-import { PromptTemplatesService } from '../services/prompt-templates.service';
+} from '../modules/agency-hub/services/a2a-message-broker.service.js';
+import { AgentSwarmOrchestrationService } from '../modules/agency-hub/services/agent-swarm-orchestration.service.js';
+import { PromptTemplatesService } from '../services/prompt-templates.service.js';
 
 @Controller('system')
 export class SystemController {

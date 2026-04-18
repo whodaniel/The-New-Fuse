@@ -8,12 +8,12 @@
  * 2. User presses Ctrl+Shift+G keyboard shortcut
  */
 
-import { simpleChatBridge } from './adapters/SimpleChatBridge';
+import { simpleChatBridge } from './adapters/SimpleChatBridge.js';
 import './guard'; // MUST BE FIRST - Patches customElements.define
-import { createEnhancedFloatingPanel, EnhancedFloatingPanel } from './injectable/FloatingPanel';
-import { accessibilityTree } from './utils/AccessibilityTree';
-import { captchaHandler } from './utils/CaptchaHandler';
-import { humanSimulator } from './utils/HumanBehaviorSimulator';
+import { createEnhancedFloatingPanel, EnhancedFloatingPanel } from './injectable/FloatingPanel.js';
+import { accessibilityTree } from './utils/AccessibilityTree.js';
+import { captchaHandler } from './utils/CaptchaHandler.js';
+import { humanSimulator } from './utils/HumanBehaviorSimulator.js';
 
 const shouldSkipForPage = (): boolean => {
   const host = window.location.hostname;

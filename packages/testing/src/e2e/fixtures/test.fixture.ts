@@ -1,11 +1,11 @@
 import { test as base, Page, TestInfo } from '@playwright/test';
-import { AuthUtils, AuthUser } from '../utils/auth.utils';
-import { LoginPage } from '../pages/login.page';
-import { DashboardPage } from '../pages/dashboard.page';
-import { WorkflowEditorPage } from '../pages/workflow-editor.page';
-import { SettingsPage } from '../pages/settings.page';
-import { TestHelpers } from '../utils/test-helpers';
-import { TestReporter } from '../utils/test-reporter';
+import { AuthUtils, AuthUser } from '../utils/auth.utils.js';
+import { LoginPage } from '../pages/login.page.js';
+import { DashboardPage } from '../pages/dashboard.page.js';
+import { WorkflowEditorPage } from '../pages/workflow-editor.page.js';
+import { SettingsPage } from '../pages/settings.page.js';
+import { TestHelpers } from '../utils/test-helpers.js';
+import { TestReporter } from '../utils/test-reporter.js';
 
 // Define the types for the extended fixtures
 interface CustomFixtures {

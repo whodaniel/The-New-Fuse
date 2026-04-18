@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { TestPrompt } from './prompts';
+import { TestPrompt } from './prompts.js';
 
 export interface GeneratedResult {
   modelName: string;

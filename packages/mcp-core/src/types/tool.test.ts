@@ -13,8 +13,8 @@ import {
   QueueStatistics,
   ToolSandboxConfig,
   NetworkAccessConfig
-} from './tool';
-import { mcpValidator } from '../validation/validator';
+} from './tool.js';
+import { mcpValidator } from '../validation/validator.js';
 
 describe('Tool Types', () => {
   describe('Enumerations', () => {

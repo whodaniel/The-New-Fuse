@@ -1,6 +1,6 @@
 import { Controller, Get, Header } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { PerformanceMetricsService } from './performance-metrics.service';
+import { PerformanceMetricsService } from './performance-metrics.service.js';
 
 /**
  * Performance Metrics Controller

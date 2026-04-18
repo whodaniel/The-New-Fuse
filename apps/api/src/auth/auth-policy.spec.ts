@@ -6,7 +6,7 @@ import {
   resolveInvitePolicy,
   resolvePermissionClaims,
   resolveRoleClaims,
-} from './auth-policy';
+} from './auth-policy.js';
 
 describe('auth-policy', () => {
   it('normalizes and expands SUPER_ADMIN role claims', () => {

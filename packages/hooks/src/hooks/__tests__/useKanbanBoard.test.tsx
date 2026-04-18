@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react-hooks';
-import { useKanbanBoard } from '../useKanbanBoard';
-import { SuggestionStatus, TaskStatus, SuggestionService } from '../../types/index';
+import { useKanbanBoard } from '../useKanbanBoard.js';
+import { SuggestionStatus, TaskStatus, SuggestionService } from '../../types/index.js';
 
 // Use jest.Mock to properly type the mock functions
 const mockSuggestionService: jest.Mocked<SuggestionService> = {

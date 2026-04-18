@@ -12,10 +12,10 @@ import { isMobile } from 'react-device-detect';
 import { useParams } from 'react-router-dom';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import { v4 } from 'uuid';
-import { SidebarMobileHeader } from '../../Sidebar';
-import ChatHistory from './ChatHistory';
-import DnDFileUploaderWrapper, { CLEAR_ATTACHMENTS_EVENT, DndUploaderContext } from './DnDWrapper';
-import PromptInput, { PROMPT_INPUT_EVENT } from './PromptInput';
+import { SidebarMobileHeader } from '../../Sidebar/index';
+import ChatHistory from './ChatHistory/index';
+import DnDFileUploaderWrapper, { CLEAR_ATTACHMENTS_EVENT, DndUploaderContext } from './DnDWrapper/index';
+import PromptInput, { PROMPT_INPUT_EVENT } from './PromptInput/index';
 // import { ChatTooltips } from './ChatTooltips';
 import { LLMSelector } from '@/components/LLMSelection/LLMSelector';
 import { Button } from '@/components/ui/button';
@@ -35,7 +35,7 @@ import {
 import { WorkspaceData } from '@/types/workspace';
 import { TimeStamp } from '@/utils/TimeStamp';
 import { Bot, ChevronDown, MoreHorizontal, Settings } from 'lucide-react';
-import MessageGroup from './ChatHistory/MessageGroup';
+import MessageGroup from './ChatHistory/MessageGroup/index';
 
 interface ChatMessage {
   uuid?: string;

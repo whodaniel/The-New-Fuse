@@ -1,7 +1,7 @@
 import { timingSafeEqual } from 'node:crypto';
 import http from 'node:http';
-import { env } from './config/env';
-import { AudioTriggerRuntime } from './runtime/audio-trigger-runtime';
+import { env } from './config/env.js';
+import { AudioTriggerRuntime } from './runtime/audio-trigger-runtime.js';
 
 const MAX_BODY_BYTES = 1024 * 1024;
 

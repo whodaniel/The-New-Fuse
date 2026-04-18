@@ -1,8 +1,8 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
-import { CacheConfig } from '../config/cache.config';
-import { CacheMonitoringService } from './cache-monitoring.service';
+import { CacheConfig } from '../config/cache.config.js';
+import { CacheMonitoringService } from './cache-monitoring.service.js';
 
 export interface CacheOptions {
   ttl?: number;

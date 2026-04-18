@@ -1,7 +1,7 @@
 export { Button, buttonVariants } from './Button';
 export type { ButtonProps } from './Button';
-export { Preloader, FullScreenLoader, preloaderVariants } from './Preloader';
-export type { PreloaderProps, PreloaderSize, PreloaderVariant } from './Preloader';
+export { Preloader, FullScreenLoader, preloaderVariants } from './Preloader/index.js';
+export type { PreloaderProps, PreloaderSize, PreloaderVariant } from './Preloader/index.js';
 export {
   Card,
   CardHeader,

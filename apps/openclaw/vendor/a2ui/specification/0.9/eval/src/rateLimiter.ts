@@ -14,8 +14,8 @@
  limitations under the License.
  */
 
-import { logger } from './logger';
-import { ModelConfiguration } from './models';
+import { logger } from './logger.js';
+import { ModelConfiguration } from './models.js';
 
 interface UsageRecord {
   timestamp: number;

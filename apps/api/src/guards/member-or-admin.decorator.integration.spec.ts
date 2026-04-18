@@ -2,7 +2,7 @@ import { Controller, INestApplication, Post, UnauthorizedException } from '@nest
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 
-import { PayPalService } from '../modules/billing/paypal.service';
+import { PayPalService } from '../modules/billing/paypal.service.js';
 
 jest.mock('@nestjs/passport', () => ({
   AuthGuard: () =>
@@ -19,7 +19,7 @@ jest.mock('@nestjs/passport', () => ({
     },
 }));
 
-import { MemberOrAdmin, MemberOrAdminGuard } from './member-or-admin.guard';
+import { MemberOrAdmin, MemberOrAdminGuard } from './member-or-admin.guard.js';
 
 @Controller('test-member-or-admin')
 class TestMemberOrAdminController {

@@ -26,7 +26,7 @@ import { Request, Response } from 'express';
 // @ts-ignore
 import { workflowExecutions, workflows } from '@the-new-fuse/database/drizzle/schema';
 
-import { WorkflowExecutionService } from '../services/workflow/WorkflowExecutionService';
+import { WorkflowExecutionService } from '../services/workflow/WorkflowExecutionService.js';
 
 type DatabaseWhere = Record<string, any>;
 

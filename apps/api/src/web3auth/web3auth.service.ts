@@ -12,7 +12,7 @@ import {
   Web3AuthInstance,
   Web3AuthOptions,
   Web3AuthProvider,
-} from './web3auth.types';
+} from './web3auth.types.js';
 
 @Injectable()
 export class Web3authService implements OnModuleInit {

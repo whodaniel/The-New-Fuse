@@ -20,10 +20,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Agent, AgentStatus, CreateAgentDto, UpdateAgentDto } from '@the-new-fuse/types';
-import { CurrentUser } from '../../auth/decorators/current-user.decorator';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { AgentService } from './agent.service';
-import { SearchAgentDto } from './dto/search-agent.dto';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator.js';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
+import { AgentService } from './agent.service.js';
+import { SearchAgentDto } from './dto/search-agent.dto.js';
 
 @ApiTags('Agents')
 @ApiBearerAuth()

@@ -13,7 +13,7 @@ import {
   CreateManagedAccountGrantDto,
   ProvisionManagedAccountDto,
   RedeemManagedAccountGrantDto,
-} from '../../../dto/email-custodian.dto';
+} from '../../../dto/email-custodian.dto.js';
 
 const execFile = promisify(execFileCallback);
 

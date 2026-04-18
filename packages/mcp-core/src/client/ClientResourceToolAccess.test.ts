@@ -5,10 +5,10 @@
  * capabilities of the MCP client, including caching behavior.
  */
 
-import { MCPClient } from './MCPClient';
-import { MCPClientConfig } from '../types/client';
-import { MCPResource, ResourceContent } from '../interfaces/IMCPResource';
-import { ToolResult } from '../interfaces/IMCPTool';
+import { MCPClient } from './MCPClient.js';
+import { MCPClientConfig } from '../types/client.js';
+import { MCPResource, ResourceContent } from '../interfaces/IMCPResource.js';
+import { ToolResult } from '../interfaces/IMCPTool.js';
 
 // Mock WebSocket for testing
 class MockCloseEvent extends Event {

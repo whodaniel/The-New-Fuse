@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Roles } from '../../auth/decorators/roles.decorator';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../auth/guards/roles.guard';
-import { SharedStateService } from './shared-state.service';
-import { Receipt } from './shared-state.types';
+import { Roles } from '../../auth/decorators/roles.decorator.js';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
+import { RolesGuard } from '../../auth/guards/roles.guard.js';
+import { SharedStateService } from './shared-state.service.js';
+import { Receipt } from './shared-state.types.js';
 
 @ApiTags('Shared State')
 @Controller('shared-state')

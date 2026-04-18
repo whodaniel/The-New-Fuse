@@ -2,4 +2,4 @@
  * MCP Server exports
  */
 
-export { MCPServer } from './MCPServer';
+export { MCPServer } from './MCPServer.js';

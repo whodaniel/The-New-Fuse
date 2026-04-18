@@ -1,14 +1,14 @@
 import { Body, Controller, ForbiddenException, Get, Param, Post, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
-import { hasPermission, isPrivilegedUser } from '../../../auth/auth-policy';
+import { hasPermission, isPrivilegedUser } from '../../../auth/auth-policy.js';
 import {
   CreateManagedAccountGrantDto,
   ProvisionManagedAccountDto,
   RedeemManagedAccountGrantDto,
-} from '../../../dto/email-custodian.dto';
-import { AuthLevel, RequireAuthLevel } from '../../../guards/secure-auth.guard';
-import { EmailCustodianService } from '../services/email-custodian.service';
+} from '../../../dto/email-custodian.dto.js';
+import { AuthLevel, RequireAuthLevel } from '../../../guards/secure-auth.guard.js';
+import { EmailCustodianService } from '../services/email-custodian.service.js';
 
 type AuthenticatedRequest = Request & {
   user?: {

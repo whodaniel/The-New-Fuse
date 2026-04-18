@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { ContextPackage } from '../../types/events';
+import { ContextPackage } from '../../types/events.js';
 
 export interface MiniOmniClientConfig {
   enabled: boolean;

@@ -6,8 +6,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { IMCPBroker } from '../interfaces/IMCPBroker';
-import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
+import { IMCPBroker } from '../interfaces/IMCPBroker.js';
+import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage.js';
 import {
   MCPServiceInfo,
   ServiceQuery,
@@ -17,14 +17,14 @@ import {
   LoadBalancingStrategy,
   ServiceCompatibilityResult,
   RoutingInfo
-} from '../types';
-import { ServiceStatus } from '../types/common';
-import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error';
-import { ServiceRegistry } from './ServiceRegistry';
-import { HealthMonitor } from './HealthMonitor';
-import { MessageRouter } from './MessageRouter';
-import { LoadBalancer } from './LoadBalancer';
-import { EventSubscriptionManager, PatternType } from './EventSubscriptionManager';
+} from '../types/index.js';
+import { ServiceStatus } from '../types/common.js';
+import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error.js';
+import { ServiceRegistry } from './ServiceRegistry.js';
+import { HealthMonitor } from './HealthMonitor.js';
+import { MessageRouter } from './MessageRouter.js';
+import { LoadBalancer } from './LoadBalancer.js';
+import { EventSubscriptionManager, PatternType } from './EventSubscriptionManager.js';
 
 /**
  * Default broker configuration

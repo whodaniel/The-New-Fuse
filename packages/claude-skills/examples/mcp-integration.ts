@@ -2,7 +2,7 @@
  * MCP Server Integration Example
  */
 
-import { ClaudeSkillsManager } from '../src';
+import { ClaudeSkillsManager } from '../src/index.js';
 
 /**
  * Mock MCP Server for demonstration

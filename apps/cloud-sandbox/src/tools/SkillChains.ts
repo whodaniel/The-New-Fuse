@@ -12,8 +12,8 @@
  */
 
 import { Logger } from '@nestjs/common';
-import type { AuthenticatedUser } from '../auth/CloudSandboxAuthGuard';
-import { ToolExecutionResult, ToolRegistry } from './ToolWrapper';
+import type { AuthenticatedUser } from '../auth/CloudSandboxAuthGuard.js';
+import { ToolExecutionResult, ToolRegistry } from './ToolWrapper.js';
 
 export interface SkillStep {
   toolName: string;

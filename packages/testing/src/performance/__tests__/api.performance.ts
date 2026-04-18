@@ -1,4 +1,4 @@
-import { PerformanceSuite } from '../PerformanceSuite';
+import { PerformanceSuite } from '../PerformanceSuite.js';
 // Mock ConfigService interface since core package has issues
 interface ConfigService {
   get: jest.Mock;

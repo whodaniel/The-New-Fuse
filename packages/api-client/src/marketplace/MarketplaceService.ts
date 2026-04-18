@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
-import { IntegrationListing, Integration, IntegrationType } from '../integrations/types';
-import { IntegrationRegistryImpl } from '../integrations/IntegrationRegistry';
+import { IntegrationListing, Integration, IntegrationType } from '../integrations/types.js';
+import { IntegrationRegistryImpl } from '../integrations/IntegrationRegistry.js';
 
 /**
  * Events emitted by the Integration Marketplace

@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Agent } from './agent.entity';
-import { PromptTemplate } from './prompt.entity';
+import { Agent } from './agent.entity.js';
+import { PromptTemplate } from './prompt.entity.js';
 
 @Entity('agent_prompts')
 export class AgentPrompt {

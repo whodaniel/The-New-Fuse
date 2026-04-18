@@ -1,5 +1,5 @@
-import { BaseService } from '../core/BaseService';
-import { Logger } from '../types/core';
+import { BaseService } from '../core/BaseService.js';
+import { Logger } from '../types/core.js';
 
 /**
  * Options for configuring retry behavior.

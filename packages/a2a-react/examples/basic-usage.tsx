@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { A2AProvider, useA2AAgents, useA2AMessages, useA2AContext } from '../src';
+import { A2AProvider, useA2AAgents, useA2AMessages, useA2AContext } from '../src/index.js';
 
 // Configuration for the A2A connection
 const config = {

@@ -1,4 +1,4 @@
-import { CodeSandbox } from '../code-sandbox';
+import { CodeSandbox } from '../code-sandbox.js';
 
 describe('CodeSandbox', () => {
   let sandbox: CodeSandbox;

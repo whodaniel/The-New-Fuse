@@ -3,26 +3,26 @@
  */
 
 // Interfaces
-export * from './interfaces/IMonitoring';
+export * from './interfaces/IMonitoring.js';
 
 // Base classes
-export * from './base/BaseMetricsCollector';
-export * from './base/BaseMonitoringSystem';
+export * from './base/BaseMetricsCollector.js';
+export * from './base/BaseMonitoringSystem.js';
 
 // Utils
 // Re-export simple logger (includes LogEntry/LogLevel)
-export * from './utils/Logger';
+export * from './utils/Logger.js';
 
 // Sentry
-export * from './sentry/sentry-config';
-export * from './sentry/sentry-integrations';
+export * from './sentry/sentry-config.js';
+export * from './sentry/sentry-integrations.js';
 
 // Logging
 // Avoid duplicate type names// This usage is just a thought, I will view the file first.
-export { WinstonLogger, createLogger, type LoggerConfig } from './logging/winston-logger';
+export { WinstonLogger, createLogger, type LoggerConfig } from './logging/winston-logger.js';
 
 // Metrics
-export * from './metrics/prometheus-metrics';
+export * from './metrics/prometheus-metrics.js';
 
 // Health checks
 // Avoid duplicate HealthStatus name (already exported by IMonitoring)
@@ -32,7 +32,7 @@ export {
   type HealthCheckResult,
   type ServiceHealth,
   type SystemHealthStatus,
-} from './health/health-check';
+} from './health/health-check.js';
 
 // Alerts
 // Avoid duplicate Alert/AlertRule types (IMonitoring already exports them)
@@ -43,10 +43,10 @@ export {
   type AlertSeverity,
   type AlertStatus,
   type ComparisonOperator,
-} from './alerts/alert-manager';
+} from './alerts/alert-manager.js';
 
 // Performance monitoring
-export * from './performance/index';
+export * from './performance/index.js';
 
 // Dashboards
 // Avoid duplicate QueryPattern type by exporting explicit members
@@ -60,10 +60,10 @@ export {
   type InfrastructureMetrics,
   type MetricValue,
   type PerformanceAlert,
-} from './dashboards/performance-dashboard';
+} from './dashboards/performance-dashboard.js';
 
 // NestJS integrations
-export * from './nestjs/health.controller';
-export * from './nestjs/metrics.controller';
-export * from './nestjs/monitoring.interceptor';
-export * from './nestjs/monitoring.module';
+export * from './nestjs/health.controller.js';
+export * from './nestjs/metrics.controller.js';
+export * from './nestjs/monitoring.interceptor.js';
+export * from './nestjs/monitoring.module.js';

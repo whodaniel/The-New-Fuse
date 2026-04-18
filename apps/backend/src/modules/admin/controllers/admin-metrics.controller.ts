@@ -1,9 +1,9 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { drizzleApiLogsRepository } from '@the-new-fuse/database';
-import { Roles } from '../../../auth/decorators/roles.decorator';
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../auth/guards/roles.guard';
+import { Roles } from '../../../auth/decorators/roles.decorator.js';
+import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard.js';
+import { RolesGuard } from '../../../auth/guards/roles.guard.js';
 
 @ApiTags('admin')
 @Controller('admin/api-analytics')

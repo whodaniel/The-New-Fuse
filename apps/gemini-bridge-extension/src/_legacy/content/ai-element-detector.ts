@@ -3,8 +3,8 @@
  * Uses machine learning heuristics to identify chat elements
  */
 
-import { Logger } from '../utils/logger';
-import { ElementInfo } from './element-selector';
+import { Logger } from '../utils/logger.js';
+import { ElementInfo } from './element-selector.js';
 
 export interface ChatElementPattern {
   type: 'input' | 'button' | 'output' | 'container';

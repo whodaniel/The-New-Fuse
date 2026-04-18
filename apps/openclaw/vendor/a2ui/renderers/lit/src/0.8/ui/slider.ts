@@ -19,7 +19,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { A2uiMessageProcessor } from '../data/model-processor.js';
-import { NumberValue, StringValue } from '../types/primitives';
+import { NumberValue, StringValue } from '../types/primitives.js';
 import { ResolvedTextField } from '../types/types.js';
 import { Root } from './root.js';
 import { structuralStyles } from './styles.js';

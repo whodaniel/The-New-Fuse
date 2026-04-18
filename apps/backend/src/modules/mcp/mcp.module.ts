@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AgentModule } from '../agent/agent.module';
-import { WorkflowTemplatesModule } from '../workflow-templates/workflow-templates.module';
-import { AdminMCPController } from './admin-mcp.controller';
-import { MCPA2ABridge } from './mcp-a2a-bridge.service';
-import { McpApiController } from './mcp-api.controller';
-import { MCPServerService } from './mcp-server.service';
-import { MCPToolRegistry } from './mcp-tool-registry.service';
-import { MCPController } from './mcp.controller';
+import { AgentModule } from '../agent/agent.module.js';
+import { WorkflowTemplatesModule } from '../workflow-templates/workflow-templates.module.js';
+import { AdminMCPController } from './admin-mcp.controller.js';
+import { MCPA2ABridge } from './mcp-a2a-bridge.service.js';
+import { McpApiController } from './mcp-api.controller.js';
+import { MCPServerService } from './mcp-server.service.js';
+import { MCPToolRegistry } from './mcp-tool-registry.service.js';
+import { MCPController } from './mcp.controller.js';
 
 /**
  * MCP Module

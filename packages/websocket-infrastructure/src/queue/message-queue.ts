@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { MessageQueueItem } from '../types';
+import { MessageQueueItem } from '../types/index.js';
 import { v4 as uuidv4 } from 'uuid';
 import { EventEmitter } from 'events';
 

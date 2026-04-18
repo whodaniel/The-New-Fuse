@@ -10,14 +10,14 @@
  * This module provides a secure wrapper around MCP tool execution.
  */
 
-import { AuditLogger } from './AuditLogger';
+import { AuditLogger } from './AuditLogger.js';
 import {
   AuthenticatedUser,
   AuthenticationResult,
   CloudSandboxAuthGuard,
-} from './CloudSandboxAuthGuard';
-import { QuotaCheckResult, TenantIsolationService } from './TenantIsolationService';
-import { PermissionCheckResult, ToolPermissionChecker } from './ToolPermissionChecker';
+} from './CloudSandboxAuthGuard.js';
+import { QuotaCheckResult, TenantIsolationService } from './TenantIsolationService.js';
+import { PermissionCheckResult, ToolPermissionChecker } from './ToolPermissionChecker.js';
 
 export interface SecuredToolExecutionContext {
   user: AuthenticatedUser;

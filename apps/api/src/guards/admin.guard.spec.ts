@@ -1,6 +1,6 @@
 import { UnauthorizedException, type ExecutionContext } from '@nestjs/common';
 import { describe, expect, it } from '@jest/globals';
-import { AdminGuard } from './admin.guard';
+import { AdminGuard } from './admin.guard.js';
 
 type RequestShape = {
   user?: {

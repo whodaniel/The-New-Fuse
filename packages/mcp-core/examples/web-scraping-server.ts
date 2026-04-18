@@ -5,10 +5,10 @@
  * for AI agents to access the internet.
  */
 
-import { MCPServer } from '../src/server/MCPServer';
-import { MCPServerConfig } from '../src/types/server';
-import { LogLevel } from '../src/types/common';
-import { WebScrapingMCPTools } from '../../web-scraping/src/mcp/WebScrapingMCPTools';
+import { MCPServer } from '../src/server/MCPServer.js';
+import { MCPServerConfig } from '../src/types/server.js';
+import { LogLevel } from '../src/types/common.js';
+import { WebScrapingMCPTools } from '../../web-scraping/src/mcp/WebScrapingMCPTools.js';
 
 async function createWebScrapingMCPServer() {
   // Create server instance

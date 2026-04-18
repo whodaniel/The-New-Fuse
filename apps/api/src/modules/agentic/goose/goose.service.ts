@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { GooseCliBridgeService, LogLevel, Logger as RelayLogger } from '@the-new-fuse/relay-core';
 import * as path from 'path';
 
-import { hasAuthorizationLevel } from '../../../auth/auth-policy';
-import { PayPalService } from '../../billing/paypal.service';
-import { GooseDispatchDto } from './goose.dto';
+import { hasAuthorizationLevel } from '../../../auth/auth-policy.js';
+import { PayPalService } from '../../billing/paypal.service.js';
+import { GooseDispatchDto } from './goose.dto.js';
 
 type GoosePrincipal = {
   id?: string;

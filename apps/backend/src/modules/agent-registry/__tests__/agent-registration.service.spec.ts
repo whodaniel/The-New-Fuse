@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AgentRegistrationService } from '../services/agent-registration.service';
-import { DrizzleService } from '../../../drizzle/drizzle.service';
-import { RegisterAgentDto } from '../dto';
+import { AgentRegistrationService } from '../services/agent-registration.service.js';
+import { DrizzleService } from '../../../drizzle/drizzle.service.js';
+import { RegisterAgentDto } from '../dto/index.js';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 
 describe('AgentRegistrationService', () => {

@@ -10,8 +10,8 @@ import {
   SearchResult,
   SearchSuggestion,
 } from '../ai/types';
-import { DashboardState } from '../collaboration/types';
-import { AnalyticsManager } from '../analytics/AnalyticsManager';
+import { DashboardState } from '../collaboration/types.js';
+import { AnalyticsManager } from '../analytics/AnalyticsManager.js';
 
 export function useAI(
   analyticsManager: AnalyticsManager,

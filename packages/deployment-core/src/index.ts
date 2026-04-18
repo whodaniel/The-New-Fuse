@@ -1,45 +1,45 @@
 // Core CI/CD Pipeline exports
-export { CICDPipeline } from './core/CICDPipeline';
-export { PipelineExecutor } from './core/PipelineExecutor';
-export { PipelineValidator } from './core/PipelineValidator';
-export { PipelineStorage } from './core/PipelineStorage';
-export { NotificationService } from './core/NotificationService';
-export { MetricsCollector } from './core/MetricsCollector';
+export { CICDPipeline } from './core/CICDPipeline.js';
+export { PipelineExecutor } from './core/PipelineExecutor.js';
+export { PipelineValidator } from './core/PipelineValidator.js';
+export { PipelineStorage } from './core/PipelineStorage.js';
+export { NotificationService } from './core/NotificationService.js';
+export { MetricsCollector } from './core/MetricsCollector.js';
 
 // Infrastructure components
-// export * from './infrastructure'; // Temporarily disabled due to export conflicts
+// export * from './infrastructure/index.js'; // Temporarily disabled due to export conflicts
 
 // Interfaces
-export type { ICICDPipeline } from './interfaces/ICICDPipeline';
-export type { IInfrastructureManager } from './interfaces/IInfrastructureManager';
+export type { ICICDPipeline } from './interfaces/ICICDPipeline.js';
+export type { IInfrastructureManager } from './interfaces/IInfrastructureManager.js';
 
 // Types
-// export * from './types/pipeline'; // Temporarily disabled due to export conflicts
+// export * from './types/pipeline.js'; // Temporarily disabled due to export conflicts
 
 // Testing components
-export { TestRunner, TestType, TestFramework, TestStatus } from './testing/TestRunner';
-export { TestOrchestrator, TestPlanStatus, TestStageStatus } from './testing/TestOrchestrator';
-export { QualityGateEvaluator } from './testing/QualityGateEvaluator';
-// export type * from './testing/TestRunner'; // Temporarily disabled due to export conflicts
-// export type * from './testing/TestOrchestrator'; // Temporarily disabled due to export conflicts
-// export type * from './testing/QualityGateEvaluator'; // Temporarily disabled due to export conflicts
+export { TestRunner, TestType, TestFramework, TestStatus } from './testing/TestRunner.js';
+export { TestOrchestrator, TestPlanStatus, TestStageStatus } from './testing/TestOrchestrator.js';
+export { QualityGateEvaluator } from './testing/QualityGateEvaluator.js';
+// export type * from './testing/TestRunner.js'; // Temporarily disabled due to export conflicts
+// export type * from './testing/TestOrchestrator.js'; // Temporarily disabled due to export conflicts
+// export type * from './testing/QualityGateEvaluator.js'; // Temporarily disabled due to export conflicts
 
 // Deployment components
-export { DeploymentOrchestrator, ApprovalStatus } from './deployment/DeploymentOrchestrator';
-export { BaseDeploymentStrategy, DeploymentPhase, ServiceDeploymentStatus } from './deployment/DeploymentStrategy';
-export { RollingUpdateStrategy } from './deployment/RollingUpdateStrategy';
-export { BlueGreenStrategy } from './deployment/BlueGreenStrategy';
-export { CanaryStrategy } from './deployment/CanaryStrategy';
-// export type * from './deployment/DeploymentStrategy'; // Temporarily disabled due to export conflicts
-// export type * from './deployment/DeploymentOrchestrator'; // Temporarily disabled due to export conflicts
+export { DeploymentOrchestrator, ApprovalStatus } from './deployment/DeploymentOrchestrator.js';
+export { BaseDeploymentStrategy, DeploymentPhase, ServiceDeploymentStatus } from './deployment/DeploymentStrategy.js';
+export { RollingUpdateStrategy } from './deployment/RollingUpdateStrategy.js';
+export { BlueGreenStrategy } from './deployment/BlueGreenStrategy.js';
+export { CanaryStrategy } from './deployment/CanaryStrategy.js';
+// export type * from './deployment/DeploymentStrategy.js'; // Temporarily disabled due to export conflicts
+// export type * from './deployment/DeploymentOrchestrator.js'; // Temporarily disabled due to export conflicts
 
 // Factory function for creating a complete CI/CD pipeline instance
-import { CICDPipeline } from './core/CICDPipeline';
-import { PipelineExecutor } from './core/PipelineExecutor';
-import { PipelineValidator } from './core/PipelineValidator';
-import { PipelineStorage } from './core/PipelineStorage';
-import { NotificationService } from './core/NotificationService';
-import { MetricsCollector } from './core/MetricsCollector';
+import { CICDPipeline } from './core/CICDPipeline.js';
+import { PipelineExecutor } from './core/PipelineExecutor.js';
+import { PipelineValidator } from './core/PipelineValidator.js';
+import { PipelineStorage } from './core/PipelineStorage.js';
+import { NotificationService } from './core/NotificationService.js';
+import { MetricsCollector } from './core/MetricsCollector.js';
 import { Logger } from 'winston';
 
 /**

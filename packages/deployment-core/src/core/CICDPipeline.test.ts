@@ -1,9 +1,9 @@
-import { CICDPipeline } from './CICDPipeline';
-import { PipelineExecutor } from './PipelineExecutor';
-import { PipelineValidator } from './PipelineValidator';
-import { PipelineStorage } from './PipelineStorage';
-import { NotificationService } from './NotificationService';
-import { MetricsCollector } from './MetricsCollector';
+import { CICDPipeline } from './CICDPipeline.js';
+import { PipelineExecutor } from './PipelineExecutor.js';
+import { PipelineValidator } from './PipelineValidator.js';
+import { PipelineStorage } from './PipelineStorage.js';
+import { NotificationService } from './NotificationService.js';
+import { MetricsCollector } from './MetricsCollector.js';
 import {
   PipelineDefinition,
   PipelineStatus,
@@ -11,7 +11,7 @@ import {
   TriggerType,
   BuildTrigger,
   EnvironmentType
-} from '../types/pipeline';
+} from '../types/pipeline.js';
 import winston from 'winston';
 
 describe('CICDPipeline', () => {

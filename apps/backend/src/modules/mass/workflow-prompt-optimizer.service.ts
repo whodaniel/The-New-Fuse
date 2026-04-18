@@ -6,7 +6,7 @@ import {
   workflowTopologyRepository,
 } from '@the-new-fuse/database';
 import { MassOptimizationConfig, PerformanceMetrics, WorkflowTopology } from '@the-new-fuse/types';
-import { EvaluationHarnessService } from './prompt-optimizer.service';
+import { EvaluationHarnessService } from './prompt-optimizer.service.js';
 
 @Injectable()
 export class WorkflowPromptOptimizerService {

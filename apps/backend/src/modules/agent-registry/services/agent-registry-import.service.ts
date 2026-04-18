@@ -3,7 +3,7 @@ import { db } from '@the-new-fuse/database';
 import { tnfAgentDefinitions } from '@the-new-fuse/database/drizzle/schema';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { AgentProfileVectorService } from './agent-profile-vector.service';
+import { AgentProfileVectorService } from './agent-profile-vector.service.js';
 
 type SnapshotEntry = {
   id?: string;

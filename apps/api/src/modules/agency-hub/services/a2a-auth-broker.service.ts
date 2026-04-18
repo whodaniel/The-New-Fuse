@@ -12,7 +12,7 @@ import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import crypto from 'crypto';
 import Redis from 'ioredis';
-import { UnifiedLedgerService } from '../../unified-ledger/unified-ledger.service';
+import { UnifiedLedgerService } from '../../unified-ledger/unified-ledger.service.js';
 
 type AuthRequestStatus = 'pending' | 'approved' | 'denied' | 'revoked';
 type AuthTokenStatus = 'active' | 'revoked' | 'expired';

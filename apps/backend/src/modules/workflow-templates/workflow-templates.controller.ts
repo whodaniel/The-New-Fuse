@@ -12,13 +12,13 @@ import {
   Req
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { WorkflowTemplatesService } from './workflow-templates.service';
+import { WorkflowTemplatesService } from './workflow-templates.service.js';
 import {
   CreateWorkflowTemplateDto,
   UpdateWorkflowTemplateDto,
   WorkflowTemplateResponseDto
-} from './dto/workflow-template.dto';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+} from './dto/workflow-template.dto.js';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
 
 @ApiTags('workflows')
 @Controller('workflows/templates')

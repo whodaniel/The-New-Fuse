@@ -15,7 +15,7 @@
  */
 
 import { Binding, InjectionToken, Type } from '@angular/core';
-import { DynamicComponent } from './dynamic-component';
+import { DynamicComponent } from './dynamic-component.js';
 import { Types } from '@a2ui/lit/0.8';
 
 export type CatalogLoader = () =>

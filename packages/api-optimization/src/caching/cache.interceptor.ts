@@ -2,7 +2,7 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } fr
 import { Reflector } from '@nestjs/core';
 import { Observable, of, tap } from 'rxjs';
 import { Request, Response } from 'express';
-import { ResponseCacheService, CacheOptions } from './response-cache.service';
+import { ResponseCacheService, CacheOptions } from './response-cache.service.js';
 
 export const CACHE_KEY_METADATA = 'cache:key';
 export const CACHE_OPTIONS_METADATA = 'cache:options';

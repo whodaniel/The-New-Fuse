@@ -13,17 +13,17 @@ import {
   ICacheMonitor,
   IConnectionPoolMonitor,
   ISystemHealthMonitor
-} from '../interfaces/IMonitoring';
-import { MonitoringConfig } from '../types/monitoring';
-import { Logger } from '../utils/Logger';
-import { MetricsCollector } from './MetricsCollector';
-import { AlertManager } from './AlertManager';
-import { DashboardManager } from './DashboardManager';
-import { PerformanceMonitor } from './PerformanceMonitor';
-import { LoadTester } from './LoadTester';
-import { CacheMonitor } from './CacheMonitor';
-import { ConnectionPoolMonitor } from './ConnectionPoolMonitor';
-import { SystemHealthMonitor } from './SystemHealthMonitor';
+} from '../interfaces/IMonitoring.js';
+import { MonitoringConfig } from '../types/monitoring.js';
+import { Logger } from '../utils/Logger.js';
+import { MetricsCollector } from './MetricsCollector.js';
+import { AlertManager } from './AlertManager.js';
+import { DashboardManager } from './DashboardManager.js';
+import { PerformanceMonitor } from './PerformanceMonitor.js';
+import { LoadTester } from './LoadTester.js';
+import { CacheMonitor } from './CacheMonitor.js';
+import { ConnectionPoolMonitor } from './ConnectionPoolMonitor.js';
+import { SystemHealthMonitor } from './SystemHealthMonitor.js';
 
 /**
  * Main monitoring system implementation

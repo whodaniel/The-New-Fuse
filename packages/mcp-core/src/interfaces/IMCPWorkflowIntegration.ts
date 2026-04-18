@@ -5,8 +5,8 @@
  * Enables workflow steps to delegate tasks to MCP services and track execution status.
  */
 
-import { MCPRequest, MCPResponse, MCPNotification } from './IMCPMessage';
-import { RetryPolicy } from '../types/common';
+import { MCPRequest, MCPResponse, MCPNotification } from './IMCPMessage.js';
+import { RetryPolicy } from '../types/common.js';
 
 /**
  * Main interface for MCP workflow integration

@@ -17,7 +17,7 @@ import {
 // @ts-ignore
 import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { ProxyService } from '../proxy/proxy.service';
+import { ProxyService } from '../proxy/proxy.service.js';
 
 @Controller('webhooks')
 @ApiTags('webhooks')

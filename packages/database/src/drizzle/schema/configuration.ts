@@ -9,7 +9,7 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { users } from './users';
+import { users } from './users.js';
 
 // =============================================================================
 // SYSTEM CONFIGURATION (Key-Value pairs for Environment/Feature flags)

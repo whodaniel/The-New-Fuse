@@ -1,6 +1,6 @@
 import React from 'react';
 import { TimeStamp } from "@/utils/TimeStamp";
-import HistoricalMessage from '../HistoricalMessage';
+import HistoricalMessage from '../HistoricalMessage/index';
 import { WorkspaceData } from "@/types/workspace";
 
 interface Message {

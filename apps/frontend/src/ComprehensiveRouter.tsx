@@ -9,7 +9,7 @@ const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
 
 // Core components (keep loaded)
 import LoginPage from './pages/auth/Login';
-import RegisterPage from './pages/auth/Register';
+import RegisterPage from './pages/auth/Register/index';
 
 import ErrorBoundary from './components/ErrorBoundary';
 import RequireAuth from './components/RequireAuth';
@@ -85,7 +85,7 @@ import AllPages from './pages/AllPages';
 import BuildInfoPage from './pages/BuildInfo';
 import DebugPageComponent from './pages/Debug';
 import DebugRoutingComponent from './pages/DebugRouting';
-import TestPage from './pages/Test';
+import TestPage from './pages/Test/index';
 
 // Suggestions components
 const SuggestionsPage = lazy(() => import('./pages/Suggestions'));

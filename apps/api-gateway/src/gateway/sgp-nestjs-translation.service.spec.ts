@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { SgpNestjsTranslationService } from './sgp-nestjs-translation.service';
+import { SgpNestjsTranslationService } from './sgp-nestjs-translation.service.js';
 
 describe('SgpNestjsTranslationService', () => {
   let service: SgpNestjsTranslationService;

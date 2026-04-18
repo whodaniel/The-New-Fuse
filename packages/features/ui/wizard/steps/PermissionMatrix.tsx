@@ -6,7 +6,7 @@
 
 import { Check, Filter, Lock, Shield, X } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
-import { WizardContext } from '../WizardSystem';
+import { WizardContext } from '../WizardSystem.js';
 
 export interface PermissionMatrixProps {
   context: WizardContext;

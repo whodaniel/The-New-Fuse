@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PolicyService } from '../policy';
+import { PolicyService } from '../policy.js';
 
 describe('PolicyService', () => {
     let service: PolicyService;

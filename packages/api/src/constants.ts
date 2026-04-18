@@ -2,4 +2,4 @@
  * Re-export constants
  */
 
-export * from './constants/index';
+export * from './constants/index.js';

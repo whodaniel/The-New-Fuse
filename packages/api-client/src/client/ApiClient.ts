@@ -22,7 +22,7 @@ export interface ApiError {
 /**
  * API client options
  */
-import type { TokenStorage } from '../auth/TokenStorage';
+import type { TokenStorage } from '../auth/TokenStorage.js';
 
 export interface ApiClientOptions {
   /**

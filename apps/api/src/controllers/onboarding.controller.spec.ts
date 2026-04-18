@@ -1,8 +1,8 @@
 import { ForbiddenException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Request } from 'express';
-import { AuthService } from '../services/auth.service';
-import { OnboardingController } from './onboarding.controller';
+import { AuthService } from '../services/auth.service.js';
+import { OnboardingController } from './onboarding.controller.js';
 
 const makeReq = (overrides: Partial<Request> = {}): Request =>
   ({

@@ -3,10 +3,10 @@ const vi = jest;
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as os from 'os';
-import { EnhancedFileSystemWatcher, WatcherConfig } from './EnhancedFileSystemWatcher';
-import { SyncRedisConfig } from '../config/SyncRedisConfig';
-import { SyncDatabaseService } from '../database/SyncDatabaseService';
-import { FileChangeEvent } from '../types';
+import { EnhancedFileSystemWatcher, WatcherConfig } from './EnhancedFileSystemWatcher.js';
+import { SyncRedisConfig } from '../config/SyncRedisConfig.js';
+import { SyncDatabaseService } from '../database/SyncDatabaseService.js';
+import { FileChangeEvent } from '../types/index.js';
 
 // Mock dependencies
 jest.mock('fs/promises');

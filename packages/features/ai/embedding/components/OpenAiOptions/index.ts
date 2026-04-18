@@ -1,2 +1,2 @@
-export { OpenAiOptions } from './OpenAiOptions';
+export { OpenAiOptions } from './OpenAiOptions.js';
 //# sourceMappingURL=index.js.map

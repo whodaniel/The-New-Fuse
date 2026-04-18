@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { JwtService } from '@nestjs/jwt';
 import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { LoggingService } from '../services/logging.service';
+import { LoggingService } from '../services/logging.service.js';
 
 @Injectable()
 export class WsAuthGuard implements CanActivate {

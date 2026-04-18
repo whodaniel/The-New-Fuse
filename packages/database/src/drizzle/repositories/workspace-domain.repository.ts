@@ -1,8 +1,8 @@
 import { randomUUID } from 'crypto';
 import { and, asc, eq } from 'drizzle-orm';
-import { db } from '../client';
-import { workspaceDomains } from '../schema';
-import type { NewWorkspaceDomain, WorkspaceDomain } from '../types';
+import { db } from '../client.js';
+import { workspaceDomains } from '../schema/index.js';
+import type { NewWorkspaceDomain, WorkspaceDomain } from '../types.js';
 
 export class DrizzleWorkspaceDomainRepository {
   async listByWorkspace(workspaceId: string): Promise<WorkspaceDomain[]> {

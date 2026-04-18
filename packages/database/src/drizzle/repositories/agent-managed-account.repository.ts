@@ -1,8 +1,8 @@
 import * as crypto from 'crypto';
 import { and, desc, eq, gte } from 'drizzle-orm';
-import { db } from '../client';
-import { agentManagedAccountGrants, agentManagedAccounts } from '../schema';
-import { AgentManagedAccount, AgentManagedAccountGrant, NewAgentManagedAccount } from '../types';
+import { db } from '../client.js';
+import { agentManagedAccountGrants, agentManagedAccounts } from '../schema/index.js';
+import { AgentManagedAccount, AgentManagedAccountGrant, NewAgentManagedAccount } from '../types.js';
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;

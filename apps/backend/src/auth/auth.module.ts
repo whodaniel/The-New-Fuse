@@ -3,19 +3,19 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { DrizzleModule } from '@the-new-fuse/database';
-import { EventBus } from '../events/event-bus.service';
-import { IdentityService } from '../services/identity.service';
-import { LoggingService } from '../services/logging.service';
-import { UsersService } from '../users/users.service';
-import { AgentJwtStrategy } from './agent-jwt.strategy';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { SupabaseAuthGuard } from './supabase-auth.guard';
-import { GitHubStrategy } from './github.strategy';
-import { GoogleStrategy } from './google.strategy';
-import { RolesGuard } from './guards/roles.guard';
-import { JwtStrategy } from './jwt.strategy';
-import { TokenBlacklistService } from './token-blacklist.service';
+import { EventBus } from '../events/event-bus.service.js';
+import { IdentityService } from '../services/identity.service.js';
+import { LoggingService } from '../services/logging.service.js';
+import { UsersService } from '../users/users.service.js';
+import { AgentJwtStrategy } from './agent-jwt.strategy.js';
+import { AuthController } from './auth.controller.js';
+import { AuthService } from './auth.service.js';
+import { SupabaseAuthGuard } from './supabase-auth.guard.js';
+import { GitHubStrategy } from './github.strategy.js';
+import { GoogleStrategy } from './google.strategy.js';
+import { RolesGuard } from './guards/roles.guard.js';
+import { JwtStrategy } from './jwt.strategy.js';
+import { TokenBlacklistService } from './token-blacklist.service.js';
 
 @Module({
   imports: [

@@ -12,7 +12,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { AgentCapabilityDto, AgentStatus } from './create-agent.dto';
+import { AgentCapabilityDto, AgentStatus } from './create-agent.dto.js';
 
 /**
  * Data Transfer Object for updating an existing agent

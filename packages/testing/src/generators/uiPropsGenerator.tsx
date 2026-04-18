@@ -1,6 +1,6 @@
-import { generateId, generateTimestamp, pickRandom } from './utils';
-import type { GeneratedUser } from './userGenerator';
-import type { GeneratedWorkflow } from './workflowGenerator';
+import { generateId, generateTimestamp, pickRandom } from './utils.js';
+import type { GeneratedUser } from './userGenerator.js';
+import type { GeneratedWorkflow } from './workflowGenerator.js';
 
 export interface GenerateComponentPropsOptions {
   variant?: 'default' | 'primary' | 'secondary' | 'danger';

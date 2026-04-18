@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Version } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IsObject, IsOptional } from 'class-validator';
-import { SgpEnvelopeDefaults, SgpNestjsTranslationService } from './sgp-nestjs-translation.service';
+import { SgpEnvelopeDefaults, SgpNestjsTranslationService } from './sgp-nestjs-translation.service.js';
 
 class TranslateToNestDto {
   @IsObject()

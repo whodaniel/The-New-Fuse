@@ -5,7 +5,7 @@ import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/commo
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
-import { RedisCacheService } from '../../cache/src/redis-cache.service';
+import { RedisCacheService } from '../../cache/src/redis-cache.service.js';
 
 // Debug interfaces
 export interface A2ADebugMessage {

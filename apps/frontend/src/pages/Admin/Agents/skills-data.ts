@@ -1,8 +1,8 @@
 import { Brain, Browser, ChartBar, File, FileMagnifyingGlass } from '@phosphor-icons/react';
 import DefaultSkillPanel from './DefaultSkillPanel';
 import GenericSkillPanel from './GenericSkillPanel';
-import AgentSQLConnectorSelection from './SQLConnectorSelection';
-import AgentWebSearchSelection from './WebSearchSelection';
+import AgentSQLConnectorSelection from './SQLConnectorSelection/index';
+import AgentWebSearchSelection from './WebSearchSelection/index';
 
 // Placeholder for agent skill images
 const RAGImage = '';

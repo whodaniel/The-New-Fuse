@@ -19,8 +19,8 @@ import { Redis as UpstashRedis } from '@upstash/redis';
 import { EventEmitter } from 'events';
 import Redis, { Cluster } from 'ioredis';
 import { createClient, RedisClientType } from 'redis';
-import { createAgentIdentityRecord } from './contracts/identity';
-import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from './protocol/tnf-envelope';
+import { createAgentIdentityRecord } from './contracts/identity.js';
+import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from './protocol/tnf-envelope.js';
 
 export interface RedisRelayBridgeConfig {
   redisUrl: string;

@@ -14,11 +14,11 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../store/store';
-import { ChatTab } from './tabs/ChatTab';
-import { ConnectionTab } from './tabs/ConnectionTab';
-import { ElementsTab } from './tabs/ElementsTab';
-import { LocalServicesTab } from './tabs/LocalServicesTab';
+import type { RootState } from '../store/store.js';
+import { ChatTab } from './tabs/ChatTab.js';
+import { ConnectionTab } from './tabs/ConnectionTab.js';
+import { ElementsTab } from './tabs/ElementsTab.js';
+import { LocalServicesTab } from './tabs/LocalServicesTab.js';
 
 interface ConsoleViewProps {
   initialTab?: 'connections' | 'elements' | 'chat' | 'services' | 'logs';

@@ -6,7 +6,7 @@
  */
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { SyncOrchestrator } from '../src/services/SyncOrchestrator';
+import { SyncOrchestrator } from '../src/services/SyncOrchestrator.js';
 
 @Injectable()
 export class UserService implements OnModuleInit {

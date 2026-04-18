@@ -6,7 +6,7 @@
 
 import { CheckCircle, Command, Terminal, XCircle } from 'lucide-react';
 import React from 'react';
-import { CommandPalette, executeCommandAPI, useCommandPalette } from './index';
+import { CommandPalette, executeCommandAPI, useCommandPalette } from './index.js';
 
 export const CommandPaletteExample: React.FC = () => {
   const { isOpen, isExecuting, executionResult, open, close, executeCommand, getRecentExecutions } =

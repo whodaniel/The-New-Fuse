@@ -9,7 +9,7 @@ import { Controller } from '@nestjs/common/interfaces';
 import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
 import * as fs from 'fs';
 import * as path from 'path';
-import { RedisCacheService } from '../../cache/src/redis-cache.service';
+import { RedisCacheService } from '../../cache/src/redis-cache.service.js';
 
 // Documentation interfaces
 export interface ApiDocumentation {

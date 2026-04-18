@@ -10,10 +10,10 @@ import {
   OptimizationJob,
   TopologyOptimizationConfig,
 } from '@the-new-fuse/types';
-import { PromptOptimizerService } from './prompt-optimizer.service';
-import { TopologyOptimizerService } from './topology-optimizer.service';
-import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service';
-import { RedisLockService } from '../../services/redis-lock.service';
+import { PromptOptimizerService } from './prompt-optimizer.service.js';
+import { TopologyOptimizerService } from './topology-optimizer.service.js';
+import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service.js';
+import { RedisLockService } from '../../services/redis-lock.service.js';
 
 @Injectable()
 export class MassOrchestrationService {

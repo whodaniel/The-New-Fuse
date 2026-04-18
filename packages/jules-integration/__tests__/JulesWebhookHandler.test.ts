@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals
 import { DrizzleClient } from '@drizzle/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { RedisClientType } from 'redis';
-import { JulesWebhookHandler } from '../src/JulesWebhookHandler';
+import { JulesWebhookHandler } from '../src/JulesWebhookHandler.js';
 
 class JulesUsageTracker {
   logUsageStart = jest.fn();

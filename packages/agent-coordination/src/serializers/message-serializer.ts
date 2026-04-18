@@ -1,5 +1,5 @@
 import * as msgpack from 'msgpack-lite';
-import { SerializationFormat } from '../types/coordination.types';
+import { SerializationFormat } from '../types/coordination.types.js';
 
 /**
  * Message serializer for efficient data transmission

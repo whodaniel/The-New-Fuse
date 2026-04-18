@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { createLogCommand } from './commands/log';
-import { createPortCommand } from './commands/port';
+import { createLogCommand } from './commands/log.js';
+import { createPortCommand } from './commands/port.js';
 
 // Create the main program
 const program = new Command()

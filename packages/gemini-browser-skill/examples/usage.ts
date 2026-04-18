@@ -4,7 +4,7 @@
  * Demonstrates how to use the Gemini browser automation
  */
 
-import { geminiBrowser, geminiBrowserMCP } from '../src';
+import { geminiBrowser, geminiBrowserMCP } from '../src/index.js';
 
 async function exampleDirectUsage() {
   console.log('\n=== Direct Usage Example ===\n');

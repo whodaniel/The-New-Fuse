@@ -7,8 +7,8 @@
  */
 
 import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
-import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard';
-import { BrandConsistencyAgentService } from './brand-consistency-agent.service';
+import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard.js';
+import { BrandConsistencyAgentService } from './brand-consistency-agent.service.js';
 
 @Controller('agents/brand-consistency')
 @RequireAuthLevel(AuthLevel.USER)

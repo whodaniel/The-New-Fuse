@@ -14,8 +14,8 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { agents } from './agents';
-import { codeExecutionLanguageEnum, codeExecutionStatusEnum, codeExecutionTierEnum } from './enums';
+import { agents } from './agents.js';
+import { codeExecutionLanguageEnum, codeExecutionStatusEnum, codeExecutionTierEnum } from './enums.js';
 
 // =============================================================================
 // CODE EXECUTION USAGE

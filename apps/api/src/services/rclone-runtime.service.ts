@@ -4,8 +4,8 @@ import { ChildProcessWithoutNullStreams, execFile, spawn } from 'node:child_proc
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { promisify } from 'node:util';
-import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service';
-import { AuditService } from './audit.service';
+import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service.js';
+import { AuditService } from './audit.service.js';
 
 const execFileAsync = promisify(execFile);
 

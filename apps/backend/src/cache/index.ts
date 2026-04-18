@@ -1,21 +1,21 @@
 // Module
-export * from './cache.module';
-export * from './cache.controller';
+export * from './cache.module.js';
+export * from './cache.controller.js';
 
 // Configuration
-export * from './config/cache.config';
+export * from './config/cache.config.js';
 
 // Services
-export * from './services/advanced-cache.manager';
-export * from './services/cache-monitoring.service';
-export * from './services/database-cache.service';
-export * from './services/session-cache.service';
-export * from './services/cache-warming.service';
-export * from './services/cache-invalidation.service';
+export * from './services/advanced-cache.manager.js';
+export * from './services/cache-monitoring.service.js';
+export * from './services/database-cache.service.js';
+export * from './services/session-cache.service.js';
+export * from './services/cache-warming.service.js';
+export * from './services/cache-invalidation.service.js';
 
 // Interceptors
-export * from './interceptors/cache.interceptor';
-export * from './interceptors/http-cache.interceptor';
+export * from './interceptors/cache.interceptor.js';
+export * from './interceptors/http-cache.interceptor.js';
 
 // Decorators
-export * from './decorators/cacheable.decorator';
+export * from './decorators/cacheable.decorator.js';

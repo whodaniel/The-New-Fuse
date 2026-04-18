@@ -4,8 +4,8 @@ import { NestFactory } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { DrizzleModule } from '@the-new-fuse/database';
 import 'reflect-metadata';
-import { ApiModule } from './api/api.module';
-import { AgentRegistryModule } from './modules/agent-registry/agent-registry.module';
+import { ApiModule } from './api/api.module.js';
+import { AgentRegistryModule } from './modules/agent-registry/agent-registry.module.js';
 
 @Module({
   imports: [

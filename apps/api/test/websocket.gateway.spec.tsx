@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { WebsocketGateway } from '../src/websocket/websocket.gateway';
-import { CacheService } from '../src/cache/cache.service';
+import { WebsocketGateway } from '../src/websocket/websocket.gateway.js';
+import { CacheService } from '../src/cache/cache.service.js';
 import { UnifiedMonitoringService } from '@the-new-fuse/core';
 import { Socket } from 'socket.io';
 

@@ -20,13 +20,13 @@ import type { NewWorkflow, User, Workflow } from '@the-new-fuse/database';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import { GqlAuthGuard } from '../guards/gql-auth.guard';
-import { UserLoader } from '../loaders/user.loader';
-import { WorkflowLoader } from '../loaders/workflow.loader';
-import { CreateWorkflowInput, ExecuteWorkflowInput } from '../types/input.types';
-import { UserType } from '../types/user.type';
-import { WorkflowStepType } from '../types/workflow-step.type';
-import { WorkflowStatus, WorkflowType } from '../types/workflow.type';
+import { GqlAuthGuard } from '../guards/gql-auth.guard.js';
+import { UserLoader } from '../loaders/user.loader.js';
+import { WorkflowLoader } from '../loaders/workflow.loader.js';
+import { CreateWorkflowInput, ExecuteWorkflowInput } from '../types/input.types.js';
+import { UserType } from '../types/user.type.js';
+import { WorkflowStepType } from '../types/workflow-step.type.js';
+import { WorkflowStatus, WorkflowType } from '../types/workflow.type.js';
 
 // WorkflowStep type alias since it may not be directly exported
 type WorkflowStep = any;

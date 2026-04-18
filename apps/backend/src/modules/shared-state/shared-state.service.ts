@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-import { DepositResponse, Receipt } from './shared-state.types';
+import { DepositResponse, Receipt } from './shared-state.types.js';
 
 const SAFE_RUNTIME_PATTERN = /^[a-zA-Z0-9_-]+$/;
 

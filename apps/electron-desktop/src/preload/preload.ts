@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { WindowAPI } from '../shared/types';
+import type { WindowAPI } from '../shared/types.js';
 
 // Create the API object with proper typing
 const api: WindowAPI = {

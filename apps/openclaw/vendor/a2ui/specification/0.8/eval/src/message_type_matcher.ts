@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { SchemaMatcher, ValidationResult } from './schema_matcher';
+import { SchemaMatcher, ValidationResult } from './schema_matcher.js';
 
 /**
  * A concrete matcher that verifies the top-level message type.

@@ -1,7 +1,7 @@
 import { AgentStatus, AgentType, TaskStatus } from '@the-new-fuse/types';
-import { JulesAgentAdapter } from '../src/JulesAgentAdapter';
-import { JulesApiClient } from '../src/JulesApiClient';
-import { fromBase64Url, toBase64Url } from '../src/utils';
+import { JulesAgentAdapter } from '../src/JulesAgentAdapter.js';
+import { JulesApiClient } from '../src/JulesApiClient.js';
+import { fromBase64Url, toBase64Url } from '../src/utils.js';
 
 // Mock workspace dependencies
 jest.mock('@the-new-fuse/agent', () => ({

@@ -1,5 +1,5 @@
 import { PlaywrightTestConfig } from '@playwright/test';
-import { config as baseConfig } from '../../config/test-config';
+import { config as baseConfig } from '../../config/test-config.js';
 
 const config: PlaywrightTestConfig = {
   ...(baseConfig as PlaywrightTestConfig), // Cast baseConfig to ensure 'use' is recognized

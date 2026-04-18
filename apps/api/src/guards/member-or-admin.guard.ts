@@ -10,8 +10,8 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import type { Request } from 'express';
 
-import { hasAuthorizationLevel } from '../auth/auth-policy';
-import { PayPalService } from '../modules/billing/paypal.service';
+import { hasAuthorizationLevel } from '../auth/auth-policy.js';
+import { PayPalService } from '../modules/billing/paypal.service.js';
 
 type MembershipPrincipal = {
   id?: string;

@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, IsEnum, IsOptional, IsArray, IsObject, IsBoolean, Matches } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ResourceCategory, ResourceType, ResourceVisibility, ResourceStatus } from '../types';
+import { ResourceCategory, ResourceType, ResourceVisibility, ResourceStatus } from '../types/index.js';
 
 export class CreateResourceDto {
   @ApiProperty({ description: 'Resource name' })

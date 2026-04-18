@@ -4,8 +4,8 @@ import { ConfigService } from '@nestjs/config';
 // @ts-ignore
 import { firstValueFrom } from 'rxjs';
 import { Logger } from '@nestjs/common';
-import { N8nMetadataService } from './n8n-metadata.service';
-import { WorkflowValidator } from './workflow.validator';
+import { N8nMetadataService } from './n8n-metadata.service.js';
+import { WorkflowValidator } from './workflow.validator.js';
 
 @Controller('n8n')
 export class N8nIntegrationController {

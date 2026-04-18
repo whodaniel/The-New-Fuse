@@ -1,7 +1,7 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { type ExecutionContext } from '@nestjs/common';
 import { type Reflector } from '@nestjs/core';
-import { RolesGuard } from './roles.guard';
+import { RolesGuard } from './roles.guard.js';
 
 type RequestShape = {
   user?: {

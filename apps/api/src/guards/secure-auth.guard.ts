@@ -9,8 +9,8 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { hasAuthorizationLevel } from '../auth/auth-policy';
-import { SecurityLoggingService } from '../security/security-logging.service';
+import { hasAuthorizationLevel } from '../auth/auth-policy.js';
+import { SecurityLoggingService } from '../security/security-logging.service.js';
 
 // Authentication levels
 export enum AuthLevel {

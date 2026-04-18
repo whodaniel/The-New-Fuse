@@ -10,7 +10,7 @@ import {
   LLMProviderConfig,
   LLMProviderType,
   MCPServerConfig,
-} from './types';
+} from './types.js';
 
 const CONFIG_NAMESPACE = 'theNewFuse';
 

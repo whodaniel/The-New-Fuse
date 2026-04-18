@@ -4,11 +4,11 @@
  */
 
 import { Module } from '@nestjs/common';
-import { AgentController } from '../controllers/AgentController';
-import { AgentService } from '../services/agent.service';
-import { AgentRepository } from '../repositories/agent.repository';
-import { LocalAIDetectionService } from '../services/agent.service';
-import { AuthModule } from './auth/auth.module';
+import { AgentController } from '../controllers/AgentController.js';
+import { AgentService } from '../services/agent.service.js';
+import { AgentRepository } from '../repositories/agent.repository.js';
+import { LocalAIDetectionService } from '../services/agent.service.js';
+import { AuthModule } from './auth/auth.module.js';
 
 @Module({
   imports: [AuthModule],

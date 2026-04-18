@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Agent, AgentStatus, MCPAgentIntegration } from '@the-new-fuse/mcp-core';
 import { MCPBroker } from '@the-new-fuse/mcp-core/broker';
 import { MCPClient } from '@the-new-fuse/mcp-core/client';
-import { MCPServerService } from './mcp-server.service';
+import { MCPServerService } from './mcp-server.service.js';
 
 /**
  * MCP-A2A Bridge Service

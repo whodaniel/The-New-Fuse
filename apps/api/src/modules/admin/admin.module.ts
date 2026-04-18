@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { CacheService } from '../../cache/cache.service';
-import { AdminConfigController } from '../../controllers/admin-config.controller';
-import { AdminMetricsController } from '../../controllers/admin-metrics.controller';
-import { AdminOpenClawRuntimeController } from '../../controllers/admin-openclaw-runtime.controller';
-import { AdminUsersController } from '../../controllers/admin-users.controller';
-import { AdminController } from '../../controllers/admin.controller';
-import { SecurityLoggingService } from '../../security/security-logging.service';
-import { AuditService } from '../../services/audit.service';
-import { MetricsService } from '../../services/metrics.service';
-import { OpenClawRuntimeService } from '../../services/openclaw-runtime.service';
-import { RoleService } from '../../services/role.service';
-import { AuthModule } from '../auth/auth.module';
-import { UnifiedLedgerModule } from '../unified-ledger/unified-ledger.module';
-import { ChronologicalProcessesService } from './chronological-processes.service';
+import { CacheService } from '../../cache/cache.service.js';
+import { AdminConfigController } from '../../controllers/admin-config.controller.js';
+import { AdminMetricsController } from '../../controllers/admin-metrics.controller.js';
+import { AdminOpenClawRuntimeController } from '../../controllers/admin-openclaw-runtime.controller.js';
+import { AdminUsersController } from '../../controllers/admin-users.controller.js';
+import { AdminController } from '../../controllers/admin.controller.js';
+import { SecurityLoggingService } from '../../security/security-logging.service.js';
+import { AuditService } from '../../services/audit.service.js';
+import { MetricsService } from '../../services/metrics.service.js';
+import { OpenClawRuntimeService } from '../../services/openclaw-runtime.service.js';
+import { RoleService } from '../../services/role.service.js';
+import { AuthModule } from '../auth/auth.module.js';
+import { UnifiedLedgerModule } from '../unified-ledger/unified-ledger.module.js';
+import { ChronologicalProcessesService } from './chronological-processes.service.js';
 
 /**
  * Admin Module

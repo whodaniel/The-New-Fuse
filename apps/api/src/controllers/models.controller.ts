@@ -3,7 +3,7 @@ import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } fro
 // @ts-ignore
 // @ts-ignore
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 
 @ApiTags('models')
 @Controller('models')

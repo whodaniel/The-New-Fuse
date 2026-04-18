@@ -22,8 +22,8 @@ import {
   A2AError,
   A2AValidationError,
   IA2ACommunicator
-} from './types';
-import { A2ARedisAdapter } from './redis-adapter';
+} from './types.js';
+import { A2ARedisAdapter } from './redis-adapter.js';
 
 // A2ASocket type is now replaced with any locally
 @Injectable()

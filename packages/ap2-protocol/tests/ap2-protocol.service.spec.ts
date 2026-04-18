@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Ap2ProtocolService } from '../src/ap2-protocol.service';
+import { Ap2ProtocolService } from '../src/ap2-protocol.service.js';
 import { HttpService } from '@nestjs/axios';
 import { of } from 'rxjs';
 

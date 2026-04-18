@@ -4,8 +4,8 @@ import { JwtModule } from '@nestjs/jwt';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseModule } from '@the-new-fuse/database';
-import { WorkflowTemplatesController } from '../controllers/workflow-templates.controller';
-import { WorkflowTemplatesService } from '../services/workflow-templates.service';
+import { WorkflowTemplatesController } from '../controllers/workflow-templates.controller.js';
+import { WorkflowTemplatesService } from '../services/workflow-templates.service.js';
 
 const getJwtSecret = (): string => {
   const secret = process.env.JWT_SECRET;

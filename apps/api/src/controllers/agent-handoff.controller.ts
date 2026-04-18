@@ -17,7 +17,7 @@ import {
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@the-new-fuse/database';
 
-import { hasPermission, isPrivilegedUser } from '../auth/auth-policy';
+import { hasPermission, isPrivilegedUser } from '../auth/auth-policy.js';
 
 type AuthUser = User & {
   tenantId?: string;
@@ -26,9 +26,9 @@ type AuthUser = User & {
   permissions?: string[];
 };
 
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard';
-import { AgentHandoffService } from '../services/agent-handoff.service';
+import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
+import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard.js';
+import { AgentHandoffService } from '../services/agent-handoff.service.js';
 
 @ApiTags('agent-handoffs')
 @Controller('handoffs')

@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { NLPEngine } from '../ai/NLPEngine';
 import { SearchEngine } from '../ai/SearchEngine';
-import { DashboardState } from '../collaboration/types';
+import { DashboardState } from '../collaboration/types.js';
 import { SearchResult, SearchSuggestion } from '../ai/types';
 
 export function useNLP(

@@ -7,8 +7,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import * as Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { Link, useMatch, useParams } from 'react-router-dom';
-import ManageWorkspace, { useManageWorkspaceModal } from '../../Modals/ManageWorkspace';
-import ThreadContainer from './ThreadContainer';
+import ManageWorkspace, { useManageWorkspaceModal } from '../../Modals/ManageWorkspace/index';
+import ThreadContainer from './ThreadContainer/index';
 const STYLES = {
   container: 'flex flex-col gap-y-2',
   workspaceItem: 'flex flex-col w-full group',

@@ -10,7 +10,7 @@ import {
 import { Logger } from '@nestjs/common';
 // @ts-ignore
 import { Server, Socket } from 'socket.io';
-import { WebSocketService } from '../websocket.service';
+import { WebSocketService } from '../websocket.service.js';
 
 @WebSocketGateway({
   cors: {

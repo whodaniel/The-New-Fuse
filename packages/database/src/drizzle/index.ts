@@ -4,7 +4,7 @@
  */
 
 // Export the database client and types
-export { db, queryClient, schema, type Database, type Transaction } from './client';
+export { db, queryClient, schema, type Database, type Transaction } from './client.js';
 
 // Export NestJS module and service
 export {
@@ -13,23 +13,23 @@ export {
   DrizzleService,
   type DrizzleClient,
   type DrizzleModuleOptions,
-} from './drizzle.module';
+} from './drizzle.module.js';
 
 // Export all schema tables
-export * from './schema';
+export * from './schema/index.js';
 
 // Export all inferred types
-export * from './types';
+export * from './types.js';
 
 // Export all repositories
-export * from './repositories';
+export * from './repositories/index.js';
 
 // Export compatibility layer for Drizzle migration
-export * from './compatibility';
+export * from './compatibility.js';
 
 // Export DatabaseService (unified database access layer)
 // DrizzleService is exported from drizzle.module above for backwards compatibility
-export { DatabaseService } from './database.service';
+export { DatabaseService } from './database.service.js';
 
 // Re-export useful Drizzle utilities
 export {

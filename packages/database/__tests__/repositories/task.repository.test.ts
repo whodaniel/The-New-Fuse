@@ -3,10 +3,10 @@
  * Tests all 24 methods of the task repository
  */
 
-import { drizzleTaskRepository } from '../../src/drizzle/repositories/task.repository';
-import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository';
-import { drizzleAgentRepository } from '../../src/drizzle/repositories/agent.repository';
-import { UserFactory, AgentFactory, TaskFactory, PipelineFactory, TaskExecutionFactory } from '../utils/factories';
+import { drizzleTaskRepository } from '../../src/drizzle/repositories/task.repository.js';
+import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository.js';
+import { drizzleAgentRepository } from '../../src/drizzle/repositories/agent.repository.js';
+import { UserFactory, AgentFactory, TaskFactory, PipelineFactory, TaskExecutionFactory } from '../utils/factories.js';
 import {
   expectDatabaseRow,
   expectSoftDeleted,
@@ -15,7 +15,7 @@ import {
   expectArrayLength,
   expectNotDeleted,
   expectDeleted,
-} from '../utils/assertions';
+} from '../utils/assertions.js';
 
 describe('DrizzleTaskRepository', () => {
   let testUserId: string;

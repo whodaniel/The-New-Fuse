@@ -1,6 +1,6 @@
 import { and, eq, gte } from 'drizzle-orm';
-import { db } from '../client';
-import { agentNfts, fractionalShares, revenueDistributions, revenueStreams } from '../schema';
+import { db } from '../client.js';
+import { agentNfts, fractionalShares, revenueDistributions, revenueStreams } from '../schema/index.js';
 
 export const agentNftRepository = {
   findByAgentId: async (agentId: string) => {

@@ -1,4 +1,4 @@
-import { BaseEvent } from '../../events/event-bus.service';
+import { BaseEvent } from '../../events/event-bus.service.js';
 
 /**
  * Event emitted when a user logs in

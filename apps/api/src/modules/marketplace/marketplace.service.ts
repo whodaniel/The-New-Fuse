@@ -10,7 +10,7 @@ import {
   MarketplaceExperienceSubmissionInput,
   MarketplaceKind,
   MarketplacePublicationStatus,
-} from './marketplace.types';
+} from './marketplace.types.js';
 
 const NOW = new Date().toISOString();
 const MAX_TEXT_LENGTH = 400;

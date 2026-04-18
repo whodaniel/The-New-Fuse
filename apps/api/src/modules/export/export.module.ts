@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { ExportController } from '../../controllers/export.controller';
-import { SecurityLoggingService } from '../../security/security-logging.service';
+import { ExportController } from '../../controllers/export.controller.js';
+import { SecurityLoggingService } from '../../security/security-logging.service.js';
 
 /**
  * Export Module

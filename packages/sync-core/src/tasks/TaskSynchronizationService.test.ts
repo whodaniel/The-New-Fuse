@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TaskSynchronizationService, TaskSyncData, TaskExecutionSyncData } from './TaskSynchronizationService';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
+import { TaskSynchronizationService, TaskSyncData, TaskExecutionSyncData } from './TaskSynchronizationService.js';
+import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { DrizzleService } from '@the-new-fuse/database';
 

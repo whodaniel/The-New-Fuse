@@ -6,11 +6,11 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MCPBroker } from './MCPBroker';
-import { MCPNotification } from '../interfaces/IMCPMessage';
-import { MCPServiceInfo, BrokerConfig } from '../types';
-import { ServiceStatus, LoadBalancingStrategy } from '../types/common';
-import { PatternType } from './EventSubscriptionManager';
+import { MCPBroker } from './MCPBroker.js';
+import { MCPNotification } from '../interfaces/IMCPMessage.js';
+import { MCPServiceInfo, BrokerConfig } from '../types/index.js';
+import { ServiceStatus, LoadBalancingStrategy } from '../types/common.js';
+import { PatternType } from './EventSubscriptionManager.js';
 
 describe('Advanced Routing Integration', () => {
   let broker: MCPBroker;

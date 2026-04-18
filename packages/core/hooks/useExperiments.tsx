@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ABTestEngine } from '../ai/ABTestEngine';
 import { RecommendationEngine } from '../ai/RecommendationEngine';
-import { AnalyticsManager } from '../analytics/AnalyticsManager';
-import { DashboardState } from '../collaboration/types';
+import { AnalyticsManager } from '../analytics/AnalyticsManager.js';
+import { DashboardState } from '../collaboration/types.js';
 
 export function useExperiments(
   analyticsManager: AnalyticsManager,

@@ -6,11 +6,11 @@
  * Now with tool orchestration and streaming support
  */
 
-import { ConfigManager } from '../core/config';
-import { ChatMessage, FileAttachment } from '../core/types';
-import { generateId } from '../utils/helpers';
-import { log } from '../utils/logger';
-import { getToolOrchestrationService } from './ToolOrchestrationService';
+import { ConfigManager } from '../core/config.js';
+import { ChatMessage, FileAttachment } from '../core/types.js';
+import { generateId } from '../utils/helpers.js';
+import { log } from '../utils/logger.js';
+import { getToolOrchestrationService } from './ToolOrchestrationService.js';
 
 const CHAT_HISTORY_KEY = 'chatHistory';
 const MAX_HISTORY_LENGTH = 100;

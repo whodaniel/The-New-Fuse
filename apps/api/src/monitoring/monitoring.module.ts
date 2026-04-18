@@ -4,9 +4,9 @@ import { JwtModule } from '@nestjs/jwt';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseModule } from '@the-new-fuse/database';
-import { SecurityLoggingService } from '../security/security-logging.service';
-import { MonitoringController } from './monitoring.controller';
-import { WalletMonitoringService } from './wallet-monitoring.service';
+import { SecurityLoggingService } from '../security/security-logging.service.js';
+import { MonitoringController } from './monitoring.controller.js';
+import { WalletMonitoringService } from './wallet-monitoring.service.js';
 
 @Module({
   imports: [JwtModule, DatabaseModule],

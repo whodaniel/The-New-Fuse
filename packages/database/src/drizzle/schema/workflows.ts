@@ -12,9 +12,9 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { agents } from './agents';
-import { workflowExecutionStatusEnum, workflowStatusEnum } from './enums';
-import { users } from './users';
+import { agents } from './agents.js';
+import { workflowExecutionStatusEnum, workflowStatusEnum } from './enums.js';
+import { users } from './users.js';
 
 // =============================================================================
 // WORKFLOW

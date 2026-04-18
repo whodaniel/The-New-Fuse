@@ -19,9 +19,9 @@ import {
   extractAuditTrace,
   mergeAuditTrace,
   type TnfAuditTrace,
-} from '../contracts/audit';
-import { createAgentIdentityRecord } from '../contracts/identity';
-import { ResourceStrategy } from './resource-protocol';
+} from '../contracts/audit.js';
+import { createAgentIdentityRecord } from '../contracts/identity.js';
+import { ResourceStrategy } from './resource-protocol.js';
 
 /**
  * Message Types

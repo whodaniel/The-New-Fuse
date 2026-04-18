@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
-import { hasPermission, isPrivilegedUser } from '../../../auth/auth-policy';
-import { AuthLevel, RequireAuthLevel } from '../../../guards/secure-auth.guard';
+import { hasPermission, isPrivilegedUser } from '../../../auth/auth-policy.js';
+import { AuthLevel, RequireAuthLevel } from '../../../guards/secure-auth.guard.js';
 import {
   ApproveAgentTokenRequestDto,
   AuthorizeAgentTokenDto,
@@ -20,8 +20,8 @@ import {
   RevokeAgentTokenDto,
   RevokeAllAgentTokensDto,
   UpsertAuthBrokerPolicyDto,
-} from '../dto/a2a-auth-broker.dto';
-import { A2AAuthBrokerService } from '../services/a2a-auth-broker.service';
+} from '../dto/a2a-auth-broker.dto.js';
+import { A2AAuthBrokerService } from '../services/a2a-auth-broker.service.js';
 
 type AuthenticatedRequest = Request & {
   user?: {

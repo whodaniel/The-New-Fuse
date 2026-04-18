@@ -8,8 +8,8 @@
  */
 
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from '../app.module';
-import { CoordinatorAgentService } from '../agents/coordinator.service';
+import { AppModule } from '../app.module.js';
+import { CoordinatorAgentService } from '../agents/coordinator.service.js';
 
 async function bootstrap() {
   console.log('🚀 Starting Self-Improvement Agent Swarm...\n');

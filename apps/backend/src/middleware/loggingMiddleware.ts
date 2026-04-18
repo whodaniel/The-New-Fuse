@@ -2,7 +2,7 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 // @ts-ignore
 import { v4 as uuidv4 } from 'uuid';
-import { LoggingService } from '../services/logging.service';
+import { LoggingService } from '../services/logging.service.js';
 
 @Injectable()
 export class LoggingMiddleware implements NestMiddleware {

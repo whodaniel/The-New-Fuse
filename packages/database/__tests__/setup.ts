@@ -6,7 +6,7 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { sql } from 'drizzle-orm';
-import * as schema from '../src/drizzle/schema';
+import * as schema from '../src/drizzle/schema/index.js';
 
 // Test database configuration
 const TEST_DATABASE_URL =

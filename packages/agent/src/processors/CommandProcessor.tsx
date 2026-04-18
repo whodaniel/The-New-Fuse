@@ -1,10 +1,10 @@
-import { BaseProcessor } from './BaseProcessor';
-import { Logger } from '../types/core';
+import { BaseProcessor } from './BaseProcessor.js';
+import { Logger } from '../types/core.js';
 import { Command, CommandResult, Message, MessageType, UUID } from '@the-new-fuse/types';
-import { InterAgentChatService } from '../services/InterAgentChatService';
-import { RedisService } from '../services/RedisService';
-import { MessageValidator } from '../services/MessageValidator';
-import { TaskProcessor } from './TaskProcessor';
+import { InterAgentChatService } from '../services/InterAgentChatService.js';
+import { RedisService } from '../services/RedisService.js';
+import { MessageValidator } from '../services/MessageValidator.js';
+import { TaskProcessor } from './TaskProcessor.js';
 
 /**
  * Interface for command handlers.

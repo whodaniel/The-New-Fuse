@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { CreateWorkflowTemplateDto, UpdateWorkflowTemplateDto, WorkflowTemplateResponseDto } from './dto/workflow-template.dto';
+import { CreateWorkflowTemplateDto, UpdateWorkflowTemplateDto, WorkflowTemplateResponseDto } from './dto/workflow-template.dto.js';
 
 @Injectable()
 export class WorkflowTemplatesService {

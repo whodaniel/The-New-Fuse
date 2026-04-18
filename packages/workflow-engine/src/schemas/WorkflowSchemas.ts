@@ -11,7 +11,7 @@ import {
   WorkflowEventType,
   WorkflowSortField,
   ExecutionSortField
-} from '../types/WorkflowTypes';
+} from '../types/WorkflowTypes.js';
 
 // Enums
 export const WorkflowStatusSchema = z.nativeEnum(WorkflowStatus);

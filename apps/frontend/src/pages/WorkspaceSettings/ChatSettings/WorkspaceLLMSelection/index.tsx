@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import ChatModelSelection from './ChatModelSelection';
+import ChatModelSelection from './ChatModelSelection/index';
 
 export default function WorkspaceLLMSelectionPage() {
   const { workspaceId } = useParams();

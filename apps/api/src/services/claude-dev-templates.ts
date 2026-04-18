@@ -1,4 +1,4 @@
-import { ClaudeDevConfiguration, ClaudeDevPermissions } from './ClaudeDevAutomationService';
+import { ClaudeDevConfiguration, ClaudeDevPermissions } from './ClaudeDevAutomationService.js';
 
 export interface ClaudeDevTemplate {
   id: string;

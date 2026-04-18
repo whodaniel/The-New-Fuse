@@ -3,7 +3,7 @@ import { MCPServer, MCPServerConfig } from '@the-new-fuse/mcp-core';
 import { EventEmitter } from 'events';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { MCPToolRegistry } from './mcp-tool-registry.service';
+import { MCPToolRegistry } from './mcp-tool-registry.service.js';
 
 /**
  * MCP Server Service

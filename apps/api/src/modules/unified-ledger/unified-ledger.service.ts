@@ -17,7 +17,7 @@ import {
   UnifiedWorkHorizon,
   UnifiedWorkItinerary,
   UnifiedWorkLane,
-} from './unified-ledger.types';
+} from './unified-ledger.types.js';
 
 type CreateRecordInput = Partial<UnifiedTaskRecord> &
   Pick<UnifiedTaskRecord, 'title' | 'description'>;

@@ -1,2 +1,2 @@
-export { VoyageAiOptions } from './VoyageAiOptions';
+export { VoyageAiOptions } from './VoyageAiOptions.js';
 //# sourceMappingURL=index.js.map

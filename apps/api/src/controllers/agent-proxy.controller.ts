@@ -12,7 +12,7 @@ import {
 // @ts-ignore
 // @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AgentApiGrantsService } from '../services/agent-api-grants.service';
+import { AgentApiGrantsService } from '../services/agent-api-grants.service.js';
 
 @ApiTags('agent-proxy')
 @Controller('agent-proxy')

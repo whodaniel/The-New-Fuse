@@ -3,7 +3,7 @@
  * An AI agent specialized in web research, data gathering, and information synthesis
  */
 
-import { IAgent } from '../interfaces/IAgent';
+import { IAgent } from '../interfaces/IAgent.js';
 
 export interface ResearchConfig {
   agentId: string;

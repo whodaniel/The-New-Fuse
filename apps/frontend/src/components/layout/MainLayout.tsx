@@ -1,9 +1,9 @@
 import { Outlet } from 'react-router-dom';
 import { useLayout } from '../../contexts/LayoutContext';
-import { Footer } from './Footer';
-import { Header } from './Header';
+import { Footer } from './Footer/index';
+import { Header } from './Header/index';
 import { ShortcutsHelp } from './ShortcutsHelp';
-import { Sidebar } from './Sidebar';
+import { Sidebar } from './Sidebar/index';
 
 export default function MainLayout() {
   const { layout } = useLayout();

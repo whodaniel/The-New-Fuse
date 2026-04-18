@@ -27,7 +27,7 @@ import {
   Icon
 } from '@chakra-ui/react'
 import { FiPlus, FiTrash2, FiRefreshCw, FiPlay, FiServer, FiActivity, FiExternalLink, FiMonitor } from 'react-icons/fi'
-import type { RootState } from '../../store/store'
+import type { RootState } from '../../store/store.js'
 
 export const LocalServicesTab: React.FC = () => {
   const toast = useToast()

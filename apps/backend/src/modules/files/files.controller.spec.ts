@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { FilesController } from './files.controller';
-import { FilesService } from './files.service';
+import { FilesController } from './files.controller.js';
+import { FilesService } from './files.service.js';
 import { BadRequestException } from '@nestjs/common';
-import { FileCategory } from './dto/file.dto';
+import { FileCategory } from './dto/file.dto.js';
 
 describe('FilesController', () => {
   let controller: FilesController;

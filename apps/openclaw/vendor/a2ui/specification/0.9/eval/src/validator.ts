@@ -19,8 +19,8 @@ import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
 
-import { logger } from './logger';
-import { GeneratedResult, IssueSeverity, ValidatedResult } from './types';
+import { logger } from './logger.js';
+import { GeneratedResult, IssueSeverity, ValidatedResult } from './types.js';
 
 export class Validator {
   private ajv: Ajv;

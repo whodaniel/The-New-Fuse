@@ -1,23 +1,23 @@
 // Core exports
-export * from './agent';
-export * from './analysis';
-export * from './core';
-export * from './communication';
-export { CommunicationPattern, ModelType, ResourceType, TokenType, WalletType } from './models';
-export { MessageRole, MessageType, MessageStatus, VerificationLevel } from './enums';
-export * from './monitoring';
-export * from './prompt.types';
-export * from './security';
-export * from './state';
+export * from './agent.js';
+export * from './analysis.js';
+export * from './core.js';
+export * from './communication.js';
+export { CommunicationPattern, ModelType, ResourceType, TokenType, WalletType } from './models.js';
+export { MessageRole, MessageType, MessageStatus, VerificationLevel } from './enums.js';
+export * from './monitoring.js';
+export * from './prompt.types.js';
+export * from './security.js';
+export * from './state.js';
 
-export * from './validation';
+export * from './validation.js';
 
 // Constants and enums
-export { ServiceState } from '../constants/types';
+export { ServiceState } from '../constants/types.js';
 
 // Named exports from analysis and agent
-export { type ValidationError, type ValidationWarning } from './analysis';
-export type { AgentState } from './agent';
+export { type ValidationError, type ValidationWarning } from './analysis.js';
+export type { AgentState } from './agent.js';
 
 // Dependency Injection Types
 export const TYPES = {

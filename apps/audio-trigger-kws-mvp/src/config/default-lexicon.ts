@@ -1,4 +1,4 @@
-import { LexiconTerm } from '../types/events';
+import { LexiconTerm } from '../types/events.js';
 
 export const defaultLexicon: LexiconTerm[] = [
   { termId: 'term_aspirin', surface: 'aspirin', groupId: 'drug', weight: 1 },

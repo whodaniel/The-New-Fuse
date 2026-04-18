@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
-import { TNFMCPService } from './TNFMCPService';
+import { TNFMCPService } from './TNFMCPService.js';
 
 @Controller('mcp')
 export class TNFMCPController {

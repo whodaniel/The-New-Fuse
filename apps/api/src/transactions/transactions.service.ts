@@ -21,8 +21,8 @@ import {
   parseEther,
 } from 'viem';
 import { mainnet } from 'viem/chains';
-import { SmartAccountService } from '../smart-accounts/smart-account.service';
-import { Web3authService } from '../web3auth/web3auth.service';
+import { SmartAccountService } from '../smart-accounts/smart-account.service.js';
+import { Web3authService } from '../web3auth/web3auth.service.js';
 import {
   BundlerResponse,
   ComplianceCheckResult as ImportedComplianceCheckResult,
@@ -31,7 +31,7 @@ import {
   TransactionCallData,
   UserOperation,
   WalletWithAgent,
-} from './user-operation.types';
+} from './user-operation.types.js';
 
 type ComplianceCheckResult = ImportedComplianceCheckResult;
 

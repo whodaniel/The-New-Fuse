@@ -1,10 +1,10 @@
 import { Controller, ForbiddenException, Get, Query, Req } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
-import { hasAuthorizationLevel } from '../../auth/auth-policy';
-import { AuthLevel, RequireAuthLevel } from '../../guards/secure-auth.guard';
-import { TerminalGraphQueryDto } from './dto/terminal-graph-query.dto';
-import { TerminalsService } from './terminals.service';
+import { hasAuthorizationLevel } from '../../auth/auth-policy.js';
+import { AuthLevel, RequireAuthLevel } from '../../guards/secure-auth.guard.js';
+import { TerminalGraphQueryDto } from './dto/terminal-graph-query.dto.js';
+import { TerminalsService } from './terminals.service.js';
 
 @ApiTags('terminals')
 @Controller('terminals')

@@ -6,7 +6,7 @@ import * as fs from 'fs/promises';
 import { glob } from 'glob';
 import Redis from 'ioredis';
 import * as path from 'path';
-import { AgentInbox } from '../shared/agent-inbox';
+import { AgentInbox } from '../shared/agent-inbox.js';
 
 export interface Resource {
   id: string;

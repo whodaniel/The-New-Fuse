@@ -6,8 +6,8 @@ import {
   Branch,
   VersionControlState,
 } from '../version/types';
-import { DashboardState } from '../collaboration/types';
-import { User } from '../collaboration/types';
+import { DashboardState } from '../collaboration/types.js';
+import { User } from '../collaboration/types.js';
 
 export function useVersionControl(
   initialState: VersionControlState,

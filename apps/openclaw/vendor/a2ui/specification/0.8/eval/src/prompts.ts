@@ -14,10 +14,10 @@
  limitations under the License.
  */
 
-import { BasicSchemaMatcher } from './basic_schema_matcher';
-import { MessageTypeMatcher } from './message_type_matcher';
-import { SchemaMatcher } from './schema_matcher';
-import { SurfaceUpdateSchemaMatcher } from './surface_update_schema_matcher';
+import { BasicSchemaMatcher } from './basic_schema_matcher.js';
+import { MessageTypeMatcher } from './message_type_matcher.js';
+import { SchemaMatcher } from './schema_matcher.js';
+import { SurfaceUpdateSchemaMatcher } from './surface_update_schema_matcher.js';
 
 export interface TestPrompt {
   name: string;

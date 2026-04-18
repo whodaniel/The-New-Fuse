@@ -8,7 +8,7 @@ import { Injectable, Logger } from '@nestjs/common';
 // @ts-ignore
 import type { NewTask, NewTaskExecution, Task, TaskExecution } from '@the-new-fuse/database';
 import { DatabaseService } from '@the-new-fuse/database';
-import type { TaskExecutionLogEntry, TaskExecutionLogPayload } from './task.types';
+import type { TaskExecutionLogEntry, TaskExecutionLogPayload } from './task.types.js';
 
 @Injectable()
 export class TaskService {

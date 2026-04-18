@@ -1,7 +1,7 @@
 /**
  * Logs viewer for The New Fuse - AI Bridge
  */
-import { LogEntry } from '../types.js';
+import { LogEntry } from '../types/index.js';
 import { Logger } from '../utils/logger.js';
 
 // Create a logs-specific logger

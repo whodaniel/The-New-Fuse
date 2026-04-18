@@ -1,7 +1,7 @@
 import { Module, Global } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ResponseCacheService } from './response-cache.service';
-import { CacheInterceptor } from './cache.interceptor';
+import { ResponseCacheService } from './response-cache.service.js';
+import { CacheInterceptor } from './cache.interceptor.js';
 
 @Global()
 @Module({

@@ -3,14 +3,14 @@
  * Includes element selection, AI automation, relay integration, and floating panel
  */
 
-import { Logger } from '../utils/logger';
-import { performanceOptimizer } from '../utils/performance-optimizer';
-import { settingsManager } from '../utils/settings-manager';
-import { webSocketManager } from '../utils/websocket-manager';
-import { AIElementDetector } from './ai-element-detector';
-import { setupBrowserControlHandlers } from './browser-control-handlers';
-import { ChatIntegrationManager } from './chat-integration-manager';
-import { ElementInfo, ElementSelector, PageElementMapping } from './element-selector';
+import { Logger } from '../utils/logger.js';
+import { performanceOptimizer } from '../utils/performance-optimizer.js';
+import { settingsManager } from '../utils/settings-manager.js';
+import { webSocketManager } from '../utils/websocket-manager.js';
+import { AIElementDetector } from './ai-element-detector.js';
+import { setupBrowserControlHandlers } from './browser-control-handlers.js';
+import { ChatIntegrationManager } from './chat-integration-manager.js';
+import { ElementInfo, ElementSelector, PageElementMapping } from './element-selector.js';
 
 console.log('The New Fuse enhanced content script loaded with floating panel support.');
 

@@ -3,13 +3,13 @@ import { Logger } from '@nestjs/common';
 import { Queue, QueueEvents, Worker } from 'bullmq';
 import { v4 as uuidv4 } from 'uuid';
 
-import { TaskStatus } from '../types/coordination.types';
-import { PersistentMetricsCollector } from '../monitoring/PersistentMetricsCollector';
+import { TaskStatus } from '../types/coordination.types.js';
+import { PersistentMetricsCollector } from '../monitoring/PersistentMetricsCollector.js';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 import type { Job } from 'bullmq';
-import type { MessageSerializer } from '../serializers/message-serializer';
-import type { AgentTask, QueueConfig, TaskProcessor } from '../types/coordination.types';
+import type { MessageSerializer } from '../serializers/message-serializer.js';
+import type { AgentTask, QueueConfig, TaskProcessor } from '../types/coordination.types.js';
 
 /**
  * Task queue manager using BullMQ

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { agentNftRepository, drizzleAgentRepository } from '@the-new-fuse/database';
 import { Contract, Wallet } from 'ethers';
-import { BlockchainUtilService } from './blockchain-util.service';
+import { BlockchainUtilService } from './blockchain-util.service.js';
 
 export interface AgentNFTCreationRequest {
   agentId: string;

@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AgentsService } from '../src/agents/agents.service';
+import { AgentsService } from '../src/agents/agents.service.js';
 import { DrizzleService } from '../src/drizzle/drizzle.service';
 import { ConfigService } from '@nestjs/config';
 import { UnifiedMonitoringService } from '@the-new-fuse/core';
-import { AgentFactory } from '../src/agents/agent.factory';
-import { CreateAgentDto, UpdateAgentDto } from '../src/agents/dto'; // Assuming UpdateAgentDto exists
+import { AgentFactory } from '../src/agents/agent.factory.js';
+import { CreateAgentDto, UpdateAgentDto } from '../src/agents/dto/index.js'; // Assuming UpdateAgentDto exists
 import { AgentType } from '@the-new-fuse/database'; // Removed DrizzleAgent alias
 import { jest, describe, beforeEach, it, expect } from '@jest/globals';
 import type { Agent } from '@drizzle/client'; // Import Agent type from drizzle client, removed DrizzleClient

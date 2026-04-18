@@ -14,8 +14,8 @@ import {
   or,
   sql,
 } from '@the-new-fuse/database';
-import { AgentDirectoryEntryDto, AgentDirectoryResponseDto, SearchAgentsDto } from '../dto';
-import { IAgentMetric } from '../interfaces/agent-registry.interfaces';
+import { AgentDirectoryEntryDto, AgentDirectoryResponseDto, SearchAgentsDto } from '../dto/index.js';
+import { IAgentMetric } from '../interfaces/agent-registry.interfaces.js';
 
 @Injectable()
 export class AgentDirectoryService {

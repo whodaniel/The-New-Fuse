@@ -3,7 +3,7 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { LRUCache, MultiLevelCache, CacheFactory } from './CacheStrategy';
+import { LRUCache, MultiLevelCache, CacheFactory } from './CacheStrategy.js';
 
 describe('CacheStrategy', () => {
   describe('LRUCache', () => {

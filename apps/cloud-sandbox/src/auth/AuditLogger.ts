@@ -5,7 +5,7 @@
  * Tracks who did what, when, and with what result for security and compliance.
  */
 
-import type { AuthenticatedUser } from './CloudSandboxAuthGuard';
+import type { AuthenticatedUser } from './CloudSandboxAuthGuard.js';
 
 export interface AuditLog {
   timestamp: Date;

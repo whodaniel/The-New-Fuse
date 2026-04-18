@@ -7,10 +7,10 @@
 
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 const vi = jest;
-import { PromptHandoffFlywheel, HandoffContext, HandoffTemplate, AgentCapability } from './PromptHandoffFlywheel';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { MasterClockService } from '../services/MasterClockService';
-import { ConflictManager } from '../services/ConflictManager';
+import { PromptHandoffFlywheel, HandoffContext, HandoffTemplate, AgentCapability } from './PromptHandoffFlywheel.js';
+import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
+import { MasterClockService } from '../services/MasterClockService.js';
+import { ConflictManager } from '../services/ConflictManager.js';
 
 // Mock dependencies
 jest.mock('../services/SyncOrchestrator');

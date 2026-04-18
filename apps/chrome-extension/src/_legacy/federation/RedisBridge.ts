@@ -8,7 +8,7 @@
  * This bridge uses a WebSocket relay to communicate with Redis.
  */
 
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 
 // ============================================================================
 // TYPES

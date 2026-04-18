@@ -6,10 +6,10 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MCPBroker } from './MCPBroker';
-import { MCPServiceInfo, BrokerConfig } from '../types';
-import { ServiceStatus, LoadBalancingStrategy } from '../types/common';
-import { MCPErrorClass } from '../types/error';
+import { MCPBroker } from './MCPBroker.js';
+import { MCPServiceInfo, BrokerConfig } from '../types/index.js';
+import { ServiceStatus, LoadBalancingStrategy } from '../types/common.js';
+import { MCPErrorClass } from '../types/error.js';
 
 describe('Service Discovery Integration', () => {
   let broker: MCPBroker;

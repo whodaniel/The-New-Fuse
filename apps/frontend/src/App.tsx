@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import ErrorBoundary from './components/core/ErrorBoundary';
+import ErrorBoundary from './components/core/ErrorBoundary/index';
 import PerformanceMonitor, {
   usePerformanceMonitor,
 } from './components/performance/PerformanceMonitor';

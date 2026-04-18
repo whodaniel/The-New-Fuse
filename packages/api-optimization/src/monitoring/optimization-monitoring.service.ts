@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { RedisRateLimiterService } from '../rate-limiting/redis-rate-limiter.service';
-import { ResponseCacheService } from '../caching/response-cache.service';
-import { CacheInvalidationService } from '../caching/cache-invalidation.service';
+import { RedisRateLimiterService } from '../rate-limiting/redis-rate-limiter.service.js';
+import { ResponseCacheService } from '../caching/response-cache.service.js';
+import { CacheInvalidationService } from '../caching/cache-invalidation.service.js';
 
 export interface OptimizationMetrics {
   rateLimit: {

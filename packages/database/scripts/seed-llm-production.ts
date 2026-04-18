@@ -1,8 +1,8 @@
 import * as crypto from 'crypto';
 import * as dotenv from 'dotenv';
 import { sql } from 'drizzle-orm';
-import { db } from '../src/drizzle';
-import { llmConfigs } from '../src/drizzle/schema';
+import { db } from '../src/drizzle/index.js';
+import { llmConfigs } from '../src/drizzle/schema/index.js';
 
 dotenv.config();
 

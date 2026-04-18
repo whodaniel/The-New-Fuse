@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { PerformanceMetrics, Task, TaskStatus, AgentInfo } from '../core/types';
+import { PerformanceMetrics, Task, TaskStatus, AgentInfo } from '../core/types.js';
 
 /**
  * Detailed metrics for a time period

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { db } from '@the-new-fuse/database';
 import axios from 'axios';
 import { sql } from 'drizzle-orm';
-import { TraitScreenRequestDto } from '../dto/trait-screen.dto';
+import { TraitScreenRequestDto } from '../dto/trait-screen.dto.js';
 
 type AgentProfileRow = {
   tnf_id: string;

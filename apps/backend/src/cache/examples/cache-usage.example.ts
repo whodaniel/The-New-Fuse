@@ -1,12 +1,12 @@
 import { Injectable, UseInterceptors } from '@nestjs/common';
-import { Cacheable, CacheEvict, CacheInvalidate } from '../decorators/cacheable.decorator';
-import { CacheInterceptor } from '../interceptors/cache.interceptor';
-import { HttpCache, HttpCacheInterceptor } from '../interceptors/http-cache.interceptor';
-import { AdvancedCacheManager } from '../services/advanced-cache.manager';
-import { CacheInvalidationService } from '../services/cache-invalidation.service';
-import { CacheWarmingService } from '../services/cache-warming.service';
-import { DatabaseCacheService } from '../services/database-cache.service';
-import { SessionCacheService } from '../services/session-cache.service';
+import { Cacheable, CacheEvict, CacheInvalidate } from '../decorators/cacheable.decorator.js';
+import { CacheInterceptor } from '../interceptors/cache.interceptor.js';
+import { HttpCache, HttpCacheInterceptor } from '../interceptors/http-cache.interceptor.js';
+import { AdvancedCacheManager } from '../services/advanced-cache.manager.js';
+import { CacheInvalidationService } from '../services/cache-invalidation.service.js';
+import { CacheWarmingService } from '../services/cache-warming.service.js';
+import { DatabaseCacheService } from '../services/database-cache.service.js';
+import { SessionCacheService } from '../services/session-cache.service.js';
 
 /**
  * Example 1: Using @Cacheable decorator for automatic caching

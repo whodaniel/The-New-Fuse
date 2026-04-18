@@ -3,9 +3,9 @@
  * Provides data access for LLM Provider configurations
  */
 import { desc, eq } from 'drizzle-orm';
-import { db } from '../client';
-import { llmConfigs } from '../schema';
-import { LLMConfig, NewLLMConfig } from '../types';
+import { db } from '../client.js';
+import { llmConfigs } from '../schema/index.js';
+import { LLMConfig, NewLLMConfig } from '../types.js';
 import * as crypto from 'crypto';
 
 // AES-256-GCM Encryption

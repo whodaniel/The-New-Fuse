@@ -5,30 +5,30 @@
  */
 
 // Types
-export * from './types';
+export * from './types.js';
 
 // Provider interface and base class
-export { BaseVideoProvider } from './providers/IVideoProvider';
-export type { IVideoProvider } from './providers/IVideoProvider';
+export { BaseVideoProvider } from './providers/IVideoProvider.js';
+export type { IVideoProvider } from './providers/IVideoProvider.js';
 
 // Provider implementations
-export { ReplicateProvider } from './providers/ReplicateProvider';
-// export { VeoProvider } from './providers/VeoProvider';
-// export { RunwayProvider } from './providers/RunwayProvider';
-// export { PikaProvider } from './providers/PikaProvider';
-// export { LumaProvider } from './providers/LumaProvider';
+export { ReplicateProvider } from './providers/ReplicateProvider.js';
+// export { VeoProvider } from './providers/VeoProvider.js';
+// export { RunwayProvider } from './providers/RunwayProvider.js';
+// export { PikaProvider } from './providers/PikaProvider.js';
+// export { LumaProvider } from './providers/LumaProvider.js';
 
 // MCP Tool
 export {
   createVideoGenerationTool,
   VIDEO_GENERATION_INPUT_SCHEMA,
   VideoGenerationHandler,
-} from './VideoGenerationTool';
+} from './VideoGenerationTool.js';
 
 // Factory function to create configured tool
-import type { MCPTool } from '../../interfaces/IMCPTool';
-import { VideoProviderConfig } from './types';
-import { createVideoGenerationTool } from './VideoGenerationTool';
+import type { MCPTool } from '../../interfaces/IMCPTool.js';
+import { VideoProviderConfig } from './types.js';
+import { createVideoGenerationTool } from './VideoGenerationTool.js';
 
 /**
  * Create a video generation tool from environment variables

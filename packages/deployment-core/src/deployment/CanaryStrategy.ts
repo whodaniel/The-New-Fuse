@@ -4,13 +4,13 @@ import {
   DeploymentPhase,
   ServiceDeploymentStatus,
   RollbackResult
-} from './DeploymentStrategy';
+} from './DeploymentStrategy.js';
 import {
   DeploymentConfig,
   DeploymentResult,
   PipelineStatus,
   ServiceDeploymentResult
-} from '../types/pipeline';
+} from '../types/pipeline.js';
 
 /**
  * Canary Deployment Strategy

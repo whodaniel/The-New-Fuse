@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Logger, Param, Post, Query } from '@nestjs/common';
 import { db, sql } from '@the-new-fuse/database';
-import { MCPA2ABridge } from './mcp-a2a-bridge.service';
-import { MCPServerService } from './mcp-server.service';
-import { MCPToolRegistry } from './mcp-tool-registry.service';
+import { MCPA2ABridge } from './mcp-a2a-bridge.service.js';
+import { MCPServerService } from './mcp-server.service.js';
+import { MCPToolRegistry } from './mcp-tool-registry.service.js';
 
 /**
  * MCP Controller

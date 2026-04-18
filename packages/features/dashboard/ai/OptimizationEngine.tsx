@@ -1,7 +1,7 @@
-import { OptimizationSuggestion } from './types';
-import { DashboardState } from '../collaboration/types';
-import { PerformanceMetrics } from '../analytics/types';
-import { AnalyticsManager } from '../analytics/AnalyticsManager';
+import { OptimizationSuggestion } from './types.js';
+import { DashboardState } from '../collaboration/types/index.js';
+import { PerformanceMetrics } from '../analytics/types.js';
+import { AnalyticsManager } from '../analytics/AnalyticsManager.js';
 
 export class OptimizationEngine {
   private analyticsManager: AnalyticsManager;

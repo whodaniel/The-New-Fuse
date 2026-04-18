@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 // @ts-ignore
-import { AgentInfo, RedisAgentClient } from '../../../tnf-cli/src/RedisAgentClient';
-import { Logger } from '../utils/Logger';
+import { AgentInfo, RedisAgentClient } from '../../../tnf-cli/src/RedisAgentClient.js';
+import { Logger } from '../utils/Logger.js';
 
 export interface TerminalFederationConfig {
   tty: string;

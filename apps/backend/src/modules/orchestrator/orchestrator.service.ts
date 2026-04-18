@@ -2,8 +2,8 @@ import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nest
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import Redis from 'ioredis';
-import { RedisLockService } from '../../services/redis-lock.service';
-import { AgentLifecycleManager } from './AgentLifecycleManager';
+import { RedisLockService } from '../../services/redis-lock.service.js';
+import { AgentLifecycleManager } from './AgentLifecycleManager.js';
 
 // Types for the orchestrator services
 interface HeartbeatConfig {

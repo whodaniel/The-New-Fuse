@@ -2,7 +2,7 @@ import { Injectable, ExecutionContext, UnauthorizedException } from '@nestjs/com
 // @ts-ignore
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { JwtService } from '@nestjs/jwt';
-import { SecurityLoggingService } from '../../security/security-logging.service';
+import { SecurityLoggingService } from '../../security/security-logging.service.js';
 
 @Injectable()
 export class GqlAuthGuard {

@@ -3,13 +3,13 @@
  */
 
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { SystemMonitor } from './SystemMonitor';
-import { MetricsCollector } from './MetricsCollector';
-import { PerformanceMonitor } from './PerformanceMonitor';
-import { PerformanceMetrics, HealthStatus, Alert, AlertSeverity, AlertStatus } from '../types/monitoring';
-import { ServiceState } from '../constants/types';
-import { logger } from '../utils/logger';
-import { BaseError } from '../utils/errors';
+import { SystemMonitor } from './SystemMonitor.js';
+import { MetricsCollector } from './MetricsCollector.js';
+import { PerformanceMonitor } from './PerformanceMonitor.js';
+import { PerformanceMetrics, HealthStatus, Alert, AlertSeverity, AlertStatus } from '../types/monitoring.js';
+import { ServiceState } from '../constants/types.js';
+import { logger } from '../utils/logger.js';
+import { BaseError } from '../utils/errors.js';
 
 @Injectable()
 export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {

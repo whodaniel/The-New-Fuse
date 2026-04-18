@@ -5,7 +5,7 @@
  * Implements capability-based access control for cloud sandbox tools.
  */
 
-import type { AuthenticatedUser } from './CloudSandboxAuthGuard';
+import type { AuthenticatedUser } from './CloudSandboxAuthGuard.js';
 
 export interface ToolPermissionConfig {
   toolName: string;

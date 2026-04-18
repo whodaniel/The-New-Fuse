@@ -4,10 +4,10 @@
  */
 
 import axios from 'axios';
-import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer';
-import { WorkflowFetcher } from '../fetcher/WorkflowFetcher';
-import { WorkflowParser } from '../parser/WorkflowParser';
-import { RegistryConfig, WorkflowRegistry } from '../registry/WorkflowRegistry';
+import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer.js';
+import { WorkflowFetcher } from '../fetcher/WorkflowFetcher.js';
+import { WorkflowParser } from '../parser/WorkflowParser.js';
+import { RegistryConfig, WorkflowRegistry } from '../registry/WorkflowRegistry.js';
 import {
   CategoryConfig,
   N8nWorkflow,
@@ -19,7 +19,7 @@ import {
   WorkflowSearchResult,
   WorkflowSource,
   WorkflowStats,
-} from '../types';
+} from '../types/index.js';
 
 export class WorkflowService {
   private fetcher: WorkflowFetcher;

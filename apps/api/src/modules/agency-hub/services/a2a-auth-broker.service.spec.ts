@@ -1,8 +1,8 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { UnifiedLedgerService } from '../../unified-ledger/unified-ledger.service';
-import { A2AAuthBrokerService } from './a2a-auth-broker.service';
+import { UnifiedLedgerService } from '../../unified-ledger/unified-ledger.service.js';
+import { A2AAuthBrokerService } from './a2a-auth-broker.service.js';
 
 describe('A2AAuthBrokerService', () => {
   const createService = () => {

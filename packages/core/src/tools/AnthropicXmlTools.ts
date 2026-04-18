@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 // Conflict 1: Use 'Incoming' imports
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 
 export interface ToolDefinition {
   name: string;

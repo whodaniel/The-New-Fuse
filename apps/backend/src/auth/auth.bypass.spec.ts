@@ -1,15 +1,15 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from './auth.service';
+import { AuthService } from './auth.service.js';
 import { JwtService } from '@nestjs/jwt';
-import { LoggingService } from '../services/logging.service';
-import { EventBus } from '../events/event-bus.service';
-import { IdentityService } from '../services/identity.service';
+import { LoggingService } from '../services/logging.service.js';
+import { EventBus } from '../events/event-bus.service.js';
+import { IdentityService } from '../services/identity.service.js';
 import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException } from '@nestjs/common';
 import { drizzleUserRepository } from '@the-new-fuse/database';
 import * as jwt from 'jsonwebtoken';
-import { TokenBlacklistService } from './token-blacklist.service';
+import { TokenBlacklistService } from './token-blacklist.service.js';
 
 // Mock the database repository
 jest.mock('@the-new-fuse/database', () => ({

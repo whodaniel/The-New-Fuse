@@ -3,10 +3,10 @@ import { Injectable, Logger } from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
 import { DrizzleService } from '@the-new-fuse/database';
-import { AnalyzerAgentService } from './analyzer.service';
-import { ArchitectAgentService } from './architect.service';
-import { ImplementerAgentService } from './implementer.service';
-import { ReviewerAgentService } from './reviewer.service';
+import { AnalyzerAgentService } from './analyzer.service.js';
+import { ArchitectAgentService } from './architect.service.js';
+import { ImplementerAgentService } from './implementer.service.js';
+import { ReviewerAgentService } from './reviewer.service.js';
 
 interface ImprovementCycle {
   id: string;

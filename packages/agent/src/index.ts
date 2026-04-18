@@ -6,4 +6,4 @@ export {
   AgentStatus,
   RedisAgentRegistry,
   type AgentRegistryConfig,
-} from './registry/redis-agent-registry';
+} from './registry/redis-agent-registry.js';

@@ -5,8 +5,8 @@ import {
   SuggestionStatus,
   SuggestionService,
   TaskStatus
-} from '../types/index';
-import { useUndoRedo } from './useUndoRedo';
+} from '../types/index.js';
+import { useUndoRedo } from './useUndoRedo.js';
 // Temporarily commented out to fix build
 // import {
 //   Table,

@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { AgentStatus } from '@the-new-fuse/a2a-core';
-import { AgentPresence, CoordinationChannel } from '../types/coordination.types';
-import { MessageSerializer } from '../serializers/message-serializer';
+import { AgentPresence, CoordinationChannel } from '../types/coordination.types.js';
+import { MessageSerializer } from '../serializers/message-serializer.js';
 
 /**
  * Agent presence tracker with heartbeat system

@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { WorkflowEngine } from './WorkflowEngine';
-import { WorkflowExecutor } from './WorkflowExecutor';
-import { WorkflowValidator } from './validator';
-import { WorkflowVersionManager } from './versioning';
+import { WorkflowEngine } from './WorkflowEngine.js';
+import { WorkflowExecutor } from './WorkflowExecutor.js';
+import { WorkflowValidator } from './validator.js';
+import { WorkflowVersionManager } from './versioning.js';
 
 @Module({
   imports: [EventEmitterModule.forRoot()],

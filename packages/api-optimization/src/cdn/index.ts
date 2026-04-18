@@ -1,2 +1,2 @@
-export * from './cdn-config.service';
-export * from './cache-headers.middleware';
+export * from './cdn-config.service.js';
+export * from './cache-headers.middleware.js';

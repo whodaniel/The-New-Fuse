@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { FeatureFlag as IFeatureFlag, Environment, FeatureTargeting, FeatureFlagMetadata } from '../types/featureFlags';
+import { FeatureFlag as IFeatureFlag, Environment, FeatureTargeting, FeatureFlagMetadata } from '../types/featureFlags.js';
 
 export interface FeatureFlagDocument extends Omit<IFeatureFlag, 'id'>, Document {
   isEnabledForEnvironment(environment: Environment): boolean;

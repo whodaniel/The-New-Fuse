@@ -11,10 +11,10 @@ import {
   PromptHandoffFlywheel,
   EnhancedAgentHandoffTemplateService,
   PromptTemplateIntegration
-} from './index';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { MasterClockService } from '../services/MasterClockService';
-import { ConflictManager } from '../services/ConflictManager';
+} from './index.js';
+import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
+import { MasterClockService } from '../services/MasterClockService.js';
+import { ConflictManager } from '../services/ConflictManager.js';
 
 /**
  * Example 1: Basic Handoff Setup and Execution

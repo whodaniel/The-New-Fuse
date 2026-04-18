@@ -5,10 +5,10 @@
 
 import { useEffect, useState } from 'react';
 import './popup.css';
-import AgentsTab from './tabs/AgentsTab';
-import ConnectTab from './tabs/ConnectTab';
-import NetworkTab from './tabs/NetworkTab';
-import SettingsTab from './tabs/SettingsTab';
+import AgentsTab from './tabs/AgentsTab.js';
+import ConnectTab from './tabs/ConnectTab.js';
+import NetworkTab from './tabs/NetworkTab.js';
+import SettingsTab from './tabs/SettingsTab.js';
 
 type TabType = 'connect' | 'agents' | 'network' | 'settings';
 

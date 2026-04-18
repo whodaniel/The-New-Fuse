@@ -2,7 +2,7 @@
  * Drizzle ORM Schema - MASS (Multi-Agent System Synthesis)
  */
 import { boolean, jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
-import { users } from './users';
+import { users } from './users.js';
 
 // =============================================================================
 // OPTIMIZATION JOB

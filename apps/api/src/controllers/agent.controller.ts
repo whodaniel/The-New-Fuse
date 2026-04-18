@@ -22,11 +22,11 @@ import {
   CreateAgentDto,
   UpdateAgentDto,
 } from '@the-new-fuse/types';
-import { AgentProfileDto } from '../agents/dto/agent.dto';
-import { isPrivilegedUser } from '../auth/auth-policy';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { JwtAuth, RateLimitTier, SetRateLimitTier } from '../guards/secure-auth.guard';
-import { AgentService } from '../services/agent.service';
+import { AgentProfileDto } from '../agents/dto/agent.dto.js';
+import { isPrivilegedUser } from '../auth/auth-policy.js';
+import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
+import { JwtAuth, RateLimitTier, SetRateLimitTier } from '../guards/secure-auth.guard.js';
+import { AgentService } from '../services/agent.service.js';
 
 /**
  * Agent Controller

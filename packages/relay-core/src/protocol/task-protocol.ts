@@ -1,4 +1,4 @@
-import { ResourceStrategy } from './resource-protocol';
+import { ResourceStrategy } from './resource-protocol.js';
 
 export interface OrchestrationTask {
   id: string;

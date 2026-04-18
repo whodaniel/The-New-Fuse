@@ -1,5 +1,5 @@
-import { CompressionUtil, CompressionMiddleware } from './compression';
-import { CompressionAlgorithm } from '../types';
+import { CompressionUtil, CompressionMiddleware } from './compression.js';
+import { CompressionAlgorithm } from '../types/index.js';
 
 describe('CompressionUtil', () => {
   const testData = {

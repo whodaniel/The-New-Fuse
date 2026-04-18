@@ -4,7 +4,7 @@
 
 import { Bot, Globe, Shield, Sparkles, Users, Zap } from 'lucide-react';
 import React from 'react';
-import { WizardContext } from '../WizardSystem';
+import { WizardContext } from '../WizardSystem.js';
 
 export interface WelcomeScreenProps {
   context: WizardContext;

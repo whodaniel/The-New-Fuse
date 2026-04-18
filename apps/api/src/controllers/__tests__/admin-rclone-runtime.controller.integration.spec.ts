@@ -26,7 +26,7 @@ jest.mock('../../guards/secure-auth.guard', () => ({
   SecureAuthGuard: class SecureAuthGuard {},
 }));
 
-import { AdminRcloneRuntimeController } from '../admin-rclone-runtime.controller';
+import { AdminRcloneRuntimeController } from '../admin-rclone-runtime.controller.js';
 
 describe('AdminRcloneRuntimeController ArDrive integration contracts', () => {
   const service = {

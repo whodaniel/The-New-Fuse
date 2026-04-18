@@ -10,15 +10,15 @@ import {
   Req,
 } from '@nestjs/common';
 import type { Request } from 'express';
-import { MemberOrAdmin } from '../../guards/member-or-admin.guard';
-import { AdminOnly } from '../../guards/secure-auth.guard';
-import { MarketplaceService } from './marketplace.service';
+import { MemberOrAdmin } from '../../guards/member-or-admin.guard.js';
+import { AdminOnly } from '../../guards/secure-auth.guard.js';
+import { MarketplaceService } from './marketplace.service.js';
 import {
   MarketplaceCatalogQuery,
   MarketplaceCatalogSubmissionInput,
   MarketplaceExperienceSubmissionInput,
   MarketplacePublicationStatus,
-} from './marketplace.types';
+} from './marketplace.types.js';
 
 type MarketplacePrincipal = {
   id?: string;

@@ -5,7 +5,7 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { WebScrapingService } from '../../../packages/web-scraping/src/core/WebScrapingService';
+import { WebScrapingService } from '../../../packages/web-scraping/src/core/WebScrapingService.js';
 
 // Initialize scraping service with serverless-optimized config
 const scrapingService = new WebScrapingService(

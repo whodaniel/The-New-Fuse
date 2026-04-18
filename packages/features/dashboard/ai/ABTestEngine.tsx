@@ -1,5 +1,5 @@
-import { DashboardState } from '../collaboration/types';
-import { AnalyticsManager } from '../analytics/AnalyticsManager';
+import { DashboardState } from '../collaboration/types/index.js';
+import { AnalyticsManager } from '../analytics/AnalyticsManager.js';
 
 interface Experiment {
   id: string;

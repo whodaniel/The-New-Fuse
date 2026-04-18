@@ -1,10 +1,10 @@
 import { test as base, Page, TestInfo } from '@playwright/test';
-import { NavigationUtils } from '../utils/navigation.utils';
-import { TestHelpers } from '../utils/test-helpers';
-import { TestReporter } from '../utils/test-reporter';
-import { DashboardPage } from '../pages/dashboard.page';
-import { WorkflowEditorPage } from '../pages/workflow-editor.page';
-import { SettingsPage } from '../pages/settings.page';
+import { NavigationUtils } from '../utils/navigation.utils.js';
+import { TestHelpers } from '../utils/test-helpers.js';
+import { TestReporter } from '../utils/test-reporter.js';
+import { DashboardPage } from '../pages/dashboard.page.js';
+import { WorkflowEditorPage } from '../pages/workflow-editor.page.js';
+import { SettingsPage } from '../pages/settings.page.js';
 
 type CustomFixtures = {
   navigationUtils: NavigationUtils;

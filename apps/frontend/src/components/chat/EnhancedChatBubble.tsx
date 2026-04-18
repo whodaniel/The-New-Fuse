@@ -2,7 +2,7 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 import react_1 from 'react';
 import message_utils_1 from '../../utils/message-utils';
-import ui_1 from '../ui';
+import ui_1 from '../ui/index';
 
 // ⚡ Bolt: Wrapped EnhancedChatBubble in React.memo to prevent O(n) re-renders
 // of the entire message list on every keystroke or update in the chat interface.

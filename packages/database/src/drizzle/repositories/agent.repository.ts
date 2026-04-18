@@ -5,7 +5,7 @@
 import * as crypto from 'crypto';
 import { randomUUID } from 'crypto';
 import { and, desc, eq, inArray, isNull, like, or, sql } from 'drizzle-orm';
-import { db } from '../client';
+import { db } from '../client.js';
 import {
   agentCapabilityRegistry,
   agentDirectoryEntries,
@@ -13,8 +13,8 @@ import {
   agentOnboardingEvents,
   agentRegistrations,
   agents,
-} from '../schema';
-import type { Agent, AgentMetadata, NewAgent, NewAgentMetadata } from '../types';
+} from '../schema/index.js';
+import type { Agent, AgentMetadata, NewAgent, NewAgentMetadata } from '../types.js';
 
 // HMAC-SHA256 Hashing for Auth Tokens (Deterministic)
 function hashToken(token: string): string {

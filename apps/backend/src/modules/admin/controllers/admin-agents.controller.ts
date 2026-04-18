@@ -1,9 +1,9 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from '../../../auth/decorators/roles.decorator';
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../auth/guards/roles.guard';
-import { AgentService } from '../../agent/agent.service';
+import { Roles } from '../../../auth/decorators/roles.decorator.js';
+import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard.js';
+import { RolesGuard } from '../../../auth/guards/roles.guard.js';
+import { AgentService } from '../../agent/agent.service.js';
 
 @ApiTags('admin')
 @Controller('admin/agents')

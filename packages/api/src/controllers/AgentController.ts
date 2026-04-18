@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Res, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { AgentDto } from '../modules/controllers/dto/agent.dto'; // Updated import path
-import { CurrentUser } from '../modules/decorators/current-user.decorator';
-import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
-import { AgentService } from '../services/agent.service';
-import { toError } from '../utils/error';
+import { AgentDto } from '../modules/controllers/dto/agent.dto.js'; // Updated import path
+import { CurrentUser } from '../modules/decorators/current-user.decorator.js';
+import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard.js';
+import { AgentService } from '../services/agent.service.js';
+import { toError } from '../utils/error.js';
 
 interface User {
   id: string;

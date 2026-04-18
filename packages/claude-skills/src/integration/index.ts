@@ -4,4 +4,4 @@
  * Exports MCP and other integration functionality
  */
 
-export { MCPSkillProvider } from './MCPSkillProvider';
+export { MCPSkillProvider } from './MCPSkillProvider.js';

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
-import { AgentApiGrantsService } from './agent-api-grants.service';
+import { AgentApiGrantsService } from './agent-api-grants.service.js';
 
 describe('AgentApiGrantsService', () => {
   const service = new AgentApiGrantsService({} as any, {} as any, {} as any);

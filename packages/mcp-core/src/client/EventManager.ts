@@ -6,8 +6,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { MCPNotification } from '../interfaces/IMCPMessage';
-import { NotificationCallback } from '../types/common';
+import { MCPNotification } from '../interfaces/IMCPMessage.js';
+import { NotificationCallback } from '../types/common.js';
 
 /**
  * Event subscription information

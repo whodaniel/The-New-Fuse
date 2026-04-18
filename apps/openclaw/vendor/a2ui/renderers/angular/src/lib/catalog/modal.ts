@@ -15,9 +15,9 @@
  */
 
 import { Component, signal, viewChild, ElementRef, effect } from '@angular/core';
-import { DynamicComponent } from '../rendering/dynamic-component';
+import { DynamicComponent } from '../rendering/dynamic-component.js';
 import { Types } from '@a2ui/lit/0.8';
-import { Renderer } from '../rendering';
+import { Renderer } from '../rendering/index.js';
 
 @Component({
   selector: 'a2ui-modal',

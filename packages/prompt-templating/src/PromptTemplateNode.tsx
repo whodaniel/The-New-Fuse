@@ -1,7 +1,7 @@
 import { ChevronDown, ChevronUp, FileText, Play, Variable, X } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 import { Handle, Position } from 'reactflow';
-import { PromptTemplate, PromptTemplateService, PromptVersion } from './types';
+import { PromptTemplate, PromptTemplateService, PromptVersion } from './types.js';
 
 interface PromptTemplateNodeProps {
   id: string;

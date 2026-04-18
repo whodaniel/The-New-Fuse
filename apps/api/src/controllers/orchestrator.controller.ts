@@ -4,9 +4,9 @@ import {
   RateLimitTier,
   RequireAuthLevel,
   SetRateLimitTier,
-} from '../guards/secure-auth.guard';
-import { AgentSwarmService } from '../modules/director/agent-swarm.service';
-import { DirectorService } from '../modules/director/director.service';
+} from '../guards/secure-auth.guard.js';
+import { AgentSwarmService } from '../modules/director/agent-swarm.service.js';
+import { DirectorService } from '../modules/director/director.service.js';
 
 @Controller('orchestrator')
 export class OrchestratorController {

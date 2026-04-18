@@ -7,7 +7,7 @@ import {
   AgentTrustLevel,
   getRateLimits,
   TRUST_LEVEL_CONFIG,
-} from '../modules/agent-registry/types/agent-trust.types';
+} from '../modules/agent-registry/types/agent-trust.types.js';
 
 /**
  * Environment variable names for rate limits

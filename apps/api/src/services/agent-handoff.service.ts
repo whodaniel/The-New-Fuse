@@ -13,7 +13,7 @@ import {
   type HandoffAck,
   type HandoffPacket,
 } from '@the-new-fuse/relay-core';
-import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service';
+import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service.js';
 
 const REQUIRED_GATE_CHAIN = [
   'TENANT_SCOPE_GATE',

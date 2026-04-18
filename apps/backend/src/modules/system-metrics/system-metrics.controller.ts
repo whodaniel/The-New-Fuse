@@ -1,10 +1,10 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { SystemMetricsService } from './system-metrics.service';
-import { SystemMetricsResponseDto } from './dto/system-metrics.dto';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../auth/guards/roles.guard';
-import { Roles } from '../../auth/decorators/roles.decorator';
+import { SystemMetricsService } from './system-metrics.service.js';
+import { SystemMetricsResponseDto } from './dto/system-metrics.dto.js';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
+import { RolesGuard } from '../../auth/guards/roles.guard.js';
+import { Roles } from '../../auth/decorators/roles.decorator.js';
 
 @ApiTags('system')
 @Controller('system')

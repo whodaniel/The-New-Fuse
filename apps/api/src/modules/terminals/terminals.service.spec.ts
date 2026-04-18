@@ -2,7 +2,7 @@ import { describe, expect, it } from '@jest/globals';
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
-import { TerminalsService } from './terminals.service';
+import { TerminalsService } from './terminals.service.js';
 
 describe('TerminalsService', () => {
   it('returns unavailable when TWIP snapshot is missing', async () => {

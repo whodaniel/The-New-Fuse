@@ -1,9 +1,9 @@
 import { Controller, Post, Get, Body, Logger, Param } from '@nestjs/common';
-import { CoordinatorAgentService } from '../agents/coordinator.service';
-import { AnalyzerAgentService } from '../agents/analyzer.service';
-import { ArchitectAgentService } from '../agents/architect.service';
-import { ImplementerAgentService } from '../agents/implementer.service';
-import { ReviewerAgentService } from '../agents/reviewer.service';
+import { CoordinatorAgentService } from '../agents/coordinator.service.js';
+import { AnalyzerAgentService } from '../agents/analyzer.service.js';
+import { ArchitectAgentService } from '../agents/architect.service.js';
+import { ImplementerAgentService } from '../agents/implementer.service.js';
+import { ReviewerAgentService } from '../agents/reviewer.service.js';
 
 @Controller('self-improvement')
 export class SelfImprovementController {

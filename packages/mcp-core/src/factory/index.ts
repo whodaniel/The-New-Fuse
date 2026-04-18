@@ -9,7 +9,7 @@ export {
   type SystemHealth,
   type SystemMetrics,
   type SystemComponents
-} from './MCPSystemFactory';
+} from './MCPSystemFactory.js';
 
 // Default export for convenience
-export { default } from './MCPSystemFactory';
+export { default } from './MCPSystemFactory.js';

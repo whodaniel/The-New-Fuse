@@ -3,13 +3,13 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MCPAgentIntegration } from './MCPAgentIntegration';
+import { MCPAgentIntegration } from './MCPAgentIntegration.js';
 import type { 
   IMCPBroker, 
   IMCPClient, 
   Agent
-} from '../interfaces';
-import { MCPErrorClass, MCPErrorCode } from '../types/error';
+} from '../interfaces/index.js';
+import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
 
 // Mock implementations
 const mockBroker: IMCPBroker = {

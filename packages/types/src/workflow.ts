@@ -1,4 +1,4 @@
-import { BaseEntity } from './core/base-types';
+import { BaseEntity } from './core/base-types.js';
 
 export enum WorkflowStatus {
   DRAFT = "DRAFT",

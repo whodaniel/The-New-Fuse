@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events';
 import * as fs from 'node:fs';
-import { HitEvent } from '../types/events';
+import { HitEvent } from '../types/events.js';
 
 interface AgentConfig {
   name: string;

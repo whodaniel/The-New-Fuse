@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 const vi = jest;
-import { PerformanceOptimizationService, PerformanceConfig } from './PerformanceOptimizationService';
-import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher';
+import { PerformanceOptimizationService, PerformanceConfig } from './PerformanceOptimizationService.js';
+import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher.js';
 
 // Mock dependencies
 const mockRedisService = {

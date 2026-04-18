@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 import { desc, eq, inArray, InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
-import { db } from '../client';
-import { projects, users, workspaces } from '../schema';
+import { db } from '../client.js';
+import { projects, users, workspaces } from '../schema/index.js';
 
 export type Workspace = InferSelectModel<typeof workspaces>;
 export type NewWorkspace = InferInsertModel<typeof workspaces>;

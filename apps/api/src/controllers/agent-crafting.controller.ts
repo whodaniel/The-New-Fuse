@@ -12,9 +12,9 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DatabaseService } from '@the-new-fuse/database';
-import { isPrivilegedUser } from '../auth/auth-policy';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { JwtAuth, RateLimitTier, SetRateLimitTier } from '../guards/secure-auth.guard';
+import { isPrivilegedUser } from '../auth/auth-policy.js';
+import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
+import { JwtAuth, RateLimitTier, SetRateLimitTier } from '../guards/secure-auth.guard.js';
 
 // Mirroring the constants from apps/casin8-games/swarm/agent-strategy/index.mjs
 export const TEMPERAMENTS = {

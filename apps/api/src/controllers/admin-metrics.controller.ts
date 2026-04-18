@@ -6,12 +6,12 @@ import {
   drizzleUserRepository,
   drizzleWorkflowRepository,
 } from '@the-new-fuse/database/drizzle/repositories';
-import { CacheService } from '../cache/cache.service';
-import { AdminGuard } from '../guards/admin.guard';
-import { SecureAuthGuard } from '../guards/secure-auth.guard';
-import { ChronologicalProcessesService } from '../modules/admin/chronological-processes.service';
-import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service';
-import { MetricsService } from '../services/metrics.service';
+import { CacheService } from '../cache/cache.service.js';
+import { AdminGuard } from '../guards/admin.guard.js';
+import { SecureAuthGuard } from '../guards/secure-auth.guard.js';
+import { ChronologicalProcessesService } from '../modules/admin/chronological-processes.service.js';
+import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service.js';
+import { MetricsService } from '../services/metrics.service.js';
 
 type AdminRequest = {
   user?: {

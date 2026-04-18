@@ -1,11 +1,11 @@
 import { Controller, Get, HttpException, HttpStatus, Param, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-// import { EnhancedAgencyService } from '../../../types/core/services/enhanced-agency.service';
-// import { AgentSwarmOrchestrationService } from '../../../types/core/services/agent-swarm-orchestration.service';
-// import { ServiceCategoryRouterService } from '../../../types/core/services/service-category-router.service';
-// import { AuthGuard } from '../../../guards/auth.guard';
-// import { RolesGuard } from '../../../guards/roles.guard';
-// import { Roles } from '../../../decorators/roles.decorator';
+// import { EnhancedAgencyService } from '../../../types/core/services/enhanced-agency.service.js';
+// import { AgentSwarmOrchestrationService } from '../../../types/core/services/agent-swarm-orchestration.service.js';
+// import { ServiceCategoryRouterService } from '../../../types/core/services/service-category-router.service.js';
+// import { AuthGuard } from '../../../guards/auth.guard.js';
+// import { RolesGuard } from '../../../guards/roles.guard.js';
+// import { Roles } from '../../../decorators/roles.decorator.js';
 
 @ApiTags('analytics')
 @Controller('analytics')

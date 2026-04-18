@@ -8,8 +8,8 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import type { FileTree, SearchOptions, SearchResult } from '../core/types';
-import { log } from '../utils/logger';
+import type { FileTree, SearchOptions, SearchResult } from '../core/types.js';
+import { log } from '../utils/logger.js';
 
 /**
  * Cache configuration

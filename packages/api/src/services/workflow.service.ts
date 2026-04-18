@@ -13,8 +13,8 @@ import {
   type NewWorkflow,
   type WorkflowExecution,
   type NewWorkflowExecution,
-} from '../repositories/workflow.repository';
-import { toError } from '../utils/error';
+} from '../repositories/workflow.repository.js';
+import { toError } from '../utils/error.js';
 
 @Injectable()
 export class WorkflowService {

@@ -1,14 +1,14 @@
 // Module
-export * from './resource-registry.module';
+export * from './resource-registry.module.js';
 
 // Services
-export * from './services';
+export * from './services/index.js';
 
 // Controllers
-export * from './controllers';
+export * from './controllers/index.js';
 
 // DTOs
-export * from './dto';
+export * from './dto/index.js';
 
 // Types
-export * from './types';
+export * from './types/index.js';

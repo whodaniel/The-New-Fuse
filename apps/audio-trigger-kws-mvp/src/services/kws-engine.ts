@@ -1,6 +1,6 @@
 import { EventEmitter } from "node:events";
 import crypto from "node:crypto";
-import { AudioFrame, HitEvent, LexiconTerm } from "../types/events";
+import { AudioFrame, HitEvent, LexiconTerm } from '../types/events.js';
 
 const normalize = (value: string): string =>
   value.toLowerCase().replace(/[^a-z0-9\s]/g, "").trim();

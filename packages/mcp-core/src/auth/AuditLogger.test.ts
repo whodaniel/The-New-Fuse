@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { AuditLogger, FileAuditStorage, AuditSeverity, AuditCategory } from './AuditLogger';
-import { MCPOperation } from './PermissionValidator';
+import { AuditLogger, FileAuditStorage, AuditSeverity, AuditCategory } from './AuditLogger.js';
+import { MCPOperation } from './PermissionValidator.js';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { rmSync } from 'fs';

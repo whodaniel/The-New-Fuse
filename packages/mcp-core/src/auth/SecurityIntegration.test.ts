@@ -6,11 +6,11 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { AuthenticationManager, AuthContext } from './AuthenticationManager';
-import { RBACManager, Permission, Role, ResourceAccessPolicy } from './RBACManager';
-import { PermissionValidator, MCPOperation, MCPResourceType } from './PermissionValidator';
-import { AuditLogger, AuditSeverity, AuditCategory, FileAuditStorage } from './AuditLogger';
-import { AuthConfig } from '../interfaces/IMCPConnection';
+import { AuthenticationManager, AuthContext } from './AuthenticationManager.js';
+import { RBACManager, Permission, Role, ResourceAccessPolicy } from './RBACManager.js';
+import { PermissionValidator, MCPOperation, MCPResourceType } from './PermissionValidator.js';
+import { AuditLogger, AuditSeverity, AuditCategory, FileAuditStorage } from './AuditLogger.js';
+import { AuthConfig } from '../interfaces/IMCPConnection.js';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { rmSync } from 'fs';

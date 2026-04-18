@@ -14,7 +14,7 @@ import {
 } from '@nestjs/websockets';
 import * as crypto from 'crypto';
 import { Server, Socket } from 'socket.io';
-import { RedisCacheService } from '../../cache/src/redis-cache.service';
+import { RedisCacheService } from '../../cache/src/redis-cache.service.js';
 
 export interface WebSocketMessage {
   id: string;

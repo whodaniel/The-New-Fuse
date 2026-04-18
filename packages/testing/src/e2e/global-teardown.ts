@@ -1,6 +1,6 @@
 import { chromium, FullConfig } from '@playwright/test';
-import { config } from './config/test-config';
-import { TestDataManager } from './utils/test-data';
+import { config } from './config/test-config.js';
+import { TestDataManager } from './utils/test-data.js';
 
 async function globalTeardown(_fullConfig: FullConfig): Promise<void> {
   const browser = await chromium.launch();

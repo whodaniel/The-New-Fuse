@@ -16,8 +16,8 @@
 
 import { Types, Primitives } from '@a2ui/lit/0.8';
 import { Directive, inject, input } from '@angular/core';
-import { MessageProcessor } from '../data';
-import { Theme } from './theming';
+import { MessageProcessor } from '../data/index.js';
+import { Theme } from './theming.js';
 
 let idCounter = 0;
 

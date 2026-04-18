@@ -5,14 +5,14 @@ import {
   OptimizationJob,
   TopologyOptimizationConfig,
 } from '@the-new-fuse/types';
-import { CurrentUser } from '../../auth/decorators/current-user.decorator';
-import { AggregateService } from './building-blocks/aggregate.service';
-import { DebateService } from './building-blocks/debate.service';
-import { ReflectService } from './building-blocks/reflect.service';
-import { MassOrchestrationService } from './mass-orchestration.service';
-import { PromptOptimizerService } from './prompt-optimizer.service';
-import { TopologyOptimizerService } from './topology-optimizer.service';
-import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator.js';
+import { AggregateService } from './building-blocks/aggregate.service.js';
+import { DebateService } from './building-blocks/debate.service.js';
+import { ReflectService } from './building-blocks/reflect.service.js';
+import { MassOrchestrationService } from './mass-orchestration.service.js';
+import { PromptOptimizerService } from './prompt-optimizer.service.js';
+import { TopologyOptimizerService } from './topology-optimizer.service.js';
+import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service.js';
 
 @Controller('mass')
 @UseGuards(AuthGuard('jwt'))

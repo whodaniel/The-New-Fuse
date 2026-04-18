@@ -1,7 +1,7 @@
 /**
  * Connection manager for The New Fuse - AI Bridge
  */
-import { CONFIG } from '../config'; // Adjust path if necessary
+import { CONFIG } from '../config.js'; // Adjust path if necessary
 import { Logger } from '../utils/logger.js';
 import { SecurityManager } from '../utils/security.js';
 import { Store } from '../utils/store.js';

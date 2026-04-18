@@ -1,24 +1,24 @@
 // Main exports
-export * from './websocket.gateway';
-export * from './types';
+export * from './websocket.gateway.js';
+export * from './types/index.js';
 
 // Connection management
-export * from './connection';
+export * from './connection/index.js';
 
 // Adapters
-export * from './adapters';
+export * from './adapters/index.js';
 
 // Strategies
-export * from './strategies';
+export * from './strategies/index.js';
 
 // Queue
-export * from './queue';
+export * from './queue/index.js';
 
 // Monitoring
-export * from './monitoring';
+export * from './monitoring/index.js';
 
 // Utilities
-export * from './utils';
+export * from './utils/index.js';
 
 // Module
-export * from './websocket.module';
+export * from './websocket.module.js';

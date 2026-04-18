@@ -20,7 +20,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { RelayService } from './relay.service';
+import { RelayService } from './relay.service.js';
 
 interface AgentSocket extends Socket {
   agentId?: string;

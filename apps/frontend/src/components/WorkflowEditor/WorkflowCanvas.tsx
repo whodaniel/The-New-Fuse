@@ -8,13 +8,13 @@ import { useWorkflowHistory } from '../../hooks/useWorkflowHistory';
 import { useWorkflowValidation } from '../../hooks/useWorkflowValidation';
 import type { WorkflowState } from '../../types/workflow';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
-import { ExecutionOverlay } from './ExecutionOverlay';
-import { NodeInspector } from './NodeInspector';
-import { NodeLibrary } from './NodeLibrary';
+import { ExecutionOverlay } from './ExecutionOverlay/index';
+import { NodeInspector } from './NodeInspector/index';
+import { NodeLibrary } from './NodeLibrary/index';
 import { WorkflowAnalytics } from './WorkflowAnalytics';
-import { WorkflowToolbar } from './WorkflowToolbar';
+import { WorkflowToolbar } from './WorkflowToolbar/index';
 import { CUSTOM_EDGE_TYPES } from './edges';
-import { CUSTOM_NODE_TYPES } from './nodes';
+import { CUSTOM_NODE_TYPES } from './nodes/index';
 
 export const WorkflowCanvas: React.FC = () => {
   const dispatch = useDispatch();

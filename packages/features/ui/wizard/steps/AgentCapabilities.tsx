@@ -19,7 +19,7 @@ import {
   Zap,
 } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
-import { WizardContext } from '../WizardSystem';
+import { WizardContext } from '../WizardSystem.js';
 
 export interface AgentCapabilitiesProps {
   context: WizardContext;

@@ -6,9 +6,9 @@
  */
 
 import { EventEmitter } from 'events';
-import { IMCPBroker } from '../interfaces/IMCPBroker';
-import { IMCPClient } from '../interfaces/IMCPClient';
-import { MCPRequest, MCPResponse } from '../interfaces/IMCPMessage';
+import { IMCPBroker } from '../interfaces/IMCPBroker.js';
+import { IMCPClient } from '../interfaces/IMCPClient.js';
+import { MCPRequest, MCPResponse } from '../interfaces/IMCPMessage.js';
 import {
   ErrorRecoveryConfig,
   ExecutionStatus,
@@ -21,11 +21,11 @@ import {
   TaskResult,
   WorkflowContext,
   WorkflowStep,
-} from '../interfaces/IMCPWorkflowIntegration';
-import { RetryPolicy } from '../types/common';
-import { MCPErrorClass } from '../types/error';
-import { CallbackHandlerConfig, MCPCallbackHandler } from './MCPCallbackHandler';
-import { WorkflowExecutionMonitor } from './WorkflowExecutionMonitor';
+} from '../interfaces/IMCPWorkflowIntegration.js';
+import { RetryPolicy } from '../types/common.js';
+import { MCPErrorClass } from '../types/error.js';
+import { CallbackHandlerConfig, MCPCallbackHandler } from './MCPCallbackHandler.js';
+import { WorkflowExecutionMonitor } from './WorkflowExecutionMonitor.js';
 
 /**
  * Configuration for MCP workflow integration

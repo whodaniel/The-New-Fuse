@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { AgentTask, TaskStatus } from '../types/coordination.types';
+import { AgentTask, TaskStatus } from '../types/coordination.types.js';
 
 export interface AgentMetrics {
   tasksCompleted: number;

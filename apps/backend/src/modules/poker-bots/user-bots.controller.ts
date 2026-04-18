@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from '../../auth/decorators/current-user.decorator';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { UserBotsService } from './user-bots.service';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator.js';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
+import { UserBotsService } from './user-bots.service.js';
 
 @ApiTags('User Bots')
 @ApiBearerAuth()

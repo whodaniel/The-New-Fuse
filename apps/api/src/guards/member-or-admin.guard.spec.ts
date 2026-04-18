@@ -1,7 +1,7 @@
 import { ExecutionContext, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 
-import { PayPalService } from '../modules/billing/paypal.service';
-import { MemberOrAdminGuard } from './member-or-admin.guard';
+import { PayPalService } from '../modules/billing/paypal.service.js';
+import { MemberOrAdminGuard } from './member-or-admin.guard.js';
 
 type RequestShape = {
   user?: {

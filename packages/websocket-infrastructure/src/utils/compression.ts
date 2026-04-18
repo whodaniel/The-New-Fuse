@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import * as pako from 'pako';
-import { CompressionAlgorithm, MessageType } from '../types';
+import { CompressionAlgorithm, MessageType } from '../types/index.js';
 
 export class CompressionUtil {
   private static readonly logger = new Logger(CompressionUtil.name);

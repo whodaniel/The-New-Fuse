@@ -1,6 +1,6 @@
 import { BullModuleOptions } from '@nestjs/bull';
 import Redis from 'ioredis';
-import { QueueName } from './constants/queue-names';
+import { QueueName } from './constants/queue-names.js';
 
 /**
  * Parse Redis connection URL if provided, otherwise use individual env vars

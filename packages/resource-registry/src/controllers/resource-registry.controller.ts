@@ -21,14 +21,14 @@ import {
   ApiQuery,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ResourceRegistryService } from '../services/resource-registry.service';
-import { ResourceAccessControlService, AccessContext } from '../services/resource-access-control.service';
-import { CreateResourceDto, UpdateResourceDto, SearchResourceDto } from '../dto';
-import { Resource, SearchResult, ResourceAction } from '../types';
+import { ResourceRegistryService } from '../services/resource-registry.service.js';
+import { ResourceAccessControlService, AccessContext } from '../services/resource-access-control.service.js';
+import { CreateResourceDto, UpdateResourceDto, SearchResourceDto } from '../dto/index.js';
+import { Resource, SearchResult, ResourceAction } from '../types/index.js';
 
 // Import authentication guards - use service or user auth to support both
 // JWT tokens (users) and API keys (services/agents)
-import { ServiceOrUserAuthGuard } from '../guards/service-or-user-auth.guard';
+import { ServiceOrUserAuthGuard } from '../guards/service-or-user-auth.guard.js';
 
 /**
  * Resource Registry Controller

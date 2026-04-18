@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AuthenticatedSocket } from '../types';
-import { ConnectionPool } from './connection-pool';
+import { AuthenticatedSocket } from '../types/index.js';
+import { ConnectionPool } from './connection-pool.js';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()

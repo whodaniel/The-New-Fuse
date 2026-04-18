@@ -1,3 +1,3 @@
-export * from './agents';
-export * from './chat';
-export * from './workspace';
+export * from './agents/index';
+export * from './chat/index';
+export * from './workspace/index';

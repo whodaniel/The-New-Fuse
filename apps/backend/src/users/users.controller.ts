@@ -13,12 +13,12 @@ import {
   Req,
   ForbiddenException
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
-import { UpdateProfileDto, ProfileResponseDto } from './dto/profile.dto';
+import { UsersService } from './users.service.js';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import { RolesGuard } from '../auth/guards/roles.guard.js';
+import { Roles } from '../auth/decorators/roles.decorator.js';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto.js';
+import { UpdateProfileDto, ProfileResponseDto } from './dto/profile.dto.js';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 

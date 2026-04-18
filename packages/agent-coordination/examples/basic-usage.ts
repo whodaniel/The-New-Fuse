@@ -1,4 +1,4 @@
-import { RedisCoordinator, SerializationFormat } from '../src';
+import { RedisCoordinator, SerializationFormat } from '../src/index.js';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { AgentStatus, A2APriority } from '@the-new-fuse/a2a-core';
 

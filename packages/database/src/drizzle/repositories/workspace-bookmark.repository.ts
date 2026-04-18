@@ -1,8 +1,8 @@
 import { randomUUID } from 'crypto';
 import { and, asc, eq } from 'drizzle-orm';
-import { db } from '../client';
-import { workspaceBookmarks } from '../schema';
-import type { NewWorkspaceBookmark, WorkspaceBookmark } from '../types';
+import { db } from '../client.js';
+import { workspaceBookmarks } from '../schema/index.js';
+import type { NewWorkspaceBookmark, WorkspaceBookmark } from '../types.js';
 
 export class DrizzleWorkspaceBookmarkRepository {
   async listByWorkspace(workspaceId: string): Promise<WorkspaceBookmark[]> {

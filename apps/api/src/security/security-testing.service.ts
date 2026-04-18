@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InputSanitizationService } from '../security/input-sanitization.service';
-import { ResponseSanitizationService } from '../security/response-sanitization.service';
+import { InputSanitizationService } from '../security/input-sanitization.service.js';
+import { ResponseSanitizationService } from '../security/response-sanitization.service.js';
 
 export interface SecurityTestResult {
   test: string;

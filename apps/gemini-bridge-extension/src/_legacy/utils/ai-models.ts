@@ -1,7 +1,7 @@
 /**
  * AI models manager for The New Fuse - AI Bridge
  */
-import { MessageSource, MessageType } from '../shared-protocol'; // Using shared protocol types
+import { MessageSource, MessageType } from '../shared-protocol.js'; // Using shared protocol types
 import { Logger } from './logger.js';
 import { WebSocketManager } from './websocket-manager.js';
 

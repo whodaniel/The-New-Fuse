@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
+import { LoginPage } from '../pages/login.page.js';
 
 export type AuthUser = {
   username: string;

@@ -12,9 +12,9 @@ import {
   CloudProvider,
   ChangeAction,
   ResourceState
-} from '../types/infrastructure';
-import { InfrastructureImportConfig } from '../interfaces/IInfrastructureManager';
-import { GCPProvider } from './providers/GCPProvider';
+} from '../types/infrastructure.js';
+import { InfrastructureImportConfig } from '../interfaces/IInfrastructureManager.js';
+import { GCPProvider } from './providers/GCPProvider.js';
 
 export interface ResourceProvider {
   provision(resource: ResourceDefinition, infrastructureId: string): Promise<ResourceProvisionResult>;

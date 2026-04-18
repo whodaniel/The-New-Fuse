@@ -11,7 +11,7 @@ import {
   RegisterDto,
   SupabaseAuthDto,
   TokenDto,
-} from '../dtos/auth.dto';
+} from '../dtos/auth.dto.js';
 
 type AuthResponse = TokenDto & {
   access_token: string;

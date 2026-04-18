@@ -6,7 +6,7 @@
 
 import { Check, Loader, MessageSquare, Play, RefreshCw, Send, X } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
-import { WizardContext } from '../WizardSystem';
+import { WizardContext } from '../WizardSystem.js';
 
 export interface AgentTestingProps {
   context: WizardContext;

@@ -6,7 +6,7 @@
 
 import { AlertCircle, Check, Clock, ExternalLink, Loader, Rocket } from 'lucide-react';
 import React, { useState } from 'react';
-import { WizardContext } from '../WizardSystem';
+import { WizardContext } from '../WizardSystem.js';
 
 export interface DeploymentProgressProps {
   context: WizardContext;

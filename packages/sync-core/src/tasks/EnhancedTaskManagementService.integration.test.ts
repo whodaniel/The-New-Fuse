@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { EnhancedTaskManagementService, EnhancedTaskData } from './EnhancedTaskManagementService';
-import { TaskSynchronizationService } from './TaskSynchronizationService';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
+import { EnhancedTaskManagementService, EnhancedTaskData } from './EnhancedTaskManagementService.js';
+import { TaskSynchronizationService } from './TaskSynchronizationService.js';
+import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
 import { DrizzleService } from '@the-new-fuse/database';
 
 describe('EnhancedTaskManagementService Integration', () => {

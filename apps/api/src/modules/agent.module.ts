@@ -5,13 +5,13 @@ import { JwtModule } from '@nestjs/jwt';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseModule } from '@the-new-fuse/database';
-import { AgentBankController } from '../controllers/agent-bank.controller';
-import { AgentCraftingController } from '../controllers/agent-crafting.controller';
-import { AgentController } from '../controllers/agent.controller';
-import { SecurityLoggingService } from '../security/security-logging.service';
-import { AgentBankService } from '../services/agent-bank.service';
-import { AgentService } from '../services/agent.service';
-import { BillingModule } from './billing/billing.module';
+import { AgentBankController } from '../controllers/agent-bank.controller.js';
+import { AgentCraftingController } from '../controllers/agent-crafting.controller.js';
+import { AgentController } from '../controllers/agent.controller.js';
+import { SecurityLoggingService } from '../security/security-logging.service.js';
+import { AgentBankService } from '../services/agent-bank.service.js';
+import { AgentService } from '../services/agent.service.js';
+import { BillingModule } from './billing/billing.module.js';
 
 @Module({
   imports: [DatabaseModule, JwtModule, ConfigModule, BillingModule],

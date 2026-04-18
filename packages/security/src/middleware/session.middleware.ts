@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { AuthUser, sessionManager } from '../services/SessionManager';
+import { AuthUser, sessionManager } from '../services/SessionManager.js';
 
 export interface RequestWithSession extends Request {
   user?: AuthUser;

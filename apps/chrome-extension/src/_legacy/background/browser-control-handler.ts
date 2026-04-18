@@ -8,9 +8,9 @@
  * automation capabilities.
  */
 
-import { Logger } from '../utils/logger';
-import { screenRecordingService } from './screen-recording';
-import { web3Interceptor } from './web3-interceptor';
+import { Logger } from '../utils/logger.js';
+import { screenRecordingService } from './screen-recording.js';
+import { web3Interceptor } from './web3-interceptor.js';
 
 // ============================================================================
 // MESSAGE TYPES (Must match protocol.ts in shared package)

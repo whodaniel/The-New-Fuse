@@ -13,7 +13,7 @@ export {
   type WizardDefinition,
   type WizardProgress,
   type WizardStep,
-} from './WizardSystem';
+} from './WizardSystem.js';
 
 // Default wizards
 import {
@@ -23,7 +23,7 @@ import {
   createGetStartedWizard,
   createTroubleshootingWizard,
   DEFAULT_WIZARDS,
-} from './DefaultWizards';
+} from './DefaultWizards.js';
 
 export {
   createAgentCreationWizard,
@@ -35,7 +35,7 @@ export {
 };
 
 // React components
-export { Wizard, WizardList, type WizardListProps, type WizardUIProps } from './WizardUI';
+export { Wizard, WizardList, type WizardListProps, type WizardUIProps } from './WizardUI.js';
 
 // React hooks
 export {
@@ -43,7 +43,7 @@ export {
   useWizardList,
   type UseWizardListOptions,
   type UseWizardOptions,
-} from './useWizard';
+} from './useWizard.js';
 
 // Step components
 export {
@@ -62,12 +62,12 @@ export {
   STEP_COMPONENTS,
   WelcomeScreen,
   WorkspaceSetup,
-} from './steps';
+} from './steps/index.js';
 
 // Styles
 import './wizard.css';
 
-import { WizardStateManager as WizardStateManagerClass } from './WizardSystem';
+import { WizardStateManager as WizardStateManagerClass } from './WizardSystem.js';
 
 /**
  * Initialize wizard system with default wizards

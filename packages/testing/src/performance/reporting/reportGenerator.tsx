@@ -1,5 +1,5 @@
-import { PerformanceResult, PerformanceStats } from '../utils/measurePerformance';
-import { RegressionAnalysisResult } from '../regression/regressionDetector';
+import { PerformanceResult, PerformanceStats } from '../utils/measurePerformance.js';
+import { RegressionAnalysisResult } from '../regression/regressionDetector.js';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 

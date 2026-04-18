@@ -10,9 +10,9 @@ import {
   ServiceMeshProvider,
   ServiceMeshMetrics,
   ServiceMeshIntegrationResult
-} from './MCPServiceMesh';
-import { ServiceHealth } from '../types/broker';
-import { MCPErrorClass as MCPError, MCPErrorCode } from '../types/error';
+} from './MCPServiceMesh.js';
+import { ServiceHealth } from '../types/broker.js';
+import { MCPErrorClass as MCPError, MCPErrorCode } from '../types/error.js';
 
 /**
  * Monitoring configuration

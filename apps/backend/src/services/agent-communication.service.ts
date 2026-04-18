@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RedisService } from './redis.service';
+import { RedisService } from './redis.service.js';
 import { AgentMessage } from '@the-new-fuse/types';
 
 @Injectable()

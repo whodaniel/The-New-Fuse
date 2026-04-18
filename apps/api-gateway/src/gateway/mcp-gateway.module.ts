@@ -4,8 +4,8 @@
  */
 
 import { Module } from '@nestjs/common';
-import { ProxyModule } from '../proxy/proxy.module';
-import { McpGatewayController } from './mcp-gateway.controller';
+import { ProxyModule } from '../proxy/proxy.module.js';
+import { McpGatewayController } from './mcp-gateway.controller.js';
 
 @Module({
   imports: [ProxyModule],

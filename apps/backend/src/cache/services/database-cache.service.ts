@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AdvancedCacheManager } from './advanced-cache.manager';
+import { AdvancedCacheManager } from './advanced-cache.manager.js';
 import * as crypto from 'crypto';
 
 export interface QueryCacheOptions {

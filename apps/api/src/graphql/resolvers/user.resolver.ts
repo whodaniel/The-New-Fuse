@@ -11,12 +11,12 @@ import type { User } from '@the-new-fuse/database';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-import { GqlAuthGuard } from '../guards/gql-auth.guard';
-import { AgentLoader } from '../loaders/agent.loader';
-import { WorkflowLoader } from '../loaders/workflow.loader';
-import { AgentType } from '../types/agent.type';
-import { UserType } from '../types/user.type';
-import { WorkflowType } from '../types/workflow.type';
+import { GqlAuthGuard } from '../guards/gql-auth.guard.js';
+import { AgentLoader } from '../loaders/agent.loader.js';
+import { WorkflowLoader } from '../loaders/workflow.loader.js';
+import { AgentType } from '../types/agent.type.js';
+import { UserType } from '../types/user.type.js';
+import { WorkflowType } from '../types/workflow.type.js';
 
 @Resolver(() => UserType)
 export class UserResolver {

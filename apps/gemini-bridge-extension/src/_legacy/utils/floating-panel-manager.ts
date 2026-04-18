@@ -3,7 +3,7 @@
  * Handles direct page injection of the floating UI panel
  */
 
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 
 const logger = new Logger({
   name: 'FloatingPanelManager',

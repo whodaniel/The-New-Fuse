@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { AppCreator } from './AppCreator';
+import { AppCreator } from './AppCreator/index';
 import { AppStacker } from './AppStacker/AppStacker';
 export default function Page() {
   return (

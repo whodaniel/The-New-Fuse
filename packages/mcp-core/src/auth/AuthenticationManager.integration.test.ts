@@ -4,10 +4,10 @@
  */
 
 import { EventEmitter } from 'events';
-import { ConnectionManager } from '../client/ConnectionManager';
-import { AuthenticationManager, AuthContext, AuthPolicy } from './AuthenticationManager';
-import { ConnectionOptions, AuthConfig, TLSConfig } from '../interfaces/IMCPConnection';
-import { MCPErrorClass, MCPErrorCode } from '../types/error';
+import { ConnectionManager } from '../client/ConnectionManager.js';
+import { AuthenticationManager, AuthContext, AuthPolicy } from './AuthenticationManager.js';
+import { ConnectionOptions, AuthConfig, TLSConfig } from '../interfaces/IMCPConnection.js';
+import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
 
 // Mock WebSocket for testing
 class MockAuthWebSocket extends EventEmitter {

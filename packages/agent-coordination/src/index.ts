@@ -10,17 +10,17 @@
  */
 
 // Legacy Redis coordinator
-export * from './redis-coordinator';
+export * from './redis-coordinator.js';
 
 // Types
-export * from './types/coordination.types';
+export * from './types/coordination.types.js';
 
 // Legacy components
-export * from './broadcast/broadcast-manager';
-export * from './coordination/shared-state-manager';
-export * from './presence/presence-tracker';
-export * from './queues/task-queue-manager';
-export * from './serializers/message-serializer';
+export * from './broadcast/broadcast-manager.js';
+export * from './coordination/shared-state-manager.js';
+export * from './presence/presence-tracker.js';
+export * from './queues/task-queue-manager.js';
+export * from './serializers/message-serializer.js';
 
 // Core components
 export {
@@ -37,16 +37,16 @@ export {
   TaskDependency,
   TaskQueue,
   TaskResult,
-} from './core';
+} from './core/index.js';
 
 // Orchestration
-export * from './orchestration';
+export * from './orchestration/index.js';
 
 // State management
-export * from './state';
+export * from './state/index.js';
 
 // Coordination patterns
-export * from './patterns';
+export * from './patterns/index.js';
 
 // Monitoring
-export * from './monitoring';
+export * from './monitoring/index.js';

@@ -3,23 +3,23 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseModule } from '@the-new-fuse/database';
-// import { AgencyHubModule as CoreAgencyHubModule } from '../../types/core';
-import { UnifiedLedgerModule } from '../unified-ledger/unified-ledger.module';
+// import { AgencyHubModule as CoreAgencyHubModule } from '../../types/core.js';
+import { UnifiedLedgerModule } from '../unified-ledger/unified-ledger.module.js';
 
 // Import existing controllers to maintain compatibility
-import { A2AAuthBrokerController } from './controllers/a2a-auth-broker.controller';
-import { A2AMessageBrokerController } from './controllers/a2a-broker.controller';
-import { AgencyController } from './controllers/agency.controller';
-import { AnalyticsController } from './controllers/analytics.controller';
-import { EmailCustodianController } from './controllers/email-custodian.controller';
-import { ServiceRequestController } from './controllers/service-request.controller';
-import { SwarmController } from './controllers/swarm.controller';
+import { A2AAuthBrokerController } from './controllers/a2a-auth-broker.controller.js';
+import { A2AMessageBrokerController } from './controllers/a2a-broker.controller.js';
+import { AgencyController } from './controllers/agency.controller.js';
+import { AnalyticsController } from './controllers/analytics.controller.js';
+import { EmailCustodianController } from './controllers/email-custodian.controller.js';
+import { ServiceRequestController } from './controllers/service-request.controller.js';
+import { SwarmController } from './controllers/swarm.controller.js';
 
 // Services - The Three Pillars of TNF Agent
-import { A2AAuthBrokerService } from './services/a2a-auth-broker.service';
-import { A2AMessageBrokerService } from './services/a2a-message-broker.service';
-import { AgentSwarmOrchestrationService } from './services/agent-swarm-orchestration.service';
-import { EmailCustodianService } from './services/email-custodian.service';
+import { A2AAuthBrokerService } from './services/a2a-auth-broker.service.js';
+import { A2AMessageBrokerService } from './services/a2a-message-broker.service.js';
+import { AgentSwarmOrchestrationService } from './services/agent-swarm-orchestration.service.js';
+import { EmailCustodianService } from './services/email-custodian.service.js';
 
 @Module({
   imports: [

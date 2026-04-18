@@ -6,10 +6,10 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { SyncModule } from './SyncModule';
-import { SyncHealthService } from './SyncHealthService';
-import { SyncConfigService } from './SyncConfigService';
-import { SyncMetricsService } from './SyncMetricsService';
+import { SyncModule } from './SyncModule.js';
+import { SyncHealthService } from './SyncHealthService.js';
+import { SyncConfigService } from './SyncConfigService.js';
+import { SyncMetricsService } from './SyncMetricsService.js';
 
 export class SyncServer {
   private readonly logger = new Logger(SyncServer.name);

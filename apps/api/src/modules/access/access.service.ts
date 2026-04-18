@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DatabaseService } from '@the-new-fuse/database/drizzle';
-import { isMasterSuperAdminEmail, resolveRoleClaims } from '../../auth/auth-policy';
-import { AuthService } from '../../services/auth.service';
-import { PayPalService } from '../billing/paypal.service';
+import { isMasterSuperAdminEmail, resolveRoleClaims } from '../../auth/auth-policy.js';
+import { AuthService } from '../../services/auth.service.js';
+import { PayPalService } from '../billing/paypal.service.js';
 
 type SubscriptionTier = 'STARTER' | 'PRO' | 'ENTERPRISE';
 

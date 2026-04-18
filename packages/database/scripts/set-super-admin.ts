@@ -14,7 +14,7 @@ import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import * as path from 'path';
 import postgres from 'postgres';
-import { users } from '../src/drizzle/schema/users';
+import { users } from '../src/drizzle/schema/users.js';
 
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, '../../../.env') });

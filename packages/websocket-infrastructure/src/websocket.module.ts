@@ -1,11 +1,11 @@
 import { Module, DynamicModule, Provider, Global } from '@nestjs/common';
-import { WebSocketGateway } from './websocket.gateway';
-import { WebSocketConfig } from './types';
-import { ConnectionPool } from './connection/connection-pool';
-import { ConnectionManager } from './connection/connection-manager';
-import { RedisWebSocketAdapter } from './adapters/redis-adapter';
-import { MessageQueue } from './queue/message-queue';
-import { WebSocketMonitoring } from './monitoring/websocket-metrics';
+import { WebSocketGateway } from './websocket.gateway.js';
+import { WebSocketConfig } from './types/index.js';
+import { ConnectionPool } from './connection/connection-pool.js';
+import { ConnectionManager } from './connection/connection-manager.js';
+import { RedisWebSocketAdapter } from './adapters/redis-adapter.js';
+import { MessageQueue } from './queue/message-queue.js';
+import { WebSocketMonitoring } from './monitoring/websocket-metrics.js';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 @Module({})

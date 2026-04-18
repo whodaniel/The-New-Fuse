@@ -10,14 +10,14 @@ import {
 } from '@nestjs/websockets';
 import { Injectable, Logger, UseGuards, Inject, Optional } from '@nestjs/common';
 import { Server } from 'socket.io';
-import { AuthenticatedSocket, WebSocketConfig } from './types';
-import { ConnectionPool } from './connection/connection-pool';
-import { ConnectionManager } from './connection/connection-manager';
-import { RedisWebSocketAdapter } from './adapters/redis-adapter';
-import { MessageQueue } from './queue/message-queue';
-import { WebSocketMonitoring } from './monitoring/websocket-metrics';
-import { CompressionMiddleware } from './utils/compression';
-import { MessageSerializer } from './utils/binary-protocol';
+import { AuthenticatedSocket, WebSocketConfig } from './types/index.js';
+import { ConnectionPool } from './connection/connection-pool.js';
+import { ConnectionManager } from './connection/connection-manager.js';
+import { RedisWebSocketAdapter } from './adapters/redis-adapter.js';
+import { MessageQueue } from './queue/message-queue.js';
+import { WebSocketMonitoring } from './monitoring/websocket-metrics.js';
+import { CompressionMiddleware } from './utils/compression.js';
+import { MessageSerializer } from './utils/binary-protocol.js';
 
 @Injectable()
 @NestWebSocketGateway({

@@ -1,1 +1,1 @@
-export * from './websocket-metrics';
+export * from './websocket-metrics.js';

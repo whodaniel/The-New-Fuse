@@ -6,8 +6,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger';
-import { AgentHandoffTemplateService } from './shared/StubServices';
+import { Logger } from '../utils/Logger.js';
+import { AgentHandoffTemplateService } from './shared/StubServices.js';
 
 export interface HeartbeatConfig {
   intervalMs: number;

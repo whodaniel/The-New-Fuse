@@ -7,12 +7,12 @@
  */
 
 import * as vscode from 'vscode';
-import { ChatMessage, FileAttachment, WebviewOutboundMessage } from '../core/types';
-import { getAIService } from '../services/AIService';
-import { getChatService } from '../services/ChatService';
-import { getMCPService } from '../services/MCPService';
-import { generateId } from '../utils/helpers';
-import { log } from '../utils/logger';
+import { ChatMessage, FileAttachment, WebviewOutboundMessage } from '../core/types.js';
+import { getAIService } from '../services/AIService.js';
+import { getChatService } from '../services/ChatService.js';
+import { getMCPService } from '../services/MCPService.js';
+import { generateId } from '../utils/helpers.js';
+import { log } from '../utils/logger.js';
 
 export class ChatViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'theNewFuse.chatView';

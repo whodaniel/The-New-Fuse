@@ -7,7 +7,7 @@ import { Body, Controller, Get, Headers, HttpStatus, Param, Post, Res } from '@n
 // @ts-ignore
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { ProxyService } from '../proxy/proxy.service';
+import { ProxyService } from '../proxy/proxy.service.js';
 
 @Controller('chat')
 @ApiTags('chat')

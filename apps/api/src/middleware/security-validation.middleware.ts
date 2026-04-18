@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { InputSanitizationService } from '../security/input-sanitization.service';
+import { InputSanitizationService } from '../security/input-sanitization.service.js';
 
 export interface SecurityValidationOptions {
   sanitize?: boolean;

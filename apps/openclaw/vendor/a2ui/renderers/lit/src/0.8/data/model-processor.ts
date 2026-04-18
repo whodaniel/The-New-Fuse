@@ -29,7 +29,7 @@ import {
   Surface,
   SurfaceID,
   SurfaceUpdateMessage,
-} from '../types/types';
+} from '../types/types.js';
 import {
   isComponentArrayReference,
   isObject,

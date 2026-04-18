@@ -6,12 +6,12 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MessageRouter } from './MessageRouter';
-import { LoadBalancer } from './LoadBalancer';
-import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
-import { MCPServiceInfo, RoutingInfo } from '../types/broker';
-import { ServiceStatus, LoadBalancingStrategy } from '../types/common';
-import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error';
+import { MessageRouter } from './MessageRouter.js';
+import { LoadBalancer } from './LoadBalancer.js';
+import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage.js';
+import { MCPServiceInfo, RoutingInfo } from '../types/broker.js';
+import { ServiceStatus, LoadBalancingStrategy } from '../types/common.js';
+import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error.js';
 
 describe('MessageRouter', () => {
   let messageRouter: MessageRouter;

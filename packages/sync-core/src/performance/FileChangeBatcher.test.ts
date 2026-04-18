@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 const vi = jest;
-import { FileChangeBatcher, BatchConfig, BatchedFileChange } from './FileChangeBatcher';
-import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher';
+import { FileChangeBatcher, BatchConfig, BatchedFileChange } from './FileChangeBatcher.js';
+import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher.js';
 
 describe('FileChangeBatcher', () => {
   let batcher: FileChangeBatcher;

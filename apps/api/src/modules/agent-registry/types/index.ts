@@ -3,4 +3,4 @@
  * Exports all types for the agent-registry module
  */
 
-export * from './agent-trust.types';
+export * from './agent-trust.types.js';

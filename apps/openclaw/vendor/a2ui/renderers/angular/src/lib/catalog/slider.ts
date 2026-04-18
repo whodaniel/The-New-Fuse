@@ -16,7 +16,7 @@
 
 import { Component, computed, input } from '@angular/core';
 import { Primitives } from '@a2ui/lit/0.8';
-import { DynamicComponent } from '../rendering/dynamic-component';
+import { DynamicComponent } from '../rendering/dynamic-component.js';
 
 @Component({
   selector: '[a2ui-slider]',

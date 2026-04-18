@@ -1,11 +1,11 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy, Inject } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { DrizzleService } from '@the-new-fuse/database';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
+import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
 import {
   SyncOperation,
   ConflictResolution
-} from '../types';
+} from '../types/index.js';
 
 export interface TaskSyncData {
   id: string;

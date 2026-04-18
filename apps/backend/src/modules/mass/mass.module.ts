@@ -1,28 +1,28 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DrizzleModule } from '@the-new-fuse/database';
-import { AggregateService } from './building-blocks/aggregate.service';
-import { CustomAgentService } from './building-blocks/custom-agent.service';
-import { DebateService } from './building-blocks/debate.service';
+import { AggregateService } from './building-blocks/aggregate.service.js';
+import { CustomAgentService } from './building-blocks/custom-agent.service.js';
+import { DebateService } from './building-blocks/debate.service.js';
 import {
   AgentExecutorService,
   AggregateBlock,
   DebateBlock,
   MassBlocksService,
   ReflectBlock,
-} from './building-blocks/mass-blocks.service';
-import { ReflectService } from './building-blocks/reflect.service';
-import { ToolUseService } from './building-blocks/tool-use.service';
-import { MassOrchestrationService } from './mass-orchestration.service';
-import { MassController } from './mass.controller';
+} from './building-blocks/mass-blocks.service.js';
+import { ReflectService } from './building-blocks/reflect.service.js';
+import { ToolUseService } from './building-blocks/tool-use.service.js';
+import { MassOrchestrationService } from './mass-orchestration.service.js';
+import { MassController } from './mass.controller.js';
 import {
   EvaluationHarnessService,
   LlmInteractionService,
   PromptOptimizerService,
-} from './prompt-optimizer.service';
-import { TopologyOptimizerService } from './topology-optimizer.service';
-import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service';
-import { RedisLockService } from '../../services/redis-lock.service';
+} from './prompt-optimizer.service.js';
+import { TopologyOptimizerService } from './topology-optimizer.service.js';
+import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service.js';
+import { RedisLockService } from '../../services/redis-lock.service.js';
 
 @Module({
   imports: [ConfigModule, DrizzleModule.forRootAsync()],

@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SyncOrchestrator, AgentState, IWebSocketService } from './SyncOrchestrator';
+import { SyncOrchestrator, AgentState, IWebSocketService } from './SyncOrchestrator.js';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { DrizzleService } from '@the-new-fuse/database';
 import { PromptTemplateServiceImpl } from '@the-new-fuse/prompt-templating';
-import { SyncConflictData, SyncResourceType } from '../types';
+import { SyncConflictData, SyncResourceType } from '../types/index.js';
 
 describe('SyncOrchestrator', () => {
   let service: SyncOrchestrator;

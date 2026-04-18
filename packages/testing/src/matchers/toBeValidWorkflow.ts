@@ -1,4 +1,4 @@
-import { createMatcher, validateSchema } from './utils';
+import { createMatcher, validateSchema } from './utils.js';
 import { z } from 'zod';
 
 // Local WorkflowSchema definition to avoid circular dependencies

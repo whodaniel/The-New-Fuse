@@ -3,7 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { v4 as uuid } // @ts-ignore
 from 'uuid';
-import { Task, TaskQueueOptions } from './TaskQueue';
+import { Task, TaskQueueOptions } from './TaskQueue.js';
 
 export interface AgentTask extends Task {
   agentId: string;

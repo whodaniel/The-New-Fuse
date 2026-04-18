@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AuthenticatedSocket, ConnectionMetadata, ConnectionPoolStats } from '../types';
+import { AuthenticatedSocket, ConnectionMetadata, ConnectionPoolStats } from '../types/index.js';
 import { EventEmitter } from 'events';
 
 @Injectable()

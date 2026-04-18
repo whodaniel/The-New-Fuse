@@ -15,7 +15,7 @@ import {
   AgentStatus,
   LoadBalancingStrategy,
   RoutingRule,
-} from './types';
+} from './types.js';
 
 @Injectable()
 export class A2AService implements OnModuleInit, OnModuleDestroy {

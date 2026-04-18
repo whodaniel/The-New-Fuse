@@ -1,4 +1,4 @@
-import { toHavePermission } from '../toHavePermission';
+import { toHavePermission } from '../toHavePermission.js';
 
 describe('toHavePermission', () => {
   const testUser = {

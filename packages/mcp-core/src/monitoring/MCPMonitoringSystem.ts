@@ -10,8 +10,8 @@ import {
   IMetricsCollector,
   Logger
 } from '@the-new-fuse/core-monitoring';
-import { MCPMetricsCollector } from './MCPMetricsCollector';
-import { PerformanceMetrics } from '../types/monitoring';
+import { MCPMetricsCollector } from './MCPMetricsCollector.js';
+import { PerformanceMetrics } from '../types/monitoring.js';
 
 /**
  * MCP monitoring configuration

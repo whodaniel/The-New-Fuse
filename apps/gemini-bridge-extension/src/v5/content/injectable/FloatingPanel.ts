@@ -15,7 +15,7 @@ import type {
   PanelState,
   PanelTab,
   StreamingState,
-} from '../../shared/types';
+} from '../../shared/types.js';
 
 const PANEL_MIN_WIDTH = 300;
 const PANEL_MIN_HEIGHT = 200;

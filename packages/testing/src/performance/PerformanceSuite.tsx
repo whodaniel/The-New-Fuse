@@ -1,7 +1,7 @@
-import { measurePerformance, PerformanceResult, PerformanceStats, PerformanceThresholds } from './utils/measurePerformance';
-import { detectMemoryLeak, LeakDetectionOptions, LeakDetectionResult } from './utils/memoryLeakDetector';
-import { RegressionDetector, RegressionThresholds } from './regression/regressionDetector';
-import { PerformanceReportGenerator, TestResult, ReportOptions } from './reporting/reportGenerator';
+import { measurePerformance, PerformanceResult, PerformanceStats, PerformanceThresholds } from './utils/measurePerformance.js';
+import { detectMemoryLeak, LeakDetectionOptions, LeakDetectionResult } from './utils/memoryLeakDetector.js';
+import { RegressionDetector, RegressionThresholds } from './regression/regressionDetector.js';
+import { PerformanceReportGenerator, TestResult, ReportOptions } from './reporting/reportGenerator.js';
 
 export interface PerformanceTestOptions {
   name: string;

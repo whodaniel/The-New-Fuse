@@ -5,9 +5,9 @@ import * as fs from 'fs/promises';
 import { Stats } from 'fs';
 import * as path from 'path';
 import { EventEmitter } from 'events';
-import { SyncRedisConfig } from '../config/SyncRedisConfig';
-import { SyncDatabaseService } from '../database/SyncDatabaseService';
-import { FileChangeEvent, SyncConflictData } from '../types';
+import { SyncRedisConfig } from '../config/SyncRedisConfig.js';
+import { SyncDatabaseService } from '../database/SyncDatabaseService.js';
+import { FileChangeEvent, SyncConflictData } from '../types/index.js';
 
 // Re-export FileChangeEvent for convenience
 export { FileChangeEvent };

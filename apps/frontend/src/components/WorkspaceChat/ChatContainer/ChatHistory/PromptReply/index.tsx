@@ -3,8 +3,8 @@ import { WorkspaceData } from '@/types/workspace';
 import renderMarkdown from '@/utils/chat/markdown';
 import { Warning } from '@phosphor-icons/react';
 import { memo } from 'react';
-import UserIcon from '../../../../UserIcon';
-import Citations from '../Citation';
+import UserIcon from '../../../../UserIcon/index';
+import Citations from '../Citation/index';
 
 interface PromptReplyProps {
   uuid?: string;

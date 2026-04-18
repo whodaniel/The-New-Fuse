@@ -3,7 +3,7 @@ interface PineconeClient {
   // Mock interface
 }
 
-import { VectorStoreProvider, VectorDocument, SearchResult, VectorQuery } from '../types';
+import { VectorStoreProvider, VectorDocument, SearchResult, VectorQuery } from '../types.js';
 
 export class PineconeProvider implements VectorStoreProvider {
   public name = 'pinecone';

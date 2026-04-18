@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { FeatureFlag, FeatureFlagUpdate, FeatureFlagContext, Environment } from '../types/featureFlags';
+import { FeatureFlag, FeatureFlagUpdate, FeatureFlagContext, Environment } from '../types/featureFlags.js';
 // Remove external dependency - implement tracking internally if needed
 import * as crypto from 'crypto';
 

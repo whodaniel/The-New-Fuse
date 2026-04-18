@@ -1,10 +1,10 @@
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { TNFAutonomousController } from '../controllers/tnf-autonomous.controller';
-import { AgentSwarmService } from './director/agent-swarm.service';
-import { BMADService } from './director/bmad.service';
-import { DirectorModule } from './director/director.module';
-import { DirectorService } from './director/director.service';
+import { TNFAutonomousController } from '../controllers/tnf-autonomous.controller.js';
+import { AgentSwarmService } from './director/agent-swarm.service.js';
+import { BMADService } from './director/bmad.service.js';
+import { DirectorModule } from './director/director.module.js';
+import { DirectorService } from './director/director.service.js';
 
 /**
  * TNF Autonomous Module

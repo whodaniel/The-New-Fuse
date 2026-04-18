@@ -1,5 +1,5 @@
-import { test } from '../../fixtures/test.fixture'; // Corrected import path
-import { VisualTesting } from '../../utils/visual-testing';
+import { test } from '../../fixtures/test.fixture.js'; // Corrected import path
+import { VisualTesting } from '../../utils/visual-testing.js';
 
 test.describe('Visual Regression Tests - UI Components', () => {
   let visualTesting: VisualTesting;

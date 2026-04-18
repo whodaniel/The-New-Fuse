@@ -3,10 +3,10 @@ import { Body, Controller, Get, HttpException, HttpStatus, Param, Post } from '@
 // @ts-ignore
 // @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from '../decorators/current-user.decorator';
-import { CreateAgentGrantDto } from '../dto/agent-grants.dto';
-import { JwtAuth, RateLimitTier, SetRateLimitTier } from '../guards/secure-auth.guard';
-import { AgentApiGrantsService } from '../services/agent-api-grants.service';
+import { CurrentUser } from '../decorators/current-user.decorator.js';
+import { CreateAgentGrantDto } from '../dto/agent-grants.dto.js';
+import { JwtAuth, RateLimitTier, SetRateLimitTier } from '../guards/secure-auth.guard.js';
+import { AgentApiGrantsService } from '../services/agent-api-grants.service.js';
 
 @ApiTags('agent-grants')
 @Controller('agent-grants')

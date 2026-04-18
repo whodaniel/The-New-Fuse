@@ -1,6 +1,6 @@
-import { HealthCheckResult, PerformanceMetrics } from '../types';
-import { Logger } from './logger';
-import { settingsManager } from './settings-manager';
+import { HealthCheckResult, PerformanceMetrics } from '../types/index.js';
+import { Logger } from './logger.js';
+import { settingsManager } from './settings-manager.js';
 
 /**
  * Smart Performance Optimizer

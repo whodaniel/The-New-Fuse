@@ -4,7 +4,7 @@ import { DatabaseService } from '@the-new-fuse/database';
 // @ts-ignore
 import { StorageService } from '@the-new-fuse/infrastructure';
 import { randomUUID } from 'crypto';
-import { PayPalService } from '../modules/billing/paypal.service';
+import { PayPalService } from '../modules/billing/paypal.service.js';
 
 export type PfpSource = 'generated' | 'upload' | 'cloud';
 

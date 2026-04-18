@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { CONFIG } from '../config';
+import { CONFIG } from '../config.js';
 import './options.css';
 
 const Options: React.FC = () => {

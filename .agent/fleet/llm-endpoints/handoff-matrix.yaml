@@ -1,11 +1,11 @@
 # TNF Directive Rotation Matrix
 # Auto-updated by directive-rotation cron
-# Rotation: 2026-04-17T17:34:19.000Z
+# Rotation: 2026-04-18T01:29:39.650Z
 
 active_directives_count: 0
 handoff_sequence: 2
-last_handoff: "2026-04-17T17:34:19.000Z"
-last_rotation: "2026-04-17T17:34:19.000Z"
+last_handoff: "2026-04-18T01:29:39.650Z"
+last_rotation: "2026-04-18T01:29:39.650Z"
 rotation_status: completed
 
 # Agent Tiers (handoff priority order)
@@ -25,7 +25,7 @@ protocols:
 # Pruned Entries (stale > 7 days)
 pruned:
   count: 0
-  last_prune: "2026-04-17T17:34:19.000Z"
+  last_prune: "2026-04-18T01:29:39.650Z"
 
 # Validation Results
 validation:

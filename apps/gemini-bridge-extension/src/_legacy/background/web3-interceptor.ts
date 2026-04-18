@@ -3,7 +3,7 @@
  * Automatically intercepts and resolves Web3 URLs before navigation
  */
 
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 import {
   DEFAULT_WEB3_CONFIG,
   getWeb3Protocol,
@@ -11,7 +11,7 @@ import {
   resolveWeb3Url,
   validateWeb3Url,
   type Web3Config,
-} from '../utils/web3-url-resolver';
+} from '../utils/web3-url-resolver.js';
 
 export class Web3Interceptor {
   private logger: Logger;

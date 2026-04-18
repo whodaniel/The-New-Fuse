@@ -8,10 +8,10 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 // @ts-ignore
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module';
-import { GlobalExceptionFilter } from './filters/global-exception.filter';
-import { LoggingInterceptor } from './interceptors/logging.interceptor';
-import { ResponseInterceptor } from './interceptors/response.interceptor';
+import { AppModule } from './app.module.js';
+import { GlobalExceptionFilter } from './filters/global-exception.filter.js';
+import { LoggingInterceptor } from './interceptors/logging.interceptor.js';
+import { ResponseInterceptor } from './interceptors/response.interceptor.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

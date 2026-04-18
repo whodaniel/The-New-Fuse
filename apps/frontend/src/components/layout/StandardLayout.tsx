@@ -7,9 +7,9 @@
 import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/lib/utils';
 import React, { ReactNode } from 'react';
-import { Footer } from './Footer';
-import { Header } from './Header';
-import { Sidebar } from './Sidebar';
+import { Footer } from './Footer/index';
+import { Header } from './Header/index';
+import { Sidebar } from './Sidebar/index';
 
 interface StandardLayoutProps {
   children: ReactNode;

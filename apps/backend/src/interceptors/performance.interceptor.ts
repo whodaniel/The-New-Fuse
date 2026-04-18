@@ -11,7 +11,7 @@ import {
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Request, Response } from 'express';
-import { PerformanceMetricsService } from '../monitoring/performance-metrics.service';
+import { PerformanceMetricsService } from '../monitoring/performance-metrics.service.js';
 
 /**
  * Performance Monitoring Interceptor

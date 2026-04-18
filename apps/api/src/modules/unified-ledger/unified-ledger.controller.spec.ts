@@ -1,7 +1,7 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { UnauthorizedException } from '@nestjs/common';
 
-import { UnifiedLedgerController } from './unified-ledger.controller';
+import { UnifiedLedgerController } from './unified-ledger.controller.js';
 
 describe('UnifiedLedgerController timeline auth scoping', () => {
   const ledger = {

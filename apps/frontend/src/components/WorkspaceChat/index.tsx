@@ -3,9 +3,9 @@ import Workspace from '@/models/workspace';
 import paths from '@/utils/paths';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ModalWrapper } from '../ModalWrapper';
-import ChatContainer from './ChatContainer';
-import LoadingChat from './LoadingChat';
+import { ModalWrapper } from '../ModalWrapper/index';
+import ChatContainer from './ChatContainer/index';
+import LoadingChat from './LoadingChat/index';
 // import { DnDFileUploaderProvider } from './ChatContainer/DnnDWrapper';
 import { WorkspaceData } from '@/types/workspace';
 

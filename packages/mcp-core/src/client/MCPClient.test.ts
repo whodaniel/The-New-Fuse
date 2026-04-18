@@ -2,10 +2,10 @@
  * Unit tests for MCPClient
  */
 
-import { MCPClient } from './MCPClient';
-import { MCPClientConfig } from '../types/client';
-import { ConnectionStatus } from '../interfaces/IMCPConnection';
-import { MCPErrorCode } from '../types/error';
+import { MCPClient } from './MCPClient.js';
+import { MCPClientConfig } from '../types/client.js';
+import { ConnectionStatus } from '../interfaces/IMCPConnection.js';
+import { MCPErrorCode } from '../types/error.js';
 
 // Mock WebSocket
 class MockCloseEvent extends Event {

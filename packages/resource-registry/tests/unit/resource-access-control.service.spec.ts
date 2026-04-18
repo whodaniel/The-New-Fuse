@@ -1,5 +1,5 @@
-import { ResourceAccessControlService } from '../../src/services/resource-access-control.service';
-import { Resource, ResourceVisibility, ResourceCategory, ResourceType, ResourceStatus } from '../../src/types';
+import { ResourceAccessControlService } from '../../src/services/resource-access-control.service.js';
+import { Resource, ResourceVisibility, ResourceCategory, ResourceType, ResourceStatus } from '../../src/types/index.js';
 
 describe('ResourceAccessControlService', () => {
   let service: ResourceAccessControlService;

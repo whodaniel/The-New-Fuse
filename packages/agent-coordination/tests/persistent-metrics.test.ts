@@ -1,8 +1,8 @@
 // REDIS MIGRATION: This file has been automatically migrated to use UnifiedRedisService
 // TODO: Update service injection and method calls as needed
 
-import { PersistentMetricsCollector } from '../src/monitoring/PersistentMetricsCollector';
-import { A2APriority, AgentTask, TaskStatus } from '../src/types/coordination.types';
+import { PersistentMetricsCollector } from '../src/monitoring/PersistentMetricsCollector.js';
+import { A2APriority, AgentTask, TaskStatus } from '../src/types/coordination.types.js';
 
 // Mock Redis
 jest.mock('ioredis');

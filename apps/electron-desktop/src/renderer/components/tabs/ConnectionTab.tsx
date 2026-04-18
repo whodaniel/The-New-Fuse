@@ -25,7 +25,7 @@ import {
   NumberDecrementStepper,
   Box
 } from '@chakra-ui/react'
-import type { RootState } from '../../store/store'
+import type { RootState } from '../../store/store.js'
 
 export const ConnectionTab: React.FC = () => {
   const toast = useToast()

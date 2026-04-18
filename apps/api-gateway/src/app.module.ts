@@ -5,20 +5,20 @@
 
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
-import { AgentGatewayModule } from './gateway/agent-gateway.module';
-import { AnalyticsGatewayModule } from './gateway/analytics-gateway.module';
-import { ChatGatewayModule } from './gateway/chat-gateway.module';
-import { IdeGatewayModule } from './gateway/ide-gateway.module';
-import { MarketplaceGatewayModule } from './gateway/marketplace-gateway.module';
-import { McpGatewayModule } from './gateway/mcp-gateway.module';
-import { PokerGatewayModule } from './gateway/poker-gateway.module';
-import { SgpGatewayModule } from './gateway/sgp-gateway.module';
-import { SystemGatewayModule } from './gateway/system-gateway.module';
-import { TerminalsGatewayModule } from './gateway/terminals-gateway.module';
-import { WebhookGatewayModule } from './gateway/webhook-gateway.module';
-import { WorkspaceGatewayModule } from './gateway/workspace-gateway.module';
-import { ProxyModule } from './proxy/proxy.module';
+import { AuthModule } from './auth/auth.module.js';
+import { AgentGatewayModule } from './gateway/agent-gateway.module.js';
+import { AnalyticsGatewayModule } from './gateway/analytics-gateway.module.js';
+import { ChatGatewayModule } from './gateway/chat-gateway.module.js';
+import { IdeGatewayModule } from './gateway/ide-gateway.module.js';
+import { MarketplaceGatewayModule } from './gateway/marketplace-gateway.module.js';
+import { McpGatewayModule } from './gateway/mcp-gateway.module.js';
+import { PokerGatewayModule } from './gateway/poker-gateway.module.js';
+import { SgpGatewayModule } from './gateway/sgp-gateway.module.js';
+import { SystemGatewayModule } from './gateway/system-gateway.module.js';
+import { TerminalsGatewayModule } from './gateway/terminals-gateway.module.js';
+import { WebhookGatewayModule } from './gateway/webhook-gateway.module.js';
+import { WorkspaceGatewayModule } from './gateway/workspace-gateway.module.js';
+import { ProxyModule } from './proxy/proxy.module.js';
 
 @Module({
   imports: [

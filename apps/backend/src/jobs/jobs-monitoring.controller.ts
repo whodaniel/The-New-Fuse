@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
-import { JobMetricsService } from './services/job-metrics.service';
-import { QueueName } from './constants/queue-names';
+import { JobMetricsService } from './services/job-metrics.service.js';
+import { QueueName } from './constants/queue-names.js';
 
 /**
  * Jobs monitoring controller

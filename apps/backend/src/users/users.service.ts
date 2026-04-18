@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { db, drizzleUserRepository, users } from '@the-new-fuse/database';
 import { desc, eq, inArray } from 'drizzle-orm';
-import { EventBus } from '../events/event-bus.service';
-import { LoggingService } from '../services/logging.service';
-import { hashPassword } from '../utils/auth.utils';
-import { UserCreatedEvent, UserDeletedEvent, UserUpdatedEvent } from './events/user.events';
+import { EventBus } from '../events/event-bus.service.js';
+import { LoggingService } from '../services/logging.service.js';
+import { hashPassword } from '../utils/auth.utils.js';
+import { UserCreatedEvent, UserDeletedEvent, UserUpdatedEvent } from './events/user.events.js';
 
 @Injectable()
 export class UsersService {

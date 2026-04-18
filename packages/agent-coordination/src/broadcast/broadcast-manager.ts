@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { A2APriority } from '@the-new-fuse/a2a-core';
-import { BroadcastMessage, CoordinationChannel, MessageHandler } from '../types/coordination.types';
-import { MessageSerializer } from '../serializers/message-serializer';
+import { BroadcastMessage, CoordinationChannel, MessageHandler } from '../types/coordination.types.js';
+import { MessageSerializer } from '../serializers/message-serializer.js';
 import { v4 as uuidv4 } from 'uuid';
 
 /**

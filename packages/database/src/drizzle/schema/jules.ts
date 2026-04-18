@@ -4,9 +4,9 @@
  */
 import { relations } from 'drizzle-orm';
 import { jsonb, pgEnum, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
-import { agents } from './agents';
-import { tasks } from './tasks';
-import { users } from './users';
+import { agents } from './agents.js';
+import { tasks } from './tasks.js';
+import { users } from './users.js';
 
 // =============================================================================
 // JULES-SPECIFIC ENUMS

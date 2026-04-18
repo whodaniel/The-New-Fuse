@@ -16,10 +16,10 @@
 
 import { inputBinding } from '@angular/core';
 import { Types } from '@a2ui/lit/0.8';
-import { Catalog } from '../rendering/catalog';
-import { Row } from './row';
-import { Column } from './column';
-import { Text } from './text';
+import { Catalog } from '../rendering/catalog.js';
+import { Row } from './row.js';
+import { Column } from './column.js';
+import { Text } from './text.js';
 
 export const DEFAULT_CATALOG: Catalog = {
   Row: {

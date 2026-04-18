@@ -1,4 +1,4 @@
-import { BaseEvent } from '../../events/event-bus.service';
+import { BaseEvent } from '../../events/event-bus.service.js';
 
 // Event triggered when a user is created
 export class UserCreatedEvent extends BaseEvent {

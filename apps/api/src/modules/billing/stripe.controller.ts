@@ -12,7 +12,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
 import * as crypto from 'crypto';
-import { StripeService } from './stripe.service';
+import { StripeService } from './stripe.service.js';
 
 @Controller('billing/stripe')
 export class StripeController {

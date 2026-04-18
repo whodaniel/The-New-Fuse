@@ -1,7 +1,7 @@
 // @ts-ignore
 import { ObjectType, Field, ID, Int, registerEnumType } from '@nestjs/graphql';
-import { UserType } from './user.type';
-import { WorkflowStepType } from './workflow-step.type';
+import { UserType } from './user.type.js';
+import { WorkflowStepType } from './workflow-step.type.js';
 
 export enum WorkflowStatus {
   IDLE = 'IDLE',

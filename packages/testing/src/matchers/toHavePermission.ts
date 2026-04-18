@@ -1,4 +1,4 @@
-import { createMatcher } from './utils';
+import { createMatcher } from './utils.js';
 
 interface UserWithPermissions {
   id: string;

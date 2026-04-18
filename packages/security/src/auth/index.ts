@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { z } from 'zod';
-import { UserRepository } from './types';
+import { UserRepository } from './types.js';
 
 const UserCredentialsSchema = z.object({
   username: z.string(),

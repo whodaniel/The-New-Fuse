@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { AuthUtils } from './auth.utils';
+import { AuthUtils } from './auth.utils.js';
 
 export interface TestUser {
   id: string;

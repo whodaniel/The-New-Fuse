@@ -1,5 +1,5 @@
-import { BaseService } from '../core/BaseService'; // Corrected import path
-import { Logger } from '../types/core';
+import { BaseService } from '../core/BaseService.js'; // Corrected import path
+import { Logger } from '../types/core.js';
 import * as client from 'prom-client';
 import { Registry, Counter, Gauge, Histogram, Summary } from 'prom-client';
 

@@ -1,5 +1,5 @@
-import { BaseService } from '../core/BaseService';
-import { Logger } from '../types/core';
+import { BaseService } from '../core/BaseService.js';
+import { Logger } from '../types/core.js';
 import { WorkflowDefinition, WorkflowStep, Task } from '@the-new-fuse/types';
 import { v4 as uuidv4 } from 'uuid';
 

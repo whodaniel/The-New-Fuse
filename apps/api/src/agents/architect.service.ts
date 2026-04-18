@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 // @ts-ignore
 // @ts-ignore
 import { DrizzleService } from '@the-new-fuse/database';
-import { resolveCodebaseRoot } from './codebase-root';
+import { resolveCodebaseRoot } from './codebase-root.js';
 
 export interface ArchitectureDecision {
   id: string;

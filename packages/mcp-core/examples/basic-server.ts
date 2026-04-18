@@ -5,9 +5,9 @@
  * with resource and tool registration.
  */
 
-import { MCPServer } from '../src/server/MCPServer';
-import { MCPServerConfig } from '../src/types/server';
-import { LogLevel } from '../src/types/common';
+import { MCPServer } from '../src/server/MCPServer.js';
+import { MCPServerConfig } from '../src/types/server.js';
+import { LogLevel } from '../src/types/common.js';
 
 async function createBasicMCPServer() {
   // Create server instance

@@ -3,9 +3,9 @@
  */
 
 import { EventEmitter } from 'events';
-import { IPerformanceMonitor, PerformanceReport } from '../interfaces/IMonitoring';
-import { PerformanceMetrics, AlertSeverity } from '../types/monitoring';
-import { Logger } from '../utils/Logger';
+import { IPerformanceMonitor, PerformanceReport } from '../interfaces/IMonitoring.js';
+import { PerformanceMetrics, AlertSeverity } from '../types/monitoring.js';
+import { Logger } from '../utils/Logger.js';
 
 export interface PerformanceMonitorConfig {
   /** Metrics collection interval (ms) */

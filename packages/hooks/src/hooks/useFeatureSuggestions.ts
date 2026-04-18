@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { FeatureSuggestion } from '../types/index';
+import type { FeatureSuggestion } from '../types/index.js';
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 

@@ -1,1 +1,1 @@
-export * from './optimization-monitoring.service';
+export * from './optimization-monitoring.service.js';

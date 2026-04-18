@@ -15,9 +15,9 @@
  */
 
 import { Component, computed, inject, input, ViewEncapsulation } from '@angular/core';
-import { DynamicComponent } from '../rendering/dynamic-component';
+import { DynamicComponent } from '../rendering/dynamic-component.js';
 import { Primitives, Styles, Types } from '@a2ui/lit/0.8';
-import { MarkdownRenderer } from '../data/markdown';
+import { MarkdownRenderer } from '../data/markdown.js';
 
 interface HintedStyles {
   h1: Record<string, string>;

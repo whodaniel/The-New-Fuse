@@ -19,9 +19,9 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DatabaseService } from '@the-new-fuse/database/drizzle';
 import { drizzleUserRepository } from '@the-new-fuse/database/drizzle/repositories';
 import { membershipOverrides } from '@the-new-fuse/database/drizzle/schema';
-import { AdminGuard } from '../guards/admin.guard';
-import { SecureAuthGuard } from '../guards/secure-auth.guard';
-import { AuditService } from '../services/audit.service';
+import { AdminGuard } from '../guards/admin.guard.js';
+import { SecureAuthGuard } from '../guards/secure-auth.guard.js';
+import { AuditService } from '../services/audit.service.js';
 
 /**
  * Admin Users Controller

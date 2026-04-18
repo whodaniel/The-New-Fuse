@@ -6,7 +6,7 @@
 
 import { Clock, Database, Globe, Server, Settings, Shield } from 'lucide-react';
 import React, { useState } from 'react';
-import { WizardContext } from '../WizardSystem';
+import { WizardContext } from '../WizardSystem.js';
 
 export interface DeploymentConfigurationProps {
   context: WizardContext;

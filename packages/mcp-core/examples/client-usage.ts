@@ -5,8 +5,8 @@
  * access resources, call tools, and handle notifications.
  */
 
-import { MCPClient } from '../src/client/MCPClient';
-import { MCPClientConfig } from '../src/types/client';
+import { MCPClient } from '../src/client/MCPClient.js';
+import { MCPClientConfig } from '../src/types/client.js';
 
 async function main() {
   // Configure the client

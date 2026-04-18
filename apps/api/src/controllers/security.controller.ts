@@ -11,10 +11,10 @@ import {
   RateLimitTier,
   SecureAuthGuard,
   SetRateLimitTier,
-} from '../guards/secure-auth.guard';
-import { InputSanitizationService } from '../security/input-sanitization.service';
-import { ResponseSanitizationService } from '../security/response-sanitization.service';
-import { SecurityTestingService } from '../security/security-testing.service';
+} from '../guards/secure-auth.guard.js';
+import { InputSanitizationService } from '../security/input-sanitization.service.js';
+import { ResponseSanitizationService } from '../security/response-sanitization.service.js';
+import { SecurityTestingService } from '../security/security-testing.service.js';
 
 /**
  * Security Test Request Data Transfer Object

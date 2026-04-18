@@ -1,10 +1,10 @@
 import { SetMetadata } from '@nestjs/common';
-import { CacheOptions } from './response-cache.service';
+import { CacheOptions } from './response-cache.service.js';
 import {
   CACHE_KEY_METADATA,
   CACHE_OPTIONS_METADATA,
   SKIP_CACHE_METADATA
-} from './cache.interceptor';
+} from './cache.interceptor.js';
 
 /**
  * Cache the response of an endpoint

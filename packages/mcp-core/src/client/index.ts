@@ -2,8 +2,8 @@
  * MCP Client module exports
  */
 
-export { MCPClient } from './MCPClient';
-export { ConnectionManager } from './ConnectionManager';
-export { RequestManager } from './RequestManager';
-export { EventManager } from './EventManager';
-export { ClientCache } from './ClientCache';
+export { MCPClient } from './MCPClient.js';
+export { ConnectionManager } from './ConnectionManager.js';
+export { RequestManager } from './RequestManager.js';
+export { EventManager } from './EventManager.js';
+export { ClientCache } from './ClientCache.js';

@@ -56,29 +56,29 @@ export abstract class BaseBridge extends EventEmitter {
 }
 
 // Export cline bridge
-export * from './cline_bridge';
+export * from './cline_bridge.js';
 
 // Export types (primary source)
-export * from './types';
+export * from './types/index.js';
 
 // Core bridges
-export * from './cascade_bridge';
-export * from './redis_bridge';
-export * from './universal_bridge';
-export * from './vscode_bridge';
+export * from './cascade_bridge.js';
+export * from './redis_bridge.js';
+export * from './universal_bridge.js';
+export * from './vscode_bridge.js';
 
 // Protocol bridge - explicit exports (it has MCPTool, MCPResource, MCPPrompt)
-export { ProtocolBridge } from './protocol_bridge';
+export { ProtocolBridge } from './protocol_bridge.js';
 export type {
   A2AMessage,
   MCPPrompt,
   MCPResource,
   MCPTool,
   ProtocolBridgeConfig,
-} from './protocol_bridge';
+} from './protocol_bridge.js';
 
 // MCP bridge - explicit exports (avoid MCP type duplicates with protocol_bridge)
-export { MCPBridge } from './mcp_bridge';
+export { MCPBridge } from './mcp_bridge.js';
 export type {
   MCPBridgeConfig,
   MCPPromptMessage,
@@ -86,20 +86,20 @@ export type {
   MCPServerInfo,
   MCPToolCall,
   MCPToolResult,
-} from './mcp_bridge';
+} from './mcp_bridge.js';
 
 // Electron bridge
-export * from './electron_bridge';
+export * from './electron_bridge.js';
 
 // Base bridge - explicit exports to avoid BridgeMessage/BridgeConfig duplicates
-export { Bridge as ExtendedBridge } from './base';
-export type { BridgeStats, BridgeConfig as ExtendedBridgeConfig } from './base';
+export { Bridge as ExtendedBridge } from './base.js';
+export type { BridgeStats, BridgeConfig as ExtendedBridgeConfig } from './base.js';
 
 // Other infrastructure bridges
-export * from './agent_sync_bridge';
-export * from './bridge_adapter';
-export * from './communication';
-export * from './enhanced_communication';
-export * from './monitor_bridge';
-export * from './monitor_communication';
-export * from './system_bridge';
+export * from './agent_sync_bridge.js';
+export * from './bridge_adapter.js';
+export * from './communication.js';
+export * from './enhanced_communication.js';
+export * from './monitor_bridge.js';
+export * from './monitor_communication.js';
+export * from './system_bridge.js';

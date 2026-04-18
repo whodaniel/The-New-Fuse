@@ -4,14 +4,14 @@ import { ConfigModule } from '@nestjs/config';
 // @ts-ignore
 // @ts-ignore
 import { DrizzleService } from '@the-new-fuse/database';
-import { SelfImprovementController } from '../controllers/self-improvement.controller';
-import { AgentFactory } from './agent.factory';
-import { AgentsService } from './agents.service';
-import { AnalyzerAgentService } from './analyzer.service';
-import { ArchitectAgentService } from './architect.service';
-import { CoordinatorAgentService } from './coordinator.service';
-import { ImplementerAgentService } from './implementer.service';
-import { ReviewerAgentService } from './reviewer.service';
+import { SelfImprovementController } from '../controllers/self-improvement.controller.js';
+import { AgentFactory } from './agent.factory.js';
+import { AgentsService } from './agents.service.js';
+import { AnalyzerAgentService } from './analyzer.service.js';
+import { ArchitectAgentService } from './architect.service.js';
+import { CoordinatorAgentService } from './coordinator.service.js';
+import { ImplementerAgentService } from './implementer.service.js';
+import { ReviewerAgentService } from './reviewer.service.js';
 
 const logger = new Logger('UnifiedMonitoringService');
 

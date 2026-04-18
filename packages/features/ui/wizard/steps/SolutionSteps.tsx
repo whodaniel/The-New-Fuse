@@ -16,7 +16,7 @@ import {
   Wrench,
 } from 'lucide-react';
 import React, { useState } from 'react';
-import { WizardContext } from '../WizardSystem';
+import { WizardContext } from '../WizardSystem.js';
 
 export interface SolutionStepsProps {
   context: WizardContext;

@@ -4,7 +4,7 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { toError } from '../../utils/error'; // Import the helper
+import { toError } from '../../utils/error.js'; // Import the helper
 
 @Injectable()
 export class MCPBrokerService {

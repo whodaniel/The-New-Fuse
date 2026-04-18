@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from '../../src/app.module';
+import { AppModule } from '../../src/app.module.js';
 import { setupApp } from '../../src/setup';
 import { DrizzleService } from '../../src/drizzle/drizzle.service';
 import { createTestUser, createTestAgent } from '../utils/test-helpers';

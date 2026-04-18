@@ -13,11 +13,11 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
-import { Roles } from '../../../decorators/roles.decorator';
-import { AuthGuard } from '../../../guards/auth.guard';
-import { RolesGuard } from '../../../guards/roles.guard';
-import { UserRole } from '../../../types/user.types';
-import { AgentSwarmOrchestrationService } from '../services/agent-swarm-orchestration.service';
+import { Roles } from '../../../decorators/roles.decorator.js';
+import { AuthGuard } from '../../../guards/auth.guard.js';
+import { RolesGuard } from '../../../guards/roles.guard.js';
+import { UserRole } from '../../../types/user.types.js';
+import { AgentSwarmOrchestrationService } from '../services/agent-swarm-orchestration.service.js';
 
 @ApiTags('swarm')
 @Controller('swarm')

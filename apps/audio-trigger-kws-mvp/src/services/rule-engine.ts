@@ -7,7 +7,7 @@ import {
   TriggerConditionHit,
   TriggerConditionSequence,
   TriggerRule
-} from "../types/events";
+} from '../types/events.js';
 
 interface StreamRuleState {
   hits: HitEvent[];

@@ -20,8 +20,8 @@ import { eq, sql } from 'drizzle-orm';
 import {
   MassBlockConfig,
   MassBlocksService,
-} from '../modules/mass/building-blocks/mass-blocks.service';
-import { WorkflowExecutionGateway } from './workflow-execution.gateway';
+} from '../modules/mass/building-blocks/mass-blocks.service.js';
+import { WorkflowExecutionGateway } from './workflow-execution.gateway.js';
 
 // Types
 export type WorkflowStatus = 'DRAFT' | 'PUBLISHED' | 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'FAILED';

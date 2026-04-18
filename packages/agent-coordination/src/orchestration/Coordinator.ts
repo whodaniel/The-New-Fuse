@@ -8,10 +8,10 @@ import {
   AgentInfo,
   ExecutionMode,
   CoordinationConfig,
-} from '../core/types';
-import { TaskQueue } from '../core/TaskQueue';
-import { TaskAssigner } from '../core/TaskAssigner';
-import { AgentPool } from '../core/AgentPool';
+} from '../core/types.js';
+import { TaskQueue } from '../core/TaskQueue.js';
+import { TaskAssigner } from '../core/TaskAssigner.js';
+import { AgentPool } from '../core/AgentPool.js';
 
 /**
  * Master coordinator for multi-agent task execution

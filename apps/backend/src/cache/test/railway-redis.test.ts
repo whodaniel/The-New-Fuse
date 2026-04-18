@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import cacheConfig from '../config/cache.config';
-import { AdvancedCacheManager } from '../services/advanced-cache.manager';
-import { CacheMonitoringService } from '../services/cache-monitoring.service';
+import cacheConfig from '../config/cache.config.js';
+import { AdvancedCacheManager } from '../services/advanced-cache.manager.js';
+import { CacheMonitoringService } from '../services/cache-monitoring.service.js';
 
 describe('Railway Redis Configuration', () => {
   let configService: ConfigService;

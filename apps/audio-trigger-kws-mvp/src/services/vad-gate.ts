@@ -1,5 +1,5 @@
 import { EventEmitter } from "node:events";
-import { AudioFrame } from "../types/events";
+import { AudioFrame } from '../types/events.js';
 
 export class VadGate extends EventEmitter {
   constructor(private readonly minSpeechProbability = 0.5) {

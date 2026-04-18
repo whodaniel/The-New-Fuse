@@ -7,7 +7,7 @@ import type {
   VectorDocument,
   VectorQuery,
   VectorSearchResult,
-} from '../interface/vector-database.interface';
+} from '../interface/vector-database.interface.js';
 
 @Injectable()
 export class QdrantDriver implements IVectorDatabase {

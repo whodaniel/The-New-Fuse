@@ -10,7 +10,7 @@ import {
   ResourceDto,
   ResourceSearchEnvelopeDto,
   ResourceSearchRequestDto,
-} from './resource-search.dto';
+} from './resource-search.dto.js';
 
 export class ResourceSearchProtocolActorDto implements ResourceSearchProtocolActor {
   @ApiPropertyOptional()

@@ -7,15 +7,15 @@
  */
 
 import * as vscode from 'vscode';
-import { registerCommands } from './commands';
-import { ConfigManager } from './core/config';
-import { LLMProviderType, MCPServerConfig, RegisteredAgent, TheNewFuseAPI } from './core/types';
-import { ChatViewProvider } from './providers/ChatViewProvider';
-import { AIService, getAIService } from './services/AIService';
-import { ChatService } from './services/ChatService';
-import { MCPService, getMCPService } from './services/MCPService';
-import { ToolOrchestrationService } from './services/ToolOrchestrationService';
-import { WorkspaceService } from './services/WorkspaceService';
+import { registerCommands } from './commands/index.js';
+import { ConfigManager } from './core/config.js';
+import { LLMProviderType, MCPServerConfig, RegisteredAgent, TheNewFuseAPI } from './core/types.js';
+import { ChatViewProvider } from './providers/ChatViewProvider.js';
+import { AIService, getAIService } from './services/AIService.js';
+import { ChatService } from './services/ChatService.js';
+import { MCPService, getMCPService } from './services/MCPService.js';
+import { ToolOrchestrationService } from './services/ToolOrchestrationService.js';
+import { WorkspaceService } from './services/WorkspaceService.js';
 import {
   A2AProtocolService,
   AGUIProtocolService,
@@ -24,8 +24,8 @@ import {
   MemoryBankService,
   ProtocolTranslationService,
   RelayServerService,
-} from './services/tnf-framework';
-import { log, logger } from './utils/logger';
+} from './services/tnf-framework/index.js';
+import { log, logger } from './utils/logger.js';
 
 /**
  * Extension activation

@@ -2,6 +2,8 @@
 import * as d3 from 'd3';
 import dagre from 'dagre';
 import {
+  Brain,
+  Cpu,
   GitBranch,
   Maximize,
   Network,
@@ -90,24 +92,44 @@ const layoutAlgorithms = {
   },
 };
 
-const clusterAlgorithms = {
-  louvain: (nodes: Node[], edges: Edge[]) => {
-    // Placeholder logic matching original structure
-    return { clusters: [], clusterMap: new Map() };
-  },
-  kMeans: (nodes: Node[], k: number) => {
-    // Placeholder logic matching original structure
-    return { clusters: [], clusterMap: new Map() };
-  },
+// Premium Node Types
+const PremiumNode = ({ data }) => {
+  const isAgent = data.kind === 'agent';
+  const isDoc = data.kind === 'doc';
+  const isTool = data.kind === 'tool';
+  
+  let icon = <Cpu className="w-4 h-4" />;
+  let colorClass = "text-blue-400 bg-blue-500/10 border-blue-500/20";
+  
+  if (isAgent) { icon = <Brain className="w-4 h-4" />; colorClass = "text-purple-400 bg-purple-500/10 border-purple-500/20"; }
+  if (isDoc) { icon = <Waypoints className="w-4 h-4" />; colorClass = "text-slate-400 bg-slate-500/10 border-slate-500/20"; }
+  if (isTool) { icon = <Settings className="w-4 h-4" />; colorClass = "text-amber-400 bg-amber-500/10 border-amber-500/20"; }
+
+  return (
+    <div className={`px-4 py-3 rounded-xl bg-gray-900/80 backdrop-blur-md border border-white/10 shadow-2xl min-w-[160px] transition-all hover:border-indigo-500/50 hover:-translate-y-1`}>
+      <div className="flex items-center gap-3 mb-2">
+        <div className={`p-2 rounded-lg border ${colorClass}`}>
+          {icon}
+        </div>
+        <div className="font-bold text-sm text-white truncate max-w-[120px]" title={data.label}>
+          {data.label}
+        </div>
+      </div>
+      <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5">
+        <span className="text-[10px] text-gray-500 uppercase font-black tracking-widest">{data.kind || 'node'}</span>
+        <div className="flex gap-1">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+        </div>
+      </div>
+    </div>
+  );
 };
 
-const pathAlgorithms = {
-  dijkstra: (nodes: Node[], edges: Edge[], start: string, end: string) => {
-    return [];
-  },
-  aStar: (nodes: Node[], edges: Edge[], start: string, end: string) => {
-    return [];
-  },
+const nodeTypes = {
+  premium: PremiumNode,
+  agent: PremiumNode,
+  doc: PremiumNode,
+  tool: PremiumNode,
 };
 
 // Interface for props
@@ -179,7 +201,21 @@ export function GraphVisualizer({
     (layoutType: string, nodes: Node[], edges: Edge[]) => {
       const layout = (layoutAlgorithms as any)[layoutType];
       if (layout) {
-        const { nodes: layoutedNodes, edges: layoutedEdges } = layout(nodes, edges);
+        // Map nodes to use premium type
+        const updatedNodes = nodes.map(n => ({
+          ...n,
+          type: n.type || 'premium',
+          dragHandle: '.drag-handle'
+        }));
+        
+        // Enhance edges with animation
+        const updatedEdges = edges.map(e => ({
+          ...e,
+          animated: true,
+          style: { stroke: '#6366f1', strokeWidth: 2 }
+        }));
+
+        const { nodes: layoutedNodes, edges: layoutedEdges } = layout(updatedNodes, updatedEdges);
         setNodes(layoutedNodes);
         setEdges(layoutedEdges);
         onLayoutChange?.(layoutType);
@@ -268,11 +304,12 @@ export function GraphVisualizer({
               onEdgesChange={onEdgesChange}
               onNodeClick={handleNodeClick}
               onEdgeClick={onEdgeClick}
+              nodeTypes={nodeTypes}
               connectionMode={ConnectionMode.LOOSE}
               fitView
             >
-              <Background />
-              <Controls />
+              <Background color="#1e293b" gap={20} />
+              <Controls className="bg-gray-900 border-gray-700 fill-white" />
 
               {/* Top Left Toolbar */}
               <Panel

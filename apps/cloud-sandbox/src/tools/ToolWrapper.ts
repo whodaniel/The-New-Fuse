@@ -12,7 +12,7 @@
  */
 
 import { Logger } from '@nestjs/common';
-import type { AuthenticatedUser } from '../auth/CloudSandboxAuthGuard';
+import type { AuthenticatedUser } from '../auth/CloudSandboxAuthGuard.js';
 
 export interface ToolParameter {
   name: string;

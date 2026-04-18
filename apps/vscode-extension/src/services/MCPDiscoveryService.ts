@@ -8,9 +8,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { ConfigManager } from '../core/config';
-import { MCPServerConfig } from '../core/types';
-import { log } from '../utils/logger';
+import { ConfigManager } from '../core/config.js';
+import { MCPServerConfig } from '../core/types.js';
+import { log } from '../utils/logger.js';
 
 export interface MCPServerDefinition {
   name: string;

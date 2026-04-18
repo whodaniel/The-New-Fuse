@@ -2,8 +2,8 @@
  * Abstract base class for MCP Resource Handlers
  */
 
-import { ResourceHandler as IResourceHandler, MCPResource, ResourceContent, ResourceCallback } from '../interfaces/IMCPResource';
-import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
+import { ResourceHandler as IResourceHandler, MCPResource, ResourceContent, ResourceCallback } from '../interfaces/IMCPResource.js';
+import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error.js';
 
 /**
  * Abstract base class for implementing resource handlers

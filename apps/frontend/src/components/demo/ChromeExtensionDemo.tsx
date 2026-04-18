@@ -3,7 +3,7 @@ import { Extension, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { Button } from '../../ui/design-system';
 
-import { PopupContainer } from '../ui/popup';
+import { PopupContainer } from '../ui/popup/index';
 
 export interface ChromeExtensionDemoProps {
   /** Whether to show the demo by default */

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { A2AService } from '../src/a2a.service';
+import { A2AService } from '../src/a2a.service.js';
 import { Ap2ProtocolService } from '@the-new-fuse/ap2-protocol';
 import { ConfigService } from '@nestjs/config';
 

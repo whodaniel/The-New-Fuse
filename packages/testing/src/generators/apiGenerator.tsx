@@ -1,5 +1,5 @@
-import { generateId, generateTimestamp, pickRandom } from './utils';
-import type { GeneratedUser } from './userGenerator';
+import { generateId, generateTimestamp, pickRandom } from './utils.js';
+import type { GeneratedUser } from './userGenerator.js';
 
 export interface GenerateAPIRequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';

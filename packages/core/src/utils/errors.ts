@@ -2,8 +2,8 @@
  * @fileoverview Production-ready error handling utilities
  */
 
-import { SystemError } from '../types/core';
-import { ERROR_CODES } from '../constants/types';
+import { SystemError } from '../types/core.js';
+import { ERROR_CODES } from '../constants/types.js';
 
 export class BaseError extends Error {
   public readonly code: string;

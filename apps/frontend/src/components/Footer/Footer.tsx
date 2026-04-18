@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 import { Link } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
-import { SettingsButton } from '../SettingsButton';
+import { SettingsButton } from '../SettingsButton/index';
 
 export const MAX_ICONS = 3;
 

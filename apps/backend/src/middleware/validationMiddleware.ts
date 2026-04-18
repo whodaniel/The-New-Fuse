@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { LoggingService } from '../services/logging.service';
-import { ValidationService } from '../services/validation.service';
+import { LoggingService } from '../services/logging.service.js';
+import { ValidationService } from '../services/validation.service.js';
 
 export interface ValidationOptions {
   dto?: new () => any;

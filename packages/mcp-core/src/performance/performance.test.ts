@@ -6,13 +6,13 @@
  */
 
 // Jest globals are available without import
-import { MCPServer } from '../server/MCPServer';
-import { MCPSystemFactory } from '../factory/MCPSystemFactory';
-import { ResourceManager } from '../handlers/ResourceManager';
-import { ToolExecutionEngine } from '../handlers/ToolExecutionEngine';
-import { MCPServerConfig } from '../types/server';
-import { MCPRequest, MCPResponse } from '../types/message';
-import { LogLevel } from '../types/common';
+import { MCPServer } from '../server/MCPServer.js';
+import { MCPSystemFactory } from '../factory/MCPSystemFactory.js';
+import { ResourceManager } from '../handlers/ResourceManager.js';
+import { ToolExecutionEngine } from '../handlers/ToolExecutionEngine.js';
+import { MCPServerConfig } from '../types/server.js';
+import { MCPRequest, MCPResponse } from '../types/message.js';
+import { LogLevel } from '../types/common.js';
 import { performance } from 'perf_hooks';
 
 describe('MCP Performance Tests', () => {

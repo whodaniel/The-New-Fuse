@@ -1,5 +1,5 @@
 // filepath: /path/to/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/agent/src/processors/BaseProcessor.ts
-import { Logger } from '../types/core';
+import { Logger } from '../types/core.js';
 import { Message } from '@the-new-fuse/types';
 
 /**

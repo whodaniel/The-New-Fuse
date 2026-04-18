@@ -1,8 +1,8 @@
-import { MCPRequest, MCPResponse } from './IMCPMessage';
-import { MCPResource } from './IMCPResource';
-import { MCPTool } from './IMCPTool';
-import { MCPCapability } from './IMCPCapability';
-import { MCPServerConfig, MCPServerInfo } from '../types';
+import { MCPRequest, MCPResponse } from './IMCPMessage.js';
+import { MCPResource } from './IMCPResource.js';
+import { MCPTool } from './IMCPTool.js';
+import { MCPCapability } from './IMCPCapability.js';
+import { MCPServerConfig, MCPServerInfo } from '../types/index.js';
 
 /**
  * Core MCP Server interface that defines the contract for MCP server implementations.

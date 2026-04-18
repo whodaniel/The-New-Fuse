@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { CommunityApiKeyGuard } from '../../guards/community-api-key.guard';
-import { PayPalService } from './paypal.service';
+import { CommunityApiKeyGuard } from '../../guards/community-api-key.guard.js';
+import { PayPalService } from './paypal.service.js';
 
 @Controller('billing')
 export class BillingController {

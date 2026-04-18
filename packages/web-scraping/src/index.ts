@@ -5,22 +5,22 @@
  */
 
 // Core services
-export { WebScrapingService } from './core/WebScrapingService';
-export { ProxyService } from './proxy/ProxyService';
+export { WebScrapingService } from './core/WebScrapingService.js';
+export { ProxyService } from './proxy/ProxyService.js';
 
 // MCP integration
-export { WebScrapingMCPTools } from './mcp/WebScrapingMCPTools';
+export { WebScrapingMCPTools } from './mcp/WebScrapingMCPTools.js';
 
 // WebSocket and streaming
-export { WebScrapingWebSocketGateway } from './websocket/WebScrapingWebSocketGateway';
-export { WebScrapingSSEController } from './streaming/WebScrapingSSEController';
+export { WebScrapingWebSocketGateway } from './websocket/WebScrapingWebSocketGateway.js';
+export { WebScrapingSSEController } from './streaming/WebScrapingSSEController.js';
 
 // Electron integration
 // Temporarily disabled - Electron is a non-SAAS framework component moved to separate branch
-// export { ElectronWebScrapingBridge } from './electron/ElectronWebScrapingBridge';
+// export { ElectronWebScrapingBridge } from './electron/ElectronWebScrapingBridge.js';
 
 // Types and interfaces
-export * from './types';
+export * from './types/index.js';
 
 // Re-export for convenience
 export type {
@@ -31,4 +31,4 @@ export type {
   ProxyResponse,
   BrowserSession,
   SecurityPolicy
-} from './types';
+} from './types/index.js';

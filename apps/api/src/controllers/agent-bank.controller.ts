@@ -7,9 +7,9 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 // @ts-ignore
 // @ts-ignore
 import { User } from '@the-new-fuse/database';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { JwtAuth } from '../guards/secure-auth.guard';
-import { AgentBankService } from '../services/agent-bank.service';
+import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
+import { JwtAuth } from '../guards/secure-auth.guard.js';
+import { AgentBankService } from '../services/agent-bank.service.js';
 
 /**
  * AgentBankController

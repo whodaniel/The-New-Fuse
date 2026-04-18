@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AggregateBlock } from './mass-blocks.service';
-import { AgentExecutorService } from './mass-blocks.service';
+import { AggregateBlock } from './mass-blocks.service.js';
+import { AgentExecutorService } from './mass-blocks.service.js';
 
 @Injectable()
 export class AggregateService {

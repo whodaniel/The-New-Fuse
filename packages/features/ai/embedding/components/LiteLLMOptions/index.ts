@@ -1,2 +1,2 @@
-export { LiteLLMOptions } from './LiteLLMOptions';
+export { LiteLLMOptions } from './LiteLLMOptions.js';
 //# sourceMappingURL=index.js.map

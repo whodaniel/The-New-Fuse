@@ -11,13 +11,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthLevel, RequireAuthLevel, SecureAuthGuard } from '../../../guards/secure-auth.guard';
-// import { ServiceCategoryRouterService } from '../../../types/core/services/service-category-router.service';
-// import { EnhancedAgencyService } from '../../../types/core/services/enhanced-agency.service';
-// import { AuthGuard } from '../../../guards/auth.guard';
-// import { RolesGuard } from '../../../guards/roles.guard';
-// import { Roles } from '../../../decorators/roles.decorator';
-// import { CurrentUser } from '../../../decorators/current-user.decorator';
+import { AuthLevel, RequireAuthLevel, SecureAuthGuard } from '../../../guards/secure-auth.guard.js';
+// import { ServiceCategoryRouterService } from '../../../types/core/services/service-category-router.service.js';
+// import { EnhancedAgencyService } from '../../../types/core/services/enhanced-agency.service.js';
+// import { AuthGuard } from '../../../guards/auth.guard.js';
+// import { RolesGuard } from '../../../guards/roles.guard.js';
+// import { Roles } from '../../../decorators/roles.decorator.js';
+// import { CurrentUser } from '../../../decorators/current-user.decorator.js';
 
 @ApiTags('service-requests')
 @Controller('service-requests')

@@ -1,7 +1,7 @@
-import { RedisCoordinator } from '../src/redis-coordinator';
+import { RedisCoordinator } from '../src/redis-coordinator.js';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { AgentStatus, A2APriority } from '@the-new-fuse/a2a-core';
-import { TaskStatus } from '../src/types/coordination.types';
+import { TaskStatus } from '../src/types/coordination.types.js';
 
 describe('RedisCoordinator', () => {
   let coordinator: RedisCoordinator;

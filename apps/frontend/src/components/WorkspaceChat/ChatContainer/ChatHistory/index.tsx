@@ -9,10 +9,10 @@ import { ArrowDown } from '@phosphor-icons/react';
 import debounce from 'lodash.debounce';
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import ManageWorkspace, { useManageWorkspaceModal } from '../../../Modals/ManageWorkspace';
-import Chartable from './Chartable';
-import HistoricalMessage from './HistoricalMessage';
-import PromptReply from './PromptReply';
+import ManageWorkspace, { useManageWorkspaceModal } from '../../../Modals/ManageWorkspace/index';
+import Chartable from './Chartable/index';
+import HistoricalMessage from './HistoricalMessage/index';
+import PromptReply from './PromptReply/index';
 
 interface ChatHistoryProps {
   history: Array<{

@@ -10,10 +10,10 @@ import {
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
-import { AdvancedCacheManager } from './services/advanced-cache.manager';
-import { CacheMonitoringService } from './services/cache-monitoring.service';
-import { CacheWarmingService } from './services/cache-warming.service';
-import { CacheInvalidationService } from './services/cache-invalidation.service';
+import { AdvancedCacheManager } from './services/advanced-cache.manager.js';
+import { CacheMonitoringService } from './services/cache-monitoring.service.js';
+import { CacheWarmingService } from './services/cache-warming.service.js';
+import { CacheInvalidationService } from './services/cache-invalidation.service.js';
 
 @Controller('cache')
 export class CacheController {

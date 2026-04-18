@@ -3,8 +3,8 @@ import { User } from '@the-new-fuse/types';
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
-import { AppConfigService } from '../config/app-config.service';
-import { RedisService } from '../services/redis.service';
+import { AppConfigService } from '../config/app-config.service.js';
+import { RedisService } from '../services/redis.service.js';
 
 declare global {
   namespace Express {

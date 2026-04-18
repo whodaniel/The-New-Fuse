@@ -5,7 +5,7 @@ import {
   TaskAssignment,
   AgentStatus,
   CoordinationConfig,
-} from './types';
+} from './types.js';
 
 /**
  * Task assignment and load balancing

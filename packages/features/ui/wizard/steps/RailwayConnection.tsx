@@ -6,7 +6,7 @@
 
 import { AlertCircle, Check, ExternalLink, Key, Loader, RefreshCw, Train } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
-import { WizardContext } from '../WizardSystem';
+import { WizardContext } from '../WizardSystem.js';
 
 export interface RailwayConnectionProps {
   context: WizardContext;

@@ -1,6 +1,6 @@
-import { test, expect } from '../../fixtures/test.fixture';
-import { SettingsPage } from '../../pages/settings.page';
-import { config } from '../../config/test-config';
+import { test, expect } from '../../fixtures/test.fixture.js';
+import { SettingsPage } from '../../pages/settings.page.js';
+import { config } from '../../config/test-config.js';
 
 test.describe('Settings', () => {
   let settingsPage: SettingsPage;

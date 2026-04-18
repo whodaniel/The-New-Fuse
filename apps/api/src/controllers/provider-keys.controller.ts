@@ -3,15 +3,15 @@ import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/c
 // @ts-ignore
 // @ts-ignore
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from '../decorators/current-user.decorator';
-import { SaveProviderKeyDto } from '../dto/provider-keys.dto';
+import { CurrentUser } from '../decorators/current-user.decorator.js';
+import { SaveProviderKeyDto } from '../dto/provider-keys.dto.js';
 import {
   JwtAuth,
   RateLimitTier,
   SecureAuthGuard,
   SetRateLimitTier,
-} from '../guards/secure-auth.guard';
-import { ProviderKeyListItem, ProviderKeysService } from '../services/provider-keys.service';
+} from '../guards/secure-auth.guard.js';
+import { ProviderKeyListItem, ProviderKeysService } from '../services/provider-keys.service.js';
 
 @ApiTags('provider-keys')
 @Controller('provider-keys')

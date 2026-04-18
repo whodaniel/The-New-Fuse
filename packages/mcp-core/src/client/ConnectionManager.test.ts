@@ -3,9 +3,9 @@
  */
 
 import { EventEmitter } from 'events';
-import { ConnectionManager } from './ConnectionManager';
-import { ConnectionOptions, ConnectionStatus } from '../interfaces/IMCPConnection';
-import { MCPErrorClass, MCPErrorCode } from '../types/error';
+import { ConnectionManager } from './ConnectionManager.js';
+import { ConnectionOptions, ConnectionStatus } from '../interfaces/IMCPConnection.js';
+import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
 
 // Mock WebSocket
 class MockWebSocket extends EventEmitter {

@@ -10,9 +10,9 @@ import * as path from 'path';
 import * as fs from 'fs/promises';
 import { LocalIndex } from 'vectra';
 import { OpenAI } from 'openai';
-import { log } from '../utils/logger';
-import { getWorkspaceService } from './WorkspaceService';
-import { ConfigManager } from '../core/config';
+import { log } from '../utils/logger.js';
+import { getWorkspaceService } from './WorkspaceService.js';
+import { ConfigManager } from '../core/config.js';
 
 export interface CodeChunk {
   filePath: string;

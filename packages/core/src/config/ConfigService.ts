@@ -1,9 +1,9 @@
 
 import { Injectable } from '@nestjs/common';
-import { SystemConfig, DatabaseConfig, RedisConfig, MonitoringConfig, AIConfig } from '../types';
-import { ServiceState } from '../types';
-import { logger } from '../utils/logger';
-import { ConfigurationError } from '../utils/errors';
+import { SystemConfig, DatabaseConfig, RedisConfig, MonitoringConfig, AIConfig } from '../types/index.js';
+import { ServiceState } from '../types/index.js';
+import { logger } from '../utils/logger.js';
+import { ConfigurationError } from '../utils/errors.js';
 
 export const ENVIRONMENTS = {
   DEVELOPMENT: 'development',

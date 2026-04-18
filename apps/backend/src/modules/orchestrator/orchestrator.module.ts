@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { OrchestratorController } from './orchestrator.controller';
-import { OrchestratorService } from './orchestrator.service';
-import { RedisLockService } from '../../services/redis-lock.service';
+import { OrchestratorController } from './orchestrator.controller.js';
+import { OrchestratorService } from './orchestrator.service.js';
+import { RedisLockService } from '../../services/redis-lock.service.js';
 
 @Module({
   controllers: [OrchestratorController],

@@ -5,8 +5,8 @@
  */
 
 import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
-import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard';
-import { BrowserHubSwarmService } from './browser-hub-swarm.service';
+import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard.js';
+import { BrowserHubSwarmService } from './browser-hub-swarm.service.js';
 
 @Controller('agents/browser-hub-swarm')
 @RequireAuthLevel(AuthLevel.USER)

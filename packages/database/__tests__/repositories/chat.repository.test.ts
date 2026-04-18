@@ -3,10 +3,10 @@
  * Tests all 24 methods of the chat repository
  */
 
-import { drizzleChatRepository } from '../../src/drizzle/repositories/chat.repository';
-import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository';
-import { drizzleAgentRepository } from '../../src/drizzle/repositories/agent.repository';
-import { ChatFactory, MessageFactory, UserFactory, AgentFactory } from '../utils/factories';
+import { drizzleChatRepository } from '../../src/drizzle/repositories/chat.repository.js';
+import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository.js';
+import { drizzleAgentRepository } from '../../src/drizzle/repositories/agent.repository.js';
+import { ChatFactory, MessageFactory, UserFactory, AgentFactory } from '../utils/factories.js';
 import {
   expectDatabaseRow,
   expectSoftDeleted,
@@ -16,8 +16,8 @@ import {
   expectNonEmptyArray,
   expectNotDeleted,
   expectTimestampInFuture,
-} from '../utils/assertions';
-import { futureTimestamp, pastTimestamp, sleep } from '../utils/database-helpers';
+} from '../utils/assertions.js';
+import { futureTimestamp, pastTimestamp, sleep } from '../utils/database-helpers.js';
 
 describe('DrizzleChatRepository', () => {
   let testUserId: string;

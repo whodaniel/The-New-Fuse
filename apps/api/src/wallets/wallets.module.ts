@@ -1,8 +1,8 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { WalletsService } from './wallets.service';
-import { WalletsController } from './wallets.controller';
-import { Web3authModule } from '../web3auth/web3auth.module';
-import { SmartAccountModule } from '../smart-accounts/smart-account.module';
+import { WalletsService } from './wallets.service.js';
+import { WalletsController } from './wallets.controller.js';
+import { Web3authModule } from '../web3auth/web3auth.module.js';
+import { SmartAccountModule } from '../smart-accounts/smart-account.module.js';
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore

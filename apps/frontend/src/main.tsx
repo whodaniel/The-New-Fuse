@@ -3,7 +3,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
-import { ToastProvider } from './components/ui/toast';
+import { ToastProvider } from './components/ui/toast/index';
 import { AuthProvider } from './providers/AuthProvider';
 // Auth runtime is initialized via Supabase in hooks/providers.
 import './styles/globals.css'; // Re-add global CSS import

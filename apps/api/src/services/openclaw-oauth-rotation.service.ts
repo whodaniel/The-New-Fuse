@@ -11,7 +11,7 @@ import { promisify } from 'node:util';
 import {
   OpenClawProvider,
   UpsertOpenClawOAuthBindingDto,
-} from '../dto/openclaw-oauth-rotation.dto';
+} from '../dto/openclaw-oauth-rotation.dto.js';
 
 const execFileAsync = promisify(execFile);
 

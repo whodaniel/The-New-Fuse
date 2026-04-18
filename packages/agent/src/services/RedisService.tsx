@@ -1,7 +1,7 @@
-import { BaseService } from '../core/BaseService';
-import { Logger } from '../types/core';
+import { BaseService } from '../core/BaseService.js';
+import { Logger } from '../types/core.js';
 import { UnifiedRedisService, QueueTask } from '@the-new-fuse/infrastructure';
-import { ConfigService } from './ConfigService';
+import { ConfigService } from './ConfigService.js';
 
 /**
  * Service for interacting with Redis via UnifiedRedisService.

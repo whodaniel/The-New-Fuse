@@ -5,10 +5,10 @@ import {
   drizzleApiLogsRepository,
   drizzleUserRepository,
 } from '@the-new-fuse/database';
-import { Roles } from '../../../auth/decorators/roles.decorator';
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../auth/guards/roles.guard';
-import { SystemMetricsService } from '../../system-metrics/system-metrics.service';
+import { Roles } from '../../../auth/decorators/roles.decorator.js';
+import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard.js';
+import { RolesGuard } from '../../../auth/guards/roles.guard.js';
+import { SystemMetricsService } from '../../system-metrics/system-metrics.service.js';
 
 @ApiTags('admin')
 @Controller('admin/metrics')

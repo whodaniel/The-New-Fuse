@@ -1,4 +1,4 @@
-import type { BaseEntity, UUID } from './core/index';
+import type { BaseEntity, UUID } from './core/index.js';
 
 /**
  * Represents user roles within the system.

@@ -3,8 +3,8 @@ import { RedisAgentRegistry } from '@the-new-fuse/agent';
 import { AgentInbox } from '@the-new-fuse/core';
 import { createTNFEnvelope, TNFEnvelope, validateTNFEnvelope } from '@the-new-fuse/relay-core';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { SystemQueueName, SystemQueueService } from './services/system-queue.service';
-import { telemetry } from '../telemetry/TelemetryService';
+import { SystemQueueName, SystemQueueService } from './services/system-queue.service.js';
+import { telemetry } from '../telemetry/TelemetryService.js';
 
 export interface RouterConfig {
   redisUrl: string;

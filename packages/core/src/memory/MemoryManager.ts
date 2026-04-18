@@ -3,12 +3,12 @@
  */
 
 import { Injectable, Logger, Optional } from '@nestjs/common';
-import { MemorySystem } from './MemorySystem';
-import { VectorMemorySystem } from './VectorMemorySystem';
-import { MemoryContent, MemoryQuery, MemoryQueryResult, MemoryContentType } from '../types/memory';
-import { ServiceState } from '../constants/types';
-import { BaseError } from '../utils/errors';
-import { PermissionManager, UserRole, SubscriptionTier } from '../security/permission-manager';
+import { MemorySystem } from './MemorySystem.js';
+import { VectorMemorySystem } from './VectorMemorySystem.js';
+import { MemoryContent, MemoryQuery, MemoryQueryResult, MemoryContentType } from '../types/memory.js';
+import { ServiceState } from '../constants/types.js';
+import { BaseError } from '../utils/errors.js';
+import { PermissionManager, UserRole, SubscriptionTier } from '../security/permission-manager.js';
 
 @Injectable()
 export class MemoryManager {

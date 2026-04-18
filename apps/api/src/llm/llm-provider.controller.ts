@@ -10,7 +10,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateLLMProviderDTO, LLMProviderDTO, LLMProviderService } from './llm-provider.service';
+import { CreateLLMProviderDTO, LLMProviderDTO, LLMProviderService } from './llm-provider.service.js';
 
 @ApiTags('llm')
 @Controller('llm/providers')

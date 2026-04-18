@@ -1,5 +1,5 @@
-import { BaseProcessor } from './BaseProcessor';
-import { Logger } from '../types/core';
+import { BaseProcessor } from './BaseProcessor.js';
+import { Logger } from '../types/core.js';
 import {
   Message,
   MessageType,
@@ -8,10 +8,10 @@ import {
   TaskStatus,
   UUID,
 } from '@the-new-fuse/types';
-import { AlertService } from '../services/AlertService';
-import { RedisService } from '../services/RedisService';
-import { MessageValidator } from '../services/MessageValidator';
-import { InterAgentChatService } from '../services/InterAgentChatService';
+import { AlertService } from '../services/AlertService.js';
+import { RedisService } from '../services/RedisService.js';
+import { MessageValidator } from '../services/MessageValidator.js';
+import { InterAgentChatService } from '../services/InterAgentChatService.js';
 
 
 /**

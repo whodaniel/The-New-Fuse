@@ -14,10 +14,10 @@ import {
   ConnectionStatus, 
   ConnectionMetrics,
   AuthConfig 
-} from '../interfaces/IMCPConnection';
-import { MCPMessage } from '../interfaces/IMCPMessage';
-import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error';
-import { RetryPolicy } from '../types/common';
+} from '../interfaces/IMCPConnection.js';
+import { MCPMessage } from '../interfaces/IMCPMessage.js';
+import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error.js';
+import { RetryPolicy } from '../types/common.js';
 
 /**
  * WebSocket-based MCP Connection implementation

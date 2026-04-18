@@ -1,7 +1,7 @@
 import React from 'react';
 import { assertSnapshot } from '@/test/helpers/snapshot';
 import { Modal } from '../Modal';
-import { Button } from '../../Button';
+import { Button } from '../../Button/index';
 
 describe('Modal Snapshots', () => {
   it('renders basic modal correctly', () => {

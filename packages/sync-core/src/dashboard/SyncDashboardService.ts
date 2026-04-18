@@ -1,8 +1,8 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { SyncRedisConfig } from '../config/SyncRedisConfig';
-import { SyncMetrics, SyncHealth, SyncOperation, TenantSyncContext } from '../types';
+import { SyncRedisConfig } from '../config/SyncRedisConfig.js';
+import { SyncMetrics, SyncHealth, SyncOperation, TenantSyncContext } from '../types/index.js';
 
 /**
  * Interface for WebSocket service integration

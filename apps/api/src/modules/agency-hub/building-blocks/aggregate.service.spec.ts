@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AggregateService } from './aggregate.service';
+import { AggregateService } from './aggregate.service.js';
 
 describe('AggregateService', () => {
   let service: AggregateService;

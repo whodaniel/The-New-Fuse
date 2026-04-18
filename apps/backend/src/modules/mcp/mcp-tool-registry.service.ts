@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MCPTool } from '@the-new-fuse/mcp-core';
-import { WorkflowTemplatesService } from '../workflow-templates/workflow-templates.service';
+import { WorkflowTemplatesService } from '../workflow-templates/workflow-templates.service.js';
 
 /**
  * MCP Tool Registry Service

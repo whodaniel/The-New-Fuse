@@ -2,7 +2,7 @@
  * Chrome Extension Federation Module - Index Export
  */
 
-export { FederationManager, federationManager } from './FederationManager';
+export { FederationManager, federationManager } from './FederationManager.js';
 export type {
   AIPlatform,
   ChannelMember,
@@ -12,6 +12,6 @@ export type {
   FederationChannel,
   MemberStatus,
   MemberType,
-} from './FederationManager';
-export { RedisBridge, redisBridge } from './RedisBridge';
-export type { RedisAgentInfo, RedisAgentMessage, RedisBridgeConfig } from './RedisBridge';
+} from './FederationManager.js';
+export { RedisBridge, redisBridge } from './RedisBridge.js';
+export type { RedisAgentInfo, RedisAgentMessage, RedisBridgeConfig } from './RedisBridge.js';

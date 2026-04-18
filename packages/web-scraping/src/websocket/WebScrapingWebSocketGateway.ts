@@ -16,9 +16,9 @@ import {
   OnGatewayDisconnect 
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { WebScrapingService } from '../core/WebScrapingService';
-import { ProxyService } from '../proxy/ProxyService';
-import { WebScrapingConfig, ScrapingResult } from '../types';
+import { WebScrapingService } from '../core/WebScrapingService.js';
+import { ProxyService } from '../proxy/ProxyService.js';
+import { WebScrapingConfig, ScrapingResult } from '../types/index.js';
 
 interface ScrapingSession {
   id: string;

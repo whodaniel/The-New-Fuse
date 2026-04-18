@@ -1,4 +1,4 @@
-import { PerformanceResult, PerformanceStats } from '../utils/measurePerformance';
+import { PerformanceResult, PerformanceStats } from '../utils/measurePerformance.js';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 

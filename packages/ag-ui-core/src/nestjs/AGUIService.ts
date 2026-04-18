@@ -3,7 +3,7 @@
  */
 
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { AGUIOrchestrator, VisualizationRequest, VisualizationResult } from '../AGUIOrchestrator';
+import { AGUIOrchestrator, VisualizationRequest, VisualizationResult } from '../AGUIOrchestrator.js';
 
 @Injectable()
 export class AGUIService implements OnModuleInit, OnModuleDestroy {

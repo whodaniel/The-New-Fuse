@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Logger, Param, Post, UseGuards } from '@nestjs/common';
-import { AdminGuard } from '../../auth/admin.guard';
-import { MCPA2ABridge } from './mcp-a2a-bridge.service';
-import { MCPServerService } from './mcp-server.service';
-import { MCPToolRegistry } from './mcp-tool-registry.service';
+import { AdminGuard } from '../../auth/admin.guard.js';
+import { MCPA2ABridge } from './mcp-a2a-bridge.service.js';
+import { MCPServerService } from './mcp-server.service.js';
+import { MCPToolRegistry } from './mcp-tool-registry.service.js';
 
 interface McpServerConfig {
   name: string;

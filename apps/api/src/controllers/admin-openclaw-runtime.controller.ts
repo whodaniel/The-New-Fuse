@@ -10,11 +10,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from '../decorators/current-user.decorator';
-import { AdminGuard } from '../guards/admin.guard';
-import { SecureAuthGuard } from '../guards/secure-auth.guard';
-import { AuditService } from '../services/audit.service';
-import { OpenClawRuntimeService } from '../services/openclaw-runtime.service';
+import { CurrentUser } from '../decorators/current-user.decorator.js';
+import { AdminGuard } from '../guards/admin.guard.js';
+import { SecureAuthGuard } from '../guards/secure-auth.guard.js';
+import { AuditService } from '../services/audit.service.js';
+import { OpenClawRuntimeService } from '../services/openclaw-runtime.service.js';
 
 @ApiTags('admin-openclaw-runtime')
 @Controller('admin/openclaw/runtime')

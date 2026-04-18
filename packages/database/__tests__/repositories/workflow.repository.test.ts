@@ -3,18 +3,18 @@
  * Tests all 32 methods of the workflow repository
  */
 
-import { drizzleWorkflowRepository } from '../../src/drizzle/repositories/workflow.repository';
-import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository';
-import { drizzleAgentRepository } from '../../src/drizzle/repositories/agent.repository';
-import { UserFactory, AgentFactory, WorkflowFactory } from '../utils/factories';
+import { drizzleWorkflowRepository } from '../../src/drizzle/repositories/workflow.repository.js';
+import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository.js';
+import { drizzleAgentRepository } from '../../src/drizzle/repositories/agent.repository.js';
+import { UserFactory, AgentFactory, WorkflowFactory } from '../utils/factories.js';
 import {
   expectDatabaseRow,
   expectSoftDeleted,
   expectNotNull,
   expectArrayLength,
   expectNotDeleted,
-} from '../utils/assertions';
-import type { NewWorkflowStep, NewWorkflowExecution, NewWorkflowTemplate } from '../../src/drizzle/types';
+} from '../utils/assertions.js';
+import type { NewWorkflowStep, NewWorkflowExecution, NewWorkflowTemplate } from '../../src/drizzle/types/index.js';
 
 describe('DrizzleWorkflowRepository', () => {
   let testUserId: string;

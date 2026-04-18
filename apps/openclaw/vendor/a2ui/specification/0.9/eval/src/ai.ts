@@ -18,7 +18,7 @@ import { openAI } from '@genkit-ai/compat-oai/openai';
 import { googleAI } from '@genkit-ai/google-genai';
 import { genkit } from 'genkit';
 import { anthropic } from 'genkitx-anthropic';
-import { logger } from './logger';
+import { logger } from './logger.js';
 
 const plugins = [];
 

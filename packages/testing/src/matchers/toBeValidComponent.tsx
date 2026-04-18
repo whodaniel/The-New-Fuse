@@ -1,4 +1,4 @@
-import { createMatcher } from './utils';
+import { createMatcher } from './utils.js';
 import { isValidElement, ReactElement, JSXElementConstructor } from 'react';
 import { z } from 'zod';
 

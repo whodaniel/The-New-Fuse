@@ -20,9 +20,9 @@
  * 5. Final report is generated and distributed
  */
 
-import { CoordinatorAgent } from './coordinator-agent';
-import { DataProcessingAgent } from './data-processing-agent';
-import { APIIntegrationAgent } from './api-integration-agent';
+import { CoordinatorAgent } from './coordinator-agent.js';
+import { DataProcessingAgent } from './data-processing-agent.js';
+import { APIIntegrationAgent } from './api-integration-agent.js';
 import { Logger } from '@nestjs/common';
 
 const logger = new Logger('MultiAgentCoordination');

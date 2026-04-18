@@ -18,7 +18,7 @@ import { css, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { A2uiMessageProcessor } from '../data/model-processor.js';
-import { SurfaceID, Surface as SurfaceState } from '../types/types';
+import { SurfaceID, Surface as SurfaceState } from '../types/types.js';
 import { Root } from './root.js';
 
 @customElement('a2ui-surface')

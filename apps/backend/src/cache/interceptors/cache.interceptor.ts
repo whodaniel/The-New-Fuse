@@ -10,8 +10,8 @@ import {
   CacheEvictOptions,
   CacheInvalidateOptions,
   CacheableOptions,
-} from '../decorators/cacheable.decorator';
-import { AdvancedCacheManager } from '../services/advanced-cache.manager';
+} from '../decorators/cacheable.decorator.js';
+import { AdvancedCacheManager } from '../services/advanced-cache.manager.js';
 
 @Injectable()
 export class CacheInterceptor implements NestInterceptor {

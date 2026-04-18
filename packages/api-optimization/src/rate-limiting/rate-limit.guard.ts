@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
-import { RedisRateLimiterService, RateLimitConfig } from './redis-rate-limiter.service';
+import { RedisRateLimiterService, RateLimitConfig } from './redis-rate-limiter.service.js';
 
 export const RATE_LIMIT_KEY = 'rateLimit';
 export const RATE_LIMIT_TIER_KEY = 'rateLimitTier';

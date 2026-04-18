@@ -3,10 +3,10 @@
  * Demonstrates integration with existing infrastructure
  */
 
-import { EnhancedFileSystemWatcher, WatcherConfig } from './EnhancedFileSystemWatcher';
-import { SyncRedisConfig } from '../config/SyncRedisConfig';
-import { SyncDatabaseService } from '../database/SyncDatabaseService';
-import { FileChangeEvent } from '../types';
+import { EnhancedFileSystemWatcher, WatcherConfig } from './EnhancedFileSystemWatcher.js';
+import { SyncRedisConfig } from '../config/SyncRedisConfig.js';
+import { SyncDatabaseService } from '../database/SyncDatabaseService.js';
+import { FileChangeEvent } from '../types/index.js';
 
 // Example: Setting up the Enhanced File System Watcher
 export async function setupEnhancedFileWatcher() {

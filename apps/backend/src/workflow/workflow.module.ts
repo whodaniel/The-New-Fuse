@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { MassModule } from '../modules/mass/mass.module';
-import { WorkflowExecutionGateway } from './workflow-execution.gateway';
-import { WorkflowExecutionService } from './workflow-execution.service';
-import { WorkflowController } from './workflow.controller';
+import { MassModule } from '../modules/mass/mass.module.js';
+import { WorkflowExecutionGateway } from './workflow-execution.gateway.js';
+import { WorkflowExecutionService } from './workflow-execution.service.js';
+import { WorkflowController } from './workflow.controller.js';
 
 @Module({
   imports: [MassModule],

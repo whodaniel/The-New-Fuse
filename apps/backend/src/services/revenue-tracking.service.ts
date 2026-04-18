@@ -6,7 +6,7 @@ import {
   revenueStreamRepository,
 } from '@the-new-fuse/database';
 import { formatEther, parseEther } from 'ethers';
-import { SmartContractService } from './smart-contract.service';
+import { SmartContractService } from './smart-contract.service.js';
 
 export interface RevenueEvent {
   agentId: string;

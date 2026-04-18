@@ -3,10 +3,10 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { SystemMetrics, HealthStatus, ServiceHealth } from '../types/monitoring';
-import { ServiceState } from '../constants/types';
-import { logger } from '../utils/logger';
-import { BaseError } from '../utils/errors';
+import { SystemMetrics, HealthStatus, ServiceHealth } from '../types/monitoring.js';
+import { ServiceState } from '../constants/types.js';
+import { logger } from '../utils/logger.js';
+import { BaseError } from '../utils/errors.js';
 
 @Injectable()
 export class SystemMonitor {

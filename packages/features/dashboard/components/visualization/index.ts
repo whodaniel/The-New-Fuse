@@ -1,2 +1,2 @@
-export * from './ChartComponent';
-export * from './DataGrid';
+export * from './ChartComponent.js';
+export * from './DataGrid.js';

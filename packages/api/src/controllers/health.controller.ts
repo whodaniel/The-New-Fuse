@@ -6,7 +6,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { HealthCheck } from '@nestjs/terminus';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { HealthService } from '../services/health.service';
+import { HealthService } from '../services/health.service.js';
 // Local type definition to avoid cross-package import issues
 interface HealthIndicatorResult {
   [key: string]: {

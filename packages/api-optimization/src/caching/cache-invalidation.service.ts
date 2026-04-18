@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ResponseCacheService } from './response-cache.service';
-import { CDNConfigService } from '../cdn/cdn-config.service';
+import { ResponseCacheService } from './response-cache.service.js';
+import { CDNConfigService } from '../cdn/cdn-config.service.js';
 
 export interface InvalidationStrategy {
   type: 'tag' | 'pattern' | 'time' | 'event';

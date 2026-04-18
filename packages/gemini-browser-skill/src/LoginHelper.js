@@ -2,60 +2,54 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { chromium } from 'playwright';
 async function login() {
-  const profileDir = path.join(process.env.HOME || '/tmp', '.video-processor-chrome-clean');
-  console.log(`[LoginHelper] 📂 Using Profile Directory: ${profileDir}`);
-  console.log('[LoginHelper] 🚀 Launching Chrome (Clean Mode)...');
-  console.log(
-    '[LoginHelper] 👉 Please sign in to Google/YouTube/AI Studio in the browser window that opens.'
-  );
-  console.log(
-    '[LoginHelper] 👉 Once signed in, verify you can access https://aistudio.google.com/'
-  );
-  console.log(
-    '[LoginHelper] ⏱️ This script will keep the browser open for 10 minutes or until you close it manually.'
-  );
-  if (!fs.existsSync(profileDir)) {
-    console.log('[LoginHelper] Creating profile directory...');
-    fs.mkdirSync(profileDir, { recursive: true });
-  }
-  const context = await chromium.launchPersistentContext(profileDir, {
-    headless: false,
-    channel: 'chrome',
-    args: [
-      '--no-first-run',
-      '--no-default-browser-check',
-      '--disable-blink-features=AutomationControlled',
-      '--window-size=1280,800',
-    ],
-    viewport: null,
-    ignoreDefaultArgs: ['--enable-automation'],
-    userAgent:
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-  });
-  const page = await context.newPage();
-  await page.goto('https://accounts.google.com/ServiceLogin');
-  // Also open AI Studio in a second tab
-  const page2 = await context.newPage();
-  await page2.goto('https://aistudio.google.com/');
-  // Debugging: Check AI Studio state
-  await page2.waitForTimeout(5000); // Wait for load
-  console.log(`[LoginHelper] 🔍 Current URL: ${page2.url()}`);
-  console.log(`[LoginHelper] 📄 Page Title: ${await page2.title()}`);
-  const textarea = page2.locator('textarea[aria-label="Enter a prompt"]');
-  if ((await textarea.count()) > 0 && (await textarea.isVisible())) {
-    console.log('[LoginHelper] ✅ SUCCESS: Prompt box found! Automation should work.');
-  } else {
-    console.log('[LoginHelper] ❌ FAILURE: Prompt box NOT found.');
-    console.log('[LoginHelper] 📸 Taking debug screenshot...');
-    await page2.screenshot({ path: path.join(process.cwd(), 'login_debug.png') });
-    // Check for common alternative states
-    if ((await page2.locator('text="Sign in"').count()) > 0) {
-      console.log('[LoginHelper] ⚠️ Detected "Sign in" text - You might not be logged in.');
+    const profileDir = path.join(process.env.HOME || '/tmp', '.video-processor-chrome-clean');
+    console.log(`[LoginHelper] 📂 Using Profile Directory: ${profileDir}`);
+    console.log('[LoginHelper] 🚀 Launching Chrome (Clean Mode)...');
+    console.log('[LoginHelper] 👉 Please sign in to Google/YouTube/AI Studio in the browser window that opens.');
+    console.log('[LoginHelper] 👉 Once signed in, verify you can access https://aistudio.google.com/');
+    console.log('[LoginHelper] ⏱️ This script will keep the browser open for 10 minutes or until you close it manually.');
+    if (!fs.existsSync(profileDir)) {
+        console.log('[LoginHelper] Creating profile directory...');
+        fs.mkdirSync(profileDir, { recursive: true });
     }
-  }
-  // Wait for a long time to let user sign in
-  await new Promise((resolve) => setTimeout(resolve, 600000)); // 10 minutes
-  await context.close();
+    const context = await chromium.launchPersistentContext(profileDir, {
+        headless: false,
+        channel: 'chrome',
+        args: [
+            '--no-first-run',
+            '--no-default-browser-check',
+            '--disable-blink-features=AutomationControlled',
+            '--window-size=1280,800',
+        ],
+        viewport: null,
+        ignoreDefaultArgs: ['--enable-automation'],
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    });
+    const page = await context.newPage();
+    await page.goto('https://accounts.google.com/ServiceLogin');
+    // Also open AI Studio in a second tab
+    const page2 = await context.newPage();
+    await page2.goto('https://aistudio.google.com/');
+    // Debugging: Check AI Studio state
+    await page2.waitForTimeout(5000); // Wait for load
+    console.log(`[LoginHelper] 🔍 Current URL: ${page2.url()}`);
+    console.log(`[LoginHelper] 📄 Page Title: ${await page2.title()}`);
+    const textarea = page2.locator('textarea[aria-label="Enter a prompt"]');
+    if ((await textarea.count()) > 0 && (await textarea.isVisible())) {
+        console.log('[LoginHelper] ✅ SUCCESS: Prompt box found! Automation should work.');
+    }
+    else {
+        console.log('[LoginHelper] ❌ FAILURE: Prompt box NOT found.');
+        console.log('[LoginHelper] 📸 Taking debug screenshot...');
+        await page2.screenshot({ path: path.join(process.cwd(), 'login_debug.png') });
+        // Check for common alternative states
+        if ((await page2.locator('text="Sign in"').count()) > 0) {
+            console.log('[LoginHelper] ⚠️ Detected "Sign in" text - You might not be logged in.');
+        }
+    }
+    // Wait for a long time to let user sign in
+    await new Promise((resolve) => setTimeout(resolve, 600000)); // 10 minutes
+    await context.close();
 }
 login().catch(console.error);
 //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiTG9naW5IZWxwZXIuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJMb2dpbkhlbHBlci50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSxPQUFPLEtBQUssRUFBRSxNQUFNLElBQUksQ0FBQztBQUN6QixPQUFPLEtBQUssSUFBSSxNQUFNLE1BQU0sQ0FBQztBQUM3QixPQUFPLEVBQUUsUUFBUSxFQUFFLE1BQU0sWUFBWSxDQUFDO0FBRXRDLEtBQUssVUFBVSxLQUFLO0lBQ2xCLE1BQU0sVUFBVSxHQUFHLElBQUksQ0FBQyxJQUFJLENBQUMsT0FBTyxDQUFDLEdBQUcsQ0FBQyxJQUFJLElBQUksTUFBTSxFQUFFLCtCQUErQixDQUFDLENBQUM7SUFFMUYsT0FBTyxDQUFDLEdBQUcsQ0FBQyw2Q0FBNkMsVUFBVSxFQUFFLENBQUMsQ0FBQztJQUN2RSxPQUFPLENBQUMsR0FBRyxDQUFDLG1EQUFtRCxDQUFDLENBQUM7SUFDakUsT0FBTyxDQUFDLEdBQUcsQ0FDVCwrRkFBK0YsQ0FDaEcsQ0FBQztJQUNGLE9BQU8sQ0FBQyxHQUFHLENBQ1QscUZBQXFGLENBQ3RGLENBQUM7SUFDRixPQUFPLENBQUMsR0FBRyxDQUNULHdHQUF3RyxDQUN6RyxDQUFDO0lBRUYsSUFBSSxDQUFDLEVBQUUsQ0FBQyxVQUFVLENBQUMsVUFBVSxDQUFDLEVBQUUsQ0FBQztRQUMvQixPQUFPLENBQUMsR0FBRyxDQUFDLDZDQUE2QyxDQUFDLENBQUM7UUFDM0QsRUFBRSxDQUFDLFNBQVMsQ0FBQyxVQUFVLEVBQUUsRUFBRSxTQUFTLEVBQUUsSUFBSSxFQUFFLENBQUMsQ0FBQztJQUNoRCxDQUFDO0lBRUQsTUFBTSxPQUFPLEdBQUcsTUFBTSxRQUFRLENBQUMsdUJBQXVCLENBQUMsVUFBVSxFQUFFO1FBQ2pFLFFBQVEsRUFBRSxLQUFLO1FBQ2YsT0FBTyxFQUFFLFFBQVE7UUFDakIsSUFBSSxFQUFFO1lBQ0osZ0JBQWdCO1lBQ2hCLDRCQUE0QjtZQUM1QiwrQ0FBK0M7WUFDL0Msd0JBQXdCO1NBQ3pCO1FBQ0QsUUFBUSxFQUFFLElBQUk7UUFDZCxpQkFBaUIsRUFBRSxDQUFDLHFCQUFxQixDQUFDO1FBQzFDLFNBQVMsRUFDUCx1SEFBdUg7S0FDMUgsQ0FBQyxDQUFDO0lBRUgsTUFBTSxJQUFJLEdBQUcsTUFBTSxPQUFPLENBQUMsT0FBTyxFQUFFLENBQUM7SUFDckMsTUFBTSxJQUFJLENBQUMsSUFBSSxDQUFDLDBDQUEwQyxDQUFDLENBQUM7SUFFNUQsc0NBQXNDO0lBQ3RDLE1BQU0sS0FBSyxHQUFHLE1BQU0sT0FBTyxDQUFDLE9BQU8sRUFBRSxDQUFDO0lBQ3RDLE1BQU0sS0FBSyxDQUFDLElBQUksQ0FBQyw4QkFBOEIsQ0FBQyxDQUFDO0lBRWpELG1DQUFtQztJQUNuQyxNQUFNLEtBQUssQ0FBQyxjQUFjLENBQUMsSUFBSSxDQUFDLENBQUMsQ0FBQyxnQkFBZ0I7SUFFbEQsT0FBTyxDQUFDLEdBQUcsQ0FBQyxpQ0FBaUMsS0FBSyxDQUFDLEdBQUcsRUFBRSxFQUFFLENBQUMsQ0FBQztJQUM1RCxPQUFPLENBQUMsR0FBRyxDQUFDLGdDQUFnQyxNQUFNLEtBQUssQ0FBQyxLQUFLLEVBQUUsRUFBRSxDQUFDLENBQUM7SUFFbkUsTUFBTSxRQUFRLEdBQUcsS0FBSyxDQUFDLE9BQU8sQ0FBQyx1Q0FBdUMsQ0FBQyxDQUFDO0lBQ3hFLElBQUksQ0FBQyxNQUFNLFFBQVEsQ0FBQyxLQUFLLEVBQUUsQ0FBQyxHQUFHLENBQUMsSUFBSSxDQUFDLE1BQU0sUUFBUSxDQUFDLFNBQVMsRUFBRSxDQUFDLEVBQUUsQ0FBQztRQUNqRSxPQUFPLENBQUMsR0FBRyxDQUFDLG9FQUFvRSxDQUFDLENBQUM7SUFDcEYsQ0FBQztTQUFNLENBQUM7UUFDTixPQUFPLENBQUMsR0FBRyxDQUFDLGdEQUFnRCxDQUFDLENBQUM7UUFDOUQsT0FBTyxDQUFDLEdBQUcsQ0FBQyw2Q0FBNkMsQ0FBQyxDQUFDO1FBQzNELE1BQU0sS0FBSyxDQUFDLFVBQVUsQ0FBQyxFQUFFLElBQUksRUFBRSxJQUFJLENBQUMsSUFBSSxDQUFDLE9BQU8sQ0FBQyxHQUFHLEVBQUUsRUFBRSxpQkFBaUIsQ0FBQyxFQUFFLENBQUMsQ0FBQztRQUU5RSxzQ0FBc0M7UUFDdEMsSUFBSSxDQUFDLE1BQU0sS0FBSyxDQUFDLE9BQU8sQ0FBQyxnQkFBZ0IsQ0FBQyxDQUFDLEtBQUssRUFBRSxDQUFDLEdBQUcsQ0FBQyxFQUFFLENBQUM7WUFDeEQsT0FBTyxDQUFDLEdBQUcsQ0FBQyx3RUFBd0UsQ0FBQyxDQUFDO1FBQ3hGLENBQUM7SUFDSCxDQUFDO0lBRUQsMkNBQTJDO0lBQzNDLE1BQU0sSUFBSSxPQUFPLENBQUMsQ0FBQyxPQUFPLEVBQUUsRUFBRSxDQUFDLFVBQVUsQ0FBQyxPQUFPLEVBQUUsTUFBTSxDQUFDLENBQUMsQ0FBQyxDQUFDLGFBQWE7SUFFMUUsTUFBTSxPQUFPLENBQUMsS0FBSyxFQUFFLENBQUM7QUFDeEIsQ0FBQztBQUVELEtBQUssRUFBRSxDQUFDLEtBQUssQ0FBQyxPQUFPLENBQUMsS0FBSyxDQUFDLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgKiBhcyBmcyBmcm9tICdmcyc7XG5pbXBvcnQgKiBhcyBwYXRoIGZyb20gJ3BhdGgnO1xuaW1wb3J0IHsgY2hyb21pdW0gfSBmcm9tICdwbGF5d3JpZ2h0JztcblxuYXN5bmMgZnVuY3Rpb24gbG9naW4oKSB7XG4gIGNvbnN0IHByb2ZpbGVEaXIgPSBwYXRoLmpvaW4ocHJvY2Vzcy5lbnYuSE9NRSB8fCAnL3RtcCcsICcudmlkZW8tcHJvY2Vzc29yLWNocm9tZS1jbGVhbicpO1xuXG4gIGNvbnNvbGUubG9nKGBbTG9naW5IZWxwZXJdIPCfk4IgVXNpbmcgUHJvZmlsZSBEaXJlY3Rvcnk6ICR7cHJvZmlsZURpcn1gKTtcbiAgY29uc29sZS5sb2coJ1tMb2dpbkhlbHBlcl0g8J+agCBMYXVuY2hpbmcgQ2hyb21lIChDbGVhbiBNb2RlKS4uLicpO1xuICBjb25zb2xlLmxvZyhcbiAgICAnW0xvZ2luSGVscGVyXSDwn5GJIFBsZWFzZSBzaWduIGluIHRvIEdvb2dsZS9Zb3VUdWJlL0FJIFN0dWRpbyBpbiB0aGUgYnJvd3NlciB3aW5kb3cgdGhhdCBvcGVucy4nXG4gICk7XG4gIGNvbnNvbGUubG9nKFxuICAgICdbTG9naW5IZWxwZXJdIPCfkYkgT25jZSBzaWduZWQgaW4sIHZlcmlmeSB5b3UgY2FuIGFjY2VzcyBodHRwczovL2Fpc3R1ZGlvLmdvb2dsZS5jb20vJ1xuICApO1xuICBjb25zb2xlLmxvZyhcbiAgICAnW0xvZ2luSGVscGVyXSDij7HvuI8gVGhpcyBzY3JpcHQgd2lsbCBrZWVwIHRoZSBicm93c2VyIG9wZW4gZm9yIDEwIG1pbnV0ZXMgb3IgdW50aWwgeW91IGNsb3NlIGl0IG1hbnVhbGx5LidcbiAgKTtcblxuICBpZiAoIWZzLmV4aXN0c1N5bmMocHJvZmlsZURpcikpIHtcbiAgICBjb25zb2xlLmxvZygnW0xvZ2luSGVscGVyXSBDcmVhdGluZyBwcm9maWxlIGRpcmVjdG9yeS4uLicpO1xuICAgIGZzLm1rZGlyU3luYyhwcm9maWxlRGlyLCB7IHJlY3Vyc2l2ZTogdHJ1ZSB9KTtcbiAgfVxuXG4gIGNvbnN0IGNvbnRleHQgPSBhd2FpdCBjaHJvbWl1bS5sYXVuY2hQZXJzaXN0ZW50Q29udGV4dChwcm9maWxlRGlyLCB7XG4gICAgaGVhZGxlc3M6IGZhbHNlLFxuICAgIGNoYW5uZWw6ICdjaHJvbWUnLFxuICAgIGFyZ3M6IFtcbiAgICAgICctLW5vLWZpcnN0LXJ1bicsXG4gICAgICAnLS1uby1kZWZhdWx0LWJyb3dzZXItY2hlY2snLFxuICAgICAgJy0tZGlzYWJsZS1ibGluay1mZWF0dXJlcz1BdXRvbWF0aW9uQ29udHJvbGxlZCcsXG4gICAgICAnLS13aW5kb3ctc2l6ZT0xMjgwLDgwMCcsXG4gICAgXSxcbiAgICB2aWV3cG9ydDogbnVsbCxcbiAgICBpZ25vcmVEZWZhdWx0QXJnczogWyctLWVuYWJsZS1hdXRvbWF0aW9uJ10sXG4gICAgdXNlckFnZW50OlxuICAgICAgJ01vemlsbGEvNS4wIChNYWNpbnRvc2g7IEludGVsIE1hYyBPUyBYIDEwXzE1XzcpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS8xMjAuMC4wLjAgU2FmYXJpLzUzNy4zNicsXG4gIH0pO1xuXG4gIGNvbnN0IHBhZ2UgPSBhd2FpdCBjb250ZXh0Lm5ld1BhZ2UoKTtcbiAgYXdhaXQgcGFnZS5nb3RvKCdodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20vU2VydmljZUxvZ2luJyk7XG5cbiAgLy8gQWxzbyBvcGVuIEFJIFN0dWRpbyBpbiBhIHNlY29uZCB0YWJcbiAgY29uc3QgcGFnZTIgPSBhd2FpdCBjb250ZXh0Lm5ld1BhZ2UoKTtcbiAgYXdhaXQgcGFnZTIuZ290bygnaHR0cHM6Ly9haXN0dWRpby5nb29nbGUuY29tLycpO1xuXG4gIC8vIERlYnVnZ2luZzogQ2hlY2sgQUkgU3R1ZGlvIHN0YXRlXG4gIGF3YWl0IHBhZ2UyLndhaXRGb3JUaW1lb3V0KDUwMDApOyAvLyBXYWl0IGZvciBsb2FkXG5cbiAgY29uc29sZS5sb2coYFtMb2dpbkhlbHBlcl0g8J+UjSBDdXJyZW50IFVSTDogJHtwYWdlMi51cmwoKX1gKTtcbiAgY29uc29sZS5sb2coYFtMb2dpbkhlbHBlcl0g8J+ThCBQYWdlIFRpdGxlOiAke2F3YWl0IHBhZ2UyLnRpdGxlKCl9YCk7XG5cbiAgY29uc3QgdGV4dGFyZWEgPSBwYWdlMi5sb2NhdG9yKCd0ZXh0YXJlYVthcmlhLWxhYmVsPVwiRW50ZXIgYSBwcm9tcHRcIl0nKTtcbiAgaWYgKChhd2FpdCB0ZXh0YXJlYS5jb3VudCgpKSA+IDAgJiYgKGF3YWl0IHRleHRhcmVhLmlzVmlzaWJsZSgpKSkge1xuICAgIGNvbnNvbGUubG9nKCdbTG9naW5IZWxwZXJdIOKchSBTVUNDRVNTOiBQcm9tcHQgYm94IGZvdW5kISBBdXRvbWF0aW9uIHNob3VsZCB3b3JrLicpO1xuICB9IGVsc2Uge1xuICAgIGNvbnNvbGUubG9nKCdbTG9naW5IZWxwZXJdIOKdjCBGQUlMVVJFOiBQcm9tcHQgYm94IE5PVCBmb3VuZC4nKTtcbiAgICBjb25zb2xlLmxvZygnW0xvZ2luSGVscGVyXSDwn5O4IFRha2luZyBkZWJ1ZyBzY3JlZW5zaG90Li4uJyk7XG4gICAgYXdhaXQgcGFnZTIuc2NyZWVuc2hvdCh7IHBhdGg6IHBhdGguam9pbihwcm9jZXNzLmN3ZCgpLCAnbG9naW5fZGVidWcucG5nJykgfSk7XG5cbiAgICAvLyBDaGVjayBmb3IgY29tbW9uIGFsdGVybmF0aXZlIHN0YXRlc1xuICAgIGlmICgoYXdhaXQgcGFnZTIubG9jYXRvcigndGV4dD1cIlNpZ24gaW5cIicpLmNvdW50KCkpID4gMCkge1xuICAgICAgY29uc29sZS5sb2coJ1tMb2dpbkhlbHBlcl0g4pqg77iPIERldGVjdGVkIFwiU2lnbiBpblwiIHRleHQgLSBZb3UgbWlnaHQgbm90IGJlIGxvZ2dlZCBpbi4nKTtcbiAgICB9XG4gIH1cblxuICAvLyBXYWl0IGZvciBhIGxvbmcgdGltZSB0byBsZXQgdXNlciBzaWduIGluXG4gIGF3YWl0IG5ldyBQcm9taXNlKChyZXNvbHZlKSA9PiBzZXRUaW1lb3V0KHJlc29sdmUsIDYwMDAwMCkpOyAvLyAxMCBtaW51dGVzXG5cbiAgYXdhaXQgY29udGV4dC5jbG9zZSgpO1xufVxuXG5sb2dpbigpLmNhdGNoKGNvbnNvbGUuZXJyb3IpO1xuIl19

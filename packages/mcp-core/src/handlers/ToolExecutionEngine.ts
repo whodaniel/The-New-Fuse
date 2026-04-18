@@ -15,9 +15,9 @@ import {
   ToolPermissions,
   ToolResult,
   ValidationResult,
-} from '../interfaces/IMCPTool';
-import { ErrorCategory, ErrorSeverity, MCPErrorClass, MCPErrorCode } from '../types/error';
-import { ToolExecutionContext, ToolExecutionLog, ToolSandboxConfig } from '../types/tool';
+} from '../interfaces/IMCPTool.js';
+import { ErrorCategory, ErrorSeverity, MCPErrorClass, MCPErrorCode } from '../types/error.js';
+import { ToolExecutionContext, ToolExecutionLog, ToolSandboxConfig } from '../types/tool.js';
 
 /**
  * Tool execution options interface

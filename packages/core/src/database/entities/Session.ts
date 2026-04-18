@@ -7,7 +7,7 @@ import {
   JoinColumn,
   BeforeInsert
 } from 'typeorm';
-import { User } from './User';
+import { User } from './User.js';
 // @ts-ignore
 import { v4 as uuidv4 } from 'uuid';
 

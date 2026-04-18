@@ -15,8 +15,8 @@ import {
   VideoJobStatus,
   VideoProvider,
   VideoProviderCapabilities,
-} from '../types';
-import { BaseVideoProvider } from './IVideoProvider';
+} from '../types.js';
+import { BaseVideoProvider } from './IVideoProvider.js';
 
 interface ReplicatePrediction {
   id: string;

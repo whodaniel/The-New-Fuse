@@ -28,8 +28,8 @@ import {
   Text,
   TextField,
   Video,
-} from './components';
-import { StringValue } from './primitives';
+} from './components.js';
+import { StringValue } from './primitives.js';
 export type MessageProcessor = {
   getSurfaces(): ReadonlyMap<string, Surface>;
   clearSurfaces(): void;

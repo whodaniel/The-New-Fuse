@@ -12,7 +12,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { ApiResponse } from '../types/api-response.types';
+import { ApiResponse } from '../types/api-response.types.js';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {

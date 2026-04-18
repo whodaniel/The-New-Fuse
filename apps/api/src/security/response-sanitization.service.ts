@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InputSanitizationService } from './input-sanitization.service';
+import { InputSanitizationService } from './input-sanitization.service.js';
 
 export interface ResponseSanitizationOptions {
   excludeFields?: string[]; // Fields to exclude from response

@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ActionCard, GlassCard, PremiumButton, StatsCard } from '../components/ui/premium';
+import { ActionCard, GlassCard, PremiumButton, StatsCard } from '../components/ui/premium/index';
 import { agentService, type Agent as ServiceAgent } from '../services/AgentService';
 
 interface Agent {

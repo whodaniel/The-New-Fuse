@@ -1,7 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 import { Logger } from '@nestjs/common';
-import { ReconnectionManager, ExponentialBackoffStrategy } from '../strategies';
-import { CompressionMiddleware } from '../utils/compression';
+import { ReconnectionManager, ExponentialBackoffStrategy } from '../strategies/index.js';
+import { CompressionMiddleware } from '../utils/compression.js';
 
 export interface ClientConfig {
   url: string;

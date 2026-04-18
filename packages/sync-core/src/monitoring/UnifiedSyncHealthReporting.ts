@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { EventEmitter } from 'events';
-import { SyncAwareHeartbeatMonitoringService, SyncHealthMetrics, SyncHealthEscalation } from './SyncAwareHeartbeatMonitoringService';
-import { SyncHealthDashboardIntegration, SyncHealthDashboardData } from './SyncHealthDashboardIntegration';
+import { SyncAwareHeartbeatMonitoringService, SyncHealthMetrics, SyncHealthEscalation } from './SyncAwareHeartbeatMonitoringService.js';
+import { SyncHealthDashboardIntegration, SyncHealthDashboardData } from './SyncHealthDashboardIntegration.js';
 
 /**
  * Interface for existing MetricsService integration

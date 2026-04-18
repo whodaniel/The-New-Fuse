@@ -1,9 +1,9 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { AgentStatus, CreateAgentDto } from './create-agent.dto';
-import { LoginDto } from './login.dto';
-import { RegisterDto } from './register.dto';
-import { UpdateAgentDto } from './update-agent.dto';
+import { AgentStatus, CreateAgentDto } from './create-agent.dto.js';
+import { LoginDto } from './login.dto.js';
+import { RegisterDto } from './register.dto.js';
+import { UpdateAgentDto } from './update-agent.dto.js';
 
 describe('DTO Validation', () => {
   describe('LoginDto', () => {

@@ -1,2 +1,2 @@
-export * from './linkedin';
-export * from './twitter';
+export * from './linkedin.js';
+export * from './twitter.js';

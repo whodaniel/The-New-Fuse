@@ -5,7 +5,7 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { ProxyService } from '../../../packages/web-scraping/src/proxy/ProxyService';
+import { ProxyService } from '../../../packages/web-scraping/src/proxy/ProxyService.js';
 
 // Initialize proxy service with security policy
 const proxyService = new ProxyService({

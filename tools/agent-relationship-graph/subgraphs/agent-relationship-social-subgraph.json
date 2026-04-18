@@ -54,7 +54,7 @@
       "source": "task-agent-router",
       "target": "content-calendar-orchestrator-agent",
       "type": "routes_to",
-      "strength": 0.80
+      "strength": 0.8
     }
   ]
 }

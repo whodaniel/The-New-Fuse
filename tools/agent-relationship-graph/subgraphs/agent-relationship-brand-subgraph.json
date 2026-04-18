@@ -76,7 +76,7 @@
       "source": "brand-prospecting-agent",
       "target": "brand-outreach-agent",
       "type": "feeds",
-      "strength": 0.90
+      "strength": 0.9
     },
     {
       "source": "brand-outreach-agent",

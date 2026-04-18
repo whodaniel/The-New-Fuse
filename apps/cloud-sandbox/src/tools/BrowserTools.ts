@@ -5,7 +5,7 @@
  */
 
 import { Page } from 'playwright';
-import { ToolRegistry, ToolWrapper } from './ToolWrapper';
+import { ToolRegistry, ToolWrapper } from './ToolWrapper.js';
 
 /**
  * Register all browser tools

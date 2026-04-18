@@ -9,7 +9,7 @@ import {
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Request, Response } from 'express';
-import { AdvancedCacheManager } from '../services/advanced-cache.manager';
+import { AdvancedCacheManager } from '../services/advanced-cache.manager.js';
 import { Reflector } from '@nestjs/core';
 
 export const HTTP_CACHE_KEY = 'http_cache';

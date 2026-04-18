@@ -3,20 +3,20 @@
  * Tests for the core infrastructure management functionality
  */
 
-import { InfrastructureManager } from './InfrastructureManager';
-import { TemplateParser } from './TemplateParser';
-import { StateManager, InMemoryStateStorage } from './StateManager';
-import { ResourceProvisioner } from './ResourceProvisioner';
-import { TemplateValidator } from './TemplateValidator';
-import { ChangeAnalyzer } from './ChangeAnalyzer';
-import { MetricsCollector } from '../core/MetricsCollector';
+import { InfrastructureManager } from './InfrastructureManager.js';
+import { TemplateParser } from './TemplateParser.js';
+import { StateManager, InMemoryStateStorage } from './StateManager.js';
+import { ResourceProvisioner } from './ResourceProvisioner.js';
+import { TemplateValidator } from './TemplateValidator.js';
+import { ChangeAnalyzer } from './ChangeAnalyzer.js';
+import { MetricsCollector } from '../core/MetricsCollector.js';
 import {
   InfrastructureTemplate,
   CloudProvider,
   ResourceType,
   VariableType,
   InfrastructureUpdate
-} from '../types/infrastructure';
+} from '../types/infrastructure.js';
 import { createLogger } from 'winston';
 
 describe('InfrastructureManager', () => {

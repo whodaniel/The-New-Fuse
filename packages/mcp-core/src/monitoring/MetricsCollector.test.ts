@@ -3,8 +3,8 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MetricsCollector } from './MetricsCollector';
-import { Logger } from '../utils/Logger';
+import { MetricsCollector } from './MetricsCollector.js';
+import { Logger } from '../utils/Logger.js';
 
 describe('MetricsCollector', () => {
   let metricsCollector: MetricsCollector;

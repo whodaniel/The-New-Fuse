@@ -7,7 +7,7 @@
  */
 
 import type { ChatDetectionConfig, DetectedChatElements, StreamingState } from '../../shared/types';
-import { getSiteConfig, type SiteConfig } from './SiteConfigs';
+import { getSiteConfig, type SiteConfig } from './SiteConfigs.js';
 
 // Default configuration for universal detection
 const DEFAULT_CONFIG: ChatDetectionConfig = {

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
-import { WorkflowTemplatesService } from '../services/workflow-templates.service';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { User } from '../decorators/user.decorator';
+import { WorkflowTemplatesService } from '../services/workflow-templates.service.js';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard.js';
+import { User } from '../decorators/user.decorator.js';
 
 @Controller('workflow-templates')
 export class WorkflowTemplatesController {

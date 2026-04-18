@@ -3,9 +3,9 @@
  */
 import { relations } from 'drizzle-orm';
 import { jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
-import { agents } from './agents';
-import { pipelineStatusEnum, taskPriorityEnum, taskStatusEnum } from './enums';
-import { users } from './users';
+import { agents } from './agents.js';
+import { pipelineStatusEnum, taskPriorityEnum, taskStatusEnum } from './enums.js';
+import { users } from './users.js';
 
 // =============================================================================
 // PIPELINE

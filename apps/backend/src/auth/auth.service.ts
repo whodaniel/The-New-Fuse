@@ -11,12 +11,12 @@ import { drizzleUserRepository } from '@the-new-fuse/database';
 import * as admin from 'firebase-admin';
 import { Address, Hex, verifyMessage } from 'viem';
 import { SiweMessage } from 'siwe';
-import { EventBus } from '../events/event-bus.service';
-import { IdentityService } from '../services/identity.service';
-import { LoggingService } from '../services/logging.service';
-import { comparePasswords, hashPassword } from '../utils/auth.utils';
-import { UserLoginEvent } from './events/auth.events';
-import { TokenBlacklistService } from './token-blacklist.service';
+import { EventBus } from '../events/event-bus.service.js';
+import { IdentityService } from '../services/identity.service.js';
+import { LoggingService } from '../services/logging.service.js';
+import { comparePasswords, hashPassword } from '../utils/auth.utils.js';
+import { UserLoginEvent } from './events/auth.events.js';
+import { TokenBlacklistService } from './token-blacklist.service.js';
 
 @Injectable()
 export class AuthService {

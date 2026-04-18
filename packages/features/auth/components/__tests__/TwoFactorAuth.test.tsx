@@ -3,7 +3,7 @@ import React from "react";
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
 import react_2 from '@testing-library/react';
-import TwoFactorAuth_1 from '../TwoFactorAuth';
+import TwoFactorAuth_1 from '../TwoFactorAuth.js';
 import AuthContext_1 from '../../../contexts/AuthContext';
 import testUtils_1 from '../../../utils/testUtils';
 describe('TwoFactorAuth', () => {

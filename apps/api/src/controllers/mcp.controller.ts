@@ -19,7 +19,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseService, drizzleSchema, eq, like, or } from '@the-new-fuse/database';
-import { MarketplaceService } from '../modules/marketplace/marketplace.service';
+import { MarketplaceService } from '../modules/marketplace/marketplace.service.js';
 
 @ApiTags('mcp')
 @Controller('mcp')

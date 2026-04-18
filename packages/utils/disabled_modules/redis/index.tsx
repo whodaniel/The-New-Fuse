@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod): any {
 export {}
 exports.RedisClient = void 0;
 const ioredis_1 = __importDefault(require("ioredis"));
-import logging_1 from '../logging';
+import logging_1 from '../logging/index.js';
 class RedisClient {
     constructor() {
         this.reconnectAttempts = 0;

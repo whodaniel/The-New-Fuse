@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
-import { BasePage } from '../pages/base.page';
-import { config } from '../config/test-config';
+import { BasePage } from '../pages/base.page.js';
+import { config } from '../config/test-config.js';
 
 export class NavigationUtils extends BasePage {
   private readonly navMenu = '[data-testid="nav-menu"]';

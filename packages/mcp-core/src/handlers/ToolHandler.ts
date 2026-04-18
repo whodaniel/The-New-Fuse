@@ -3,8 +3,8 @@
  */
 
 import { randomUUID } from 'crypto';
-import { ToolHandler as IToolHandler, ToolResult, ValidationResult, ToolUsageStats, JSONSchema } from '../interfaces/IMCPTool';
-import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
+import { ToolHandler as IToolHandler, ToolResult, ValidationResult, ToolUsageStats, JSONSchema } from '../interfaces/IMCPTool.js';
+import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error.js';
 
 /**
  * Abstract base class for implementing tool handlers

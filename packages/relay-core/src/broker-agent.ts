@@ -4,7 +4,7 @@ import * as path from 'node:path';
 // @ts-ignore
 import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 import { Cluster, Redis } from 'ioredis';
-import { createTNFEnvelope } from './protocol/tnf-envelope';
+import { createTNFEnvelope } from './protocol/tnf-envelope.js';
 
 type QueueTask = {
   id: string;

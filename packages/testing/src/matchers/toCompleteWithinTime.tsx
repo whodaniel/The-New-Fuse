@@ -1,4 +1,4 @@
-import { createMatcher } from './utils';
+import { createMatcher } from './utils.js';
 
 export const toCompleteWithinTime = createMatcher(
   async (received: Promise<unknown>, timeLimit: number) => {

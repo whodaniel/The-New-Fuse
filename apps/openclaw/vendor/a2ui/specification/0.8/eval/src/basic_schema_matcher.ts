@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { SchemaMatcher, ValidationResult } from './schema_matcher';
+import { SchemaMatcher, ValidationResult } from './schema_matcher.js';
 
 export class BasicSchemaMatcher extends SchemaMatcher {
   constructor(

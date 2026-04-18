@@ -1,2 +1,2 @@
-export { EmbedderItem } from './EmbedderItem';
+export { EmbedderItem } from './EmbedderItem.js';
 //# sourceMappingURL=index.js.map

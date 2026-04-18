@@ -4,7 +4,7 @@
  * Pre-built wizard flows for common user goals in The New Fuse platform.
  */
 
-import { ValidationResult, WizardBuilder, WizardContext, WizardDefinition } from './WizardSystem';
+import { ValidationResult, WizardBuilder, WizardContext, WizardDefinition } from './WizardSystem.js';
 
 /**
  * Get Started Wizard - First-time user onboarding

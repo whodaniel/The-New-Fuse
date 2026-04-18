@@ -1,7 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { ProxyModule } from '../proxy/proxy.module';
-import { AnalyticsGatewayController } from './analytics-gateway.controller';
+import { ProxyModule } from '../proxy/proxy.module.js';
+import { AnalyticsGatewayController } from './analytics-gateway.controller.js';
 
 @Module({
   imports: [

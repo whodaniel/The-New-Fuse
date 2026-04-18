@@ -11,10 +11,10 @@ import {
   RateLimitTier,
   SecureAuthGuard,
   SetRateLimitTier,
-} from '../guards/secure-auth.guard';
-import { AuditService } from '../services/audit.service';
-import { MetricsService } from '../services/metrics.service';
-import { RoleService } from '../services/role.service';
+} from '../guards/secure-auth.guard.js';
+import { AuditService } from '../services/audit.service.js';
+import { MetricsService } from '../services/metrics.service.js';
+import { RoleService } from '../services/role.service.js';
 
 /**
  * Admin Controller

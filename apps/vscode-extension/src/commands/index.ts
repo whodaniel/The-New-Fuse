@@ -6,13 +6,13 @@
  */
 
 import * as vscode from 'vscode';
-import { ConfigManager } from '../core/config';
-import { ChatViewProvider } from '../providers/ChatViewProvider';
-import { getAIService } from '../services/AIService';
-import { getChatService } from '../services/ChatService';
-import { getMCPDiscoveryService } from '../services/MCPDiscoveryService';
-import { getMCPService } from '../services/MCPService';
-import { getOpenRouterService } from '../services/OpenRouterService';
+import { ConfigManager } from '../core/config.js';
+import { ChatViewProvider } from '../providers/ChatViewProvider.js';
+import { getAIService } from '../services/AIService.js';
+import { getChatService } from '../services/ChatService.js';
+import { getMCPDiscoveryService } from '../services/MCPDiscoveryService.js';
+import { getMCPService } from '../services/MCPService.js';
+import { getOpenRouterService } from '../services/OpenRouterService.js';
 import {
   getA2AProtocolService,
   getAGUIProtocolService,
@@ -21,7 +21,7 @@ import {
   getMemoryBankService,
   getProtocolTranslationService,
   getRelayServerService,
-} from '../services/tnf-framework';
+} from '../services/tnf-framework/index.js';
 import {
   getCurrentFilePath,
   getCurrentLanguageId,
@@ -29,8 +29,8 @@ import {
   showInfo,
   showQuickPick,
   showWarning,
-} from '../utils/helpers';
-import { log } from '../utils/logger';
+} from '../utils/helpers.js';
+import { log } from '../utils/logger.js';
 
 /**
  * Register all extension commands

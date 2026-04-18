@@ -1,9 +1,9 @@
 import React from 'react';
 import { useQuery } from 'react-query';
 import { useApi } from '../../hooks/useApi';
-import { AgentCard } from './AgentCard';
-import { AgentSearch } from './AgentSearch';
-import { AgentFilters } from './AgentFilters';
+import { AgentCard } from './AgentCard.js';
+import { AgentSearch } from './AgentSearch.js';
+import { AgentFilters } from './AgentFilters/index.js';
 
 const AgentList: React.FC = () => {
   const api = useApi();

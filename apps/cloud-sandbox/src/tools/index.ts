@@ -11,15 +11,15 @@ import type {
   ToolExecutionResult,
   ToolParameter,
   ToolSchema,
-} from './ToolWrapper';
-import { ToolRegistry, ToolWrapper } from './ToolWrapper';
+} from './ToolWrapper.js';
+import { ToolRegistry, ToolWrapper } from './ToolWrapper.js';
 
-import type { SkillContext, SkillExecutionResult, SkillSchema, SkillStep } from './SkillChains';
-import { SkillChain, SkillRegistry, registerDefaultSkills } from './SkillChains';
+import type { SkillContext, SkillExecutionResult, SkillSchema, SkillStep } from './SkillChains.js';
+import { SkillChain, SkillRegistry, registerDefaultSkills } from './SkillChains.js';
 
-import { registerBrowserTools } from './BrowserTools';
-import { registerExecutionTools } from './ExecutionTools';
-import { registerFilesystemTools } from './FilesystemTools';
+import { registerBrowserTools } from './BrowserTools.js';
+import { registerExecutionTools } from './ExecutionTools.js';
+import { registerFilesystemTools } from './FilesystemTools.js';
 
 export { ToolRegistry, ToolWrapper };
 export type { ToolExecutionContext, ToolExecutionResult, ToolParameter, ToolSchema };

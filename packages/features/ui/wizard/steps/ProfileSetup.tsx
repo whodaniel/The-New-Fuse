@@ -4,7 +4,7 @@
 
 import { Building, Cloud, Code, Database, Mail, Shield, Target, User } from 'lucide-react';
 import React, { useState } from 'react';
-import { WizardContext } from '../WizardSystem';
+import { WizardContext } from '../WizardSystem.js';
 
 export interface ProfileSetupProps {
   context: WizardContext;

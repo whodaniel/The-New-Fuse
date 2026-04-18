@@ -4,8 +4,8 @@ import {
   VersionDiff,
   Branch,
   VersionControlState,
-} from './types';
-import { DashboardState } from '../collaboration/types';
+} from './types.js';
+import { DashboardState } from '../collaboration/types/index.js';
 import deepDiff from 'deep-diff';
 
 export class VersionManager {

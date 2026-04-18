@@ -12,23 +12,23 @@ export {
   type ApiClientOptions,
   type ApiResponse,
   type ApiError
-} from './client/ApiClient';
+} from './client/ApiClient.js';
 
 // Token storage exports
 export {
   TokenStorage,
   type TokenStorage as TokenStorageInterface
-} from './auth/TokenStorage';
+} from './auth/TokenStorage.js';
 
 // Base service exports
 export {
   BaseService
-} from './services/BaseService';
+} from './services/BaseService.js';
 
 // Configuration exports
 export {
   type ApiConfig
-} from './config/ApiConfig';
+} from './config/ApiConfig.js';
 
 // Authentication service exports
 export {
@@ -36,7 +36,7 @@ export {
   createAuthService,
   type AuthResponse,
   type UserData
-} from './services/auth.service';
+} from './services/auth.service.js';
 
 // Workflow service exports
 export {
@@ -49,7 +49,7 @@ export {
   type WorkflowCreateData,
   type WorkflowUpdateData,
   WorkflowExecutionStatus
-} from './services/workflow.service';
+} from './services/workflow.service.js';
 
 // Agent service exports
 export {
@@ -61,7 +61,7 @@ export {
   type AgentUpdateData,
   type AgentExecutionResult,
   AgentStatus
-} from './services/agent.service';
+} from './services/agent.service.js';
 
 // User service exports
 export {
@@ -70,7 +70,7 @@ export {
   type User,
   type UserProfile,
   type UserUpdateData
-} from './services/user.service';
+} from './services/user.service.js';
 
 /**
  * Create a new API client with the given configuration

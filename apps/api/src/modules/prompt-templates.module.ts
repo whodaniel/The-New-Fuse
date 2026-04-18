@@ -4,8 +4,8 @@ import { JwtModule } from '@nestjs/jwt';
 // @ts-ignore
 // @ts-ignore
 import { DatabaseModule } from '@the-new-fuse/database';
-import { PromptTemplatesController } from '../controllers/prompt-templates.controller';
-import { PromptTemplatesService } from '../services/prompt-templates.service';
+import { PromptTemplatesController } from '../controllers/prompt-templates.controller.js';
+import { PromptTemplatesService } from '../services/prompt-templates.service.js';
 
 const getJwtSecret = (): string => {
   const secret = process.env.JWT_SECRET;

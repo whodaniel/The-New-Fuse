@@ -6,7 +6,7 @@ import {
   RateLimitTier,
   SecureAuthGuard,
   SetRateLimitTier,
-} from '../guards/secure-auth.guard';
+} from '../guards/secure-auth.guard.js';
 
 /**
  * Export Service

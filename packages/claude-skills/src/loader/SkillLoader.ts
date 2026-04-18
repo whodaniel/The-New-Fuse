@@ -8,8 +8,8 @@ import { exec } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { promisify } from 'util';
-import { SkillParser } from '../parser';
-import type { ClaudeSkill, SkillCategory, SkillImportResult, SkillLoaderConfig } from '../types';
+import { SkillParser } from '../parser/index.js';
+import type { ClaudeSkill, SkillCategory, SkillImportResult, SkillLoaderConfig } from '../types/index.js';
 
 const execAsync = promisify(exec);
 

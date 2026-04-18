@@ -5,8 +5,8 @@
  * a fully integrated MCP system with all components working together.
  */
 
-import { MCPSystemFactory, MCPSystemConfig } from '../src/factory/MCPSystemFactory';
-import { LogLevel } from '../src/types/common';
+import { MCPSystemFactory, MCPSystemConfig } from '../src/factory/MCPSystemFactory.js';
+import { LogLevel } from '../src/types/common.js';
 
 async function createIntegratedMCPSystem() {
   console.log('🚀 Creating Integrated MCP System...');

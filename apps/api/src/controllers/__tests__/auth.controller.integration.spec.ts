@@ -7,9 +7,9 @@ import { DatabaseService } from '@the-new-fuse/database';
 import { hash } from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import { AuthGuard } from '../../guards/auth.guard';
-import { AuthService } from '../../services/auth.service';
-import { AuthController } from '../auth.controller';
+import { AuthGuard } from '../../guards/auth.guard.js';
+import { AuthService } from '../../services/auth.service.js';
+import { AuthController } from '../auth.controller.js';
 
 describe('AuthController Login Claims (integration)', () => {
   let controller: AuthController;

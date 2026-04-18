@@ -35,7 +35,7 @@ export * from './directories';
 export * from './files';
 
 // Chat utilities
-export * from './chat';
+export * from './chat/index';
 export * from './chat/clipboard';
 export * from './chat/codeblock';
 export * from './chat/highlight';

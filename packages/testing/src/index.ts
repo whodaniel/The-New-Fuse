@@ -6,12 +6,12 @@
  */
 
 // Export artifact utilities
-export * from './artifacts/artifact-manager';
+export * from './artifacts/artifact-manager.js';
 
 // Export test helpers
-export * from './utils/test-helpers';
-export * from './utils/react-helpers';
-export * from './utils/nestjs-helpers';
+export * from './utils/test-helpers.js';
+export * from './utils/react-helpers.js';
+export * from './utils/nestjs-helpers.js';
 
 // Export fixtures
-export * from './fixtures';
+export * from './fixtures/index.js';

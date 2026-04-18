@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Put, Body, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
-import { AgentService } from '../services/agent.service';
-import { WorkflowService } from '../services/workflow.service';
-import { CurrentUser } from '../modules/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard.js';
+import { AgentService } from '../services/agent.service.js';
+import { WorkflowService } from '../services/workflow.service.js';
+import { CurrentUser } from '../modules/decorators/current-user.decorator.js';
 // Local type definition to avoid cross-package import issues
 interface UserModel {
   id: string;

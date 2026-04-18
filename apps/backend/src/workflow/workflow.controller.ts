@@ -17,8 +17,8 @@ import {
 import { db } from '@the-new-fuse/database';
 import { workflows, workflowSteps } from '@the-new-fuse/database/drizzle/schema';
 import { eq } from 'drizzle-orm';
-import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';
-import { WorkflowExecutionService } from './workflow-execution.service';
+import { SupabaseAuthGuard } from '../auth/supabase-auth.guard.js';
+import { WorkflowExecutionService } from './workflow-execution.service.js';
 
 interface CreateWorkflowDto {
   name: string;

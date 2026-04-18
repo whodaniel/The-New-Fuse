@@ -12,8 +12,8 @@ import {
   MCPCallback,
   ErrorRecoveryConfig,
   MonitoringConfig
-} from '../interfaces/IMCPWorkflowIntegration';
-import { MCPErrorClass } from '../types/error';
+} from '../interfaces/IMCPWorkflowIntegration.js';
+import { MCPErrorClass } from '../types/error.js';
 
 /**
  * Execution metrics for monitoring

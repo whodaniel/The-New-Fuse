@@ -1,13 +1,13 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
-import { AgentExecutionsService } from './agent-executions.service';
+import { AgentExecutionsService } from './agent-executions.service.js';
 import {
   AgentExecutionQueryDto,
   AgentExecutionResponseDto,
   AgentExecutionListResponseDto,
   ExecutionStatus
-} from './dto/agent-execution.dto';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+} from './dto/agent-execution.dto.js';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
 
 @ApiTags('agents')
 @Controller('agents/executions')

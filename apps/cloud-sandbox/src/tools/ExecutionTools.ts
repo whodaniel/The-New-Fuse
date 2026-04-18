@@ -6,7 +6,7 @@
 
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { ToolRegistry, ToolWrapper } from './ToolWrapper';
+import { ToolRegistry, ToolWrapper } from './ToolWrapper.js';
 
 const execAsync = promisify(exec);
 

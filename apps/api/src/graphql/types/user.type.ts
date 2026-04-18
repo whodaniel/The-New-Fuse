@@ -1,7 +1,7 @@
 // @ts-ignore
 import { ObjectType, Field, ID } from '@nestjs/graphql';
-import { AgentType } from './agent.type';
-import { WorkflowType } from './workflow.type';
+import { AgentType } from './agent.type.js';
+import { WorkflowType } from './workflow.type.js';
 
 @ObjectType('User')
 export class UserType {

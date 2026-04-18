@@ -17,10 +17,10 @@
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
-import { evaluationFlow } from './evaluation_flow';
-import { logger } from './logger';
-import { rateLimiter } from './rateLimiter';
-import { EvaluatedResult, IssueSeverity, ValidatedResult } from './types';
+import { evaluationFlow } from './evaluation_flow.js';
+import { logger } from './logger.js';
+import { rateLimiter } from './rateLimiter.js';
+import { EvaluatedResult, IssueSeverity, ValidatedResult } from './types.js';
 
 export class Evaluator {
   constructor(

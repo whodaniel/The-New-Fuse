@@ -1,4 +1,4 @@
-import { DashboardWidget, DashboardLayout } from '../types';
+import { DashboardWidget, DashboardLayout } from '../types/index.js';
 
 export interface DashboardTemplate {
   id: string;

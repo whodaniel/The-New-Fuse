@@ -16,8 +16,8 @@ import type {
   NotificationType,
   ProtocolMessage,
   TNFNode,
-} from '../shared/types';
-import { simpleHash } from '../shared/utils';
+} from '../shared/types.js';
+import { simpleHash } from '../shared/utils.js';
 
 // Storage keys
 const STORAGE_KEYS = {

@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from '../../../auth/decorators/current-user.decorator';
-import { Roles } from '../../../auth/decorators/roles.decorator';
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../auth/guards/roles.guard';
-import { ConfigurationService } from '../../configuration/configuration.service';
+import { CurrentUser } from '../../../auth/decorators/current-user.decorator.js';
+import { Roles } from '../../../auth/decorators/roles.decorator.js';
+import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard.js';
+import { RolesGuard } from '../../../auth/guards/roles.guard.js';
+import { ConfigurationService } from '../../configuration/configuration.service.js';
 
 @ApiTags('admin')
 @Controller('admin/config')

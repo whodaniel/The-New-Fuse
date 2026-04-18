@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { SuggestionActionsContext } from './types/index';
+import { SuggestionActionsContext } from './types/index.js';
 
 export const useSuggestionActions = (): any => {
   const context = useContext(SuggestionActionsContext);

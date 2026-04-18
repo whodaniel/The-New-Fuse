@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '../Button';
+import { Button } from '../Button/index';
 import { useTheme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
 import { MoonIcon, SunIcon } from '@/components/icons';

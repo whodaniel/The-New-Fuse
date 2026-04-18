@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, Param, UseGuards, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
-import { ChatService } from '../services/chat.service';
-import { CreateMessageDto } from '../dtos/message.dto';
-import { AuthGuard } from '../guards/auth.guard';
+import { ChatService } from '../services/chat.service.js';
+import { CreateMessageDto } from '../dtos/message.dto.js';
+import { AuthGuard } from '../guards/auth.guard.js';
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore

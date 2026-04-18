@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictManager } from './ConflictManager';
-import { SyncDatabaseService } from '../database/SyncDatabaseService';
+import { ConflictManager } from './ConflictManager.js';
+import { SyncDatabaseService } from '../database/SyncDatabaseService.js';
 import { DrizzleClient, SyncConflict, SyncState } from '@the-new-fuse/database/generated/drizzle';
-import { ConflictResolutionStrategy } from '../types';
+import { ConflictResolutionStrategy } from '../types/index.js';
 
 // Mock DrizzleClient
 const mockDrizzleClient = {

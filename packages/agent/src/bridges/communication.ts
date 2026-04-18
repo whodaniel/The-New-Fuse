@@ -9,7 +9,7 @@
  * - Channel subscriptions
  */
 
-import { BaseBridge, MessageType, Priority } from './index';
+import { BaseBridge, MessageType, Priority } from './index.js';
 
 // ============================================================
 // COMMUNICATION TYPES

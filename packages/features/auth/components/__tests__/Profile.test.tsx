@@ -2,7 +2,7 @@ import React from "react";
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
-import Profile_1 from '../Profile';
+import Profile_1 from '../Profile.js';
 import testUtils_1 from '@/utils/testUtils';
 import testUtils_2 from '@/utils/testUtils';
 import AuthContext_1 from '@/contexts/AuthContext';

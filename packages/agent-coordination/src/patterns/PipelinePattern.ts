@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
-import { Task, TaskPriority } from '../core/types';
-import { Coordinator } from '../orchestration/Coordinator';
+import { Task, TaskPriority } from '../core/types.js';
+import { Coordinator } from '../orchestration/Coordinator.js';
 
 /**
  * Pipeline stage function

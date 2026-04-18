@@ -1,6 +1,6 @@
 import { google } from 'googleapis';
 
-import { getAuthClient } from './auth';
+import { getAuthClient } from './auth.js';
 
 async function getSheetsService() {
   const auth = await getAuthClient();

@@ -3,9 +3,9 @@
  */
 
 import { describe, it, expect, beforeEach } from '@jest/globals';
-import { PermissionValidator, MCPOperation, MCPResourceType } from './PermissionValidator';
-import { RBACManager, Permission, Role } from './RBACManager';
-import { AuthContext } from './AuthenticationManager';
+import { PermissionValidator, MCPOperation, MCPResourceType } from './PermissionValidator.js';
+import { RBACManager, Permission, Role } from './RBACManager.js';
+import { AuthContext } from './AuthenticationManager.js';
 
 describe('PermissionValidator', () => {
   let rbacManager: RBACManager;

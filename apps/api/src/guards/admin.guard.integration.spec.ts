@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { AdminGuard } from './admin.guard';
+import { AdminGuard } from './admin.guard.js';
 
 class TestAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {

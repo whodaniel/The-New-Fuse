@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from '../app.module';
-import { AgentSwarmOrchestrationService } from '../modules/agency-hub/services/agent-swarm-orchestration.service';
-import { PromptTemplatesService } from '../services/prompt-templates.service';
+import { AppModule } from '../app.module.js';
+import { AgentSwarmOrchestrationService } from '../modules/agency-hub/services/agent-swarm-orchestration.service.js';
+import { PromptTemplatesService } from '../services/prompt-templates.service.js';
 import { Logger } from '@nestjs/common';
 
 async function bootstrap() {

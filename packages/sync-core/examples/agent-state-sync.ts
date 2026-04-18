@@ -6,7 +6,7 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { SyncOrchestrator } from '../src/services/SyncOrchestrator';
+import { SyncOrchestrator } from '../src/services/SyncOrchestrator.js';
 
 interface AgentState {
   id: string;

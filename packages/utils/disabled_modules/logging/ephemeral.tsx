@@ -21,7 +21,7 @@ const plugins_1 = __importDefault(require("./aibitat/plugins"));
 const imported_1 = __importDefault(require("./imported"));
 import http_socket_1 from './aibitat/plugins/http-socket';
 import workspaceChats_1 from '../../models/workspaceChats';
-import http_1 from '../http';
+import http_1 from '../http/index.js';
 import defaults_1 from './defaults';
 import _1 from '.;
 import workspaceAgentInvocation_1 from '../../models/workspaceAgentInvocation';

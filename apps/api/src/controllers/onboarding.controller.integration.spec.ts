@@ -8,8 +8,8 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { AuthService } from '../services/auth.service';
-import { OnboardingController } from './onboarding.controller';
+import { AuthService } from '../services/auth.service.js';
+import { OnboardingController } from './onboarding.controller.js';
 
 describe('OnboardingController integration', () => {
   let app: INestApplication;

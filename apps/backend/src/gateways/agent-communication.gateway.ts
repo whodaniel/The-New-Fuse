@@ -8,7 +8,7 @@ import {
 } from '@nestjs/websockets';
 import { Redis } from 'ioredis';
 import { Server, Socket } from 'socket.io';
-import { RedisService } from '../services/redis.service';
+import { RedisService } from '../services/redis.service.js';
 
 @WebSocketGateway({
   cors: {

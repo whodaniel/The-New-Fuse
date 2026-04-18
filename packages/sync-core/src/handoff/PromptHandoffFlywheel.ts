@@ -8,9 +8,9 @@
  */
 
 import { EventEmitter } from 'events';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { MasterClockService } from '../services/MasterClockService';
-import { ConflictManager } from '../services/ConflictManager';
+import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
+import { MasterClockService } from '../services/MasterClockService.js';
+import { ConflictManager } from '../services/ConflictManager.js';
 
 export interface HandoffContext {
   id: string;

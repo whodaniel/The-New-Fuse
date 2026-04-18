@@ -6,8 +6,8 @@
  */
 
 import * as vscode from 'vscode';
-import { RedisAgentClient } from '../../../../../packages/tnf-cli/src/RedisAgentClient';
-import { log } from '../../utils/logger';
+import { RedisAgentClient } from '../../../../../packages/tnf-cli/src/RedisAgentClient.js';
+import { log } from '../../utils/logger.js';
 
 interface ConnectedAgent {
   id: string;

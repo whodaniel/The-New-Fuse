@@ -4,7 +4,7 @@
 
 import { Briefcase, Folder, Globe, Lock, Rocket, User, Users } from 'lucide-react';
 import React, { useState } from 'react';
-import { WizardContext } from '../WizardSystem';
+import { WizardContext } from '../WizardSystem.js';
 
 export interface WorkspaceSetupProps {
   context: WizardContext;

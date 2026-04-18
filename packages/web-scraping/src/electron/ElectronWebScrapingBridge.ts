@@ -6,10 +6,10 @@
  */
 
 import { ipcMain } from 'electron';
-import { WebScrapingService } from '../core/WebScrapingService';
-import { ProxyService } from '../proxy/ProxyService';
-import { WebScrapingMCPTools } from '../mcp/WebScrapingMCPTools';
-import { WebScrapingConfig, ScrapingResult, SecurityPolicy } from '../types';
+import { WebScrapingService } from '../core/WebScrapingService.js';
+import { ProxyService } from '../proxy/ProxyService.js';
+import { WebScrapingMCPTools } from '../mcp/WebScrapingMCPTools.js';
+import { WebScrapingConfig, ScrapingResult, SecurityPolicy } from '../types/index.js';
 
 export class ElectronWebScrapingBridge {
   private webScrapingService: WebScrapingService;

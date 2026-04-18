@@ -2,15 +2,15 @@
  * Integration tests for MCP Service Mesh Integration
  */
 
-import { MCPServiceMesh } from './MCPServiceMesh';
-import { KubernetesServiceMeshProvider } from './providers/KubernetesServiceMeshProvider';
-import { MCPServiceInfo, ServiceHealth } from '../types/broker';
-import { ServiceStatus } from '../types/common';
+import { MCPServiceMesh } from './MCPServiceMesh.js';
+import { KubernetesServiceMeshProvider } from './providers/KubernetesServiceMeshProvider.js';
+import { MCPServiceInfo, ServiceHealth } from '../types/broker.js';
+import { ServiceStatus } from '../types/common.js';
 import {
   ServiceMeshRegistration,
   ServiceScalingConfig,
   AutoDiscoveryConfig
-} from '../interfaces/IMCPServiceMesh';
+} from '../interfaces/IMCPServiceMesh.js';
 
 describe('MCPServiceMesh Integration Tests', () => {
   let serviceMesh: MCPServiceMesh;

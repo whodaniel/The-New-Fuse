@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AgentExecutionsController } from './agent-executions.controller';
-import { AgentExecutionsService } from './agent-executions.service';
-import { AgentExecutionQueryDto, ExecutionStatus } from './dto/agent-execution.dto';
+import { AgentExecutionsController } from './agent-executions.controller.js';
+import { AgentExecutionsService } from './agent-executions.service.js';
+import { AgentExecutionQueryDto, ExecutionStatus } from './dto/agent-execution.dto.js';
 
 describe('AgentExecutionsController', () => {
   let controller: AgentExecutionsController;

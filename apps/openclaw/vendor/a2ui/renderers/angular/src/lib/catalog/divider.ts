@@ -15,7 +15,7 @@
  */
 
 import { Component } from '@angular/core';
-import { DynamicComponent } from '../rendering/dynamic-component';
+import { DynamicComponent } from '../rendering/dynamic-component.js';
 
 @Component({
   selector: 'a2ui-divider',

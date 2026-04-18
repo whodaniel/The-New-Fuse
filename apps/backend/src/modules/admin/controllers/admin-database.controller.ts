@@ -2,9 +2,9 @@ import { Body, Controller, Get, HttpException, HttpStatus, Post, UseGuards } fro
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { db } from '@the-new-fuse/database';
 import { sql } from 'drizzle-orm';
-import { Roles } from '../../../auth/decorators/roles.decorator';
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../auth/guards/roles.guard';
+import { Roles } from '../../../auth/decorators/roles.decorator.js';
+import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard.js';
+import { RolesGuard } from '../../../auth/guards/roles.guard.js';
 
 @ApiTags('admin')
 @Controller('admin/database')

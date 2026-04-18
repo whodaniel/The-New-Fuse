@@ -6,11 +6,11 @@ import {
   DeploymentStrategy as StrategyType,
   RollbackResult,
   PipelineStatus
-} from '../types/pipeline';
-import { IDeploymentStrategy, DeploymentProgress } from './DeploymentStrategy';
-import { RollingUpdateStrategy } from './RollingUpdateStrategy';
-import { BlueGreenStrategy } from './BlueGreenStrategy';
-import { CanaryStrategy } from './CanaryStrategy';
+} from '../types/pipeline.js';
+import { IDeploymentStrategy, DeploymentProgress } from './DeploymentStrategy.js';
+import { RollingUpdateStrategy } from './RollingUpdateStrategy.js';
+import { BlueGreenStrategy } from './BlueGreenStrategy.js';
+import { CanaryStrategy } from './CanaryStrategy.js';
 
 /**
  * Deployment approval interface

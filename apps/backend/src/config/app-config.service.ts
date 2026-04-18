@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { validateCloudRootPolicy } from './cloud-root-policy';
+import { validateCloudRootPolicy } from './cloud-root-policy.js';
 
 /**
  * Centralized Application Configuration Service

@@ -30,7 +30,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { Types, Styles } from '@a2ui/lit/0.8';
-import { Catalog } from './catalog';
+import { Catalog } from './catalog.js';
 import { isPlatformBrowser } from '@angular/common';
 
 @Directive({

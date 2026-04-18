@@ -4,10 +4,10 @@ import { DatabaseService } from '@the-new-fuse/database';
 import { agents, transactions, users, wallets } from '@the-new-fuse/database/drizzle/schema';
 import { Job } from 'bull';
 import { and, count, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
-import { SystemMetricsService } from '../../modules/system-metrics/system-metrics.service';
-import { EmailService } from '../../services/email.service';
-import { QueueName } from '../constants/queue-names';
-import { ReportGenerationJobData } from '../interfaces/job-data.interface';
+import { SystemMetricsService } from '../../modules/system-metrics/system-metrics.service.js';
+import { EmailService } from '../../services/email.service.js';
+import { QueueName } from '../constants/queue-names.js';
+import { ReportGenerationJobData } from '../interfaces/job-data.interface.js';
 
 /**
  * Report generation job processor

@@ -3,9 +3,9 @@
  * Tests all 23 methods of the agent repository
  */
 
-import { drizzleAgentRepository } from '../../src/drizzle/repositories/agent.repository';
-import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository';
-import { AgentFactory, UserFactory } from '../utils/factories';
+import { drizzleAgentRepository } from '../../src/drizzle/repositories/agent.repository.js';
+import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository.js';
+import { AgentFactory, UserFactory } from '../utils/factories.js';
 import {
   expectDatabaseRow,
   expectSoftDeleted,
@@ -16,8 +16,8 @@ import {
   expectValidPagination,
   expectNotDeleted,
   expectDeleted,
-} from '../utils/assertions';
-import { pastTimestamp, sleep } from '../utils/database-helpers';
+} from '../utils/assertions.js';
+import { pastTimestamp, sleep } from '../utils/database-helpers.js';
 
 describe('DrizzleAgentRepository', () => {
   let testUserId: string;

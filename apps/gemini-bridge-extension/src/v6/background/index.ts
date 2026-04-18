@@ -6,7 +6,7 @@
  * starting the relay from the extension's Services tab.
  */
 
-import youtubeService from '../services/ai-studio/youtube-service';
+import youtubeService from '../services/ai-studio/youtube-service.js';
 import type {
   Agent,
   AgentMessage,
@@ -17,8 +17,8 @@ import type {
   NotificationType,
   ProtocolMessage,
   TNFNode,
-} from '../shared/types';
-import { simpleHash } from '../shared/utils';
+} from '../shared/types.js';
+import { simpleHash } from '../shared/utils.js';
 
 // Storage keys
 const STORAGE_KEYS = {

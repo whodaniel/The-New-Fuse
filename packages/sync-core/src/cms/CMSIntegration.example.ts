@@ -7,17 +7,17 @@
  */
 
 import { DrizzleClient, UserRole } from '@the-new-fuse/database/generated/drizzle';
-import { RedisService } from '../config/SyncRedisConfig';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';
-import { CMSIntegrationService } from './CMSIntegrationService';
+import { RedisService } from '../config/SyncRedisConfig.js';
+import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
+import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher.js';
+import { CMSIntegrationService } from './CMSIntegrationService.js';
 import { 
   ContentType, 
   PrivacyLevel, 
   Permission,
   SyncFrequency,
   ConflictResolutionStrategy
-} from './types';
+} from './types.js';
 
 async function demonstrateCMSIntegration() {
   // Initialize dependencies (these would be injected in real application)

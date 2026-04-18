@@ -2,7 +2,7 @@
  * Unit tests for MCP Service Mesh Integration
  */
 
-import { MCPServiceMesh, ServiceMeshProvider } from './MCPServiceMesh';
+import { MCPServiceMesh, ServiceMeshProvider } from './MCPServiceMesh.js';
 import {
   ServiceMeshRegistration,
   ServiceMeshQuery,
@@ -10,9 +10,9 @@ import {
   ServiceScalingConfig,
   AutoDiscoveryConfig,
   ScalingEvent
-} from '../interfaces/IMCPServiceMesh';
-import { MCPServiceInfo, ServiceHealth } from '../types/broker';
-import { ServiceStatus } from '../types/common';
+} from '../interfaces/IMCPServiceMesh.js';
+import { MCPServiceInfo, ServiceHealth } from '../types/broker.js';
+import { ServiceStatus } from '../types/common.js';
 
 // Mock service mesh provider
 class MockServiceMeshProvider implements ServiceMeshProvider {

@@ -5,7 +5,7 @@
  * through the global ValidationPipe configured in main.ts
  */
 
-export * from './create-agent.dto';
-export * from './login.dto';
-export * from './register.dto';
-export * from './update-agent.dto';
+export * from './create-agent.dto.js';
+export * from './login.dto.js';
+export * from './register.dto.js';
+export * from './update-agent.dto.js';

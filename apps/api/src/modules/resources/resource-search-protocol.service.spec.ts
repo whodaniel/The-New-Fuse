@@ -3,7 +3,7 @@ import type {
   ResourceCatalogItem,
   ResourceSearchProtocolRequestEnvelope,
 } from '@the-new-fuse/types';
-import { ResourceSearchProtocolService } from './resource-search-protocol.service';
+import { ResourceSearchProtocolService } from './resource-search-protocol.service.js';
 
 describe('ResourceSearchProtocolService', () => {
   const service = new ResourceSearchProtocolService();

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import type { ThemeConfig, ThemeContextValue, ThemeColors, ThemeMode } from './types';
+import type { ThemeConfig, ThemeContextValue, ThemeColors, ThemeMode } from './types.js';
 const defaultLightColors: ThemeColors = {
     primary: '#0ba5ec',
     secondary: '#805ad5',

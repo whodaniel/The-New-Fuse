@@ -6,10 +6,10 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { LoadBalancer } from './LoadBalancer';
-import { MCPServiceInfo, LoadBalancingConfig } from '../types';
-import { LoadBalancingStrategy, ServiceStatus } from '../types/common';
-import { MCPErrorClass } from '../types/error';
+import { LoadBalancer } from './LoadBalancer.js';
+import { MCPServiceInfo, LoadBalancingConfig } from '../types/index.js';
+import { LoadBalancingStrategy, ServiceStatus } from '../types/common.js';
+import { MCPErrorClass } from '../types/error.js';
 
 describe('LoadBalancer', () => {
   let loadBalancer: LoadBalancer;

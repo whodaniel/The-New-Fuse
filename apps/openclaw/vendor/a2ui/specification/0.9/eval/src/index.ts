@@ -18,14 +18,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { analysisFlow } from './analysis_flow';
-import { Evaluator } from './evaluator';
-import { Generator } from './generator';
-import { logger, setupLogger } from './logger';
-import { modelsToTest } from './models';
-import { prompts } from './prompts';
-import { EvaluatedResult } from './types';
-import { Validator } from './validator';
+import { analysisFlow } from './analysis_flow.js';
+import { Evaluator } from './evaluator.js';
+import { Generator } from './generator.js';
+import { logger, setupLogger } from './logger.js';
+import { modelsToTest } from './models.js';
+import { prompts } from './prompts.js';
+import { EvaluatedResult } from './types.js';
+import { Validator } from './validator.js';
 
 const schemaFiles = [
   '../../json/common_types.json',

@@ -3,13 +3,13 @@ import {
   TodoItem, 
   SuggestionStatus, 
   SuggestionPriority 
-} from '../types';
+} from '../types/index.js';
 import { 
   TimelineEvent, 
   TimelineBranch, 
   TimelineWorkflow, 
   WorkflowStep 
-} from '../types/timeline';
+} from '../types/timeline.js';
 
 /**
  * Interface for the suggestion service that handles feature suggestions and todos

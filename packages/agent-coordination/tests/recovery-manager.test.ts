@@ -1,12 +1,12 @@
 // REDIS MIGRATION: This file has been automatically migrated to use UnifiedRedisService
 // TODO: Update service injection and method calls as needed
 
-import { RecoveryManager } from '../src/coordination/RecoveryManager';
-import { SharedStateManager } from '../src/coordination/shared-state-manager';
-import { PresenceTracker } from '../src/presence/presence-tracker';
-import { TaskQueueManager } from '../src/queues/task-queue-manager';
-import { MessageSerializer } from '../src/serializers/message-serializer';
-import { AgentStatus } from '../src/types/coordination.types';
+import { RecoveryManager } from '../src/coordination/RecoveryManager.js';
+import { SharedStateManager } from '../src/coordination/shared-state-manager.js';
+import { PresenceTracker } from '../src/presence/presence-tracker.js';
+import { TaskQueueManager } from '../src/queues/task-queue-manager.js';
+import { MessageSerializer } from '../src/serializers/message-serializer.js';
+import { AgentStatus } from '../src/types/coordination.types.js';
 
 // Mock dependencies
 jest.mock('ioredis');

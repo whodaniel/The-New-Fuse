@@ -1,1 +1,1 @@
-export * from './CallbackHandlerRegistry';
+export * from './CallbackHandlerRegistry.js';

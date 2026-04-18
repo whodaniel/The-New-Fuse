@@ -1,13 +1,13 @@
 import { Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
-import { QueueName } from '../constants/queue-names';
+import { QueueName } from '../constants/queue-names.js';
 import {
   EmailJobData,
   WelcomeEmailJobData,
   NotificationEmailJobData,
-} from '../interfaces/job-data.interface';
-import { EmailService } from '../../services/email.service';
+} from '../interfaces/job-data.interface.js';
+import { EmailService } from '../../services/email.service.js';
 
 /**
  * Email job processor

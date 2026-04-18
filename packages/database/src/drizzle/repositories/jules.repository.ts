@@ -3,8 +3,8 @@
  * Provides data access for Jules integration (configs, sessions, usage logs)
  */
 import { and, desc, eq, isNull } from 'drizzle-orm';
-import { db } from '../client';
-import { julesConfigs, julesSessions, julesUsageLogs } from '../schema';
+import { db } from '../client.js';
+import { julesConfigs, julesSessions, julesUsageLogs } from '../schema/index.js';
 import type {
   JulesConfig,
   JulesSession,
@@ -12,7 +12,7 @@ import type {
   NewJulesConfig,
   NewJulesSession,
   NewJulesUsageLog,
-} from '../types/jules';
+} from '../types/jules.js';
 
 /**
  * Jules Repository - provides data access for Jules-related entities

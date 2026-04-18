@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { IOrientationStep } from '../interfaces/agent-registry.interfaces';
+import { IOrientationStep } from '../interfaces/agent-registry.interfaces.js';
 
 @Injectable()
 export class AgentOrientationService {

@@ -12,7 +12,7 @@ import {
   UseGuards,
   Logger
 } from '@nestjs/common';
-import { A2AService } from './a2a.service';
+import { A2AService } from './a2a.service.js';
 import {
   AgentRegistration,
   A2AMessage,
@@ -20,7 +20,7 @@ import {
   AgentStatus,
   A2AMessageType,
   A2APriority
-} from './types';
+} from './types.js';
 
 @Controller('a2a')
 export class A2AController {

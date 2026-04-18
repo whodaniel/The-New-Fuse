@@ -1,4 +1,4 @@
-import { DashboardState, ShareConfig } from '../exporters/types';
+import { DashboardState, ShareConfig } from '../exporters/types.js';
 
 export class DashboardStorage {
   private storage: Storage;

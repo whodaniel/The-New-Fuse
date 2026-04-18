@@ -3,7 +3,7 @@ const vi = jest;
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as os from 'os';
-import { EnhancedFileSystemWatcher, WatcherConfig } from './EnhancedFileSystemWatcher';
+import { EnhancedFileSystemWatcher, WatcherConfig } from './EnhancedFileSystemWatcher.js';
 
 // Simple integration test without complex mocking
 describe('EnhancedFileSystemWatcher Integration', () => {

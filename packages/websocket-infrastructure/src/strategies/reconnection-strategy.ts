@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { ReconnectionStrategy } from '../types';
+import { ReconnectionStrategy } from '../types/index.js';
 
 /**
  * Exponential backoff reconnection strategy

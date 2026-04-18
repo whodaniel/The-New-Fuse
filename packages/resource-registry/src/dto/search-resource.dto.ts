@@ -1,7 +1,7 @@
 import { IsString, IsOptional, IsEnum, IsArray, IsBoolean, IsInt, Min, Max, IsDateString } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { ResourceCategory, ResourceType, ResourceVisibility, ResourceStatus } from '../types';
+import { ResourceCategory, ResourceType, ResourceVisibility, ResourceStatus } from '../types/index.js';
 
 export class SearchResourceDto {
   @ApiPropertyOptional({ description: 'Search query (searches name, description, tags, keywords)' })

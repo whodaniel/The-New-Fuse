@@ -75,7 +75,7 @@
       "source": "legal-compliance-agent",
       "target": "affiliate-link-manager-agent",
       "type": "governs",
-      "strength": 0.90
+      "strength": 0.9
     },
     {
       "source": "legal-compliance-agent",

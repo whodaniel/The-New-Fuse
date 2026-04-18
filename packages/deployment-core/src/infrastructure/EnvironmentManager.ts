@@ -7,8 +7,8 @@ import {
   InfrastructureTemplate,
   CloudProvider,
   EnvironmentType
-} from '../types/infrastructure';
-import { InfrastructureManager } from './InfrastructureManager';
+} from '../types/infrastructure.js';
+import { InfrastructureManager } from './InfrastructureManager.js';
 
 export interface Environment {
   id: string;

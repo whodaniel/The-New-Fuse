@@ -6,7 +6,7 @@
 
 import { Activity, AlertTriangle, Check, Loader, RefreshCw, Terminal, X } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
-import { WizardContext } from '../WizardSystem';
+import { WizardContext } from '../WizardSystem.js';
 
 export interface DiagnosticsRunnerProps {
   context: WizardContext;

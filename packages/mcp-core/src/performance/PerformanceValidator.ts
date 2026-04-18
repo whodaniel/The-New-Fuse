@@ -2,8 +2,8 @@
  * Performance Validation System
  */
 
-import { Logger } from '../utils/Logger';
-import { LoadTestRunner, LoadTestScenario } from './LoadTestRunner';
+import { Logger } from '../utils/Logger.js';
+import { LoadTestRunner, LoadTestScenario } from './LoadTestRunner.js';
 
 /**
  * Performance target configuration

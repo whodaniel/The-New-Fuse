@@ -10,7 +10,7 @@ import { DatabaseService } from '@the-new-fuse/database';
 import { createHash } from 'crypto';
 import { createPublicClient, http, parseAbi } from 'viem';
 import { mainnet } from 'viem/chains';
-import { Web3authService } from '../web3auth/web3auth.service';
+import { Web3authService } from '../web3auth/web3auth.service.js';
 
 export interface SmartAccountDeploymentResult {
   smartAccountAddress: string;

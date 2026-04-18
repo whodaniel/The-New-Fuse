@@ -3,10 +3,10 @@
 
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TestRunnerService } from './test-runner.service';
-import { TestRunnerController } from './test-runner.controller';
-import { LoadTestingService } from './load-testing/load-testing.service';
-import { ArtifactGenerationService } from './artifacts/artifact-generation.service';
+import { TestRunnerService } from './test-runner.service.js';
+import { TestRunnerController } from './test-runner.controller.js';
+import { LoadTestingService } from './load-testing/load-testing.service.js';
+import { ArtifactGenerationService } from './artifacts/artifact-generation.service.js';
 
 // TODO: Add CacheModule, QueueModule, WebSocketModule, A2AModule when ready
 

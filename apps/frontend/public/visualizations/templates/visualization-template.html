@@ -12,90 +12,114 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: {{BACKGROUND_GRADIENT}};
+      font-family: 'Inter', 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #020617;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.1) 0px, transparent 50%);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 20px;
+      padding: 40px;
+      color: #f8fafc;
     }
 
     header {
       color: white;
-      text-align: center;
-      margin-bottom: 20px;
+      text-align: left;
+      margin-bottom: 32px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
     }
 
     header h1 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      background: linear-gradient(to right, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     header p {
-      font-size: 0.9rem;
-      opacity: 0.9;
+      font-size: 1rem;
+      color: #94a3b8;
     }
 
     main {
       flex: 1;
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
       display: flex;
       flex-direction: column;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
     }
 
     #controls {
       display: flex;
-      gap: 15px;
-      margin-bottom: 20px;
+      gap: 12px;
+      margin-bottom: 24px;
       flex-wrap: wrap;
       align-items: center;
     }
 
     #controls label {
-      font-weight: 600;
-      color: #4a5568;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
     }
 
     #controls select,
     #controls button {
-      padding: 8px 16px;
-      border: 2px solid #e2e8f0;
-      border-radius: 6px;
-      font-size: 14px;
-      background: white;
+      padding: 10px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      background: rgba(30, 41, 59, 0.5);
+      color: white;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    #controls select:hover,
-    #controls button:hover {
-      border-color: {{PRIMARY_COLOR}};
-      background: #f7fafc;
+    #controls select:hover {
+      background: rgba(51, 65, 85, 0.8);
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
     #controls button {
-      background: {{PRIMARY_COLOR}};
-      color: white;
-      border-color: {{PRIMARY_COLOR}};
-      font-weight: 600;
+      background: #3b82f6;
+      border-color: #3b82f6;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
 
     #controls button:hover {
-      background: {{PRIMARY_COLOR_DARK}};
-      border-color: {{PRIMARY_COLOR_DARK}};
+      background: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
     }
 
     #chart {
       flex: 1;
       position: relative;
-      min-height: 400px;
-      border: 2px solid #e2e8f0;
-      border-radius: 8px;
+      min-height: 500px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 16px;
       overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     svg {
@@ -105,78 +129,97 @@
 
     .node {
       cursor: pointer;
-      transition: opacity 0.2s;
-    }
-
-    .node:hover {
-      opacity: 0.8;
     }
 
     .node rect {
-      stroke: white;
-      stroke-width: 2px;
+      stroke: rgba(0, 0, 0, 0.3);
+      stroke-width: 1px;
+      transition: all 0.3s ease;
+    }
+
+    .node:hover rect {
+      filter: brightness(1.2);
+      stroke: rgba(255, 255, 255, 0.5);
     }
 
     .node text {
       pointer-events: none;
       font-size: 11px;
-      font-weight: 600;
-      text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+      font-weight: 700;
+      fill: rgba(255, 255, 255, 0.9);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     }
 
     #tooltip {
       position: absolute;
-      background: rgba(0, 0, 0, 0.9);
-      color: white;
-      padding: 12px 16px;
-      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #f8fafc;
+      padding: 16px 20px;
+      border-radius: 12px;
       font-size: 13px;
       pointer-events: none;
       z-index: 1000;
       opacity: 0;
-      transition: opacity 0.2s;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      max-width: 300px;
+      transition: all 0.2s ease;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      max-width: 320px;
     }
 
     #tooltip.visible {
       opacity: 1;
+      transform: translate(0, 0) scale(1);
     }
 
     #tooltip strong {
-      color: #fbbf24;
+      color: #60a5fa;
       display: block;
-      margin-bottom: 6px;
-      font-size: 14px;
+      margin-bottom: 8px;
+      font-size: 15px;
+      font-weight: 800;
     }
 
     #tooltip .stat {
-      margin: 4px 0;
+      margin: 6px 0;
+      display: flex;
+      justify-content: space-between;
+      color: #94a3b8;
+    }
+
+    #tooltip .stat-value {
+      color: #f1f5f9;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
     }
 
     .breadcrumb {
-      font-size: 14px;
-      color: #4a5568;
-      margin-bottom: 10px;
-      padding: 8px 12px;
-      background: #f7fafc;
-      border-radius: 6px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 16px;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .breadcrumb span {
       cursor: pointer;
-      color: {{PRIMARY_COLOR}};
+      color: #94a3b8;
       transition: color 0.2s;
     }
 
     .breadcrumb span:hover {
-      color: {{PRIMARY_COLOR_DARK}};
-      text-decoration: underline;
+      color: #ffffff;
     }
 
     .breadcrumb .separator {
-      margin: 0 8px;
-      color: #a0aec0;
+      color: #334155;
       cursor: default;
     }
 
@@ -391,7 +434,10 @@
         if (d.data[key] !== undefined) {
           const formatter = CONFIG.formatters[key] || ((v) => v);
           tooltipContent += `
-            <div class="stat">${label}: ${formatter(d.data[key])}</div>
+            <div class="stat">
+              <span>${label}:</span>
+              <span class="stat-value">${formatter(d.data[key])}</span>
+            </div>
           `;
         }
       });

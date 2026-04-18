@@ -1,6 +1,6 @@
 import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { DatabaseService, MessageRole } from '@the-new-fuse/database';
-import { AgentsService } from '../../agents/agents.service';
+import { AgentsService } from '../../agents/agents.service.js';
 
 /**
  * ChatService handles agent-based chat conversations.

@@ -1,6 +1,6 @@
-import { InsightConfig, Insight } from './types';
-import { DashboardMetrics } from '../analytics/types';
-import { AnalyticsManager } from '../analytics/AnalyticsManager';
+import { InsightConfig, Insight } from './types.js';
+import { DashboardMetrics } from '../analytics/types.js';
+import { AnalyticsManager } from '../analytics/AnalyticsManager.js';
 
 export class InsightEngine {
   private analyticsManager: AnalyticsManager;

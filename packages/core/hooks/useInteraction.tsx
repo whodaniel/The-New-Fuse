@@ -3,7 +3,7 @@ import { VoiceEngine } from '../ai/VoiceEngine';
 import { GestureEngine } from '../ai/GestureEngine';
 import { XREngine } from '../ai/XREngine';
 import { NLPEngine } from '../ai/NLPEngine';
-import { DashboardState } from '../collaboration/types';
+import { DashboardState } from '../collaboration/types.js';
 
 export function useInteraction(
   dashboardState: DashboardState,

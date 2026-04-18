@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-import { UpdateProfileDto } from './dto/profile.dto';
-import { UpdateUserDto } from './dto/user.dto';
+import { UsersController } from './users.controller.js';
+import { UsersService } from './users.service.js';
+import { UpdateProfileDto } from './dto/profile.dto.js';
+import { UpdateUserDto } from './dto/user.dto.js';
 import { ForbiddenException } from '@nestjs/common';
 
 describe('UsersController', () => {
