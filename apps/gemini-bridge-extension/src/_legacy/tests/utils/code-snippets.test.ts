@@ -1,7 +1,7 @@
 /**
  * Tests for CodeSnippetsManager
  */
-import { CodeSnippetsManager } from '../../utils/code-snippets.js';
+import { CodeSnippetsManager } from '../../utils/code-snippets';
 
 describe('CodeSnippetsManager', () => {
   let codeSnippetsManager: CodeSnippetsManager;

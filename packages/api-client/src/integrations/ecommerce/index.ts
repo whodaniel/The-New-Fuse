@@ -1,1 +1,1 @@
-export * from './shopify.js';
+export * from './shopify';

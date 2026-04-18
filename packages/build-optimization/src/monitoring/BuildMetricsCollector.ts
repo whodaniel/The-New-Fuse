@@ -14,8 +14,8 @@ import {
   MemoryUsage,
   BuildResult,
   BuildEvent
-} from '../types/index.js';
-import { IBuildMetricsCollector } from '../interfaces/index.js';
+} from '../types';
+import { IBuildMetricsCollector } from '../interfaces';
 
 /**
  * Detailed build statistics

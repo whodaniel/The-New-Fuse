@@ -32,7 +32,7 @@ import {
   ApiDocGeneratorService,
   ApiDocumentation,
   DocGenerationOptions,
-} from './api-doc-generator.service.js';
+} from './api-doc-generator.service';
 
 @ApiTags('Documentation')
 @Controller('api/docs')

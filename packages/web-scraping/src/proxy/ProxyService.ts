@@ -7,7 +7,7 @@
 
 import { isValidPublicUrl } from '@the-new-fuse/utils';
 import axios from 'axios';
-import { ProxyRequest, ProxyResponse, SecurityPolicy } from '../types/index.js';
+import { ProxyRequest, ProxyResponse, SecurityPolicy } from '../types';
 // Simple error and monitoring implementations for proxy service
 class BaseErrorHandler {
   async handleError(error: Error, context?: any): Promise<void> {

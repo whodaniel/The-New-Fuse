@@ -12,7 +12,7 @@ import {
   SyncResourceType,
   ConflictResolution,
   ConflictResolutionStrategy
-} from '../types/index.js';
+} from '../types';
 
 export interface AgentState {
   id: string;

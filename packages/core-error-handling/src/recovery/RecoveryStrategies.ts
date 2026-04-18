@@ -11,9 +11,9 @@ import {
   BaseError,
   ErrorContext,
   ErrorCategory,
-} from '../interfaces/IErrorHandling.js';
-import { ErrorCodes } from '../errors/CustomErrors.js';
-import { Logger } from '../utils/Logger.js';
+} from '../interfaces/IErrorHandling';
+import { ErrorCodes } from '../errors/CustomErrors';
+import { Logger } from '../utils/Logger';
 
 /**
  * Network reconnection strategy

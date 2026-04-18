@@ -2,27 +2,27 @@
 // Re-exporting essential modules and services for the ecosystem
 
 // Utils
-export * from './utils/logger.js';
+export * from './utils/logger';
 
 // LLM
-export * from './modules/llm/llm.module.js';
-export * from './services/llm-config.service.js';
-export * from './services/AgentLLMService.js';
-export * from './llm/providers/AnthropicProvider.js';
-export * from './llm/providers/GeminiProvider.js';
-export * from './llm/providers/GoogleADKProvider.js';
+export * from './modules/llm/llm.module';
+export * from './services/llm-config.service';
+export * from './services/AgentLLMService';
+export * from './llm/providers/AnthropicProvider';
+export * from './llm/providers/GeminiProvider';
+export * from './llm/providers/GoogleADKProvider';
 
 // Task
-export * from './task/AgentInbox.js';
+export * from './task/AgentInbox';
 
 // Monitoring
-export * from './services/UnifiedMonitoringService.js';
+export * from './services/UnifiedMonitoringService';
 
 // Memory
-export * from './memory/MemorySystem.js';
+export * from './memory/MemorySystem';
 
 // Services
-export * from './services/PromptService.js';
+export * from './services/PromptService';
 
 // Cascade
-export * from './services/CascadeService.js';
+export * from './services/CascadeService';

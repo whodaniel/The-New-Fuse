@@ -2,7 +2,7 @@
  * Caching Strategies for Performance Optimization
  */
 
-import { Logger } from '../utils/Logger.js';
+import { Logger } from '../utils/Logger';
 
 /**
  * Cache entry interface

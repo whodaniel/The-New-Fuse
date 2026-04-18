@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { ConcurrencyController } from './ConcurrencyController.js';
-import { SystemResources, MemoryUsage } from '../types/index.js';
+import { ConcurrencyController } from './ConcurrencyController';
+import { SystemResources, MemoryUsage } from '../types';
 
 describe('ConcurrencyController', () => {
   let controller: ConcurrencyController;

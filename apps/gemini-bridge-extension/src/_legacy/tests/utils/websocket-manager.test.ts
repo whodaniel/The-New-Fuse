@@ -1,7 +1,7 @@
 /**
  * Tests for WebSocketManager
  */
-import { WebSocketManager } from '../../utils/websocket-manager.js';
+import { WebSocketManager } from '../../utils/websocket-manager';
 
 describe('WebSocketManager', () => {
   let wsManager: WebSocketManager;

@@ -8,13 +8,13 @@ import {
   ResourceImportConfig,
   ResourceStatus,
   ResourceHealth
-} from '../ResourceProvisioner.js';
+} from '../ResourceProvisioner';
 import {
   ResourceDefinition,
   ResourceProvisionResult,
   InfrastructureChange,
   ResourceType
-} from '../../types/infrastructure.js';
+} from '../../types/infrastructure';
 
 export class GCPProvider implements ResourceProvider {
   private projectId: string;

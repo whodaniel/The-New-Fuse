@@ -1,7 +1,7 @@
 /**
  * Code snippets manager for The New Fuse - AI Bridge
  */
-import { Logger } from './logger.js';
+import { Logger } from './logger';
 
 // Create a code snippets-specific logger
 const codeSnippetsLogger = new Logger({

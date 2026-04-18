@@ -2,10 +2,10 @@
  * MCPServer Unit Tests
  */
 
-import { MCPServer } from '../server/MCPServer.js';
-import { MCPServerConfig, LogLevel, JSONRPCErrorCode } from '../types/index.js';
-import { MCPRequest } from '../interfaces/IMCPMessage.js';
-import { MCPErrorCode } from '../types/error.js';
+import { MCPServer } from '../server/MCPServer';
+import { MCPServerConfig, LogLevel, JSONRPCErrorCode } from '../types';
+import { MCPRequest } from '../interfaces/IMCPMessage';
+import { MCPErrorCode } from '../types/error';
 
 describe('MCPServer', () => {
   let server: MCPServer;

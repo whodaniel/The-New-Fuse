@@ -3,7 +3,7 @@
  * Provides data access for Chat and Message entities
  */
 import { and, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
-import { db } from '../client.js';
+import { db } from '../client';
 import {
   chatMessages,
   chatRoomParticipants,
@@ -11,7 +11,7 @@ import {
   chats,
   messages,
   readReceipts,
-} from '../schema/index.js';
+} from '../schema';
 import type {
   Chat,
   ChatMessage,
@@ -25,7 +25,7 @@ import type {
   NewMessage,
   NewReadReceipt,
   ReadReceipt,
-} from '../types.js';
+} from '../types';
 
 /**
  * Chat Repository - provides data access for Chat entities

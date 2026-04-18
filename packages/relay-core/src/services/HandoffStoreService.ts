@@ -12,7 +12,7 @@ import {
   type HandoffAck as HandoffAckType,
   type HandoffPacket as HandoffPacketType,
   type HandoffStatus,
-} from '../protocol/handoff-protocol.js';
+} from '../protocol/handoff-protocol';
 
 interface HandoffStoreOptions {
   redisUrl?: string;

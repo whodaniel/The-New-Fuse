@@ -1,5 +1,5 @@
 import { EventEmitter } from "node:events";
-import { HitEvent } from '../types/events.js';
+import { HitEvent } from '../types/events';
 
 export class GroupingFilter extends EventEmitter {
   push(hit: HitEvent): void {

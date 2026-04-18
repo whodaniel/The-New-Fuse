@@ -9,8 +9,8 @@ import { EventEmitter } from 'events';
 import { existsSync } from 'fs';
 import { appendFile, mkdir } from 'fs/promises';
 import { join } from 'path';
-import { AuthAuditEvent } from './AuthenticationManager.js';
-import { MCPOperation } from './PermissionValidator.js';
+import { AuthAuditEvent } from './AuthenticationManager';
+import { MCPOperation } from './PermissionValidator';
 
 /**
  * Audit event severity levels

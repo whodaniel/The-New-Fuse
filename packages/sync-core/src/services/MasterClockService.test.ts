@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 const vi = jest;
 import { EventEmitter } from 'events';
-import { MasterClockService, MasterClockConfig, ClockDriftReport } from './MasterClockService.js';
+import { MasterClockService, MasterClockConfig, ClockDriftReport } from './MasterClockService';
 
 // Create mock implementations
 const createMockRedisService = () => ({

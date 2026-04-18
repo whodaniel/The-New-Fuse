@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { BuildProcessThrottler, BuildTask, BuildTaskResult } from './BuildProcessThrottler.js';
-import { MemoryUsage } from '../types/index.js';
+import { BuildProcessThrottler, BuildTask, BuildTaskResult } from './BuildProcessThrottler';
+import { MemoryUsage } from '../types';
 
 describe('BuildProcessThrottler', () => {
   let throttler: BuildProcessThrottler;

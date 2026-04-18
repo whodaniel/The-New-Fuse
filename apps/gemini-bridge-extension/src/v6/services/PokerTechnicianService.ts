@@ -5,7 +5,7 @@
  * Implements GTO Game Theory Optimal poker analysis with TNF Federation Green Channel integration
  */
 
-import { simpleChatBridge } from '../content/adapters/SimpleChatBridge.js';
+import { simpleChatBridge } from '../content/adapters/SimpleChatBridge';
 
 export class PokerTechnicianService {
   private static instance: PokerTechnicianService;

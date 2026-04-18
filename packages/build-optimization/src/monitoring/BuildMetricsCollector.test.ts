@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { BuildMetricsCollector } from './BuildMetricsCollector.js';
-import { BuildEventData, MemoryUsage } from '../types/index.js';
+import { BuildMetricsCollector } from './BuildMetricsCollector';
+import { BuildEventData, MemoryUsage } from '../types';
 
 describe('BuildMetricsCollector', () => {
   let collector: BuildMetricsCollector;

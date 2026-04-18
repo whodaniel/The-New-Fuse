@@ -1,1 +1,1 @@
-export { EncryptionError } from './EncryptionError.js';
+export { EncryptionError } from './EncryptionError';

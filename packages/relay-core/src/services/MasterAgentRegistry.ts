@@ -10,12 +10,12 @@
 import type { AgentStatus, AgentType, TaskPriority, TaskStatus } from '@the-new-fuse/database';
 import { Contract, JsonRpcProvider, Wallet, parseUnits } from 'ethers';
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger.js';
-import { VCIssuanceRequest, VCIssuanceService } from './VCIssuanceService.js';
-import { BlockchainConfig, BlockchainService } from './shared/BlockchainService.js';
-// import { sha256 } from '../../../../src/utils/cryptoUtils.js';
-// import { AgentRegistry, Agent as LegacyAgent } from '../../../../src/services/AgentRegistry.js';
-// import { AgentMetadataManager } from '../../../../src/services/AgentMetadataManager.js';
+import { Logger } from '../utils/Logger';
+import { VCIssuanceRequest, VCIssuanceService } from './VCIssuanceService';
+import { BlockchainConfig, BlockchainService } from './shared/BlockchainService';
+// import { sha256 } from '../../../../src/utils/cryptoUtils';
+// import { AgentRegistry, Agent as LegacyAgent } from '../../../../src/services/AgentRegistry';
+// import { AgentMetadataManager } from '../../../../src/services/AgentMetadataManager';
 
 // Stub implementations
 const sha256 = (input: string): string => {
@@ -58,7 +58,7 @@ class AgentMetadataManager {
 }
 
 // Re-export BlockchainConfig for compatibility
-export { BlockchainConfig } from './shared/BlockchainService.js';
+export { BlockchainConfig } from './shared/BlockchainService';
 
 // On-chain agent data
 export interface OnChainAgentData {

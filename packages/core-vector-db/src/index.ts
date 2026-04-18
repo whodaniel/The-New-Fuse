@@ -1,7 +1,7 @@
 // Main exports
-export { VectorDatabaseModule } from './vector-database.module.js';
-export type { VectorDatabaseModuleOptions } from './vector-database.module.js';
-export { VectorDatabaseService } from './vector-database.service.js';
+export { VectorDatabaseModule } from './vector-database.module';
+export type { VectorDatabaseModuleOptions } from './vector-database.module';
+export { VectorDatabaseService } from './vector-database.service';
 
 // Interface exports
 export type {
@@ -13,27 +13,27 @@ export type {
   VectorDocument,
   VectorQuery,
   VectorSearchResult,
-} from './interface/vector-database.interface.js';
+} from './interface/vector-database.interface';
 
 export {
   CollectionConfigSchema,
   VectorDocumentSchema,
   VectorQuerySchema,
   VectorSearchResultSchema,
-} from './interface/vector-database.interface.js';
+} from './interface/vector-database.interface';
 
 // Driver exports
-export { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider.js';
-export { PgVectorDriver } from './drivers/pgvector.driver.js';
-export { QdrantDriver } from './drivers/qdrant.driver.js';
+export { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider';
+export { PgVectorDriver } from './drivers/pgvector.driver';
+export { QdrantDriver } from './drivers/qdrant.driver';
 
 // Adapter exports
 export {
   LegacyVectorAdapter,
   TypeConverter,
   createLegacyAdapter,
-} from './adapters/legacy-adapter.js';
+} from './adapters/legacy-adapter';
 
 // Codebase Intelligence exports
-export { CodebaseSearch } from './codebase-search.js';
-export { CodebaseVectorizer } from './codebase-vectorizer.js';
+export { CodebaseSearch } from './codebase-search';
+export { CodebaseVectorizer } from './codebase-vectorizer';

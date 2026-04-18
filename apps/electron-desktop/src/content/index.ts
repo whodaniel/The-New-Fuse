@@ -3,7 +3,7 @@
  * This bridges the chrome extension with the Electron desktop app
  */
 
-import type { ElementInfo, PageElementMapping } from '../shared/types.js'
+import type { ElementInfo, PageElementMapping } from '../shared/types'
 
 class TNFContentBridge {
   private relayPort: chrome.runtime.Port | null = null

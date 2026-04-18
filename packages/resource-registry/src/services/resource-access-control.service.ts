@@ -1,5 +1,5 @@
 import { Injectable, ForbiddenException, Logger } from '@nestjs/common';
-import { ResourceVisibility, Resource } from '../types/index.js';
+import { ResourceVisibility, Resource } from '../types';
 
 export interface AccessContext {
   userId?: string;

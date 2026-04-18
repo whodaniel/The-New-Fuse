@@ -1,5 +1,5 @@
 import { spawn } from 'child_process';
-import { Logger } from '../utils/Logger.js';
+import { Logger } from '../utils/Logger';
 
 export interface GooseRunRequest {
   prompt: string;

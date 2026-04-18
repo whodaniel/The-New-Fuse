@@ -1,4 +1,4 @@
-import { StorageFile, StorageOptions } from './types.js';
+import { StorageFile, StorageOptions } from './types';
 
 export abstract class StorageService {
   abstract upload(

@@ -1,10 +1,10 @@
 /**
  * Debug tools for The New Fuse - AI Bridge
  */
-import { Logger } from '../utils/logger.js';
-import { LogsViewer } from './logs-viewer.js';
-import { DebugSettingsManager } from './settings-manager.js';
-import { WebSocketTester } from './websocket-tester.js';
+import { Logger } from '../utils/logger';
+import { LogsViewer } from './logs-viewer';
+import { DebugSettingsManager } from './settings-manager';
+import { WebSocketTester } from './websocket-tester';
 
 // Create a debug-specific logger
 const debugLogger = new Logger({

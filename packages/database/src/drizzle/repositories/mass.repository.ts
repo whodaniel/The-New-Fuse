@@ -1,11 +1,11 @@
 import { and, desc, eq } from 'drizzle-orm';
-import { db } from '../client.js';
+import { db } from '../client';
 import {
   agentPromptVersions,
   optimizationJobs,
   validationDatasets,
   workflowTopologies,
-} from '../schema/index.js';
+} from '../schema';
 
 export const optimizationJobRepository = {
   findById: async (id: string) => {

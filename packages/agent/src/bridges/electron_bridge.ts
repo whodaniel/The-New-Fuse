@@ -13,7 +13,7 @@
  * - Chrome Extension: Via messaging
  */
 
-import { BaseBridge, MessageType, Priority } from './index.js';
+import { BaseBridge, MessageType, Priority } from './index';
 
 // ============================================================
 // ELECTRON IPC TYPES

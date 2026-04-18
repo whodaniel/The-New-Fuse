@@ -2,8 +2,8 @@
  * Unit tests for CircuitBreaker
  */
 
-import { CircuitBreaker, CircuitState, CircuitBreakerManager } from './CircuitBreaker.js';
-import { Logger } from '../utils/Logger.js';
+import { CircuitBreaker, CircuitState, CircuitBreakerManager } from './CircuitBreaker';
+import { Logger } from '../utils/Logger';
 
 describe('CircuitBreaker', () => {
   let circuitBreaker: CircuitBreaker;

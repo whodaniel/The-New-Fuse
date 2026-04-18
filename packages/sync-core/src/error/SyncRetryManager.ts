@@ -6,7 +6,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { SyncError, SyncContext } from './SyncErrorHandler.js';
+import { SyncError, SyncContext } from './SyncErrorHandler';
 
 /**
  * Retry configuration

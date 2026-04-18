@@ -6,7 +6,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
+import { MCPErrorClass, MCPErrorCode } from '../types/error';
 
 /**
  * Event subscription pattern types

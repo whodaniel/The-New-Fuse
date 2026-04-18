@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { AuthService, LoginCredentials, RegisterData } from '../mocks/api-client.js';
+import { AuthService, LoginCredentials, RegisterData } from '../mocks/api-client';
 
 /**
  * Authentication hook result

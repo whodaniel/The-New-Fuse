@@ -3,8 +3,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { ISystemHealthMonitor, SystemHealthStatus, HealthCheck, HealthCheckResult } from '../interfaces/IMonitoring.js';
-import { Logger } from '../utils/Logger.js';
+import { ISystemHealthMonitor, SystemHealthStatus, HealthCheck, HealthCheckResult } from '../interfaces/IMonitoring';
+import { Logger } from '../utils/Logger';
 
 export interface SystemHealthMonitorConfig {
   /** Health check interval (ms) */

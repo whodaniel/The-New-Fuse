@@ -12,7 +12,7 @@ import {
   JulesTaskTemplate,
   ListSessionsOptions,
   PullSessionOptions,
-} from './types.js';
+} from './types';
 
 /**
  * Jules CLI Client

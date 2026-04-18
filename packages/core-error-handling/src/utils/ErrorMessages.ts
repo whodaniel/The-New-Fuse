@@ -6,8 +6,8 @@
  * for better user experience when errors occur.
  */
 
-import { ErrorCodes } from '../errors/CustomErrors.js';
-import { ApplicationError } from '../errors/CustomErrors.js';
+import { ErrorCodes } from '../errors/CustomErrors';
+import { ApplicationError } from '../errors/CustomErrors';
 
 /**
  * Error message templates

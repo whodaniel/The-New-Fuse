@@ -5,9 +5,9 @@
 
 import { eq } from 'drizzle-orm';
 import { fileURLToPath } from 'node:url';
-import { db } from './drizzle/client.js';
-import { agents } from './drizzle/schema/agents.js';
-import { users } from './drizzle/schema/users.js';
+import { db } from './drizzle/client';
+import { agents } from './drizzle/schema/agents';
+import { users } from './drizzle/schema/users';
 
 // =============================================================================
 // AGENT TYPES
@@ -477,11 +477,13 @@ export { AGENT_CAPABILITIES, AGENT_STATUSES, AGENT_TYPES, seed, SEED_AGENTS };
 // CLI entry point
 const isMainModule = () => {
   if (typeof require !== 'undefined' && typeof module !== 'undefined' && require.main === module) return true;
-  if (typeof import.meta !== 'undefined' && import.meta.url) {
-    const mainPath = process.argv[1];
-    const modulePath = fileURLToPath(import.meta.url);
-    return mainPath === modulePath || mainPath?.endsWith('seed.js');
+  
+  // Safe fallback for potentially mixed environments or ts-node/tsx usage
+  const mainPath = process.argv[1];
+  if (mainPath && (mainPath.endsWith('seed.ts') || mainPath.endsWith('seed.js'))) {
+    return true;
   }
+  
   return false;
 };
 

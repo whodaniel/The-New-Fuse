@@ -1,10 +1,10 @@
 /**
  * Background script for The New Fuse - AI Bridge
  */
-import { Logger } from '../utils/logger.js';
-import { ConnectionManager } from './connection-manager.js';
-import { MessageHandler } from './message-handler.js';
-import { web3Interceptor } from './web3-interceptor.js';
+import { Logger } from '../utils/logger';
+import { ConnectionManager } from './connection-manager';
+import { MessageHandler } from './message-handler';
+import { web3Interceptor } from './web3-interceptor';
 
 // Create a background-specific logger
 const backgroundLogger = new Logger({

@@ -13,8 +13,8 @@ import {
   ScalingEvent,
   ScalingPolicy,
   ServiceMeshIntegrationResult
-} from './MCPServiceMesh.js';
-import { MCPErrorClass as MCPError, MCPErrorCode } from '../types/error.js';
+} from './MCPServiceMesh';
+import { MCPErrorClass as MCPError, MCPErrorCode } from '../types/error';
 
 /**
  * Scaler configuration

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 const vi = jest;
 import { ConfigService } from '@nestjs/config';
-import { SyncRedisConfig } from './SyncRedisConfig.js';
+import { SyncRedisConfig } from './SyncRedisConfig';
 
 describe('SyncRedisConfig', () => {
   let config: SyncRedisConfig;

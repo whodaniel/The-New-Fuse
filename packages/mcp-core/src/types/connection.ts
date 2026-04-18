@@ -11,7 +11,7 @@ export type {
   ConnectionMetrics,
   MCPConnection,
   IConnectionManager
-} from '../interfaces/IMCPConnection.js';
+} from '../interfaces/IMCPConnection';
 
 /**
  * Connection type enumeration

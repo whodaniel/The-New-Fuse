@@ -6,7 +6,7 @@
 
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 const vi = jest;
-import { PromptHandoffFlywheel, HandoffTemplate } from './PromptHandoffFlywheel.js';
+import { PromptHandoffFlywheel, HandoffTemplate } from './PromptHandoffFlywheel';
 
 // Simple mock implementations
 class MockSyncOrchestrator {

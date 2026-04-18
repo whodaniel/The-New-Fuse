@@ -9,8 +9,8 @@ import { EventEmitter } from 'events';
 
 import express from 'express';
 
-import type { InterceptRule, RelayMessage, Transport } from '../types/index.js';
-import type { Logger } from '../utils/Logger.js';
+import type { InterceptRule, RelayMessage, Transport } from '../types';
+import type { Logger } from '../utils/Logger';
 import type { Server } from 'http';
 
 export interface HTTPTransportConfig {

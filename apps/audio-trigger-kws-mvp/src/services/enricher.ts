@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { ContextPackage, HitEvent, RuleFireEvent } from '../types/events.js';
+import { ContextPackage, HitEvent, RuleFireEvent } from '../types/events';
 
 export class Enricher {
   constructor(private readonly hitStore: Map<string, HitEvent>) {}

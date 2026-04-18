@@ -12,8 +12,8 @@
 
 import { EventEmitter } from 'events';
 
-import { RedisTransportAdapter } from './adapters/RedisTransportAdapter.js';
-import { BaseBridge, MessageType, Priority } from './index.js';
+import { RedisTransportAdapter } from './adapters/RedisTransportAdapter';
+import { BaseBridge, MessageType, Priority } from './index';
 
 // Universal Message Format
 export interface UniversalMessage {

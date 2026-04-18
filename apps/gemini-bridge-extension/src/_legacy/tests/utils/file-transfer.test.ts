@@ -1,8 +1,8 @@
 /**
  * Tests for FileTransferManager
  */
-import { FileTransferManager } from '../../utils/file-transfer.js';
-import { WebSocketManager } from '../../utils/websocket-manager.js';
+import { FileTransferManager } from '../../utils/file-transfer';
+import { WebSocketManager } from '../../utils/websocket-manager';
 
 // Mock WebSocketManager
 jest.mock('../../utils/websocket-manager');

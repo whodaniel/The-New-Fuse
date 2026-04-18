@@ -1,4 +1,4 @@
-import { AgentMetadata, RedisAgentRegistry } from './redis-agent-registry.js';
+import { AgentMetadata, RedisAgentRegistry } from './redis-agent-registry';
 
 // Mock Redis client
 const mockRedisClient = {

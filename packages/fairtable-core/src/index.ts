@@ -1,8 +1,8 @@
 // Export all types
-export * from './types.js';
+export * from './types';
 
 // Export all constants
-export * from './constants.js';
+export * from './constants';
 
 // Export utilities
-export * from './formulaEvaluator.js';
+export * from './formulaEvaluator';

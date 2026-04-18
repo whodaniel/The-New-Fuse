@@ -1,1 +1,1 @@
-export * from './validators-server.js';
+export * from './validators-server';

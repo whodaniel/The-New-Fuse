@@ -1,7 +1,7 @@
 /**
  * WebSocket tester for The New Fuse - AI Bridge
  */
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger';
 
 // Create a debug-specific logger
 const debugLogger = new Logger({

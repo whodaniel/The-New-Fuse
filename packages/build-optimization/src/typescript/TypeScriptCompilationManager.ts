@@ -11,8 +11,8 @@
 import { spawn, ChildProcess } from 'child_process';
 import { promises as fs } from 'fs';
 import { join, dirname, resolve } from 'path';
-import { ITypeScriptCompilationManager } from '../interfaces/index.js';
-import { MemoryCleanupUtility, MemoryCleanupConfig } from './MemoryCleanupUtility.js';
+import { ITypeScriptCompilationManager } from '../interfaces';
+import { MemoryCleanupUtility, MemoryCleanupConfig } from './MemoryCleanupUtility';
 
 /**
  * TypeScript project configuration

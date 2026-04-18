@@ -1,4 +1,4 @@
-import { toMatchAPIContract, APIContract } from '../toMatchAPIContract.js';
+import { toMatchAPIContract, APIContract } from '../toMatchAPIContract';
 import { z } from 'zod';
 
 describe('toMatchAPIContract', () => {

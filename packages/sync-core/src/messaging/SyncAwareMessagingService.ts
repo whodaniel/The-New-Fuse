@@ -1,9 +1,9 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy, Inject } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { SyncRedisConfig } from '../config/SyncRedisConfig.js';
-import { SyncAwareAgentWebSocketService, IAgentWebSocketService } from './SyncAwareAgentWebSocketService.js';
-import { MessageQueueSynchronizer } from './MessageQueueSynchronizer.js';
-import { CommunicationHubFailover } from './CommunicationHubFailover.js';
+import { SyncRedisConfig } from '../config/SyncRedisConfig';
+import { SyncAwareAgentWebSocketService, IAgentWebSocketService } from './SyncAwareAgentWebSocketService';
+import { MessageQueueSynchronizer } from './MessageQueueSynchronizer';
+import { CommunicationHubFailover } from './CommunicationHubFailover';
 import {
   SyncAwareA2AMessage,
   MessageSyncStatus,
@@ -12,7 +12,7 @@ import {
   MessageFailoverConfig,
   MessageDeliveryMetrics,
   SyncAwareMessageUtils
-} from './SyncAwareA2AMessage.js';
+} from './SyncAwareA2AMessage';
 
 export interface MessagingServiceConfig {
   enableSyncAwareMessaging: boolean;

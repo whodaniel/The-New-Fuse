@@ -8,8 +8,8 @@
 import { readFile } from 'fs/promises';
 import { join, resolve } from 'path';
 import { glob } from 'glob';
-import { IDependencyGraphAnalyzer } from '../interfaces/index.js';
-import { PackageDependency, BuildStage } from '../types/index.js';
+import { IDependencyGraphAnalyzer } from '../interfaces';
+import { PackageDependency, BuildStage } from '../types';
 
 /**
  * Node in the dependency graph

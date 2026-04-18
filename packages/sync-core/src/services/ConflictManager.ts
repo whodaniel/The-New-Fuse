@@ -2,14 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { DrizzleClient, SyncConflict, AuthEvent } from '@the-new-fuse/database/generated/drizzle';
 import { BaseErrorHandler, ErrorSeverity, ErrorCategory } from '@the-new-fuse/core-error-handling';
-import { SyncDatabaseService } from '../database/SyncDatabaseService.js';
+import { SyncDatabaseService } from '../database/SyncDatabaseService';
 import { 
   SyncConflictData, 
   ConflictResolution, 
   ConflictResolutionStrategy,
   SyncResourceType,
   TenantSyncContext 
-} from '../types/index.js';
+} from '../types';
 
 /**
  * Conflict-specific error interface

@@ -7,7 +7,7 @@
 
 import { EventEmitter } from 'events';
 
-import { MessageType, Priority } from './index.js';
+import { MessageType, Priority } from './index';
 
 // ============================================================
 // BASE TYPES

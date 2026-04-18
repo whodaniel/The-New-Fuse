@@ -1,15 +1,15 @@
 /**
  * Popup script for The New Fuse - AI Bridge
  */
-import { Logger } from '../utils/logger.js';
-import { AccessibilityManager } from './accessibility.js';
-import { ChatManager } from './chat-manager.js';
-import { ConnectionStatusManager } from './connection-status.js';
-import { ElementSelectionManager } from './element-selection-manager.js'; // Import element selection manager
-import { HeaderConnectionManager } from './header-connection.js'; // Import header connection manager
-import { serverManagement } from './server-management.js'; // Import server management module
-import { TabManager } from './tab-manager.js';
-import { ThemeManager } from './theme-manager.js';
+import { Logger } from '../utils/logger';
+import { AccessibilityManager } from './accessibility';
+import { ChatManager } from './chat-manager';
+import { ConnectionStatusManager } from './connection-status';
+import { ElementSelectionManager } from './element-selection-manager'; // Import element selection manager
+import { HeaderConnectionManager } from './header-connection'; // Import header connection manager
+import { serverManagement } from './server-management'; // Import server management module
+import { TabManager } from './tab-manager';
+import { ThemeManager } from './theme-manager';
 
 // Create a popup-specific logger
 const popupLogger = new Logger({

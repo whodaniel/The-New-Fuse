@@ -1,4 +1,4 @@
-import { simpleHash } from '../utils.js';
+import { simpleHash } from '../utils';
 
 describe('Shared Utils', () => {
   describe('simpleHash', () => {

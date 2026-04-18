@@ -1,12 +1,12 @@
 /**
  * Connection manager for The New Fuse - AI Bridge
  */
-import { CONFIG } from '../config.js'; // Adjust path if necessary
-import { Logger } from '../utils/logger.js';
-import { SecurityManager } from '../utils/security.js';
-import { Store } from '../utils/store.js';
-import { WebSocketManager } from '../utils/websocket-manager.js';
-import { AuthManager } from './auth-manager.js';
+import { CONFIG } from '../config'; // Adjust path if necessary
+import { Logger } from '../utils/logger';
+import { SecurityManager } from '../utils/security';
+import { Store } from '../utils/store';
+import { WebSocketManager } from '../utils/websocket-manager';
+import { AuthManager } from './auth-manager';
 
 // Create a connection-specific logger
 const connectionLogger = new Logger({

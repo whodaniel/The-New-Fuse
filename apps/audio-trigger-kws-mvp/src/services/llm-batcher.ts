@@ -1,6 +1,6 @@
-import { renderPromptFromPackage } from '../templates/context-package.js';
-import { ContextPackage, LlmBatchResult } from '../types/events.js';
-import { MiniOmniClient } from './llm-backends/mini-omni-client.js';
+import { renderPromptFromPackage } from '../templates/context-package';
+import { ContextPackage, LlmBatchResult } from '../types/events';
+import { MiniOmniClient } from './llm-backends/mini-omni-client';
 
 export class LlmBatcher {
   private readonly queue: ContextPackage[] = [];

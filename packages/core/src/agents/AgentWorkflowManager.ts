@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
-import { Agent, AgentTask } from '../types/agent.js';
+import { Agent, AgentTask } from '../types/agent';
 
 export interface WorkflowStep {
   id: string;

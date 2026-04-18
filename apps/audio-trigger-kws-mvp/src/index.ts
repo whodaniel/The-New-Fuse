@@ -1,5 +1,5 @@
-import { env } from './config/env.js';
-import { AudioTriggerRuntime } from './runtime/audio-trigger-runtime.js';
+import { env } from './config/env';
+import { AudioTriggerRuntime } from './runtime/audio-trigger-runtime';
 
 const isDemo = process.argv.includes('--demo');
 const isDemoFull = process.argv.includes('--demo-full');

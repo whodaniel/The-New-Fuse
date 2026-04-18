@@ -6,15 +6,15 @@ import {
   SyncAwareAgentHeartbeat,
   SyncAwareStagnationAlert,
   SyncHealthEscalation
-} from './SyncAwareHeartbeatMonitoringService.js';
+} from './SyncAwareHeartbeatMonitoringService';
 import { 
   HeartbeatMonitoringService, 
   HeartbeatConfig, 
   StagnationAlert 
 } from '@the-new-fuse/relay-core';
-import { MasterClockService } from '../services/MasterClockService.js';
-import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
-import { ConflictManager } from '../services/ConflictManager.js';
+import { MasterClockService } from '../services/MasterClockService';
+import { SyncOrchestrator } from '../services/SyncOrchestrator';
+import { ConflictManager } from '../services/ConflictManager';
 
 // Mock implementations
 class MockHeartbeatMonitoringService extends EventEmitter {

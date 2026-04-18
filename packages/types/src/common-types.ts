@@ -1,4 +1,4 @@
-import { BaseResponse } from './core/base-types.js';
+import { BaseResponse } from './core/base-types';
 
 export type ApiResponse<T = unknown> = BaseResponse<T>;
 

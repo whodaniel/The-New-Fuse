@@ -1,4 +1,4 @@
-import { useStore } from './store.js';
+import { useStore } from './store';
 
 export const handleMessage = (data: any) => {
   try {

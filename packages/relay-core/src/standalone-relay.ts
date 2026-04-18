@@ -28,25 +28,25 @@ import WebSocket, { WebSocketServer } from 'ws';
 // @ts-ignore
 import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 
-import { createAuthService } from './auth/JWTAuthService.js';
-import { attachAuditTrace } from './contracts/audit.js';
-import { createAgentIdentityRecord } from './contracts/identity.js';
-import { normalizeAgentLifecycleStatus, type TnfAgentLifecycleStatus } from './contracts/lifecycle.js';
+import { createAuthService } from './auth/JWTAuthService';
+import { attachAuditTrace } from './contracts/audit';
+import { createAgentIdentityRecord } from './contracts/identity';
+import { normalizeAgentLifecycleStatus, type TnfAgentLifecycleStatus } from './contracts/lifecycle';
 import {
   ConversationPhase,
   ConversationStateMachine,
-} from './orchestrator/conversation-state-machine.js';
-import { SubscriptionRegistry } from './orchestrator/subscription-registry.js';
-import { createRedisRelayBridge } from './redis-relay-bridge.js';
-import { createStallDetector } from './services/stall-detector.js';
-import { Logger } from './utils/Logger.js';
-import { relay as fmt } from './utils/TerminalFormatter.js';
+} from './orchestrator/conversation-state-machine';
+import { SubscriptionRegistry } from './orchestrator/subscription-registry';
+import { createRedisRelayBridge } from './redis-relay-bridge';
+import { createStallDetector } from './services/stall-detector';
+import { Logger } from './utils/Logger';
+import { relay as fmt } from './utils/TerminalFormatter';
 
-import type { JWTAuthService } from './auth/JWTAuthService.js';
-import type { OrchestrationTask } from './protocol/task-protocol.js';
-import type { TNFEnvelope } from './protocol/tnf-envelope.js';
-import type { RedisRelayBridge } from './redis-relay-bridge.js';
-import type { StallDetector } from './services/stall-detector.js';
+import type { JWTAuthService } from './auth/JWTAuthService';
+import type { OrchestrationTask } from './protocol/task-protocol';
+import type { TNFEnvelope } from './protocol/tnf-envelope';
+import type { RedisRelayBridge } from './redis-relay-bridge';
+import type { StallDetector } from './services/stall-detector';
 
 // Configuration
 const PORT = parseInt(process.env.PORT || '3000', 10);
@@ -2135,9 +2135,9 @@ export class TNFRelayServer extends EventEmitter {
 // CLI entry point
 const isMainModule = () => {
   if (typeof require !== 'undefined' && typeof module !== 'undefined' && require.main === module) return true;
-  if (typeof import.meta !== 'undefined' && import.meta.url) {
+  if (typeof (import.meta as any) !== 'undefined' && (import.meta as any).url) {
     const mainPath = process.argv[1];
-    const modulePath = fileURLToPath(import.meta.url);
+    const modulePath = fileURLToPath((import.meta as any).url);
     return mainPath === modulePath || mainPath?.endsWith('standalone-relay.js');
   }
   return false;

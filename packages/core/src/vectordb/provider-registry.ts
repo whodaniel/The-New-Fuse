@@ -1,4 +1,4 @@
-import { VectorStoreConfig, VectorStoreProvider } from './types.js';
+import { VectorStoreConfig, VectorStoreProvider } from './types';
 
 // Mock provider classes for now - these need to be implemented properly
 class PineconeProvider implements VectorStoreProvider {

@@ -2,7 +2,7 @@ import {
   SyncAwareA2AMessage,
   SyncAwareMessageUtils,
   SyncMetadata
-} from './SyncAwareA2AMessage.js';
+} from './SyncAwareA2AMessage';
 
 describe('SyncAwareA2AMessage', () => {
   describe('SyncAwareMessageUtils', () => {

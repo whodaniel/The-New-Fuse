@@ -1,8 +1,8 @@
 /**
  * Tests for AIModelsManager
  */
-import { AIModelsManager } from '../../utils/ai-models.js';
-import { WebSocketManager } from '../../utils/websocket-manager.js';
+import { AIModelsManager } from '../../utils/ai-models';
+import { WebSocketManager } from '../../utils/websocket-manager';
 
 // Mock WebSocketManager
 jest.mock('../../utils/websocket-manager');

@@ -8,33 +8,33 @@ import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 // Sync Core Services
-import { MasterClockService } from '../services/MasterClockService.js';
-import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
-import { ConflictManager } from '../services/ConflictManager.js';
+import { MasterClockService } from '../services/MasterClockService';
+import { SyncOrchestrator } from '../services/SyncOrchestrator';
+import { ConflictManager } from '../services/ConflictManager';
 
 // Watchers
-import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher.js';
+import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';
 
 // Performance
-import { PerformanceOptimizationService } from '../performance/PerformanceOptimizationService.js';
-import { HorizontalScalingCoordinator } from '../performance/HorizontalScalingCoordinator.js';
-import { FileChangeBatcher } from '../performance/FileChangeBatcher.js';
-import { SyncLRUCache } from '../performance/SyncLRUCache.js';
+import { PerformanceOptimizationService } from '../performance/PerformanceOptimizationService';
+import { HorizontalScalingCoordinator } from '../performance/HorizontalScalingCoordinator';
+import { FileChangeBatcher } from '../performance/FileChangeBatcher';
+import { SyncLRUCache } from '../performance/SyncLRUCache';
 
 // Error Handling
-import { SyncErrorHandler } from '../error/SyncErrorHandler.js';
-import { SyncRetryManager } from '../error/SyncRetryManager.js';
-import { SyncFallbackProcessor } from '../error/SyncFallbackProcessor.js';
+import { SyncErrorHandler } from '../error/SyncErrorHandler';
+import { SyncRetryManager } from '../error/SyncRetryManager';
+import { SyncFallbackProcessor } from '../error/SyncFallbackProcessor';
 
 // Deployment Services
-import { SyncHealthService } from './SyncHealthService.js';
-import { SyncConfigService } from './SyncConfigService.js';
-import { SyncMetricsService } from './SyncMetricsService.js';
+import { SyncHealthService } from './SyncHealthService';
+import { SyncConfigService } from './SyncConfigService';
+import { SyncMetricsService } from './SyncMetricsService';
 
 // Controllers
-import { SyncController } from './SyncController.js';
-import { HealthController } from './HealthController.js';
-import { MetricsController } from './MetricsController.js';
+import { SyncController } from './SyncController';
+import { HealthController } from './HealthController';
+import { MetricsController } from './MetricsController';
 
 @Module({
   imports: [

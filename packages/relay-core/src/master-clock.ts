@@ -65,14 +65,14 @@ import { execFile } from 'node:child_process';
 import path from 'path';
 import { promisify } from 'util';
 import WebSocket from 'ws';
-import { attachAuditTrace, type TnfAuditTrace } from './contracts/audit.js';
+import { attachAuditTrace, type TnfAuditTrace } from './contracts/audit';
 import {
   buildCanonicalEntityId,
   createAgentIdentityRecord,
   type TnfAgentIdentityRecord,
-} from './contracts/identity.js';
-import { normalizeAgentLifecycleStatus, type TnfAgentLifecycleStatus } from './contracts/lifecycle.js';
-import { createTNFEnvelope } from './protocol/tnf-envelope.js';
+} from './contracts/identity';
+import { normalizeAgentLifecycleStatus, type TnfAgentLifecycleStatus } from './contracts/lifecycle';
+import { createTNFEnvelope } from './protocol/tnf-envelope';
 
 const execFileAsync = promisify(execFile);
 

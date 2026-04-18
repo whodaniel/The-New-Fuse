@@ -1,1 +1,1 @@
-export * from './cache-warming.service.js';
+export * from './cache-warming.service';

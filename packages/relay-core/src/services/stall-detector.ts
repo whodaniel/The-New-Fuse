@@ -6,7 +6,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger.js';
+import { Logger } from '../utils/Logger';
 
 export interface ConversationState {
   conversationId: string;

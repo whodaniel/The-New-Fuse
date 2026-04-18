@@ -2,7 +2,7 @@
  * Security utilities for The New Fuse Chrome Extension
  * Handles encryption, decryption, and other security-related functions
  */
-import { Store } from './store.js';
+import { Store } from './store';
 
 const IV_LENGTH = 12; // Bytes for AES-GCM IV (must match VS Code extension)
 const KEY_ALGORITHM = { name: 'AES-GCM' };

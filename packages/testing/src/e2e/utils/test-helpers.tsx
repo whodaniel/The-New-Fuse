@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { config } from '../config/test-config.js';
+import { config } from '../config/test-config';
 
 export interface TestWorkflow {
   id: string;

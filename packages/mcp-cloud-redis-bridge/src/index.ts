@@ -4,9 +4,9 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types';
 import crypto from 'crypto';
 import { z } from 'zod';
-import { CloudRedisClient } from './RedisClient.js';
-import { SecurityService } from './crypto.js';
-import { MasterClockSignalEnvelope, TNFEnvelope } from './types.js';
+import { CloudRedisClient } from './RedisClient';
+import { SecurityService } from './crypto';
+import { MasterClockSignalEnvelope, TNFEnvelope } from './types';
 
 const server = new Server(
   { name: 'mcp-cloud-redis-bridge', version: '1.0.0' },

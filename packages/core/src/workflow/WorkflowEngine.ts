@@ -11,10 +11,10 @@ import {
   StepExecution, 
   WorkflowStep,
   WorkflowStepType 
-} from '../types/workflow.js';
-import { WorkflowError } from '../utils/errors.js';
-import { ServiceState } from '../constants/types.js';
-import { BaseError } from '../utils/errors.js';
+} from '../types/workflow';
+import { WorkflowError } from '../utils/errors';
+import { ServiceState } from '../constants/types';
+import { BaseError } from '../utils/errors';
 
 @Injectable()
 export class WorkflowEngine extends EventEmitter {

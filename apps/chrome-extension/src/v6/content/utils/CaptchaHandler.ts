@@ -10,7 +10,7 @@
  * Uses human behavior simulation to interact naturally with CAPTCHA elements.
  */
 
-import { humanSimulator } from './HumanBehaviorSimulator.js';
+import { humanSimulator } from './HumanBehaviorSimulator';
 
 export type CaptchaType =
   | 'recaptcha-v2'

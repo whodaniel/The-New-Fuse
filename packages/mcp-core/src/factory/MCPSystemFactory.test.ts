@@ -2,8 +2,8 @@
  * MCPSystemFactory Unit Tests
  */
 
-import { MCPSystemFactory, MCPSystemConfig } from './MCPSystemFactory.js';
-import { LogLevel } from '../types/index.js';
+import { MCPSystemFactory, MCPSystemConfig } from './MCPSystemFactory';
+import { LogLevel } from '../types';
 
 describe('MCPSystemFactory', () => {
   let system: any;

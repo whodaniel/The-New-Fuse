@@ -1,6 +1,6 @@
 import { mkdir, readFile, writeFile } from 'fs/promises';
 import * as path from 'path';
-import { Logger } from '../utils/Logger.js';
+import { Logger } from '../utils/Logger';
 
 const DEFAULT_MINI_OMNI_API_URL = process.env.MINI_OMNI_API_URL || 'http://127.0.0.1:60808/chat';
 

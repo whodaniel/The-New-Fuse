@@ -3,12 +3,12 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { ToolHandler, ToolPermissions, ToolResult } from '../interfaces/IMCPTool.js';
+import { ToolHandler, ToolPermissions, ToolResult } from '../interfaces/IMCPTool';
 import {
   ToolExecutionEngine,
   ToolExecutionOptions,
   ToolSecurityContext,
-} from './ToolExecutionEngine.js';
+} from './ToolExecutionEngine';
 
 // Mock tool handlers for integration testing
 class SecureFileHandler implements ToolHandler {

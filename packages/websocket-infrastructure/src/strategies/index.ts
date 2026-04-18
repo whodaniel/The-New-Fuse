@@ -1,1 +1,1 @@
-export * from './reconnection-strategy.js';
+export * from './reconnection-strategy';

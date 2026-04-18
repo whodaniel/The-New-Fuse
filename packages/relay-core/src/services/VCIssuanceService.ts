@@ -7,13 +7,13 @@
  */
 
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger.js';
+import { Logger } from '../utils/Logger';
 // @ts-ignore
 import type { AgentType } from '@the-new-fuse/database';
 // @ts-ignore
 import type { DrizzleClient } from '@the-new-fuse/database';
 import { ethers, BigNumberish } from 'ethers';
-import { BlockchainService } from './shared/BlockchainService.js';
+import { BlockchainService } from './shared/BlockchainService';
 
 // W3C Verifiable Credentials data model interfaces
 export interface VerifiableCredential {

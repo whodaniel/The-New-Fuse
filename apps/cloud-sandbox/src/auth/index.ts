@@ -6,20 +6,20 @@
  * @packageDocumentation
  */
 
-export { CloudSandboxAuthGuard } from './CloudSandboxAuthGuard.js';
-export type { AuthenticatedUser, AuthenticationResult } from './CloudSandboxAuthGuard.js';
+export { CloudSandboxAuthGuard } from './CloudSandboxAuthGuard';
+export type { AuthenticatedUser, AuthenticationResult } from './CloudSandboxAuthGuard';
 
-export { ToolPermissionChecker } from './ToolPermissionChecker.js';
-export type { PermissionCheckResult, ToolPermissionConfig } from './ToolPermissionChecker.js';
+export { ToolPermissionChecker } from './ToolPermissionChecker';
+export type { PermissionCheckResult, ToolPermissionConfig } from './ToolPermissionChecker';
 
-export { TenantIsolationService } from './TenantIsolationService.js';
-export type { QuotaCheckResult, TenantQuota, TenantUsage } from './TenantIsolationService.js';
+export { TenantIsolationService } from './TenantIsolationService';
+export type { QuotaCheckResult, TenantQuota, TenantUsage } from './TenantIsolationService';
 
-export { AuditLogger } from './AuditLogger.js';
-export type { AuditLog, AuditLogStorage } from './AuditLogger.js';
+export { AuditLogger } from './AuditLogger';
+export type { AuditLog, AuditLogStorage } from './AuditLogger';
 
-export { SecureCloudSandboxModule } from './SecureCloudSandboxModule.js';
+export { SecureCloudSandboxModule } from './SecureCloudSandboxModule';
 export type {
   SecuredToolExecutionContext,
   SecuredToolExecutionResult,
-} from './SecureCloudSandboxModule.js';
+} from './SecureCloudSandboxModule';

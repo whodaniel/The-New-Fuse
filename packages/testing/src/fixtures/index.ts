@@ -4,7 +4,7 @@
  * Common test data and fixtures for use across the monorepo.
  */
 
-import { randomString, randomEmail, randomUUID } from '../utils/test-helpers.js';
+import { randomString, randomEmail, randomUUID } from '../utils/test-helpers';
 
 /**
  * User fixtures

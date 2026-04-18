@@ -1,7 +1,7 @@
 /**
  * Options script for The New Fuse - AI Bridge
  */
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger';
 
 // Create an options-specific logger
 const optionsLogger = new Logger({

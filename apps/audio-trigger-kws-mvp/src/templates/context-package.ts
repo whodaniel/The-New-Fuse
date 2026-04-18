@@ -1,4 +1,4 @@
-import { ContextPackage } from '../types/events.js';
+import { ContextPackage } from '../types/events';
 
 export const renderPromptFromPackage = (pkg: ContextPackage): string => {
   return [

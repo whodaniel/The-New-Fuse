@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { VERSION, DEFAULT_CONFIG } from './index.js';
+import { VERSION, DEFAULT_CONFIG } from './index';
 
 describe('Build Optimization Package', () => {
   it('should export version information', () => {

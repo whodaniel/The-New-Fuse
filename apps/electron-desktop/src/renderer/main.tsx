@@ -2,8 +2,8 @@ import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { AppLayout } from './components/AppLayout.js';
-import { store } from './store/store.js';
+import { AppLayout } from './components/AppLayout';
+import { store } from './store/store';
 
 // Custom theme for the desktop app
 const theme = extendTheme({

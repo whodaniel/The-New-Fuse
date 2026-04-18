@@ -1,8 +1,8 @@
 /**
  * Chat manager for The New Fuse - AI Bridge
  */
-import { Logger } from '../utils/logger.js';
-import { ConnectionStatusManager } from './connection-status.js';
+import { Logger } from '../utils/logger';
+import { ConnectionStatusManager } from './connection-status';
 
 // Create a chat-specific logger
 const chatLogger = new Logger({

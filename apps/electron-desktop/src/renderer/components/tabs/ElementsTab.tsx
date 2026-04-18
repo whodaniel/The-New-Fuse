@@ -22,7 +22,7 @@ import {
   Icon
 } from '@chakra-ui/react'
 import { FiTarget, FiRefreshCw, FiEye } from 'react-icons/fi'
-import type { RootState } from '../../store/store.js'
+import type { RootState } from '../../store/store'
 
 export const ElementsTab: React.FC = () => {
   const toast = useToast()

@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import { ZodSchema } from 'zod';
-import { ComponentValidator, ComponentValidatorInput } from './toBeValidComponent.js';
-import { APIContract } from './toMatchAPIContract.js';
+import { ComponentValidator, ComponentValidatorInput } from './toBeValidComponent';
+import { APIContract } from './toMatchAPIContract';
 
 declare global {
   namespace jest {

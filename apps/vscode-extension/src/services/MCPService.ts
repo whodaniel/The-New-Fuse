@@ -8,10 +8,10 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio';
 import * as vscode from 'vscode';
-import { ConfigManager } from '../core/config.js';
-import { MCPConnection, MCPResource, MCPServerConfig, MCPTool } from '../core/types.js';
-import { generateId } from '../utils/helpers.js';
-import { log } from '../utils/logger.js';
+import { ConfigManager } from '../core/config';
+import { MCPConnection, MCPResource, MCPServerConfig, MCPTool } from '../core/types';
+import { generateId } from '../utils/helpers';
+import { log } from '../utils/logger';
 
 /**
  * MCP Service for managing Model Context Protocol connections

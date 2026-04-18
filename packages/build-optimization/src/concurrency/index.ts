@@ -2,11 +2,11 @@
  * Concurrency control module exports
  */
 
-export { ConcurrencyController } from './ConcurrencyController.js';
-export { BuildProcessThrottler } from './BuildProcessThrottler.js';
-export type { IConcurrencyController } from '../interfaces/index.js';
+export { ConcurrencyController } from './ConcurrencyController';
+export { BuildProcessThrottler } from './BuildProcessThrottler';
+export type { IConcurrencyController } from '../interfaces';
 export type { 
   BuildTask, 
   BuildTaskResult, 
   ThrottlerOptions 
-} from './BuildProcessThrottler.js';
+} from './BuildProcessThrottler';

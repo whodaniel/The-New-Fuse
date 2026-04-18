@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ErrorHandlingService } from './ErrorHandlingService.js';
-import { ErrorRecoveryService } from './ErrorRecoveryService.js';
-import { ErrorReportingService } from './error-reporting.service.js';
+import { ErrorHandlingService } from './ErrorHandlingService';
+import { ErrorRecoveryService } from './ErrorRecoveryService';
+import { ErrorReportingService } from './error-reporting.service';
 
 @Injectable()
 export class ErrorHandler {

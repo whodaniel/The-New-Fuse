@@ -7,8 +7,8 @@
  */
 
 import { DrizzleClient, User, UserRole } from '@the-new-fuse/database/generated/drizzle';
-import { RedisService } from '../config/SyncRedisConfig.js';
-import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
+import { RedisService } from '../config/SyncRedisConfig';
+import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { 
   ContentItem,
   ProjectConfiguration,
@@ -19,7 +19,7 @@ import {
   CMSEvent,
   CMSEventType,
   Collaborator
-} from './types.js';
+} from './types';
 
 export class CollaborativeContentService {
   private drizzle: DrizzleClient;

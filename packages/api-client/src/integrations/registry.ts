@@ -1,4 +1,4 @@
-import { IntegrationConfig, Integration, IntegrationType } from './types.js';
+import { IntegrationConfig, Integration, IntegrationType } from './types';
 
 /**
  * Registry for managing external service integrations

@@ -2,8 +2,8 @@
  * Unit tests for Service Mesh Scaler
  */
 
-import { ServiceMeshScaler, ServiceMeshScalerConfig, ScalingDecision } from './ServiceMeshScaler.js';
-import { ServiceMeshProvider, ServiceScalingConfig, ScalingEvent } from './MCPServiceMesh.js';
+import { ServiceMeshScaler, ServiceMeshScalerConfig, ScalingDecision } from './ServiceMeshScaler';
+import { ServiceMeshProvider, ServiceScalingConfig, ScalingEvent } from './MCPServiceMesh';
 
 // Mock service mesh provider
 class MockServiceMeshProvider implements ServiceMeshProvider {

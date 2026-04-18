@@ -2,7 +2,7 @@
  * Fuse Connect v6 - Constants and Configuration
  */
 
-import type { ChatDetectionConfig, ExtensionSettings, NotificationSettings } from './types.js';
+import type { ChatDetectionConfig, ExtensionSettings, NotificationSettings } from './types';
 
 // ============================================
 // EXTENSION METADATA

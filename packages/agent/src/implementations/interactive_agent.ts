@@ -4,7 +4,7 @@
  * Supports multi-turn dialogues, context retention, and dynamic responses
  */
 
-import { IAgent } from '../interfaces/IAgent.js';
+import { IAgent } from '../interfaces/IAgent';
 
 export interface InteractiveConfig {
   agentId: string;

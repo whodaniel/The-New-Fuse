@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Counter, Gauge, Histogram, Registry, register } from 'prom-client';
-import { WebSocketMetrics, HealthStatus } from '../types/index.js';
+import { WebSocketMetrics, HealthStatus } from '../types';
 
 @Injectable()
 export class WebSocketMonitoring {

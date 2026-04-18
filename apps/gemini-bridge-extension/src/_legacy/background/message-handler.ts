@@ -6,10 +6,10 @@ import {
   SetSharedSecretRequestMessage,
   MessageType as SharedMessageType,
   SharedSecretAckMessage,
-} from '../shared-protocol.js';
-import { Logger } from '../utils/logger.js';
-import { SecurityManager } from '../utils/security.js';
-import { ConnectionManager } from './connection-manager.js';
+} from '../shared-protocol';
+import { Logger } from '../utils/logger';
+import { SecurityManager } from '../utils/security';
+import { ConnectionManager } from './connection-manager';
 
 // Create a message-specific logger
 const messageLogger = new Logger({

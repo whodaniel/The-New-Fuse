@@ -278,7 +278,7 @@ export class AGUIOrchestrator extends EventEmitter {
       console.log(`[AG-UI] Generating ${request.type} visualization for ${session.agentId}`);
 
       // Import the visualization generator
-      const { VisualizationGenerator } = await import('./utils/VisualizationGenerator.js');
+      const { VisualizationGenerator } = await import('./utils/VisualizationGenerator');
 
       const generator = new VisualizationGenerator();
 

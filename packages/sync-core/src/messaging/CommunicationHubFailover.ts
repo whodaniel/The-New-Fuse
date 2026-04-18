@@ -1,12 +1,12 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { SyncRedisConfig } from '../config/SyncRedisConfig.js';
+import { SyncRedisConfig } from '../config/SyncRedisConfig';
 import {
   SyncAwareA2AMessage,
   MessageFailoverConfig,
   MessageDeliveryMetrics,
   SyncAwareMessageUtils
-} from './SyncAwareA2AMessage.js';
+} from './SyncAwareA2AMessage';
 
 export interface CommunicationNode {
   id: string;

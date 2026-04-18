@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Logger } from './logger.js';
+import { Logger } from './logger';
 
 interface LogEntry {
   timestamp: Date;

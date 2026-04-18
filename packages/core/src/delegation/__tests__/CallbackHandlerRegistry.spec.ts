@@ -1,7 +1,7 @@
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
 import { mock } from 'jest-mock-extended';
-import { CallbackHandlerRegistry, SubTaskEvent } from '../CallbackHandlerRegistry.js';
+import { CallbackHandlerRegistry, SubTaskEvent } from '../CallbackHandlerRegistry';
 
 // Mock Logger to prevent console output during tests
 jest.mock('@nestjs/common', () => {

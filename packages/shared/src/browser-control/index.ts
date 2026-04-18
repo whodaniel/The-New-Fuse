@@ -1,2 +1,2 @@
 // Browser Control Protocol Exports
-export * from './protocol.js';
+export * from './protocol';

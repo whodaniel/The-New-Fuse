@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { CommunicationService } from './CommunicationService.js';
-import { CommunicationProtocol } from './CommunicationProtocol.js';
+import { CommunicationService } from './CommunicationService';
+import { CommunicationProtocol } from './CommunicationProtocol';
 
 @Module({
   providers: [CommunicationService, CommunicationProtocol],

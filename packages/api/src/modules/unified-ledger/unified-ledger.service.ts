@@ -13,7 +13,7 @@ import {
   UnifiedRecordPriority,
   UnifiedRecordStatus,
   UnifiedTaskRecord,
-} from './unified-ledger.types.js';
+} from './unified-ledger.types';
 
 type CreateRecordInput = Partial<UnifiedTaskRecord> &
   Pick<UnifiedTaskRecord, 'title' | 'description'>;

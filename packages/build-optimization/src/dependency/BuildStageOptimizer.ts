@@ -5,7 +5,7 @@
  * memory usage patterns, and dependency relationships to create optimal build stages.
  */
 
-import { PackageDependency, BuildStage, SystemResources } from '../types/index.js';
+import { PackageDependency, BuildStage, SystemResources } from '../types';
 
 /**
  * Configuration for stage optimization

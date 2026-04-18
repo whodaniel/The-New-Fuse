@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { TypeScriptCompilationManager, TypeScriptCompilationOptions } from './TypeScriptCompilationManager.js';
+import { TypeScriptCompilationManager, TypeScriptCompilationOptions } from './TypeScriptCompilationManager';
 
 describe('TypeScriptCompilationManager', () => {
   let manager: TypeScriptCompilationManager;

@@ -1,1 +1,1 @@
-export * from './resource-registry.controller.js';
+export * from './resource-registry.controller';

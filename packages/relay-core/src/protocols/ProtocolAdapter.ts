@@ -3,7 +3,7 @@
  * Base Protocol Adapter for The New Fuse Relay System
  */
 
-import { RelayMessage, ProtocolType } from '../types/index.js';
+import { RelayMessage, ProtocolType } from '../types';
 
 export interface ProtocolAdapter {
   name: string;

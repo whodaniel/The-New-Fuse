@@ -1,4 +1,4 @@
-import { TaskPriority } from './core/enums.js';
+import { TaskPriority } from './core/enums';
 
 export const TaskType = {
   ANALYSIS: 'ANALYSIS',

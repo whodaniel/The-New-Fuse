@@ -5,7 +5,7 @@
  * and ensures compliance with JSON-RPC 2.0 specification.
  */
 
-export * from './messageValidator.js';
-export * from './schemas.js';
-export * from './serialization.js';
-export * from './validator.js';
+export * from './messageValidator';
+export * from './schemas';
+export * from './serialization';
+export * from './validator';

@@ -1,5 +1,5 @@
 // Export all utility functions
-export * from './idGenerator.js';
+export * from './idGenerator';
 
 // Export all hooks
-export * from './useLocalStorage.js';
+export * from './useLocalStorage';

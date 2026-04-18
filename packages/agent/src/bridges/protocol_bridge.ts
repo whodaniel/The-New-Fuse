@@ -12,7 +12,7 @@
  * - MCP Server: For tool registration
  */
 
-import { BaseBridge, MessageType, Priority } from './index.js';
+import { BaseBridge, MessageType, Priority } from './index';
 
 // ============================================================
 // A2A PROTOCOL TYPES (aligned with v0.3.0)

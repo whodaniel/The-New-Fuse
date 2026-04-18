@@ -13,7 +13,7 @@ import {
   SyncError, 
   SyncContext, 
   SyncErrorHandlerConfig 
-} from './SyncErrorHandler.js';
+} from './SyncErrorHandler';
 
 describe('SyncErrorHandler', () => {
   let errorHandler: SyncErrorHandler;

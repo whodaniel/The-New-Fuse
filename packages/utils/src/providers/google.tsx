@@ -1,8 +1,8 @@
 
 export {}
 exports.GoogleProvider = void 0;
-import { BaseLLMProvider, LLMConfig } from './base.js';
-import { providerRegistry } from './registry.js';
+import { BaseLLMProvider, LLMConfig } from './base';
+import { providerRegistry } from './registry';
 
 interface GoogleConfig extends LLMConfig {
     projectId?: string;

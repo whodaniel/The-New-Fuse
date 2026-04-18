@@ -18,7 +18,7 @@
  */
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
-import { Database, db, queryClient } from './client.js';
+import { Database, db, queryClient } from './client';
 import {
   drizzleAgentApiGrantRepository,
   DrizzleAgentApiGrantRepository,
@@ -50,7 +50,7 @@ import {
   DrizzleWorkspaceMemberRepository,
   drizzleWorkspaceRepository,
   DrizzleWorkspaceRepository,
-} from './repositories/index.js';
+} from './repositories';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {

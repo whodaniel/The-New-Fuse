@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { ClockSyncData } from '../types/index.js';
+import { ClockSyncData } from '../types';
 
 // Type definitions for external services (to avoid direct imports in implementation)
 export interface IRedisService {

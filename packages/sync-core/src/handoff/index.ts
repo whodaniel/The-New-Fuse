@@ -5,9 +5,9 @@
  * with existing template and orchestration systems.
  */
 
-export * from './PromptHandoffFlywheel.js';
-export * from './EnhancedAgentHandoffTemplateService.js';
-export * from './PromptTemplateIntegration.js';
+export * from './PromptHandoffFlywheel';
+export * from './EnhancedAgentHandoffTemplateService';
+export * from './PromptTemplateIntegration';
 
 // Re-export key types for convenience
 export type {
@@ -16,16 +16,16 @@ export type {
   HandoffTemplate,
   HandoffQueue,
   AgentCapability
-} from './PromptHandoffFlywheel.js';
+} from './PromptHandoffFlywheel';
 
 export type {
   EnhancedHandoffTemplate,
   TemplateVersion,
   TemplateAnalytics,
   HandoffSession
-} from './EnhancedAgentHandoffTemplateService.js';
+} from './EnhancedAgentHandoffTemplateService';
 
 export type {
   IntegratedTemplate,
   TemplateExecutionResult
-} from './PromptTemplateIntegration.js';
+} from './PromptTemplateIntegration';

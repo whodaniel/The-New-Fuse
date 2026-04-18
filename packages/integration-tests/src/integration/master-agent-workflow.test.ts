@@ -5,7 +5,7 @@
  * validating agent task assignment, execution, handoffs, and monitoring
  */
 
-import { getTestEnvironment, TestHelpers } from '../setup/test-setup.js';
+import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
 // import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
 
 // Define types locally since workflow-engine dependency was removed

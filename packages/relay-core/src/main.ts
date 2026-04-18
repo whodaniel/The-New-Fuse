@@ -4,8 +4,8 @@
  */
 
 import * as http from 'http';
-import { RelayServer } from './server/RelayServer.js';
-import { RelayConfig } from './types/index.js';
+import { RelayServer } from './server/RelayServer';
+import { RelayConfig } from './types';
 
 async function bootstrap() {
   console.log('Starting The New Fuse Relay Core Server...');

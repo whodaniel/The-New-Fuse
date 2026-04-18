@@ -1,4 +1,4 @@
-import { setupTestMatchers } from './index.js';
+import { setupTestMatchers } from './index';
 import { z } from 'zod';
 
 // Set up custom matchers

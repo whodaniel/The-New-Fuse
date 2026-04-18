@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { JulesSessionStatus } from './types.js';
+import { JulesSessionStatus } from './types';
 
 const JULES_API_URL = process.env.JULES_API_URL || 'https://jules.googleapis.com/v1alpha';
 

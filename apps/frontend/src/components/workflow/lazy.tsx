@@ -4,55 +4,55 @@ import { lazy, Suspense } from 'react';
 
 // Lazy-loaded components
 export const LazyWorkflowCanvas = lazy(() =>
-  import('./WorkflowCanvas.js').then((module: any) => ({ default: module.WorkflowCanvas }))
+  import('./WorkflowCanvas').then((module: any) => ({ default: module.WorkflowCanvas }))
 );
 export const LazyNodeToolbox = lazy(() =>
-  import('./NodeToolbox.js').then((module: any) => ({ default: module.NodeToolbox }))
+  import('./NodeToolbox').then((module: any) => ({ default: module.NodeToolbox }))
 );
 export const LazyNodeProperties = lazy(() =>
-  import('./NodeProperties.js').then((module: any) => ({ default: module.NodeProperties }))
+  import('./NodeProperties').then((module: any) => ({ default: module.NodeProperties }))
 );
 export const LazyWorkflowExecutionContext = lazy(() =>
-  import('./WorkflowExecutionContext.js').then((module: any) => ({
+  import('./WorkflowExecutionContext').then((module: any) => ({
     default: module.WorkflowExecutionContext,
   }))
 );
 export const LazyWorkflowDebugger = lazy(() =>
-  import('./WorkflowDebugger.js').then((module: any) => ({ default: module.WorkflowDebugger }))
+  import('./WorkflowDebugger').then((module: any) => ({ default: module.WorkflowDebugger }))
 );
 export const LazyWorkflowAnalytics = lazy(() =>
-  import('./WorkflowAnalytics.js').then((module: any) => ({ default: module.WorkflowAnalytics }))
+  import('./WorkflowAnalytics').then((module: any) => ({ default: module.WorkflowAnalytics }))
 );
 export const LazyWorkflowTemplates = lazy(() =>
-  import('./WorkflowTemplates.js').then((module: any) => ({ default: module.WorkflowTemplates }))
+  import('./WorkflowTemplates').then((module: any) => ({ default: module.WorkflowTemplates }))
 );
 
 // Lazy-loaded node components
 export const LazyAgentNode = lazy(() =>
-  import('./nodes/agent-node.js').then((module: any) => ({ default: module.AgentNode }))
+  import('./nodes/agent-node').then((module: any) => ({ default: module.AgentNode }))
 );
 export const LazyA2ANode = lazy(() =>
-  import('./nodes/a2a-node.js').then((module: any) => ({ default: module.A2ANode }))
+  import('./nodes/a2a-node').then((module: any) => ({ default: module.A2ANode }))
 );
 export const LazyMCPToolNode = lazy(() =>
-  import('./nodes/mcp-tool-node.js').then((module: any) => ({ default: module.MCPToolNode }))
+  import('./nodes/mcp-tool-node').then((module: any) => ({ default: module.MCPToolNode }))
 );
 export const LazyTransformNode = lazy(() =>
-  import('./nodes/transform-node.js').then((module: any) => ({ default: module.TransformNode }))
+  import('./nodes/transform-node').then((module: any) => ({ default: module.TransformNode }))
 );
 export const LazyConditionNode = lazy(() =>
-  import('./nodes/condition-node.js').then((module: any) => ({ default: module.ConditionNode }))
+  import('./nodes/condition-node').then((module: any) => ({ default: module.ConditionNode }))
 );
 export const LazyNotificationNode = lazy(() =>
-  import('./nodes/notification-node.js').then((module: any) => ({
+  import('./nodes/notification-node').then((module: any) => ({
     default: module.NotificationNode,
   }))
 );
 export const LazyInputNode = lazy(() =>
-  import('./nodes/input-node.js').then((module: any) => ({ default: module.InputNode }))
+  import('./nodes/input-node').then((module: any) => ({ default: module.InputNode }))
 );
 export const LazyOutputNode = lazy(() =>
-  import('./nodes/output-node.js').then((module: any) => ({ default: module.OutputNode }))
+  import('./nodes/output-node').then((module: any) => ({ default: module.OutputNode }))
 );
 
 // Loading fallback

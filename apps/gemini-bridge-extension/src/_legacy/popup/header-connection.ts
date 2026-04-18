@@ -1,8 +1,8 @@
 /**
  * Header connection status handler for The New Fuse - AI Bridge
  */
-import { Logger } from '../utils/logger.js';
-import { ConnectionStatusManager } from './connection-status.js';
+import { Logger } from '../utils/logger';
+import { ConnectionStatusManager } from './connection-status';
 
 // Create a header-specific logger
 const headerLogger = new Logger({

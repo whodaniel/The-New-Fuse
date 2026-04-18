@@ -4,11 +4,11 @@
  * Exposes The New Fuse skills library via Model Context Protocol
  */
 
-export { SkillsMCPServer } from './SkillsMCPServer.js';
+export { SkillsMCPServer } from './SkillsMCPServer';
 
 // CLI execution
 import { fileURLToPath } from 'url';
-import { SkillsMCPServer } from './SkillsMCPServer.js';
+import { SkillsMCPServer } from './SkillsMCPServer';
 
 async function main() {
   const server = new SkillsMCPServer(process.env.SKILLS_BASE_PATH);

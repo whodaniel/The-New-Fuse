@@ -6,7 +6,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { BaseBridge, MessageType, Priority } from './index.js';
+import { BaseBridge, MessageType, Priority } from './index';
 
 // ============================================================
 // ADAPTER TYPES

@@ -1,4 +1,4 @@
-import { getThemeClass, getResponsiveClass } from '../index.js';
+import { getThemeClass, getResponsiveClass } from '../index';
 
 describe('UI Utilities', () => {
   describe('getThemeClass', () => {

@@ -14,8 +14,8 @@ import {
   ExecutionQuery,
   WorkflowStatus,
   WorkflowExecutionStatus
-} from '../types/WorkflowTypes.js';
-import { getErrorMessage } from '../utils/errorUtils.js';
+} from '../types/WorkflowTypes';
+import { getErrorMessage } from '../utils/errorUtils';
 
 export interface RepositoryConfig {
   enableCaching: boolean;

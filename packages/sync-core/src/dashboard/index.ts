@@ -6,7 +6,7 @@
  */
 
 // Core dashboard service
-export { SyncDashboardService } from './SyncDashboardService.js';
+export { SyncDashboardService } from './SyncDashboardService';
 export type { 
   IAgentWebSocketService,
   IMonitoringService,
@@ -14,11 +14,11 @@ export type {
   DashboardUpdateType,
   DashboardUpdate,
   SyncDashboardConfig
-} from './SyncDashboardService.js';
+} from './SyncDashboardService';
 
 // React integration
-export { useSyncDashboard } from './useSyncDashboard.js';
-export { useFilteredAlerts, useRecentOperations, useHealthScore } from './useSyncDashboard.js';
+export { useSyncDashboard } from './useSyncDashboard';
+export { useFilteredAlerts, useRecentOperations, useHealthScore } from './useSyncDashboard';
 export type {
   UseSyncDashboardConfig,
   UseSyncDashboardReturn,
@@ -26,17 +26,17 @@ export type {
   SyncMetrics,
   SyncHealth,
   SyncOperation
-} from './useSyncDashboard.js';
+} from './useSyncDashboard';
 
 // Enhanced dashboard component
-export { SyncAwareAdminDashboard } from './SyncAwareAdminDashboard.js';
-export type { SyncAwareAdminDashboardProps } from './SyncAwareAdminDashboard.js';
+export { SyncAwareAdminDashboard } from './SyncAwareAdminDashboard';
+export type { SyncAwareAdminDashboardProps } from './SyncAwareAdminDashboard';
 
 // WebSocket integration
-export { DashboardWebSocketIntegration } from './DashboardWebSocketIntegration.js';
+export { DashboardWebSocketIntegration } from './DashboardWebSocketIntegration';
 
 // Monitoring integration
-export { DashboardMonitoringIntegration } from './DashboardMonitoringIntegration.js';
+export { DashboardMonitoringIntegration } from './DashboardMonitoringIntegration';
 export type {
   IExistingMonitoringService,
   IExistingMetricsService,
@@ -44,7 +44,7 @@ export type {
   MonitoringEventType,
   MonitoringEvent,
   AlertThreshold
-} from './DashboardMonitoringIntegration.js';
+} from './DashboardMonitoringIntegration';
 
 // Re-export types from other modules for convenience
 export type {
@@ -52,4 +52,4 @@ export type {
   SyncHealth as CoreSyncHealth,
   SyncOperation as CoreSyncOperation,
   SystemAlert as CoreSystemAlert
-} from '../types/index.js';
+} from '../types';

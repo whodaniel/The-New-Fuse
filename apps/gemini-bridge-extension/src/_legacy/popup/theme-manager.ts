@@ -1,7 +1,7 @@
 /**
  * Theme manager for The New Fuse - AI Bridge
  */
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger';
 
 // Create a theme-specific logger
 const themeLogger = new Logger({

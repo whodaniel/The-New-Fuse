@@ -7,8 +7,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
-import { AuthContext, AuthAuditEvent } from './AuthenticationManager.js';
+import { MCPErrorClass, MCPErrorCode } from '../types/error';
+import { AuthContext, AuthAuditEvent } from './AuthenticationManager';
 
 /**
  * Permission interface

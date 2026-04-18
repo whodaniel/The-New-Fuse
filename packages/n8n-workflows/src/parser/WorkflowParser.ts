@@ -11,7 +11,7 @@ import {
   WorkflowMetadata,
   WorkflowNode,
   WorkflowSource,
-} from '../types/index.js';
+} from '../types';
 
 export class WorkflowParser {
   /**

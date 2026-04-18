@@ -6,14 +6,14 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
-import { BuildOrchestrator } from './BuildOrchestrator.js';
+import { BuildOrchestrator } from './BuildOrchestrator';
 import {
   ISystemResourceDetector,
   IMemoryMonitor,
   IDependencyGraphAnalyzer,
   IConcurrencyController,
   ITypeScriptCompilationManager
-} from '../interfaces/index.js';
+} from '../interfaces';
 import {
   SystemResources,
   MemoryUsage,
@@ -21,7 +21,7 @@ import {
   BuildStage,
   PackageDependency,
   BuildEventData
-} from '../types/index.js';
+} from '../types';
 
 // Mock implementations
 class MockSystemResourceDetector implements ISystemResourceDetector {

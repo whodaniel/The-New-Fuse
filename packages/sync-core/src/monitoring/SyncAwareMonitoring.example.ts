@@ -13,13 +13,13 @@ import {
   SyncHealthMetrics,
   SyncHealthEscalation,
   UnifiedSyncHealthReport
-} from './index.js';
+} from './index';
 import { HeartbeatMonitoringService } from '@the-new-fuse/relay-core';
-import { MasterClockService } from '../services/MasterClockService.js';
-import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
-import { ConflictManager } from '../services/ConflictManager.js';
-import { SyncDashboardService } from '../dashboard/SyncDashboardService.js';
-import { DashboardMonitoringIntegration } from '../dashboard/DashboardMonitoringIntegration.js';
+import { MasterClockService } from '../services/MasterClockService';
+import { SyncOrchestrator } from '../services/SyncOrchestrator';
+import { ConflictManager } from '../services/ConflictManager';
+import { SyncDashboardService } from '../dashboard/SyncDashboardService';
+import { DashboardMonitoringIntegration } from '../dashboard/DashboardMonitoringIntegration';
 
 /**
  * Example 1: Basic Setup and Integration

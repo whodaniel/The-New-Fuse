@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 // @ts-ignore
 import { Storage } from '@google-cloud/storage';
 import { ConfigService } from '@nestjs/config';
-import { StorageService } from './StorageService.js';
-import { StorageFile, StorageOptions } from './types.js';
+import { StorageService } from './StorageService';
+import { StorageFile, StorageOptions } from './types';
 
 @Injectable()
 export class GcsStorageService extends StorageService {

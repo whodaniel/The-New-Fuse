@@ -6,8 +6,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { MCPCallback, TaskExecutionStatus } from '../interfaces/IMCPWorkflowIntegration.js';
-import { MCPErrorClass } from '../types/error.js';
+import { MCPCallback, TaskExecutionStatus } from '../interfaces/IMCPWorkflowIntegration';
+import { MCPErrorClass } from '../types/error';
 
 /**
  * Callback handler configuration

@@ -4,10 +4,10 @@
  */
 
 // Validation
-export * from './validation/index.js';
+export * from './validation';
 
 // Utils
-export * from './utils/index.js';
+export * from './utils';
 
 // Hooks
-export * from './hooks/index.js';
+export * from './hooks';

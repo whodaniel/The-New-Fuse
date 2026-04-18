@@ -6,7 +6,7 @@ import {
   StageType,
   TriggerType,
   DeploymentStrategy
-} from '../types/pipeline.js';
+} from '../types/pipeline';
 import { Logger } from 'winston';
 
 /**

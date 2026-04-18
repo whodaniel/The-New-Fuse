@@ -8,8 +8,8 @@ import {
   MemoryUsage,
   SystemResources,
   BuildResult
-} from '../types/index.js';
-import { DetailedBuildMetrics } from './BuildMetricsCollector.js';
+} from '../types';
+import { DetailedBuildMetrics } from './BuildMetricsCollector';
 
 /**
  * Types of build failures

@@ -5,7 +5,7 @@
  */
 
 // Import from local response file instead of types package
-import { BaseResponse } from './response.js';
+import { BaseResponse } from './response';
 
 /**
  * API Client configuration options

@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { disconnect as dbDisconnect, query } from './db/connection.js';
+import { disconnect as dbDisconnect, query } from './db/connection';
 
 interface SearchResult {
   id: bigint;

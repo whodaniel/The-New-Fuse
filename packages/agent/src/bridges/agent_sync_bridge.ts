@@ -8,7 +8,7 @@
  * - Event sourcing
  */
 
-import { BaseBridge, MessageType, Priority } from './index.js';
+import { BaseBridge, MessageType, Priority } from './index';
 
 // ============================================================
 // SYNC TYPES

@@ -4,7 +4,7 @@
  * Specializes in file operations, code generation, and terminal command execution
  */
 
-import { IAgent } from '../interfaces/IAgent.js';
+import { IAgent } from '../interfaces/IAgent';
 
 export interface ClineConfig {
   agentId: string;

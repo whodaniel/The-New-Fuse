@@ -4,4 +4,4 @@
  * Exports skill execution functionality
  */
 
-export { SkillExecutor } from './SkillExecutor.js';
+export { SkillExecutor } from './SkillExecutor';

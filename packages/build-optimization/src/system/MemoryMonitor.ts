@@ -2,9 +2,9 @@
  * Real-time memory monitoring for build optimization
  */
 
-import { IMemoryMonitor } from '../interfaces/index.js';
-import { MemoryUsage, MemoryCallback } from '../types/index.js';
-import { SystemResourceDetector } from './SystemResourceDetector.js';
+import { IMemoryMonitor } from '../interfaces';
+import { MemoryUsage, MemoryCallback } from '../types';
+import { SystemResourceDetector } from './SystemResourceDetector';
 
 /**
  * Monitors system memory usage with configurable polling and threshold detection

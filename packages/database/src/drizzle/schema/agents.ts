@@ -13,8 +13,8 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { agentStatusEnum, agentTypeEnum } from './enums.js';
-import { users } from './users.js';
+import { agentStatusEnum, agentTypeEnum } from './enums';
+import { users } from './users';
 
 // =============================================================================
 // AGENT

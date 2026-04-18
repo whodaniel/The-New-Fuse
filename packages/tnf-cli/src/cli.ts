@@ -6,11 +6,15 @@ import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
-import type { AgentMessage } from './RedisAgentClient.js';
-import { RedisAgentClient } from './RedisAgentClient.js';
+import type { AgentMessage } from './RedisAgentClient';
+import { RedisAgentClient } from './RedisAgentClient';
 
 const program = new Command();
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
+// Fallback for CommonJS/ESM compatibility
+const _dirname = typeof __dirname !== 'undefined' 
+  ? __dirname 
+  : path.dirname(fileURLToPath((import.meta as any).url));
+const repoRoot = path.resolve(_dirname, '../../..');
 const SUPER_ADMIN_ENV_KEY = 'TNF_SUPER_ADMIN_TOKEN';
 const SUPER_ADMIN_INPUT_ENV_KEY = 'TNF_SUPER_ADMIN_INPUT_TOKEN';
 const RUNNABLE_SCRIPT_EXTENSIONS = new Set([
@@ -1788,23 +1792,162 @@ metaskills
       if (options.json) args.push('--json');
       await runCommand('node', args);
     } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    }
-  });
+console.error(chalk.red(`Error: ${err.message}`));
+process.exit(1);
+}
+});
 
 const mcp = program.command('mcp').description('MCP utilities');
+
 mcp
-  .command('generate')
-  .description('Generate MCP clients inventory')
-  .action(async () => {
-    try {
-      await runCommand('node', ['scripts/tnf-generate-mcp-clients.cjs']);
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
-    }
-  });
+.command('generate')
+.description('Generate MCP clients inventory')
+.action(async () => {
+try {
+await runCommand('node', ['scripts/tnf-generate-mcp-clients.cjs']);
+} catch (err: any) {
+console.error(chalk.red(`Error: ${err.message}`));
+process.exit(1);
+}
+});
+
+mcp
+.command('add')
+.description('Add an MCP server')
+.argument('<name>', 'Server name')
+.requiredOption('--command <cmd>', 'Command to run')
+.option('--args <args...>', 'Arguments for the command')
+.option('--env <json>', 'Environment variables as JSON')
+.option('--cwd <path>', 'Working directory')
+.action((name: string, options: { command: string; args?: string[]; env?: string; cwd?: string }) => {
+try {
+let env: Record<string, string> | undefined;
+if (options.env) {
+env = JSON.parse(options.env);
+}
+const mcpManager = new MCPManagerService();
+mcpManager.addServer(name, {
+command: options.command,
+args: options.args,
+env,
+cwd: options.cwd,
+});
+console.log(chalk.green(`✅ Added MCP server '${name}'`));
+} catch (err: any) {
+console.error(chalk.red(`Error: ${err.message}`));
+process.exit(1);
+}
+});
+
+mcp
+.command('list')
+.alias('ls')
+.description('List MCP servers and their status')
+.option('--json', 'Output machine-readable JSON')
+.action((options: { json?: boolean }) => {
+try {
+const mcpManager = new MCPManagerService();
+const servers = mcpManager.listServers();
+if (options.json) {
+console.log(JSON.stringify(servers, null, 2));
+return;
+}
+console.log(chalk.bold('\nMCP Servers\n'));
+if (servers.length === 0) {
+console.log(chalk.dim('No MCP servers configured'));
+} else {
+for (const server of servers) {
+const status = server.running ? chalk.green('running') : chalk.yellow('stopped');
+const oauth = server.oauth?.enabled
+? (server.oauth.authenticated ? chalk.green('auth ✓') : chalk.red('auth ✗'))
+: '';
+console.log(`  ${chalk.cyan(server.name)}: ${status} ${oauth}`);
+}
+}
+console.log('');
+} catch (err: any) {
+console.error(chalk.red(`Error: ${err.message}`));
+process.exit(1);
+}
+});
+
+mcp
+.command('auth')
+.description('Authenticate with an OAuth-enabled MCP server')
+.argument('[name]', 'Server name')
+.action(async (name?: string) => {
+try {
+const mcpManager = new MCPManagerService();
+if (!name) {
+const servers = mcpManager.listServers().filter(s => s.oauth?.enabled);
+if (servers.length === 0) {
+console.log(chalk.yellow('No OAuth-enabled MCP servers configured'));
+process.exit(0);
+}
+console.log(chalk.bold('\nOAuth-enabled servers:\n'));
+for (const s of servers) {
+console.log(`  ${chalk.cyan(s.name)}`);
+}
+console.log('');
+return;
+}
+const result = await mcpManager.authenticate(name);
+console.log(chalk.cyan(`\n  Authorize URL: ${result.url}`));
+if (result.code) {
+console.log(chalk.dim(`  State: ${result.code}`));
+}
+console.log('');
+} catch (err: any) {
+console.error(chalk.red(`Error: ${err.message}`));
+process.exit(1);
+}
+});
+
+mcp
+.command('logout')
+.description('Remove OAuth credentials for an MCP server')
+.argument('[name]', 'Server name')
+.action((name?: string) => {
+try {
+if (!name) {
+console.log(chalk.yellow('Please specify a server name'));
+process.exit(1);
+}
+const mcpManager = new MCPManagerService();
+if (mcpManager.logout(name)) {
+console.log(chalk.green(`✅ Logged out from '${name}'`));
+} else {
+console.log(chalk.yellow(`No credentials found for '${name}'`));
+}
+} catch (err: any) {
+console.error(chalk.red(`Error: ${err.message}`));
+process.exit(1);
+}
+});
+
+mcp
+.command('debug')
+.description('Debug OAuth connection for an MCP server')
+.argument('<name>', 'Server name')
+.option('--json', 'Output machine-readable JSON')
+.action(async (name: string, options: { json?: boolean }) => {
+try {
+const mcpManager = new MCPManagerService();
+const result = await mcpManager.debugConnection(name);
+if (options.json) {
+console.log(JSON.stringify(result, null, 2));
+return;
+}
+console.log(chalk.bold(`\nMCP Server: ${name}\n`));
+for (const diag of result.diagnostics) {
+console.log(`  ${diag}`);
+}
+console.log('');
+} catch (err: any) {
+console.error(chalk.red(`Error: ${err.message}`));
+process.exit(1);
+}
+});
 
 const ai = program.command('ai').description('AI launcher commands');
 ai.command('start')
@@ -4667,6 +4810,178 @@ reports
           );
         } catch {
           /* skip corrupt */
+}
+}
+console.log('');
+} catch (err: any) {
+console.error(chalk.red(`Error: ${err.message}`));
+process.exit(1);
+}
+});
+
+async function runPassthrough(cliName: string, args: string[] = []): Promise<void> {
+await runCommand(cliName, normalizeForwardedArgs(args));
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// TNF Command Extensions: ACP, MCP, Auth, Agent, Debug, Session, Remote, etc.
+// ────────────────────────────────────────────────────────────────────────────
+
+import { ACPService } from './services/ACPService';
+import { MCPManagerService } from './services/MCPManagerService';
+import { AuthService } from './services/AuthService';
+import { AgentManagerService } from './services/AgentManagerService';
+import { DebugService } from './services/DebugService';
+import { SessionManagerService } from './services/SessionManagerService';
+import { StatsService } from './services/StatsService';
+import { RemoteService } from './services/RemoteService';
+import { DatabaseService } from './services/DatabaseService';
+import { ModelsService } from './services/ModelsService';
+import { ServeService } from './services/ServeService';
+import { UpgradeService } from './services/UpgradeService';
+import { generateCompletion, getInstallInstructions, ShellType } from './services/CompletionService';
+
+// ACP command
+const acp = program.command('acp').description('Start ACP (Agent Client Protocol) server');
+acp
+  .option('--port <number>', 'Port to listen on', '0')
+  .option('--hostname <hostname>', 'Hostname to listen on', '127.0.0.1')
+  .option('--cwd <path>', 'Working directory', process.cwd())
+  .action(async (options: { port: string; hostname: string; cwd: string }) => {
+    try {
+      const service = new ACPService({
+        port: parseInt(options.port, 10) || 0,
+        hostname: options.hostname,
+        cwd: options.cwd,
+      });
+      const { port, hostname } = await service.start();
+      console.log(chalk.green(`✅ ACP server started on ${hostname}:${port}`));
+      console.log(chalk.dim('Press Ctrl+C to stop'));
+
+      process.on('SIGINT', async () => {
+        await service.stop();
+        process.exit(0);
+      });
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Auth commands
+const auth = program.command('auth').description('Manage credentials');
+const authService = new AuthService();
+
+auth
+.command('login')
+.description('Log in to a provider')
+.argument('[url]', 'OAuth URL or provider name')
+.action(async (url?: string) => {
+try {
+const result = await authService.login(url || '', url?.startsWith('http') ? url : undefined);
+if (result.success) {
+console.log(chalk.green(`✅ ${result.message}`));
+} else {
+console.log(chalk.yellow(result.message));
+if (result.url) {
+console.log(chalk.cyan(`  URL: ${result.url}`));
+}
+}
+} catch (err: any) {
+console.error(chalk.red(`Error: ${err.message}`));
+process.exit(1);
+}
+});
+
+auth
+.command('logout')
+.description('Log out from a configured provider')
+.argument('<provider>', 'Provider name')
+.action((provider: string) => {
+try {
+if (authService.logout(provider)) {
+console.log(chalk.green(`✅ Logged out from '${provider}'`));
+} else {
+console.log(chalk.yellow(`No credentials found for '${provider}'`));
+}
+} catch (err: any) {
+console.error(chalk.red(`Error: ${err.message}`));
+process.exit(1);
+}
+});
+
+auth
+.command('list')
+.alias('ls')
+.description('List providers')
+.option('--json', 'Output machine-readable JSON')
+.action((options: { json?: boolean }) => {
+try {
+const providers = authService.listProviders();
+if (options.json) {
+console.log(JSON.stringify(providers, null, 2));
+return;
+}
+console.log(chalk.bold('\nConfigured Providers\n'));
+for (const p of providers) {
+const status = p.authenticated ? chalk.green('✓') : chalk.red('✗');
+const type = chalk.dim(`(${p.type})`);
+console.log(`  ${status} ${chalk.cyan(p.name)} ${type}`);
+}
+console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Agent commands (extended)
+const agentManager = new AgentManagerService();
+
+const agentCreate = program
+  .command('agent')
+  .description('Manage agents');
+
+agentCreate
+  .command('create')
+  .description('Create a new agent')
+  .argument('<name>', 'Agent name')
+  .option('--role <role>', 'Agent role (orchestrator|broker|worker|participant)', 'participant')
+  .option('--platform <platform>', 'Agent platform', 'vscode')
+  .option('--capabilities <caps...>', 'Agent capabilities')
+  .action((name: string, options: { role: string; platform: string; capabilities?: string[] }) => {
+    try {
+      const agent = agentManager.create(name, options.role as any, options.platform as any, {
+        capabilities: options.capabilities,
+      });
+      console.log(chalk.green(`✅ Created agent '${name}'`));
+      console.log(`  ID: ${chalk.dim(agent.id)}`);
+      console.log(`  Role: ${agent.role}`);
+      console.log(`  Platform: ${agent.platform}`);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+agentCreate
+  .command('list')
+  .description('List all available agents')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const agents = agentManager.list();
+      if (options.json) {
+        console.log(JSON.stringify(agents, null, 2));
+        return;
+      }
+      console.log(chalk.bold('\nAgents\n'));
+      if (agents.length === 0) {
+        console.log(chalk.dim('No agents configured'));
+      } else {
+        for (const a of agents) {
+          const status = a.isOnline ? chalk.green('online') : chalk.yellow('offline');
+          console.log(`  ${chalk.cyan(a.name)} (${a.role}/${a.platform}): ${status}`);
         }
       }
       console.log('');
@@ -4676,9 +4991,604 @@ reports
     }
   });
 
-async function runPassthrough(cliName: string, args: string[] = []): Promise<void> {
-  await runCommand(cliName, normalizeForwardedArgs(args));
+// Debug commands
+const debug = program.command('debug').description('Debugging and troubleshooting tools');
+const debugService = new DebugService();
+
+debug
+  .command('config')
+  .description('Show resolved configuration')
+  .option('--path <key>', 'Get specific config path')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { path?: string; json?: boolean }) => {
+    try {
+      if (options.path) {
+        const value = debugService.getConfigPath(options.path);
+        if (options.json) {
+          console.log(JSON.stringify({ path: options.path, value }, null, 2));
+        } else {
+          console.log(value !== undefined ? JSON.stringify(value, null, 2) : chalk.yellow('undefined'));
+        }
+      } else {
+        const config = debugService.getConfig();
+        if (options.json) {
+          console.log(JSON.stringify(config, null, 2));
+        } else {
+          console.log(chalk.bold('\nConfiguration\n'));
+          console.log(JSON.stringify(config, null, 2));
+        }
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+debug
+  .command('lsp')
+  .description('LSP debugging utilities')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const lsp = debugService.debugLSP();
+      if (options.json) {
+        console.log(JSON.stringify(lsp, null, 2));
+      } else {
+        console.log(chalk.bold('\nLSP Status\n'));
+        console.log(`  Available: ${lsp.available ? chalk.green('yes') : chalk.red('no')}`);
+        if (lsp.path) console.log(`  Path: ${chalk.dim(lsp.path)}`);
+        if (lsp.version) console.log(`  Version: ${chalk.dim(lsp.version)}`);
+        if (lsp.error) console.log(`  Error: ${chalk.red(lsp.error)}`);
+        console.log('');
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+debug
+  .command('rg')
+  .description('ripgrep debugging utilities')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const rg = debugService.debugRg();
+      if (options.json) {
+        console.log(JSON.stringify(rg, null, 2));
+      } else {
+        console.log(chalk.bold('\nripgrep Status\n'));
+        console.log(`  Available: ${rg.available ? chalk.green('yes') : chalk.red('no')}`);
+        if (rg.path) console.log(`  Path: ${chalk.dim(rg.path)}`);
+        if (rg.version) console.log(`  Version: ${chalk.dim(rg.version)}`);
+        console.log('');
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+debug
+  .command('file')
+  .description('File system debugging utilities')
+  .argument('<path>', 'File path to debug')
+  .option('--json', 'Output machine-readable JSON')
+  .action((filePath: string, options: { json?: boolean }) => {
+    try {
+      const info = debugService.debugFile(filePath);
+      if (options.json) {
+        console.log(JSON.stringify(info, null, 2));
+      } else {
+        console.log(chalk.bold('\nFile Info\n'));
+        console.log(`  Path: ${chalk.cyan(filePath)}`);
+        console.log(`  Exists: ${info.exists ? chalk.green('yes') : chalk.red('no')}`);
+        if (info.exists) {
+          if (info.size !== undefined) console.log(`  Size: ${info.size} bytes`);
+          if (info.modified) console.log(`  Modified: ${chalk.dim(info.modified)}`);
+          if (info.permissions) console.log(`  Permissions: ${info.permissions}`);
+        }
+        if (info.error) console.log(`  Error: ${chalk.red(info.error)}`);
+        console.log('');
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+debug
+  .command('scrap')
+  .description('List all known projects')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const projects = debugService.listProjects();
+      if (options.json) {
+        console.log(JSON.stringify(projects, null, 2));
+      } else {
+        console.log(chalk.bold('\nKnown Projects\n'));
+        for (const p of projects) {
+          console.log(`  ${chalk.cyan(p.name)}: ${chalk.dim(p.path)}`);
+        }
+        console.log('');
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+debug
+  .command('skill')
+  .description('List all available skills')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const skills = debugService.listSkills();
+      if (options.json) {
+        console.log(JSON.stringify(skills, null, 2));
+      } else {
+        console.log(chalk.bold('\nAvailable Skills\n'));
+        for (const s of skills) {
+          console.log(`  ${chalk.cyan(s.name)} (${chalk.dim(s.source)})`);
+        }
+        console.log('');
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+debug
+  .command('snapshot')
+  .description('Snapshot debugging utilities')
+  .option('--output <path>', 'Output file path')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { output?: string; json?: boolean }) => {
+    try {
+      const { path: snapshotPath, data } = debugService.createSnapshot(options.output);
+      if (options.json) {
+        console.log(JSON.stringify(data, null, 2));
+      } else {
+        console.log(chalk.green(`✅ Snapshot saved to ${snapshotPath}`));
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+debug
+  .command('agent')
+  .description('Show agent configuration details')
+  .argument('<name>', 'Agent name')
+  .option('--json', 'Output machine-readable JSON')
+  .action((name: string, options: { json?: boolean }) => {
+    try {
+      const agent = agentManager.getByName(name) || agentManager.get(name);
+      if (!agent) {
+        console.log(chalk.red(`Agent '${name}' not found`));
+        process.exit(1);
+      }
+      if (options.json) {
+        console.log(JSON.stringify(agent, null, 2));
+      } else {
+        console.log(chalk.bold(`\nAgent: ${name}\n`));
+        console.log(`  ID: ${chalk.dim(agent.id)}`);
+        console.log(`  Role: ${agent.role}`);
+        console.log(`  Platform: ${agent.platform}`);
+        console.log(`  Status: ${agent.isOnline ? chalk.green('online') : chalk.yellow('offline')}`);
+        console.log(`  Created: ${chalk.dim(agent.createdAt)}`);
+        console.log(`  Last Seen: ${chalk.dim(agent.lastSeen)}`);
+        if (agent.capabilities.length > 0) {
+          console.log(`  Capabilities: ${agent.capabilities.join(', ')}`);
+        }
+        console.log('');
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+debug
+  .command('paths')
+  .description('Show global paths (data, config, cache, state)')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const paths = debugService.getPaths();
+      if (options.json) {
+        console.log(JSON.stringify(paths, null, 2));
+      } else {
+        console.log(chalk.bold('\nGlobal Paths\n'));
+        console.log(`  Config:  ${chalk.cyan(paths.config)}`);
+        console.log(`  Data:    ${chalk.cyan(paths.data)}`);
+        console.log(`  Cache:   ${chalk.cyan(paths.cache)}`);
+        console.log(`  State:   ${chalk.cyan(paths.state)}`);
+        console.log(`  Logs:    ${chalk.cyan(paths.logs)}`);
+        console.log('');
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+debug
+  .command('wait')
+  .description('Wait indefinitely (for debugging)')
+  .action(() => {
+    console.log(chalk.dim('Waiting... Press Ctrl+C to exit'));
+    process.on('SIGINT', () => process.exit(0));
+  });
+
+// Session commands
+const sessionManager = new SessionManagerService();
+
+const session = program.command('session').description('Manage sessions');
+
+session
+  .command('list')
+  .description('List sessions')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const sessions = sessionManager.list();
+      if (options.json) {
+        console.log(JSON.stringify(sessions, null, 2));
+      } else {
+        console.log(chalk.bold('\nSessions\n'));
+        if (sessions.length === 0) {
+          console.log(chalk.dim('No sessions found'));
+        } else {
+          for (const s of sessions) {
+            const name = s.name || s.id;
+            console.log(`  ${chalk.cyan(name)} (${s.provider}/${s.model}): ${s.messageCount} msgs`);
+          }
+        }
+        console.log('');
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+session
+  .command('delete')
+  .description('Delete a session')
+  .argument('<sessionId>', 'Session ID')
+  .action((sessionId: string) => {
+    try {
+      const result = sessionManager.delete(sessionId);
+      if (result.success) {
+        console.log(chalk.green(`✅ ${result.message}`));
+      } else {
+        console.log(chalk.red(result.message));
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Remote command
+program
+  .command('remote')
+  .description('Enable remote connection for real-time session relay')
+  .option('--port <number>', 'Port to listen on', '0')
+  .option('--hostname <hostname>', 'Hostname to listen on', '127.0.0.1')
+  .option('--mdns', 'Enable mDNS discovery', false)
+  .option('--mdns-domain <domain>', 'Custom mDNS domain', 'tnf.local')
+  .option('--cors <origins...>', 'Allowed CORS origins')
+  .action(async (options: { port: string; hostname: string; mdns: boolean; mdnsDomain: string; cors?: string[] }) => {
+    try {
+      const service = new RemoteService({
+        port: parseInt(options.port, 10) || 0,
+        hostname: options.hostname,
+        mdns: options.mdns,
+        mdnsDomain: options.mdnsDomain,
+        cors: options.cors,
+      });
+      const { url } = await service.enable();
+      console.log(chalk.green(`✅ Remote relay enabled at ${url}`));
+      console.log(chalk.dim('Press Ctrl+C to stop'));
+
+      process.on('SIGINT', async () => {
+        await service.disable();
+        process.exit(0);
+      });
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Export command
+program
+  .command('export')
+  .description('Export session data as JSON')
+  .argument('[sessionId]', 'Session ID (omit for all sessions)')
+  .option('--output <path>', 'Output file path')
+  .action((sessionId?: string, options?: { output?: string }) => {
+    try {
+      const data = sessionId
+        ? sessionManager.export(sessionId)
+        : { sessions: sessionManager.exportAll() };
+
+      if (!data) {
+        console.log(chalk.red(`Session '${sessionId}' not found`));
+        process.exit(1);
+      }
+
+      const json = JSON.stringify(data, null, 2);
+      if (options?.output) {
+        fs.writeFileSync(options.output, json);
+        console.log(chalk.green(`✅ Exported to ${options.output}`));
+      } else {
+        console.log(json);
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Import command
+program
+  .command('import')
+  .description('Import session data from JSON file or URL')
+  .argument('<file>', 'JSON file path or URL')
+  .option('--overwrite', 'Overwrite existing session if ID conflicts')
+  .action(async (file: string, options: { overwrite?: boolean }) => {
+    try {
+      const result = file.startsWith('http')
+        ? await sessionManager.importFromUrl(file)
+        : sessionManager.importFromFile(file, { overwrite: options.overwrite });
+
+      if (result.success) {
+        console.log(chalk.green(`✅ ${result.message}`));
+      } else {
+        console.log(chalk.red(result.message));
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Models command
+program
+  .command('models')
+  .description('List all available models')
+  .argument('[provider]', 'Provider ID to filter models by')
+  .option('--verbose', 'Show detailed model information')
+  .option('--refresh', 'Refresh the models cache')
+  .option('--json', 'Output machine-readable JSON')
+  .action(async (provider?: string, options?: { verbose?: boolean; refresh?: boolean; json?: boolean }) => {
+    try {
+      const modelsService = new ModelsService();
+      const models = await modelsService.listModels(provider, { refresh: options?.refresh });
+
+      if (options?.json) {
+        console.log(JSON.stringify(models, null, 2));
+        return;
+      }
+
+      console.log(chalk.bold('\nAvailable Models\n'));
+      if (models.length === 0) {
+        console.log(chalk.dim('No models found'));
+      } else {
+        for (const m of models) {
+          if (options?.verbose) {
+            console.log(`${chalk.cyan(m.id)} (${m.provider})`);
+            if (m.contextWindow) console.log(`  Context: ${m.contextWindow.toLocaleString()} tokens`);
+            if (m.inputCost !== undefined) console.log(`  Input: $${(m.inputCost / 1000000).toFixed(4)}/1M tokens`);
+            if (m.outputCost !== undefined) console.log(`  Output: $${(m.outputCost / 1000000).toFixed(4)}/1M tokens`);
+            console.log('');
+          } else {
+            console.log(`  ${chalk.cyan(m.id)}`);
+          }
+        }
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Stats command
+program
+.command('stats')
+.description('Show token usage and cost statistics')
+.option('--days <n>', 'Show stats for the last N days', undefined)
+.option('--tools <n>', 'Number of tools to show', undefined)
+.option('--models', 'Show model statistics')
+.option('--project <name>', 'Filter by project')
+.option('--json', 'Output machine-readable JSON')
+.action(async (options: { days?: string; tools?: string; models?: boolean; project?: string; json?: boolean }) => {
+try {
+const statsService = new StatsService();
+
+const summary = await statsService.getSummary({
+days: options.days ? parseInt(options.days, 10) : undefined,
+project: options.project,
+});
+
+await statsService.close();
+
+if (options.json) {
+console.log(JSON.stringify(summary, null, 2));
+return;
 }
+
+console.log(chalk.bold('\n📊 Usage Statistics\n'));
+console.log(`  Total Tokens: ${chalk.cyan(summary.totalTokens.toLocaleString())}`);
+console.log(`  Total Cost: ${chalk.cyan('$' + summary.totalCost.toFixed(4))}`);
+console.log('');
+
+if (options.models && Object.keys(summary.byModel).length > 0) {
+console.log(chalk.bold('By Model:'));
+for (const [model, data] of Object.entries(summary.byModel)) {
+console.log(`  ${chalk.cyan(model)}: ${data.tokens.toLocaleString()} tokens, $${data.cost.toFixed(4)}`);
+}
+console.log('');
+}
+
+if (Object.keys(summary.byProvider).length > 0) {
+console.log(chalk.bold('By Provider:'));
+        for (const [provider, data] of Object.entries(summary.byProvider)) {
+          console.log(`  ${chalk.cyan(provider)}: ${data.tokens.toLocaleString()} tokens, $${data.cost.toFixed(4)}`);
+        }
+        console.log('');
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Database commands
+const db = program.command('db').description('Database tools');
+const dbService = new DatabaseService();
+
+db
+  .command('path')
+  .description('Print the database path')
+  .action(() => {
+    console.log(dbService.getPath());
+  });
+
+db
+  .command('migrate')
+  .description('Migrate JSON data to SQLite (merges with existing data)')
+  .action(async () => {
+    try {
+      const result = await dbService.migrate();
+      console.log(chalk.green(`✅ Migrated ${result.migrated} files`));
+      if (result.errors.length > 0) {
+        for (const err of result.errors) {
+          console.log(chalk.yellow(err));
+        }
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+db
+  .argument('[query]', 'SQL query to execute')
+  .option('--format <format>', 'Output format (json|tsv)', 'tsv')
+  .description('Open an interactive sqlite3 shell or run a query')
+  .action(async (query?: string, options?: { format?: string }) => {
+    try {
+      if (!query) {
+        await dbService.openInteractive();
+        return;
+      }
+      const result = await dbService.query(query, { format: options?.format as 'json' | 'tsv' });
+      if (options?.format === 'json') {
+        console.log(JSON.stringify(result.rows, null, 2));
+      } else {
+        console.log(result.columns.join('\t'));
+        for (const row of result.rows) {
+          console.log(Object.values(row).join('\t'));
+        }
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Serve command
+program
+  .command('serve')
+  .description('Starts a headless tnf server')
+  .option('--port <number>', 'Port to listen on', '0')
+  .option('--hostname <hostname>', 'Hostname to listen on', '127.0.0.1')
+  .option('--mdns', 'Enable mDNS service discovery', false)
+  .option('--mdns-domain <domain>', 'Custom mDNS domain', 'tnf.local')
+  .option('--cors <origins...>', 'Allowed CORS origins')
+  .action(async (options: { port: string; hostname: string; mdns: boolean; mdnsDomain: string; cors?: string[] }) => {
+    try {
+      const service = new ServeService({
+        port: parseInt(options.port, 10) || 0,
+        hostname: options.hostname,
+        mdns: options.mdns,
+        mdnsDomain: options.mdnsDomain,
+        cors: options.cors,
+      });
+      const status = await service.start();
+      console.log(chalk.green(`✅ TNF server started at ${status.url}`));
+      console.log(chalk.dim(`  PID: ${status.pid}`));
+      console.log(chalk.dim('Press Ctrl+C to stop'));
+
+      process.on('SIGINT', async () => {
+        await service.stop();
+        process.exit(0);
+      });
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Completion command
+program
+  .command('completion')
+  .description('Generate shell completion script')
+  .option('--shell <shell>', 'Shell type (zsh|bash|fish)', 'zsh')
+  .action((options: { shell: ShellType }) => {
+    const completion = generateCompletion(options.shell);
+    console.log(completion);
+    console.log(chalk.dim('\n' + getInstallInstructions(options.shell)));
+  });
+
+// Upgrade command
+program
+  .command('upgrade')
+  .description('Upgrade tnf to the latest or a specific version')
+  .argument('[target]', 'Version to upgrade to')
+  .option('-m, --method <method>', 'Installation method (curl|npm|pnpm|bun|brew)')
+  .action(async (target?: string, options?: { method?: 'curl' | 'npm' | 'pnpm' | 'bun' | 'brew' }) => {
+    try {
+      const upgradeService = new UpgradeService();
+      const result = await upgradeService.upgrade({ target, method: options?.method });
+      if (result.success) {
+        console.log(chalk.green(`✅ ${result.message}`));
+      } else {
+        console.log(chalk.red(result.message));
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Uninstall command
+program
+  .command('uninstall')
+  .description('Uninstall tnf and remove all related files')
+  .action(async () => {
+    try {
+      const upgradeService = new UpgradeService();
+      const result = await upgradeService.uninstall();
+      if (result.success) {
+        console.log(chalk.green(`✅ ${result.message}`));
+      } else {
+        console.log(chalk.red(result.message));
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 async function main(): Promise<void> {
   if (process.argv.length <= 2) {

@@ -4,13 +4,13 @@ import {
   DeploymentPhase,
   ServiceDeploymentStatus,
   RollbackResult
-} from './DeploymentStrategy.js';
+} from './DeploymentStrategy';
 import {
   DeploymentConfig,
   DeploymentResult,
   PipelineStatus,
   ServiceDeploymentResult
-} from '../types/pipeline.js';
+} from '../types/pipeline';
 
 /**
  * Rolling Update Deployment Strategy

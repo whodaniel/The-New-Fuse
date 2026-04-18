@@ -5,7 +5,7 @@ import {
   PromptTemplate,
   PromptTemplateService,
   PromptVersion,
-} from './types.js';
+} from './types';
 
 export class PromptTemplateServiceImpl implements PromptTemplateService {
   private repository = drizzlePromptTemplateRepository;

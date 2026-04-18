@@ -7,9 +7,9 @@
  * Requirements: 4.2, 4.5
  */
 
-import { EnhancedAgentHandoffTemplateService, EnhancedHandoffTemplate } from './EnhancedAgentHandoffTemplateService.js';
-import { PromptHandoffFlywheel } from './PromptHandoffFlywheel.js';
-import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
+import { EnhancedAgentHandoffTemplateService, EnhancedHandoffTemplate } from './EnhancedAgentHandoffTemplateService';
+import { PromptHandoffFlywheel } from './PromptHandoffFlywheel';
+import { SyncOrchestrator } from '../services/SyncOrchestrator';
 
 // Interface for existing PromptTemplateServiceImpl
 interface PromptTemplateServiceImpl {

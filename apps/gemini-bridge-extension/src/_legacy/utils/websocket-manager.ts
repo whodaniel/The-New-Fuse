@@ -9,9 +9,9 @@ import {
   ConnectionStatusMessage,
   MessageSource,
   MessageType,
-} from '../shared-protocol.js'; // Added BaseMessage, ConnectionStatusMessage
-import { compressString, decompressArrayBufferToString } from './compression.js'; // Import from TypeScript file
-import { SecurityManager } from './security.js';
+} from '../shared-protocol'; // Added BaseMessage, ConnectionStatusMessage
+import { compressString, decompressArrayBufferToString } from './compression'; // Import from TypeScript file
+import { SecurityManager } from './security';
 
 // Placeholder for token retrieval
 const getAuthToken = (): string | null => {
@@ -589,10 +589,10 @@ export class WebSocketManager extends EventEmitter {
 /**
  * Usage:
  * // Option 1: Singleton instance
- * import { webSocketManager } from './websocket-manager.js';
+ * import { webSocketManager } from './websocket-manager';
  *
  * // Option 2: Create your own instance
- * import { WebSocketManager } from './websocket-manager.js';
+ * import { WebSocketManager } from './websocket-manager';
  * const myManager = new WebSocketManager();
  */
 export const webSocketManager = new WebSocketManager('ws://localhost:3001/ws', { debug: true });

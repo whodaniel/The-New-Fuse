@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MessageBroker, Message } from './MessageBroker.js';
+import { MessageBroker, Message } from './MessageBroker';
 
 export interface RouteRule {
   topic: string;

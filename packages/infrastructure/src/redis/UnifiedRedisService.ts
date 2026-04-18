@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Redis as UpstashRedis } from '@upstash/redis';
 import { Cluster, Redis } from 'ioredis';
-import { RedisConfig } from './RedisConfig.js';
+import { RedisConfig } from './RedisConfig';
 import {
   CacheOptions,
   PubSubMessage,
@@ -11,7 +11,7 @@ import {
   RedisOperationLog,
   RedisOperationType,
   SearchResult,
-} from './types.js';
+} from './types';
 
 @Injectable()
 export class UnifiedRedisService implements OnModuleInit, OnModuleDestroy {

@@ -1,5 +1,5 @@
-import { TimelineService } from './types.js';
-import { TimelineBranch, TimelineEvent, TimelineWorkflow, WorkflowStep } from '../types/timeline.js';
+import { TimelineService } from './types';
+import { TimelineBranch, TimelineEvent, TimelineWorkflow, WorkflowStep } from '../types/timeline';
 
 /**
  * Timeline adapter backed by the unified ledger API.

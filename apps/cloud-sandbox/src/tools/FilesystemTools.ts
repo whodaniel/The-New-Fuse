@@ -6,7 +6,7 @@
 
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { ToolRegistry, ToolWrapper } from './ToolWrapper.js';
+import { ToolRegistry, ToolWrapper } from './ToolWrapper';
 
 /**
  * Register all filesystem tools

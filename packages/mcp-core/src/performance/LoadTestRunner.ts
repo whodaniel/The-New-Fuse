@@ -3,7 +3,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger.js';
+import { Logger } from '../utils/Logger';
 
 /**
  * Load test scenario configuration

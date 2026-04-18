@@ -9,7 +9,7 @@ import {
   BaseMetricsCollectorConfig,
   Logger
 } from '@the-new-fuse/core-monitoring';
-import { PerformanceMetrics } from '../types/monitoring.js';
+import { PerformanceMetrics } from '../types/monitoring';
 
 /**
  * MCP metrics collector implementation

@@ -5,7 +5,7 @@ import {
   WorkflowCreateData,
   WorkflowUpdateData,
   WorkflowExecution,
-} from '../mocks/api-client.js';
+} from '../mocks/api-client';
 
 /**
  * Workflows hook result

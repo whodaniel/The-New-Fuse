@@ -1,25 +1,25 @@
 // Crypto utilities
-export * from './utils/cryptoUtils.js';
+export * from './utils/cryptoUtils';
 
 // Core services
-export { EncryptionService } from './EncryptionService.js';
-export { SecurityService } from './SecurityService.js';
+export { EncryptionService } from './EncryptionService';
+export { SecurityService } from './SecurityService';
 
 // Auth services and types
-export { AuthService, UserCredentials, type UserCredentialsType } from './auth/index.js';
+export { AuthService, UserCredentials, type UserCredentialsType } from './auth';
 
 // Audit services and types
-export { AuditService } from './audit/index.js';
-export type { AuditLogEntryType } from './audit/index.js';
+export { AuditService } from './audit';
+export type { AuditLogEntryType } from './audit';
 
 // Rate limiting services
-export { RateLimitingService } from './rate-limiting/index.js';
+export { RateLimitingService } from './rate-limiting';
 
 // Types and interfaces
-export type { AuditLogEntry, SecurityContext } from './types/index.js';
+export type { AuditLogEntry, SecurityContext } from './types';
 
 // Middleware
-export { authMiddleware } from './middleware/auth.middleware.js';
+export { authMiddleware } from './middleware/auth.middleware';
 
 // Session management
-export { SessionManager, sessionManager } from './services/SessionManager.js';
+export { SessionManager, sessionManager } from './services/SessionManager';

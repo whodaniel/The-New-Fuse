@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { BaseEntity } from './core/base-types.js';
-import { AgentCapability, AgentRole, AgentStatus, AgentTrustLevel } from './core/enums.js';
+import { BaseEntity } from './core/base-types';
+import { AgentCapability, AgentRole, AgentStatus, AgentTrustLevel } from './core/enums';
 
 // Re-export the enums for external use
 export { AgentCapability, AgentRole, AgentStatus, AgentTrustLevel };

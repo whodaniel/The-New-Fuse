@@ -3,7 +3,7 @@
  * Provides inferred types from the Drizzle schema for use across the monorepo
  */
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { workspaceBookmarks, workspaceDomains } from './schema/index.js';
+import { workspaceBookmarks, workspaceDomains } from './schema';
 
 import {
   agentApiGrants,
@@ -67,7 +67,7 @@ import {
   workflowTemplates,
   workspaceMembers,
   workspaces,
-} from './schema/index.js';
+} from './schema';
 
 // =============================================================================
 // USER TYPES

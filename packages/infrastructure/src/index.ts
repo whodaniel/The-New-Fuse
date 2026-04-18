@@ -1,10 +1,10 @@
 // Infrastructure Services
-export * from './database/index.js';
-export * from './logging/index.js';
-export * from './redis/index.js';
-export * from './storage/index.js';
+export * from './database';
+export * from './logging';
+export * from './redis';
+export * from './storage';
 
 // Future infrastructure services will be exported here
-// export * from './database/index.js';
-// export * from './messaging.js';
-// export * from './monitoring.js';
+// export * from './database';
+// export * from './messaging';
+// export * from './monitoring';

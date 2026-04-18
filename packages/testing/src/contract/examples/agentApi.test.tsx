@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
-import { ContractEnforcer, ContractDefinition } from '../contractEnforcer.js';
-import { SchemaValidator } from '../schemaValidator.js';
-import { TestUtils } from '../testUtils.js';
+import { ContractEnforcer, ContractDefinition } from '../contractEnforcer';
+import { SchemaValidator } from '../schemaValidator';
+import { TestUtils } from '../testUtils';
 import { CreateAgentDto, Agent, AgentType, AgentStatus } from '@the-new-fuse/types';
 // Define ProtocolType locally since core package has issues
 enum ProtocolType {

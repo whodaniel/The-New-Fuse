@@ -1,6 +1,6 @@
 import { MemoryManager } from '@the-new-fuse/core';
 import { Message } from '@the-new-fuse/types';
-import { IAgent } from './interfaces/IAgent.js';
+import { IAgent } from './interfaces/IAgent';
 
 export abstract class BaseAgent implements IAgent {
   protected memoryManager: MemoryManager;

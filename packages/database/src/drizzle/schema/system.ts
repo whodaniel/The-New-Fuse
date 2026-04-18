@@ -13,7 +13,7 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { entityStatusEnum, registeredEntityTypeEnum } from './enums.js';
+import { entityStatusEnum, registeredEntityTypeEnum } from './enums';
 
 // =============================================================================
 // REGISTERED ENTITY
@@ -102,7 +102,7 @@ export const errorLogs = pgTable('error_logs', {
 // NOTIFICATIONS
 // =============================================================================
 
-import { users } from './users.js';
+import { users } from './users';
 
 export const notifications = pgTable('notifications', {
   id: uuid('id').primaryKey().defaultRandom(),

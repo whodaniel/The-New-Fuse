@@ -1,1 +1,1 @@
-export * from './resource-registry-mcp-server.js';
+export * from './resource-registry-mcp-server';

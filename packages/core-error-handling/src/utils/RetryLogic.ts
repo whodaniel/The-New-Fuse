@@ -6,8 +6,8 @@
  * including exponential backoff, jitter, and circuit breaker patterns.
  */
 
-import { Logger } from './Logger.js';
-import { ApplicationError } from '../errors/CustomErrors.js';
+import { Logger } from './Logger';
+import { ApplicationError } from '../errors/CustomErrors';
 
 /**
  * Retry configuration options

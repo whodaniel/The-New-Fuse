@@ -12,15 +12,15 @@ import {
   ToolResult,
   ToolUsageStats,
   ValidationResult,
-} from '../../interfaces/IMCPTool.js';
-import { IVideoProvider } from './providers/IVideoProvider.js';
-import { ReplicateProvider } from './providers/ReplicateProvider.js';
+} from '../../interfaces/IMCPTool';
+import { IVideoProvider } from './providers/IVideoProvider';
+import { ReplicateProvider } from './providers/ReplicateProvider';
 import {
   VideoGenerationJob,
   VideoGenerationParams,
   VideoProvider,
   VideoProviderConfig,
-} from './types.js';
+} from './types';
 
 /**
  * Input schema for the video generation tool

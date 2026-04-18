@@ -3,8 +3,8 @@
  * Provides data access for Wallet and Transaction entities
  */
 import { and, desc, eq, gt, lt, sql } from 'drizzle-orm';
-import { db } from '../client.js';
-import { agents, transactions, users, wallets } from '../schema/index.js';
+import { db } from '../client';
+import { agents, transactions, users, wallets } from '../schema';
 
 // Type definitions
 export type Wallet = typeof wallets.$inferSelect;

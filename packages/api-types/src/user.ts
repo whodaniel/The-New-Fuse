@@ -1,7 +1,7 @@
 /**
  * User-related type definitions
  */
-import { UUID, ISODateTime } from './common.js';
+import { UUID, ISODateTime } from './common';
 
 export enum UserRole {
   ADMIN = 'admin',

@@ -4,8 +4,8 @@ import {
   TimelineBranch,
   TimelineWorkflow,
   WorkflowStep
-} from '../types/timeline.js';
-import { TimelineService } from '../services/types.js';
+} from '../types/timeline';
+import { TimelineService } from '../services/types';
 
 interface UseTimelineProps {
   timelineService: TimelineService;

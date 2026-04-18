@@ -3,7 +3,7 @@
  * Tests for master agent coordination and workflow execution
  */
 
-import { getTestEnvironment, TestHelpers } from './setup/test-setup.js';
+import { getTestEnvironment, TestHelpers } from './setup/test-setup';
 
 describe('Master Agent Workflow Integration', () => {
   let env: any;

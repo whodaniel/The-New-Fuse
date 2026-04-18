@@ -10,7 +10,7 @@ export type {
   CapabilityStatus,
   CapabilityMetrics,
   CapabilityRegistry
-} from '../interfaces/IMCPCapability.js';
+} from '../interfaces/IMCPCapability';
 
 /**
  * Capability category enumeration

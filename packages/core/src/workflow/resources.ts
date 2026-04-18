@@ -1,4 +1,4 @@
-import { WorkflowTemplate } from '../types/types.js';
+import { WorkflowTemplate } from '../types/types';
 
 interface ResourceAllocation {
   cpu: number;

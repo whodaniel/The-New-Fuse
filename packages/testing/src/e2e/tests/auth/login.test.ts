@@ -1,4 +1,4 @@
-import { test, expect } from '../../fixtures/test.fixture.js';
+import { test, expect } from '../../fixtures/test.fixture';
 
 test.describe('Authentication Flow', () => {
   test('should successfully login with valid credentials', async ({ loginPage }) => {

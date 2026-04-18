@@ -1,8 +1,8 @@
 import { Message, MessageType } from '@the-new-fuse/types';
 // @ts-ignore
 import addFormats from 'ajv-formats';
-import { BaseService } from '../core/BaseService.js';
-import { Logger } from '../types/core.js';
+import { BaseService } from '../core/BaseService';
+import { Logger } from '../types/core';
 const Ajv = require('ajv');
 type ValidateFunction = any;
 type Schema = any;

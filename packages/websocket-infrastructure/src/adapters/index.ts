@@ -1,2 +1,2 @@
-export * from './redis-adapter.js';
-export * from './load-balancer.js';
+export * from './redis-adapter';
+export * from './load-balancer';

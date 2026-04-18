@@ -13,7 +13,7 @@ import {
   BuildEventData,
   MemoryCallback,
   BuildEventCallback
-} from '../types/index.js';
+} from '../types';
 
 /**
  * Interface for system resource detection

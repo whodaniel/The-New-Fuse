@@ -5,7 +5,7 @@
 
 import { Controller, Get, Logger } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { SyncHealthService } from './SyncHealthService.js';
+import { SyncHealthService } from './SyncHealthService';
 
 @ApiTags('health')
 @Controller('health')

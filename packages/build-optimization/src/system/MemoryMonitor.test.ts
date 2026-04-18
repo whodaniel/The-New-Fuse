@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { MemoryMonitor } from './MemoryMonitor.js';
-import { MemoryUsage } from '../types/index.js';
+import { MemoryMonitor } from './MemoryMonitor';
+import { MemoryUsage } from '../types';
 
 describe('MemoryMonitor', () => {
   let monitor: MemoryMonitor;

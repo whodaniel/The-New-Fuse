@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AlertService } from './alerts/AlertService.js';
+import { AlertService } from './alerts/AlertService';
 
 interface Alert {
     name: string;

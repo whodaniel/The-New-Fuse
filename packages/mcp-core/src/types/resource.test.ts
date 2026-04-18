@@ -14,8 +14,8 @@ import {
   ResourceConfig,
   ResourceBackupConfig,
   ResourceValidationConfig
-} from './resource.js';
-import { mcpValidator } from '../validation/validator.js';
+} from './resource';
+import { mcpValidator } from '../validation/validator';
 
 describe('Resource Types', () => {
   describe('Enumerations', () => {

@@ -1,4 +1,4 @@
-import { A2AMessage, A2AMessageV1, A2AMessageV2 } from '../../../src/protocols/types.js';
+import { A2AMessage, A2AMessageV1, A2AMessageV2 } from '../../../src/protocols/types';
 
 /**
  * Sync metadata for A2A messages

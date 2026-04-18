@@ -13,7 +13,7 @@
  * - TNFMCPModule: For NestJS integration
  */
 
-import { BaseBridge, MessageType, Priority } from './index.js';
+import { BaseBridge, MessageType, Priority } from './index';
 
 // ============================================================
 // MCP TYPES

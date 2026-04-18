@@ -8,7 +8,7 @@ import {
   WorkflowCategory,
   CategoryConfig,
   WorkflowNode,
-} from '../types/index.js';
+} from '../types';
 
 export class WorkflowCategorizer {
   private categoryConfigs: CategoryConfig[] = [

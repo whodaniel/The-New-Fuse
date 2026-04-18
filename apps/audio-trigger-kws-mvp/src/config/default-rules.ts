@@ -1,4 +1,4 @@
-import { TriggerRule } from '../types/events.js';
+import { TriggerRule } from '../types/events';
 
 export const defaultRules: TriggerRule[] = [
   {

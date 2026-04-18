@@ -12,7 +12,7 @@ import {
   TaskSyncData,
   EnhancedTaskData,
   TaskNotificationRule
-} from './index.js';
+} from './index';
 
 // Mock services for demonstration
 const mockTaskSyncService = {} as TaskSynchronizationService;

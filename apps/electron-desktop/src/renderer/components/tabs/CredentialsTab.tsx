@@ -85,7 +85,7 @@ import {
   SiFirebase,
   SiStripe,
 } from 'react-icons/si';
-import type { StoredCredential, AIProviderInfo } from '../../../shared/types.js';
+import type { StoredCredential, AIProviderInfo } from '../../../shared/types';
 
 // Extended provider info type
 interface ProviderInfo extends AIProviderInfo {

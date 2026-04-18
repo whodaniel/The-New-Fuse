@@ -1,2 +1,2 @@
 import typeorm from 'typeorm';
-//import '../../notification/notification.service.js';
+//import '../../notification/notification.service';

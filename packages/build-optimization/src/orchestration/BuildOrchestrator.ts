@@ -13,7 +13,7 @@ import {
   IDependencyGraphAnalyzer,
   IConcurrencyController,
   ITypeScriptCompilationManager
-} from '../interfaces/index.js';
+} from '../interfaces';
 import {
   BuildStrategy,
   BuildResult,
@@ -25,13 +25,13 @@ import {
   MemoryUsage,
   BuildMetrics,
   BuildEvent
-} from '../types/index.js';
-import { SystemResourceDetector } from '../system/SystemResourceDetector.js';
-import { MemoryMonitor } from '../system/MemoryMonitor.js';
-import { DependencyGraphAnalyzer } from '../dependency/DependencyGraphAnalyzer.js';
-import { ConcurrencyController } from '../concurrency/ConcurrencyController.js';
-import { TypeScriptCompilationManager } from '../typescript/TypeScriptCompilationManager.js';
-import { DEFAULT_CONFIG } from '../index.js';
+} from '../types';
+import { SystemResourceDetector } from '../system/SystemResourceDetector';
+import { MemoryMonitor } from '../system/MemoryMonitor';
+import { DependencyGraphAnalyzer } from '../dependency/DependencyGraphAnalyzer';
+import { ConcurrencyController } from '../concurrency/ConcurrencyController';
+import { TypeScriptCompilationManager } from '../typescript/TypeScriptCompilationManager';
+import { DEFAULT_CONFIG } from '../index';
 
 /**
  * Main build orchestrator that coordinates all build optimization components

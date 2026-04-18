@@ -8,7 +8,7 @@ import {
   RollbackResult, 
   PipelineStatus,
   PipelineConfig
-} from '../types/pipeline.js';
+} from '../types/pipeline';
 
 /**
  * Core CI/CD Pipeline interface for managing automated build, test, and deployment processes

@@ -1,5 +1,5 @@
 import { index, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from 'drizzle-orm/pg-core';
-import { users } from './users.js';
+import { users } from './users';
 
 export const resourceFavorites = pgTable(
   'resource_favorites',

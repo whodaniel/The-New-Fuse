@@ -11,7 +11,7 @@
 
 import { EventEmitter } from 'events';
 
-import { Priority } from './index.js';
+import { Priority } from './index';
 
 // ============================================================
 // ENHANCED TYPES

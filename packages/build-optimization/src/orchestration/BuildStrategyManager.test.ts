@@ -5,14 +5,14 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { BuildStrategyManager, ConfigurationValidationError } from './BuildStrategyManager.js';
+import { BuildStrategyManager, ConfigurationValidationError } from './BuildStrategyManager';
 import {
   BuildStrategy,
   BuildConfiguration,
   SystemResources,
   BuildEnvironment,
   EnhancedBuildConfiguration
-} from '../types/index.js';
+} from '../types';
 
 describe('BuildStrategyManager', () => {
   let manager: BuildStrategyManager;

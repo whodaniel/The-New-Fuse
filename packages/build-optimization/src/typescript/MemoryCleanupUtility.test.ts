@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { MemoryCleanupUtility, MemoryCleanupConfig } from './MemoryCleanupUtility.js';
+import { MemoryCleanupUtility, MemoryCleanupConfig } from './MemoryCleanupUtility';
 
 describe('MemoryCleanupUtility', () => {
   let utility: MemoryCleanupUtility;

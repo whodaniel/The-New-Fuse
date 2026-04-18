@@ -8,7 +8,7 @@
  * - Module cache cleanup
  */
 
-import { MemoryUsage } from '../types/index.js';
+import { MemoryUsage } from '../types';
 
 /**
  * Memory cleanup configuration

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Repository, DataSource, FindManyOptions, Between } from 'typeorm';
-import { Log, LogLevel } from '../entities/Log.js';
+import { Log, LogLevel } from '../entities/Log';
 
 @Injectable()
 export class LogRepository extends Repository<Log> {

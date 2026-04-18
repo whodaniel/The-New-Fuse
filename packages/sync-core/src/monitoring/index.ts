@@ -6,31 +6,31 @@
  */
 
 // Core sync-aware monitoring service
-export { SyncAwareHeartbeatMonitoringService } from './SyncAwareHeartbeatMonitoringService.js';
+export { SyncAwareHeartbeatMonitoringService } from './SyncAwareHeartbeatMonitoringService';
 export type {
   SyncHealthMetrics,
   SyncAwareAgentHeartbeat,
   SyncAwareStagnationAlert,
   SyncHealthEscalation
-} from './SyncAwareHeartbeatMonitoringService.js';
+} from './SyncAwareHeartbeatMonitoringService';
 
 // Dashboard integration
 // Temporarily disabled due to Chakra UI v3 breaking changes
-// export { SyncHealthDashboardIntegration } from './SyncHealthDashboardIntegration.js';
+// export { SyncHealthDashboardIntegration } from './SyncHealthDashboardIntegration';
 // export type {
 //   SyncHealthDashboardData,
 //   SyncHealthAlert,
 //   SyncHealthWidget
-// } from './SyncHealthDashboardIntegration.js';
+// } from './SyncHealthDashboardIntegration';
 
 // Unified health reporting
 // Temporarily disabled (depends on SyncHealthDashboardIntegration)
-// export { UnifiedSyncHealthReporting } from './UnifiedSyncHealthReporting.js';
+// export { UnifiedSyncHealthReporting } from './UnifiedSyncHealthReporting';
 // export type {
 //   UnifiedSyncHealthReport,
 //   HealthReportConfig,
 //   IExistingMetricsService
-// } from './UnifiedSyncHealthReporting.js';
+// } from './UnifiedSyncHealthReporting';
 
 // Re-export types from dashboard monitoring integration for convenience
 // Temporarily disabled due to Chakra UI v3 breaking changes
@@ -41,4 +41,4 @@ export type {
 //   MonitoringEventType,
 //   MonitoringEvent,
 //   AlertThreshold
-// } from '../dashboard/DashboardMonitoringIntegration.js';
+// } from '../dashboard/DashboardMonitoringIntegration';

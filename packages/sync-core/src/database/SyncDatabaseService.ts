@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Drizzle, DrizzleClient, SyncState, SyncConflict } from '@the-new-fuse/database/generated/drizzle';
-import { SyncStateData, SyncConflictData, SyncResourceType } from '../types/index.js';
+import { SyncStateData, SyncConflictData, SyncResourceType } from '../types';
 
 /**
  * Database service for sync operations

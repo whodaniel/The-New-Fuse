@@ -3,9 +3,9 @@
  * Real-time performance monitoring dashboard data provider
  */
 
-import type { WebVitalsMetric } from '../performance/web-vitals.js';
-import type { QueryMetric, ConnectionPoolMetric } from '../performance/db-monitoring.js';
-import type { Transaction } from '../performance/apm.js';
+import type { WebVitalsMetric } from '../performance/web-vitals';
+import type { QueryMetric, ConnectionPoolMetric } from '../performance/db-monitoring';
+import type { Transaction } from '../performance/apm';
 
 export interface DashboardMetrics {
   timestamp: number;

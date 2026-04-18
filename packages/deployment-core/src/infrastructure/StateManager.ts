@@ -6,8 +6,8 @@
 import {
   InfrastructureState,
   InfrastructureStatus
-} from '../types/infrastructure.js';
-import { InfrastructureFilters } from '../interfaces/IInfrastructureManager.js';
+} from '../types/infrastructure';
+import { InfrastructureFilters } from '../interfaces/IInfrastructureManager';
 
 export interface StateStorage {
   save(state: InfrastructureState): Promise<void>;

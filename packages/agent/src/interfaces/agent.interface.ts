@@ -1,5 +1,5 @@
 import { Skill } from '@the-new-fuse/mcp-core/types';
-import { Priority } from '../bridges/index.js';
+import { Priority } from '../bridges';
 
 export enum AgentState {
   INITIALIZING = 'INITIALIZING',

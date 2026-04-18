@@ -17,7 +17,7 @@ import {
   ExtensionValidationError,
   ExtensionValidationWarning,
   PermissionType
-} from '../types/ExtensionTypes.js';
+} from '../types/ExtensionTypes';
 
 export interface ExtensionValidatorConfig {
   strictMode: boolean;

@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "TNF Agent CLI - Redis-Based Agent Communication System",
+  "description": "TNF Agent CLI - Unified Command Surface for TNF Operations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -26,11 +26,13 @@
     "chalk": "^5.4.1",
     "commander": "^13.1.0",
     "ioredis": "^5.8.2",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/node": "^24.8.1",
     "@types/uuid": "^9.0.8",
+    "@types/ws": "^8.5.14",
     "rimraf": "^5.0.10",
     "tsx": "^4.20.3",
     "typescript": "^6.0.2"

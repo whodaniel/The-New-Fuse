@@ -14,4 +14,4 @@
  limitations under the License.
  */
 
-export * as v0_8 from './0.8/index.js';
+export * as v0_8 from './0.8';

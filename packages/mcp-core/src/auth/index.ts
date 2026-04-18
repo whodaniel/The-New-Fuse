@@ -2,7 +2,7 @@
  * Authentication module exports
  */
 
-export { AuthenticationManager } from './AuthenticationManager.js';
+export { AuthenticationManager } from './AuthenticationManager';
 export type {
   AuthResult,
   AuthContext,
@@ -10,9 +10,9 @@ export type {
   AuthPolicy,
   AuthManagerConfig,
   AuthAuditEvent
-} from './AuthenticationManager.js';
+} from './AuthenticationManager';
 
-export { RBACManager } from './RBACManager.js';
+export { RBACManager } from './RBACManager';
 export type {
   Permission,
   Role,
@@ -20,19 +20,19 @@ export type {
   PolicyCondition,
   AccessControlResult,
   RBACConfig
-} from './RBACManager.js';
+} from './RBACManager';
 
-export { PermissionValidator, MCPOperation, MCPResourceType } from './PermissionValidator.js';
+export { PermissionValidator, MCPOperation, MCPResourceType } from './PermissionValidator';
 export type {
   PermissionValidationResult,
   ValidationContext
-} from './PermissionValidator.js';
+} from './PermissionValidator';
 
-export { AuditLogger, FileAuditStorage, AuditSeverity, AuditCategory } from './AuditLogger.js';
+export { AuditLogger, FileAuditStorage, AuditSeverity, AuditCategory } from './AuditLogger';
 export type {
   EnhancedAuditEvent,
   AuditStorageBackend,
   AuditQueryFilter,
   AuditStorageStats,
   AuditLoggerConfig
-} from './AuditLogger.js';
+} from './AuditLogger';

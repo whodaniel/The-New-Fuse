@@ -1,7 +1,7 @@
 /**
  * Connection status manager for The New Fuse - AI Bridge
  */
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger';
 
 // Create a connection-specific logger
 const connectionLogger = new Logger({

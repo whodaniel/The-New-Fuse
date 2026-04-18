@@ -14,8 +14,8 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { subscriptionTierEnum } from './billing.js';
-import { users } from './users.js';
+import { subscriptionTierEnum } from './billing';
+import { users } from './users';
 
 // =============================================================================
 // MEMBERSHIP OVERRIDES (Server-side only; bypasses payment processors)

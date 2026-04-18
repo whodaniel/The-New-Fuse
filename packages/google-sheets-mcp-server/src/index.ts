@@ -7,7 +7,7 @@ import {
   readSheet,
   shareSpreadsheet,
   writeSheet,
-} from './tools.js';
+} from './tools';
 
 const server = new MCPServer();
 

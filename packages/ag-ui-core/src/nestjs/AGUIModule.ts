@@ -3,7 +3,7 @@
  */
 
 import { Global, Module } from '@nestjs/common';
-import { AGUIService } from './AGUIService.js';
+import { AGUIService } from './AGUIService';
 
 @Global()
 @Module({

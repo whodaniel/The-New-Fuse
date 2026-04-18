@@ -1,6 +1,6 @@
 import { desc, eq, or } from 'drizzle-orm';
-import { db } from '../client.js';
-import { marketplaceCatalogItems, type NewMarketplaceCatalogItemRow } from '../schema/index.js';
+import { db } from '../client';
+import { marketplaceCatalogItems, type NewMarketplaceCatalogItemRow } from '../schema';
 
 export class DrizzleMarketplaceCatalogRepository {
   async count(): Promise<number> {

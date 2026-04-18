@@ -1,7 +1,7 @@
 /**
  * Authentication manager for The New Fuse - AI Bridge
  */
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger';
 
 // Create an auth-specific logger
 const authLogger = new Logger({

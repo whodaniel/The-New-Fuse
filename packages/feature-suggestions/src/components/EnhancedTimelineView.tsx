@@ -2,8 +2,8 @@ import { FeatureStage } from '@the-new-fuse/feature-tracker';
 import * as d3 from 'd3';
 import { format } from 'date-fns';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { TimelineEvent, TimelineEventType } from '../types/timeline.js';
-import TimelineSlider from './TimelineSlider.js';
+import { TimelineEvent, TimelineEventType } from '../types/timeline';
+import TimelineSlider from './TimelineSlider';
 // @ts-ignore
 import './EnhancedTimelineView.css';
 

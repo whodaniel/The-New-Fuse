@@ -22,9 +22,9 @@ import {
   AgentHandoffNodeConfig,
   ConditionNodeConfig,
   LLMPromptNodeConfig
-} from '../types/WorkflowTypes.js';
-import { UnifiedWorkflowSchema } from '../schemas/WorkflowSchemas.js';
-import { getErrorMessage } from '../utils/errorUtils.js';
+} from '../types/WorkflowTypes';
+import { UnifiedWorkflowSchema } from '../schemas/WorkflowSchemas';
+import { getErrorMessage } from '../utils/errorUtils';
 
 export interface ValidatorConfig {
   strictMode: boolean;

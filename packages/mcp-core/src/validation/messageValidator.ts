@@ -2,15 +2,15 @@
  * Message-specific validation utilities
  */
 
-import { mcpValidator, ValidationResult } from './validator.js';
+import { mcpValidator, ValidationResult } from './validator';
 import {
   MCPRequest,
   MCPResponse,
   MCPNotification,
   MCPMessage
-} from '../interfaces/IMCPMessage.js';
-import { MessageValidationResult } from '../types/message.js';
-import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error.js';
+} from '../interfaces/IMCPMessage';
+import { MessageValidationResult } from '../types/message';
+import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
 
 /**
  * Message validator class for MCP protocol compliance

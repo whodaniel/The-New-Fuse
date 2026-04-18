@@ -1,8 +1,8 @@
 /**
  * Debug settings manager for The New Fuse - AI Bridge
  */
-import { DebugSettings } from '../types/index.js';
-import { Logger } from '../utils/logger.js';
+import { DebugSettings } from '../types';
+import { Logger } from '../utils/logger';
 
 // Create a settings-specific logger
 const settingsLogger = new Logger({

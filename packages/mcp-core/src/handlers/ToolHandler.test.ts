@@ -3,9 +3,9 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { ToolHandler, FunctionToolHandler, ScriptToolHandler, ApiCallToolHandler } from './ToolHandler.js';
-import { ToolResult, JSONSchema } from '../interfaces/IMCPTool.js';
-import { MCPErrorCode } from '../types/error.js';
+import { ToolHandler, FunctionToolHandler, ScriptToolHandler, ApiCallToolHandler } from './ToolHandler';
+import { ToolResult, JSONSchema } from '../interfaces/IMCPTool';
+import { MCPErrorCode } from '../types/error';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as os from 'os';

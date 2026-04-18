@@ -4,7 +4,7 @@ import {
   BuildResult,
   DeploymentResult,
   RollbackResult
-} from '../types/pipeline.js';
+} from '../types/pipeline';
 import { Logger } from 'winston';
 
 /**

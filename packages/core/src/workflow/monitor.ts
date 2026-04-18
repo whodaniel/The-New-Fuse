@@ -1,1 +1,1 @@
-import { WorkflowStatus } from '../types/types.js';
+import { WorkflowStatus } from '../types/types';

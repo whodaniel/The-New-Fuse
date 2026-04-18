@@ -1,8 +1,8 @@
 /**
  * File transfer utility for The New Fuse - AI Bridge
  */
-import { Logger } from './logger.js';
-import { WebSocketManager } from './websocket-manager.js';
+import { Logger } from './logger';
+import { WebSocketManager } from './websocket-manager';
 
 import {
   FileTransferAbortMessage,
@@ -17,7 +17,7 @@ import {
   FileTransferRequestAckMessage,
   FileTransferRequestChunkMessage,
   FileTransferRequestMessage,
-} from '../types/index.js';
+} from '../types';
 
 // Create a file transfer-specific logger
 const fileTransferLogger = new Logger({ name: 'FileTransferMain' }); // Main logger for the module

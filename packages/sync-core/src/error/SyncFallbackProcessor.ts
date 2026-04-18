@@ -7,7 +7,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { IMetricsCollector } from '@the-new-fuse/core-monitoring';
-import { SyncError, SyncContext, FallbackOperation } from './SyncErrorHandler.js';
+import { SyncError, SyncContext, FallbackOperation } from './SyncErrorHandler';
 
 /**
  * Fallback strategy configuration

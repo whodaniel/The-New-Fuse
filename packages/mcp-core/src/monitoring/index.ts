@@ -3,21 +3,21 @@
  */
 
 // New unified monitoring system (recommended)
-export { MCPMonitoringSystem } from './MCPMonitoringSystem.js';
-export { MCPMetricsCollector } from './MCPMetricsCollector.js';
+export { MCPMonitoringSystem } from './MCPMonitoringSystem';
+export { MCPMetricsCollector } from './MCPMetricsCollector';
 
 // Legacy monitoring system (deprecated - use MCPMonitoringSystem instead)
-export { MonitoringSystem } from './MonitoringSystem.js';
+export { MonitoringSystem } from './MonitoringSystem';
 
 // Core monitoring components
-export { MetricsCollector } from './MetricsCollector.js';
-export { AlertManager } from './AlertManager.js';
-export { DashboardManager } from './DashboardManager.js';
-export { PerformanceMonitor } from './PerformanceMonitor.js';
-export { LoadTester } from './LoadTester.js';
-export { CacheMonitor } from './CacheMonitor.js';
-export { ConnectionPoolMonitor } from './ConnectionPoolMonitor.js';
-export { SystemHealthMonitor } from './SystemHealthMonitor.js';
+export { MetricsCollector } from './MetricsCollector';
+export { AlertManager } from './AlertManager';
+export { DashboardManager } from './DashboardManager';
+export { PerformanceMonitor } from './PerformanceMonitor';
+export { LoadTester } from './LoadTester';
+export { CacheMonitor } from './CacheMonitor';
+export { ConnectionPoolMonitor } from './ConnectionPoolMonitor';
+export { SystemHealthMonitor } from './SystemHealthMonitor';
 
 // Re-export interfaces
 export type {
@@ -35,7 +35,7 @@ export type {
   SystemHealthStatus,
   HealthCheck,
   HealthCheckResult
-} from '../interfaces/IMonitoring.js';
+} from '../interfaces/IMonitoring';
 
 // Re-export types
 export type {
@@ -52,4 +52,4 @@ export type {
   LoadTestResult,
   CacheMetrics,
   ConnectionPoolMetrics
-} from '../types/monitoring.js';
+} from '../types/monitoring';

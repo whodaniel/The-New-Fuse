@@ -51,7 +51,7 @@ import {
   useHealthScore,
   type SystemAlert,
   type SyncOperation 
-} from './useSyncDashboard.js';
+} from './useSyncDashboard';
 
 /**
  * Props for the SyncAwareAdminDashboard component

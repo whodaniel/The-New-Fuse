@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
-import { db } from '../client.js';
-import { systemConfigurations, systemSettings } from '../schema/configuration.js';
+import { db } from '../client';
+import { systemConfigurations, systemSettings } from '../schema/configuration';
 
 export class DrizzleConfigurationRepository {
   // System Configurations (KV)

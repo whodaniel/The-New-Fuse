@@ -1,2 +1,2 @@
-export * from './useUndoRedo.js';
-export * from './useKeyboardShortcuts.js';
+export * from './useUndoRedo';
+export * from './useKeyboardShortcuts';

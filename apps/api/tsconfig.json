@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     "moduleResolution": "Node",
     "module": "CommonJS",
     "esModuleInterop": true,
@@ -15,14 +16,16 @@
     "typeRoots": ["./node_modules/@types", "../../node_modules/@types"],
     "paths": {
       "@/*": ["./src/*"],
-      "@the-new-fuse/database/drizzle/*": ["../../packages/database/drizzle/*"],
+      "@the-new-fuse/database/drizzle/*": ["../../packages/database/dist/drizzle/*"],
       "@the-new-fuse/database/drizzle": [
-        "../../packages/database/drizzle/index"
+        "../../packages/database/dist/drizzle/index"
       ],
       "@the-new-fuse/n8n-workflows": [
         "../../packages/n8n-workflows/dist/index"
       ],
       "@the-new-fuse/n8n-workflows/*": ["../../packages/n8n-workflows/dist/*"],
+      "@the-new-fuse/relay-core": ["../../packages/relay-core/dist/index"],
+      "@the-new-fuse/relay-core/*": ["../../packages/relay-core/dist/*"],
       "@the-new-fuse/*": ["../../packages/*/dist"]
     }
   },

@@ -5,10 +5,10 @@
  * for handling synchronization conflicts in a multi-tenant environment.
  */
 
-import { ConflictManager } from './ConflictManager.js';
-import { SyncDatabaseService } from '../database/SyncDatabaseService.js';
+import { ConflictManager } from './ConflictManager';
+import { SyncDatabaseService } from '../database/SyncDatabaseService';
 import { DrizzleClient } from '@the-new-fuse/database/generated/drizzle';
-import { TenantSyncContext } from '../types/index.js';
+import { TenantSyncContext } from '../types';
 
 // Example setup
 async function setupConflictManager() {

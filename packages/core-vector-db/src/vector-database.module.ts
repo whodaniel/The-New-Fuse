@@ -1,8 +1,8 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { VectorStoreGrpcController } from './grpc/vector-store-grpc.controller.js';
-import { HealthController } from './health.controller.js';
-import { EmbeddingConfig, VectorDatabaseConfig } from './interface/vector-database.interface.js';
-import { VectorDatabaseService } from './vector-database.service.js';
+import { VectorStoreGrpcController } from './grpc/vector-store-grpc.controller';
+import { HealthController } from './health.controller';
+import { EmbeddingConfig, VectorDatabaseConfig } from './interface/vector-database.interface';
+import { VectorDatabaseService } from './vector-database.service';
 
 export interface VectorDatabaseModuleOptions {
   vectorDbConfig: VectorDatabaseConfig;

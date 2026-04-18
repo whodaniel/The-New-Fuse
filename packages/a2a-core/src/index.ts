@@ -1,16 +1,16 @@
 // Core types and interfaces
-export * from './types.js';
+export * from './types';
 
 // Services and adapters
-export { A2AService } from './a2a.service.js';
-export { A2ARedisAdapter } from './redis-adapter.js';
-export { A2AWebSocketAdapter } from './websocket-adapter.js';
+export { A2AService } from './a2a.service';
+export { A2ARedisAdapter } from './redis-adapter';
+export { A2AWebSocketAdapter } from './websocket-adapter';
 
 // Controller
-export { A2AController } from './a2a.controller.js';
+export { A2AController } from './a2a.controller';
 
 // Module
-export { A2ACoreModule } from './a2a.module.js';
+export { A2ACoreModule } from './a2a.module';
 
 // Re-export commonly used utilities
 // @ts-ignore

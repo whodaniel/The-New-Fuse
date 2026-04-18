@@ -45,7 +45,7 @@ import { Video } from './video.js';
 
 export { ComponentRegistry, componentRegistry } from './component-registry.js';
 export * as Context from './context/theme.js';
-export { registerCustomComponents } from './custom-components/index.js';
+export { registerCustomComponents } from './custom-components';
 export * as Utils from './utils/utils.js';
 
 export {

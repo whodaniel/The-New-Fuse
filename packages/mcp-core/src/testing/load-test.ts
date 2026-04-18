@@ -8,8 +8,8 @@
 
 import { EventEmitter } from 'events';
 import { performance } from 'perf_hooks';
-import { MCPServer } from '../server/MCPServer.js';
-import { MCPRequest, MCPResponse, MCPNotification } from '../types/message.js';
+import { MCPServer } from '../server/MCPServer';
+import { MCPRequest, MCPResponse, MCPNotification } from '../types/message';
 
 export interface LoadTestConfig {
   duration: number; // Test duration in milliseconds

@@ -12,10 +12,10 @@ import {
   ServiceMeshMetrics,
   ServiceScalingConfig,
   ScalingEvent
-} from '../MCPServiceMesh.js';
-import { ServiceHealth } from '../../types/broker.js';
-import { ServiceStatus } from '../../types/common.js';
-import { MCPErrorClass as MCPError, MCPErrorCode } from '../../types/error.js';
+} from '../MCPServiceMesh';
+import { ServiceHealth } from '../../types/broker';
+import { ServiceStatus } from '../../types/common';
+import { MCPErrorClass as MCPError, MCPErrorCode } from '../../types/error';
 
 /**
  * Kubernetes configuration

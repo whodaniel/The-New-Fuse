@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { CommunicationProtocol, MessageProtocol } from './CommunicationProtocol.js';
+import { CommunicationProtocol, MessageProtocol } from './CommunicationProtocol';
 
 export interface UserConnection {
   userId: string;

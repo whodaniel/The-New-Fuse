@@ -2,7 +2,7 @@
  * MCP Server type definitions
  */
 
-import { LogLevel, TimeoutConfig, HealthCheckResult } from './common.js';
+import { LogLevel, TimeoutConfig, HealthCheckResult } from './common';
 
 /**
  * MCP Server configuration interface

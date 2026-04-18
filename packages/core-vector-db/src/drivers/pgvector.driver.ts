@@ -7,7 +7,7 @@ import type {
   VectorDocument,
   VectorQuery,
   VectorSearchResult,
-} from '../interface/vector-database.interface.js';
+} from '../interface/vector-database.interface';
 
 @Injectable()
 export class PgVectorDriver implements IVectorDatabase {

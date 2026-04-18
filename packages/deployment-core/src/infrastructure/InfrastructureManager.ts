@@ -8,7 +8,7 @@ import {
   InfrastructureFilters,
   InfrastructureImportConfig,
   InfrastructureMetrics
-} from '../interfaces/IInfrastructureManager.js';
+} from '../interfaces/IInfrastructureManager';
 import {
   InfrastructureTemplate,
   InfrastructureUpdate,
@@ -23,13 +23,13 @@ import {
   InfrastructureState,
   InfrastructureStatus,
   ResourceState
-} from '../types/infrastructure.js';
-import { TemplateParser } from './TemplateParser.js';
-import { StateManager } from './StateManager.js';
-import { ResourceProvisioner } from './ResourceProvisioner.js';
-import { TemplateValidator } from './TemplateValidator.js';
-import { ChangeAnalyzer } from './ChangeAnalyzer.js';
-import { MetricsCollector } from '../core/MetricsCollector.js';
+} from '../types/infrastructure';
+import { TemplateParser } from './TemplateParser';
+import { StateManager } from './StateManager';
+import { ResourceProvisioner } from './ResourceProvisioner';
+import { TemplateValidator } from './TemplateValidator';
+import { ChangeAnalyzer } from './ChangeAnalyzer';
+import { MetricsCollector } from '../core/MetricsCollector';
 
 export class InfrastructureManager implements IInfrastructureManager {
   private templateParser: TemplateParser;

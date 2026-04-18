@@ -1,6 +1,6 @@
 import { Module, DynamicModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DatabaseService } from './DatabaseService.js';
+import { DatabaseService } from './DatabaseService';
 
 export interface DatabaseConfig {
   host?: string;

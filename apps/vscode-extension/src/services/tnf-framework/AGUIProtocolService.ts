@@ -6,7 +6,7 @@
  */
 
 import * as vscode from 'vscode';
-import { log } from '../../utils/logger.js';
+import { log } from '../../utils/logger';
 
 interface AGUISession {
   id: string;

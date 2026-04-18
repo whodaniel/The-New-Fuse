@@ -5,7 +5,7 @@
  * This file orchestrates all workflow builder tests and provides summary reporting.
  */
 
-import { getTestEnvironment, TestHelpers } from '../setup/test-setup.js';
+import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
 import { performance } from 'perf_hooks';
 
 // Import all test suites

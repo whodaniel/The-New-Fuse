@@ -4,8 +4,8 @@
  * This module provides the UI functionality for managing the WebSocket server
  * from the browser extension popup.
  */
-import { RedisConfig, WebSocketServerStatus } from '../types/index.js';
-import { Logger } from '../utils/logger.js';
+import { RedisConfig, WebSocketServerStatus } from '../types';
+import { Logger } from '../utils/logger';
 
 // Create a server-management-specific logger
 const serverLogger = new Logger({

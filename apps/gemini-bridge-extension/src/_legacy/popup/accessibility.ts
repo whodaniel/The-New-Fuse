@@ -1,7 +1,7 @@
 /**
  * Accessibility utilities for The New Fuse - AI Bridge
  */
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger';
 
 // Create an accessibility-specific logger
 const accessibilityLogger = new Logger({

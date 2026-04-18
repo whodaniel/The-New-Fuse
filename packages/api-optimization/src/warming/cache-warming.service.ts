@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ResponseCacheService } from '../caching/response-cache.service.js';
+import { ResponseCacheService } from '../caching/response-cache.service';
 
 export interface WarmingStrategy {
   name: string;

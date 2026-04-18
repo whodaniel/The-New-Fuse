@@ -18,7 +18,7 @@ import {
   DiscoveryQuery,
   DiscoveryQueryResult,
   LoadBalancingRecommendation,
-} from '../types/agent-discovery.types.js';
+} from '../types/agent-discovery.types';
 
 export interface DiscoveryRegistryOptions {
   /** Redis connection options */

@@ -1,10 +1,10 @@
 import { SetMetadata } from '@nestjs/common';
-import { RateLimitConfig } from './redis-rate-limiter.service.js';
+import { RateLimitConfig } from './redis-rate-limiter.service';
 import {
   RATE_LIMIT_KEY,
   RATE_LIMIT_TIER_KEY,
   SKIP_RATE_LIMIT_KEY
-} from './rate-limit.guard.js';
+} from './rate-limit.guard';
 
 /**
  * Set custom rate limit configuration for an endpoint

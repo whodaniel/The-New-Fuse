@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import * as d3 from 'd3';
-import { WorkflowStep as TimelineWorkflowStep } from '../types/timeline.js';
+import { WorkflowStep as TimelineWorkflowStep } from '../types/timeline';
 
 interface TimelineEvent {
     id: string;

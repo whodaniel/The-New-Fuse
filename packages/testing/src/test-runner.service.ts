@@ -3,7 +3,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AgentWorkflowTestSuite } from './agent-workflow.test-suite.js';
+import { AgentWorkflowTestSuite } from './agent-workflow.test-suite';
 
 // Mock service interfaces since packages are not available
 interface OptimizedQueueService {

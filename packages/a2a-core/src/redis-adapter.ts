@@ -22,7 +22,7 @@ import {
   Conversation,
   ConversationSchema,
   IA2ACommunicator,
-} from './types.js';
+} from './types';
 
 @Injectable()
 export class A2ARedisAdapter

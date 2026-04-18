@@ -2,7 +2,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { v4 as uuidv4 } // @ts-ignore
 from 'uuid';
-import { Task } from './TaskTypes.js';
+import { Task } from './TaskTypes';
 
 @Injectable()
 export class TaskService {

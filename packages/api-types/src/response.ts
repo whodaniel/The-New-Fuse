@@ -2,7 +2,7 @@
  * Response-related type definitions
  */
 
-import { Pagination, BaseResponse as CommonBaseResponse } from './common.js';
+import { Pagination, BaseResponse as CommonBaseResponse } from './common';
 
 /**
  * Base response interface

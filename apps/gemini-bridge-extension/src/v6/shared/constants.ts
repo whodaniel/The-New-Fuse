@@ -5,7 +5,7 @@
  * without conflict. All storage keys use 'gemini_bridge_' prefix.
  */
 
-import type { ChatDetectionConfig, ExtensionSettings, NotificationSettings } from './types.js';
+import type { ChatDetectionConfig, ExtensionSettings, NotificationSettings } from './types';
 
 // ============================================
 // EXTENSION METADATA

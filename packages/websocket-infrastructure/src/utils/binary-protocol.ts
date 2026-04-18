@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import * as msgpack from 'msgpack-lite';
-import { MessageType } from '../types/index.js';
+import { MessageType } from '../types';
 
 /**
  * Binary protocol handler for WebSocket messages

@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit, Inject } from '@nestjs/common';
 import { DrizzleService } from '@the-new-fuse/database';
-import { TaskSynchronizationService, TaskSyncData, TaskExecutionSyncData } from './TaskSynchronizationService.js';
-import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
+import { TaskSynchronizationService, TaskSyncData, TaskExecutionSyncData } from './TaskSynchronizationService';
+import { SyncOrchestrator } from '../services/SyncOrchestrator';
 
 export interface EnhancedTaskData {
   id: string;

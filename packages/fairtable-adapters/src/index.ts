@@ -6,10 +6,10 @@
  */
 
 // Core adapter components
-export { default as KanbanBoardAdapter } from './KanbanBoardAdapter.js';
+export { default as KanbanBoardAdapter } from './KanbanBoardAdapter';
 
 // Migration utilities
-export * from './migration-utils.js';
+export * from './migration-utils';
 
 // Re-export types from airtable-core for convenience
 export type {

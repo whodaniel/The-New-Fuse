@@ -1,8 +1,8 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { RedisConfig } from './RedisConfig.js';
-import { RedisConfiguration } from './types.js';
-import { UnifiedRedisService } from './UnifiedRedisService.js';
+import { RedisConfig } from './RedisConfig';
+import { RedisConfiguration } from './types';
+import { UnifiedRedisService } from './UnifiedRedisService';
 
 export interface RedisModuleOptions {
   isGlobal?: boolean;

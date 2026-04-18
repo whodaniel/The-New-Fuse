@@ -3,7 +3,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { MCPMessage } from './IMCPMessage.js';
+import { MCPMessage } from './IMCPMessage';
 
 /**
  * Connection status enumeration

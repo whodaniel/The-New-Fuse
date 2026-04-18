@@ -11,8 +11,8 @@ import {
   SystemResources,
   BuildEnvironment,
   EnhancedBuildConfiguration
-} from '../types/index.js';
-import { DEFAULT_CONFIG } from '../index.js';
+} from '../types';
+import { DEFAULT_CONFIG } from '../index';
 
 /**
  * Configuration validation error

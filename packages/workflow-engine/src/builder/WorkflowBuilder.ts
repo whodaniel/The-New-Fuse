@@ -20,8 +20,8 @@ import {
   WorkflowTemplate,
   WorkflowSettings,
   WorkflowNodeType,
-} from '../types/WorkflowTypes.js';
-import { getErrorMessage } from '../utils/errorUtils.js';
+} from '../types/WorkflowTypes';
+import { getErrorMessage } from '../utils/errorUtils';
 
 export interface BuilderConfig {
   enableAutoValidation: boolean;

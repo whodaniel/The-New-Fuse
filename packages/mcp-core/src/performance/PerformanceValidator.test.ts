@@ -3,8 +3,8 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { PerformanceValidator } from './PerformanceValidator.js';
-import { LoadTestScenario } from './LoadTestRunner.js';
+import { PerformanceValidator } from './PerformanceValidator';
+import { LoadTestScenario } from './LoadTestRunner';
 
 describe('PerformanceValidator', () => {
   let validator: PerformanceValidator;

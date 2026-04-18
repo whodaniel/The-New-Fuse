@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { UnifiedRedisService } from './UnifiedRedisService.js';
+import { UnifiedRedisService } from './UnifiedRedisService';
 
 export interface LegacyRedisService {
   get?: (key: string) => Promise<string | null>;

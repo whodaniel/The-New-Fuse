@@ -1,5 +1,5 @@
-import { ExtensionSettings, FeatureConfig, OptimizationSettings } from '../types/index.js';
-import { Logger } from './logger.js';
+import { ExtensionSettings, FeatureConfig, OptimizationSettings } from '../types';
+import { Logger } from './logger';
 
 /**
  * Advanced settings manager for Chrome Extension

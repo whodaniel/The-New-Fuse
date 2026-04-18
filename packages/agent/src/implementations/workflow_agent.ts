@@ -3,7 +3,7 @@
  * An agent that orchestrates and executes multi-step workflows
  */
 
-import { IAgent } from '../interfaces/IAgent.js';
+import { IAgent } from '../interfaces/IAgent';
 
 export interface WorkflowConfig {
   agentId: string;

@@ -1,8 +1,8 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { SecurityService } from '../SecurityService.js';
+import { SecurityService } from '../SecurityService';
 // import { Logger } from '@the-new-fuse/utils';
-import { SecurityMiddlewareConfig } from './types.js';
+import { SecurityMiddlewareConfig } from './types';
 
 @Injectable()
 export class SecurityMiddleware implements NestMiddleware {

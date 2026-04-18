@@ -3,16 +3,16 @@
  * Version 9.1.0 - Full TNF Framework Integration
  */
 
-export { A2AProtocolService, getA2AProtocolService } from './A2AProtocolService.js';
-export { AgentRegistryService, getAgentRegistryService } from './AgentRegistryService.js';
-export { AGUIProtocolService, getAGUIProtocolService } from './AGUIProtocolService.js';
+export { A2AProtocolService, getA2AProtocolService } from './A2AProtocolService';
+export { AgentRegistryService, getAgentRegistryService } from './AgentRegistryService';
+export { AGUIProtocolService, getAGUIProtocolService } from './AGUIProtocolService';
 export {
   CollectiveOrchestratorService,
   getCollectiveOrchestratorService,
-} from './CollectiveOrchestratorService.js';
-export { MemoryBankService, getMemoryBankService } from './MemoryBankService.js';
+} from './CollectiveOrchestratorService';
+export { MemoryBankService, getMemoryBankService } from './MemoryBankService';
 export {
   ProtocolTranslationService,
   getProtocolTranslationService,
-} from './ProtocolTranslationService.js';
-export { RelayServerService, getRelayServerService } from './RelayServerService.js';
+} from './ProtocolTranslationService';
+export { RelayServerService, getRelayServerService } from './RelayServerService';

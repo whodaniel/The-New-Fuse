@@ -1,4 +1,4 @@
-import { FileVisualizer, VisualizationConfig } from './fileVisualizer.js';
+import { FileVisualizer, VisualizationConfig } from './fileVisualizer';
 
 export interface VisualizationRequest {
   type: 'file-tree' | 'dependency-graph' | 'code-metrics';

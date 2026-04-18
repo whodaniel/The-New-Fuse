@@ -20,7 +20,7 @@ import {
   Icon
 } from '@chakra-ui/react'
 import { FiSend, FiTrash2, FiDownload } from 'react-icons/fi'
-import type { RootState } from '../../store/store.js'
+import type { RootState } from '../../store/store'
 
 // Using local interface to match the chatSlice type (timestamp as string for Redux serialization)
 interface ChatMessage {

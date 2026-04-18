@@ -2,6 +2,6 @@
  * Shared state management components
  */
 
-export * from './DistributedLock.js';
-export * from './SharedCache.js';
-export * from './ConflictResolver.js';
+export * from './DistributedLock';
+export * from './SharedCache';
+export * from './ConflictResolver';

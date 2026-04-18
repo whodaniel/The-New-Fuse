@@ -6,14 +6,14 @@
  */
 
 import { ToolResult } from '@the-new-fuse/mcp-core';
-import { WebScrapingService } from '../core/WebScrapingService.js';
-import { ProxyService } from '../proxy/ProxyService.js';
+import { WebScrapingService } from '../core/WebScrapingService';
+import { ProxyService } from '../proxy/ProxyService';
 import {
   ContentExtractionOptions,
   ProxyRequest,
   SecurityPolicy,
   WebScrapingConfig,
-} from '../types/index.js';
+} from '../types';
 
 /**
  * Simple handler interface for web scraping tools

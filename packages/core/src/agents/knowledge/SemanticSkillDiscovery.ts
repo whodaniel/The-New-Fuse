@@ -1,6 +1,6 @@
 // packages/core/src/agents/knowledge/SemanticSkillDiscovery.ts
 
-import { PastTaskResult, SemanticSkillDiscovery } from '../orchestration/types.js';
+import { PastTaskResult, SemanticSkillDiscovery } from '../orchestration/types';
 
 /**
  * Mock implementation of the SemanticSkillDiscovery service for development and testing.

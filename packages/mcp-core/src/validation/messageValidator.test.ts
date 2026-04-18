@@ -3,8 +3,8 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MessageValidator } from './messageValidator.js';
-import { MCPErrorCode } from '../types/error.js';
+import { MessageValidator } from './messageValidator';
+import { MCPErrorCode } from '../types/error';
 
 describe('MessageValidator', () => {
   describe('Message Type Detection and Validation', () => {

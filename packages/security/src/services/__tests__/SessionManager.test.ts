@@ -1,4 +1,4 @@
-import { AuthUser } from '../../types/auth.js';
+import { AuthUser } from '../../types/auth';
 
 describe('SessionManager', () => {
   let sessionManager: any;

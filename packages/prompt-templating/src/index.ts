@@ -1,7 +1,7 @@
-export * from './types.js';
-export { default as ModularPromptTemplatingSystem } from './ModularPromptTemplatingSystem.js';
-export { PromptTemplateServiceImpl } from './PromptTemplateService.js';
-export { default as PromptTemplateNode } from './PromptTemplateNode.js';
+export * from './types';
+export { default as ModularPromptTemplatingSystem } from './ModularPromptTemplatingSystem';
+export { PromptTemplateServiceImpl } from './PromptTemplateService';
+export { default as PromptTemplateNode } from './PromptTemplateNode';
 
 // Re-export main components for easy import
-export { default } from './ModularPromptTemplatingSystem.js';
+export { default } from './ModularPromptTemplatingSystem';

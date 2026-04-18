@@ -2,7 +2,7 @@
  * Start the TNF Orchestrator Router
  */
 
-import { TNFRouter } from './tnf-router.js';
+import { TNFRouter } from './tnf-router';
 
 // Load env vars
 const REDIS_URL =

@@ -1,13 +1,13 @@
 
 import { describe, expect, it, jest, beforeEach, afterEach } from '@jest/globals';
-import { UnifiedWorkflowEngine, WorkflowEngineConfig } from '../engine/WorkflowEngine.js';
+import { UnifiedWorkflowEngine, WorkflowEngineConfig } from '../engine/WorkflowEngine';
 import { Logger, MasterAgentRegistry } from '@the-new-fuse/relay-core';
 import {
   WorkflowExecutionStatus,
   WorkflowNodeType,
   UnifiedWorkflow,
   NodeExecutionStatus
-} from '../types/WorkflowTypes.js';
+} from '../types/WorkflowTypes';
 
 // Mock dependencies
 const mockLogger = {

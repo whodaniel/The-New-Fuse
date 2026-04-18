@@ -5,7 +5,7 @@ import {
   generateBoolean,
   generateEmail,
   type TimestampOptions
-} from './utils.js';
+} from './utils';
 
 export type UserRole = 'admin' | 'user' | 'viewer' | 'manager';
 export type UserStatus = 'active' | 'inactive' | 'pending' | 'suspended';

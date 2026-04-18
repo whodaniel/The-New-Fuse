@@ -1,4 +1,4 @@
-import { nativeMessaging } from '../NativeMessaging.js';
+import { nativeMessaging } from '../NativeMessaging';
 
 describe('NativeMessaging', () => {
   beforeEach(() => {

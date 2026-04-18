@@ -1,4 +1,4 @@
-import { WebSocketConfig, SubscriptionConfig } from './types/index.js';
+import { WebSocketConfig, SubscriptionConfig } from './types';
 
 export class WebSocketManager {
   private ws: WebSocket | null = null;

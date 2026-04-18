@@ -3,7 +3,7 @@
  * Main entry point for the sync system deployment
  */
 
-import { SyncServer } from './deployment/SyncServer.js';
+import { SyncServer } from './deployment/SyncServer';
 
 // Start the server
 const server = new SyncServer();

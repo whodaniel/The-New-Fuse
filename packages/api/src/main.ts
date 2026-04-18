@@ -8,8 +8,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Logger } from '@nestjs/common';
-import { AppModule } from './app.module.js';
-import { GlobalExceptionFilter } from './filters/global-exception.filter.js';
+import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './filters/global-exception.filter';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');

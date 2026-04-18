@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Task, TaskPriority, TaskStatus, TaskDependency } from '../core/types.js';
+import { Task, TaskPriority, TaskStatus, TaskDependency } from '../core/types';
 
 /**
  * Decomposition strategy

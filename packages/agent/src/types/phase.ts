@@ -1,4 +1,4 @@
-import { Task } from './task.js';
+import { Task } from './task';
 
 export interface ImplementationPhase {
     id: string;

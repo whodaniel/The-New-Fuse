@@ -1,10 +1,10 @@
 import { Logger } from 'winston';
 import { EventEmitter } from 'events';
-import { TestRunner, TestConfiguration, TestResult, TestType, TestFramework, TestSummaryReport, TestStatus } from './TestRunner.js';
-import { QualityGateEvaluator, QualityGateResult } from './QualityGateEvaluator.js';
+import { TestRunner, TestConfiguration, TestResult, TestType, TestFramework, TestSummaryReport, TestStatus } from './TestRunner';
+import { QualityGateEvaluator, QualityGateResult } from './QualityGateEvaluator';
 
 // Re-export commonly used types from TestRunner for convenience
-export { TestType, TestFramework, TestStatus } from './TestRunner.js';
+export { TestType, TestFramework, TestStatus } from './TestRunner';
 
 /**
  * Test execution plan interface

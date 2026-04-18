@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { PortStatus } from '../../shared/types.js'
+import type { PortStatus } from '../../shared/types'
 
 export interface PortsState {
   monitored: number[]

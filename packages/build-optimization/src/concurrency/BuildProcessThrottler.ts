@@ -4,8 +4,8 @@
 
 import { spawn, ChildProcess } from 'child_process';
 import { EventEmitter } from 'events';
-import { MemoryUsage } from '../types/index.js';
-import { SystemResourceDetector } from '../system/SystemResourceDetector.js';
+import { MemoryUsage } from '../types';
+import { SystemResourceDetector } from '../system/SystemResourceDetector';
 
 export interface BuildTask {
   id: string;

@@ -3,8 +3,8 @@
  * Provides data access for Workflow entities and executions
  */
 import { and, desc, eq, isNull, sql } from 'drizzle-orm';
-import { db } from '../client.js';
-import { workflowExecutions, workflows, workflowSteps, workflowTemplates } from '../schema/index.js';
+import { db } from '../client';
+import { workflowExecutions, workflows, workflowSteps, workflowTemplates } from '../schema';
 import type {
   NewWorkflow,
   NewWorkflowExecution,
@@ -14,7 +14,7 @@ import type {
   WorkflowExecution,
   WorkflowStep,
   WorkflowTemplate,
-} from '../types.js';
+} from '../types';
 
 /**
  * Workflow Repository - provides data access for Workflow entities

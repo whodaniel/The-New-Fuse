@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { RedisRateLimiterService } from './redis-rate-limiter.service.js';
+import { RedisRateLimiterService } from './redis-rate-limiter.service';
 
 /**
  * Global rate limiting middleware

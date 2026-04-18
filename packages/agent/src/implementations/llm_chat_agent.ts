@@ -3,7 +3,7 @@
  * A versatile conversational AI agent that can interface with multiple LLM providers
  */
 
-import { IAgent } from '../interfaces/IAgent.js';
+import { IAgent } from '../interfaces/IAgent';
 
 export interface LLMChatConfig {
   agentId: string;

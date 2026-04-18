@@ -12,7 +12,7 @@ import {
   VideoGenerationResult,
   VideoProvider,
   VideoProviderCapabilities,
-} from '../types.js';
+} from '../types';
 
 /**
  * Interface for video generation providers

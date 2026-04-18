@@ -1,4 +1,4 @@
-import { Tool } from '../tools/types.js';
+import { Tool } from '../tools/types';
 
 interface ToolManager {
   getTool(name: string): any;

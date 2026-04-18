@@ -6,9 +6,9 @@
  * and testing environments for easier debugging and troubleshooting.
  */
 
-import { ApplicationError } from '../errors/CustomErrors.js';
-import { ErrorContext } from '../interfaces/IErrorHandling.js';
-import { Logger } from './Logger.js';
+import { ApplicationError } from '../errors/CustomErrors';
+import { ErrorContext } from '../interfaces/IErrorHandling';
+import { Logger } from './Logger';
 
 /**
  * Error reproduction data

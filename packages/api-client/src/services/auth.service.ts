@@ -1,5 +1,5 @@
-import { ApiClient } from '../client/ApiClient.js';
-import { BaseService } from './BaseService.js';
+import { ApiClient } from '../client/ApiClient';
+import { BaseService } from './BaseService';
 
 /**
  * Authentication response interface

@@ -2,10 +2,10 @@
  * Unit tests for Service Mesh Monitor
  */
 
-import { ServiceMeshMonitor, ServiceMeshMonitorConfig, Alert } from './ServiceMeshMonitor.js';
-import { ServiceMeshProvider } from './MCPServiceMesh.js';
-import { ServiceHealth } from '../types/broker.js';
-import { ServiceStatus } from '../types/common.js';
+import { ServiceMeshMonitor, ServiceMeshMonitorConfig, Alert } from './ServiceMeshMonitor';
+import { ServiceMeshProvider } from './MCPServiceMesh';
+import { ServiceHealth } from '../types/broker';
+import { ServiceStatus } from '../types/common';
 
 // Mock service mesh provider
 class MockServiceMeshProvider implements ServiceMeshProvider {

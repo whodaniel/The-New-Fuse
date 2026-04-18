@@ -5,9 +5,9 @@
  * Converts between Langchain agent messages and The New Fuse's A2A protocol
  */
 
-import { ProtocolAdapter } from './ProtocolAdapter.js';
-import { RelayMessage, ProtocolType } from '../types/index.js';
-import { Logger } from '../utils/Logger.js';
+import { ProtocolAdapter } from './ProtocolAdapter';
+import { RelayMessage, ProtocolType } from '../types';
+import { Logger } from '../utils/Logger';
 
 export class LangchainAdapter implements ProtocolAdapter {
   public readonly name = 'langchain';

@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { useApi } from '../../hooks/useApi';
 import { AgentCard } from './AgentCard.js';
 import { AgentSearch } from './AgentSearch.js';
-import { AgentFilters } from './AgentFilters/index.js';
+import { AgentFilters } from './AgentFilters';
 
 const AgentList: React.FC = () => {
   const api = useApi();

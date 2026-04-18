@@ -1,10 +1,10 @@
 import { EventEmitter } from 'events';
 
-import type { AgentPool } from '../core/AgentPool.js';
-import type { TaskQueue } from '../core/TaskQueue.js';
-import type { AgentInfo, Task } from '../core/types.js';
-import type { Coordinator } from '../orchestration/Coordinator.js';
-import type { MetricsCollector } from './MetricsCollector.js';
+import type { AgentPool } from '../core/AgentPool';
+import type { TaskQueue } from '../core/TaskQueue';
+import type { AgentInfo, Task } from '../core/types';
+import type { Coordinator } from '../orchestration/Coordinator';
+import type { MetricsCollector } from './MetricsCollector';
 
 /**
  * Agent activity event

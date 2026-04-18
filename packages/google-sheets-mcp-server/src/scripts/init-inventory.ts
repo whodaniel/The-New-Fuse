@@ -1,4 +1,4 @@
-import { createSpreadsheet, shareSpreadsheet, writeSheet } from '../tools.js';
+import { createSpreadsheet, shareSpreadsheet, writeSheet } from '../tools';
 
 async function main() {
   const args = process.argv.slice(2);

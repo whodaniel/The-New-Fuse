@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { RateLimitingService } from './index.js';
+import { RateLimitingService } from './index';
 
 describe('RateLimitingService', () => {
   let service: RateLimitingService;

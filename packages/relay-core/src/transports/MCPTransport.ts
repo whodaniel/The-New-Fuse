@@ -13,8 +13,8 @@ import { Server } from '@modelcontextprotocol/sdk/server/index';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
 // @ts-ignore
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types';
-import { Transport, RelayMessage } from '../types/index.js';
-import { Logger } from '../utils/Logger.js';
+import { Transport, RelayMessage } from '../types';
+import { Logger } from '../utils/Logger';
 
 export interface MCPTransportConfig {
   relayId: string;

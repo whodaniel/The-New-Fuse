@@ -2,8 +2,8 @@ import type {
   VectorDocument,
   VectorQuery,
   VectorSearchResult,
-} from '../interface/vector-database.interface.js';
-import type { VectorDatabaseService } from '../vector-database.service.js';
+} from '../interface/vector-database.interface';
+import type { VectorDatabaseService } from '../vector-database.service';
 
 // Legacy types from packages/core
 interface LegacyVectorDocument {

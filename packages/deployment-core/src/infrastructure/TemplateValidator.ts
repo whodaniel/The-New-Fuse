@@ -10,7 +10,7 @@ import {
   SuggestionType,
   ResourceType,
   VariableType
-} from '../types/infrastructure.js';
+} from '../types/infrastructure';
 
 export interface ValidationRule {
   name: string;

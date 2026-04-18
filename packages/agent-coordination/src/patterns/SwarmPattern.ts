@@ -1,10 +1,10 @@
 import { EventEmitter } from 'events';
 
-import { TaskPriority } from '../core/types.js';
+import { TaskPriority } from '../core/types';
 
-import type { AgentInfo, Task } from '../core/types.js';
-import type { Coordinator } from '../orchestration/Coordinator.js';
-import type { SharedCache } from '../state/SharedCache.js';
+import type { AgentInfo, Task } from '../core/types';
+import type { Coordinator } from '../orchestration/Coordinator';
+import type { SharedCache } from '../state/SharedCache';
 
 /**
  * Swarm agent behavior

@@ -12,7 +12,7 @@ import type {
   SkillExecutionResult,
   SkillParameter,
   ValidationResult,
-} from '../types/index.js';
+} from '../types';
 
 /**
  * Skill executor class

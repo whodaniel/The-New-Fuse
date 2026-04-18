@@ -17,15 +17,15 @@ export type {
   ServiceHealth,
   ServiceQuery,
   ServiceRecommendationOptions,
-} from './broker.js';
+} from './broker';
 export type {
   CapabilityCategory,
   CapabilityCompatibilityLevel,
   CapabilityDiscoveryResult,
   CapabilityLifecycleState,
-} from './capability.js';
-export type { ClientStatistics, ClientStatus, MCPClientConfig } from './client.js';
-export { LoadBalancingStrategy, LogLevel, ServiceStatus } from './common.js';
+} from './capability';
+export type { ClientStatistics, ClientStatus, MCPClientConfig } from './client';
+export { LoadBalancingStrategy, LogLevel, ServiceStatus } from './common';
 export type {
   FilterConfig,
   HealthCheckResult,
@@ -35,15 +35,15 @@ export type {
   SortConfig,
   TimeoutConfig,
   VersionInfo,
-} from './common.js';
+} from './common';
 export type {
   ConnectionEvent,
   ConnectionFactory,
   ConnectionPoolConfig,
   ConnectionType,
-} from './connection.js';
-export { ErrorCategory, ErrorSeverity, JSONRPCErrorCode, MCPErrorCode } from './error.js';
-export type { ErrorHandler, ErrorRecoveryStrategy, ErrorStatistics } from './error.js';
+} from './connection';
+export { ErrorCategory, ErrorSeverity, JSONRPCErrorCode, MCPErrorCode } from './error';
+export type { ErrorHandler, ErrorRecoveryStrategy, ErrorStatistics } from './error';
 export type {
   MessageEnvelope,
   MessagePriority,
@@ -51,7 +51,7 @@ export type {
   MessageType,
   MessageValidationResult,
   NotificationType,
-} from './message.js';
+} from './message';
 export type {
   Alert,
   AlertSeverity,
@@ -66,23 +66,23 @@ export type {
   MonitoringConfig,
   PerformanceMetrics,
   TimeSeries,
-} from './monitoring.js';
+} from './monitoring';
 export type {
   ResourceAccessMode,
   ResourceDiscoveryResult,
   ResourceMetrics,
   ResourceStatus,
   ResourceType,
-} from './resource.js';
-export type { MCPServerConfig, MCPServerInfo, ServerStatistics } from './server.js';
-export type { ResourceRequirement, Skill } from './skill.js';
+} from './resource';
+export type { MCPServerConfig, MCPServerInfo, ServerStatistics } from './server';
+export type { ResourceRequirement, Skill } from './skill';
 export type {
   ToolExecutionContext,
   ToolExecutionStatus,
   ToolRegistry,
   ToolSandboxConfig,
   ToolType,
-} from './tool.js';
+} from './tool';
 
 // Export classes
-export { MCPErrorClass } from './error.js';
+export { MCPErrorClass } from './error';

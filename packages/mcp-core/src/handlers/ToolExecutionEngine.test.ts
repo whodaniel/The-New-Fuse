@@ -3,8 +3,8 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { ToolExecutionEngine, ToolExecutionOptions } from './ToolExecutionEngine.js';
-import { ToolHandler, ToolResult, JSONSchema } from '../interfaces/IMCPTool.js';
+import { ToolExecutionEngine, ToolExecutionOptions } from './ToolExecutionEngine';
+import { ToolHandler, ToolResult, JSONSchema } from '../interfaces/IMCPTool';
 
 // Mock tool handler for testing
 class MockToolHandler implements ToolHandler {

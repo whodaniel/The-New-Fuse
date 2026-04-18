@@ -6,9 +6,9 @@
  */
 
 import { EventEmitter } from 'events';
-import { MCPResource, ResourceContent } from '../interfaces/IMCPResource.js';
-import { MCPCapability } from '../interfaces/IMCPCapability.js';
-import { ToolResult } from '../interfaces/IMCPTool.js';
+import { MCPResource, ResourceContent } from '../interfaces/IMCPResource';
+import { MCPCapability } from '../interfaces/IMCPCapability';
+import { ToolResult } from '../interfaces/IMCPTool';
 
 /**
  * Cache entry interface

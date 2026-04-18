@@ -5,8 +5,8 @@
  * request routing, load balancing, event subscription, and metrics collection.
  */
 
-import { MCPRequest, MCPResponse, MCPNotification } from './IMCPMessage.js';
-import { RoutingInfo, RoutingMetrics } from '../types/broker.js';
+import { MCPRequest, MCPResponse, MCPNotification } from './IMCPMessage';
+import { RoutingInfo, RoutingMetrics } from '../types/broker';
 
 /**
  * Event callback function type

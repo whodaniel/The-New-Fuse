@@ -15,7 +15,7 @@
  */
 
 export * as Events from './events/events.js';
-export * as Styles from './styles/index.js';
+export * as Styles from './styles';
 export * as Primitives from './types/primitives.js';
 export * as Types from './types/types.js';
 import * as Guards from './data/guards.js';

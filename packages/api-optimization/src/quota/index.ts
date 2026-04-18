@@ -1,1 +1,1 @@
-export * from './quota-management.service.js';
+export * from './quota-management.service';

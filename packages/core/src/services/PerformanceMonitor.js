@@ -1,0 +1,282 @@
+"use strict";
+/**
+ * @fileoverview Production-ready performance monitoring service
+ */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PerformanceMonitor = void 0;
+const common_1 = require("@nestjs/common");
+const types_js_1 = require("../constants/types.js");
+const logger_js_1 = require("../utils/logger.js");
+const MetricsCollector_js_1 = require("./MetricsCollector.js");
+const SystemMonitor_js_1 = require("./SystemMonitor.js");
+let PerformanceMonitor = class PerformanceMonitor {
+    constructor(metricsCollector, systemMonitor) {
+        this.metricsCollector = metricsCollector;
+        this.systemMonitor = systemMonitor;
+        this.state = types_js_1.ServiceState.UNINITIALIZED;
+        this.startTime = new Date();
+        this.requestCount = 0;
+        this.errorCount = 0;
+        this.responseTimes = [];
+        this.activeConnections = 0;
+        logger_js_1.logger.setContext('PerformanceMonitor');
+    }
+    async start() {
+        if (this.state === types_js_1.ServiceState.RUNNING) {
+            logger_js_1.logger.warn('PerformanceMonitor is already running');
+            return;
+        }
+        try {
+            this.state = types_js_1.ServiceState.INITIALIZING;
+            logger_js_1.logger.info('Starting PerformanceMonitor');
+            // Start performance monitoring interval
+            this.monitoringInterval = setInterval(() => {
+                this.collectPerformanceMetrics();
+            }, 30000); // Collect every 30 seconds
+            this.state = types_js_1.ServiceState.RUNNING;
+            logger_js_1.logger.info('PerformanceMonitor started successfully');
+        }
+        catch (error) {
+            this.state = types_js_1.ServiceState.ERROR;
+            logger_js_1.logger.error('Failed to start PerformanceMonitor', error);
+            throw error;
+        }
+    }
+    async stop() {
+        if (this.state === types_js_1.ServiceState.STOPPED) {
+            logger_js_1.logger.warn('PerformanceMonitor is already stopped');
+            return;
+        }
+        try {
+            this.state = types_js_1.ServiceState.STOPPING;
+            logger_js_1.logger.info('Stopping PerformanceMonitor');
+            if (this.monitoringInterval) {
+                clearInterval(this.monitoringInterval);
+                this.monitoringInterval = undefined;
+            }
+            this.state = types_js_1.ServiceState.STOPPED;
+            logger_js_1.logger.info('PerformanceMonitor stopped successfully');
+        }
+        catch (error) {
+            this.state = types_js_1.ServiceState.ERROR;
+            logger_js_1.logger.error('Failed to stop PerformanceMonitor', error);
+            throw error;
+        }
+    }
+    getState() {
+        return this.state;
+    }
+    async monitor() {
+        try {
+            const systemMetrics = await this.systemMonitor.getSystemMetrics();
+            const applicationMetrics = this.getApplicationMetrics();
+            const performanceMetrics = {
+                system: systemMetrics,
+                application: applicationMetrics,
+                agents: [], // Will be populated by AgentOrchestrator
+                workflows: [], // Will be populated by WorkflowEngine
+                timestamp: new Date(),
+            };
+            // Record metrics
+            this.recordSystemMetrics(systemMetrics);
+            this.recordApplicationMetrics(applicationMetrics);
+            return performanceMetrics;
+        }
+        catch (error) {
+            logger_js_1.logger.error('Failed to collect performance metrics', error);
+            throw error;
+        }
+    }
+    // Request tracking methods
+    recordRequest(responseTime, isError = false) {
+        this.requestCount++;
+        this.responseTimes.push(responseTime);
+        if (isError) {
+            this.errorCount++;
+        }
+        // Keep only last 1000 response times for memory efficiency
+        if (this.responseTimes.length > 1000) {
+            this.responseTimes = this.responseTimes.slice(-1000);
+        }
+        // Record metrics
+        this.metricsCollector.recordCounter('http_requests_total', 1, { error: isError.toString() });
+        this.metricsCollector.recordTimer('http_request_duration', responseTime);
+    }
+    recordConnectionChange(delta) {
+        this.activeConnections = Math.max(0, this.activeConnections + delta);
+        this.metricsCollector.recordGauge('active_connections', this.activeConnections);
+    }
+    // Database connection tracking
+    recordDatabaseConnection(active, idle) {
+        this.metricsCollector.recordGauge('database_connections_active', active);
+        this.metricsCollector.recordGauge('database_connections_idle', idle);
+        this.metricsCollector.recordGauge('database_connections_total', active + idle);
+    }
+    // Memory tracking
+    recordMemoryUsage() {
+        const memoryUsage = process.memoryUsage();
+        this.metricsCollector.recordGauge('memory_heap_used', memoryUsage.heapUsed, 'bytes');
+        this.metricsCollector.recordGauge('memory_heap_total', memoryUsage.heapTotal, 'bytes');
+        this.metricsCollector.recordGauge('memory_external', memoryUsage.external, 'bytes');
+        this.metricsCollector.recordGauge('memory_rss', memoryUsage.rss, 'bytes');
+    }
+    // Event loop lag monitoring
+    recordEventLoopLag() {
+        const start = process.hrtime.bigint();
+        setImmediate(() => {
+            const lag = Number(process.hrtime.bigint() - start) / 1000000; // Convert to milliseconds
+            this.metricsCollector.recordGauge('event_loop_lag', lag, 'ms');
+        });
+    }
+    async collectPerformanceMetrics() {
+        try {
+            // Collect memory metrics
+            this.recordMemoryUsage();
+            // Collect event loop lag
+            this.recordEventLoopLag();
+            // Collect full performance metrics
+            await this.monitor();
+            logger_js_1.logger.debug('Performance metrics collected successfully');
+        }
+        catch (error) {
+            logger_js_1.logger.error('Failed to collect performance metrics', error);
+        }
+    }
+    getApplicationMetrics() {
+        const uptime = Math.floor((Date.now() - this.startTime.getTime()) / 1000);
+        const responseTime = this.calculateResponseTimeStats();
+        return {
+            uptime,
+            requestCount: this.requestCount,
+            errorCount: this.errorCount,
+            responseTime,
+            activeConnections: this.activeConnections,
+            databaseConnections: {
+                active: 0, // Will be updated by database service
+                idle: 0, // Will be updated by database service
+                total: 0, // Will be updated by database service
+            },
+        };
+    }
+    calculateResponseTimeStats() {
+        if (this.responseTimes.length === 0) {
+            return {
+                average: 0,
+                p50: 0,
+                p95: 0,
+                p99: 0,
+            };
+        }
+        const sorted = [...this.responseTimes].sort((a, b) => a - b);
+        const sum = sorted.reduce((a, b) => a + b, 0);
+        return {
+            average: sum / sorted.length,
+            p50: this.calculatePercentile(sorted, 50),
+            p95: this.calculatePercentile(sorted, 95),
+            p99: this.calculatePercentile(sorted, 99),
+        };
+    }
+    calculatePercentile(sortedValues, percentile) {
+        const index = Math.ceil((percentile / 100) * sortedValues.length) - 1;
+        return sortedValues[Math.max(0, index)];
+    }
+    recordSystemMetrics(metrics) {
+        // CPU metrics
+        this.metricsCollector.recordGauge('cpu_usage_percent', metrics.cpu.usage, '%');
+        this.metricsCollector.recordGauge('cpu_cores', metrics.cpu.cores);
+        // Memory metrics
+        this.metricsCollector.recordGauge('system_memory_used', metrics.memory.used, 'bytes');
+        this.metricsCollector.recordGauge('system_memory_total', metrics.memory.total, 'bytes');
+        this.metricsCollector.recordGauge('system_memory_usage_percent', metrics.memory.usage, '%');
+        // Disk metrics
+        this.metricsCollector.recordGauge('disk_used', metrics.disk.used, 'bytes');
+        this.metricsCollector.recordGauge('disk_total', metrics.disk.total, 'bytes');
+        this.metricsCollector.recordGauge('disk_usage_percent', metrics.disk.usage, '%');
+        this.metricsCollector.recordGauge('disk_iops', metrics.disk.iops);
+        // Network metrics
+        this.metricsCollector.recordGauge('network_bytes_in', metrics.network.bytesIn, 'bytes');
+        this.metricsCollector.recordGauge('network_bytes_out', metrics.network.bytesOut, 'bytes');
+        this.metricsCollector.recordGauge('network_packets_in', metrics.network.packetsIn);
+        this.metricsCollector.recordGauge('network_packets_out', metrics.network.packetsOut);
+        this.metricsCollector.recordGauge('network_connections', metrics.network.connections);
+    }
+    recordApplicationMetrics(metrics) {
+        this.metricsCollector.recordGauge('app_uptime', metrics.uptime, 'seconds');
+        this.metricsCollector.recordGauge('app_requests_total', metrics.requestCount);
+        this.metricsCollector.recordGauge('app_errors_total', metrics.errorCount);
+        this.metricsCollector.recordGauge('app_response_time_avg', metrics.responseTime.average, 'ms');
+        this.metricsCollector.recordGauge('app_response_time_p50', metrics.responseTime.p50, 'ms');
+        this.metricsCollector.recordGauge('app_response_time_p95', metrics.responseTime.p95, 'ms');
+        this.metricsCollector.recordGauge('app_response_time_p99', metrics.responseTime.p99, 'ms');
+        this.metricsCollector.recordGauge('app_active_connections', metrics.activeConnections);
+    }
+    // Utility methods for performance tracking
+    async trackOperation(operationName, operation, tags) {
+        const startTime = Date.now();
+        try {
+            const result = await operation();
+            const duration = Date.now() - startTime;
+            this.metricsCollector.recordTimer(`operation_duration`, duration, {
+                operation: operationName,
+                success: 'true',
+                ...tags,
+            });
+            return result;
+        }
+        catch (error) {
+            const duration = Date.now() - startTime;
+            this.metricsCollector.recordTimer(`operation_duration`, duration, {
+                operation: operationName,
+                success: 'false',
+                ...tags,
+            });
+            this.metricsCollector.recordCounter(`operation_errors`, 1, {
+                operation: operationName,
+                ...tags,
+            });
+            throw error;
+        }
+    }
+    trackOperationSync(operationName, operation, tags) {
+        const startTime = Date.now();
+        try {
+            const result = operation();
+            const duration = Date.now() - startTime;
+            this.metricsCollector.recordTimer(`operation_duration`, duration, {
+                operation: operationName,
+                success: 'true',
+                ...tags,
+            });
+            return result;
+        }
+        catch (error) {
+            const duration = Date.now() - startTime;
+            this.metricsCollector.recordTimer(`operation_duration`, duration, {
+                operation: operationName,
+                success: 'false',
+                ...tags,
+            });
+            this.metricsCollector.recordCounter(`operation_errors`, 1, {
+                operation: operationName,
+                ...tags,
+            });
+            throw error;
+        }
+    }
+};
+exports.PerformanceMonitor = PerformanceMonitor;
+exports.PerformanceMonitor = PerformanceMonitor = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [MetricsCollector_js_1.MetricsCollector,
+        SystemMonitor_js_1.SystemMonitor])
+], PerformanceMonitor);
+//# sourceMappingURL=PerformanceMonitor.js.map

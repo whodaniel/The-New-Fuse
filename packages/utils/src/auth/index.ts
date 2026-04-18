@@ -1,4 +1,4 @@
-export * from './constants.js';
-export * from './auth.js';
-export * from './RepoLoader.js';
-// export * from './bedrock.js';
+export * from './constants';
+export * from './auth';
+export * from './RepoLoader';
+// export * from './bedrock';

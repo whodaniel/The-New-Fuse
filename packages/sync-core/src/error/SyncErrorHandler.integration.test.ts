@@ -13,9 +13,9 @@ import {
   SyncError, 
   SyncContext,
   SyncErrorHandlerConfig 
-} from './SyncErrorHandler.js';
-import { SyncRetryManager, RetryConfig } from './SyncRetryManager.js';
-import { SyncFallbackProcessor, FallbackProcessorConfig } from './SyncFallbackProcessor.js';
+} from './SyncErrorHandler';
+import { SyncRetryManager, RetryConfig } from './SyncRetryManager';
+import { SyncFallbackProcessor, FallbackProcessorConfig } from './SyncFallbackProcessor';
 
 describe('Sync Error Handling Integration', () => {
   let errorHandler: SyncErrorHandler;

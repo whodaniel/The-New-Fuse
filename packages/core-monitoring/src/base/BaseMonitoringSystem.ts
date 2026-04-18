@@ -11,9 +11,9 @@ import {
   IPerformanceMonitor,
   IDashboardManager,
   ISystemHealthMonitor
-} from '../interfaces/IMonitoring.js';
-import { BaseMetricsCollector } from './BaseMetricsCollector.js';
-import { Logger } from '../utils/Logger.js';
+} from '../interfaces/IMonitoring';
+import { BaseMetricsCollector } from './BaseMetricsCollector';
+import { Logger } from '../utils/Logger';
 
 /**
  * Base monitoring configuration

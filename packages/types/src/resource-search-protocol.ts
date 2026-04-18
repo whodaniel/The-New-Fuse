@@ -2,7 +2,7 @@ import type {
   ResourceCatalogItem,
   ResourceSearchRequest,
   ResourceSearchResponse,
-} from './resource-search.js';
+} from './resource-search';
 
 export type ResourceSearchProtocolMessageType =
   | 'RESOURCE.SEARCH.REQUEST'

@@ -38,8 +38,8 @@ import {
   PaymentError,
   PaymentDeclinedError,
   InsufficientFundsError,
-} from '../errors/CustomErrors.js';
-import { ErrorCategory, ErrorSeverity } from '../interfaces/IErrorHandling.js';
+} from '../errors/CustomErrors';
+import { ErrorCategory, ErrorSeverity } from '../interfaces/IErrorHandling';
 
 /**
  * Error Factory for creating standardized errors

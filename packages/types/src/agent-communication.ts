@@ -1,5 +1,5 @@
-import { Message } from "./communication.js";
-import { Priority } from "./core/enums.js";
+import { Message } from "./communication";
+import { Priority } from "./core/enums";
 
 export interface AgentMessage extends Message {
   /** Agent ID that sent the message */

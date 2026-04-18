@@ -8,9 +8,9 @@
 import { Logger } from '@the-new-fuse/relay-core';
 import { EventEmitter } from 'events';
 // import { DrizzleClient } from '@drizzle/client';
-import { WorkflowExecutor } from '../executor/WorkflowExecutor.js';
-import { WorkflowQueue } from '../queue/WorkflowQueue.js';
-import { telemetry } from '../telemetry/TelemetryService.js';
+import { WorkflowExecutor } from '../executor/WorkflowExecutor';
+import { WorkflowQueue } from '../queue/WorkflowQueue';
+import { telemetry } from '../telemetry/TelemetryService';
 import {
   ExecutionContext,
   NodeExecution,
@@ -20,8 +20,8 @@ import {
   WorkflowExecution,
   WorkflowExecutionStatus,
   WorkflowNode,
-} from '../types/WorkflowTypes.js';
-import { getErrorMessage } from '../utils/errorUtils.js';
+} from '../types/WorkflowTypes';
+import { getErrorMessage } from '../utils/errorUtils';
 
 // Import actual types from relay-core
 import { MasterAgentRegistry } from '@the-new-fuse/relay-core';

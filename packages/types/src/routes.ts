@@ -1,4 +1,4 @@
-import type { DataMap } from './core/base-types.js';
+import type { DataMap } from './core/base-types';
 
 export interface RouteConfig {
   path: string;
