@@ -25,6 +25,15 @@ apps/casin8-games/.data-tests/
 /solid-shrimp/
 /strategic-cow/
 /tools/
+/.kilo/
+/.venv_crawler/
+/.documentation-system/
+/.agent/
+/.skills/
+/.playwright-cli/
+/.turbo/
+/data/
+/logs/
 
 # Exclude large apps not needed for api-gateway deployments
 /apps/gemini-bridge-extension/

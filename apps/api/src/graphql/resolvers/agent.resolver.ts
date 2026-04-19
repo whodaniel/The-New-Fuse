@@ -15,10 +15,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 // @ts-ignore
-// @ts-ignore
 import type { Agent, NewAgent, User } from '@the-new-fuse/database';
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import { GqlAuthGuard } from '../guards/gql-auth.guard';
 import { UserLoader } from '../loaders/user.loader';

@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/api-optimization",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Comprehensive API optimization with rate limiting, caching, CDN, and performance features",
   "main": "dist/index.js",

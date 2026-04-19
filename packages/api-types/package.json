@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/api-types",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Shared type definitions for The New Fuse API",
   "type": "module",

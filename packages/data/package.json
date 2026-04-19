@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/data",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Unified data stack for The New Fuse framework",
   "main": "dist/index.js",

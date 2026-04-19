@@ -6,7 +6,6 @@
  * master clock can treat cron/automation loops as first-class participants.
  */
 
-// @ts-ignore
 import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 import Redis from 'ioredis';
 

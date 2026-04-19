@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { Permission } from '@the-new-fuse/types';
 
 @Injectable()

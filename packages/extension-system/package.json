@@ -1,7 +1,9 @@
 {
   "name": "@the-new-fuse/extension-system",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
   ],
   "version": "1.0.0",
   "description": "Unified Extension System for The New Fuse Framework - Consolidates modules, plugins, and extensions",
@@ -89,11 +91,6 @@
   "peerDependencies": {
     "@the-new-fuse/relay-core": "workspace:*"
   },
-  "files": [
-    "dist",
-    "README.md",
-    "CHANGELOG.md"
-  ],
   "publishConfig": {
     "access": "restricted",
     "registry": "https://npm.pkg.github.com"

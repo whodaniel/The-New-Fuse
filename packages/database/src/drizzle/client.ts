@@ -2,7 +2,6 @@
  * Drizzle ORM Client
  * Provides the database connection and client instance
  */
-// @ts-ignore
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';

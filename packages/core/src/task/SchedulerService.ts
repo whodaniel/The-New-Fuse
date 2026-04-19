@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-// @ts-ignore
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()

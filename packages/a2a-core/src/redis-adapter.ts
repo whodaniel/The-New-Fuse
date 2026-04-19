@@ -1,8 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { UnifiedRedisService } from // @ts-ignore
-'@the-new-fuse/infrastructure';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { EventEmitter } from 'events';
-// @ts-ignore
 import { v4 as uuidv4 } from 'uuid';
 import {
   A2AConfig,

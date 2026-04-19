@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-// @ts-ignore
 import { firstValueFrom } from 'rxjs';
 import { Logger } from '@nestjs/common';
 

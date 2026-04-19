@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/security",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Security package for The New Fuse",
   "main": "dist/index.js",

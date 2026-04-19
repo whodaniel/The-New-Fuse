@@ -6,9 +6,6 @@
  * This is a temporary simplified implementation
  */
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import * as crypto from 'node:crypto';
 

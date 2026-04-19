@@ -2,11 +2,9 @@
  * GraphQL Module - Migrated to Drizzle ORM
  * Provides GraphQL API with Apollo Server using Drizzle for database access
  */
-// @ts-ignore
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-// @ts-ignore
 import { GraphQLModule } from '@nestjs/graphql';
 import { JwtModule } from '@nestjs/jwt';
 import { Request, Response } from 'express';

@@ -7,21 +7,37 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "declaration": true,
     "composite": true,
-
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
-    "noImplicitAny": false,
-    "strictFunctionTypes": false,
     "paths": {
-      "@the-new-fuse/infrastructure": ["../infrastructure/dist"],
-      "@the-new-fuse/database": ["../database/dist"],
-      "@the-new-fuse/types": ["../types/dist"]
-    }
+      "@the-new-fuse/infrastructure": [
+        "../infrastructure/dist"
+      ],
+      "@the-new-fuse/database": [
+        "../database/dist"
+      ],
+      "@the-new-fuse/types": [
+        "../types/dist"
+      ],
+      "@the-new-fuse/tnf-cli": [
+        "../tnf-cli/dist"
+      ]
+    },
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+  "include": [
+    "src*",
+    "../tnf-cli/src*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "***.spec.ts"
+  ],
   "references": []
 }

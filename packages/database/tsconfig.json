@@ -9,10 +9,18 @@
     "skipLibCheck": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "strict": true
+    "strict": true,
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*", "generated/**/*"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
+  "include": [
+    "src*",
+    "generated*"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "***.spec.ts"
+  ],
   "references": [
     {
       "path": "../types"

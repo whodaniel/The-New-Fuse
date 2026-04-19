@@ -19,9 +19,20 @@
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "sourceMap": true,
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "types": []
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2022"
+    ],
+    "types": [],
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "include": [
+    "src*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "***.spec.ts"
+  ]
 }

@@ -38,6 +38,7 @@
     "@modelcontextprotocol/sdk": "^1.26.0",
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/infrastructure": "workspace:*",
+    "@the-new-fuse/tnf-cli": "workspace:*",
     "@upstash/redis": "^1.37.0",
     "chokidar": "^4.0.3",
     "ethers": "^6.15.0",

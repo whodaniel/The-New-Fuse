@@ -15,8 +15,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 // @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 
 // ========================== TYPES ==========================

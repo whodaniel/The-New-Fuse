@@ -1,4 +1,3 @@
-// @ts-ignore
 import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
 import { UserType } from './user.type';
 

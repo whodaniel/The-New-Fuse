@@ -9,9 +9,7 @@ import {
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common';
-// @ts-ignore
 import { Observable } from 'rxjs';
-// @ts-ignore
 import { map } from 'rxjs/operators';
 import { Request } from 'express';
 

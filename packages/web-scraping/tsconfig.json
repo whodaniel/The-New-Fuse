@@ -12,11 +12,20 @@
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "paths": {
-      "@the-new-fuse/utils": ["../utils/dist/index.d.ts"]
-    }
+      "@the-new-fuse/utils": [
+        "../utils/dist/index.d.ts"
+      ]
+    },
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts", "src/electron/**/*"],
+  "include": [
+    "src*"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "***"
+  ],
   "references": [
     {
       "path": "../mcp-core"

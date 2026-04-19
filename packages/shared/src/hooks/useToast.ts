@@ -2,7 +2,6 @@
  * Toast Notification Hook
  * Provides standardized toast messages across the application
  */
-// @ts-ignore
 import toast from 'react-hot-toast';
 
 export interface ToastOptions {

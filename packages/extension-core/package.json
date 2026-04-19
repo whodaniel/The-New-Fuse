@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/extension-core",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Shared core logic for TNF Chrome Extensions",
   "main": "dist/index.js",

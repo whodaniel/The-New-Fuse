@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/test-utils",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Testing utilities for The New Fuse",
   "main": "dist/index.js",

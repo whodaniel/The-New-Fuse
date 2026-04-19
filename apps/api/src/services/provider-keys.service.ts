@@ -1,7 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import { SaveProviderKeyDto } from '../dto/provider-keys.dto';
 

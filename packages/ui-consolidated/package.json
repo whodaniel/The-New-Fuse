@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/ui-consolidated",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Consolidated UI components for The New Fuse",
   "packageManager": "pnpm@10.29.3",

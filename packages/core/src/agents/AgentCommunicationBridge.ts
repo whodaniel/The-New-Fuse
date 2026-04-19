@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Subject, Observable } // @ts-ignore
+import { Subject, Observable }
 from 'rxjs';
 
 export interface AgentMessage {

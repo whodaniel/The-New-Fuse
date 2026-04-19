@@ -4,11 +4,8 @@
  * Provides Model Context Protocol server for AI agency platform capabilities
  */
 
-// @ts-ignore
 import { Server } from '@modelcontextprotocol/sdk/server/index';
-// @ts-ignore
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse';
-// @ts-ignore
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
 import {
   CallToolRequest,
@@ -22,9 +19,7 @@ import express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// @ts-ignore
 // import { WebScrapingMCPTools } from '@the-new-fuse/web-scraping';
-// @ts-ignore
 import { JulesClient } from '@the-new-fuse/jules-skill';
 
 // Mock services interface (will be replaced with actual services in production)

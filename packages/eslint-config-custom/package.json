@@ -1,6 +1,8 @@
 {
   "name": "eslint-config-custom",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "0.1.0",
   "private": true,
   "main": "index.js",
@@ -13,7 +15,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-turbo": "^2.8.17",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   },
   "publishConfig": {
     "access": "public"

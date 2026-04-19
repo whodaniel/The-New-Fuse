@@ -6,8 +6,15 @@
     "outDir": "./dist",
     "rootDir": ".",
     "composite": true,
-    "types": []
+    "types": [],
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["./*.ts", "./*.tsx", "./components/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "include": [
+    ".*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "***.spec.ts"
+  ]
 }

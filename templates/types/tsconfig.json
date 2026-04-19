@@ -5,7 +5,10 @@
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["./**/*"]
+  "include": [
+    ".*"
+  ]
 }

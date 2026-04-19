@@ -8,7 +8,6 @@ import {
   UseGuards,
   Version,
 } from '@nestjs/common';
-// @ts-ignore
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
 import { Request } from 'express';

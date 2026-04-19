@@ -4,7 +4,6 @@ import { format } from 'date-fns';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { TimelineEvent, TimelineEventType } from '../types/timeline';
 import TimelineSlider from './TimelineSlider';
-// @ts-ignore
 import './EnhancedTimelineView.css';
 
 interface EventData {

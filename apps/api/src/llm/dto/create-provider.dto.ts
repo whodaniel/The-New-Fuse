@@ -1,5 +1,3 @@
-// @ts-ignore
-// @ts-ignore
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsIn } from 'class-validator';
 

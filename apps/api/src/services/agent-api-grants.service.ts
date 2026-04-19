@@ -9,19 +9,8 @@ import {
 import { randomUUID } from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { and, DatabaseService, desc, eq, gte } from '@the-new-fuse/database';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { drizzleConfigurationRepository } from '@the-new-fuse/database/drizzle/repositories';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { agentApiGrants } from '@the-new-fuse/database/drizzle/schema';
 import { CreateAgentGrantDto } from '../dto/agent-grants.dto';
 

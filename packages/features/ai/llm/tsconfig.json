@@ -6,11 +6,30 @@
     "outDir": "./dist",
     "rootDir": ".",
     "composite": true,
-    "types": ["react", "node", "jest"],
+    "types": [
+      "react",
+      "node",
+      "jest"
+    ],
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*", "components/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
-  "references": [{ "path": "../../../core" }, { "path": "../../../types" }]
+  "include": [
+    "src*",
+    "components*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "***.spec.ts"
+  ],
+  "references": [
+    {
+      "path": "../../../core"
+    },
+    {
+      "path": "../../../types"
+    }
+  ]
 }

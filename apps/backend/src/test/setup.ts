@@ -26,7 +26,6 @@ jest.fn((key: string) => {
 }
 
 /*
-// @ts-ignore
 export async function setupTestDatabase(): Promise<any> {
   // Clean up test database
   await db.execute(sql`TRUNCATE TABLE users CASCADE`);

@@ -5,7 +5,6 @@
  * Stores agent metadata in Redis with TTL for presence
  */
 
-// @ts-ignore
 import {
   createStandaloneRedisClient,
   createUpstashRestClient,

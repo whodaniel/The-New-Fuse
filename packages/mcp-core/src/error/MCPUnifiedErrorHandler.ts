@@ -3,7 +3,6 @@
  * Extends the base error handler with MCP-specific functionality
  */
 
-// @ts-ignore
 import {
   BaseErrorHandler,
   BaseErrorHandlerConfig,

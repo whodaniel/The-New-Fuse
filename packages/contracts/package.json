@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/contracts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Smart contracts for The New Fuse decentralized agent ecosystem",
   "main": "src/index.js",

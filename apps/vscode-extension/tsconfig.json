@@ -2,7 +2,9 @@
   "compilerOptions": {
     "module": "ESNext",
     "target": "ES2022",
-    "lib": ["ES2022"],
+    "lib": [
+      "ES2022"
+    ],
     "sourceMap": true,
     "rootDir": "src",
     "outDir": "out",
@@ -19,13 +21,30 @@
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["node", "vscode"],
+    "types": [
+      "node",
+      "vscode"
+    ],
     "paths": {
-      "@the-new-fuse/infrastructure": ["../../packages/infrastructure/dist"],
-      "@the-new-fuse/auth": ["../../packages/auth/dist"],
-      "@the-new-fuse/data": ["../../packages/data/dist"]
-    }
+      "@the-new-fuse/infrastructure": [
+        "../../packages/infrastructure/dist"
+      ],
+      "@the-new-fuse/auth": [
+        "../../packages/auth/dist"
+      ],
+      "@the-new-fuse/data": [
+        "../../packages/data/dist"
+      ]
+    },
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "out", "dist", "**/*.test.ts"]
+  "include": [
+    "src*"
+  ],
+  "exclude": [
+    "node_modules",
+    "out",
+    "dist",
+    "**/*.test.ts"
+  ]
 }

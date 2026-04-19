@@ -1,8 +1,5 @@
 import { Inject, Injectable, NotFoundException, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import { UnifiedMonitoringService } from '../types/core';
 import { AgentFactory } from './agent.factory';

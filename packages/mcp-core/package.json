@@ -1,7 +1,12 @@
 {
   "name": "@the-new-fuse/mcp-core",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "docs/API_REFERENCE.md",
+    "docs/EXAMPLES.md",
+    "docs/MCP_CORE_TROUBLESHOOTING.md",
+    "docs/DEVELOPER_GUIDE.md"
   ],
   "version": "1.0.0",
   "description": "Model Context Protocol (MCP) core implementation for The New Fuse",
@@ -110,7 +115,7 @@
     "rimraf": "^6.0.1",
     "ts-jest": "^29.4.9",
     "typedoc": "^0.28.14",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   },
   "peerDependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0"
@@ -119,14 +124,6 @@
     "@the-new-fuse/relay-core": "workspace:*",
     "@the-new-fuse/types": "workspace:*"
   },
-  "files": [
-    "dist",
-    "README.md",
-    "docs/API_REFERENCE.md",
-    "docs/EXAMPLES.md",
-    "docs/MCP_CORE_TROUBLESHOOTING.md",
-    "docs/DEVELOPER_GUIDE.md"
-  ],
   "keywords": [
     "mcp",
     "model-context-protocol",

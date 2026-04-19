@@ -25,7 +25,6 @@ import { Cluster, Redis } from 'ioredis';
 import { createClient, RedisClientType } from 'redis';
 import WebSocket, { WebSocketServer } from 'ws';
 
-// @ts-ignore
 import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 
 import { createAuthService } from './auth/JWTAuthService';

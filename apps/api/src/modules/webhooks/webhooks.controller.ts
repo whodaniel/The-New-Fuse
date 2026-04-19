@@ -14,7 +14,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 // @ts-ignore
-// @ts-ignore
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   BusinessEventType,

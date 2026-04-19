@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/jules-skill",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "0.1.0",
   "description": "Jules CLI integration skill for AI agent delegation - Enables agents to delegate coding tasks to Google Jules",
   "main": "dist/index.js",

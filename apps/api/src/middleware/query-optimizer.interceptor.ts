@@ -1,7 +1,5 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from '@nestjs/common';
-// @ts-ignore
 import { Observable } from 'rxjs';
-// @ts-ignore
 import { tap } from 'rxjs/operators';
 
 /**

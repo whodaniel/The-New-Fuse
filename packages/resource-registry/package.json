@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/resource-registry",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Comprehensive resource management system for The New Fuse - AI agents and humans",
   "main": "dist/index.js",
@@ -70,7 +72,7 @@
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^6.0.2"
   },
   "keywords": [
     "resource-registry",
@@ -97,7 +99,9 @@
   },
   "author": {
     "name": "The New Fuse Team",
-  "files": ["dist"],
+    "files": [
+      "dist"
+    ],
     "url": "https://github.com/the-new-fuse"
   },
   "engines": {

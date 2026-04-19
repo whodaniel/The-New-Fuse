@@ -2,7 +2,6 @@
  * MCP Protocol Validator using AJV
  */
 
-// @ts-ignore
 import Ajv, { JSONSchemaType, ValidateFunction } from 'ajv';
 import { schemas } from './schemas';
 import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';

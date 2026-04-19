@@ -1,9 +1,5 @@
 // @ts-nocheck
 import { Injectable } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { drizzleConfigurationRepository } from '@the-new-fuse/database/drizzle/repositories';
 import * as crypto from 'node:crypto';
 import { execFile } from 'node:child_process';

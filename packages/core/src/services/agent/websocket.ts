@@ -1,6 +1,4 @@
-// @ts-ignore
 import { io, Socket } from 'socket.io-client';
-// @ts-ignore
 import { toast } from 'react-hot-toast';
 import { EventEmitter } from 'events';
 

@@ -8,7 +8,6 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
-// @ts-ignore
 import { Server, Socket } from 'socket.io';
 import { WebSocketService } from '../websocket.service';
 

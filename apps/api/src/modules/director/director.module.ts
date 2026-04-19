@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
 import { CascadeService } from '@the-new-fuse/core';
 import { TaskModule } from '../task/task.module';
 import { AgentSwarmService } from './agent-swarm.service';

@@ -7,9 +7,6 @@
  * scoped to the user's Workspace context.
  */
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 import {
   AgentCapability,

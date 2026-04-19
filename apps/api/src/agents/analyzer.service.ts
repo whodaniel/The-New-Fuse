@@ -1,10 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DrizzleService } from '@the-new-fuse/database';
 import * as fs from 'fs/promises';
-// @ts-ignore
 import { glob } from 'glob';
 import * as path from 'path';
 import { resolveCodebaseRoot } from './codebase-root';

@@ -1,7 +1,8 @@
 {
   "name": "@the-new-fuse/claude-skills",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "version": "1.0.0",
   "description": "Integration layer for Anthropic's Claude Skills into The New Fuse",
@@ -70,10 +71,6 @@
     "ts-jest": "^29.4.9",
     "typescript": "^6.0.2"
   },
-  "files": [
-    "dist",
-    "README.md"
-  ],
   "keywords": [
     "claude",
     "skills",

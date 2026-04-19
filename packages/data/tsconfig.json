@@ -9,11 +9,24 @@
     "composite": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "paths": {
-      "@the-new-fuse/database": ["../../packages/database/dist"],
-      "@the-new-fuse/core-vector-db": ["../../packages/core-vector-db/dist"],
-      "@the-new-fuse/infrastructure": ["../../packages/infrastructure/dist"]
-    }
+      "@the-new-fuse/database": [
+        "../../packages/database/dist"
+      ],
+      "@the-new-fuse/core-vector-db": [
+        "../../packages/core-vector-db/dist"
+      ],
+      "@the-new-fuse/infrastructure": [
+        "../../packages/infrastructure/dist"
+      ]
+    },
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "include": [
+    "src*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts"
+  ]
 }

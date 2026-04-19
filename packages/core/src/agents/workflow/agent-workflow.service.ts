@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-// @ts-ignore
 import { v4 as uuidv4 } from 'uuid';
 
 export interface WorkflowStep {

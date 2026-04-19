@@ -12,14 +12,7 @@
 
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService, desc, eq } from '@the-new-fuse/database';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { promptTemplates, promptVersions } from '@the-new-fuse/database/drizzle/schema';
 
 // Agent Configuration

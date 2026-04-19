@@ -8,9 +8,18 @@
     "declaration": true,
     "composite": true,
     "paths": {
-      "@the-new-fuse/types": ["../../packages/types/src"]
-    }
+      "@the-new-fuse/types": [
+        "../../packages/types/src"
+      ]
+    },
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "include": [
+    "src*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "***.spec.ts"
+  ]
 }

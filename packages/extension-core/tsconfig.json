@@ -7,9 +7,20 @@
     "rootDir": "./src",
     "declaration": true,
     "composite": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "include": [
+    "src*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts"
+  ]
 }

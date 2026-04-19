@@ -7,9 +7,12 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": false,
-    "types": []
+    "types": [],
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src*"
+  ],
   "references": [
     {
       "path": "../types"

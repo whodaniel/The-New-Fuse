@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { Server, Socket } // @ts-ignore
+import { Server, Socket }
 from 'socket.io';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter } from 'events';

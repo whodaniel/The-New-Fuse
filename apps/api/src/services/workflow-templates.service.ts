@@ -7,9 +7,6 @@
  * This is a temporary simplified implementation
  */
 import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 
 @Injectable()

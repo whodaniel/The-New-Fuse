@@ -9,30 +9,36 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
-    "types": ["node", "jest"]
+    "types": [
+      "node",
+      "jest"
+    ],
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src*"
+  ],
   "exclude": [
     "node_modules",
     "dist",
-    "src/**/*.test.ts",
-    "src/**/*.example.ts",
+    "src*.test.ts",
+    "src*.example.ts",
     "examples",
-    "src/dashboard/**/*",
-    "src/monitoring/**/*",
-    "src/deployment/**/*",
+    "src/dashboard*",
+    "src/monitoring*",
+    "src/deployment*",
     "src/server.ts",
-    "src/messaging/**/*",
-    "src/handoff/**/*",
-    "src/tasks/**/*",
-    "src/error/**/*",
+    "src/messaging*",
+    "src/handoff*",
+    "src/tasks*",
+    "src/error*",
     "src/services/ConflictManager.ts",
     "src/services/SyncOrchestrator.ts",
-    "src/cms/**/*",
-    "src/database/**/*",
-    "src/integration/**/*",
-    "src/watchers/**/*",
-    "src/performance/**/*"
+    "src/cms*",
+    "src/database*",
+    "src/integration*",
+    "src/watchers*",
+    "src/performance*"
   ],
   "references": [
     {

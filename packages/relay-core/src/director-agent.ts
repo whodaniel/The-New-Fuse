@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// @ts-ignore
 import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 import { Cluster, Redis } from 'ioredis';
 

@@ -3,9 +3,6 @@
  * Handles user CRUD operations
  */
 import { Injectable } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService, User } from '@the-new-fuse/database';
 
 @Injectable()

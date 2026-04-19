@@ -75,7 +75,7 @@
     "yargs": "^18.0.0"
   },
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "build": "pnpm clean && tsc --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'",
     "build:watch": "tsc --watch --skipLibCheck --noEmitOnError false",
     "migrate:deploy": "SERVICE_PATH=api sh ./run-service.sh",
@@ -96,7 +96,6 @@
     "type-check": "tsc --noEmit",
     "arcade:listener": "ts-node src/scripts/arcade-chain-listener.ts",
     "arcade:sweep": "ts-node src/scripts/arcade-chain-sweeper.ts",
-    "clean": "rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "claude-dev": "ts-node src/scripts/claude-dev-cli.ts"
   },
   "devDependencies": {
@@ -114,7 +113,7 @@
     "rimraf": "^6.1.3",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.2",
     "vite": "^8.0.0"
   }
 }

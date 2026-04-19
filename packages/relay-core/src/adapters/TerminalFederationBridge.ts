@@ -1,6 +1,5 @@
 import { EventEmitter } from 'events';
-// @ts-ignore
-import { AgentInfo, RedisAgentClient } from '../../../tnf-cli/src/RedisAgentClient';
+import { AgentInfo, RedisAgentClient } from '@the-new-fuse/tnf-cli';
 import { Logger } from '../utils/Logger';
 
 export interface TerminalFederationConfig {

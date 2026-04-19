@@ -11,10 +11,21 @@
     "strict": true,
     "target": "es2017",
     "rootDir": "src",
-    "composite": true
+    "composite": true,
+    "ignoreDeprecations": "6.0"
   },
   "compileOnSave": true,
-  "references": [{ "path": "../packages/types" }],
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "references": [
+    {
+      "path": "../packages/types"
+    }
+  ],
+  "include": [
+    "src*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts"
+  ]
 }

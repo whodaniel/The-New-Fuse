@@ -8,7 +8,6 @@ import {
   timingSafeEqual as nodeTimingSafeEqual,
   randomBytes,
 } from 'crypto';
-// @ts-ignore
 import { v4 as uuidv4 } from 'uuid';
 
 const ALGORITHM = 'aes-256-gcm';

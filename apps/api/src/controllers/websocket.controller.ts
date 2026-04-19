@@ -45,7 +45,6 @@
  * socket.on('workflow:update', (data: any) => console.log(data));
  */
 import { Request, Response } from 'express';
-// @ts-ignore
 import { Server as SocketIOServer } from 'socket.io';
 import { createServer } from 'node:http';
 import { Controller, Logger } from '@nestjs/common';

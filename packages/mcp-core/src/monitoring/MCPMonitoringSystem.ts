@@ -3,7 +3,6 @@
  * Extends the base monitoring system with MCP-specific functionality
  */
 
-// @ts-ignore
 import {
   BaseMonitoringSystem,
   BaseMonitoringConfig,

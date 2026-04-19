@@ -1,5 +1,4 @@
-import { createClient, RedisClientType } // @ts-ignore
-from 'redis';
+import { createClient, RedisClientType } from 'redis';
 import { createLogger, transports, format, Logger } from 'winston';
 
 const logger: Logger = createLogger({

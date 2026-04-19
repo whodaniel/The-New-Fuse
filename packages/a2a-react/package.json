@@ -1,7 +1,8 @@
 {
   "name": "@the-new-fuse/a2a-react",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "version": "0.1.0",
   "description": "React components and hooks for Agent-to-Agent (A2A) communication protocol",
@@ -33,10 +34,6 @@
     "@types/jest": "^30.0.0",
     "typescript": "^6.0.2"
   },
-  "files": [
-    "dist",
-    "src"
-  ],
   "publishConfig": {
     "access": "restricted"
   }

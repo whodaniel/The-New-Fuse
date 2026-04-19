@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { v4 as uuid } // @ts-ignore
-from 'uuid';
+import { v4 as uuid } from 'uuid';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { EventEmitter } from 'events';
 

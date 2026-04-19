@@ -1,6 +1,5 @@
 import crypto from 'crypto';
 
-// @ts-ignore
 import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 import Redis, { Cluster } from 'ioredis';
 

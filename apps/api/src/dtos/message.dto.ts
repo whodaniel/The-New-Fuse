@@ -1,7 +1,4 @@
 import { IsString, IsOptional, IsObject, IsArray } from 'class-validator';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMessageDto {

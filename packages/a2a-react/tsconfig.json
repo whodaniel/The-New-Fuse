@@ -9,18 +9,20 @@
     "declarationMap": true,
     "sourceMap": true,
     "jsx": "react-jsx",
-    "types": ["jest"]
+    "types": [
+      "jest"
+    ],
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src*"
+  ],
   "exclude": [
     "dist",
     "node_modules",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.spec.ts",
-    "**/*.spec.tsx",
-    "**/__tests__/**",
-    "**/__mocks__/**"
+    "***.test.tsx",
+    "***.spec.tsx",
+    "**/__tests____mocks__/**"
   ],
   "references": [
     {

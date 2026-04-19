@@ -5,16 +5,9 @@ import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule } from '@nestjs/throttler';
-// @ts-ignore
-// @ts-ignore
 import { A2AController, A2ACoreModule } from '@the-new-fuse/a2a-core';
 
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DrizzleModule } from '@the-new-fuse/database/drizzle';
-// @ts-ignore
-// @ts-ignore
 import { StorageModule } from '@the-new-fuse/infrastructure';
 import { AgentsModule } from './agents/agents.module';
 import { BrandConsistencyAgentModule } from './agents/brand-consistency-agent.module';

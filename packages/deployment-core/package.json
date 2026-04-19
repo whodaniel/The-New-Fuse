@@ -1,7 +1,8 @@
 {
   "name": "@the-new-fuse/deployment-core",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "version": "1.0.0",
   "description": "Core deployment and CI/CD pipeline functionality",
@@ -41,10 +42,6 @@
     "ts-jest": "^29.4.9",
     "typescript": "^6.0.2"
   },
-  "files": [
-    "dist",
-    "README.md"
-  ],
   "publishConfig": {
     "access": "restricted"
   }

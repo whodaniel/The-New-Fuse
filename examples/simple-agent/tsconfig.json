@@ -10,9 +10,15 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "declaration": true, // Optional: Generate declaration files
-    "sourceMap": true // Optional: Generate source maps
+    "declaration": true,
+    "sourceMap": true,
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

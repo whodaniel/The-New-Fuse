@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'; // Added Logger
 import { EventEmitter } from 'events';
-import { v4 as uuidv4 } // @ts-ignore
+import { v4 as uuidv4 }
 from 'uuid';
 
 // All from Incoming change

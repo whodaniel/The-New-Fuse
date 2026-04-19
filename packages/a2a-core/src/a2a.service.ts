@@ -1,9 +1,7 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Ap2ProtocolService } from // @ts-ignore
-'@the-new-fuse/ap2-protocol';
-import { UnifiedRedisService } from // @ts-ignore
-'@the-new-fuse/infrastructure';
+import { Ap2ProtocolService } from '@the-new-fuse/ap2-protocol';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import {
   A2AMessage,
   A2AMessageType,

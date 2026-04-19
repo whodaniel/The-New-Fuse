@@ -1,5 +1,4 @@
 import { Injectable, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-// @ts-ignore
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { JwtService } from '@nestjs/jwt';
 import { SecurityLoggingService } from '../../security/security-logging.service';

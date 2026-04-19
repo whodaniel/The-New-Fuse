@@ -1,7 +1,9 @@
 {
   "name": "@the-new-fuse/workflow-engine",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
   ],
   "version": "1.0.0",
   "description": "Unified Workflow Engine for The New Fuse Framework - Consolidates all workflow execution capabilities",
@@ -98,11 +100,6 @@
     "ts-jest": "^29.4.9",
     "typescript": "^6.0.2"
   },
-  "files": [
-    "dist",
-    "README.md",
-    "CHANGELOG.md"
-  ],
   "publishConfig": {
     "access": "restricted",
     "registry": "https://npm.pkg.github.com"

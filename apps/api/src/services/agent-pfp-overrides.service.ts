@@ -1,7 +1,5 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
-// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
-// @ts-ignore
 import { StorageService } from '@the-new-fuse/infrastructure';
 import { randomUUID } from 'node:crypto';
 import { PayPalService } from '../modules/billing/paypal.service';

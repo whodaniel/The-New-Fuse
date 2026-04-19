@@ -4,8 +4,15 @@
     "allowJs": true,
     "checkJs": false,
     "outDir": "./dist",
-    "rootDir": "."
+    "rootDir": ".",
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["*.js", "*.html"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "*.js",
+    "*.html"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

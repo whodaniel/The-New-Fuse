@@ -7,9 +7,18 @@
     "rootDir": "./src",
     "declaration": true,
     "composite": true,
-    "types": ["node"],
-    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+    "types": [
+      "node"
+    ],
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "include": [
+    "src*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts"
+  ]
 }

@@ -1,11 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 
 /**

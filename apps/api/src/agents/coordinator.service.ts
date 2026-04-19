@@ -1,7 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DrizzleService } from '@the-new-fuse/database';
 import { AnalyzerAgentService } from './analyzer.service';
 import { ArchitectAgentService } from './architect.service';

@@ -1,5 +1,4 @@
 import { ClineBridge } from '../cline_bridge';
-// @ts-ignore
 import { jest } from '@jest/globals';
 import { Task } from '../types/task';
 import { ImplementationPhase } from '../types/phase';

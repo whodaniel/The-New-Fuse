@@ -7,11 +7,8 @@
  */
 
 import { EventEmitter } from 'events';
-// @ts-ignore
 import { Server } from '@modelcontextprotocol/sdk/server/index';
-// @ts-ignore
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
-// @ts-ignore
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types';
 import { Transport, RelayMessage } from '../types';
 import { Logger } from '../utils/Logger';

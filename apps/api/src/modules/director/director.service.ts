@@ -1,7 +1,5 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-// @ts-ignore
-// @ts-ignore
 import { CascadeMode, CascadeService } from '@the-new-fuse/core';
 import { Redis } from 'ioredis';
 import { TaskService } from '../task/task.service';

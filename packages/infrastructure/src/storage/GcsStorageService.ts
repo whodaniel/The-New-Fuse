@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-// @ts-ignore
 import { Storage } from '@google-cloud/storage';
 import { ConfigService } from '@nestjs/config';
 import { StorageService } from './StorageService';

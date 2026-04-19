@@ -8,8 +8,17 @@
     "sourceMap": true,
     "moduleResolution": "bundler",
     "module": "ESNext",
-    "types": ["node"]
+    "types": [
+      "node"
+    ],
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts"]
+  "include": [
+    "src*"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "**/*.test.ts"
+  ]
 }

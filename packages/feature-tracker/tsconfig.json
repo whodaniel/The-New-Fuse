@@ -7,10 +7,18 @@
     "rootDir": ".",
     "declaration": true,
     "sourceMap": true,
-    "types": []
+    "types": [],
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*", "metrics/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.*"],
+  "include": [
+    "src*",
+    "metrics*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.*"
+  ],
   "references": [
     {
       "path": "../core"

@@ -1,9 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseModule } from '@the-new-fuse/database';
 import {
   WORKFLOW_ENGINE_PROVIDER,

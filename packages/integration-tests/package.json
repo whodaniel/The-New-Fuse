@@ -1,6 +1,8 @@
 {
   "name": "@the-new-fuse/integration-tests",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "version": "1.0.0",
   "description": "Comprehensive integration tests for The New Fuse unified framework",
   "private": true,

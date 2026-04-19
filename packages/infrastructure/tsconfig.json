@@ -9,15 +9,15 @@
     "types": [],
     "composite": true,
     "module": "ESNext",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "ignoreDeprecations": "6.0"
   },
   "include": [
-    "src/**/*"
+    "src*"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts"
+    "***.spec.ts"
   ]
 }

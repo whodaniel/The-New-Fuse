@@ -12,16 +12,17 @@
     "composite": true,
     "incremental": true,
     "noEmit": false,
-    "types": []
+    "types": [],
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src*"
+  ],
   "exclude": [
     "dist",
     "node_modules",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.spec.ts",
-    "**/*.spec.tsx"
+    "***.test.tsx",
+    "***.spec.tsx"
   ],
   "references": [
     {

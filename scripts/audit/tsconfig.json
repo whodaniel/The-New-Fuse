@@ -9,12 +9,17 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
     "allowJs": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "ignoreDeprecations": "6.0"
   },
   "ts-node": {
     "esm": true,
     "experimentalSpecifiers": true
   },
-  "include": ["./**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    ".*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

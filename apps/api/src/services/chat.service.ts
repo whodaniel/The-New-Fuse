@@ -3,9 +3,6 @@
  * Handles multi-user chat room operations
  */
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 import { DatabaseService } from '@the-new-fuse/database';
 
 // Message role enum

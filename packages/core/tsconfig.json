@@ -17,15 +17,17 @@
     "forceConsistentCasingInFileNames": true,
     "composite": true,
     "incremental": true,
-    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*.ts"],
+  "include": [
+    "src*.ts"
+  ],
   "exclude": [
     "node_modules",
     "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts",
-    "src/drizzle/**/*",
+    "***.spec.ts",
+    "src/drizzle*",
     "src/database/DatabaseModule.ts",
     "src/database/DatabaseMonitor.ts",
     "src/database/TransactionManager.ts",

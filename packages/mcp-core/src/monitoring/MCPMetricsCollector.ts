@@ -3,7 +3,6 @@
  * Extends the base metrics collector with MCP-specific functionality
  */
 
-// @ts-ignore
 import {
   BaseMetricsCollector,
   BaseMetricsCollectorConfig,

@@ -13,7 +13,6 @@
  * 6. Bridge subscribes and forwards back to Relay
  */
 
-// @ts-ignore
 import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 import { Redis as UpstashRedis } from '@upstash/redis';
 import { EventEmitter } from 'events';
