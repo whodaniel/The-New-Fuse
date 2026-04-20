@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { EncryptionError } from './errors/EncryptionError';
-import { decrypt, encrypt } from './utils/cryptoUtils';
+import { EncryptionError } from './errors/EncryptionError.js';
+import { decrypt, encrypt } from './utils/cryptoUtils.js';
 
 @Injectable()
 export class EncryptionService {

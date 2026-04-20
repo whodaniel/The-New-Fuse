@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { AuthContext } from './types';
+import { AuthContext } from './types.js';
 
 export const useAuth = (): any => {
   const context = useContext(AuthContext);

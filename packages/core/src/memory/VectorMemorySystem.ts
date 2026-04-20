@@ -8,10 +8,10 @@ import {
   MemoryStats,
   MemoryContentType,
   MemorySearchResult,
-} from '../types/memory';
-import { ServiceState } from '../constants/types';
-import { MemorySystem } from './MemorySystem';
-import { BaseError } from '../utils/errors';
+} from '../types/memory.js';
+import { ServiceState } from '../constants/types.js';
+import { MemorySystem } from './MemorySystem.js';
+import { BaseError } from '../utils/errors.js';
 
 /**
  * Vector-based Memory System using the shared VectorDatabaseService

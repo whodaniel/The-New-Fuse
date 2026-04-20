@@ -5,7 +5,7 @@
  * for basic synchronization operations.
  */
 import { OnModuleInit } from '@nestjs/common';
-import { SyncOrchestrator } from '../src/services/SyncOrchestrator';
+import { SyncOrchestrator } from '../src/services/SyncOrchestrator.js';
 export declare class UserService implements OnModuleInit {
     private readonly syncOrchestrator;
     constructor(syncOrchestrator: SyncOrchestrator);

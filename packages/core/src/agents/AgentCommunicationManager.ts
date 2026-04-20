@@ -1,8 +1,8 @@
 import { EventEmitter } from 'events';
 import { Injectable, Logger } from '@nestjs/common';
 import * as crypto from 'crypto';
-import { MetricsProcessor } from '../security/metricsProcessor';
-import { AgentCommunicationBridge, AgentMessage } from './AgentCommunicationBridge';
+import { MetricsProcessor } from '../security/metricsProcessor.js';
+import { AgentCommunicationBridge, AgentMessage } from './AgentCommunicationBridge.js';
 interface CommunicationConfig {
   level: 'info' | 'debug' | 'warn' | 'error';
   type: 'direct' | 'broadcast' | 'group';

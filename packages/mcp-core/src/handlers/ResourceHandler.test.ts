@@ -3,9 +3,9 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { ResourceHandler, FileResourceHandler, DatabaseResourceHandler } from './ResourceHandler';
-import { MCPErrorCode } from '../types/error';
-import { ResourceContent, MCPResource } from '../interfaces/IMCPResource';
+import { ResourceHandler, FileResourceHandler, DatabaseResourceHandler } from './ResourceHandler.js';
+import { MCPErrorCode } from '../types/error.js';
+import { ResourceContent, MCPResource } from '../interfaces/IMCPResource.js';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as os from 'os';

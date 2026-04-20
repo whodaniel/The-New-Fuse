@@ -5,8 +5,8 @@
  * and automatic content synchronization with CMS.
  */
 import { OnModuleInit } from '@nestjs/common';
-import { SyncOrchestrator } from '../src/services/SyncOrchestrator';
-import { EnhancedFileSystemWatcher } from '../src/services/EnhancedFileSystemWatcher';
+import { SyncOrchestrator } from '../src/services/SyncOrchestrator.js';
+import { EnhancedFileSystemWatcher } from '../src/services/EnhancedFileSystemWatcher.js';
 export declare class CMSSyncService implements OnModuleInit {
     private readonly syncOrchestrator;
     private readonly fileWatcher;

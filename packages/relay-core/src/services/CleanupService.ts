@@ -7,7 +7,7 @@
 
 import { promises as fs } from 'fs';
 import path from 'path';
-import { Logger } from '../utils/Logger';
+import { Logger } from '../utils/Logger.js';
 
 export interface CleanupTarget {
   path: string;

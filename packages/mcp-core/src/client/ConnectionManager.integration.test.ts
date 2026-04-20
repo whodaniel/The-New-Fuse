@@ -4,9 +4,9 @@
  */
 
 import { EventEmitter } from 'events';
-import { ConnectionManager } from './ConnectionManager';
-import { ConnectionOptions, ConnectionStatus, AuthConfig, TLSConfig } from '../interfaces/IMCPConnection';
-import { MCPErrorClass, MCPErrorCode } from '../types/error';
+import { ConnectionManager } from './ConnectionManager.js';
+import { ConnectionOptions, ConnectionStatus, AuthConfig, TLSConfig } from '../interfaces/IMCPConnection.js';
+import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
 
 // Mock secure WebSocket for testing TLS connections
 class MockSecureWebSocket extends EventEmitter {

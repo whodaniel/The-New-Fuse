@@ -5,9 +5,9 @@ import { Ap2ProtocolModule, Ap2ProtocolService } from '@the-new-fuse/ap2-protoco
 import { RedisModule, UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 import { A2AService } from './a2a.service';
-import { A2ARedisAdapter } from './redis-adapter';
-import { A2AConfig } from './types';
-import { A2AWebSocketAdapter } from './websocket-adapter';
+import { A2ARedisAdapter } from './redis-adapter.js';
+import { A2AConfig } from './types.js';
+import { A2AWebSocketAdapter } from './websocket-adapter.js';
 
 @Global()
 @Module({})

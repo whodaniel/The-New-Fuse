@@ -28,10 +28,10 @@ import {
   WorkflowNodeExtension,
   AgentCapabilityExtension,
   VSCodeExtensionWrapper
-} from '../types/ExtensionTypes';
-import { ExtensionLoader, ExtensionLoaderConfig } from '../loader/ExtensionLoader';
-import { ExtensionRegistry } from '../registry/ExtensionRegistry';
-import { ExtensionValidator } from '../validator/ExtensionValidator';
+} from '../types/ExtensionTypes.js';
+import { ExtensionLoader, ExtensionLoaderConfig } from '../loader/ExtensionLoader.js';
+import { ExtensionRegistry } from '../registry/ExtensionRegistry.js';
+import { ExtensionValidator } from '../validator/ExtensionValidator.js';
 
 export class ExtensionManager extends EventEmitter implements ExtensionAPI {
   private logger: Logger;

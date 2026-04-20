@@ -7,10 +7,10 @@
 
 import { EventEmitter } from 'events';
 import { Logger, LogLevel } from '@the-new-fuse/relay-core';
-import { ExtensionRegistry } from './ExtensionRegistry';
-import { ExtensionLoader } from './ExtensionLoader';
-import { ExtensionValidator } from './ExtensionValidator';
-import { Extension, ExtensionStatus } from './ExtensionTypes';
+import { ExtensionRegistry } from './ExtensionRegistry.js';
+import { ExtensionLoader } from './ExtensionLoader.js';
+import { ExtensionValidator } from './ExtensionValidator.js';
+import { Extension, ExtensionStatus } from './ExtensionTypes.js';
 
 export class ExtensionManager extends EventEmitter {
   private logger: Logger;

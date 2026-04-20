@@ -3,9 +3,9 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MonitoringSystem } from './MonitoringSystem';
-import { MonitoringConfig, AlertSeverity } from '../types/monitoring';
-import { Logger } from '../utils/Logger';
+import { MonitoringSystem } from './MonitoringSystem.js';
+import { MonitoringConfig, AlertSeverity } from '../types/monitoring.js';
+import { Logger } from '../utils/Logger.js';
 
 describe('MonitoringSystem Integration', () => {
   let monitoringSystem: MonitoringSystem;

@@ -16,7 +16,7 @@
  * - PromptTemplateService: For prompt management
  */
 
-import { BaseBridge, MessageType, Priority } from './index';
+import { BaseBridge, MessageType, Priority } from './index.js';
 
 // IDE Context Types
 export interface EditorContext {

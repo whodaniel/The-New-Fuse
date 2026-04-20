@@ -4,13 +4,13 @@
  */
 
 // Export all type definitions
-export * from './agent';
-export * from './user';
-export * from './workflow';
-export * from './request';
-export * from './response';
-export * from './auth';
-export * from './api-response';
+export * from './agent.js';
+export * from './user.js';
+export * from './workflow.js';
+export * from './request.js';
+export * from './response.js';
+export * from './auth.js';
+export * from './api-response.js';
 
 // Export common types except BaseResponse (already exported from response.js)
 export type {
@@ -24,4 +24,4 @@ export type {
   ApiResponse,
   Message,
   MessageType
-} from './common';
+} from './common.js';

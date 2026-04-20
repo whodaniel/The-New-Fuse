@@ -1,6 +1,6 @@
 import { A2AMessageType, Conversation } from '@the-new-fuse/a2a-core';
 import { useCallback, useState } from 'react';
-import { useA2AContext } from '../A2AProvider';
+import { useA2AContext } from '../A2AProvider.js';
 
 export interface ConversationWithCount extends Conversation {
   participantCount: number;

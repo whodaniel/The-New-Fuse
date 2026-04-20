@@ -5,7 +5,7 @@ import { AgentDto } from '../modules/controllers/dto/agent.dto'; // Updated impo
 import { CurrentUser } from '../modules/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
 import { AgentService } from '../services/agent.service';
-import { toError } from '../utils/error';
+import { toError } from '../utils/error.js';
 
 interface User {
   id: string;

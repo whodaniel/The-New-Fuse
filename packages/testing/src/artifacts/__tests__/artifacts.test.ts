@@ -4,7 +4,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { ArtifactManager } from '../artifact-manager';
+import { ArtifactManager } from '../artifact-manager.js';
 
 // Create a test-specific artifact manager
 const testRunId = `test-run-${Date.now()}`;

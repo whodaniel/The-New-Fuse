@@ -4,12 +4,12 @@
  * These tests verify client-server communication and end-to-end functionality
  */
 
-import { MCPClient } from './MCPClient';
-import { MCPServer } from '../server/MCPServer';
-import { MCPClientConfig } from '../types/client';
-import { MCPServerConfig } from '../types/server';
-import { ResourceHandler, MCPResource, ResourceContent } from '../interfaces/IMCPResource';
-import { ToolHandler, MCPTool, ToolResult } from '../interfaces/IMCPTool';
+import { MCPClient } from './MCPClient.js';
+import { MCPServer } from '../server/MCPServer.js';
+import { MCPClientConfig } from '../types/client.js';
+import { MCPServerConfig } from '../types/server.js';
+import { ResourceHandler, MCPResource, ResourceContent } from '../interfaces/IMCPResource.js';
+import { ToolHandler, MCPTool, ToolResult } from '../interfaces/IMCPTool.js';
 
 // Test resource handler
 class TestResourceHandler implements ResourceHandler {

@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
-import { Task, TaskResult } from '../core/types';
-import { Coordinator } from '../orchestration/Coordinator';
+import { Task, TaskResult } from '../core/types.js';
+import { Coordinator } from '../orchestration/Coordinator.js';
 
 /**
  * Map function type

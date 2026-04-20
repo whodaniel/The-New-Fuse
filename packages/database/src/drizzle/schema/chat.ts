@@ -12,10 +12,10 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { agents } from './agents';
-import { messageRoleEnum } from './enums';
-import { users } from './users';
-import { projects } from './workspace';
+import { agents } from './agents.js';
+import { messageRoleEnum } from './enums.js';
+import { users } from './users.js';
+import { projects } from './workspace.js';
 
 // =============================================================================
 // CHAT

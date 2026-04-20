@@ -5,25 +5,25 @@
  */
 
 // Core types
-export * from './types';
+export * from './types.js';
 
 // Parser
-export { SkillParser } from './parser';
+export { SkillParser } from './parser.js';
 
 // Loader
-export { SkillLoader } from './loader';
+export { SkillLoader } from './loader.js';
 
 // Executor
-export { SkillExecutor } from './executor';
+export { SkillExecutor } from './executor.js';
 
 // Registry
-export { SkillRegistry } from './registry';
+export { SkillRegistry } from './registry.js';
 
 // MCP Integration
-export { MCPSkillProvider } from './integration';
+export { MCPSkillProvider } from './integration.js';
 
 // Main orchestrator
-export { ClaudeSkillsManager } from './ClaudeSkillsManager';
+export { ClaudeSkillsManager } from './ClaudeSkillsManager.js';
 
 // Package metadata
 export const VERSION = '1.0.0';

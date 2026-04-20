@@ -13,8 +13,8 @@ import {
   CapabilitySearchCriteria,
   CapabilityValidationResult,
   CapabilityUsageTracking
-} from './capability';
-import { mcpValidator } from '../validation/validator';
+} from './capability.js';
+import { mcpValidator } from '../validation/validator.js';
 
 describe('Capability Types', () => {
   describe('Enumerations', () => {

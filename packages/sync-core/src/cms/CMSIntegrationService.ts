@@ -8,13 +8,13 @@
  */
 
 import { DrizzleClient, User, UserRole } from '@the-new-fuse/database/generated/drizzle';
-import { RedisService } from '../config/SyncRedisConfig';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';
-import { PersonalContentManager } from './PersonalContentManager';
-import { ProjectConfigurationSync } from './ProjectConfigurationSync';
-import { CollaborativeContentService } from './CollaborativeContentService';
-import { PrivateDataIsolationService } from './PrivateDataIsolationService';
+import { RedisService } from '../config/SyncRedisConfig.js';
+import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
+import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher.js';
+import { PersonalContentManager } from './PersonalContentManager.js';
+import { ProjectConfigurationSync } from './ProjectConfigurationSync.js';
+import { CollaborativeContentService } from './CollaborativeContentService.js';
+import { PrivateDataIsolationService } from './PrivateDataIsolationService.js';
 import { 
   CMSConfig,
   ContentItem,
@@ -24,7 +24,7 @@ import {
   Permission,
   CMSEvent,
   CMSEventType
-} from './types';
+} from './types.js';
 
 export class CMSIntegrationService {
   private drizzle: DrizzleClient;

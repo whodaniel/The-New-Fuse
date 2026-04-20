@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Agent, AgentState, ExtendedAgentConfig } from '../types/agent';
+import { Agent, AgentState, ExtendedAgentConfig } from '../types/agent.js';
 
 @Injectable()
 export class AgentProcessor {

@@ -6,7 +6,7 @@ import {
   RollbackResult,
   NotificationChannel,
   NotificationEvent
-} from '../types/pipeline';
+} from '../types/pipeline.js';
 import { Logger } from 'winston';
 import axios from 'axios';
 

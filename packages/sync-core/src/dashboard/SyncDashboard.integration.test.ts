@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SyncDashboardService } from './SyncDashboardService';
-import { DashboardWebSocketIntegration } from './DashboardWebSocketIntegration';
-import { DashboardMonitoringIntegration } from './DashboardMonitoringIntegration';
+import { SyncDashboardService } from './SyncDashboardService.js';
+import { DashboardWebSocketIntegration } from './DashboardWebSocketIntegration.js';
+import { DashboardMonitoringIntegration } from './DashboardMonitoringIntegration.js';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { SyncRedisConfig } from '../config/SyncRedisConfig';
+import { SyncRedisConfig } from '../config/SyncRedisConfig.js';
 import { EventEmitter } from 'events';
 
 describe('SyncDashboard Integration', () => {

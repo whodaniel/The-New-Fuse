@@ -4,8 +4,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger';
-import { MCPErrorClass, ErrorCategory } from '../types/error';
+import { Logger } from '../utils/Logger.js';
+import { MCPErrorClass, ErrorCategory } from '../types/error.js';
 
 export enum ServiceLevel {
   FULL = 'full',

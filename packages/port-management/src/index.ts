@@ -1,7 +1,7 @@
 // packages/port-management/src/index.ts
 
 export { PortRegistryService } from './services/port-registry.service';
-export { ConfigurationUpdater } from './config-updater';
+export { ConfigurationUpdater } from './config-updater.js';
 export type {
   PortRegistration,
   PortConflict,
@@ -10,4 +10,4 @@ export type {
 } from './services/port-registry.service';
 export type {
   ConfigUpdateTarget
-} from './config-updater';
+} from './config-updater.js';

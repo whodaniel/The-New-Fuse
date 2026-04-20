@@ -15,8 +15,8 @@ import {
   WorkflowExecution,
   WorkflowNode,
   WorkflowNodeType,
-} from '../types/WorkflowTypes';
-import { getErrorMessage } from '../utils/errorUtils';
+} from '../types/WorkflowTypes.js';
+import { getErrorMessage } from '../utils/errorUtils.js';
 
 export interface ExecutorConfig {
   maxParallelNodes: number;

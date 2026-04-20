@@ -1,4 +1,4 @@
-import { WorkflowTemplate } from '../types/types';
+import { WorkflowTemplate } from '../types/types.js';
 
 interface User {
   id: string;

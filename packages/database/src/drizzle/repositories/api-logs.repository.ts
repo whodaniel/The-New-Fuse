@@ -1,6 +1,6 @@
 import { and, desc, gte, lte, sql } from 'drizzle-orm';
-import { db } from '../client';
-import { apiLogs } from '../schema/api-logs';
+import { db } from '../client.js';
+import { apiLogs } from '../schema/api-logs.js';
 
 export class DrizzleApiLogsRepository {
   async logRequest(data: typeof apiLogs.$inferInsert) {

@@ -1,2 +1,2 @@
-export * from './websocket-client';
-export * from './load-tester';
+export * from './websocket-client.js';
+export * from './load-tester.js';

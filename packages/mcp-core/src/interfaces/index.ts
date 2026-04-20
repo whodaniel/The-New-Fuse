@@ -5,7 +5,7 @@
  * implementation, including server, client, and broker interfaces.
  */
 
-export { AgentStatus } from './IMCPAgentIntegration';
+export { AgentStatus } from './IMCPAgentIntegration.js';
 export type {
   Agent,
   AgentCapabilityDiscovery,
@@ -15,8 +15,8 @@ export type {
   AgentMessageRouting,
   AgentRegistrationResult,
   IMCPAgentIntegration,
-} from './IMCPAgentIntegration';
-export type { IMCPBroker } from './IMCPBroker';
+} from './IMCPAgentIntegration.js';
+export type { IMCPBroker } from './IMCPBroker.js';
 export type {
   CapabilityDependency,
   CapabilityMetadata,
@@ -24,8 +24,8 @@ export type {
   CapabilityRegistry,
   CapabilityStatus,
   MCPCapability,
-} from './IMCPCapability';
-export type { IMCPClient } from './IMCPClient';
+} from './IMCPCapability.js';
+export type { IMCPClient } from './IMCPClient.js';
 export type {
   AuthConfig,
   ConnectionMetrics,
@@ -34,7 +34,7 @@ export type {
   IConnectionManager,
   MCPConnection,
   TLSConfig,
-} from './IMCPConnection';
+} from './IMCPConnection.js';
 export type {
   JSONRPCError,
   JSONRPCMessage,
@@ -47,7 +47,7 @@ export type {
   MCPNotification,
   MCPRequest,
   MCPResponse,
-} from './IMCPMessage';
+} from './IMCPMessage.js';
 export type {
   MCPResource,
   ResourceCaching,
@@ -55,8 +55,8 @@ export type {
   ResourceContent,
   ResourceHandler,
   ResourcePermissions,
-} from './IMCPResource';
-export type { IMCPServer } from './IMCPServer';
+} from './IMCPResource.js';
+export type { IMCPServer } from './IMCPServer.js';
 export type {
   AutoDiscoveryConfig,
   CircuitBreakerConfig,
@@ -72,7 +72,7 @@ export type {
   ServiceMeshQuery,
   ServiceMeshRegistration,
   ServiceScalingConfig,
-} from './IMCPServiceMesh';
+} from './IMCPServiceMesh.js';
 export type {
   JSONSchema,
   MCPTool,
@@ -85,7 +85,7 @@ export type {
   ToolResult,
   ToolUsageStats,
   ValidationResult,
-} from './IMCPTool';
+} from './IMCPTool.js';
 export type {
   AuthContext,
   ErrorRecoveryConfig,
@@ -99,8 +99,8 @@ export type {
   TaskResult,
   WorkflowContext,
   WorkflowStep,
-} from './IMCPWorkflowIntegration';
-export type { EventCallback, IMessageRouter } from './IMessageRouter';
+} from './IMCPWorkflowIntegration.js';
+export type { EventCallback, IMessageRouter } from './IMessageRouter.js';
 export type {
   AlertRule,
   HealthCheck,
@@ -116,7 +116,7 @@ export type {
   ISystemHealthMonitor,
   PerformanceReport,
   SystemHealthStatus,
-} from './IMonitoring';
+} from './IMonitoring.js';
 
 // Export AccessControlEntry from one source to avoid conflicts
-export type { AccessControlEntry } from './IMCPResource';
+export type { AccessControlEntry } from './IMCPResource.js';

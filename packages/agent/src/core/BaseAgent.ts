@@ -1,10 +1,10 @@
 import { EventEmitter } from 'events';
-import { Logger } from '../types/core';
+import { Logger } from '../types/core.js';
 
-import { BaseBridge, MessageType, Priority } from '../bridges';
-import { ContextManager, ContextType } from '../context/manager';
-import { ErrorRecovery, ErrorCategory, ErrorSeverity } from '../error/recovery';
-import { MetricsRegistry, PerformanceMonitor } from '../monitoring/metrics';
+import { BaseBridge, MessageType, Priority } from '../bridges.js';
+import { ContextManager, ContextType } from '../context/manager.js';
+import { ErrorRecovery, ErrorCategory, ErrorSeverity } from '../error/recovery.js';
+import { MetricsRegistry, PerformanceMonitor } from '../monitoring/metrics.js';
 import { AgentState, AgentConfig, Task } from '../interfaces/agent.interface';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 

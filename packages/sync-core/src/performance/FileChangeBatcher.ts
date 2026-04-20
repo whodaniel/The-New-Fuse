@@ -1,5 +1,5 @@
 import { Logger } from '@the-new-fuse/core-monitoring';
-import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher';
+import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher.js';
 
 export interface BatchConfig {
   maxBatchSize: number;

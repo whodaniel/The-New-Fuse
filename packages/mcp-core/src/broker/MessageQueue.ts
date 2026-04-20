@@ -6,8 +6,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
-import { MCPErrorClass, MCPErrorCode } from '../types/error';
+import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage.js';
+import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
 
 /**
  * Queued message types

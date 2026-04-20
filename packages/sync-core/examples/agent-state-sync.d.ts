@@ -4,7 +4,7 @@
  * Shows how to sync agent states across distributed systems
  * for real-time agent monitoring and coordination.
  */
-import { SyncOrchestrator } from '../src/services/SyncOrchestrator';
+import { SyncOrchestrator } from '../src/services/SyncOrchestrator.js';
 interface AgentState {
     id: string;
     name: string;

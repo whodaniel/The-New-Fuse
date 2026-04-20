@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { SystemResourceDetector } from './SystemResourceDetector';
+import { SystemResourceDetector } from './SystemResourceDetector.js';
 
 describe('SystemResourceDetector', () => {
   let detector: SystemResourceDetector;

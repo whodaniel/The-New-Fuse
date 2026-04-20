@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer, SubscribeMessage, ConnectedSocket, MessageBody } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { SyncDashboardService, DashboardUpdate } from './SyncDashboardService';
+import { SyncDashboardService, DashboardUpdate } from './SyncDashboardService.js';
 
 /**
  * Dashboard client metadata

@@ -12,7 +12,7 @@ import {
   WorkflowSearchResult,
   WorkflowSource,
   WorkflowStats,
-} from '../types';
+} from '../types.js';
 
 export interface RegistryConfig {
   storageDir?: string;

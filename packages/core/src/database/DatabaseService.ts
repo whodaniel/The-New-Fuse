@@ -3,10 +3,10 @@
  */
 
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { ServiceState } from '../constants/types';
-import { logger } from '../utils/logger';
-import { DatabaseError, BaseError } from '../utils/errors';
-import { ConfigService } from '../config/ConfigService';
+import { ServiceState } from '../constants/types.js';
+import { logger } from '../utils/logger.js';
+import { DatabaseError, BaseError } from '../utils/errors.js';
+import { ConfigService } from '../config/ConfigService.js';
 
 export interface DatabaseConnection {
   id: string;

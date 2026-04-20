@@ -7,7 +7,7 @@
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { SyncOrchestrator } from '../src/services/SyncOrchestrator.js';
-import { NotificationService } from '../src/services/NotificationService';
+import { NotificationService } from '../src/services/NotificationService.js';
 
 interface Notification {
   id: string;

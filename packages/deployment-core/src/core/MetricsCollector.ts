@@ -2,8 +2,8 @@ import {
   PipelineResult,
   BuildResult,
   DeploymentResult
-} from '../types/pipeline';
-import { InfrastructureMetrics } from '../interfaces/IInfrastructureManager';
+} from '../types/pipeline.js';
+import { InfrastructureMetrics } from '../interfaces/IInfrastructureManager.js';
 import { Logger } from 'winston';
 
 /**

@@ -1,1 +1,1 @@
-export * from './SupabaseService';
+export * from './SupabaseService.js';

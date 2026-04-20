@@ -3,9 +3,9 @@
  */
 
 import { EventEmitter } from 'events';
-import { IMetricsCollector } from '../interfaces/IMonitoring';
-import { PerformanceMetrics, TimeSeries, MetricDataPoint } from '../types/monitoring';
-import { Logger } from '../utils/Logger';
+import { IMetricsCollector } from '../interfaces/IMonitoring.js';
+import { PerformanceMetrics, TimeSeries, MetricDataPoint } from '../types/monitoring.js';
+import { Logger } from '../utils/Logger.js';
 
 export interface MetricsCollectorConfig {
   /** Collection interval (ms) */

@@ -4,4 +4,4 @@
  * Exports skill registry functionality
  */
 
-export { SkillRegistry } from './SkillRegistry';
+export { SkillRegistry } from './SkillRegistry.js';

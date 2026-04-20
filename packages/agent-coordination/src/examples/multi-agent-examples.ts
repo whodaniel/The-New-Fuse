@@ -4,19 +4,19 @@
  * Demonstrates 5 agents collaborating on complex tasks using various patterns
  */
 
-import { AgentPool } from '../core/AgentPool';
-import { TaskQueue } from '../core/TaskQueue';
-import { ActivityMonitor } from '../monitoring/ActivityMonitor';
-import { MetricsCollector } from '../monitoring/MetricsCollector';
-import { Coordinator } from '../orchestration/Coordinator';
-import { ConsensusPattern } from '../patterns/ConsensusPattern';
-import { MapReducePattern } from '../patterns/MapReducePattern';
-import { PipelinePattern } from '../patterns/PipelinePattern';
-import { SwarmPattern } from '../patterns/SwarmPattern';
-import { DistributedLock } from '../state/DistributedLock';
-import { SharedCache } from '../state/SharedCache';
+import { AgentPool } from '../core/AgentPool.js';
+import { TaskQueue } from '../core/TaskQueue.js';
+import { ActivityMonitor } from '../monitoring/ActivityMonitor.js';
+import { MetricsCollector } from '../monitoring/MetricsCollector.js';
+import { Coordinator } from '../orchestration/Coordinator.js';
+import { ConsensusPattern } from '../patterns/ConsensusPattern.js';
+import { MapReducePattern } from '../patterns/MapReducePattern.js';
+import { PipelinePattern } from '../patterns/PipelinePattern.js';
+import { SwarmPattern } from '../patterns/SwarmPattern.js';
+import { DistributedLock } from '../state/DistributedLock.js';
+import { SharedCache } from '../state/SharedCache.js';
 
-import type { AgentInfo } from '../core/types';
+import type { AgentInfo } from '../core/types.js';
 
 /**
  * Example 1: Map-Reduce Pattern

@@ -1,6 +1,6 @@
-export * from './auth';
-export * from './session';
-export * from './utils';
+export * from './auth.js';
+export * from './session.js';
+export * from './utils.js';
 
 export interface SecurityContext {
   userId: string;

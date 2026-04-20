@@ -5,9 +5,9 @@
  * enabling agent-to-agent communication through standardized MCP protocols.
  */
 
-import type { MCPCapability } from './IMCPCapability';
-import type { MCPServiceInfo } from '../types/broker';
-import type { MCPMessage } from './IMCPMessage';
+import type { MCPCapability } from './IMCPCapability.js';
+import type { MCPServiceInfo } from '../types/broker.js';
+import type { MCPMessage } from './IMCPMessage.js';
 
 // Re-export for other modules
 export type { MCPCapability };

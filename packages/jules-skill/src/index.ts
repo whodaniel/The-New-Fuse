@@ -9,10 +9,10 @@
  */
 
 // Export types
-export * from './types';
+export * from './types.js';
 
 // Export client
-export { JulesClient, julesClient } from './client';
+export { JulesClient, julesClient } from './client.js';
 
 // Re-export for convenience
 export type {
@@ -24,4 +24,4 @@ export type {
   JulesTaskTemplate,
   ListSessionsOptions,
   PullSessionOptions,
-} from './types';
+} from './types.js';

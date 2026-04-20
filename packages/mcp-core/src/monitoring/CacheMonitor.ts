@@ -2,9 +2,9 @@
  * Cache Monitoring System
  */
 
-import { ICacheMonitor } from '../interfaces/IMonitoring';
-import { CacheMetrics } from '../types/monitoring';
-import { Logger } from '../utils/Logger';
+import { ICacheMonitor } from '../interfaces/IMonitoring.js';
+import { CacheMetrics } from '../types/monitoring.js';
+import { Logger } from '../utils/Logger.js';
 
 export interface CacheMonitorConfig {
   /** Metrics retention period (ms) */

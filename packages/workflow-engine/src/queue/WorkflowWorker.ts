@@ -1,9 +1,9 @@
 import { Worker, Job } from 'bullmq';
 import { Logger } from '@the-new-fuse/relay-core';
-import { UnifiedWorkflowEngine } from '../engine/WorkflowEngine';
-import { WorkflowQueue, WORKFLOW_QUEUE_NAME, WorkflowJobType, StartWorkflowJobData, ExecuteNodeJobData } from './WorkflowQueue';
-import { WorkflowNodeType, ExecutionContext } from '../types/WorkflowTypes';
-import { telemetry } from '../telemetry/TelemetryService';
+import { UnifiedWorkflowEngine } from '../engine/WorkflowEngine.js';
+import { WorkflowQueue, WORKFLOW_QUEUE_NAME, WorkflowJobType, StartWorkflowJobData, ExecuteNodeJobData } from './WorkflowQueue.js';
+import { WorkflowNodeType, ExecutionContext } from '../types/WorkflowTypes.js';
+import { telemetry } from '../telemetry/TelemetryService.js';
 import { context } from '@opentelemetry/api';
 
 export class WorkflowWorker {

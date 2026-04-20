@@ -18,9 +18,9 @@ import {
   ScalingEvent,
   ServiceMeshHealthCheck,
   ServiceMeshLoadBalancing
-} from '../interfaces/IMCPServiceMesh';
-import { MCPServiceInfo, ServiceHealth } from '../types/broker';
-import { MCPErrorClass as MCPError, MCPErrorCode } from '../types/error';
+} from '../interfaces/IMCPServiceMesh.js';
+import { MCPServiceInfo, ServiceHealth } from '../types/broker.js';
+import { MCPErrorClass as MCPError, MCPErrorCode } from '../types/error.js';
 
 // Re-export types for other modules
 export type {
@@ -31,7 +31,7 @@ export type {
   ServiceMeshIntegrationResult,
   ScalingEvent,
   ScalingPolicy
-} from '../interfaces/IMCPServiceMesh';
+} from '../interfaces/IMCPServiceMesh.js';
 
 /**
  * Service mesh provider interface for different mesh implementations

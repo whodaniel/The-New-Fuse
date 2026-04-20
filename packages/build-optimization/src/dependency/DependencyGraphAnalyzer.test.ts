@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { DependencyGraphAnalyzer } from './DependencyGraphAnalyzer';
-import { PackageDependency } from '../types';
+import { DependencyGraphAnalyzer } from './DependencyGraphAnalyzer.js';
+import { PackageDependency } from '../types.js';
 
 describe('DependencyGraphAnalyzer', () => {
   let analyzer: DependencyGraphAnalyzer;

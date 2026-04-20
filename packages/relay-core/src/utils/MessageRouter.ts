@@ -4,9 +4,9 @@
  */
 
 import { EventEmitter } from 'events';
-import { RelayMessage, Transport } from '../types';
-import { AgentRegistry } from './AgentRegistry';
-import { Logger } from './Logger';
+import { RelayMessage, Transport } from '../types.js';
+import { AgentRegistry } from './AgentRegistry.js';
+import { Logger } from './Logger.js';
 
 export class MessageRouter extends EventEmitter {
   private logger: Logger;

@@ -3,8 +3,8 @@
  * Provides comprehensive audit trail for compliance and security monitoring
  */
 import { and, desc, eq, gte, lte, sql } from 'drizzle-orm';
-import { db } from '../client';
-import { auditLogs } from '../schema/audit-logs';
+import { db } from '../client.js';
+import { auditLogs } from '../schema/audit-logs.js';
 
 export interface AuditLogEntry {
   id?: string;

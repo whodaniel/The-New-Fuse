@@ -6,7 +6,7 @@
 import { Controller, Get, Query, Logger, Res } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { Response } from 'express';
-import { SyncMetricsService } from './SyncMetricsService';
+import { SyncMetricsService } from './SyncMetricsService.js';
 
 @ApiTags('metrics')
 @Controller('metrics')

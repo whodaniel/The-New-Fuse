@@ -5,9 +5,9 @@
  * Handles Anthropic's XML-based function calling and tool invocation format
  */
 
-import { ProtocolAdapter } from './ProtocolAdapter';
-import { RelayMessage, ProtocolType } from '../types';
-import { Logger } from '../utils/Logger';
+import { ProtocolAdapter } from './ProtocolAdapter.js';
+import { RelayMessage, ProtocolType } from '../types.js';
+import { Logger } from '../utils/Logger.js';
 
 export class AnthropicXmlAdapter implements ProtocolAdapter {
   public readonly name = 'anthropic-xml';

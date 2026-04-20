@@ -4,8 +4,8 @@ import { LoginPage } from '../pages/login.page';
 import { DashboardPage } from '../pages/dashboard.page';
 import { WorkflowEditorPage } from '../pages/workflow-editor.page';
 import { SettingsPage } from '../pages/settings.page';
-import { TestHelpers } from '../utils/test-helpers';
-import { TestReporter } from '../utils/test-reporter';
+import { TestHelpers } from '../utils/test-helpers.js';
+import { TestReporter } from '../utils/test-reporter.js';
 
 // Define the types for the extended fixtures
 interface CustomFixtures {

@@ -5,7 +5,7 @@
  */
 
 import { Logger, LogLevel } from '@the-new-fuse/relay-core';
-import { Extension, ExtensionManifest, ExtensionStatus } from './ExtensionTypes';
+import { Extension, ExtensionManifest, ExtensionStatus } from './ExtensionTypes.js';
 
 export class ExtensionLoader {
   private logger: Logger;

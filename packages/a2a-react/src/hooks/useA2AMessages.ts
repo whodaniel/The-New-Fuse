@@ -1,6 +1,6 @@
 import { A2AMessage, A2AMessageType, A2APriority } from '@the-new-fuse/a2a-core';
 import { useCallback } from 'react';
-import { useA2AContext } from '../A2AProvider';
+import { useA2AContext } from '../A2AProvider.js';
 
 export function useA2AMessages() {
   const { messages, sendMessage: contextSendMessage } = useA2AContext();

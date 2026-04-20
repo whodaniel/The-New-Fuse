@@ -6,31 +6,31 @@
  */
 
 // Export all types
-export * from './types';
+export * from './types.js';
 
 // Export all interfaces
-export * from './interfaces';
+export * from './interfaces.js';
 
 // Export system resource detection
-export * from './system/SystemResourceDetector';
-export * from './system/MemoryMonitor';
+export * from './system/SystemResourceDetector.js';
+export * from './system/MemoryMonitor.js';
 
 // Export dependency analysis
-export * from './dependency/DependencyGraphAnalyzer';
-export * from './dependency/BuildStageOptimizer';
+export * from './dependency/DependencyGraphAnalyzer.js';
+export * from './dependency/BuildStageOptimizer.js';
 
 // Export concurrency control
-export * from './concurrency/ConcurrencyController';
-export * from './concurrency/BuildProcessThrottler';
+export * from './concurrency/ConcurrencyController.js';
+export * from './concurrency/BuildProcessThrottler.js';
 
 // Export TypeScript compilation optimization
-export * from './typescript';
+export * from './typescript.js';
 
 // Export build orchestration
-export * from './orchestration';
+export * from './orchestration.js';
 
 // Export monitoring and reporting
-export * from './monitoring';
+export * from './monitoring.js';
 
 // Version information
 export const VERSION = '1.0.0';

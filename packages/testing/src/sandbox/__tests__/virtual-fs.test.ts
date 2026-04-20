@@ -1,4 +1,4 @@
-import { VirtualFileSystem } from '../virtual-fs';
+import { VirtualFileSystem } from '../virtual-fs.js';
 
 describe('VirtualFileSystem', () => {
   let vfs: VirtualFileSystem;

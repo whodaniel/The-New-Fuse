@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { EventEmitter } from 'events';
-import { SyncDashboardService, SystemAlert } from './SyncDashboardService';
+import { SyncDashboardService, SystemAlert } from './SyncDashboardService.js';
 
 /**
  * Interface for existing monitoring service integration

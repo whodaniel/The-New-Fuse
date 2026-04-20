@@ -3,9 +3,9 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MessageSerializer, SerializationUtils } from './serialization';
-import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
-import { MCPErrorCode } from '../types/error';
+import { MessageSerializer, SerializationUtils } from './serialization.js';
+import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage.js';
+import { MCPErrorCode } from '../types/error.js';
 
 describe('MessageSerializer', () => {
   describe('Basic Serialization', () => {

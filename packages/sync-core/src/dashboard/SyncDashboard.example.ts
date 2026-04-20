@@ -12,9 +12,9 @@ import {
   DashboardMonitoringIntegration,
   IAgentWebSocketService,
   IMonitoringService 
-} from './index';
+} from './index.js';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { SyncRedisConfig } from '../config/SyncRedisConfig';
+import { SyncRedisConfig } from '../config/SyncRedisConfig.js';
 
 // Example: Existing AgentWebSocketService adapter
 @Injectable()
@@ -315,7 +315,7 @@ dashboardClient.onUpdate('system_alert', (update) => {
 export const ExampleTestSetup = `
 // Example test setup for dashboard integration
 import { Test } from '@nestjs/testing';
-import { SyncDashboardService } from './SyncDashboardService';
+import { SyncDashboardService } from './SyncDashboardService.js';
 
 describe('Dashboard Integration Test', () => {
   let dashboardService: SyncDashboardService;

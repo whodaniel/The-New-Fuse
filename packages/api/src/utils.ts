@@ -2,4 +2,4 @@
  * Re-export utility functions
  */
 
-export * from './utils';
+export * from './utils.js';

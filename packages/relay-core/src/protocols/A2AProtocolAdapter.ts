@@ -3,8 +3,8 @@
  * A2A Protocol Adapter for The New Fuse Relay System
  */
 
-import { RelayMessage, ProtocolType } from '../types';
-import { ProtocolAdapter } from './ProtocolAdapter';
+import { RelayMessage, ProtocolType } from '../types.js';
+import { ProtocolAdapter } from './ProtocolAdapter.js';
 
 export class A2AProtocolAdapter implements ProtocolAdapter {
   name = 'a2a';

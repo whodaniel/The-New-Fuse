@@ -1,3 +1,3 @@
 export * from './model.js';
 export * from './dto.js';
-export * from './service';
+export * from './service.js';

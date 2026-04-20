@@ -14,7 +14,7 @@ import {
   MessageQueueSyncConfig,
   MessageFailoverConfig,
   CommunicationNode
-} from './index';
+} from './index.js';
 
 // Example: Basic sync-aware message sending
 export async function basicMessageSending(

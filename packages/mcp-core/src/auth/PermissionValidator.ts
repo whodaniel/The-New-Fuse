@@ -5,8 +5,8 @@
  * including resource access, tool execution, and server administration.
  */
 
-import { AuthContext } from './AuthenticationManager';
-import { AccessControlResult, RBACManager } from './RBACManager';
+import { AuthContext } from './AuthenticationManager.js';
+import { AccessControlResult, RBACManager } from './RBACManager.js';
 
 /**
  * MCP operation types

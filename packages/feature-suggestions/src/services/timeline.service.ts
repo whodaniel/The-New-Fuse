@@ -1,4 +1,4 @@
-import { TimelineEvent, TimelineBranch, TimelineWorkflow } from '../types/timeline';
+import { TimelineEvent, TimelineBranch, TimelineWorkflow } from '../types/timeline.js';
 
 /**
  * Service for managing timeline events, branches, and workflows

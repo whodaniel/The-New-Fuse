@@ -1,4 +1,4 @@
-import { toBeValidWorkflow } from '../toBeValidWorkflow';
+import { toBeValidWorkflow } from '../toBeValidWorkflow.js';
 import { WorkflowStatus } from '@the-new-fuse/types';
 
 describe('toBeValidWorkflow', () => {

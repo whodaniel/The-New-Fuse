@@ -1,5 +1,5 @@
-import { ApiClient } from '../client/ApiClient';
-import { BaseService } from './BaseService';
+import { ApiClient } from '../client/ApiClient.js';
+import { BaseService } from './BaseService.js';
 
 /**
  * User interface

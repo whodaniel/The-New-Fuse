@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { LLMProvider } from './LLMProvider';
+import { LLMProvider } from './LLMProvider.js';
 
 @Injectable()
 export class MidsceneLLMAdapter {

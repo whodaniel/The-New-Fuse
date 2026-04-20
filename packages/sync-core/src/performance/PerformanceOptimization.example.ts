@@ -1,5 +1,5 @@
-import { PerformanceOptimizationService, PerformanceConfig } from './PerformanceOptimizationService';
-import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher';
+import { PerformanceOptimizationService, PerformanceConfig } from './PerformanceOptimizationService.js';
+import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher.js';
 
 // Mock services for example purposes
 class MockRedisService {

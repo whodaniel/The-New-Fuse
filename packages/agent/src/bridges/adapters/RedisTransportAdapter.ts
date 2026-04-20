@@ -14,7 +14,7 @@ import {
 } from '@the-new-fuse/infrastructure';
 import { Redis as UpstashRedis } from '@upstash/redis';
 import Redis, { Cluster } from 'ioredis';
-import { TransportAdapter, TransportType, UniversalMessage } from '../universal_bridge';
+import { TransportAdapter, TransportType, UniversalMessage } from '../universal_bridge.js';
 
 export interface RedisTransportConfig {
   redisUrl?: string;

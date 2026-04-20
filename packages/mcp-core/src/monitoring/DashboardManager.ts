@@ -2,9 +2,9 @@
  * Dashboard Management System
  */
 
-import { IDashboardManager } from '../interfaces/IMonitoring';
-import { DashboardConfig } from '../types/monitoring';
-import { Logger } from '../utils/Logger';
+import { IDashboardManager } from '../interfaces/IMonitoring.js';
+import { DashboardConfig } from '../types/monitoring.js';
+import { Logger } from '../utils/Logger.js';
 
 export interface DashboardManagerConfig {
   /** Dashboard refresh interval (ms) */

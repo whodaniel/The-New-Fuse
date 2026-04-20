@@ -3,7 +3,7 @@
  * This demonstrates how to set up and use the MasterClockService in a real application
  */
 
-import { MasterClockService, MasterClockConfig } from './MasterClockService';
+import { MasterClockService, MasterClockConfig } from './MasterClockService.js';
 
 // Example configuration for production use
 const createMasterClockConfig = (): MasterClockConfig => ({

@@ -4,4 +4,4 @@
  * Exports skill parsing functionality
  */
 
-export { SkillParser } from './SkillParser';
+export { SkillParser } from './SkillParser.js';

@@ -16,7 +16,7 @@ export type {
   ToolPermissions,
   AccessControlEntry,
   RateLimitConfig
-} from '../interfaces/IMCPTool';
+} from '../interfaces/IMCPTool.js';
 
 /**
  * Tool type enumeration

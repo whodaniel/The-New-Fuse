@@ -1,4 +1,4 @@
-import { RedisAgentClient, AgentMessage } from './RedisAgentClient';
+import { RedisAgentClient, AgentMessage } from './RedisAgentClient.js';
 import chalk from 'chalk';
 
 export class Orchestrator {

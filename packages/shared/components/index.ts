@@ -1,7 +1,7 @@
-export { Button, buttonVariants } from './Button';
-export type { ButtonProps } from './Button';
-export { Preloader, FullScreenLoader, preloaderVariants } from './Preloader';
-export type { PreloaderProps, PreloaderSize, PreloaderVariant } from './Preloader';
+export { Button, buttonVariants } from './Button.js';
+export type { ButtonProps } from './Button.js';
+export { Preloader, FullScreenLoader, preloaderVariants } from './Preloader.js';
+export type { PreloaderProps, PreloaderSize, PreloaderVariant } from './Preloader.js';
 export {
   Card,
   CardHeader,
@@ -10,6 +10,6 @@ export {
   CardContent,
   CardFooter,
   cardVariants,
-} from './Card';
-export type { CardProps } from './Card';
+} from './Card.js';
+export type { CardProps } from './Card.js';
 //# sourceMappingURL=index.js.map

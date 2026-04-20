@@ -6,8 +6,8 @@ import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
-import type { AgentMessage } from './RedisAgentClient';
-import { RedisAgentClient } from './RedisAgentClient';
+import type { AgentMessage } from './RedisAgentClient.js';
+import { RedisAgentClient } from './RedisAgentClient.js';
 
 const program = new Command();
 // Fallback for CommonJS/ESM compatibility
@@ -4827,19 +4827,19 @@ await runCommand(cliName, normalizeForwardedArgs(args));
 // TNF Command Extensions: ACP, MCP, Auth, Agent, Debug, Session, Remote, etc.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { ACPService } from './services/ACPService';
-import { MCPManagerService } from './services/MCPManagerService';
-import { AuthService } from './services/AuthService';
-import { AgentManagerService } from './services/AgentManagerService';
-import { DebugService } from './services/DebugService';
-import { SessionManagerService } from './services/SessionManagerService';
-import { StatsService } from './services/StatsService';
-import { RemoteService } from './services/RemoteService';
-import { DatabaseService } from './services/DatabaseService';
-import { ModelsService } from './services/ModelsService';
-import { ServeService } from './services/ServeService';
-import { UpgradeService } from './services/UpgradeService';
-import { generateCompletion, getInstallInstructions, ShellType } from './services/CompletionService';
+import { ACPService } from './services/ACPService.js';
+import { MCPManagerService } from './services/MCPManagerService.js';
+import { AuthService } from './services/AuthService.js';
+import { AgentManagerService } from './services/AgentManagerService.js';
+import { DebugService } from './services/DebugService.js';
+import { SessionManagerService } from './services/SessionManagerService.js';
+import { StatsService } from './services/StatsService.js';
+import { RemoteService } from './services/RemoteService.js';
+import { DatabaseService } from './services/DatabaseService.js';
+import { ModelsService } from './services/ModelsService.js';
+import { ServeService } from './services/ServeService.js';
+import { UpgradeService } from './services/UpgradeService.js';
+import { generateCompletion, getInstallInstructions, ShellType } from './services/CompletionService.js';
 
 // ACP command
 const acp = program.command('acp').description('Start ACP (Agent Client Protocol) server');

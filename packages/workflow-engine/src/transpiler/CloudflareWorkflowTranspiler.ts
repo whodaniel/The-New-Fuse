@@ -1,4 +1,4 @@
-import { UnifiedWorkflow, WorkflowNode, WorkflowNodeType } from '../types/WorkflowTypes';
+import { UnifiedWorkflow, WorkflowNode, WorkflowNodeType } from '../types/WorkflowTypes.js';
 
 /**
  * Enhanced Cloudflare Workflow Transpiler

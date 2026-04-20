@@ -7,7 +7,7 @@
  * and handling across the application.
  */
 
-import { BaseError, ErrorSeverity, ErrorCategory } from '../interfaces/IErrorHandling';
+import { BaseError, ErrorSeverity, ErrorCategory } from '../interfaces/IErrorHandling.js';
 
 /**
  * Base application error with enhanced metadata

@@ -6,7 +6,7 @@
 
 import type { Message, MessageType } from '@the-new-fuse/types';
 
-import type { IAgent } from '../interfaces/IAgent';
+import type { IAgent } from '../interfaces/IAgent.js';
 
 export interface CascadeConfig {
   agentId: string;

@@ -6,14 +6,14 @@
  */
 
 import { EventEmitter } from 'events';
-import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
-import { IMessageRouter, EventCallback } from '../interfaces/IMessageRouter';
-import { RoutingMetrics, RoutingInfo, MCPServiceInfo } from '../types/broker';
-import { LoadBalancingStrategy } from '../types/common';
-import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error';
-import { LoadBalancer } from './LoadBalancer';
-import { EventSubscriptionManager, EventMatchResult } from './EventSubscriptionManager';
-import { MessageQueue, QueuedMessage } from './MessageQueue';
+import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage.js';
+import { IMessageRouter, EventCallback } from '../interfaces/IMessageRouter.js';
+import { RoutingMetrics, RoutingInfo, MCPServiceInfo } from '../types/broker.js';
+import { LoadBalancingStrategy } from '../types/common.js';
+import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error.js';
+import { LoadBalancer } from './LoadBalancer.js';
+import { EventSubscriptionManager, EventMatchResult } from './EventSubscriptionManager.js';
+import { MessageQueue, QueuedMessage } from './MessageQueue.js';
 
 /**
  * Request tracking information

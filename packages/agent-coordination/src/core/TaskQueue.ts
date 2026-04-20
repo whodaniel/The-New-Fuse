@@ -1,6 +1,6 @@
 import Bull, { Job, JobOptions, Queue } from 'bull';
 import { EventEmitter } from 'events';
-import { QueueStats, Task, TaskPriority, TaskStatus } from './types';
+import { QueueStats, Task, TaskPriority, TaskStatus } from './types.js';
 
 /**
  * Priority-based task queue using Bull

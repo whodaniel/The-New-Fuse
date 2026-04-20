@@ -5,11 +5,11 @@
 
 import { Controller, Get, Post, Put, Delete, Body, Param, Query, Logger } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { ConflictManager } from '../services/ConflictManager';
-import { MasterClockService } from '../services/MasterClockService';
-import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';
-import { SyncConfigService } from './SyncConfigService';
+import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
+import { ConflictManager } from '../services/ConflictManager.js';
+import { MasterClockService } from '../services/MasterClockService.js';
+import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher.js';
+import { SyncConfigService } from './SyncConfigService.js';
 
 @ApiTags('sync')
 @Controller('sync')

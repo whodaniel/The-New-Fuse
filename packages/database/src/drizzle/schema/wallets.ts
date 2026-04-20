@@ -13,8 +13,8 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { agents } from './agents';
-import { transactionStatusEnum, transactionTypeEnum, walletTypeEnum } from './enums';
+import { agents } from './agents.js';
+import { transactionStatusEnum, transactionTypeEnum, walletTypeEnum } from './enums.js';
 
 // =============================================================================
 // WALLET

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { WorkflowTemplate, WorkflowStep, WorkflowStepType } from '../types/types';
+import { WorkflowTemplate, WorkflowStep, WorkflowStepType } from '../types/types.js';
 
 export interface ValidationResult {
   valid: boolean;

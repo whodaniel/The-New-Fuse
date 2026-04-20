@@ -5,13 +5,13 @@
  * Connects AI agents to self-contained visualization generation
  */
 
-export { AGUIOrchestrator } from './AGUIOrchestrator';
-export { AGUIModule } from './nestjs/AGUIModule';
-export { AGUIService } from './nestjs/AGUIService';
+export { AGUIOrchestrator } from './AGUIOrchestrator.js';
+export { AGUIModule } from './nestjs/AGUIModule.js';
+export { AGUIService } from './nestjs/AGUIService.js';
 
 export type {
   AGUIMessage,
   AgentSession,
   VisualizationRequest,
   VisualizationResult,
-} from './AGUIOrchestrator';
+} from './AGUIOrchestrator.js';

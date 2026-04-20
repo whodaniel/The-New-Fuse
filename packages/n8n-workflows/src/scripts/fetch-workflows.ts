@@ -5,7 +5,7 @@
  */
 
 import * as path from 'path';
-import { WorkflowService } from '../services/WorkflowService';
+import { WorkflowService } from '../services/WorkflowService.js';
 
 async function main() {
   console.log('=== N8N Workflow Fetcher ===\n');

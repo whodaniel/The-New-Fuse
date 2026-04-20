@@ -22,7 +22,7 @@ import {
   drizzleChatRepository,
   drizzleTaskRepository,
   drizzleWorkflowRepository,
-} from './repositories';
+} from './repositories.js';
 
 /**
  * Repository Aliases for Backwards Compatibility
@@ -64,7 +64,7 @@ export {
   drizzleChatRepository,
   drizzleTaskRepository,
   drizzleWorkflowRepository,
-} from './repositories';
+} from './repositories.js';
 
 /**
  * Re-export repository classes for type annotations
@@ -75,4 +75,4 @@ export {
   DrizzleChatRepository,
   DrizzleTaskRepository,
   DrizzleWorkflowRepository,
-} from './repositories';
+} from './repositories.js';

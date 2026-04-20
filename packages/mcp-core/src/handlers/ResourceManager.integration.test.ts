@@ -3,9 +3,9 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { ResourceManager, AccessContext } from './ResourceManager';
-import { DatabaseResourceHandler } from './ResourceHandler';
-import { MCPResource, ResourceHandler, ResourceContent } from '../interfaces/IMCPResource';
+import { ResourceManager, AccessContext } from './ResourceManager.js';
+import { DatabaseResourceHandler } from './ResourceHandler.js';
+import { MCPResource, ResourceHandler, ResourceContent } from '../interfaces/IMCPResource.js';
 
 // Mock resource handler for integration testing
 class MockIntegrationResourceHandler implements ResourceHandler {

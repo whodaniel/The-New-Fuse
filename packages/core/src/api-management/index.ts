@@ -1,2 +1,2 @@
-export * from './api-client-factory';
-export * from './provider-registry';
+export * from './api-client-factory.js';
+export * from './provider-registry.js';

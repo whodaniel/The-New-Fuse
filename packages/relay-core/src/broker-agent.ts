@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import * as path from 'node:path';
 import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
 import { Cluster, Redis } from 'ioredis';
-import { createTNFEnvelope } from './protocol/tnf-envelope';
+import { createTNFEnvelope } from './protocol/tnf-envelope.js';
 
 type QueueTask = {
   id: string;

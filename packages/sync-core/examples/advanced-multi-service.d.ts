@@ -5,9 +5,9 @@
  * through sync-core for distributed workflows.
  */
 import { OnModuleInit } from '@nestjs/common';
-import { SyncOrchestrator } from '../src/services/SyncOrchestrator';
-import { ConflictManager } from '../src/services/ConflictManager';
-import { TaskSynchronizationService } from '../src/services/TaskSynchronizationService';
+import { SyncOrchestrator } from '../src/services/SyncOrchestrator.js';
+import { ConflictManager } from '../src/services/ConflictManager.js';
+import { TaskSynchronizationService } from '../src/services/TaskSynchronizationService.js';
 interface WorkflowExecution {
     id: string;
     tenantId: string;

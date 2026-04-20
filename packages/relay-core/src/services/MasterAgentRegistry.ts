@@ -9,9 +9,9 @@
 import type { AgentStatus, AgentType, TaskPriority, TaskStatus } from '@the-new-fuse/database';
 import { Contract, JsonRpcProvider, Wallet, parseUnits } from 'ethers';
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger';
-import { VCIssuanceRequest, VCIssuanceService } from './VCIssuanceService';
-import { BlockchainConfig, BlockchainService } from './shared/BlockchainService';
+import { Logger } from '../utils/Logger.js';
+import { VCIssuanceRequest, VCIssuanceService } from './VCIssuanceService.js';
+import { BlockchainConfig, BlockchainService } from './shared/BlockchainService.js';
 // import { sha256 } from '../../../../src/utils/cryptoUtils';
 // import { AgentRegistry, Agent as LegacyAgent } from '../../../../src/services/AgentRegistry';
 // import { AgentMetadataManager } from '../../../../src/services/AgentMetadataManager';
@@ -57,7 +57,7 @@ class AgentMetadataManager {
 }
 
 // Re-export BlockchainConfig for compatibility
-export { BlockchainConfig } from './shared/BlockchainService';
+export { BlockchainConfig } from './shared/BlockchainService.js';
 
 // On-chain agent data
 export interface OnChainAgentData {

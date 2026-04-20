@@ -14,8 +14,8 @@ import {
   IErrorHandlerSystem,
   RecoveryResult,
   RecoveryStrategy,
-} from '../interfaces/IErrorHandling';
-import { Logger } from '../utils/Logger';
+} from '../interfaces/IErrorHandling.js';
+import { Logger } from '../utils/Logger.js';
 
 /**
  * Base error handler configuration

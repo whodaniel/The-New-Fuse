@@ -1,13 +1,13 @@
 // Export all security services and types
-export * from './audit';
-export * from './auth';
-export * from './EncryptionService';
-export * from './middleware';
-export * from './rate-limiting';
-export * from './SecurityService';
+export * from './audit.js';
+export * from './auth.js';
+export * from './EncryptionService.js';
+export * from './middleware.js';
+export * from './rate-limiting.js';
+export * from './SecurityService.js';
 
 // Re-export types
-export type { AuditStorage } from './audit/storage';
+export type { AuditStorage } from './audit/storage.js';
 
 // Default configuration
 export const defaultConfig = {

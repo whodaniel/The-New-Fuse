@@ -6,12 +6,12 @@
  * and real-world usage scenarios.
  */
 
-import { MCPServer } from '../server/MCPServer';
-import { MCPSystemFactory } from '../factory/MCPSystemFactory';
-import { MCPRequest, MCPResponse, MCPNotification } from '../types/message';
-import { MCPServerConfig } from '../types/server';
-import { ResourceHandler } from '../handlers/ResourceHandler';
-import { ToolHandler } from '../handlers/ToolHandler';
+import { MCPServer } from '../server/MCPServer.js';
+import { MCPSystemFactory } from '../factory/MCPSystemFactory.js';
+import { MCPRequest, MCPResponse, MCPNotification } from '../types/message.js';
+import { MCPServerConfig } from '../types/server.js';
+import { ResourceHandler } from '../handlers/ResourceHandler.js';
+import { ToolHandler } from '../handlers/ToolHandler.js';
 import WebSocket from 'ws';
 import { EventEmitter } from 'events';
 

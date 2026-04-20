@@ -7,7 +7,7 @@
  * @jest-environment node
  */
 
-import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
+import { getTestEnvironment, TestHelpers } from '../setup/test-setup.js';
 // import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
 import * as path from 'path';
 import * as fs from 'fs-extra';

@@ -3,8 +3,8 @@
  * Handles automated infrastructure operations, compliance, and disaster recovery
  */
 
-import { InfrastructureManager } from './InfrastructureManager';
-import { EnvironmentManager } from './EnvironmentManager';
+import { InfrastructureManager } from './InfrastructureManager.js';
+import { EnvironmentManager } from './EnvironmentManager.js';
 
 export interface AutomationRule {
   id: string;

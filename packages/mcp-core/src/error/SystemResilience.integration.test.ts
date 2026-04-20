@@ -3,13 +3,13 @@
  * Tests circuit breaker, graceful degradation, and failover working together
  */
 
-import { CircuitBreaker, CircuitState, CircuitBreakerManager } from './CircuitBreaker';
-import { GracefulDegradationManager, ServiceLevel, DegradationConfig } from './GracefulDegradation';
-import { FailoverManager, ServiceEndpoint } from './FailoverManager';
-import { MCPErrorHandler } from './MCPErrorHandler';
-import { ErrorMonitor } from './ErrorMonitor';
-import { MCPErrorClass, MCPErrorCode, ErrorSeverity } from '../types/error';
-import { Logger } from '../utils/Logger';
+import { CircuitBreaker, CircuitState, CircuitBreakerManager } from './CircuitBreaker.js';
+import { GracefulDegradationManager, ServiceLevel, DegradationConfig } from './GracefulDegradation.js';
+import { FailoverManager, ServiceEndpoint } from './FailoverManager.js';
+import { MCPErrorHandler } from './MCPErrorHandler.js';
+import { ErrorMonitor } from './ErrorMonitor.js';
+import { MCPErrorClass, MCPErrorCode, ErrorSeverity } from '../types/error.js';
+import { Logger } from '../utils/Logger.js';
 
 describe('System Resilience Integration', () => {
   let mockLogger: jest.Mocked<Logger>;

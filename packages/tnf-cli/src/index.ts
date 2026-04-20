@@ -1,21 +1,21 @@
-export * from './RedisAgentClient';
-export * from './orchestration';
+export * from './RedisAgentClient.js';
+export * from './orchestration.js';
 
 // TNF CLI Services
-export { ACPService } from './services/ACPService';
-export { MCPManagerService } from './services/MCPManagerService';
-export { AuthService } from './services/AuthService';
-export { AgentManagerService } from './services/AgentManagerService';
-export { DebugService } from './services/DebugService';
-export { SessionManagerService } from './services/SessionManagerService';
-export { StatsService } from './services/StatsService';
-export { RemoteService } from './services/RemoteService';
-export { DatabaseService } from './services/DatabaseService';
-export { ModelsService } from './services/ModelsService';
-export { ServeService } from './services/ServeService';
-export { UpgradeService } from './services/UpgradeService';
-export { generateCompletion, getInstallInstructions } from './services/CompletionService';
+export { ACPService } from './services/ACPService.js';
+export { MCPManagerService } from './services/MCPManagerService.js';
+export { AuthService } from './services/AuthService.js';
+export { AgentManagerService } from './services/AgentManagerService.js';
+export { DebugService } from './services/DebugService.js';
+export { SessionManagerService } from './services/SessionManagerService.js';
+export { StatsService } from './services/StatsService.js';
+export { RemoteService } from './services/RemoteService.js';
+export { DatabaseService } from './services/DatabaseService.js';
+export { ModelsService } from './services/ModelsService.js';
+export { ServeService } from './services/ServeService.js';
+export { UpgradeService } from './services/UpgradeService.js';
+export { generateCompletion, getInstallInstructions } from './services/CompletionService.js';
 
 // Existing services
-export { SkillsService } from './services/SkillsService';
-export { MemoryService } from './services/MemoryService';
+export { SkillsService } from './services/SkillsService.js';
+export { MemoryService } from './services/MemoryService.js';

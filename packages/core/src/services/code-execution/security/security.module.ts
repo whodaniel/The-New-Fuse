@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { CodeScanner } from './code-scanner';
-import { RateLimiter } from './rate-limiter';
+import { CodeScanner } from './code-scanner.js';
+import { RateLimiter } from './rate-limiter.js';
 
 @Module({
   imports: [ConfigModule],

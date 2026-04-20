@@ -3,7 +3,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { MCPWorkflowIntegration, MCPWorkflowIntegrationConfig } from './MCPWorkflowIntegration';
+import { MCPWorkflowIntegration, MCPWorkflowIntegrationConfig } from './MCPWorkflowIntegration.js';
 import { 
   WorkflowStep, 
   WorkflowContext, 
@@ -12,12 +12,12 @@ import {
   TaskExecutionStatus,
   ErrorRecoveryConfig,
   MonitoringConfig
-} from '../interfaces/IMCPWorkflowIntegration';
-import { IMCPClient } from '../interfaces/IMCPClient';
-import { IMCPBroker } from '../interfaces/IMCPBroker';
-import { MCPRequest, MCPResponse } from '../interfaces/IMCPMessage';
-import { RetryPolicy } from '../types/common';
-import { MCPServiceInfo } from '../types/broker';
+} from '../interfaces/IMCPWorkflowIntegration.js';
+import { IMCPClient } from '../interfaces/IMCPClient.js';
+import { IMCPBroker } from '../interfaces/IMCPBroker.js';
+import { MCPRequest, MCPResponse } from '../interfaces/IMCPMessage.js';
+import { RetryPolicy } from '../types/common.js';
+import { MCPServiceInfo } from '../types/broker.js';
 
 // Mock implementations
 class MockMCPClient extends EventEmitter implements IMCPClient {

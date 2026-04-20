@@ -8,8 +8,8 @@
 
 import { EventEmitter } from 'events';
 import * as crypto from 'crypto';
-import { AuthConfig } from '../interfaces/IMCPConnection';
-import { MCPErrorClass, MCPErrorCode } from '../types/error';
+import { AuthConfig } from '../interfaces/IMCPConnection.js';
+import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
 
 /**
  * Authentication result interface

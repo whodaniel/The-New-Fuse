@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { TaskService } from './TaskService';
-import { Task } from './TaskTypes';
+import { TaskService } from './TaskService.js';
+import { Task } from './TaskTypes.js';
 
 @Injectable()
 export class TaskScheduler {

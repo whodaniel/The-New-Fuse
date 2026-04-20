@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { exampleUtil } from './example';
+import { exampleUtil } from './example.js';
 
 describe('exampleUtil', () => {
   it('should return the expected result', () => {

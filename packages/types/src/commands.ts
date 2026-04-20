@@ -1,4 +1,4 @@
-import { Priority } from './core/enums';
+import { Priority } from './core/enums.js';
 
 export interface Command {
   id: string;

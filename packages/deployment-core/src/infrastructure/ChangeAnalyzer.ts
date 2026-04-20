@@ -22,7 +22,7 @@ import {
   ExecutionPhase,
   PhaseDependency,
   DependencyType
-} from '../types/infrastructure';
+} from '../types/infrastructure.js';
 
 export class ChangeAnalyzer {
   private riskAnalyzer: RiskAnalyzer;

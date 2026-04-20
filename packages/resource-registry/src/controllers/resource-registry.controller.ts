@@ -23,8 +23,8 @@ import {
 } from '@nestjs/swagger';
 import { ResourceRegistryService } from '../services/resource-registry.service';
 import { ResourceAccessControlService, AccessContext } from '../services/resource-access-control.service';
-import { CreateResourceDto, UpdateResourceDto, SearchResourceDto } from '../dto';
-import { Resource, SearchResult, ResourceAction } from '../types';
+import { CreateResourceDto, UpdateResourceDto, SearchResourceDto } from '../dto.js';
+import { Resource, SearchResult, ResourceAction } from '../types.js';
 
 // Import authentication guards - use service or user auth to support both
 // JWT tokens (users) and API keys (services/agents)

@@ -7,52 +7,52 @@
  */
 
 // New unified error handler (recommended)
-export { MCPUnifiedErrorHandler } from './MCPUnifiedErrorHandler';
-export type { MCPError, MCPErrorContext, MCPErrorHandlerConfig } from './MCPUnifiedErrorHandler';
+export { MCPUnifiedErrorHandler } from './MCPUnifiedErrorHandler.js';
+export type { MCPError, MCPErrorContext, MCPErrorHandlerConfig } from './MCPUnifiedErrorHandler.js';
 
 // Legacy core error handling (deprecated - use MCPUnifiedErrorHandler instead)
-export { MCPErrorHandler, ErrorHandlerFactory } from './MCPErrorHandler';
+export { MCPErrorHandler, ErrorHandlerFactory } from './MCPErrorHandler.js';
 export type { 
   ErrorHandlerConfig, 
   ErrorContext, 
   ErrorHandler, 
   RecoveryResult 
-} from './MCPErrorHandler';
+} from './MCPErrorHandler.js';
 
 // Error monitoring and metrics
-export { ErrorMonitor } from './ErrorMonitor';
+export { ErrorMonitor } from './ErrorMonitor.js';
 export type { 
   ErrorMetrics, 
   AlertRule, 
   MonitorConfig 
-} from './ErrorMonitor';
+} from './ErrorMonitor.js';
 
 // Circuit breaker pattern
-export { CircuitBreaker, CircuitBreakerManager } from './CircuitBreaker';
-export { CircuitState } from './CircuitBreaker';
+export { CircuitBreaker, CircuitBreakerManager } from './CircuitBreaker.js';
+export { CircuitState } from './CircuitBreaker.js';
 export type { 
   CircuitBreakerConfig, 
   CircuitBreakerStats, 
   RequestResult 
-} from './CircuitBreaker';
+} from './CircuitBreaker.js';
 
 // Graceful degradation
-export { GracefulDegradationManager } from './GracefulDegradation';
-export { ServiceLevel } from './GracefulDegradation';
+export { GracefulDegradationManager } from './GracefulDegradation.js';
+export { ServiceLevel } from './GracefulDegradation.js';
 export type { 
   DegradationConfig, 
   DegradationLevel, 
   FallbackHandler, 
   ServiceStatus 
-} from './GracefulDegradation';
+} from './GracefulDegradation.js';
 
 // Failover management
-export { FailoverManager } from './FailoverManager';
+export { FailoverManager } from './FailoverManager.js';
 export type { 
   ServiceEndpoint, 
   FailoverConfig, 
   FailoverStats 
-} from './FailoverManager';
+} from './FailoverManager.js';
 
 // Error types (re-exported from types module)
 export { 
@@ -61,12 +61,12 @@ export {
   JSONRPCErrorCode,
   ErrorCategory, 
   ErrorSeverity 
-} from '../types/error';
+} from '../types/error.js';
 export type { 
   ErrorRecoveryStrategy, 
   ErrorStatistics 
-} from '../types/error';
+} from '../types/error.js';
 
 // Utilities
-export { Logger } from '../utils/Logger';
-export type { LogLevel, LogEntry } from '../utils/Logger';
+export { Logger } from '../utils/Logger.js';
+export type { LogLevel, LogEntry } from '../utils/Logger.js';

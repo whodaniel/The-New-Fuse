@@ -1,4 +1,4 @@
-import { setupTestEnvironment, cleanupTestEnvironment } from './setup/test-setup';
+import { setupTestEnvironment, cleanupTestEnvironment } from './setup/test-setup.js';
 
 describe('Benchmark Tests', () => {
   beforeAll(async () => {

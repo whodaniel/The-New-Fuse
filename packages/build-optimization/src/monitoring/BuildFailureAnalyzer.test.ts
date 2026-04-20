@@ -3,9 +3,9 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { BuildFailureAnalyzer, FailureType } from './BuildFailureAnalyzer';
-import { BuildResult, SystemResources, MemoryUsage } from '../types';
-import { DetailedBuildMetrics } from './BuildMetricsCollector';
+import { BuildFailureAnalyzer, FailureType } from './BuildFailureAnalyzer.js';
+import { BuildResult, SystemResources, MemoryUsage } from '../types.js';
+import { DetailedBuildMetrics } from './BuildMetricsCollector.js';
 
 describe('BuildFailureAnalyzer', () => {
   let analyzer: BuildFailureAnalyzer;

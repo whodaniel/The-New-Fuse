@@ -16,8 +16,8 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { agentNfts } from './agents';
-import { marketplaceStatusEnum, offerStatusEnum } from './enums';
+import { agentNfts } from './agents.js';
+import { marketplaceStatusEnum, offerStatusEnum } from './enums.js';
 
 // =============================================================================
 // FRACTIONAL SHARE

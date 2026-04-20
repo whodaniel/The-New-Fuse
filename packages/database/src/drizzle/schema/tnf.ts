@@ -22,7 +22,7 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { users } from './users';
+import { users } from './users.js';
 
 // =============================================================================
 // ENUMS FOR TNF V2

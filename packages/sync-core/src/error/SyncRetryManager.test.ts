@@ -10,8 +10,8 @@ import {
   RetryConfig, 
   RetryAttempt, 
   CircuitBreakerState 
-} from './SyncRetryManager';
-import { SyncError, SyncContext } from './SyncErrorHandler';
+} from './SyncRetryManager.js';
+import { SyncError, SyncContext } from './SyncErrorHandler.js';
 import { ErrorSeverity, ErrorCategory } from '@the-new-fuse/core-error-handling';
 
 describe('SyncRetryManager', () => {

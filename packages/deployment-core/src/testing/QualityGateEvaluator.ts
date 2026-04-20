@@ -1,5 +1,5 @@
 import { Logger } from 'winston';
-import { TestSummaryReport } from './TestRunner';
+import { TestSummaryReport } from './TestRunner.js';
 
 /**
  * Quality gate evaluation result

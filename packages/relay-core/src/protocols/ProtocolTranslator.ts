@@ -4,8 +4,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { RelayMessage, ProtocolType, ProtocolAdapter } from '../types';
-import { Logger } from '../utils/Logger';
+import { RelayMessage, ProtocolType, ProtocolAdapter } from '../types.js';
+import { Logger } from '../utils/Logger.js';
 
 export class ProtocolTranslator extends EventEmitter {
   private logger: Logger;

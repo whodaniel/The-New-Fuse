@@ -10,21 +10,21 @@
  */
 
 import { EventEmitter } from 'events';
-import { UnifiedBridge } from '../adapters/UnifiedBridge';
-import { createAuthService, JWTAuthService } from '../auth/JWTAuthService';
-import { A2AProtocolAdapter } from '../protocols/A2AProtocolAdapter';
-import { AnthropicXmlAdapter } from '../protocols/AnthropicXmlAdapter';
-import { CrewAIAdapter } from '../protocols/CrewAIAdapter';
-import { GooseAdapter } from '../protocols/GooseAdapter';
-import { LangchainAdapter } from '../protocols/LangchainAdapter';
-import { OpenAIAdapter } from '../protocols/OpenAIAdapter';
-import { ProtocolTranslator } from '../protocols/ProtocolTranslator';
-import { OrchestratorIntegrationService } from '../services/OrchestratorIntegrationService';
-import { FileTransport } from '../transports/FileTransport';
-import { HTTPTransport } from '../transports/HTTPTransport';
-import { MCPTransport } from '../transports/MCPTransport';
-import { RedisTransport } from '../transports/RedisTransport';
-import { WebSocketTransport } from '../transports/WebSocketTransport';
+import { UnifiedBridge } from '../adapters/UnifiedBridge.js';
+import { createAuthService, JWTAuthService } from '../auth/JWTAuthService.js';
+import { A2AProtocolAdapter } from '../protocols/A2AProtocolAdapter.js';
+import { AnthropicXmlAdapter } from '../protocols/AnthropicXmlAdapter.js';
+import { CrewAIAdapter } from '../protocols/CrewAIAdapter.js';
+import { GooseAdapter } from '../protocols/GooseAdapter.js';
+import { LangchainAdapter } from '../protocols/LangchainAdapter.js';
+import { OpenAIAdapter } from '../protocols/OpenAIAdapter.js';
+import { ProtocolTranslator } from '../protocols/ProtocolTranslator.js';
+import { OrchestratorIntegrationService } from '../services/OrchestratorIntegrationService.js';
+import { FileTransport } from '../transports/FileTransport.js';
+import { HTTPTransport } from '../transports/HTTPTransport.js';
+import { MCPTransport } from '../transports/MCPTransport.js';
+import { RedisTransport } from '../transports/RedisTransport.js';
+import { WebSocketTransport } from '../transports/WebSocketTransport.js';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import {
   Agent,
@@ -33,10 +33,10 @@ import {
   RelayMessage,
   SystemStatus,
   Transport,
-} from '../types';
-import { AgentRegistry } from '../utils/AgentRegistry';
-import { Logger } from '../utils/Logger';
-import { MessageRouter } from '../utils/MessageRouter';
+} from '../types.js';
+import { AgentRegistry } from '../utils/AgentRegistry.js';
+import { Logger } from '../utils/Logger.js';
+import { MessageRouter } from '../utils/MessageRouter.js';
 
 export class RelayServer extends EventEmitter {
   private config: RelayConfig;

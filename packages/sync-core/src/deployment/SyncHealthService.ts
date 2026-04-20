@@ -6,10 +6,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { ISystemHealthMonitor, HealthStatus } from '@the-new-fuse/core-monitoring';
-import { MasterClockService } from '../services/MasterClockService';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';
-import { PerformanceOptimizationService } from '../performance/PerformanceOptimizationService';
+import { MasterClockService } from '../services/MasterClockService.js';
+import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
+import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher.js';
+import { PerformanceOptimizationService } from '../performance/PerformanceOptimizationService.js';
 
 export interface SyncHealthMetrics {
   masterClock: {

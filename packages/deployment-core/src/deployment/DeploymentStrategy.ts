@@ -5,7 +5,7 @@ import {
   DeploymentResult,
   DeploymentStrategy as StrategyType,
   HealthCheckResult,
-} from '../types/pipeline';
+} from '../types/pipeline.js';
 
 /**
  * Base deployment strategy interface

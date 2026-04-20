@@ -1,6 +1,6 @@
 // packages/core/src/agents/memory_system/VectorMemorySystem.ts
 
-import { PastTaskResult, VectorMemorySystem } from '../orchestration/types';
+import { PastTaskResult, VectorMemorySystem } from '../orchestration/types.js';
 
 /**
  * Mock implementation of the VectorMemorySystem for development and testing.

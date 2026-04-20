@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter } from 'events';
-import { SyncAwareHeartbeatMonitoringService } from './SyncAwareHeartbeatMonitoringService';
-import { SyncHealthDashboardIntegration } from './SyncHealthDashboardIntegration';
-import { UnifiedSyncHealthReporting } from './UnifiedSyncHealthReporting';
-import { SyncDashboardService } from '../dashboard/SyncDashboardService';
-import { DashboardMonitoringIntegration } from '../dashboard/DashboardMonitoringIntegration';
+import { SyncAwareHeartbeatMonitoringService } from './SyncAwareHeartbeatMonitoringService.js';
+import { SyncHealthDashboardIntegration } from './SyncHealthDashboardIntegration.js';
+import { UnifiedSyncHealthReporting } from './UnifiedSyncHealthReporting.js';
+import { SyncDashboardService } from '../dashboard/SyncDashboardService.js';
+import { DashboardMonitoringIntegration } from '../dashboard/DashboardMonitoringIntegration.js';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { SyncRedisConfig } from '../config/SyncRedisConfig';
+import { SyncRedisConfig } from '../config/SyncRedisConfig.js';
 
 // Mock services
 class MockHeartbeatMonitoringService extends EventEmitter {

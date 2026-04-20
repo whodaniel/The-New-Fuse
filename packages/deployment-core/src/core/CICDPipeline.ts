@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { Logger } from 'winston';
-import { ICICDPipeline } from '../interfaces/ICICDPipeline';
+import { ICICDPipeline } from '../interfaces/ICICDPipeline.js';
 import {
   BuildResult,
   BuildTrigger,
@@ -16,12 +16,12 @@ import {
   RollbackResult,
   StageResult,
   TaskResult,
-} from '../types/pipeline';
-import { MetricsCollector } from './MetricsCollector';
-import { NotificationService } from './NotificationService';
-import { PipelineExecutor } from './PipelineExecutor';
-import { PipelineStorage } from './PipelineStorage';
-import { PipelineValidator } from './PipelineValidator';
+} from '../types/pipeline.js';
+import { MetricsCollector } from './MetricsCollector.js';
+import { NotificationService } from './NotificationService.js';
+import { PipelineExecutor } from './PipelineExecutor.js';
+import { PipelineStorage } from './PipelineStorage.js';
+import { PipelineValidator } from './PipelineValidator.js';
 
 /**
  * Core CI/CD Pipeline implementation

@@ -1,4 +1,4 @@
-import { Integration, IntegrationType, IntegrationRegistry } from './types';
+import { Integration, IntegrationType, IntegrationRegistry } from './types.js';
 import { EventEmitter } from 'events';
 
 /**

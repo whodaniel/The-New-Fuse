@@ -17,7 +17,7 @@ import {
   varchar,
   index,
 } from 'drizzle-orm/pg-core';
-import { agents } from './agents';
+import { agents } from './agents.js';
 
 // =============================================================================
 // AGENT TRACKING

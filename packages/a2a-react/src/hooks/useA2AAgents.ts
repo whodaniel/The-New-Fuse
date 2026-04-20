@@ -1,6 +1,6 @@
 import { A2AMessageType, AgentRegistration } from '@the-new-fuse/a2a-core';
 import { useCallback } from 'react';
-import { useA2AContext } from '../A2AProvider';
+import { useA2AContext } from '../A2AProvider.js';
 
 export function useA2AAgents() {
   const { agents: rawAgents, sendMessage } = useA2AContext();

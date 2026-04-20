@@ -1,4 +1,4 @@
-import { BaseService } from '../core/BaseService';
+import { BaseService } from '../core/BaseService.js';
 import { Logger } from '@the-new-fuse/core';
 import { Message, MessageType } from '@the-new-fuse/types';
 const Ajv = require('ajv');

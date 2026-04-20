@@ -10,8 +10,8 @@ import { EventEmitter } from 'events';
 import * as chokidar from 'chokidar';
 import fs from 'fs/promises';
 import path from 'path';
-import { Transport, RelayMessage } from '../types';
-import { Logger } from '../utils/Logger';
+import { Transport, RelayMessage } from '../types.js';
+import { Logger } from '../utils/Logger.js';
 
 export interface FileTransportConfig {
   workspaceDir: string;

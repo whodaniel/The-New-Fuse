@@ -6,9 +6,9 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { mcpValidator } from './validator';
-import { MessageValidator } from './messageValidator';
-import { JSONRPCErrorCode, MCPErrorCode } from '../types/error';
+import { mcpValidator } from './validator.js';
+import { MessageValidator } from './messageValidator.js';
+import { JSONRPCErrorCode, MCPErrorCode } from '../types/error.js';
 
 describe('MCP Protocol Compliance', () => {
   describe('JSON-RPC 2.0 Compliance', () => {

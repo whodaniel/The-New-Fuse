@@ -3,9 +3,9 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { WorkflowStep, StepExecution, WorkflowExecution, WorkflowStepType } from '../types/workflow';
-import { ServiceState } from '../constants/types';
-import { BaseError } from '../utils/errors';
+import { WorkflowStep, StepExecution, WorkflowExecution, WorkflowStepType } from '../types/workflow.js';
+import { ServiceState } from '../constants/types.js';
+import { BaseError } from '../utils/errors.js';
 
 export interface ExecutionContext {
   execution: WorkflowExecution;

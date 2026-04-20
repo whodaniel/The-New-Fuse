@@ -16,7 +16,7 @@ import {
   ApplyResult,
   InfrastructureState,
   CloudProvider
-} from '../types/infrastructure';
+} from '../types/infrastructure.js';
 
 export interface IInfrastructureManager {
   /**

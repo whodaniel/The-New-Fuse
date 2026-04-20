@@ -7,8 +7,8 @@ import {
 } from '@modelcontextprotocol/sdk/types';
 import { ResourceRegistryService } from '../services/resource-registry.service';
 import { ResourceAccessControlService } from '../services/resource-access-control.service';
-import { SearchResourceDto } from '../dto';
-import { ResourceCategory, ResourceType, ResourceVisibility, ResourceAction } from '../types';
+import { SearchResourceDto } from '../dto.js';
+import { ResourceCategory, ResourceType, ResourceVisibility, ResourceAction } from '../types.js';
 
 /**
  * MCP Server for Resource Registry

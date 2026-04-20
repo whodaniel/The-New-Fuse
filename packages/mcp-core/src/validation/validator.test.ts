@@ -3,8 +3,8 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MCPValidator, mcpValidator } from './validator';
-import { MCPErrorCode } from '../types/error';
+import { MCPValidator, mcpValidator } from './validator.js';
+import { MCPErrorCode } from '../types/error.js';
 
 describe('MCPValidator', () => {
   let validator: MCPValidator;

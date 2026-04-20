@@ -2,9 +2,9 @@
  * ConcurrencyController - Manages build process concurrency based on system resources and memory usage
  */
 
-import { IConcurrencyController } from '../interfaces';
-import { SystemResources, MemoryUsage } from '../types';
-import { SystemResourceDetector } from '../system/SystemResourceDetector';
+import { IConcurrencyController } from '../interfaces.js';
+import { SystemResources, MemoryUsage } from '../types.js';
+import { SystemResourceDetector } from '../system/SystemResourceDetector.js';
 
 export class ConcurrencyController implements IConcurrencyController {
   private currentConcurrency: number;

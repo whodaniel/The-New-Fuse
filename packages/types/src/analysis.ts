@@ -1,7 +1,7 @@
 // packages/types/src/analysis.ts
 
 // Import enums from core to avoid duplication
-import { AnalysisType, AnalysisStatus } from './core/enums';
+import { AnalysisType, AnalysisStatus } from './core/enums.js';
 
 // Re-export the imported enums
 export { AnalysisType, AnalysisStatus };
@@ -109,7 +109,7 @@ export interface SecurityScanResult {
 }
 
 // Import SecuritySeverity from core enums
-import { SecuritySeverity } from './core/enums';
+import { SecuritySeverity } from './core/enums.js';
 
 // Re-export SecuritySeverity
 export { SecuritySeverity };

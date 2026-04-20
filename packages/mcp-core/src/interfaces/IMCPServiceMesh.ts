@@ -5,7 +5,7 @@
  * infrastructure for service discovery, load balancing, health monitoring, and scaling.
  */
 
-import { MCPServiceInfo, ServiceHealth, RoutingMetrics } from '../types/broker';
+import { MCPServiceInfo, ServiceHealth, RoutingMetrics } from '../types/broker.js';
 
 /**
  * Service mesh registration information

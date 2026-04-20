@@ -7,12 +7,12 @@
 
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 const vi = jest;
-import { PromptHandoffFlywheel } from './PromptHandoffFlywheel';
-import { EnhancedAgentHandoffTemplateService } from './EnhancedAgentHandoffTemplateService';
-import { PromptTemplateIntegration } from './PromptTemplateIntegration';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { MasterClockService } from '../services/MasterClockService';
-import { ConflictManager } from '../services/ConflictManager';
+import { PromptHandoffFlywheel } from './PromptHandoffFlywheel.js';
+import { EnhancedAgentHandoffTemplateService } from './EnhancedAgentHandoffTemplateService.js';
+import { PromptTemplateIntegration } from './PromptTemplateIntegration.js';
+import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
+import { MasterClockService } from '../services/MasterClockService.js';
+import { ConflictManager } from '../services/ConflictManager.js';
 
 describe('PromptHandoffFlywheel Integration', () => {
   let flywheel: PromptHandoffFlywheel;

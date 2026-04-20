@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { AgentInfo, RedisAgentClient } from '@the-new-fuse/tnf-cli';
-import { Logger } from '../utils/Logger';
+import { Logger } from '../utils/Logger.js';
 
 export interface TerminalFederationConfig {
   tty: string;

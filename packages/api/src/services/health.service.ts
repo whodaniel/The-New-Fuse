@@ -7,7 +7,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from './database.service';
 import { HealthIndicator } from '@nestjs/terminus';
-import { toError } from '../utils/error';
+import { toError } from '../utils/error.js';
 
 // Local type definitions to avoid cross-package import issues
 interface HealthIndicatorResult {

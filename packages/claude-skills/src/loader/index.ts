@@ -4,4 +4,4 @@
  * Exports skill loading functionality
  */
 
-export { SkillLoader } from './SkillLoader';
+export { SkillLoader } from './SkillLoader.js';

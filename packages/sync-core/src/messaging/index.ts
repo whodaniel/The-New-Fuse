@@ -1,11 +1,11 @@
 // Sync-Aware A2A Message Types and Utilities
-export * from './SyncAwareA2AMessage';
+export * from './SyncAwareA2AMessage.js';
 
 // Core Messaging Services
-export * from './SyncAwareAgentWebSocketService';
-export * from './MessageQueueSynchronizer';
-export * from './CommunicationHubFailover';
-export * from './SyncAwareMessagingService';
+export * from './SyncAwareAgentWebSocketService.js';
+export * from './MessageQueueSynchronizer.js';
+export * from './CommunicationHubFailover.js';
+export * from './SyncAwareMessagingService.js';
 
 // Re-export for convenience
 export {
@@ -19,29 +19,29 @@ export {
   MessageFailoverConfig,
   MessageDeliveryMetrics,
   SyncAwareMessageUtils
-} from './SyncAwareA2AMessage';
+} from './SyncAwareA2AMessage.js';
 
 export {
   SyncAwareAgentWebSocketService,
   type IAgentWebSocketService,
   type SyncAwareWebSocketConfig
-} from './SyncAwareAgentWebSocketService';
+} from './SyncAwareAgentWebSocketService.js';
 
 export {
   MessageQueueSynchronizer,
   type QueueSyncMetrics,
   type QueueConflict
-} from './MessageQueueSynchronizer';
+} from './MessageQueueSynchronizer.js';
 
 export {
   CommunicationHubFailover,
   type CommunicationNode,
   type FailoverEvent,
   type CircuitBreakerState
-} from './CommunicationHubFailover';
+} from './CommunicationHubFailover.js';
 
 export {
   SyncAwareMessagingService,
   type MessagingServiceConfig,
   type MessagingMetrics
-} from './SyncAwareMessagingService';
+} from './SyncAwareMessagingService.js';

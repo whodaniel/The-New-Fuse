@@ -1,7 +1,7 @@
-import { ClineBridge } from '../cline_bridge';
+import { ClineBridge } from '../cline_bridge.js';
 import { jest } from '@jest/globals';
-import { Task } from '../types/task';
-import { ImplementationPhase } from '../types/phase';
+import { Task } from '../types/task.js';
+import { ImplementationPhase } from '../types/phase.js';
 
 export interface PriorityFactors {
     basePriority: number;

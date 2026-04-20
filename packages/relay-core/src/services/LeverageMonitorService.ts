@@ -1,5 +1,5 @@
-import { Logger } from '../utils/Logger';
-import { MasterAgentRegistry, MasterAgentProfile } from './MasterAgentRegistry';
+import { Logger } from '../utils/Logger.js';
+import { MasterAgentRegistry, MasterAgentProfile } from './MasterAgentRegistry.js';
 
 /**
  * Leverage Monitor Service

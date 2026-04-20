@@ -5,8 +5,8 @@
  * and event delivery across the system.
  */
 import { OnModuleInit } from '@nestjs/common';
-import { SyncOrchestrator } from '../src/services/SyncOrchestrator';
-import { NotificationService } from '../src/services/NotificationService';
+import { SyncOrchestrator } from '../src/services/SyncOrchestrator.js';
+import { NotificationService } from '../src/services/NotificationService.js';
 interface Notification {
     id: string;
     type: 'INFO' | 'WARNING' | 'ERROR' | 'SUCCESS';

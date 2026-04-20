@@ -32,8 +32,8 @@ export {
   LegacyVectorAdapter,
   TypeConverter,
   createLegacyAdapter,
-} from './adapters/legacy-adapter';
+} from './adapters/legacy-adapter.js';
 
 // Codebase Intelligence exports
-export { CodebaseSearch } from './codebase-search';
-export { CodebaseVectorizer } from './codebase-vectorizer';
+export { CodebaseSearch } from './codebase-search.js';
+export { CodebaseVectorizer } from './codebase-vectorizer.js';

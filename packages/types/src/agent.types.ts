@@ -1,4 +1,4 @@
-import type { JsonValue, DataMap } from './core/base-types';
+import type { JsonValue, DataMap } from './core/base-types.js';
 
 export interface AgentConfig {
   tools?: AgentTool[];

@@ -1,13 +1,13 @@
-import { toBeValidWorkflow } from './toBeValidWorkflow';
-import { toHavePermission } from './toHavePermission';
-import { toMatchAPIContract } from './toMatchAPIContract';
-import { toBeValidComponent } from './toBeValidComponent';
-import { toCompleteWithinTime } from './toCompleteWithinTime';
+import { toBeValidWorkflow } from './toBeValidWorkflow.js';
+import { toHavePermission } from './toHavePermission.js';
+import { toMatchAPIContract } from './toMatchAPIContract.js';
+import { toBeValidComponent } from './toBeValidComponent.js';
+import { toCompleteWithinTime } from './toCompleteWithinTime.js';
 
 // Use export type for type-only exports
-export type { ComponentValidator, ComponentValidatorInput } from './toBeValidComponent';
-export type { APIContract } from './toMatchAPIContract';
-export * from './types';
+export type { ComponentValidator, ComponentValidatorInput } from './toBeValidComponent.js';
+export type { APIContract } from './toMatchAPIContract.js';
+export * from './types.js';
 
 /**
  * Extends Jest's expect with custom matchers for The New Fuse platform

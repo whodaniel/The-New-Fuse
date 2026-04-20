@@ -5,9 +5,9 @@
  * functionality that's compatible with SkIDEancer's AI features and MCP expectations.
  */
 
-import { MCPServer } from '../server/MCPServer';
-import { MCPSystemFactory, MCPSystemConfig } from '../factory/MCPSystemFactory';
-import { LogLevel } from '../types/common';
+import { MCPServer } from '../server/MCPServer.js';
+import { MCPSystemFactory, MCPSystemConfig } from '../factory/MCPSystemFactory.js';
+import { LogLevel } from '../types/common.js';
 
 /**
  * Configuration for SkIDEancer MCP Bridge

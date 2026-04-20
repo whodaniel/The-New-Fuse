@@ -17,9 +17,9 @@ export type {
   MCPConnection,
   MCPResource,
   MCPTool,
-} from './interfaces';
+} from './interfaces.js';
 
-export { AgentStatus } from './interfaces';
+export { AgentStatus } from './interfaces.js';
 
 // Core message types
 export type {
@@ -27,10 +27,10 @@ export type {
   MCPNotification,
   MCPRequest,
   MCPResponse,
-} from './interfaces/IMCPMessage';
+} from './interfaces/IMCPMessage.js';
 
 // Connection types
-export type { ConnectionOptions, ConnectionStatus } from './interfaces/IMCPConnection';
+export type { ConnectionOptions, ConnectionStatus } from './interfaces/IMCPConnection.js';
 
 // Resource types
 export type {
@@ -38,7 +38,7 @@ export type {
   ResourceCallback,
   ResourceContent,
   ResourcePermissions,
-} from './interfaces/IMCPResource';
+} from './interfaces/IMCPResource.js';
 
 // Service Mesh types
 export type {
@@ -56,7 +56,7 @@ export type {
   ServiceMeshQuery,
   ServiceMeshRegistration,
   ServiceScalingConfig,
-} from './interfaces/IMCPServiceMesh';
+} from './interfaces/IMCPServiceMesh.js';
 
 // Tool-related types
 export type {
@@ -69,7 +69,7 @@ export type {
   ToolResult,
   ToolUsageStats,
   ValidationResult,
-} from './interfaces/IMCPTool';
+} from './interfaces/IMCPTool.js';
 
 // Core types
 export type {
@@ -79,10 +79,10 @@ export type {
   MCPServerInfo,
   MCPServiceInfo,
   ServiceStatus,
-} from './types';
+} from './types.js';
 
 // Skill types (used by workflow-engine and agent packages)
-export type { ResourceRequirement, Skill } from './types';
+export type { ResourceRequirement, Skill } from './types.js';
 
 // Error types and classes
 export {
@@ -91,31 +91,31 @@ export {
   JSONRPCErrorCode,
   MCPErrorClass,
   MCPErrorCode,
-} from './types/error';
+} from './types/error.js';
 
 // Validation utilities
-export { MessageSerializer, MessageValidator, SerializationUtils } from './validation';
+export { MessageSerializer, MessageValidator, SerializationUtils } from './validation.js';
 
 export type {
   DeserializationResult,
   ValidationResult as MessageValidationResult,
   SerializationResult,
-} from './validation';
+} from './validation.js';
 
 // Handler base classes
-export * from './handlers';
+export * from './handlers.js';
 
 // Server implementation
-export { MCPServer } from './server';
+export { MCPServer } from './server.js';
 
 // Client implementation
-export * from './client';
+export * from './client.js';
 
 // Broker implementation
-export * from './broker';
+export * from './broker.js';
 
 // Factory for integrated system
-export * from './factory';
+export * from './factory.js';
 
 // Integration bridges
 export {
@@ -125,13 +125,13 @@ export {
   ServiceMeshMonitor,
   ServiceMeshScaler,
   WorkflowExecutionMonitor,
-} from './integrations';
+} from './integrations.js';
 
 // Authentication and authorization
-export * from './auth';
+export * from './auth.js';
 
 // Monitoring and metrics (prefer monitoring over integrations for Alert types)
-export * from './monitoring';
+export * from './monitoring.js';
 
 // Performance optimization
 export {
@@ -142,7 +142,7 @@ export {
   MultiLevelCache,
   OptimizedConnectionPool,
   PerformanceValidator,
-} from './performance';
+} from './performance.js';
 
 // Version information
 export const VERSION = '1.0.0';

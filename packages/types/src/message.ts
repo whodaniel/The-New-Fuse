@@ -11,7 +11,7 @@ export enum MessageType {
   TASK_ASSIGNMENT = 'task_assignment'
 }
 
-import { Priority } from './core/enums';
+import { Priority } from './core/enums.js';
 
 export interface Message {
   id: string;

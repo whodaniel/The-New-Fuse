@@ -1,4 +1,4 @@
-import { PerformanceSuite } from '../PerformanceSuite';
+import { PerformanceSuite } from '../PerformanceSuite.js';
 import * as path from 'path';
 
 describe('UI Performance Tests', () => {

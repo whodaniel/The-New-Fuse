@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SyncDashboardService, IAgentWebSocketService, IMonitoringService, SystemAlert } from './SyncDashboardService';
+import { SyncDashboardService, IAgentWebSocketService, IMonitoringService, SystemAlert } from './SyncDashboardService.js';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { SyncRedisConfig } from '../config/SyncRedisConfig';
+import { SyncRedisConfig } from '../config/SyncRedisConfig.js';
 
 describe('SyncDashboardService', () => {
   let service: SyncDashboardService;

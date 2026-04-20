@@ -12,7 +12,7 @@ import {
   CloudProvider,
   ResourceType,
   VariableType
-} from '../types/infrastructure';
+} from '../types/infrastructure.js';
 
 export interface ParsedTemplate {
   template: InfrastructureTemplate;

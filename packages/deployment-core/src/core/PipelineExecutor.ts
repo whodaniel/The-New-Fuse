@@ -9,7 +9,7 @@ import {
   RollbackResult,
   ServiceDeploymentResult,
   HealthCheckResult
-} from '../types/pipeline';
+} from '../types/pipeline.js';
 import { Logger } from 'winston';
 import { spawn, ChildProcess } from 'child_process';
 import { EventEmitter } from 'events';

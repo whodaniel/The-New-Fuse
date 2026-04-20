@@ -11,7 +11,7 @@
 
 import { EventEmitter } from 'events';
 
-import { MessageType } from './index';
+import { MessageType } from './index.js';
 
 // ============================================================
 // MONITORING TYPES

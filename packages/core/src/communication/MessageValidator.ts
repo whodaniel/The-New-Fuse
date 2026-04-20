@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Message } from './MessageBroker';
+import { Message } from './MessageBroker.js';
 
 export interface ValidationRule {
   field: string;

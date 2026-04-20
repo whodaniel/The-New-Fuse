@@ -9,7 +9,7 @@
  * - Alerting
  */
 
-import { BaseBridge, MessageType, Priority } from './index';
+import { BaseBridge, MessageType, Priority } from './index.js';
 
 // ============================================================
 // MONITORING TYPES

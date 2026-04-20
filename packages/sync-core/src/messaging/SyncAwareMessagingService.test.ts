@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SyncAwareMessagingService } from './SyncAwareMessagingService';
-import { SyncAwareAgentWebSocketService } from './SyncAwareAgentWebSocketService';
-import { MessageQueueSynchronizer } from './MessageQueueSynchronizer';
-import { CommunicationHubFailover } from './CommunicationHubFailover';
-import { SyncRedisConfig } from '../config/SyncRedisConfig';
+import { SyncAwareMessagingService } from './SyncAwareMessagingService.js';
+import { SyncAwareAgentWebSocketService } from './SyncAwareAgentWebSocketService.js';
+import { MessageQueueSynchronizer } from './MessageQueueSynchronizer.js';
+import { CommunicationHubFailover } from './CommunicationHubFailover.js';
+import { SyncRedisConfig } from '../config/SyncRedisConfig.js';
 import {
   SyncAwareA2AMessage,
   SyncAwareMessageUtils,
@@ -11,7 +11,7 @@ import {
   CrossTenantRoutingConfig,
   MessageQueueSyncConfig,
   MessageFailoverConfig
-} from './SyncAwareA2AMessage';
+} from './SyncAwareA2AMessage.js';
 
 describe('SyncAwareMessagingService', () => {
   let service: SyncAwareMessagingService;

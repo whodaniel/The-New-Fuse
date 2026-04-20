@@ -10,11 +10,11 @@
  */
 
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger';
-import { CleanupService } from './CleanupService';
-import { HeartbeatMonitoringService } from './HeartbeatMonitoringService';
-import { AgentHandoffTemplateService } from './shared/StubServices';
-import { StallDetector } from './stall-detector';
+import { Logger } from '../utils/Logger.js';
+import { CleanupService } from './CleanupService.js';
+import { HeartbeatMonitoringService } from './HeartbeatMonitoringService.js';
+import { AgentHandoffTemplateService } from './shared/StubServices.js';
+import { StallDetector } from './stall-detector.js';
 
 export interface OrchestratorConfig {
   workspaceRoot: string;

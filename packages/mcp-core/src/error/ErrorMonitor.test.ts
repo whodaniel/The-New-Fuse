@@ -2,9 +2,9 @@
  * Unit tests for ErrorMonitor
  */
 
-import { ErrorMonitor, MonitorConfig, AlertRule, ErrorMetrics } from './ErrorMonitor';
-import { MCPErrorClass, ErrorCategory, ErrorSeverity, MCPErrorCode } from '../types/error';
-import { Logger } from '../utils/Logger';
+import { ErrorMonitor, MonitorConfig, AlertRule, ErrorMetrics } from './ErrorMonitor.js';
+import { MCPErrorClass, ErrorCategory, ErrorSeverity, MCPErrorCode } from '../types/error.js';
+import { Logger } from '../utils/Logger.js';
 
 describe('ErrorMonitor', () => {
   let monitor: ErrorMonitor;

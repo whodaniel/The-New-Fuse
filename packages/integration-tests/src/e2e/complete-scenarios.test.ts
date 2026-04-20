@@ -5,7 +5,7 @@
  * and Extension System working together to accomplish complex tasks
  */
 
-import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
+import { getTestEnvironment, TestHelpers } from '../setup/test-setup.js';
 import * as path from 'path';
 
 // Define types locally since workflow-engine dependency was removed

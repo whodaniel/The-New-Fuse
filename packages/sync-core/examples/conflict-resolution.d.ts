@@ -4,8 +4,8 @@
  * Shows how to handle and resolve data conflicts when
  * multiple instances modify the same resource concurrently.
  */
-import { SyncOrchestrator } from '../src/services/SyncOrchestrator';
-import { ConflictManager } from '../src/services/ConflictManager';
+import { SyncOrchestrator } from '../src/services/SyncOrchestrator.js';
+import { ConflictManager } from '../src/services/ConflictManager.js';
 interface Document {
     id: string;
     title: string;

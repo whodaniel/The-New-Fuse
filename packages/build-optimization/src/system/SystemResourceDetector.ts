@@ -4,8 +4,8 @@
 
 import * as os from 'os';
 import process from 'process';
-import { ISystemResourceDetector } from '../interfaces';
-import { SystemResources, MemoryUsage } from '../types';
+import { ISystemResourceDetector } from '../interfaces.js';
+import { SystemResources, MemoryUsage } from '../types.js';
 
 /**
  * Detects system resources including memory, CPU, and platform information

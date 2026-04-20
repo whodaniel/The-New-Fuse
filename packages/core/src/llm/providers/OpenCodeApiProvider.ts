@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
-import { LLMProvider } from '../LLMProvider';
+import { LLMProvider } from '../LLMProvider.js';
 import { LLMMessage, LLMResponse, LLMConfig } from '@the-new-fuse/types';
 
 export interface OpenCodeApiConfig extends LLMConfig {

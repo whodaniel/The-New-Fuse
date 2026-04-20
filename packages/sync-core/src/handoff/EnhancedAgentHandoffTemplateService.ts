@@ -7,9 +7,9 @@
  * Requirements: 4.1, 4.2, 4.3, 4.4, 4.5
  */
 
-import { PromptHandoffFlywheel, HandoffTemplate, HandoffContext } from './PromptHandoffFlywheel';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { MasterClockService } from '../services/MasterClockService';
+import { PromptHandoffFlywheel, HandoffTemplate, HandoffContext } from './PromptHandoffFlywheel.js';
+import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
+import { MasterClockService } from '../services/MasterClockService.js';
 
 // Import existing services (assuming they exist in the codebase)
 interface ExistingPromptTemplateService {

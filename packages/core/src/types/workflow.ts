@@ -2,7 +2,7 @@
  * @fileoverview Workflow system type definitions
  */
 
-import { WorkflowError } from '../utils/errors';
+import { WorkflowError } from '../utils/errors.js';
 
 // Workflow Definition Types
 export interface WorkflowDefinition {

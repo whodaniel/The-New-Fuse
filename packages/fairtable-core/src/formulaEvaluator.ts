@@ -1,5 +1,5 @@
 
-import { Row, Column, CellValue, DataType, Table, AttachmentFile } from './types';
+import { Row, Column, CellValue, DataType, Table, AttachmentFile } from './types.js';
 
 // Very simple tokenizer - adjust regex for more complex scenarios
 const tokenize = (formula: string): (string | number)[] => {

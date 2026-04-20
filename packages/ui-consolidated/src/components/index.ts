@@ -1,34 +1,34 @@
 // UI Components
-export * from './Accordion';
-export * from './Alert';
-export * from './Badge';
-export * from './Breadcrumb';
-export * from './Button';
-export * from './Card';
-export * from './Checkbox';
-export * from './Dropdown';
-export * from './Input';
-export * from './Modal';
-export * from './Pagination';
-export * from './Radio';
-export * from './Select';
-export * from './Switch';
-export * from './Tabs';
-export * from './Textarea';
-export * from './Tooltip';
+export * from './Accordion.js';
+export * from './Alert.js';
+export * from './Badge.js';
+export * from './Breadcrumb.js';
+export * from './Button.js';
+export * from './Card.js';
+export * from './Checkbox.js';
+export * from './Dropdown.js';
+export * from './Input.js';
+export * from './Modal.js';
+export * from './Pagination.js';
+export * from './Radio.js';
+export * from './Select.js';
+export * from './Switch.js';
+export * from './Tabs.js';
+export * from './Textarea.js';
+export * from './Tooltip.js';
 
 // Auth Components
-export * from './auth';
+export * from './auth.js';
 
 // Layout Components
-export * from './Container';
-export * from './Layout';
-export * from './Sidebar';
-export * from './Split';
+export * from './Container.js';
+export * from './Layout.js';
+export * from './Sidebar.js';
+export * from './Split.js';
 
 // Feature Components
-export * from './features/memory-inspector/MemoryInspector';
-export * from './features/metrics-dashboard/MetricsDashboard';
+export * from './features/memory-inspector/MemoryInspector.js';
+export * from './features/metrics-dashboard/MetricsDashboard.js';
 
-export * from './GlassCard';
-export * from './MagneticButton';
+export * from './GlassCard.js';
+export * from './MagneticButton.js';

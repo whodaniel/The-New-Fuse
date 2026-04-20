@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import Anthropic from '@anthropic-ai/sdk';
-import { LLMProvider } from '../LLMProvider';
+import { LLMProvider } from '../LLMProvider.js';
 import { LLMMessage, LLMResponse, LLMConfig } from '@the-new-fuse/types';
 
 export interface AnthropicConfig extends LLMConfig {

@@ -12,7 +12,7 @@ import {
   verify,
   type KeyObject,
 } from 'node:crypto';
-import { MasterClockSignalEnvelope, MasterClockSignalPlaintext, SignalAckRequest } from './types';
+import { MasterClockSignalEnvelope, MasterClockSignalPlaintext, SignalAckRequest } from './types.js';
 
 /**
  * Stable stringify for deterministic signing

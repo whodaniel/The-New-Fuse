@@ -5,7 +5,7 @@
  * Allows any TNF agent to delegate tasks to free Gemini compute
  */
 
-import { geminiBrowser, GeminiPromptRequest } from './GeminiBrowserAutomation';
+import { geminiBrowser, GeminiPromptRequest } from './GeminiBrowserAutomation.js';
 
 export interface MCPTool {
   name: string;

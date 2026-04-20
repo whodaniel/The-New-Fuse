@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { WebSocketTestClient } from './websocket-client';
+import { WebSocketTestClient } from './websocket-client.js';
 
 export interface LoadTestConfig {
   url: string;

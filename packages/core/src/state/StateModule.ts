@@ -1,6 +1,6 @@
 import { Module, Global } from '@nestjs/common';
-import { StateService } from './StateService';
-import { StateManager } from './StateManager';
+import { StateService } from './StateService.js';
+import { StateManager } from './StateManager.js';
 
 @Global()
 @Module({

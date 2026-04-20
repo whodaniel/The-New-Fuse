@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 export interface ApiClientOptions {
   baseURL: string;
   timeout?: number;

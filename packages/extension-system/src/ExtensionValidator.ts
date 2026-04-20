@@ -4,7 +4,7 @@
  * Validates an extension's manifest to ensure it has all the required fields.
  */
 
-import { ExtensionManifest } from './ExtensionTypes';
+import { ExtensionManifest } from './ExtensionTypes.js';
 
 interface ValidationResult {
   isValid: boolean;

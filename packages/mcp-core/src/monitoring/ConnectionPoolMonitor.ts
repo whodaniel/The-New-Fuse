@@ -2,9 +2,9 @@
  * Connection Pool Monitoring System
  */
 
-import { IConnectionPoolMonitor } from '../interfaces/IMonitoring';
-import { ConnectionPoolMetrics } from '../types/monitoring';
-import { Logger } from '../utils/Logger';
+import { IConnectionPoolMonitor } from '../interfaces/IMonitoring.js';
+import { ConnectionPoolMetrics } from '../types/monitoring.js';
+import { Logger } from '../utils/Logger.js';
 
 export interface ConnectionPoolMonitorConfig {
   /** Metrics retention period (ms) */

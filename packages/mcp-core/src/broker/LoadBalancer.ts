@@ -5,10 +5,10 @@
  * multiple MCP service instances using various strategies.
  */
 
-import { MCPServiceInfo } from '../types/broker';
-import { LoadBalancingConfig } from '../types/broker';
-import { LoadBalancingStrategy, ServiceStatus } from '../types/common';
-import { MCPErrorClass, MCPErrorCode } from '../types/error';
+import { MCPServiceInfo } from '../types/broker.js';
+import { LoadBalancingConfig } from '../types/broker.js';
+import { LoadBalancingStrategy, ServiceStatus } from '../types/common.js';
+import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
 
 /**
  * Service instance tracking for load balancing

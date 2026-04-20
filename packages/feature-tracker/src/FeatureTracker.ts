@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FeatureProgress, FeatureStage, CodeMetrics, QualitativeAssessment } from './types';
+import { FeatureProgress, FeatureStage, CodeMetrics, QualitativeAssessment } from './types.js';
 
 @Injectable()
 export class FeatureTracker {

@@ -10,8 +10,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { RelayMessage, Transport } from '../types';
-import { Logger } from '../utils/Logger';
+import { RelayMessage, Transport } from '../types.js';
+import { Logger } from '../utils/Logger.js';
 
 export class UnifiedBridge extends EventEmitter {
   private logger: Logger;

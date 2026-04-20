@@ -1,2 +1,2 @@
-export * from './types';
-export * from './UnifiedLoggingService';
+export * from './types.js';
+export * from './UnifiedLoggingService.js';

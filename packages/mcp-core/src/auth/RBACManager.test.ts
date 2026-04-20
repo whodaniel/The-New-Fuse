@@ -3,9 +3,9 @@
  */
 
 import { describe, it, expect, beforeEach } from '@jest/globals';
-import { RBACManager, Permission, Role, ResourceAccessPolicy } from './RBACManager';
-import { AuthContext } from './AuthenticationManager';
-import { MCPErrorClass, MCPErrorCode } from '../types/error';
+import { RBACManager, Permission, Role, ResourceAccessPolicy } from './RBACManager.js';
+import { AuthContext } from './AuthenticationManager.js';
+import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
 
 describe('RBACManager', () => {
   let rbacManager: RBACManager;

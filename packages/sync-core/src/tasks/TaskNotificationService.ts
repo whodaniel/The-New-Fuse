@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy, Inject } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { DrizzleService } from '@the-new-fuse/database';
-import { TaskNotification } from './TaskSynchronizationService';
+import { TaskNotification } from './TaskSynchronizationService.js';
 
 export interface TaskNotificationRule {
   id: string;

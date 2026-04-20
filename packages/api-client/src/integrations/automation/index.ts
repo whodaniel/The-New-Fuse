@@ -1,3 +1,3 @@
-export * from './make';
-export * from './pabbly';
-export * from './zapier';
+export * from './make.js';
+export * from './pabbly.js';
+export * from './zapier.js';

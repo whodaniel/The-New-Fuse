@@ -5,10 +5,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import * as crypto from 'crypto';
-import { SwarmExecution, SwarmCoordinationStrategy, Agent, AgentStatus } from '../types/agent';
-import { Task, TaskStatus } from '../types/core';
-import { ServiceState } from '../constants/types';
-import { BaseError } from '../utils/errors';
+import { SwarmExecution, SwarmCoordinationStrategy, Agent, AgentStatus } from '../types/agent.js';
+import { Task, TaskStatus } from '../types/core.js';
+import { ServiceState } from '../constants/types.js';
+import { BaseError } from '../utils/errors.js';
 
 export interface SwarmTask {
   id: string;

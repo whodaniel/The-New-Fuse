@@ -6,21 +6,21 @@
  */
 
 // Core engine components
-export { UnifiedWorkflowEngine, type WorkflowEngineConfig } from './engine/WorkflowEngine';
-export { WorkflowExecutor, type ExecutorConfig } from './executor/WorkflowExecutor';
-export { WorkflowBuilder, type BuilderConfig, type BuilderState, type BuilderAction } from './builder/WorkflowBuilder';
-export { WorkflowQueue, type StartWorkflowJobData, type ExecuteNodeJobData } from './queue/WorkflowQueue';
-export { WorkflowWorker } from './queue/WorkflowWorker';
+export { UnifiedWorkflowEngine, type WorkflowEngineConfig } from './engine/WorkflowEngine.js';
+export { WorkflowExecutor, type ExecutorConfig } from './executor/WorkflowExecutor.js';
+export { WorkflowBuilder, type BuilderConfig, type BuilderState, type BuilderAction } from './builder/WorkflowBuilder.js';
+export { WorkflowQueue, type StartWorkflowJobData, type ExecuteNodeJobData } from './queue/WorkflowQueue.js';
+export { WorkflowWorker } from './queue/WorkflowWorker.js';
 
 // Repository and validation
-export { WorkflowRepository, type RepositoryConfig } from './repository/WorkflowRepository';
-export { WorkflowValidator, type ValidatorConfig } from './validator/WorkflowValidator';
+export { WorkflowRepository, type RepositoryConfig } from './repository/WorkflowRepository.js';
+export { WorkflowValidator, type ValidatorConfig } from './validator/WorkflowValidator.js';
 
 // Types and interfaces
-export * from './types/WorkflowTypes';
+export * from './types/WorkflowTypes.js';
 
 // Utilities
-export { getErrorMessage, isError, createExecutionError } from './utils/errorUtils';
+export { getErrorMessage, isError, createExecutionError } from './utils/errorUtils.js';
 
 // Utility functions
 export {
@@ -28,7 +28,7 @@ export {
   isAgentHandoffNode,
   isConditionNode,
   isLLMPromptNode
-} from './types/WorkflowTypes';
+} from './types/WorkflowTypes.js';
 
 /**
  * Workflow Engine Factory
@@ -40,13 +40,13 @@ import { Logger } from '@the-new-fuse/relay-core';
 
 // Import actual types from relay-core
 import { MasterAgentRegistry, HeartbeatMonitoringService } from '@the-new-fuse/relay-core';
-import { UnifiedWorkflowEngine } from './engine/WorkflowEngine';
-import { WorkflowRepository } from './repository/WorkflowRepository';
-import { WorkflowValidator } from './validator/WorkflowValidator';
-import { WorkflowBuilder } from './builder/WorkflowBuilder';
-import { WorkflowExecutor } from './executor/WorkflowExecutor';
-import { WorkflowQueue } from './queue/WorkflowQueue';
-import { WorkflowWorker } from './queue/WorkflowWorker';
+import { UnifiedWorkflowEngine } from './engine/WorkflowEngine.js';
+import { WorkflowRepository } from './repository/WorkflowRepository.js';
+import { WorkflowValidator } from './validator/WorkflowValidator.js';
+import { WorkflowBuilder } from './builder/WorkflowBuilder.js';
+import { WorkflowExecutor } from './executor/WorkflowExecutor.js';
+import { WorkflowQueue } from './queue/WorkflowQueue.js';
+import { WorkflowWorker } from './queue/WorkflowWorker.js';
 
 export interface WorkflowEngineFactoryConfig {
   // Database configuration

@@ -4,9 +4,9 @@
  */
 
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger';
-import { CircuitBreaker, CircuitState } from './CircuitBreaker';
-import { GracefulDegradationManager, ServiceLevel } from './GracefulDegradation';
+import { Logger } from '../utils/Logger.js';
+import { CircuitBreaker, CircuitState } from './CircuitBreaker.js';
+import { GracefulDegradationManager, ServiceLevel } from './GracefulDegradation.js';
 
 export interface ServiceEndpoint {
   /** Endpoint ID */

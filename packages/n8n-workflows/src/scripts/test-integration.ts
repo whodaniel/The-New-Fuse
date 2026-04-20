@@ -5,9 +5,9 @@
  */
 
 import * as path from 'path';
-import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer';
-import { WorkflowParser } from '../parser/WorkflowParser';
-import { WorkflowService } from '../services/WorkflowService';
+import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer.js';
+import { WorkflowParser } from '../parser/WorkflowParser.js';
+import { WorkflowService } from '../services/WorkflowService.js';
 
 async function testIntegration() {
   console.log('=== N8N Workflows Integration Test ===\n');

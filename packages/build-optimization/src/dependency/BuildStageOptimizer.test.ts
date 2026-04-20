@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { BuildStageOptimizer, StageOptimizationConfig } from './BuildStageOptimizer';
-import { PackageDependency, SystemResources } from '../types';
+import { BuildStageOptimizer, StageOptimizationConfig } from './BuildStageOptimizer.js';
+import { PackageDependency, SystemResources } from '../types.js';
 
 describe('BuildStageOptimizer', () => {
   let optimizer: BuildStageOptimizer;

@@ -14,7 +14,7 @@ import {
   type WorkflowExecution,
   type NewWorkflowExecution,
 } from '../repositories/workflow.repository';
-import { toError } from '../utils/error';
+import { toError } from '../utils/error.js';
 
 @Injectable()
 export class WorkflowService {

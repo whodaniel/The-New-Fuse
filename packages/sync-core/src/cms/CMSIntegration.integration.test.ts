@@ -14,7 +14,7 @@ import {
   CMSEventType,
   SyncFrequency,
   ConflictResolutionStrategy
-} from './types';
+} from './types.js';
 
 // Mock UserRole enum since Drizzle client is not available in tests
 enum UserRole {

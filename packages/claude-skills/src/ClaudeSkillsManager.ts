@@ -4,11 +4,11 @@
  * Main orchestrator for Claude Skills integration
  */
 
-import { SkillLoader } from './loader';
-import { SkillParser } from './parser';
-import { SkillExecutor } from './executor';
-import { SkillRegistry } from './registry';
-import { MCPSkillProvider } from './integration';
+import { SkillLoader } from './loader.js';
+import { SkillParser } from './parser.js';
+import { SkillExecutor } from './executor.js';
+import { SkillRegistry } from './registry.js';
+import { MCPSkillProvider } from './integration.js';
 import {
   ClaudeSkill,
   SkillLoaderConfig,
@@ -16,7 +16,7 @@ import {
   SkillExecutionContext,
   SkillExecutionResult,
   SkillFilter,
-} from './types';
+} from './types.js';
 
 /**
  * Configuration for Claude Skills Manager

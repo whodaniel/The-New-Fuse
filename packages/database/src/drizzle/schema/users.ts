@@ -13,9 +13,9 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { agents } from './agents';
-import { userRoleEnum } from './enums';
-import { workspaceMembers, workspaces } from './workspace';
+import { agents } from './agents.js';
+import { userRoleEnum } from './enums.js';
+import { workspaceMembers, workspaces } from './workspace.js';
 
 // =============================================================================
 // USER

@@ -3,9 +3,9 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { MemoryContent, MemoryQuery, MemoryQueryResult, MemoryStorageConfig, MemoryStats } from '../types/memory';
-import { ServiceState } from '../constants/types';
-import { BaseError } from '../utils/errors';
+import { MemoryContent, MemoryQuery, MemoryQueryResult, MemoryStorageConfig, MemoryStats } from '../types/memory.js';
+import { ServiceState } from '../constants/types.js';
+import { BaseError } from '../utils/errors.js';
 
 @Injectable()
 export class MemorySystem {

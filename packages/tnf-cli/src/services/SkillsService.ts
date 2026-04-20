@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { LLMClient } from '../utils/llm-client';
+import { LLMClient } from '../utils/llm-client.js';
 
 export class SkillsService {
   private readonly skillBankPath: string;

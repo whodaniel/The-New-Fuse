@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { createLogger, format, transports, Logger as WinstonLogger } from 'winston';
-import { ConfigService } from '../config/ConfigService';
+import { ConfigService } from '../config/ConfigService.js';
 
 export interface LogEntry {
   id: string;

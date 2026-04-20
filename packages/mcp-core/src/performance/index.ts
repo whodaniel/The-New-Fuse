@@ -8,32 +8,32 @@ export {
   MultiLevelCache,
   CacheFactory,
   EvictionStrategy
-} from './CacheStrategy';
+} from './CacheStrategy.js';
 
 export type {
   ICache,
   CacheEntry,
   CacheConfig,
   CacheStats
-} from './CacheStrategy';
+} from './CacheStrategy.js';
 
 // Connection pool optimization
 export {
   OptimizedConnectionPool,
   ConnectionPoolFactory
-} from './ConnectionPoolOptimizer';
+} from './ConnectionPoolOptimizer.js';
 
 export type {
   IConnection,
   IConnectionFactory,
   ConnectionPoolConfig,
   PoolStatistics
-} from './ConnectionPoolOptimizer';
+} from './ConnectionPoolOptimizer.js';
 
 // Load testing
 export {
   LoadTestRunner
-} from './LoadTestRunner';
+} from './LoadTestRunner.js';
 
 export type {
   LoadTestScenario,
@@ -45,12 +45,12 @@ export type {
   TestStatistics,
   TimelinePoint,
   ErrorSummary
-} from './LoadTestRunner';
+} from './LoadTestRunner.js';
 
 // Performance validation
 export {
   PerformanceValidator
-} from './PerformanceValidator';
+} from './PerformanceValidator.js';
 
 export type {
   PerformanceTargets,
@@ -58,4 +58,4 @@ export type {
   TargetValidation,
   PerformanceMetrics,
   ScalabilityAnalysis
-} from './PerformanceValidator';
+} from './PerformanceValidator.js';

@@ -7,8 +7,8 @@
 
 import { EventEmitter } from 'events';
 import WebSocket, { WebSocketServer } from 'ws';
-import { RelayMessage, Transport } from '../types';
-import { Logger } from '../utils/Logger';
+import { RelayMessage, Transport } from '../types.js';
+import { Logger } from '../utils/Logger.js';
 
 export interface WebSocketTransportConfig {
   port: number;

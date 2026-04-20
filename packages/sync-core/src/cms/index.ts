@@ -6,11 +6,11 @@
  * content sharing, and private data isolation.
  */
 
-export { PersonalContentManager } from './PersonalContentManager';
-export { ProjectConfigurationSync } from './ProjectConfigurationSync';
-export { CollaborativeContentService } from './CollaborativeContentService';
-export { PrivateDataIsolationService } from './PrivateDataIsolationService';
-export { CMSIntegrationService } from './CMSIntegrationService';
+export { PersonalContentManager } from './PersonalContentManager.js';
+export { ProjectConfigurationSync } from './ProjectConfigurationSync.js';
+export { CollaborativeContentService } from './CollaborativeContentService.js';
+export { PrivateDataIsolationService } from './PrivateDataIsolationService.js';
+export { CMSIntegrationService } from './CMSIntegrationService.js';
 
 // Types
 export type {
@@ -21,4 +21,4 @@ export type {
   CMSConfig,
   ContentMetadata,
   SharingPermission
-} from './types';
+} from './types.js';

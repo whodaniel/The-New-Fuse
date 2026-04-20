@@ -2,9 +2,9 @@
  * Load Testing System
  */
 
-import { ILoadTester } from '../interfaces/IMonitoring';
-import { LoadTestConfig, LoadTestResult } from '../types/monitoring';
-import { Logger } from '../utils/Logger';
+import { ILoadTester } from '../interfaces/IMonitoring.js';
+import { LoadTestConfig, LoadTestResult } from '../types/monitoring.js';
+import { Logger } from '../utils/Logger.js';
 
 /**
  * Load tester implementation

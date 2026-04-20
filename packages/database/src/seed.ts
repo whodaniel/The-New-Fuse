@@ -5,9 +5,9 @@
 
 import { eq } from 'drizzle-orm';
 import { fileURLToPath } from 'node:url';
-import { db } from './drizzle/client';
-import { agents } from './drizzle/schema/agents';
-import { users } from './drizzle/schema/users';
+import { db } from './drizzle/client.js';
+import { agents } from './drizzle/schema/agents.js';
+import { users } from './drizzle/schema/users.js';
 
 // =============================================================================
 // AGENT TYPES

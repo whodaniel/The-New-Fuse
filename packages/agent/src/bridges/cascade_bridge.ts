@@ -10,8 +10,8 @@
  * - EventEmitter: For workflow events
  */
 
-import { BaseBridge, MessageType, Priority } from './index';
-import type { UniversalMessage } from './universal_bridge';
+import { BaseBridge, MessageType, Priority } from './index.js';
+import type { UniversalMessage } from './universal_bridge.js';
 
 // Cascade Step Definition
 export interface CascadeStepDef {

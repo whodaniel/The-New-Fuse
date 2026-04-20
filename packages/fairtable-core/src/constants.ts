@@ -1,5 +1,5 @@
 
-import { DataType, ViewType, FilterOperator, View, KanbanViewOptions, TimelineViewOptions, Table } from './types';
+import { DataType, ViewType, FilterOperator, View, KanbanViewOptions, TimelineViewOptions, Table } from './types.js';
 
 // Simple ID generator function
 const generateId = (): string => {

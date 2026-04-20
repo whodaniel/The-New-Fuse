@@ -5,7 +5,7 @@
  * for multi-tenant synchronization across The New Fuse platform.
  */
 
-import { SyncOrchestrator, AgentState } from './SyncOrchestrator';
+import { SyncOrchestrator, AgentState } from './SyncOrchestrator.js';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { DrizzleService } from '@the-new-fuse/database';
 import { PromptTemplateServiceImpl } from '@the-new-fuse/prompt-templating';

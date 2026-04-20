@@ -5,7 +5,7 @@
  */
 
 import * as path from 'path';
-import { WorkflowService } from '../services/WorkflowService';
+import { WorkflowService } from '../services/WorkflowService.js';
 
 const SYNC_INTERVAL_HOURS = 24; // Sync every 24 hours
 

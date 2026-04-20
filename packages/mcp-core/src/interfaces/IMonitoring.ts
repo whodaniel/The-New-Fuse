@@ -15,8 +15,8 @@ import {
   LoadTestResult,
   CacheMetrics,
   ConnectionPoolMetrics
-} from '../types/monitoring';
-import { ErrorStatistics } from '../types/error';
+} from '../types/monitoring.js';
+import { ErrorStatistics } from '../types/error.js';
 
 /**
  * Metrics collector interface

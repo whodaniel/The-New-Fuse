@@ -3,8 +3,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { MCPErrorClass, ErrorCategory, ErrorSeverity, ErrorStatistics } from '../types/error';
-import { Logger } from '../utils/Logger';
+import { MCPErrorClass, ErrorCategory, ErrorSeverity, ErrorStatistics } from '../types/error.js';
+import { Logger } from '../utils/Logger.js';
 
 export interface ErrorMetrics {
   /** Total error count */

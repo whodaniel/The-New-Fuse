@@ -8,7 +8,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { SyncOrchestrator } from '../src/services/SyncOrchestrator.js';
 import { ConflictManager } from '../src/services/ConflictManager.js';
-import { TaskSynchronizationService } from '../src/services/TaskSynchronizationService';
+import { TaskSynchronizationService } from '../src/services/TaskSynchronizationService.js';
 
 interface WorkflowExecution {
   id: string;

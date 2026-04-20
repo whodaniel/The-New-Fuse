@@ -7,7 +7,7 @@ import {
   JoinColumn,
   BeforeInsert
 } from 'typeorm';
-import { User } from './User';
+import { User } from './User.js';
 import { v4 as uuidv4 } from 'uuid';
 
 @Entity('sessions')

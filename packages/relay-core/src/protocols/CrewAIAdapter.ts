@@ -5,9 +5,9 @@
  * Converts between CrewAI crew/agent messages and The New Fuse's A2A protocol
  */
 
-import { ProtocolAdapter } from './ProtocolAdapter';
-import { RelayMessage, ProtocolType } from '../types';
-import { Logger } from '../utils/Logger';
+import { ProtocolAdapter } from './ProtocolAdapter.js';
+import { RelayMessage, ProtocolType } from '../types.js';
+import { Logger } from '../utils/Logger.js';
 
 export class CrewAIAdapter implements ProtocolAdapter {
   public readonly name = 'crewai';

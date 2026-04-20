@@ -20,7 +20,7 @@ import {
   AgentStatus,
   A2AMessageType,
   A2APriority
-} from './types';
+} from './types.js';
 
 @Controller('a2a')
 export class A2AController {

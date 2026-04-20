@@ -11,35 +11,35 @@ export {
   RelayBridge,
   replaceMCPTransport,
   type RelayBridgeConfig,
-} from './RelayBridge';
+} from './RelayBridge.js';
 
 // SkIDEancer IDE integration bridge
 export {
   createSkIDEancerMCPBridge,
   SkIDEancerMCPBridge,
   type SkIDEancerMCPBridgeConfig,
-} from './TheiaMCPBridge';
+} from './TheiaMCPBridge.js';
 
 // MCP System Factory and related exports
 export {
   MCPSystemFactory,
   type MCPSystem,
   type MCPSystemConfig,
-} from '../factory/MCPSystemFactory';
+} from '../factory/MCPSystemFactory.js';
 
 // Platform integrations (new)
-export * from './database';
-export * from './platform-types';
-export * from './relay-core';
+export * from './database.js';
+export * from './platform-types.js';
+export * from './relay-core.js';
 
 // Workflow integration
 export {
   MCPWorkflowIntegration,
   type MCPWorkflowIntegrationConfig,
-} from './MCPWorkflowIntegration';
+} from './MCPWorkflowIntegration.js';
 
 // Agent integration
-export { MCPAgentIntegration, type MCPAgentIntegrationConfig } from './MCPAgentIntegration';
+export { MCPAgentIntegration, type MCPAgentIntegrationConfig } from './MCPAgentIntegration.js';
 
 // Service mesh integration
 export {
@@ -49,12 +49,12 @@ export {
   type CallbackQueueEntry,
   type CallbackRegistration,
   type CallbackStatistics,
-} from './MCPCallbackHandler';
-export { MCPServiceMesh, type ServiceMeshConfig, type ServiceMeshProvider } from './MCPServiceMesh';
+} from './MCPCallbackHandler.js';
+export { MCPServiceMesh, type ServiceMeshConfig, type ServiceMeshProvider } from './MCPServiceMesh.js';
 export {
   KubernetesServiceMeshProvider,
   type KubernetesConfig,
-} from './providers/KubernetesServiceMeshProvider';
+} from './providers/KubernetesServiceMeshProvider.js';
 export {
   ServiceMeshMonitor,
   type Alert,
@@ -62,14 +62,14 @@ export {
   type MonitoringStatistics,
   type ServiceMeshMonitorConfig,
   type ServiceMonitoringData,
-} from './ServiceMeshMonitor';
+} from './ServiceMeshMonitor.js';
 export {
   ServiceMeshScaler,
   type ScalingDecision,
   type ScalingStatistics,
   type ServiceMeshScalerConfig,
   type ServiceScalingState,
-} from './ServiceMeshScaler';
+} from './ServiceMeshScaler.js';
 export {
   WorkflowExecutionMonitor,
   type AlertConfig,
@@ -77,12 +77,12 @@ export {
   type ExecutionEvent,
   type ExecutionHistoryEntry,
   type ExecutionMetrics,
-} from './WorkflowExecutionMonitor';
+} from './WorkflowExecutionMonitor.js';
 
 // Platform integration manager
-import { DatabaseIntegration, DatabaseIntegrationFactory } from './database';
-import { PlatformTypesBridge, PlatformUtils } from './platform-types';
-import { RelayIntegration, RelayIntegrationFactory } from './relay-core';
+import { DatabaseIntegration, DatabaseIntegrationFactory } from './database.js';
+import { PlatformTypesBridge, PlatformUtils } from './platform-types.js';
+import { RelayIntegration, RelayIntegrationFactory } from './relay-core.js';
 
 /**
  * Platform Integration Manager

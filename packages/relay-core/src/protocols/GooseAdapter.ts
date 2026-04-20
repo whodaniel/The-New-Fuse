@@ -4,9 +4,9 @@
  * Bridges Goose CLI/headless interaction envelopes to TNF A2A relay messages.
  */
 
-import { ProtocolType, RelayMessage } from '../types';
-import { Logger } from '../utils/Logger';
-import { ProtocolAdapter } from './ProtocolAdapter';
+import { ProtocolType, RelayMessage } from '../types.js';
+import { Logger } from '../utils/Logger.js';
+import { ProtocolAdapter } from './ProtocolAdapter.js';
 
 export class GooseAdapter implements ProtocolAdapter {
   public readonly name = 'goose-cli';

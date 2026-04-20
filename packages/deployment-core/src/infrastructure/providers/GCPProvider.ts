@@ -8,7 +8,7 @@ import {
   ResourceImportConfig,
   ResourceStatus,
   ResourceHealth
-} from '../ResourceProvisioner';
+} from '../ResourceProvisioner.js';
 import {
   ResourceDefinition,
   ResourceProvisionResult,

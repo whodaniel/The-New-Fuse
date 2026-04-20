@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
-import { db } from './drizzle/client';
-import { users } from './drizzle/schema/users';
-import { workflowExecutions, workflows } from './drizzle/schema/workflows';
+import { db } from './drizzle/client.js';
+import { users } from './drizzle/schema/users.js';
+import { workflowExecutions, workflows } from './drizzle/schema/workflows.js';
 
 async function seed() {
   console.log('🌱 Seeding workflows...');

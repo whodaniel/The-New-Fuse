@@ -4,8 +4,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { Agent } from '../types';
-import { Logger } from './Logger';
+import { Agent } from '../types.js';
+import { Logger } from './Logger.js';
 
 export class AgentRegistry extends EventEmitter {
   private agents: Map<string, Agent> = new Map();

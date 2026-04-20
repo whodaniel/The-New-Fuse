@@ -1,3 +1,3 @@
-export * from './JulesAgentAdapter';
-export * from './JulesApiClient';
-export * from './types';
+export * from './JulesAgentAdapter.js';
+export * from './JulesApiClient.js';
+export * from './types.js';

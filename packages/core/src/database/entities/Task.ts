@@ -7,7 +7,7 @@ import {
   ManyToOne,
   JoinColumn
 } from 'typeorm';
-import { User } from './User';
+import { User } from './User.js';
 
 @Entity('tasks')
 export class Task {

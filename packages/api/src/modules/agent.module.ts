@@ -4,7 +4,7 @@
  */
 
 import { Module } from '@nestjs/common';
-import { AgentController } from '../controllers/AgentController';
+import { AgentController } from '../controllers/AgentController.js';
 import { AgentService } from '../services/agent.service';
 import { AgentRepository } from '../repositories/agent.repository';
 import { LocalAIDetectionService } from '../services/agent.service';

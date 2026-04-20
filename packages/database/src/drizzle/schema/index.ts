@@ -4,30 +4,30 @@
  */
 
 // Enums
-export * from './enums';
+export * from './enums.js';
 
 // Tables
-export * from './agent-tracking';
-export * from './agents';
-export * from './ai-assets-marketplace';
-export * from './api-logs';
-export * from './audit-logs';
-export * from './billing';
-export * from './chat';
-export * from './code-execution';
-export * from './configuration';
-export * from './entitlements';
-export * from './jules';
-export * from './marketplace';
-export * from './mass';
-export * from './personal-skills';
-export * from './prompt-templates';
-export * from './resource-interactions';
-export * from './system';
-export * from './tasks';
-export * from './tnf'; // TNF Entity ID Taxonomy V2
-export * from './users';
-export * from './wallets';
-export * from './webhooks';
-export * from './workflows';
-export * from './workspace';
+export * from './agent-tracking.js';
+export * from './agents.js';
+export * from './ai-assets-marketplace.js';
+export * from './api-logs.js';
+export * from './audit-logs.js';
+export * from './billing.js';
+export * from './chat.js';
+export * from './code-execution.js';
+export * from './configuration.js';
+export * from './entitlements.js';
+export * from './jules.js';
+export * from './marketplace.js';
+export * from './mass.js';
+export * from './personal-skills.js';
+export * from './prompt-templates.js';
+export * from './resource-interactions.js';
+export * from './system.js';
+export * from './tasks.js';
+export * from './tnf.js'; // TNF Entity ID Taxonomy V2
+export * from './users.js';
+export * from './wallets.js';
+export * from './webhooks.js';
+export * from './workflows.js';
+export * from './workspace.js';

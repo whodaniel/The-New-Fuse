@@ -5,9 +5,9 @@
  */
 
 import { EventEmitter } from 'events';
-import { MCPWorkflowIntegration, MCPWorkflowIntegrationConfig } from './MCPWorkflowIntegration';
-import { WorkflowExecutionMonitor } from './WorkflowExecutionMonitor';
-import { MCPCallbackHandler, CallbackHandlerConfig } from './MCPCallbackHandler';
+import { MCPWorkflowIntegration, MCPWorkflowIntegrationConfig } from './MCPWorkflowIntegration.js';
+import { WorkflowExecutionMonitor } from './WorkflowExecutionMonitor.js';
+import { MCPCallbackHandler, CallbackHandlerConfig } from './MCPCallbackHandler.js';
 import {
   WorkflowStep,
   WorkflowContext,
@@ -16,12 +16,12 @@ import {
   TaskExecutionStatus,
   ErrorRecoveryConfig,
   MonitoringConfig
-} from '../interfaces/IMCPWorkflowIntegration';
-import { IMCPClient } from '../interfaces/IMCPClient';
-import { IMCPBroker } from '../interfaces/IMCPBroker';
-import { MCPRequest, MCPResponse } from '../interfaces/IMCPMessage';
-import { RetryPolicy } from '../types/common';
-import { MCPServiceInfo } from '../types/broker';
+} from '../interfaces/IMCPWorkflowIntegration.js';
+import { IMCPClient } from '../interfaces/IMCPClient.js';
+import { IMCPBroker } from '../interfaces/IMCPBroker.js';
+import { MCPRequest, MCPResponse } from '../interfaces/IMCPMessage.js';
+import { RetryPolicy } from '../types/common.js';
+import { MCPServiceInfo } from '../types/broker.js';
 
 // Enhanced mock implementations for integration testing
 class IntegrationMockMCPClient extends EventEmitter implements IMCPClient {

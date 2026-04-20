@@ -1,4 +1,4 @@
-import { ApiClient } from './api-client';
+import { ApiClient } from './api-client.js';
 import { CreateAgentDto, UpdateAgentDto, AgentResponseDto, AgentStatus, AgentType } from '@the-new-fuse/types';
 
 export class AgentsClient extends ApiClient {

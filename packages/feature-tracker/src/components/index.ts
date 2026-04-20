@@ -1,1 +1,1 @@
-export * from './FeatureProgress';
+export * from './FeatureProgress.js';

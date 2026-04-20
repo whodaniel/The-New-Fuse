@@ -11,7 +11,7 @@ export type {
 AccessControlEntry,
   ResourceCaching,
   ResourceCallback
-} from '../interfaces/IMCPResource';
+} from '../interfaces/IMCPResource.js';
 
 /**
  * Resource type enumeration

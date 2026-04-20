@@ -9,8 +9,8 @@ import {
   ResourcePermissions, 
   AccessControlEntry,
   ResourceCaching 
-} from '../interfaces/IMCPResource';
-import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
+} from '../interfaces/IMCPResource.js';
+import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error.js';
 
 /**
  * Resource discovery query interface

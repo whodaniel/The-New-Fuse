@@ -2,7 +2,7 @@
  * Monitoring and metrics type definitions
  */
 
-import { ErrorCategory, ErrorSeverity } from './error';
+import { ErrorCategory, ErrorSeverity } from './error.js';
 
 /**
  * Performance metrics interface

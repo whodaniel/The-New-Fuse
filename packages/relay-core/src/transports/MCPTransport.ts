@@ -10,8 +10,8 @@ import { EventEmitter } from 'events';
 import { Server } from '@modelcontextprotocol/sdk/server/index';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types';
-import { Transport, RelayMessage } from '../types';
-import { Logger } from '../utils/Logger';
+import { Transport, RelayMessage } from '../types.js';
+import { Logger } from '../utils/Logger.js';
 
 export interface MCPTransportConfig {
   relayId: string;

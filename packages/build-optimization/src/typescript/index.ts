@@ -7,10 +7,10 @@ export {
   type TypeScriptProject,
   type TypeScriptCompilationOptions,
   type CompilationMetrics
-} from './TypeScriptCompilationManager';
+} from './TypeScriptCompilationManager.js';
 
 export {
   MemoryCleanupUtility,
   type MemoryCleanupConfig,
   type MemoryCleanupResult
-} from './MemoryCleanupUtility';
+} from './MemoryCleanupUtility.js';

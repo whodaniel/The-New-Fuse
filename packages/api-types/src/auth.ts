@@ -1,8 +1,8 @@
 /**
  * Authentication-related type definitions
  */
-import { UUID, ISODateTime } from './common';
-import { UserRole } from './user';
+import { UUID, ISODateTime } from './common.js';
+import { UserRole } from './user.js';
 
 export interface LoginDto {
   email: string;

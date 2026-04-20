@@ -4,9 +4,9 @@
  * Integrates Claude skills with The New Fuse MCP server
  */
 
-import type { SkillExecutor } from '../executor';
-import type { SkillRegistry } from '../registry';
-import type { ClaudeSkill, SkillMCPTool } from '../types';
+import type { SkillExecutor } from '../executor.js';
+import type { SkillRegistry } from '../registry.js';
+import type { ClaudeSkill, SkillMCPTool } from '../types.js';
 
 /**
  * MCP Skill Provider

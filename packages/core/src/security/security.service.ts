@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { SecurityError } from '../utils/errors';
-import { Logger } from '../utils/logger';
+import { SecurityError } from '../utils/errors.js';
+import { Logger } from '../utils/logger.js';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import sanitizeHtml from 'sanitize-html';

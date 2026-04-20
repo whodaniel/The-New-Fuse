@@ -1,4 +1,4 @@
-import { Integration, IntegrationType, IntegrationConfig } from "./types";
+import { Integration, IntegrationType, IntegrationConfig } from "./types.js";
 
 /**
  * Base integration class that implements common functionality
@@ -73,4 +73,4 @@ export abstract class BaseIntegration implements Integration {
   }
 }
 
-export { IntegrationType } from "./types";
+export { IntegrationType } from "./types.js";

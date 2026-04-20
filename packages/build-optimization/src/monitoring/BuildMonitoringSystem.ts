@@ -9,8 +9,8 @@ import {
   IMetricsCollector,
   Logger
 } from '@the-new-fuse/core-monitoring';
-import { BuildMetricsCollector } from './BuildMetricsCollector';
-import { DetailedBuildMetrics } from './BuildMetricsCollector';
+import { BuildMetricsCollector } from './BuildMetricsCollector.js';
+import { DetailedBuildMetrics } from './BuildMetricsCollector.js';
 
 /**
  * Build monitoring configuration

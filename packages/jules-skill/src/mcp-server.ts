@@ -13,8 +13,8 @@ import {
 } from '@modelcontextprotocol/sdk/types';
 import * as fs from 'fs';
 import * as path from 'path';
-import { JulesClient } from './client';
-import { JulesTaskTemplate } from './types';
+import { JulesClient } from './client.js';
+import { JulesTaskTemplate } from './types.js';
 
 // Initialize Jules client
 const julesClient = new JulesClient();

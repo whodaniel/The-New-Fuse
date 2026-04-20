@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { ApiConfig } from '../config/ApiConfig';
+import { ApiConfig } from '../config/ApiConfig.js';
 
 /**
  * Core API client for making HTTP requests

@@ -1,4 +1,4 @@
-import { TaskStatus, TaskPriority } from './core/enums';
+import { TaskStatus, TaskPriority } from './core/enums.js';
 
 export interface Task {
   id: string;

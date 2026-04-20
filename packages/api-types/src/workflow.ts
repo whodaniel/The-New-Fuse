@@ -1,7 +1,7 @@
 /**
  * Workflow-related type definitions
  */
-import { UUID, ISODateTime } from './common';
+import { UUID, ISODateTime } from './common.js';
 
 export enum WorkflowStatus {
   DRAFT = 'draft',

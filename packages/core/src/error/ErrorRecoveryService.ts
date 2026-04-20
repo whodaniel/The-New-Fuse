@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BaseRecoveryStrategy } from './strategies/BaseRecoveryStrategy';
+import { BaseRecoveryStrategy } from './strategies/BaseRecoveryStrategy.js';
 
 @Injectable()
 export class ErrorRecoveryService {

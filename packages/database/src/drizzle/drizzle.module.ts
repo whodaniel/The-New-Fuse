@@ -6,7 +6,7 @@ import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import * as schema from './schema';
+import * as schema from './schema.js';
 import { DatabaseService } from './database.service';
 
 // Injection token for the Drizzle client

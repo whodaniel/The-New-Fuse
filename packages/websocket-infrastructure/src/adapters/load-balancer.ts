@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AuthenticatedSocket } from '../types';
+import { AuthenticatedSocket } from '../types.js';
 
 /**
  * Load balancer configuration for WebSocket servers

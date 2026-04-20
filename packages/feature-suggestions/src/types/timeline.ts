@@ -1,4 +1,4 @@
-import { FeatureSuggestion, TodoItem } from '../types';
+import { FeatureSuggestion, TodoItem } from '../types.js';
 import { FeatureProgress } from '@the-new-fuse/feature-tracker';
 
 // Re-export SuggestionStatus enum for use throughout the application

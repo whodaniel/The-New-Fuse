@@ -15,7 +15,7 @@ import {
   SyncErrorHandlerConfig,
   RetryConfig,
   FallbackProcessorConfig
-} from './index';
+} from './index.js';
 
 /**
  * Example: Setting up comprehensive sync error handling

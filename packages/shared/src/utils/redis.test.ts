@@ -1,4 +1,4 @@
-import { redisClient } from './redis';
+import { redisClient } from './redis.js';
 
 // Mock the Redis module
 jest.mock('./redis', () => ({

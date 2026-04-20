@@ -1,7 +1,7 @@
 // Import required API client and types
 import { ApiClient } from '../../core/ApiClient';
 import { ApiConfig } from '../../config/ApiConfig';
-import { Integration, IntegrationType, IntegrationConfig, AuthType } from '../types';
+import { Integration, IntegrationType, IntegrationConfig, AuthType } from '../types.js';
 
 /**
  * Make.com integration configuration

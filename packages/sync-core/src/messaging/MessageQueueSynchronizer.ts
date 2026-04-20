@@ -1,12 +1,12 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { SyncRedisConfig } from '../config/SyncRedisConfig';
+import { SyncRedisConfig } from '../config/SyncRedisConfig.js';
 import {
   SyncAwareA2AMessage,
   MessageQueueSyncConfig,
   MessageSyncStatus,
   SyncAwareMessageUtils
-} from './SyncAwareA2AMessage';
+} from './SyncAwareA2AMessage.js';
 
 export interface QueueSyncMetrics {
   totalQueues: number;

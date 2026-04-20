@@ -8,43 +8,43 @@
 import { EventEmitter } from 'events';
 import { 
   IMCPClient 
-} from '../interfaces/IMCPClient';
+} from '../interfaces/IMCPClient.js';
 import { 
   MCPRequest, 
   MCPResponse, 
   MCPNotification 
-} from '../interfaces/IMCPMessage';
+} from '../interfaces/IMCPMessage.js';
 import { 
   MCPResource, 
   ResourceContent 
-} from '../interfaces/IMCPResource';
+} from '../interfaces/IMCPResource.js';
 import { 
   MCPCapability 
-} from '../interfaces/IMCPCapability';
+} from '../interfaces/IMCPCapability.js';
 import { 
   ToolResult 
-} from '../interfaces/IMCPTool';
+} from '../interfaces/IMCPTool.js';
 import { 
   ConnectionOptions, 
   ConnectionStatus 
-} from '../interfaces/IMCPConnection';
+} from '../interfaces/IMCPConnection.js';
 import { 
   MCPClientConfig, 
   ClientStatistics, 
   ClientStatus 
-} from '../types/client';
+} from '../types/client.js';
 import { 
   NotificationCallback 
-} from '../types/common';
+} from '../types/common.js';
 import { 
   MCPErrorClass, 
   MCPErrorCode 
-} from '../types/error';
+} from '../types/error.js';
 
-import { ConnectionManager } from './ConnectionManager';
-import { RequestManager } from './RequestManager';
-import { EventManager } from './EventManager';
-import { ClientCache } from './ClientCache';
+import { ConnectionManager } from './ConnectionManager.js';
+import { RequestManager } from './RequestManager.js';
+import { EventManager } from './EventManager.js';
+import { ClientCache } from './ClientCache.js';
 
 /**
  * MCP Client implementation

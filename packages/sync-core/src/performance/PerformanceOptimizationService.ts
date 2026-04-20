@@ -1,9 +1,9 @@
 import { Logger } from '@the-new-fuse/core-monitoring';
-import { HorizontalScalingCoordinator, ScalingCoordinationConfig } from './HorizontalScalingCoordinator';
-import { FileChangeBatcher, BatchConfig, BatchedFileChange } from './FileChangeBatcher';
-import { SyncLRUCache, CacheConfig } from './SyncLRUCache';
-import { SyncPerformanceTelemetry, TelemetryConfig, SyncOperationMetrics } from './SyncPerformanceTelemetry';
-import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher';
+import { HorizontalScalingCoordinator, ScalingCoordinationConfig } from './HorizontalScalingCoordinator.js';
+import { FileChangeBatcher, BatchConfig, BatchedFileChange } from './FileChangeBatcher.js';
+import { SyncLRUCache, CacheConfig } from './SyncLRUCache.js';
+import { SyncPerformanceTelemetry, TelemetryConfig, SyncOperationMetrics } from './SyncPerformanceTelemetry.js';
+import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher.js';
 
 // Generic interfaces for compatibility with existing infrastructure
 interface RedisService {
