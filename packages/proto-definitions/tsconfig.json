@@ -4,7 +4,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "target": "ES2020",
-    "module": "ESNext",
+    "module": "NodeNext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -12,7 +12,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "bundler",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "types": [
       "node",
@@ -21,7 +21,7 @@
     "ignoreDeprecations": "6.0"
   },
   "include": [
-    "src*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",

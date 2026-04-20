@@ -2,8 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "ignoreDeprecations": "6.0",
-    "moduleResolution": "bundler",
-    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
     "declaration": true,
     "removeComments": false,
     "emitDecoratorMetadata": true,

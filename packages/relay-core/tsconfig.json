@@ -4,8 +4,8 @@
     "strict": false,
     "noImplicitAny": false,
     "strictFunctionTypes": false,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "./dist",
     "rootDir": ".",
     "declaration": true,
@@ -31,13 +31,13 @@
     "ignoreDeprecations": "6.0"
   },
   "include": [
-    "src*",
-    "../tnf-cli/src*"
+    "src/**/*",
+    "../tnf-cli/src/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "***.spec.ts"
+    "**/*.spec.ts"
   ],
   "references": []
 }

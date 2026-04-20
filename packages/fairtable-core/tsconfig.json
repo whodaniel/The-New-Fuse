@@ -12,8 +12,8 @@
     "types": [
       "jest"
     ],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "isolatedModules": true,
     "paths": {
       "@the-new-fuse/fairtable-core": [
@@ -32,7 +32,7 @@
     "ignoreDeprecations": "6.0"
   },
   "include": [
-    "src*"
+    "src/**/*"
   ],
   "exclude": [
     "dist",

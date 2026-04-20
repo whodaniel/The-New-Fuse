@@ -4,8 +4,8 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "declaration": true,
     "sourceMap": true,
@@ -15,7 +15,7 @@
     "ignoreDeprecations": "6.0"
   },
   "include": [
-    "src*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",

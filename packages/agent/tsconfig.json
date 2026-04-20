@@ -1,8 +1,8 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "moduleResolution": "bundler",
-    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
     "outDir": "./dist",
     "rootDir": "./src",
     "composite": true,
@@ -15,7 +15,7 @@
     "ignoreDeprecations": "6.0"
   },
   "include": [
-    "src*"
+    "src/**/*"
   ],
   "exclude": [
     "dist",

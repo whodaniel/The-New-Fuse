@@ -1,8 +1,8 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "moduleResolution": "bundler",
-    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
@@ -21,12 +21,12 @@
     "ignoreDeprecations": "6.0"
   },
   "include": [
-    "src*.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "***.spec.ts",
+    "**/*.spec.ts",
     "src/drizzle*",
     "src/database/DatabaseModule.ts",
     "src/database/DatabaseMonitor.ts",

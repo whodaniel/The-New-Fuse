@@ -11,8 +11,8 @@
     "lib": [
       "ES2020"
     ],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "types": [
       "node",
@@ -26,12 +26,12 @@
     "ignoreDeprecations": "6.0"
   },
   "include": [
-    "src*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "***.spec.ts"
+    "**/*.spec.ts"
   ],
   "references": [
     {

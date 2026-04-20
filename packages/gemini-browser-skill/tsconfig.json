@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "moduleResolution": "bundler",
+    "moduleResolution": "NodeNext",
     "target": "es2018",
-    "module": "ESNext",
+    "module": "NodeNext",
     "lib": [
       "es2018",
       "dom"

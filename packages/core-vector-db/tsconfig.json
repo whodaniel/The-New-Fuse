@@ -4,8 +4,8 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "composite": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "declaration": true,
@@ -19,11 +19,11 @@
     "ignoreDeprecations": "6.0"
   },
   "include": [
-    "src*"
+    "src/**/*"
   ],
   "exclude": [
     "dist",
     "node_modules",
-    "***.spec.ts"
+    "**/*.spec.ts"
   ]
 }

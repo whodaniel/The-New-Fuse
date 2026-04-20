@@ -4,8 +4,8 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "composite": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "allowImportingTsExtensions": false,
     "types": [
       "node"
@@ -13,7 +13,7 @@
     "ignoreDeprecations": "6.0"
   },
   "include": [
-    "src*"
+    "src/**/*"
   ],
   "references": [
     {

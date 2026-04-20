@@ -3,8 +3,8 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "composite": true,
     "noEmit": false,
     "jsx": "react-jsx",
@@ -24,13 +24,13 @@
     "ignoreDeprecations": "6.0"
   },
   "include": [
-    "src*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "***.spec.ts",
-    "***.spec.tsx"
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
   ],
   "references": [
     {

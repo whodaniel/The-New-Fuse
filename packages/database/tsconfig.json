@@ -13,13 +13,13 @@
     "ignoreDeprecations": "6.0"
   },
   "include": [
-    "src*",
+    "src/**/*",
     "generated*"
   ],
   "exclude": [
     "dist",
     "node_modules",
-    "***.spec.ts"
+    "**/*.spec.ts"
   ],
   "references": [
     {
