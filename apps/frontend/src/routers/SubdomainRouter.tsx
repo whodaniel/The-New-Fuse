@@ -30,13 +30,18 @@ const getSubdomainInfo = () => {
 const SubdomainRouter: React.FC = () => {
   const [subdomain, setSubdomain] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null;
-    return getSubdomain();
+    return getSubdomainInfo().name;
+  });
+  const [isApp, setIsApp] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return getSubdomainInfo().isApp;
   });
 
   useEffect(() => {
-    const sub = getSubdomain();
+    const { name: sub, isApp: app } = getSubdomainInfo();
     if (sub) console.log('Detected Agency Subdomain:', sub);
     setSubdomain(sub);
+    setIsApp(app);
   }, []);
 
   // If we are on a subdomain (e.g., alpha.thenewfuse.hub), we might want to show
@@ -73,10 +78,15 @@ const SubdomainRouter: React.FC = () => {
       return <ConnectExtensionPage />;
     }
 
+    // Treat 'app' or 'saas' as STANDARD MODE, not White Label/Agency mode
+    if (isApp) {
+      return <ComprehensiveRouter isApp={isApp} />;
+    }
+
     // WHITE LABEL MODE / AGENCY MODE
     return (
       <div data-agency-mode={subdomain}>
-        <ComprehensiveRouter />
+        <ComprehensiveRouter isApp={isApp} />
       </div>
     );
   }

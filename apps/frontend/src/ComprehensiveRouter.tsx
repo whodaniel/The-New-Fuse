@@ -251,7 +251,11 @@ const SmartNavigation = lazy(() => import('./components/SmartNavigation'));
 // Redirect component to force reload to static HTML pages
 const RedirectToStatic = ({ to }: { to: string }) => {
   if (typeof window !== 'undefined') {
-    window.location.href = to;
+    // Force redirect to the main site for static content to avoid SPA loops
+    const target = to.startsWith('/') ? `https://thenewfuse.com${to}` : to;
+    if (window.location.href !== target) {
+      window.location.href = target;
+    }
   }
   return null;
 };
@@ -267,6 +271,7 @@ const MarketplaceRootRoute = () => {
 
   const host = window.location.hostname;
   const isMarketplaceHost = host === 'marketplace.thenewfuse.com';
+  const isAppHost = host === 'app.thenewfuse.com' || host.startsWith('app.');
 
   if (isMarketplaceHost) {
     return (
@@ -276,7 +281,17 @@ const MarketplaceRootRoute = () => {
     );
   }
 
+  if (isAppHost) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   // ON MAIN SITE: / should trigger a hard reload to the static landing page
+  // Redirect to the canonical landing page domain to avoid relative loops
+  if (host !== 'thenewfuse.com' && !host.includes('localhost')) {
+    window.location.href = 'https://thenewfuse.com/';
+    return null;
+  }
+
   return <RedirectToStatic to="/" />;
 };
 

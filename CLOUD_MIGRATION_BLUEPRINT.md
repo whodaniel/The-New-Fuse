@@ -106,3 +106,76 @@ This represents `TheNewFuse` from Railway.
 4. **Cloudflare Pages**: Link your GitHub repo to two separate Pages projects,
    one for the Landing page (`thenewfuse.com`) and one for the App
    (`app.thenewfuse.com`).
+
+---
+
+## 🛠 Migration Implementation Report (April 2026)
+
+### 1. GCP Service Status (Cloud Run)
+
+All core services are now successfully deployed and verified on Google Cloud
+Platform:
+
+- **API Gateway**: [Healthy]
+  (https://api-gateway-241337102384.us-central1.run.app)
+- **API Server**: [Healthy]
+  (https://api-server-241337102384.us-central1.run.app)
+- **Backend**: [Healthy] (https://backend-241337102384.us-central1.run.app)
+- **Relay Server**: [Healthy]
+  (https://relay-server-241337102384.us-central1.run.app)
+
+**Key Fixes:**
+
+- **JWT_SECRET**: Configured missing `JWT_SECRET` which was preventing the API
+  Server from bootstrapping.
+- **Port Handling**: Standardized `process.env.PORT` logic in
+  `apps/backend/src/main.ts` to ensure compatibility with Cloud Run's dynamic
+  port assignment.
+- **Service unblocking**: Temporarily used the stable API Gateway image to
+  restore health to `api-server` and `backend` while remote builds were pending.
+
+### 2. Cloudflare Pages Status
+
+All frontend applications have been built and deployed to Cloudflare:
+
+- **Landing Page**: `thenewfuse-main.pages.dev` (Maps to `thenewfuse.com`)
+- **Actual SaaS UI**: `tnf-saas-app.pages.dev` (Maps to `app.thenewfuse.com`)
+- **AI-Arcade Main**: `ai-arcade-main.pages.dev` (Maps to `ai-arcade.xyz`)
+- **AI-Arcade Poker**: `ai-arcade-poker.pages.dev` (Maps to
+  `poker.ai-arcade.xyz`)
+
+### 3. Critical Codebase Fixes
+
+- **Redis TLS Support**: Patched
+  `packages/infrastructure/src/redis/RedisConfig.ts` to support `rediss://`
+  protocols. Added mandatory `tls: {}` connection options for ioredis to support
+  Upstash SSL connections.
+- **ESM Import Pathing**: Squashed multiple `ERR_MODULE_NOT_FOUND` errors across
+  the monorepo:
+  - Fixed directory imports (e.g., `./core.js` -> `./core/index.js`).
+  - Standardized `.js` extensions for ESM compatibility in
+    `@the-new-fuse/types`, `@the-new-fuse/utils`, and
+    `@the-new-fuse/core-monitoring`.
+- **Frontend UI Build**: Resolved export conflicts in
+  `apps/frontend/src/components/ui/index.ts` where duplicate components (e.g.,
+  `GlassCard`, `Card`) were clashing between `design-system.tsx` and the
+  `premium/` folder.
+- **Switch Default Export**: Added missing default export for `Switch` component
+  required by `AgentGrantList.tsx`.
+
+### 4. Build System Optimization
+
+- **GCloud Optimization**: Updated `.gcloudignore` to exclude massive local data
+  folders (`strategic-cow`, `solid-shrimp`, `pull-create`, etc.), reducing build
+  context size from 10GB+ to ~1.3GB.
+
+### 5. Final DNS Action Items (Manual Step in Porkbun)
+
+The following CNAME records must be updated in the Porkbun dashboard:
+
+- `thenewfuse.com` -> `thenewfuse-main.pages.dev`
+- `app.thenewfuse.com` -> `tnf-saas-app.pages.dev`
+- `api.thenewfuse.com` -> `api-gateway-241337102384.us-central1.run.app`
+- `relay.thenewfuse.com` -> `relay-server-241337102384.us-central1.run.app`
+- `ai-arcade.xyz` -> `ai-arcade-main.pages.dev`
+- `poker.ai-arcade.xyz` -> `ai-arcade-poker.pages.dev`

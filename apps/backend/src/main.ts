@@ -1,10 +1,10 @@
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config';
 import compression from 'compression';
 import helmet from 'helmet';
+import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 
 async function bootstrap(): Promise<void> {
@@ -54,9 +54,11 @@ async function bootstrap(): Promise<void> {
 
   // Root health check endpoint
   app.getHttpAdapter().get('/', (req, res) => res.json({ status: 'healthy', service: 'backend' }));
-  app.getHttpAdapter().get('/health', (req, res) => res.json({ status: 'healthy', service: 'backend' }));
+  app
+    .getHttpAdapter()
+    .get('/health', (req, res) => res.json({ status: 'healthy', service: 'backend' }));
 
-  const port = configService.get('PORT') || 3001;
+  const port = Number(process.env.PORT || configService.get('PORT') || 3001);
   await app.listen(port, '0.0.0.0');
   console.log(`🚀 Backend application is running on port ${port} and host 0.0.0.0`);
 }

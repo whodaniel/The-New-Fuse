@@ -2,6 +2,10 @@
   "cleanUrls": true,
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
+    { "source": "/auth/**", "destination": "/app.html" },
+    { "source": "/dashboard/**", "destination": "/app.html" },
+    { "source": "/login", "destination": "/app.html" },
+    { "source": "/register", "destination": "/app.html" },
     { "source": "**", "destination": "/app.html" }
   ]
 }
