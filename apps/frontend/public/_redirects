@@ -1,9 +1,6 @@
-# FORCE REDIRECTS TO APP SUBDOMAIN (where the SPA/Login lives)
 /auth/* https://app.thenewfuse.com/auth/:splat 301
 /login https://app.thenewfuse.com/auth/login 301
 /register https://app.thenewfuse.com/auth/register 301
 /dashboard/* https://app.thenewfuse.com/dashboard/:splat 301
-
-# FALLBACKS
 / /index.html 200
 /* /app.html 200

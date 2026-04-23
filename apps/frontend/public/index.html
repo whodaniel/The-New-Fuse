@@ -3,6 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script>
+    (function() {
+      const h = window.location.hostname;
+      const p = window.location.pathname;
+      if (h === 'thenewfuse.com' || h === 'www.thenewfuse.com') {
+        if (p.startsWith('/auth') || p.startsWith('/login') || p.startsWith('/register') || p.startsWith('/dashboard')) {
+          window.location.replace('https://app.thenewfuse.com' + p + window.location.search + window.location.hash);
+        }
+      }
+    })();
+  </script>
   <title>The New Fuse — AI Agent Orchestration Platform</title>
   <meta name="description" content="Orchestrate intelligent workflows, enable seamless agent communication, and unlock the full potential of AI automation with The New Fuse. Support for MCP and A2A protocols.">
   <meta name="keywords" content="AI platform, workflow automation, AI agents, agent orchestration, MCP protocol, A2A protocol, enterprise AI, AI collaboration">
