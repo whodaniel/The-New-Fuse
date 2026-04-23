@@ -1692,9 +1692,13 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route
                 path="*"
                 element={
-                  <Suspense fallback={<LoadingFallback name="Page Not Found" />}>
-                    <NotFound />
-                  </Suspense>
+                  isAppHost ? (
+                    <Suspense fallback={<LoadingFallback name="Page Not Found" />}>
+                      <NotFound />
+                    </Suspense>
+                  ) : (
+                    <RedirectToStatic to="/" />
+                  )
                 }
               />
             </Routes>
