@@ -1,11 +1,9 @@
-# Cross-domain redirects (Landing -> App)
-/auth/* https://app.thenewfuse.com/auth/:splat 301
-/login https://app.thenewfuse.com/auth/login 301
-/register https://app.thenewfuse.com/auth/register 301
-/dashboard/* https://app.thenewfuse.com/dashboard/:splat 301
+# Cross-domain rewrites (Main Domain -> SPA content)
+/auth/* /app.html 200
+/login /app.html 200
+/register /app.html 200
+/dashboard/* /app.html 200
 
-# Fallback for the Landing Page project
+# Subdomain redirects (if needed)
 / /index.html 200
-
-# Fallback for the App project (if it uses the same file)
 /* /app.html 200

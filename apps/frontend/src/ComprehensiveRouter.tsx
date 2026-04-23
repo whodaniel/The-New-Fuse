@@ -251,6 +251,12 @@ const SmartNavigation = lazy(() => import('./components/SmartNavigation'));
 // Redirect component to force reload to static HTML pages
 const RedirectToStatic = ({ to }: { to: string }) => {
   if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    // DO NOT redirect if we are on the app subdomain, as it should be handled by the SPA
+    if (host === 'app.thenewfuse.com' || host.startsWith('app.')) {
+      return null;
+    }
+
     // Force redirect to the main site for static content to avoid SPA loops
     const target = to.startsWith('/') ? `https://thenewfuse.com${to}` : to;
     if (window.location.href !== target) {
@@ -282,6 +288,7 @@ const MarketplaceRootRoute = () => {
   }
 
   if (isAppHost) {
+    // If on app subdomain, / should go to dashboard (or login if not authenticated)
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -294,7 +301,6 @@ const MarketplaceRootRoute = () => {
 
   return <RedirectToStatic to="/" />;
 };
-
 const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
   <RequireAuth>
     <RequireMembership>{children}</RequireMembership>
