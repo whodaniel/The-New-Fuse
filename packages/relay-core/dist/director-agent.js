@@ -1,6 +1,8 @@
 #!/usr/bin/env node
-import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
-import { Redis } from 'ioredis';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const infrastructure_1 = require("@the-new-fuse/infrastructure");
+const ioredis_1 = require("ioredis");
 const CONFIG = {
     REDIS_URL: process.env.REDIS_URL ||
         process.env.RAILWAY_REDIS_URL ||
@@ -37,20 +39,20 @@ class DirectorAgent {
         this.running = false;
         this.directorId = process.env.DIRECTOR_ID || `DIRECTOR-${Date.now()}`;
         // Use unified standalone utilities
-        this.redis = createStandaloneRedisClient({ lazyConnect: true });
-        this.redisBlocking = createStandaloneRedisClient({ lazyConnect: true });
-        this.upstash = createUpstashRestClient();
-        if (this.redis instanceof Redis) {
+        this.redis = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
+        this.redisBlocking = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
+        this.upstash = (0, infrastructure_1.createUpstashRestClient)();
+        if (this.redis instanceof ioredis_1.Redis) {
             this.redis.on('error', (err) => console.error('[Director] Redis error:', err?.message || err));
         }
-        if (this.redisBlocking instanceof Redis) {
+        if (this.redisBlocking instanceof ioredis_1.Redis) {
             this.redisBlocking.on('error', (err) => console.error('[Director] Redis blocking error:', err?.message || err));
         }
     }
     async start() {
-        if (this.redis instanceof Redis)
+        if (this.redis instanceof ioredis_1.Redis)
             await this.redis.connect();
-        if (this.redisBlocking instanceof Redis)
+        if (this.redisBlocking instanceof ioredis_1.Redis)
             await this.redisBlocking.connect();
         this.running = true;
         await this.registerDirector();

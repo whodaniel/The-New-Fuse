@@ -1,10 +1,16 @@
-import crypto from 'crypto';
-import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
-import Redis from 'ioredis';
-import { HandoffAck, HandoffPacket, } from '../protocol/handoff-protocol';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HandoffStoreService = void 0;
+const crypto_1 = __importDefault(require("crypto"));
+const infrastructure_1 = require("@the-new-fuse/infrastructure");
+const ioredis_1 = __importDefault(require("ioredis"));
+const handoff_protocol_js_1 = require("../protocol/handoff-protocol.js");
 const DEFAULT_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days
 const DEFAULT_MAX_INBOX_ITEMS = 2000;
-export class HandoffStoreService {
+class HandoffStoreService {
     constructor(options = {}) {
         this.client = null;
         this.upstash = null;
@@ -18,9 +24,9 @@ export class HandoffStoreService {
         if (this.connected) {
             return;
         }
-        this.client = createStandaloneRedisClient({ lazyConnect: true });
-        this.upstash = createUpstashRestClient();
-        if (this.client instanceof Redis) {
+        this.client = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
+        this.upstash = (0, infrastructure_1.createUpstashRestClient)();
+        if (this.client instanceof ioredis_1.default) {
             await this.client.connect().catch(() => { });
         }
         this.connected = true;
@@ -38,9 +44,9 @@ export class HandoffStoreService {
         await this.connect();
         const now = this.now();
         const expiresAt = input.expiresAt ?? new Date(now.getTime() + this.defaultTtlSeconds * 1000).toISOString();
-        const packet = HandoffPacket.parse({
+        const packet = handoff_protocol_js_1.HandoffPacket.parse({
             ...input,
-            id: crypto.randomUUID(),
+            id: crypto_1.default.randomUUID(),
             version: '1.1',
             createdAt: now.toISOString(),
             expiresAt,
@@ -133,7 +139,7 @@ export class HandoffStoreService {
     }
     async acknowledge(input) {
         await this.connect();
-        const ack = HandoffAck.parse({
+        const ack = handoff_protocol_js_1.HandoffAck.parse({
             ...input,
             ackedAt: this.now().toISOString(),
         });
@@ -209,7 +215,7 @@ export class HandoffStoreService {
             if (parsed && typeof parsed === 'object' && !('version' in parsed)) {
                 parsed.version = '1.0';
             }
-            return HandoffPacket.parse(parsed);
+            return handoff_protocol_js_1.HandoffPacket.parse(parsed);
         }
         catch {
             return null;
@@ -218,7 +224,7 @@ export class HandoffStoreService {
     parseAck(raw) {
         try {
             const parsed = JSON.parse(raw);
-            return HandoffAck.parse(parsed);
+            return handoff_protocol_js_1.HandoffAck.parse(parsed);
         }
         catch {
             return null;
@@ -232,4 +238,5 @@ export class HandoffStoreService {
         return Math.max(remainingSeconds, 1);
     }
 }
+exports.HandoffStoreService = HandoffStoreService;
 //# sourceMappingURL=HandoffStoreService.js.map

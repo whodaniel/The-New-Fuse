@@ -1,3 +1,4 @@
+"use strict";
 /**
  * Verifiable Credential Issuance Service
  *
@@ -5,9 +6,11 @@
  * Enables trusted issuance, verification, and revocation of credentials that
  * attest to agent capabilities and achievements.
  */
-import { EventEmitter } from 'events';
-import { BlockchainService } from './shared/BlockchainService';
-export var CapabilityCategory;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VCIssuanceService = exports.VerificationMethod = exports.ProficiencyLevel = exports.CapabilityCategory = void 0;
+const events_1 = require("events");
+const BlockchainService_js_1 = require("./shared/BlockchainService.js");
+var CapabilityCategory;
 (function (CapabilityCategory) {
     CapabilityCategory["CODE_GENERATION"] = "code_generation";
     CapabilityCategory["DATA_ANALYSIS"] = "data_analysis";
@@ -19,27 +22,27 @@ export var CapabilityCategory;
     CapabilityCategory["COLLABORATION"] = "collaboration";
     CapabilityCategory["PROBLEM_SOLVING"] = "problem_solving";
     CapabilityCategory["CREATIVITY"] = "creativity";
-})(CapabilityCategory || (CapabilityCategory = {}));
-export var ProficiencyLevel;
+})(CapabilityCategory || (exports.CapabilityCategory = CapabilityCategory = {}));
+var ProficiencyLevel;
 (function (ProficiencyLevel) {
     ProficiencyLevel["NOVICE"] = "novice";
     ProficiencyLevel["INTERMEDIATE"] = "intermediate";
     ProficiencyLevel["ADVANCED"] = "advanced";
     ProficiencyLevel["EXPERT"] = "expert";
     ProficiencyLevel["MASTER"] = "master";
-})(ProficiencyLevel || (ProficiencyLevel = {}));
-export var VerificationMethod;
+})(ProficiencyLevel || (exports.ProficiencyLevel = ProficiencyLevel = {}));
+var VerificationMethod;
 (function (VerificationMethod) {
     VerificationMethod["AUTOMATED_TESTING"] = "automated_testing";
     VerificationMethod["PEER_REVIEW"] = "peer_review";
     VerificationMethod["HUMAN_EVALUATION"] = "human_evaluation";
     VerificationMethod["BENCHMARK_TESTING"] = "benchmark_testing";
     VerificationMethod["REAL_WORLD_PERFORMANCE"] = "real_world_performance";
-})(VerificationMethod || (VerificationMethod = {}));
+})(VerificationMethod || (exports.VerificationMethod = VerificationMethod = {}));
 /**
  * VCIssuanceService - Handles Verifiable Credential lifecycle
  */
-export class VCIssuanceService extends EventEmitter {
+class VCIssuanceService extends events_1.EventEmitter {
     constructor(drizzle, logger, privateKey) {
         super();
         this.blockchainService = null;
@@ -71,7 +74,7 @@ export class VCIssuanceService extends EventEmitter {
                 gasLimit: 2000000,
                 maxGasPrice: '50'
             };
-            this.blockchainService = new BlockchainService(blockchainConfig, logger);
+            this.blockchainService = new BlockchainService_js_1.BlockchainService(blockchainConfig, logger);
         }
         this.initializeTrustedIssuers();
     }
@@ -496,7 +499,7 @@ export class VCIssuanceService extends EventEmitter {
             const signature = credential.proof.proofValue;
             // Use shared blockchain service for verification
             const recoveredAddress = this.blockchainService?.verifyMessage(message, signature) ||
-                BlockchainService.verifyMessage(message, signature);
+                BlockchainService_js_1.BlockchainService.verifyMessage(message, signature);
             // For now, just check if signature is valid format
             return signature.length > 0 && !!recoveredAddress;
         }
@@ -578,4 +581,5 @@ export class VCIssuanceService extends EventEmitter {
         return this.revokedCredentials.has(credentialId);
     }
 }
+exports.VCIssuanceService = VCIssuanceService;
 //# sourceMappingURL=VCIssuanceService.js.map

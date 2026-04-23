@@ -1,12 +1,18 @@
+"use strict";
 /**
  * Cleanup Service for The New Fuse Framework
  *
  * Manages cleanup of old tributary files after consolidation
  * Implements safe file removal with backup and rollback capabilities
  */
-import { promises as fs } from 'fs';
-import path from 'path';
-export class CleanupService {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CleanupService = void 0;
+const fs_1 = require("fs");
+const path_1 = __importDefault(require("path"));
+class CleanupService {
     constructor(workspaceRoot, logger) {
         this.cleanupTargets = [];
         this.workspaceRoot = workspaceRoot;
@@ -86,7 +92,7 @@ export class CleanupService {
         }
         for (const target of this.cleanupTargets) {
             try {
-                const fullPath = path.resolve(this.workspaceRoot, target.path);
+                const fullPath = path_1.default.resolve(this.workspaceRoot, target.path);
                 // Check if file exists
                 const exists = await this.pathExists(fullPath);
                 if (!exists) {
@@ -123,10 +129,10 @@ export class CleanupService {
      */
     async createBackup(sourcePath, target, backupDir) {
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const basename = path.basename(sourcePath);
-        const backupPath = path.join(backupDir, `${basename}_${timestamp}`);
+        const basename = path_1.default.basename(sourcePath);
+        const backupPath = path_1.default.join(backupDir, `${basename}_${timestamp}`);
         if (target.type === 'file') {
-            await fs.copyFile(sourcePath, backupPath);
+            await fs_1.promises.copyFile(sourcePath, backupPath);
         }
         else {
             await this.copyDirectory(sourcePath, backupPath);
@@ -140,7 +146,7 @@ export class CleanupService {
             consolidatedInto: target.consolidatedInto,
             type: target.type
         };
-        await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2));
+        await fs_1.promises.writeFile(metadataPath, JSON.stringify(metadata, null, 2));
         this.logger.info(`Created backup: ${backupPath}`);
     }
     /**
@@ -148,26 +154,26 @@ export class CleanupService {
      */
     async removeTarget(targetPath, type) {
         if (type === 'file') {
-            await fs.unlink(targetPath);
+            await fs_1.promises.unlink(targetPath);
         }
         else {
-            await fs.rmdir(targetPath, { recursive: true });
+            await fs_1.promises.rmdir(targetPath, { recursive: true });
         }
     }
     /**
      * Copy directory recursively
      */
     async copyDirectory(source, destination) {
-        await fs.mkdir(destination, { recursive: true });
-        const entries = await fs.readdir(source, { withFileTypes: true });
+        await fs_1.promises.mkdir(destination, { recursive: true });
+        const entries = await fs_1.promises.readdir(source, { withFileTypes: true });
         for (const entry of entries) {
-            const sourcePath = path.join(source, entry.name);
-            const destPath = path.join(destination, entry.name);
+            const sourcePath = path_1.default.join(source, entry.name);
+            const destPath = path_1.default.join(destination, entry.name);
             if (entry.isDirectory()) {
                 await this.copyDirectory(sourcePath, destPath);
             }
             else {
-                await fs.copyFile(sourcePath, destPath);
+                await fs_1.promises.copyFile(sourcePath, destPath);
             }
         }
     }
@@ -175,14 +181,14 @@ export class CleanupService {
      * Ensure backup directory exists
      */
     async ensureBackupDirectory(backupDir) {
-        await fs.mkdir(backupDir, { recursive: true });
+        await fs_1.promises.mkdir(backupDir, { recursive: true });
     }
     /**
      * Check if path exists
      */
     async pathExists(path) {
         try {
-            await fs.access(path);
+            await fs_1.promises.access(path);
             return true;
         }
         catch {
@@ -206,19 +212,19 @@ export class CleanupService {
     async rollbackFromBackup(backupDir, targetOriginalPath) {
         try {
             // Find backup metadata
-            const backupFiles = await fs.readdir(backupDir);
+            const backupFiles = await fs_1.promises.readdir(backupDir);
             const metadataFile = backupFiles.find(f => f.endsWith('.metadata.json'));
             if (!metadataFile) {
                 throw new Error('No metadata file found for rollback');
             }
-            const metadata = JSON.parse(await fs.readFile(path.join(backupDir, metadataFile), 'utf-8'));
+            const metadata = JSON.parse(await fs_1.promises.readFile(path_1.default.join(backupDir, metadataFile), 'utf-8'));
             if (metadata.originalPath !== targetOriginalPath) {
                 throw new Error('Backup metadata does not match target path');
             }
-            const backupPath = path.join(backupDir, metadataFile.replace('.metadata.json', ''));
+            const backupPath = path_1.default.join(backupDir, metadataFile.replace('.metadata.json', ''));
             // Restore from backup
             if (metadata.type === 'file') {
-                await fs.copyFile(backupPath, targetOriginalPath);
+                await fs_1.promises.copyFile(backupPath, targetOriginalPath);
             }
             else {
                 await this.copyDirectory(backupPath, targetOriginalPath);
@@ -232,4 +238,5 @@ export class CleanupService {
         }
     }
 }
+exports.CleanupService = CleanupService;
 //# sourceMappingURL=CleanupService.js.map

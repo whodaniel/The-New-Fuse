@@ -1,12 +1,48 @@
+"use strict";
 /**
  * WebSocket Transport for The New Fuse Relay System
  *
  * Based on enhanced-tnf-relay.js:412 (startWebSocketServer method)
  * Handles real-time communication with agents and extensions.
  */
-import { EventEmitter } from 'events';
-import WebSocket, { WebSocketServer } from 'ws';
-export class WebSocketTransport extends EventEmitter {
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WebSocketTransport = void 0;
+const events_1 = require("events");
+const ws_1 = __importStar(require("ws"));
+class WebSocketTransport extends events_1.EventEmitter {
     constructor(config) {
         super();
         this.name = 'websocket';
@@ -22,7 +58,7 @@ export class WebSocketTransport extends EventEmitter {
             return true;
         }
         try {
-            this.wss = new WebSocketServer({ port: this.config.port });
+            this.wss = new ws_1.WebSocketServer({ port: this.config.port });
             this.logger.info(`WebSocket server started on port ${this.config.port}`);
             this.wss.on('connection', this.handleConnection.bind(this));
             this.startHeartbeat();
@@ -51,7 +87,7 @@ export class WebSocketTransport extends EventEmitter {
             return false;
         }
         const client = this.clients.get(targetId);
-        if (client && client.readyState === WebSocket.OPEN) {
+        if (client && client.readyState === ws_1.default.OPEN) {
             client.send(JSON.stringify(message));
             return true;
         }
@@ -123,4 +159,5 @@ export class WebSocketTransport extends EventEmitter {
         return `ws_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     }
 }
+exports.WebSocketTransport = WebSocketTransport;
 //# sourceMappingURL=WebSocketTransport.js.map

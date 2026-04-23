@@ -1,10 +1,14 @@
+"use strict";
 /**
  * Stall Detector - Detects and recovers stalled conversations
  *
  * Part of the Multi-Agent Orchestration Enhancement
  * @package @the-new-fuse/relay-core
  */
-import { EventEmitter } from 'events';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StallDetector = void 0;
+exports.createStallDetector = createStallDetector;
+const events_1 = require("events");
 const DEFAULT_CONFIG = {
     stallThresholdMs: 30000, // 30 seconds
     checkIntervalMs: 5000, // 5 seconds
@@ -12,7 +16,7 @@ const DEFAULT_CONFIG = {
     recoveryIntervalMs: 60000, // 60 seconds
     autoRecover: true,
 };
-export class StallDetector extends EventEmitter {
+class StallDetector extends events_1.EventEmitter {
     constructor(logger, config = {}) {
         super();
         this.conversations = new Map();
@@ -266,7 +270,8 @@ export class StallDetector extends EventEmitter {
         return cleaned;
     }
 }
-export function createStallDetector(logger, config) {
+exports.StallDetector = StallDetector;
+function createStallDetector(logger, config) {
     return new StallDetector(logger, config);
 }
 //# sourceMappingURL=stall-detector.js.map

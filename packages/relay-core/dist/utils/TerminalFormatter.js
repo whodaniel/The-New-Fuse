@@ -1,3 +1,4 @@
+"use strict";
 /**
  * Terminal Formatter for TNF Relay Server
  *
@@ -7,6 +8,8 @@
  * All functions are pure formatters — they return formatted strings
  * and write to stdout. They do NOT mutate state.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.relay = void 0;
 // ─── ANSI Escape Codes ──────────────────────────────────────────────
 const c = {
     reset: '\x1b[0m',
@@ -45,7 +48,7 @@ function padRight(text, len) {
     return text.length >= len ? text : text + ' '.repeat(len - text.length);
 }
 // ─── Public API ──────────────────────────────────────────────────────
-export const relay = {
+exports.relay = {
     /**
      * Print the enhanced startup banner.
      * Call this INSTEAD OF the existing box-drawing banner in `start()`.
@@ -168,5 +171,5 @@ export const relay = {
         console.error(`${c.dim}${ts()}${c.reset} ${c.red}[✗]${c.reset} ${c.red}${context}:${c.reset} ${message}`);
     },
 };
-export default relay;
+exports.default = exports.relay;
 //# sourceMappingURL=TerminalFormatter.js.map

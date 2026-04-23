@@ -1,14 +1,17 @@
+"use strict";
 /**
  * MCP Transport for The New Fuse Relay System
  *
  * Based on comprehensive-tnf-relay.js:86 (setupMCPServer method)
  * Handles communication with Model Context Protocol (MCP) clients.
  */
-import { EventEmitter } from 'events';
-import { Server } from '@modelcontextprotocol/sdk/server/index';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
-import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types';
-export class MCPTransport extends EventEmitter {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MCPTransport = void 0;
+const events_1 = require("events");
+const index_1 = require("@modelcontextprotocol/sdk/server/index");
+const stdio_1 = require("@modelcontextprotocol/sdk/server/stdio");
+const types_1 = require("@modelcontextprotocol/sdk/types");
+class MCPTransport extends events_1.EventEmitter {
     constructor(config) {
         super();
         this.name = 'mcp';
@@ -23,7 +26,7 @@ export class MCPTransport extends EventEmitter {
             return true;
         }
         try {
-            this.mcpServer = new Server({
+            this.mcpServer = new index_1.Server({
                 name: this.config.relayId,
                 version: this.config.version,
             }, {
@@ -34,7 +37,7 @@ export class MCPTransport extends EventEmitter {
             });
             this.setupRequestHandlers();
             if (process.argv.includes('--mcp')) {
-                const transport = new StdioServerTransport();
+                const transport = new stdio_1.StdioServerTransport();
                 await this.mcpServer.connect(transport);
                 this.logger.info('MCP Server started on stdio transport');
             }
@@ -64,11 +67,11 @@ export class MCPTransport extends EventEmitter {
     setupRequestHandlers() {
         if (!this.mcpServer)
             return;
-        this.mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
+        this.mcpServer.setRequestHandler(types_1.ListToolsRequestSchema, async () => {
             // This can be expanded to dynamically list tools from the relay
             return { tools: [] };
         });
-        this.mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
+        this.mcpServer.setRequestHandler(types_1.CallToolRequestSchema, async (request) => {
             const { name, arguments: args } = request.params;
             const message = {
                 id: `mcp_${Date.now()}`,
@@ -82,4 +85,5 @@ export class MCPTransport extends EventEmitter {
         });
     }
 }
+exports.MCPTransport = MCPTransport;
 //# sourceMappingURL=MCPTransport.js.map

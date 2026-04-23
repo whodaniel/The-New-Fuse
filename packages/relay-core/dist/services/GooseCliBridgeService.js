@@ -1,9 +1,12 @@
-import { spawn } from 'child_process';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GooseCliBridgeService = void 0;
+const child_process_1 = require("child_process");
 /**
  * Thin execution bridge around Goose CLI so TNF orchestrators can call Goose
  * as a deterministic sub-agent without coupling to Goose internals.
  */
-export class GooseCliBridgeService {
+class GooseCliBridgeService {
     constructor(logger, binary = process.env.GOOSE_BINARY || 'goose') {
         this.logger = logger;
         this.binary = binary;
@@ -13,7 +16,7 @@ export class GooseCliBridgeService {
         const args = ['run', request.prompt, ...(request.extraArgs || [])];
         const timeoutMs = request.timeoutMs || 10 * 60 * 1000;
         return new Promise((resolve) => {
-            const child = spawn(this.binary, args, {
+            const child = (0, child_process_1.spawn)(this.binary, args, {
                 cwd: request.cwd,
                 env: {
                     ...process.env,
@@ -58,4 +61,5 @@ export class GooseCliBridgeService {
         });
     }
 }
+exports.GooseCliBridgeService = GooseCliBridgeService;
 //# sourceMappingURL=GooseCliBridgeService.js.map

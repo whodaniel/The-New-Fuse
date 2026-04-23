@@ -1,11 +1,47 @@
-import { mkdir, readFile, writeFile } from 'fs/promises';
-import * as path from 'path';
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MiniOmniBridgeService = void 0;
+const promises_1 = require("fs/promises");
+const path = __importStar(require("path"));
 const DEFAULT_MINI_OMNI_API_URL = process.env.MINI_OMNI_API_URL || 'http://127.0.0.1:60808/chat';
 /**
  * Deterministic HTTP bridge for Mini-Omni so TNF orchestrators and scripts
  * can invoke local speech-to-speech inference without coupling to CLI internals.
  */
-export class MiniOmniBridgeService {
+class MiniOmniBridgeService {
     constructor(logger, defaultApiUrl = DEFAULT_MINI_OMNI_API_URL) {
         this.logger = logger;
         this.defaultApiUrl = defaultApiUrl;
@@ -19,7 +55,7 @@ export class MiniOmniBridgeService {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), timeoutMs);
         try {
-            const audioBuffer = await readFile(request.audioPath);
+            const audioBuffer = await (0, promises_1.readFile)(request.audioPath);
             const payload = {
                 audio: audioBuffer.toString('base64'),
                 stream_stride: streamStride,
@@ -78,8 +114,8 @@ export class MiniOmniBridgeService {
                 return result;
             }
             if (request.outputPath) {
-                await mkdir(path.dirname(request.outputPath), { recursive: true });
-                await writeFile(request.outputPath, combined);
+                await (0, promises_1.mkdir)(path.dirname(request.outputPath), { recursive: true });
+                await (0, promises_1.writeFile)(request.outputPath, combined);
             }
             const result = {
                 ok: true,
@@ -130,4 +166,5 @@ export class MiniOmniBridgeService {
         }
     }
 }
+exports.MiniOmniBridgeService = MiniOmniBridgeService;
 //# sourceMappingURL=MiniOmniBridgeService.js.map

@@ -1,11 +1,14 @@
+"use strict";
 /**
  * Redis Transport for The New Fuse Relay System
  *
  * Provides pub/sub messaging and distributed coordination
  * Based on existing Redis infrastructure in src/redis/
  */
-import { EventEmitter } from 'events';
-export class RedisTransport extends EventEmitter {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RedisTransport = void 0;
+const events_1 = require("events");
+class RedisTransport extends events_1.EventEmitter {
     constructor(config, redisService) {
         super();
         this.name = 'redis';
@@ -231,4 +234,5 @@ export class RedisTransport extends EventEmitter {
         }
     }
 }
+exports.RedisTransport = RedisTransport;
 //# sourceMappingURL=RedisTransport.js.map

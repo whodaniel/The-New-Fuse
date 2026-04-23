@@ -1,5 +1,44 @@
 #!/usr/bin/env node
+"use strict";
 /* eslint-disable no-console */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TNFRelayServer = void 0;
 /**
  * TNF Relay Server - Standalone WebSocket Relay
  * Part of @the-new-fuse/relay-core package
@@ -14,29 +53,28 @@
  *   Agents:    http://localhost:3000/agents
  *   Channels:  http://localhost:3000/channels
  */
-import { EventEmitter } from 'events';
-import http from 'http';
-import { fileURLToPath } from 'node:url';
-import { Redis } from 'ioredis';
-import { createClient } from 'redis';
-import WebSocket, { WebSocketServer } from 'ws';
-import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
-import { createAuthService } from './auth/JWTAuthService';
-import { attachAuditTrace } from './contracts/audit';
-import { createAgentIdentityRecord } from './contracts/identity';
-import { normalizeAgentLifecycleStatus } from './contracts/lifecycle';
-import { ConversationPhase, ConversationStateMachine, } from './orchestrator/conversation-state-machine';
-import { SubscriptionRegistry } from './orchestrator/subscription-registry';
-import { createRedisRelayBridge } from './redis-relay-bridge';
-import { createStallDetector } from './services/stall-detector';
-import { Logger } from './utils/Logger';
-import { relay as fmt } from './utils/TerminalFormatter';
+const events_1 = require("events");
+const http_1 = __importDefault(require("http"));
+const ioredis_1 = require("ioredis");
+const redis_1 = require("redis");
+const ws_1 = __importStar(require("ws"));
+const infrastructure_1 = require("@the-new-fuse/infrastructure");
+const JWTAuthService_js_1 = require("./auth/JWTAuthService.js");
+const audit_js_1 = require("./contracts/audit.js");
+const identity_js_1 = require("./contracts/identity.js");
+const lifecycle_js_1 = require("./contracts/lifecycle.js");
+const conversation_state_machine_js_1 = require("./orchestrator/conversation-state-machine.js");
+const subscription_registry_js_1 = require("./orchestrator/subscription-registry.js");
+const redis_relay_bridge_js_1 = require("./redis-relay-bridge.js");
+const stall_detector_js_1 = require("./services/stall-detector.js");
+const Logger_js_1 = require("./utils/Logger.js");
+const TerminalFormatter_js_1 = require("./utils/TerminalFormatter.js");
 // Configuration
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const HEARTBEAT_INTERVAL = 30000;
 const AGENT_TIMEOUT = 60000;
 function buildRelayAgentIdentity(input) {
-    return createAgentIdentityRecord({
+    return (0, identity_js_1.createAgentIdentityRecord)({
         canonicalEntityId: typeof input.canonicalEntityId === 'string' ? input.canonicalEntityId : undefined,
         operationalHandle: typeof input.operationalHandle === 'string' && input.operationalHandle.trim()
             ? input.operationalHandle
@@ -48,7 +86,7 @@ function buildRelayAgentIdentity(input) {
     });
 }
 function resolveRelayAgentStatus(input) {
-    return normalizeAgentLifecycleStatus(typeof input === 'string' ? input : null) || 'active';
+    return (0, lifecycle_js_1.normalizeAgentLifecycleStatus)(typeof input === 'string' ? input : null) || 'active';
 }
 function buildBridgeOperatorContext(req) {
     const headerActor = req.headers['x-tnf-operator'];
@@ -60,7 +98,7 @@ function buildBridgeOperatorContext(req) {
     };
 }
 // Relay Server Class
-export class TNFRelayServer extends EventEmitter {
+class TNFRelayServer extends events_1.EventEmitter {
     constructor(port = PORT) {
         super();
         this.agents = new Map();
@@ -79,13 +117,13 @@ export class TNFRelayServer extends EventEmitter {
         this.port = port;
         // Auth is optional for local development
         try {
-            this.authService = createAuthService();
+            this.authService = (0, JWTAuthService_js_1.createAuthService)();
         }
         catch {
             console.log('[Relay] JWT auth disabled - running in open mode');
             this.authService = null;
         }
-        this.subscriptionRegistry = new SubscriptionRegistry();
+        this.subscriptionRegistry = new subscription_registry_js_1.SubscriptionRegistry();
         this.activityPersistenceEnabled = process.env.ENABLE_ACTIVITY_PERSISTENCE !== 'false';
         this.activityPersistenceRequired = process.env.ACTIVITY_PERSISTENCE_REQUIRED !== 'false';
         this.activityStreamKey = process.env.ACTIVITY_STREAM_KEY || 'tnf:activity:stream';
@@ -94,10 +132,10 @@ export class TNFRelayServer extends EventEmitter {
         this.activityMaxLen = parseInt(process.env.ACTIVITY_STREAM_MAXLEN || '100000', 10);
         // Initialize activity persistence clients
         if (this.activityPersistenceEnabled) {
-            this.activityRedis = createStandaloneRedisClient({ lazyConnect: true });
-            this.activityUpstash = createUpstashRestClient();
+            this.activityRedis = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
+            this.activityUpstash = (0, infrastructure_1.createUpstashRestClient)();
             this.activityRedisConnectPromise = (async () => {
-                if (this.activityRedis instanceof Redis) {
+                if (this.activityRedis instanceof ioredis_1.Redis) {
                     try {
                         await this.activityRedis.connect();
                     }
@@ -108,17 +146,17 @@ export class TNFRelayServer extends EventEmitter {
             })();
         }
         // Create logger
-        this.logger = new Logger(process.env.LOG_LEVEL || 'info', process.env.WORKSPACE_DIR || process.cwd());
+        this.logger = new Logger_js_1.Logger(process.env.LOG_LEVEL || 'info', process.env.WORKSPACE_DIR || process.cwd());
         // Create HTTP server
-        this.server = http.createServer(this.handleHttpRequest.bind(this));
+        this.server = http_1.default.createServer(this.handleHttpRequest.bind(this));
         // Create WebSocket server at /ws path
-        this.wss = new WebSocketServer({ server: this.server, path: '/ws' });
+        this.wss = new ws_1.WebSocketServer({ server: this.server, path: '/ws' });
         // Setup WebSocket handlers
         this.setupWebSocket();
         // Create default channel
         this.createDefaultChannel();
         // Initialize stall detector for conversation recovery
-        this.stallDetector = createStallDetector(this.logger, {
+        this.stallDetector = (0, stall_detector_js_1.createStallDetector)(this.logger, {
             stallThresholdMs: 45000, // 45 seconds (restored from 60m)
             checkIntervalMs: 5000, // Check every 5 seconds
             maxRecoveryAttempts: 3,
@@ -129,25 +167,25 @@ export class TNFRelayServer extends EventEmitter {
             this.sendRecoveryMessage(event.channelId, event.message, event.metadata);
         });
         this.stallDetector.on('conversation:stalled', (event) => {
-            fmt.conversationStalled(event.channelId);
+            TerminalFormatter_js_1.relay.conversationStalled(event.channelId);
             this.emit('conversation:stalled', event);
         });
         this.stallDetector.on('conversation:terminated', (event) => {
-            fmt.conversationTerminated(event.channelId);
+            TerminalFormatter_js_1.relay.conversationTerminated(event.channelId);
             this.emit('conversation:terminated', event);
         });
         this.stallDetector.on('conversation:recovered', (event) => {
-            fmt.conversationRecovered(event.channelId);
+            TerminalFormatter_js_1.relay.conversationRecovered(event.channelId);
             const manager = this.conversationManagers.get(event.channelId);
-            if (manager && manager.getPhase() === ConversationPhase.STALLED) {
-                void manager.transition(ConversationPhase.EXECUTION);
+            if (manager && manager.getPhase() === conversation_state_machine_js_1.ConversationPhase.STALLED) {
+                void manager.transition(conversation_state_machine_js_1.ConversationPhase.EXECUTION);
             }
         });
         // Initialize Redis Bridge (always enabled for coordination, but gated)
         this.bridgeGateEnabled = process.env.BRIDGE_GATE_ENABLED !== 'false'; // Default: gate is ON
-        this.bridge = createRedisRelayBridge();
+        this.bridge = (0, redis_relay_bridge_js_1.createRedisRelayBridge)();
         this.bridge.on('connected', () => {
-            fmt.redisBridgeConnected();
+            TerminalFormatter_js_1.relay.redisBridgeConnected();
             console.log('[Relay] Bridge connected - Agent gate:', this.bridgeGateEnabled ? 'ENABLED' : 'OPEN');
         });
         this.bridge.on('egress', (envelope) => {
@@ -160,7 +198,7 @@ export class TNFRelayServer extends EventEmitter {
             this.bridge = null;
         });
         if (this.activityPersistenceEnabled) {
-            this.activityRedis = createClient({
+            this.activityRedis = (0, redis_1.createClient)({
                 url: process.env.ACTIVITY_REDIS_URL || process.env.REDIS_URL || 'redis://localhost:6379',
             });
             this.activityRedis.on('error', (err) => {
@@ -168,7 +206,7 @@ export class TNFRelayServer extends EventEmitter {
             });
             // ioredis handles connection automatically, but we can wrap it in a promise if needed
             this.activityRedisConnectPromise = Promise.resolve();
-            fmt.activityPersistenceEnabled(this.activityStreamKey);
+            TerminalFormatter_js_1.relay.activityPersistenceEnabled(this.activityStreamKey);
         }
     }
     handleHttpRequest(req, res) {
@@ -410,10 +448,10 @@ export class TNFRelayServer extends EventEmitter {
         let manager = this.conversationManagers.get(channelId);
         if (!manager) {
             console.log(`[Relay] initializing conversation state machine for ${channelId}`);
-            manager = new ConversationStateMachine(channelId);
+            manager = new conversation_state_machine_js_1.ConversationStateMachine(channelId);
             // Hook up state machine events
             manager.on('phase:changed', (event) => {
-                fmt.phaseChanged(event.conversationId, event.from, event.to);
+                TerminalFormatter_js_1.relay.phaseChanged(event.conversationId, event.from, event.to);
                 // Broadcast phase change to channel
                 this.broadcastToChannel(event.conversationId, {
                     id: `sys-${Date.now()}`,
@@ -439,7 +477,7 @@ export class TNFRelayServer extends EventEmitter {
     setupWebSocket() {
         this.wss.on('connection', (ws, req) => {
             let agentId = null;
-            fmt.newConnection(req.socket.remoteAddress);
+            TerminalFormatter_js_1.relay.newConnection(req.socket.remoteAddress);
             // Send welcome message
             this.send(ws, {
                 type: 'WELCOME',
@@ -510,7 +548,7 @@ export class TNFRelayServer extends EventEmitter {
             };
             return this.handleMessage(ws, converted, currentAgentId);
         }
-        fmt.protocolMessage(type, agentId || null);
+        TerminalFormatter_js_1.relay.protocolMessage(type, agentId || null);
         switch (type) {
             case 'AGENT_REGISTER': {
                 // Authenticate if token provided
@@ -555,7 +593,7 @@ export class TNFRelayServer extends EventEmitter {
                     channels: agentData.channels || [],
                     connectedAt: Date.now(),
                     lastSeen: Date.now(),
-                    metadata: attachAuditTrace({
+                    metadata: (0, audit_js_1.attachAuditTrace)({
                         ...agentData.metadata,
                         authenticated: !!verifiedToken,
                     }, {
@@ -578,7 +616,7 @@ export class TNFRelayServer extends EventEmitter {
                 for (const cap of agent.capabilities) {
                     this.subscriptionRegistry.register(id, `capability:${cap}`);
                 }
-                fmt.agentRegistered(agent.name, id, agent.platform, !!verifiedToken);
+                TerminalFormatter_js_1.relay.agentRegistered(agent.name, id, agent.platform, !!verifiedToken);
                 this.emit('agent:registered', agent);
                 // Send current state to new agent
                 this.send(ws, {
@@ -722,7 +760,7 @@ export class TNFRelayServer extends EventEmitter {
                     this.agentChannels.forEach((channels) => channels.delete(channelId));
                     // FIX: Clear conversation manager for the deleted channel to prevent memory leak
                     this.conversationManagers.delete(channelId);
-                    fmt.channelDeleted(channelId);
+                    TerminalFormatter_js_1.relay.channelDeleted(channelId);
                     this.broadcast({
                         type: 'CHANNEL_LIST',
                         payload: { channels: Array.from(this.channels.values()) },
@@ -735,7 +773,7 @@ export class TNFRelayServer extends EventEmitter {
                 if (channelId) {
                     const manager = this.getOrCreateConversationManager(channelId);
                     void manager.pause(); // async but we don't await
-                    fmt.channelPaused(channelId);
+                    TerminalFormatter_js_1.relay.channelPaused(channelId);
                 }
                 break;
             }
@@ -744,7 +782,7 @@ export class TNFRelayServer extends EventEmitter {
                 if (channelId) {
                     const manager = this.getOrCreateConversationManager(channelId);
                     void manager.resume(); // async but we don't await
-                    fmt.channelResumed(channelId);
+                    TerminalFormatter_js_1.relay.channelResumed(channelId);
                 }
                 break;
             }
@@ -776,21 +814,21 @@ export class TNFRelayServer extends EventEmitter {
                     const manager = this.getOrCreateConversationManager(channel);
                     const currentPhase = manager.getPhase();
                     // 1. Check for Pause
-                    if (currentPhase === ConversationPhase.PAUSED) {
+                    if (currentPhase === conversation_state_machine_js_1.ConversationPhase.PAUSED) {
                         // Do NOT record activity or update stall detector when paused
                         console.log(`[Relay] Skipping activity record for paused channel: ${channel}`);
                     }
                     else {
                         // 2. Auto-start if in initializing phase (User sent a message, so start it!)
-                        if (currentPhase === ConversationPhase.INITIALIZING) {
+                        if (currentPhase === conversation_state_machine_js_1.ConversationPhase.INITIALIZING) {
                             console.log(`[Relay] Auto-starting conversation in channel: ${channel}`);
-                            void manager.transition(ConversationPhase.EXECUTION);
+                            void manager.transition(conversation_state_machine_js_1.ConversationPhase.EXECUTION);
                         }
                         // 3. Record activity only if we are in an active phase
                         // (This prevents stall detector from firing on a conversation that hasn't really started or is finished)
-                        if (currentPhase === ConversationPhase.EXECUTION ||
-                            currentPhase === ConversationPhase.STALLED ||
-                            currentPhase === ConversationPhase.RECOVERY) {
+                        if (currentPhase === conversation_state_machine_js_1.ConversationPhase.EXECUTION ||
+                            currentPhase === conversation_state_machine_js_1.ConversationPhase.STALLED ||
+                            currentPhase === conversation_state_machine_js_1.ConversationPhase.RECOVERY) {
                             // Only track as conversation content if there's actual message content
                             const msgPayload = message?.payload;
                             const hasMessageContent = !!msgPayload?.content;
@@ -809,7 +847,7 @@ export class TNFRelayServer extends EventEmitter {
                         if (ch) {
                             ch.members.forEach((memberId) => {
                                 const memberWs = this.sockets.get(memberId);
-                                if (memberWs && memberWs.readyState === WebSocket.OPEN) {
+                                if (memberWs && memberWs.readyState === ws_1.default.OPEN) {
                                     this.send(memberWs, {
                                         type: 'CHANNEL_MESSAGE',
                                         payload: msg,
@@ -829,7 +867,7 @@ export class TNFRelayServer extends EventEmitter {
                 else if (to) {
                     // Direct message
                     const targetWs = this.sockets.get(to);
-                    if (targetWs && targetWs.readyState === WebSocket.OPEN) {
+                    if (targetWs && targetWs.readyState === ws_1.default.OPEN) {
                         this.send(targetWs, {
                             type: 'MESSAGE_RECEIVE',
                             payload: msg,
@@ -878,7 +916,7 @@ export class TNFRelayServer extends EventEmitter {
         const payload = (rawMessage.payload || {});
         const metadata = (msg.metadata || {});
         const agent = this.agents.get(msg.from);
-        const auditedMetadata = attachAuditTrace(metadata, {
+        const auditedMetadata = (0, audit_js_1.attachAuditTrace)(metadata, {
             source: 'standalone-relay',
             actor: agent?.operationalHandle || msg.from || 'unknown',
             channelId: msg.channel,
@@ -997,7 +1035,7 @@ export class TNFRelayServer extends EventEmitter {
         }
     }
     handleAgentDisconnect(agentId) {
-        fmt.agentDisconnected(agentId);
+        TerminalFormatter_js_1.relay.agentDisconnected(agentId);
         const agent = this.agents.get(agentId);
         this.agents.delete(agentId);
         this.sockets.delete(agentId);
@@ -1037,7 +1075,7 @@ export class TNFRelayServer extends EventEmitter {
         this.emit('agent:disconnected', { agentId, agent });
     }
     send(ws, message) {
-        if (ws.readyState === WebSocket.OPEN) {
+        if (ws.readyState === ws_1.default.OPEN) {
             ws.send(JSON.stringify({
                 id: message.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                 timestamp: Date.now(),
@@ -1103,19 +1141,19 @@ export class TNFRelayServer extends EventEmitter {
         else if ('agentId' in envelope.to) {
             // Direct message to specific agent
             const targetSocket = this.sockets.get(envelope.to.agentId);
-            if (targetSocket && targetSocket.readyState === WebSocket.OPEN) {
+            if (targetSocket && targetSocket.readyState === ws_1.default.OPEN) {
                 targetSocket.send(JSON.stringify(protocolMsg));
             }
         }
     }
     dispatchTask(task, channelId) {
-        fmt.taskDispatched(task.id, channelId);
+        TerminalFormatter_js_1.relay.taskDispatched(task.id, channelId);
         void this.persistTaskDispatch(task, channelId);
         // If specific targets are defined, prioritize them
         if (task.targetAgents && task.targetAgents.length > 0) {
             for (const targetAgentId of task.targetAgents) {
                 const targetSocket = this.sockets.get(targetAgentId);
-                if (targetSocket && targetSocket.readyState === WebSocket.OPEN) {
+                if (targetSocket && targetSocket.readyState === ws_1.default.OPEN) {
                     this.send(targetSocket, {
                         type: 'TASK_ASSIGN',
                         payload: { task },
@@ -1140,7 +1178,7 @@ export class TNFRelayServer extends EventEmitter {
                     console.log(`[Relay] Dispatching task via capabilities to: ${capableAgents.join(', ')}`);
                     capableAgents.forEach((agentId) => {
                         const ws = this.sockets.get(agentId);
-                        if (ws && ws.readyState === WebSocket.OPEN) {
+                        if (ws && ws.readyState === ws_1.default.OPEN) {
                             this.send(ws, {
                                 type: 'TASK_ASSIGN',
                                 payload: { task },
@@ -1205,7 +1243,7 @@ export class TNFRelayServer extends EventEmitter {
         }
         channel.members.forEach((memberId) => {
             const socket = this.sockets.get(memberId);
-            if (socket && socket.readyState === WebSocket.OPEN) {
+            if (socket && socket.readyState === ws_1.default.OPEN) {
                 socket.send(JSON.stringify(message));
             }
         });
@@ -1217,7 +1255,7 @@ export class TNFRelayServer extends EventEmitter {
             ...message,
         });
         this.sockets.forEach((ws, agentId) => {
-            if (agentId !== excludeAgentId && ws.readyState === WebSocket.OPEN) {
+            if (agentId !== excludeAgentId && ws.readyState === ws_1.default.OPEN) {
                 ws.send(data);
             }
         });
@@ -1352,7 +1390,7 @@ export class TNFRelayServer extends EventEmitter {
     emitRelayActivityEvent(eventType, content, metadata, operator = { actor: 'relay-admin-http' }) {
         const channelId = 'fuse-activity-log';
         const timestamp = Date.now();
-        const auditedMetadata = attachAuditTrace({
+        const auditedMetadata = (0, audit_js_1.attachAuditTrace)({
             isSystemMessage: true,
             source: 'RELAY',
             eventType,
@@ -1553,7 +1591,7 @@ export class TNFRelayServer extends EventEmitter {
             content: message,
             channel: channelId,
             timestamp: Date.now(),
-            metadata: attachAuditTrace({
+            metadata: (0, audit_js_1.attachAuditTrace)({
                 ...metadata,
                 isSystemMessage: true,
                 isRecoveryAttempt: true,
@@ -1569,7 +1607,7 @@ export class TNFRelayServer extends EventEmitter {
         // Broadcast to all channel members
         ch.members.forEach((memberId) => {
             const memberWs = this.sockets.get(memberId);
-            if (memberWs && memberWs.readyState === WebSocket.OPEN) {
+            if (memberWs && memberWs.readyState === ws_1.default.OPEN) {
                 this.send(memberWs, {
                     type: 'CHANNEL_MESSAGE',
                     payload: recoveryMsg,
@@ -1593,7 +1631,7 @@ export class TNFRelayServer extends EventEmitter {
             const now = Date.now();
             this.agents.forEach((agent, agentId) => {
                 if (now - agent.lastSeen > AGENT_TIMEOUT) {
-                    fmt.agentTimeout(agentId);
+                    TerminalFormatter_js_1.relay.agentTimeout(agentId);
                     const ws = this.sockets.get(agentId);
                     if (ws) {
                         ws.close();
@@ -1608,7 +1646,7 @@ export class TNFRelayServer extends EventEmitter {
             void this.ensureActivityPersistenceReady()
                 .then(() => {
                 this.server.listen(this.port, () => {
-                    fmt.banner({
+                    TerminalFormatter_js_1.relay.banner({
                         port: this.port,
                         redisBridge: !!this.bridge,
                         activityPersistence: this.activityPersistenceEnabled,
@@ -1617,7 +1655,7 @@ export class TNFRelayServer extends EventEmitter {
                     });
                     this.startHeartbeatMonitor();
                     this.stallDetector.start(); // Start stall detection
-                    fmt.stallDetectorStarted();
+                    TerminalFormatter_js_1.relay.stallDetectorStarted();
                     this.emit('started', { port: this.port });
                     resolve();
                 });
@@ -1653,7 +1691,7 @@ export class TNFRelayServer extends EventEmitter {
                         }
                         // Upstash REST client doesn't need explicit closing as it is HTTP-based
                         this.activityUpstash = null;
-                        fmt.serverStopped();
+                        TerminalFormatter_js_1.relay.serverStopped();
                         this.emit('stopped');
                         resolve();
                     };
@@ -1676,16 +1714,12 @@ export class TNFRelayServer extends EventEmitter {
         return this.channels.get(id);
     }
 }
+exports.TNFRelayServer = TNFRelayServer;
 // CLI entry point
 const isMainModule = () => {
     if (typeof require !== 'undefined' && typeof module !== 'undefined' && require.main === module)
         return true;
-    if (typeof import.meta !== 'undefined' && import.meta.url) {
-        const mainPath = process.argv[1];
-        const modulePath = fileURLToPath(import.meta.url);
-        return mainPath === modulePath || mainPath?.endsWith('standalone-relay.js');
-    }
-    return false;
+    return process.argv[1]?.endsWith('standalone-relay.js') ?? false;
 };
 if (isMainModule()) {
     const relay = new TNFRelayServer(PORT);
@@ -1697,7 +1731,7 @@ if (isMainModule()) {
     // Graceful shutdown
     process.on('SIGINT', () => {
         void (async () => {
-            fmt.shutdownRequested();
+            TerminalFormatter_js_1.relay.shutdownRequested();
             await relay.stop();
             process.exit(0);
         })();
@@ -1709,5 +1743,5 @@ if (isMainModule()) {
         })();
     });
 }
-export default TNFRelayServer;
+exports.default = TNFRelayServer;
 //# sourceMappingURL=standalone-relay.js.map

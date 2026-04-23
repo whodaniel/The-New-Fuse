@@ -1,5 +1,8 @@
-import { EventEmitter } from 'node:events'; // eslint-disable-line import/no-unresolved
-export var ConversationPhase;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ConversationStateMachine = exports.ConversationPhase = void 0;
+const node_events_1 = require("node:events"); // eslint-disable-line import/no-unresolved
+var ConversationPhase;
 (function (ConversationPhase) {
     ConversationPhase["INITIALIZING"] = "initializing";
     ConversationPhase["AGENT_DISCOVERY"] = "agent_discovery";
@@ -11,8 +14,8 @@ export var ConversationPhase;
     ConversationPhase["RECOVERY"] = "recovery";
     ConversationPhase["TERMINATED"] = "terminated";
     ConversationPhase["PAUSED"] = "paused";
-})(ConversationPhase || (ConversationPhase = {}));
-export class ConversationStateMachine extends EventEmitter {
+})(ConversationPhase || (exports.ConversationPhase = ConversationPhase = {}));
+class ConversationStateMachine extends node_events_1.EventEmitter {
     constructor(channelId, config) {
         super();
         this.phase = ConversationPhase.INITIALIZING;
@@ -116,4 +119,5 @@ export class ConversationStateMachine extends EventEmitter {
         // Additional logic can be added here
     }
 }
+exports.ConversationStateMachine = ConversationStateMachine;
 //# sourceMappingURL=conversation-state-machine.js.map

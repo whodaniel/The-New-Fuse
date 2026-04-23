@@ -1,10 +1,13 @@
+"use strict";
 /**
  * CrewAI Protocol Adapter
  *
  * Handles CrewAI's multi-agent framework format
  * Converts between CrewAI crew/agent messages and The New Fuse's A2A protocol
  */
-export class CrewAIAdapter {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CrewAIAdapter = void 0;
+class CrewAIAdapter {
     constructor(logger) {
         this.name = 'crewai';
         this.version = '1.0.0';
@@ -370,4 +373,5 @@ export class CrewAIAdapter {
         };
     }
 }
+exports.CrewAIAdapter = CrewAIAdapter;
 //# sourceMappingURL=CrewAIAdapter.js.map

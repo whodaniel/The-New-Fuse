@@ -1,15 +1,18 @@
+"use strict";
 /**
  * Shared Blockchain Service
  *
  * Centralized blockchain interaction utilities to eliminate code duplication
  * and provide consistent Web3 functionality across all services.
  */
-import { JsonRpcProvider, Wallet, ethers, formatEther, formatUnits, isAddress, parseEther, parseUnits, verifyMessage, } from 'ethers';
-import { EventEmitter } from 'events';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BlockchainService = void 0;
+const ethers_1 = require("ethers");
+const events_1 = require("events");
 /**
  * Centralized blockchain service for consistent Web3 operations
  */
-export class BlockchainService extends EventEmitter {
+class BlockchainService extends events_1.EventEmitter {
     constructor(config, logger) {
         super();
         this.provider = null;
@@ -30,7 +33,7 @@ export class BlockchainService extends EventEmitter {
         try {
             this.logger.info('Initializing blockchain connection...');
             // Setup provider
-            this.provider = new JsonRpcProvider(this.config.providerUrl);
+            this.provider = new ethers_1.JsonRpcProvider(this.config.providerUrl);
             // Test connection
             const network = await this.provider.getNetwork();
             if (network.chainId !== BigInt(this.config.chainId)) {
@@ -38,7 +41,7 @@ export class BlockchainService extends EventEmitter {
             }
             // Setup wallet if private key provided
             if (this.config.privateKey) {
-                this.wallet = new Wallet(this.config.privateKey, this.provider);
+                this.wallet = new ethers_1.Wallet(this.config.privateKey, this.provider);
                 this.logger.info(`Wallet connected: ${this.wallet.address}`);
             }
             this.isConnected = true;
@@ -86,7 +89,7 @@ export class BlockchainService extends EventEmitter {
                 return null;
             }
             const signer = this.wallet || this.provider;
-            const contract = new ethers.Contract(address, abi, signer);
+            const contract = new ethers_1.ethers.Contract(address, abi, signer);
             this.contracts.set(name, contract);
             this.logger.info(`Contract registered: ${name} at ${address}`);
             return contract;
@@ -118,7 +121,7 @@ export class BlockchainService extends EventEmitter {
                 return null;
             }
             const signer = this.wallet || this.provider;
-            return new ethers.Contract(address, abi, signer);
+            return new ethers_1.ethers.Contract(address, abi, signer);
         }
         catch (error) {
             this.logger.error(`Failed to create contract instance: ${error}`);
@@ -150,9 +153,9 @@ export class BlockchainService extends EventEmitter {
             if (options.gasLimit)
                 txOptions.gasLimit = options.gasLimit;
             if (options.gasPrice)
-                txOptions.gasPrice = parseUnits(options.gasPrice, 'gwei');
+                txOptions.gasPrice = (0, ethers_1.parseUnits)(options.gasPrice, 'gwei');
             if (options.value)
-                txOptions.value = parseEther(options.value);
+                txOptions.value = (0, ethers_1.parseEther)(options.value);
             // Execute the call
             let result;
             try {
@@ -216,7 +219,7 @@ export class BlockchainService extends EventEmitter {
             }
             const feeData = await this.provider.getFeeData();
             const gasPrice = feeData.gasPrice || 0n;
-            const gasPriceGwei = formatUnits(gasPrice, 'gwei');
+            const gasPriceGwei = (0, ethers_1.formatUnits)(gasPrice, 'gwei');
             // Cap at max gas price
             const maxGwei = parseFloat(this.config.maxGasPrice);
             const currentGwei = parseFloat(gasPriceGwei);
@@ -242,7 +245,7 @@ export class BlockchainService extends EventEmitter {
             }
             const txOptions = {};
             if (options.value)
-                txOptions.value = parseEther(options.value);
+                txOptions.value = (0, ethers_1.parseEther)(options.value);
             // Use the contract's estimateGas method
             const estimatedGas = await contract[methodName].estimateGas(...args, txOptions);
             // Add 20% buffer for safety
@@ -277,7 +280,7 @@ export class BlockchainService extends EventEmitter {
      */
     verifyMessage(message, signature) {
         try {
-            const recoveredAddress = verifyMessage(message, signature);
+            const recoveredAddress = (0, ethers_1.verifyMessage)(message, signature);
             this.logger.info(`Message verified, recovered address: ${recoveredAddress}`);
             return recoveredAddress;
         }
@@ -291,7 +294,7 @@ export class BlockchainService extends EventEmitter {
      */
     static verifyMessage(message, signature) {
         try {
-            return verifyMessage(message, signature);
+            return (0, ethers_1.verifyMessage)(message, signature);
         }
         catch {
             return null;
@@ -301,7 +304,7 @@ export class BlockchainService extends EventEmitter {
      * Generate a random wallet
      */
     static generateWallet() {
-        const wallet = ethers.Wallet.createRandom();
+        const wallet = ethers_1.ethers.Wallet.createRandom();
         return {
             address: wallet.address,
             privateKey: wallet.privateKey,
@@ -313,25 +316,25 @@ export class BlockchainService extends EventEmitter {
      * Format ETH amount for display
      */
     static formatEther(amount) {
-        return formatEther(amount);
+        return (0, ethers_1.formatEther)(amount);
     }
     /**
      * Parse ETH amount from string
      */
     static parseEther(amount) {
-        return parseEther(amount);
+        return (0, ethers_1.parseEther)(amount);
     }
     /**
      * Convert to Wei
      */
     static toWei(amount, unit = 'ether') {
-        return parseUnits(amount, unit);
+        return (0, ethers_1.parseUnits)(amount, unit);
     }
     /**
      * Convert from Wei
      */
     static fromWei(amount, unit = 'ether') {
-        return formatUnits(amount, unit);
+        return (0, ethers_1.formatUnits)(amount, unit);
     }
     /**
      * Create a token bound account for a given token ID using ERC-6551 Registry.
@@ -358,9 +361,9 @@ export class BlockchainService extends EventEmitter {
             'function createAccount(address implementation, bytes32 salt, uint256 chainId, address tokenContract, uint256 tokenId) external returns (address)',
             'function account(address implementation, bytes32 salt, uint256 chainId, address tokenContract, uint256 tokenId) external view returns (address)',
         ];
-        const registryContract = new ethers.Contract(registry, registryAbi, this.wallet);
+        const registryContract = new ethers_1.ethers.Contract(registry, registryAbi, this.wallet);
         const nftAddress = await nftContract.getAddress();
-        const saltBytes32 = ethers.zeroPadValue(ethers.toBeHex(salt), 32);
+        const saltBytes32 = ethers_1.ethers.zeroPadValue(ethers_1.ethers.toBeHex(salt), 32);
         this.logger.info(`Creating token-bound account for token ID: ${tokenId}`);
         try {
             // First check if account already exists
@@ -386,7 +389,7 @@ export class BlockchainService extends EventEmitter {
      * Check if address is valid
      */
     static isValidAddress(address) {
-        return isAddress(address);
+        return (0, ethers_1.isAddress)(address);
     }
     /**
      * Get transaction receipt
@@ -439,7 +442,7 @@ export class BlockchainService extends EventEmitter {
                 healthy: true,
                 details: {
                     blockNumber,
-                    gasPrice: formatUnits(feeData.gasPrice || 0n, 'gwei'),
+                    gasPrice: (0, ethers_1.formatUnits)(feeData.gasPrice || 0n, 'gwei'),
                     chainId: network.chainId,
                     name: network.name,
                 },
@@ -481,4 +484,5 @@ export class BlockchainService extends EventEmitter {
         this.logger.info('Blockchain service disconnected');
     }
 }
+exports.BlockchainService = BlockchainService;
 //# sourceMappingURL=BlockchainService.js.map

@@ -1,3 +1,4 @@
+"use strict";
 /**
  * JWT Authentication Service for Agent Federation
  *
@@ -6,8 +7,14 @@
  * - Implements capability-based access control
  * - Provides audit trail via token signatures
  */
-import jwt from 'jsonwebtoken';
-export class JWTAuthService {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.JWTAuthService = void 0;
+exports.createAuthService = createAuthService;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+class JWTAuthService {
     constructor(config) {
         this.secret = config.secret;
         this.expiresIn = config.expiresIn || '24h';
@@ -27,7 +34,7 @@ export class JWTAuthService {
             platform: agent.platform,
             metadata: agent.metadata,
         };
-        return jwt.sign(payload, this.secret, {
+        return jsonwebtoken_1.default.sign(payload, this.secret, {
             expiresIn: this.expiresIn,
             algorithm: this.algorithm,
         });
@@ -38,7 +45,7 @@ export class JWTAuthService {
      */
     verifyToken(token) {
         try {
-            const decoded = jwt.verify(token, this.secret, {
+            const decoded = jsonwebtoken_1.default.verify(token, this.secret, {
                 algorithms: [this.algorithm],
             });
             // Validate required fields
@@ -49,10 +56,10 @@ export class JWTAuthService {
             return decoded;
         }
         catch (error) {
-            if (error instanceof jwt.TokenExpiredError) {
+            if (error instanceof jsonwebtoken_1.default.TokenExpiredError) {
                 console.warn('[JWTAuth] Token expired');
             }
-            else if (error instanceof jwt.JsonWebTokenError) {
+            else if (error instanceof jsonwebtoken_1.default.JsonWebTokenError) {
                 console.warn('[JWTAuth] Invalid token:', error.message);
             }
             else {
@@ -66,7 +73,7 @@ export class JWTAuthService {
      */
     decodeToken(token) {
         try {
-            return jwt.decode(token);
+            return jsonwebtoken_1.default.decode(token);
         }
         catch (error) {
             console.error('[JWTAuth] Token decode error:', error);
@@ -101,10 +108,11 @@ export class JWTAuthService {
         });
     }
 }
+exports.JWTAuthService = JWTAuthService;
 /**
  * Create a singleton instance for use across the relay
  */
-export function createAuthService(config) {
+function createAuthService(config) {
     const secret = config?.secret || process.env.JWT_SECRET;
     if (!secret) {
         throw new Error('[JWTAuth] 🛑 CRITICAL SECURITY ERROR: JWT secret is required. Must provide a strong JWT_SECRET environment variable.');

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+"use strict";
 /**
  * TNF LAUNCHPAD — The Perpetual Spawner
  * =====================================
@@ -17,10 +18,11 @@
  *   TNF_RELAY_TOKEN  — Auth token for relay
  *   LAUNCHPAD_DRY_RUN — If "true", only prints what it would do
  */
-import { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = require("fs");
+const path_1 = require("path");
 // @ts-ignore
-const __dirname = typeof __dirname !== 'undefined' ? __dirname : join(process.cwd(), 'src');
+const __dirname = typeof __dirname !== 'undefined' ? __dirname : (0, path_1.join)(process.cwd(), 'src');
 // ============================================================================
 // CONFIG
 // ============================================================================
@@ -28,8 +30,8 @@ const CONFIG = {
     RELAY_URL: process.env.TNF_RELAY_URL || 'ws://localhost:3000',
     RELAY_TOKEN: process.env.TNF_RELAY_TOKEN || null,
     DRY_RUN: process.env.LAUNCHPAD_DRY_RUN === 'true',
-    BACKLOG_FILE: join(__dirname, '..', '..', 'docs', 'LAUNCH_BACKLOG.md'),
-    LOG_FILE: join(__dirname, '..', '..', 'docs', 'LAUNCH_LOG.md'),
+    BACKLOG_FILE: (0, path_1.join)(__dirname, '..', '..', 'docs', 'LAUNCH_BACKLOG.md'),
+    LOG_FILE: (0, path_1.join)(__dirname, '..', '..', 'docs', 'LAUNCH_LOG.md'),
     MAX_SPAWN_PER_RUN: 3,
 };
 // ============================================================================
@@ -98,9 +100,9 @@ const LAUNCH_BACKLOG = [
 // ============================================================================
 function getLastLaunched() {
     const logFile = CONFIG.LOG_FILE;
-    if (!existsSync(logFile))
+    if (!(0, fs_1.existsSync)(logFile))
         return null;
-    const content = readFileSync(logFile, 'utf-8');
+    const content = (0, fs_1.readFileSync)(logFile, 'utf-8');
     const matches = content.match(/\| (\d{4}-\d{2}-\d{2}) \|([^|]+)\|/g);
     if (!matches || matches.length === 0)
         return null;

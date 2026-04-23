@@ -1,23 +1,26 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentRegistryBridge = void 0;
 /**
  * TNF Agent Registry WebSocket Bridge
  * Registers agents with Master Clock and keeps them alive via heartbeat
  * Acts as a living agent on the relay — always present, always listening
  */
-import { WebSocket } from 'ws';
-import { randomUUID } from 'crypto';
+const ws_1 = require("ws");
+const crypto_1 = require("crypto");
 const RELAY_URL = process.env.RELAY_URL || 'ws://localhost:3000/ws';
 const AGENT_ID = process.env.AGENT_ID || 'LAUNCHPAD-AGENT';
 const HEARTBEAT_INTERVAL = parseInt(process.env.HEARTBEAT_INTERVAL || '3000');
 class AgentRegistryBridge {
     constructor() {
         this.ws = null;
-        this.sessionId = randomUUID();
+        this.sessionId = (0, crypto_1.randomUUID)();
         this.registered = false;
         this.messageHandlers = new Map();
     }
     async connect() {
         return new Promise((resolve, reject) => {
-            this.ws = new WebSocket(RELAY_URL);
+            this.ws = new ws_1.WebSocket(RELAY_URL);
             this.ws.on('open', () => {
                 console.log(`[${AGENT_ID}] Connected to relay ${RELAY_URL}`);
                 this.register();
@@ -72,7 +75,7 @@ class AgentRegistryBridge {
         this.messageHandlers.set(type, handler);
     }
     send(type, payload) {
-        if (!this.ws || this.ws.readyState !== WebSocket.OPEN)
+        if (!this.ws || this.ws.readyState !== ws_1.WebSocket.OPEN)
             return;
         this.ws.send(JSON.stringify({
             type,
@@ -83,7 +86,7 @@ class AgentRegistryBridge {
     }
     startHeartbeat() {
         setInterval(() => {
-            if (this.ws?.readyState === WebSocket.OPEN) {
+            if (this.ws?.readyState === ws_1.WebSocket.OPEN) {
                 this.ws.send(JSON.stringify({
                     type: 'AGENT_HEARTBEAT',
                     payload: { agentId: this.sessionId, status: 'active' },
@@ -94,6 +97,7 @@ class AgentRegistryBridge {
         }, HEARTBEAT_INTERVAL);
     }
 }
+exports.AgentRegistryBridge = AgentRegistryBridge;
 // Auto-start if run directly
 if (require.main === module) {
     const bridge = new AgentRegistryBridge();
@@ -103,5 +107,4 @@ if (require.main === module) {
         console.log(`[${AGENT_ID}] Session: ${bridge['sessionId']}`);
     });
 }
-export { AgentRegistryBridge };
 //# sourceMappingURL=agent-registry-bridge.js.map

@@ -1,12 +1,15 @@
+"use strict";
 /**
  * Heartbeat Monitoring and Anti-Stagnation Service
  *
  * Implements robust monitoring of agent communications and workflow progress
  * Provides fallback mechanisms for stalled communications and automatic recovery
  */
-import { EventEmitter } from 'events';
-import { AgentHandoffTemplateService } from './shared/StubServices';
-export class HeartbeatMonitoringService extends EventEmitter {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HeartbeatMonitoringService = void 0;
+const events_1 = require("events");
+const StubServices_js_1 = require("./shared/StubServices.js");
+class HeartbeatMonitoringService extends events_1.EventEmitter {
     constructor(config, logger) {
         super();
         this.agentHeartbeats = new Map();
@@ -15,7 +18,7 @@ export class HeartbeatMonitoringService extends EventEmitter {
         this.humanNotificationQueue = [];
         this.config = config;
         this.logger = logger;
-        this.handoffTemplateService = new AgentHandoffTemplateService();
+        this.handoffTemplateService = new StubServices_js_1.AgentHandoffTemplateService();
     }
     /**
      * Start heartbeat monitoring
@@ -447,4 +450,5 @@ export class HeartbeatMonitoringService extends EventEmitter {
         };
     }
 }
+exports.HeartbeatMonitoringService = HeartbeatMonitoringService;
 //# sourceMappingURL=HeartbeatMonitoringService.js.map

@@ -1,8 +1,11 @@
+"use strict";
 /**
  * Agent Registry for The New Fuse Relay System
  */
-import { EventEmitter } from 'events';
-export class AgentRegistry extends EventEmitter {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentRegistry = void 0;
+const events_1 = require("events");
+class AgentRegistry extends events_1.EventEmitter {
     constructor(logger) {
         super();
         this.agents = new Map();
@@ -43,4 +46,5 @@ export class AgentRegistry extends EventEmitter {
         this.logger.info('Agent discovery stopped.');
     }
 }
+exports.AgentRegistry = AgentRegistry;
 //# sourceMappingURL=AgentRegistry.js.map

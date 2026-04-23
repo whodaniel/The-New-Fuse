@@ -1,18 +1,21 @@
-import { EventEmitter } from 'events';
-import { RedisAgentClient } from '@the-new-fuse/tnf-cli';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TerminalFederationBridge = void 0;
+const events_1 = require("events");
+const tnf_cli_1 = require("@the-new-fuse/tnf-cli");
 /**
  * Terminal Federation Bridge
  *
  * Bridges local terminal "Active Pulse" injections with the official TNF Federation protocol.
  * Ensures that even terminal-based agents are registered and visible in the WS Relay.
  */
-export class TerminalFederationBridge extends EventEmitter {
+class TerminalFederationBridge extends events_1.EventEmitter {
     constructor(logger, config) {
         super();
         this.agentInfo = null;
         this.logger = logger;
         this.config = config;
-        this.client = new RedisAgentClient();
+        this.client = new tnf_cli_1.RedisAgentClient();
     }
     /**
      * Register the terminal as an official TNF Agent
@@ -59,4 +62,5 @@ export class TerminalFederationBridge extends EventEmitter {
         await this.client.cleanup();
     }
 }
+exports.TerminalFederationBridge = TerminalFederationBridge;
 //# sourceMappingURL=TerminalFederationBridge.js.map

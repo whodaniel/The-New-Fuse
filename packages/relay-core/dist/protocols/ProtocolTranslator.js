@@ -1,8 +1,11 @@
+"use strict";
 /**
  * Protocol Translator for The New Fuse Relay System
  */
-import { EventEmitter } from 'events';
-export class ProtocolTranslator extends EventEmitter {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ProtocolTranslator = void 0;
+const events_1 = require("events");
+class ProtocolTranslator extends events_1.EventEmitter {
     constructor(logger) {
         super();
         this.adapters = new Map();
@@ -44,4 +47,5 @@ export class ProtocolTranslator extends EventEmitter {
         return undefined;
     }
 }
+exports.ProtocolTranslator = ProtocolTranslator;
 //# sourceMappingURL=ProtocolTranslator.js.map

@@ -1,10 +1,13 @@
+"use strict";
 /**
  * Langchain Protocol Adapter
  *
  * Handles Langchain's agent framework format
  * Converts between Langchain agent messages and The New Fuse's A2A protocol
  */
-export class LangchainAdapter {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.LangchainAdapter = void 0;
+class LangchainAdapter {
     constructor(logger) {
         this.name = 'langchain';
         this.version = '1.0.0';
@@ -314,4 +317,5 @@ export class LangchainAdapter {
         };
     }
 }
+exports.LangchainAdapter = LangchainAdapter;
 //# sourceMappingURL=LangchainAdapter.js.map

@@ -1,4 +1,7 @@
-export class SubscriptionRegistry {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SubscriptionRegistry = void 0;
+class SubscriptionRegistry {
     constructor() {
         this.subscriptions = new Map(); // topic -> Set<agentId>
         this.agentSubscriptions = new Map(); // agentId -> Set<topic>
@@ -47,4 +50,5 @@ export class SubscriptionRegistry {
         }
     }
 }
+exports.SubscriptionRegistry = SubscriptionRegistry;
 //# sourceMappingURL=subscription-registry.js.map

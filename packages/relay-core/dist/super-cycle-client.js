@@ -1,12 +1,17 @@
 #!/usr/bin/env node
+"use strict";
 /**
  * Super-Cycle Client
  *
  * Publishes scheduled process lifecycle events into TNF ingress so the
  * master clock can treat cron/automation loops as first-class participants.
  */
-import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
-import Redis from 'ioredis';
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const infrastructure_1 = require("@the-new-fuse/infrastructure");
+const ioredis_1 = __importDefault(require("ioredis"));
 const DEFAULTS = {
     redisUrl: process.env.REDIS_URL ||
         process.env.RAILWAY_REDIS_URL ||
@@ -85,9 +90,9 @@ function mapActionToType(action) {
 async function main() {
     const args = parseArgs(process.argv.slice(2));
     // Use unified standalone utilities
-    const redis = createStandaloneRedisClient({ lazyConnect: true });
-    const upstash = createUpstashRestClient();
-    if (redis instanceof Redis) {
+    const redis = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
+    const upstash = (0, infrastructure_1.createUpstashRestClient)();
+    if (redis instanceof ioredis_1.default) {
         redis.on('error', (err) => {
             console.error(`[super-cycle] redis error: ${err?.message || String(err)}`);
         });
@@ -167,7 +172,7 @@ async function main() {
         console.log(`[super-cycle] sent ${event.type} for ${args.processId}`);
     }
     finally {
-        if (redis instanceof Redis)
+        if (redis instanceof ioredis_1.default)
             await redis.quit();
     }
 }

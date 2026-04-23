@@ -1,10 +1,13 @@
+"use strict";
 /**
  * Anthropic XML Protocol Adapter
  *
  * Based on existing AnthropicXmlAdapter in packages/core/src/protocols/adapters/
  * Handles Anthropic's XML-based function calling and tool invocation format
  */
-export class AnthropicXmlAdapter {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AnthropicXmlAdapter = void 0;
+class AnthropicXmlAdapter {
     constructor(logger) {
         this.name = 'anthropic-xml';
         this.version = '1.0.0';
@@ -253,4 +256,5 @@ export class AnthropicXmlAdapter {
         return xml;
     }
 }
+exports.AnthropicXmlAdapter = AnthropicXmlAdapter;
 //# sourceMappingURL=AnthropicXmlAdapter.js.map

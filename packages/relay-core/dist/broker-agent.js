@@ -1,9 +1,44 @@
 #!/usr/bin/env node
-import { readFile } from 'node:fs/promises';
-import * as path from 'node:path';
-import { createStandaloneRedisClient, createUpstashRestClient } from '@the-new-fuse/infrastructure';
-import { Redis } from 'ioredis';
-import { createTNFEnvelope } from './protocol/tnf-envelope';
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+const promises_1 = require("node:fs/promises");
+const path = __importStar(require("node:path"));
+const infrastructure_1 = require("@the-new-fuse/infrastructure");
+const ioredis_1 = require("ioredis");
+const tnf_envelope_js_1 = require("./protocol/tnf-envelope.js");
 const CONFIG = {
     REDIS_URL: process.env.REDIS_URL ||
         process.env.RAILWAY_REDIS_URL ||
@@ -57,20 +92,20 @@ class BrokerAgent {
         this.brokerId = process.env.BROKER_ID || `BROKER-${Date.now()}`;
         this.twipSnapshotCache = null;
         // Use unified standalone utilities
-        this.redis = createStandaloneRedisClient({ lazyConnect: true });
-        this.redisBlocking = createStandaloneRedisClient({ lazyConnect: true });
-        this.upstash = createUpstashRestClient();
-        if (this.redis instanceof Redis) {
+        this.redis = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
+        this.redisBlocking = (0, infrastructure_1.createStandaloneRedisClient)({ lazyConnect: true });
+        this.upstash = (0, infrastructure_1.createUpstashRestClient)();
+        if (this.redis instanceof ioredis_1.Redis) {
             this.redis.on('error', (err) => console.error('[Broker] Redis error:', err?.message || err));
         }
-        if (this.redisBlocking instanceof Redis) {
+        if (this.redisBlocking instanceof ioredis_1.Redis) {
             this.redisBlocking.on('error', (err) => console.error('[Broker] Redis blocking error:', err?.message || err));
         }
     }
     async start() {
-        if (this.redis instanceof Redis)
+        if (this.redis instanceof ioredis_1.Redis)
             await this.redis.connect();
-        if (this.redisBlocking instanceof Redis)
+        if (this.redisBlocking instanceof ioredis_1.Redis)
             await this.redisBlocking.connect();
         this.running = true;
         await this.registerBroker();
@@ -343,7 +378,7 @@ class BrokerAgent {
             return this.twipSnapshotCache.byTwid.get(twid) || null;
         }
         try {
-            const raw = await readFile(CONFIG.TWIP_INVENTORY_SNAPSHOT_PATH, 'utf8');
+            const raw = await (0, promises_1.readFile)(CONFIG.TWIP_INVENTORY_SNAPSHOT_PATH, 'utf8');
             const parsed = JSON.parse(raw);
             const identities = Array.isArray(parsed?.terminals) ? parsed.terminals : [];
             const byTwid = new Map();
@@ -791,7 +826,7 @@ class BrokerAgent {
             console.warn(`[Broker] Escalated ${task.id} to Director: ${policy.reason}`);
             return;
         }
-        const envelope = createTNFEnvelope('task', { agentId: this.brokerId, role: 'coordinator', platform: 'broker-agent' }, targetAgentId ? { agentId: targetAgentId, role: 'worker' } : { broadcast: true }, {
+        const envelope = (0, tnf_envelope_js_1.createTNFEnvelope)('task', { agentId: this.brokerId, role: 'coordinator', platform: 'broker-agent' }, targetAgentId ? { agentId: targetAgentId, role: 'worker' } : { broadcast: true }, {
             action: 'execute_task',
             taskId: task.id,
             task,

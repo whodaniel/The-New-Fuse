@@ -1,8 +1,11 @@
+"use strict";
 /**
  * Message Router for The New Fuse Relay System
  */
-import { EventEmitter } from 'events';
-export class MessageRouter extends EventEmitter {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MessageRouter = void 0;
+const events_1 = require("events");
+class MessageRouter extends events_1.EventEmitter {
     constructor(logger) {
         super();
         this.logger = logger;
@@ -32,4 +35,5 @@ export class MessageRouter extends EventEmitter {
         return false;
     }
 }
+exports.MessageRouter = MessageRouter;
 //# sourceMappingURL=MessageRouter.js.map

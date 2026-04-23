@@ -1,6 +1,17 @@
-import { z } from 'zod';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TnfIdentityCategory = void 0;
+exports.buildCanonicalEntityId = buildCanonicalEntityId;
+exports.normalizeCanonicalEntityId = normalizeCanonicalEntityId;
+exports.isCanonicalEntityId = isCanonicalEntityId;
+exports.normalizeOperationalHandle = normalizeOperationalHandle;
+exports.buildIdentityAliases = buildIdentityAliases;
+exports.createAgentIdentityRecord = createAgentIdentityRecord;
+exports.buildIdentityAliasMap = buildIdentityAliasMap;
+exports.resolveIdentityAlias = resolveIdentityAlias;
+const zod_1 = require("zod");
 const CANONICAL_ID_SEGMENT = /^[A-Z0-9_]+$/;
-export const TnfIdentityCategory = z.enum([
+exports.TnfIdentityCategory = zod_1.z.enum([
     'AGENT',
     'SESSION',
     'CHANNEL',
@@ -36,7 +47,7 @@ function normalizeCanonicalInstance(value) {
     const normalized = normalizeCanonicalSegment(raw);
     return normalized || '001';
 }
-export function buildCanonicalEntityId(parts) {
+function buildCanonicalEntityId(parts) {
     const category = normalizeCanonicalSegment(parts.category);
     const provider = normalizeCanonicalSegment(parts.provider);
     const name = normalizeCanonicalSegment(parts.name);
@@ -47,7 +58,7 @@ export function buildCanonicalEntityId(parts) {
     }
     return ['TNF', scope, category, provider, name, instance].filter(Boolean).join(':');
 }
-export function normalizeCanonicalEntityId(input) {
+function normalizeCanonicalEntityId(input) {
     const value = String(input || '').trim();
     if (!value) {
         throw new Error('canonical entity id cannot be empty');
@@ -70,7 +81,7 @@ export function normalizeCanonicalEntityId(input) {
     normalized.push(normalizeCanonicalInstance(segments[segments.length - 1]));
     return normalized.join(':');
 }
-export function isCanonicalEntityId(input) {
+function isCanonicalEntityId(input) {
     try {
         normalizeCanonicalEntityId(String(input));
         return true;
@@ -79,14 +90,14 @@ export function isCanonicalEntityId(input) {
         return false;
     }
 }
-export function normalizeOperationalHandle(input) {
+function normalizeOperationalHandle(input) {
     return String(input || '').trim();
 }
 function normalizeAlias(input) {
     const value = String(input || '').trim().toLowerCase();
     return value || null;
 }
-export function buildIdentityAliases(input) {
+function buildIdentityAliases(input) {
     const values = new Set();
     const add = (candidate) => {
         const normalized = candidate ? normalizeAlias(candidate) : null;
@@ -102,7 +113,7 @@ export function buildIdentityAliases(input) {
     }
     return [...values];
 }
-export function createAgentIdentityRecord(input) {
+function createAgentIdentityRecord(input) {
     const operationalHandle = normalizeOperationalHandle(input.operationalHandle);
     if (!operationalHandle) {
         throw new Error('operationalHandle is required');
@@ -124,7 +135,7 @@ export function createAgentIdentityRecord(input) {
         }),
     };
 }
-export function buildIdentityAliasMap(records) {
+function buildIdentityAliasMap(records) {
     const aliasMap = new Map();
     for (const record of records) {
         for (const alias of record.aliases) {
@@ -133,7 +144,7 @@ export function buildIdentityAliasMap(records) {
     }
     return aliasMap;
 }
-export function resolveIdentityAlias(alias, recordsOrMap) {
+function resolveIdentityAlias(alias, recordsOrMap) {
     const normalized = normalizeAlias(alias);
     if (!normalized)
         return null;

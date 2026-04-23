@@ -1,13 +1,19 @@
-import { randomUUID } from 'crypto';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createAuditTrace = createAuditTrace;
+exports.extractAuditTrace = extractAuditTrace;
+exports.mergeAuditTrace = mergeAuditTrace;
+exports.attachAuditTrace = attachAuditTrace;
+const crypto_1 = require("crypto");
 function asString(value) {
     if (typeof value !== 'string')
         return null;
     const normalized = value.trim();
     return normalized || null;
 }
-export function createAuditTrace(input) {
+function createAuditTrace(input) {
     return {
-        traceId: asString(input.traceId) || randomUUID(),
+        traceId: asString(input.traceId) || (0, crypto_1.randomUUID)(),
         source: String(input.source),
         actor: String(input.actor),
         recordedAt: asString(input.recordedAt) || new Date().toISOString(),
@@ -24,7 +30,7 @@ export function createAuditTrace(input) {
         runtimeSessionId: asString(input.runtimeSessionId),
     };
 }
-export function extractAuditTrace(value) {
+function extractAuditTrace(value) {
     if (!value || typeof value !== 'object')
         return null;
     const candidate = value;
@@ -52,7 +58,7 @@ export function extractAuditTrace(value) {
         runtimeSessionId: asString(candidate.runtimeSessionId) || undefined,
     });
 }
-export function mergeAuditTrace(...sources) {
+function mergeAuditTrace(...sources) {
     const merged = {};
     for (const source of sources) {
         if (!source)
@@ -70,7 +76,7 @@ export function mergeAuditTrace(...sources) {
         source,
     });
 }
-export function attachAuditTrace(metadata, input) {
+function attachAuditTrace(metadata, input) {
     const current = extractAuditTrace(metadata?.audit);
     const audit = mergeAuditTrace(current, input) || createAuditTrace(input);
     return {

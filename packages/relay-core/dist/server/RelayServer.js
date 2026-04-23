@@ -1,3 +1,4 @@
+"use strict";
 /**
  * Unified Relay Server for The New Fuse Framework
  *
@@ -8,32 +9,67 @@
  * - relay-adapter.js
  * - message-bridge.js
  */
-import { EventEmitter } from 'events';
-import { UnifiedBridge } from '../adapters/UnifiedBridge';
-import { createAuthService } from '../auth/JWTAuthService';
-import { A2AProtocolAdapter } from '../protocols/A2AProtocolAdapter';
-import { AnthropicXmlAdapter } from '../protocols/AnthropicXmlAdapter';
-import { CrewAIAdapter } from '../protocols/CrewAIAdapter';
-import { GooseAdapter } from '../protocols/GooseAdapter';
-import { LangchainAdapter } from '../protocols/LangchainAdapter';
-import { OpenAIAdapter } from '../protocols/OpenAIAdapter';
-import { ProtocolTranslator } from '../protocols/ProtocolTranslator';
-import { OrchestratorIntegrationService } from '../services/OrchestratorIntegrationService';
-import { FileTransport } from '../transports/FileTransport';
-import { HTTPTransport } from '../transports/HTTPTransport';
-import { MCPTransport } from '../transports/MCPTransport';
-import { RedisTransport } from '../transports/RedisTransport';
-import { WebSocketTransport } from '../transports/WebSocketTransport';
-import { AgentRegistry } from '../utils/AgentRegistry';
-import { Logger } from '../utils/Logger';
-import { MessageRouter } from '../utils/MessageRouter';
-export class RelayServer extends EventEmitter {
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RelayServer = void 0;
+const events_1 = require("events");
+const UnifiedBridge_js_1 = require("../adapters/UnifiedBridge.js");
+const JWTAuthService_js_1 = require("../auth/JWTAuthService.js");
+const A2AProtocolAdapter_js_1 = require("../protocols/A2AProtocolAdapter.js");
+const AnthropicXmlAdapter_js_1 = require("../protocols/AnthropicXmlAdapter.js");
+const CrewAIAdapter_js_1 = require("../protocols/CrewAIAdapter.js");
+const GooseAdapter_js_1 = require("../protocols/GooseAdapter.js");
+const LangchainAdapter_js_1 = require("../protocols/LangchainAdapter.js");
+const OpenAIAdapter_js_1 = require("../protocols/OpenAIAdapter.js");
+const ProtocolTranslator_js_1 = require("../protocols/ProtocolTranslator.js");
+const OrchestratorIntegrationService_js_1 = require("../services/OrchestratorIntegrationService.js");
+const FileTransport_js_1 = require("../transports/FileTransport.js");
+const HTTPTransport_js_1 = require("../transports/HTTPTransport.js");
+const MCPTransport_js_1 = require("../transports/MCPTransport.js");
+const RedisTransport_js_1 = require("../transports/RedisTransport.js");
+const WebSocketTransport_js_1 = require("../transports/WebSocketTransport.js");
+const AgentRegistry_js_1 = require("../utils/AgentRegistry.js");
+const Logger_js_1 = require("../utils/Logger.js");
+const MessageRouter_js_1 = require("../utils/MessageRouter.js");
+class RelayServer extends events_1.EventEmitter {
     constructor(config, redisService) {
         super();
         this.isRunning = false;
         this.interceptedMessages = [];
         this.config = config;
-        this.logger = new Logger(config.logLevel, config.workspaceDir);
+        this.logger = new Logger_js_1.Logger(config.logLevel, config.workspaceDir);
         // Initialize or use provided redis service
         if (redisService) {
             this.redisService = redisService;
@@ -42,19 +78,19 @@ export class RelayServer extends EventEmitter {
             // Mock/Create UnifiedRedisService for standalone use
             // In a real standalone, we'd use the creation utilities
             this.redisService = (async () => {
-                const { UnifiedRedisService, RedisConfig } = await import('@the-new-fuse/infrastructure');
+                const { UnifiedRedisService, RedisConfig } = await Promise.resolve().then(() => __importStar(require('@the-new-fuse/infrastructure')));
                 // This is a bit complex for a constructor, let's assume we'll fix it in main.ts
                 return null;
             })();
         }
         this.transports = new Map();
-        this.agentRegistry = new AgentRegistry(this.logger);
-        this.messageRouter = new MessageRouter(this.logger);
-        this.bridge = new UnifiedBridge(this.logger);
-        this.protocolTranslator = new ProtocolTranslator(this.logger);
-        this.authService = createAuthService();
+        this.agentRegistry = new AgentRegistry_js_1.AgentRegistry(this.logger);
+        this.messageRouter = new MessageRouter_js_1.MessageRouter(this.logger);
+        this.bridge = new UnifiedBridge_js_1.UnifiedBridge(this.logger);
+        this.protocolTranslator = new ProtocolTranslator_js_1.ProtocolTranslator(this.logger);
+        this.authService = (0, JWTAuthService_js_1.createAuthService)();
         // Initialize orchestrator integration service
-        this.orchestratorService = new OrchestratorIntegrationService({
+        this.orchestratorService = new OrchestratorIntegrationService_js_1.OrchestratorIntegrationService({
             workspaceRoot: config.workspaceDir,
             enableHeartbeatMonitoring: true,
             enableCleanup: true,
@@ -161,7 +197,7 @@ export class RelayServer extends EventEmitter {
     async initializeTransports() {
         // WebSocket Transport
         if (this.config.transports.websocket) {
-            const wsTransport = new WebSocketTransport({
+            const wsTransport = new WebSocketTransport_js_1.WebSocketTransport({
                 port: this.config.ports.websocket,
                 logger: this.logger,
             });
@@ -169,7 +205,7 @@ export class RelayServer extends EventEmitter {
         }
         // HTTP Transport
         if (this.config.transports.http) {
-            const httpTransport = new HTTPTransport({
+            const httpTransport = new HTTPTransport_js_1.HTTPTransport({
                 port: this.config.ports.http,
                 interceptRules: this.config.interceptRules,
                 logger: this.logger,
@@ -178,7 +214,7 @@ export class RelayServer extends EventEmitter {
         }
         // File Transport
         if (this.config.transports.file) {
-            const fileTransport = new FileTransport({
+            const fileTransport = new FileTransport_js_1.FileTransport({
                 workspaceDir: this.config.workspaceDir,
                 logger: this.logger,
             });
@@ -186,7 +222,7 @@ export class RelayServer extends EventEmitter {
         }
         // MCP Transport
         if (this.config.transports.mcp) {
-            const mcpTransport = new MCPTransport({
+            const mcpTransport = new MCPTransport_js_1.MCPTransport({
                 relayId: this.config.id,
                 version: this.config.version,
                 logger: this.logger,
@@ -195,7 +231,7 @@ export class RelayServer extends EventEmitter {
         }
         // Redis Transport
         if (this.config.transports.redis) {
-            const redisTransport = new RedisTransport({
+            const redisTransport = new RedisTransport_js_1.RedisTransport({
                 ...this.config.redis,
                 logger: this.logger,
                 channels: {
@@ -363,24 +399,25 @@ export class RelayServer extends EventEmitter {
         // Register all protocol adapters for comprehensive framework support
         this.logger.info('Initializing protocol adapters');
         // Core A2A adapter
-        const a2aAdapter = new A2AProtocolAdapter();
+        const a2aAdapter = new A2AProtocolAdapter_js_1.A2AProtocolAdapter();
         this.protocolTranslator.registerAdapter(a2aAdapter);
         // Anthropic XML adapter
-        const anthropicAdapter = new AnthropicXmlAdapter(this.logger);
+        const anthropicAdapter = new AnthropicXmlAdapter_js_1.AnthropicXmlAdapter(this.logger);
         this.protocolTranslator.registerAdapter(anthropicAdapter);
         // OpenAI Assistant adapter
-        const openaiAdapter = new OpenAIAdapter(this.logger);
+        const openaiAdapter = new OpenAIAdapter_js_1.OpenAIAdapter(this.logger);
         this.protocolTranslator.registerAdapter(openaiAdapter);
         // Langchain adapter
-        const langchainAdapter = new LangchainAdapter(this.logger);
+        const langchainAdapter = new LangchainAdapter_js_1.LangchainAdapter(this.logger);
         this.protocolTranslator.registerAdapter(langchainAdapter);
         // CrewAI adapter
-        const crewaiAdapter = new CrewAIAdapter(this.logger);
+        const crewaiAdapter = new CrewAIAdapter_js_1.CrewAIAdapter(this.logger);
         this.protocolTranslator.registerAdapter(crewaiAdapter);
         // Goose CLI adapter
-        const gooseAdapter = new GooseAdapter(this.logger);
+        const gooseAdapter = new GooseAdapter_js_1.GooseAdapter(this.logger);
         this.protocolTranslator.registerAdapter(gooseAdapter);
         this.logger.info('Protocol adapters initialized: A2A, Anthropic XML, OpenAI, Langchain, CrewAI, Goose');
     }
 }
+exports.RelayServer = RelayServer;
 //# sourceMappingURL=RelayServer.js.map

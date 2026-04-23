@@ -1,10 +1,13 @@
+"use strict";
 /**
  * OpenAI Protocol Adapter
  *
  * Handles OpenAI's Assistant API and function calling format
  * Converts between OpenAI format and The New Fuse's A2A protocol
  */
-export class OpenAIAdapter {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.OpenAIAdapter = void 0;
+class OpenAIAdapter {
     constructor(logger) {
         this.name = 'openai-assistant';
         this.version = '1.0.0';
@@ -263,4 +266,5 @@ export class OpenAIAdapter {
         };
     }
 }
+exports.OpenAIAdapter = OpenAIAdapter;
 //# sourceMappingURL=OpenAIAdapter.js.map

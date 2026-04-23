@@ -1,12 +1,18 @@
+"use strict";
 /**
  * HTTP Transport for The New Fuse Relay System
  *
  * Based on comprehensive-tnf-relay.js:333 (startHTTPServer method)
  * Provides a REST API for interacting with the relay.
  */
-import { EventEmitter } from 'events';
-import express from 'express';
-export class HTTPTransport extends EventEmitter {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HTTPTransport = void 0;
+const events_1 = require("events");
+const express_1 = __importDefault(require("express"));
+class HTTPTransport extends events_1.EventEmitter {
     constructor(config) {
         super();
         this.name = 'http';
@@ -21,8 +27,8 @@ export class HTTPTransport extends EventEmitter {
             return true;
         }
         try {
-            const app = express();
-            app.use(express.json());
+            const app = (0, express_1.default)();
+            app.use(express_1.default.json());
             app.use((req, res, next) => {
                 res.header('Access-Control-Allow-Origin', '*');
                 res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -81,4 +87,5 @@ export class HTTPTransport extends EventEmitter {
         });
     }
 }
+exports.HTTPTransport = HTTPTransport;
 //# sourceMappingURL=HTTPTransport.js.map

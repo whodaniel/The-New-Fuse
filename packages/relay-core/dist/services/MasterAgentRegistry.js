@@ -1,3 +1,4 @@
+"use strict";
 /**
  * Master Agent Registry - Single Source of Truth
  *
@@ -5,10 +6,12 @@
  * Integrates with existing Drizzle database, AgentRegistry, and TaskService.
  * Every agent must register here and maintain state through this system.
  */
-import { parseUnits } from 'ethers';
-import { EventEmitter } from 'events';
-import { VCIssuanceService } from './VCIssuanceService';
-import { BlockchainService } from './shared/BlockchainService';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MasterAgentRegistry = void 0;
+const ethers_1 = require("ethers");
+const events_1 = require("events");
+const VCIssuanceService_js_1 = require("./VCIssuanceService.js");
+const BlockchainService_js_1 = require("./shared/BlockchainService.js");
 // import { sha256 } from '../../../../src/utils/cryptoUtils';
 // import { AgentRegistry, Agent as LegacyAgent } from '../../../../src/services/AgentRegistry';
 // import { AgentMetadataManager } from '../../../../src/services/AgentMetadataManager';
@@ -42,7 +45,7 @@ class AgentMetadataManager {
         return this.metadata.get(agentId);
     }
 }
-export class MasterAgentRegistry extends EventEmitter {
+class MasterAgentRegistry extends events_1.EventEmitter {
     constructor(drizzle, logger, blockchainConfig, vcPrivateKey) {
         super();
         // In-memory caches for performance
@@ -69,7 +72,7 @@ export class MasterAgentRegistry extends EventEmitter {
         this.onboardingProtocol = {}; // Stub
         // Initialize blockchain service
         if (blockchainConfig) {
-            this.blockchainService = new BlockchainService(blockchainConfig, logger);
+            this.blockchainService = new BlockchainService_js_1.BlockchainService(blockchainConfig, logger);
             this.initializeBlockchainIntegration();
         }
         // Initialize system metrics
@@ -89,7 +92,7 @@ export class MasterAgentRegistry extends EventEmitter {
         };
         // Initialize VCIssuanceService if private key provided
         if (vcPrivateKey) {
-            this.vcIssuanceService = new VCIssuanceService(drizzle, logger, vcPrivateKey);
+            this.vcIssuanceService = new VCIssuanceService_js_1.VCIssuanceService(drizzle, logger, vcPrivateKey);
         }
         this.initializeUniversalOnboardingProtocol();
         this.loadExistingAgents();
@@ -1227,7 +1230,7 @@ export class MasterAgentRegistry extends EventEmitter {
             const metadataURI = `ipfs://QmAgent${profile.id}Metadata`;
             const legalContractURI = `ipfs://QmAgent${profile.id}Constitution`;
             // Set gas configuration
-            const gasPrice = parseUnits(blockchainConfig.maxGasPrice, 'gwei');
+            const gasPrice = (0, ethers_1.parseUnits)(blockchainConfig.maxGasPrice, 'gwei');
             // Mint the Agent NFT
             const tx = await agentNFTContract.mintAgent(wallet.address, // Owner (for now, same as minter)
             profile.id, // Agent ID
@@ -1284,7 +1287,7 @@ export class MasterAgentRegistry extends EventEmitter {
         try {
             const tx = await agentNFTContract.updateMetadata(agent.onChainData.tokenId, newMetadataURI, {
                 gasLimit: blockchainConfig.gasLimit,
-                gasPrice: parseUnits(blockchainConfig.maxGasPrice, 'gwei'),
+                gasPrice: (0, ethers_1.parseUnits)(blockchainConfig.maxGasPrice, 'gwei'),
             });
             await tx.wait();
             agent.onChainData.lastOnChainUpdate = new Date();
@@ -1375,4 +1378,5 @@ export class MasterAgentRegistry extends EventEmitter {
         return groups;
     }
 }
+exports.MasterAgentRegistry = MasterAgentRegistry;
 //# sourceMappingURL=MasterAgentRegistry.js.map

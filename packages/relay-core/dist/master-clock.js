@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+"use strict";
 /**
  * TNF MASTER CLOCK - The Eternal Heartbeat
  * =========================================
@@ -57,18 +58,55 @@
  * - STALL_THRESHOLD: Stall detection threshold in ms (default: 5000)
  * - LOG_LEVEL: debug|info|warn|error (default: info)
  */
-import { randomUUID } from 'crypto';
-import { existsSync, promises as fs } from 'fs';
-import { Redis } from 'ioredis';
-import { execFile } from 'node:child_process';
-import path from 'path';
-import { promisify } from 'util';
-import WebSocket from 'ws';
-import { attachAuditTrace } from './contracts/audit';
-import { buildCanonicalEntityId, createAgentIdentityRecord, } from './contracts/identity';
-import { normalizeAgentLifecycleStatus } from './contracts/lifecycle';
-import { createTNFEnvelope } from './protocol/tnf-envelope';
-const execFileAsync = promisify(execFile);
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const crypto_1 = require("crypto");
+const fs_1 = require("fs");
+const ioredis_1 = require("ioredis");
+const node_child_process_1 = require("node:child_process");
+const path_1 = __importDefault(require("path"));
+const util_1 = require("util");
+const ws_1 = __importDefault(require("ws"));
+const audit_js_1 = require("./contracts/audit.js");
+const identity_js_1 = require("./contracts/identity.js");
+const lifecycle_js_1 = require("./contracts/lifecycle.js");
+const tnf_envelope_js_1 = require("./protocol/tnf-envelope.js");
+const execFileAsync = (0, util_1.promisify)(node_child_process_1.execFile);
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
@@ -117,7 +155,7 @@ const CONFIG = {
     },
     // Logging
     LOG_LEVEL: process.env.LOG_LEVEL || 'info',
-    LOG_DIR: process.env.LOG_DIR || path.join(process.env.HOME || '/tmp', '.tnf-master-clock'),
+    LOG_DIR: process.env.LOG_DIR || path_1.default.join(process.env.HOME || '/tmp', '.tnf-master-clock'),
 };
 // ============================================================================
 // LOGGING
@@ -141,9 +179,9 @@ function log(level, category, message, data = {}) {
 }
 async function logToFile(entry) {
     try {
-        await fs.mkdir(CONFIG.LOG_DIR, { recursive: true });
-        const logFile = path.join(CONFIG.LOG_DIR, `master-${new Date().toISOString().split('T')[0]}.jsonl`);
-        await fs.appendFile(logFile, JSON.stringify(entry) + '\n');
+        await fs_1.promises.mkdir(CONFIG.LOG_DIR, { recursive: true });
+        const logFile = path_1.default.join(CONFIG.LOG_DIR, `master-${new Date().toISOString().split('T')[0]}.jsonl`);
+        await fs_1.promises.appendFile(logFile, JSON.stringify(entry) + '\n');
     }
     catch (e) {
         // Silently fail - log file not critical
@@ -153,7 +191,7 @@ function createMasterClockAgentIdentity(sourceId, info, agentId, ordinal) {
     let canonicalEntityId = typeof info?.canonicalEntityId === 'string' ? info.canonicalEntityId : null;
     if (!canonicalEntityId) {
         try {
-            canonicalEntityId = buildCanonicalEntityId({
+            canonicalEntityId = (0, identity_js_1.buildCanonicalEntityId)({
                 category: 'AGENT',
                 provider: typeof info?.platform === 'string' && info.platform.trim() ? info.platform : 'unknown',
                 name: typeof info?.name === 'string' && info.name.trim() ? info.name : sourceId || agentId,
@@ -164,7 +202,7 @@ function createMasterClockAgentIdentity(sourceId, info, agentId, ordinal) {
             canonicalEntityId = null;
         }
     }
-    return createAgentIdentityRecord({
+    return (0, identity_js_1.createAgentIdentityRecord)({
         canonicalEntityId,
         operationalHandle: agentId,
         runtimeSessionId: sourceId,
@@ -179,7 +217,7 @@ function createMasterClockAgentIdentity(sourceId, info, agentId, ordinal) {
 function createOrchestratorIdentity(sessionId) {
     let canonicalEntityId = null;
     try {
-        canonicalEntityId = buildCanonicalEntityId({
+        canonicalEntityId = (0, identity_js_1.buildCanonicalEntityId)({
             category: 'AGENT',
             provider: 'TNF',
             name: 'MASTER_CLOCK',
@@ -189,7 +227,7 @@ function createOrchestratorIdentity(sessionId) {
     catch {
         canonicalEntityId = null;
     }
-    return createAgentIdentityRecord({
+    return (0, identity_js_1.createAgentIdentityRecord)({
         canonicalEntityId,
         operationalHandle: 'ORCHESTRATOR',
         runtimeSessionId: sessionId,
@@ -226,7 +264,7 @@ class AgentRegistry {
             registeredAt: Date.now(),
             lastHeartbeat: Date.now(),
             lastActivity: Date.now(),
-            status: normalizeAgentLifecycleStatus('active') || 'active',
+            status: (0, lifecycle_js_1.normalizeAgentLifecycleStatus)('active') || 'active',
             messageCount: 0,
             violations: 0,
             channel: info.channel || null,
@@ -242,7 +280,7 @@ class AgentRegistry {
         const agent = this.agents.get(agentId);
         if (agent) {
             agent.lastHeartbeat = Date.now();
-            agent.status = normalizeAgentLifecycleStatus('active') || 'active';
+            agent.status = (0, lifecycle_js_1.normalizeAgentLifecycleStatus)('active') || 'active';
         }
     }
     recordActivity(agentId) {
@@ -250,7 +288,7 @@ class AgentRegistry {
         if (agent) {
             agent.lastActivity = Date.now();
             agent.messageCount++;
-            agent.status = normalizeAgentLifecycleStatus('active') || 'active';
+            agent.status = (0, lifecycle_js_1.normalizeAgentLifecycleStatus)('active') || 'active';
         }
     }
     recordViolation(agentId, type) {
@@ -288,7 +326,7 @@ class AgentRegistry {
     markOffline(agentId) {
         const agent = this.agents.get(agentId);
         if (agent) {
-            agent.status = normalizeAgentLifecycleStatus('offline') || 'offline';
+            agent.status = (0, lifecycle_js_1.normalizeAgentLifecycleStatus)('offline') || 'offline';
             log('warn', 'REGISTRY', `Agent marked offline: ${agentId}`, { agentId });
         }
     }
@@ -374,17 +412,17 @@ class MasterClock {
         log('info', 'REDIS', 'Connecting to Redis for cloud coordination...');
         try {
             // Use unified standalone utilities via dynamic import for ESM/CJS compatibility
-            const infra = await import('@the-new-fuse/infrastructure');
+            const infra = await Promise.resolve().then(() => __importStar(require('@the-new-fuse/infrastructure')));
             this.redis = infra.createStandaloneRedisClient({ lazyConnect: true });
             this.redisSub = infra.createStandaloneRedisClient({ lazyConnect: true });
             this.upstash = infra.createUpstashRestClient();
-            if (this.redis instanceof Redis) {
+            if (this.redis instanceof ioredis_1.Redis) {
                 this.redis.on('error', (err) => log('error', 'REDIS', `Client error: ${err.message}`));
                 await this.redis.connect().catch((err) => {
                     log('warn', 'REDIS', `Failed to connect primary client (TCP): ${err.message}`);
                 });
             }
-            if (this.redisSub instanceof Redis) {
+            if (this.redisSub instanceof ioredis_1.Redis) {
                 this.redisSub.on('error', (err) => log('error', 'REDIS', `Subscriber error: ${err.message}`));
                 await this.redisSub.connect().catch((err) => {
                     log('warn', 'REDIS', `Failed to connect subscriber client (TCP): ${err.message}`);
@@ -412,7 +450,7 @@ class MasterClock {
     async connectRelay() {
         return new Promise((resolve, reject) => {
             log('info', 'RELAY', `Connecting to ${CONFIG.RELAY_URL}...`);
-            this.ws = new WebSocket(CONFIG.RELAY_URL);
+            this.ws = new ws_1.default(CONFIG.RELAY_URL);
             const timeout = setTimeout(() => {
                 reject(new Error('Connection timeout'));
             }, 10000);
@@ -918,18 +956,18 @@ class MasterClock {
         }
     }
     async loadChronologicalProcessSnapshots() {
-        const registryPath = path.join(this.repoRoot, 'data', 'protocols', 'cron-jobs.registry.json');
-        const statePath = path.join(this.repoRoot, 'data', 'protocols', 'cron-jobs.control-plane-state.json');
-        const catalogPath = path.join(this.repoRoot, 'data', 'protocols', 'chronological-process-catalog.json');
-        const registryRaw = await fs
+        const registryPath = path_1.default.join(this.repoRoot, 'data', 'protocols', 'cron-jobs.registry.json');
+        const statePath = path_1.default.join(this.repoRoot, 'data', 'protocols', 'cron-jobs.control-plane-state.json');
+        const catalogPath = path_1.default.join(this.repoRoot, 'data', 'protocols', 'chronological-process-catalog.json');
+        const registryRaw = await fs_1.promises
             .readFile(registryPath, 'utf8')
             .then((value) => JSON.parse(value))
             .catch(() => ({ jobs: [] }));
-        const stateRaw = await fs
+        const stateRaw = await fs_1.promises
             .readFile(statePath, 'utf8')
             .then((value) => JSON.parse(value))
             .catch(() => ({ overrides: {}, runtime: {} }));
-        const catalogRaw = await fs
+        const catalogRaw = await fs_1.promises
             .readFile(catalogPath, 'utf8')
             .then((value) => JSON.parse(value))
             .catch(() => ({ entries: {} }));
@@ -981,7 +1019,7 @@ class MasterClock {
         return currentSlot.key !== lastRunSlot.key;
     }
     async executeChronologicalProcess(snapshot) {
-        const runnerPath = path.join(this.repoRoot, 'scripts', 'protocols', 'run-chronological-process.cjs');
+        const runnerPath = path_1.default.join(this.repoRoot, 'scripts', 'protocols', 'run-chronological-process.cjs');
         const startedAt = new Date().toISOString();
         let status = 'healthy';
         let lastResult = 'ok';
@@ -1264,13 +1302,13 @@ class MasterClock {
         return parsed;
     }
     resolveRepoRoot() {
-        const marker = path.join('data', 'protocols', 'chronological-process-catalog.json');
+        const marker = path_1.default.join('data', 'protocols', 'chronological-process-catalog.json');
         let current = process.cwd();
         for (let i = 0; i < 8; i += 1) {
-            if (existsSync(path.join(current, marker))) {
+            if ((0, fs_1.existsSync)(path_1.default.join(current, marker))) {
                 return current;
             }
-            const next = path.dirname(current);
+            const next = path_1.default.dirname(current);
             if (next === current)
                 break;
             current = next;
@@ -1284,7 +1322,7 @@ class MasterClock {
             const attempts = this.recoveryAttempts.get(agent.agentId) || 0;
             if (agent.status === 'active') {
                 // First detection - mark as stalled
-                agent.status = normalizeAgentLifecycleStatus('stalled') || 'stalled';
+                agent.status = (0, lifecycle_js_1.normalizeAgentLifecycleStatus)('stalled') || 'stalled';
                 this.metrics.stallsDetected++;
                 log('warn', 'WATCHDOG', `STALL DETECTED: ${agent.agentId} (idle: ${Math.round(idleTime / 1000)}s)`, { agentId: agent.agentId });
                 // Immediate recovery attempt
@@ -1629,7 +1667,7 @@ class MasterClock {
     // UTILITY METHODS
     // --------------------------------------------------------------------------
     send(msg) {
-        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+        if (this.ws && this.ws.readyState === ws_1.default.OPEN) {
             this.ws.send(JSON.stringify({
                 ...msg,
                 source: this.sessionId,
@@ -1800,7 +1838,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         const tenantId = process.env.TENANT_ID || 'tnf-local';
         const cumulativeId = {
             spec: 'tnf/mcid/0.1',
-            id: randomUUID(),
+            id: (0, crypto_1.randomUUID)(),
             scope: {
                 tenant_id: tenantId,
                 session_key: this.sessionId,
@@ -1809,7 +1847,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
             },
             lineage: {
                 trace_id: null,
-                correlation_id: randomUUID(),
+                correlation_id: (0, crypto_1.randomUUID)(),
                 causation_id: null,
                 handoff_packet_id: null,
                 twid: null,
@@ -1842,7 +1880,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
                 },
             },
         };
-        const broadcastEnvelope = createTNFEnvelope('event', this.getOrchestratorEnvelopeIdentity(), { broadcast: true }, {
+        const broadcastEnvelope = (0, tnf_envelope_js_1.createTNFEnvelope)('event', this.getOrchestratorEnvelopeIdentity(), { broadcast: true }, {
             eventType: 'SELF_PROMPT',
             data: {
                 ...params,
@@ -1873,7 +1911,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
             log('warn', 'SELF-PROMPT', `Failed to publish self-prompt: ${error.message}`);
         }
         if (params.targetSourceId) {
-            const directEnvelope = createTNFEnvelope('task', this.getOrchestratorEnvelopeIdentity(), this.getAgentEnvelopeIdentity(params.targetSourceId), {
+            const directEnvelope = (0, tnf_envelope_js_1.createTNFEnvelope)('task', this.getOrchestratorEnvelopeIdentity(), this.getAgentEnvelopeIdentity(params.targetSourceId), {
                 action: 'self_prompt_continue',
                 parameters: {
                     prompt: params.prompt,
@@ -1923,7 +1961,7 @@ Acknowledge by sending: [${agentId}] Ready for duty!
         };
     }
     attachOrchestratorAudit(metadata, overrides = {}) {
-        return attachAuditTrace(metadata, this.getOrchestratorAudit(overrides));
+        return (0, audit_js_1.attachAuditTrace)(metadata, this.getOrchestratorAudit(overrides));
     }
     getOrchestratorEnvelopeIdentity() {
         return {

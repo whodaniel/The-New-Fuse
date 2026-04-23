@@ -1,3 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.normalizeAgentLifecycleStatus = normalizeAgentLifecycleStatus;
+exports.normalizeWorkflowDefinitionStatus = normalizeWorkflowDefinitionStatus;
+exports.normalizeWorkflowExecutionStatus = normalizeWorkflowExecutionStatus;
+exports.normalizeRelayConnectionStatus = normalizeRelayConnectionStatus;
+exports.toWorkflowDefinitionStatusTarget = toWorkflowDefinitionStatusTarget;
+exports.toWorkflowExecutionStatusTarget = toWorkflowExecutionStatusTarget;
 const AGENT_STATUS_ALIASES = {
     active: 'active',
     idle: 'idle',
@@ -36,19 +44,19 @@ const RELAY_CONNECTION_STATUS_ALIASES = {
     offline: 'offline',
     stalled: 'idle',
 };
-export function normalizeAgentLifecycleStatus(input) {
+function normalizeAgentLifecycleStatus(input) {
     return AGENT_STATUS_ALIASES[String(input || '').trim().toLowerCase()] || null;
 }
-export function normalizeWorkflowDefinitionStatus(input) {
+function normalizeWorkflowDefinitionStatus(input) {
     return WORKFLOW_DEFINITION_STATUS_ALIASES[String(input || '').trim().toLowerCase()] || null;
 }
-export function normalizeWorkflowExecutionStatus(input) {
+function normalizeWorkflowExecutionStatus(input) {
     return WORKFLOW_EXECUTION_STATUS_ALIASES[String(input || '').trim().toLowerCase()] || null;
 }
-export function normalizeRelayConnectionStatus(input) {
+function normalizeRelayConnectionStatus(input) {
     return RELAY_CONNECTION_STATUS_ALIASES[String(input || '').trim().toLowerCase()] || null;
 }
-export function toWorkflowDefinitionStatusTarget(input, target) {
+function toWorkflowDefinitionStatusTarget(input, target) {
     const normalized = normalizeWorkflowDefinitionStatus(input);
     if (!normalized)
         return null;
@@ -57,7 +65,7 @@ export function toWorkflowDefinitionStatusTarget(input, target) {
     }
     return normalized.toUpperCase();
 }
-export function toWorkflowExecutionStatusTarget(input, target) {
+function toWorkflowExecutionStatusTarget(input, target) {
     const normalized = normalizeWorkflowExecutionStatus(input);
     if (!normalized)
         return null;

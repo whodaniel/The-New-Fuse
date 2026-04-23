@@ -1,3 +1,4 @@
+"use strict";
 /**
  * Orchestrator Integration Service
  *
@@ -8,12 +9,14 @@
  * - Agent swarm coordination
  * - State preservation with Redis, NestJS, RAG, and Graph systems
  */
-import { EventEmitter } from 'events';
-import { CleanupService } from './CleanupService';
-import { HeartbeatMonitoringService } from './HeartbeatMonitoringService';
-import { AgentHandoffTemplateService } from './shared/StubServices';
-import { StallDetector } from './stall-detector';
-export class OrchestratorIntegrationService extends EventEmitter {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.OrchestratorIntegrationService = void 0;
+const events_1 = require("events");
+const CleanupService_js_1 = require("./CleanupService.js");
+const HeartbeatMonitoringService_js_1 = require("./HeartbeatMonitoringService.js");
+const StubServices_js_1 = require("./shared/StubServices.js");
+const stall_detector_js_1 = require("./stall-detector.js");
+class OrchestratorIntegrationService extends events_1.EventEmitter {
     constructor(config, logger) {
         super();
         this.taskStates = new Map();
@@ -21,10 +24,10 @@ export class OrchestratorIntegrationService extends EventEmitter {
         this.config = config;
         this.logger = logger;
         // Initialize core services
-        this.cleanupService = new CleanupService(config.workspaceRoot, logger);
-        this.heartbeatService = new HeartbeatMonitoringService(config.heartbeat, logger);
-        this.stallDetector = new StallDetector(logger, config.stall);
-        this.handoffService = new AgentHandoffTemplateService();
+        this.cleanupService = new CleanupService_js_1.CleanupService(config.workspaceRoot, logger);
+        this.heartbeatService = new HeartbeatMonitoringService_js_1.HeartbeatMonitoringService(config.heartbeat, logger);
+        this.stallDetector = new stall_detector_js_1.StallDetector(logger, config.stall);
+        this.handoffService = new StubServices_js_1.AgentHandoffTemplateService();
         this.setupEventHandlers();
     }
     /**
@@ -514,4 +517,5 @@ export class OrchestratorIntegrationService extends EventEmitter {
         };
     }
 }
+exports.OrchestratorIntegrationService = OrchestratorIntegrationService;
 //# sourceMappingURL=OrchestratorIntegrationService.js.map

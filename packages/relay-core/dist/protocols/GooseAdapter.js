@@ -1,9 +1,12 @@
+"use strict";
 /**
  * Goose Protocol Adapter
  *
  * Bridges Goose CLI/headless interaction envelopes to TNF A2A relay messages.
  */
-export class GooseAdapter {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GooseAdapter = void 0;
+class GooseAdapter {
     constructor(logger) {
         this.name = 'goose-cli';
         this.version = '1.0.0';
@@ -130,4 +133,5 @@ export class GooseAdapter {
         };
     }
 }
+exports.GooseAdapter = GooseAdapter;
 //# sourceMappingURL=GooseAdapter.js.map
