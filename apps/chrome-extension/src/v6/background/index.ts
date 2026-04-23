@@ -7,6 +7,10 @@
  */
 
 import youtubeService from '../services/ai-studio/youtube-service';
+import {
+  DEFAULT_NODES as DEFAULT_NODES_CONST,
+  STORAGE_KEYS as STORAGE_KEYS_CONST,
+} from '../shared/constants';
 import type {
   Agent,
   AgentMessage,
@@ -20,15 +24,10 @@ import type {
 } from '../shared/types';
 import { simpleHash } from '../shared/utils';
 
-// Storage keys
 const STORAGE_KEYS = {
-  settings: 'fuse_settings',
-  agentId: 'fuse_agent_id',
-  channels: 'fuse_channels',
-  joinedChannels: 'fuse_joined_channels',
+  ...STORAGE_KEYS_CONST,
   tabActiveChannels: 'fuse_tab_active_channels',
   tabPausedChannels: 'fuse_tab_paused_channels',
-  knownNodes: 'fuse_known_nodes',
   autoConnect: 'fuse_auto_connect',
   autoMonitor: 'fuse_auto_monitor',
   autoMasterClock: 'fuse_auto_master_clock',
@@ -36,16 +35,7 @@ const STORAGE_KEYS = {
   eventLog: 'fuse_event_log',
 };
 
-// Default node configuration
-const DEFAULT_NODES = {
-  relay: 'ws://localhost:3000/ws',
-  apiGateway: 'http://localhost:3000',
-  backend: 'http://localhost:3000',
-  saas: 'http://localhost:3002',
-
-  // Canonical edge state (Cloudflare)
-  tnfWorker: 'https://tnf-agent-orchestration.bizsynth.workers.dev',
-};
+const DEFAULT_NODES = DEFAULT_NODES_CONST;
 
 // Native messaging host name
 const NATIVE_HOST_NAME = 'com.thenewfuse.native_host';
@@ -236,10 +226,13 @@ class BackgroundService {
    */
   private async checkRelayHealth(): Promise<boolean> {
     try {
-      const response = await fetch('http://localhost:3000/health', {
-        method: 'GET',
-        signal: AbortSignal.timeout(2000),
-      });
+      const response = await fetch(
+        DEFAULT_NODES.relay.replace('/ws', '/health').replace('ws', 'http'),
+        {
+          method: 'GET',
+          signal: AbortSignal.timeout(2000),
+        }
+      );
       const data = await response.json();
       return data.status === 'ok';
     } catch (e) {

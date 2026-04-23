@@ -17,10 +17,11 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "allowImportingTsExtensions": true,
+    "baseUrl": ".",
     "paths": {
-      "@utils/*": ["utils/*"],
-      "@styles/*": ["styles/*"],
-      "@components/*": ["components/*"],
+      "@utils/*": ["src/utils/*"],
+      "@styles/*": ["src/styles/*"],
+      "@components/*": ["src/components/*"],
       "@packages/types": ["../../../packages/types/src/index"],
       "@packages/utils": ["../../../packages/utils/src/index"]
     },

@@ -2,6 +2,8 @@
  * Fuse Connect v7 - Popup Logic
  */
 
+import { DEFAULT_NODES } from '../shared/constants.js';
+
 const NATIVE_HOST_NAME = 'com.thenewfuse.native_host';
 
 class FuseConnectPopup {
@@ -43,7 +45,7 @@ class FuseConnectPopup {
         source: 'unknown',
       },
       settings: {
-        relayUrl: 'ws://localhost:3000/ws',
+        relayUrl: DEFAULT_NODES.relay,
         autoReconnect: true,
         autoMonitor: true,
         autoMasterClock: true,
