@@ -121,6 +121,31 @@ class ComprehensiveTNFRelay {
       next();
     });
 
+    // Health check endpoints (must be defined BEFORE catch-all)
+    app.get('/', (req, res) => {
+      res.json({
+        status: 'healthy',
+        service: 'relay-server',
+        version: this.version,
+        relayId: this.relayId,
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+      });
+    });
+
+    app.get('/health', (req, res) => {
+      res.json({
+        status: 'healthy',
+        service: 'relay-server',
+        version: this.version,
+        relayId: this.relayId,
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+        connections: this.systemStatus.activeConnections,
+        agents: this.agents.size,
+      });
+    });
+
     // 2. Setup API Routes
     this.setupAPIRoutes(app);
 

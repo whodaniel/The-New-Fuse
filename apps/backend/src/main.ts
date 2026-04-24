@@ -14,7 +14,13 @@ async function bootstrap(): Promise<void> {
   // Security
   app.use(helmet());
   app.enableCors({
-    origin: configService.get('CORS_ORIGINS')?.split(',') || ['http://localhost:3000'],
+    origin: configService.get('CORS_ORIGINS')?.split(',') || [
+      'https://thenewfuse.com',
+      'https://app.thenewfuse.com',
+      'https://tnf-saas-app.pages.dev',
+      'https://api-gateway-241337102384.us-central1.run.app',
+      'http://localhost:3000',
+    ],
     credentials: true,
   });
 
