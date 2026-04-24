@@ -9,9 +9,18 @@ export async function onRequest(context) {
       path.startsWith('/auth') ||
       path.startsWith('/login') ||
       path.startsWith('/register') ||
-      path.startsWith('/dashboard')
+      path.startsWith('/dashboard') ||
+      path.startsWith('/app') ||
+      path === '/app.html'
     ) {
-      return Response.redirect(`https://app.thenewfuse.com${path}${url.search}${url.hash}`, 301);
+      // Remove '/app' or '/app.html' from the path when redirecting to the app subdomain
+      const cleanPath = path.replace(/^\/app(\.html)?/, '');
+      const redirectPath = cleanPath === '' ? '/dashboard' : cleanPath;
+
+      return Response.redirect(
+        `https://app.thenewfuse.com${redirectPath}${url.search}${url.hash}`,
+        301
+      );
     }
   }
 
