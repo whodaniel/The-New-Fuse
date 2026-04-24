@@ -227,8 +227,8 @@ export class Logger {
     // Default configuration
     this.config = {
       logLevel: (import.meta.env?.VITE_LOG_LEVEL as LogLevel) || 'info',
-      enableConsole: env !== 'production',
-      enableFileLogging: env === 'production',
+      enableConsole: !import.meta.env.PROD,
+      enableFileLogging: import.meta.env.PROD,
       maxLogFileSize: 100,
       maxLogFiles: 30,
       enablePerformanceMonitoring: true,
@@ -586,7 +586,7 @@ export class Logger {
       source: callerInfo,
       context: this.buildContext(),
       environment: {
-        name: (process.env.NODE_ENV as any) || 'development',
+        name: (import.meta.env.MODE as any) || 'development',
         version: process.env.APP_VERSION || '1.0.0',
         region: process.env.AWS_REGION || 'unknown',
         deploymentId: process.env.DEPLOYMENT_ID || 'unknown',

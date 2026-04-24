@@ -31,7 +31,7 @@ export function App() {
   // Performance monitoring in development
   React.useEffect(() => {
     console.log('[App] App mounting...');
-    if (process.env.NODE_ENV === 'development' || import.meta.env.PROD) {
+    if (import.meta.env.DEV || import.meta.env.PROD) {
       console.log('🚀 Performance-optimized The New Fuse App starting...');
       console.log('📊 Bundle analysis: Run "pnpm build:analyze" to view detailed bundle analysis');
       console.log('🎯 Performance monitor: Press Ctrl+Shift+P to toggle performance monitor');
