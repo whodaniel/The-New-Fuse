@@ -269,3 +269,12 @@ strategic-cow/
 solid-shrimp/
 strategic-cow/
 pull-create/
+app_deploy/
+app_deploy_final/
+app_deploy_temp/
+deploy_temp/
+clean_landing/
+fix_landing/
+landing_clean_deploy/
+ui-audit-results/
+reports/
