@@ -1,0 +1,40 @@
+name: TNF Repo Separation Sync
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Force push even if no changes detected"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  sync-repos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Monorepo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Needed for full history and logs
+
+      - name: Configure Git Identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Make sync script executable
+        run: chmod +x scripts/sync-repos.sh
+
+      - name: Run Repo Sync Script
+        env:
+          GITHUB_PAT: ${{ secrets.TNF_SYNC_PAT }}
+        run: |
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            ./scripts/sync-repos.sh --force
+          else
+            ./scripts/sync-repos.sh
+          fi

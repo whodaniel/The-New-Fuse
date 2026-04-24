@@ -164,7 +164,11 @@ if [ "$SYNC_CONTROL" = true ]; then
   echo ""
 
   CTRL_DIR="$WORK_DIR/fuse-control-plane"
-  git clone https://github.com/whodaniel/fuse-control-plane.git "$CTRL_DIR" 2>&1 | grep -v "^$"
+  if [ -n "${GITHUB_PAT:-}" ]; then
+    git clone "https://${GITHUB_PAT}@github.com/whodaniel/fuse-control-plane.git" "$CTRL_DIR" 2>&1 | grep -v "^$"
+  else
+    git clone https://github.com/whodaniel/fuse-control-plane.git "$CTRL_DIR" 2>&1 | grep -v "^$"
+  fi
 
   cd "$CTRL_DIR"
 
@@ -356,7 +360,11 @@ STUB
 
   # Update remote to point to open-runtime
   git remote remove origin 2>/dev/null || true
-  git remote add origin https://github.com/whodaniel/fuse-open-runtime.git
+  if [ -n "${GITHUB_PAT:-}" ]; then
+    git remote add origin "https://${GITHUB_PAT}@github.com/whodaniel/fuse-open-runtime.git"
+  else
+    git remote add origin https://github.com/whodaniel/fuse-open-runtime.git
+  fi
 
   git add -A
   git commit -m "sync: open-runtime ← monorepo @ $MONO_HEAD ($TIMESTAMP)
