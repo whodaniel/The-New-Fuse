@@ -16,7 +16,7 @@ export async function onRequest(context) {
   }
 
   // Cloud Run Backend Origins
-  const API_GATEWAY = 'https://api-gateway-ipjhxcemfa-uc.a.run.app';
+  const API_GATEWAY = 'https://api-gateway-241337102384.us-central1.run.app';
   const RELAY_SERVER = 'https://relay-server-ipjhxcemfa-uc.a.run.app';
 
   // 2. API & WebSocket Routes - Proxy to Cloud Run
