@@ -1,3 +1,0 @@
-# Procfile for Railway deployment
-# Serves the built static files from dist/
-web: npx --yes serve ./dist -p ${PORT:-3000} -s -n
