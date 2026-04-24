@@ -4,15 +4,16 @@
  * Single source of truth for API URL resolution.
  *
  * Strategy:
- * - Production: Cloudflare Pages Function proxies /api/* to the API Gateway.
- *   We use relative paths (/api/v1/...) so the proxy handles routing.
- * - Development: Vite dev server proxies /api/* to localhost:3001.
- *   We use relative paths (/api/...) so the Vite proxy handles routing.
- *
- * NEVER construct absolute URLs to backend services from the frontend.
+ * - Production: We use absolute URLs (VITE_API_URL) to bypass the broken Cloudflare
+ *   Pages proxy and directly hit the API Gateway, which has proper CORS configured.
+ * - Development: We use relative paths (/api) so the Vite dev server handles routing.
  */
 
-const API_PREFIX = import.meta.env.PROD ? '/api/v1' : '/api';
+const API_PREFIX = import.meta.env.PROD
+  ? import.meta.env.VITE_API_URL
+    ? `${import.meta.env.VITE_API_URL}/api/v1`
+    : '/api/v1'
+  : '/api';
 
 export const API_BASE = API_PREFIX;
 
