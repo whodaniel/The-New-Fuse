@@ -3,497 +3,377 @@ import AuthContext, { User } from '../AuthContext';
 import { API_ENDPOINTS } from '../config/api';
 import { hasSupabaseConfig, supabase } from '../lib/supabase';
 
-console.log('[Auth] useAuth module loading...');
-
-// Request timeout in milliseconds
-const FETCH_TIMEOUT = 5000;
-
-async function fetchWithTimeout(url: string, options: any = {}) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
-
-  try {
-    const response = await fetch(url, {
-      ...options,
-      signal: controller.signal,
-    });
-    clearTimeout(id);
-    return response;
-  } catch (error) {
-    clearTimeout(id);
-    throw error;
-  }
-}
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
 
 const AUTH_TOKEN_KEY = 'auth_token';
+const REQUEST_TIMEOUT_MS = 3_000;
 
-const getAuthToken = () => localStorage.getItem(AUTH_TOKEN_KEY);
+// ---------------------------------------------------------------------------
+// Token helpers
+// ---------------------------------------------------------------------------
+
+const getAuthToken = (): string | null => localStorage.getItem(AUTH_TOKEN_KEY);
 const setAuthToken = (token: string) => localStorage.setItem(AUTH_TOKEN_KEY, token);
 const clearAuthToken = () => localStorage.removeItem(AUTH_TOKEN_KEY);
 
-type AuthPayload = {
+// ---------------------------------------------------------------------------
+// Fetch with timeout – never waits longer than REQUEST_TIMEOUT_MS
+// ---------------------------------------------------------------------------
+
+async function apiFetch(url: string, init: RequestInit = {}): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    const res = await fetch(url, { ...init, signal: controller.signal });
+    return res;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Payload normalisation
+// ---------------------------------------------------------------------------
+
+interface BackendPayload {
   accessToken?: string;
   access_token?: string;
-  refreshToken?: string;
-  refresh_token?: string;
   token?: string;
-  user?: unknown;
+  user?: Record<string, unknown>;
   message?: string | string[];
   error?: string;
   requiresEmailVerification?: boolean;
-};
+  data?: BackendPayload;
+}
 
-type AuthSubmitOptions = {
-  cfTurnstileToken?: string;
-  inviteCode?: string;
-};
-
-const unwrapPayload = (payload: any): AuthPayload => {
-  if (payload && typeof payload === 'object' && payload.data && typeof payload.data === 'object') {
-    return payload.data as AuthPayload;
+/** Unwrap NestJS `{ data: { ... } }` envelope */
+function unwrap(raw: unknown): BackendPayload {
+  if (raw && typeof raw === 'object' && 'data' in raw && typeof (raw as any).data === 'object') {
+    return (raw as any).data as BackendPayload;
   }
-  return (payload || {}) as AuthPayload;
-};
+  return (raw ?? {}) as BackendPayload;
+}
 
-const toFrontendUser = (backendUser: any, fallbackEmail = ''): User => ({
-  id: String(backendUser?.id || backendUser?.sub || ''),
-  email: String(backendUser?.email || fallbackEmail),
-  name: String(backendUser?.name || backendUser?.email || fallbackEmail || 'User'),
-  role: String(backendUser?.role || 'USER'),
-  roles: Array.isArray(backendUser?.roles) ? backendUser.roles : [backendUser?.role || 'USER'],
-  agencyId: backendUser?.agencyId,
-  tenantId: backendUser?.tenantId,
-  photoURL: backendUser?.photoURL,
-  firstName: backendUser?.firstName,
-  lastName: backendUser?.lastName,
-});
+/** Pull an access token from any known field name */
+function extractToken(p: BackendPayload): string | null {
+  return p.accessToken ?? p.access_token ?? p.token ?? null;
+}
 
-const getTokenFromPayload = (payload: AuthPayload): string | null =>
-  payload?.accessToken || payload?.access_token || payload?.token || null;
-
-const extractErrorMessage = (payload: any): string | null => {
-  if (!payload || typeof payload !== 'object') return null;
-  if (payload.data && typeof payload.data === 'object') {
-    const nested = extractErrorMessage(payload.data);
-    if (nested) return nested;
-  }
-  if (typeof payload.message === 'string' && payload.message.trim()) return payload.message;
-  if (Array.isArray(payload.message) && payload.message.length > 0) {
-    const joined = payload.message.filter(Boolean).join(', ');
-    return joined || null;
-  }
-  if (typeof payload.error === 'string' && payload.error.trim()) return payload.error;
+/** Pull a human-readable error string */
+function extractError(p: BackendPayload): string | null {
+  if (typeof p.message === 'string' && p.message.trim()) return p.message;
+  if (Array.isArray(p.message) && p.message.length) return p.message.filter(Boolean).join(', ');
+  if (typeof p.error === 'string' && p.error.trim()) return p.error;
   return null;
-};
+}
 
-const sanitizeApiBaseUrl = (rawUrl: string) => {
-  const trimmed = rawUrl.replace(/\/$/, '');
-  if (!trimmed) return '';
-  if (trimmed.startsWith('//')) return `https:${trimmed}`;
-  if (
-    !trimmed.startsWith('http://') &&
-    !trimmed.startsWith('https://') &&
-    !trimmed.startsWith('/')
-  ) {
-    const looksLikeDomain = /^[a-z0-9.-]+\.[a-z]{2,}(:\d+)?$/i.test(trimmed);
-    if (looksLikeDomain) {
-      return `https://${trimmed}`;
-    }
-  }
-  const normalized = trimmed.toLowerCase();
-  if (normalized === '/api' || normalized === '/v1') return '';
-  return trimmed;
-};
+/** Normalise any backend user shape into our `User` type */
+function toUser(raw: any, fallbackEmail = ''): User {
+  return {
+    id: String(raw?.id ?? raw?.sub ?? ''),
+    email: String(raw?.email ?? fallbackEmail),
+    name: String(raw?.name ?? raw?.email ?? fallbackEmail ?? 'User'),
+    role: String(raw?.role ?? 'USER'),
+    roles: Array.isArray(raw?.roles) ? raw.roles : [raw?.role ?? 'USER'],
+    agencyId: raw?.agencyId,
+    tenantId: raw?.tenantId,
+    photoURL: raw?.photoURL,
+    firstName: raw?.firstName,
+    lastName: raw?.lastName,
+  };
+}
 
-const uniqueUrls = (urls: string[]): string[] => Array.from(new Set(urls.filter(Boolean)));
-
-const shouldFallbackToApiAuth = (message: string | null | undefined): boolean => {
-  if (!message) return false;
-  const normalized = message.toLowerCase();
-  return (
-    normalized.includes('invalid api key') ||
-    normalized.includes('apikey') ||
-    normalized.includes('network request failed') ||
-    normalized.includes('failed to fetch')
-  );
-};
+// ---------------------------------------------------------------------------
+// AuthProvider
+// ---------------------------------------------------------------------------
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const apiBaseUrl = sanitizeApiBaseUrl(import.meta.env.VITE_API_URL || '');
-  const gatewayBaseUrl = sanitizeApiBaseUrl(import.meta.env.VITE_API_GATEWAY_URL || '');
-  const gatewayPrefix = import.meta.env.PROD ? '/api/v1' : '/api';
+  // -----------------------------------------------------------------------
+  // Core API helpers
+  // -----------------------------------------------------------------------
 
-  const inviteOnlyMode = ['1', 'true', 'yes', 'on', 'enabled'].includes(
-    String(import.meta.env.VITE_AUTH_INVITE_ONLY || '')
-      .trim()
-      .toLowerCase()
-  );
-
-  const authEndpoints = useMemo(
-    () => ({
-      me: uniqueUrls([
-        `${apiBaseUrl}${API_ENDPOINTS.AUTH.ME}`,
-        `${apiBaseUrl}${gatewayPrefix}/auth/me`,
-        `${apiBaseUrl}/api/auth/me`,
-        `${apiBaseUrl}/auth/me`,
-        `${gatewayBaseUrl}/v1/auth/me`,
-        '/api/auth/me',
-        '/v1/auth/me',
-        '/auth/me',
-      ]),
-      supabaseExchange: uniqueUrls([
-        `${apiBaseUrl}${gatewayPrefix}/auth/supabase`,
-        `${apiBaseUrl}/api/auth/supabase`,
-        `${apiBaseUrl}/auth/supabase`,
-        `${gatewayBaseUrl}/v1/auth/supabase`,
-        '/api/auth/supabase',
-        '/v1/auth/supabase',
-        '/auth/supabase',
-      ]),
-      login: uniqueUrls([
-        `${apiBaseUrl}${gatewayPrefix}/auth/login`,
-        `${apiBaseUrl}/api/auth/login`,
-        `${apiBaseUrl}/auth/login`,
-        `${gatewayBaseUrl}/v1/auth/login`,
-        '/api/auth/login',
-        '/v1/auth/login',
-        '/auth/login',
-      ]),
-      register: uniqueUrls([
-        `${apiBaseUrl}${gatewayPrefix}/auth/register`,
-        `${apiBaseUrl}/api/auth/register`,
-        `${apiBaseUrl}/auth/register`,
-        `${gatewayBaseUrl}/v1/auth/register`,
-        '/api/auth/register',
-        '/v1/auth/register',
-        '/auth/register',
-      ]),
-      google: uniqueUrls([
-        `${apiBaseUrl}${gatewayPrefix}/auth/google`,
-        `${apiBaseUrl}/api/auth/google`,
-        `${apiBaseUrl}/auth/google`,
-        `${gatewayBaseUrl}/v1/auth/google`,
-        '/api/auth/google',
-        '/v1/auth/google',
-        '/auth/google',
-      ]),
-    }),
-    [apiBaseUrl, gatewayBaseUrl, gatewayPrefix]
-  );
-
-  const fetchUserDetails = useCallback(
-    async (token: string): Promise<User | null> => {
-      console.log('[Auth] Fetching user details...');
-      for (const endpoint of authEndpoints.me) {
-        try {
-          console.log(`[Auth] Trying endpoint: ${endpoint}`);
-          const response = await fetchWithTimeout(endpoint, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'X-Requested-With': 'XMLHttpRequest',
-            },
-          });
-
-          if (!response.ok) {
-            console.log(`[Auth] Endpoint ${endpoint} returned status: ${response.status}`);
-            continue;
-          }
-          const payload = await response.json();
-          const data = payload?.data ?? payload;
-          const rawUser = data?.user || data;
-          if (!rawUser?.id && !rawUser?.sub) {
-            console.log(`[Auth] Endpoint ${endpoint} returned invalid user data`);
-            continue;
-          }
-
-          console.log(`[Auth] User details successfully fetched from: ${endpoint}`);
-          return toFrontendUser(rawUser);
-        } catch (err: any) {
-          console.warn(
-            `[Auth] Error fetching from ${endpoint}:`,
-            err.name === 'AbortError' ? 'TIMEOUT' : err.message
-          );
-        }
+  /** GET /auth/me with a bearer token → User | null */
+  const fetchMe = useCallback(async (token: string): Promise<User | null> => {
+    console.log('[Auth] fetchMe – checking token validity');
+    try {
+      const res = await apiFetch(API_ENDPOINTS.AUTH.ME, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      });
+      if (!res.ok) {
+        console.warn(`[Auth] fetchMe returned ${res.status}`);
+        return null;
       }
-
-      console.log('[Auth] All user details endpoints failed.');
+      const raw = await res.json();
+      const data = raw?.data ?? raw;
+      const rawUser = data?.user ?? data;
+      if (!rawUser?.id && !rawUser?.sub) {
+        console.warn('[Auth] fetchMe – response has no user id');
+        return null;
+      }
+      console.log('[Auth] fetchMe – user validated');
+      return toUser(rawUser);
+    } catch (err: any) {
+      console.warn('[Auth] fetchMe failed:', err.name === 'AbortError' ? 'TIMEOUT' : err.message);
       return null;
-    },
-    [authEndpoints.me]
-  );
+    }
+  }, []);
 
-  const authenticateWithToken = useCallback(
-    async (token: string) => {
-      setAuthToken(token);
-      const details = await fetchUserDetails(token);
-      if (!details) {
-        clearAuthToken();
-        setUser(null);
-        throw new Error('Token was rejected by the API');
-      }
-      setUser(details);
-      return { method: 'token' as const, user: details };
-    },
-    [fetchUserDetails]
-  );
-
+  /** POST a Supabase access_token to the backend to get an app token */
   const exchangeSupabaseToken = useCallback(
-    async (accessToken: string) => {
-      let lastErrorMessage: string | null = null;
+    async (supabaseAccessToken: string): Promise<{ user: User; token: string } | null> => {
+      console.log('[Auth] exchangeSupabaseToken – exchanging with backend');
+      try {
+        const res = await apiFetch(API_ENDPOINTS.AUTH.SUPABASE_EXCHANGE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ accessToken: supabaseAccessToken }),
+        });
+        const rawPayload = await res.json();
+        const payload = unwrap(rawPayload);
 
-      console.log('[Auth] Starting exchangeSupabaseToken...');
-      for (const endpoint of authEndpoints.supabaseExchange) {
-        try {
-          console.log(`[Auth] Trying Supabase exchange endpoint: ${endpoint}`);
-          const response = await fetchWithTimeout(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ accessToken }),
-          });
-
-          const rawPayload = await response.json();
-          const payload = unwrapPayload(rawPayload);
-
-          if (!response.ok) {
-            console.log(`[Auth] Endpoint ${endpoint} returned status: ${response.status}`);
-            lastErrorMessage =
-              extractErrorMessage(rawPayload) || extractErrorMessage(payload) || lastErrorMessage;
-            continue;
-          }
-
-          const appToken = getTokenFromPayload(payload);
-          if (!appToken) {
-            console.log(`[Auth] Endpoint ${endpoint} returned no token`);
-            continue;
-          }
-
-          setAuthToken(appToken);
-
-          if (payload.user) {
-            const normalized = toFrontendUser(payload.user);
-            console.log(`[Auth] Token exchange successful via ${endpoint} (user in payload)`);
-            setUser(normalized);
-            return { method: 'supabase' as const, user: normalized };
-          }
-
-          console.log(`[Auth] Token exchange successful via ${endpoint}, fetching details...`);
-          const details = await fetchUserDetails(appToken);
-          if (details) {
-            setUser(details);
-            return { method: 'supabase' as const, user: details };
-          }
-        } catch (err: any) {
-          console.warn(
-            `[Auth] Error exchanging token at ${endpoint}:`,
-            err.name === 'AbortError' ? 'TIMEOUT' : err.message
-          );
+        if (!res.ok) {
+          const msg =
+            extractError(payload) ?? extractError(rawPayload as any) ?? `HTTP ${res.status}`;
+          console.warn('[Auth] exchangeSupabaseToken failed:', msg);
+          return null;
         }
-      }
 
-      throw new Error(lastErrorMessage || 'Supabase auth exchange failed');
+        const appToken = extractToken(payload);
+        if (!appToken) {
+          console.warn('[Auth] exchangeSupabaseToken – no token in response');
+          return null;
+        }
+
+        setAuthToken(appToken);
+
+        if (payload.user) {
+          const u = toUser(payload.user);
+          console.log('[Auth] exchangeSupabaseToken – success (user in payload)');
+          return { user: u, token: appToken };
+        }
+
+        const u = await fetchMe(appToken);
+        if (u) {
+          console.log('[Auth] exchangeSupabaseToken – success (fetched user)');
+          return { user: u, token: appToken };
+        }
+
+        console.warn('[Auth] exchangeSupabaseToken – got token but fetchMe failed');
+        return null;
+      } catch (err: any) {
+        console.warn(
+          '[Auth] exchangeSupabaseToken error:',
+          err.name === 'AbortError' ? 'TIMEOUT' : err.message
+        );
+        return null;
+      }
     },
-    [authEndpoints.supabaseExchange, fetchUserDetails]
+    [fetchMe]
   );
 
-  const exchangeApiAuth = useCallback(
-    async (endpoints: string[], body: Record<string, unknown>, method: string) => {
-      let lastErrorMessage: string | null = null;
+  /** Generic POST to a backend auth endpoint (login/register) */
+  const postAuth = useCallback(
+    async (
+      url: string,
+      body: Record<string, unknown>
+    ): Promise<{ user: User; token: string; requiresEmailVerification?: boolean }> => {
+      console.log(`[Auth] postAuth → ${url}`);
+      const res = await apiFetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const rawPayload = await res.json();
+      const payload = unwrap(rawPayload);
 
-      console.log(`[Auth] Starting exchangeApiAuth (${method})...`);
-      for (const endpoint of endpoints) {
-        try {
-          console.log(`[Auth] Trying exchange endpoint: ${endpoint}`);
-          const response = await fetchWithTimeout(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
-          });
-
-          const rawPayload = await response.json();
-          const payload = unwrapPayload(rawPayload);
-
-          if (!response.ok) {
-            console.log(`[Auth] Endpoint ${endpoint} returned status: ${response.status}`);
-            lastErrorMessage =
-              extractErrorMessage(rawPayload) || extractErrorMessage(payload) || lastErrorMessage;
-            continue;
-          }
-
-          const appToken = getTokenFromPayload(payload);
-          if (!appToken) {
-            console.log(`[Auth] Endpoint ${endpoint} returned no token`);
-            continue;
-          }
-
-          setAuthToken(appToken);
-
-          if (payload.user) {
-            const normalized = toFrontendUser(payload.user);
-            console.log(`[Auth] Exchange successful via ${endpoint} (user in payload)`);
-            setUser(normalized);
-            return { method, user: normalized };
-          }
-
-          console.log(`[Auth] Exchange successful via ${endpoint}, fetching details...`);
-          const details = await fetchUserDetails(appToken);
-          if (details) {
-            setUser(details);
-            return { method, user: details };
-          }
-        } catch (err: any) {
-          console.warn(
-            `[Auth] Error in exchangeApiAuth at ${endpoint}:`,
-            err.name === 'AbortError' ? 'TIMEOUT' : err.message
-          );
-        }
+      if (!res.ok) {
+        const msg = extractError(payload) ?? extractError(rawPayload as any) ?? 'Request failed';
+        throw new Error(msg);
       }
 
-      throw new Error(lastErrorMessage || 'Authentication exchange failed');
+      // Check for email verification requirement
+      if (payload.requiresEmailVerification) {
+        return {
+          user: null as any,
+          token: '',
+          requiresEmailVerification: true,
+        };
+      }
+
+      const appToken = extractToken(payload);
+      if (!appToken) {
+        throw new Error('Server did not return an access token');
+      }
+
+      setAuthToken(appToken);
+
+      const rawUser = payload.user;
+      if (rawUser) {
+        const u = toUser(rawUser);
+        return { user: u, token: appToken };
+      }
+
+      const u = await fetchMe(appToken);
+      if (!u) throw new Error('Got a token but failed to fetch user profile');
+      return { user: u, token: appToken };
     },
-    [fetchUserDetails]
+    [fetchMe]
   );
+
+  // -----------------------------------------------------------------------
+  // Public auth methods
+  // -----------------------------------------------------------------------
 
   const login = useCallback(
-    async (emailOrToken: string, password?: string, _options?: AuthSubmitOptions) => {
+    async (emailOrToken: string, password?: string, options?: { cfTurnstileToken?: string }) => {
       setError(null);
       setIsLoading(true);
 
       try {
+        // Token-only login (used by SSO callbacks)
         if (!password) {
-          return await authenticateWithToken(emailOrToken);
+          setAuthToken(emailOrToken);
+          const details = await fetchMe(emailOrToken);
+          if (!details) {
+            clearAuthToken();
+            throw new Error('Token was rejected by the API');
+          }
+          setUser(details);
+          return { method: 'token' as const, user: details };
         }
 
-        if (!hasSupabaseConfig || !supabase) {
-          return await exchangeApiAuth(
-            authEndpoints.login,
-            {
-              email: emailOrToken,
-              password,
-              cfTurnstileToken: _options?.cfTurnstileToken,
-            },
-            'password'
-          );
+        // Strategy 1: Supabase sign-in → exchange
+        if (hasSupabaseConfig && supabase) {
+          console.log('[Auth] login – using Supabase');
+          const { data, error: signInErr } = await supabase.auth.signInWithPassword({
+            email: emailOrToken,
+            password,
+          });
+
+          if (signInErr) {
+            // If Supabase itself has a config issue, fall through to direct API
+            const msg = signInErr.message?.toLowerCase() ?? '';
+            if (msg.includes('invalid api key') || msg.includes('failed to fetch')) {
+              console.warn('[Auth] Supabase unavailable, falling back to direct API');
+            } else {
+              throw new Error(signInErr.message || 'Failed to login');
+            }
+          } else {
+            const accessToken = data?.session?.access_token;
+            if (!accessToken) throw new Error('Supabase did not return an access token');
+
+            const result = await exchangeSupabaseToken(accessToken);
+            if (result) {
+              setUser(result.user);
+              return { method: 'supabase' as const, user: result.user };
+            }
+            throw new Error('Supabase token exchange failed');
+          }
         }
 
-        const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        // Strategy 2: Direct API login
+        console.log('[Auth] login – using direct API');
+        const result = await postAuth(API_ENDPOINTS.AUTH.LOGIN, {
           email: emailOrToken,
           password,
+          cfTurnstileToken: options?.cfTurnstileToken,
         });
-
-        if (signInError) {
-          if (shouldFallbackToApiAuth(signInError.message)) {
-            return await exchangeApiAuth(
-              authEndpoints.login,
-              {
-                email: emailOrToken,
-                password,
-                cfTurnstileToken: _options?.cfTurnstileToken,
-              },
-              'password_fallback'
-            );
-          }
-          throw new Error(signInError.message || 'Failed to login');
-        }
-
-        const accessToken = data?.session?.access_token;
-        if (!accessToken) {
-          throw new Error('Supabase login did not return an access token');
-        }
-
-        return await exchangeSupabaseToken(accessToken);
+        setUser(result.user);
+        return { method: 'password' as const, user: result.user };
       } catch (err: any) {
-        setError(err?.message || 'Failed to login');
+        setError(err?.message ?? 'Failed to login');
         throw err;
       } finally {
         setIsLoading(false);
       }
     },
-    [authenticateWithToken, authEndpoints.login, exchangeApiAuth, exchangeSupabaseToken]
+    [fetchMe, exchangeSupabaseToken, postAuth]
   );
 
   const register = useCallback(
-    async (name: string, email: string, password: string, _options?: AuthSubmitOptions) => {
+    async (
+      name: string,
+      email: string,
+      password: string,
+      options?: { cfTurnstileToken?: string; inviteCode?: string }
+    ) => {
       setError(null);
       setIsLoading(true);
 
       try {
-        if (!hasSupabaseConfig || !supabase) {
-          return await exchangeApiAuth(
-            authEndpoints.register,
-            {
-              name,
-              email,
-              password,
-              inviteCode: _options?.inviteCode,
-              cfTurnstileToken: _options?.cfTurnstileToken,
-            },
-            'register'
-          );
+        // Strategy 1: Supabase sign-up → exchange
+        if (hasSupabaseConfig && supabase) {
+          console.log('[Auth] register – using Supabase');
+          const { data, error: signUpErr } = await supabase.auth.signUp({
+            email,
+            password,
+            options: { data: { name } },
+          });
+
+          if (signUpErr) {
+            const msg = signUpErr.message?.toLowerCase() ?? '';
+            if (msg.includes('invalid api key') || msg.includes('failed to fetch')) {
+              console.warn('[Auth] Supabase unavailable, falling back to direct API');
+            } else {
+              throw new Error(signUpErr.message || 'Failed to register');
+            }
+          } else {
+            const accessToken = data?.session?.access_token;
+            if (!accessToken) {
+              // Email verification required – Supabase doesn't give a session
+              return {
+                method: 'supabase_signup_pending' as const,
+                requiresEmailVerification: true,
+                message: 'Check your email to verify your account, then sign in.',
+              };
+            }
+
+            const result = await exchangeSupabaseToken(accessToken);
+            if (result) {
+              setUser(result.user);
+              return { method: 'supabase' as const, user: result.user };
+            }
+            throw new Error('Supabase token exchange failed');
+          }
         }
 
-        if (inviteOnlyMode) {
-          return await exchangeApiAuth(
-            authEndpoints.register,
-            {
-              name,
-              email,
-              password,
-              inviteCode: _options?.inviteCode,
-              cfTurnstileToken: _options?.cfTurnstileToken,
-            },
-            'register_invite_only'
-          );
-        }
-
-        const { data, error: signUpError } = await supabase.auth.signUp({
+        // Strategy 2: Direct API registration
+        console.log('[Auth] register – using direct API');
+        const result = await postAuth(API_ENDPOINTS.AUTH.REGISTER, {
+          name,
           email,
           password,
-          options: {
-            data: {
-              name,
-            },
-          },
+          inviteCode: options?.inviteCode,
+          cfTurnstileToken: options?.cfTurnstileToken,
         });
 
-        if (signUpError) {
-          if (shouldFallbackToApiAuth(signUpError.message)) {
-            return await exchangeApiAuth(
-              authEndpoints.register,
-              {
-                name,
-                email,
-                password,
-                inviteCode: _options?.inviteCode,
-                cfTurnstileToken: _options?.cfTurnstileToken,
-              },
-              'register_fallback'
-            );
-          }
-          throw new Error(signUpError.message || 'Failed to register');
-        }
-
-        const accessToken = data?.session?.access_token;
-        if (!accessToken) {
+        if (result.requiresEmailVerification) {
           return {
-            method: 'supabase_signup_pending' as const,
+            method: 'register_pending' as const,
             requiresEmailVerification: true,
             message: 'Check your email to verify your account, then sign in.',
           };
         }
 
-        return await exchangeSupabaseToken(accessToken);
+        setUser(result.user);
+        return { method: 'register' as const, user: result.user };
       } catch (err: any) {
-        setError(err?.message || 'Failed to register');
+        setError(err?.message ?? 'Failed to register');
         throw err;
       } finally {
         setIsLoading(false);
       }
     },
-    [authEndpoints.register, exchangeApiAuth, exchangeSupabaseToken, inviteOnlyMode]
+    [exchangeSupabaseToken, postAuth]
   );
 
   const signInWithGoogle = useCallback(async () => {
@@ -515,154 +395,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       });
 
-      if (oauthError) {
-        throw new Error(oauthError.message || 'Google sign-in failed');
-      }
-
+      if (oauthError) throw new Error(oauthError.message || 'Google sign-in failed');
       return { method: 'google_redirect' as const };
     } catch (err: any) {
-      setError(err?.message || 'Google sign-in failed');
+      setError(err?.message ?? 'Google sign-in failed');
       setIsLoading(false);
       throw err;
     }
   }, []);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const bootstrapAuth = async () => {
-      console.log('[Auth] Starting bootstrapAuth...');
-      setIsLoading(true);
-
-      try {
-        const appToken = getAuthToken();
-        if (appToken) {
-          console.log('[Auth] Token found in storage, fetching details...');
-          const details = await fetchUserDetails(appToken);
-          if (!isMounted) return;
-
-          if (details?.id) {
-            setUser(details);
-            console.log('[Auth] Bootstrap successful via stored token.');
-            setIsLoading(false);
-            return;
-          }
-
-          console.log('[Auth] Stored token invalid or expired.');
-          clearAuthToken();
-          setUser(null);
-        } else {
-          console.log('[Auth] No stored token found.');
-        }
-
-        if (hasSupabaseConfig && supabase) {
-          try {
-            console.log('[Auth] Checking Supabase session...');
-            const { data, error: sessionError } = await supabase.auth.getSession();
-            if (!sessionError && data?.session?.access_token) {
-              console.log('[Auth] Supabase session found, exchanging token...');
-              await exchangeSupabaseToken(data.session.access_token);
-            } else {
-              console.log('[Auth] No Supabase session found.');
-            }
-          } catch (err: any) {
-            console.error('[Auth] Supabase session check failed:', err);
-            if (isMounted) {
-              setError(err?.message || 'Failed to initialize Supabase session');
-              setUser(null);
-            }
-          }
-        }
-      } catch (err) {
-        console.error('[Auth] Critical error in bootstrapAuth:', err);
-      } finally {
-        if (isMounted) {
-          console.log('[Auth] Bootstrap sequence finished.');
-          setIsLoading(false);
-        }
-      }
-    };
-
-    bootstrapAuth();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [exchangeSupabaseToken, fetchUserDetails]);
-
-  const forgotPassword = useCallback(async (email: string) => {
-    if (!hasSupabaseConfig || !supabase) {
-      throw new Error('Supabase is not configured');
-    }
-
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
-    });
-
-    if (resetError) {
-      throw new Error(resetError.message || 'Failed to send reset email');
-    }
-
-    return { success: true };
-  }, []);
-
-  const resetPassword = useCallback(async (_token: string, password: string) => {
-    if (!hasSupabaseConfig || !supabase) {
-      throw new Error('Supabase is not configured');
-    }
-
-    const { error: updateError } = await supabase.auth.updateUser({ password });
-    if (updateError) {
-      throw new Error(updateError.message || 'Failed to reset password');
-    }
-
-    return { success: true };
-  }, []);
-
-  const handleSSOCallback = useCallback(
-    async (_provider: string, _code: string, _state?: string | null) => {
-      if (!hasSupabaseConfig || !supabase) {
-        throw new Error('Supabase is not configured');
-      }
-
-      const url = typeof window !== 'undefined' ? new URL(window.location.href) : null;
-      const code = url?.searchParams.get('code') || _code || '';
-      let accessToken = '';
-
-      if (code) {
-        const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-        if (error) {
-          throw new Error(error.message || 'Failed to exchange OAuth code');
-        }
-        accessToken = data?.session?.access_token || '';
-      } else if (url) {
-        const hashParams = new URLSearchParams(
-          url.hash.startsWith('#') ? url.hash.slice(1) : url.hash
-        );
-        accessToken = hashParams.get('access_token') || '';
-      }
-
-      if (!accessToken) {
-        // Supabase may need a brief moment to persist the session.
-        const maxAttempts = 10;
-        for (let attempt = 0; attempt < maxAttempts; attempt++) {
-          const { data, error: sessionError } = await supabase.auth.getSession();
-          if (!sessionError && data?.session?.access_token) {
-            accessToken = data.session.access_token;
-            break;
-          }
-          await new Promise((resolve) => setTimeout(resolve, 250));
-        }
-      }
-
-      if (!accessToken) {
-        throw new Error('No Supabase session after OAuth callback');
-      }
-
-      return await exchangeSupabaseToken(accessToken);
-    },
-    [exchangeSupabaseToken]
-  );
 
   const signInWithMagicLink = useCallback(async (email: string) => {
     setError(null);
@@ -673,54 +413,200 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error('Supabase is not configured');
       }
 
-      const { error } = await supabase.auth.signInWithOtp({
+      const { error: otpErr } = await supabase.auth.signInWithOtp({
         email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
       });
 
-      if (error) {
-        throw new Error(error.message || 'Failed to send magic link');
-      }
-
+      if (otpErr) throw new Error(otpErr.message || 'Failed to send magic link');
       return { success: true };
     } finally {
       setIsLoading(false);
     }
   }, []);
 
+  const forgotPassword = useCallback(async (email: string) => {
+    if (!hasSupabaseConfig || !supabase) throw new Error('Supabase is not configured');
+
+    const { error: resetErr } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    });
+    if (resetErr) throw new Error(resetErr.message || 'Failed to send reset email');
+    return { success: true };
+  }, []);
+
+  const resetPassword = useCallback(async (_token: string, password: string) => {
+    if (!hasSupabaseConfig || !supabase) throw new Error('Supabase is not configured');
+
+    const { error: updateErr } = await supabase.auth.updateUser({ password });
+    if (updateErr) throw new Error(updateErr.message || 'Failed to reset password');
+    return { success: true };
+  }, []);
+
+  const handleSSOCallback = useCallback(
+    async (_provider: string, _code: string, _state?: string | null) => {
+      if (!hasSupabaseConfig || !supabase) throw new Error('Supabase is not configured');
+
+      const url = typeof window !== 'undefined' ? new URL(window.location.href) : null;
+      const code = url?.searchParams.get('code') ?? _code ?? '';
+      let accessToken = '';
+
+      if (code) {
+        const { data, error: codeErr } = await supabase.auth.exchangeCodeForSession(code);
+        if (codeErr) throw new Error(codeErr.message || 'Failed to exchange OAuth code');
+        accessToken = data?.session?.access_token ?? '';
+      } else if (url) {
+        const hashParams = new URLSearchParams(
+          url.hash.startsWith('#') ? url.hash.slice(1) : url.hash
+        );
+        accessToken = hashParams.get('access_token') ?? '';
+      }
+
+      // Poll for session if not yet available
+      if (!accessToken) {
+        for (let i = 0; i < 10; i++) {
+          const { data } = await supabase.auth.getSession();
+          if (data?.session?.access_token) {
+            accessToken = data.session.access_token;
+            break;
+          }
+          await new Promise((r) => setTimeout(r, 250));
+        }
+      }
+
+      if (!accessToken) throw new Error('No session after OAuth callback');
+
+      const result = await exchangeSupabaseToken(accessToken);
+      if (!result) throw new Error('Token exchange failed after OAuth');
+      setUser(result.user);
+      return { method: 'sso' as const, user: result.user };
+    },
+    [exchangeSupabaseToken]
+  );
+
   const logout = useCallback(async () => {
     setIsLoading(true);
     clearAuthToken();
     setUser(null);
     if (supabase) {
-      await supabase.auth.signOut();
+      try {
+        await supabase.auth.signOut();
+      } catch {
+        /* ignore */
+      }
     }
     setIsLoading(false);
   }, []);
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        isLoading,
-        login,
-        register,
-        signInWithGoogle,
-        signInWithMagicLink,
-        forgotPassword,
-        resetPassword,
-        handleSSOCallback,
-        logout,
-        error,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+  // -----------------------------------------------------------------------
+  // Bootstrap – runs ONCE on mount
+  // -----------------------------------------------------------------------
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const bootstrap = async () => {
+      console.log('[Auth] ▶ Bootstrap starting');
+      setIsLoading(true);
+
+      try {
+        // 1. Check for a stored app token
+        const storedToken = getAuthToken();
+        if (storedToken) {
+          console.log('[Auth] Found stored token, validating…');
+          const u = await fetchMe(storedToken);
+          if (cancelled) return;
+          if (u?.id) {
+            console.log('[Auth] ✓ Stored token is valid');
+            setUser(u);
+            setIsLoading(false);
+            return;
+          }
+          console.log('[Auth] ✗ Stored token is invalid, clearing');
+          clearAuthToken();
+        }
+
+        // 2. Check for a Supabase session
+        if (hasSupabaseConfig && supabase) {
+          console.log('[Auth] Checking Supabase session…');
+          try {
+            const { data, error: sessErr } = await supabase.auth.getSession();
+            if (!sessErr && data?.session?.access_token) {
+              console.log('[Auth] Supabase session found, exchanging…');
+              const result = await exchangeSupabaseToken(data.session.access_token);
+              if (cancelled) return;
+              if (result) {
+                console.log('[Auth] ✓ Supabase session exchange succeeded');
+                setUser(result.user);
+                setIsLoading(false);
+                return;
+              }
+            } else {
+              console.log('[Auth] No active Supabase session');
+            }
+          } catch (err: any) {
+            console.warn('[Auth] Supabase session check failed:', err.message);
+          }
+        }
+
+        // 3. Not authenticated
+        if (!cancelled) {
+          console.log('[Auth] ✓ Bootstrap complete – no active session');
+          setUser(null);
+        }
+      } catch (err) {
+        console.error('[Auth] Bootstrap error:', err);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+
+    bootstrap();
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchMe, exchangeSupabaseToken]);
+
+  // -----------------------------------------------------------------------
+  // Provide context
+  // -----------------------------------------------------------------------
+
+  const value = useMemo(
+    () => ({
+      user,
+      isAuthenticated: !!user,
+      isLoading,
+      login,
+      register,
+      signInWithGoogle,
+      signInWithMagicLink,
+      forgotPassword,
+      resetPassword,
+      handleSSOCallback,
+      logout,
+      error,
+    }),
+    [
+      user,
+      isLoading,
+      login,
+      register,
+      signInWithGoogle,
+      signInWithMagicLink,
+      forgotPassword,
+      resetPassword,
+      handleSSOCallback,
+      logout,
+      error,
+    ]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
+
+// ---------------------------------------------------------------------------
+// Hook
+// ---------------------------------------------------------------------------
 
 export function useAuth() {
   const context = useContext(AuthContext);
