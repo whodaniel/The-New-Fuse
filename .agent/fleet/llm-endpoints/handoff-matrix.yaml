@@ -1,11 +1,11 @@
 # TNF Directive Rotation Matrix
 # Auto-updated by directive-rotation cron
-# Rotation: 2026-04-18T01:29:39.650Z
+# Rotation: 2026-04-21T15:39:10.005141+00:00
 
-active_directives_count: 0
-handoff_sequence: 2
-last_handoff: "2026-04-18T01:29:39.650Z"
-last_rotation: "2026-04-18T01:29:39.650Z"
+active_directives_count: 5
+handoff_sequence: 3
+last_handoff: "2026-04-21T15:39:10.005141+00:00"
+last_rotation: "2026-04-21T15:39:10.005141+00:00"
 rotation_status: completed
 
 # Agent Tiers (handoff priority order)
@@ -21,11 +21,37 @@ protocols:
   - relay-protocol
   - task-system
   - agent-onboarding
+  - directive-rotation
+  - stall-defense
+  - tnf-bridge
+  - gates-of-truth
+  - openclaw-sync
 
-# Pruned Entries (stale > 7 days)
+# Active Directives
+active_directives:
+  directive-rotation: active
+  stall-defense: active
+  tnf-bridge: active
+  gates-of-truth: active
+  openclaw-sync: active
+
+# Pruned Entries (stale > 5 days)
 pruned:
-  count: 0
-  last_prune: "2026-04-18T01:29:39.650Z"
+  stale_agents: 3
+  stale_tasks: 2
+  last_prune: "2026-04-21T15:39:10.005141+00:00"
+
+# Degradations
+degradations:
+  tnf-relay-mcp: no_tcp_listen_no_ws_unix_fd_only
+  close_wait_sockets: 5
+
+# Fleet State
+fleet:
+  active: 0
+  unvalidated: 1
+  tested: 0
+  dead: 0
 
 # Validation Results
 validation:
@@ -33,3 +59,4 @@ validation:
   runtime_state: valid
   protocol_snapshot: valid
   agent_registry: valid
+  redis_connectivity: valid

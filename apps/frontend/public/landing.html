@@ -14,49 +14,6 @@
       }
     })();
   </script>
-  <title>The New Fuse — AI Agent Orchestration Platform</title>
-  <meta name="description" content="Orchestrate intelligent workflows, enable seamless agent communication, and unlock the full potential of AI automation with The New Fuse. Support for MCP and A2A protocols.">
-  <meta name="keywords" content="AI platform, workflow automation, AI agents, agent orchestration, MCP protocol, A2A protocol, enterprise AI, AI collaboration">
-  <meta name="author" content="The New Fuse Team">
-  <meta name="theme-color" content="#3b82f6">
-
-  <!-- Favicons -->
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="The New Fuse — AI Agent Orchestration Platform">
-  <meta property="og:description" content="Build intelligent AI workflows. Orchestrate multi-agent systems with MCP protocol support.">
-  <meta property="og:site_name" content="The New Fuse">
-  <meta name="twitter:card" content="summary_large_image">
-
-  <script>
-    (function routeStaticHostingToSpa() {
-      var AUTH_LOGIN_URL = '/auth/login';
-      var AUTH_REGISTER_URL = '/auth/register';
-
-      // Keep auth links canonical while leaving app links as clean path-based routes.
-      // The frontend server handles SPA fallback to app.html.
-      document.addEventListener('DOMContentLoaded', function () {
-        var links = document.querySelectorAll('a[href^="/"]');
-        links.forEach(function (link) {
-          var href = link.getAttribute('href');
-          if (!href) return;
-          if (href === '/' || href.startsWith('/#') || href.startsWith('/visualizations/')) return;
-          if (href === '/auth/login' || href === '/login') {
-            link.setAttribute('href', AUTH_LOGIN_URL);
-            return;
-          }
-          if (href === '/auth/register' || href === '/register') {
-            link.setAttribute('href', AUTH_REGISTER_URL);
-            return;
-          }
-        });
-      });
-    })();
-  </script>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -506,13 +463,7 @@
     <nav class="nav" id="navbar">
       <div class="nav-inner">
         <a href="/" class="nav-brand" style="display: flex; align-items: center; gap: 4px; text-decoration: none;">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px; filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.5));">
-              <path d="M16 4L28 10V22L16 28L4 22V10L16 4Z" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M16 8L24 12V20L16 24L8 20V12L16 8Z" fill="#8B5CF6" fill-opacity="0.2"/>
-              <circle cx="16" cy="16" r="4" fill="#8B5CF6">
-                  <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" />
-              </circle>
-          </svg>
+          <img src="/assets/brand/tnf-logo.png" alt="The New Fuse" class="nav-logo" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; margin-right: 8px;">
           <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; color: white;">The New Fuse</span>
         </a>
         <div class="nav-links">
@@ -753,13 +704,7 @@
       <div class="footer-inner">
         <div class="footer-brand">
           <a href="/" class="nav-brand" style="display: flex; align-items: center; gap: 4px; text-decoration: none; margin-bottom: 1.5rem;">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px; filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.5));">
-                <path d="M16 4L28 10V22L16 28L4 22V10L16 4Z" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M16 8L24 12V20L16 24L8 20V12L16 8Z" fill="#8B5CF6" fill-opacity="0.2"/>
-                <circle cx="16" cy="16" r="4" fill="#8B5CF6">
-                    <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" />
-                </circle>
-            </svg>
+            <img src="/assets/brand/tnf-logo.png" alt="The New Fuse" class="nav-logo" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; margin-right: 8px;">
             <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; color: white;">The New Fuse</span>
           </a>
           <p>The AI Agent Orchestration Platform. Build, deploy, and scale multi-agent systems with MCP and A2A protocols.</p>

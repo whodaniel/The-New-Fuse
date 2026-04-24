@@ -1,8 +1,6 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "exclude": [
     "src/mcp*",
     "src/agent/services*",
@@ -46,6 +44,6 @@
     }
   ],
   "compilerOptions": {
-    "ignoreDeprecations": "6.0"
+    "ignoreDeprecations": "5.0"
   }
 }

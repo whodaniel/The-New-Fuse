@@ -4,13 +4,8 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "strict": true,
-    "lib": [
-      "ES2022",
-      "WebWorker"
-    ],
-    "ignoreDeprecations": "6.0"
+    "lib": ["ES2022", "WebWorker"],
+    "ignoreDeprecations": "5.0"
   },
-  "include": [
-    "src/**/*.ts"
-  ]
+  "include": ["src/**/*.ts"]
 }

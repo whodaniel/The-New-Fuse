@@ -13,15 +13,8 @@
     "incremental": true,
     "noEmit": false,
     "types": [],
-    "ignoreDeprecations": "6.0"
+    "ignoreDeprecations": "5.0"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "***.test.tsx",
-    "**/*.spec.tsx"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "***.test.tsx", "**/*.spec.tsx"]
 }

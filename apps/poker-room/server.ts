@@ -1,10 +1,20 @@
 import express from 'express';
 import fs from 'fs/promises';
 import http from 'http';
+import { randomInt } from 'node:crypto';
 import path from 'path';
 import { Hand } from 'pokersolver';
 import { Server } from 'socket.io';
 import { createServer as createViteServer } from 'vite';
+
+// Holdem-engine is ESM (.mjs) — dynamic import at module level
+let holdemEngine: any = null;
+const loadHoldemEngine = async () => {
+  if (!holdemEngine) {
+    holdemEngine = await import('../casin8-games/core-logic/holdem-engine/index.mjs');
+  }
+  return holdemEngine;
+};
 
 const app = express();
 const server = http.createServer(app);
@@ -287,57 +297,17 @@ const buildBadges = (app: CommunityArcadeApp) => {
   return badges;
 };
 
-// --- GAME LOGIC ---
-const ROUNDS = ['WAITING', 'PRE_FLOP', 'FLOP', 'TURN', 'RIVER', 'SHOWDOWN'];
-const FULL_DECK = (() => {
-  const suits = ['h', 'd', 'c', 's'];
-  const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
-  const deck: string[] = [];
-  suits.forEach((s) => ranks.forEach((r) => deck.push(r + s)));
-  return deck;
-})();
+// --- GAME LOGIC (holdem-engine integration) ---
+// Replaces the duplicate inline poker engine with the canonical holdem-engine.
+// The holdem-engine provides: proper side pots, TDA-compliant rules, idempotency,
+// cryptographic shuffle, burn cards, heads-up correct blinds, and more.
 
-const shuffle = (array: any[]) => {
-  const newDeck = [...array];
-  for (let i = newDeck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newDeck[i], newDeck[j]] = [newDeck[j], newDeck[i]];
-  }
-  return newDeck;
-};
+const DISCONNECT_GRACE_MS = 30_000; // 30s sit-out grace before removal
+const ACTION_TIMEOUT_MS = 25_000; // 25s to act before auto-fold (shorter than grace)
+const HAND_START_DELAY_MS = 5_000;
+const STARTING_STACK = 100_000;
 
-interface Player {
-  id: string;
-  name: string;
-  avatar: string;
-  stack: number;
-  bet: number;
-  cards: string[];
-  active: boolean;
-  folded: boolean;
-  isAllIn: boolean;
-  disconnected: boolean;
-  acted: boolean;
-}
-
-interface GameState {
-  deck: string[];
-  communityCards: string[];
-  pot: number;
-  round: string;
-  dealerIndex: number;
-  turnIndex: number;
-  lastAggressor: number;
-  currentBet: number;
-  seats: Player[];
-  blinds: [number, number];
-  blindLevel: number;
-  nextBlindTime: number;
-  logs: string[];
-  winners: any[];
-}
-
-const BLIND_LEVELS = [
+const BLIND_LEVELS: [number, number][] = [
   [100, 200],
   [200, 400],
   [300, 600],
@@ -348,371 +318,704 @@ const BLIND_LEVELS = [
 ];
 const BLIND_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
-let gameState: GameState = {
-  deck: [],
-  communityCards: [],
-  pot: 0,
-  round: 'WAITING',
-  dealerIndex: 0,
-  turnIndex: 0,
-  lastAggressor: -1,
-  currentBet: 0,
-  seats: Array(9)
-    .fill(null)
-    .map((_, i) => ({
-      id: `empty-${i}`,
-      name: 'EMPTY',
-      avatar: '',
-      stack: 0,
-      bet: 0,
-      cards: [],
-      active: false,
-      folded: false,
-      isAllIn: false,
-      disconnected: false,
-      acted: false,
-    })),
-  blinds: BLIND_LEVELS[0] as [number, number],
-  blindLevel: 0,
-  nextBlindTime: Date.now() + BLIND_INTERVAL,
-  logs: [],
-  winners: [],
-};
+// Player tracking maps
+const socketToPlayer = new Map<string, { playerId: string; seat: number }>();
+const playerToSocket = new Map<string, string>();
+const socketDisplayNames = new Map<string, string>();
+const disconnectTimers = new Map<string, NodeJS.Timeout>();
+let actionTimeoutTimer: NodeJS.Timeout | null = null; // Auto-fold timer for current actor
+
+// Engine instance — created async after module load
+let pokerEngine: any = null;
+let blindLevel = 0;
+let nextBlindTime = Date.now() + BLIND_INTERVAL;
+let gameLogs: string[] = [];
+let currentWinners: any[] = [];
 
 const addLog = (msg: string) => {
-  gameState.logs.unshift(msg);
-  if (gameState.logs.length > 20) gameState.logs.pop();
+  gameLogs.unshift(msg);
+  if (gameLogs.length > 20) gameLogs.pop();
+};
+
+/**
+ * Convert holdem-engine snapshot to the GameState shape the frontend expects.
+ * This preserves backward compatibility with the Socket.IO event interface.
+ */
+const engineToGameState = () => {
+  if (!pokerEngine || !holdemEngine) {
+    // Engine not yet initialized
+    return {
+      deck: [],
+      communityCards: [],
+      pot: 0,
+      round: 'WAITING',
+      dealerIndex: 0,
+      turnIndex: -1,
+      lastAggressor: -1,
+      currentBet: 0,
+      lastRaiseSize: 0,
+      bigBlind: 200,
+      seats: Array(pokerEngine?.maxSeats || 9)
+        .fill(null)
+        .map((_, i) => ({
+          id: `empty-${i}`,
+          name: 'EMPTY',
+          avatar: '',
+          stack: 0,
+          bet: 0,
+          cards: [],
+          active: false,
+          folded: false,
+          isAllIn: false,
+          disconnected: false,
+          acted: true,
+        })),
+      blinds: [100, 200] as [number, number],
+      blindLevel: 0,
+      nextBlindTime,
+      logs: gameLogs,
+      winners: currentWinners,
+    };
+  }
+
+  const snap = holdemEngine.tableSnapshot(pokerEngine);
+  const hand = snap.hand;
+
+  const streetToRound: Record<string, string> = {
+    preflop: 'PRE_FLOP',
+    flop: 'FLOP',
+    turn: 'TURN',
+    river: 'RIVER',
+  };
+
+  const round = hand
+    ? hand.settled
+      ? 'SHOWDOWN'
+      : streetToRound[hand.street] || 'WAITING'
+    : 'WAITING';
+
+  // Iterate by engine seat index (0..maxSeats-1), NOT by snap.seats array position.
+  // snap.seats is a filtered/sorted array where snap.seats[i] is the i-th non-null seat,
+  // which does NOT correspond to engine seat number i. Previously, using snap.seats[i]
+  // with Array(9) caused seat number mismatches on any table with empty seats.
+  const maxSeats = snap.maxSeats || 9;
+  const seats = Array(maxSeats)
+    .fill(null)
+    .map((_, i) => {
+      // Look up the seat by engine seat number from the sorted seats array
+      const seat = snap.seats.find((s: any) => s.seat === i);
+      if (!seat) {
+        return {
+          id: `empty-${i}`,
+          name: 'EMPTY',
+          avatar: '',
+          stack: 0,
+          bet: 0,
+          cards: [],
+          active: false,
+          folded: true,
+          isAllIn: false,
+          disconnected: false,
+          acted: true,
+        };
+      }
+      const isFolded = hand ? hand.foldedSeats.includes(seat.seat) : false;
+      const isAllIn = hand ? hand.allInSeats.includes(seat.seat) : false;
+      const streetCommit = hand ? Number(hand.streetCommitted[String(seat.seat)] || 0) : 0;
+      const actedSinceAggression = hand ? hand.actedSinceAggression.includes(seat.seat) : false;
+      // Hole cards are stored on hand.holeCards keyed by seat number, NOT on the seat object.
+      // Previously accessed seat.holeCards which was always undefined — players could never see their cards.
+      const holeCards = hand ? hand.holeCards?.[String(seat.seat)] || [] : [];
+
+      return {
+        id: seat.playerId,
+        name: socketDisplayNames.get(playerToSocket.get(seat.playerId) || '') || seat.playerId,
+        avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${seat.playerId}`,
+        stack: seat.stack,
+        bet: streetCommit,
+        cards: holeCards,
+        active: true,
+        folded: isFolded,
+        isAllIn,
+        disconnected: seat.connected === false,
+        acted: actedSinceAggression,
+      };
+    });
+
+  return {
+    deck: [],
+    communityCards:
+      hand?.boardCards?.slice(
+        0,
+        hand.street === 'flop'
+          ? 3
+          : hand.street === 'turn'
+            ? 4
+            : hand.street === 'river'
+              ? 5
+              : hand.street === 'showdown'
+                ? 5
+                : 0
+      ) || [],
+    pot: hand?.pot || 0,
+    round,
+    dealerIndex: snap.buttonSeat ?? 0,
+    turnIndex: hand?.actingSeat ?? -1,
+    lastAggressor: hand?.lastAggressorSeat ?? -1,
+    currentBet: hand?.currentBet ?? 0,
+    lastRaiseSize: hand?.lastAggressiveDelta ?? 0,
+    bigBlind: snap.blinds.bigBlind,
+    seats,
+    blinds: [snap.blinds.smallBlind, snap.blinds.bigBlind] as [number, number],
+    blindLevel,
+    nextBlindTime,
+    logs: gameLogs,
+    winners: currentWinners,
+  };
 };
 
 const broadcastState = () => {
-  // Hide other players' cards
-  const stateToSend = {
-    ...gameState,
-    seats: gameState.seats.map((s) => ({
-      ...s,
-      cards: s.cards.length > 0 ? ['hidden', 'hidden'] : [],
-    })),
-  };
-
+  const stateToSend = engineToGameState();
+  // Security: hide other players' cards per socket
   io.sockets.sockets.forEach((socket) => {
     const playerState = JSON.parse(JSON.stringify(stateToSend));
-    const seatIdx = gameState.seats.findIndex((s) => s.id === socket.id);
-    if (seatIdx !== -1 && gameState.seats[seatIdx].cards.length > 0) {
-      playerState.seats[seatIdx].cards = gameState.seats[seatIdx].cards;
+    const info = socketToPlayer.get(socket.id);
+    if (info && playerState.seats[info.seat]?.cards.length > 0) {
+      const ownCards = playerState.seats[info.seat].cards;
+      playerState.seats = playerState.seats.map((s: any, i: number) => ({
+        ...s,
+        cards: i === info.seat ? ownCards : s.cards.length > 0 ? ['hidden', 'hidden'] : [],
+      }));
+    } else {
+      playerState.seats = playerState.seats.map((s: any) => ({
+        ...s,
+        cards: s.cards.length > 0 ? ['hidden', 'hidden'] : [],
+      }));
     }
-    // In showdown, reveal all active cards
-    if (gameState.round === 'SHOWDOWN') {
-      playerState.seats = gameState.seats.map((s) => ({ ...s, cards: s.cards }));
+    // At showdown, reveal only non-folded players' cards (TDA Rule 66)
+    // Folded players' cards remain hidden even at showdown
+    // Use the original unmasked stateToSend instead of calling engineToGameState() again
+    if (playerState.round === 'SHOWDOWN') {
+      playerState.seats = stateToSend.seats.map((s: any) => ({
+        ...s,
+        cards: s.folded ? (s.cards.length > 0 ? ['hidden', 'hidden'] : []) : s.cards,
+      }));
     }
     socket.emit('gameState', playerState);
   });
+  // Schedule auto-fold for current actor if hand is active
+  scheduleActionTimeout();
 };
 
-const getNextActivePlayer = (startIndex: number) => {
-  let nextIndex = (startIndex + 1) % 9;
-  let guard = 0;
-  while (
-    (!gameState.seats[nextIndex].active ||
-      gameState.seats[nextIndex].folded ||
-      gameState.seats[nextIndex].isAllIn) &&
-    guard < 10
-  ) {
-    nextIndex = (nextIndex + 1) % 9;
-    guard++;
+// Action timeout: auto-fold/check the current actor if they don't act in time
+const scheduleActionTimeout = () => {
+  if (actionTimeoutTimer) {
+    clearTimeout(actionTimeoutTimer);
+    actionTimeoutTimer = null;
   }
-  return guard < 10 ? nextIndex : -1;
-};
+  if (!pokerEngine || !holdemEngine) return;
+  const hand = pokerEngine.hand;
+  if (!hand || hand.settled || hand.actingSeat == null) return;
 
-const checkRoundEnd = () => {
-  const activePlayers = gameState.seats.filter((s) => s.active && !s.folded);
-  if (activePlayers.length <= 1) {
-    endHand();
-    return;
-  }
+  const actingSeat = hand.actingSeat;
+  const seatRow = pokerEngine.seats[actingSeat];
+  if (!seatRow) return;
 
-  const playersCanAct = activePlayers.filter((s) => !s.isAllIn);
-  if (playersCanAct.length <= 1) {
-    const allMatched = activePlayers.every((s) => s.isAllIn || s.bet === gameState.currentBet);
-    if (allMatched) {
-      fastForwardToShowdown();
-      return;
+  actionTimeoutTimer = setTimeout(() => {
+    if (!pokerEngine || !holdemEngine) return;
+    const currentHand = pokerEngine.hand;
+    if (!currentHand || currentHand.settled || currentHand.actingSeat !== actingSeat) return;
+
+    // Time expired — auto-fold the player
+    try {
+      if (seatRow.connected === false) {
+        // Disconnected players can't use applyAction (it rejects disconnected players).
+        // Use forceFoldDisconnected instead, which handles the disconnected state.
+        holdemEngine.forceFoldDisconnected(pokerEngine, { playerId: seatRow.playerId });
+        addLog(`${seatRow.playerId} auto-folded (action timeout, disconnected)`);
+      } else {
+        // Connected but idle — fold via applyAction with playerId (NOT seat number).
+        // Previous code passed { seat: actingSeat } which caused applyAction to throw
+        // "Unknown playerId" since applyAction resolves the player via input.playerId.
+        const idemKey = `timeout-fold:${seatRow.playerId}:${Date.now()}`;
+        holdemEngine.applyAction(pokerEngine, {
+          playerId: seatRow.playerId,
+          action: 'fold',
+          amount: 0,
+          idempotencyKey: idemKey,
+        });
+        addLog(`${seatRow.playerId} auto-folded (action timeout)`);
+      }
+    } catch (err: any) {
+      // Player may have already acted, hand settled, or already folded; ignore
     }
-  }
 
-  const allActed = activePlayers.every((s) => s.acted || s.isAllIn);
-  const allMatched = activePlayers.every((s) => s.isAllIn || s.bet === gameState.currentBet);
-
-  if (allActed && allMatched) {
-    nextRound();
-  }
-};
-
-const fastForwardToShowdown = () => {
-  while (gameState.communityCards.length < 5) {
-    if (gameState.communityCards.length === 0) {
-      gameState.communityCards.push(
-        gameState.deck.pop()!,
-        gameState.deck.pop()!,
-        gameState.deck.pop()!
-      );
-    } else {
-      gameState.communityCards.push(gameState.deck.pop()!);
+    // Check if hand should settle
+    if (currentHand.readyForSettlement || currentHand.street === 'showdown') {
+      handleSettlement();
     }
-  }
-  gameState.round = 'SHOWDOWN';
-  evaluateHand();
-};
 
-const nextRound = () => {
-  const idx = ROUNDS.indexOf(gameState.round);
-  const next = ROUNDS[idx + 1] || 'WAITING';
-
-  // Gather bets to pot
-  gameState.seats.forEach((s) => {
-    gameState.pot += s.bet;
-    s.bet = 0;
-    s.acted = false;
-  });
-  gameState.currentBet = 0;
-
-  if (next === 'FLOP')
-    gameState.communityCards.push(
-      gameState.deck.pop()!,
-      gameState.deck.pop()!,
-      gameState.deck.pop()!
-    );
-  if (next === 'TURN' || next === 'RIVER') gameState.communityCards.push(gameState.deck.pop()!);
-
-  gameState.round = next;
-
-  if (next === 'SHOWDOWN') {
-    evaluateHand();
-  } else {
-    gameState.lastAggressor = gameState.dealerIndex;
-    gameState.turnIndex = getNextActivePlayer(gameState.dealerIndex);
-    addLog(`--- ${next} ---`);
     broadcastState();
-  }
+  }, ACTION_TIMEOUT_MS);
 };
 
-const evaluateHand = () => {
-  gameState.seats.forEach((s) => {
-    gameState.pot += s.bet;
-    s.bet = 0;
-  });
-  gameState.currentBet = 0;
+const tryStartHand = () => {
+  if (!pokerEngine || !holdemEngine) return;
+  if (pokerEngine.hand && !pokerEngine.hand.settled) return; // Hand in progress
 
-  const activePlayers = gameState.seats.filter((s) => s.active && !s.folded);
-
-  if (activePlayers.length === 1) {
-    const winner = activePlayers[0];
-    winner.stack += gameState.pot;
-    addLog(`${winner.name} wins $${gameState.pot} (Others folded)`);
-    gameState.winners = [{ id: winner.id, name: winner.name, amount: gameState.pot, hand: 'Fold' }];
-  } else {
-    const hands = activePlayers.map((p) => {
-      const handCards = [...p.cards, ...gameState.communityCards];
-      // Convert T, J, Q, K, A to pokersolver format (it uses T, J, Q, K, A and suits c, d, h, s)
-      const solverHand = Hand.solve(handCards);
-      return { player: p, hand: solverHand };
-    });
-
-    const winners = Hand.winners(hands.map((h) => h.hand));
-    const winningPlayers = hands.filter((h) => winners.includes(h.hand));
-
-    const splitPot = Math.floor(gameState.pot / winningPlayers.length);
-    gameState.winners = winningPlayers.map((w) => {
-      w.player.stack += splitPot;
-      addLog(`${w.player.name} wins $${splitPot} with ${w.hand.name}`);
-      return { id: w.player.id, name: w.player.name, amount: splitPot, hand: w.hand.name };
-    });
-  }
-
-  broadcastState();
-
-  setTimeout(() => {
-    startHand();
-  }, 5000);
-};
-
-const startHand = () => {
-  // Check blind increase
-  if (Date.now() > gameState.nextBlindTime && gameState.blindLevel < BLIND_LEVELS.length - 1) {
-    gameState.blindLevel++;
-    gameState.blinds = BLIND_LEVELS[gameState.blindLevel] as [number, number];
-    gameState.nextBlindTime = Date.now() + BLIND_INTERVAL;
-    addLog(`Blinds increased to ${gameState.blinds[0]}/${gameState.blinds[1]}`);
-  }
-
-  // Remove busted players
-  gameState.seats.forEach((s, i) => {
-    if (s.active && s.stack === 0) {
-      s.active = false;
-      s.id = `empty-${i}`;
-      s.name = 'EMPTY';
-      addLog(`${s.name} busted out!`);
-    }
-  });
-
-  const activeCount = gameState.seats.filter((s) => s.active).length;
-  if (activeCount < 2) {
-    gameState.round = 'WAITING';
-    gameState.pot = 0;
-    gameState.communityCards = [];
-    gameState.winners = [];
+  const seated = pokerEngine.seats.filter((s: any) => s !== null && s.stack > 0);
+  if (seated.length < 2) {
     addLog('Waiting for players...');
     broadcastState();
     return;
   }
 
-  gameState.deck = shuffle(FULL_DECK);
-  gameState.communityCards = [];
-  gameState.pot = 0;
-  gameState.round = 'PRE_FLOP';
-  gameState.winners = [];
-
-  // Move dealer button
-  let nextDealer = (gameState.dealerIndex + 1) % 9;
-  while (!gameState.seats[nextDealer].active) {
-    nextDealer = (nextDealer + 1) % 9;
+  // Check blind escalation
+  if (Date.now() > nextBlindTime && blindLevel < BLIND_LEVELS.length - 1) {
+    blindLevel++;
+    nextBlindTime = Date.now() + BLIND_INTERVAL;
+    const [sb, bb] = BLIND_LEVELS[blindLevel];
+    pokerEngine.blinds.smallBlind = sb;
+    pokerEngine.blinds.bigBlind = bb;
+    addLog(`Blinds increased to ${sb}/${bb}`);
   }
-  gameState.dealerIndex = nextDealer;
 
-  const sbIndex = getNextActivePlayer(gameState.dealerIndex);
-  const bbIndex = getNextActivePlayer(sbIndex);
+  // Remove busted players ONLY between hands (not during an active hand)
+  // Removing mid-hand corrupts side pot calculations and can crash settlement
+  if (!pokerEngine.hand || pokerEngine.hand.settled) {
+    pokerEngine.seats.forEach((seat: any, i: number) => {
+      if (seat && seat.stack <= 0) {
+        const playerId = seat.playerId;
+        try {
+          holdemEngine.unseatPlayer(pokerEngine, { playerId });
+        } catch {}
+        const socketId = playerToSocket.get(playerId);
+        if (socketId) {
+          socketToPlayer.delete(socketId);
+          playerToSocket.delete(playerId);
+          socketDisplayNames.delete(socketId);
+        }
+        addLog(`${playerId} busted out!`);
+      }
+    });
+  }
 
-  gameState.seats.forEach((s) => {
-    if (s.active) {
-      s.cards = [gameState.deck.pop()!, gameState.deck.pop()!];
-      s.folded = false;
-      s.isAllIn = false;
-      s.bet = 0;
-      s.acted = false;
+  const activeAfterBust = pokerEngine.seats.filter((s: any) => s !== null && s.stack > 0);
+  if (activeAfterBust.length < 2) {
+    addLog('Waiting for players...');
+    broadcastState();
+    return;
+  }
+
+  try {
+    const handId = `hand-${Date.now()}-${randomInt(0, 2821109907455).toString(36)}`;
+    const idempotencyKey = `start-${handId}`;
+    holdemEngine.startHand(pokerEngine, { handId, idempotencyKey });
+    currentWinners = [];
+
+    const hand = pokerEngine.hand;
+    if (hand) addLog(`Hand started. Dealer: Seat ${hand.buttonSeat}`);
+    broadcastState();
+  } catch (err: any) {
+    addLog(`Hand start error: ${err.message}`);
+  }
+};
+
+const handleSettlement = () => {
+  if (!pokerEngine || !holdemEngine) return;
+  const hand = pokerEngine.hand;
+  if (!hand || !hand.readyForSettlement) return;
+
+  try {
+    let rankingBySeat: Record<string, number> = {};
+    const activeSeats = pokerEngine.seats
+      .map((seat: any, i: number) => ({ seat, idx: i }))
+      .filter(({ seat, idx }: any) => seat !== null && !hand.foldedSeats.includes(idx));
+
+    if (activeSeats.length === 1) {
+      rankingBySeat = { [String(activeSeats[0].idx)]: 1 };
     } else {
-      s.cards = [];
-      s.folded = true;
-      s.acted = true;
+      const evaluations = activeSeats.map(({ seat, idx }: any) => {
+        // Hole cards are on hand.holeCards, NOT on the seat object
+        const holeCards = hand.holeCards?.[String(idx)] || [];
+        const board =
+          hand.boardCards?.slice(
+            0,
+            hand.street === 'flop'
+              ? 3
+              : hand.street === 'turn'
+                ? 4
+                : hand.street === 'river'
+                  ? 5
+                  : hand.street === 'showdown'
+                    ? 5
+                    : 0
+          ) || [];
+        const solverHand = Hand.solve([...holeCards, ...board]);
+        return { seatIdx: idx, hand: solverHand };
+      });
+      const winners = Hand.winners(evaluations.map((e: any) => e.hand));
+      const winnerSet = new Set(winners);
+      let rank = 2;
+      for (const ev of evaluations) {
+        if (winnerSet.has(ev.hand)) {
+          rankingBySeat[String(ev.seatIdx)] = 1;
+        } else {
+          rankingBySeat[String(ev.seatIdx)] = rank++;
+        }
+      }
     }
-  });
 
-  // Post blinds
-  const sbPlayer = gameState.seats[sbIndex];
-  const bbPlayer = gameState.seats[bbIndex];
+    const settlementKey = `settle-${hand.handId}-${Date.now()}`;
+    holdemEngine.settleHand(pokerEngine, { rankingBySeat, settlementKey });
 
-  const sbAmount = Math.min(sbPlayer.stack, gameState.blinds[0]);
-  sbPlayer.bet = sbAmount;
-  sbPlayer.stack -= sbAmount;
-  if (sbPlayer.stack === 0) sbPlayer.isAllIn = true;
+    currentWinners = [];
+    for (const [seatRaw, payout] of Object.entries(hand.payoutBySeat)) {
+      const seatNo = Number(seatRaw);
+      const seat = pokerEngine.seats[seatNo];
+      if (seat && Number(payout) > 0) {
+        const displayName =
+          socketDisplayNames.get(playerToSocket.get(seat.playerId) || '') || seat.playerId;
+        currentWinners.push({
+          id: seat.playerId,
+          name: displayName,
+          amount: Number(payout),
+          hand: 'Win',
+        });
+        addLog(`${displayName} wins $${Number(payout)}`);
+      }
+    }
 
-  const bbAmount = Math.min(bbPlayer.stack, gameState.blinds[1]);
-  bbPlayer.bet = bbAmount;
-  bbPlayer.stack -= bbAmount;
-  if (bbPlayer.stack === 0) bbPlayer.isAllIn = true;
-
-  gameState.currentBet = gameState.blinds[1];
-  gameState.lastAggressor = bbIndex;
-  gameState.turnIndex = getNextActivePlayer(bbIndex);
-
-  addLog(`Hand started. Dealer: ${gameState.seats[gameState.dealerIndex].name}`);
-  broadcastState();
+    broadcastState();
+    setTimeout(() => tryStartHand(), HAND_START_DELAY_MS);
+  } catch (err: any) {
+    addLog(`Settlement error: ${err.message}`);
+  }
 };
 
-const endHand = () => {
-  gameState.round = 'SHOWDOWN';
-  evaluateHand();
+const checkForSettlement = () => {
+  const hand = pokerEngine?.hand;
+  if (hand?.readyForSettlement) handleSettlement();
 };
+
+// --- SOCKET AUTH MIDDLEWARE ---
+// H4 fix: Require membership identity for WebSocket connections.
+// Reuses the same membership verification flow as casin8-games server.js.
+
+const TNF_API_BASE = String(process.env.TNF_API_BASE_URL || 'https://thenewfuse.com/api').replace(
+  /\/$/,
+  ''
+);
+const COMMUNITY_API_BASE = String(
+  process.env.COMMUNITY_API_BASE_URL || 'https://ai-arcade-community-api.bizsynth.workers.dev'
+).replace(/\/$/, '');
+const COMMUNITY_API_KEY = String(process.env.COMMUNITY_API_KEY || '').trim();
+const SUPER_ADMIN_IDENTITIES = new Set(
+  String(process.env.MASTER_SUPER_ADMIN_EMAILS || 'owner@example.com')
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean)
+);
+const MEMBERSHIP_CACHE_TTL = 90_000;
+const membershipCache = new Map();
+
+async function verifyMembership(
+  identity: string,
+  jwt?: string
+): Promise<{ active: boolean; tier: string }> {
+  if (!identity) return { active: false, tier: 'NONE' };
+  const key = identity.toLowerCase();
+  if (SUPER_ADMIN_IDENTITIES.has(key)) return { active: true, tier: 'ENTERPRISE' };
+  const cached = membershipCache.get(key);
+  if (cached && cached.expiresAt > Date.now()) return cached.value;
+  try {
+    if (jwt && jwt.split('.').length === 3) {
+      const res = await fetch(`${TNF_API_BASE}/billing/membership/me`, {
+        headers: { authorization: `Bearer ${jwt}` },
+      });
+      if (res.ok) {
+        const json = await res.json().catch(() => null as any);
+        const value = { active: !!json?.active, tier: json?.tier || 'STARTER' };
+        membershipCache.set(key, { expiresAt: Date.now() + MEMBERSHIP_CACHE_TTL, value });
+        return value;
+      }
+    }
+    if (COMMUNITY_API_KEY) {
+      const res = await fetch(
+        `${TNF_API_BASE}/billing/membership/${encodeURIComponent(identity)}`,
+        {
+          headers: { 'x-community-api-key': COMMUNITY_API_KEY },
+        }
+      );
+      if (res.ok) {
+        const json = await res.json().catch(() => null as any);
+        const value = { active: !!json?.active, tier: json?.tier || 'STARTER' };
+        membershipCache.set(key, { expiresAt: Date.now() + MEMBERSHIP_CACHE_TTL, value });
+        return value;
+      }
+    }
+    const res = await fetch(
+      `${COMMUNITY_API_BASE}/api/community/membership/${encodeURIComponent(identity)}`
+    );
+    if (res.ok) {
+      const json = await res.json().catch(() => null as any);
+      const value = { active: !!json?.active, tier: json?.tier || 'STARTER' };
+      membershipCache.set(key, { expiresAt: Date.now() + MEMBERSHIP_CACHE_TTL, value });
+      return value;
+    }
+  } catch {}
+  return { active: false, tier: 'NONE' };
+}
+
+io.use(async (socket, next) => {
+  const identity = String(
+    socket.handshake.auth.identity ||
+      socket.handshake.auth.username ||
+      socket.handshake.headers['x-tnf-identity'] ||
+      ''
+  ).trim();
+  const jwt = String(socket.handshake.auth.token || socket.handshake.headers['authorization'] || '')
+    .replace(/^Bearer\s+/i, '')
+    .trim();
+  if (!identity) {
+    // Allow read-only spectators without identity
+    socket.data.spectator = true;
+    return next();
+  }
+  const membership = await verifyMembership(identity, jwt);
+  if (!membership.active) {
+    return next(new Error('Membership required'));
+  }
+  socket.data.identity = identity;
+  socket.data.tier = membership.tier;
+  socket.data.spectator = false;
+  next();
+});
 
 io.on('connection', (socket) => {
+  // Spectators can only watch, not join or act
   socket.on('join', (data) => {
-    const emptySeat = gameState.seats.findIndex((s) => !s.active);
-    if (emptySeat !== -1) {
-      gameState.seats[emptySeat] = {
-        id: socket.id,
-        name: data.name || `Player_${Math.floor(Math.random() * 1000)}`,
-        avatar: data.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${socket.id}`,
-        stack: 10000,
-        bet: 0,
-        cards: [],
-        active: true,
-        folded: true,
-        isAllIn: false,
-        disconnected: false,
-        acted: true,
-      };
-      addLog(`${gameState.seats[emptySeat].name} joined the table.`);
+    if (!pokerEngine || !holdemEngine) return;
+    if (socket.data.spectator) {
+      socket.emit('error', { message: 'Membership required to play' });
+      return;
+    }
+    const name = String(data.name || `Player_${randomInt(100, 999)}`).trim();
+    const emptySeat = pokerEngine.seats.findIndex((s: any) => s === null);
+    if (emptySeat === -1) {
+      socket.emit('error', { message: 'Table is full' });
+      return;
+    }
+
+    const playerId = `player-${socket.id}`;
+    try {
+      holdemEngine.seatPlayer(pokerEngine, {
+        playerId,
+        seat: emptySeat,
+        stack: STARTING_STACK,
+        autoPostBlinds: true,
+        controlMode: 'human',
+      });
+
+      socketToPlayer.set(socket.id, { playerId, seat: emptySeat });
+      playerToSocket.set(playerId, socket.id);
+      socketDisplayNames.set(socket.id, name);
+
+      addLog(`${name} joined seat ${emptySeat}`);
       broadcastState();
 
-      if (gameState.round === 'WAITING' && gameState.seats.filter((s) => s.active).length >= 2) {
-        startHand();
+      if (!pokerEngine.hand || pokerEngine.hand.settled) {
+        setTimeout(() => tryStartHand(), 1000);
       }
+    } catch (err: any) {
+      socket.emit('error', { message: err.message });
     }
   });
 
   socket.on('action', (data) => {
-    const { type, amount } = data;
-    const seatIdx = gameState.seats.findIndex((s) => s.id === socket.id);
-    if (
-      seatIdx === -1 ||
-      seatIdx !== gameState.turnIndex ||
-      gameState.round === 'WAITING' ||
-      gameState.round === 'SHOWDOWN'
-    )
+    if (!pokerEngine || !holdemEngine) return;
+    if (socket.data.spectator) {
+      socket.emit('error', { message: 'Membership required to act' });
       return;
+    }
+    const { type, amount } = data;
+    const info = socketToPlayer.get(socket.id);
+    if (!info) return;
 
-    const player = gameState.seats[seatIdx];
+    const hand = pokerEngine.hand;
+    if (!hand || hand.settled) return;
+    if (hand.actingSeat !== info.seat) return;
 
-    if (type === 'FOLD') {
-      player.folded = true;
-      player.acted = true;
-      addLog(`${player.name} folds`);
-    } else if (type === 'CALL') {
-      const callAmount = Math.min(player.stack, gameState.currentBet - player.bet);
-      player.bet += callAmount;
-      player.stack -= callAmount;
-      player.acted = true;
-      if (player.stack === 0) player.isAllIn = true;
-      addLog(`${player.name} calls $${callAmount}`);
-    } else if (type === 'RAISE') {
-      const raiseAmount = Math.min(player.stack, amount - player.bet);
-      if (player.bet + raiseAmount > gameState.currentBet) {
-        player.bet += raiseAmount;
-        player.stack -= raiseAmount;
-        gameState.currentBet = player.bet;
-        gameState.lastAggressor = seatIdx;
-        player.acted = true;
-
-        // Reset acted for everyone else
-        gameState.seats.forEach((s, i) => {
-          if (i !== seatIdx && s.active && !s.folded && !s.isAllIn) {
-            s.acted = false;
-          }
-        });
-
-        if (player.stack === 0) player.isAllIn = true;
-        addLog(`${player.name} raises to $${player.bet}`);
-      }
+    // Map frontend action types to holdem-engine action types
+    let engineAction: string;
+    let engineAmount = amount || 0;
+    switch (String(type).toUpperCase()) {
+      case 'FOLD':
+        engineAction = 'fold';
+        break;
+      case 'CALL':
+        engineAction = 'call';
+        break;
+      case 'CHECK':
+        engineAction = 'check';
+        break;
+      case 'BET':
+        engineAction = 'bet';
+        break;
+      case 'RAISE':
+        engineAction = 'raise';
+        break;
+      case 'ALLIN':
+        engineAction = 'allin';
+        break;
+      default:
+        return;
     }
 
-    gameState.turnIndex = getNextActivePlayer(seatIdx);
-    checkRoundEnd();
-    broadcastState();
+    const idempotencyKey = `action-${hand.handId}-${info.seat}-${hand.street}-${type}-${amount || 0}`;
+    try {
+      holdemEngine.applyAction(pokerEngine, {
+        playerId: info.playerId,
+        action: engineAction,
+        amount: engineAmount,
+        idempotencyKey,
+      });
+
+      const displayName = socketDisplayNames.get(socket.id) || info.playerId;
+      const logMap: Record<string, string> = {
+        fold: `${displayName} folds`,
+        call: `${displayName} calls`,
+        check: `${displayName} checks`,
+        bet: `${displayName} bets $${engineAmount}`,
+        raise: `${displayName} raises to $${engineAmount}`,
+        allin: `${displayName} goes all-in`,
+      };
+      addLog(logMap[engineAction] || `${displayName}: ${engineAction}`);
+
+      broadcastState();
+      checkForSettlement();
+    } catch (err: any) {
+      socket.emit('actionError', { message: err.message });
+    }
   });
 
   socket.on('disconnect', () => {
-    const seatIdx = gameState.seats.findIndex((s) => s.id === socket.id);
-    if (seatIdx !== -1) {
-      const player = gameState.seats[seatIdx];
-      player.disconnected = true;
-      player.folded = true;
-      addLog(`${player.name} disconnected`);
-      if (gameState.turnIndex === seatIdx) {
-        gameState.turnIndex = getNextActivePlayer(seatIdx);
-        checkRoundEnd();
+    if (!pokerEngine || !holdemEngine) return;
+    const info = socketToPlayer.get(socket.id);
+    if (!info) return;
+
+    const { playerId, seat } = info;
+
+    // Grace period: mark disconnected but don't remove from mappings yet
+    // so reconnection can find the player by identity
+    try {
+      holdemEngine.setConnection(pokerEngine, { playerId, connected: false });
+    } catch {}
+    addLog(
+      `${socketDisplayNames.get(socket.id) || playerId} disconnected (grace: ${DISCONNECT_GRACE_MS / 1000}s)`
+    );
+
+    // Store a marker so we know this socket is disconnected but still mapped
+    // The grace timer will clean up if no reconnection occurs
+    const timer = setTimeout(() => {
+      // Grace expired — force-fold the player if in an active hand
+      try {
+        holdemEngine.forceFoldDisconnected(pokerEngine, { playerId });
+      } catch {}
+      addLog(
+        `${socketDisplayNames.get(playerToSocket.get(playerId) || '') || playerId} force-folded (grace expired)`
+      );
+
+      // If the fold triggered settlement (e.g., only one player left), handle it now
+      // BEFORE unseating — otherwise the busted player loses their payout
+      const handAfterFold = pokerEngine.hand;
+      if (handAfterFold?.readyForSettlement) {
+        handleSettlement();
       }
-      player.active = false;
-      player.id = `empty-${seatIdx}`;
-      player.name = 'EMPTY';
+
+      // Only unseat AFTER the hand is settled (same principle as NC4 mid-hand fix).
+      // Unseating during an active hand corrupts side pot calculations.
+      const handNow = pokerEngine.hand;
+      if (!handNow || handNow.settled) {
+        try {
+          holdemEngine.unseatPlayer(pokerEngine, { playerId });
+        } catch {}
+        addLog(
+          `${socketDisplayNames.get(playerToSocket.get(playerId) || '') || playerId} removed (grace expired)`
+        );
+        const oldSocketId = playerToSocket.get(playerId);
+        if (oldSocketId) {
+          socketToPlayer.delete(oldSocketId);
+          socketDisplayNames.delete(oldSocketId);
+        }
+        playerToSocket.delete(playerId);
+        disconnectTimers.delete(playerId);
+        broadcastState();
+        setTimeout(() => tryStartHand(), 1000);
+      } else {
+        // Hand still active (other players still betting) — keep the disconnected
+        // player seated but folded. Will be unseated when hand ends (in tryStartHand).
+        broadcastState();
+      }
+    }, DISCONNECT_GRACE_MS);
+
+    disconnectTimers.set(playerId, timer);
+    // NOTE: Do NOT delete socketToPlayer/playerToSocket here — keep them for reconnection
+    broadcastState();
+  });
+
+  // Reconnection handler: if a player reconnects within grace period, restore their seat
+  // Match by identity to avoid claiming the wrong disconnected player's seat.
+  socket.on('reconnect_attempt', () => {
+    if (!pokerEngine || !holdemEngine) return;
+    const identity = socket.data.identity;
+    if (!identity) return;
+
+    // Find the disconnected player whose identity matches this socket's identity.
+    // The previous implementation matched on playerId.startsWith('player-') which
+    // could match ANY disconnected player, causing wrong-seat claims when multiple
+    // players disconnect simultaneously.
+    let reclaimed = false;
+    for (const [existingSocketId, info] of socketToPlayer.entries()) {
+      const { playerId, seat } = info;
+      const existingSocket = io.sockets.sockets.get(existingSocketId);
+      if (existingSocket && existingSocket.connected) continue; // Still connected, skip
+
+      // Check identity match: the existing socket's identity should match the reconnecting one.
+      // Fallback: if the existing socket data is gone, check by displayName mapping.
+      const existingIdentity = existingSocket?.data?.identity;
+      const displayName = socketDisplayNames.get(existingSocketId) || '';
+      const isMatch =
+        existingIdentity === identity || displayName.toLowerCase() === identity.toLowerCase();
+
+      if (!isMatch) continue;
+
+      // Clear the grace timer
+      const timer = disconnectTimers.get(playerId);
+      if (timer) {
+        clearTimeout(timer);
+        disconnectTimers.delete(playerId);
+      }
+
+      // Re-map to new socket
+      socketToPlayer.delete(existingSocketId);
+      socketToPlayer.set(socket.id, { playerId, seat });
+      playerToSocket.set(playerId, socket.id);
+      socketDisplayNames.set(socket.id, displayName || playerId);
+      socketDisplayNames.delete(existingSocketId);
+
+      // Mark reconnected in engine
+      try {
+        holdemEngine.setConnection(pokerEngine, { playerId, connected: true });
+      } catch {}
+      addLog(`${socketDisplayNames.get(socket.id)} reconnected`);
       broadcastState();
+      reclaimed = true;
+      return;
+    }
+
+    if (!reclaimed) {
+      addLog(`Reconnect attempt for ${identity} — no matching disconnected player found`);
     }
   });
 });
@@ -923,7 +1226,7 @@ async function startServer() {
     }
     const userId = normalizeUserId(req, req.body?.userId);
     const comment: CommunityComment = {
-      id: `cmt-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      id: `cmt-${Date.now()}-${randomInt(0, 2821109907455).toString(36)}`,
       appId,
       userId,
       text: text.slice(0, 500),
@@ -1000,6 +1303,18 @@ async function startServer() {
   });
 
   await loadCommunityState();
+
+  // Initialize the holdem-engine poker table
+  const engine = await loadHoldemEngine();
+  pokerEngine = engine.createHoldemTable({
+    tableId: 'arcade-main-1',
+    maxSeats: 9,
+    smallBlind: 100,
+    bigBlind: 200,
+    mode: 'cash',
+  });
+  console.log('Holdem-engine poker table initialized');
+
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },

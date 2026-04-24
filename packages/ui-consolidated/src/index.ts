@@ -4,6 +4,9 @@ export * from './components.js';
 // Export providers
 export * from './providers.js';
 
+// Export hooks
+export * from './hooks.js';
+
 // Export utilities
 export * from './utils.js';
 

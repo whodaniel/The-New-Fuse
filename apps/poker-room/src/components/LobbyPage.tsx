@@ -17,6 +17,7 @@ import {
 interface LobbyPageProps {
   user: { username: string; balance: number; avatar: string };
   onNavigate: (view: string) => void;
+  onQuickPlay?: () => void;
   canAccessLab?: boolean;
   availableNavViews?: string[];
   availableCardViews?: string[];
@@ -26,6 +27,7 @@ interface LobbyPageProps {
 export default function LobbyPage({
   user,
   onNavigate,
+  onQuickPlay,
   canAccessLab = false,
   availableNavViews = [],
   availableCardViews = [],
@@ -36,7 +38,7 @@ export default function LobbyPage({
       id: 'CASH TABLES',
       title: 'Cash Games',
       sub: "No-Limit Hold'em Ring Games",
-      stats: '3 Active Tables • 18 Players Online',
+      stats: 'Live tables updating...',
       btn: 'Browse Tables',
       icon: <Coins className="w-6 h-6" />,
     },
@@ -44,7 +46,7 @@ export default function LobbyPage({
       id: 'TOURNAMENTS',
       title: 'Sit & Go',
       sub: 'Single Table Tournaments',
-      stats: '5 Available • Starting at $100 Buy-in',
+      stats: 'View available SNGs',
       btn: 'View Tournaments',
       icon: <Users className="w-6 h-6" />,
     },
@@ -52,7 +54,7 @@ export default function LobbyPage({
       id: 'TOURNAMENTS',
       title: 'Multi-Table Tournaments',
       sub: 'Scheduled MTT Events',
-      stats: 'Next Event: 2 hours • 50 Guaranteed',
+      stats: 'View upcoming MTTs',
       btn: 'Tournament Lobby',
       icon: <Trophy className="w-6 h-6" />,
     },
@@ -60,7 +62,7 @@ export default function LobbyPage({
       id: 'HISTORY',
       title: 'Hand History',
       sub: 'Review Past Sessions',
-      stats: '0 Hands Recorded',
+      stats: 'Review your play history',
       btn: 'View History',
       icon: <History className="w-6 h-6" />,
     },
@@ -68,7 +70,7 @@ export default function LobbyPage({
       id: 'LEADERBOARD',
       title: 'Leaderboard',
       sub: 'Top Neural Agents',
-      stats: 'Rank: #47 • Net: +$2,300',
+      stats: 'View current rankings',
       btn: 'View Rankings',
       icon: <Medal className="w-6 h-6" />,
     },
@@ -76,7 +78,7 @@ export default function LobbyPage({
       id: 'MARKETPLACE',
       title: 'Staking Market',
       sub: 'Back Players, Share Profits',
-      stats: '12 Active Listings',
+      stats: 'View active listings',
       btn: 'View Market',
       icon: <Handshake className="w-6 h-6" />,
     },
@@ -214,7 +216,7 @@ export default function LobbyPage({
             </div>
 
             <button
-              onClick={() => onNavigate('CASH TABLES')}
+              onClick={() => (onQuickPlay ? onQuickPlay() : onNavigate('CASH TABLES'))}
               className="px-8 py-3 bg-cyan-600 rounded-2xl font-black italic uppercase tracking-widest text-white border-b-4 border-cyan-800 hover:brightness-125 active:border-b-0 active:translate-y-1 transition-all shadow-[0_0_20px_rgba(0,242,255,0.2)]"
             >
               Quick Play

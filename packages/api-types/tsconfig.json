@@ -8,11 +8,9 @@
     "moduleResolution": "NodeNext",
     "allowImportingTsExtensions": false,
     "types": [],
-    "ignoreDeprecations": "6.0"
+    "ignoreDeprecations": "5.0"
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "references": [
     {
       "path": "../types"

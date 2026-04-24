@@ -9,7 +9,8 @@ import { LayoutProvider } from './contexts/LayoutContext';
 import { ThemeProvider } from './providers/ThemeProvider';
 
 import { ShortcutsHelp } from './components/layout/ShortcutsHelp';
-import SubdomainRouter from './routers/SubdomainRouter';
+import ComprehensiveRouter from './ComprehensiveRouter';
+import { AuthProvider } from './hooks/useAuth';
 
 const queryClient = new QueryClient();
 
@@ -19,7 +20,7 @@ const AppContent: React.FC = () => {
 
   return (
     <>
-      <SubdomainRouter />
+      <ComprehensiveRouter isApp={true} />
       <ShortcutsHelp />
       {showMonitor && <PerformanceMonitor position="bottom-right" compact={true} />}
     </>
@@ -57,13 +58,15 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <LayoutProvider>
-          <RouteProvider>
-            <ErrorBoundary>
-              <AppContent />
-            </ErrorBoundary>
-          </RouteProvider>
-        </LayoutProvider>
+        <AuthProvider>
+          <LayoutProvider>
+            <RouteProvider>
+              <ErrorBoundary>
+                <AppContent />
+              </ErrorBoundary>
+            </RouteProvider>
+          </LayoutProvider>
+        </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

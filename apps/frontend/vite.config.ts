@@ -166,6 +166,7 @@ export default defineConfig(({ mode }) => {
         'axios/lib/adapters/http.js': path.resolve(__dirname, 'src/stubs/axios-http-adapter.ts'),
         'xmlhttprequest-ssl': path.resolve(__dirname, 'src/stubs/xmlhttprequest-ssl.ts'),
         'form-data': path.resolve(__dirname, 'src/stubs/form-data.ts'),
+        'lucide-react': path.resolve(__dirname, 'src/stubs/lucide-react.tsx'),
       },
     },
     define: {

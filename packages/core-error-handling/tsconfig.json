@@ -8,17 +8,9 @@
     "sourceMap": true,
     "moduleResolution": "NodeNext",
     "module": "NodeNext",
-    "types": [
-      "node"
-    ],
-    "ignoreDeprecations": "6.0"
+    "types": ["node"],
+    "ignoreDeprecations": "5.0"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "**/*.test.ts"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts"]
 }

@@ -1,11 +1,1 @@
-# ROOT FALLBACK (Landing Page)
-/ /landing.html 200
-
-# APP REDIRECTS (Force move to canonical app subdomain)
-/auth/* https://app.thenewfuse.com/auth/:splat 301!
-/login https://app.thenewfuse.com/auth/login 301!
-/register https://app.thenewfuse.com/auth/register 301!
-/dashboard/* https://app.thenewfuse.com/dashboard/:splat 301!
-
-# SPA FALLBACK (For everything else on main domain)
-/* /app.html 200
+/* /index.html 200

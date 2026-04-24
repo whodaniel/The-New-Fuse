@@ -11,9 +11,10 @@ import { RedisAgentClient } from './RedisAgentClient.js';
 
 const program = new Command();
 // Fallback for CommonJS/ESM compatibility
-const _dirname = typeof __dirname !== 'undefined' 
-  ? __dirname 
-  : path.dirname(fileURLToPath((import.meta as any).url));
+const _dirname =
+  typeof __dirname !== 'undefined'
+    ? __dirname
+    : path.dirname(fileURLToPath((import.meta as any).url));
 const repoRoot = path.resolve(_dirname, '../../..');
 const SUPER_ADMIN_ENV_KEY = 'TNF_SUPER_ADMIN_TOKEN';
 const SUPER_ADMIN_INPUT_ENV_KEY = 'TNF_SUPER_ADMIN_INPUT_TOKEN';
@@ -1792,162 +1793,166 @@ metaskills
       if (options.json) args.push('--json');
       await runCommand('node', args);
     } catch (err: any) {
-console.error(chalk.red(`Error: ${err.message}`));
-process.exit(1);
-}
-});
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 const mcp = program.command('mcp').description('MCP utilities');
 
 mcp
-.command('generate')
-.description('Generate MCP clients inventory')
-.action(async () => {
-try {
-await runCommand('node', ['scripts/tnf-generate-mcp-clients.cjs']);
-} catch (err: any) {
-console.error(chalk.red(`Error: ${err.message}`));
-process.exit(1);
-}
-});
+  .command('generate')
+  .description('Generate MCP clients inventory')
+  .action(async () => {
+    try {
+      await runCommand('node', ['scripts/tnf-generate-mcp-clients.cjs']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 mcp
-.command('add')
-.description('Add an MCP server')
-.argument('<name>', 'Server name')
-.requiredOption('--command <cmd>', 'Command to run')
-.option('--args <args...>', 'Arguments for the command')
-.option('--env <json>', 'Environment variables as JSON')
-.option('--cwd <path>', 'Working directory')
-.action((name: string, options: { command: string; args?: string[]; env?: string; cwd?: string }) => {
-try {
-let env: Record<string, string> | undefined;
-if (options.env) {
-env = JSON.parse(options.env);
-}
-const mcpManager = new MCPManagerService();
-mcpManager.addServer(name, {
-command: options.command,
-args: options.args,
-env,
-cwd: options.cwd,
-});
-console.log(chalk.green(`✅ Added MCP server '${name}'`));
-} catch (err: any) {
-console.error(chalk.red(`Error: ${err.message}`));
-process.exit(1);
-}
-});
+  .command('add')
+  .description('Add an MCP server')
+  .argument('<name>', 'Server name')
+  .requiredOption('--command <cmd>', 'Command to run')
+  .option('--args <args...>', 'Arguments for the command')
+  .option('--env <json>', 'Environment variables as JSON')
+  .option('--cwd <path>', 'Working directory')
+  .action(
+    (name: string, options: { command: string; args?: string[]; env?: string; cwd?: string }) => {
+      try {
+        let env: Record<string, string> | undefined;
+        if (options.env) {
+          env = JSON.parse(options.env);
+        }
+        const mcpManager = new MCPManagerService();
+        mcpManager.addServer(name, {
+          command: options.command,
+          args: options.args,
+          env,
+          cwd: options.cwd,
+        });
+        console.log(chalk.green(`✅ Added MCP server '${name}'`));
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
+    }
+  );
 
 mcp
-.command('list')
-.alias('ls')
-.description('List MCP servers and their status')
-.option('--json', 'Output machine-readable JSON')
-.action((options: { json?: boolean }) => {
-try {
-const mcpManager = new MCPManagerService();
-const servers = mcpManager.listServers();
-if (options.json) {
-console.log(JSON.stringify(servers, null, 2));
-return;
-}
-console.log(chalk.bold('\nMCP Servers\n'));
-if (servers.length === 0) {
-console.log(chalk.dim('No MCP servers configured'));
-} else {
-for (const server of servers) {
-const status = server.running ? chalk.green('running') : chalk.yellow('stopped');
-const oauth = server.oauth?.enabled
-? (server.oauth.authenticated ? chalk.green('auth ✓') : chalk.red('auth ✗'))
-: '';
-console.log(`  ${chalk.cyan(server.name)}: ${status} ${oauth}`);
-}
-}
-console.log('');
-} catch (err: any) {
-console.error(chalk.red(`Error: ${err.message}`));
-process.exit(1);
-}
-});
+  .command('list')
+  .alias('ls')
+  .description('List MCP servers and their status')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const mcpManager = new MCPManagerService();
+      const servers = mcpManager.listServers();
+      if (options.json) {
+        console.log(JSON.stringify(servers, null, 2));
+        return;
+      }
+      console.log(chalk.bold('\nMCP Servers\n'));
+      if (servers.length === 0) {
+        console.log(chalk.dim('No MCP servers configured'));
+      } else {
+        for (const server of servers) {
+          const status = server.running ? chalk.green('running') : chalk.yellow('stopped');
+          const oauth = server.oauth?.enabled
+            ? server.oauth.authenticated
+              ? chalk.green('auth ✓')
+              : chalk.red('auth ✗')
+            : '';
+          console.log(`  ${chalk.cyan(server.name)}: ${status} ${oauth}`);
+        }
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 mcp
-.command('auth')
-.description('Authenticate with an OAuth-enabled MCP server')
-.argument('[name]', 'Server name')
-.action(async (name?: string) => {
-try {
-const mcpManager = new MCPManagerService();
-if (!name) {
-const servers = mcpManager.listServers().filter(s => s.oauth?.enabled);
-if (servers.length === 0) {
-console.log(chalk.yellow('No OAuth-enabled MCP servers configured'));
-process.exit(0);
-}
-console.log(chalk.bold('\nOAuth-enabled servers:\n'));
-for (const s of servers) {
-console.log(`  ${chalk.cyan(s.name)}`);
-}
-console.log('');
-return;
-}
-const result = await mcpManager.authenticate(name);
-console.log(chalk.cyan(`\n  Authorize URL: ${result.url}`));
-if (result.code) {
-console.log(chalk.dim(`  State: ${result.code}`));
-}
-console.log('');
-} catch (err: any) {
-console.error(chalk.red(`Error: ${err.message}`));
-process.exit(1);
-}
-});
+  .command('auth')
+  .description('Authenticate with an OAuth-enabled MCP server')
+  .argument('[name]', 'Server name')
+  .action(async (name?: string) => {
+    try {
+      const mcpManager = new MCPManagerService();
+      if (!name) {
+        const servers = mcpManager.listServers().filter((s) => s.oauth?.enabled);
+        if (servers.length === 0) {
+          console.log(chalk.yellow('No OAuth-enabled MCP servers configured'));
+          process.exit(0);
+        }
+        console.log(chalk.bold('\nOAuth-enabled servers:\n'));
+        for (const s of servers) {
+          console.log(`  ${chalk.cyan(s.name)}`);
+        }
+        console.log('');
+        return;
+      }
+      const result = await mcpManager.authenticate(name);
+      console.log(chalk.cyan(`\n  Authorize URL: ${result.url}`));
+      if (result.code) {
+        console.log(chalk.dim(`  State: ${result.code}`));
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 mcp
-.command('logout')
-.description('Remove OAuth credentials for an MCP server')
-.argument('[name]', 'Server name')
-.action((name?: string) => {
-try {
-if (!name) {
-console.log(chalk.yellow('Please specify a server name'));
-process.exit(1);
-}
-const mcpManager = new MCPManagerService();
-if (mcpManager.logout(name)) {
-console.log(chalk.green(`✅ Logged out from '${name}'`));
-} else {
-console.log(chalk.yellow(`No credentials found for '${name}'`));
-}
-} catch (err: any) {
-console.error(chalk.red(`Error: ${err.message}`));
-process.exit(1);
-}
-});
+  .command('logout')
+  .description('Remove OAuth credentials for an MCP server')
+  .argument('[name]', 'Server name')
+  .action((name?: string) => {
+    try {
+      if (!name) {
+        console.log(chalk.yellow('Please specify a server name'));
+        process.exit(1);
+      }
+      const mcpManager = new MCPManagerService();
+      if (mcpManager.logout(name)) {
+        console.log(chalk.green(`✅ Logged out from '${name}'`));
+      } else {
+        console.log(chalk.yellow(`No credentials found for '${name}'`));
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 mcp
-.command('debug')
-.description('Debug OAuth connection for an MCP server')
-.argument('<name>', 'Server name')
-.option('--json', 'Output machine-readable JSON')
-.action(async (name: string, options: { json?: boolean }) => {
-try {
-const mcpManager = new MCPManagerService();
-const result = await mcpManager.debugConnection(name);
-if (options.json) {
-console.log(JSON.stringify(result, null, 2));
-return;
-}
-console.log(chalk.bold(`\nMCP Server: ${name}\n`));
-for (const diag of result.diagnostics) {
-console.log(`  ${diag}`);
-}
-console.log('');
-} catch (err: any) {
-console.error(chalk.red(`Error: ${err.message}`));
-process.exit(1);
-}
-});
+  .command('debug')
+  .description('Debug OAuth connection for an MCP server')
+  .argument('<name>', 'Server name')
+  .option('--json', 'Output machine-readable JSON')
+  .action(async (name: string, options: { json?: boolean }) => {
+    try {
+      const mcpManager = new MCPManagerService();
+      const result = await mcpManager.debugConnection(name);
+      if (options.json) {
+        console.log(JSON.stringify(result, null, 2));
+        return;
+      }
+      console.log(chalk.bold(`\nMCP Server: ${name}\n`));
+      for (const diag of result.diagnostics) {
+        console.log(`  ${diag}`);
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 const ai = program.command('ai').description('AI launcher commands');
 ai.command('start')
@@ -1968,7 +1973,7 @@ ai.command('models')
   .description('List available models for the current provider')
   .action(async () => {
     try {
-      const { LLMClient } = await import('./utils/llm-client');
+      const { LLMClient } = await import('./utils/llm-client.js');
       const client = new LLMClient();
       console.log(chalk.blue('\nFetching available models...'));
       const models = await client.fetchAvailableModels();
@@ -1976,7 +1981,7 @@ ai.command('models')
         console.log(chalk.yellow('No models found or provider does not support listing.'));
       } else {
         console.log(chalk.green(`\nAvailable models:`));
-        models.forEach((m) => console.log(`  - ${m}`));
+        models.forEach((m: string) => console.log(` - ${m}`));
       }
       console.log('');
     } catch (err: any) {
@@ -1993,7 +1998,7 @@ ai.command('chat')
   .action(async (opts) => {
     try {
       const readline = await import('readline');
-      const { LLMClient } = await import('./utils/llm-client');
+      const { LLMClient } = await import('./utils/llm-client.js');
       const client = new LLMClient('orchestrator');
 
       // Override model if specified
@@ -2080,14 +2085,6 @@ program
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
     }
-  });
-
-program
-  .command('agent')
-  .description('Alias for `tnf chat`')
-  .argument('[query...]', 'Initial message')
-  .action(async (query: string[]) => {
-    await runSelfCliWithExit(['chat', ...query]);
   });
 
 program
@@ -4810,17 +4807,25 @@ reports
           );
         } catch {
           /* skip corrupt */
-}
-}
-console.log('');
-} catch (err: any) {
-console.error(chalk.red(`Error: ${err.message}`));
-process.exit(1);
-}
-});
+        }
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 async function runPassthrough(cliName: string, args: string[] = []): Promise<void> {
-await runCommand(cliName, normalizeForwardedArgs(args));
+  try {
+    await runCommand(cliName, normalizeForwardedArgs(args));
+  } catch (err: any) {
+    // Passthrough commands should exit with the child's exit code, not wrap it as an error.
+    // The child process already displayed its own output/errors to the user.
+    const exitCodeMatch = err?.message?.match(/exited with code (\d+)/);
+    const exitCode = exitCodeMatch ? parseInt(exitCodeMatch[1], 10) : 1;
+    process.exit(exitCode);
+  }
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -4828,18 +4833,22 @@ await runCommand(cliName, normalizeForwardedArgs(args));
 // ────────────────────────────────────────────────────────────────────────────
 
 import { ACPService } from './services/ACPService.js';
-import { MCPManagerService } from './services/MCPManagerService.js';
-import { AuthService } from './services/AuthService.js';
 import { AgentManagerService } from './services/AgentManagerService.js';
+import { AuthService } from './services/AuthService.js';
+import {
+  generateCompletion,
+  getInstallInstructions,
+  ShellType,
+} from './services/CompletionService.js';
+import { DatabaseService } from './services/DatabaseService.js';
 import { DebugService } from './services/DebugService.js';
+import { MCPManagerService } from './services/MCPManagerService.js';
+import { ModelsService } from './services/ModelsService.js';
+import { RemoteService } from './services/RemoteService.js';
+import { ServeService } from './services/ServeService.js';
 import { SessionManagerService } from './services/SessionManagerService.js';
 import { StatsService } from './services/StatsService.js';
-import { RemoteService } from './services/RemoteService.js';
-import { DatabaseService } from './services/DatabaseService.js';
-import { ModelsService } from './services/ModelsService.js';
-import { ServeService } from './services/ServeService.js';
 import { UpgradeService } from './services/UpgradeService.js';
-import { generateCompletion, getInstallInstructions, ShellType } from './services/CompletionService.js';
 
 // ACP command
 const acp = program.command('acp').description('Start ACP (Agent Client Protocol) server');
@@ -4873,62 +4882,62 @@ const auth = program.command('auth').description('Manage credentials');
 const authService = new AuthService();
 
 auth
-.command('login')
-.description('Log in to a provider')
-.argument('[url]', 'OAuth URL or provider name')
-.action(async (url?: string) => {
-try {
-const result = await authService.login(url || '', url?.startsWith('http') ? url : undefined);
-if (result.success) {
-console.log(chalk.green(`✅ ${result.message}`));
-} else {
-console.log(chalk.yellow(result.message));
-if (result.url) {
-console.log(chalk.cyan(`  URL: ${result.url}`));
-}
-}
-} catch (err: any) {
-console.error(chalk.red(`Error: ${err.message}`));
-process.exit(1);
-}
-});
+  .command('login')
+  .description('Log in to a provider')
+  .argument('[url]', 'OAuth URL or provider name')
+  .action(async (url?: string) => {
+    try {
+      const result = await authService.login(url || '', url?.startsWith('http') ? url : undefined);
+      if (result.success) {
+        console.log(chalk.green(`✅ ${result.message}`));
+      } else {
+        console.log(chalk.yellow(result.message));
+        if (result.url) {
+          console.log(chalk.cyan(`  URL: ${result.url}`));
+        }
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 auth
-.command('logout')
-.description('Log out from a configured provider')
-.argument('<provider>', 'Provider name')
-.action((provider: string) => {
-try {
-if (authService.logout(provider)) {
-console.log(chalk.green(`✅ Logged out from '${provider}'`));
-} else {
-console.log(chalk.yellow(`No credentials found for '${provider}'`));
-}
-} catch (err: any) {
-console.error(chalk.red(`Error: ${err.message}`));
-process.exit(1);
-}
-});
+  .command('logout')
+  .description('Log out from a configured provider')
+  .argument('<provider>', 'Provider name')
+  .action((provider: string) => {
+    try {
+      if (authService.logout(provider)) {
+        console.log(chalk.green(`✅ Logged out from '${provider}'`));
+      } else {
+        console.log(chalk.yellow(`No credentials found for '${provider}'`));
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
 
 auth
-.command('list')
-.alias('ls')
-.description('List providers')
-.option('--json', 'Output machine-readable JSON')
-.action((options: { json?: boolean }) => {
-try {
-const providers = authService.listProviders();
-if (options.json) {
-console.log(JSON.stringify(providers, null, 2));
-return;
-}
-console.log(chalk.bold('\nConfigured Providers\n'));
-for (const p of providers) {
-const status = p.authenticated ? chalk.green('✓') : chalk.red('✗');
-const type = chalk.dim(`(${p.type})`);
-console.log(`  ${status} ${chalk.cyan(p.name)} ${type}`);
-}
-console.log('');
+  .command('list')
+  .alias('ls')
+  .description('List providers')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const providers = authService.listProviders();
+      if (options.json) {
+        console.log(JSON.stringify(providers, null, 2));
+        return;
+      }
+      console.log(chalk.bold('\nConfigured Providers\n'));
+      for (const p of providers) {
+        const status = p.authenticated ? chalk.green('✓') : chalk.red('✗');
+        const type = chalk.dim(`(${p.type})`);
+        console.log(`  ${status} ${chalk.cyan(p.name)} ${type}`);
+      }
+      console.log('');
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
@@ -4938,9 +4947,7 @@ console.log('');
 // Agent commands (extended)
 const agentManager = new AgentManagerService();
 
-const agentCreate = program
-  .command('agent')
-  .description('Manage agents');
+const agentCreate = program.command('agent').description('Manage agents');
 
 agentCreate
   .command('create')
@@ -5007,7 +5014,9 @@ debug
         if (options.json) {
           console.log(JSON.stringify({ path: options.path, value }, null, 2));
         } else {
-          console.log(value !== undefined ? JSON.stringify(value, null, 2) : chalk.yellow('undefined'));
+          console.log(
+            value !== undefined ? JSON.stringify(value, null, 2) : chalk.yellow('undefined')
+          );
         }
       } else {
         const config = debugService.getConfig();
@@ -5179,7 +5188,9 @@ debug
         console.log(`  ID: ${chalk.dim(agent.id)}`);
         console.log(`  Role: ${agent.role}`);
         console.log(`  Platform: ${agent.platform}`);
-        console.log(`  Status: ${agent.isOnline ? chalk.green('online') : chalk.yellow('offline')}`);
+        console.log(
+          `  Status: ${agent.isOnline ? chalk.green('online') : chalk.yellow('offline')}`
+        );
         console.log(`  Created: ${chalk.dim(agent.createdAt)}`);
         console.log(`  Last Seen: ${chalk.dim(agent.lastSeen)}`);
         if (agent.capabilities.length > 0) {
@@ -5284,28 +5295,36 @@ program
   .option('--mdns', 'Enable mDNS discovery', false)
   .option('--mdns-domain <domain>', 'Custom mDNS domain', 'tnf.local')
   .option('--cors <origins...>', 'Allowed CORS origins')
-  .action(async (options: { port: string; hostname: string; mdns: boolean; mdnsDomain: string; cors?: string[] }) => {
-    try {
-      const service = new RemoteService({
-        port: parseInt(options.port, 10) || 0,
-        hostname: options.hostname,
-        mdns: options.mdns,
-        mdnsDomain: options.mdnsDomain,
-        cors: options.cors,
-      });
-      const { url } = await service.enable();
-      console.log(chalk.green(`✅ Remote relay enabled at ${url}`));
-      console.log(chalk.dim('Press Ctrl+C to stop'));
+  .action(
+    async (options: {
+      port: string;
+      hostname: string;
+      mdns: boolean;
+      mdnsDomain: string;
+      cors?: string[];
+    }) => {
+      try {
+        const service = new RemoteService({
+          port: parseInt(options.port, 10) || 0,
+          hostname: options.hostname,
+          mdns: options.mdns,
+          mdnsDomain: options.mdnsDomain,
+          cors: options.cors,
+        });
+        const { url } = await service.enable();
+        console.log(chalk.green(`✅ Remote relay enabled at ${url}`));
+        console.log(chalk.dim('Press Ctrl+C to stop'));
 
-      process.on('SIGINT', async () => {
-        await service.disable();
-        process.exit(0);
-      });
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
+        process.on('SIGINT', async () => {
+          await service.disable();
+          process.exit(0);
+        });
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
     }
-  });
+  );
 
 // Export command
 program
@@ -5368,103 +5387,121 @@ program
   .option('--verbose', 'Show detailed model information')
   .option('--refresh', 'Refresh the models cache')
   .option('--json', 'Output machine-readable JSON')
-  .action(async (provider?: string, options?: { verbose?: boolean; refresh?: boolean; json?: boolean }) => {
-    try {
-      const modelsService = new ModelsService();
-      const models = await modelsService.listModels(provider, { refresh: options?.refresh });
+  .action(
+    async (
+      provider?: string,
+      options?: { verbose?: boolean; refresh?: boolean; json?: boolean }
+    ) => {
+      try {
+        const modelsService = new ModelsService();
+        const models = await modelsService.listModels(provider, { refresh: options?.refresh });
 
-      if (options?.json) {
-        console.log(JSON.stringify(models, null, 2));
-        return;
-      }
+        if (options?.json) {
+          console.log(JSON.stringify(models, null, 2));
+          return;
+        }
 
-      console.log(chalk.bold('\nAvailable Models\n'));
-      if (models.length === 0) {
-        console.log(chalk.dim('No models found'));
-      } else {
-        for (const m of models) {
-          if (options?.verbose) {
-            console.log(`${chalk.cyan(m.id)} (${m.provider})`);
-            if (m.contextWindow) console.log(`  Context: ${m.contextWindow.toLocaleString()} tokens`);
-            if (m.inputCost !== undefined) console.log(`  Input: $${(m.inputCost / 1000000).toFixed(4)}/1M tokens`);
-            if (m.outputCost !== undefined) console.log(`  Output: $${(m.outputCost / 1000000).toFixed(4)}/1M tokens`);
-            console.log('');
-          } else {
-            console.log(`  ${chalk.cyan(m.id)}`);
+        console.log(chalk.bold('\nAvailable Models\n'));
+        if (models.length === 0) {
+          console.log(chalk.dim('No models found'));
+        } else {
+          for (const m of models) {
+            if (options?.verbose) {
+              console.log(`${chalk.cyan(m.id)} (${m.provider})`);
+              if (m.contextWindow)
+                console.log(`  Context: ${m.contextWindow.toLocaleString()} tokens`);
+              if (m.inputCost !== undefined)
+                console.log(`  Input: $${(m.inputCost / 1000000).toFixed(4)}/1M tokens`);
+              if (m.outputCost !== undefined)
+                console.log(`  Output: $${(m.outputCost / 1000000).toFixed(4)}/1M tokens`);
+              console.log('');
+            } else {
+              console.log(`  ${chalk.cyan(m.id)}`);
+            }
           }
         }
+        console.log('');
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
       }
-      console.log('');
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
     }
-  });
+  );
 
 // Stats command
 program
-.command('stats')
-.description('Show token usage and cost statistics')
-.option('--days <n>', 'Show stats for the last N days', undefined)
-.option('--tools <n>', 'Number of tools to show', undefined)
-.option('--models', 'Show model statistics')
-.option('--project <name>', 'Filter by project')
-.option('--json', 'Output machine-readable JSON')
-.action(async (options: { days?: string; tools?: string; models?: boolean; project?: string; json?: boolean }) => {
-try {
-const statsService = new StatsService();
+  .command('stats')
+  .description('Show token usage and cost statistics')
+  .option('--days <n>', 'Show stats for the last N days', undefined)
+  .option('--tools <n>', 'Number of tools to show', undefined)
+  .option('--models', 'Show model statistics')
+  .option('--project <name>', 'Filter by project')
+  .option('--json', 'Output machine-readable JSON')
+  .action(
+    async (options: {
+      days?: string;
+      tools?: string;
+      models?: boolean;
+      project?: string;
+      json?: boolean;
+    }) => {
+      try {
+        const statsService = new StatsService();
 
-const summary = await statsService.getSummary({
-days: options.days ? parseInt(options.days, 10) : undefined,
-project: options.project,
-});
+        const summary = await statsService.getSummary({
+          days: options.days ? parseInt(options.days, 10) : undefined,
+          project: options.project,
+        });
 
-await statsService.close();
+        await statsService.close();
 
-if (options.json) {
-console.log(JSON.stringify(summary, null, 2));
-return;
-}
-
-console.log(chalk.bold('\n📊 Usage Statistics\n'));
-console.log(`  Total Tokens: ${chalk.cyan(summary.totalTokens.toLocaleString())}`);
-console.log(`  Total Cost: ${chalk.cyan('$' + summary.totalCost.toFixed(4))}`);
-console.log('');
-
-if (options.models && Object.keys(summary.byModel).length > 0) {
-console.log(chalk.bold('By Model:'));
-for (const [model, data] of Object.entries(summary.byModel)) {
-console.log(`  ${chalk.cyan(model)}: ${data.tokens.toLocaleString()} tokens, $${data.cost.toFixed(4)}`);
-}
-console.log('');
-}
-
-if (Object.keys(summary.byProvider).length > 0) {
-console.log(chalk.bold('By Provider:'));
-        for (const [provider, data] of Object.entries(summary.byProvider)) {
-          console.log(`  ${chalk.cyan(provider)}: ${data.tokens.toLocaleString()} tokens, $${data.cost.toFixed(4)}`);
+        if (options.json) {
+          console.log(JSON.stringify(summary, null, 2));
+          return;
         }
+
+        console.log(chalk.bold('\n📊 Usage Statistics\n'));
+        console.log(`  Total Tokens: ${chalk.cyan(summary.totalTokens.toLocaleString())}`);
+        console.log(`  Total Cost: ${chalk.cyan('$' + summary.totalCost.toFixed(4))}`);
         console.log('');
+
+        if (options.models && Object.keys(summary.byModel).length > 0) {
+          console.log(chalk.bold('By Model:'));
+          for (const [model, data] of Object.entries(summary.byModel)) {
+            console.log(
+              `  ${chalk.cyan(model)}: ${data.tokens.toLocaleString()} tokens, $${data.cost.toFixed(4)}`
+            );
+          }
+          console.log('');
+        }
+
+        if (Object.keys(summary.byProvider).length > 0) {
+          console.log(chalk.bold('By Provider:'));
+          for (const [provider, data] of Object.entries(summary.byProvider)) {
+            console.log(
+              `  ${chalk.cyan(provider)}: ${data.tokens.toLocaleString()} tokens, $${data.cost.toFixed(4)}`
+            );
+          }
+          console.log('');
+        }
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
       }
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
     }
-  });
+  );
 
 // Database commands
 const db = program.command('db').description('Database tools');
 const dbService = new DatabaseService();
 
-db
-  .command('path')
+db.command('path')
   .description('Print the database path')
   .action(() => {
     console.log(dbService.getPath());
   });
 
-db
-  .command('migrate')
+db.command('migrate')
   .description('Migrate JSON data to SQLite (merges with existing data)')
   .action(async () => {
     try {
@@ -5481,8 +5518,7 @@ db
     }
   });
 
-db
-  .argument('[query]', 'SQL query to execute')
+db.argument('[query]', 'SQL query to execute')
   .option('--format <format>', 'Output format (json|tsv)', 'tsv')
   .description('Open an interactive sqlite3 shell or run a query')
   .action(async (query?: string, options?: { format?: string }) => {
@@ -5515,29 +5551,37 @@ program
   .option('--mdns', 'Enable mDNS service discovery', false)
   .option('--mdns-domain <domain>', 'Custom mDNS domain', 'tnf.local')
   .option('--cors <origins...>', 'Allowed CORS origins')
-  .action(async (options: { port: string; hostname: string; mdns: boolean; mdnsDomain: string; cors?: string[] }) => {
-    try {
-      const service = new ServeService({
-        port: parseInt(options.port, 10) || 0,
-        hostname: options.hostname,
-        mdns: options.mdns,
-        mdnsDomain: options.mdnsDomain,
-        cors: options.cors,
-      });
-      const status = await service.start();
-      console.log(chalk.green(`✅ TNF server started at ${status.url}`));
-      console.log(chalk.dim(`  PID: ${status.pid}`));
-      console.log(chalk.dim('Press Ctrl+C to stop'));
+  .action(
+    async (options: {
+      port: string;
+      hostname: string;
+      mdns: boolean;
+      mdnsDomain: string;
+      cors?: string[];
+    }) => {
+      try {
+        const service = new ServeService({
+          port: parseInt(options.port, 10) || 0,
+          hostname: options.hostname,
+          mdns: options.mdns,
+          mdnsDomain: options.mdnsDomain,
+          cors: options.cors,
+        });
+        const status = await service.start();
+        console.log(chalk.green(`✅ TNF server started at ${status.url}`));
+        console.log(chalk.dim(`  PID: ${status.pid}`));
+        console.log(chalk.dim('Press Ctrl+C to stop'));
 
-      process.on('SIGINT', async () => {
-        await service.stop();
-        process.exit(0);
-      });
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
+        process.on('SIGINT', async () => {
+          await service.stop();
+          process.exit(0);
+        });
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
+      }
     }
-  });
+  );
 
 // Completion command
 program
@@ -5556,20 +5600,22 @@ program
   .description('Upgrade tnf to the latest or a specific version')
   .argument('[target]', 'Version to upgrade to')
   .option('-m, --method <method>', 'Installation method (curl|npm|pnpm|bun|brew)')
-  .action(async (target?: string, options?: { method?: 'curl' | 'npm' | 'pnpm' | 'bun' | 'brew' }) => {
-    try {
-      const upgradeService = new UpgradeService();
-      const result = await upgradeService.upgrade({ target, method: options?.method });
-      if (result.success) {
-        console.log(chalk.green(`✅ ${result.message}`));
-      } else {
-        console.log(chalk.red(result.message));
+  .action(
+    async (target?: string, options?: { method?: 'curl' | 'npm' | 'pnpm' | 'bun' | 'brew' }) => {
+      try {
+        const upgradeService = new UpgradeService();
+        const result = await upgradeService.upgrade({ target, method: options?.method });
+        if (result.success) {
+          console.log(chalk.green(`✅ ${result.message}`));
+        } else {
+          console.log(chalk.red(result.message));
+        }
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
       }
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
     }
-  });
+  );
 
 // Uninstall command
 program

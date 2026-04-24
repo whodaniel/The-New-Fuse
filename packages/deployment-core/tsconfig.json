@@ -15,20 +15,11 @@
     "strictNullChecks": false,
     "useUnknownInCatchVariables": false,
     "isolatedModules": true,
-    "types": [
-      "node",
-      "jest"
-    ],
-    "ignoreDeprecations": "6.0"
+    "types": ["node", "jest"],
+    "ignoreDeprecations": "5.0"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "**/*.spec.ts"
-  ],
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "**/*.spec.ts"],
   "references": [
     {
       "path": "../types"

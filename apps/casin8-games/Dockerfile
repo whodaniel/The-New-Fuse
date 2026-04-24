@@ -1,14 +1,27 @@
-FROM node:20-alpine
-
+FROM node:20-slim
 WORKDIR /app
 
-COPY . .
+# Copy all source files that server.js requires/imports
+COPY package.json ./
+RUN npm install --production
+COPY server.js ./
+COPY risk-db.js ./
+COPY db-store.js ./
+COPY engine.mjs ./
 
-# Use pnpm and optionally build the Poker Room frontend if present
-RUN corepack enable && corepack prepare pnpm@10.22.0 --activate
-RUN if [ -d "AI-ARCADE.XYZ---POKER-ROOM" ]; then cd "AI-ARCADE.XYZ---POKER-ROOM" && pnpm install && pnpm run build; fi
+# Copy all dynamic-imported module directories
+COPY shared/ ./shared/
+COPY core-logic/ ./core-logic/
+COPY swarm/ ./swarm/
 
+# Copy docs only if present (not required for runtime)
+# docs/ is in .dockerignore, so skip it here
+
+ENV PORT=8080
 ENV NODE_ENV=production
-EXPOSE 3000
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD curl -f http://localhost:8080/api/health || exit 1
 
 CMD ["node", "server.js"]

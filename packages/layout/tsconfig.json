@@ -7,14 +7,8 @@
     "rootDir": ".",
     "composite": true,
     "types": [],
-    "ignoreDeprecations": "6.0"
+    "ignoreDeprecations": "5.0"
   },
-  "include": [
-    ".*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.spec.ts"
-  ]
+  "include": [".*"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts"]
 }

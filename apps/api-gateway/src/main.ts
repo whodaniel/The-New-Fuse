@@ -21,8 +21,15 @@ async function bootstrap() {
   // In dev: always allow, including file:// and electron origins (no Origin header)
   const prodAllowedOrigins = new Set([
     'https://thenewfuse.com',
+    'https://www.thenewfuse.com',
     'https://app.thenewfuse.com',
+    'https://marketplace.thenewfuse.com',
+    'https://connect.thenewfuse.com',
+    'https://tnf-saas-app.pages.dev',
+    'https://thenewfuse-main.pages.dev',
+    'https://api-gateway-241337102384.us-central1.run.app',
     'https://poker.ai-arcade.xyz',
+    'https://ai-arcade.xyz',
   ]);
 
   app.enableCors({
@@ -30,7 +37,12 @@ async function bootstrap() {
       process.env.NODE_ENV === 'production'
         ? (origin, callback) => {
             if (!origin) return callback(null, true);
-            if (prodAllowedOrigins.has(origin) || origin.endsWith('.ai-arcade.xyz')) {
+            if (
+              prodAllowedOrigins.has(origin) ||
+              origin.endsWith('.ai-arcade.xyz') ||
+              origin.endsWith('.pages.dev') ||
+              origin.endsWith('.run.app')
+            ) {
               return callback(null, true);
             }
             return callback(new Error('CORS origin not allowed'));
@@ -98,47 +110,47 @@ async function bootstrap() {
       All endpoints are now available through this single entry point with
       consistent authentication, versioning, and error handling.
     `
-    )
-    .setVersion('1.0.0')
-    .setContact(
-      'The New Fuse API Support',
-      'https://thenewfuse.com/support',
-      'api-support@thenewfuse.com'
-    )
-    .setLicense('Proprietary', 'https://thenewfuse.com/license')
-    .addTag('auth', 'Authentication and authorization')
-    .addTag('agents', 'AI Agent management and operations')
-    .addTag('chat', 'Real-time chat and communication')
-    .addTag('workflows', 'Task workflows and pipelines')
-    .addTag('webhooks', 'Webhook management and ingestion')
-    .addTag('sse', 'Server-Sent Events streaming')
-    .addTag('mcp', 'Model Context Protocol servers')
-    .addTag('sgp', 'Spreadsheet Graph Protocol translation bridge')
-    .addTag('health', 'Health checks and monitoring')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'JWT token obtained from /auth/login',
-        in: 'header',
-      },
-      'JWT-auth'
-    )
-    .addApiKey(
-      {
-        type: 'apiKey',
-        name: 'x-api-key',
-        in: 'header',
-        description: 'API key for service-to-service communication',
-      },
-      'api-key'
-    )
-    .addServer('https://api.thenewfuse.com', 'Production server')
-    .addServer('https://staging-api.thenewfuse.com', 'Staging server')
-    .addServer('http://localhost:8080', 'Local API Gateway')
-    .build();
+        )
+        .setVersion('1.0.0')
+        .setContact(
+          'The New Fuse API Support',
+          'https://thenewfuse.com/support',
+          'api-support@thenewfuse.com'
+        )
+        .setLicense('Proprietary', 'https://thenewfuse.com/license')
+        .addTag('auth', 'Authentication and authorization')
+        .addTag('agents', 'AI Agent management and operations')
+        .addTag('chat', 'Real-time chat and communication')
+        .addTag('workflows', 'Task workflows and pipelines')
+        .addTag('webhooks', 'Webhook management and ingestion')
+        .addTag('sse', 'Server-Sent Events streaming')
+        .addTag('mcp', 'Model Context Protocol servers')
+        .addTag('sgp', 'Spreadsheet Graph Protocol translation bridge')
+        .addTag('health', 'Health checks and monitoring')
+        .addBearerAuth(
+          {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+            name: 'JWT',
+            description: 'JWT token obtained from /auth/login',
+            in: 'header',
+          },
+          'JWT-auth'
+        )
+        .addApiKey(
+          {
+            type: 'apiKey',
+            name: 'x-api-key',
+            in: 'header',
+            description: 'API key for service-to-service communication',
+          },
+          'api-key'
+        )
+        .addServer('https://api.thenewfuse.com', 'Production server')
+        .addServer('https://staging-api.thenewfuse.com', 'Staging server')
+        .addServer('http://localhost:8080', 'Local API Gateway')
+        .build();
 
       const document = SwaggerModule.createDocument(app as any, config, {
         deepScanRoutes: true,

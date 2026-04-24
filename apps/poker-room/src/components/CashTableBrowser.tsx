@@ -7,12 +7,14 @@ interface CashTableBrowserProps {
   onJoinTable: (tableId: string, tableMeta?: any) => void;
   onBack: () => void;
   canCreateTable?: boolean;
+  onQuickPlay?: () => void;
 }
 
 export default function CashTableBrowser({
   onJoinTable,
   onBack,
   canCreateTable = false,
+  onQuickPlay,
 }: CashTableBrowserProps) {
   const [tables, setTables] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,6 +34,7 @@ export default function CashTableBrowser({
         }
       } catch (e) {
         console.error('Failed to fetch tables:', e);
+        // Auth failure or network error — show empty state, not broken
         if (isMounted) setTables([]);
       } finally {
         if (showLoader && isMounted) setIsLoading(false);
@@ -232,10 +235,12 @@ export default function CashTableBrowser({
               </p>
               <button
                 onClick={() =>
-                  onJoinTable(`bot-table-${Date.now()}`, {
-                    maxPlayers: 6,
-                    stakes: '$25/$50',
-                  })
+                  onQuickPlay
+                    ? onQuickPlay()
+                    : onJoinTable(`bot-table-${Date.now()}`, {
+                        maxPlayers: 6,
+                        stakes: '$25/$50',
+                      })
                 }
                 className="px-8 py-4 bg-cyan-600 text-white rounded-2xl font-black uppercase tracking-widest border-b-4 border-cyan-800 hover:brightness-125 active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(0,242,255,0.2)]"
               >

@@ -852,14 +852,15 @@ export default function SettingsPage({ onBack, onSave }: SettingsPageProps) {
                     className="flex-1 bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-emerald-400 font-mono text-sm focus:outline-none focus:border-cyan-400"
                   />
                   <button
-                    onClick={() =>
-                      updateSection(
-                        'account',
-                        'clientSeed',
-                        Math.random().toString(36).substring(2, 15) +
-                          Math.random().toString(36).substring(2, 15)
-                      )
-                    }
+                    onClick={() => {
+                      // Use crypto.getRandomValues for provably-fair client seed.
+                      // Math.random() is NOT cryptographically secure — its output
+                      // is predictable and undermines the fairness guarantee.
+                      const arr = new Uint8Array(24);
+                      crypto.getRandomValues(arr);
+                      const seed = Array.from(arr, (b) => b.toString(36).padStart(2, '0')).join('');
+                      updateSection('account', 'clientSeed', seed);
+                    }}
                     className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg px-4 flex items-center justify-center transition-colors"
                     title="Generate New Seed"
                   >

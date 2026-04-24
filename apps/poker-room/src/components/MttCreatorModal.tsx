@@ -55,8 +55,18 @@ export default function MttCreatorModal({ onClose, onCreate }: MttCreatorModalPr
   const [policyMode, setPolicyMode] = useState<'open' | 'bots-only' | 'hybrid'>('open');
   const [allowTakeover, setAllowTakeover] = useState(true);
 
+  const MIN_BUY_IN = 10;
+  const MAX_BUY_IN = 100000;
+  const MIN_STACK = 500;
+  const MAX_STACK = 1000000;
+  const isValidBuyIn = buyIn >= MIN_BUY_IN && buyIn <= MAX_BUY_IN;
+  const isValidStack = stack >= MIN_STACK && stack <= MAX_STACK;
+  const isValidGtd = gtd >= 0;
+  const isValid = isValidBuyIn && isValidStack && isValidGtd;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isValid) return;
     onCreate({
       name,
       format,
@@ -486,10 +496,22 @@ export default function MttCreatorModal({ onClose, onCreate }: MttCreatorModalPr
             </button>
             <button
               type="submit"
-              className="flex-[2] py-4 bg-cyan-600 rounded-2xl font-black italic uppercase tracking-widest text-white border-b-4 border-cyan-800 hover:brightness-125 active:border-b-0 active:translate-y-1 transition-all shadow-[0_0_20px_rgba(0,242,255,0.2)]"
+              disabled={!isValid}
+              className={`flex-[2] py-4 rounded-2xl font-black italic uppercase tracking-widest text-white border-b-4 transition-all shadow-[0_0_20px_rgba(0,242,255,0.2)] ${
+                isValid
+                  ? 'bg-cyan-600 border-cyan-800 hover:brightness-125 active:border-b-0 active:translate-y-1'
+                  : 'bg-slate-700 border-slate-800 opacity-50 cursor-not-allowed'
+              }`}
             >
               Create Tournament
             </button>
+            {!isValid && (
+              <p className="text-[10px] font-black uppercase tracking-widest text-red-400 pt-1">
+                {!isValidBuyIn && `Buy-in must be $${MIN_BUY_IN}-$${MAX_BUY_IN.toLocaleString()} `}
+                {!isValidStack && `Stack must be ${MIN_STACK}-${MAX_STACK.toLocaleString()} `}
+                {!isValidGtd && 'Guarantee must be ≥ $0'}
+              </p>
+            )}
           </div>
         </form>
       </motion.div>

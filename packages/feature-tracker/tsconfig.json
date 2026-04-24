@@ -8,17 +8,10 @@
     "declaration": true,
     "sourceMap": true,
     "types": [],
-    "ignoreDeprecations": "6.0"
+    "ignoreDeprecations": "5.0"
   },
-  "include": [
-    "src/**/*",
-    "metrics*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.*"
-  ],
+  "include": ["src/**/*", "metrics*"],
+  "exclude": ["node_modules", "dist", "**/*.test.*"],
   "references": [
     {
       "path": "../core"

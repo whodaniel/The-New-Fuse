@@ -136,6 +136,15 @@ export const pokerApi = {
 
 // --- V2 Hold'em Cash Table APIs ---
 export const holdemV2Api = {
+  async quickplay(payload: {
+    playerId?: string;
+    maxSeats?: number;
+    smallBlind?: number;
+    bigBlind?: number;
+    stack?: number;
+  }) {
+    return api('/api/v2/holdem/quickplay', { method: 'POST', body: payload, retry: false });
+  },
   async tables(identity?: string) {
     const suffix = identity ? `?identity=${encodeURIComponent(identity)}` : '';
     return api(`/api/v2/holdem/tables${suffix}`, { identity });

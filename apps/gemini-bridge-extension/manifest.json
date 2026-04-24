@@ -28,9 +28,7 @@
         "https://aistudio.google.com/*",
         "https://gemini.google.com/*",
         "https://*.google.com/*",
-        "http://localhost:*/*",
-        "ws://localhost:*/*",
-        "wss://localhost:*/*"
+        "http://localhost:*/*"
       ],
       "js": ["dist-v7/content/index.js"],
       "css": [],
@@ -58,9 +56,7 @@
     "https://aistudio.google.com/*",
     "https://gemini.google.com/*",
     "https://*.google.com/*",
-    "http://localhost:*/*",
-    "ws://localhost:*/*",
-    "wss://localhost:*/*"
+    "http://localhost:*/*"
   ],
 
   "commands": {

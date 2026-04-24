@@ -288,8 +288,13 @@ const MarketplaceRootRoute = () => {
   }
 
   if (isAppHost) {
-    // If on app subdomain, / should go to dashboard (or login if not authenticated)
-    return <Navigate to="/dashboard" replace />;
+    // Let the standard SPA routes below handle /, /auth, etc.
+    return null;
+  }
+
+  // If we are already on /landing, don't redirect back to / (to break Cloudflare 308 loops)
+  if (window.location.pathname === '/landing') {
+    return null;
   }
 
   // ON MAIN SITE: / should trigger a hard reload to the static landing page
@@ -375,7 +380,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
             <Routes>
               {/* Core Routes - Root switches based on hostname (marketplace vs main landing) */}
               <Route path="/" element={<MarketplaceRootRoute />} />
-              <Route path="/app.html" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/landing" element={<MarketplaceRootRoute />} />
               <Route path="/home" element={<RedirectToStatic to="/" />} />
               {LEGACY_REDIRECTS.map((redirect) => (
                 <Route
@@ -1242,7 +1247,6 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/auth/oauth-callback" element={<OAuthCallbackPage />} />
 
               {/* Enhanced Landing Routes */}
-              <Route path="/landing" element={<RedirectToStatic to="/" />} />
               <Route path="/about" element={<Navigate to="/brand" replace />} />
               <Route path="/features" element={<RedirectToStatic to="/#features" />} />
               <Route path="/pricing" element={<RedirectToStatic to="/#pricing" />} />

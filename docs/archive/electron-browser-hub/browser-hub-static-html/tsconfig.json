@@ -5,14 +5,8 @@
     "checkJs": false,
     "outDir": "./dist",
     "rootDir": ".",
-    "ignoreDeprecations": "6.0"
+    "ignoreDeprecations": "5.0"
   },
-  "include": [
-    "*.js",
-    "*.html"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["*.js", "*.html"],
+  "exclude": ["node_modules", "dist"]
 }

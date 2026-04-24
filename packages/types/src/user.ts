@@ -1,4 +1,4 @@
-import type { BaseEntity, UUID } from './core.js';
+import type { BaseEntity, UUID } from './core/index.js';
 
 /**
  * Represents user roles within the system.
@@ -13,7 +13,7 @@ export enum Permission {
   WRITE_USERS = 'WRITE_USERS',
   DELETE_USERS = 'DELETE_USERS',
   MANAGE_AGENTS = 'MANAGE_AGENTS',
-  ADMIN_ACCESS = 'ADMIN_ACCESS'
+  ADMIN_ACCESS = 'ADMIN_ACCESS',
 }
 
 /**

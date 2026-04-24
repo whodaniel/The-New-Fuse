@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { pathToFileURL } = require('url');
+const { Hand } = require('pokersolver');
 const { createRiskDb } = require('./risk-db');
 
 const PORT = Number(process.env.PORT || 3000);
@@ -1009,6 +1010,14 @@ async function requireMembership(req, res, urlObj) {
 function requiresMembershipGate(method, pathname) {
   const m = String(method || 'GET').toUpperCase();
   const p = String(pathname || '');
+  // Quick-play routes allow anonymous access (guests get bot-filled tables)
+  if (p.startsWith('/api/v2/holdem/quickplay')) return false;
+  // Health and public lobby listing also open
+  if (p === '/api/v2/holdem/tables' && m === 'GET') return false;
+  // State and action endpoints are conditionally gated:
+  // quickplay tables (qp-*) are open, others require membership.
+  // The handlers check tableId themselves.
+  if (p === '/api/v2/holdem/state' || p === '/api/v2/holdem/action') return false;
   if (p.startsWith('/api/v2/holdem')) return true;
   if (p.startsWith('/api/v2/tournaments')) return true;
   if (p.startsWith('/api/table/')) return true;
@@ -1132,7 +1141,7 @@ function redactHoldemSnapshot(snapshot, playerId) {
 
 function pickWeighted(items) {
   const total = items.reduce((sum, item) => sum + item.weight, 0);
-  const target = Math.random() * total;
+  const target = (crypto.randomInt(0, 0x100000000) / 0x100000000) * total;
   let cursor = 0;
   for (const item of items) {
     cursor += item.weight;
@@ -4440,6 +4449,103 @@ async function handleV2HoldemControl(req, res) {
   writeJson(res, 200, { ok: true, seat: seatRow, table: mod.tableSnapshot(table) });
 }
 
+// Quick-play endpoint: creates a bot-filled table and seats the player in one call.
+// No membership required — this is the "just play" path for guests.
+const QUICKPLAY_BOT_PROFILES = [
+  { id: 'bot-ace', name: 'Ace' },
+  { id: 'bot-blitz', name: 'Blitz' },
+  { id: 'bot-cipher', name: 'Cipher' },
+  { id: 'bot-drift', name: 'Drift' },
+  { id: 'bot-echo', name: 'Echo' },
+  { id: 'bot-flux', name: 'Flux' },
+  { id: 'bot-ghost', name: 'Ghost' },
+  { id: 'bot-havoc', name: 'Havoc' },
+];
+
+async function handleV2HoldemQuickplay(req, res) {
+  const body = await readBodyJson(req);
+  const mod = await holdemEnginePromise;
+  const playerId = String(body.playerId || `guest-${Date.now().toString(36)}`).trim();
+  const maxSeats = Math.max(2, Math.min(9, Number(body.maxSeats ?? 6)));
+  const smallBlind = Number(body.smallBlind ?? 50);
+  const bigBlind = Number(body.bigBlind ?? 100);
+  const tableId = String(body.tableId || `qp-${Date.now().toString(36)}`).trim();
+
+  const table = await getOrCreateHoldemTable(tableId, {
+    mode: 'cash',
+    maxSeats,
+    smallBlind,
+    bigBlind,
+    ante: 0,
+    buttonSeat: 0,
+  });
+
+  // Seat the human player at first open seat
+  const snapshot = mod.tableSnapshot(table);
+  const occupied = new Set(
+    (Array.isArray(snapshot.seats) ? snapshot.seats : [])
+      .filter((s) => s && s.playerId)
+      .map((s, i) => (Number.isInteger(s.seat) ? s.seat : i))
+  );
+  let playerSeat = -1;
+  for (let i = 0; i < maxSeats; i++) {
+    if (!occupied.has(i)) {
+      playerSeat = i;
+      break;
+    }
+  }
+  if (playerSeat >= 0) {
+    try {
+      mod.seatPlayer(table, {
+        playerId,
+        seat: playerSeat,
+        stack: Number(body.stack ?? 20000),
+        autoPostBlinds: true,
+        controlMode: 'human',
+      });
+    } catch {
+      /* already seated */
+    }
+  }
+
+  // Fill remaining seats with bots
+  const updatedSnapshot = mod.tableSnapshot(table);
+  const nowOccupied = new Set(
+    (Array.isArray(updatedSnapshot.seats) ? updatedSnapshot.seats : [])
+      .filter((s) => s && s.playerId)
+      .map((s, i) => (Number.isInteger(s.seat) ? s.seat : i))
+  );
+  let botIndex = 0;
+  for (let i = 0; i < maxSeats; i++) {
+    if (!nowOccupied.has(i)) {
+      const bot = QUICKPLAY_BOT_PROFILES[botIndex % QUICKPLAY_BOT_PROFILES.length];
+      botIndex++;
+      try {
+        mod.seatPlayer(table, {
+          playerId: bot.id,
+          seat: i,
+          stack: 20000,
+          autoPostBlinds: true,
+          controlMode: 'agent',
+        });
+      } catch {
+        /* skip seat conflicts */
+      }
+    }
+  }
+
+  await persistV2HoldemTable(table);
+  const finalSnapshot = mod.tableSnapshot(table);
+  writeJson(res, 201, {
+    ok: true,
+    tableId,
+    playerId,
+    playerSeat,
+    table: finalSnapshot,
+    recovery: mod.recoverySnapshot(table),
+  });
+}
+
 async function handleV2HoldemState(req, res, urlObj) {
   const mod = await holdemEnginePromise;
   const table = await getOrCreateHoldemTable(
@@ -5566,8 +5672,8 @@ async function handleSponsorshipSimulate(req, res) {
   let sponsorLossRuns = 0;
   let extremeLossRuns = 0;
   for (let i = 0; i < runs; i += 1) {
-    const n1 = Math.random();
-    const n2 = Math.random();
+    const n1 = crypto.randomInt(0, 0x100000000) / 0x100000000;
+    const n2 = crypto.randomInt(0, 0x100000000) / 0x100000000;
     const gauss = Math.sqrt(-2 * Math.log(Math.max(1e-9, n1))) * Math.cos(2 * Math.PI * n2);
     const roiBps = Math.round(roiBpsMean + gauss * roiBpsStdDev);
     const clampedRoiBps = Math.max(-capLossBps, roiBps);
@@ -7040,6 +7146,7 @@ const API_ROUTES = new Map([
   ['GET /api/realtime/snapshot/read', endpointWithQuery(handleRealtimeSnapshotRead)],
   ['GET /api/realtime/feed', endpointWithQuery(handleRealtimeFeed)],
 
+  ['POST /api/v2/holdem/quickplay', endpoint(handleV2HoldemQuickplay)],
   ['GET /api/v2/holdem/tables', endpoint(handleV2HoldemTablesList)],
   ['POST /api/v2/holdem/tables', endpoint(handleV2HoldemTableCreate)],
   ['POST /api/v2/holdem/seat', endpoint(handleV2HoldemSeat)],
@@ -7273,8 +7380,41 @@ async function runHoldemBotLoop() {
         const contenders = seats.filter((seat) => !hand.foldedSeats.includes(seat.seat));
         const rankingBySeat = {};
         if (contenders.length > 0) {
-          const winner = contenders[Math.floor(Math.random() * contenders.length)];
-          rankingBySeat[String(winner.seat)] = 1;
+          if (contenders.length === 1) {
+            // Single remaining player wins by default
+            rankingBySeat[String(contenders[0].seat)] = 1;
+          } else {
+            // Evaluate actual hand strength using pokersolver (NOT Math.random)
+            // This ensures correct winners — previous Math.random picked arbitrary winners
+            const streetBoardCount =
+              hand.street === 'flop'
+                ? 3
+                : hand.street === 'turn'
+                  ? 4
+                  : hand.street === 'river' || hand.street === 'showdown'
+                    ? 5
+                    : 0;
+            const board = (hand.boardCards || []).slice(0, streetBoardCount);
+            const evaluations = contenders.map((seat) => {
+              // Hole cards are stored on hand.holeCards keyed by seat number,
+              // NOT on the seat object. Using seat.holeCards always returns undefined
+              // (same bug as ND1 in poker-room/server.ts — all contenders tie on
+              // board-only evaluation, pot splits evenly regardless of hand strength).
+              const holeCards = hand.holeCards?.[String(seat.seat)] || [];
+              const solverHand = Hand.solve([...holeCards, ...board]);
+              return { seatIdx: seat.seat, hand: solverHand };
+            });
+            const winners = Hand.winners(evaluations.map((e) => e.hand));
+            const winnerSet = new Set(winners);
+            let rank = 2;
+            for (const ev of evaluations) {
+              if (winnerSet.has(ev.hand)) {
+                rankingBySeat[String(ev.seatIdx)] = 1;
+              } else {
+                rankingBySeat[String(ev.seatIdx)] = rank++;
+              }
+            }
+          }
         }
         holdemEngine.settleHand(table, {
           rankingBySeat,

@@ -3,13 +3,8 @@
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "typeRoots": [
-      "./node_modules/@types",
-      "../node_modules/@types"
-    ],
-    "ignoreDeprecations": "6.0"
+    "typeRoots": ["./node_modules/@types", "../node_modules/@types"],
+    "ignoreDeprecations": "5.0"
   },
-  "include": [
-    "./"
-  ]
+  "include": ["./"]
 }

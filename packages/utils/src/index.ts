@@ -4,7 +4,7 @@ export * from './config.js';
 export * from './date.js';
 export * from './error.js';
 export * from './formatters.js';
-export * from './logger.js';
+export * from './logger/index.js';
 export * from './performance.js';
 export * from './validators-server.js';
 export * from './validators.js';

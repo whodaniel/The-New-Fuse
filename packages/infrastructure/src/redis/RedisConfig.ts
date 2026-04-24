@@ -35,6 +35,7 @@ export class RedisConfig {
 
       try {
         const url = new URL(redisUrl);
+        const isSsl = url.protocol === 'rediss:';
 
         // Parse database index safely
         const dbFromPath =
@@ -43,7 +44,7 @@ export class RedisConfig {
         const db = !isNaN(dbFromPath) && dbFromPath >= 0 ? dbFromPath : 0;
 
         console.log(
-          `[RedisConfig] Using REDIS_URL: ${url.hostname}:${url.port || 6379} (db: ${db})`
+          `[RedisConfig] Using REDIS_URL: ${url.hostname}:${url.port || 6379} (db: ${db}, ssl: ${isSsl})`
         );
 
         return {
@@ -51,6 +52,7 @@ export class RedisConfig {
           port: parseInt(url.port || '6379', 10),
           password: url.password || undefined,
           db,
+          tls: isSsl ? {} : undefined,
         };
       } catch (error) {
         console.error(
@@ -65,17 +67,19 @@ export class RedisConfig {
       port: this.configService.get<number>('REDIS_PORT', 6379),
       password: this.configService.get<string>('REDIS_PASSWORD'),
       db: this.configService.get<number>('REDIS_DB', 0),
+      tls: undefined,
     };
   }
 
-  getConfiguration(): RedisConfiguration {
-    const { host, port, password, db } = this.parseRedisConfig();
+  getConfiguration(): RedisConfiguration & { tls?: any } {
+    const { host, port, password, db, tls } = this.parseRedisConfig();
 
     return {
       host,
       port,
       password,
       db,
+      tls,
       upstash: {
         restUrl: this.configService.get<string>('UPSTASH_REDIS_REST_URL'),
         restToken: this.configService.get<string>('UPSTASH_REDIS_REST_TOKEN'),
@@ -117,6 +121,7 @@ export class RedisConfig {
     family: number;
     keepAlive: number;
     keyPrefix: string;
+    tls?: any;
   } | null {
     const config = this.getConfiguration();
 
@@ -140,6 +145,7 @@ export class RedisConfig {
       family: 4,
       keepAlive: 30000,
       keyPrefix: this.configService.get<string>('REDIS_KEY_PREFIX', ''),
+      tls: config.tls,
     };
   }
 

@@ -519,3 +519,11 @@ skill-builder (meta)
 what it knows by reading this, then loads specific knowledge on-demand.
 
 **Living Document**: This map grows as the TNF knowledge base expands.
+
+## Directive Rotation - 2026-04-20 22:00 UTC
+
+- Protocols active: stall-defense, handoff-matrix, gates-of-truth, tnf-bridge,
+  openclaw-sync
+- Stale entries pruned: 10
+- Matrix validation: passed
+- Redis: connected

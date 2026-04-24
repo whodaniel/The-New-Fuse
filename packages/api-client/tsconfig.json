@@ -7,14 +7,10 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "allowImportingTsExtensions": false,
-    "types": [
-      "node"
-    ],
-    "ignoreDeprecations": "6.0"
+    "types": ["node"],
+    "ignoreDeprecations": "5.0"
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "references": [
     {
       "path": "../api-types"

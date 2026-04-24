@@ -18,7 +18,7 @@ export * from './sentry/sentry-config.js';
 export * from './sentry/sentry-integrations.js';
 
 // Logging
-// Avoid duplicate type names// This usage is just a thought, I will view the file first.
+// Avoid duplicate type names
 export { WinstonLogger, createLogger, type LoggerConfig } from './logging/winston-logger.js';
 
 // Metrics
@@ -46,7 +46,7 @@ export {
 } from './alerts/alert-manager.js';
 
 // Performance monitoring
-export * from './performance.js';
+export * from './performance/index.js';
 
 // Dashboards
 // Avoid duplicate QueryPattern type by exporting explicit members
@@ -63,7 +63,7 @@ export {
 } from './dashboards/performance-dashboard.js';
 
 // NestJS integrations
-export * from './nestjs/health.controller';
-export * from './nestjs/metrics.controller';
-export * from './nestjs/monitoring.interceptor';
-export * from './nestjs/monitoring.module';
+export * from './nestjs/health.controller.js';
+export * from './nestjs/metrics.controller.js';
+export * from './nestjs/monitoring.interceptor.js';
+export * from './nestjs/monitoring.module.js';

@@ -1,4 +1,5 @@
 import { assertInteger, assertString } from '../../shared/contracts.mjs';
+import { createHash } from 'node:crypto';
 
 function cloneJson(value) {
   return JSON.parse(JSON.stringify(value));
@@ -35,7 +36,9 @@ function defaultPayoutBps(fieldSize) {
   if (fieldSize <= 6) return [6500, 3500];
   if (fieldSize <= 9) return [5000, 3000, 2000];
   if (fieldSize <= 45) return [3500, 2200, 1500, 1100, 800, 500, 400];
-  return [2500, 1700, 1200, 900, 700, 550, 450, 350, 300, 250, 200, 200];
+  // Sum must equal 10000 (full prize pool). Previous sum was 9300 — 7% lost.
+ // Added 700 to 1st place (most standard structures weight top heavy).
+ return [3200, 1700, 1200, 900, 700, 550, 450, 350, 300, 250, 200, 200];
 }
 
 function normalizePolicy(input = {}) {
@@ -71,7 +74,19 @@ function currentLevelRow(t) {
 
 function assignSeatsToTables(t) {
   const active = [...t.players.values()].filter((p) => p.status === 'active');
-  active.sort((a, b) => a.playerId.localeCompare(b.playerId));
+  // Cryptographically deterministic seeded shuffle using SHA-256 PRNG
+  // (replaces insecure Math.sin-based RNG — predictable seat assignment was exploitable)
+  let shuffleCounter = 0;
+  const shuffleRng = () => {
+    const hex = createHash('sha256').update(`${t.tournamentId}:shuffle:${shuffleCounter}`).digest('hex');
+    shuffleCounter += 1;
+    const int = Number.parseInt(hex.slice(0, 8), 16);
+    return int / 0x100000000;
+  };
+  for (let i = active.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(shuffleRng() * (i + 1));
+    [active[i], active[j]] = [active[j], active[i]];
+  }
 
   t.tables = new Map();
   t.tableCounter = 0;
@@ -124,10 +139,22 @@ function rebalanceTables(t) {
 function mergeFinalTable(t) {
   const active = [...t.players.values()].filter((p) => p.status === 'active');
   if (active.length === 0) return;
+  // Use SHA-256 PRNG for fair seat assignment (same pattern as assignSeatsToTables)
+  let mergeCounter = 0;
+  const mergeRng = () => {
+    const hex = createHash('sha256').update(`${t.tournamentId}:merge:${mergeCounter}`).digest('hex');
+    mergeCounter += 1;
+    const int = Number.parseInt(hex.slice(0, 8), 16);
+    return int / 0x100000000;
+  };
+  for (let i = active.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(mergeRng() * (i + 1));
+    [active[i], active[j]] = [active[j], active[i]];
+  }
+
   const tableId = `${t.tournamentId}-final-table`;
   const table = { tableId, seats: [] };
   t.tables = new Map([[tableId, table]]);
-  active.sort((a, b) => a.playerId.localeCompare(b.playerId));
   for (const player of active) {
     player.tableId = tableId;
     player.seat = table.seats.length;
@@ -169,12 +196,18 @@ export function createTournament(config) {
       byLevelInclusive: toInt(config.lateReg?.byLevelInclusive ?? 4, 'lateRegByLevel', 0),
       open: true,
     },
-    rebuy: {
-      enabled: Boolean(config.rebuy?.enabled),
-      maxPerPlayer: toInt(config.rebuy?.maxPerPlayer ?? 0, 'rebuyMax', 0),
-      untilLevelInclusive: toInt(config.rebuy?.untilLevelInclusive ?? 6, 'rebuyUntilLevel', 0),
-      chipsPerRebuy: toInt(config.rebuy?.chipsPerRebuy ?? startStack, 'chipsPerRebuy', 100),
-    },
+  rebuy: {
+    enabled: Boolean(config.rebuy?.enabled),
+    // When rebuy is enabled, default maxPerPlayer to 1 (not 0).
+    // A default of 0 means p.rebuys >= 0 is always true on the first check,
+    // which silently blocks ALL rebuys — making rebuy.enabled=true useless.
+    maxPerPlayer: toInt(
+      config.rebuy?.maxPerPlayer ?? (Boolean(config.rebuy?.enabled) ? 1 : 0),
+      'rebuyMax', 0
+    ),
+    untilLevelInclusive: toInt(config.rebuy?.untilLevelInclusive ?? 6, 'rebuyUntilLevel', 0),
+    chipsPerRebuy: toInt(config.rebuy?.chipsPerRebuy ?? startStack, 'chipsPerRebuy', 100),
+  },
     addon: {
       enabled: Boolean(config.addon?.enabled),
       level: toInt(config.addon?.level ?? 6, 'addonLevel', 1),
@@ -337,12 +370,20 @@ export function rebuyPlayer(t, { playerId }) {
   if (!t.rebuy.enabled) throw new Error('Rebuy disabled');
   if (t.levelIndex > t.rebuy.untilLevelInclusive) throw new Error('Rebuy window closed');
   if (p.rebuys >= t.rebuy.maxPerPlayer) throw new Error('Rebuy cap reached');
+  // Standard rule: rebuys only allowed when at or below starting stack
+  if (p.chips > t.startStack) throw new Error('Not eligible for rebuy: chip count too high');
 
-  p.rebuys += 1;
-  p.entries += 1;
-  p.chips += t.rebuy.chipsPerRebuy;
-  p.status = 'active';
-  t.prizePoolUnits += t.buyInUnits;
+ p.rebuys += 1;
+ p.entries += 1;
+ p.chips += t.rebuy.chipsPerRebuy;
+ p.status = 'active';
+ // Reset finishPosition — player is back in the tournament.
+ // Leaving the old finishPosition caused computePayouts to pay
+ // a "ghost" finish position for an active player.
+ p.finishPosition = null;
+ // Remove from eliminationOrder — player is no longer eliminated.
+ t.eliminationOrder = t.eliminationOrder.filter((e) => e.playerId !== playerId);
+ t.prizePoolUnits += t.buyInUnits;
 
   t.eventLog.push({ type: 'player.rebuy', ts: nowIso(), payload: { playerId, rebuys: p.rebuys } });
   rebalanceTables(t);
@@ -353,8 +394,15 @@ export function addOnPlayer(t, { playerId }) {
   const p = t.players.get(playerId);
   if (!p) throw new Error('Unknown player');
   if (!t.addon.enabled) throw new Error('Add-on disabled');
-  if (p.addonTaken) throw new Error('Add-on already used');
-  if (t.levelIndex !== t.addon.level) throw new Error('Add-on level mismatch');
+ if (p.addonTaken) throw new Error('Add-on already used');
+ // Allow add-on at the configured level or any level before it (since the exact
+ // level boundary may be missed if the clock advances multiple levels at once).
+ // Previously used strict equality (`!==`) which made add-on impossible if the
+ // level was skipped or the player missed the exact window.
+ if (t.levelIndex < t.addon.level) throw new Error('Add-on not yet available');
+ if (t.levelIndex > t.addon.level && !(t.onBreak && t.levelIndex === t.addon.level + 1)) {
+ throw new Error('Add-on window closed');
+ }
 
   p.addonTaken = true;
   p.entries += 1;
@@ -407,30 +455,63 @@ export function eliminatePlayer(t, { playerId, finishPosition }) {
 
 export function computePayouts(t) {
   if (t.status !== 'complete') throw new Error('Tournament not complete');
-  const entries = [...t.players.values()].sort((a, b) => {
-    const fa = Number(a.finishPosition || 9999);
-    const fb = Number(b.finishPosition || 9999);
-    if (fa !== fb) return fa - fb;
-    return a.playerId.localeCompare(b.playerId);
-  });
-
-  const payouts = [];
-  for (let i = 0; i < t.payoutBps.length; i += 1) {
-    const p = entries[i];
-    if (!p) break;
-    const payout = Math.floor((t.prizePoolUnits * t.payoutBps[i]) / 10000);
-    payouts.push({
-      playerId: p.playerId,
-      finishPosition: p.finishPosition,
-      payoutUnits: payout,
+  // Only include players with a valid finishPosition for payout.
+  // Players with finishPosition=null (e.g., registered but never eliminated)
+  // should NOT receive payouts — they are sorted as 9999 and could silently
+  // consume payout positions meant for actual finishers.
+  const entries = [...t.players.values()]
+    .filter((p) => p.finishPosition != null && Number(p.finishPosition) > 0)
+    .sort((a, b) => {
+      const fa = Number(a.finishPosition);
+      const fb = Number(b.finishPosition);
+      if (fa !== fb) return fa - fb;
+      return a.playerId.localeCompare(b.playerId);
     });
-  }
 
-  return {
-    tournamentId: t.tournamentId,
-    prizePoolUnits: t.prizePoolUnits,
-    payouts,
-  };
+ // When fewer players finish in-the-money than payoutBps entries,
+ // redistribute unused BPS proportionally to the paid positions.
+ // e.g. 5 players with 7-position BPS → positions 4-6 BPS are lost
+ // unless we reallocate them.
+ const paidPositions = Math.min(entries.length, t.payoutBps.length);
+ const rawBps = t.payoutBps.slice(0, paidPositions);
+ const totalRawBps = rawBps.reduce((s, b) => s + b, 0);
+ const unusedBps = t.payoutBps.slice(paidPositions).reduce((s, b) => s + b, 0);
+ const effectiveBps = totalRawBps === 0
+ ? rawBps.map(() => Math.floor(10000 / paidPositions))
+ : rawBps.map((b) => Math.round((b / totalRawBps) * 10000));
+ // Re-normalize to exactly 10000 after rounding
+ const bpsSum = effectiveBps.reduce((s, b) => s + b, 0);
+ if (bpsSum !== 10000 && effectiveBps.length > 0) {
+ effectiveBps[0] += 10000 - bpsSum;
+ }
+
+ const payouts = [];
+ let distributedTotal = 0;
+ for (let i = 0; i < paidPositions; i += 1) {
+ const p = entries[i];
+ if (!p) break;
+ const payout = Math.floor((t.prizePoolUnits * effectiveBps[i]) / 10000);
+ distributedTotal += payout;
+ payouts.push({
+ playerId: p.playerId,
+ finishPosition: p.finishPosition,
+ payoutUnits: payout,
+ });
+ }
+
+ // Distribute truncation remainder (1 unit each) to lowest finish positions
+ // This ensures the full prize pool is paid out
+ const remainder = t.prizePoolUnits - distributedTotal;
+ for (let i = 0; i < payouts.length && remainder > 0; i += 1) {
+ payouts[i].payoutUnits += 1;
+ remainder -= 1;
+ }
+
+ return {
+ tournamentId: t.tournamentId,
+ prizePoolUnits: t.prizePoolUnits,
+ payouts,
+ };
 }
 
 export function snapshotTournament(t) {

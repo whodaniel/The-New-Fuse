@@ -8,11 +8,7 @@
     "composite": true,
     "noEmit": false,
     "jsx": "react-jsx",
-    "types": [
-      "jest",
-      "node",
-      "react"
-    ],
+    "types": ["jest", "node", "react"],
     "esModuleInterop": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -21,17 +17,10 @@
     "sourceMap": true,
     "noImplicitAny": false,
     "strict": false,
-    "ignoreDeprecations": "6.0"
+    "ignoreDeprecations": "5.0"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.spec.ts",
-    "**/*.spec.tsx"
-  ],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.spec.tsx"],
   "references": [
     {
       "path": "../api-client"

@@ -451,7 +451,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo:
+            window.location.hostname === 'localhost'
+              ? `${window.location.origin}/auth/callback`
+              : 'https://app.thenewfuse.com/auth/callback',
         },
       });
 
@@ -644,8 +647,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-
-  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

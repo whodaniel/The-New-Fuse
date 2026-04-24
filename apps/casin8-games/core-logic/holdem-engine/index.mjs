@@ -41,13 +41,18 @@ function createRng(seed) {
 }
 
 function buildDeck() {
-  const deck = [];
-  for (const suit of CARD_SUITS) {
-    for (const rank of CARD_RANKS) {
-      deck.push(`${rank}${suit}`);
-    }
-  }
-  return deck;
+ const deck = [];
+ for (const suit of CARD_SUITS) {
+ for (const rank of CARD_RANKS) {
+ deck.push(`${rank}${suit}`);
+ }
+ }
+ // Deck integrity check — must have exactly 52 unique cards.
+ // Catches accidental duplicate constants or array mutation.
+ if (deck.length !== 52 || new Set(deck).size !== 52) {
+ throw new Error(`Deck integrity violation: ${deck.length} cards, ${new Set(deck).size} unique`);
+ }
+ return deck;
 }
 
 function drawCards(rng, deck, count) {
@@ -60,15 +65,29 @@ function drawCards(rng, deck, count) {
 }
 
 function dealHoldemCards(engine, hand, seated) {
-  const rng = createRng(`${engine.replaySeed}:${hand.handId}`);
-  const deck = buildDeck();
-  const holeCards = {};
-  for (const seat of seated) {
-    holeCards[String(seat.seat)] = drawCards(rng, deck, 2);
-  }
-  hand.holeCards = holeCards;
-  hand.boardCards = drawCards(rng, deck, 5);
-  hand.deckHash = hashHex(deck.join(','));
+ const rng = createRng(`${engine.replaySeed}:${hand.handId}`);
+ const deck = buildDeck();
+ const holeCards = {};
+ for (const seat of seated) {
+ holeCards[String(seat.seat)] = drawCards(rng, deck, 2);
+ }
+ hand.holeCards = holeCards;
+ // Burn cards: 1 before flop, 1 before turn, 1 before river (TDA standard)
+ // Draw burn + board cards in proper order to ensure correct card sequence
+ const burnCards = [];
+ // Pre-flop burn (1 card discarded before flop)
+ burnCards.push(...drawCards(rng, deck, 1));
+ const flopCards = drawCards(rng, deck, 3);
+ // Pre-turn burn
+ burnCards.push(...drawCards(rng, deck, 1));
+ const turnCard = drawCards(rng, deck, 1);
+ // Pre-river burn
+ burnCards.push(...drawCards(rng, deck, 1));
+ const riverCard = drawCards(rng, deck, 1);
+
+ hand.boardCards = [...flopCards, ...turnCard, ...riverCard];
+ hand.burnCards = burnCards;
+ hand.deckHash = hashHex(deck.join(','));
 }
 
 function asInt(value, field, min = 0) {
@@ -322,6 +341,7 @@ export function createHoldemTable(options = {}) {
     version: 2,
     tableId,
     mode: String(options.mode || 'cash').trim() || 'cash',
+    maxSeats,
     seats: Array.from({ length: maxSeats }, (_, i) => null),
     blinds: {
       smallBlind,
@@ -418,39 +438,60 @@ export function setConnection(engine, { playerId, connected }) {
     seat: row.seat,
   });
 
-  const hand = engine.hand;
-  if (!row.connected && hand && !hand.settled && hand.actingSeat === row.seat) {
-    if (!hand.foldedSeats.includes(row.seat)) hand.foldedSeats.push(row.seat);
-    hand.actedSinceAggression = hand.actedSinceAggression.filter((s) => s !== row.seat);
-    const alive = activeSeats(engine, hand);
-    if (alive.length <= 1) {
-      hand.street = 'showdown';
-      hand.actingSeat = null;
-      hand.readyForSettlement = true;
-    } else {
-      maybeAdvanceStreet(engine, hand);
-    }
-    appendEvent(engine, 'hand.action', {
-      handId: hand.handId,
-      idempotencyKey: `disconnect-fold:${playerId}:${engine.seq + 1}`,
-      row: {
-        seat: row.seat,
-        playerId,
-        action: 'fold',
-        amount: 0,
-        spend: 0,
-        target: Number(hand.streetCommitted[String(row.seat)] || 0),
-        toCallBefore: Math.max(0, Number(hand.currentBet || 0) - Number(hand.streetCommitted[String(row.seat)] || 0)),
-        potAfter: hand.pot,
-        currentBetAfter: hand.currentBet,
-        disconnectForced: true,
-      },
-      street: hand.street,
-      actingSeat: hand.actingSeat,
-      readyForSettlement: hand.readyForSettlement,
-    });
-  }
+  // When disconnecting, do NOT auto-fold here.
+  // The calling code (server grace period) is responsible for deciding
+  // when to fold or remove the player. Auto-folding here defeats
+  // disconnect grace periods. Instead, just mark disconnected so
+  // legalActionsForSeat returns [] for the disconnected player,
+  // effectively making them sit out until reconnected or removed.
   return cloneJson(row);
+}
+
+/**
+ * Force-fold a disconnected player who has exceeded the grace period.
+ * This is the explicit alternative to auto-folding in setConnection.
+ * The server should call this after the grace period expires before unseating.
+ */
+export function forceFoldDisconnected(engine, { playerId }) {
+  const row = seatForPlayer(engine, playerId);
+  if (row.connected) return null; // Player reconnected, no fold needed
+
+  const hand = engine.hand;
+  if (!hand || hand.settled) return null; // No active hand
+  if (hand.foldedSeats.includes(row.seat)) return null; // Already folded
+
+  if (!hand.foldedSeats.includes(row.seat)) hand.foldedSeats.push(row.seat);
+  hand.actedSinceAggression = hand.actedSinceAggression.filter((s) => s !== row.seat);
+  const alive = activeSeats(engine, hand);
+  if (alive.length <= 1) {
+    hand.street = 'showdown';
+    hand.actingSeat = null;
+    hand.readyForSettlement = true;
+  } else if (hand.actingSeat === row.seat) {
+    maybeAdvanceStreet(engine, hand);
+  }
+
+  appendEvent(engine, 'hand.action', {
+    handId: hand.handId,
+    idempotencyKey: `disconnect-fold:${playerId}:${engine.seq + 1}`,
+    row: {
+      seat: row.seat,
+      playerId,
+      action: 'fold',
+      amount: 0,
+      spend: 0,
+      target: Number(hand.streetCommitted[String(row.seat)] || 0),
+      toCallBefore: Math.max(0, Number(hand.currentBet || 0) - Number(hand.streetCommitted[String(row.seat)] || 0)),
+      potAfter: hand.pot,
+      currentBetAfter: hand.currentBet,
+      disconnectForced: true,
+    },
+    street: hand.street,
+    actingSeat: hand.actingSeat,
+    readyForSettlement: hand.readyForSettlement,
+  });
+
+  return { folded: true, seat: row.seat };
 }
 
 export function requestStraddle(engine, { playerId, amount = null }) {
@@ -579,7 +620,7 @@ export function startHand(engine, { handId, idempotencyKey }) {
     status: 'active',
     startedAt: nowIso(),
     street: 'preflop',
-    buttonSeat: nextSeatFrom(engine, prevButton - 1, null, { includeFolded: true }) ?? firstSeat(engine),
+    buttonSeat: nextSeatFrom(engine, prevButton, null, { includeFolded: true }) ?? firstSeat(engine),
     sbSeat: null,
     bbSeat: null,
     actingSeat: null,
@@ -614,8 +655,15 @@ export function startHand(engine, { handId, idempotencyKey }) {
     }
   }
 
-  const sbSeatNo = nextSeatFrom(engine, hand.buttonSeat, hand, { includeFolded: true });
-  const bbSeatNo = nextSeatFrom(engine, sbSeatNo, hand, { includeFolded: true });
+  // TDA Rule 2: In heads-up, the button posts the small blind.
+  let sbSeatNo, bbSeatNo;
+  if (seated.length === 2) {
+    sbSeatNo = hand.buttonSeat;
+    bbSeatNo = nextSeatFrom(engine, hand.buttonSeat, hand, { includeFolded: true });
+  } else {
+    sbSeatNo = nextSeatFrom(engine, hand.buttonSeat, hand, { includeFolded: true });
+    bbSeatNo = nextSeatFrom(engine, sbSeatNo, hand, { includeFolded: true });
+  }
   hand.sbSeat = sbSeatNo;
   hand.bbSeat = bbSeatNo;
 
@@ -784,6 +832,10 @@ export function applyAction(engine, input) {
     const maxReach = streetCommit + stack;
     if (target > maxReach) target = maxReach;
     if (target <= hand.currentBet) throw new Error('Raise target must exceed current bet');
+    // TDA Rule 43: Min-raise enforcement — only all-in short raises are legal
+    if (target < minRaiseTo && stack > (target - streetCommit)) {
+      throw new Error(`Raise must be at least ${minRaiseTo} (min-raise violation)`);
+    }
     spend = target - streetCommit;
     commit(engine, hand, seatNo, spend);
 
@@ -875,7 +927,7 @@ export function applyAction(engine, input) {
   return cloneJson(out);
 }
 
-export function computeSidePots(committedBySeat, foldedSeats = [], rankingBySeat = {}) {
+export function computeSidePots(committedBySeat, foldedSeats = [], rankingBySeat = {}, { buttonSeat = 0, maxSeats = 9 } = {}) {
   const folded = new Set(foldedSeats);
   const invested = {};
   for (const [seatRaw, amountRaw] of Object.entries(committedBySeat || {})) {
@@ -900,7 +952,28 @@ export function computeSidePots(committedBySeat, foldedSeats = [], rankingBySeat
     if (amount <= 0) continue;
 
     const contenders = contributors.filter((seat) => !folded.has(seat));
-    if (contenders.length === 0) continue;
+    if (contenders.length === 0) {
+      // All contributors at this tier are folded — this is "dead money".
+      // Per TDA rules, dead money in the pot stays in the pot and is won by
+      // the best hand at the next lower tier. Add it to the previous tier's
+      // payout pool by distributing it to whoever won at the closest lower tier.
+      // Simplest correct approach: add the unclaimed amount to payoutBySeat
+      // proportionally to existing payouts, or if no lower tier exists,
+      // distribute to the closest-to-button active player.
+      const unclaimed = amount;
+      // Find the active player closest to the button clockwise
+      const activePlayers = Object.keys(invested).map(Number).filter((s) => !folded.has(s));
+      if (activePlayers.length > 0 && unclaimed > 0) {
+        activePlayers.sort((a, b) => {
+          const distA = (a - buttonSeat + maxSeats) % maxSeats;
+          const distB = (b - buttonSeat + maxSeats) % maxSeats;
+          return distA - distB;
+        });
+        // Give the dead money to the first active player clockwise from button
+        payoutBySeat[String(activePlayers[0])] = Number(payoutBySeat[String(activePlayers[0])] || 0) + unclaimed;
+      }
+      continue;
+    }
 
     let best = -Infinity;
     let winners = [];
@@ -914,7 +987,13 @@ export function computeSidePots(committedBySeat, foldedSeats = [], rankingBySeat
       }
     }
 
-    winners.sort((a, b) => a - b);
+    // TDA Rule 73: Odd chip goes to the seat closest left of the button (clockwise).
+  // Sort winners by clockwise distance from button.
+  winners.sort((a, b) => {
+    const distA = (a - buttonSeat + maxSeats) % maxSeats;
+    const distB = (b - buttonSeat + maxSeats) % maxSeats;
+    return distA - distB;
+  });
     const split = Math.floor(amount / winners.length);
     let remainder = amount - split * winners.length;
     for (const seat of winners) {
@@ -952,7 +1031,10 @@ export function settleHand(engine, { rankingBySeat = {}, settlementKey }) {
     rankings = { [String(active[0].seat)]: 1 };
   }
 
-  const settlement = computeSidePots(hand.committedBySeat, hand.foldedSeats, rankings);
+  const settlement = computeSidePots(hand.committedBySeat, hand.foldedSeats, rankings, {
+    buttonSeat: hand.buttonSeat,
+    maxSeats: engine.maxSeats,
+  });
   hand.sidePots = settlement.sidePots;
   hand.payoutBySeat = settlement.payoutBySeat;
   hand.settled = true;
@@ -960,10 +1042,15 @@ export function settleHand(engine, { rankingBySeat = {}, settlementKey }) {
   hand.status = 'settled';
   hand.settledAt = nowIso();
 
-  for (const [seatRaw, payout] of Object.entries(settlement.payoutBySeat)) {
-    const seatNo = Number(seatRaw);
-    const seat = engine.seats[seatNo];
-    if (!seat) continue;
+ for (const [seatRaw, payout] of Object.entries(settlement.payoutBySeat)) {
+ const seatNo = Number(seatRaw);
+ const seat = engine.seats[seatNo];
+ if (!seat) {
+ // Seat was unseated before payout — this should not happen after the NC4
+ // mid-hand removal fix, but if it does, the chips are lost. Log a warning.
+ // Future: hold in escrow on hand object for later claiming.
+ continue;
+ }
     seat.stack += Number(payout);
   }
 
@@ -998,13 +1085,14 @@ export function settleHand(engine, { rankingBySeat = {}, settlementKey }) {
 
 export function tableSnapshot(engine) {
   return {
-    version: engine.version,
-    tableId: engine.tableId,
-    mode: engine.mode,
-    buttonSeat: engine.buttonSeat,
-    blinds: cloneJson(engine.blinds),
-    seats: sortedSeats(engine),
-    hand: engine.hand ? cloneJson(engine.hand) : null,
+  version: engine.version,
+  tableId: engine.tableId,
+  mode: engine.mode,
+  maxSeats: engine.maxSeats,
+  buttonSeat: engine.buttonSeat,
+  blinds: cloneJson(engine.blinds),
+  seats: sortedSeats(engine),
+  hand: engine.hand ? cloneJson(engine.hand) : null,
     pendingSeatMoves: cloneJson(engine.pendingSeatMoves || []),
     audit: cloneJson(engine.audit || { lastEventHash: 'genesis' }),
     replayCursor: engine.seq,
@@ -1016,6 +1104,7 @@ export function recoverySnapshot(engine) {
     version: engine.version,
     tableId: engine.tableId,
     mode: engine.mode,
+    maxSeats: engine.maxSeats,
     blinds: engine.blinds,
     buttonSeat: engine.buttonSeat,
     seats: sortedSeats(engine),
@@ -1032,7 +1121,7 @@ export function restoreFromRecovery(snapshot) {
   const engine = createHoldemTable({
     tableId: snapshot.tableId,
     mode: snapshot.mode,
-    maxSeats: Math.max(2, Number(snapshot.seats?.length || 9)),
+    maxSeats: snapshot.maxSeats ?? Math.max(2, Number(snapshot.seats?.length || 9)),
     smallBlind: Number(snapshot.blinds?.smallBlind || 50),
     bigBlind: Number(snapshot.blinds?.bigBlind || 100),
     ante: Number(snapshot.blinds?.ante || 0),

@@ -15,6 +15,13 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  // Workspace surfaces get tighter padding for data-dense views
+  const isWorkspaceSurface =
+    pathname.startsWith('/dashboard/fairtable') ||
+    pathname.startsWith('/dashboard/files') ||
+    pathname.startsWith('/dashboard/datasets') ||
+    pathname.startsWith('/workflows/builder');
+
   useEffect(() => {
     const handleSidebarToggle = () => {
       setIsSidebarOpen((prev) => !prev);

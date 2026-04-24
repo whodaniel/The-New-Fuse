@@ -2,7 +2,14 @@ import type { CommunityMembership } from '../api';
 
 const MASTER_SUPER_ADMIN_EMAIL = 'owner@example.com';
 
-type MembershipRole = 'admin' | 'super_admin' | 'creator' | 'member' | 'ai_agent' | 'unknown';
+type MembershipRole =
+  | 'admin'
+  | 'super_admin'
+  | 'creator'
+  | 'member'
+  | 'ai_agent'
+  | 'guest'
+  | 'unknown';
 
 export interface PokerAccessContext {
   isSuperAdmin: boolean;
@@ -46,6 +53,9 @@ const normalizeMembershipRole = (value?: string): MembershipRole => {
   if (role === 'ai_agent' || role === 'agent' || role === 'bot') {
     return 'ai_agent';
   }
+  if (role === 'guest' || role === 'anonymous' || role === 'visitor') {
+    return 'guest';
+  }
   return 'unknown';
 };
 
@@ -59,7 +69,9 @@ export const derivePokerAccess = ({
   membership?: CommunityMembership | null;
 }): PokerAccessContext => {
   const normalizedRole = normalizeMembershipRole(membership?.role);
-  const activeMembership = (membership?.status || '').toLowerCase() === 'active';
+  const membershipStatus = (membership?.status || '').toLowerCase();
+  const activeMembership = membershipStatus === 'active';
+  const isGuest = membershipStatus === 'guest' || normalizedRole === 'guest';
   const normalizedEmail = (email || '').trim().toLowerCase();
   const normalizedUsername = (username || '').trim().toLowerCase();
 
@@ -70,8 +82,9 @@ export const derivePokerAccess = ({
     normalizedRole === 'super_admin';
   const isAdmin = isSuperAdmin || normalizedRole === 'admin';
   const isCreator = isAdmin || normalizedRole === 'creator';
+  // Guests get player_core access (Quick Play) but NOT creator/admin surfaces
   const isMember =
-    isCreator || activeMembership || normalizedRole === 'member' || isProgrammaticAgent;
+    isCreator || activeMembership || normalizedRole === 'member' || isProgrammaticAgent || isGuest;
 
   return {
     isSuperAdmin,

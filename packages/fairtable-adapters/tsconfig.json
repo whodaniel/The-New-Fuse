@@ -8,19 +8,11 @@
     "declaration": true,
     "declarationMap": true,
     "jsx": "react-jsx",
-    "types": [
-      "node"
-    ],
-    "ignoreDeprecations": "6.0"
+    "types": ["node"],
+    "ignoreDeprecations": "5.0"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.*"
-  ],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.*"],
   "references": [
     {
       "path": "../fairtable-components"

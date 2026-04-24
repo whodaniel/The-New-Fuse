@@ -807,6 +807,8 @@ function AppContent() {
     const resolved = await resolveGameAccess(gameId);
     if (resolved) {
       if (resolved.access?.canPlay) return true;
+      // Guest users: allow Quick Play even if canPlay is false
+      if (membership?.status === 'guest') return true;
       if (options?.postLoginView) setPostLoginView(options.postLoginView);
       if (!options?.silent) {
         notify('SYSTEM', 'Access Required', formatAccessMessage(resolved, contextLabel));
@@ -1415,20 +1417,33 @@ function AppContent() {
     }
 
     if (accessResolution) {
+      // If user has no email (anonymous), allow guest login with Quick Play access only.
+      // Full table access requires membership.
       if (!accessResolution.access?.canPlay) {
-        const error = new Error(accessResolution.pathSummary) as Error & {
-          accessResolution?: CommunityAccessResolution;
+        console.log('[handleLogin] canPlay=false, email=', email, 'type=', typeof email);
+        if (!email) {
+          // Anonymous user: allow as guest (Quick Play only)
+          resolvedMembership = {
+            username: accessResolution.subject.username || username.trim(),
+            status: 'guest',
+            role: 'guest',
+            addedAt: new Date().toISOString(),
+          };
+        } else {
+          const error = new Error(accessResolution.pathSummary) as Error & {
+            accessResolution?: CommunityAccessResolution;
+          };
+          error.accessResolution = accessResolution;
+          throw error;
+        }
+      } else {
+        resolvedMembership = {
+          username: accessResolution.subject.username || username.trim(),
+          status: 'active',
+          role: accessResolution.actor.primaryRole || 'member',
+          addedAt: new Date().toISOString(),
         };
-        error.accessResolution = accessResolution;
-        throw error;
       }
-
-      resolvedMembership = {
-        username: accessResolution.subject.username || username.trim(),
-        status: 'active',
-        role: accessResolution.actor.primaryRole || 'member',
-        addedAt: new Date().toISOString(),
-      };
     }
 
     setUser({
@@ -1471,6 +1486,18 @@ function AppContent() {
         };
       }
     }
+
+    // Final fallback: anonymous user with no membership resolved (API down, etc.)
+    // Grant guest access so they can at least use Quick Play
+    if (!resolvedMembership && !email) {
+      resolvedMembership = {
+        username: username.trim(),
+        status: 'guest',
+        role: 'guest',
+        addedAt: new Date().toISOString(),
+      };
+    }
+
     setMembership(resolvedMembership);
     if (accessResolution) {
       accessResolutionCacheRef.current = {
@@ -1485,6 +1512,61 @@ function AppContent() {
     } else {
       setView('LOBBY');
     }
+  };
+
+  // Quick Play: goes directly to a bot-filled table, no membership required.
+  // If the user isn't logged in, auto-creates a guest identity.
+  const handleQuickPlay = async () => {
+    playClick();
+    let playerId = user?.username || '';
+    if (!playerId) {
+      playerId = `guest-${Date.now().toString(36)}`;
+      // Create a minimal user session for the guest
+      setUser({
+        username: playerId,
+        balance: 100000,
+        avatar: PLAYER_AVATARS[0],
+        email: '',
+        controlMode: 'human',
+      } as any);
+    }
+    const tid = `qp-${Date.now().toString(36)}`;
+    setActiveTableId(tid);
+    setTableProtocol('v2');
+    setActiveTableMeta({ name: 'Quick Play', maxPlayers: 6, stakes: '$1/$2', type: '6-Max' });
+    setActiveTournamentId(null);
+    setActionTape({ handId: '', events: [], lastIndex: 0, feed: [] });
+    setGameState(null);
+    v2ResumeRef.current = null;
+    v2BotLoopRef.current = { tableId: tid, lastActionAt: 0 };
+    notify('SYSTEM', 'Quick Play', 'Spinning up a bot-filled table...');
+    setView('TABLE');
+
+    try {
+      const res = await holdemV2Api.quickplay({
+        playerId,
+        maxSeats: 6,
+        smallBlind: 50,
+        bigBlind: 100,
+        stack: 20000,
+      });
+      if (res?.ok && res.table) {
+        setGameState(res.table);
+        setActiveTableId(res.tableId || tid);
+        v2BotLoopRef.current = { tableId: res.tableId || tid, lastActionAt: Date.now() };
+        return;
+      }
+    } catch (err) {
+      console.error('Quick play API failed, falling back to local table:', err);
+    }
+
+    // Fallback: try the traditional path
+    await handleJoinCashTable(tid, {
+      name: 'Quick Play',
+      maxPlayers: 6,
+      stakes: '$1/$2',
+      type: '6-Max',
+    });
   };
 
   const handleJoinCashTable = async (tableId?: string, tableMeta?: any) => {
@@ -2276,6 +2358,7 @@ function AppContent() {
           availableNavViews={lobbyNavViews}
           availableCardViews={lobbyCardViews}
           availableOperatorViews={lobbyOperatorViews}
+          onQuickPlay={handleQuickPlay}
           onNavigate={(v) => {
             playClick();
             const normalized = v as PokerView;
@@ -2321,6 +2404,7 @@ function AppContent() {
         <CashTableBrowser
           onJoinTable={handleJoinCashTable}
           canCreateTable={access.canCreateTables}
+          onQuickPlay={handleQuickPlay}
           onBack={() => {
             playClick();
             setView('LOBBY');

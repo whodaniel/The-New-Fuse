@@ -11,14 +11,8 @@
     "outDir": "dist",
     "composite": true,
     "declaration": true,
-    "ignoreDeprecations": "6.0"
+    "ignoreDeprecations": "5.0"
   },
-  "include": [
-    "./test",
-    "./scripts",
-    "./hardhat.config.js"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["./test", "./scripts", "./hardhat.config.js"],
+  "exclude": ["node_modules"]
 }

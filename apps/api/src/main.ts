@@ -2,12 +2,12 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
-dotenv.config();
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
 import { AppModule } from './app.module';
 import { validateGcpEnvironment } from './config/gcp.config';
+dotenv.config();
 
 const logger = new Logger('Bootstrap');
 
@@ -22,9 +22,14 @@ async function bootstrap(): Promise<void> {
       origin:
         process.env.NODE_ENV === 'production'
           ? [
-              ...(process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com']),
+              ...(process.env.ALLOWED_ORIGINS?.split(',') || [
+                'https://thenewfuse.com',
+                'https://www.thenewfuse.com',
+                'https://app.thenewfuse.com',
+                'https://tnf-saas-app.pages.dev',
+                'https://api-gateway-241337102384.us-central1.run.app',
+              ]),
               'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
-              'https://fae7326d.ai-arcade-poker.pages.dev',
             ]
           : [
               'http://localhost:3000',
