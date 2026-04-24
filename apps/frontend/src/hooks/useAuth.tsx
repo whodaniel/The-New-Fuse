@@ -3,6 +3,28 @@ import AuthContext, { User } from '../AuthContext';
 import { API_ENDPOINTS } from '../config/api';
 import { hasSupabaseConfig, supabase } from '../lib/supabase';
 
+console.log('[Auth] useAuth module loading...');
+
+// Request timeout in milliseconds
+const FETCH_TIMEOUT = 5000;
+
+async function fetchWithTimeout(url: string, options: any = {}) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(id);
+    return response;
+  } catch (error) {
+    clearTimeout(id);
+    throw error;
+  }
+}
+
 const AUTH_TOKEN_KEY = 'auth_token';
 
 const getAuthToken = () => localStorage.getItem(AUTH_TOKEN_KEY);
@@ -165,27 +187,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUserDetails = useCallback(
     async (token: string): Promise<User | null> => {
+      console.log('[Auth] Fetching user details...');
       for (const endpoint of authEndpoints.me) {
         try {
-          const response = await fetch(endpoint, {
+          console.log(`[Auth] Trying endpoint: ${endpoint}`);
+          const response = await fetchWithTimeout(endpoint, {
             headers: {
               Authorization: `Bearer ${token}`,
               'X-Requested-With': 'XMLHttpRequest',
             },
           });
 
-          if (!response.ok) continue;
+          if (!response.ok) {
+            console.log(`[Auth] Endpoint ${endpoint} returned status: ${response.status}`);
+            continue;
+          }
           const payload = await response.json();
           const data = payload?.data ?? payload;
           const rawUser = data?.user || data;
-          if (!rawUser?.id && !rawUser?.sub) continue;
+          if (!rawUser?.id && !rawUser?.sub) {
+            console.log(`[Auth] Endpoint ${endpoint} returned invalid user data`);
+            continue;
+          }
 
+          console.log(`[Auth] User details successfully fetched from: ${endpoint}`);
           return toFrontendUser(rawUser);
-        } catch {
-          // Try next endpoint.
+        } catch (err: any) {
+          console.warn(
+            `[Auth] Error fetching from ${endpoint}:`,
+            err.name === 'AbortError' ? 'TIMEOUT' : err.message
+          );
         }
       }
 
+      console.log('[Auth] All user details endpoints failed.');
       return null;
     },
     [authEndpoints.me]
@@ -210,9 +245,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (accessToken: string) => {
       let lastErrorMessage: string | null = null;
 
+      console.log('[Auth] Starting exchangeSupabaseToken...');
       for (const endpoint of authEndpoints.supabaseExchange) {
         try {
-          const response = await fetch(endpoint, {
+          console.log(`[Auth] Trying Supabase exchange endpoint: ${endpoint}`);
+          const response = await fetchWithTimeout(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ accessToken }),
@@ -222,29 +259,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const payload = unwrapPayload(rawPayload);
 
           if (!response.ok) {
+            console.log(`[Auth] Endpoint ${endpoint} returned status: ${response.status}`);
             lastErrorMessage =
               extractErrorMessage(rawPayload) || extractErrorMessage(payload) || lastErrorMessage;
             continue;
           }
 
           const appToken = getTokenFromPayload(payload);
-          if (!appToken) continue;
+          if (!appToken) {
+            console.log(`[Auth] Endpoint ${endpoint} returned no token`);
+            continue;
+          }
 
           setAuthToken(appToken);
 
           if (payload.user) {
             const normalized = toFrontendUser(payload.user);
+            console.log(`[Auth] Token exchange successful via ${endpoint} (user in payload)`);
             setUser(normalized);
             return { method: 'supabase' as const, user: normalized };
           }
 
+          console.log(`[Auth] Token exchange successful via ${endpoint}, fetching details...`);
           const details = await fetchUserDetails(appToken);
           if (details) {
             setUser(details);
             return { method: 'supabase' as const, user: details };
           }
-        } catch {
-          // Try next endpoint.
+        } catch (err: any) {
+          console.warn(
+            `[Auth] Error exchanging token at ${endpoint}:`,
+            err.name === 'AbortError' ? 'TIMEOUT' : err.message
+          );
         }
       }
 
@@ -257,9 +303,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (endpoints: string[], body: Record<string, unknown>, method: string) => {
       let lastErrorMessage: string | null = null;
 
+      console.log(`[Auth] Starting exchangeApiAuth (${method})...`);
       for (const endpoint of endpoints) {
         try {
-          const response = await fetch(endpoint, {
+          console.log(`[Auth] Trying exchange endpoint: ${endpoint}`);
+          const response = await fetchWithTimeout(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
@@ -269,29 +317,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const payload = unwrapPayload(rawPayload);
 
           if (!response.ok) {
+            console.log(`[Auth] Endpoint ${endpoint} returned status: ${response.status}`);
             lastErrorMessage =
               extractErrorMessage(rawPayload) || extractErrorMessage(payload) || lastErrorMessage;
             continue;
           }
 
           const appToken = getTokenFromPayload(payload);
-          if (!appToken) continue;
+          if (!appToken) {
+            console.log(`[Auth] Endpoint ${endpoint} returned no token`);
+            continue;
+          }
 
           setAuthToken(appToken);
 
           if (payload.user) {
             const normalized = toFrontendUser(payload.user);
+            console.log(`[Auth] Exchange successful via ${endpoint} (user in payload)`);
             setUser(normalized);
             return { method, user: normalized };
           }
 
+          console.log(`[Auth] Exchange successful via ${endpoint}, fetching details...`);
           const details = await fetchUserDetails(appToken);
           if (details) {
             setUser(details);
             return { method, user: details };
           }
-        } catch {
-          // Try next endpoint.
+        } catch (err: any) {
+          console.warn(
+            `[Auth] Error in exchangeApiAuth at ${endpoint}:`,
+            err.name === 'AbortError' ? 'TIMEOUT' : err.message
+          );
         }
       }
 
@@ -474,39 +531,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let isMounted = true;
 
     const bootstrapAuth = async () => {
+      console.log('[Auth] Starting bootstrapAuth...');
       setIsLoading(true);
 
-      const appToken = getAuthToken();
-      if (appToken) {
-        const details = await fetchUserDetails(appToken);
-        if (!isMounted) return;
+      try {
+        const appToken = getAuthToken();
+        if (appToken) {
+          console.log('[Auth] Token found in storage, fetching details...');
+          const details = await fetchUserDetails(appToken);
+          if (!isMounted) return;
 
-        if (details?.id) {
-          setUser(details);
+          if (details?.id) {
+            setUser(details);
+            console.log('[Auth] Bootstrap successful via stored token.');
+            setIsLoading(false);
+            return;
+          }
+
+          console.log('[Auth] Stored token invalid or expired.');
+          clearAuthToken();
+          setUser(null);
+        } else {
+          console.log('[Auth] No stored token found.');
+        }
+
+        if (hasSupabaseConfig && supabase) {
+          try {
+            console.log('[Auth] Checking Supabase session...');
+            const { data, error: sessionError } = await supabase.auth.getSession();
+            if (!sessionError && data?.session?.access_token) {
+              console.log('[Auth] Supabase session found, exchanging token...');
+              await exchangeSupabaseToken(data.session.access_token);
+            } else {
+              console.log('[Auth] No Supabase session found.');
+            }
+          } catch (err: any) {
+            console.error('[Auth] Supabase session check failed:', err);
+            if (isMounted) {
+              setError(err?.message || 'Failed to initialize Supabase session');
+              setUser(null);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('[Auth] Critical error in bootstrapAuth:', err);
+      } finally {
+        if (isMounted) {
+          console.log('[Auth] Bootstrap sequence finished.');
           setIsLoading(false);
-          return;
         }
-
-        clearAuthToken();
-        setUser(null);
-      }
-
-      if (hasSupabaseConfig && supabase) {
-        try {
-          const { data, error: sessionError } = await supabase.auth.getSession();
-          if (!sessionError && data?.session?.access_token) {
-            await exchangeSupabaseToken(data.session.access_token);
-          }
-        } catch (err: any) {
-          if (isMounted) {
-            setError(err?.message || 'Failed to initialize Supabase session');
-            setUser(null);
-          }
-        }
-      }
-
-      if (isMounted) {
-        setIsLoading(false);
       }
     };
 

@@ -4,7 +4,6 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { ToastProvider } from './components/ui/toast';
-import { AuthProvider } from './providers/AuthProvider';
 // Auth runtime is initialized via Supabase in hooks/providers.
 import './styles/globals.css'; // Re-add global CSS import
 
@@ -80,11 +79,9 @@ try {
   root.render(
     <React.StrictMode>
       <BrowserRouter>
-        <AuthProvider>
-          <ToastProvider>
-            <App />
-          </ToastProvider>
-        </AuthProvider>
+        <ToastProvider>
+          <App />
+        </ToastProvider>
       </BrowserRouter>
     </React.StrictMode>
   );
