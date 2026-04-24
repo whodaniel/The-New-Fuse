@@ -26,7 +26,7 @@ test('holdem-engine handles missed/dead blinds, action order, risk caps, idempot
     smallBlind: 50,
     bigBlind: 100,
     ante: 10,
-    buttonSeat: 0,
+    buttonSeat: 5,
   });
 
   seatPlayer(engine, { playerId: 'p1', seat: 0, stack: 5000 });
@@ -206,7 +206,7 @@ test('missed blind on upcoming blind seat is not double-charged as dead blind', 
     maxSeats: 6,
     smallBlind: 50,
     bigBlind: 100,
-    buttonSeat: 1, // SB=2, BB=3 for this hand
+    buttonSeat: 0, // After startHand, button advances to 1. SB=2, BB=3.
   });
 
   seatPlayer(engine, { playerId: 'p1', seat: 0, stack: 1000 });

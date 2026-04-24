@@ -34,7 +34,7 @@ test('cash edge-cases: straddle + queued seat change + disconnect fold path', ()
     maxSeats: 6,
     smallBlind: 50,
     bigBlind: 100,
-    buttonSeat: 0,
+    buttonSeat: 3,
   });
 
   seatPlayer(e, { playerId: 'a', seat: 0, stack: 3000 });

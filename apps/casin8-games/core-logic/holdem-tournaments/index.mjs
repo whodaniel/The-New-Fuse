@@ -205,14 +205,20 @@ export function createTournament(config) {
       config.rebuy?.maxPerPlayer ?? (Boolean(config.rebuy?.enabled) ? 1 : 0),
       'rebuyMax', 0
     ),
-    untilLevelInclusive: toInt(config.rebuy?.untilLevelInclusive ?? 6, 'rebuyUntilLevel', 0),
-    chipsPerRebuy: toInt(config.rebuy?.chipsPerRebuy ?? startStack, 'chipsPerRebuy', 100),
-  },
-    addon: {
-      enabled: Boolean(config.addon?.enabled),
-      level: toInt(config.addon?.level ?? 6, 'addonLevel', 1),
-      chips: toInt(config.addon?.chips ?? Math.floor(startStack * 1.5), 'addonChips', 100),
-    },
+ untilLevelInclusive: toInt(config.rebuy?.untilLevelInclusive ?? 6, 'rebuyUntilLevel', 0),
+ chipsPerRebuy: toInt(config.rebuy?.chipsPerRebuy ?? startStack, 'chipsPerRebuy', 100),
+ // Rebuy may have a different price than buy-in (e.g., $10 buy-in + $5 rebuy).
+ // Defaults to buyInUnits if not specified (backward compatible).
+ rebuyPriceUnits: toInt(config.rebuy?.rebuyPriceUnits ?? buyInUnits, 'rebuyPriceUnits', 1),
+ },
+ addon: {
+ enabled: Boolean(config.addon?.enabled),
+ level: toInt(config.addon?.level ?? 6, 'addonLevel', 1),
+ chips: toInt(config.addon?.chips ?? Math.floor(startStack * 1.5), 'addonChips', 100),
+ // Add-on may have a different price than the buy-in (e.g., $10 buy-in
+ // with $15 add-on). If not specified, defaults to buyInUnits.
+ addonPriceUnits: toUnits(config.addon?.addonPriceUnits ?? buyInUnits, 'addonPriceUnits'),
+ },
     payoutBps: cloneJson(config.payoutBps || defaultPayoutBps(maxPlayers)),
     policy: normalizePolicy(config.policy),
     players: new Map(),
@@ -383,7 +389,9 @@ export function rebuyPlayer(t, { playerId }) {
  p.finishPosition = null;
  // Remove from eliminationOrder — player is no longer eliminated.
  t.eliminationOrder = t.eliminationOrder.filter((e) => e.playerId !== playerId);
- t.prizePoolUnits += t.buyInUnits;
+ // Rebuy may have a different price than buy-in (e.g., $10 buy-in + $5 rebuy).
+ // Previously used t.buyInUnits which was incorrect when rebuy pricing differs.
+ t.prizePoolUnits += t.rebuy.rebuyPriceUnits || t.buyInUnits;
 
   t.eventLog.push({ type: 'player.rebuy', ts: nowIso(), payload: { playerId, rebuys: p.rebuys } });
   rebalanceTables(t);
@@ -404,10 +412,12 @@ export function addOnPlayer(t, { playerId }) {
  throw new Error('Add-on window closed');
  }
 
-  p.addonTaken = true;
-  p.entries += 1;
-  p.chips += t.addon.chips;
-  t.prizePoolUnits += t.buyInUnits;
+ p.addonTaken = true;
+ p.entries += 1;
+ p.chips += t.addon.chips;
+ // Add-on may have a different price than buy-in (e.g., $10 buy-in + $15 add-on).
+ // Previously used t.buyInUnits which was incorrect when addon pricing differs.
+ t.prizePoolUnits += t.addon.addonPriceUnits || t.buyInUnits;
 
   t.eventLog.push({ type: 'player.addon', ts: nowIso(), payload: { playerId } });
   return snapshotTournament(t);

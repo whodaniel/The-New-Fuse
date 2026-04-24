@@ -68,7 +68,13 @@ module.exports = {
   setupFilesAfterEnv: [],
 
   // Ignore patterns
-  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/build/', '/coverage/'],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    '/build/',
+    '/coverage/',
+    '/apps/casin8-games/',
+  ],
 
   // Transform ignore patterns for ESM modules
   transformIgnorePatterns: ['node_modules/(?!(date-fns|@the-new-fuse)/)'],

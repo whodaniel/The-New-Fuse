@@ -49,8 +49,11 @@ test('MTT supports late reg, rebuy/add-on windows, balancing, final-table merge,
   assert.equal(snapshotTournament(t).lateRegOpen, false);
   assert.throws(() => registerPlayer(t, { playerId: 'late-2' }), /Registration closed/);
 
+  t.players.get('p0').chips = 0;
   rebuyPlayer(t, { playerId: 'p0' });
+  t.players.get('p0').chips = 0;
   rebuyPlayer(t, { playerId: 'p0' });
+  t.players.get('p0').chips = 0;
   assert.throws(() => rebuyPlayer(t, { playerId: 'p0' }), /Rebuy cap reached/);
 
   // Advance to add-on level and consume add-on.

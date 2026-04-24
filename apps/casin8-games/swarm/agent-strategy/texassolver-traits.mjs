@@ -1,4 +1,4 @@
-import { assertString } from '../shared/contracts.mjs';
+import { assertString } from '../../shared/contracts.mjs';
 
 const STYLE_TO_TEMPERAMENT = Object.freeze({
   tight_aggressive: 'tight_aggressive',

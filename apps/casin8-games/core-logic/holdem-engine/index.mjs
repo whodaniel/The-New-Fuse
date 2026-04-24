@@ -265,12 +265,19 @@ function postForced(engine, hand, seat, amount, kind, live = false) {
 }
 
 function resetStreet(engine, hand, nextStreet) {
-  hand.street = nextStreet;
-  hand.streetCommitted = {};
-  hand.currentBet = 0;
-  hand.actedSinceAggression = [];
-  hand.lastAggressorSeat = null;
-  hand.lastAggressiveDelta = hand.minRaise;
+ hand.street = nextStreet;
+ hand.streetCommitted = {};
+ hand.currentBet = 0;
+ hand.actedSinceAggression = [];
+ hand.lastAggressorSeat = null;
+ // TDA Rule 43: On each new street, the minimum opening bet is the big blind.
+ // Previously, hand.minRaise was NOT reset on street transition, carrying over
+ // the previous street's value (e.g., after a 500 bet on the flop, minRaise=500
+ // would persist to the turn). This caused the minimum bet/raise on the new
+ // street to be incorrectly large. Per TDA rules, the minimum raise size resets
+ // to the big blind at the start of each new betting round.
+ hand.minRaise = engine.blinds.bigBlind;
+ hand.lastAggressiveDelta = engine.blinds.bigBlind;
 
   const button = hand.buttonSeat;
   const seat = nextSeatFrom(engine, button, hand);
@@ -460,16 +467,22 @@ export function forceFoldDisconnected(engine, { playerId }) {
   if (!hand || hand.settled) return null; // No active hand
   if (hand.foldedSeats.includes(row.seat)) return null; // Already folded
 
-  if (!hand.foldedSeats.includes(row.seat)) hand.foldedSeats.push(row.seat);
-  hand.actedSinceAggression = hand.actedSinceAggression.filter((s) => s !== row.seat);
-  const alive = activeSeats(engine, hand);
-  if (alive.length <= 1) {
-    hand.street = 'showdown';
-    hand.actingSeat = null;
-    hand.readyForSettlement = true;
-  } else if (hand.actingSeat === row.seat) {
-    maybeAdvanceStreet(engine, hand);
-  }
+ if (!hand.foldedSeats.includes(row.seat)) hand.foldedSeats.push(row.seat);
+ hand.actedSinceAggression = hand.actedSinceAggression.filter((s) => s !== row.seat);
+ const alive = activeSeats(engine, hand);
+ if (alive.length <= 1) {
+ hand.street = 'showdown';
+ hand.actingSeat = null;
+ hand.readyForSettlement = true;
+ } else if (hand.actingSeat === row.seat) {
+ maybeAdvanceStreet(engine, hand);
+ } else if (isBettingRoundComplete(engine, hand)) {
+ // The fold of a non-acting player may have completed the betting round
+ // (e.g., the folded player was the only one who hadn't yet acted).
+ // If so, advance the street. Without this check, the game stalls because
+ // the current actor already acted and no one else needs to act.
+ maybeAdvanceStreet(engine, hand);
+ }
 
   appendEvent(engine, 'hand.action', {
     handId: hand.handId,
@@ -704,18 +717,26 @@ export function startHand(engine, { handId, idempotencyKey }) {
     Number(straddleSeat.straddleRequested || 0) > 0 &&
     straddleSeat.stack > 0
   ) {
-    const straddleAmount = Math.max(engine.blinds.bigBlind * 2, Number(straddleSeat.straddleRequested || 0));
-    postForced(engine, hand, straddleSeat, straddleAmount, 'straddle', true);
-    hand.currentBet = Math.max(hand.currentBet, Number(hand.streetCommitted[String(straddleSeatNo)] || 0));
-    hand.lastAggressiveDelta = Math.max(
-      hand.lastAggressiveDelta,
-      hand.currentBet - Number(hand.streetCommitted[String(bbSeatNo)] || engine.blinds.bigBlind)
-    );
-    straddleSeat.straddleRequested = 0;
-    actingFrom = straddleSeatNo;
+ const straddleAmount = Math.max(engine.blinds.bigBlind * 2, Number(straddleSeat.straddleRequested || 0));
+ postForced(engine, hand, straddleSeat, straddleAmount, 'straddle', true);
+ hand.currentBet = Math.max(hand.currentBet, Number(hand.streetCommitted[String(straddleSeatNo)] || 0));
+ hand.lastAggressiveDelta = Math.max(
+ hand.lastAggressiveDelta,
+ hand.currentBet - Number(hand.streetCommitted[String(bbSeatNo)] || engine.blinds.bigBlind)
+ );
+ // TDA Rule 43: A straddle is a voluntary live bet. After a straddle, the
+ // minimum raise must be at least the straddle amount (same as after any bet).
+ // Without this, the minRaise stayed at bigBlind, allowing raises that didn't
+ // meet the straddle's raise threshold.
+ hand.minRaise = Math.max(hand.minRaise, hand.currentBet);
+ straddleSeat.straddleRequested = 0;
+ actingFrom = straddleSeatNo;
   }
 
-  hand.actingSeat = nextSeatFrom(engine, actingFrom, hand);
+  // Preflop action order: UTG acts first (left of BB).
+ // In heads-up, nextSeatFrom wraps from BB to button/SB who acts first.
+ // Straddle case: action starts left of straddler.
+ hand.actingSeat = nextSeatFrom(engine, actingFrom, hand);
   engine.hand = hand;
   engine.buttonSeat = hand.buttonSeat;
 
@@ -813,18 +834,24 @@ export function applyAction(engine, input) {
     spend = Math.min(stack, toCall);
     target = streetCommit + spend;
     commit(engine, hand, seatNo, spend);
-  } else if (action === 'bet') {
-    if (toCall > 0) throw new Error('Cannot bet while facing a bet');
-    const minTotal = Math.max(engine.blinds.bigBlind, hand.minRaise);
-    const desired = amount > 0 ? amount : minTotal;
-    target = Math.min(streetCommit + stack, desired);
-    if (target <= 0) throw new Error('Invalid bet target');
-    spend = Math.max(0, target - streetCommit);
-    commit(engine, hand, seatNo, spend);
-    aggressive = true;
-    hand.lastAggressiveDelta = spend;
-    hand.currentBet = target;
-    hand.lastAggressorSeat = seatNo;
+ } else if (action === 'bet') {
+ if (toCall > 0) throw new Error('Cannot bet while facing a bet');
+ const minTotal = Math.max(engine.blinds.bigBlind, hand.minRaise);
+ const desired = amount > 0 ? amount : minTotal;
+ target = Math.min(streetCommit + stack, desired);
+ if (target <= 0) throw new Error('Invalid bet target');
+ spend = Math.max(0, target - streetCommit);
+ commit(engine, hand, seatNo, spend);
+ aggressive = true;
+ hand.lastAggressiveDelta = spend;
+ // TDA Rule 43: Update minRaise to match the opening bet size.
+ // After a bet of X, a raise must be at least X more (bet + raise ≥ 2X).
+ // Previously, hand.minRaise was NOT updated after a bet, so if a player
+ // bet 500, the next player's minimum raise was still based on the big
+ // blind (e.g., 200), allowing a raise to 700 instead of the correct 1000.
+ hand.minRaise = target;
+ hand.currentBet = target;
+ hand.lastAggressorSeat = seatNo;
   } else if (action === 'raise') {
     if (toCall <= 0) throw new Error('Use bet when no outstanding bet');
     const minRaiseTo = hand.currentBet + hand.lastAggressiveDelta;
@@ -839,32 +866,72 @@ export function applyAction(engine, input) {
     spend = target - streetCommit;
     commit(engine, hand, seatNo, spend);
 
-    const delta = target - hand.currentBet;
-    if (delta >= hand.lastAggressiveDelta) {
-      hand.lastAggressiveDelta = delta;
-      aggressive = true;
-      hand.currentBet = target;
-      hand.lastAggressorSeat = seatNo;
-    } else {
-      // short all-in raise: legal, does not reopen action
-      hand.currentBet = target;
-    }
-  } else if (action === 'allin') {
-    if (stack <= 0) throw new Error('No chips to push all-in');
-    target = streetCommit + stack;
-    spend = stack;
-    commit(engine, hand, seatNo, spend);
+ const prevCurrentBet = hand.currentBet;
+ const delta = target - prevCurrentBet;
+ if (delta >= hand.lastAggressiveDelta) {
+ hand.lastAggressiveDelta = delta;
+ // TDA Rule 43: Update minRaise when the raise constitutes a full raise.
+ // After a raise to X, the minimum re-raise is X + delta (full raise more).
+ // Previously, minRaise was not updated after a raise, so the minimum
+ // re-raise could be smaller than TDA rules permit.
+ hand.minRaise = target;
+ aggressive = true;
+ hand.currentBet = target;
+ hand.lastAggressorSeat = seatNo;
+ } else {
+ // Short all-in raise: legal, does not reopen action per TDA Rule 42.
+ // However, since currentBet increased (target > prevCurrentBet),
+ // other players' committed amounts are now below the new currentBet.
+ // Clear actedSinceAggression so they get a chance to match.
+ hand.currentBet = target;
+ hand.actedSinceAggression = hand.actedSinceAggression.filter((s) => s !== seatNo);
+ hand.actedSinceAggression.push(seatNo);
+ }
+ } else if (action === 'allin') {
+ if (stack <= 0) throw new Error('No chips to push all-in');
+ target = streetCommit + stack;
+ spend = stack;
+ const prevCurrentBet = hand.currentBet;
+ commit(engine, hand, seatNo, spend);
 
-    if (target > hand.currentBet) {
-      const delta = target - hand.currentBet;
-      if (delta >= hand.lastAggressiveDelta) {
-        hand.lastAggressiveDelta = delta;
-        aggressive = true;
-        hand.lastAggressorSeat = seatNo;
-      }
-      hand.currentBet = target;
-    }
-  } else {
+ if (target > hand.currentBet) {
+ const delta = target - hand.currentBet;
+ if (delta >= hand.lastAggressiveDelta) {
+ hand.lastAggressiveDelta = delta;
+ // TDA Rule 43: When an all-in constitutes a full raise, update minRaise
+ // to reflect the new raise size. Subsequent raises must be at least this
+ // much more than the current bet. Previously, minRaise was not updated
+ // after an all-in, allowing subsequent raises below the correct minimum.
+ hand.minRaise = target;
+ aggressive = true;
+ hand.lastAggressorSeat = seatNo;
+ }
+ hand.currentBet = target;
+ }
+ // TDA Rule 42: An all-in wager that is less than a full raise does NOT
+ // reopen betting for players who have already acted. However, when an
+ // all-in INCREASES the current bet (but less than a min-raise), the
+ // committed amounts of other players are now below currentBet, so
+ // isBettingRoundComplete() will return false for them (committed < currentBet).
+ // Those players need another chance to match the new currentBet.
+ //
+ // When the all-in DOES NOT increase currentBet (calling all-in for less
+ // or a flat call), currentBet is unchanged and committed amounts are
+ // still sufficient — isBettingRoundComplete() correctly returns true
+ // if everyone has acted. In this case, do NOT reset actedSinceAggression
+ // since no one needs to act again.
+ //
+ // Only clear actedSinceAggression when the all-in increased currentBet
+ // but was not a full raise (non-aggressive raise, target > prevCurrentBet).
+ if (!aggressive && target > prevCurrentBet) {
+ // The all-in raised currentBet but not enough to be a full raise.
+ // Clear actedSinceAggression for all OTHER live players so they
+ // get a chance to face the new currentBet. The all-in player is
+ // marked as having acted (they can't act again).
+ hand.actedSinceAggression = hand.actedSinceAggression.filter((s) => s !== seatNo);
+ hand.actedSinceAggression.push(seatNo);
+ }
+ } else {
     throw new Error('Unsupported action');
   }
 

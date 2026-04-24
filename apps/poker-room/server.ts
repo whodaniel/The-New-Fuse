@@ -526,25 +526,33 @@ const scheduleActionTimeout = () => {
     const currentHand = pokerEngine.hand;
     if (!currentHand || currentHand.settled || currentHand.actingSeat !== actingSeat) return;
 
+    // Re-read the seat row at timeout time, not at schedule time.
+    // The captured `seatRow` becomes stale if the player disconnects and
+    // reconnects within the 25s window (connected flips false→true but
+    // the closure still sees the old value). Using the live engine seat
+    // ensures we check the CURRENT connection state.
+    const liveSeatRow = pokerEngine.seats[actingSeat];
+    if (!liveSeatRow) return;
+
     // Time expired — auto-fold the player
     try {
-      if (seatRow.connected === false) {
+      if (liveSeatRow.connected === false) {
         // Disconnected players can't use applyAction (it rejects disconnected players).
         // Use forceFoldDisconnected instead, which handles the disconnected state.
-        holdemEngine.forceFoldDisconnected(pokerEngine, { playerId: seatRow.playerId });
-        addLog(`${seatRow.playerId} auto-folded (action timeout, disconnected)`);
+        holdemEngine.forceFoldDisconnected(pokerEngine, { playerId: liveSeatRow.playerId });
+        addLog(`${liveSeatRow.playerId} auto-folded (action timeout, disconnected)`);
       } else {
         // Connected but idle — fold via applyAction with playerId (NOT seat number).
         // Previous code passed { seat: actingSeat } which caused applyAction to throw
         // "Unknown playerId" since applyAction resolves the player via input.playerId.
-        const idemKey = `timeout-fold:${seatRow.playerId}:${Date.now()}`;
+        const idemKey = `timeout-fold:${liveSeatRow.playerId}:${Date.now()}`;
         holdemEngine.applyAction(pokerEngine, {
-          playerId: seatRow.playerId,
+          playerId: liveSeatRow.playerId,
           action: 'fold',
           amount: 0,
           idempotencyKey: idemKey,
         });
-        addLog(`${seatRow.playerId} auto-folded (action timeout)`);
+        addLog(`${liveSeatRow.playerId} auto-folded (action timeout)`);
       }
     } catch (err: any) {
       // Player may have already acted, hand settled, or already folded; ignore
@@ -638,7 +646,11 @@ const handleSettlement = () => {
       const evaluations = activeSeats.map(({ seat, idx }: any) => {
         // Hole cards are on hand.holeCards, NOT on the seat object
         const holeCards = hand.holeCards?.[String(idx)] || [];
-        const board =
+        // When a hand ends before all community cards are dealt (e.g., all but
+        // one player folds on the flop), boardCards may contain fewer than 5
+        // entries, and slicing to 5 includes `undefined` entries that crash
+        // Hand.solve(). Filter out undefined/null to prevent this.
+        const rawBoard =
           hand.boardCards?.slice(
             0,
             hand.street === 'flop'
@@ -651,6 +663,7 @@ const handleSettlement = () => {
                     ? 5
                     : 0
           ) || [];
+        const board = rawBoard.filter(Boolean);
         const solverHand = Hand.solve([...holeCards, ...board]);
         return { seatIdx: idx, hand: solverHand };
       });
@@ -918,6 +931,18 @@ io.on('connection', (socket) => {
     // Store a marker so we know this socket is disconnected but still mapped
     // The grace timer will clean up if no reconnection occurs
     const timer = setTimeout(() => {
+      // Verify player is still disconnected before acting.
+      // A reconnect_attempt handler may have already cleared the timer and
+      // restored the player, but Node.js setTimeout callbacks are not atomically
+      // cancelled — if the callback was already queued before clearTimeout ran,
+      // it still fires. Without this check, a reconnected player gets force-folded.
+      const seatRow = pokerEngine.seats[seat];
+      if (seatRow && seatRow.connected !== false) {
+        // Player has reconnected — do nothing
+        disconnectTimers.delete(playerId);
+        return;
+      }
+
       // Grace expired — force-fold the player if in an active hand
       try {
         holdemEngine.forceFoldDisconnected(pokerEngine, { playerId });

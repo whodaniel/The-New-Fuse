@@ -1,4 +1,4 @@
-import { assertString } from '../shared/contracts.mjs';
+import { assertString } from '../../shared/contracts.mjs';
 import { craftTraitsFromTexasSolver } from './texassolver-traits.mjs';
 
 const PROVIDERS = Object.freeze(['texassolver', 'cfr_profile', 'risk_profile']);
