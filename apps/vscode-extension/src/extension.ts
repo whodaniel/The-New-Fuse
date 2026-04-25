@@ -7,6 +7,10 @@
  */
 
 import * as vscode from 'vscode';
+import {
+  EmbeddedBrowserProvider,
+  registerBrowserCommands,
+} from './browser/EmbeddedBrowserProvider';
 import { registerCommands } from './commands';
 import { ConfigManager } from './core/config';
 import { LLMProviderType, MCPServerConfig, RegisteredAgent, TheNewFuseAPI } from './core/types';
@@ -16,6 +20,7 @@ import { ChatService } from './services/ChatService';
 import { MCPService, getMCPService } from './services/MCPService';
 import { ToolOrchestrationService } from './services/ToolOrchestrationService';
 import { WorkspaceService } from './services/WorkspaceService';
+import { WorkspaceSyncService } from './services/WorkspaceSyncService';
 import {
   A2AProtocolService,
   AGUIProtocolService,
@@ -26,6 +31,15 @@ import {
   RelayServerService,
 } from './services/tnf-framework';
 import { log, logger } from './utils/logger';
+
+let workspaceSyncService: WorkspaceSyncService | null = null;
+
+export function getWorkspaceSyncService(): WorkspaceSyncService {
+  if (!workspaceSyncService) {
+    workspaceSyncService = new WorkspaceSyncService();
+  }
+  return workspaceSyncService;
+}
 
 /**
  * Extension activation
@@ -53,6 +67,18 @@ export async function activate(context: vscode.ExtensionContext): Promise<TheNew
       })
     );
     log.info('✓ Chat view provider registered');
+
+    // Create and register embedded browser provider
+    const browserProvider = new EmbeddedBrowserProvider(context.extensionUri);
+    context.subscriptions.push(
+      vscode.window.registerWebviewViewProvider(EmbeddedBrowserProvider.viewType, browserProvider, {
+        webviewOptions: {
+          retainContextWhenHidden: true,
+        },
+      })
+    );
+    registerBrowserCommands(context, browserProvider);
+    log.info('✓ Embedded browser provider registered');
 
     // Register all commands
     registerCommands(context, chatViewProvider);

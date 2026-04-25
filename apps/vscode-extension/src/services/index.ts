@@ -7,6 +7,7 @@ export * from './ChatService';
 export * from './MCPDiscoveryService';
 export * from './MCPService';
 export * from './OpenRouterService';
+export * from './WorkspaceSyncService';
 
 // TNF Framework Services
 export * from './tnf-framework/A2AProtocolService';

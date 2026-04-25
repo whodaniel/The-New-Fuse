@@ -159,6 +159,70 @@ export class EmbeddedBrowserProvider implements vscode.WebviewViewProvider {
   }
 
   /**
+   * Take a semantic snapshot (accessibility tree)
+   */
+  public async takeSemanticSnapshot(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (!this.browserProcess) {
+        reject(new Error('Browser not running'));
+        return;
+      }
+
+      const id = Date.now().toString();
+      const messageHandler = (message: any) => {
+        if (message.type === 'semanticSnapshotResult' && message.id === id) {
+          this.browserProcess?.off?.('message', messageHandler);
+          if (message.error) {
+            reject(new Error(message.error));
+          } else {
+            resolve(message.nodes);
+          }
+        }
+      };
+
+      this.browserProcess.on('message', messageHandler);
+      this.browserProcess.send?.({ type: 'takeSemanticSnapshot', id });
+
+      setTimeout(() => {
+        this.browserProcess?.off?.('message', messageHandler);
+        reject(new Error('Semantic snapshot timeout'));
+      }, 10000);
+    });
+  }
+
+  /**
+   * Take an annotated screenshot for vision models
+   */
+  public async takeAnnotatedScreenshot(): Promise<{ dataUrl: string; elements: any[] } | null> {
+    return new Promise((resolve) => {
+      if (!this.browserProcess) {
+        resolve(null);
+        return;
+      }
+
+      const id = Date.now().toString();
+      const messageHandler = (message: any) => {
+        if (message.type === 'annotatedScreenshotResult' && message.id === id) {
+          this.browserProcess?.off?.('message', messageHandler);
+          if (message.error) {
+            resolve(null);
+          } else {
+            resolve({ dataUrl: message.dataUrl, elements: message.elements });
+          }
+        }
+      };
+
+      this.browserProcess.on('message', messageHandler);
+      this.browserProcess.send?.({ type: 'takeAnnotatedScreenshot', id });
+
+      setTimeout(() => {
+        this.browserProcess?.off?.('message', messageHandler);
+        resolve(null);
+      }, 10000);
+    });
+  }
+
+  /**
    * Execute JavaScript in the browser
    */
   public async executeScript(script: string): Promise<any> {
@@ -694,6 +758,25 @@ export function registerBrowserCommands(
         // Could save to file or return to AI agent
       } else {
         vscode.window.showWarningMessage('Failed to capture screenshot');
+      }
+    }),
+    vscode.commands.registerCommand('theNewFuse.browserSemanticSnapshot', async () => {
+      try {
+        const snapshot = await browserProvider.takeSemanticSnapshot();
+        vscode.window.showInformationMessage('Semantic snapshot captured!');
+        console.log('Semantic Snapshot:', snapshot);
+      } catch (error) {
+        vscode.window.showErrorMessage(`Failed to capture semantic snapshot: ${error}`);
+      }
+    }),
+    vscode.commands.registerCommand('theNewFuse.browserAnnotatedScreenshot', async () => {
+      const result = await browserProvider.takeAnnotatedScreenshot();
+      if (result) {
+        vscode.window.showInformationMessage(
+          `Annotated screenshot captured with ${result.elements.length} interactive elements!`
+        );
+      } else {
+        vscode.window.showWarningMessage('Failed to capture annotated screenshot');
       }
     }),
     vscode.commands.registerCommand('theNewFuse.browserExecuteScript', async () => {

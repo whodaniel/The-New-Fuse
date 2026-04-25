@@ -7,6 +7,7 @@
 
 import * as vscode from 'vscode';
 import { ConfigManager } from '../core/config';
+import { getWorkspaceSyncService } from '../extension';
 import { ChatViewProvider } from '../providers/ChatViewProvider';
 import { getAIService } from '../services/AIService';
 import { getChatService } from '../services/ChatService';
@@ -897,6 +898,17 @@ export function registerCommands(
         const a2aService = getA2AProtocolService();
         await a2aService.connect();
         showInfo('Joined federation network');
+      },
+    },
+
+    // ============================================
+    // Workspace Sync Commands
+    // ============================================
+    {
+      id: 'theNewFuse.toggleWorkspaceSync',
+      handler: async () => {
+        const syncService = getWorkspaceSyncService();
+        await syncService.toggleSync();
       },
     },
   ];

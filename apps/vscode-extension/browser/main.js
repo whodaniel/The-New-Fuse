@@ -45,6 +45,12 @@ function handleMessage(message) {
     case 'takeScreenshot':
       takeScreenshot();
       break;
+    case 'takeSemanticSnapshot':
+      takeSemanticSnapshot(message.id);
+      break;
+    case 'takeAnnotatedScreenshot':
+      takeAnnotatedScreenshot(message.id);
+      break;
     case 'executeScript':
       executeScript(message.script, message.id);
       break;
@@ -143,6 +149,82 @@ async function executeScript(script, id) {
     sendMessage({ type: 'executeScriptResult', id, result });
   } catch (error) {
     sendMessage({ type: 'executeScriptResult', id, error: error.message });
+  }
+}
+
+/**
+ * Take a semantic snapshot (accessibility tree)
+ */
+async function takeSemanticSnapshot(id) {
+  if (!browserView?.webContents) {
+    sendMessage({ type: 'semanticSnapshotResult', id, error: 'Browser not ready' });
+    return;
+  }
+
+  try {
+    if (!browserView.webContents.debugger.isAttached()) {
+      browserView.webContents.debugger.attach();
+    }
+    const { nodes } = await browserView.webContents.debugger.sendCommand(
+      'Accessibility.getFullAXTree'
+    );
+    sendMessage({ type: 'semanticSnapshotResult', id, nodes });
+  } catch (error) {
+    sendMessage({ type: 'semanticSnapshotResult', id, error: error.message });
+  }
+}
+
+/**
+ * Take an annotated screenshot with numbered labels
+ */
+async function takeAnnotatedScreenshot(id) {
+  if (!browserView?.webContents) {
+    sendMessage({ type: 'annotatedScreenshotResult', id, error: 'Browser not ready' });
+    return;
+  }
+
+  try {
+    const elementsInfo = await browserView.webContents.executeJavaScript(`
+      (function() {
+        const interactiveSelectors = 'a, button, input, select, textarea, [role="button"], [role="link"]';
+        const elements = document.querySelectorAll(interactiveSelectors);
+        const info = [];
+        
+        elements.forEach((el, i) => {
+          const rect = el.getBoundingClientRect();
+          if (rect.width === 0 || rect.height === 0) return;
+          
+          const box = document.createElement('div');
+          box.className = 'tnf-vision-label';
+          box.style.cssText = 'position:absolute; border:2px solid red; z-index:2147483647; pointer-events:none; background:rgba(255,0,0,0.1);';
+          box.style.left = rect.left + window.scrollX + 'px';
+          box.style.top = rect.top + window.scrollY + 'px';
+          box.style.width = rect.width + 'px';
+          box.style.height = rect.height + 'px';
+          
+          const label = document.createElement('span');
+          label.innerText = i + 1;
+          label.style.cssText = 'position:absolute; top:-10px; left:-10px; background:red; color:white; font-weight:bold; border-radius:50%; padding:2px 5px; font-size:12px;';
+          box.appendChild(label);
+          
+          document.body.appendChild(box);
+          info.push({ id: i + 1, tagName: el.tagName, text: el.innerText.substring(0, 20) });
+        });
+        return info;
+      })()
+    `);
+
+    const image = await browserView.webContents.capturePage();
+    const dataUrl = 'data:image/png;base64,' + image.toPNG().toString('base64');
+
+    // Cleanup labels
+    await browserView.webContents.executeJavaScript(`
+      document.querySelectorAll('.tnf-vision-label').forEach(el => el.remove());
+    `);
+
+    sendMessage({ type: 'annotatedScreenshotResult', id, dataUrl, elements: elementsInfo });
+  } catch (error) {
+    sendMessage({ type: 'annotatedScreenshotResult', id, error: error.message });
   }
 }
 
