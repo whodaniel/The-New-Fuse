@@ -12,7 +12,10 @@ async function main() {
     sourcesContent: false,
     platform: 'node',
     outfile: 'dist/extension.js',
-    external: ['vscode'],
+    external: ['vscode', 'electron', 'fsevents', 'chokidar', '@modelcontextprotocol/sdk', 'uuid'],
+    loader: {
+      '.node': 'copy',
+    },
     logLevel: 'silent',
     plugins: [
       /* add plugins if needed */

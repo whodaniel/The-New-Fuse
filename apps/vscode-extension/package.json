@@ -2,7 +2,7 @@
   "name": "the-new-fuse",
   "displayName": "The New Fuse",
   "description": "AI-Powered Development Assistant with Multi-Provider LLM Support, A2A Protocol, MCP Integration & Agent Federation",
-  "version": "9.1.1",
+  "version": "9.2.0",
   "publisher": "TheNewFuse",
   "license": "MIT",
   "repository": {
@@ -821,6 +821,9 @@
     "lint": "eslint src --ext ts",
     "test": "echo \"Tests temporarily disabled for this package\"",
     "package": "npm run compile && npx @vscode/vsce package --no-dependencies"
+  },
+  "vsce": {
+    "no-dependencies": true
   },
   "devDependencies": {
     "@types/dompurify": "^3.2.0",
