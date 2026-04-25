@@ -56,6 +56,19 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
   });
 
+  // Pseudo-domain Identity Mapping (Sovereign Agent Identity)
+  app.use((req, res, next) => {
+    const host = req.headers.host;
+    if (host && host.endsWith('.tnf.computer')) {
+      const identity = host.split('.tnf.computer')[0];
+      req.headers['x-tnf-identity'] = identity;
+      // Map to agent/user specific route namespace if needed
+      // Currently sets the header for downstream services to consume
+      console.log(`[Identity] Mapped pseudo-domain ${host} to identity: ${identity}`);
+    }
+    next();
+  });
+
   // Back-compat: some clients still call /v1/* without the global /api prefix.
   app.use((req, _res, next) => {
     if (req.url.startsWith('/v1/') || req.url === '/v1') {

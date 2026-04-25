@@ -433,6 +433,121 @@ const tools: ToolHandler[] = [
     },
   },
   {
+    name: 'browser_semantic_snapshot',
+    description:
+      'Get a semantic snapshot (accessibility tree) of the current page, optimized for LLMs.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        interestingOnly: {
+          type: 'boolean',
+          description: 'Include only interesting nodes (true by default)',
+          default: true,
+        },
+      },
+    },
+    handler: async (params) => {
+      try {
+        const page = await getPage();
+        const interestingOnly = params.interestingOnly !== false;
+        const snapshot = await (page as any).accessibility.snapshot({ interestingOnly });
+        const url = page.url();
+        const title = await page.title();
+        return { success: true, url, title, snapshot };
+      } catch (error: unknown) {
+        const err = error as { message: string };
+        return { success: false, error: err.message };
+      }
+    },
+  },
+  {
+    name: 'browser_annotated_screenshot',
+    description:
+      'Take a screenshot of the current page with numbered bounding boxes over interactive elements for Vision models.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: {
+          type: 'string',
+          description: 'File path to save screenshot',
+          default: '/tmp/annotated_screenshot.png',
+        },
+      },
+    },
+    handler: withBroadcast('screenshot', async (params) => {
+      try {
+        const page = await getPage();
+        const path = (params.path as string) || '/tmp/annotated_screenshot.png';
+
+        // Inject script to add bounding boxes
+        const elementsInfo = await page.evaluate(() => {
+          const interactiveSelectors =
+            'a, button, input, select, textarea, [role="button"], [role="link"], [tabindex]:not([tabindex="-1"])';
+          const elements = document.querySelectorAll(interactiveSelectors);
+          const info: Array<{ id: number; tagName: string; text: string; rect: any }> = [];
+
+          let counter = 1;
+          elements.forEach((el) => {
+            const rect = el.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0 || rect.top < 0 || rect.left < 0) return;
+
+            // Draw box
+            const box = document.createElement('div');
+            box.style.position = 'absolute';
+            box.style.left = rect.left + window.scrollX + 'px';
+            box.style.top = rect.top + window.scrollY + 'px';
+            box.style.width = rect.width + 'px';
+            box.style.height = rect.height + 'px';
+            box.style.border = '2px solid red';
+            box.style.backgroundColor = 'rgba(255,0,0,0.1)';
+            box.style.pointerEvents = 'none';
+            box.style.zIndex = '10000';
+
+            // Add label
+            const label = document.createElement('span');
+            label.textContent = counter.toString();
+            label.style.position = 'absolute';
+            label.style.top = '-10px';
+            label.style.left = '-10px';
+            label.style.backgroundColor = 'red';
+            label.style.color = 'white';
+            label.style.padding = '2px 4px';
+            label.style.fontSize = '12px';
+            label.style.fontWeight = 'bold';
+            label.style.borderRadius = '50%';
+
+            box.appendChild(label);
+            document.body.appendChild(box);
+
+            info.push({
+              id: counter,
+              tagName: el.tagName.toLowerCase(),
+              text: (el.textContent || '').substring(0, 50).trim(),
+              rect: { x: rect.left, y: rect.top, width: rect.width, height: rect.height },
+            });
+            counter++;
+          });
+          return info;
+        });
+
+        // Take screenshot
+        await page.screenshot({ path, fullPage: true });
+
+        // Clean up boxes
+        await page.evaluate(() => {
+          // Remove all added divs
+          const boxes = document.querySelectorAll('div[style*="z-index: 10000"]');
+          boxes.forEach((b) => b.remove());
+        });
+
+        return { success: true, path, interactiveElements: elementsInfo };
+      } catch (error: unknown) {
+        const err = error as { message: string };
+        return { success: false, error: err.message };
+      }
+    }),
+  },
+  {
     name: 'get_terminal_access',
     description: 'Get the WebSocket URL for an interactive cloud terminal (PTY)',
     inputSchema: {
@@ -445,7 +560,8 @@ const tools: ToolHandler[] = [
       return {
         success: true,
         url: `${protocol}://${publicUrl}/ws/terminal`,
-        instructions: 'Connect using a WebSocket client. Send raw strings for input, receive ANSI data for output.'
+        instructions:
+          'Connect using a WebSocket client. Send raw strings for input, receive ANSI data for output.',
       };
     },
   },
@@ -1364,7 +1480,7 @@ terminalWss.on('connection', (ws) => {
     cols: 100,
     rows: 30,
     cwd: process.env.HOME || '/home/app-user',
-    env: process.env as Record<string, string>
+    env: process.env as Record<string, string>,
   });
 
   ptyProcess.onData((data) => {

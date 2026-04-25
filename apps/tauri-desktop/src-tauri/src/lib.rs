@@ -173,6 +173,26 @@ async fn mcp_list_tools(state: State<'_, AppState>) -> Result<Vec<serde_json::Va
                 }
             }),
             serde_json::json!({
+                "name": "browser_semantic_snapshot",
+                "description": "Get a semantic snapshot (accessibility tree) of the current page, optimized for LLMs.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "interestingOnly": { "type": "boolean" }
+                    }
+                }
+            }),
+            serde_json::json!({
+                "name": "browser_annotated_screenshot",
+                "description": "Take a screenshot of the current page with numbered bounding boxes over interactive elements for Vision models.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "path": { "type": "string" }
+                    }
+                }
+            }),
+            serde_json::json!({
                 "name": "read_local_file",
                 "description": "Read file from local machine",
                 "inputSchema": {

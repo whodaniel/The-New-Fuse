@@ -9,7 +9,9 @@ export * from './config/SyncRedisConfig.js';
 // export * from './database/SyncDatabaseService.js';
 
 // Services
+export * from './services/AgentFlightRecorder.js';
 export * from './services/MasterClockService.js';
+export * from './services/WorkspaceMirrorService.js';
 // Temporarily disabled - requires Drizzle-based SyncDatabaseService
 // export * from './services/SyncOrchestrator.js';
 // ConflictManager temporarily disabled - requires BaseErrorHandler refactoring
