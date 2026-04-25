@@ -26,9 +26,21 @@ class MojoAccelerator:
         print(f"[Mojo-Accelerator] Forging kernel: {kernel_name}")
         
         try:
-            # 1. Emit LLVM IR
-            # command: mojo build --emit-llvm -o kernel.ll source.mojo
-            subprocess.run(["mojo", "build", "--emit-llvm", "-o", f"{source_path}.ll", source_path], check=True)
+            # Check if mojo is available locally
+            has_mojo = subprocess.run(["which", "mojo"], capture_output=True).returncode == 0
+            
+            if has_mojo:
+                # 1. Emit LLVM IR locally
+                subprocess.run(["mojo", "build", "--emit-llvm", "-o", f"{source_path}.ll", source_path], check=True)
+            else:
+                # 1. Fallback: Use Docker for compilation
+                print(f"[Mojo-Accelerator] Local 'mojo' not found. Failing over to containerized forge...")
+                subprocess.run([
+                    "docker", "run", "--rm", 
+                    "-v", f"{self.forge_dir}:/forge", 
+                    "tnf-mojo-forge", 
+                    "mojo", "build", "--emit-llvm", "-o", f"{kernel_name}.mojo.ll", f"{kernel_name}.mojo"
+                ], check=True)
             
             # 2. Use Clang to link the LLVM IR into a shared library
             # Note: This is the 'Tri-Layer' link-time optimization (WPO)
