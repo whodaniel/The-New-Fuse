@@ -1,0 +1,11 @@
+{
+  "name": "@tnf/a2a-protocol",
+  "version": "1.2.0-next-gen",
+  "description": "TNF Agent-to-Agent protocol and Next-Gen assimilation adapters",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@mariozechner/pi-agent-core": "^1.0.0",
+    "@mariozechner/pi-ai": "^1.0.0"
+  }
+}
