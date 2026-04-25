@@ -1,15 +1,19 @@
-export { HorizontalScalingCoordinator, ScalingInstance, ScalingCoordinationConfig } from './HorizontalScalingCoordinator.js';
-export { FileChangeBatcher, BatchConfig, BatchedFileChange } from './FileChangeBatcher.js';
-export { SyncLRUCache, CacheEntry, CacheConfig, CacheStats } from './SyncLRUCache.js';
-export { 
-  SyncPerformanceTelemetry, 
-  PerformanceMetric, 
-  SyncOperationMetrics, 
-  SystemResourceMetrics, 
-  TelemetryConfig 
-} from './SyncPerformanceTelemetry.js';
-export { 
-  PerformanceOptimizationService, 
-  PerformanceConfig, 
-  PerformanceMetrics 
-} from './PerformanceOptimizationService.js';
+export { BatchConfig, BatchedFileChange, FileChangeBatcher } from './FileChangeBatcher';
+export {
+  HorizontalScalingCoordinator,
+  ScalingCoordinationConfig,
+  ScalingInstance,
+} from './HorizontalScalingCoordinator';
+export {
+  PerformanceConfig,
+  PerformanceMetrics,
+  PerformanceOptimizationService,
+} from './PerformanceOptimizationService';
+export { CacheConfig, CacheEntry, CacheStats, SyncLRUCache } from './SyncLRUCache';
+export {
+  PerformanceMetric,
+  SyncOperationMetrics,
+  SyncPerformanceTelemetry,
+  SystemResourceMetrics,
+  TelemetryConfig,
+} from './SyncPerformanceTelemetry';

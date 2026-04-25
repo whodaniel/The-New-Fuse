@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-const vi = jest;
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { DrizzleClient } from '@the-new-fuse/database/generated/drizzle';
-import { SyncDatabaseService } from './SyncDatabaseService.js';
+import { SyncDatabaseService } from './SyncDatabaseService';
+const vi = jest;
 
 describe('SyncDatabaseService', () => {
   let service: SyncDatabaseService;

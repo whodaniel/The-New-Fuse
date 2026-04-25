@@ -1,42 +1,42 @@
 /**
  * CMS Integration Service
- * 
+ *
  * Main orchestration service for Content Management System integration.
  * Coordinates personal content management, project configuration sync,
  * collaborative content sharing, and private data isolation using
  * existing user and tenant systems.
  */
 
-import { DrizzleClient, User, UserRole } from '@the-new-fuse/database/generated/drizzle';
-import { RedisService } from '../config/SyncRedisConfig.js';
-import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
-import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher.js';
-import { PersonalContentManager } from './PersonalContentManager.js';
-import { ProjectConfigurationSync } from './ProjectConfigurationSync.js';
-import { CollaborativeContentService } from './CollaborativeContentService.js';
-import { PrivateDataIsolationService } from './PrivateDataIsolationService.js';
-import { 
+import { DrizzleClient, UserRole } from '@the-new-fuse/database/generated/drizzle';
+import { RedisService } from '../config/SyncRedisConfig';
+import { SyncOrchestrator } from '../services/SyncOrchestrator';
+import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';
+import { CollaborativeContentService } from './CollaborativeContentService';
+import { PersonalContentManager } from './PersonalContentManager';
+import { PrivateDataIsolationService } from './PrivateDataIsolationService';
+import { ProjectConfigurationSync } from './ProjectConfigurationSync';
+import {
   CMSConfig,
-  ContentItem,
-  ProjectConfiguration,
-  ContentType,
-  PrivacyLevel,
-  Permission,
   CMSEvent,
-  CMSEventType
-} from './types.js';
+  CMSEventType,
+  ContentItem,
+  ContentType,
+  Permission,
+  PrivacyLevel,
+  ProjectConfiguration,
+} from './types';
 
 export class CMSIntegrationService {
   private drizzle: DrizzleClient;
   private redis: RedisService;
   private syncOrchestrator: SyncOrchestrator;
   private fileWatcher: EnhancedFileSystemWatcher;
-  
+
   private personalContentManager!: PersonalContentManager;
   private projectConfigSync!: ProjectConfigurationSync;
   private collaborativeContentService!: CollaborativeContentService;
   private privateDataIsolationService!: PrivateDataIsolationService;
-  
+
   private config: CMSConfig;
   private initialized: boolean = false;
 
@@ -51,7 +51,7 @@ export class CMSIntegrationService {
     this.redis = redis;
     this.syncOrchestrator = syncOrchestrator;
     this.fileWatcher = fileWatcher;
-    
+
     // Set default configuration
     this.config = {
       enablePersonalContent: true,
@@ -61,7 +61,7 @@ export class CMSIntegrationService {
       maxContentSize: 10 * 1024 * 1024, // 10MB
       allowedContentTypes: Object.values(ContentType),
       syncInterval: 30000, // 30 seconds
-      ...config
+      ...config,
     };
 
     // Initialize component services
@@ -105,10 +105,13 @@ export class CMSIntegrationService {
    */
   async createPersonalContent(
     userId: string,
-    content: Omit<ContentItem, 'id' | 'ownerId' | 'createdAt' | 'updatedAt' | 'version' | 'checksum'>
+    content: Omit<
+      ContentItem,
+      'id' | 'ownerId' | 'createdAt' | 'updatedAt' | 'version' | 'checksum'
+    >
   ): Promise<ContentItem> {
     this.ensureInitialized();
-    
+
     // Validate content against configuration
     await this.validateContentCreation(userId, content);
 
@@ -214,15 +217,18 @@ export class CMSIntegrationService {
    * Get user's accessible content across all CMS features
    * Requirement 13.1, 13.3: Unified content access with proper isolation
    */
-  async getUserContent(userId: string, filters?: {
-    includePersonal?: boolean;
-    includeShared?: boolean;
-    includeCollaborative?: boolean;
-    contentType?: ContentType;
-    privacy?: PrivacyLevel;
-    limit?: number;
-    offset?: number;
-  }): Promise<{
+  async getUserContent(
+    userId: string,
+    filters?: {
+      includePersonal?: boolean;
+      includeShared?: boolean;
+      includeCollaborative?: boolean;
+      contentType?: ContentType;
+      privacy?: PrivacyLevel;
+      limit?: number;
+      offset?: number;
+    }
+  ): Promise<{
     personalContent: ContentItem[];
     sharedContent: ContentItem[];
     collaborativeProjects: ProjectConfiguration[];
@@ -232,7 +238,7 @@ export class CMSIntegrationService {
     const result = {
       personalContent: [] as ContentItem[],
       sharedContent: [] as ContentItem[],
-      collaborativeProjects: [] as ProjectConfiguration[]
+      collaborativeProjects: [] as ProjectConfiguration[],
     };
 
     // Get personal content if requested
@@ -241,7 +247,7 @@ export class CMSIntegrationService {
         type: filters?.contentType,
         privacy: filters?.privacy,
         limit: filters?.limit,
-        offset: filters?.offset
+        offset: filters?.offset,
       });
     }
 
@@ -250,13 +256,14 @@ export class CMSIntegrationService {
       result.sharedContent = await this.collaborativeContentService.getSharedContent(userId, {
         contentType: filters?.contentType,
         limit: filters?.limit,
-        offset: filters?.offset
+        offset: filters?.offset,
       });
     }
 
     // Get collaborative projects if requested
     if (filters?.includeCollaborative !== false) {
-      result.collaborativeProjects = await this.collaborativeContentService.getCollaborativeProjects(userId);
+      result.collaborativeProjects =
+        await this.collaborativeContentService.getCollaborativeProjects(userId);
     }
 
     return result;
@@ -287,12 +294,12 @@ export class CMSIntegrationService {
       personalContent: await this.auditPersonalContentCompliance(tenantId),
       projectConfigurations: await this.auditProjectConfigurationCompliance(tenantId),
       collaborativeContent: await this.auditCollaborativeContentCompliance(tenantId),
-      dataIsolation: await this.auditDataIsolationCompliance(tenantId)
+      dataIsolation: await this.auditDataIsolationCompliance(tenantId),
     };
 
     return {
       ...auditResult,
-      details
+      details,
     };
   }
 
@@ -320,11 +327,10 @@ export class CMSIntegrationService {
         userId,
         metadata: {
           syncType: 'full_cms_sync',
-          projectCount: projects.length
+          projectCount: projects.length,
         },
-        timestamp: new Date()
+        timestamp: new Date(),
       });
-
     } catch (error) {
       console.error(`Failed to sync CMS data for user ${userId}:`, error);
       throw error;
@@ -488,11 +494,16 @@ export class CMSIntegrationService {
 
   private async validateContentCreation(
     userId: string,
-    content: Omit<ContentItem, 'id' | 'ownerId' | 'createdAt' | 'updatedAt' | 'version' | 'checksum'>
+    content: Omit<
+      ContentItem,
+      'id' | 'ownerId' | 'createdAt' | 'updatedAt' | 'version' | 'checksum'
+    >
   ): Promise<void> {
     // Validate content size
     if (content.content.length > this.config.maxContentSize) {
-      throw new Error(`Content size exceeds maximum allowed size of ${this.config.maxContentSize} bytes`);
+      throw new Error(
+        `Content size exceeds maximum allowed size of ${this.config.maxContentSize} bytes`
+      );
     }
 
     // Validate content type
@@ -503,7 +514,7 @@ export class CMSIntegrationService {
     // Validate user permissions
     const user = await this.drizzle.user.findUnique({
       where: { id: userId },
-      select: { role: true, roles: true, isActive: true }
+      select: { role: true, roles: true, isActive: true },
     });
 
     if (!user || !user.isActive) {
@@ -518,7 +529,7 @@ export class CMSIntegrationService {
     // Validate user permissions for project creation
     const user = await this.drizzle.user.findUnique({
       where: { id: userId },
-      select: { role: true, roles: true, isActive: true }
+      select: { role: true, roles: true, isActive: true },
     });
 
     if (!user || !user.isActive) {
@@ -547,7 +558,7 @@ export class CMSIntegrationService {
     // Validate target user exists
     const targetUser = await this.drizzle.user.findUnique({
       where: { id: targetUserId },
-      select: { id: true, isActive: true }
+      select: { id: true, isActive: true },
     });
 
     if (!targetUser || !targetUser.isActive) {
@@ -575,7 +586,7 @@ export class CMSIntegrationService {
     // Validate collaborator user exists
     const collaborator = await this.drizzle.user.findUnique({
       where: { id: collaboratorUserId },
-      select: { id: true, role: true, isActive: true }
+      select: { id: true, role: true, isActive: true },
     });
 
     if (!collaborator || !collaborator.isActive) {
@@ -583,12 +594,18 @@ export class CMSIntegrationService {
     }
   }
 
-  private async updatePrivacyBoundariesForSharing(contentId: string, targetUserId: string): Promise<void> {
+  private async updatePrivacyBoundariesForSharing(
+    contentId: string,
+    targetUserId: string
+  ): Promise<void> {
     // Update privacy boundaries when content is shared
     // Implementation would depend on specific privacy requirements
   }
 
-  private async updatePrivacyBoundariesForCollaboration(projectId: string, collaboratorUserId: string): Promise<void> {
+  private async updatePrivacyBoundariesForCollaboration(
+    projectId: string,
+    collaboratorUserId: string
+  ): Promise<void> {
     // Update privacy boundaries when collaborator is added
     // Implementation would depend on specific privacy requirements
   }
@@ -651,7 +668,7 @@ export class CMSIntegrationService {
   private async handleCMSEvent(event: CMSEvent): Promise<void> {
     // Handle CMS events for real-time updates
     console.log(`Handling CMS event: ${event.type} for content ${event.contentId}`);
-    
+
     // Could trigger additional sync operations, notifications, etc.
   }
 
@@ -663,20 +680,20 @@ export class CMSIntegrationService {
   private async handleCMSFileChange(event: any): Promise<void> {
     // Handle file changes related to CMS
     console.log(`Handling CMS file change: ${event.filePath}`);
-    
+
     // Could trigger configuration reloads, content updates, etc.
   }
 
   private async performPeriodicSync(): Promise<void> {
     // Perform periodic synchronization tasks
     console.log('Performing periodic CMS sync...');
-    
+
     // Could include cleanup tasks, cache refreshes, etc.
   }
 
   private async emitCMSEvent(event: CMSEvent): Promise<void> {
     await this.redis.publish('cms_events', JSON.stringify(event));
-    
+
     await this.drizzle.authEvent.create({
       data: {
         userId: event.userId,
@@ -685,9 +702,9 @@ export class CMSIntegrationService {
           contentId: event.contentId,
           tenantId: event.tenantId,
           metadata: event.metadata,
-          timestamp: event.timestamp
-        }
-      }
+          timestamp: event.timestamp,
+        },
+      },
     });
   }
 }

@@ -1120,15 +1120,22 @@ function redactHoldemSnapshot(snapshot, playerId) {
   if (!snapshot || !snapshot.hand || !snapshot.hand.holeCards) return snapshot;
   const safe = cloneJsonSafe(snapshot);
   const holeCards = safe?.hand?.holeCards || {};
+  const hand = safe?.hand;
   let seatNo = null;
   if (playerId && Array.isArray(safe.seats)) {
     const seatRow = safe.seats.find((row) => row && row.playerId === playerId);
     if (seatRow && Number.isInteger(seatRow.seat)) seatNo = seatRow.seat;
   }
+  // Mask hole cards: only reveal own cards, others get 'hidden'
+  // At showdown, reveal non-folded players' cards per TDA Rule 66
+  const foldedSet = new Set(hand?.foldedSeats || []);
+  const isShowdown = hand?.street === 'showdown' || hand?.settled === true;
   const masked = {};
   for (const [seat, cards] of Object.entries(holeCards)) {
     if (seatNo != null && String(seat) === String(seatNo)) {
-      masked[seat] = cards;
+      masked[seat] = cards; // Always reveal own cards
+    } else if (isShowdown && !foldedSet.has(Number(seat))) {
+      masked[seat] = cards; // Reveal non-folded at showdown
     } else if (Array.isArray(cards)) {
       masked[seat] = cards.map(() => 'hidden');
     } else {
@@ -1136,6 +1143,23 @@ function redactHoldemSnapshot(snapshot, playerId) {
     }
   }
   safe.hand.holeCards = masked;
+  // Truncate boardCards to current street to prevent future card leakage.
+  // Without this, a client on the flop can read boardCards[3] (turn) and
+  // boardCards[4] (river) before they're dealt — a critical card leakage vulnerability.
+  if (hand && Array.isArray(hand.boardCards)) {
+    const street = hand.street || 'preflop';
+    const sliceEnd =
+      street === 'flop'
+        ? 3
+        : street === 'turn'
+          ? 4
+          : street === 'river'
+            ? 5
+            : street === 'showdown'
+              ? 5
+              : 0;
+    safe.hand.boardCards = hand.boardCards.slice(0, sliceEnd);
+  }
   return safe;
 }
 

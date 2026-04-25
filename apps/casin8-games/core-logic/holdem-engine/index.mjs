@@ -32,10 +32,21 @@ function hashHex(value) {
 
 function createRng(seed) {
   let counter = 0;
-  return function rand() {
+  return function rand(max) {
     const hex = hashHex(`${seed}:${counter}`);
     counter += 1;
     const int = Number.parseInt(hex.slice(0, 8), 16);
+    if (max != null && Number.isInteger(max) && max > 0) {
+      // Rejection sampling to eliminate modulo bias.
+      // Without this, Math.floor(rng() * max) with a 32-bit RNG introduces
+      // bias: when 2^32 is not evenly divisible by `max`, some indices are
+      // more likely. For a 52-card deck, the bias is ~1.2% per draw — small
+      // but detectable and exploitable over many hands.
+      const limit = 0x100000000 - (0x100000000 % max);
+      if (int < limit) return int % max;
+      // Rejection: draw again (extremely rare, ~1.2% chance for max=52)
+      return rand(max);
+    }
     return int / 0x100000000;
   };
 }
@@ -58,7 +69,7 @@ function buildDeck() {
 function drawCards(rng, deck, count) {
   const cards = [];
   for (let i = 0; i < count; i += 1) {
-    const idx = Math.floor(rng() * deck.length);
+    const idx = rng(deck.length); // bias-free integer selection via rejection sampling
     cards.push(deck.splice(idx, 1)[0]);
   }
   return cards;
@@ -708,6 +719,14 @@ export function startHand(engine, { handId, idempotencyKey }) {
     Number(hand.streetCommitted[String(bbSeatNo)] || 0)
   );
 
+  // actedSinceAggression intentionally does NOT include SB or BB seats.
+  // Preflop, the blinds are forced posts — the players haven't voluntarily acted.
+  // Since actedSinceAggression starts empty, isBettingRoundComplete() will
+  // return false for the BB after all callers match the big blind, giving
+  // the BB their standard "option" to raise (TDA standard preflop structure).
+  // The SB is similarly not in actedSinceAggression, but their committed <
+  // currentBet means they always get to act regardless.
+
   let actingFrom = bbSeatNo;
   const straddleSeatNo = nextSeatFrom(engine, bbSeatNo, hand, { includeFolded: true });
   const straddleSeat = straddleSeatNo == null ? null : engine.seats[straddleSeatNo];
@@ -720,9 +739,18 @@ export function startHand(engine, { handId, idempotencyKey }) {
  const straddleAmount = Math.max(engine.blinds.bigBlind * 2, Number(straddleSeat.straddleRequested || 0));
  postForced(engine, hand, straddleSeat, straddleAmount, 'straddle', true);
  hand.currentBet = Math.max(hand.currentBet, Number(hand.streetCommitted[String(straddleSeatNo)] || 0));
+ // The straddle is a voluntary live bet — it acts as a new "opening bet"
+ // of the straddle amount. Per TDA Rule 43, the minimum re-raise after a
+ // straddle must be at least the straddle amount (same as after any bet).
+ // Previously, lastAggressiveDelta was calculated as (currentBet - bbCommitted),
+ // which gave only the delta from BB to straddle (e.g., 200 for a 2xBB straddle).
+ // This was wrong — it meant minRaiseTo = 400 + 200 = 600 instead of the
+ // correct 400 + 400 = 800. The straddle's raise delta is the FULL straddle
+ // amount (currentBet after straddle posting), since the straddle acts as a
+ // new bet from the BB's perspective.
  hand.lastAggressiveDelta = Math.max(
  hand.lastAggressiveDelta,
- hand.currentBet - Number(hand.streetCommitted[String(bbSeatNo)] || engine.blinds.bigBlind)
+ hand.currentBet
  );
  // TDA Rule 43: A straddle is a voluntary live bet. After a straddle, the
  // minimum raise must be at least the straddle amount (same as after any bet).
@@ -852,9 +880,9 @@ export function applyAction(engine, input) {
  hand.minRaise = target;
  hand.currentBet = target;
  hand.lastAggressorSeat = seatNo;
-  } else if (action === 'raise') {
-    if (toCall <= 0) throw new Error('Use bet when no outstanding bet');
-    const minRaiseTo = hand.currentBet + hand.lastAggressiveDelta;
+ } else if (action === 'raise') {
+ if (toCall <= 0) throw new Error('Use bet when no outstanding bet');
+ const minRaiseTo = hand.currentBet + hand.lastAggressiveDelta;
     target = amount > 0 ? amount : minRaiseTo;
     const maxReach = streetCommit + stack;
     if (target > maxReach) target = maxReach;
@@ -880,12 +908,18 @@ export function applyAction(engine, input) {
  hand.lastAggressorSeat = seatNo;
  } else {
  // Short all-in raise: legal, does not reopen action per TDA Rule 42.
- // However, since currentBet increased (target > prevCurrentBet),
- // other players' committed amounts are now below the new currentBet.
- // Clear actedSinceAggression so they get a chance to match.
+ // However, since currentBet increased (target > prevCurrentBet), other
+ // players' committed amounts are now below the new currentBet.
+ // Clear ALL other live players from actedSinceAggression so they get a
+ // chance to match the new currentBet. Previously, only the current player
+ // was filtered, which meant players who had already acted but now face
+ // a higher currentBet would be incorrectly considered "done" for the round.
+ // This caused isBettingRoundComplete() to return true even though those
+ // players' committed < currentBet — a contradiction that could advance
+ // the street prematurely (skipping their action).
  hand.currentBet = target;
- hand.actedSinceAggression = hand.actedSinceAggression.filter((s) => s !== seatNo);
- hand.actedSinceAggression.push(seatNo);
+ const liveSeatNos = liveSeats(engine, hand).map((s) => s.seat);
+ hand.actedSinceAggression = liveSeatNos.filter((s) => s === seatNo);
  }
  } else if (action === 'allin') {
  if (stack <= 0) throw new Error('No chips to push all-in');
@@ -925,11 +959,14 @@ export function applyAction(engine, input) {
  // but was not a full raise (non-aggressive raise, target > prevCurrentBet).
  if (!aggressive && target > prevCurrentBet) {
  // The all-in raised currentBet but not enough to be a full raise.
- // Clear actedSinceAggression for all OTHER live players so they
- // get a chance to face the new currentBet. The all-in player is
- // marked as having acted (they can't act again).
- hand.actedSinceAggression = hand.actedSinceAggression.filter((s) => s !== seatNo);
- hand.actedSinceAggression.push(seatNo);
+ // Clear actedSinceAggression for ALL other live players (not just
+ // filter the current player). Players who already acted now face a
+ // higher currentBet (committed < currentBet) — they must act again.
+ // Previously only the all-in player was filtered, which could cause
+ // isBettingRoundComplete() to return true prematurely and skip
+ // other players' action.
+ const liveSeatNos = liveSeats(engine, hand).map((s) => s.seat);
+ hand.actedSinceAggression = liveSeatNos.filter((s) => s === seatNo);
  }
  } else {
     throw new Error('Unsupported action');

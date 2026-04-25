@@ -8,33 +8,33 @@ import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 // Sync Core Services
-import { MasterClockService } from '../services/MasterClockService.js';
-import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
-import { ConflictManager } from '../services/ConflictManager.js';
+import { ConflictManager } from '../services/ConflictManager';
+import { MasterClockService } from '../services/MasterClockService';
+import { SyncOrchestrator } from '../services/SyncOrchestrator';
 
 // Watchers
-import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher.js';
+import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';
 
 // Performance
-import { PerformanceOptimizationService } from '../performance/PerformanceOptimizationService.js';
-import { HorizontalScalingCoordinator } from '../performance/HorizontalScalingCoordinator.js';
-import { FileChangeBatcher } from '../performance/FileChangeBatcher.js';
-import { SyncLRUCache } from '../performance/SyncLRUCache.js';
+import { FileChangeBatcher } from '../performance/FileChangeBatcher';
+import { HorizontalScalingCoordinator } from '../performance/HorizontalScalingCoordinator';
+import { PerformanceOptimizationService } from '../performance/PerformanceOptimizationService';
+import { SyncLRUCache } from '../performance/SyncLRUCache';
 
 // Error Handling
-import { SyncErrorHandler } from '../error/SyncErrorHandler.js';
-import { SyncRetryManager } from '../error/SyncRetryManager.js';
-import { SyncFallbackProcessor } from '../error/SyncFallbackProcessor.js';
+import { SyncErrorHandler } from '../error/SyncErrorHandler';
+import { SyncFallbackProcessor } from '../error/SyncFallbackProcessor';
+import { SyncRetryManager } from '../error/SyncRetryManager';
 
 // Deployment Services
-import { SyncHealthService } from './SyncHealthService.js';
-import { SyncConfigService } from './SyncConfigService.js';
-import { SyncMetricsService } from './SyncMetricsService.js';
+import { SyncConfigService } from './SyncConfigService';
+import { SyncHealthService } from './SyncHealthService';
+import { SyncMetricsService } from './SyncMetricsService';
 
 // Controllers
-import { SyncController } from './SyncController.js';
-import { HealthController } from './HealthController.js';
-import { MetricsController } from './MetricsController.js';
+import { HealthController } from './HealthController';
+import { MetricsController } from './MetricsController';
+import { SyncController } from './SyncController';
 
 @Module({
   imports: [
@@ -43,7 +43,7 @@ import { MetricsController } from './MetricsController.js';
       isGlobal: true,
       envFilePath: ['.env.local', '.env'],
     }),
-    
+
     // Event system for real-time updates
     EventEmitterModule.forRoot({
       wildcard: false,
@@ -55,38 +55,34 @@ import { MetricsController } from './MetricsController.js';
       ignoreErrors: false,
     }),
   ],
-  
-  controllers: [
-    SyncController,
-    HealthController,
-    MetricsController,
-  ],
-  
+
+  controllers: [SyncController, HealthController, MetricsController],
+
   providers: [
     // Configuration and deployment services
     SyncConfigService,
     SyncHealthService,
     SyncMetricsService,
-    
+
     // Core sync services
     MasterClockService,
     SyncOrchestrator,
     ConflictManager,
-    
+
     // File system monitoring
     EnhancedFileSystemWatcher,
-    
+
     // Performance optimization
     PerformanceOptimizationService,
     HorizontalScalingCoordinator,
     FileChangeBatcher,
     SyncLRUCache,
-    
+
     // Error handling
     SyncErrorHandler,
     SyncRetryManager,
     SyncFallbackProcessor,
-    
+
     // Factory for creating service instances
     {
       provide: 'SYNC_SERVICES_FACTORY',
@@ -117,7 +113,7 @@ import { MetricsController } from './MetricsController.js';
       ],
     },
   ],
-  
+
   exports: [
     // Export services for use in other modules
     SyncConfigService,

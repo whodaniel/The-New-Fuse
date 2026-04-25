@@ -1,55 +1,59 @@
 /**
  * Dashboard Integration Module
- * 
+ *
  * This module provides real-time sync updates for user control panels,
  * integrating with existing AdminDashboard and AgentWebSocketService.
  */
 
 // Core dashboard service
-export { SyncDashboardService } from './SyncDashboardService.js';
-export type { 
+export { SyncDashboardService } from './SyncDashboardService';
+export type {
+  DashboardUpdate,
+  DashboardUpdateType,
   IAgentWebSocketService,
   IMonitoringService,
+  SyncDashboardConfig,
   SystemAlert,
-  DashboardUpdateType,
-  DashboardUpdate,
-  SyncDashboardConfig
-} from './SyncDashboardService.js';
+} from './SyncDashboardService';
 
 // React integration
-export { useSyncDashboard } from './useSyncDashboard.js';
-export { useFilteredAlerts, useRecentOperations, useHealthScore } from './useSyncDashboard.js';
+export {
+  useFilteredAlerts,
+  useHealthScore,
+  useRecentOperations,
+  useSyncDashboard,
+} from './useSyncDashboard';
 export type {
+  DashboardData,
+  SyncHealth,
+  SyncMetrics,
+  SyncOperation,
   UseSyncDashboardConfig,
   UseSyncDashboardReturn,
-  DashboardData,
-  SyncMetrics,
-  SyncHealth,
-  SyncOperation
-} from './useSyncDashboard.js';
+} from './useSyncDashboard';
 
 // Enhanced dashboard component
-export { SyncAwareAdminDashboard } from './SyncAwareAdminDashboard.js';
-export type { SyncAwareAdminDashboardProps } from './SyncAwareAdminDashboard.js';
+export { SyncAwareAdminDashboard } from './SyncAwareAdminDashboard';
+export type { SyncAwareAdminDashboardProps } from './SyncAwareAdminDashboard';
 
 // WebSocket integration
-export { DashboardWebSocketIntegration } from './DashboardWebSocketIntegration.js';
+export { DashboardWebSocketIntegration } from './DashboardWebSocketIntegration';
 
 // Monitoring integration
-export { DashboardMonitoringIntegration } from './DashboardMonitoringIntegration.js';
+export { DashboardMonitoringIntegration } from './DashboardMonitoringIntegration';
 export type {
-  IExistingMonitoringService,
-  IExistingMetricsService,
+  AlertThreshold,
   IExistingHeartbeatService,
-  MonitoringEventType,
+  IExistingMetricsService,
+  IExistingMonitoringService,
   MonitoringEvent,
-  AlertThreshold
-} from './DashboardMonitoringIntegration.js';
+  MonitoringEventType,
+} from './DashboardMonitoringIntegration';
 
 // Re-export types from other modules for convenience
 export type {
-  SyncMetrics as CoreSyncMetrics,
   SyncHealth as CoreSyncHealth,
+  SyncMetrics as CoreSyncMetrics,
   SyncOperation as CoreSyncOperation,
-  SystemAlert as CoreSystemAlert
-} from '../types.js';
+  SystemAlert as CoreSystemAlert,
+} from '../types';

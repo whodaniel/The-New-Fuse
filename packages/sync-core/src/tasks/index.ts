@@ -1,22 +1,22 @@
-export { TaskSynchronizationService } from './TaskSynchronizationService.js';
-export { EnhancedTaskManagementService } from './EnhancedTaskManagementService.js';
-export { TaskNotificationService } from './TaskNotificationService.js';
+export { EnhancedTaskManagementService } from './EnhancedTaskManagementService';
+export { TaskNotificationService } from './TaskNotificationService';
+export { TaskSynchronizationService } from './TaskSynchronizationService';
 
 export type {
-  TaskSyncData,
-  TaskExecutionSyncData,
   TaskDependencyUpdate,
-  TaskNotification
-} from './TaskSynchronizationService.js';
+  TaskExecutionSyncData,
+  TaskNotification,
+  TaskSyncData,
+} from './TaskSynchronizationService';
 
 export type {
   EnhancedTaskData,
   TaskExecutionContext,
-  WorkflowTaskIntegration
-} from './EnhancedTaskManagementService.js';
+  WorkflowTaskIntegration,
+} from './EnhancedTaskManagementService';
 
 export type {
-  TaskNotificationRule,
   NotificationChannel,
-  TaskNotificationHistory
-} from './TaskNotificationService.js';
+  TaskNotificationHistory,
+  TaskNotificationRule,
+} from './TaskNotificationService';

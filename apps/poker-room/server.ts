@@ -1033,6 +1033,18 @@ io.on('connection', (socket) => {
       try {
         holdemEngine.setConnection(pokerEngine, { playerId, connected: true });
       } catch {}
+
+      // IMPORTANT: Also clear the action timeout timer if the reconnecting
+      // player is the current actor. Without this, the 25s action timeout
+      // (which was scheduled before the disconnect) fires and force-folds
+      // the player even though they just reconnected and should have their
+      // remaining time to act. The scheduleActionTimeout() call in
+      // broadcastState() will reschedule a fresh timer after this.
+      if (actionTimeoutTimer && hand?.actingSeat === seat) {
+        clearTimeout(actionTimeoutTimer);
+        actionTimeoutTimer = null;
+      }
+
       addLog(`${socketDisplayNames.get(socket.id)} reconnected`);
       broadcastState();
       reclaimed = true;

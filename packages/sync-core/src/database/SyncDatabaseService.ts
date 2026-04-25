@@ -1,6 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Drizzle, DrizzleClient, SyncState, SyncConflict } from '@the-new-fuse/database/generated/drizzle';
-import { SyncStateData, SyncConflictData, SyncResourceType } from '../types.js';
+import {
+  Drizzle,
+  DrizzleClient,
+  SyncConflict,
+  SyncState,
+} from '@the-new-fuse/database/generated/drizzle';
+import { SyncConflictData, SyncResourceType, SyncStateData } from '../types';
 
 /**
  * Database service for sync operations
@@ -140,7 +145,12 @@ export class SyncDatabaseService {
         });
       }
     } catch (error) {
-      this.logger.error('Failed to delete sync state', { resourceType, resourceId, tenantId, error });
+      this.logger.error('Failed to delete sync state', {
+        resourceType,
+        resourceId,
+        tenantId,
+        error,
+      });
       throw error;
     }
   }
@@ -148,7 +158,9 @@ export class SyncDatabaseService {
   /**
    * Create a sync conflict record
    */
-  async createSyncConflict(data: Omit<SyncConflictData, 'id' | 'createdAt'>): Promise<SyncConflict> {
+  async createSyncConflict(
+    data: Omit<SyncConflictData, 'id' | 'createdAt'>
+  ): Promise<SyncConflict> {
     try {
       return await this.drizzle.syncConflict.create({
         data: {
@@ -228,7 +240,12 @@ export class SyncDatabaseService {
         orderBy: { createdAt: 'desc' },
       });
     } catch (error) {
-      this.logger.error('Failed to get resource conflicts', { resourceType, resourceId, tenantId, error });
+      this.logger.error('Failed to get resource conflicts', {
+        resourceType,
+        resourceId,
+        tenantId,
+        error,
+      });
       throw error;
     }
   }
@@ -250,7 +267,9 @@ export class SyncDatabaseService {
         },
       });
 
-      this.logger.log(`Cleaned up ${result.count} resolved conflicts older than ${olderThanDays} days`);
+      this.logger.log(
+        `Cleaned up ${result.count} resolved conflicts older than ${olderThanDays} days`
+      );
       return result.count;
     } catch (error) {
       this.logger.error('Failed to cleanup resolved conflicts', { olderThanDays, error });
@@ -263,43 +282,41 @@ export class SyncDatabaseService {
    */
   async getSyncStatistics(tenantId?: string) {
     try {
-      const [
-        totalSyncStates,
-        pendingConflicts,
-        resolvedConflicts,
-        recentSyncs,
-      ] = await Promise.all([
-        this.drizzle.syncState.count({
-          where: tenantId ? { tenantId } : {},
-        }),
-        this.drizzle.syncConflict.count({
-          where: {
-            resolvedAt: null,
-            ...(tenantId && { tenantId }),
-          },
-        }),
-        this.drizzle.syncConflict.count({
-          where: {
-            resolvedAt: { not: null },
-            ...(tenantId && { tenantId }),
-          },
-        }),
-        this.drizzle.syncState.count({
-          where: {
-            lastSync: {
-              gte: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
+      const [totalSyncStates, pendingConflicts, resolvedConflicts, recentSyncs] = await Promise.all(
+        [
+          this.drizzle.syncState.count({
+            where: tenantId ? { tenantId } : {},
+          }),
+          this.drizzle.syncConflict.count({
+            where: {
+              resolvedAt: null,
+              ...(tenantId && { tenantId }),
             },
-            ...(tenantId && { tenantId }),
-          },
-        }),
-      ]);
+          }),
+          this.drizzle.syncConflict.count({
+            where: {
+              resolvedAt: { not: null },
+              ...(tenantId && { tenantId }),
+            },
+          }),
+          this.drizzle.syncState.count({
+            where: {
+              lastSync: {
+                gte: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
+              },
+              ...(tenantId && { tenantId }),
+            },
+          }),
+        ]
+      );
 
       return {
         totalSyncStates,
         pendingConflicts,
         resolvedConflicts,
         recentSyncs,
-        conflictRate: totalSyncStates > 0 ? (pendingConflicts + resolvedConflicts) / totalSyncStates : 0,
+        conflictRate:
+          totalSyncStates > 0 ? (pendingConflicts + resolvedConflicts) / totalSyncStates : 0,
       };
     } catch (error) {
       this.logger.error('Failed to get sync statistics', { tenantId, error });

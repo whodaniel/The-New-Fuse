@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictManager } from './ConflictManager.js';
-import { SyncDatabaseService } from '../database/SyncDatabaseService.js';
 import { DrizzleClient, SyncConflict, SyncState } from '@the-new-fuse/database/generated/drizzle';
-import { ConflictResolutionStrategy } from '../types.js';
+import { SyncDatabaseService } from '../database/SyncDatabaseService';
+import { ConflictManager } from './ConflictManager';
 
 // Mock DrizzleClient
 const mockDrizzleClient = {
@@ -102,7 +101,7 @@ describe('ConflictManager', () => {
       );
 
       expect(result).toBeNull();
-      
+
       // Restore original method
       (service as any).calculateChecksum = originalCalculateChecksum;
     });
@@ -140,7 +139,7 @@ describe('ConflictManager', () => {
       };
 
       syncDb.getSyncState.mockResolvedValue(mockSyncState);
-      
+
       // Mock transaction
       drizzle.$transaction.mockImplementation(async (callback) => {
         const mockTx = {
@@ -241,11 +240,7 @@ describe('ConflictManager', () => {
 
       syncDb.upsertSyncState.mockResolvedValue({} as any);
 
-      const result = await service.resolveConflict(
-        conflictId,
-        'latest_wins',
-        'test-resolver'
-      );
+      const result = await service.resolveConflict(conflictId, 'latest_wins', 'test-resolver');
 
       expect(result.strategy).toBe('latest_wins');
       expect(result.resolvedData).toEqual(mockConflict.remoteVersion);
@@ -296,11 +291,7 @@ describe('ConflictManager', () => {
 
       syncDb.upsertSyncState.mockResolvedValue({} as any);
 
-      const result = await service.resolveConflict(
-        conflictId,
-        'merge',
-        'test-resolver'
-      );
+      const result = await service.resolveConflict(conflictId, 'merge', 'test-resolver');
 
       expect(result.strategy).toBe('merge');
       expect(result.resolvedData).toMatchObject({
@@ -367,9 +358,9 @@ describe('ConflictManager', () => {
         return await callback(mockTx);
       });
 
-      await expect(
-        service.resolveConflict(conflictId, 'manual', 'test-resolver')
-      ).rejects.toThrow('Manual resolution strategy requires human intervention');
+      await expect(service.resolveConflict(conflictId, 'manual', 'test-resolver')).rejects.toThrow(
+        'Manual resolution strategy requires human intervention'
+      );
     });
   });
 
@@ -451,7 +442,7 @@ describe('ConflictManager', () => {
       ];
 
       syncDb.getPendingConflicts.mockResolvedValue(mockConflicts);
-      
+
       // Mock the resolveConflict method
       const resolveConflictSpy = jest.spyOn(service, 'resolveConflict').mockResolvedValue({
         strategy: 'latest_wins',
@@ -489,7 +480,7 @@ describe('ConflictManager', () => {
       ];
 
       syncDb.getPendingConflicts.mockResolvedValue(mockConflicts);
-      
+
       const resolveConflictSpy = jest.spyOn(service, 'resolveConflict');
 
       const result = await service.autoResolveConflicts();

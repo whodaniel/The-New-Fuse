@@ -826,6 +826,9 @@
     "no-dependencies": true
   },
   "devDependencies": {
+    "@the-new-fuse/infrastructure": "workspace:*",
+    "@the-new-fuse/auth": "workspace:*",
+    "@the-new-fuse/data": "workspace:*",
     "@types/dompurify": "^3.2.0",
     "@types/node": "18.x",
     "@types/uuid": "^11.0.0",
@@ -849,10 +852,7 @@
     "lru-cache": "^11.2.4",
     "tiktoken": "^1.0.22",
     "zod": "^4.3.5",
-    "zod-to-json-schema": "^3.25.1",
-    "@the-new-fuse/infrastructure": "workspace:*",
-    "@the-new-fuse/auth": "workspace:*",
-    "@the-new-fuse/data": "workspace:*"
+    "zod-to-json-schema": "^3.25.1"
   },
   "optionalDependencies": {
     "electron": "^35.7.5"

@@ -1,79 +1,125 @@
 # TNF LLVM FORGE EXECUTIVE PROSPECTUS
+
 # OFFICIAL MASTER ROADMAP
-# 2026-04-12 / Daniel Goldberg
+
+# 2026-04-24 / Daniel Goldberg
+
 #
+
 # THIS DOCUMENT IS THE HIGHEST AUTHORITY FOR ALL TNF ARCHITECTURE DECISIONS.
+
 # ALL PREVIOUS GUIDELINES ARE SUPERSEDED.
 
 ---
 
 ## MANDATORY EXECUTIVE DIRECTIVE
-The New Fuse shall evolve from a system that calls tools, into a system that autonomously designs, compiles, and executes hyper-optimized native machine code on the fly.
 
-No new performance critical components shall be written in interpreted languages after this document. All new core services will be forged via LLVM.
+The New Fuse shall evolve from a system that calls tools, into a system that
+autonomously designs, compiles, and executes hyper-optimized native machine code
+on the fly.
+
+We are adopting a **Tri-Layer Native Architecture** to leverage the 10x
+performance boost of TypeScript 7.0 (Project Corsa) alongside Mojo/LLVM for
+hardware-level kernels.
 
 ---
 
-## IMPLEMENTATION PHASE ORDER
+## THE TRI-LAYER NATIVE ARCHITECTURE
 
-### ✅ PHASE 0 (ACTIVE NOW)
-1.  iPhone Vision Bridge (native QuickTime USB mirroring) is the official first test case
-2.  Deploy native latency probe daemon for LLM provider routing
-3.  PERMANENTLY DISABLE all launchd persistent daemons.
-4.  Establish Railway as ground control for all operations
+### 1. LOGIC & ORCHESTRATION LAYER (Top)
 
-### PHASE 1: PYTHON ACCELERATOR
-- Profiler Agent monitors running Python scripts
-- Identifies hot functions, automatically rewrites in C/Rust
-- Compiles via LLVM into native C-extensions for 100x speedups
-- Zero downtime hot swap of interpreted functions
+- **Language:** TypeScript 7.0 (Native Go-based `tsgo`)
+- **Role:** High-level agentic reasoning, protocol negotiation, and complex
+  state management.
+- **Benefit:** 10x faster type-checking and iteration. The "Brain" remains
+  expressive but runs at native speeds.
 
-### PHASE 2: OMNI-TNF GATEWAY
-- Forge native C++ LLM gateway service
-- Real-time multi-factor scoring: Latency, Cost, Quota Health
-- Unified proxy for all provider keys with circuit breakers and failover
-- Context Relay memory handoff across provider boundaries
+### 2. STRUCTURAL & SERVICES LAYER (Middle)
 
-### PHASE 3: TNF AUTOPHAGY
-- Agents will systematically deconstruct performance critical segments of the existing TNF stack
-- Rewrite Relay Server and Gateway components into Rust/C++
-- Hot swap native binaries into running framework without outage
-- Gradually evolve TNF into high performance native kernel
+- **Language:** Go
+- **Role:** Unified toolchain, concurrent service orchestration, and
+  cloud-native infrastructure.
+- **Benefit:** Deep integration with the `tsgo` compiler runtime. Native Go
+  performance for the backbone of the agent swarm.
 
-### PHASE 4: TEST-TIME RL ARCHITECTURE
-- MLIR powered native backpropagation
-- 10,000 parallel simulation runs per decision in milliseconds
-- Dynamic weight patching without system restart
-- Self healing swarm with master clock performance monitoring
+### 3. COMPUTE & PERFORMANCE LAYER (Kernel)
+
+- **Language:** Mojo / LLVM
+- **Role:** The "Forge," JIT-compiled GPU/DSP kernels, SIMD optimization, and
+  zero-copy memory management.
+- **Benefit:** 100x performance for math-heavy tasks. Direct hardware alignment
+  for AVX2/H100/A100.
+
+---
+
+## REVISED IMPLEMENTATION PHASE ORDER
+
+### ✅ PHASE 0 (COMPLETE/ACTIVE)
+
+1.  iPhone Vision Bridge (native QuickTime USB mirroring)
+2.  Native latency probe daemon for LLM provider routing
+3.  Establishment of stable ground control (Railway/Cloudflare/Supabase)
+
+### PHASE 1: NATIVE ITERATION ACCELERATOR (CORSA)
+
+- Integrated `tsgo` (TypeScript 7.0 Beta) into the TNF Forge validation cycle.
+- Goal: Reduce "Act -> Validate" loop from minutes to seconds.
+- Enable high-frequency evolutionary coding for agentic swarms.
+
+### PHASE 2: MOJO FORGE & KERNEL EVOLUTION
+
+- Deploy `tnf_forge.py` with Mojo support.
+- Automate GPU kernel optimization using Search-Based Search (MCTS) via
+  KernelEvolve patterns.
+- Real-time hardware-guided performance signals for JIT flow.
+
+### PHASE 3: TNF AUTOPHAGY (REFINED)
+
+- Deconstruct legacy Node.js/Python infrastructure components.
+- Replace structural logic with Go and performance logic with Mojo/Rust.
+- Keep high-level orchestration in TypeScript 7.0 for sovereign continuity.
+
+### PHASE 4: TEST-TIME RL & AGENTIC ECONOMIES
+
+- MLIR powered native backpropagation.
+- Implementation of **ACNBP (Agent Capability Negotiation and Binding
+  Protocol)**.
+- Autonomous resource allocation and task compensation within the virtual agent
+  economy.
 
 ---
 
 ## NON NEGOTIABLE PRINCIPLES
 
-✅ **Hardware Alignment:** All compiled code shall be specifically optimized for the exact host silicon it will execute on. Generic binaries are forbidden for production deployment.
+✅ **Hardware Alignment:** All compiled code shall be specifically optimized for
+the exact host silicon it will execute on.
 
-✅ **Formal Verification:** All generated code shall be verified at LLVM IR level before execution. No unanalyzed code will ever be granted CPU cycles.
+✅ **Formal Verification:** All generated code shall be verified at LLVM IR
+level before execution.
 
-✅ **Zero Drift Policy:** Existing Railway stack remains stable ground control. All new LLVM components are deployed side by side on existing GCP/Cloudflare/Supabase/Upstash infrastructure. No legacy code migration, only clean replacement.
+✅ **Tri-Layer Integrity:** Maintain strict separation between Logic (TS),
+Structure (Go), and Performance (Mojo).
 
-✅ **Sovereign Continuity:** TNF does not rent operating systems. It synthesizes its own. All logic is written to LLVM IR first, then re-forged for any target host.
+✅ **Sovereign Continuity:** TNF synthesizes its own runtime. All logic is
+written to LLVM IR first, then re-forged for any target host.
+
+---
+
+## GOVERNANCE & SECURITY
+
+- **AARS Scoring:** Implement the Agentic AI Risk Score as a primary safety
+  multiplier.
+- **Identity:** All agents must use verifiable A2A Agent Cards
+  (`/.well-known/agent-card.json`).
 
 ---
 
 ## HARDWARE PRIORITY
+
 1.  2015 MacBook Pro (Intel Haswell, AVX2) - PRIMARY TEST PLATFORM
 2.  Cloudflare Workers (Wasm)
-3.  GCP Cloud Run
-4.  Raspberry Pi
-5.  Browser Wasm runtime
-
----
-
-## FORBIDDEN ACTIONS
-❌ Do NOT break, remove, or modify any existing working TNF functionality
-❌ Do NOT migrate legacy codebase. Build clean next generation beside it.
-❌ Do NOT use generic binaries. Always target specific hardware.
-❌ Do NOT ever use launchd for long running processes.
+3.  GCP Cloud Run / NVIDIA H100
+4.  Browser Wasm runtime
 
 ---
 

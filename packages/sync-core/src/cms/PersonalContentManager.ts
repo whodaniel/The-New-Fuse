@@ -1,35 +1,23 @@
 /**
  * Personal Content Manager
- * 
+ *
  * Manages personal content using existing User and tenant models.
  * Provides content creation, synchronization, and management with
  * proper tenant isolation and privacy boundaries.
  */
 
-import { DrizzleClient, User, UserRole } from '@the-new-fuse/database/generated/drizzle';
-import { RedisService } from '../config/SyncRedisConfig.js';
-import { SyncOrchestrator } from '../services/SyncOrchestrator.js';
-import { 
-  ContentItem, 
-  ContentType, 
-  PrivacyLevel, 
-  CMSEvent, 
-  CMSEventType,
-  ContentMetadata,
-  SharingSettings
-} from './types.js';
+import { DrizzleClient } from '@the-new-fuse/database/generated/drizzle';
 import { createHash } from 'crypto';
+import { RedisService } from '../config/SyncRedisConfig';
+import { SyncOrchestrator } from '../services/SyncOrchestrator';
+import { CMSEvent, CMSEventType, ContentItem, ContentType, PrivacyLevel } from './types';
 
 export class PersonalContentManager {
   private drizzle: DrizzleClient;
   private redis: RedisService;
   private syncOrchestrator: SyncOrchestrator;
 
-  constructor(
-    drizzle: DrizzleClient,
-    redis: RedisService,
-    syncOrchestrator: SyncOrchestrator
-  ) {
+  constructor(drizzle: DrizzleClient, redis: RedisService, syncOrchestrator: SyncOrchestrator) {
     this.drizzle = drizzle;
     this.redis = redis;
     this.syncOrchestrator = syncOrchestrator;
@@ -41,12 +29,15 @@ export class PersonalContentManager {
    */
   async createPersonalContent(
     userId: string,
-    content: Omit<ContentItem, 'id' | 'ownerId' | 'createdAt' | 'updatedAt' | 'version' | 'checksum'>
+    content: Omit<
+      ContentItem,
+      'id' | 'ownerId' | 'createdAt' | 'updatedAt' | 'version' | 'checksum'
+    >
   ): Promise<ContentItem> {
     // Verify user exists and get tenant context
     const user = await this.drizzle.user.findUnique({
       where: { id: userId },
-      select: { id: true, role: true, roles: true }
+      select: { id: true, role: true, roles: true },
     });
 
     if (!user) {
@@ -66,7 +57,7 @@ export class PersonalContentManager {
       createdAt: new Date(),
       updatedAt: new Date(),
       version: 1,
-      checksum
+      checksum,
     };
 
     // Store in database using existing User model patterns
@@ -86,7 +77,7 @@ export class PersonalContentManager {
       userId,
       tenantId: contentItem.tenantId,
       metadata: { contentType: content.type, privacy: content.privacy },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return contentItem;
@@ -108,7 +99,7 @@ export class PersonalContentManager {
     }
 
     // Calculate new checksum if content changed
-    const newChecksum = updates.content 
+    const newChecksum = updates.content
       ? this.calculateChecksum(updates.content)
       : existingContent.checksum;
 
@@ -118,7 +109,7 @@ export class PersonalContentManager {
       ...updates,
       updatedAt: new Date(),
       version: existingContent.version + 1,
-      checksum: newChecksum
+      checksum: newChecksum,
     };
 
     // Store updated content
@@ -138,7 +129,7 @@ export class PersonalContentManager {
       userId,
       tenantId: updatedContent.tenantId,
       metadata: { version: updatedContent.version, changes: Object.keys(updates) },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return updatedContent;
@@ -152,18 +143,18 @@ export class PersonalContentManager {
     // Check Redis cache first
     const cacheKey = `personal_content:${userId}:${contentId}`;
     const cached = await this.redis.get(cacheKey);
-    
+
     if (cached) {
       return JSON.parse(cached);
     }
 
     // Retrieve from database with tenant isolation
     const content = await this.retrieveContentFromDatabase(contentId, userId);
-    
+
     if (content) {
       // Cache for future access
       await this.redis.setex(cacheKey, 300, JSON.stringify(content)); // 5 minute cache
-      
+
       // Track access for analytics
       await this.trackContentAccess(userId, contentId);
     }
@@ -187,17 +178,17 @@ export class PersonalContentManager {
   ): Promise<ContentItem[]> {
     const cacheKey = `personal_content_list:${userId}:${JSON.stringify(filters)}`;
     const cached = await this.redis.get(cacheKey);
-    
+
     if (cached) {
       return JSON.parse(cached);
     }
 
     // Build query with tenant isolation
     const content = await this.queryUserContent(userId, filters);
-    
+
     // Cache results
     await this.redis.setex(cacheKey, 60, JSON.stringify(content)); // 1 minute cache
-    
+
     return content;
   }
 
@@ -233,7 +224,7 @@ export class PersonalContentManager {
       userId,
       tenantId: content.tenantId,
       metadata: { contentType: content.type, title: content.title },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
@@ -244,7 +235,7 @@ export class PersonalContentManager {
   async syncPersonalContentAcrossSessions(userId: string): Promise<void> {
     // Get all user's content
     const allContent = await this.listPersonalContent(userId);
-    
+
     // Sync each content item
     for (const content of allContent) {
       await this.syncOrchestrator.syncTenantData(
@@ -260,7 +251,7 @@ export class PersonalContentManager {
       contentId: 'all',
       userId,
       metadata: { itemCount: allContent.length },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
@@ -312,7 +303,10 @@ export class PersonalContentManager {
     `;
   }
 
-  private async retrieveContentFromDatabase(contentId: string, userId: string): Promise<ContentItem | null> {
+  private async retrieveContentFromDatabase(
+    contentId: string,
+    userId: string
+  ): Promise<ContentItem | null> {
     // Query with tenant isolation using existing patterns
     const result = await this.drizzle.$queryRaw<any[]>`
       SELECT * FROM personal_content 
@@ -339,7 +333,7 @@ export class PersonalContentManager {
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       version: row.version,
-      checksum: row.checksum
+      checksum: row.checksum,
     };
   }
 
@@ -355,13 +349,13 @@ export class PersonalContentManager {
   ): Promise<ContentItem[]> {
     const limit = filters?.limit || 50;
     const offset = filters?.offset || 0;
-    
+
     let whereClause = `(owner_id = '${userId}' OR tenant_id = '${userId}' OR privacy IN ('shared', 'public')) AND deleted_at IS NULL`;
-    
+
     if (filters?.type) {
       whereClause += ` AND type = '${filters.type}'`;
     }
-    
+
     if (filters?.privacy) {
       whereClause += ` AND privacy = '${filters.privacy}'`;
     }
@@ -373,7 +367,7 @@ export class PersonalContentManager {
       LIMIT ${limit} OFFSET ${offset}
     `;
 
-    return result.map(row => ({
+    return result.map((row) => ({
       id: row.id,
       type: row.type,
       title: row.title,
@@ -386,7 +380,7 @@ export class PersonalContentManager {
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       version: row.version,
-      checksum: row.checksum
+      checksum: row.checksum,
     }));
   }
 
@@ -407,16 +401,16 @@ export class PersonalContentManager {
         details: {
           contentId,
           accessedAt: new Date(),
-          action: 'read'
-        }
-      }
+          action: 'read',
+        },
+      },
     });
   }
 
   private async emitCMSEvent(event: CMSEvent): Promise<void> {
     // Publish event to Redis for real-time updates
     await this.redis.publish('cms_events', JSON.stringify(event));
-    
+
     // Store in database for audit trail using existing AuthEvent pattern
     await this.drizzle.authEvent.create({
       data: {
@@ -426,9 +420,9 @@ export class PersonalContentManager {
           contentId: event.contentId,
           tenantId: event.tenantId,
           metadata: event.metadata,
-          timestamp: event.timestamp
-        }
-      }
+          timestamp: event.timestamp,
+        },
+      },
     });
   }
 }

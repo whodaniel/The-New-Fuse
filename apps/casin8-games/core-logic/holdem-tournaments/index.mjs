@@ -88,20 +88,26 @@ function assignSeatsToTables(t) {
     [active[i], active[j]] = [active[j], active[i]];
   }
 
-  t.tables = new Map();
-  t.tableCounter = 0;
-  for (const p of active) {
-    let target = [...t.tables.values()].find((row) => row.seats.length < t.tableSize);
-    if (!target) {
-      t.tableCounter += 1;
-      const tableId = `${t.tournamentId}-table-${t.tableCounter}`;
-      target = { tableId, seats: [] };
-      t.tables.set(tableId, target);
-    }
-    p.tableId = target.tableId;
-    p.seat = target.seats.length;
-    target.seats.push(p.playerId);
-  }
+ // TDA Rule 40: Tables must be balanced — no table should differ by more
+ // than 1 player. The previous sequential fill created unbalanced tables
+ // (e.g., 9+1 for 10 players on 9-max tables instead of 5+5).
+ // Fix: calculate table count, then distribute round-robin for balance.
+ const numTables = Math.ceil(active.length / t.tableSize);
+ t.tables = new Map();
+ t.tableCounter = numTables;
+ for (let i = 1; i <= numTables; i += 1) {
+ const tableId = `${t.tournamentId}-table-${i}`;
+ t.tables.set(tableId, { tableId, seats: [] });
+ }
+ const tableIds = [...t.tables.keys()];
+ for (let i = 0; i < active.length; i += 1) {
+ const p = active[i];
+ const targetTableId = tableIds[i % numTables];
+ const target = t.tables.get(targetTableId);
+ p.tableId = targetTableId;
+ p.seat = target.seats.length;
+ target.seats.push(p.playerId);
+ }
 }
 
 function rebalanceTables(t) {
@@ -192,10 +198,15 @@ export function createTournament(config) {
     },
     onBreak: false,
     breakRemainingSec: 0,
-    lateReg: {
-      byLevelInclusive: toInt(config.lateReg?.byLevelInclusive ?? 4, 'lateRegByLevel', 0),
-      open: true,
-    },
+ lateReg: {
+ byLevelInclusive: toInt(config.lateReg?.byLevelInclusive ?? 4, 'lateRegByLevel', 0),
+ // Close late reg when active player count drops below this threshold.
+ // Prevents unfair late entry into a near-complete tournament (e.g., buying
+ // into a 50-player tournament when only 2 players remain). Defaults to 2
+ // (must be at least heads-up to meaningfully continue).
+ minPlayers: toInt(config.lateReg?.minPlayers ?? 2, 'lateRegMinPlayers', 2),
+ open: true,
+ },
   rebuy: {
     enabled: Boolean(config.rebuy?.enabled),
     // When rebuy is enabled, default maxPerPlayer to 1 (not 0).
@@ -258,11 +269,32 @@ export function registerPlayer(t, { playerId, controlMode }) {
     controlMode: normalizeControlMode(controlMode, 'human'),
     controlUpdatedAt: nowIso(),
   });
-  t.prizePoolUnits += t.buyInUnits;
-  t.eventLog.push({ type: 'player.registered', ts: nowIso(), payload: { playerId } });
+ t.prizePoolUnits += t.buyInUnits;
+ t.eventLog.push({ type: 'player.registered', ts: nowIso(), payload: { playerId } });
 
-  if (t.status === 'running') rebalanceTables(t);
-  if (t.type === 'sng' && t.status === 'registration' && t.players.size === t.maxPlayers) {
+ // Only rebalance tables when the tournament is running AND no hands are
+ // currently in progress on any table. Rebalancing mid-hand corrupts the
+ // hand-in-progress (changes seat assignments, breaks actingSeat tracking,
+ // invalidates hole card mappings). This can happen with late registration
+ // where registerPlayer is called while hands are being played.
+ // The safe approach: defer rebalance until between hands.
+ // Since we can't know hand state here, only rebalance for SNG auto-start.
+ // For MTT late-reg, rebalance will occur at the next table break or when
+ // the tournament clock advances.
+ if (t.status === 'running' && t.type === 'sng') {
+ // SNG auto-start check — only rebalance when the table is first set up
+ // (no active hands). After this initial setup, rebalance happens via
+ // eliminatePlayer and advanceTournamentClock.
+ rebalanceTables(t);
+ } else if (t.status === 'running' && t.type === 'mtt') {
+ // MTT late registration: defer rebalance. Tables will be rebalanced
+ // when eliminatePlayer is called (between hands) or when the clock
+ // advances. Do NOT call rebalanceTables here — it would disrupt
+ // active hands.
+ t.eventLog.push({ type: 'player.late_registered', ts: nowIso(), payload: { playerId, rebalanceDeferred: true } });
+ }
+
+ if (t.type === 'sng' && t.status === 'registration' && t.players.size === t.maxPlayers) {
     startTournament(t);
   }
   return snapshotTournament(t);
@@ -447,18 +479,33 @@ export function eliminatePlayer(t, { playerId, finishPosition }) {
   t.eliminationOrder.push({ playerId, finishPosition: p.finishPosition, ts: nowIso() });
   t.eventLog.push({ type: 'player.eliminated', ts: nowIso(), payload: { playerId, finishPosition: p.finishPosition } });
 
-  const active = [...t.players.values()].filter((row) => row.status === 'active');
-  if (active.length <= 1) {
-    if (active.length === 1) {
-      active[0].finishPosition = 1;
-      t.eliminationOrder.push({ playerId: active[0].playerId, finishPosition: 1, ts: nowIso() });
-    }
-    t.status = 'complete';
-    t.completedAt = nowIso();
-    t.tables = new Map();
-  } else {
-    rebalanceTables(t);
-  }
+ const active = [...t.players.values()].filter((row) => row.status === 'active');
+ if (active.length <= 1) {
+ if (active.length === 1) {
+ active[0].finishPosition = 1;
+ t.eliminationOrder.push({ playerId: active[0].playerId, finishPosition: 1, ts: nowIso() });
+ }
+ t.status = 'complete';
+ t.completedAt = nowIso();
+ t.lateReg.open = false;
+ t.tables = new Map();
+ } else {
+ // Close late registration if the active player count has dropped below
+ // lateReg.minPlayers. A new player buying in when only 2 remain in a
+ // 50-player tournament is at an unfair chip disadvantage and distorts
+ // the prize pool. Previously, late reg only closed by level cutoff or
+ // tournament completion — a small remaining field was not considered.
+ if (t.lateReg.open && active.length < t.lateReg.minPlayers) {
+ t.lateReg.open = false;
+ t.eventLog.push({ type: 'latereg.closed_field_shrink', ts: nowIso(), payload: { activeCount: active.length, minPlayers: t.lateReg.minPlayers } });
+ }
+ // Also close late reg if we've gone past the level cutoff — this is a
+ // safety net since advanceTournamentClock is the primary mechanism.
+ if (t.lateReg.open && t.levelIndex > t.lateReg.byLevelInclusive) {
+ t.lateReg.open = false;
+ }
+ rebalanceTables(t);
+ }
 
   return snapshotTournament(t);
 }
@@ -490,9 +537,10 @@ export function computePayouts(t) {
  ? rawBps.map(() => Math.floor(10000 / paidPositions))
  : rawBps.map((b) => Math.round((b / totalRawBps) * 10000));
  // Re-normalize to exactly 10000 after rounding
+ // Per TDA convention, odd chip goes to worst finishing position (last paid position)
  const bpsSum = effectiveBps.reduce((s, b) => s + b, 0);
  if (bpsSum !== 10000 && effectiveBps.length > 0) {
- effectiveBps[0] += 10000 - bpsSum;
+ effectiveBps[effectiveBps.length - 1] += 10000 - bpsSum;
  }
 
  const payouts = [];
@@ -509,10 +557,11 @@ export function computePayouts(t) {
  });
  }
 
- // Distribute truncation remainder (1 unit each) to lowest finish positions
- // This ensures the full prize pool is paid out
+ // Distribute truncation remainder (1 unit each) starting from worst finishing position
+ // Per TDA Rule 73 convention, odd chip goes to seat closest LEFT of button clockwise.
+ // In payout context, this means the worst (last) paid position gets the odd chips.
  const remainder = t.prizePoolUnits - distributedTotal;
- for (let i = 0; i < payouts.length && remainder > 0; i += 1) {
+ for (let i = payouts.length - 1; i >= 0 && remainder > 0; i -= 1) {
  payouts[i].payoutUnits += 1;
  remainder -= 1;
  }
