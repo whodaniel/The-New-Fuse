@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"sync"
+
+	"gopkg.in/yaml.v3"
 )
 
 // AgentCard represents the A2A Agent Card
@@ -177,6 +179,42 @@ func (o *Orchestrator) HandleMemoryHook(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusAccepted)
 }
 
+// GooseRecipe represents the deconstructed Goose YAML structure
+type GooseRecipe struct {
+	Version      string `yaml:"version"`
+	Title        string `yaml:"title"`
+	Description  string `yaml:"description"`
+	Instructions string `yaml:"instructions"`
+	Extensions   []struct {
+		Type string   `yaml:"type"`
+		Name string   `yaml:"name"`
+		Args []string `yaml:"args"`
+	} `yaml:"extensions"`
+}
+
+func (o *Orchestrator) IngestGooseRecipe(w http.ResponseWriter, r *http.Request) {
+	var recipe GooseRecipe
+	if err := yaml.NewDecoder(r.Body).Decode(&recipe); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	fmt.Printf("[Borg-Deconstruction] Assimilating Goose Recipe: %s\n", recipe.Title)
+
+	// Translate to TNF Native Go Routine
+	go o.ExecuteAssimilatedGoose(recipe)
+
+	w.WriteHeader(http.StatusAccepted)
+}
+
+func (o *Orchestrator) ExecuteAssimilatedGoose(recipe GooseRecipe) {
+	fmt.Printf("[Native-Execution] Running '%s' at native speed...\n", recipe.Title)
+	// In a full implementation, we would map recipe.Extensions to Go channels or MCP clients
+	for _, ext := range recipe.Extensions {
+		fmt.Printf("  -> Activating Extension: %s (%s)\n", ext.Name, ext.Type)
+	}
+}
+
 func main() {
 	orc := NewOrchestrator()
 	go orc.StartRouter()
@@ -186,6 +224,7 @@ func main() {
 	http.HandleFunc("/ans", orc.HandleANS)
 	http.HandleFunc("/negotiate", orc.HandleNegotiate)
 	http.HandleFunc("/memory", orc.HandleMemoryHook)
+	http.HandleFunc("/ingest/goose", orc.IngestGooseRecipe)
 
 	fmt.Println("TNF Go Orchestrator running on :3006")
 	log.Fatal(http.ListenAndServe(":3006", nil))
