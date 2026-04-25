@@ -42,6 +42,30 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '1mb' }));
 
 app.get('/', (_req, res) => res.send('API running on port ' + PORT));
+
+app.get('/.well-known/agent-card.json', (_req, res) => {
+  res.json({
+    version: '1.2',
+    agentId: 'api-server-001',
+    name: 'TNF API Server',
+    description: 'Primary control plane and gateway for the TNF multi-agent network.',
+    skills: [
+      { name: 'Orchestration', description: 'Routing and management of agent communications' },
+      { name: 'Marketplace', description: 'Legacy marketplace shim for compatibility' },
+    ],
+    endpoint: `http://localhost:${PORT}`,
+    aars: {
+      score: 0.1,
+      factors: { autonomy: 0.2, toolUse: 0.1, persistence: 0.0 },
+    },
+    signature: {
+      type: 'ed25519',
+      publicKey: 'static-dev-key',
+      value: 'static-dev-sig',
+    },
+  });
+});
+
 app.get('/health', (_req, res) =>
   res.json({
     ok: true,

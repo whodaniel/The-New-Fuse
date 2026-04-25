@@ -32,12 +32,7 @@
     },
     "agentType": {
       "type": "string",
-      "enum": [
-        "local",
-        "external",
-        "api",
-        "mcp"
-      ]
+      "enum": ["local", "external", "api", "mcp"]
     },
     "status": {
       "type": "string"
@@ -63,10 +58,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "sourceId",
-          "sourceFile"
-        ]
+        "required": ["sourceId", "sourceFile"]
       }
     },
     "tools": {
@@ -119,12 +111,7 @@
     },
     "classification": {
       "type": "object",
-      "required": [
-        "domain",
-        "workflowStage",
-        "complexity",
-        "riskTier"
-      ],
+      "required": ["domain", "workflowStage", "complexity", "riskTier"],
       "properties": {
         "domain": {
           "type": "array",
@@ -143,6 +130,18 @@
         },
         "riskTier": {
           "type": "string"
+        },
+        "aarsScore": {
+          "type": "number",
+          "description": "Agentic AI Risk Score ( multiplier to standard CVSS )"
+        },
+        "aarsFactors": {
+          "type": "object",
+          "properties": {
+            "autonomy": { "type": "number" },
+            "toolUse": { "type": "number" },
+            "persistence": { "type": "number" }
+          }
         }
       }
     },

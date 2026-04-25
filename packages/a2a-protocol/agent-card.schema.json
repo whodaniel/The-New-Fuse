@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "A2A Agent Card",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Protocol version (e.g., '1.2')"
+    },
+    "agentId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Universally Unique Identifier for the agent"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the agent"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of agent purpose and goals"
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "version": { "type": "string" }
+        },
+        "required": ["name", "description"]
+      }
+    },
+    "endpoint": {
+      "type": "string",
+      "format": "uri",
+      "description": "The communication endpoint for this agent"
+    },
+    "aars": {
+      "type": "object",
+      "properties": {
+        "score": { "type": "number" },
+        "factors": {
+          "type": "object",
+          "properties": {
+            "autonomy": { "type": "number" },
+            "toolUse": { "type": "number" },
+            "persistence": { "type": "number" }
+          }
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string" },
+        "publicKey": { "type": "string" },
+        "value": { "type": "string" }
+      },
+      "required": ["type", "publicKey", "value"]
+    }
+  },
+  "required": ["version", "agentId", "name", "skills", "endpoint"]
+}

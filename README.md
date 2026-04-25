@@ -89,14 +89,14 @@ PicoClaw Fleet (Edge) <── Lightweight edge agents
 
 ### Core Services
 
-| Service          | Platform      | Tech         | Purpose                                                                |
-| ---------------- | ------------- | ------------ | ---------------------------------------------------------------------- |
-| **Frontend**     | Cloudflare    | React + Vite | SPA: dashboard, workflow builder, agent management, chat, admin        |
-| **API Server**   | GCP Cloud Run | NestJS       | Main backend: agents, chat, LLM routing, MCP, workflows, GraphQL       |
-| **API Gateway**  | GCP           | NestJS       | Single ingress proxy, auth, API versioning                             |
-| **Relay Server** | Cloudflare    | Node.js      | WebSocket hub connecting all agents across tabs/processes              |
-| **Database**     | Supabase      | PostgreSQL   | Primary database via Drizzle ORM (with pgvector)                       |
-| **Redis**        | Upstash       | Serverless   | Global Pub/sub, caching, job queues via UnifiedRedisService            |
+| Service          | Platform      | Tech         | Purpose                                                          |
+| ---------------- | ------------- | ------------ | ---------------------------------------------------------------- |
+| **Frontend**     | Cloudflare    | React + Vite | SPA: dashboard, workflow builder, agent management, chat, admin  |
+| **API Server**   | GCP Cloud Run | NestJS       | Main backend: agents, chat, LLM routing, MCP, workflows, GraphQL |
+| **API Gateway**  | GCP           | NestJS       | Single ingress proxy, auth, API versioning                       |
+| **Relay Server** | Cloudflare    | Node.js      | WebSocket hub connecting all agents across tabs/processes        |
+| **Database**     | Supabase      | PostgreSQL   | Primary database via Drizzle ORM (with pgvector)                 |
+| **Redis**        | Upstash       | Serverless   | Global Pub/sub, caching, job queues via UnifiedRedisService      |
 
 ### Message Flow
 
@@ -345,7 +345,9 @@ The-New-Fuse/
 │   ├── database/               # Drizzle ORM + PostgreSQL schemas
 │   ├── relay-core/             # WebSocket relay, protocols, TNF Envelope
 │   ├── mcp-core/               # MCP client/server/broker
-│   ├── a2a-core/               # Agent-to-Agent protocol
+│   ├── a2a-core/               # Agent-to-Agent protocol (legacy)
+│   ├── a2a-protocol/           # Next-Gen A2A protocol and Agent Cards
+│   ├── tnf-orchestrator-go/    # High-performance Go agent orchestrator
 │   ├── ag-ui-core/             # AG-UI protocol
 │   ├── core/                   # AI adapters, auth, vectordb, webhooks
 │   ├── agent/                  # Agent abstractions
@@ -447,7 +449,8 @@ pnpm run deploy:gcp
 - **[DOCUMENTATION_MAP.md](./DOCUMENTATION_MAP.md)** — Complete map of all
   1,200+ docs
 - **[QUICK_START_GUIDE.md](./QUICK_START_GUIDE.md)** — Fast setup guide
-- **[PRODUCTION_READINESS.md](./docs/project-management/PRODUCTION_READINESS.md)** — Production status
+- **[PRODUCTION_READINESS.md](./docs/project-management/PRODUCTION_READINESS.md)**
+  — Production status
 
 ### By Topic
 
@@ -456,7 +459,7 @@ pnpm run deploy:gcp
 | Architecture        | [docs/architecture/ARCHITECTURE_STANDARDS.md](./docs/architecture/ARCHITECTURE_STANDARDS.md) |
 | Agent Development   | [docs/agents/COMPLETE-AGENT-GUIDE.md](./docs/agents/COMPLETE-AGENT-GUIDE.md)                 |
 | Agent Communication | [docs/AGENT_COMMUNICATION_PROTOCOL.md](./docs/AGENT_COMMUNICATION_PROTOCOL.md)               |
-| API Usage           | [docs/API_USAGE_GUIDE.md](./docs/api/COMPLETE-API-GUIDE.md)                                         |
+| API Usage           | [docs/API_USAGE_GUIDE.md](./docs/api/COMPLETE-API-GUIDE.md)                                  |
 | GraphQL             | [apps/api/src/graphql/README.md](./apps/api/src/graphql/README.md)                           |
 | MCP Integration     | [apps/backend/src/modules/mcp/README.md](./apps/backend/src/modules/mcp/README.md)           |
 | Deployment          | [docs/guides/deployment-guide.md](./docs/guides/deployment-guide.md)                         |

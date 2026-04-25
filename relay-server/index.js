@@ -1,10 +1,10 @@
-import express from 'express';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
-import { createClient } from 'redis';
 import cors from 'cors';
+import express from 'express';
 import fs from 'fs';
+import http, { createServer } from 'http';
 import path from 'path';
+import { createClient } from 'redis';
+import { Server } from 'socket.io';
 import { fileURLToPath } from 'url';
 
 // Get the directory name
@@ -23,8 +23,8 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: '*',
-    methods: ['GET', 'POST']
-  }
+    methods: ['GET', 'POST'],
+  },
 });
 
 // Track connected clients
@@ -39,18 +39,18 @@ let redisSubscriber = null;
 try {
   redisClient = createClient();
   redisSubscriber = redisClient.duplicate();
-  
+
   await redisClient.connect();
   await redisSubscriber.connect();
-  
+
   console.log('Redis connected');
-  
+
   // Subscribe to the channel
   await redisSubscriber.subscribe('qwen_to_vscode', (message) => {
     console.log(`[Redis] Received message: ${message}`);
     forwardToVSCode(JSON.parse(message));
   });
-  
+
   await redisSubscriber.subscribe('vscode_to_qwen', (message) => {
     console.log(`[Redis] Received message: ${message}`);
     forwardToWeb(JSON.parse(message));
@@ -63,13 +63,13 @@ try {
 // Socket.IO connection handler
 io.on('connection', (socket) => {
   console.log(`Client connected: ${socket.id}`);
-  
+
   const clientType = socket.handshake.query.clientType;
-  
+
   if (clientType === 'vscode') {
     vscodeSocket = socket;
     console.log('VSCode client connected');
-    
+
     // Listen for messages from VSCode
     socket.on('from-vscode', (data) => {
       console.log(`[WebSocket] Received from VSCode: ${JSON.stringify(data)}`);
@@ -78,7 +78,7 @@ io.on('connection', (socket) => {
   } else if (clientType === 'chrome') {
     chromeSocket = socket;
     console.log('Chrome client connected');
-    
+
     // Listen for messages from Chrome
     socket.on('from-web', (data) => {
       console.log(`[WebSocket] Received from Chrome: ${JSON.stringify(data)}`);
@@ -87,14 +87,14 @@ io.on('connection', (socket) => {
   } else {
     webClients.add(socket);
     console.log('Web client connected');
-    
+
     // Listen for messages from web clients
     socket.on('to-vscode', (data) => {
       console.log(`[WebSocket] Received from web: ${JSON.stringify(data)}`);
       forwardToVSCode(data);
     });
   }
-  
+
   // Handle disconnection
   socket.on('disconnect', () => {
     if (socket === vscodeSocket) {
@@ -110,18 +110,54 @@ io.on('connection', (socket) => {
   });
 });
 
+function forwardToGoOrchestrator(payload, target) {
+  const data = JSON.stringify({
+    senderId: 'legacy-relay',
+    receiverID: target,
+    payload: payload,
+  });
+
+  const options = {
+    hostname: 'localhost',
+    port: 3006,
+    path: '/send',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(data),
+    },
+  };
+
+  const req = http.request(options, (res) => {
+    if (res.statusCode !== 202) {
+      // Silently fail if orchestrator is not accepting
+    }
+  });
+
+  req.on('error', () => {
+    // Orchestrator likely not running
+  });
+
+  req.write(data);
+  req.end();
+}
+
 // Forward message to VSCode
 function forwardToVSCode(data) {
   if (vscodeSocket) {
     vscodeSocket.emit('from-web', data);
   }
-  
+
+  // Bridge to Next-Gen
+  forwardToGoOrchestrator(data, 'vscode');
+
   // Also publish to Redis if available
   if (redisClient && redisClient.isOpen) {
-    redisClient.publish('qwen_to_vscode', JSON.stringify(data))
-      .catch(err => console.error('Redis publish error:', err));
+    redisClient
+      .publish('qwen_to_vscode', JSON.stringify(data))
+      .catch((err) => console.error('Redis publish error:', err));
   }
-  
+
   // Write to file as fallback
   const fileData = JSON.stringify(data);
   fs.writeFile(path.join(__dirname, 'to_vscode.json'), fileData, (err) => {
@@ -135,18 +171,22 @@ function forwardToWeb(data) {
   if (chromeSocket) {
     chromeSocket.emit('from-vscode', data);
   }
-  
+
+  // Bridge to Next-Gen
+  forwardToGoOrchestrator(data, 'web');
+
   // Send to all web clients
-  webClients.forEach(socket => {
+  webClients.forEach((socket) => {
     socket.emit('from-vscode', data);
   });
-  
+
   // Also publish to Redis if available
   if (redisClient && redisClient.isOpen) {
-    redisClient.publish('vscode_to_qwen', JSON.stringify(data))
-      .catch(err => console.error('Redis publish error:', err));
+    redisClient
+      .publish('vscode_to_qwen', JSON.stringify(data))
+      .catch((err) => console.error('Redis publish error:', err));
   }
-  
+
   // Write to file as fallback
   const fileData = JSON.stringify(data);
   fs.writeFile(path.join(__dirname, 'to_web.json'), fileData, (err) => {
@@ -158,7 +198,7 @@ function forwardToWeb(data) {
 app.post('/send', (req, res) => {
   const data = req.body;
   console.log(`[HTTP] Received: ${JSON.stringify(data)}`);
-  
+
   if (req.query.target === 'vscode') {
     forwardToVSCode(data);
     res.send({ status: 'sent to vscode' });
@@ -174,7 +214,7 @@ app.get('/status', (req, res) => {
     vscodeConnected: !!vscodeSocket,
     chromeConnected: !!chromeSocket,
     webClientsCount: webClients.size,
-    redisConnected: redisClient ? redisClient.isOpen : false
+    redisConnected: redisClient ? redisClient.isOpen : false,
   });
 });
 
