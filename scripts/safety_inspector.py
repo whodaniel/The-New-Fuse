@@ -9,6 +9,34 @@ class SafetyInspector:
         # We look for LLVM analysis tools
         self.opt_path = "opt"
         self.llvm_as_path = "llvm-as"
+        self.tsgo_path = "npx tsgo"
+
+    def validate_typescript(self, project_dir: str) -> dict:
+        """
+        Uses the native TypeScript compiler (Project Corsa) to validate code.
+        Returns a report of errors and warnings.
+        """
+        report = {"safe": True, "error_count": 0, "output": ""}
+        
+        try:
+            print(f"[Safety-Inspector] Running native TS validation in: {project_dir}")
+            res = subprocess.run(
+                ["npx", "tsgo", "--noEmit"], 
+                cwd=project_dir, 
+                capture_output=True, 
+                text=True
+            )
+            
+            report["output"] = res.stdout + res.stderr
+            if res.returncode != 0:
+                report["safe"] = False
+                # Extract error count from output if possible
+                if "Found " in report["output"]:
+                    report["error_count"] = report["output"].split("Found ")[1].split(" ")[0]
+                    
+            return report
+        except Exception as e:
+            return {"safe": False, "errors": [str(e)]}
 
     def analyze_ir(self, ir_code: str) -> dict:
         """

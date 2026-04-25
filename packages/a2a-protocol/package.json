@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {
-    "@mariozechner/pi-agent-core": "^1.0.0",
-    "@mariozechner/pi-ai": "^1.0.0"
+    "@mariozechner/pi-agent-core": "^0.70.2",
+    "@mariozechner/pi-ai": "^0.70.2"
   }
 }
