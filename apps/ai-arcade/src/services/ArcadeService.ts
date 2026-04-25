@@ -425,6 +425,27 @@ export class ArcadeService {
   private getPinnedExperiences(): AgentListing[] {
     return [
       {
+        id: 'localhost-port-monitor',
+        name: 'Localhost Port Monitor',
+        description:
+          'The ultimate visual control center for modern developers. Native Go performance, process intelligence, and surgical management.',
+        type: 'CONTENT',
+        pricePerRun: 14.99,
+        payPalPlanId: 'P-LPM-PRO-NATIVE',
+        avatarUrl: '/assets/agents/unique/LPM.png',
+        rating: 5.0,
+        capabilities: ['port-scanning', 'process-intelligence', 'native-management'],
+        category: 'community',
+        tags: ['productivity', 'dev-tools', 'native'],
+        status: 'online',
+        totalRuns: 100,
+        successRate: 100.0,
+        experienceKind: 'app',
+        launchUrl: 'https://github.com/whodaniel/LPM-Standalone',
+        kind: 'experience',
+        publicationStatus: 'published',
+      },
+      {
         id: 'casin8-poker',
         name: 'POKER ROOM',
         description: 'Direct launch into Casin8 poker tables.',

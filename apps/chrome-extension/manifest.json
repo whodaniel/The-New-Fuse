@@ -16,7 +16,8 @@
     "alarms",
     "contextMenus",
     "webRequest",
-    "notifications"
+    "notifications",
+    "nativeMessaging"
   ],
 
   "host_permissions": [

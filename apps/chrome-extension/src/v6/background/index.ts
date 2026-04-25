@@ -2428,6 +2428,20 @@ class BackgroundService {
           sendResponse({ success: true });
           break;
 
+        case 'NATIVE_COMMAND':
+          this.sendNativeMessage({
+            command: message.command,
+            port: message.port,
+            cmd: message.cmd,
+          })
+            .then((response) => {
+              sendResponse(response);
+            })
+            .catch((error) => {
+              sendResponse({ success: false, error: error.message });
+            });
+          return true; // Async response
+
         case 'GET_STATE': {
           // Find the page agent for this tab if it exists
           let tabPageAgentId = null;

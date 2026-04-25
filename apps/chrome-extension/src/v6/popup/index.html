@@ -49,6 +49,10 @@
           <span class="tab-icon">🖥️</span>
           <span class="tab-label">Services</span>
         </button>
+        <button class="tab" data-tab="system">
+          <span class="tab-icon">📟</span>
+          <span class="tab-label">System</span>
+        </button>
         <button class="tab" data-tab="settings">
           <span class="tab-icon">⚙️</span>
           <span class="tab-label">Settings</span>
@@ -399,6 +403,38 @@
               <strong id="ai-video-processed">0</strong>
               <strong id="ai-video-total">0</strong>
               <strong id="ai-video-cost">$0.00</strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- System Tab (Port Monitor) -->
+        <section class="tab-content" id="tab-system">
+          <div class="services-header">
+            <h3 class="section-title">Localhost Port Monitor</h3>
+            <button class="btn-icon-only" id="refresh-ports" title="Refresh Ports">🔄</button>
+          </div>
+          
+          <div class="system-stats-card">
+            <div id="native-host-status-badge" class="status-badge warning">
+              Native Host Required
+            </div>
+            <p class="section-subtitle">Real-time system port allocation</p>
+          </div>
+
+          <div class="port-list-container">
+            <div id="port-list" class="port-grid">
+              <!-- Ports dynamically injected -->
+              <div class="empty-state small">
+                <p>Click refresh to scan ports</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="system-tools-section" style="margin-top: 16px;">
+            <h4 class="subsection-title">System Tools</h4>
+            <div class="tool-buttons">
+              <button class="btn-secondary" id="kill-inactive-ports">Kill Inactive</button>
+              <button class="btn-secondary" id="clean-zombie-processes">Clean Zsh</button>
             </div>
           </div>
         </section>

@@ -348,6 +348,7 @@ The-New-Fuse/
 │   ├── a2a-core/               # Agent-to-Agent protocol (legacy)
 │   ├── a2a-protocol/           # Next-Gen A2A protocol and Agent Cards
 │   ├── tnf-orchestrator-go/    # High-performance Go agent orchestrator
+│   ├── lpm-native/             # (Assimilated) Localhost Port Monitor native kernel
 │   ├── ag-ui-core/             # AG-UI protocol
 │   ├── core/                   # AI adapters, auth, vectordb, webhooks
 │   ├── agent/                  # Agent abstractions

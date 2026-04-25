@@ -34,7 +34,7 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
 # Ports
 REDIS_PORT=6379
-WS_BRIDGE_PORT=3000
+WS_BRIDGE_PORT=3005
 
 # PID file for tracking
 PID_FILE="$SCRIPT_DIR/.agent-network-pids"

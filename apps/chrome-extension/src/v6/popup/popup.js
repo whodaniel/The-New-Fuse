@@ -194,6 +194,11 @@ class FuseConnectPopup {
       this.refreshServiceStatus();
     });
 
+    // Refresh ports
+    document.getElementById('refresh-ports')?.addEventListener('click', () => {
+      this.refreshPortMonitor();
+    });
+
     // Service control buttons
     document.querySelectorAll('[data-action]').forEach((btn) => {
       btn.addEventListener('click', (e) => {
@@ -1627,6 +1632,8 @@ class FuseConnectPopup {
 
   updateNativeHostIndicator() {
     const indicator = document.getElementById('native-host-indicator');
+    const badge = document.getElementById('native-host-status-badge');
+
     if (indicator) {
       if (this.state.nativeHostAvailable) {
         indicator.textContent = '🟢 Connected';
@@ -1636,6 +1643,62 @@ class FuseConnectPopup {
         indicator.style.color = '#ff3366';
       }
     }
+
+    if (badge) {
+      if (this.state.nativeHostAvailable) {
+        badge.textContent = 'Native Host: Connected';
+        badge.className = 'status-badge success';
+      } else {
+        badge.textContent = 'Native Host Required';
+        badge.className = 'status-badge warning';
+      }
+    }
+  }
+
+  async refreshPortMonitor() {
+    if (!this.state.nativeHostAvailable) {
+      this.showToast('Native host required for port monitoring');
+      return;
+    }
+
+    const portListEl = document.getElementById('port-list');
+    if (portListEl) portListEl.innerHTML = '<div class="loading-spinner">Scanning system...</div>';
+
+    chrome.runtime.sendMessage({ type: 'NATIVE_COMMAND', command: 'list_ports' }, (response) => {
+      if (response?.success && Array.isArray(response.ports)) {
+        this.updatePortListUI(response.ports);
+      } else {
+        this.showToast(response?.error || 'Failed to scan ports');
+        if (portListEl) portListEl.innerHTML = '<div class="empty-state">Scan failed</div>';
+      }
+    });
+  }
+
+  updatePortListUI(ports) {
+    const container = document.getElementById('port-list');
+    if (!container) return;
+
+    if (ports.length === 0) {
+      container.innerHTML = '<div class="empty-state">No active ports found</div>';
+      return;
+    }
+
+    container.innerHTML = ports
+      .map(
+        (p) => `
+      <div class="port-item-card">
+        <div class="port-number">:${p.port}</div>
+        <div class="port-info">
+          <div class="port-process">${p.name}</div>
+          <div class="port-pid">PID: ${p.pid}</div>
+        </div>
+        <div class="port-actions">
+          <button class="btn-tiny" onclick="window.open('http://localhost:${p.port}', '_blank')">🔗</button>
+        </div>
+      </div>
+    `
+      )
+      .join('');
   }
 
   updateServiceUI() {

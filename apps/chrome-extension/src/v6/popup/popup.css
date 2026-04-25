@@ -1158,3 +1158,94 @@ body {
   border-radius: var(--radius-sm);
   font-style: italic;
 }
+
+/* ============================================
+   System / Port Monitor Tab
+   ============================================ */
+.port-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+.port-item-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.port-item-card:hover {
+  border-color: var(--neon-cyan);
+  background: var(--bg-elevated);
+}
+
+.port-number {
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--neon-cyan);
+}
+
+.port-process {
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.port-pid {
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.success {
+  background: rgba(0, 255, 136, 0.1);
+  color: var(--neon-green);
+  border: 1px solid var(--neon-green);
+}
+
+.status-badge.warning {
+  background: rgba(255, 184, 0, 0.1);
+  color: var(--neon-yellow);
+  border: 1px solid var(--neon-yellow);
+}
+
+.btn-tiny {
+  padding: 2px 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.btn-tiny:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.tool-buttons {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.subsection-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
