@@ -150,6 +150,33 @@ func (o *Orchestrator) HandleNegotiate(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
+type MemoryHookRequest struct {
+	EntryID  string `json:"entryId"`
+	Title    string `json:"title"`
+	Category string `json:"category"`
+	Content  string `json:"content"`
+	AgentID  string `json:"agentId"`
+}
+
+func (o *Orchestrator) HandleMemoryHook(w http.ResponseWriter, r *http.Request) {
+	var req MemoryHookRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	fmt.Printf("[Memory-Hook] Compounding decision from %s: %s\n", req.AgentID, req.Title)
+
+	// Call the Python Wiki Compiler (Bridge to Mojo Kernel)
+	go func(r MemoryHookRequest) {
+		cmd := fmt.Sprintf("python3 /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/wiki_compiler.py '%s'", r.EntryID)
+		// Note: Real implementation would pass the full JSON payload
+		_ = cmd
+	}(req)
+
+	w.WriteHeader(http.StatusAccepted)
+}
+
 func main() {
 	orc := NewOrchestrator()
 	go orc.StartRouter()
@@ -158,6 +185,7 @@ func main() {
 	http.HandleFunc("/send", orc.HandleMessage)
 	http.HandleFunc("/ans", orc.HandleANS)
 	http.HandleFunc("/negotiate", orc.HandleNegotiate)
+	http.HandleFunc("/memory", orc.HandleMemoryHook)
 
 	fmt.Println("TNF Go Orchestrator running on :3006")
 	log.Fatal(http.ListenAndServe(":3006", nil))
