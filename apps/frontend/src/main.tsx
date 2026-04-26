@@ -61,6 +61,7 @@ installChunkLoadRecovery();
 // Custom Element Guard: Moved to index.html for maximum interception coverage.
 // The index.html guard locks the registry, so attempting to redefine define() here
 // would throw a TypeError.
+// Triggering fresh build to apply environment variable updates.
 
 console.log('Main.tsx starting...');
 
