@@ -11,10 +11,15 @@ export class AuthService {
 
   constructor(apiUrl: string) {
     this.apiUrl = apiUrl || config.apiUrl;
-    this.supabase = createClient(
-      process.env.VITE_SUPABASE_URL || '',
-      process.env.VITE_SUPABASE_ANON_KEY || ''
-    );
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+    if (supabaseUrl && supabaseAnonKey) {
+      this.supabase = createClient(supabaseUrl, supabaseAnonKey);
+    } else {
+      console.warn('[AuthService] Supabase credentials missing. Auth will be disabled.');
+      this.supabase = null as any;
+    }
   }
 
   private getStorage(): Storage | null {
@@ -58,8 +63,8 @@ export class AuthService {
         options: {
           data: {
             username: credentials.username,
-          }
-        }
+          },
+        },
       });
 
       if (error) throw error;
@@ -70,12 +75,12 @@ export class AuthService {
         this.setSession(token, user);
         return { success: true, user, token };
       }
-      
-      return { 
-        success: true, 
-        user: data.user ? this.supabaseUserToUser(data.user) : (null as any), 
+
+      return {
+        success: true,
+        user: data.user ? this.supabaseUserToUser(data.user) : (null as any),
         token: '',
-        message: 'Registration successful. Please check your email for verification.' 
+        message: 'Registration successful. Please check your email for verification.',
       };
     } catch (error: any) {
       console.error('Supabase register error:', error);
@@ -106,7 +111,10 @@ export class AuthService {
     }
 
     try {
-      const { data: { user }, error } = await this.supabase.auth.getUser();
+      const {
+        data: { user },
+        error,
+      } = await this.supabase.auth.getUser();
       if (error) throw error;
 
       if (user) {
