@@ -5638,11 +5638,12 @@ program
 
 async function main(): Promise<void> {
   if (process.argv.length <= 2) {
-    await printCommandMenu({
-      splash: {
-        compact: shouldAutoCompactMenuSplash(),
-      },
+    await renderSplash({
+      compact: false,
+      animate: process.stdout.isTTY,
     });
+    console.log('');
+    program.outputHelp();
     return;
   }
   if (isOpenClawPassthroughArgv(process.argv)) {
