@@ -1,3 +1,8 @@
+> **⚠️ RAILWAY IS NO LONGER USED.** TNF has migrated to GCP (Cloud Run) +
+> Cloudflare (Pages/Workers) + Supabase (PostgreSQL) + Upstash (Redis). See
+> `/CLOUD_MIGRATION_BLUEPRINT.md` for current infrastructure. This document is
+> preserved for historical reference only.
+
 # 🔴 Railway Deployment Failure - Root Cause Analysis
 
 **Date**: 2025-11-13 **Status**: All 4 services failed - FIXES EXIST LOCALLY but

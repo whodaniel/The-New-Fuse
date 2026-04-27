@@ -57,7 +57,9 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private configService: ConfigService,
     private ap2ProtocolService: Ap2ProtocolService,
-    private redisService: UnifiedRedisService
+    private redisService: UnifiedRedisService,
+    private signatureWrapper: A2ASignatureWrapper,
+    private pointerResolver: PointerResolverService
   ) {
     this.initializeDefaultRoutes();
   }
@@ -422,6 +424,62 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
     };
 
     return optimizedMessage;
+  }
+
+  /**
+   * Resolves any resource pointers in the message to their actual content.
+   * This is called by agents when they need to process the heavy data behind a pointer.
+   */
+  async resolvePointers(message: A2AMessage): Promise<Record<string, any>> {
+    const resolved: Record<string, any> = {};
+    if (!message.resourcePointers) return resolved;
+
+    for (const [key, pointer] of Object.entries(message.resourcePointers)) {
+      try {
+        resolved[key] = await this.pointerResolver.resolve(pointer);
+      } catch (error) {
+        this.logger.error(`Failed to resolve pointer ${key}: ${(error as Error).message}`);
+        throw error;
+      }
+    }
+    return resolved;
+  }
+
+  /**
+   * Sends a message wrapped in a DACC-v1 signature with optional resource pointers.
+   * This is the "Sovereign State" compliant way to send large data.
+   */
+  async sendSecureMessage(
+    fromAgent: string,
+    toAgent: string,
+    type: A2AMessageType,
+    payload: any,
+    options?: {
+      priority?: A2APriority;
+      resourcePointers?: Record<string, any>;
+    }
+  ): Promise<A2AResponse> {
+    const signedPacket = this.signatureWrapper.wrap(type, payload, {
+      resourcePointers: options?.resourcePointers,
+    });
+
+    const message: A2AMessage = {
+      id: this.generateMessageId(),
+      fromAgent,
+      toAgent,
+      type,
+      payload: signedPacket.payload.data,
+      priority: options?.priority || A2APriority.MEDIUM,
+      timestamp: signedPacket.header.timestamp,
+      resourcePointers: signedPacket.header.resource_pointers,
+      metadata: {
+        signature: signedPacket.signature,
+        nonce: signedPacket.header.nonce,
+        secure: true,
+      },
+    };
+
+    return this.sendMessage(message);
   }
 
   private async compressMessage(message: A2AMessage): Promise<A2AMessage> {

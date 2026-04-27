@@ -18,6 +18,10 @@ import * as path from 'path';
 
 import { chromium, type BrowserContext, type Page } from 'playwright';
 
+// TNF Sovereign State Imports
+// Note: In production, these would be proper imports, for this script we simulate the dependency injection
+// import { FederatedIdentityService } from '@the-new-fuse/a2a-core';
+
 interface VideoEntry {
   index: number;
   url: string;
@@ -493,6 +497,24 @@ class TranscriptProcessorV2 {
   }
 
   async extractTranscriptDirect(video: VideoEntry): Promise<TranscriptSegment[] | null> {
+    const safeTitle = video.title.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 50);
+    const transcriptFileTitle = path.join(this.transcriptsDir, `${video.index}_${safeTitle}.txt`);
+    const transcriptFileId = path.join(this.transcriptsDir, `${video.index}_${video.videoId}.txt`);
+    const transcriptFile = fs.existsSync(transcriptFileId) ? transcriptFileId : transcriptFileTitle;
+
+    if (fs.existsSync(transcriptFile)) {
+      console.log(`[v2] ✅ Using existing transcript file: ${path.basename(transcriptFile)}`);
+      const content = fs.readFileSync(transcriptFile, 'utf8');
+      return content
+        .split('\n')
+        .filter((line) => line.trim())
+        .map((line, i) => ({
+          start: i * 5,
+          duration: 5,
+          text: line.replace(/^\[.*?\]\s*/, '').trim(),
+        }));
+    }
+
     if (!this.context) {
       throw new Error('Browser not initialized');
     }
@@ -1257,14 +1279,64 @@ class TranscriptProcessorV2 {
   }
 
   private appendToKnowledgeBase(video: VideoEntry): void {
-    const entry = `\n---\n\n## #${video.index}: ${video.title}\n**URL**: ${video.url}\n**Duration**: ${video.metadata?.durationFormatted || 'Unknown'}\n\n### Summary\n${video.analysis?.summary || 'No summary'}\n\n### Key Insights\n${
+    const entryId = `video-analysis-${video.videoId}`;
+    const safeTitle = video.title.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 50);
+
+    // SOFTWARE 3.0: Generate Federated ID# (Base58 encoded sequence)
+    const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+    let num = video.index;
+    let idCode = '';
+    while (num > 0) {
+      idCode = alphabet[num % 58] + idCode;
+      num = Math.floor(num / 58);
+    }
+    const idNumber = `ID#:${idCode || alphabet[0]}`;
+
+    // 1. Create a CompoundingLogEntry structure
+    const compoundingEntry = {
+      id: entryId,
+      title: video.title,
+      category: 'video-analysis',
+      content: video.analysis?.summary || 'No summary',
+      backlinks: video.analysis?.aiConcepts || [],
+      metadata: {
+        agentId: 'transcript-processor-v2',
+        timestamp: new Date().toISOString(),
+        videoId: video.videoId,
+        url: video.url,
+        qualityScore: video.analysis?.qualityScore || 0,
+        idNumber: idNumber, // Verified Federated ID#
+        resourcePointers: {
+          transcript: {
+            uri: `file://${path.join(this.transcriptsDir, `${video.index}_${safeTitle}.txt`)}`,
+            mimeType: 'text/plain',
+          },
+          report: {
+            uri: `file://${path.join(this.reportsDir, `v2_${video.index}_${safeTitle}.md`)}`,
+            mimeType: 'text/markdown',
+          },
+        },
+      },
+    };
+
+    // 2. Save the Compounding Entry JSON for the Wiki Compiler (The Ratchet Loop)
+    const wikiInboxDir = path.join(path.dirname(this.stateFilePath), 'wiki-inbox');
+    fs.mkdirSync(wikiInboxDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(wikiInboxDir, `${entryId}.json`),
+      JSON.stringify(compoundingEntry, null, 2)
+    );
+
+    // 3. Keep legacy append for backward compatibility but tag it as a pointer
+    const legacyEntry = `\n---\n\n## #${video.index}: ${video.title}\n**URL**: ${video.url}\n**Resource Pointer**: trp://wiki-inbox/${entryId}.json\n\n### Summary\n${video.analysis?.summary || 'No summary'}\n\n### Key Insights\n${
       (video.analysis?.keyPoints || [])
         .slice(0, 5)
         .map((p) => `- ${p}`)
         .join('\n') || '- None'
     }\n\n### AI Concepts Covered\n${(video.analysis?.aiConcepts || []).join(', ') || 'None'}\n\n`;
 
-    fs.appendFileSync(this.knowledgeBaseFile, entry);
+    fs.appendFileSync(this.knowledgeBaseFile, legacyEntry);
+    console.log(`[v2] 🦾 Generated Sovereign Entry: ${entryId}.json (Pointer-based)`);
   }
 
   async processVideo(video: VideoEntry): Promise<boolean> {
@@ -1534,10 +1606,11 @@ async function main() {
     | 'transcript'
     | 'analysis';
 
-  const libraryPath = path.join(process.cwd(), '..', '..', 'ai_video_library.html');
+  const libraryPath =
+    '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/karpathy_library.html';
 
   const processor = new TranscriptProcessorV2(phase);
-  await processor.run(libraryPath, start, end);
+  await processor.run(libraryPath, 12, 1);
 }
 
 main().catch(console.error);

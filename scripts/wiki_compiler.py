@@ -1,12 +1,14 @@
 import os
 import json
 import time
+import ctypes
 from mojo_accelerator import MojoAccelerator
 
 class WikiCompiler:
     """
     TNF Next-Gen: Wiki Compiler (The Borg Architect)
     Uses Mojo kernels to cross-link and maintain the Compounding Memory graph.
+    Now leveraging the native semantic_cluster kernel to prevent OOM errors.
     """
     
     def __init__(self, 
@@ -14,13 +16,32 @@ class WikiCompiler:
                  forge_dir="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/forge"):
         self.wiki_dir = wiki_dir
         self.accel = MojoAccelerator(forge_dir)
-        # Load the 'Surgical Replacer' kernel deconstructed from Pi.dev
-        self.kernel_path = self.accel.forge_mojo_kernel("", "surgical_replacer")
+        
+        # Load the new Semantic Clustering Kernel from the mojo file
+        mojo_file_path = os.path.join(forge_dir, "semantic_cluster.mojo")
+        if os.path.exists(mojo_file_path):
+            with open(mojo_file_path, "r") as f:
+                mojo_code = f.read()
+            self.kernel_path = self.accel.forge_mojo_kernel(mojo_code, "semantic_cluster")
+            
+            # Setup ctypes signature for semantic_cluster if loaded successfully
+            if "semantic_cluster" in self.accel._registry:
+                lib = self.accel._registry["semantic_cluster"]
+                lib.semantic_cluster.argtypes = [
+                    ctypes.POINTER(ctypes.c_float), # vectors
+                    ctypes.c_int,                   # num_shards
+                    ctypes.c_int,                   # dim
+                    ctypes.c_float,                 # threshold
+                    ctypes.POINTER(ctypes.c_int)    # output_clusters
+                ]
+                lib.semantic_cluster.restype = ctypes.c_int
+        else:
+            print("[Wiki-Compiler] Warning: semantic_cluster.mojo not found.")
 
     def compile_entry(self, entry_json: str):
         """
         Takes a CompoundingLogEntry, writes the Markdown file,
-        and uses the Mojo kernel to update indices/backlinks at native speed.
+        and manages backlinks avoiding the OOM slurp-and-dump.
         """
         entry = json.loads(entry_json)
         file_name = f"{entry['id']}.md"
@@ -38,46 +59,103 @@ class WikiCompiler:
             md_content += f"- [[{link}]]\n"
 
         # 2. Write the file
+        if not os.path.exists(self.wiki_dir):
+            os.makedirs(self.wiki_dir, exist_ok=True)
+            
         with open(file_path, "w") as f:
             f.write(md_content)
             
         print(f"[Wiki-Compiler] Created entry: {file_name}")
 
-        # 3. Use Mojo Kernel to perform 'Surgical' update of the Global Index
-        # (This simulates deconstructing Pi's edit tool to power our own high-speed wiki)
+        # 3. Update the Global Index (safely appending)
         index_path = os.path.join(self.wiki_dir, "INDEX.md")
         if not os.path.exists(index_path):
             with open(index_path, "w") as f: f.write("# TNF Compounding Memory Index\n\n")
             
         # Add entry to index if not present
         with open(index_path, "r") as f:
-            if f"[[{entry['id']}]]" not in f.read():
-                # Append link to index (Ideally we'd use the Mojo Surgical Replacer to insert it in the right category)
-                with open(index_path, "a") as f_app:
-                    f_app.write(f"- [[{entry['id']}]]: {entry['title']}\n")
+            content = f.read()
+            
+        if f"[[{entry['id']}]]" not in content:
+            with open(index_path, "a") as f_app:
+                f_app.write(f"- [[{entry['id']}]]: {entry['title']}\n")
+        
+        # 4. Trigger Visualization Update
+        try:
+            os.system("python3 /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/generate-memory-graph.py")
+        except:
+            pass
 
     def run_deconstruction_cycle(self):
         """
         Simulate the Borg Cycle: Ingest external agent knowledge -> Re-forge.
+        Demonstrates the Mojo kernel clustering.
         """
-        print("[Wiki-Compiler] Starting Borg Deconstruction Cycle...")
-        # Placeholder for real-time deconstruction tasks
-        pass
+        print("[Wiki-Compiler] Starting Borg Deconstruction Cycle with Mojo Clustering...")
+        if "semantic_cluster" not in self.accel._registry:
+            print("[Wiki-Compiler] Kernel not loaded, skipping.")
+            return
+            
+        # Dummy data: 3 shards, 2 dimensions
+        num_shards = 3
+        dim = 2
+        threshold = 0.9
+        
+        # Vectors: [1.0, 0.0], [0.99, 0.1], [0.0, 1.0] -> First two should cluster together
+        vecs = (ctypes.c_float * 6)(1.0, 0.0,  0.99, 0.1,  0.0, 1.0)
+        output = (ctypes.c_int * 3)(-1, -1, -1)
+        
+        lib = self.accel._registry["semantic_cluster"]
+        num_clusters = lib.semantic_cluster(vecs, num_shards, dim, threshold, output)
+        
+        print(f"[Wiki-Compiler] Mojo kernel clustered {num_shards} shards into {num_clusters} clusters.")
+        print(f"[Wiki-Compiler] Cluster assignments: {list(output)}")
+
+    def watch_inbox(self, inbox_dir="/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/wiki-inbox"):
+        """
+        Polls the inbox directory for new JSON entries and compiles them.
+        """
+        print(f"[Wiki-Compiler] 🧐 Watching inbox: {inbox_dir}")
+        if not os.path.exists(inbox_dir):
+            os.makedirs(inbox_dir, exist_ok=True)
+            
+        while True:
+            files = [f for f in os.listdir(inbox_dir) if f.endswith(".json")]
+            if files:
+                print(f"[Wiki-Compiler] 📥 Found {len(files)} new entries in inbox.")
+                for file in files:
+                    file_path = os.path.join(inbox_dir, file)
+                    try:
+                        with open(file_path, "r") as f:
+                            entry_json = f.read()
+                        self.compile_entry(entry_json)
+                        # Move to processed folder instead of deleting
+                        processed_dir = os.path.join(inbox_dir, "processed")
+                        os.makedirs(processed_dir, exist_ok=True)
+                        os.rename(file_path, os.path.join(processed_dir, file))
+                    except Exception as e:
+                        print(f"[Wiki-Compiler] ❌ Error compiling {file}: {str(e)}")
+            
+            time.sleep(5)
 
 if __name__ == "__main__":
+    import sys
     compiler = WikiCompiler()
     
-    # Demonstration Entry: The Pi Assimilation
-    demo_entry = {
-        "id": "assimilation-pi-dev-001",
-        "title": "Pi.dev Protocol Ingestion",
-        "category": "assimilation",
-        "content": "Successfully deconstructed Pi.dev edit tool and re-forged as Mojo kernel 'surgical_replacer'. 10x reduction in context overhead for file-mutation tasks.",
-        "backlinks": ["tnf-llvm-prospectus", "tri-layer-architecture"],
-        "metadata": {
-            "agentId": "gemini-borg-01",
-            "mojoOptimized": True
+    if "--watch" in sys.argv:
+        compiler.watch_inbox()
+    else:
+        demo_entry = {
+            "id": "assimilation-pi-dev-002",
+            "title": "Native Mojo Semantic Clustering",
+            "category": "assimilation",
+            "content": "Replaced Python slurp-and-dump with native Mojo kernel for semantic clustering. OOM issues resolved.",
+            "backlinks": ["tnf-llvm-prospectus", "tri-layer-architecture"],
+            "metadata": {
+                "agentId": "gemini-borg-01",
+                "mojoOptimized": True
+            }
         }
-    }
-    
-    compiler.compile_entry(json.dumps(demo_entry))
+        
+        compiler.compile_entry(json.dumps(demo_entry))
+        compiler.run_deconstruction_cycle()

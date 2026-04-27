@@ -48,6 +48,17 @@ export const MasterCumulativeId = z.object({
 });
 export type MasterCumulativeId = z.infer<typeof MasterCumulativeId>;
 
+export const TNFResourcePointer = z.object({
+  uri: z
+    .string()
+    .url()
+    .or(z.string().regex(/^(pgvector|file|trp|s3|r2):\/\//)),
+  integrityHash: z.string().optional(),
+  mimeType: z.string().optional(),
+  size: z.number().int().nonnegative().optional(),
+});
+export type TNFResourcePointer = z.infer<typeof TNFResourcePointer>;
+
 export const HandoffPayload = z.object({
   title: z.string().min(3),
   summary: z.string().min(10),
@@ -55,6 +66,7 @@ export const HandoffPayload = z.object({
   acceptanceCriteria: z.array(z.string()).default([]),
   nextActions: z.array(z.string()).default([]),
   artifacts: z.array(z.string()).default([]),
+  resourcePointers: z.record(z.string(), TNFResourcePointer).optional(),
   twipRef: z
     .object({
       twid: z.string().uuid(),

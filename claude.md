@@ -76,7 +76,7 @@
 
 # follow documentation structure in docs/
 
-# reference DOCUMENTATION_MAP.md for navigation
+# reference DOCUMENTATION_INDEX.md for navigation
 
 # maintain API documentation in respective app README files
 

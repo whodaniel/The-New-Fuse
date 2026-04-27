@@ -1,3 +1,8 @@
+> **⚠️ RAILWAY IS NO LONGER USED.** TNF has migrated to GCP (Cloud Run) +
+> Cloudflare (Pages/Workers) + Supabase (PostgreSQL) + Upstash (Redis). See
+> `/CLOUD_MIGRATION_BLUEPRINT.md` for current infrastructure. This document is
+> preserved for historical reference only.
+
 # The New Fuse - Railway Deployment Guide
 
 ## Quick Start
@@ -17,7 +22,8 @@ minutes.
 
 ### Build Guardrails (Monorepo)
 
-- Prefer Docker-based deployments for monorepo consistency (instead of Nixpacks).
+- Prefer Docker-based deployments for monorepo consistency (instead of
+  Nixpacks).
 - Set **Root Directory** to `.` for services that use `Dockerfile.railway`.
 - Set **Dockerfile Path** to `./Dockerfile.railway`.
 - Set `SERVICE_PATH` build arg per service (`api-gateway`, `backend`, etc.).
@@ -248,7 +254,8 @@ Railway logs → Backend → Search for "drizzle migrate"
 - Verify `package.json` has updated build script
 - Check Dockerfile.railway excludes problematic packages
 - Review build logs for specific missing packages
-- Ensure all required workspace `package.json` files are copied during image build
+- Ensure all required workspace `package.json` files are copied during image
+  build
 - Ensure built workspace outputs are copied into the runtime image
 
 ### Service Won't Start

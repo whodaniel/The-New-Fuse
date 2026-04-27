@@ -2,10 +2,14 @@ import { DynamicModule, Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { Ap2ProtocolModule, Ap2ProtocolService } from '@the-new-fuse/ap2-protocol';
+import { VectorDatabaseModule } from '@the-new-fuse/core-vector-db';
 import { RedisModule, UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 import { A2AService } from './a2a.service';
+import { FederatedIdentityService } from './federated-identity.service.js';
+import { PointerResolverService } from './pointer-resolver.service.js';
 import { A2ARedisAdapter } from './redis-adapter.js';
+import { A2ASignatureWrapper } from './signature-wrapper.js';
 import { A2AConfig } from './types.js';
 import { A2AWebSocketAdapter } from './websocket-adapter.js';
 
@@ -15,7 +19,12 @@ export class A2ACoreModule {
   static forRoot(config?: Partial<A2AConfig>): DynamicModule {
     return {
       module: A2ACoreModule,
-      imports: [ConfigModule, RedisModule.forRoot({ isGlobal: true }), Ap2ProtocolModule],
+      imports: [
+        ConfigModule,
+        RedisModule.forRoot({ isGlobal: true }),
+        Ap2ProtocolModule,
+        VectorDatabaseModule.forRoot({}),
+      ],
       providers: [
         {
           provide: 'A2A_CONFIG',
@@ -50,6 +59,17 @@ export class A2ACoreModule {
           inject: [ConfigService],
         },
         {
+          provide: A2ASignatureWrapper,
+          useFactory: (configService: ConfigService) => {
+            const agentId = configService.get<string>('AGENT_ID') || 'system-gateway';
+            const secret = configService.get<string>('A2A_SECRET_KEY') || 'default-secret';
+            return new A2ASignatureWrapper(agentId, secret);
+          },
+          inject: [ConfigService],
+        },
+        PointerResolverService,
+        FederatedIdentityService,
+        {
           provide: A2ARedisAdapter,
           useFactory: (config: A2AConfig, unifiedRedis: UnifiedRedisService) =>
             new A2ARedisAdapter(config, unifiedRedis),
@@ -66,12 +86,35 @@ export class A2ACoreModule {
           useFactory: (
             configService: ConfigService,
             ap2ProtocolService: Ap2ProtocolService,
-            redisService: UnifiedRedisService
-          ) => new A2AService(configService, ap2ProtocolService, redisService),
-          inject: [ConfigService, Ap2ProtocolService, UnifiedRedisService],
+            redisService: UnifiedRedisService,
+            signatureWrapper: A2ASignatureWrapper,
+            pointerResolver: PointerResolverService
+          ) =>
+            new A2AService(
+              configService,
+              ap2ProtocolService,
+              redisService,
+              signatureWrapper,
+              pointerResolver
+            ),
+          inject: [
+            ConfigService,
+            Ap2ProtocolService,
+            UnifiedRedisService,
+            A2ASignatureWrapper,
+            PointerResolverService,
+          ],
         },
       ],
-      exports: [A2AService, A2ARedisAdapter, A2AWebSocketAdapter, 'A2A_CONFIG'],
+      exports: [
+        A2AService,
+        A2ARedisAdapter,
+        A2AWebSocketAdapter,
+        'A2A_CONFIG',
+        PointerResolverService,
+        A2ASignatureWrapper,
+        FederatedIdentityService,
+      ],
       global: true,
     };
   }
@@ -83,13 +126,29 @@ export class A2ACoreModule {
   }): DynamicModule {
     return {
       module: A2ACoreModule,
-      imports: [ConfigModule, RedisModule.forRoot({ isGlobal: true }), ...(options.imports || [])],
+      imports: [
+        ConfigModule,
+        RedisModule.forRoot({ isGlobal: true }),
+        VectorDatabaseModule.forRoot({}),
+        ...(options.imports || []),
+      ],
       providers: [
         {
           provide: 'A2A_CONFIG',
           useFactory: options.useFactory,
           inject: options.inject || [],
         },
+        {
+          provide: A2ASignatureWrapper,
+          useFactory: (configService: ConfigService) => {
+            const agentId = configService.get<string>('AGENT_ID') || 'system-gateway';
+            const secret = configService.get<string>('A2A_SECRET_KEY') || 'default-secret';
+            return new A2ASignatureWrapper(agentId, secret);
+          },
+          inject: [ConfigService],
+        },
+        PointerResolverService,
+        FederatedIdentityService,
         {
           provide: A2ARedisAdapter,
           useFactory: (config: A2AConfig, unifiedRedis: UnifiedRedisService) =>
@@ -107,12 +166,35 @@ export class A2ACoreModule {
           useFactory: (
             configService: ConfigService,
             ap2ProtocolService: Ap2ProtocolService,
-            redisService: UnifiedRedisService
-          ) => new A2AService(configService, ap2ProtocolService, redisService),
-          inject: [ConfigService, Ap2ProtocolService, UnifiedRedisService],
+            redisService: UnifiedRedisService,
+            signatureWrapper: A2ASignatureWrapper,
+            pointerResolver: PointerResolverService
+          ) =>
+            new A2AService(
+              configService,
+              ap2ProtocolService,
+              redisService,
+              signatureWrapper,
+              pointerResolver
+            ),
+          inject: [
+            ConfigService,
+            Ap2ProtocolService,
+            UnifiedRedisService,
+            A2ASignatureWrapper,
+            PointerResolverService,
+          ],
         },
       ],
-      exports: [A2AService, A2ARedisAdapter, A2AWebSocketAdapter, 'A2A_CONFIG'],
+      exports: [
+        A2AService,
+        A2ARedisAdapter,
+        A2AWebSocketAdapter,
+        'A2A_CONFIG',
+        PointerResolverService,
+        A2ASignatureWrapper,
+        FederatedIdentityService,
+      ],
       global: true,
     };
   }

@@ -1,4 +1,6 @@
 # railway.toml for The New Fuse Monorepo
+# ⚠️ DEPRECATED — Railway is no longer used. TNF has migrated to GCP (Cloud Run) + Cloudflare (Pages/Workers) + Supabase + Upstash.
+# This file is preserved for historical reference only. See CLOUD_MIGRATION_BLUEPRINT.md for current deployment.
 # NOTE: Do NOT set global [build] section - each service specifies its own builder
 
 # API Gateway Service (uses Docker)

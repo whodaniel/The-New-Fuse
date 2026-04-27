@@ -168,12 +168,12 @@ Run `/deploy rollback` if needed.
 
 ## Platform Support
 
-| Platform | Command                | Notes                     |
-| -------- | ---------------------- | ------------------------- |
-| Vercel   | `vercel --prod`        | Auto-detected for Next.js |
-| Railway  | `railway up`           | Needs Railway CLI         |
-| Fly.io   | `fly deploy`           | Needs flyctl              |
-| Docker   | `docker compose up -d` | For self-hosted           |
+| Platform | Command                | Notes                                                      |
+| -------- | ---------------------- | ---------------------------------------------------------- |
+| Vercel   | `vercel --prod`        | Auto-detected for Next.js                                  |
+| Railway  | `railway up`           | ⚠️ DEPRECATED — Railway no longer used. Use GCP Cloud Run. |
+| Fly.io   | `fly deploy`           | Needs flyctl                                               |
+| Docker   | `docker compose up -d` | For self-hosted                                            |
 
 ---
 

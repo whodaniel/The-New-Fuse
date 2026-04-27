@@ -3,7 +3,14 @@ export * from './types.js';
 
 // Services and adapters
 export { A2AService } from './a2a.service';
+export { FederatedIdentityService } from './federated-identity.service.js';
+export { PointerResolverService } from './pointer-resolver.service.js';
 export { A2ARedisAdapter } from './redis-adapter.js';
+export {
+  A2ASignatureWrapper,
+  type A2ASignedPacket,
+  type TNFResourcePointer,
+} from './signature-wrapper.js';
 export { A2AWebSocketAdapter } from './websocket-adapter.js';
 
 // Controller

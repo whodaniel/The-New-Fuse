@@ -1,0 +1,30 @@
+[
+  {
+    "id": "cluster_assimilation **agent:** gemini-borg-01 **timestamp:** sat apr 25",
+    "label": "assimilation **Agent:** gemini-borg-01 **Timestamp:** Sat Apr 25",
+    "items": [
+      {
+        "id": "assimilation-pi-dev-001",
+        "content": "Pi.dev Protocol Ingestion",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      }
+    ]
+  },
+  {
+    "id": "cluster_assimilation",
+    "label": "assimilation",
+    "items": [
+      {
+        "id": "assimilation-pi-dev-002",
+        "content": "Native Mojo Semantic Clustering",
+        "metadata": {
+          "confidence": 1.0,
+          "source": "wiki"
+        }
+      }
+    ]
+  }
+]

@@ -51,7 +51,12 @@ pnpm test   # Verify 14,752 tests pass
 
 ---
 
-### 🟢 Day 6-7: Deploy to Railway
+### 🟢 Day 6-7: Deploy to Production
+
+> **⚠️ RAILWAY IS NO LONGER USED.** TNF has migrated from Railway to **GCP
+> (Cloud Run) + Cloudflare (Pages/Workers) + Supabase (PostgreSQL) + Upstash
+> (Redis)**. See `CLOUD_MIGRATION_BLUEPRINT.md` for current deployment
+> instructions. The Railway steps below are historical.
 
 ```bash
 # 1. Merge to main
@@ -59,13 +64,11 @@ git checkout main
 git merge claude/fix-monorepo-builds-019rTq29GyFPBTHdttUkdE9w
 git push origin main
 
-# 2. Configure Railway
-# - Add PostgreSQL database
-# - Set environment variables (see PUBLIC_LAUNCH_ROADMAP.md)
-# - Monitor: https://railway.app/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+# 2. Deploy to GCP Cloud Run (current method)
+# See CLOUD_MIGRATION_BLUEPRINT.md for full instructions
 
 # 3. Verify deployment
-# - All 4 services running
+# - All services running on Cloud Run
 # - Health checks passing
 # - www.thenewfuse.com accessible
 ```
@@ -78,7 +81,8 @@ git push origin main
 
 - 32/37 packages building (86.5%)
 - 291 test files, 14,752 test cases
-- Railway configured with 4 Dockerfiles
+- Railway configured with 4 Dockerfiles ⚠️ **DEPRECATED — Railway no longer
+  used. See CLOUD_MIGRATION_BLUEPRINT.md for GCP/Cloudflare deployment.**
 - Core infrastructure operational
 - Comprehensive documentation
 
@@ -86,7 +90,7 @@ git push origin main
 
 1. **sync-core package** (5 Drizzle models, import paths)
 2. **Drizzle binary download** (using placeholder)
-3. **Railway deployment** (not yet live)
+3. **Railway deployment** ⚠️ **DEPRECATED — now on GCP Cloud Run + Cloudflare**
 4. **integration-tests** (syntax errors)
 5. **web-scraping** (electron types)
 
@@ -99,7 +103,8 @@ git push origin main
 - [ ] sync-core building
 - [ ] Real Drizzle client working
 - [ ] User auth (register/login)
-- [ ] Services deployed to Railway
+- [ ] Services deployed to GCP Cloud Run + Cloudflare (⚠️ Railway is no longer
+      used)
 - [ ] www.thenewfuse.com live with SSL
 
 ### Should Have
@@ -147,14 +152,13 @@ pnpm run dev:no-ide  # Fastest startup
 
 ## 📚 Key Documents
 
-| Document                                                       | Purpose                                               |
-| -------------------------------------------------------------- | ----------------------------------------------------- |
-| [README.md](./README.md)                                       | Project overview and development setup                |
-| [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md)           | Current production status and comprehensive roadmap   |
-| [DOCUMENTATION_MAP.md](./DOCUMENTATION_MAP.md)                 | Complete map of all 1,200+ docs with navigation paths |
-| [DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md)             | Organized index by category                           |
-| [BUILD_STATUS.md](./docs/development/BUILD_STATUS.md)          | Current build status and known issues                 |
-| [DEPLOYMENT_STATUS.md](./docs/deployment/DEPLOYMENT_STATUS.md) | Railway configuration and deployment guide            |
+| Document                                                       | Purpose                                                                 |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| [README.md](./README.md)                                       | Project overview and development setup                                  |
+| [CLOUD_MIGRATION_BLUEPRINT.md](./CLOUD_MIGRATION_BLUEPRINT.md) | Current infrastructure: GCP Cloud Run + Cloudflare + Supabase + Upstash |
+| [DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md)             | Organized index with guided navigation paths                            |
+| [BUILD_STATUS.md](./docs/development/BUILD_STATUS.md)          | Current build status and known issues                                   |
+| [RELEASE_GATE.md](./RELEASE_GATE.md)                           | Merge-blocking release gate                                             |
 
 ## 📖 Related Documentation
 
@@ -167,8 +171,8 @@ pnpm run dev:no-ide  # Fastest startup
 
 ### Deployment
 
-- [Deployment Guide](./docs/deployment/DEPLOYMENT_GUIDE.md)
-- [Railway Deployment](./docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md)
+- [Cloud Migration Blueprint](./CLOUD_MIGRATION_BLUEPRINT.md)
+- [Deployment Guide](./docs/guides/deployment-guide.md)
 - [Docker Setup](./docs/guides/docker-setup.md)
 - [CI/CD Strategy](./docs/ci-cd/workflows.md)
 
@@ -201,6 +205,9 @@ DRIZZLE_ENGINES_CHECKSUM_IGNORE_MISSING=1
 
 ### "Railway deployment fails"
 
+> ⚠️ **DEPRECATED** — Railway is no longer used. Deploy to GCP Cloud Run +
+> Cloudflare instead. See `CLOUD_MIGRATION_BLUEPRINT.md`.
+
 → Check railway.toml exists on main branch → Verify Dockerfile.railway in each
 app → Check environment variables set
 
@@ -214,9 +221,11 @@ CORS_ORIGIN includes frontend URL
 ## 💡 Pro Tips
 
 1. **Fix sync-core first** - It's blocking the most packages
-2. **Test locally before Railway** - Save deployment time
+2. **Test locally before deploying** ⚠️ Railway no longer used — deploy to GCP
+   Cloud Run
 3. **Use pnpm filtering** - Faster than full builds
-4. **Monitor Railway logs** - Real-time deployment feedback
+4. **Monitor deployment logs** ⚠️ Railway no longer used — use GCP Cloud Run
+   logs
 5. **Keep this document updated** - Track your progress
 
 ---
@@ -228,7 +237,8 @@ Based on current branch: `claude/fix-monorepo-builds-019rTq29GyFPBTHdttUkdE9w`
 1. **Immediate**: Start fixing sync-core package
 2. **Next**: Resolve Drizzle binary issue
 3. **Then**: Run full build verification
-4. **Finally**: Deploy to Railway
+4. **Finally**: Deploy to GCP Cloud Run + Cloudflare (⚠️ Railway is no longer
+   used)
 
 **Estimated time to launch**: 7-14 days with focused effort
 

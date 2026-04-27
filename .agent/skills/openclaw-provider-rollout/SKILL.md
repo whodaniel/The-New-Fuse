@@ -1,5 +1,9 @@
 # OpenClaw Provider Rollout
 
+> **⚠️ Railway references below are DEPRECATED.** TNF has migrated from Railway
+> to **GCP (Cloud Run) + Cloudflare + Supabase + Upstash**. See
+> `CLOUD_MIGRATION_BLUEPRINT.md`.
+
 ## Purpose
 
 Expand OpenClaw OAuth routing from Codex to additional providers in controlled
@@ -15,7 +19,8 @@ phases: `openai-codex` -> `anthropic` -> `google-antigravity` -> `kilo`.
 
 ## Workflow
 
-1. Add provider binding to `scripts/railway/openclaw-oauth-instances.json`.
+1. Add provider binding to `scripts/railway/openclaw-oauth-instances.json`. ⚠️
+   **DEPRECATED — Railway scripts are historical; adapt for GCP Cloud Run**
 2. Execute single provider canary on one low-risk service.
 3. Validate chat response and logs for model resolution errors.
 4. Promote to more services after success.

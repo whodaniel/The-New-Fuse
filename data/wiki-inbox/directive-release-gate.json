@@ -1,0 +1,22 @@
+{
+  "header": {
+    "agent_id": "AGENT-RELEASE-ENFORCER",
+    "alg": "HS256",
+    "nonce": "4f74baecd333f2d040b89849dfe939bf",
+    "timestamp": 1777321546267,
+    "resource_pointers": {
+      "release-gate": {
+        "uri": "file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/RELEASE_GATE.md",
+        "mimeType": "text/markdown"
+      }
+    }
+  },
+  "payload": {
+    "type": "SYSTEM_DIRECTIVE",
+    "data": {
+      "title": "Enforce Release Gate",
+      "instruction": "All commits must pass the Release Gate strict mode."
+    }
+  },
+  "signature": "3d357cb7954d270c58fcc5785c9006de6717d1bb4aa653e68f787ef658784370"
+}

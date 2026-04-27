@@ -126,10 +126,11 @@ oagi::wait_duration       // Pause
    - Will start Relay, build extensions, launch Tauri
 
 2. **SkIDEancer IDE Reintegration**
-   - Status: 404 on Railway deployment
-   - URL: https://tnf-ide-ide-production.up.railway.app
-   - Repo: whodaniel/skideancer-ide
-   - Action: Verify Railway deployment status
+
+- Status: 404 on Railway deployment ⚠️ **DEPRECATED — Railway no longer used**
+- URL: https://tnf-ide-ide-production.up.railway.app ⚠️ **DEPRECATED**
+- Repo: whodaniel/skideancer-ide
+- Action: Verify GCP Cloud Run deployment status (Railway is historical)
 
 3. **Build Chrome Extension**
 
@@ -196,7 +197,7 @@ node scripts/RelayHealthCheck.cjs
 | Chrome Extension    | 🔄 Needs build   | Almost              |
 | VS Code Extension   | 🔄 Needs compile | Almost              |
 | Tauri App           | 🔄 Needs launch  | Almost              |
-| SkIDEancer IDE           | ❌ 404 Error     | No                  |
+| SkIDEancer IDE      | ❌ 404 Error     | No                  |
 
 ---
 

@@ -6,6 +6,7 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PointerResolverService } from '@the-new-fuse/a2a-core';
 import {
   HandoffAckInput,
   HandoffPacketInput,
@@ -38,12 +39,35 @@ export class AgentHandoffService implements OnModuleDestroy {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly unifiedLedgerService: UnifiedLedgerService
+    private readonly unifiedLedgerService: UnifiedLedgerService,
+    private readonly pointerResolver: PointerResolverService
   ) {
     this.store = new HandoffStoreService({
       redisUrl: this.configService.get<string>('REDIS_URL'),
       keyPrefix: this.configService.get<string>('HANDOFF_KEY_PREFIX') || 'tnf:handoff:v1',
     });
+  }
+
+  /**
+   * Resolves resource pointers in a handoff packet.
+   * This allows agents to receive lightweight packets and fetch heavy data on-demand.
+   */
+  async resolvePointers(packet: HandoffPacket): Promise<Record<string, any>> {
+    const resolved: Record<string, any> = {};
+    const pointers = packet.payload.resourcePointers;
+    if (!pointers) return resolved;
+
+    for (const [key, pointer] of Object.entries(pointers)) {
+      try {
+        resolved[key] = await this.pointerResolver.resolve(pointer);
+      } catch (error) {
+        this.logger.error(
+          `Failed to resolve pointer ${key} in packet ${packet.id}: ${(error as Error).message}`
+        );
+        throw error;
+      }
+    }
+    return resolved;
   }
 
   async publishForTenant(input: unknown, tenantId: string): Promise<HandoffPacket> {

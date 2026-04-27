@@ -1,0 +1,266 @@
+[
+  {
+    "index": 405,
+    "url": "https://www.youtube.com/watch?v=D6jxT0E7tzU",
+    "title": "Manus is out of control",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/405_Manus_is_out_of_control.txt"
+  },
+  {
+    "index": 415,
+    "url": "https://www.youtube.com/watch?v=xnEfL8rmy2M",
+    "title": "How to Use Meta Llama API for Free | Use Llama AI Model in Your Application for Free",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/415_How_to_Use_Meta_Llama_API_for_Free___Use_Llama_AI_.txt"
+  },
+  {
+    "index": 443,
+    "url": "https://www.youtube.com/watch?v=sV3pI_xH_Q0",
+    "title": "How to build your AI App with Cursor, Firebase, Vercel (Full Tutorial)",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/443_How_to_build_your_AI_App_with_Cursor__Firebase__Ve.txt"
+  },
+  {
+    "index": 458,
+    "url": "https://www.youtube.com/watch?v=IVRr3zvXC0Q",
+    "title": "How to OPTIMIZE your prompts for better Reasoning!",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/458_How_to_OPTIMIZE_your_prompts_for_better_Reasoning_.txt"
+  },
+  {
+    "index": 459,
+    "url": "https://www.youtube.com/watch?v=7ZMXFYawDME",
+    "title": "The Hottest AI Crypto Trends of 2025",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/459_The_Hottest_AI_Crypto_Trends_of_2025.txt"
+  },
+  {
+    "index": 464,
+    "url": "https://www.youtube.com/watch?v=c8EpB4zmXG0",
+    "title": "smolagents - HuggingFace's NEW Agent Framework",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/464_smolagents___HuggingFace_s_NEW_Agent_Framework.txt"
+  },
+  {
+    "index": 469,
+    "url": "https://www.youtube.com/watch?v=Lj5fyDX01v8",
+    "title": "This 20+ AI Agent Team Automates ALL Your Work (GPT-01) (Relevance AI)",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/469_This_20__AI_Agent_Team_Automates_ALL_Your_Work__GP.txt"
+  },
+  {
+    "index": 479,
+    "url": "https://www.youtube.com/watch?v=B6PKVZq2qqo",
+    "title": "Best of 2024 in Agents (from #1 on SWE-Bench Full, Prof. Graham Neubig of OpenHands/AllHands)",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/479_Best_of_2024_in_Agents__from__1_on_SWE_Bench_Full_.txt"
+  },
+  {
+    "index": 495,
+    "url": "https://www.youtube.com/watch?v=AsYQVlBC6Mo",
+    "title": "Bee Agent Framework: Build AI Agents Fast \ud83d\udd25",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/495_Bee_Agent_Framework__Build_AI_Agents_Fast___.txt"
+  },
+  {
+    "index": 528,
+    "url": "https://www.youtube.com/watch?v=thPIc-_h2ms",
+    "title": "Based Rollups: The Next Frontier of Ethereum Scaling with Justin Drake",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/528_Based_Rollups__The_Next_Frontier_of_Ethereum_Scali.txt"
+  },
+  {
+    "index": 531,
+    "url": "https://www.youtube.com/watch?v=3_NedlX1hKg",
+    "title": "21 FREE AI Coding Tools THAT I USE!",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/531_21_FREE_AI_Coding_Tools_THAT_I_USE_.txt"
+  },
+  {
+    "index": 546,
+    "url": "https://www.youtube.com/watch?v=bNFG36Hkupo",
+    "title": "Automate Agentic Workflow of LLMs: AFLOW (NEW)",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/546_Automate_Agentic_Workflow_of_LLMs__AFLOW__NEW_.txt"
+  },
+  {
+    "index": 550,
+    "url": "https://www.youtube.com/watch?v=q4YF-txbo-I",
+    "title": "FREE GPT Researcher AI Agent Powerhouse!\ud83e\udd16Open Source Perplexity Self Hosted - Perplica, Morphic",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/550_FREE_GPT_Researcher_AI_Agent_Powerhouse___Open_Sou.txt"
+  },
+  {
+    "index": 551,
+    "url": "https://www.youtube.com/watch?v=VC6QCEXERpU",
+    "title": "How good is llama 3.2 REALLY? Ollama SLM & LLM Prompt Ranking (Qwen, Phi, Gemini Flash)",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/551_How_good_is_llama_3_2_REALLY__Ollama_SLM___LLM_Pro.txt"
+  },
+  {
+    "index": 561,
+    "url": "https://www.youtube.com/watch?v=Xifzdn7zW3A",
+    "title": "No Code RAG Agents? You HAVE to Check out n8n + LangChain",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/561_No_Code_RAG_Agents__You_HAVE_to_Check_out_n8n___La.txt"
+  },
+  {
+    "index": 562,
+    "url": "https://www.youtube.com/watch?v=1m7ZVCy3728",
+    "title": "FLUX + LORA Full Course (Uncensored Super Photorealistic Images With Your Own Face)",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/562_FLUX___LORA_Full_Course__Uncensored_Super_Photorea.txt"
+  },
+  {
+    "index": 572,
+    "url": "https://www.youtube.com/watch?v=9NYZWt2_hnI",
+    "title": "How to protect your recently won Social Security Disability Benefits",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/572_How_to_protect_your_recently_won_Social_Security_D.txt"
+  },
+  {
+    "index": 573,
+    "url": "https://www.youtube.com/watch?v=yF9kGESAi3M",
+    "title": "LangChain Master Class For Beginners 2024 [+20 Examples, LangChain V0.2]",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/573_LangChain_Master_Class_For_Beginners_2024___20_Exa.txt"
+  },
+  {
+    "index": 574,
+    "url": "https://www.youtube.com/watch?v=7jwjSiYmAMU",
+    "title": "How We Created First Fully Autonomous Business With AI",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/574_How_We_Created_First_Fully_Autonomous_Business_Wit.txt"
+  },
+  {
+    "index": 575,
+    "url": "https://www.youtube.com/watch?v=4ukqsKajWnk",
+    "title": "Build Blazing-Fast LLM Apps with Groq, Langflow, & Langchain",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/transcript_575_Build_Blazing_Fast_LLM_Apps_with_Groq__Langflow___.txt"
+  },
+  {
+    "index": 576,
+    "url": "https://www.youtube.com/watch?v=d3uoLbfBPkw",
+    "title": "Building a Generative UI App With LangChain Python",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/576_Building_a_Generative_UI_App_With_LangChain_Python.txt"
+  },
+  {
+    "index": 577,
+    "url": "https://www.youtube.com/watch?v=QgOeWbW0jeA",
+    "title": "New Discovery: LLMs have a Performance Phase",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/577_New_Discovery__LLMs_have_a_Performance_Phase.txt"
+  },
+  {
+    "index": 578,
+    "url": "https://www.youtube.com/watch?v=oELYollTFeQ",
+    "title": "How to Make AI Influencers For FREE (full-process)",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/transcript_578_How_to_Make_AI_Influencers_For_FREE__full_process_.txt"
+  },
+  {
+    "index": 579,
+    "url": "https://www.youtube.com/watch?v=VmNhDUKMHd4",
+    "title": "How to use Llama 3 API for FREE (Best Open Source AI for business!)",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/579_How_to_use_Llama_3_API_for_FREE__Best_Open_Source_.txt"
+  },
+  {
+    "index": 580,
+    "url": "https://www.youtube.com/watch?v=TqSDSzd_QRY",
+    "title": "Gold Gang (100% AI) | INSANE AI Music Video + How it was done (behind the scenes look)",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/transcript_580_Gold_Gang__100__AI____INSANE_AI_Music_Video___How_.txt"
+  },
+  {
+    "index": 581,
+    "url": "https://www.youtube.com/watch?v=UTuuTTnjxMQ",
+    "title": "Sholto Douglas & Trenton Bricken \u2014 How LLMs actually think",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/581_Sholto_Douglas___Trenton_Bricken___How_LLMs_actual.txt"
+  },
+  {
+    "index": 582,
+    "url": "https://www.youtube.com/watch?v=yrwSOMFZvHY",
+    "title": "The Manipulation Expert: You're Being Manipulated! Use Jealousy To Manipulate People! Robert Greene",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/transcript_582_The_Manipulation_Expert__You_re_Being_Manipulated_.txt"
+  },
+  {
+    "index": 583,
+    "url": "https://www.youtube.com/watch?v=XGFWIwUrzYM",
+    "title": "LCM for Krita - OVERPOWERED!!!!",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/transcript_583_LCM_for_Krita___OVERPOWERED____.txt"
+  },
+  {
+    "index": 584,
+    "url": "https://www.youtube.com/watch?v=1RxbHg0Nsw0",
+    "title": "World's First AGI Agent SHOCKS the Entire Industry! (FULLY Autonomous AI Software Engineer Devin)",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/transcript_584_World_s_First_AGI_Agent_SHOCKS_the_Entire_Industry.txt"
+  },
+  {
+    "index": 585,
+    "url": "https://www.youtube.com/watch?v=WCYf2Agml-s",
+    "title": "INSANELY Fast AI Cold Call Agent- built w/ Groq",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/transcript_585_INSANELY_Fast_AI_Cold_Call_Agent__built_w__Groq.txt"
+  },
+  {
+    "index": 588,
+    "url": "https://www.youtube.com/watch?v=PgGKhsWhUu8",
+    "title": "Bill Ackman: Investing, Financial Battles, Harvard, DEI, X & Free Speech | Lex Fridman Podcast #413",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/588_Bill_Ackman__Investing__Financial_Battles__Harvard.txt"
+  },
+  {
+    "index": 592,
+    "url": "https://www.youtube.com/watch?v=SUzKZfyaAK8",
+    "title": "The One-Person Business Model (How To Productize Yourself Full Guide)",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/592_The_One_Person_Business_Model__How_To_Productize_Y.txt"
+  },
+  {
+    "index": 595,
+    "url": "https://www.youtube.com/watch?v=gY_E3QBZ-NE",
+    "title": "FINALLY! Open-Source \"LLaMA Code\" Coding Assistant (Tutorial)",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/595_FINALLY__Open_Source__LLaMA_Code__Coding_Assistant.txt"
+  },
+  {
+    "index": 596,
+    "url": "https://www.youtube.com/watch?v=XZReTAgx1cU",
+    "title": "Mixtral goes Mainstream with BRAVE!!!",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/596_Mixtral_goes_Mainstream_with_BRAVE___.txt"
+  },
+  {
+    "index": 604,
+    "url": "https://www.youtube.com/watch?v=ZYUt4WE4Mrw",
+    "title": "23 AI Tools You Won't Believe are Free",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/604_23_AI_Tools_You_Won_t_Believe_are_Free.txt"
+  },
+  {
+    "index": 606,
+    "url": "https://www.youtube.com/watch?v=QPBmsgGufXE",
+    "title": "Deepseek Coder: AI Let's The Code Write Itself! Better Than ChatDev!?",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/606_Deepseek_Coder__AI_Let_s_The_Code_Write_Itself__Be.txt"
+  },
+  {
+    "index": 622,
+    "url": "https://www.youtube.com/watch?v=GOkxDvq_8zQ",
+    "title": "Token Design: Mental Models, Capabilities, and Emerging Design Spaces with Eddy Lazzarin",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/622_Token_Design__Mental_Models__Capabilities__and_Eme.txt"
+  },
+  {
+    "index": 623,
+    "url": "https://www.youtube.com/watch?v=B6j2KlBqlZc",
+    "title": "The Devil Wears Prada - Trapped",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/623_The_Devil_Wears_Prada___Trapped.txt"
+  },
+  {
+    "index": 624,
+    "url": "https://www.youtube.com/watch?v=tOtdJcco3YM",
+    "title": "Nick Lane: Origin of Life, Evolution, Aliens, Biology, and Consciousness | Lex Fridman Podcast #318",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/624_Nick_Lane__Origin_of_Life__Evolution__Aliens__Biol.txt"
+  },
+  {
+    "index": 627,
+    "url": "https://www.youtube.com/watch?v=Wq1di2luMcs",
+    "title": "VOCAL EQ SECRETS of the PRO\u2019s",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/627_VOCAL_EQ_SECRETS_of_the_PRO_s.txt"
+  },
+  {
+    "index": 628,
+    "url": "https://www.youtube.com/watch?v=sdlRLT8cmws",
+    "title": "One Mistake Is Destroying Your Crypto Portfolio! | Retail Investors Are Losing $1,000,000s!",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/628_One_Mistake_Is_Destroying_Your_Crypto_Portfolio___.txt"
+  },
+  {
+    "index": 629,
+    "url": "https://www.youtube.com/watch?v=-5NeYlq6-Mw",
+    "title": "How to Build a Bluechip NFT Brand with Doodles\u2019 Founder, Poopie | Overpriced JPEGs #12",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/629_How_to_Build_a_Bluechip_NFT_Brand_with_Doodles__Fo.txt"
+  },
+  {
+    "index": 633,
+    "url": "https://www.youtube.com/watch?v=bIZB1hIJ4u8",
+    "title": "GEOMETRIC DEEP LEARNING BLUEPRINT",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/633_GEOMETRIC_DEEP_LEARNING_BLUEPRINT.txt"
+  },
+  {
+    "index": 647,
+    "url": "https://www.youtube.com/watch?v=JTWHkKDJ6Ws",
+    "title": "Pinky and the Brain Swearing",
+    "transcript_path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts/647_Pinky_and_the_Brain_Swearing.txt"
+  }
+]

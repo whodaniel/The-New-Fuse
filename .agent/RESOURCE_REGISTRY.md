@@ -265,9 +265,9 @@ const julesInstance = await lifecycleManager.spawnAgent({
 }
 ```
 
-#### 3. **Railway Status**
+#### 3. **Railway Status** ⚠️ DEPRECATED — Railway no longer used. See GCP Cloud Run status instead.
 
-**URL**: https://railway.app/status  
+**URL**: https://railway.app/status ⚠️ **Historical only**  
 **Type**: Service Status  
 **Update Frequency**: Real-time  
 **Monitored For**:

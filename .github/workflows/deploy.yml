@@ -1,4 +1,8 @@
-name: Deploy to Railway (LEGACY)
+# ⚠️ DEPRECATED — Railway is no longer used.
+# TNF has migrated to GCP (Cloud Run) + Cloudflare (Pages/Workers) + Supabase + Upstash.
+# See CLOUD_MIGRATION_BLUEPRINT.md for current deployment instructions.
+# This workflow is preserved for historical reference only.
+name: Deploy to Railway (LEGACY — DEPRECATED, Railway no longer used)
 
 on:
   workflow_dispatch:

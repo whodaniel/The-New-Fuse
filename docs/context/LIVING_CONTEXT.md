@@ -73,12 +73,14 @@ Primary references:
 
 ## Deployment Overview
 
-Railway:
+Railway: ⚠️ **DEPRECATED — Railway is no longer used.** TNF has migrated to
+**GCP (Cloud Run) + Cloudflare (Pages/Workers) + Supabase (PostgreSQL) + Upstash
+(Redis)**. See `CLOUD_MIGRATION_BLUEPRINT.md` for current infrastructure.
 
-- Primary production deployment target.
+- Primary production deployment target. ⚠️ Historical — was Railway.
 - Services: Frontend, API Gateway, Backend.
 - Use `Dockerfile.railway` and environment variables from `.env.railway.example`
-  for setup.
+  for setup. ⚠️ These are historical; use GCP/Cloudflare equivalents instead.
 
 Docker (local dev infra):
 
@@ -162,5 +164,6 @@ Primary references:
 
 ## Canonical Navigation
 
-- `DOCUMENTATION_MAP.md` for full doc graph.
+- `DOCUMENTATION_INDEX.md` for full doc graph (replaces the former
+  DOCUMENTATION_MAP.md).
 - `DOCUMENTATION_INDEX.md` for category index.

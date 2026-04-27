@@ -6,8 +6,9 @@ Welcome to The New Fuse deployment documentation.
 
 - **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Complete deployment
   instructions
-- **[Current Production Status](./DEPLOYMENT_STATUS.md)** - Live Railway status,
-  domains, and verification commands
+- **[Current Production Status](./DEPLOYMENT_STATUS.md)** - ⚠️ Historical
+  Railway status; TNF now uses GCP Cloud Run + Cloudflare. See
+  `CLOUD_MIGRATION_BLUEPRINT.md` for current details
 - **[Deployment Checklist](./DEPLOYMENT_CHECKLIST.md)** - Pre/post deployment
   checklist
 - **[Rollback Procedures](./ROLLBACK_PROCEDURES.md)** - How to rollback failed
@@ -60,9 +61,9 @@ Located in `<repo-root>/scripts/deployment/`:
 - `db-migrate.sh` - Run database migrations
 - `db-backup.sh` - Create database backup
 
-### Railway Scripts
+### Railway Scripts ⚠️ DEPRECATED — Railway no longer used. See CLOUD_MIGRATION_BLUEPRINT.md for GCP/Cloudflare deployment.
 
-- `railway-deploy.sh` - Railway deployment utility
+- `railway-deploy.sh` - ⚠️ Historical Railway deployment utility
 
 ## Deployment Dashboard
 

@@ -1,17 +1,25 @@
 # OpenClaw OAuth Rotation
 
+> **⚠️ Railway references below are DEPRECATED.** TNF has migrated from Railway
+> to **GCP (Cloud Run) + Cloudflare + Supabase + Upstash**. Replace `railway`
+> CLI commands with GCP/Cloudflare equivalents. See
+> `CLOUD_MIGRATION_BLUEPRINT.md`.
+
 ## Purpose
 
 Safely rotate OAuth credentials and active model routing for any OpenClaw
 Railway service, with encrypted credential storage, RBAC, audit logging,
-deployment validation, and health checks.
+deployment validation, and health checks. ⚠️ **Railway service references are
+historical — update to GCP Cloud Run.**
 
 ## Pre-Flight Checklist
 
 1. Confirm operator role is `SUPER_ADMIN` for API-driven execution.
 2. Confirm `ENCRYPTION_KEY` is set for encrypted binding storage.
-3. Confirm Railway CLI auth is healthy (`railway whoami`).
-4. Confirm target service exists (`railway status --json`).
+3. Confirm Railway CLI auth is healthy (`railway whoami`). ⚠️ **DEPRECATED — use
+   `gcloud` CLI instead**
+4. Confirm target service exists (`railway status --json`). ⚠️ **DEPRECATED —
+   use `gcloud run services list` instead**
 5. Confirm provider model mapping is valid (`openai-codex`, `anthropic`,
    `google-antigravity`, `kilo`).
 

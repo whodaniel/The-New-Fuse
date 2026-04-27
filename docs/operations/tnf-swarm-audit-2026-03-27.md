@@ -1,5 +1,9 @@
 # TNF Swarm Audit - 2026-03-27
 
+> **⚠️ Railway worker references below are DEPRECATED.** TNF migrated from
+> Railway to GCP (Cloud Run) + Cloudflare + Supabase + Upstash. See
+> `CLOUD_MIGRATION_BLUEPRINT.md`.
+
 ## Scope
 
 - Cloudflare workers:

@@ -1,0 +1,12 @@
+{
+  "id": "doc-docs-home",
+  "title": "Verified Doc: Docs Home",
+  "category": "verified-documentation",
+  "content": "# The New Fuse Documentation\n\nWelcome to The New Fuse documentation. This repository contains comprehensive guides, specifications, and references for developing with The New Fuse platform.\n\n## Documentation Sections\n\n## Getting Started\n\n[Installation Guide](GETTING_STARTED.md)\n[Quick Start](../QUICK_START_GUIDE.md)\n\n## Development & Troubleshooting\n\n- [Native Modules Guide](NATIVE_MODULES_GUIDE.md) - Handling native module compatibility with Bun\n- [Build Optimization](BUILD_OPTIMIZATION.md) - Memory-efficient build strategies\n- [Testing Guide](TESTING_GUIDE.md) - Testing practices and configuration\n\n## Deployment\n\n[Deployment Guide](guides/deployment-guide.md)\n- [Architecture](architecture/) - System architecture and design\n- [API](api/) - API specifications and usage\n- [Development](development/) - Development guides and practices\n- [Agents](agents/) - Agent development and specifications\n- [Workflows](workflows/) - Workflow creation and management\n- [Components](components/) - UI and service components\n- [Database](database/) - Database schema and management\n\n## Contributing to Documentation\n\nPlease follow the [contribution guidelines](../README.md) when updating documentation. All documentation should be written in Markdown and properly linked from this index.\n",
+  "backlinks": ["documentation-index", "sovereign-state"],
+  "metadata": {
+    "source_path": "/docs/README.md",
+    "agentId": "AGENT-DOC-ASSIMILATOR",
+    "timestamp": 1774434754.4106586
+  }
+}

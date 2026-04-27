@@ -2,6 +2,8 @@ name = "tnf-zeroclaw-relay"
 main = "src/index.ts"
 compatibility_date = "2026-03-02"
 
+# ⚠️ DEPRECATED: Railway URLs below are no longer active. TNF migrated to GCP Cloud Run + Cloudflare.
+# Update to current GCP Cloud Run endpoints. See CLOUD_MIGRATION_BLUEPRINT.md.
 [vars]
 ZEROCLAW_PRIMARY_URL = "https://zeroclaw-sandbox-production.up.railway.app"
 ZEROCLAW_SECONDARY_URL = "https://picoclaw-tester-v2-production.up.railway.app"

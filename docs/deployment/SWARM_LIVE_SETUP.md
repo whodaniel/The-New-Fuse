@@ -1,3 +1,8 @@
+> **⚠️ RAILWAY IS NO LONGER USED.** TNF has migrated to GCP (Cloud Run) +
+> Cloudflare (Pages/Workers) + Supabase (PostgreSQL) + Upstash (Redis). See
+> `/CLOUD_MIGRATION_BLUEPRINT.md` for current infrastructure. This document is
+> preserved for historical reference only.
+
 # TNF Live Swarm Setup (Redis + SearXNG)
 
 This setup enables the no-mock swarm pipeline:

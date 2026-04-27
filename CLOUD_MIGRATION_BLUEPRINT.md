@@ -1,5 +1,10 @@
 # Cloud Infrastructure Migration Blueprint (Railway -> GCP/Cloudflare Stack)
 
+> **⚠️ RAILWAY IS NO LONGER USED.** This document describes the migration FROM
+> Railway TO the current stack: **GCP (Cloud Run) + Cloudflare (Pages/Workers) +
+> Supabase (PostgreSQL) + Upstash (Redis)**. The Railway references below are
+> historical and preserved for migration context only.
+
 Based on the verified Railway configuration, here is exactly how the services
 must be configured on the new infrastructure stack.
 

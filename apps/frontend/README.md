@@ -222,4 +222,4 @@ while maintaining code organization and developer productivity.
 
 - [Project README](../../README.md)
 - [Quick Start Guide](../../QUICK_START_GUIDE.md)
-- [Documentation Map](../../DOCUMENTATION_MAP.md)
+- [Documentation Index](../../DOCUMENTATION_INDEX.md)

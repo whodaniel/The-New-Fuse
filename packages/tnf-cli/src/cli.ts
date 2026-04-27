@@ -5332,8 +5332,14 @@ program
   .description('Export session data as JSON')
   .argument('[sessionId]', 'Session ID (omit for all sessions)')
   .option('--output <path>', 'Output file path')
-  .action((sessionId?: string, options?: { output?: string }) => {
+  .action(async (sessionId?: string, options?: { output?: string }) => {
     try {
+      if (!sessionId && options?.output) {
+        await sessionManager.exportAllToStream(options.output);
+        console.log(chalk.green(`✅ Exported all sessions (streaming) to ${options.output}`));
+        return;
+      }
+
       const data = sessionId
         ? sessionManager.export(sessionId)
         : { sessions: sessionManager.exportAll() };

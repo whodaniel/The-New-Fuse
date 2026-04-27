@@ -1024,6 +1024,7 @@ export interface A2AMessage {
   retryCount?: number;
   requiresResponse?: boolean;
   conversationId?: string;
+  resourcePointers?: Record<string, any>;
   metadata?: Record<string, any>;
 }
 
@@ -1111,6 +1112,7 @@ export const A2AMessageSchema = z.object({
   retryCount: z.number().optional(),
   requiresResponse: z.boolean().optional(),
   conversationId: z.string().optional(),
+  resourcePointers: z.record(z.string(), z.any()).optional(),
   metadata: z.record(z.string(), z.any()).optional(),
 });
 

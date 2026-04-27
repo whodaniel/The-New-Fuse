@@ -4,6 +4,7 @@
     "dist"
   ],
   "version": "1.0.0",
+  "type": "module",
   "description": "Security package for The New Fuse",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

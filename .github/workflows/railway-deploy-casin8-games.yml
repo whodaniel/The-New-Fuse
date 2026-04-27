@@ -1,12 +1,16 @@
-name: Railway Deploy casin8-games
+# ⚠️ DEPRECATED — Railway is no longer used.
+# TNF has migrated to GCP (Cloud Run) + Cloudflare (Pages/Workers) + Supabase + Upstash.
+# See CLOUD_MIGRATION_BLUEPRINT.md for current deployment instructions.
+# This workflow is preserved for historical reference only.
+name: Railway Deploy casin8-games (DEPRECATED)
 
 on:
   push:
     branches: [main]
     paths:
-      - 'apps/casin8-games/**'
-      - 'railway.toml'
-      - '.github/workflows/railway-deploy-casin8-games.yml'
+      - "apps/casin8-games/**"
+      - "railway.toml"
+      - ".github/workflows/railway-deploy-casin8-games.yml"
   workflow_dispatch:
 
 jobs:
@@ -23,7 +27,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install Railway CLI
         run: npm i -g @railway/cli

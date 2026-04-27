@@ -1,3 +1,8 @@
+> **⚠️ RAILWAY IS NO LONGER USED.** TNF has migrated to GCP (Cloud Run) +
+> Cloudflare (Pages/Workers) + Supabase (PostgreSQL) + Upstash (Redis). See
+> `/CLOUD_MIGRATION_BLUEPRINT.md` for current infrastructure. This document is
+> preserved for historical reference only.
+
 # SkIDEancer IDE Railway Deployment - Diagnosis & Fix
 
 **Issue Date**: December 20, 2025  
@@ -171,11 +176,11 @@ Look for:
 
 ## 📊 PORT CONFIGURATION REFERENCE
 
-| Service            | Default Port | Railway Port | Status       |
-| ------------------ | ------------ | ------------ | ------------ |
+| Service                 | Default Port | Railway Port | Status       |
+| ----------------------- | ------------ | ------------ | ------------ |
 | SkIDEancer (Documented) | 3007         | 3000 ❌      | **Mismatch** |
-| Cloud Sandbox      | Auto         | Auto ✅      | Working      |
-| TNF Relay          | 3000         | N/A          | Local only   |
+| Cloud Sandbox           | Auto         | Auto ✅      | Working      |
+| TNF Relay               | 3000         | N/A          | Local only   |
 
 ---
 

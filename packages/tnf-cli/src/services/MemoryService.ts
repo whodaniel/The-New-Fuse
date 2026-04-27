@@ -50,10 +50,10 @@ export class MemoryService {
     `;
 
     const userMessage = `Prompt: ${prompt}\n${categoryOverride ? `Requested Category: ${categoryOverride}\n` : ''}\nContext Files:${context}`;
-    
+
     const response = await this.llm.chatComplete([
       { role: 'system', content: systemPrompt },
-      { role: 'user', content: userMessage }
+      { role: 'user', content: userMessage },
     ]);
 
     try {
@@ -63,7 +63,7 @@ export class MemoryService {
         const match = jsonStr.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
         if (match) jsonStr = match[1];
       }
-      
+
       const parsed = JSON.parse(jsonStr);
       const timestamp = new Date().toISOString().split('T')[0];
       const fileName = `${timestamp}-${parsed.slug}.md`;
@@ -80,17 +80,33 @@ export class MemoryService {
   async query(query: string, categoryFilter?: string) {
     await this.ensureTree();
 
-    let allMemories = await this.getAllMemories();
-    
+    let allMemories = await this.getAllMemoryMetadata();
+
     if (categoryFilter) {
-      allMemories = allMemories.filter(m => m.category === categoryFilter);
+      allMemories = allMemories.filter((m) => m.category === categoryFilter);
     }
 
     if (allMemories.length === 0) {
       return `No memories found ${categoryFilter ? `in category '${categoryFilter}' ` : ''}in the project knowledge base. Try curating some first!`;
     }
 
-    const context = allMemories.map(m => `\n--- Memory (${m.category}): ${m.name} ---\n${m.content}\n`).join('\n');
+    // OOM PROTECTION: Only select the most recent 10 memories to prevent context overflow
+    // In a full RAG implementation, this would use the Core Vector DB service
+    const topMemories = allMemories.slice(-10);
+
+    const loadedMemories = await Promise.all(
+      topMemories.map(async (m) => {
+        const content = await fs.readFile(
+          path.join(this.memoryTreePath, m.category, m.name),
+          'utf8'
+        );
+        return { ...m, content };
+      })
+    );
+
+    const context = loadedMemories
+      .map((m) => `\n--- Memory (${m.category}): ${m.name} ---\n${m.content}\n`)
+      .join('\n');
 
     const systemPrompt = `
       You are the Project Memory Query Engine. You have access to the project's long-term memory tree.
@@ -101,7 +117,7 @@ export class MemoryService {
 
     return await this.llm.chatComplete([
       { role: 'system', content: systemPrompt },
-      { role: 'user', content: `Context:\n${context}\n\nQuery: ${query}` }
+      { role: 'user', content: `Context:\n${context}\n\nQuery: ${query}` },
     ]);
   }
 
@@ -109,7 +125,7 @@ export class MemoryService {
     await this.ensureTree();
     const categories = await fs.readdir(this.memoryTreePath);
     const tree: Record<string, string[]> = {};
-    
+
     for (const cat of categories) {
       const catPath = path.join(this.memoryTreePath, cat);
       try {
@@ -124,18 +140,18 @@ export class MemoryService {
     return tree;
   }
 
-  private async getAllMemories() {
+  private async getAllMemoryMetadata() {
     const tree = await this.getTree();
-    const memories: Array<{ category: string, name: string, content: string }> = [];
+    const memories: Array<{ category: string; name: string }> = [];
 
     for (const [category, files] of Object.entries(tree)) {
       for (const file of files) {
         if (file.endsWith('.md')) {
-          const content = await fs.readFile(path.join(this.memoryTreePath, category, file), 'utf8');
-          memories.push({ category, name: file, content });
+          memories.push({ category, name: file });
         }
       }
     }
-    return memories;
+    // Sort by name (which starts with timestamp) to get newest first
+    return memories.sort((a, b) => a.name.localeCompare(b.name));
   }
 }

@@ -1545,10 +1545,10 @@ communicationManager
 
 ### Agent Communication
 
-- [Agent Communication Guide](../agents-and-protocols/AGENT_COMMUNICATION_GUIDE.md) - Communication
-  overview
-- [Agent Redis Communication](../agents-and-protocols/AGENT_COMMUNICATION_GUIDE.md) - Redis
-  integration
+- [Agent Communication Guide](../agents-and-protocols/AGENT_COMMUNICATION_GUIDE.md) -
+  Communication overview
+- [Agent Redis Communication](../agents-and-protocols/AGENT_COMMUNICATION_GUIDE.md) -
+  Redis integration
 - [Agent Communication Architecture](../agents-and-protocols/AGENT_COMMUNICATION_ARCHITECTURE.md)
 
 ### Agent Registry & API
@@ -1589,15 +1589,15 @@ communicationManager
 - [API Examples](../../apps/backend/API_EXAMPLES.md) - API usage patterns
 - [WebSocket Integration](../../apps/backend/WEBSOCKET_INTEGRATION_GUIDE.md) -
   Real-time comm
-- [Chat Rooms Module](../../apps/backend/README.md) -
-  Chat system
+- [Chat Rooms Module](../../apps/backend/README.md) - Chat system
 
 ### Workflows
 
 - [Workflow Quickstart](../workflows/WORKFLOW_QUICKSTART.md) - Workflow basics
 - [Workflow Builder](../workflows/WORKFLOW_BUILDER_ENHANCEMENTS.md) - Builder
   guide
-- [n8n Integration](../history/WORKFLOW_N8N_COMPLETE_2026-03-22.md) - n8n workflows
+- [n8n Integration](../history/WORKFLOW_N8N_COMPLETE_2026-03-22.md) - n8n
+  workflows
 
 ### Architecture & Standards
 
@@ -1616,13 +1616,14 @@ communicationManager
 ### Deployment
 
 - [Deployment Guide](../guides/deployment-guide.md) - Production deployment
-- [Production Readiness](../project-management/PRODUCTION_READINESS.md) - Production status
+- [Production Readiness](../project-management/PRODUCTION_READINESS.md) -
+  Production status
 
 ### Getting Started
 
 - [Project README](../../README.md) - Project overview
 - [Quick Start Guide](../../QUICK_START_GUIDE.md) - Quick setup
-- [Documentation Map](../../DOCUMENTATION_MAP.md) - All documentation
+- [Documentation Index](../../DOCUMENTATION_INDEX.md) - All documentation
 
 ---
 

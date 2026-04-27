@@ -4,6 +4,7 @@
     "dist"
   ],
   "version": "0.3.0",
+  "type": "module",
   "description": "Agent-to-Agent (A2A) Protocol v0.3.0 Core Library - Official Linux Foundation Specification",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,6 +29,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/websockets": "^11.1.16",
     "@the-new-fuse/ap2-protocol": "workspace:^",
+    "@the-new-fuse/core-vector-db": "workspace:^",
     "@the-new-fuse/infrastructure": "workspace:*",
     "ioredis": "^5.8.1",
     "rxjs": "^7.8.2",

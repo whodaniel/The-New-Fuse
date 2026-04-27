@@ -261,9 +261,13 @@ Federated gateway network using the `openclaw` npm package with Claude Pro
 OAuth:
 
 - **Local**: `ws://127.0.0.1:18789`
-- **Cloud Primary**: `openclaw-cloud-production-934c.up.railway.app`
-- **Cloud Secondary**: `openclaw-primary-production.up.railway.app`
-- **Cloud Sandbox**: `openclaw-sandbox-cloud-production.up.railway.app`
+- **Cloud Primary**: `openclaw-cloud-production-934c.up.railway.app` ⚠️
+  **DEPRECATED — Railway is no longer used. Migrated to GCP (Cloud Run) +
+  Cloudflare + Supabase + Upstash. See `CLOUD_MIGRATION_BLUEPRINT.md`.**
+- **Cloud Secondary**: `openclaw-primary-production.up.railway.app` ⚠️
+  **DEPRECATED**
+- **Cloud Sandbox**: `openclaw-sandbox-cloud-production.up.railway.app` ⚠️
+  **DEPRECATED**
 - **Model**: `anthropic/claude-opus-4-6`
 
 ### Premium UI Components
@@ -363,8 +367,8 @@ The-New-Fuse/
 ├── turbo.json                  # Turbo pipeline config
 ├── pnpm-workspace.yaml         # Workspace definition
 ├── docker-compose.dev-simple.yml  # Dev infrastructure (PG + Redis)
-├── railway.toml                # Railway deployment (15+ services)
-└── Dockerfile.railway          # Multi-stage Railway build
+├── railway.toml # ⚠️ DEPRECATED — Railway deployment (15+ services). TNF migrated to GCP Cloud Run + Cloudflare. See CLOUD_MIGRATION_BLUEPRINT.md.
+└── Dockerfile.railway # ⚠️ DEPRECATED — Multi-stage Railway build. No longer used for production.
 ```
 
 ## Development Commands
@@ -447,9 +451,12 @@ pnpm run deploy:gcp
 
 ## Documentation
 
-- **[DOCUMENTATION_MAP.md](./DOCUMENTATION_MAP.md)** — Complete map of all
-  1,200+ docs
+- **[DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md)** — Navigational index
+  with guided paths
 - **[QUICK_START_GUIDE.md](./QUICK_START_GUIDE.md)** — Fast setup guide
+- **[CLOUD_MIGRATION_BLUEPRINT.md](./CLOUD_MIGRATION_BLUEPRINT.md)** —
+  Infrastructure reference (GCP + Cloudflare)
+- **[RELEASE_GATE.md](./RELEASE_GATE.md)** — Merge-blocking release gate
 - **[PRODUCTION_READINESS.md](./docs/project-management/PRODUCTION_READINESS.md)**
   — Production status
 
@@ -460,17 +467,19 @@ pnpm run deploy:gcp
 | Architecture        | [docs/architecture/ARCHITECTURE_STANDARDS.md](./docs/architecture/ARCHITECTURE_STANDARDS.md) |
 | Agent Development   | [docs/agents/COMPLETE-AGENT-GUIDE.md](./docs/agents/COMPLETE-AGENT-GUIDE.md)                 |
 | Agent Communication | [docs/AGENT_COMMUNICATION_PROTOCOL.md](./docs/AGENT_COMMUNICATION_PROTOCOL.md)               |
-| API Usage           | [docs/API_USAGE_GUIDE.md](./docs/api/COMPLETE-API-GUIDE.md)                                  |
+| API Usage           | [docs/api/COMPLETE-API-GUIDE.md](./docs/api/COMPLETE-API-GUIDE.md)                           |
 | GraphQL             | [apps/api/src/graphql/README.md](./apps/api/src/graphql/README.md)                           |
 | MCP Integration     | [apps/backend/src/modules/mcp/README.md](./apps/backend/src/modules/mcp/README.md)           |
 | Deployment          | [docs/guides/deployment-guide.md](./docs/guides/deployment-guide.md)                         |
-| Railway             | [docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md](./docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md) |
-| Security            | [docs/security/SECURITY_BEST_PRACTICES.md](./docs/security/SECURITY_BEST_PRACTICES.md)       |
+| Cloud Infra         | [CLOUD_MIGRATION_BLUEPRINT.md](./CLOUD_MIGRATION_BLUEPRINT.md)                               |
+| Security            | [docs/security/audit-findings.md](./docs/security/audit-findings.md)                         |
 | Testing             | [docs/testing/TESTING_SETUP_COMPLETE.md](./docs/testing/TESTING_SETUP_COMPLETE.md)           |
 | Design System       | [docs/PREMIUM_THEME_MANIFEST.md](./docs/PREMIUM_THEME_MANIFEST.md)                           |
 | Chrome Extension    | [apps/chrome-extension/README.md](./apps/chrome-extension/README.md)                         |
 | VS Code Extension   | [apps/vscode-extension/README.md](./apps/vscode-extension/README.md)                         |
 | Workflows           | [docs/workflows/WORKFLOW_QUICKSTART.md](./docs/workflows/WORKFLOW_QUICKSTART.md)             |
+| CLI Commands        | [docs/reference/command-map.md](./docs/reference/command-map.md)                             |
+| Cloud QA            | [docs/qa/cloud-qa-guide.md](./docs/qa/cloud-qa-guide.md)                                     |
 
 ## Package Manager
 

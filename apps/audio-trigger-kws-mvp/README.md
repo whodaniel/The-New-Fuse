@@ -171,11 +171,12 @@ Notes:
 
 Detailed runbook:
 
-- `docs/railway-cloudflare-production.md`
+- `docs/railway-cloudflare-production.md` ⚠️ **DEPRECATED — Railway no longer
+  used**
 - `cloudflare/worker.example.ts`
 - `cloudflare/wrangler.toml`
 - `cloudflare/src/index.ts`
-- `railway.toml`
+- `railway.toml` ⚠️ **DEPRECATED — Railway no longer used**
 - `Dockerfile`
 
 Quickest live test commands:

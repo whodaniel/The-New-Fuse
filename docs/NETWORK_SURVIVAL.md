@@ -88,15 +88,18 @@ Redis pub/sub across multiple cloud providers = baton never drops.
 
 ### The Self-Healing Relay
 
-Railway instances die. Always. The relay must respawn itself.
+Railway instances die. Always. ⚠️ **DEPRECATED — Railway is no longer used.**
+TNF now runs on GCP Cloud Run, which auto-scales. The relay must respawn itself.
 
 ```bash
+# ⚠️ DEPRECATED: Railway command below. Use GCP Cloud Run for current deployment.
 # Railway health check → if dead → redeploy
 railway up --detach || railway run npm start
 ```
 
 Combined with git having the code forever, the relay is IMMORTAL even if Railway
-instances are mortal.
+instances are mortal. ⚠️ **Railway is historical — GCP Cloud Run provides
+equivalent resilience.**
 
 ---
 

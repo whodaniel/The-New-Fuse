@@ -24,6 +24,7 @@ import { AgentPfpOverridesController } from './controllers/agent-pfp-overrides.c
 import { AgentProxyController } from './controllers/agent-proxy.controller';
 import { AiController } from './controllers/ai.controller';
 import { CommunityController } from './controllers/community.controller';
+import { CompoundingMemoryController } from './controllers/compounding-memory.controller';
 import { HealthController } from './controllers/health.controller';
 import { MCPServerController } from './controllers/mcp.controller';
 import { ModelsController } from './controllers/models.controller';
@@ -164,6 +165,7 @@ import { WorkflowExecutionService } from './services/workflow/WorkflowExecutionS
     AgentProxyController,
     AiController,
     CommunityController,
+    CompoundingMemoryController,
     ModelsController, // AI model provider selection
     SystemController,
     UserManagementController, // User CRUD operations

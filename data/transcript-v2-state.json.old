@@ -1,0 +1,984 @@
+{
+  "version": "2.0",
+  "queue": [
+    {
+      "index": 3,
+      "url": "https://www.youtube.com/watch?v=Mx6KtptCePg",
+      "title": "Solution for \"Stuck at 2 Minutes Left Remaining\" on Mac OS X Yosemite Zone 10.10.2 on Virtualbox",
+      "videoId": "Mx6KtptCePg",
+      "status": "error",
+      "processingAttempts": 3,
+      "lastProcessed": "2026-04-27T19:53:51.822Z",
+      "metadata": {
+        "duration": 0,
+        "durationFormatted": "0:00",
+        "publishDate": "May 8, 2023",
+        "description": ", views, publish date, topics, summary\n\nThe 22-minute Google Cloud Tech video \"Introduction to Generative AI,\" published May 8, 2023, provides an overview of Generative AI, Large Language Models (LLMs), and their applications. It serves as the first module in a learning path, explaining how generative models differ from traditional machine learning in creating text, images, and code.",
+        "summary": "The 22-minute Google Cloud Tech video \"Introduction to Generative AI,\" published May 8, 2023, provides an overview of Generative AI, Large Language Models (LLMs), and their applications. It serves as the first module in a learning path, explaining how generative models differ from traditional machin"
+      },
+      "error": "Analysis failed",
+      "transcript": [
+        {
+          "start": 0,
+          "duration": 3,
+          "text": "so after waiting a long hours for at the"
+        },
+        {
+          "start": 3,
+          "duration": 3,
+          "text": "2 minutes it was hang so just what you"
+        },
+        {
+          "start": 6,
+          "duration": 2,
+          "text": "have to do the power of this Yos show"
+        },
+        {
+          "start": 8,
+          "duration": 3,
+          "text": "mic by clicking on this power off and"
+        },
+        {
+          "start": 11,
+          "duration": 2,
+          "text": "what you have to do is you need to start"
+        },
+        {
+          "start": 13,
+          "duration": 3,
+          "text": "again after powering of this just click"
+        },
+        {
+          "start": 16,
+          "duration": 2,
+          "text": "on start your show M completely you need"
+        },
+        {
+          "start": 18,
+          "duration": 1,
+          "text": "to power off then what you have to do is"
+        },
+        {
+          "start": 19,
+          "duration": 3,
+          "text": "you need to press immediately effect to"
+        },
+        {
+          "start": 22,
+          "duration": 3,
+          "text": "boot the menu so press fun f8 to boots"
+        },
+        {
+          "start": 25,
+          "duration": 4,
+          "text": "from the menu and after that so after"
+        },
+        {
+          "start": 29,
+          "duration": 4,
+          "text": "after typing f8 so we came to the boot"
+        },
+        {
+          "start": 33,
+          "duration": 1,
+          "text": "menu so here you can see we need to"
+        },
+        {
+          "start": 34,
+          "duration": 4,
+          "text": "select here our hard dis which I have"
+        },
+        {
+          "start": 38,
+          "duration": 2,
+          "text": "given Untitled the name of during the"
+        },
+        {
+          "start": 40,
+          "duration": 2,
+          "text": "installations and now you can see if you"
+        },
+        {
+          "start": 42,
+          "duration": 2,
+          "text": "press enter here it will be go for the"
+        },
+        {
+          "start": 44,
+          "duration": 3,
+          "text": "normal installation if you type minus V"
+        },
+        {
+          "start": 47,
+          "duration": 2,
+          "text": "that will be uh Diagnostic Center will"
+        },
+        {
+          "start": 49,
+          "duration": 2,
+          "text": "be come up if you type the question mark"
+        },
+        {
+          "start": 51,
+          "duration": 2,
+          "text": "you will get help center so now I'm"
+        },
+        {
+          "start": 53,
+          "duration": 4,
+          "text": "going to uh go to this hard dis and"
+        },
+        {
+          "start": 57,
+          "duration": 3,
+          "text": "there I need to type hyph S Hy and give"
+        },
+        {
+          "start": 60,
+          "duration": 4,
+          "text": "Hy and to press enter here so after that"
+        },
+        {
+          "start": 64,
+          "duration": 2,
+          "text": "typing uh you need to wait for this"
+        },
+        {
+          "start": 66,
+          "duration": 3,
+          "text": "command prome you will come this is uh"
+        },
+        {
+          "start": 69,
+          "duration": 3,
+          "text": "boting in a save mode so you need to be"
+        },
+        {
+          "start": 72,
+          "duration": 2,
+          "text": "uh wait here now finally we came to the"
+        },
+        {
+          "start": 74,
+          "duration": 3,
+          "text": "save mode prom so here we need to uh"
+        },
+        {
+          "start": 77,
+          "duration": 2,
+          "text": "type this one so you can see on the"
+        },
+        {
+          "start": 79,
+          "duration": 3,
+          "text": "screen we need to type the uh root"
+        },
+        {
+          "start": 82,
+          "duration": 1,
+          "text": "device like"
+        },
+        {
+          "start": 83,
+          "duration": 2,
+          "text": "slash"
+        },
+        {
+          "start": 85,
+          "duration": 5,
+          "text": "um uh type the slash okay slash SB so"
+        },
+        {
+          "start": 90,
+          "duration": 3,
+          "text": "you can see on the screen to the top of"
+        },
+        {
+          "start": 93,
+          "duration": 4,
+          "text": "here let me show you so this one is the"
+        },
+        {
+          "start": 97,
+          "duration": 3,
+          "text": "to mount the root device read add read"
+        },
+        {
+          "start": 100,
+          "duration": 2,
+          "text": "hyph right so we need to type the both"
+        },
+        {
+          "start": 102,
+          "duration": 4,
+          "text": "the command just give slash s pin and"
+        },
+        {
+          "start": 106,
+          "duration": 2,
+          "text": "then give FS"
+        },
+        {
+          "start": 108,
+          "duration": 7,
+          "text": "CK uh CK give space Hy F5 after typing"
+        },
+        {
+          "start": 115,
+          "duration": 3,
+          "text": "that you need to press enter here so"
+        },
+        {
+          "start": 118,
+          "duration": 1,
+          "text": "after that it's going to be check all"
+        },
+        {
+          "start": 119,
+          "duration": 2,
+          "text": "those"
+        },
+        {
+          "start": 121,
+          "duration": 3,
+          "text": "things now after typing that has been"
+        },
+        {
+          "start": 124,
+          "duration": 6,
+          "text": "completed now I'm going to type SL s / s"
+        },
+        {
+          "start": 130,
+          "duration": 8,
+          "text": "bin sbin give slash and Type M and hph"
+        },
+        {
+          "start": 138,
+          "duration": 4,
+          "text": "UW give space slash so you need to press"
+        },
+        {
+          "start": 142,
+          "duration": 3,
+          "text": "enter here so that's going to be link so"
+        },
+        {
+          "start": 145,
+          "duration": 3,
+          "text": "after that command uh when you type this"
+        },
+        {
+          "start": 148,
+          "duration": 2,
+          "text": "/bin /m it will be"
+        },
+        {
+          "start": 150,
+          "duration": 3,
+          "text": "uh linked all those things it will be uh"
+        },
+        {
+          "start": 153,
+          "duration": 2,
+          "text": "come with the installation directories"
+        },
+        {
+          "start": 155,
+          "duration": 2,
+          "text": "and remove the unwanted file system"
+        },
+        {
+          "start": 157,
+          "duration": 2,
+          "text": "everything is going to be come with you"
+        },
+        {
+          "start": 159,
+          "duration": 3,
+          "text": "that will take your 10 minutes more so"
+        },
+        {
+          "start": 162,
+          "duration": 5,
+          "text": "now I'm going to here uh typing here so"
+        },
+        {
+          "start": 167,
+          "duration": 2,
+          "text": "I'm going to enter into the directory"
+        },
+        {
+          "start": 169,
+          "duration": 1,
+          "text": "type"
+        },
+        {
+          "start": 170,
+          "duration": 3,
+          "text": "cd/ do"
+        },
+        {
+          "start": 173,
+          "duration": 5,
+          "text": "o uh S Type in install sandbox part"
+        },
+        {
+          "start": 178,
+          "duration": 3,
+          "text": "after that what you have to to do is uh"
+        },
+        {
+          "start": 181,
+          "duration": 4,
+          "text": "you need to type the script here s ipt"
+        },
+        {
+          "start": 185,
+          "duration": 2,
+          "text": "script so press enter here and now you"
+        },
+        {
+          "start": 187,
+          "duration": 3,
+          "text": "need to type LS here so all this is the"
+        },
+        {
+          "start": 190,
+          "duration": 2,
+          "text": "packages you can see this is your update"
+        },
+        {
+          "start": 192,
+          "duration": 3,
+          "text": "packages are showing in this Macos so"
+        },
+        {
+          "start": 195,
+          "duration": 2,
+          "text": "what you have to do is we need to uh go"
+        },
+        {
+          "start": 197,
+          "duration": 2,
+          "text": "to the inside the folder of this one"
+        },
+        {
+          "start": 199,
+          "duration": 3,
+          "text": "package type CD and need to type hack"
+        },
+        {
+          "start": 202,
+          "duration": 4,
+          "text": "hack hacking Tosh Zone and then give a"
+        },
+        {
+          "start": 206,
+          "duration": 3,
+          "text": "tab to get a full command then need to"
+        },
+        {
+          "start": 209,
+          "duration": 1,
+          "text": "type here"
+        },
+        {
+          "start": 210,
+          "duration": 4,
+          "text": "post installation USD Type 4 then press"
+        },
+        {
+          "start": 214,
+          "duration": 3,
+          "text": "a type to get a full command or else you"
+        },
+        {
+          "start": 217,
+          "duration": 5,
+          "text": "can see tal po press a tab to"
+        },
+        {
+          "start": 222,
+          "duration": 3,
+          "text": "get to type here and then you will need"
+        },
+        {
+          "start": 225,
+          "duration": 4,
+          "text": "to type here"
+        },
+        {
+          "start": 229,
+          "duration": 4,
+          "text": "script so uh you can find here uh in"
+        },
+        {
+          "start": 233,
+          "duration": 2,
+          "text": "this one you need to find hacking"
+        },
+        {
+          "start": 235,
+          "duration": 4,
+          "text": "hacking Source do Zone dot uh after that"
+        },
+        {
+          "start": 239,
+          "duration": 2,
+          "text": "you need to search for the wait I'm"
+        },
+        {
+          "start": 241,
+          "duration": 4,
+          "text": "going to show you this file name I'm"
+        },
+        {
+          "start": 245,
+          "duration": 3,
+          "text": "missing just type capital z z Zone then"
+        },
+        {
+          "start": 248,
+          "duration": 3,
+          "text": "you need to give capital P press tag key"
+        },
+        {
+          "start": 251,
+          "duration": 3,
+          "text": "to get full command PS to post script so"
+        },
+        {
+          "start": 254,
+          "duration": 2,
+          "text": "you need to press enter here after that"
+        },
+        {
+          "start": 256,
+          "duration": 3,
+          "text": "you need to type dot slash you need to"
+        },
+        {
+          "start": 259,
+          "duration": 3,
+          "text": "type PD Port install press enter so now"
+        },
+        {
+          "start": 262,
+          "duration": 3,
+          "text": "it's going to be uh install in a save"
+        },
+        {
+          "start": 265,
+          "duration": 2,
+          "text": "mode now we'll come up with a screen"
+        },
+        {
+          "start": 267,
+          "duration": 1,
+          "text": "with a login screen we need to wait here"
+        },
+        {
+          "start": 268,
+          "duration": 2,
+          "text": "for few minutes"
+        },
+        {
+          "start": 270,
+          "duration": 3,
+          "text": "after that uh our message will become on"
+        },
+        {
+          "start": 273,
+          "duration": 3,
+          "text": "the login screen so still is uh running"
+        },
+        {
+          "start": 276,
+          "duration": 3,
+          "text": "showing some of the warnings is coming"
+        },
+        {
+          "start": 279,
+          "duration": 2,
+          "text": "so you need to ignore all those warnings"
+        },
+        {
+          "start": 281,
+          "duration": 4,
+          "text": "and errors during this message now that"
+        },
+        {
+          "start": 285,
+          "duration": 2,
+          "text": "has been complete now what I have to do"
+        },
+        {
+          "start": 287,
+          "duration": 3,
+          "text": "is we need to exit here type EXT exit"
+        },
+        {
+          "start": 290,
+          "duration": 3,
+          "text": "here press enter now we'll come with the"
+        },
+        {
+          "start": 293,
+          "duration": 4,
+          "text": "uh menu will come here MOS so wait for"
+        },
+        {
+          "start": 297,
+          "duration": 2,
+          "text": "your 2 minutes here you will come up"
+        },
+        {
+          "start": 299,
+          "duration": 2,
+          "text": "there's no such file or directories come"
+        },
+        {
+          "start": 301,
+          "duration": 3,
+          "text": "up uh like you need to ignore whatever"
+        },
+        {
+          "start": 304,
+          "duration": 4,
+          "text": "the uh no such or file errors and"
+        },
+        {
+          "start": 308,
+          "duration": 4,
+          "text": "warnings errors just need ignore that"
+        },
+        {
+          "start": 312,
+          "duration": 4,
+          "text": "one waiting for waiting for D"
+        },
+        {
+          "start": 316,
+          "duration": 5,
+          "text": "[Music]"
+        },
+        {
+          "start": 321,
+          "duration": 3,
+          "text": "dsmos"
+        },
+        {
+          "start": 324,
+          "duration": 6,
+          "text": "see still coming out"
+        },
+        {
+          "start": 330,
+          "duration": 4,
+          "text": "that has been completed so D DS Mar has"
+        },
+        {
+          "start": 334,
+          "duration": 2,
+          "text": "been arrived now said that has been"
+        },
+        {
+          "start": 336,
+          "duration": 4,
+          "text": "complet now I'm going to be"
+        },
+        {
+          "start": 340,
+          "duration": 3,
+          "text": "start we do not do anything just we need"
+        },
+        {
+          "start": 343,
+          "duration": 3,
+          "text": "to keep watching here on the screen uh"
+        },
+        {
+          "start": 346,
+          "duration": 2,
+          "text": "it will come up it will be come with"
+        },
+        {
+          "start": 348,
+          "duration": 4,
+          "text": "welcome screen will come here so finally"
+        },
+        {
+          "start": 352,
+          "duration": 2,
+          "text": "we came to welcome screen on screen you"
+        },
+        {
+          "start": 354,
+          "duration": 2,
+          "text": "can see"
+        },
+        {
+          "start": 356,
+          "duration": 4,
+          "text": "so just we need to select here"
+        },
+        {
+          "start": 360,
+          "duration": 3,
+          "text": "uh language here time zone I'm going to"
+        },
+        {
+          "start": 363,
+          "duration": 6,
+          "text": "select here India here by default let's"
+        },
+        {
+          "start": 369,
+          "duration": 4,
+          "text": "see so just what you have to do is just"
+        },
+        {
+          "start": 373,
+          "duration": 3,
+          "text": "go for"
+        },
+        {
+          "start": 376,
+          "duration": 4,
+          "text": "this uh you need to click on continue"
+        },
+        {
+          "start": 380,
+          "duration": 2,
+          "text": "selecting your time zone after that you"
+        },
+        {
+          "start": 382,
+          "duration": 2,
+          "text": "need to click on continue and you can"
+        },
+        {
+          "start": 384,
+          "duration": 2,
+          "text": "see you need to select your keyboard"
+        },
+        {
+          "start": 386,
+          "duration": 2,
+          "text": "language here select your which language"
+        },
+        {
+          "start": 388,
+          "duration": 2,
+          "text": "you suitable you need to select that one"
+        },
+        {
+          "start": 390,
+          "duration": 2,
+          "text": "so the transfer for this information on"
+        },
+        {
+          "start": 392,
+          "duration": 2,
+          "text": "this Mac you can see uh do you want to"
+        },
+        {
+          "start": 394,
+          "duration": 3,
+          "text": "transfer this ad this whatever if you"
+        },
+        {
+          "start": 397,
+          "duration": 2,
+          "text": "want to select the first option second I"
+        },
+        {
+          "start": 399,
+          "duration": 2,
+          "text": "do not want to transfer information and"
+        },
+        {
+          "start": 401,
+          "duration": 3,
+          "text": "select click on continue then I do not"
+        },
+        {
+          "start": 404,
+          "duration": 4,
+          "text": "want to sign in on the cloud Apple ID"
+        },
+        {
+          "start": 408,
+          "duration": 2,
+          "text": "don't have any ID if you want to create"
+        },
+        {
+          "start": 410,
+          "duration": 2,
+          "text": "you can create it then you need to click"
+        },
+        {
+          "start": 412,
+          "duration": 3,
+          "text": "on continue then skip this one after"
+        },
+        {
+          "start": 415,
+          "duration": 3,
+          "text": "that you need to accept the license"
+        },
+        {
+          "start": 418,
+          "duration": 3,
+          "text": "agreement here click on agree then click"
+        },
+        {
+          "start": 421,
+          "duration": 3,
+          "text": "on agree again after that we come with a"
+        },
+        {
+          "start": 424,
+          "duration": 2,
+          "text": "computer account we need to create a"
+        },
+        {
+          "start": 426,
+          "duration": 2,
+          "text": "computer account to login with this"
+        },
+        {
+          "start": 428,
+          "duration": 2,
+          "text": "usern the password Here I have been"
+        },
+        {
+          "start": 430,
+          "duration": 2,
+          "text": "created an account for the computer"
+        },
+        {
+          "start": 432,
+          "duration": 2,
+          "text": "given the full name and the account name"
+        },
+        {
+          "start": 434,
+          "duration": 3,
+          "text": "the password I have given and then click"
+        },
+        {
+          "start": 437,
+          "duration": 3,
+          "text": "on"
+        },
+        {
+          "start": 440,
+          "duration": 4,
+          "text": "continue so if you want to have a dig"
+        },
+        {
+          "start": 444,
+          "duration": 3,
+          "text": "and users means you can check I'm going"
+        },
+        {
+          "start": 447,
+          "duration": 4,
+          "text": "to uncheck this option and click on on"
+        },
+        {
+          "start": 451,
+          "duration": 5,
+          "text": "continue and it's going to set up Mac"
+        },
+        {
+          "start": 456,
+          "duration": 4,
+          "text": "finally we log in here with the Mac Mac"
+        },
+        {
+          "start": 460,
+          "duration": 5,
+          "text": "OS Uso might so if you can see the"
+        },
+        {
+          "start": 465,
+          "duration": 4,
+          "text": "latest version of this have been"
+        },
+        {
+          "start": 469,
+          "duration": 4,
+          "text": "installed scroll down see it come up"
+        },
+        {
+          "start": 473,
+          "duration": 7,
+          "text": "here so you can see here right side also"
+        },
+        {
+          "start": 480,
+          "duration": 3,
+          "text": "you show M Zone you show my zone H go"
+        },
+        {
+          "start": 483,
+          "duration": 3,
+          "text": "for the help click on the"
+        },
+        {
+          "start": 486,
+          "duration": 5,
+          "text": "help and"
+        },
+        {
+          "start": 491,
+          "duration": 2,
+          "text": "then get a"
+        },
+        {
+          "start": 493,
+          "duration": 4,
+          "text": "Mac so here you can see on the"
+        },
+        {
+          "start": 497,
+          "duration": 3,
+          "text": "settings phone memory everything is"
+        },
+        {
+          "start": 500,
+          "duration": 3,
+          "text": "there we check the latest so my friend"
+        },
+        {
+          "start": 503,
+          "duration": 2,
+          "text": "internet also working in that"
+        },
+        {
+          "start": 505,
+          "duration": 2,
+          "text": "one now I'm going to show you how to"
+        },
+        {
+          "start": 507,
+          "duration": 3,
+          "text": "make a full screen also my friend you"
+        },
+        {
+          "start": 510,
+          "duration": 6,
+          "text": "can see my OS X Uso meet is the version"
+        },
+        {
+          "start": 516,
+          "duration": 2,
+          "text": "you can see on 10.1 version Mac summer"
+        },
+        {
+          "start": 518,
+          "duration": 5,
+          "text": "200 processor and memory RAM and the"
+        },
+        {
+          "start": 523,
+          "duration": 2,
+          "text": "name for the installation I have given"
+        },
+        {
+          "start": 525,
+          "duration": 4,
+          "text": "title display graphic 3MB serial number"
+        },
+        {
+          "start": 529,
+          "duration": 2,
+          "text": "you can see on display storage"
+        },
+        {
+          "start": 531,
+          "duration": 2,
+          "text": "every so my friend thank you for"
+        },
+        {
+          "start": 533,
+          "duration": 5,
+          "text": "watching my it clet video on M"
+        },
+        {
+          "start": 538,
+          "duration": 3,
+          "text": "mosite so so if you have any problem if"
+        },
+        {
+          "start": 541,
+          "duration": 1,
+          "text": "you get any problem you can comment"
+        },
+        {
+          "start": 542,
+          "duration": 3,
+          "text": "below to my video thank you for watching"
+        },
+        {
+          "start": 545,
+          "duration": 5,
+          "text": "please subscribe to CL Channel"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "url": "https://www.youtube.com/watch?v=9Gv7eZemHrE",
+      "title": "Anthropic's Ralph Loop + Claude Code: Anthropic's new FRAMEWORK can run CLAUDE CODE for 24/7!",
+      "videoId": "9Gv7eZemHrE",
+      "status": "error",
+      "processingAttempts": 3,
+      "lastProcessed": "2026-04-27T19:53:53.824Z",
+      "metadata": {
+        "duration": 0,
+        "durationFormatted": "0:00",
+        "publishDate": "November 16, 2021",
+        "description": ", views, publish date, topics, summary\n\nThe official trailer for Spider-Man: No Way Home from Sony Pictures Entertainment, published on November 16, 2021, runs 3 minutes and 4 seconds and has garnered over 87 million views. It showcases Peter Parker dealing with the multiversal consequences of his identity being revealed, featuring the return of iconic villains like Doctor Octopus and Green Goblin.",
+        "summary": "The official trailer for Spider-Man: No Way Home from Sony Pictures Entertainment, published on November 16, 2021, runs 3 minutes and 4 seconds and has garnered over 87 million views. It showcases Peter Parker dealing with the multiversal consequences of his identity being revealed, featuring the re"
+      },
+      "error": "Analysis failed"
+    },
+    {
+      "index": 1,
+      "url": "https://www.youtube.com/watch?v=FTtmZQBX-fk",
+      "title": "Google A2UI: Agent-to-User Interface - Build AI Generated Apps EASILY! (CopilotKit AG-UI) Opensource",
+      "videoId": "FTtmZQBX-fk",
+      "status": "error",
+      "processingAttempts": 3,
+      "lastProcessed": "2026-04-27T19:53:55.827Z",
+      "metadata": {
+        "duration": 586,
+        "durationFormatted": "9:46",
+        "channel": "Google A",
+        "publishDate": "December 29, 2025",
+        "description": ", views, publish date, topics, summary\n\n\"Google A2UI: Agent-to-User Interface - Build AI Generated UIs,\" published on December 29, 2025, demonstrates an open-source framework for generating native, interactive user interfaces via AI agents. Developed with Copilot Kit, the protocol enables secure, real-time rendering of widgets, charts, and maps across platforms without executing arbitrary code.",
+        "summary": "\"Google A2UI: Agent-to-User Interface - Build AI Generated UIs,\" published on December 29, 2025, demonstrates an open-source framework for generating native, interactive user interfaces via AI agents. Developed with Copilot Kit, the protocol enables secure, real-time rendering of widgets, charts, an"
+      },
+      "error": "Analysis failed"
+    }
+  ],
+  "currentIndex": 1,
+  "startedAt": "2026-04-22T17:58:52.770Z",
+  "lastUpdated": "2026-04-27T19:53:55.827Z",
+  "stats": {
+    "totalVideos": 3,
+    "metadataComplete": 38,
+    "transcriptsExtracted": 10,
+    "analyzed": 0,
+    "needsVisualReview": 0,
+    "completed": 0,
+    "skipped": 0,
+    "errors": 40,
+    "analysisSuccessRate": 0,
+    "averageTranscriptLength": 182
+  }
+}

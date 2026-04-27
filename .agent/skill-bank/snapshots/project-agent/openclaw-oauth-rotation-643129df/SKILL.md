@@ -1,3 +1,7 @@
+> **⚠️ SNAPSHOT — Railway references in this archived skill are DEPRECATED.**
+> TNF migrated from Railway to GCP (Cloud Run) + Cloudflare + Supabase +
+> Upstash. See CLOUD_MIGRATION_BLUEPRINT.md.
+
 # OpenClaw OAuth Rotation
 
 ## Purpose
