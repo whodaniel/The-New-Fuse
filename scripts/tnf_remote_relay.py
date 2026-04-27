@@ -457,13 +457,17 @@ html,body{width:100%;height:100%;background:#0a0a1a;color:#eee;
 #anno-canvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none!important;z-index:10}
 #anno-canvas.drawing{pointer-events:auto!important;touch-action:none}
 
-/* Cursor indicator */
-#cursor{position:fixed;width:24px;height:24px;border:2px solid #00ff88;border-radius:50%;
-  pointer-events:none;z-index:150;display:none;transform:translate(-50%,-50%);
-  box-shadow:0 0 12px rgba(0,255,136,0.5);transition:border-color .15s}
-#cursor::after{content:'';position:absolute;top:50%;left:50%;width:4px;height:4px;
-  background:#00ff88;border-radius:50%;transform:translate(-50%,-50%)}
-body.rc #cursor{border-color:#ff5555;box-shadow:0 0 12px rgba(255,85,85,0.5)}
+/* Cursor indicator — GIANT for outdoor visibility */
+#cursor{position:fixed;width:64px;height:64px;border:3px solid #00ff88;border-radius:50%;
+ pointer-events:none;z-index:150;display:none;transform:translate(-50%,-50%);
+ box-shadow:0 0 30px 12px rgba(0,255,136,0.7),0 0 60px 24px rgba(0,255,136,0.3),0 0 100px 50px rgba(0,255,136,0.1);
+ transition:border-color .15s;animation:cursorPulse 1.5s ease-in-out infinite}
+#cursor::after{content:'';position:absolute;top:50%;left:50%;width:12px;height:12px;
+ background:#00ff88;border-radius:50%;transform:translate(-50%,-50%);
+ box-shadow:0 0 10px 4px rgba(0,255,136,0.8)}
+@keyframes cursorPulse{0%,100%{box-shadow:0 0 30px 12px rgba(0,255,136,0.7),0 0 60px 24px rgba(0,255,136,0.3),0 0 100px 50px rgba(0,255,136,0.1)}
+50%{box-shadow:0 0 40px 18px rgba(0,255,136,0.9),0 0 80px 36px rgba(0,255,136,0.4),0 0 120px 60px rgba(0,255,136,0.15)}}
+body.rc #cursor{border-color:#ff5555;box-shadow:0 0 30px 12px rgba(255,85,85,0.7),0 0 60px 24px rgba(255,85,85,0.3),0 0 100px 50px rgba(255,85,85,0.1)}
 body.rc #cursor::after{background:#ff5555}
 
 /* Hidden keyboard input */
@@ -649,7 +653,7 @@ function resizeWrap(){
 window.addEventListener('resize',resizeWrap);
 
 // ─── Coordinate Mapping ───
-function screenCoords(clientX,clientY){
+function sc(clientX,clientY){
   const r=wrap.getBoundingClientRect();
   const sx=(si?.screen?.width||2560)/(r.width);
   const sy=(si?.screen?.height||1600)/(r.height);

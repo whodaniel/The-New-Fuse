@@ -13,7 +13,7 @@
  */
 
 import * as path from 'path';
-import { CodebaseVectorizer } from '../packages/core-vector-db/src/codebase-vectorizer';
+import { CodebaseVectorizer } from '../packages/core-vector-db/src/codebase-vectorizer.js';
 
 async function main() {
   const targetPath = process.argv[2] || process.cwd();

@@ -71,7 +71,10 @@ import {
   createAgentIdentityRecord,
   type TnfAgentIdentityRecord,
 } from './contracts/identity.js';
-import { normalizeAgentLifecycleStatus, type TnfAgentLifecycleStatus } from './contracts/lifecycle.js';
+import {
+  normalizeAgentLifecycleStatus,
+  type TnfAgentLifecycleStatus,
+} from './contracts/lifecycle.js';
 import { createTNFEnvelope } from './protocol/tnf-envelope.js';
 
 const execFileAsync = promisify(execFile);
@@ -97,7 +100,7 @@ const CONFIG = {
     parseInt(process.env.CHRONOLOGICAL_POLL_INTERVAL_MS || '') || 30000, // 30 seconds
 
   // Connections
-  RELAY_URL: process.env.RELAY_URL || 'ws://localhost:3000/ws',
+  RELAY_URL: process.env.RELAY_URL || 'ws://localhost:3005/redis-bridge',
   REDIS_URL: process.env.REDIS_URL,
   LEDGER_API_BASE:
     process.env.LEDGER_API_BASE ||

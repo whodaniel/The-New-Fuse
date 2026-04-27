@@ -813,6 +813,24 @@ io.on('connection', (socket) => {
       socket.emit('error', { message: 'Membership required to play' });
       return;
     }
+    // S1 fix: Check if this identity already has an active seat (from a previous
+    // disconnected session). Without this check, opening a new browser tab while
+    // the old socket is still in the grace period creates a second seat for the
+    // same identity, violating the one-seat-per-player rule (NF1 in holdem-engine
+    // also prevents duplicate playerIds, but here the playerId includes socket.id
+    // so it's different each time — we must check by identity instead).
+    const identity = socket.data.identity;
+    if (identity) {
+      for (const [, info] of socketToPlayer.entries()) {
+        if (info.identity === identity) {
+          // This identity already has a seat. Reclaim it instead of creating a new one.
+          socket.emit('error', { message: 'You already have a seat. Reconnecting...' });
+          // Trigger reconnect logic for the existing seat
+          socket.emit('reclaim_seat', { seat: info.seat });
+          return;
+        }
+      }
+    }
     const name = String(data.name || `Player_${randomInt(100, 999)}`).trim();
     const emptySeat = pokerEngine.seats.findIndex((s: any) => s === null);
     if (emptySeat === -1) {
@@ -830,7 +848,7 @@ io.on('connection', (socket) => {
         controlMode: 'human',
       });
 
-      socketToPlayer.set(socket.id, { playerId, seat: emptySeat });
+      socketToPlayer.set(socket.id, { playerId, seat: emptySeat, identity: identity || '' });
       playerToSocket.set(playerId, socket.id);
       socketDisplayNames.set(socket.id, name);
 
@@ -1024,7 +1042,7 @@ io.on('connection', (socket) => {
 
       // Re-map to new socket
       socketToPlayer.delete(existingSocketId);
-      socketToPlayer.set(socket.id, { playerId, seat });
+      socketToPlayer.set(socket.id, { playerId, seat, identity: identity || '' });
       playerToSocket.set(playerId, socket.id);
       socketDisplayNames.set(socket.id, displayName || playerId);
       socketDisplayNames.delete(existingSocketId);
@@ -1040,7 +1058,12 @@ io.on('connection', (socket) => {
       // the player even though they just reconnected and should have their
       // remaining time to act. The scheduleActionTimeout() call in
       // broadcastState() will reschedule a fresh timer after this.
-      if (actionTimeoutTimer && hand?.actingSeat === seat) {
+      // NF3 fix: Use pokerEngine.hand (live engine state) instead of closure-captured
+      // `hand` which is stale/undefined in this scope. Previously, `hand?.actingSeat`
+      // was always undefined because `hand` is from the action handler's closure —
+      // if no action was processed, it was undefined, meaning the action timeout
+      // timer was NEVER cleared on reconnection, causing auto-fold 25s later.
+      if (actionTimeoutTimer && pokerEngine.hand?.actingSeat === seat) {
         clearTimeout(actionTimeoutTimer);
         actionTimeoutTimer = null;
       }

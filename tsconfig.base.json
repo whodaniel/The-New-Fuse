@@ -18,6 +18,7 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "emitDeclarationOnly": false,
     "types": ["node"]
   },
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]

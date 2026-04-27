@@ -11,8 +11,8 @@
  * - Bidirectional state management
  */
 
-import { EventEmitter } from 'events';
 import * as crypto from 'crypto';
+import { EventEmitter } from 'events';
 
 import { WebSocketServer } from 'ws';
 
@@ -278,7 +278,7 @@ export class AGUIOrchestrator extends EventEmitter {
       console.log(`[AG-UI] Generating ${request.type} visualization for ${session.agentId}`);
 
       // Import the visualization generator
-      const { VisualizationGenerator } = await import('./utils/VisualizationGenerator');
+      const { VisualizationGenerator } = await import('./utils/VisualizationGenerator.js');
 
       const generator = new VisualizationGenerator();
 

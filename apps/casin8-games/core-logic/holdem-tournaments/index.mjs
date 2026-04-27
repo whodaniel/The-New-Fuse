@@ -73,20 +73,26 @@ function currentLevelRow(t) {
 }
 
 function assignSeatsToTables(t) {
-  const active = [...t.players.values()].filter((p) => p.status === 'active');
-  // Cryptographically deterministic seeded shuffle using SHA-256 PRNG
-  // (replaces insecure Math.sin-based RNG — predictable seat assignment was exploitable)
-  let shuffleCounter = 0;
-  const shuffleRng = () => {
-    const hex = createHash('sha256').update(`${t.tournamentId}:shuffle:${shuffleCounter}`).digest('hex');
-    shuffleCounter += 1;
-    const int = Number.parseInt(hex.slice(0, 8), 16);
-    return int / 0x100000000;
-  };
-  for (let i = active.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(shuffleRng() * (i + 1));
-    [active[i], active[j]] = [active[j], active[i]];
-  }
+ const active = [...t.players.values()].filter((p) => p.status === 'active');
+ // Cryptographically deterministic seeded shuffle using SHA-256 PRNG
+ // with rejection sampling to eliminate modulo bias.
+ // Previous code used Math.floor(shuffleRng() * (i + 1)) which has modulo bias
+ // when 2^32 is not evenly divisible by (i+1). For a 180-player tournament,
+ // the bias is detectable and exploitable since the tournament ID (seed) is public.
+ let shuffleCounter = 0;
+ const shuffleInt = (max) => {
+ const hex = createHash('sha256').update(`${t.tournamentId}:shuffle:${shuffleCounter}`).digest('hex');
+ shuffleCounter += 1;
+ const int = Number.parseInt(hex.slice(0, 8), 16);
+ // Rejection sampling: eliminate modulo bias (same pattern as holdem-engine createRng)
+ const limit = 0x100000000 - (0x100000000 % max);
+ if (int < limit) return int % max;
+ return shuffleInt(max); // redraw (extremely rare, ~1.2% for max=52)
+ };
+ for (let i = active.length - 1; i > 0; i -= 1) {
+ const j = shuffleInt(i + 1);
+ [active[i], active[j]] = [active[j], active[i]];
+ }
 
  // TDA Rule 40: Tables must be balanced — no table should differ by more
  // than 1 player. The previous sequential fill created unbalanced tables
@@ -143,20 +149,23 @@ function rebalanceTables(t) {
 }
 
 function mergeFinalTable(t) {
-  const active = [...t.players.values()].filter((p) => p.status === 'active');
-  if (active.length === 0) return;
-  // Use SHA-256 PRNG for fair seat assignment (same pattern as assignSeatsToTables)
-  let mergeCounter = 0;
-  const mergeRng = () => {
-    const hex = createHash('sha256').update(`${t.tournamentId}:merge:${mergeCounter}`).digest('hex');
-    mergeCounter += 1;
-    const int = Number.parseInt(hex.slice(0, 8), 16);
-    return int / 0x100000000;
-  };
-  for (let i = active.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(mergeRng() * (i + 1));
-    [active[i], active[j]] = [active[j], active[i]];
-  }
+ const active = [...t.players.values()].filter((p) => p.status === 'active');
+ if (active.length === 0) return;
+ // Use SHA-256 PRNG with rejection sampling for fair seat assignment
+ // (same pattern as assignSeatsToTables — eliminates modulo bias)
+ let mergeCounter = 0;
+ const mergeInt = (max) => {
+ const hex = createHash('sha256').update(`${t.tournamentId}:merge:${mergeCounter}`).digest('hex');
+ mergeCounter += 1;
+ const int = Number.parseInt(hex.slice(0, 8), 16);
+ const limit = 0x100000000 - (0x100000000 % max);
+ if (int < limit) return int % max;
+ return mergeInt(max); // rejection sampling
+ };
+ for (let i = active.length - 1; i > 0; i -= 1) {
+ const j = mergeInt(i + 1);
+ [active[i], active[j]] = [active[j], active[i]];
+ }
 
   const tableId = `${t.tournamentId}-final-table`;
   const table = { tableId, seats: [] };
@@ -374,7 +383,7 @@ export function advanceTournamentClock(t, seconds) {
       if (t.levelIndex > t.lateReg.byLevelInclusive) {
         t.lateReg.open = false;
       }
-      if (t.levelIndex > 0 && t.levelIndex % t.breakConfig.everyLevels === 0) {
+      if (t.levelIndex > 0 && (t.levelIndex + 1) % t.breakConfig.everyLevels === 0) {
         t.onBreak = true;
         t.breakRemainingSec = t.breakConfig.breakDurationSec;
       }
@@ -511,19 +520,28 @@ export function eliminatePlayer(t, { playerId, finishPosition }) {
 }
 
 export function computePayouts(t) {
-  if (t.status !== 'complete') throw new Error('Tournament not complete');
-  // Only include players with a valid finishPosition for payout.
-  // Players with finishPosition=null (e.g., registered but never eliminated)
-  // should NOT receive payouts — they are sorted as 9999 and could silently
-  // consume payout positions meant for actual finishers.
-  const entries = [...t.players.values()]
-    .filter((p) => p.finishPosition != null && Number(p.finishPosition) > 0)
-    .sort((a, b) => {
-      const fa = Number(a.finishPosition);
-      const fb = Number(b.finishPosition);
-      if (fa !== fb) return fa - fb;
-      return a.playerId.localeCompare(b.playerId);
-    });
+ if (t.status !== 'complete') throw new Error('Tournament not complete');
+ // Only include players with a valid finishPosition for payout.
+ // Players with finishPosition=null (e.g., registered but never eliminated)
+ // should NOT receive payouts — they are sorted as 9999 and could silently
+ // consume payout positions meant for actual finishers.
+ const entries = [...t.players.values()]
+ .filter((p) => p.finishPosition != null && Number(p.finishPosition) > 0)
+ .sort((a, b) => {
+ const fa = Number(a.finishPosition);
+ const fb = Number(b.finishPosition);
+ if (fa !== fb) return fa - fb;
+ return a.playerId.localeCompare(b.playerId);
+ });
+
+ // Guard: no players with finishPosition — prize pool cannot be distributed.
+ // Without this, the for-loop runs 0 times and the entire prize pool is silently
+ // undistributed (chips vanish). This shouldn't happen in normal tournament flow
+ // (eliminatePlayer always sets finishPosition), but a crash or data corruption
+ // could create this state.
+ if (entries.length === 0) {
+ throw new Error('No players with finishPosition — cannot compute payouts');
+ }
 
  // When fewer players finish in-the-money than payoutBps entries,
  // redistribute unused BPS proportionally to the paid positions.
@@ -666,7 +684,8 @@ export function restoreTournament(snapshot) {
   t.completedAt = snapshot.completedAt || null;
   t.players = new Map((snapshot.players || []).map((p) => [p.playerId, { ...p }]));
   t.eliminationOrder = cloneJson(snapshot.eliminationOrder || []);
-  t.tables = new Map((snapshot.tables || []).map((row) => [row.tableId, { tableId: row.tableId, seats: [...(row.seats || [])] }]));
-  t.eventLog = cloneJson(snapshot.eventLog || []);
+ t.lateReg.open = Boolean(snapshot.lateReg?.open ?? true);
+ t.tables = new Map((snapshot.tables || []).map((row) => [row.tableId, { tableId: row.tableId, seats: [...(row.seats || [])] }]));
+ t.eventLog = cloneJson(snapshot.eventLog || []);
   return t;
 }

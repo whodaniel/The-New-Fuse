@@ -1,9 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/mcp-config.json",
   "generatedBy": "scripts/tnf-generate-mcp-clients.cjs",
-  "generatedAt": "2026-04-27T16:15:41.952Z",
+  "generatedAt": "2026-04-27T16:15:41.956Z",
   "source": "data/mcp_config.json",
-  "client": "claude",
+  "client": "openclaw",
   "mcpServers": {
     "tnf-enhanced-mcp-server": {
       "command": "node",

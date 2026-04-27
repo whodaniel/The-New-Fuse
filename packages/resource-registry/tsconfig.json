@@ -1,8 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "moduleResolution": "NodeNext",
-    "module": "NodeNext",
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
@@ -16,7 +14,8 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "ignoreDeprecations": "5.0"
+    "ignoreDeprecations": "5.0",
+    "emitDeclarationOnly": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "***.test.ts"]

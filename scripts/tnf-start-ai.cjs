@@ -56,6 +56,8 @@ const clientCommandMap = {
   codex: "codex",
   claude: "claude",
   gemini: "gemini",
+  openclaw: "openclaw",
+  hermes: "hermes",
 };
 
 const cmd = clientCommandMap[client];

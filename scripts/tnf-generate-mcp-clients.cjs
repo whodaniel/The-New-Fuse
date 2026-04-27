@@ -43,6 +43,7 @@ const outputs = [
   ["codex", "codex.mcp.json"],
   ["claude", "claude.mcp.json"],
   ["gemini", "gemini.mcp.json"],
+  ["openclaw", "openclaw.mcp.json"],
 ];
 
 for (const [client, file] of outputs) {

@@ -385,11 +385,18 @@ export function createHoldemTable(options = {}) {
 }
 
 export function seatPlayer(engine, { playerId, seat, stack, autoPostBlinds = true, controlMode }) {
-  assertString(playerId, 'playerId');
-  const seatNo = asInt(seat, 'seat', 0);
-  const stackUnits = asInt(stack, 'stack', 1);
-  if (seatNo >= engine.seats.length) throw new Error('Seat out of range');
-  if (engine.seats[seatNo]) throw new Error('Seat occupied');
+ assertString(playerId, 'playerId');
+ const seatNo = asInt(seat, 'seat', 0);
+ const stackUnits = asInt(stack, 'stack', 1);
+ if (seatNo >= engine.seats.length) throw new Error('Seat out of range');
+ if (engine.seats[seatNo]) throw new Error('Seat occupied');
+ // NF1 fix: Prevent duplicate playerId — same player cannot occupy multiple seats.
+ // Without this check, a player could sit at seat 0 AND seat 3 simultaneously,
+ // creating a "ghost" duplicate that corrupts committedBySeat, actedSinceAggression,
+ // computeSidePots, and pot distribution. seatForPlayer() uses .find() which returns
+ // only the first match, so the second seat becomes a phantom.
+ const existing = engine.seats.find((s) => s && s.playerId === playerId);
+ if (existing) throw new Error('Player already seated');
 
   const hasPlayed = engine.events.some((e) => e.type === 'player.seated' && e.payload.playerId === playerId);
   const mode = String(controlMode || '').trim().toLowerCase();
@@ -1055,28 +1062,42 @@ export function computeSidePots(committedBySeat, foldedSeats = [], rankingBySeat
     previous = tier;
     if (amount <= 0) continue;
 
-    const contenders = contributors.filter((seat) => !folded.has(seat));
-    if (contenders.length === 0) {
-      // All contributors at this tier are folded — this is "dead money".
-      // Per TDA rules, dead money in the pot stays in the pot and is won by
-      // the best hand at the next lower tier. Add it to the previous tier's
-      // payout pool by distributing it to whoever won at the closest lower tier.
-      // Simplest correct approach: add the unclaimed amount to payoutBySeat
-      // proportionally to existing payouts, or if no lower tier exists,
-      // distribute to the closest-to-button active player.
-      const unclaimed = amount;
-      // Find the active player closest to the button clockwise
-      const activePlayers = Object.keys(invested).map(Number).filter((s) => !folded.has(s));
-      if (activePlayers.length > 0 && unclaimed > 0) {
-        activePlayers.sort((a, b) => {
-          const distA = (a - buttonSeat + maxSeats) % maxSeats;
-          const distB = (b - buttonSeat + maxSeats) % maxSeats;
-          return distA - distB;
-        });
-        // Give the dead money to the first active player clockwise from button
-        payoutBySeat[String(activePlayers[0])] = Number(payoutBySeat[String(activePlayers[0])] || 0) + unclaimed;
-      }
-      continue;
+ const contenders = contributors.filter((seat) => !folded.has(seat));
+ if (contenders.length === 0) {
+ // All contributors at this tier are folded — this is "dead money".
+ // Per TDA rules, dead money in the pot stays in the pot and is won by
+ // the best hand at the next lower tier. Add it to the previous tier's
+ // payout pool by distributing it to whoever won at the closest lower tier.
+ // Simplest correct approach: add the unclaimed amount to payoutBySeat
+ // proportionally to existing payouts, or if no lower tier exists,
+ // distribute to the closest-to-button active player.
+ const unclaimed = amount;
+ // Find the active player closest to the button clockwise
+ let activePlayers = Object.keys(invested).map(Number).filter((s) => !folded.has(s));
+ if (activePlayers.length > 0 && unclaimed > 0) {
+ activePlayers.sort((a, b) => {
+ const distA = (a - buttonSeat + maxSeats) % maxSeats;
+ const distB = (b - buttonSeat + maxSeats) % maxSeats;
+ return distA - distB;
+ });
+ // Give the dead money to the first active player clockwise from button
+ payoutBySeat[String(activePlayers[0])] = Number(payoutBySeat[String(activePlayers[0])] || 0) + unclaimed;
+ } else if (activePlayers.length === 0 && unclaimed > 0) {
+ // NF4 fix: When ALL contributors at ALL tiers are folded, the dead money
+ // chips silently vanished (the old code only distributed when activePlayers.length > 0).
+ // This is an extreme edge case but it means chips disappear from the game.
+ // The correct resolution: refund the unclaimed amount proportionally to
+ // all contributors at this tier (they all folded, so they split their own
+ // dead money back). This ensures the full pot is always accounted for.
+ const refundPerPlayer = Math.floor(unclaimed / contributors.length);
+ let refundRemainder = unclaimed - refundPerPlayer * contributors.length;
+ for (const seat of contributors) {
+ const refund = refundPerPlayer + (refundRemainder > 0 ? 1 : 0);
+ payoutBySeat[String(seat)] = Number(payoutBySeat[String(seat)] || 0) + refund;
+ if (refundRemainder > 0) refundRemainder -= 1;
+ }
+ }
+ continue;
     }
 
     let best = -Infinity;

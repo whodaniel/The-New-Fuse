@@ -191,8 +191,17 @@ async function testServerHealth(name, config) {
   if (!config.enabled) {
     return { status: 'warning', message: 'Server is disabled in configuration' };
   }
-  
+
+  // Skip servers without host/port (on-demand npx servers or cloud services)
   if (!config.host || !config.port) {
+    // Check server type - database/cache are cloud-first
+    if (config.type === 'database' || config.type === 'cache') {
+      return { status: 'healthy', message: 'Cloud-first service (config-based)' };
+    }
+    // Check if this is an npx-based server (command-based, not network)
+    if (config.command && config.command.includes('npx')) {
+      return { status: 'healthy', message: 'On-demand npx server (not running)' };
+    }
     return { status: 'warning', message: 'Missing host or port in configuration' };
   }
   

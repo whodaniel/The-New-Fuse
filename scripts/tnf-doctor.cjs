@@ -192,6 +192,20 @@ function runShellCommand(command) {
   };
 }
 
+function runNodeScript(args) {
+  const result = spawnSync("node", args, {
+    encoding: "utf8",
+    cwd: ROOT,
+    env: process.env,
+  });
+  return {
+    ok: result.status === 0,
+    stdout: String(result.stdout || ""),
+    stderr: String(result.stderr || ""),
+    status: result.status,
+  };
+}
+
 function detectRailwayApiBaseUrl() {
   const status = runShellCommand("railway status");
   if (!status.ok) return "";
@@ -477,6 +491,53 @@ async function main() {
     } else {
       console.log("- WARN stripe.json missing env_mapping");
     }
+  }
+
+  console.log("\n[12] WhatsApp Bridge Health");
+  const whatsappHealth = runNodeScript([
+    "scripts/protocols/whatsapp-bridge-health-check.cjs",
+    "--json",
+  ]);
+  const whatsappPayload = (() => {
+    try {
+      return JSON.parse(whatsappHealth.stdout || "{}");
+    } catch {
+      return null;
+    }
+  })();
+
+  if (!whatsappPayload || typeof whatsappPayload !== "object") {
+    console.log("- WARN unable to parse WhatsApp bridge verifier output");
+    if (whatsappHealth.stderr.trim()) {
+      console.log(`- Detail: ${whatsappHealth.stderr.trim()}`);
+    }
+  } else {
+    const bridge = whatsappPayload.bridge || {};
+    const checks = whatsappPayload.checks || {};
+    const runtime = whatsappPayload.runtime || {};
+    const filesystem = whatsappPayload.filesystem || {};
+    const httpReachable = checks.httpReachable === true;
+    const connected = checks.connected === true;
+    const sessionPresent = checks.sessionPresent === true;
+    const processPresent = checks.processPresent === true;
+    const queueLength = Number.isFinite(Number(bridge.queueLength)) ? Number(bridge.queueLength) : -1;
+    const status = bridge.status || "unknown";
+    const httpStatusCode = bridge.httpStatusCode || 0;
+    const processCount = Array.isArray(runtime.processMatches) ? runtime.processMatches.length : 0;
+    const logPath = filesystem.logPath || "~/.hermes/whatsapp/bridge.log";
+
+    console.log(
+      `- ${httpReachable ? "OK" : "WARN"} HTTP ${httpStatusCode || "n/a"} status=${status} queue=${queueLength}`
+    );
+    console.log(
+      `- ${connected ? "OK" : "WARN"} connected=${connected ? "yes" : "no"} session=${
+        sessionPresent ? "present" : "missing"
+      } processes=${processCount}`
+    );
+    if (!processPresent) {
+      console.log("- WARN no WhatsApp bridge/gateway processes detected");
+    }
+    console.log(`- Log: ${logPath}`);
   }
 
   console.log(`\nDoctor result: ${hardFail ? "FAIL" : "PASS"}`);
