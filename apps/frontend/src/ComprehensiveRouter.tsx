@@ -288,8 +288,8 @@ const MarketplaceRootRoute = () => {
   }
 
   if (isAppHost) {
-    // Let the standard SPA routes below handle /, /auth, etc.
-    return null;
+    // If we are on the app host, the root should go to the dashboard
+    return <Navigate to="/dashboard" replace />;
   }
 
   // If we are already on /landing, don't redirect back to / (to break Cloudflare 308 loops)
@@ -315,6 +315,9 @@ const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
 // Remove the old ComprehensiveNavigation component and replace with SmartNavigation
 export default function ComprehensiveRouter({ isApp: _isApp = false }: ComprehensiveRouterProps) {
   const location = useLocation();
+  const host = typeof window !== 'undefined' ? window.location.hostname : '';
+  const isAppHost =
+    host === 'app.thenewfuse.com' || host.startsWith('app.') || host.includes('localhost');
   const isPublicRoute =
     [
       '/',
@@ -382,6 +385,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/" element={<MarketplaceRootRoute />} />
               <Route path="/landing" element={<MarketplaceRootRoute />} />
               <Route path="/home" element={<RedirectToStatic to="/" />} />
+              <Route path="/app" element={<Navigate to="/dashboard" replace />} />
               {LEGACY_REDIRECTS.map((redirect) => (
                 <Route
                   key={`legacy-redirect:${redirect.from}`}
