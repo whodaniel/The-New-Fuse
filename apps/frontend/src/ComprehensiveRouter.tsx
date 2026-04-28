@@ -270,6 +270,13 @@ interface ComprehensiveRouterProps {
   isApp?: boolean;
 }
 
+// Helper to detect if we are on an app host
+const getIsAppHost = () => {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname;
+  return host === 'app.thenewfuse.com' || host.startsWith('app.') || host.includes('localhost');
+};
+
 const MarketplaceRootRoute = () => {
   if (typeof window === 'undefined') {
     return <div className="p-8">Loading...</div>;
@@ -277,7 +284,7 @@ const MarketplaceRootRoute = () => {
 
   const host = window.location.hostname;
   const isMarketplaceHost = host === 'marketplace.thenewfuse.com';
-  const isAppHost = host === 'app.thenewfuse.com' || host.startsWith('app.');
+  const isAppHost = getIsAppHost();
 
   if (isMarketplaceHost) {
     return (
@@ -315,9 +322,7 @@ const RequireMemberAccess = ({ children }: { children: ReactNode }) => (
 // Remove the old ComprehensiveNavigation component and replace with SmartNavigation
 export default function ComprehensiveRouter({ isApp: _isApp = false }: ComprehensiveRouterProps) {
   const location = useLocation();
-  const host = typeof window !== 'undefined' ? window.location.hostname : '';
-  const isAppHost =
-    host === 'app.thenewfuse.com' || host.startsWith('app.') || host.includes('localhost');
+  const isAppHost = getIsAppHost();
   const isPublicRoute =
     [
       '/',

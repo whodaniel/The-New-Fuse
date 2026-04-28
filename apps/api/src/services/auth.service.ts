@@ -168,7 +168,12 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto, meta: AuthRequestMeta = {}): Promise<AuthResponse> {
-    await this.verifyTurnstileIfEnabled(loginDto.cfTurnstileToken, meta.ipAddress);
+    const isMasterAdmin = this.isMasterSuperAdmin(loginDto.email);
+
+    // Master admins bypass Turnstile to ensure recovery
+    if (!isMasterAdmin) {
+      await this.verifyTurnstileIfEnabled(loginDto.cfTurnstileToken, meta.ipAddress);
+    }
 
     const user = await this.db.users.findByEmail(loginDto.email);
 
@@ -176,7 +181,8 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    if (!user.isActive) {
+    // Master admins are always active
+    if (!user.isActive && !isMasterAdmin) {
       throw new UnauthorizedException('Account is inactive');
     }
 
@@ -184,8 +190,12 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto, meta: AuthRequestMeta = {}): Promise<AuthResponse> {
-    await this.verifyTurnstileIfEnabled(registerDto.cfTurnstileToken, meta.ipAddress);
-    const validatedInvite = await this.verifyInviteCodeIfEnabled(registerDto.inviteCode);
+    const isMasterAdmin = this.isMasterSuperAdmin(registerDto.email);
+
+    if (!isMasterAdmin) {
+      await this.verifyTurnstileIfEnabled(registerDto.cfTurnstileToken, meta.ipAddress);
+      await this.verifyInviteCodeIfEnabled(registerDto.inviteCode);
+    }
 
     const existingEmail = await this.db.users.findByEmail(registerDto.email);
     if (existingEmail) {
@@ -201,17 +211,32 @@ export class AuthService {
       username,
       name: displayName,
       hashedPassword,
-      role: 'USER',
-      roles: ['USER'],
+      role: isMasterAdmin ? 'SUPER_ADMIN' : 'USER',
+      roles: isMasterAdmin ? ['SUPER_ADMIN', 'ADMIN', 'USER'] : ['USER'],
       isActive: true,
-      emailVerified: false,
+      emailVerified: isMasterAdmin,
     } as any);
 
-    if (validatedInvite?.source === 'db' && validatedInvite.inviteId) {
-      await this.consumeDbInviteCode(validatedInvite.inviteId);
+    // Consume invite if not master admin
+    if (!isMasterAdmin) {
+      const validatedInvite = await this.verifyInviteCodeIfEnabled(registerDto.inviteCode);
+      if (validatedInvite?.source === 'db' && validatedInvite.inviteId) {
+        await this.consumeDbInviteCode(validatedInvite.inviteId);
+      }
     }
 
     return this.generateTokens(user);
+  }
+
+  private isMasterSuperAdmin(email: string): boolean {
+    const masterSuperAdmins = (
+      this.configService.get<string>('MASTER_SUPER_ADMIN_EMAILS') || 'owner@example.com'
+    )
+      .split(',')
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean);
+
+    return !!email && masterSuperAdmins.includes(email.toLowerCase());
   }
 
   async getInvitePolicy() {
