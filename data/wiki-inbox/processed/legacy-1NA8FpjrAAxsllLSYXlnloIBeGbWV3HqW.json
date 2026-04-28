@@ -1,0 +1,29 @@
+{
+  "header": {
+    "agent_id": "AGENT-LEGACY-ASSIMILATOR",
+    "alg": "HS256",
+    "nonce": "356f6aae0c5be35d84cd194562fe4182",
+    "timestamp": 1777336541554,
+    "id_number": "ID#:LEGACY-1NA8"
+  },
+  "payload": {
+    "type": "COMPOUNDING_LOG_ENTRY",
+    "data": {
+      "id": "legacy-1NA8FpjrAAxsllLSYXlnloIBeGbWV3HqW",
+      "title": "surf",
+      "category": "legacy-video-analysis",
+      "content": "## Summary\nsurf.new is an open-source application designed for deploying and managing web agents to automate tasks such as scraping, form filling, and summarizing content. It integrates with frameworks like Browser-use and Claude Computer Use, allowing users to leverage various LLMs locally via Ollama or through commercial APIs.\n\n## Key Points\n- Introduction of surf.new as a playground for deploying web automation agents.\n- Support for Browser-use, which achieves an 89% accuracy score on web agent benchmarks.\n- Ability to switch between different agents and model providers (OpenAI, Anthropic, DeepSeek, Ollama).\n- Capability to automate complex tasks like scraping YouTube video data and pasting it into third-party apps.\n- Step-by-step guide for local installation using Node.js, Python, and Steel.dev API.\n\n## AI Concepts\nWeb Agents, AI Orchestration, Large Language Models (LLMs), Browser Automation Agents, Agentic Accuracy Benchmarks, Computer Use (Experimental)",
+      "backlinks": [
+        "Web Agents",
+        "AI Orchestration",
+        "Large Language Models (LLMs)",
+        "Browser Automation Agents",
+        "Agentic Accuracy Benchmarks",
+        "Computer Use (Experimental)",
+        "legacy-import",
+        "sovereign-state"
+      ]
+    }
+  },
+  "signature": "3c01142725149e7493c912778899b94d8081f18b9c60ab48e8be2cd443f34b36"
+}

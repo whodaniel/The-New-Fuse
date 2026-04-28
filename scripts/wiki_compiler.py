@@ -40,18 +40,51 @@ class WikiCompiler:
 
     def compile_entry(self, entry_json: str):
         """
-        Takes a CompoundingLogEntry, writes the Markdown file,
-        and manages backlinks avoiding the OOM slurp-and-dump.
+        Takes a CompoundingLogEntry (or a signed DACC-v1 packet), writes the 
+        Markdown file, and manages backlinks avoiding the OOM slurp-and-dump.
         """
-        entry = json.loads(entry_json)
+        raw_data = json.loads(entry_json)
+        
+        # 0. Protocol Bridge: Handle Signed DACC-v1 Packets
+        if "header" in raw_data and "payload" in raw_data:
+            print(f"[Wiki-Compiler] 🔐 Processing Signed Packet from {raw_data['header'].get('agent_id')}")
+            # In a full implementation, we would verify the signature here using the secret
+            entry = raw_data["payload"].get("data", {})
+            metadata = raw_data["header"]
+            # Merge header metadata into entry metadata
+            if "metadata" not in entry: entry["metadata"] = {}
+            entry["metadata"]["signed_by"] = metadata.get("agent_id")
+            entry["metadata"]["id_number"] = metadata.get("id_number")
+            entry["metadata"]["resource_pointers"] = metadata.get("resource_pointers")
+        else:
+            entry = raw_data
+
+        if "id" not in entry:
+            raise KeyError(f"Invalid entry format: Missing 'id' field. Root keys: {list(raw_data.keys())}")
+
         file_name = f"{entry['id']}.md"
         file_path = os.path.join(self.wiki_dir, file_name)
         
         # 1. Generate the Markdown Content
         md_content = f"# {entry['title']}\n\n"
         md_content += f"**Category:** {entry['category']}\n"
-        md_content += f"**Agent:** {entry.get('metadata', {}).get('agentId', 'unknown')}\n"
+        
+        # Identity Strata
+        agent_id = entry.get('metadata', {}).get('agentId') or entry.get('metadata', {}).get('signed_by', 'unknown')
+        id_number = entry.get('metadata', {}).get('idNumber') or entry.get('metadata', {}).get('id_number', 'unknown')
+        
+        md_content += f"**Agent:** {agent_id}\n"
+        md_content += f"**ID#:** {id_number}\n"
         md_content += f"**Timestamp:** {entry.get('metadata', {}).get('timestamp', time.ctime())}\n\n"
+        
+        # Resource Pointers section
+        pointers = entry.get('metadata', {}).get('resource_pointers')
+        if pointers:
+            md_content += "## Resource Pointers\n"
+            for name, ptr in pointers.items():
+                md_content += f"- **{name}**: `{ptr.get('uri')}` ({ptr.get('mimeType', 'unknown')})\n"
+            md_content += "\n"
+
         md_content += "## Content\n"
         md_content += entry['content']
         md_content += "\n\n## Backlinks\n"

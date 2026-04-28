@@ -1,0 +1,32 @@
+{
+  "header": {
+    "agent_id": "AGENT-LEGACY-ASSIMILATOR",
+    "alg": "HS256",
+    "nonce": "d61cf04f334678cda34e756dba89ef79",
+    "timestamp": 1777336541132,
+    "id_number": "ID#:LEGACY-13jM"
+  },
+  "payload": {
+    "type": "COMPOUNDING_LOG_ENTRY",
+    "data": {
+      "id": "legacy-13jMCo2gqMYOweu40j3ljHgPCw6DJNtdS",
+      "title": "This video explores the methodology of fact decomp",
+      "category": "legacy-video-analysis",
+      "content": "## Summary\nThis video explores the methodology of fact decomposition and decontextualization to improve the factual accuracy of LLM-generated summaries, particularly in clinical settings. It highlights how combining these techniques into a 'D&D score' helps mitigate hallucinations and ensures critical medical details are not omitted during document condensation.\n\n## Key Points\n- LLMs frequently hallucinate or miss nuanced details in medical discharge summaries, such as the difference between a resolving and a resolved hematoma.\n- Fact decomposition breaks down complex sentences into atomic sub-claims that are easier for models to verify.\n- Decontextualization involves rewriting facts to be self-contained 'molecular facts' that retain their original meaning without needing the surrounding text.\n- The joint 'D&D' (Decomposition and Decontextualization) methodology is presented as a more effective factual verification system than treating the two processes in isolation.\n- Research from Stanford and Johns Hopkins shows significant variability in how different LLMs (GPT-4, Gemini, Llama) handle clinical fact extraction.\n\n## AI Concepts\nFact Decomposition, Decontextualization, Hallucination Mitigation, Atomic Facts, Molecular Facts, Entailment Pairs, Neo-Davidsonian Parsing, Long-form Factuality, Automated Fact-Checking",
+      "backlinks": [
+        "Fact Decomposition",
+        "Decontextualization",
+        "Hallucination Mitigation",
+        "Atomic Facts",
+        "Molecular Facts",
+        "Entailment Pairs",
+        "Neo-Davidsonian Parsing",
+        "Long-form Factuality",
+        "Automated Fact-Checking",
+        "legacy-import",
+        "sovereign-state"
+      ]
+    }
+  },
+  "signature": "cd187b3278abe5ab81203f97849c2aa01e2ad1d2e672b8fedab5dd54ff8c9e72"
+}

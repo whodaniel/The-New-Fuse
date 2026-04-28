@@ -1,0 +1,30 @@
+{
+  "header": {
+    "agent_id": "AGENT-LEGACY-ASSIMILATOR",
+    "alg": "HS256",
+    "nonce": "ffefa251a98771b881ac566bb06b744d",
+    "timestamp": 1777336540952,
+    "id_number": "ID#:LEGACY-1aGQ"
+  },
+  "payload": {
+    "type": "COMPOUNDING_LOG_ENTRY",
+    "data": {
+      "id": "legacy-1aGQhNNaeX7j01GGyluwheFPUPzYHPJFn",
+      "title": "This video provides an advanced tutorial on custom",
+      "category": "legacy-video-analysis",
+      "content": "## Summary\nThis video provides an advanced tutorial on customizing GPTs for the GPT Store, focusing on unique custom instructions and knowledge base management. The creator demonstrates how to differentiate custom bots by reverse-engineering existing GPTs and utilizing specific data sets to enhance performance.\n\n## Key Points\n- GPTs are specialized, mini-versions of ChatGPT designed for specific use cases and custom data.\n- The two primary ways to make a GPT stand out are unique custom instructions and exclusive private data.\n- Custom instructions can be up to 8,000 characters long and should include domain-specific rules and interaction styles.\n- The knowledge base currently allows up to 10 documents, with a tested limit of approximately 100,000 words per file.\n- Users can reverse-engineer existing GPTs by prompting them to reveal their instructions and knowledge base contents.\n- Kaggle is recommended as a resource for finding public datasets to improve a GPT's expertise.\n\n## AI Concepts\nGenerative Pre-trained Transformers (GPTs), Custom Instructions, Knowledge Base, Reverse Engineering / Prompt Injection, AI Agents, Retrieval-Augmented Generation (RAG) context, Domain-specific training",
+      "backlinks": [
+        "Generative Pre-trained Transformers (GPTs)",
+        "Custom Instructions",
+        "Knowledge Base",
+        "Reverse Engineering / Prompt Injection",
+        "AI Agents",
+        "Retrieval-Augmented Generation (RAG) context",
+        "Domain-specific training",
+        "legacy-import",
+        "sovereign-state"
+      ]
+    }
+  },
+  "signature": "2281994819ce38e396ed939051e1e960190291b24bac74aed4bc97820a7a7ae0"
+}

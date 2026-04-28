@@ -498,21 +498,42 @@ class TranscriptProcessorV2 {
 
   async extractTranscriptDirect(video: VideoEntry): Promise<TranscriptSegment[] | null> {
     const safeTitle = video.title.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 50);
-    const transcriptFileTitle = path.join(this.transcriptsDir, `${video.index}_${safeTitle}.txt`);
-    const transcriptFileId = path.join(this.transcriptsDir, `${video.index}_${video.videoId}.txt`);
-    const transcriptFile = fs.existsSync(transcriptFileId) ? transcriptFileId : transcriptFileTitle;
 
-    if (fs.existsSync(transcriptFile)) {
-      console.log(`[v2] ✅ Using existing transcript file: ${path.basename(transcriptFile)}`);
-      const content = fs.readFileSync(transcriptFile, 'utf8');
-      return content
-        .split('\n')
-        .filter((line) => line.trim())
-        .map((line, i) => ({
-          start: i * 5,
-          duration: 5,
-          text: line.replace(/^\[.*?\]\s*/, '').trim(),
-        }));
+    // Check multiple possible transcript locations
+    const candidatePaths = [
+      path.join(this.transcriptsDir, `${video.index}_${video.videoId}.txt`),
+      path.join(this.transcriptsDir, `${video.index}_${safeTitle}.txt`),
+      path.join(
+        '/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts',
+        `transcript_${video.index}_${safeTitle}.txt`
+      ),
+      path.join(
+        '/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-transcripts',
+        `${video.index}_${safeTitle}.txt`
+      ),
+      path.join(
+        '/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/transcripts',
+        `${video.index}_${safeTitle}.txt`
+      ),
+      path.join(
+        '/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/transcripts',
+        `${video.index}_Manus_is_out_of_control.txt`
+      ), // Special case handling
+    ];
+
+    for (const transcriptFile of candidatePaths) {
+      if (fs.existsSync(transcriptFile)) {
+        console.log(`[v2] ✅ Using existing transcript file: ${path.basename(transcriptFile)}`);
+        const content = fs.readFileSync(transcriptFile, 'utf8');
+        return content
+          .split('\n')
+          .filter((line) => line.trim())
+          .map((line, i) => ({
+            start: i * 5,
+            duration: 5,
+            text: line.replace(/^\[.*?\]\s*/, '').trim(),
+          }));
+      }
     }
 
     if (!this.context) {
@@ -1607,10 +1628,11 @@ async function main() {
     | 'analysis';
 
   const libraryPath =
-    '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/karpathy_library.html';
+    '/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/video-library/ai_video_library.html';
 
   const processor = new TranscriptProcessorV2(phase);
-  await processor.run(libraryPath, 12, 1);
+  // Process the known backlog (indices where transcripts already exist)
+  await processor.run(libraryPath, 647, 405);
 }
 
 main().catch(console.error);

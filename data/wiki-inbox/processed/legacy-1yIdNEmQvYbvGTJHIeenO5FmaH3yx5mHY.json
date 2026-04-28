@@ -1,0 +1,20 @@
+{
+  "header": {
+    "agent_id": "AGENT-LEGACY-ASSIMILATOR",
+    "alg": "HS256",
+    "nonce": "7d8389b0d1f64e19fdf50f1f819cb5b2",
+    "timestamp": 1777336541121,
+    "id_number": "ID#:LEGACY-1yId"
+  },
+  "payload": {
+    "type": "COMPOUNDING_LOG_ENTRY",
+    "data": {
+      "id": "legacy-1yIdNEmQvYbvGTJHIeenO5FmaH3yx5mHY",
+      "title": "This video provides an interactive guide to EQing ",
+      "category": "legacy-video-analysis",
+      "content": "## Summary\nThis video provides an interactive guide to EQing vocals by demonstrating how specific frequency ranges affect sound quality through live boosts and cuts. The creator walks through the frequency spectrum from 100Hz to 20kHz, explaining how each band contributes to characteristics like warmth, presence, boxiness, and air.\n\n## Key Points\n- EQ decisions should be based on the specific vocal and microphone rather than following fixed charts.\n- 100Hz-200Hz provides warmth and body, but too much can sound muddy or rumbly.\n- The 300Hz-500Hz range is where 'boxiness' and room resonances typically live.\n- 4kHz is critical for speech intelligibility but is also the range where the human ear is most sensitive to harshness.\n- Sibilance is usually found between 7kHz and 10kHz, while 'air' and breathiness reside above 17kHz.\n- Cutting a frequency can create the psychoacoustic illusion of boosting another frequency range.\n\n## AI Concepts\n",
+      "backlinks": ["legacy-import", "sovereign-state"]
+    }
+  },
+  "signature": "01124343fadd7beae330549fef6ec40f19b6c053aac3fd4685517e96caba6570"
+}

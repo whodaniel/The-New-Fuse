@@ -1,0 +1,20 @@
+{
+  "header": {
+    "agent_id": "AGENT-LEGACY-ASSIMILATOR",
+    "alg": "HS256",
+    "nonce": "a0c793c938d797d5bc95dc0103a042d3",
+    "timestamp": 1777336540948,
+    "id_number": "ID#:LEGACY-1HH3"
+  },
+  "payload": {
+    "type": "COMPOUNDING_LOG_ENTRY",
+    "data": {
+      "id": "legacy-1HH3O0ZYCpNQ5QTU7EJSBaYjvU6inXBPj",
+      "title": "Eddie Lazer, Head of Engineering at a16z Crypto, a",
+      "category": "legacy-video-analysis",
+      "content": "## Summary\nEddie Lazer, Head of Engineering at a16z Crypto, argues that token design is fundamentally protocol design, where tokens act as tools to achieve specific decentralized goals. He outlines a structured framework for development\u2014moving from goals and constraints to mechanisms\u2014and provides a comprehensive taxonomy of token capabilities across five key categories.\n\n## Key Points\n- Tokens are tools that serve protocols, not the primary object of design.\n- The protocol design process should flow from defining a measurable Goal to identifying Constraints, and finally selecting Mechanisms.\n- Constraints are divided into endogenous (chosen trade-offs) and exogenous (imposed by tech or regulation).\n- Common failure patterns include 'token-first thinking' and using the community as a 'wastebasket' for unresolved design problems.\n- Token capabilities are categorized into five groups: Payment, Voting, Stakeholding, Metadata, and Claiming.\n- Advanced token metadata can include embedded interfaces (HTML/JS) so the token carries its own UI.\n\n## AI Concepts\n",
+      "backlinks": ["legacy-import", "sovereign-state"]
+    }
+  },
+  "signature": "a446ef0ee14c0fcce5b723710382c5a54c8730873caefc3750fcfef60b02a6bc"
+}

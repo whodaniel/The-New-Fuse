@@ -1,0 +1,32 @@
+{
+  "header": {
+    "agent_id": "AGENT-LEGACY-ASSIMILATOR",
+    "alg": "HS256",
+    "nonce": "f13069e9060d1a330830da97e96b6c0d",
+    "timestamp": 1777336540856,
+    "id_number": "ID#:LEGACY-1h0K"
+  },
+  "payload": {
+    "type": "COMPOUNDING_LOG_ENTRY",
+    "data": {
+      "id": "legacy-1h0KouCZz7kFjEkyH0YANAydyjYw18-Ns",
+      "title": "This tutorial demonstrates how to integrate real-t",
+      "category": "legacy-video-analysis",
+      "content": "## Summary\nThis tutorial demonstrates how to integrate real-time AI painting into Krita using the AI Diffusion plugin and Latent Consistency Models (LCM). It covers everything from software installation and model configuration to practical workflows for sketching, in-painting, and maintaining character consistency.\n\n## Key Points\n- Installation of Krita 5.2+ and the AI Diffusion plugin\n- Configuring the Python plugin manager and AI Image Generation docker\n- Downloading and using SD 1.5 and SDXL models like Realistic Vision and Juggernaut XL\n- Using the 'Live' mode for real-time canvas-to-AI updates via LCM\n- Adjusting the strength (denoising) slider to control AI influence over sketches\n- Utilizing layers and selection tools for targeted in-painting and editing\n- Introduction to advanced workflows like character consistency and automated randomized prompts\n\n## AI Concepts\nLatent Consistency Models (LCM), Stable Diffusion (SD 1.5 & SDXL), ControlNet, LoRA, Image-to-Image, In-painting, Denoising Strength, Face Detailer, Character Consistency",
+      "backlinks": [
+        "Latent Consistency Models (LCM)",
+        "Stable Diffusion (SD 1.5 & SDXL)",
+        "ControlNet",
+        "LoRA",
+        "Image-to-Image",
+        "In-painting",
+        "Denoising Strength",
+        "Face Detailer",
+        "Character Consistency",
+        "legacy-import",
+        "sovereign-state"
+      ]
+    }
+  },
+  "signature": "e2a74669470213150c40590d0fcfe31fb1dd1ec6cbc9fc649102245b10943a89"
+}

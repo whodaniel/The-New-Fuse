@@ -1,0 +1,20 @@
+{
+  "header": {
+    "agent_id": "AGENT-LEGACY-ASSIMILATOR",
+    "alg": "HS256",
+    "nonce": "7859d6c374eb18bb01f673f1eac54291",
+    "timestamp": 1777336540932,
+    "id_number": "ID#:LEGACY-1SSk"
+  },
+  "payload": {
+    "type": "COMPOUNDING_LOG_ENTRY",
+    "data": {
+      "id": "legacy-1SSkkcU75sKwLNKLGvuEyauuER2QEOctd",
+      "title": "This interview features Jordan (Poopy), a co-found",
+      "category": "legacy-video-analysis",
+      "content": "## Summary\nThis interview features Jordan (Poopy), a co-founder of the Doodles NFT project, discussing his decade-long history in the crypto space and the explosive growth of the Doodles ecosystem. Jordan details his transition from early Bitcoin prediction markets to building essential breeding tools for CryptoKitties, which eventually led to his involvement with Dapper Labs and the creation of Doodles.\n\n## Key Points\n- Doodles has become a leading NFT project with a floor price reaching 12 ETH at the time of recording.\n- Jordan began his career in 2012-2013 by building a prediction market for Bitcoin and Dogecoin.\n- The open economy of CryptoKitties inspired Jordan to leave traditional gaming and focus on Ethereum smart contracts.\n- Jordan co-created 'Kitty Calc,' a tool that productized the CryptoKitties genome project to help users understand breeding probabilities.\n- The Doodles project aims to use high-quality art as a 'Trojan Horse' to onboard millions of users into the blockchain space.\n\n## AI Concepts\n",
+      "backlinks": ["legacy-import", "sovereign-state"]
+    }
+  },
+  "signature": "020110c76c7e945a78b8829ae1990529b93a3274433c0aab70d901b96326d04e"
+}

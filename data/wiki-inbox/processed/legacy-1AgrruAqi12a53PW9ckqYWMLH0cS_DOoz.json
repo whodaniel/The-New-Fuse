@@ -1,0 +1,32 @@
+{
+  "header": {
+    "agent_id": "AGENT-LEGACY-ASSIMILATOR",
+    "alg": "HS256",
+    "nonce": "cab4648b76c30285cc48a7a38df287b0",
+    "timestamp": 1777336540789,
+    "id_number": "ID#:LEGACY-1Agr"
+  },
+  "payload": {
+    "type": "COMPOUNDING_LOG_ENTRY",
+    "data": {
+      "id": "legacy-1AgrruAqi12a53PW9ckqYWMLH0cS_DOoz",
+      "title": "This video analyzes the hidden system prompts and ",
+      "category": "legacy-video-analysis",
+      "content": "## Summary\nThis video analyzes the hidden system prompts and internal reasoning processes of Anthropic's Claude 3.5 Sonnet, discovered by manipulating the model's output formatting. It explores the 'ant-thinking' tags used for hidden Chain of Thought reasoning and details the specific instructions that govern Claude's personality, behavior, and use of Artifacts.\n\n## Key Points\n- A method was found to reveal Claude's hidden internal thinking process ('ant-thinking') using specific prompt instructions.\n- Claude uses a hidden scratchpad or Chain of Thought to reason through problems before providing a final answer.\n- System prompts instruct the model to use self-deprecating humor to create a more pleasant user experience.\n- Artifacts are triggered for content that is substantial (over 15 lines), self-contained, or meant for reuse like code and documents.\n- The system prompt explicitly forbids code truncation, requiring the model to provide full updated scripts.\n- Claude is instructed to prefer SVG images for visual requests despite having limited proficiency in generating them.\n- The prompt structure uses specific formatting like hashtags and bullet points to improve model adherence.\n\n## AI Concepts\nSystem Prompt, Chain of Thought (CoT), Hidden Reasoning, Prompt Engineering, Artifacts, Zero-shot prompting, Few-shot prompting, Scratchpad, XML tags",
+      "backlinks": [
+        "System Prompt",
+        "Chain of Thought (CoT)",
+        "Hidden Reasoning",
+        "Prompt Engineering",
+        "Artifacts",
+        "Zero-shot prompting",
+        "Few-shot prompting",
+        "Scratchpad",
+        "XML tags",
+        "legacy-import",
+        "sovereign-state"
+      ]
+    }
+  },
+  "signature": "710f1406be006914f0538a42534125de71706b3f0dde7b8858827e2c48ef7bd4"
+}

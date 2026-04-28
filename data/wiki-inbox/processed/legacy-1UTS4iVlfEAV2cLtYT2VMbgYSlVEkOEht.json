@@ -1,0 +1,30 @@
+{
+  "header": {
+    "agent_id": "AGENT-LEGACY-ASSIMILATOR",
+    "alg": "HS256",
+    "nonce": "16e4f902f33a8296e7df86bdca3ed25e",
+    "timestamp": 1777336541168,
+    "id_number": "ID#:LEGACY-1UTS"
+  },
+  "payload": {
+    "type": "COMPOUNDING_LOG_ENTRY",
+    "data": {
+      "id": "legacy-1UTS4iVlfEAV2cLtYT2VMbgYSlVEkOEht",
+      "title": "This video demonstrates how to integrate a real-ti",
+      "category": "legacy-video-analysis",
+      "content": "## Summary\nThis video demonstrates how to integrate a real-time, human-like AI voice agent into a Next.js application using the ElevenLabs React SDK. It covers the end-to-end process from configuring an agent in the ElevenLabs dashboard to implementing session controls and microphone permissions in code.\n\n## Key Points\n- ElevenLabs provides a conversational AI platform currently in beta that allows for low-latency voice interactions.\n- Integration is simplified through a dedicated React SDK and the useConversation hook.\n- AI agents can be customized with specific system prompts, knowledge bases, and tool-calling capabilities.\n- Security is handled by adding production domains to an allow-list within the ElevenLabs dashboard.\n- The implementation requires handling browser-level microphone permissions using the Media Devices API.\n\n## AI Concepts\nConversational AI, Low-latency speech-to-speech, LLM (Large Language Model) Providers, Knowledge Bases / RAG, Tool Calling, Natural Language Processing, Conversational State Management",
+      "backlinks": [
+        "Conversational AI",
+        "Low-latency speech-to-speech",
+        "LLM (Large Language Model) Providers",
+        "Knowledge Bases / RAG",
+        "Tool Calling",
+        "Natural Language Processing",
+        "Conversational State Management",
+        "legacy-import",
+        "sovereign-state"
+      ]
+    }
+  },
+  "signature": "ce55a0dd61f5e8751155f79b83ba7452d5b4c0cf285f99943e6028d8b2aa436b"
+}
