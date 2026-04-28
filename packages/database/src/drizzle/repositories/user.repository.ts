@@ -11,13 +11,16 @@ export class DrizzleUserRepository {
    * Create a new user
    */
   async create(data: Omit<NewUser, 'id'> & { id?: string }): Promise<User> {
-    // Exacting Tracking Standard: user_${SanitizedName}_${Timestamp}
-    const sanitizedName = (data.username || 'anonymous').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const id = data.id || `user_${sanitizedName}_${Date.now()}`;
+    // If an explicit ID is provided (e.g. valid UUID), use it.
+    // Otherwise, omit the id property entirely so the database generates a valid random UUID.
+    const valuesToInsert = { ...data };
+    if (!valuesToInsert.id) {
+      delete valuesToInsert.id;
+    }
 
     const [user] = await db
       .insert(users)
-      .values({ ...data, id } as NewUser)
+      .values(valuesToInsert as NewUser)
       .returning();
     return user;
   }

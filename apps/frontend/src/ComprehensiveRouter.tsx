@@ -1050,9 +1050,9 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route
                 path="/knowledge-hub"
                 element={
-                  <RequireMemberAccess>
+                  <RequirePermission roles={['SUPER_ADMIN', 'super_admin']}>
                     <KnowledgeHub />
-                  </RequireMemberAccess>
+                  </RequirePermission>
                 }
               />
               <Route
