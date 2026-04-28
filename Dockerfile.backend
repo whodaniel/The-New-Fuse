@@ -42,6 +42,7 @@ RUN pnpm --filter @the-new-fuse/core build
 RUN pnpm --filter @the-new-fuse/api-types build
 RUN pnpm --filter @the-new-fuse/security build
 RUN pnpm --filter @the-new-fuse/ag-ui-core build
+RUN pnpm --filter @the-new-fuse/n8n-workflows build
 
 # Final pass: Build the app and ensure all workspace links are solid
 WORKDIR /app/apps/backend
