@@ -1,16 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+
+const REQAUTH_REDIRECT_KEY = '__tnf_require_auth_redirect__';
 
 interface RequireAuthProps {
   children: React.ReactNode;
   redirectTo?: string;
 }
 
-/**
- * A wrapper component that redirects unauthenticated users to the login page.
- * Use this to protect private routes like /dashboard.
- */
 export const RequireAuth: React.FC<RequireAuthProps> = ({
   children,
   redirectTo = '/auth/login',
@@ -18,11 +16,24 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
   const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const hasRedirected = useRef(false);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    hasRedirected.current = false;
+    sessionStorage.removeItem(REQAUTH_REDIRECT_KEY);
+  }, [isAuthenticated, isLoading]);
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated && !hasRedirected.current) {
+      const redirectCount = parseInt(sessionStorage.getItem(REQAUTH_REDIRECT_KEY) || '0', 10);
+      if (redirectCount > 3) {
+        console.warn('[RequireAuth] Redirect loop detected — clearing auth state and staying.');
+        sessionStorage.removeItem(REQAUTH_REDIRECT_KEY);
+        return;
+      }
+      sessionStorage.setItem(REQAUTH_REDIRECT_KEY, String(redirectCount + 1));
+      hasRedirected.current = true;
       console.log('[RequireAuth] User not authenticated, redirecting to', redirectTo);
-      // Pass the current location to the redirect so we can return after login
       navigate(redirectTo, { replace: true, state: { from: location } });
     }
   }, [isAuthenticated, isLoading, navigate, redirectTo, location]);
@@ -36,7 +47,7 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
   }
 
   if (!isAuthenticated) {
-    return null; // Will redirect via useEffect
+    return null;
   }
 
   return <>{children}</>;

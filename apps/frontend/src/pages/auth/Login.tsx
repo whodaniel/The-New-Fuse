@@ -9,6 +9,8 @@ const isTruthy = (value: string | undefined): boolean => {
   return ['1', 'true', 'yes', 'on', 'enabled'].includes(value.trim().toLowerCase());
 };
 
+const LOGIN_REDIRECT_COUNT_KEY = '__tnf_login_redirect_count__';
+
 const Login: React.FC = () => {
   const {
     isAuthenticated,
@@ -29,9 +31,22 @@ const Login: React.FC = () => {
   const requireTurnstile = isTruthy(import.meta.env.VITE_AUTH_REQUIRE_TURNSTILE);
 
   useEffect(() => {
-    if (!isAuthLoading && isAuthenticated) {
-      navigate('/dashboard', { replace: true });
+    if (isAuthLoading || !isAuthenticated) return;
+
+    const currentPath = window.location.pathname;
+    if (currentPath === '/dashboard' || currentPath === '/dashboard/') {
+      return;
     }
+
+    const redirectCount = parseInt(sessionStorage.getItem(LOGIN_REDIRECT_COUNT_KEY) || '0', 10);
+    if (redirectCount > 2) {
+      console.warn('[Login] Redirect loop detected — clearing sessionStorage and staying on login.');
+      sessionStorage.removeItem(LOGIN_REDIRECT_COUNT_KEY);
+      return;
+    }
+
+    sessionStorage.setItem(LOGIN_REDIRECT_COUNT_KEY, String(redirectCount + 1));
+    navigate('/dashboard', { replace: true });
   }, [isAuthenticated, isAuthLoading, navigate]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -156,7 +171,7 @@ const Login: React.FC = () => {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={isLoading}
-            className="w-full rounded-md border border-slate-700 bg-transparent px-4 py-2 font-medium text-slate-900 hover:bg-slate-100 disabled:opacity-50"
+            className="w-full rounded-md border border-slate-700 bg-transparent px-4 py-2 font-medium text-white hover:bg-slate-800 disabled:opacity-50"
           >
             Continue with Google
           </button>
