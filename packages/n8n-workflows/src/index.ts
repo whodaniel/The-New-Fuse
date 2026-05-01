@@ -8,4 +8,4 @@ export { WorkflowFetcher, type RepositoryConfig } from './fetcher/WorkflowFetche
 export { WorkflowParser } from './parser/WorkflowParser.js';
 export { WorkflowRegistry, type RegistryConfig } from './registry/WorkflowRegistry.js';
 export { WorkflowService } from './services/WorkflowService.js';
-export * from './types.js';
+export * from './types/index.js';

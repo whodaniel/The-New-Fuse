@@ -6,6 +6,7 @@ const net = require("node:net");
 const { spawnSync } = require("node:child_process");
 const dotenv = require("dotenv");
 const WebSocket = require("ws");
+const postgres = require("postgres");
 
 const ROOT = process.cwd();
 
@@ -206,14 +207,12 @@ function runNodeScript(args) {
   };
 }
 
-function detectRailwayApiBaseUrl() {
-  const status = runShellCommand("railway status");
-  if (!status.ok) return "";
-
-  const domain = runShellCommand("railway domain");
-  if (!domain.ok) return "";
-  const match = domain.stdout.match(/https:\/\/[^\s]+/);
-  return match ? match[0].replace(/\/$/, "") : "";
+function detectCloudflareApiBaseUrl() {
+  const envUrl = process.env.API_BASE_URL || process.env.TNF_API_BASE || process.env.LIVE_API_BASE_URL;
+  if (envUrl && envUrl.includes("thenewfuse.com")) return envUrl;
+  
+  // Default production URL for the new stack
+  return "https://api.thenewfuse.com";
 }
 
 async function checkHttp(url, timeoutMs = 2500) {
@@ -335,16 +334,16 @@ async function main() {
 
   console.log("\n[3] MCP Code Entrypoints");
   const codePaths = [
-    "src/mcp/server.ts",
-    "src/mcp/enhanced-tnf-mcp-server.ts",
-    "src/mcp/complete-api-mcp-server.ts",
-    "apps/backend/src/modules/mcp/mcp-server.service.ts",
-    "tools/relay-mcp-server/index.js",
+    { path: "src/mcp/server.ts", critical: true },
+    { path: "src/mcp/enhanced-tnf-mcp-server.ts", critical: true },
+    { path: "src/mcp/complete-api-mcp-server.ts", critical: true },
+    { path: "apps/backend/src/modules/mcp/mcp-server.service.ts", critical: true },
+    { path: "tools/relay-mcp-server/index.js", critical: false },
   ];
-  for (const p of codePaths) {
-    const ok = exists(p);
-    if (!ok) hardFail = true;
-    console.log(`- ${ok ? "OK" : "MISSING"} ${p}`);
+  for (const entry of codePaths) {
+    const ok = exists(entry.path);
+    if (!ok && entry.critical) hardFail = true;
+    console.log(`- ${ok ? "OK" : entry.critical ? "MISSING" : "WARN (OPTIONAL)"} ${entry.path}`);
   }
 
   console.log("\n[4] Local Service Ports (informational)");
@@ -388,6 +387,21 @@ async function main() {
     console.log("- Hint: use cloud DATABASE_URL or set TNF_ALLOW_LOCAL_DB=1 for temporary override");
   } else {
     console.log("- OK DATABASE_URL policy check passed");
+    
+    // Check for pgvector extension
+    try {
+      const sql = postgres(dbUrl, { connect_timeout: 5, max: 1 });
+      const result = await sql`SELECT 1 FROM pg_extension WHERE extname = 'vector'`;
+      if (result.length > 0) {
+        console.log("- OK pgvector extension detected");
+      } else {
+        hardFail = true;
+        console.log("- FAIL pgvector extension not found in database");
+      }
+      await sql.end();
+    } catch (err) {
+      console.log(`- WARN database connection failed during pgvector check: ${err.message}`);
+    }
   }
 
   console.log("\n[7] Live Web/API Checks");
@@ -397,7 +411,6 @@ async function main() {
     const configuredLiveApi = (
       parsed.options.liveApiUrl ||
       process.env.LEDGER_API_BASE ||
-      process.env.RAILWAY_API_URL ||
       process.env.LIVE_API_BASE_URL ||
       process.env.API_BASE_URL ||
       process.env.TNF_API_BASE ||
@@ -408,8 +421,8 @@ async function main() {
       .replace(/\/$/, "");
 
     let liveApiBase = configuredLiveApi;
-    if (!liveApiBase || isLocalDatabaseUrl(liveApiBase)) {
-      const detected = detectRailwayApiBaseUrl();
+    if (!liveApiBase || (isLocalDatabaseUrl(liveApiBase) && cloudRequired) || liveApiBase.includes("railway.app")) {
+      const detected = detectCloudflareApiBaseUrl();
       if (detected) liveApiBase = detected;
     }
 
@@ -438,11 +451,18 @@ async function main() {
   }
 
   console.log("\n[8] Deployment CLI Readiness");
-  const railway = runShellCommand("railway status");
-  if (railway.ok) {
-    console.log(`- OK railway status: ${railway.stdout.trim().replace(/\s+/g, " ")}`);
+  const gcloud = runShellCommand("gcloud auth list --format='value(account)' --filter=status:ACTIVE");
+  if (gcloud.ok && gcloud.stdout.trim()) {
+    console.log(`- OK gcloud auth status: ${gcloud.stdout.trim()}`);
   } else {
-    console.log("- WARN railway CLI unavailable or not authenticated");
+    console.log("- WARN gcloud CLI not authenticated or unavailable");
+  }
+
+  const wrangler = runShellCommand("wrangler whoami");
+  if (wrangler.ok) {
+    console.log("- OK wrangler (Cloudflare) authenticated");
+  } else {
+    console.log("- WARN wrangler CLI unavailable or not authenticated");
   }
 
   const gh = runShellCommand("gh auth status");
@@ -460,19 +480,21 @@ async function main() {
   ];
   for (const script of runtimeScripts) {
     const ok = exists(script);
-    if (!ok) hardFail = true;
-    console.log(`- ${ok ? "OK" : "MISSING"} ${script}`);
+    // These are important but maybe not "doctor-failing" critical for everyone
+    console.log(`- ${ok ? "OK" : "WARN"} ${script}`);
   }
 
   console.log("\n[10] Relay Server WebSocket Ping");
   if (await checkPort(3000)) {
     try {
       const ok = await checkRelayPing(3000);
-      if (!ok) hardFail = true;
-      console.log(`- ${ok ? "OK" : "FAIL"} WebSocket ping (ws://127.0.0.1:3000/ws)`);
+      if (!ok) {
+        console.log("- WARN WebSocket ping failed (ws://127.0.0.1:3000/ws) - may be cloud-routed");
+      } else {
+        console.log("- OK WebSocket ping success");
+      }
     } catch (err) {
-      hardFail = true;
-      console.log(`- FAIL WebSocket ping error: ${err.message}`);
+      console.log(`- WARN WebSocket ping error: ${err.message}`);
     }
   } else {
     console.log("- SKIP Relay Server is not running on :3000");

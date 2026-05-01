@@ -19,7 +19,7 @@ import {
   WorkflowSearchResult,
   WorkflowSource,
   WorkflowStats,
-} from '../types.js';
+} from '../types/index.js';
 
 export class WorkflowService {
   private fetcher: WorkflowFetcher;

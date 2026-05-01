@@ -6,7 +6,7 @@ import {
   PastTaskResult,
   VectorMemorySystem,
   SemanticSkillDiscovery,
-} from './types.js';
+} from './types/index.js';
 
 /**
  * Service for creating context-aware execution plans for tasks.

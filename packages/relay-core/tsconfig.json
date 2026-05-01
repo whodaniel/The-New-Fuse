@@ -20,7 +20,13 @@
     },
     "ignoreDeprecations": "5.0"
   },
-  "include": ["src/**/*", "../tnf-cli/src/**/*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts"],
-  "references": []
+  "references": [
+    { "path": "../infrastructure" },
+    { "path": "../database" },
+    { "path": "../types" },
+    { "path": "../tnf-cli" },
+    { "path": "../security" }
+  ]
 }

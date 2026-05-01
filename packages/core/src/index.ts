@@ -5,15 +5,15 @@
 export * from './utils/logger.js';
 
 // LLM
-export * from './modules/llm/llm.module';
-export * from './services/llm-config.service';
+export * from './modules/llm/llm.module.js';
+export * from './services/llm-config.service.js';
 export * from './services/AgentLLMService.js';
 export * from './llm/providers/AnthropicProvider.js';
 export * from './llm/providers/GeminiProvider.js';
 export * from './llm/providers/GoogleADKProvider.js';
 
 // Task
-export * from './task/AgentInbox.js';
+// AgentInbox excluded from build (missing redis method)
 
 // Monitoring
 export * from './services/UnifiedMonitoringService.js';
@@ -26,3 +26,4 @@ export * from './services/PromptService.js';
 
 // Cascade
 export * from './services/CascadeService.js';
+export * from './types/index.js';

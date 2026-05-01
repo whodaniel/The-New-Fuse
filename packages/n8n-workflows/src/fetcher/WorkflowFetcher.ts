@@ -9,7 +9,7 @@ import * as path from 'path';
 import { simpleGit, SimpleGit } from 'simple-git';
 import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer.js';
 import { WorkflowParser } from '../parser/WorkflowParser.js';
-import { N8nWorkflow, WorkflowFetchResult, WorkflowSource } from '../types.js';
+import { N8nWorkflow, WorkflowFetchResult, WorkflowSource } from '../types/index.js';
 
 export interface RepositoryConfig {
   source: WorkflowSource;
