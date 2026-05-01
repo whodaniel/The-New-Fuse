@@ -67,14 +67,17 @@ This manual expands the TNF Corporate Chain of Command into actionable, distinct
 ## 5. Department of Connective Journaling (The Historians)
 **Role:** The connective tissue of the system. They track the "Long-Tail Story" and ensure that the "Customer Journey" and "Product Pipeline" are aligned through rigorous reporting and classification.
 
-*   **Staffing Requirements:** `Journaling Agents`, `Reviewer Agents`, `Tagging/Classification Specialists`.
+*   **Staffing Requirements:** `Journaling Agents`, `Reviewer Agents`, `Tagging/Classification Specialists`, `Librarians`.
+*   **Specialized Roles for Merkle Traversal:**
+    *   **Strategic Analyst:** Traverses the `Library:Intelligence -> Class:Strategic` branch. Updates `TNF_RESOURCE_STRATEGY.md` and identifies architectural shifts.
+    *   **Procedural Forge:** Traverses the `Library:Intelligence -> Class:Procedural` branch. Extracts executable payloads into `.skill` files and updates technical implementation docs.
+    *   **Governance Auditor:** Traverses the `Library:Intelligence -> Class:Governance` branch. Updates `TNF_GOVERNANCE_TENETS.md` based on failure archaeology.
+    *   **Librarian:** Manages the **TNF Brain Survival** protocol. Responsible for Merkle Tree generation, Git synchronization, and Deep Snapshot vaulting.
 *   **Job Responsibilities:**
     *   **Post-Conversation Auditing:** Review completed chat sessions (JSON) to determine the actual chain of events and extract productive vs. counter-productive communication patterns.
     *   **Thru-Point Tracking:** Maintain standardized dossiers on critical recurring entities (e.g., new LLM model releases: Who, Where, How, Differentiation).
     *   **Connective Journaling:** Catalog and tag distilled artifacts to ensure they are searchable across different time horizons.
-*   **Inbox (Receivables):** Completed session JSONs; Distilled intelligence artifacts from the Forge.
-*   **Outbox (Handoffs):** Connective Journals (historical dossiers); Refined classification schemes; Centralized Agent Status Ledger.
-*   **Traditional Tooling Integration:** Notion-style knowledge bases, GitHub Wiki, centralized interaction databases.
+    *   **Brain Survival:** Execute `brain_sync.sh` to ensure the integrity and recoverability of the TNF Brain.
 
 ---
 
