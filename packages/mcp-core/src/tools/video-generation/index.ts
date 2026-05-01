@@ -26,7 +26,7 @@ export {
 } from './VideoGenerationTool.js';
 
 // Factory function to create configured tool
-import type { MCPTool } from '../../interfaces/IMCPTool';
+import type { MCPTool } from '../../interfaces/IMCPTool.js';
 import { VideoProviderConfig } from './types.js';
 import { createVideoGenerationTool } from './VideoGenerationTool.js';
 

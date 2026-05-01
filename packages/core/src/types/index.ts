@@ -6,7 +6,7 @@ export * from './communication.js';
 export { CommunicationPattern, ModelType, ResourceType, TokenType, WalletType } from './models.js';
 export { MessageRole, MessageType, MessageStatus, VerificationLevel } from './enums.js';
 export * from './monitoring.js';
-export * from './prompt.types';
+export * from './prompt.types.js';
 export * from './security.js';
 export * from './state.js';
 

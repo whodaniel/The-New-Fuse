@@ -6,6 +6,6 @@ export * from './AgentLLMService.js';
 export * from './PromptService.js';
 
 // Agency Services (Multi-tenant white-label management)
-export * from './agency.service';
-export * from './enhanced-agency.service';
+export * from './agency.service.js';
+export * from './enhanced-agency.service.js';
 export * from '../agents/AgentSwarmOrchestrationService.js';

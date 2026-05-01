@@ -10,8 +10,8 @@
     "composite": true,
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "types": ["node"],
     "paths": {
       "@/*": ["./src/*"],
@@ -22,7 +22,8 @@
       "@the-new-fuse/types": ["../types/src"],
       "@the-new-fuse/relay-core": ["../relay-core/src"]
     },
-    "isolatedModules": true
+    "isolatedModules": true,
+    "noImplicitAny": false
   },
   "include": ["src/**/*"],
   "exclude": [

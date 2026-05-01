@@ -23,7 +23,7 @@ export {
   type Transaction,
 } from './drizzle.js';
 
-export { DatabaseService } from './drizzle/database.service';
+export { DatabaseService } from './drizzle/database.service.js';
 
 export * as drizzleSchema from './drizzle/schema.js';
 

@@ -19,7 +19,7 @@ export { RateLimitingService } from './rate-limiting.js';
 export type { AuditLogEntry, SecurityContext } from './types.js';
 
 // Middleware
-export { authMiddleware } from './middleware/auth.middleware';
+export { authMiddleware } from './middleware/auth.middleware.js';
 
 // Session management
 export { SessionManager, sessionManager } from './services/SessionManager.js';

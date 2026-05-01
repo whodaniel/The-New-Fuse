@@ -1264,13 +1264,13 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
 
               {/* Enhanced Landing Routes */}
               <Route path="/about" element={<Navigate to="/brand" replace />} />
-              <Route path="/features" element={<RedirectToStatic to="/#features" />} />
-              <Route path="/pricing" element={<RedirectToStatic to="/#pricing" />} />
+              <Route path="/features" element={<Navigate to="/#features" replace />} />
+              <Route path="/pricing" element={<Navigate to="/#pricing" replace />} />
               <Route path="/community" element={<CommunityHubPage />} />
               <Route path="/membership" element={<MembershipPage />} />
               <Route path="/support" element={<SupportPage />} />
               <Route path="/contact" element={<SupportPage />} />
-              <Route path="/onboarding" element={<RedirectToStatic to="/onboarding" />} />
+              <Route path="/onboarding" element={<Navigate to="/onboarding" replace />} />
               <Route path="/docs" element={<DocsPage />} />
               <Route path="/docs/*" element={<DocsPage />} />
               <Route path="/visualizations" element={<VisualizationsPage />} />

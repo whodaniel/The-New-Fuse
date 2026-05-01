@@ -185,19 +185,19 @@ export const apiService = {
   },
 
   saveWebhookUrl: async (url: string) => {
-    await api.post('/api/webhooks/config', { url });
+    await api.post('/api/v1/webhooks/config', { url });
     return { success: true };
   },
 
   testWebhookUrl: async (url: string) => {
-    const response = await api.post<{ success: boolean; message: string }>('/api/webhooks/test', {
+    const response = await api.post<{ success: boolean; message: string }>('/api/v1/webhooks/test', {
       url,
     });
     return response.data;
   },
 
   getWebhookUrl: async () => {
-    const response = await api.get<{ url: string }>('/api/webhooks/config');
+    const response = await api.get<{ url: string }>('/api/v1/webhooks/config');
     return response.data;
   },
 

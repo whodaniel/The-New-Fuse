@@ -1,5 +1,0 @@
-- Add conflict resolution mechanisms
-- Implement offline support with sync queue
-- Add real-time collaboration features
-- Enhance sync progress indicators
-- Add selective sync for large documents

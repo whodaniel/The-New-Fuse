@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowUpRight, CheckCircle2, Shield } from 'lucide-react';
+import { ArrowUpRight, CheckCircle2, Shield, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { type CommunityAccessResolution } from '../api';
 import { PLAYER_AVATARS } from '../data/avatars';
@@ -12,11 +12,12 @@ interface SessionLoginProps {
     email?: string,
     controlMode?: PlayerControlMode
   ) => Promise<void> | void;
+  onBack?: () => void;
 }
 
 const AVATARS = PLAYER_AVATARS;
 
-export default function SessionLogin({ onLogin }: SessionLoginProps) {
+export default function SessionLogin({ onLogin, onBack }: SessionLoginProps) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
@@ -24,7 +25,8 @@ export default function SessionLogin({ onLogin }: SessionLoginProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (username.length < 3 || username.length > 16) {
+    const sanitizedUsername = username.trim();
+    if (sanitizedUsername.length < 3 || sanitizedUsername.length > 16) {
       setError('Callsign must be 3-16 characters.');
       setAccessResolution(null);
       return;
@@ -34,7 +36,7 @@ export default function SessionLogin({ onLogin }: SessionLoginProps) {
       setAccessResolution(null);
       const avatar = AVATARS[0];
       const controlMode: PlayerControlMode = 'human';
-      await onLogin(username.trim(), avatar, email.trim() || undefined, controlMode);
+      await onLogin(sanitizedUsername, avatar, email.trim() || undefined, controlMode);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unable to initialize protocol.';
       const resolved =
@@ -57,6 +59,16 @@ export default function SessionLogin({ onLogin }: SessionLoginProps) {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         className="w-full max-w-md max-h-[90vh] overflow-y-auto bg-[#0a0c1a]/90 backdrop-blur-xl border border-cyan-900/50 rounded-[40px] p-8 pr-6 shadow-[0_0_50px_rgba(0,242,255,0.1)] relative"
       >
+        {onBack ? (
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label="Back to landing page"
+            className="absolute top-4 right-4 rounded-lg p-2 text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        ) : null}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-50" />
 
         <div className="flex flex-col items-center mb-8">
@@ -71,7 +83,7 @@ export default function SessionLogin({ onLogin }: SessionLoginProps) {
         <form onSubmit={handleSubmit} className="space-y-6">
           <button
             type="button"
-            onClick={() => window.open('https://thenewfuse.com/auth/login', '_blank')}
+            onClick={() => window.open('https://thenewfuse.com/auth/login', '_blank', 'noopener,noreferrer')}
             className="w-full py-4 bg-indigo-600/20 text-indigo-400 rounded-2xl font-black uppercase tracking-widest border border-indigo-500/50 hover:bg-indigo-600/30 transition-all flex items-center justify-center gap-3 group mb-2"
           >
             <div className="w-6 h-6 bg-indigo-500 rounded-lg flex items-center justify-center group-hover:shadow-[0_0_15px_rgba(99,102,241,0.6)]">
@@ -129,14 +141,19 @@ export default function SessionLogin({ onLogin }: SessionLoginProps) {
           ) : null}
 
           <div>
-            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">
+            <label
+              htmlFor="callsign"
+              className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2"
+            >
               Agent Callsign
             </label>
             <input
+              id="callsign"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your callsign..."
+              autoComplete="username"
               className="w-full bg-black/60 border border-slate-800 focus:border-cyan-500 rounded-xl px-4 py-3 text-white font-mono outline-none transition-colors"
             />
             {error && (
@@ -145,14 +162,19 @@ export default function SessionLogin({ onLogin }: SessionLoginProps) {
           </div>
 
           <div>
-            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">
+            <label
+              htmlFor="member-email"
+              className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2"
+            >
               Member Email (Optional)
             </label>
             <input
+              id="member-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="For membership and creator access checks"
+              autoComplete="email"
               className="w-full bg-black/60 border border-slate-800 focus:border-cyan-500 rounded-xl px-4 py-3 text-white font-mono outline-none transition-colors"
             />
           </div>

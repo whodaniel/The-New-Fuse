@@ -40,7 +40,7 @@ export function useAgents(realtimeEnabled = true): UseAgentsResult {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get('/api/agents');
+      const response = await api.get('/api/v1/agents');
       if (response.data.success) {
         setAgents(response.data.data);
       } else {
@@ -56,7 +56,7 @@ export function useAgents(realtimeEnabled = true): UseAgentsResult {
 
   const getAgent = useCallback(async (id: string): Promise<Agent | null> => {
     try {
-      const response = await api.get(`/api/agents/${id}`);
+      const response = await api.get(`/api/v1/agents/${id}`);
       if (response.data.success) {
         return response.data.data;
       }
@@ -69,7 +69,7 @@ export function useAgents(realtimeEnabled = true): UseAgentsResult {
 
   const createAgent = useCallback(async (agent: Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>): Promise<Agent> => {
     try {
-      const response = await api.post('/api/agents', agent);
+      const response = await api.post('/api/v1/agents', agent);
       if (response.data.success) {
         // Note: No need to update local state here as the WebSocket will handle it
         return response.data.data;
@@ -86,7 +86,7 @@ export function useAgents(realtimeEnabled = true): UseAgentsResult {
     data: Partial<Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>>
   ): Promise<Agent | null> => {
     try {
-      const response = await api.put(`/api/agents/${id}`, data);
+      const response = await api.put(`/api/v1/agents/${id}`, data);
       if (response.data.success) {
         // Note: No need to update local state here as the WebSocket will handle it
         return response.data.data;
@@ -100,7 +100,7 @@ export function useAgents(realtimeEnabled = true): UseAgentsResult {
 
   const deleteAgent = useCallback(async (id: string): Promise<boolean> => {
     try {
-      const response = await api.delete(`/api/agents/${id}`);
+      const response = await api.delete(`/api/v1/agents/${id}`);
       if (response.data.success) {
         // Note: No need to update local state here as the WebSocket will handle it
         return true;

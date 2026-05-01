@@ -7,11 +7,17 @@ const isArcadeHost =
   typeof window !== 'undefined' &&
   (window.location.hostname === 'poker.ai-arcade.xyz' ||
     window.location.hostname.endsWith('.ai-arcade.xyz'));
+const isLocalHost =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+const ARCADE_BACKEND_URL =
+  import.meta.env.VITE_ARCADE_BACKEND_URL ||
+  'https://casin8-games-241337102384.us-central1.run.app';
 const BASE_URL =
   import.meta.env.VITE_API_URL ||
   (isArcadeHost
-    ? window.location.origin
-    : typeof window !== 'undefined' && window.location.hostname === 'localhost'
+    ? ARCADE_BACKEND_URL
+    : isLocalHost
       ? 'http://localhost:3000'
       : 'https://api.thenewfuse.com/api/v1/poker');
 

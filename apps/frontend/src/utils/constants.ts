@@ -1,4 +1,8 @@
-export const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+export const API_BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api/v1`
+  : import.meta.env.PROD
+    ? '/api/v1'
+    : '/api';
 export const WS_BASE_URL = import.meta.env.VITE_WS_URL || '/ws';
 
 export const API_ENDPOINTS = {

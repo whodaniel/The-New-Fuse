@@ -8,7 +8,7 @@ import { hasSupabaseConfig, supabase } from '../lib/supabase';
 // ---------------------------------------------------------------------------
 
 const AUTH_TOKEN_KEY = 'auth_token';
-const REQUEST_TIMEOUT_MS = 3_000;
+const REQUEST_TIMEOUT_MS = 15_000;
 
 // ---------------------------------------------------------------------------
 // Token helpers
@@ -532,15 +532,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           try {
             const { data, error: sessErr } = await supabase.auth.getSession();
             if (!sessErr && data?.session?.access_token) {
-              console.log('[Auth] Supabase session found, exchanging…');
-              const result = await exchangeSupabaseToken(data.session.access_token);
-              if (cancelled) return;
-              if (result) {
-                console.log('[Auth] ✓ Supabase session exchange succeeded');
-                setUser(result.user);
-                setIsLoading(false);
-                return;
-              }
+          console.log('[Auth] Supabase session found, exchanging…');
+          const result = await exchangeSupabaseToken(data.session.access_token);
+          if (cancelled) return;
+          if (result) {
+            console.log('[Auth] ✓ Supabase session exchange succeeded');
+            setUser(result.user);
+            setIsLoading(false);
+            return;
+          }
+          console.log('[Auth] ✗ Supabase exchange failed — signing out stale session to prevent redirect loop');
+          try { await supabase.auth.signOut(); } catch { /* ignore */ }
+          clearAuthToken();
             } else {
               console.log('[Auth] No active Supabase session');
             }

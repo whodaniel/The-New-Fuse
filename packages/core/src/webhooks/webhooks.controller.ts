@@ -10,7 +10,7 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { WebhookManagerService, WebhookConfig } from './webhook-manager.service';
+import { WebhookManagerService, WebhookConfig } from './webhook-manager.service.js';
 
 export interface CreateWebhookDto {
   url: string;

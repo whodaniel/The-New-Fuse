@@ -5,8 +5,8 @@ import { TNFResourcePointer } from './signature-wrapper.js';
 
 @Injectable()
 export class PointerResolverService {
-  private readonly logger = new Logger(PointerResolverService.serviceName);
-  private static readonly serviceName = 'PointerResolverService';
+ private static readonly serviceName = 'PointerResolverService';
+ private readonly logger = new Logger(PointerResolverService.serviceName);
 
   constructor(private readonly vectorDbService: VectorDatabaseService) {}
 

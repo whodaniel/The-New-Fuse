@@ -1,7 +1,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { OnboardingAdminController } from '../OnboardingAdminController.js';
-import { RolesGuard } from '../../auth/guards/roles.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard.js';
 import { Reflector } from '@nestjs/core';
 
 describe('OnboardingAdminController', () => {

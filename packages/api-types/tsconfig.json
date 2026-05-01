@@ -4,8 +4,8 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "composite": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "allowImportingTsExtensions": false,
     "types": [],
     "ignoreDeprecations": "5.0"

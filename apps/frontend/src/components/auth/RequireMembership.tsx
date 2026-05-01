@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useAuthorization } from '../../hooks/useAuthorization';
 
@@ -21,21 +20,37 @@ export const RequireMembership: React.FC<RequireMembershipProps> = ({
   const { isSuperAdmin } = useAuthorization();
   const [membership, setMembership] = useState<MembershipState | null>(null);
   const [isChecking, setIsChecking] = useState(true);
+  const [redirectTo, setRedirectTo] = useState<string | null>(null);
 
   const shouldBypass = useMemo(() => isSuperAdmin, [isSuperAdmin]);
 
   useEffect(() => {
     let canceled = false;
 
-    const checkMembership = async () => {
-      if (!isAuthenticated || shouldBypass) {
-        if (!canceled) {
-          setMembership({ active: true, tier: 'ENTERPRISE' });
-          setIsChecking(false);
-        }
-        return;
-      }
+    if (isLoading) {
+      return;
+    }
 
+    if (!isAuthenticated) {
+      if (!canceled) {
+        setRedirectTo('/auth/login');
+        setIsChecking(false);
+      }
+      return;
+    }
+
+    if (shouldBypass) {
+      if (!canceled) {
+        setMembership({ active: true, tier: 'ENTERPRISE' });
+        setIsChecking(false);
+        setRedirectTo(null);
+      }
+      return;
+    }
+
+    setIsChecking(true);
+
+    const checkMembership = async () => {
       try {
         const token = localStorage.getItem('auth_token');
         const response = await fetch('/api/billing/membership/me', {
@@ -47,6 +62,13 @@ export const RequireMembership: React.FC<RequireMembershipProps> = ({
         });
 
         if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            if (!canceled) {
+              setMembership(null);
+              setRedirectTo('/auth/login');
+            }
+            return;
+          }
           throw new Error(`Membership check failed with status ${response.status}`);
         }
 
@@ -54,14 +76,21 @@ export const RequireMembership: React.FC<RequireMembershipProps> = ({
         const data = payload?.data ?? payload;
 
         if (!canceled) {
+          const active = Boolean(data?.active);
           setMembership({
-            active: Boolean(data?.active),
+            active,
             tier: (data?.tier as 'STARTER' | 'PRO' | 'ENTERPRISE') || 'STARTER',
           });
+          if (!active) {
+            setRedirectTo(fallback);
+          } else {
+            setRedirectTo(null);
+          }
         }
       } catch {
         if (!canceled) {
           setMembership({ active: false, tier: 'STARTER' });
+          setRedirectTo(fallback);
         }
       } finally {
         if (!canceled) {
@@ -75,7 +104,13 @@ export const RequireMembership: React.FC<RequireMembershipProps> = ({
     return () => {
       canceled = true;
     };
-  }, [isAuthenticated, shouldBypass]);
+  }, [isAuthenticated, isLoading, shouldBypass, fallback]);
+
+  useEffect(() => {
+    if (redirectTo && !isLoading && !isChecking) {
+      window.location.replace(redirectTo);
+    }
+  }, [redirectTo, isLoading, isChecking]);
 
   if (isLoading || isChecking) {
     return (
@@ -85,12 +120,16 @@ export const RequireMembership: React.FC<RequireMembershipProps> = ({
     );
   }
 
+  if (redirectTo) {
+    return null;
+  }
+
   if (!isAuthenticated) {
-    return <Navigate to="/auth/login" replace />;
+    return null;
   }
 
   if (!membership?.active) {
-    return <Navigate to={fallback} replace />;
+    return null;
   }
 
   return <>{children}</>;

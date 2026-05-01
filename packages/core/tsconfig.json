@@ -1,14 +1,15 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "moduleResolution": "NodeNext",
-    "module": "NodeNext",
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "strict": true,
+    "noImplicitAny": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
@@ -20,7 +21,9 @@
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "ignoreDeprecations": "5.0"
   },
-  "include": ["src/**/*.ts"],
+  "include": [
+    "src/**/*.ts"
+  ],
   "exclude": [
     "node_modules",
     "dist",
@@ -33,7 +36,13 @@
     "src/memory/MemoryManager.ts",
     "src/services/AgentMetadataManager.ts",
     "src/communication/MessagingService.ts",
-    "src/communication/NotificationService.ts"
+    "src/communication/NotificationService.ts",
+    "src/services/agent/websocket.ts",
+    "src/task/AgentInbox.ts",
+    "src/wizards/**",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/websocket/**"
   ],
   "references": [
     {

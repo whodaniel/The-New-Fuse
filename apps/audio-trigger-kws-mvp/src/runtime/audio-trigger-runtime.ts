@@ -1,16 +1,23 @@
+import { EventEmitter } from 'node:events';
 import { defaultLexicon } from '../config/default-lexicon';
 import { defaultRules } from '../config/default-rules';
 import { env } from '../config/env';
 import { AgentRouter } from '../services/agent-router';
 import { AudioGateway } from '../services/audio-gateway';
+import { EchoSuppression } from '../services/echo-suppression';
 import { Enricher } from '../services/enricher';
 import { GroupingFilter } from '../services/grouping-filter';
 import { KwsEngine } from '../services/kws-engine';
 import { MiniOmniClient } from '../services/llm-backends/mini-omni-client';
+import { OpenaiCompatClient, ILlmClient } from '../services/llm-backends/openai-compat-client';
 import { LlmBatcher } from '../services/llm-batcher';
+import { profileService } from '../services/profile/service';
+import { ProfileUpdate } from '../services/profile/schema';
 import { RuleEngine } from '../services/rule-engine';
 import { VadGate } from '../services/vad-gate';
-import { ContextPackage, HitEvent, LlmBatchResult, RuleFireEvent } from '../types/events';
+import { ContextPackage, HitEvent, LlmBatchResult, RuleFireEvent, TriggerRule } from '../types/events';
+import { loadRulesFromDirectory } from '../config/rule-parser';
+import * as path from 'node:path';
 
 const pushBounded = <T>(list: T[], item: T, maxItems: number): void => {
   list.push(item);
@@ -19,21 +26,19 @@ const pushBounded = <T>(list: T[], item: T, maxItems: number): void => {
   }
 };
 
-export class AudioTriggerRuntime {
+export class AudioTriggerRuntime extends EventEmitter {
   private readonly gateway = new AudioGateway();
   private readonly vadGate = new VadGate();
   private readonly kwsEngine = new KwsEngine(defaultLexicon);
   private readonly groupingFilter = new GroupingFilter();
-  private readonly ruleEngine = new RuleEngine(defaultRules);
+  private readonly ruleEngine: RuleEngine;
   private readonly hitStore = new Map<string, HitEvent>();
   private readonly enricher = new Enricher(this.hitStore);
-  private readonly miniOmniClient = new MiniOmniClient(env.miniOmni);
-  private readonly llmBatcher = new LlmBatcher(
-    this.miniOmniClient,
-    env.batcher.flushIntervalMs,
-    env.batcher.maxItems
-  );
+  private readonly miniOmniClient: MiniOmniClient;
+  private readonly openaiCompatClient: OpenaiCompatClient;
+  private readonly llmBatcher: LlmBatcher;
   private readonly agentRouter = new AgentRouter();
+  readonly echoSuppression = new EchoSuppression();
   private currentUtterance: string = '';
 
   private readonly startedAtMs = Date.now();
@@ -45,6 +50,28 @@ export class AudioTriggerRuntime {
   private running = false;
 
   constructor() {
+    super();
+    this.ruleEngine = new RuleEngine(defaultRules, profileService);
+    void this.loadAdditionalRules();
+
+    this.miniOmniClient = new MiniOmniClient(env.miniOmni);
+    this.openaiCompatClient = new OpenaiCompatClient(env.openaiCompat);
+
+    const llmClients: ILlmClient[] = [];
+    if (env.miniOmni.enabled) {
+      llmClients.push(this.miniOmniClient);
+    }
+    if (env.openaiCompat.enabled) {
+      llmClients.push(this.openaiCompatClient);
+    }
+
+    this.llmBatcher = new LlmBatcher(
+      llmClients.length > 0 ? llmClients : [this.miniOmniClient], // Fallback to miniOmniClient if no other clients are explicitly enabled
+      env.batcher.flushIntervalMs,
+      env.batcher.maxItems
+    );
+    
+    // Event handlers
     this.gateway.on('frame', (frame) => {
       this.processedFrames += 1;
       this.vadGate.push(frame);
@@ -52,6 +79,10 @@ export class AudioTriggerRuntime {
     this.vadGate.on('speech_frame', (frame) => this.kwsEngine.push(frame));
     this.kwsEngine.on('hit', (hit: HitEvent) => {
       this.processedHits += 1;
+      // Echo suppression: skip hits that are likely caused by TTS output
+      if (this.echoSuppression.filterHit(hit) === null) {
+        return;
+      }
       this.hitStore.set(hit.eventId, hit);
       this.groupingFilter.push(hit);
       this.agentRouter.processHit(hit, this.currentUtterance, hit.streamId);
@@ -59,6 +90,7 @@ export class AudioTriggerRuntime {
     this.groupingFilter.on('grouped_hit', (hit: HitEvent) => this.ruleEngine.push(hit));
     this.ruleEngine.on('rule_fired', async (ruleFire: RuleFireEvent) => {
       pushBounded(this.recentRuleFires, ruleFire, env.runtime.maxRecentRuleFires);
+      this.emit('rule_fired', ruleFire);
       const pkg = await this.enricher.buildContextPackage(ruleFire);
       pushBounded(this.recentPackages, pkg, env.runtime.maxRecentPackages);
       this.llmBatcher.enqueue(pkg);
@@ -69,6 +101,17 @@ export class AudioTriggerRuntime {
     this.llmBatcher.setResultHandler((result) => {
       pushBounded(this.recentLlmResults, result, env.runtime.maxRecentLlmResults);
     });
+  }
+
+  private async loadAdditionalRules(): Promise<void> {
+    try {
+      const rulesPath = path.join(__dirname, '..', 'configs', 'rules');
+      const additionalRules = await loadRulesFromDirectory(rulesPath);
+      console.log(`[AudioTriggerRuntime] Loaded ${additionalRules.length} additional rules from ${rulesPath}`);
+      this.ruleEngine.addRules(additionalRules);
+    } catch (error) {
+      console.error('[AudioTriggerRuntime] Failed to load additional rules:', error);
+    }
   }
 
   start(): void {
@@ -128,5 +171,17 @@ export class AudioTriggerRuntime {
 
   getRecentLlmResults(limit = 50): LlmBatchResult[] {
     return this.recentLlmResults.slice(-Math.max(1, Math.min(limit, 1000))).reverse();
+  }
+
+  getProfile(userId: string) {
+    return profileService.getProfile(userId);
+  }
+
+  updateProfile(userId: string, update: ProfileUpdate) {
+    return profileService.updateProfile(userId, update);
+  }
+
+  getProfilesDirectory() {
+    return profileService.getProfilesDirectory();
   }
 }

@@ -46,6 +46,7 @@ import TournamentResults from './components/TournamentResults';
 import TournamentTableView from './components/TournamentTableView';
 import { GameAudioProvider, useGameAudio } from './contexts/GameAudioContext';
 import { NotificationProvider, useNotification } from './contexts/NotificationContext';
+import { PLAYER_AVATARS } from './data/avatars';
 import {
   canAccessPokerSurface,
   derivePokerAccess,
@@ -292,12 +293,18 @@ const PokerTable: React.FC<PokerTableProps> = ({
       <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
         <button
           onClick={toggleBgm}
+          aria-label={bgmEnabled ? 'Disable background music' : 'Enable background music'}
+          aria-pressed={bgmEnabled}
+          title={bgmEnabled ? 'Disable background music' : 'Enable background music'}
           className={`p-2 rounded-lg transition-colors ${bgmEnabled ? 'text-cyan-400 bg-cyan-900/30' : 'text-slate-500 hover:text-slate-300 bg-black/40'}`}
         >
           <Music className="w-4 h-4" />
         </button>
         <button
           onClick={toggleSfx}
+          aria-label={sfxEnabled ? 'Disable sound effects' : 'Enable sound effects'}
+          aria-pressed={sfxEnabled}
+          title={sfxEnabled ? 'Disable sound effects' : 'Enable sound effects'}
           className={`p-2 rounded-lg transition-colors ${sfxEnabled ? 'text-cyan-400 bg-cyan-900/30' : 'text-slate-500 hover:text-slate-300 bg-black/40'}`}
         >
           {sfxEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
@@ -559,10 +566,11 @@ const PokerTable: React.FC<PokerTableProps> = ({
             <button
               disabled={!isMyTurn}
               onClick={() => {
-                const val = parseInt(
-                  (document.getElementById('raiseAmount') as HTMLInputElement).value
-                );
-                handleAction('RAISE', val);
+                const el = document.getElementById('raiseAmount') as HTMLInputElement | null;
+                const val = el
+                  ? parseInt(el.value)
+                  : gameState.currentBet + (gameState.blinds?.[1] || 0);
+                if (!isNaN(val)) handleAction('RAISE', val);
               }}
               onMouseEnter={playHover}
               className="px-6 bg-slate-100 rounded-r-lg font-black text-xs uppercase text-black border-b-4 border-slate-400 hover:bg-white active:border-b-0 active:translate-y-1 disabled:opacity-50 transition-all"
@@ -807,8 +815,6 @@ function AppContent() {
     const resolved = await resolveGameAccess(gameId);
     if (resolved) {
       if (resolved.access?.canPlay) return true;
-      // Guest users: allow Quick Play even if canPlay is false
-      if (membership?.status === 'guest') return true;
       if (options?.postLoginView) setPostLoginView(options.postLoginView);
       if (!options?.silent) {
         notify('SYSTEM', 'Access Required', formatAccessMessage(resolved, contextLabel));
@@ -1417,25 +1423,12 @@ function AppContent() {
     }
 
     if (accessResolution) {
-      // If user has no email (anonymous), allow guest login with Quick Play access only.
-      // Full table access requires membership.
       if (!accessResolution.access?.canPlay) {
-        console.log('[handleLogin] canPlay=false, email=', email, 'type=', typeof email);
-        if (!email) {
-          // Anonymous user: allow as guest (Quick Play only)
-          resolvedMembership = {
-            username: accessResolution.subject.username || username.trim(),
-            status: 'guest',
-            role: 'guest',
-            addedAt: new Date().toISOString(),
-          };
-        } else {
-          const error = new Error(accessResolution.pathSummary) as Error & {
-            accessResolution?: CommunityAccessResolution;
-          };
-          error.accessResolution = accessResolution;
-          throw error;
-        }
+        const error = new Error(accessResolution.pathSummary) as Error & {
+          accessResolution?: CommunityAccessResolution;
+        };
+        error.accessResolution = accessResolution;
+        throw error;
       } else {
         resolvedMembership = {
           username: accessResolution.subject.username || username.trim(),
@@ -1457,6 +1450,7 @@ function AppContent() {
       const identity = email?.trim() ? email.trim() : username;
       window.localStorage.setItem('tnf_identity', identity);
       if (email) window.localStorage.setItem('tnf_email', email);
+      else window.localStorage.removeItem('tnf_email');
     }
 
     if (!resolvedMembership) {
@@ -1486,18 +1480,6 @@ function AppContent() {
         };
       }
     }
-
-    // Final fallback: anonymous user with no membership resolved (API down, etc.)
-    // Grant guest access so they can at least use Quick Play
-    if (!resolvedMembership && !email) {
-      resolvedMembership = {
-        username: username.trim(),
-        status: 'guest',
-        role: 'guest',
-        addedAt: new Date().toISOString(),
-      };
-    }
-
     setMembership(resolvedMembership);
     if (accessResolution) {
       accessResolutionCacheRef.current = {
@@ -1518,18 +1500,28 @@ function AppContent() {
   // If the user isn't logged in, auto-creates a guest identity.
   const handleQuickPlay = async () => {
     playClick();
-    let playerId = user?.username || '';
-    if (!playerId) {
-      playerId = `guest-${Date.now().toString(36)}`;
-      // Create a minimal user session for the guest
-      setUser({
-        username: playerId,
+    let activeUser = user;
+    if (!activeUser) {
+      const guestUsername = `guest-${Date.now().toString(36)}`;
+      activeUser = {
+        username: guestUsername,
         balance: 100000,
         avatar: PLAYER_AVATARS[0],
         email: '',
         controlMode: 'human',
-      } as any);
+      };
+      setUser(activeUser);
+      setMembership({
+        username: guestUsername,
+        status: 'guest',
+        role: 'guest',
+        addedAt: new Date().toISOString(),
+      });
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('tnf_identity', guestUsername);
+      }
     }
+    const playerId = activeUser.username;
     const tid = `qp-${Date.now().toString(36)}`;
     setActiveTableId(tid);
     setTableProtocol('v2');
@@ -1551,28 +1543,55 @@ function AppContent() {
         stack: 20000,
       });
       if (res?.ok && res.table) {
-        setGameState(res.table);
+        setGameState((prev: any) => deriveGameStateFromV2(res.table, prev));
         setActiveTableId(res.tableId || tid);
         v2BotLoopRef.current = { tableId: res.tableId || tid, lastActionAt: Date.now() };
         return;
       }
     } catch (err) {
-      console.error('Quick play API failed, falling back to local table:', err);
+      console.error('Quick play API failed, falling back to cash tables:', err);
     }
 
-    // Fallback: try the traditional path
+    // Fallback 1: join the first available lobby cash table.
+    try {
+      const listed = await holdemV2Api.tables(activeUser.email || activeUser.username);
+      const firstTable = Array.isArray(listed?.tables) ? listed.tables[0] : null;
+      if (firstTable?.id) {
+        await handleJoinCashTable(firstTable.id, firstTable, {
+          sessionUser: activeUser,
+          skipAccessCheck: true,
+        });
+        return;
+      }
+    } catch (err) {
+      console.warn('Cash table listing failed during quick play fallback:', err);
+    }
+
+    // Fallback 2: try provisioning a dedicated quick-play table.
     await handleJoinCashTable(tid, {
       name: 'Quick Play',
       maxPlayers: 6,
       stakes: '$1/$2',
       type: '6-Max',
+    }, {
+      sessionUser: activeUser,
+      skipAccessCheck: true,
     });
   };
 
-  const handleJoinCashTable = async (tableId?: string, tableMeta?: any) => {
-    if (!user) return;
-    if (!(await ensureGameAccess('ai-arcade-poker-cash', 'Cash games', { postLoginView: 'TABLE' })))
-      return;
+  const handleJoinCashTable = async (
+    tableId?: string,
+    tableMeta?: any,
+    options?: { sessionUser?: SessionUser; skipAccessCheck?: boolean }
+  ) => {
+    const currentUser = options?.sessionUser || user;
+    if (!currentUser) return;
+    if (!options?.skipAccessCheck) {
+      const allowed = await ensureGameAccess('ai-arcade-poker-cash', 'Cash games', {
+        postLoginView: 'TABLE',
+      });
+      if (!allowed) return;
+    }
     playClick();
     const tid = tableId || 'lobby-1';
     setActiveTableId(tid);
@@ -1588,7 +1607,7 @@ function AppContent() {
 
     let table = null;
     try {
-      const res = await holdemV2Api.state(tid, user.username);
+      const res = await holdemV2Api.state(tid, currentUser.username);
       if (res?.ok && res.table) table = res.table;
     } catch {
       table = null;
@@ -1637,6 +1656,9 @@ function AppContent() {
         maxSeats: seatCount,
         type: tableMeta?.type || '6-Max',
         stakes: tableMeta?.stakes || '$1/$2',
+      }, {
+        sessionUser: currentUser,
+        skipAccessCheck: true,
       });
       return true;
     };
@@ -1654,7 +1676,7 @@ function AppContent() {
     };
 
     const existingSeat = Array.isArray(table.seats)
-      ? table.seats.find((s: any) => s && s.playerId === user.username)
+      ? table.seats.find((s: any) => s && s.playerId === currentUser.username)
       : null;
 
     if (!existingSeat) {
@@ -1668,15 +1690,15 @@ function AppContent() {
         setView('LOBBY');
         return;
       }
-      const stack = Math.max(1000, Math.min(user.balance || 0, 20000));
+      const stack = Math.max(1000, Math.min(currentUser.balance || 0, 20000));
       try {
         const seatRes = await holdemV2Api.seat({
           tableId: tid,
-          playerId: user.username,
+          playerId: currentUser.username,
           seat: openSeat,
           stack,
           autoPostBlinds: true,
-          controlMode: user.controlMode || 'human',
+          controlMode: currentUser.controlMode || 'human',
         });
         if (seatRes?.ok && seatRes.table) table = seatRes.table;
       } catch (err) {
@@ -1727,7 +1749,7 @@ function AppContent() {
         }
       }
       try {
-        const refreshed = await holdemV2Api.state(tid, user.username);
+        const refreshed = await holdemV2Api.state(tid, currentUser.username);
         if (refreshed?.ok && refreshed.table) table = refreshed.table;
       } catch {
         // Ignore refresh failures.
@@ -1735,7 +1757,7 @@ function AppContent() {
     }
 
     try {
-      const resumeRes = await holdemV2Api.resume(tid, user.username);
+      const resumeRes = await holdemV2Api.resume(tid, currentUser.username);
       if (resumeRes?.ok && resumeRes.resume) {
         v2ResumeRef.current = {
           token: resumeRes.resume.token,
@@ -1749,13 +1771,13 @@ function AppContent() {
       // Resume is required for actions but we can still render state.
     }
 
-    holdemV2Api.setConnection(tid, user.username, true).catch(() => {});
+    holdemV2Api.setConnection(tid, currentUser.username, true).catch(() => {});
 
     if (!table.hand || table.hand.status === 'settled') {
       try {
         const startRes = await holdemV2Api.startHand(tid);
         if (startRes?.ok && startRes.table) table = startRes.table;
-        const resumeRes = await holdemV2Api.resume(tid, user.username);
+        const resumeRes = await holdemV2Api.resume(tid, currentUser.username);
         if (resumeRes?.ok && resumeRes.resume) {
           v2ResumeRef.current = {
             token: resumeRes.resume.token,
@@ -2329,12 +2351,18 @@ function AppContent() {
         <div className="fixed bottom-4 right-4 z-999 flex items-center gap-2">
           <button
             onClick={toggleBgm}
+            aria-label={bgmEnabled ? 'Disable background music' : 'Enable background music'}
+            aria-pressed={bgmEnabled}
+            title={bgmEnabled ? 'Disable background music' : 'Enable background music'}
             className={`p-3 rounded-full transition-colors shadow-lg ${bgmEnabled ? 'text-cyan-400 bg-cyan-900/50 border border-cyan-500/50' : 'text-slate-500 bg-black/60 border border-slate-800 hover:text-white'}`}
           >
             <Music className="w-5 h-5" />
           </button>
           <button
             onClick={toggleSfx}
+            aria-label={sfxEnabled ? 'Disable sound effects' : 'Enable sound effects'}
+            aria-pressed={sfxEnabled}
+            title={sfxEnabled ? 'Disable sound effects' : 'Enable sound effects'}
             className={`p-3 rounded-full transition-colors shadow-lg ${sfxEnabled ? 'text-cyan-400 bg-cyan-900/50 border border-cyan-500/50' : 'text-slate-500 bg-black/60 border border-slate-800 hover:text-white'}`}
           >
             {sfxEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
@@ -2350,7 +2378,15 @@ function AppContent() {
           }}
         />
       )}
-      {view === 'LOGIN' && <SessionLogin onLogin={handleLogin} />}
+      {view === 'LOGIN' && (
+        <SessionLogin
+          onLogin={handleLogin}
+          onBack={() => {
+            playClick();
+            setView('LANDING');
+          }}
+        />
+      )}
       {view === 'LOBBY' && user && (
         <LobbyPage
           user={user}

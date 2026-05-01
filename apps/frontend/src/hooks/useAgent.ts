@@ -11,7 +11,7 @@ export function useAgent(id): any {
     }
     try {
       setLoading(true);
-      const response = await fetch(`/api/agents/${id}`);
+      const response = await fetch(`/api/v1/agents/${id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch agent');
       }

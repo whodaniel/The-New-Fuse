@@ -25,7 +25,8 @@
     "@nestjs/config": "^4.0.2",
     "@upstash/redis": "^1.37.0",
     "ioredis": "^5.8.1",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "@google-cloud/storage": "^7.19.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

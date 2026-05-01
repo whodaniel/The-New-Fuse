@@ -1,4 +1,4 @@
-import { getRandomBytes, hmacSha256 } from '../../security/src/utils/cryptoUtils.js';
+import { getRandomBytes, hmacSha256 } from '@the-new-fuse/security';
 
 /**
  * TNF Resource Pointer (TRP)

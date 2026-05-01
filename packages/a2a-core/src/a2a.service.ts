@@ -1,4 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { A2ASignatureWrapper } from './signature-wrapper.js';
+import { PointerResolverService } from './pointer-resolver.service.js';
 import { ConfigService } from '@nestjs/config';
 import { Ap2ProtocolService } from '@the-new-fuse/ap2-protocol';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';

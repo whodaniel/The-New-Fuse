@@ -12,7 +12,7 @@ import {
   ToolResult,
   ToolUsageStats,
   ValidationResult,
-} from '../../interfaces/IMCPTool';
+} from '../../interfaces/IMCPTool.js';
 import { IVideoProvider } from './providers/IVideoProvider.js';
 import { ReplicateProvider } from './providers/ReplicateProvider.js';
 import {

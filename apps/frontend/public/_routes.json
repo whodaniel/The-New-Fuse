@@ -4,6 +4,9 @@
   "exclude": [
     "/index.html",
     "/app.html",
+    "/pricing.html",
+    "/features.html",
+    "/docs.html",
     "/assets/*",
     "/favicon.ico",
     "/images/*",

@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { SecurityService } from './security.service';
+import { SecurityService } from './security.service.js';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()

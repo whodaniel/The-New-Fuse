@@ -20,7 +20,7 @@ const RegistrationForm: React.FC = () => {
     }
 
     try {
-      const response = await fetch('/api/auth/register', { // Assuming API is proxied or on same domain
+      const response = await fetch('/api/v1/auth/register', { // Gateway uses URI versioning (default v1)
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

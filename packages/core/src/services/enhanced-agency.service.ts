@@ -16,7 +16,7 @@
 import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
 import { drizzleAgentRepository, drizzleTaskRepository } from '@the-new-fuse/database';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { AgencyService, AgencyProfile, CreateAgencyDto, UpdateAgencyDto } from './agency.service';
+import { AgencyService, AgencyProfile, CreateAgencyDto, UpdateAgencyDto } from './agency.service.js';
 import { AgentSwarmOrchestrationService } from '../agents/AgentSwarmOrchestrationService.js';
 
 // Analytics types

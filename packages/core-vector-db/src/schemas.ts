@@ -4,4 +4,4 @@ export {
   VectorDocumentSchema,
   VectorQuerySchema,
   VectorSearchResultSchema,
-} from './interface/vector-database.interface';
+} from './interface/vector-database.interface.js';

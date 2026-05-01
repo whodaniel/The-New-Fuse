@@ -13,7 +13,7 @@ export {
   DrizzleService,
   type DrizzleClient,
   type DrizzleModuleOptions,
-} from './drizzle.module';
+} from './drizzle.module.js';
 
 // Export all schema tables
 export * from './schema.js';
@@ -29,7 +29,7 @@ export * from './compatibility.js';
 
 // Export DatabaseService (unified database access layer)
 // DrizzleService is exported from drizzle.module above for backwards compatibility
-export { DatabaseService } from './database.service';
+export { DatabaseService } from './database.service.js';
 
 // Re-export useful Drizzle utilities
 export {

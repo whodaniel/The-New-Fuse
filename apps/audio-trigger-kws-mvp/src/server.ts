@@ -1,177 +1,110 @@
-import { timingSafeEqual } from 'node:crypto';
-import http from 'node:http';
+import express from 'express';
+import cors from 'cors';
 import { env } from './config/env';
 import { AudioTriggerRuntime } from './runtime/audio-trigger-runtime';
+import type { RuleFireEvent, ContextPackage, LlmBatchResult, ProfileUpdate } from './types/events';
+import type { UserProfile } from './services/profile/schema';
 
-const MAX_BODY_BYTES = 1024 * 1024;
-
-const readBody = async (req: http.IncomingMessage): Promise<string> => {
-  const chunks: Buffer[] = [];
-  let total = 0;
-  for await (const chunk of req) {
-    const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
-    total += buf.length;
-    if (total > MAX_BODY_BYTES) {
-      throw new Error('Payload too large');
-    }
-    chunks.push(buf);
-  }
-  return Buffer.concat(chunks).toString('utf8');
-};
-
-const parseJsonBody = async <T>(req: http.IncomingMessage): Promise<T> => {
-  const raw = await readBody(req);
-  if (!raw) {
-    throw new Error('Empty JSON body');
-  }
-  return JSON.parse(raw) as T;
-};
-
-const safeEquals = (left: string, right: string): boolean => {
-  const a = Buffer.from(left, 'utf8');
-  const b = Buffer.from(right, 'utf8');
-  if (a.length !== b.length) {
-    return false;
-  }
-  return timingSafeEqual(a, b);
-};
-
-const extractApiKey = (req: http.IncomingMessage): string => {
-  const edgeHeader = req.headers['x-edge-api-key'];
-  if (typeof edgeHeader === 'string' && edgeHeader.trim().length > 0) {
-    return edgeHeader.trim();
-  }
-
-  const authHeader = req.headers.authorization;
-  if (typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
-    return authHeader.slice('Bearer '.length).trim();
-  }
-
-  return '';
-};
-
-const sendJson = (
-  res: http.ServerResponse<http.IncomingMessage>,
-  statusCode: number,
-  payload: unknown
-): void => {
-  const data = JSON.stringify(payload);
-  res.writeHead(statusCode, {
-    'content-type': 'application/json; charset=utf-8',
-    'content-length': Buffer.byteLength(data),
-  });
-  res.end(data);
-};
-
-const getLimit = (urlObj: URL): number => {
-  const raw = urlObj.searchParams.get('limit');
-  if (!raw) {
-    return 50;
-  }
-  const parsed = Number.parseInt(raw, 10);
-  if (!Number.isFinite(parsed)) {
-    return 50;
-  }
-  return Math.max(1, Math.min(parsed, 1000));
-};
-
-interface IngestTextRequest {
-  streamId: string;
-  utterance: string;
-}
-
-if (env.api.requireIngestAuth && !env.api.ingestApiKey) {
-  throw new Error(
-    'INGEST_API_KEY (or VOICE_KWS_API_KEY / EDGE_API_KEY) is required when REQUIRE_INGEST_AUTH=true'
-  );
-}
+const app = express();
+app.use(cors());
+app.use(express.json());
 
 const runtime = new AudioTriggerRuntime();
 runtime.start();
 
-const server = http.createServer(async (req, res) => {
-  const method = req.method ?? 'GET';
-  const host = req.headers.host ?? `127.0.0.1:${env.api.port}`;
-  const urlObj = new URL(req.url ?? '/', `http://${host}`);
-  const path = urlObj.pathname;
-
-  try {
-    if (method === 'GET' && path === '/healthz') {
-      sendJson(res, 200, runtime.getStatus());
-      return;
-    }
-
-    if (method === 'POST' && path === '/v1/ingest/text') {
-      if (env.api.requireIngestAuth && !safeEquals(extractApiKey(req), env.api.ingestApiKey)) {
-        sendJson(res, 401, { error: 'unauthorized' });
-        return;
-      }
-      const body = await parseJsonBody<IngestTextRequest>(req);
-      if (!body.streamId || !body.utterance) {
-        sendJson(res, 400, { error: 'streamId and utterance are required' });
-        return;
-      }
-      runtime.ingestText(body.streamId, body.utterance);
-      sendJson(res, 202, { accepted: true, streamId: body.streamId });
-      return;
-    }
-
-    if (method === 'POST' && path === '/v1/flush') {
-      if (env.api.requireIngestAuth && !safeEquals(extractApiKey(req), env.api.ingestApiKey)) {
-        sendJson(res, 401, { error: 'unauthorized' });
-        return;
-      }
-      await runtime.flush();
-      sendJson(res, 200, { flushed: true });
-      return;
-    }
-
-    if (method === 'GET' && path === '/v1/events/rules') {
-      sendJson(res, 200, { items: runtime.getRecentRuleFires(getLimit(urlObj)) });
-      return;
-    }
-
-    if (method === 'GET' && path === '/v1/events/packages') {
-      sendJson(res, 200, { items: runtime.getRecentPackages(getLimit(urlObj)) });
-      return;
-    }
-
-    if (method === 'GET' && path === '/v1/events/llm-results') {
-      sendJson(res, 200, { items: runtime.getRecentLlmResults(getLimit(urlObj)) });
-      return;
-    }
-
-    sendJson(res, 404, {
-      error: 'not_found',
-      routes: [
-        'GET /healthz',
-        'POST /v1/ingest/text',
-        'POST /v1/flush',
-        'GET /v1/events/rules',
-        'GET /v1/events/packages',
-        'GET /v1/events/llm-results',
-      ],
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    sendJson(res, 500, { error: message });
+const apiKeyMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (!env.api.requireIngestAuth) return next();
+  const key = req.headers['x-api-key'] as string | undefined || req.query?.apiKey as string | undefined;
+  if (key !== env.api.ingestApiKey) {
+    return res.status(401).json({ error: 'unauthorized' });
   }
-});
-
-server.listen(env.api.port, env.api.host, () => {
-  console.log(`audio-trigger-kws-mvp API listening on http://${env.api.host}:${env.api.port}`);
-  console.log('Routes: GET /healthz, POST /v1/ingest/text, POST /v1/flush');
-});
-
-const shutdown = async (): Promise<void> => {
-  console.log('Shutting down audio-trigger-kws-mvp API...');
-  await runtime.stop();
-  server.close(() => process.exit(0));
+  next();
 };
 
-process.on('SIGINT', () => {
-  void shutdown();
+app.post('/v1/ingest/text', apiKeyMiddleware, (req, res) => {
+  const { streamId, utterance } = req.body;
+  if (!streamId || !utterance) {
+    return res.status(400).json({ error: 'streamId and utterance required' });
+  }
+  runtime.ingestText(streamId, utterance);
+  res.json({ ok: true, streamId });
 });
-process.on('SIGTERM', () => {
-  void shutdown();
+
+app.post('/v1/flush', apiKeyMiddleware, async (req, res) => {
+  await runtime.flush();
+  res.json({ ok: true });
+});
+
+app.get('/v1/events/rules', (req, res) => {
+  const limit = Math.min(parseInt(req.query.limit as string) || 50, 1000);
+  res.json(runtime.getRecentRuleFires(limit));
+});
+
+app.get('/v1/events/packages', (req, res) => {
+  const limit = Math.min(parseInt(req.query.limit as string) || 50, 1000);
+  res.json(runtime.getRecentPackages(limit));
+});
+
+app.get('/v1/events/llm-results', (req, res) => {
+  const limit = Math.min(parseInt(req.query.limit as string) || 50, 1000);
+  res.json(runtime.getRecentLlmResults(limit));
+});
+
+app.get('/v1/events/rules/stream', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  res.write(`data: ${JSON.stringify({ type: 'connected', tsMs: Date.now() })}\n\n`);
+
+  const handler = (event: RuleFireEvent) => {
+    res.write(`data: ${JSON.stringify({ type: 'rule_fired', ...event })}\n\n`);
+  };
+
+  runtime.on('rule_fired', handler);
+
+  req.on('close', () => {
+    runtime.off('rule_fired', handler);
+  });
+});
+
+app.post('/v1/echo/speaking-start', (req, res) => {
+  runtime.echoSuppression.markSpeakingStart();
+  res.json({ ok: true, speaking: true });
+});
+
+app.post('/v1/echo/speaking-end', (req, res) => {
+  runtime.echoSuppression.markSpeakingEnd();
+  res.json({ ok: true, speaking: runtime.echoSuppression.isSpeaking() });
+});
+
+app.get('/v1/echo/status', (req, res) => {
+  res.json({ speaking: runtime.echoSuppression.isSpeaking() });
+});
+
+app.get('/v1/profiles', (req, res) => {
+  res.json({ profilesDir: runtime.getProfilesDirectory() });
+});
+
+app.get('/v1/profiles/:userId', (req, res) => {
+  const profile = runtime.getProfile(req.params.userId);
+  if (!profile) {
+    return res.status(404).json({ error: 'profile not found' });
+  }
+  res.json(profile);
+});
+
+app.put('/v1/profiles/:userId', (req, res) => {
+  const updated = runtime.updateProfile(req.params.userId, req.body as ProfileUpdate);
+  res.json(updated);
+});
+
+app.get('/healthz', (req, res) => {
+  res.json(runtime.getStatus());
+});
+
+app.listen(env.api.port, env.api.host, () => {
+  console.log(`[KWS-Server] Listening on ${env.api.host}:${env.api.port}`);
+  console.log(`[KWS-Server] Auth required: ${env.api.requireIngestAuth}`);
+  console.log(`[KWS-Server] Mini-omni mode: ${env.miniOmni.mode}`);
 });

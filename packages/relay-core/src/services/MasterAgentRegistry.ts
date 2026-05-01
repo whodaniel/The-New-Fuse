@@ -12,9 +12,9 @@ import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger.js';
 import { VCIssuanceRequest, VCIssuanceService } from './VCIssuanceService.js';
 import { BlockchainConfig, BlockchainService } from './shared/BlockchainService.js';
-// import { sha256 } from '../../../../src/utils/cryptoUtils';
-// import { AgentRegistry, Agent as LegacyAgent } from '../../../../src/services/AgentRegistry';
-// import { AgentMetadataManager } from '../../../../src/services/AgentMetadataManager';
+// import { sha256 } from '../../../../src/utils/cryptoUtils.js';
+// import { AgentRegistry, Agent as LegacyAgent } from '../../../../src/services/AgentRegistry.js';
+// import { AgentMetadataManager } from '../../../../src/services/AgentMetadataManager.js';
 
 // Stub implementations
 const sha256 = (input: string): string => {

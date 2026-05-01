@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { ContextPackage } from '../../types/events';
+import { ILlmClient } from './openai-compat-client';
 
 export interface MiniOmniClientConfig {
   enabled: boolean;
@@ -18,7 +19,7 @@ export interface MiniOmniClientConfig {
   outputWavDir: string;
 }
 
-export class MiniOmniClient {
+export class MiniOmniClient implements ILlmClient {
   constructor(private readonly config: MiniOmniClientConfig) {}
 
   async complete(prompt: string, pkg: ContextPackage): Promise<string> {

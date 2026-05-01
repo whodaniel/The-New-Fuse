@@ -7,7 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema.js';
-import { DatabaseService } from './database.service';
+import { DatabaseService } from './database.service.js';
 
 // Injection token for the Drizzle client
 export const DRIZZLE_CLIENT = Symbol('DRIZZLE_CLIENT');

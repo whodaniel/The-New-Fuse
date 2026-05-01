@@ -57,9 +57,9 @@ export const TEST_AGENTS = {
 };
 
 export const API_ENDPOINTS = {
-  health: '/api/health',
-  login: '/api/auth/login',
-  logout: '/api/auth/logout',
-  workflows: '/api/workflows',
-  agents: '/api/agents',
+ health: '/api/health',
+ login: '/api/v1/auth/login',
+ logout: '/api/v1/auth/logout',
+ workflows: '/api/v1/workflows',
+ agents: '/api/v1/agents',
 };

@@ -5,7 +5,7 @@ import { Ap2ProtocolModule, Ap2ProtocolService } from '@the-new-fuse/ap2-protoco
 import { VectorDatabaseModule } from '@the-new-fuse/core-vector-db';
 import { RedisModule, UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
-import { A2AService } from './a2a.service';
+import { A2AService } from './a2a.service.js';
 import { FederatedIdentityService } from './federated-identity.service.js';
 import { PointerResolverService } from './pointer-resolver.service.js';
 import { A2ARedisAdapter } from './redis-adapter.js';
@@ -23,7 +23,7 @@ export class A2ACoreModule {
         ConfigModule,
         RedisModule.forRoot({ isGlobal: true }),
         Ap2ProtocolModule,
-        VectorDatabaseModule.forRoot({}),
+        VectorDatabaseModule.forRoot({} as any),
       ],
       providers: [
         {
@@ -129,7 +129,7 @@ export class A2ACoreModule {
       imports: [
         ConfigModule,
         RedisModule.forRoot({ isGlobal: true }),
-        VectorDatabaseModule.forRoot({}),
+        VectorDatabaseModule.forRoot({} as any),
         ...(options.imports || []),
       ],
       providers: [

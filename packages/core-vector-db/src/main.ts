@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
-import { VectorDatabaseModule } from './vector-database.module';
+import { VectorDatabaseModule } from './vector-database.module.js';
 
 async function bootstrap() {
   const logger = new Logger('VectorDBMicroservice');

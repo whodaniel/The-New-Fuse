@@ -46,7 +46,7 @@ export interface Chat {
 }
 
 class ChatApiService {
-  private baseUrl = '/api/chat';
+  private baseUrl = '/api/v1/chat';
 
   async getChats(): Promise<Chat[]> {
     try {
@@ -186,7 +186,7 @@ class ChatApiService {
     systemPrompt = 'You are a helpful assistant.'
   ): Promise<string> {
     try {
-      const response = await apiRequest<{ text: string }>(`/api/ai/text-completion`, {
+      const response = await apiRequest<{ text: string }>(`/api/v1/ai/text-completion`, {
         method: 'POST',
         data: { prompt, systemPrompt },
       });
@@ -199,7 +199,7 @@ class ChatApiService {
 
   async callImageApi(prompt: string): Promise<string> {
     try {
-      const response = await apiRequest<{ imageUrl: string }>(`/api/ai/image-generation`, {
+      const response = await apiRequest<{ imageUrl: string }>(`/api/v1/ai/image-generation`, {
         method: 'POST',
         data: { prompt },
       });

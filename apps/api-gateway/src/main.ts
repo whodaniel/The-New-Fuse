@@ -17,6 +17,25 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   });
 
+  // Disable Express "X-Powered-By" header (information leakage)
+  app.getHttpAdapter().set('x-powered-by', false);
+  // Alternative: app.disable('x-powered-by') — but getHttpAdapter is safer in NestJS
+
+  // Security headers middleware — applied before all routes
+  app.use((req: any, res: any, next: any) => {
+    // HSTS: enforce HTTPS for 1 year (include subdomains), preload for browser HSTS lists
+    // Only set in production; dev environments often use HTTP locally
+    if (process.env.NODE_ENV === 'production') {
+      res.setHeader(
+        'Strict-Transport-Security',
+        'max-age=31536000; includeSubDomains; preload',
+      );
+    }
+    // Prevent MIME-type sniffing
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    next();
+  });
+
   // Enable CORS
   // In dev: always allow, including file:// and electron origins (no Origin header)
   const prodAllowedOrigins = new Set([
@@ -45,7 +64,14 @@ async function bootstrap() {
             ) {
               return callback(null, true);
             }
-            return callback(new Error('CORS origin not allowed'));
+            // FIX: Return callback(null, false) instead of callback(new Error(...))
+            // Passing an Error to the callback causes the cors middleware to call
+            // next(error), which hits the GlobalExceptionFilter and returns HTTP 500.
+            // With callback(null, false), the cors middleware omits the
+            // Access-Control-Allow-Origin header and for preflight (OPTIONS) requests
+            // still returns the configured optionsSuccessStatus (204) — without the
+            // ACAO header, so the browser correctly rejects the preflight.
+            return callback(null, false);
           }
         : (origin, callback) => callback(null, true),
     credentials: true,
@@ -73,6 +99,21 @@ async function bootstrap() {
   app.use((req, _res, next) => {
     if (req.url.startsWith('/v1/') || req.url === '/v1') {
       req.url = `/api${req.url}`;
+    }
+    next();
+  });
+
+  // Back-compat: clients call /api/{resource}/* without the v1 version prefix.
+  // The gateway uses URI versioning (default v1), so routes are at /api/v1/{resource}/*.
+  // This middleware rewrites /api/{resource}/* → /api/v1/{resource}/* so those calls succeed.
+  // It handles ALL unversioned /api/ paths (auth, agents, chat, workflows, webhooks, mcp, sgp, etc.)
+  // and skips paths that already have a version prefix (e.g. /api/v1/*, /api/v2/*).
+  app.use((req, _res, next) => {
+    // Match /api/{segment}/* but NOT /api/v{N}/* (already versioned) and NOT /api/health
+    const unversionedApiPath = /^\/api\/(?!v\d+|health)([^/?#]+)([/?#].*)?$/;
+    const match = req.url.match(unversionedApiPath);
+    if (match) {
+      req.url = `/api/v1/${match[1]}${match[2] || ''}`;
     }
     next();
   });

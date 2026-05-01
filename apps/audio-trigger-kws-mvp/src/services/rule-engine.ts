@@ -8,6 +8,7 @@ import {
   TriggerConditionSequence,
   TriggerRule
 } from '../types/events';
+import { ProfileService } from './profile/service';
 
 interface StreamRuleState {
   hits: HitEvent[];
@@ -17,7 +18,7 @@ interface StreamRuleState {
 export class RuleEngine extends EventEmitter {
   private readonly stateByStream = new Map<string, StreamRuleState>();
 
-  constructor(private readonly rules: TriggerRule[]) {
+  constructor(private readonly rules: TriggerRule[], private readonly profileService: ProfileService) {
     super();
   }
 
@@ -38,6 +39,9 @@ export class RuleEngine extends EventEmitter {
 
     for (const rule of orderedRules) {
       const lastFired = streamState.lastFiredAtMsByRule.get(rule.ruleId) ?? 0;
+      const userProfile = this.profileService.getProfile(hit.streamId);
+      const effectiveMinRuleConf = userProfile?.triggerThresholds?.[`rule_${rule.ruleId}`] ?? rule.minRuleConf;
+
       if (hit.tsEndMs - lastFired < rule.cooldownMs) {
         continue;
       }
@@ -46,8 +50,8 @@ export class RuleEngine extends EventEmitter {
         (event) => event.tsEndMs >= hit.tsEndMs - rule.windowMs && event.tsEndMs <= hit.tsEndMs
       );
 
-      const evaluation = this.evaluateRule(rule, inWindow);
-      if (!evaluation.matched || evaluation.confidence < rule.minRuleConf) {
+      const evaluation = this.evaluateRule(rule, inWindow, hit.streamId);
+      if (!evaluation.matched || evaluation.confidence < effectiveMinRuleConf) {
         continue;
       }
 
@@ -66,14 +70,17 @@ export class RuleEngine extends EventEmitter {
     }
   }
 
-  private evaluateRule(rule: TriggerRule, events: HitEvent[]): {
+  private evaluateRule(rule: TriggerRule, events: HitEvent[], streamId: string): {
     matched: boolean;
     confidence: number;
     matchedEvents: HitEvent[];
   } {
-    const allResults = (rule.all ?? []).map((condition) => this.evaluateCondition(condition, events));
-    const anyResults = (rule.any ?? []).map((condition) => this.evaluateCondition(condition, events));
-    const noneResults = (rule.none ?? []).map((condition) => this.evaluateCondition(condition, events));
+    const userProfile = this.profileService.getProfile(streamId);
+    const effectiveMinRuleConf = userProfile?.triggerThresholds?.[`rule_${rule.ruleId}`] ?? rule.minRuleConf;
+
+    const allResults = (rule.all ?? []).map((condition) => this.evaluateCondition(condition, events, streamId));
+    const anyResults = (rule.any ?? []).map((condition) => this.evaluateCondition(condition, events, streamId));
+    const noneResults = (rule.none ?? []).map((condition) => this.evaluateCondition(condition, events, streamId));
 
     const allMatched = allResults.every((result) => result.matched);
     const anyMatched = anyResults.length === 0 ? true : anyResults.some((result) => result.matched);
@@ -99,27 +106,32 @@ export class RuleEngine extends EventEmitter {
 
   private evaluateCondition(
     condition: TriggerCondition,
-    events: HitEvent[]
+    events: HitEvent[],
+    streamId: string
   ): { matched: boolean; confidence: number; events: HitEvent[] } {
     if (condition.kind === "hit") {
-      return this.evaluateHitCondition(condition, events);
+      return this.evaluateHitCondition(condition, events, streamId);
     }
     return this.evaluateSequenceCondition(condition, events);
   }
 
   private evaluateHitCondition(
     condition: TriggerConditionHit,
-    events: HitEvent[]
+    events: HitEvent[],
+    streamId: string
   ): { matched: boolean; confidence: number; events: HitEvent[] } {
     if (events.length === 0) {
       return { matched: false, confidence: 0, events: [] };
     }
 
+    const userProfile = this.profileService.getProfile(streamId);
+    const effectiveMinConf = userProfile?.triggerThresholds?.[condition.groupId] ?? condition.minConf;
+
     const nowMs = Math.max(...events.map((event) => event.tsEndMs));
     const matches = events.filter(
       (event) =>
         event.groupId === condition.groupId &&
-        event.confidence >= condition.minConf &&
+        event.confidence >= effectiveMinConf &&
         event.tsEndMs >= nowMs - condition.windowMs
     );
 
@@ -179,6 +191,11 @@ export class RuleEngine extends EventEmitter {
     }
 
     return { matched: false, confidence: 0, events: matched };
+  }
+
+  addRules(newRules: TriggerRule[]): void {
+    this.rules.push(...newRules);
+    console.log(`[RuleEngine] Added ${newRules.length} new rules. Total rules: ${this.rules.length}`);
   }
 }
 

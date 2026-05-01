@@ -8,8 +8,8 @@
     "sourceMap": true,
     "types": [],
     "composite": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "ignoreDeprecations": "5.0"
   },
   "include": ["src/**/*"],

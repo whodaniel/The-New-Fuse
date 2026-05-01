@@ -448,10 +448,19 @@ export function addOnPlayer(t, { playerId }) {
  // level boundary may be missed if the clock advances multiple levels at once).
  // Previously used strict equality (`!==`) which made add-on impossible if the
  // level was skipped or the player missed the exact window.
- if (t.levelIndex < t.addon.level) throw new Error('Add-on not yet available');
- if (t.levelIndex > t.addon.level && !(t.onBreak && t.levelIndex === t.addon.level + 1)) {
- throw new Error('Add-on window closed');
- }
+    if (t.levelIndex < t.addon.level) throw new Error('Add-on not yet available');
+    // Add-on window is from `addon.level` up to `addon.level + 1` if on break,
+    // or `addon.level` itself if not on break (for single-level window).
+    // Ensure that if the clock jumps, we still allow add-on if the player
+    // was eligible at any skipped level.
+    if (t.levelIndex > t.addon.level && !t.onBreak) {
+      throw new Error('Add-on window closed');
+    }
+    // If on break at level + 1, it's the last chance for add-on.
+    // If not on break at level + 1, it's already too late.
+    if (t.onBreak && t.levelIndex > t.addon.level + 1) {
+      throw new Error('Add-on window closed');
+    }
 
  p.addonTaken = true;
  p.entries += 1;

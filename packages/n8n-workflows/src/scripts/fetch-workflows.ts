@@ -44,7 +44,7 @@ async function main() {
   console.log(`  Complex: ${result.stats.byComplexity.complex}`);
 
   console.log('\n=== Top Tags ===');
-  result.stats.mostPopularTags.slice(0, 10).forEach(({ tag, count }) => {
+  result.stats.mostPopularTags.slice(0, 10).forEach(({ tag, count }: { tag: string; count: number }) => {
     console.log(`  ${tag}: ${count}`);
   });
 

@@ -3,7 +3,7 @@
  * Re-exports all workflow types
  */
 
-export * from '../types.js';
+export * from '../types/index.js';
 // Workflow-specific error class
 export class WorkflowError extends Error {
   constructor(message: string,

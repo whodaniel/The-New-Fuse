@@ -1,7 +1,7 @@
 
 import { Injectable } from '@nestjs/common';
-import { SystemConfig, DatabaseConfig, RedisConfig, MonitoringConfig, AIConfig } from '../types.js';
-import { ServiceState } from '../types.js';
+import { SystemConfig, DatabaseConfig, RedisConfig, MonitoringConfig, AIConfig } from '../types/index.js';
+import { ServiceState } from '../types/index.js';
 import { logger } from '../utils/logger.js';
 import { ConfigurationError } from '../utils/errors.js';
 

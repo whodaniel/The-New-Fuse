@@ -29,10 +29,18 @@ const TerminalGraphPage = lazy(() => import('../pages/TerminalGraph'));
 const UnauthorizedPage = lazy(() => import('../pages/Unauthorized'));
 
 const RedirectToStatic = ({ to }: { to: string }) => {
-  if (typeof window !== 'undefined') {
-    window.location.href = to;
-  }
-  return null;
+ if (typeof window !== 'undefined') {
+ // On app subdomain, hash routes like /#pricing should redirect to the
+ // main landing site (thenewfuse.com) since the landing page owns those sections.
+ // On the main domain, the hash fragment works as-is.
+ const hostname = window.location.hostname;
+ if (to.startsWith('/#') && (hostname === 'app.thenewfuse.com' || hostname.startsWith('app.'))) {
+ window.location.href = `https://thenewfuse.com${to}`;
+ } else {
+ window.location.href = to;
+ }
+ }
+ return null;
 };
 
 const MarketplaceRootRoute = () => {

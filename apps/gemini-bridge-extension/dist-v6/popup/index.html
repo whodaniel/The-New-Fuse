@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fuse Connect</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="popup">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-logo">
+          <div class="logo-icon">⚡</div>
+          <div class="logo-text">
+            <span class="logo-title">FUSE CONNECT</span>
+            <span class="logo-version">v7.0</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button
+            class="btn-icon-only open-panel-btn"
+            id="open-panel-btn"
+            title="Open Panel on Page (Ctrl+Shift+G)"
+          >
+            🪟
+          </button>
+          <div class="header-status" id="connection-indicator">
+            <span class="status-dot disconnected"></span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab Navigation -->
+      <nav class="tabs">
+        <button class="tab active" data-tab="connect">
+          <span class="tab-icon">🔌</span>
+          <span class="tab-label">Connect</span>
+        </button>
+        <button class="tab" data-tab="network">
+          <span class="tab-icon">🌐</span>
+          <span class="tab-label">Network</span>
+        </button>
+        <button class="tab" data-tab="services">
+          <span class="tab-icon">🖥️</span>
+          <span class="tab-label">Services</span>
+        </button>
+        <button class="tab" data-tab="settings">
+          <span class="tab-icon">⚙️</span>
+          <span class="tab-label">Settings</span>
+        </button>
+      </nav>
+
+      <!-- Tab Content -->
+      <main class="content">
+        <!-- Connect Tab -->
+        <section class="tab-content active" id="tab-connect">
+          <div class="connection-card">
+            <div class="connection-status">
+              <div class="connection-icon" id="connection-icon">
+                <div class="pulse-ring"></div>
+                <span>⚡</span>
+              </div>
+              <div class="connection-info">
+                <h2 id="connection-status-text">Disconnected</h2>
+                <p id="connection-url">ws://localhost:3000/ws</p>
+              </div>
+            </div>
+            <button class="btn-primary" id="connect-btn">
+              <span class="btn-icon">🔌</span>
+              Connect to Relay
+            </button>
+          </div>
+
+          <!-- Quick Start Helper - shown when relay not running -->
+          <div class="quick-start-helper" id="quick-start-helper" style="display: none">
+            <div class="helper-card">
+              <div class="helper-icon">⚡</div>
+              <div class="helper-content">
+                <h4>Relay Not Running</h4>
+                <p>Start the TNF Relay to connect agents</p>
+                <button class="btn-secondary" id="quick-start-relay">🚀 Start Relay Server</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="platform-section">
+            <h3 class="section-title">Platform Detection</h3>
+            <div class="platform-card" id="platform-card">
+              <div class="platform-icon">🔍</div>
+              <div class="platform-info">
+                <span class="platform-name" id="platform-name">Detecting...</span>
+                <span class="platform-status" id="platform-status">Open an AI chat page</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-stats">
+            <div class="stat-item">
+              <span class="stat-value" id="stat-agents">0</span>
+              <span class="stat-label">Agents</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="stat-messages">0</span>
+              <span class="stat-label">Messages</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="stat-uptime">--</span>
+              <span class="stat-label">Uptime</span>
+            </div>
+          </div>
+
+          <div class="central-chat-card">
+            <div class="central-chat-header">
+              <h3 class="section-title">Central Channel Control</h3>
+              <span class="central-chat-subtitle" id="central-chat-subtitle">No channel selected</span>
+            </div>
+
+            <div class="central-chat-toolbar">
+              <select id="central-channel-select" class="central-select">
+                <option value="">Select channel...</option>
+              </select>
+              <button class="btn-secondary central-btn" id="central-refresh-channels">Refresh</button>
+            </div>
+
+            <div class="central-chat-create-row">
+              <input
+                id="central-new-channel"
+                class="central-input"
+                type="text"
+                placeholder="Create channel..."
+              />
+              <button class="btn-secondary central-btn" id="central-create-channel">Create</button>
+            </div>
+
+            <div class="central-chat-stream" id="central-chat-stream">
+              <div class="empty-state small">
+                <p>No channel messages yet</p>
+              </div>
+            </div>
+
+            <div class="central-chat-compose">
+              <input
+                id="central-chat-input"
+                class="central-input"
+                type="text"
+                placeholder="Send to selected channel..."
+              />
+              <button class="btn-primary central-send-btn" id="central-send-message">Send</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Network Tab (merged with Agents) -->
+        <section class="tab-content" id="tab-network">
+          <!-- Connected Agents Section -->
+          <div class="network-section">
+            <div class="agents-header">
+              <h3 class="section-title">🤖 Connected Agents</h3>
+              <button class="btn-icon-only" id="refresh-agents" title="Refresh">🔄</button>
+            </div>
+            <div class="agents-list" id="agents-list">
+              <div class="empty-state">
+                <span class="empty-icon">🤖</span>
+                <p>No agents connected</p>
+                <span class="empty-hint">Connect to the relay to see agents</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Network Visualization Section -->
+          <div class="network-section" style="margin-top: 16px">
+            <h3 class="section-title">🌐 Network Topology</h3>
+            <div class="network-visual">
+              <div class="network-node center">
+                <span>RELAY</span>
+              </div>
+              <div class="network-connections" id="network-connections">
+                <!-- Dynamic agent nodes -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity Section -->
+          <div class="message-log" style="margin-top: 16px">
+            <h3 class="section-title">📋 Recent Activity</h3>
+            <div class="message-list" id="message-list">
+              <div class="empty-state small">
+                <p>No recent messages</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Services Tab -->
+        <section class="tab-content" id="tab-services">
+          <div class="services-header">
+            <h3 class="section-title">AI Video Intelligence</h3>
+            <button class="btn-icon-only" id="refresh-services" title="Refresh">🔄</button>
+          </div>
+
+          <div class="service-card aivi-service-card" data-service="ai-studio">
+            <div class="aivi-tab-row">
+              <button class="btn-secondary" id="ai-video-subtab-queue" style="flex: 1">Queue</button>
+              <button class="btn-secondary" id="ai-video-subtab-history" style="flex: 1">History</button>
+              <button class="btn-secondary" id="ai-video-dashboard-link" style="flex: 1">Dashboard ↗</button>
+            </div>
+            <div class="aivi-tab-row" style="margin-top: 8px">
+              <button class="btn-secondary" id="ai-video-auth-btn" style="flex: 1">Auth</button>
+              <button class="btn-secondary" id="ai-video-signout-btn" style="flex: 1">Sign Out</button>
+              <div
+                id="ai-video-auth-state"
+                style="
+                  flex: 1;
+                  font-size: 11px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: rgba(255, 255, 255, 0.72);
+                "
+              >
+                Not authenticated
+              </div>
+            </div>
+
+            <div id="ai-video-queue-view">
+              <div style="font-size: 14px; font-weight: 700">🎥 Quick Add Video</div>
+              <div style="font-size: 11px; color: rgba(255, 255, 255, 0.68); margin-bottom: 6px">
+                Process a single video
+              </div>
+              <div style="display: flex; gap: 8px">
+                <input
+                  id="ai-video-single-url"
+                  type="text"
+                  placeholder="Paste YouTube video URL..."
+                  style="flex: 1"
+                />
+                <button class="btn-primary" id="ai-video-single-add">Add</button>
+              </div>
+              <div id="ai-video-single-preview" style="font-size: 11px; color: rgba(255, 255, 255, 0.62); margin-top: 6px;">
+                No preview yet
+              </div>
+
+              <div style="text-align: center; margin: 12px 0; font-size: 11px; color: rgba(255, 255, 255, 0.6)">
+                — OR select from playlist —
+              </div>
+
+              <div style="font-size: 13px; font-weight: 700; margin-bottom: 4px">📺 Source Playlist</div>
+              <div style="display: flex; gap: 8px; margin-bottom: 8px">
+                <button class="btn-secondary" id="ai-video-refresh-playlists">🔄</button>
+                <select id="ai-video-playlist-select" style="flex: 1">
+                  <option value="">Select a playlist...</option>
+                </select>
+              </div>
+
+              <div style="font-size: 13px; font-weight: 700; margin-bottom: 4px">🎯 Destination Playlist</div>
+              <div style="display: flex; gap: 8px; margin-bottom: 8px">
+                <button class="btn-secondary" id="ai-video-create-playlist">➕ New</button>
+                <select id="ai-video-destination-playlist-select" style="flex: 1">
+                  <option value="">Select destination...</option>
+                </select>
+              </div>
+              <input
+                id="ai-video-new-playlist-title"
+                type="text"
+                placeholder="New private playlist title..."
+                style="width: 100%; margin-bottom: 10px"
+              />
+
+              <div style="font-size: 13px; font-weight: 700; margin-bottom: 4px">⚙️ Processing Level</div>
+              <div style="font-size: 11px; color: rgba(255, 255, 255, 0.68); margin-bottom: 6px">
+                Choose processing depth & cost
+              </div>
+              <select id="ai-video-processing-level" style="width: 100%; margin-bottom: 6px">
+                <option value="transcript">📝 Transcript + Metadata (No AI model)</option>
+                <option value="flash">⚡ Quick Local Summary (No external AI API)</option>
+                <option value="pro">🧠 Extended Local Summary (No external AI API)</option>
+                <option value="ai_studio" selected>🎬 AI Studio (Uses Your Gemini Account)</option>
+              </select>
+              <div
+                id="ai-video-processing-description"
+                style="font-size: 11px; color: rgba(255, 255, 255, 0.68); margin-bottom: 10px"
+              >
+                Full video analysis using your Google AI Studio account. Best quality, uses segments for long videos.
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px">
+                <div style="font-size: 13px; font-weight: 700">🔍 Filter Videos</div>
+                <button class="btn-secondary" id="ai-video-clear-filter">Clear</button>
+              </div>
+              <input
+                id="ai-video-search-filter"
+                type="text"
+                placeholder="Search by title, channel, or keywords..."
+                style="width: 100%; margin-bottom: 8px"
+              />
+              <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; font-size: 11px">
+                <label style="display:flex; gap:5px; align-items:center;">
+                  <input id="ai-video-filter-watched" type="checkbox" />
+                  Hide watched
+                </label>
+                <label style="display:flex; gap:5px; align-items:center;">
+                  <input id="ai-video-filter-duplicates" type="checkbox" />
+                  Hide duplicates
+                </label>
+                <label style="display:flex; gap:5px; align-items:center;">
+                  <input id="ai-video-filter-short" type="checkbox" />
+                  Only videos &gt; 10min
+                </label>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <div style="font-size:13px; font-weight:700;">📹 Videos (<span id="videoCount">0</span>)</div>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn-secondary" id="ai-video-select-all">Select All</button>
+                  <button class="btn-secondary" id="ai-video-deselect-all">Deselect All</button>
+                </div>
+              </div>
+              <div
+                id="ai-video-browser-list"
+                style="
+                  max-height: 240px;
+                  overflow: auto;
+                  border: 1px solid rgba(255,255,255,0.12);
+                  border-radius: 6px;
+                  padding: 4px;
+                  margin-bottom: 8px;
+                  background: rgba(0, 0, 0, 0.25);
+                "
+              >
+                <div id="ai-video-browser-empty" style="font-size:11px; color:rgba(255,255,255,0.66); padding:8px;">
+                  Loading videos...
+                </div>
+              </div>
+
+              <button class="btn-primary" id="ai-video-process-selected" style="width: 100%; margin-bottom: 8px">
+                🚀 Process Selected (<span id="selectedCount">0</span> videos)
+              </button>
+              <div style="margin-bottom: 8px; font-size: 11px; color: rgba(255,255,255,0.72);">
+                Processing: <strong id="ai-video-processing-status">Idle</strong>
+                <span style="margin-left:8px;">Progress: <strong id="ai-video-processing-progress">0/0</strong></span>
+              </div>
+              <div style="display: flex; gap: 8px">
+                <button class="btn-secondary" id="ai-video-bulk-import-btn" style="flex: 1">
+                  📥 Bulk Import to NotebookLM
+                </button>
+                <button class="btn-secondary" id="ai-video-export-queue-btn" style="flex: 1">
+                  💾 Export Queue
+                </button>
+              </div>
+              <div style="display: flex; gap: 8px; margin-top: 8px">
+                <button class="btn-secondary" id="ai-video-send-urls-channel" style="flex: 1">
+                  📡 Send URLs to Channel
+                </button>
+                <button class="btn-secondary" id="ai-video-send-analysis-channel" style="flex: 1">
+                  🧠 Send Analysis to Channel
+                </button>
+              </div>
+              <div
+                id="ai-video-channel-target"
+                style="
+                  margin-top: 8px;
+                  font-size: 11px;
+                  color: rgba(255, 255, 255, 0.7);
+                  padding: 6px 8px;
+                  border: 1px solid rgba(255, 255, 255, 0.16);
+                  border-radius: 6px;
+                  background: rgba(0, 0, 0, 0.18);
+                "
+              >
+                Channel target: none selected (set in Central tab)
+              </div>
+            </div>
+
+            <div id="ai-video-history-view" style="display: none">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size: 13px; font-weight: 700">History</span>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn-secondary" id="ai-video-refresh-history">Refresh</button>
+                  <button class="btn-secondary" id="ai-video-export-reports">Export MD</button>
+                  <button class="btn-secondary" id="ai-video-clear-history">Clear</button>
+                </div>
+              </div>
+              <div id="ai-video-history-list" style="max-height:260px; overflow:auto; font-size:11px; color:rgba(255,255,255,0.76);">
+                No processed videos yet
+              </div>
+            </div>
+
+            <div style="display:none;">
+              <div class="service-status" id="service-ai-studio-status">
+                <span class="status-dot disconnected"></span>
+              </div>
+              <span id="native-host-indicator" style="font-size: 11px">⚪ Unknown</span>
+              <span id="ai-video-account">None</span>
+              <strong id="ai-video-processed">0</strong>
+              <strong id="ai-video-total">0</strong>
+              <strong id="ai-video-cost">$0.00</strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- Settings Tab -->
+        <section class="tab-content" id="tab-settings">
+          <div class="settings-section">
+            <h3 class="section-title">AI Video Automation</h3>
+            <div class="setting-item">
+              <label for="aivi-segment-duration-settings">Segment Duration (minutes)</label>
+              <input
+                type="number"
+                id="aivi-segment-duration-settings"
+                min="1"
+                max="120"
+                value="45"
+              />
+            </div>
+            <div class="setting-item">
+              <label for="aivi-concurrent-processes">Concurrent Processes (currently fixed at 1)</label>
+              <input
+                type="number"
+                id="aivi-concurrent-processes"
+                min="1"
+                max="1"
+                value="1"
+                disabled
+              />
+            </div>
+            <div class="setting-item">
+              <label>Auto-open notebook after import</label>
+              <label class="toggle">
+                <input type="checkbox" id="aivi-auto-open-notebook" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label>Auto-generate audio overview</label>
+              <label class="toggle">
+                <input type="checkbox" id="aivi-auto-audio-overview" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3 class="section-title">AI Video Account</h3>
+            <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7">
+              <div><strong>Email:</strong> <span id="settingsEmail">-</span></div>
+              <div><strong>Tier:</strong> <span id="settingsTier">FREE</span></div>
+              <div><strong>Member Since:</strong> <span id="settingsMemberSince">-</span></div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3 class="section-title">AI Video Data</h3>
+            <div style="display: flex; gap: 8px">
+              <button class="btn-secondary" id="clearCacheBtn" style="flex: 1">Clear Cache</button>
+              <button class="btn-secondary" id="exportDataBtn" style="flex: 1">Export Data</button>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3 class="section-title">Connection</h3>
+            <div class="setting-item">
+              <label for="relay-url">Relay URL</label>
+              <input
+                type="text"
+                id="relay-url"
+                value="ws://localhost:3000/ws"
+                placeholder="ws://..."
+              />
+            </div>
+            <div class="setting-item">
+              <label>Auto-Reconnect</label>
+              <label class="toggle">
+                <input type="checkbox" id="auto-reconnect" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label>Auto Monitor</label>
+              <label class="toggle">
+                <input type="checkbox" id="auto-monitor" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label>Auto Master Clock</label>
+              <label class="toggle">
+                <input type="checkbox" id="auto-master-clock" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label>Auto Wake Ping</label>
+              <label class="toggle">
+                <input type="checkbox" id="auto-wake-ping" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <button class="btn-secondary" id="start-autonomy-now">🧠 Start Autonomy Now</button>
+          </div>
+
+          <div class="settings-section">
+            <h3 class="section-title">Managed Sites</h3>
+            <div
+              class="setting-description"
+              style="margin-bottom: 12px; font-size: 11px; color: var(--text-secondary)"
+            >
+              Add custom sites to enable Fuse Connect on them.
+            </div>
+
+            <div class="sites-list" id="sites-list">
+              <!-- Sites injected by JS -->
+              <div class="empty-sites">Loading sites...</div>
+            </div>
+
+            <div class="add-site-row" style="display: flex; gap: 8px; margin-top: 12px">
+              <input
+                type="text"
+                id="new-site-input"
+                placeholder="example.com"
+                style="
+                  flex: 1;
+                  padding: 8px;
+                  border-radius: 4px;
+                  border: 1px solid var(--border-subtle);
+                  background: var(--bg-input);
+                  color: var(--text-primary);
+                  font-size: 12px;
+                "
+              />
+              <button class="btn-secondary" id="add-site-btn" style="padding: 0 12px">Add</button>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3 class="section-title">Interface</h3>
+            <div class="setting-item">
+              <label>Show Panel on All Pages</label>
+              <label class="toggle">
+                <input type="checkbox" id="show-panel" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label>Keyboard Shortcut</label>
+              <span class="shortcut-badge">Ctrl+Shift+G</span>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3 class="section-title">Debug</h3>
+            <div class="setting-item">
+              <label>Debug Mode</label>
+              <label class="toggle">
+                <input type="checkbox" id="debug-mode" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <button class="btn-secondary" id="export-logs">📋 Export Logs</button>
+          </div>
+
+          <div class="settings-footer">
+            <button class="btn-primary" id="save-settings">💾 Save Settings</button>
+          </div>
+        </section>
+      </main>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <span class="footer-text">The New Fuse • Agent Network</span>
+        <a href="#" class="footer-link" id="open-docs">Docs</a>
+      </footer>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

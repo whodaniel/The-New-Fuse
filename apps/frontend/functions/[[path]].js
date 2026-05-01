@@ -3,6 +3,21 @@ export async function onRequest(context) {
   const path = url.pathname;
   const host = url.hostname;
 
+  // 0. Special handling for missing pages on app subdomain
+  // On app.thenewfuse.com, /pricing, /features, /docs should redirect to
+  // the main landing site (thenewfuse.com) where those sections live.
+  if (host === 'app.thenewfuse.com' || host.startsWith('app.')) {
+    if (path === '/pricing') {
+      return Response.redirect(`https://thenewfuse.com/#pricing${url.search}${url.hash}`, 301);
+    }
+    if (path === '/features') {
+      return Response.redirect(`https://thenewfuse.com/#features${url.search}${url.hash}`, 301);
+    }
+    if (path === '/docs') {
+      return Response.redirect(`https://thenewfuse.com/docs${url.search}${url.hash}`, 301);
+    }
+  }
+
   // 1. Force Redirect from Main Domain to App Subdomain for functional routes
   if (host === 'thenewfuse.com' || host === 'www.thenewfuse.com') {
     if (
@@ -24,33 +39,11 @@ export async function onRequest(context) {
     }
   }
 
-  // 2. Static content routes on app subdomain - redirect to landing page hash anchors
-  // Previously these returned blank (RedirectToStatic returned null on app subdomain)
-  // or 301'd to broken thenewfuse.com root domain (DNS Error 1000 → 403).
-  // Now we redirect to the landing page on the SAME app subdomain with hash anchors,
-  // which works because _redirects serves index.html (landing page) for all paths.
-  if (host === 'app.thenewfuse.com' || host.startsWith('app.')) {
-    const staticRouteMap = {
-      '/pricing': '/#pricing',
-      '/features': '/#features',
-      '/about': '/#about',
-      '/blog': '/#blog',
-      '/community': '/#community',
-      '/brand': '/#brand',
-    };
-    if (staticRouteMap[path]) {
-      return Response.redirect(`https://app.thenewfuse.com${staticRouteMap[path]}`, 302);
-    }
-    if (path === '/docs' || path.startsWith('/docs/')) {
-      return Response.redirect('https://app.thenewfuse.com/#docs', 302);
-    }
-  }
-
   // Cloud Run Backend Origins
   const API_GATEWAY = 'https://api-gateway-241337102384.us-central1.run.app';
   const RELAY_SERVER = 'https://relay-server-ipjhxcemfa-uc.a.run.app';
 
-  // 3. API & WebSocket Routes - Proxy to Cloud Run
+  // 2. API & WebSocket Routes - Proxy to Cloud Run
   if (path.startsWith('/api/') || path.startsWith('/v1/') || path === '/api' || path === '/v1') {
     const apiTarget = new URL(path + url.search, API_GATEWAY);
     return fetch(new Request(apiTarget, context.request));
@@ -61,10 +54,10 @@ export async function onRequest(context) {
     return fetch(new Request(wsTarget, context.request));
   }
 
-  // 4. Fetch the requested asset from the static store
+  // 3. Fetch the requested asset from the static store
   let response = await context.env.ASSETS.fetch(context.request);
 
-  // 5. Fallback logic for SPA routes (on the app subdomain)
+  // 4. Fallback logic for SPA routes (on the app subdomain)
   if (
     response.status === 404 &&
     !path.includes('.') &&
@@ -76,6 +69,5 @@ export async function onRequest(context) {
 
   return response;
 }
-// Force function deploy: Thu Apr 23 13:03:03 EDT 2026
-// Logo update: Thu Apr 23 15:36:22 EDT 2026
-// Missing pages fix: Added explicit 302 redirects for /pricing, /features, /docs on app subdomain
+// Force function deploy: Thu Apr 30 14:57:00 UTC 2026
+// Missing pages fix: redirect /pricing, /features, /docs to thenewfuse.com landing

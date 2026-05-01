@@ -7,7 +7,7 @@ const USER_KEY = 'ai_arcade_user';
 
 export class AuthService {
   private apiUrl: string;
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClient | null;
 
   constructor(apiUrl: string) {
     this.apiUrl = apiUrl || config.apiUrl;
@@ -18,7 +18,7 @@ export class AuthService {
       this.supabase = createClient(supabaseUrl, supabaseAnonKey);
     } else {
       console.warn('[AuthService] Supabase credentials missing. Auth will be disabled.');
-      this.supabase = null as any;
+      this.supabase = null;
     }
   }
 
@@ -30,6 +30,9 @@ export class AuthService {
   }
 
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    if (!this.supabase) {
+      return { success: false, message: 'Auth is not configured.' };
+    }
     try {
       const { data, error } = await this.supabase.auth.signInWithPassword({
         email: credentials.email,
@@ -56,6 +59,9 @@ export class AuthService {
   }
 
   async register(credentials: RegisterCredentials): Promise<AuthResponse> {
+    if (!this.supabase) {
+      return { success: false, message: 'Auth is not configured.' };
+    }
     try {
       const { data, error } = await this.supabase.auth.signUp({
         email: credentials.email,
@@ -93,7 +99,9 @@ export class AuthService {
 
   async logout(): Promise<void> {
     try {
-      await this.supabase.auth.signOut();
+      if (this.supabase) {
+        await this.supabase.auth.signOut();
+      }
     } catch (error) {
       console.error('Supabase logout error:', error);
     } finally {
@@ -108,6 +116,10 @@ export class AuthService {
     const cachedUser = storage.getItem(USER_KEY);
     if (cachedUser) {
       return JSON.parse(cachedUser);
+    }
+
+    if (!this.supabase) {
+      return null;
     }
 
     try {

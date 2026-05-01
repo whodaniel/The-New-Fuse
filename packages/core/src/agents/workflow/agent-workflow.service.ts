@@ -226,7 +226,7 @@ export class AgentWorkflowService {
     this.logger.debug(`Executing sequential step: ${context.step.id}`);
     
     const tasks = context.step.config.tasks || [];
-    const results = [];
+    const results: any[] = [];
     
     for (const task of tasks) {
       const result = await this.executeTaskStep({ ...context, step: { ...context.step, config: task } });

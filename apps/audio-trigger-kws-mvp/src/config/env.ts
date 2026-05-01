@@ -35,6 +35,13 @@ export const env = {
     sampleWavPath: process.env.MINI_OMNI_SAMPLE_WAV ?? '',
     outputWavDir: process.env.MINI_OMNI_OUTPUT_WAV_DIR ?? '/tmp/mini-omni-kws-mvp',
   },
+  openaiCompat: {
+    enabled: toBool(process.env.OPENAI_COMPAT_ENABLED, false),
+    apiUrl: toString(process.env.OPENAI_COMPAT_API_URL, 'https://api.openai.com/v1/chat/completions'),
+    model: toString(process.env.OPENAI_COMPAT_MODEL, 'gpt-3.5-turbo'),
+    apiKey: process.env.OPENAI_COMPAT_API_KEY,
+    timeoutMs: toInt(process.env.OPENAI_COMPAT_TIMEOUT_MS, 15000),
+  },
   batcher: {
     flushIntervalMs: toInt(process.env.BATCH_FLUSH_INTERVAL_MS, 2000),
     maxItems: toInt(process.env.BATCH_MAX_ITEMS, 20),

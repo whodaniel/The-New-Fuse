@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import OpenAI from 'openai';
-import type { EmbeddingConfig, IEmbeddingProvider } from '../interface/vector-database.interface';
+import type { EmbeddingConfig, IEmbeddingProvider } from '../interface/vector-database.interface.js';
 
 @Injectable()
 export class OpenAIEmbeddingProvider implements IEmbeddingProvider {

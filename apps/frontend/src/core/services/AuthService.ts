@@ -3,7 +3,7 @@ import { EventBus } from '../../domain/core/eventBus';
 import { StateManager } from '../../domain/core/stateManager';
 import { authHelpers } from '../../lib/supabase';
 import { LoggingService } from '../../services/logging';
-const API_BASE_URL = '/api';
+const API_BASE_URL = '/api/v1';
 
 export class AuthService {
   private refreshTokenCache: string | null = null;
@@ -115,7 +115,7 @@ export class AuthService {
       if (!refreshToken) {
         throw new Error('No refresh token available');
       }
-      const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

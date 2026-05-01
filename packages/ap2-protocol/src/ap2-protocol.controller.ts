@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Logger } from '@nestjs/common';
-import { Ap2ProtocolService } from './ap2-protocol.service';
+import { Ap2ProtocolService } from './ap2-protocol.service.js';
 
 @Controller('ap2')
 export class Ap2ProtocolController {

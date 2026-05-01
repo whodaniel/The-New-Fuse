@@ -9,18 +9,22 @@
   "private": true,
   "exports": {
     ".": {
+      "types@build": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
     "./drizzle": {
+      "types@build": "./src/drizzle/index.ts",
       "types": "./dist/drizzle/index.d.ts",
       "default": "./dist/drizzle/index.js"
     },
     "./drizzle/repositories": {
+      "types@build": "./src/drizzle/repositories/index.ts",
       "types": "./dist/drizzle/repositories/index.d.ts",
       "default": "./dist/drizzle/repositories/index.js"
     },
     "./drizzle/schema": {
+      "types@build": "./src/drizzle/schema/index.ts",
       "types": "./dist/drizzle/schema/index.d.ts",
       "default": "./dist/drizzle/schema/index.js"
     }

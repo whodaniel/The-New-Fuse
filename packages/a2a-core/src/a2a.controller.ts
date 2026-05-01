@@ -12,7 +12,7 @@ import {
   UseGuards,
   Logger
 } from '@nestjs/common';
-import { A2AService } from './a2a.service';
+import { A2AService } from './a2a.service.js';
 import {
   AgentRegistration,
   A2AMessage,

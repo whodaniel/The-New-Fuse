@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { Task } from './TaskQueue';
+import { Task } from './TaskQueue.js';
 
 /**
  * TNF Agent Inbox System

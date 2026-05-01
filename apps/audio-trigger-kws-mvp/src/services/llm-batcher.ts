@@ -1,6 +1,6 @@
 import { renderPromptFromPackage } from '../templates/context-package';
 import { ContextPackage, LlmBatchResult } from '../types/events';
-import { MiniOmniClient } from './llm-backends/mini-omni-client';
+import { ILlmClient } from './llm-backends/openai-compat-client';
 
 export class LlmBatcher {
   private readonly queue: ContextPackage[] = [];
@@ -10,10 +10,14 @@ export class LlmBatcher {
   private resultHandler: ((result: LlmBatchResult) => void) | null = null;
 
   constructor(
-    private readonly llmClient: MiniOmniClient,
+    private readonly llmClients: ILlmClient[],
     private readonly flushIntervalMs: number,
     private readonly maxItems: number
-  ) {}
+  ) {
+    if (llmClients.length === 0) {
+      throw new Error('At least one LLM client must be provided to LlmBatcher');
+    }
+  }
 
   start(): void {
     if (this.flushTimer) {
@@ -64,18 +68,34 @@ export class LlmBatcher {
         const batch = this.queue.splice(0, this.maxItems);
         for (const pkg of batch) {
           const prompt = renderPromptFromPackage(pkg);
-          const response = await this.llmClient.complete(prompt, pkg);
+          let response = '';
+          let success = false;
+
+          for (const client of this.llmClients) {
+            try {
+              response = await client.complete(prompt, pkg);
+              if (!response.includes('request error') && !response.includes('failed: HTTP')) {
+                success = true;
+                break; // Successfully got a response, no need to try other clients
+              } else {
+                console.warn(`[LlmBatcher] Client failed, trying next: ${response.slice(0, 100)}...`);
+              }
+            } catch (clientError) {
+              console.error(`[LlmBatcher] Client threw an error, trying next:`, clientError);
+            }
+          }
+
           const result: LlmBatchResult = {
             pkgId: pkg.pkg_id,
             ruleId: pkg.rule_id,
             streamId: pkg.stream_id,
-            ok: !response.includes('request error') && !response.includes('failed: HTTP'),
+            ok: success,
             responsePreview: response.slice(0, 180),
             completedAt: new Date().toISOString(),
           };
           this.resultHandler?.(result);
           console.log(
-            `[mini-omni] rule=${pkg.rule_id} stream=${pkg.stream_id} response=${result.responsePreview}`
+            `[LLM] rule=${pkg.rule_id} stream=${pkg.stream_id} ok=${result.ok} response=${result.responsePreview}`
           );
         }
       }
