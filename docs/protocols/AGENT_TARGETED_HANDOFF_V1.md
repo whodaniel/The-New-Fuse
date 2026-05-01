@@ -143,3 +143,29 @@ await handoffs.acknowledge({
 - Audit logs: persist `publish`, `read`, `ack`, `reassign`.
 - PII controls: never store secrets inside `payload.prompt`.
 - SLA: monitor `pending -> claimed` and `claimed -> completed` latency.
+
+---
+
+## 4. Handoff Communication Protocol (Artifact #208)
+
+To ensure seamless coordination across the Specialist Swarm, all inter-agent messages and handoff notes MUST utilize the **Handoff-Header** standard in their `payload.prompt` or accompanying notes:
+
+```markdown
+### 📤 HANDOFF-HEADER
+- **Project ID:** [e.g., INFRA-002]
+- **Current Task:** [Specific implementation goal]
+- **Status:** [ACTIVE | BLOCKED | COMPLETE]
+- **Required Action:** [What the next agent needs to do]
+- **Merkle Hash:** [Root-hash of the current work-tree]
+```
+
+### Verification Rule
+Every receiving agent MUST verify the Merkle Hash before accepting the handoff to ensure they are working on the synchronized state.
+
+---
+
+## 5. Metadata
+
+- **ID Number:** `ID#:PROT-HANDOFF-V1-2026`
+- **Revision:** 1.1.0
+- **Attribution:** Distilled from 647 YouTube Intelligence Resources (Traversal: INFRA-002).

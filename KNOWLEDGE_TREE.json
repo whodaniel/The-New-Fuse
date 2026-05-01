@@ -1,5 +1,5 @@
 {
-  "root": "29c2f2f925a3e2334f6081d616878d468757f1de2019b8060f600034297f7af8",
+  "root": "44f882ca7bb1bfddda354bc70d3b8455b455ecc8c554be16d1f13b53ad76b8fc",
   "libraries": {
     "Library:Intelligence": {
       "hash": "574a2f1e5f043032b7f2398a84909e13e78f917ff64180affc74331ce0632d56",
@@ -3261,13 +3261,13 @@
       }
     },
     "Library:Protocols": {
-      "hash": "a9e22307e8ab82d7b883f3128cdf8dd964f40e2c3c34cc72838cb6e74e421ab6",
+      "hash": "c2adfed001ea85d999078441d7040257806bbe3aee65f8d18458e4732c8f6cf6",
       "files": {
         "AGENT_STATUS_LEDGER.md": {
           "hash": "7deb931a7cd9d61473a39866e67e55d27aeff4e3ba2acee37a198f7f78756b76"
         },
         "AGENT_TARGETED_HANDOFF_V1.md": {
-          "hash": "d826493814c90034af3c6b54c35cc619c2217eb91061f47c0eee370f80393703"
+          "hash": "2159d2ac8c40c68a46221c0446ffe14303a217f720e810e69e9b5d4b73f77709"
         },
         "AUDIT_PROTOCOL_TRANSITION_2026_04_29.md": {
           "hash": "14a76e187154200e42639d016c7fe6db6339780b0c182e85e7760c4528e72c06"
@@ -3282,7 +3282,7 @@
           "hash": "ff0ec8d013301e3d32f0b2b611c2b1ac143df9aa7395fec26390a6d0fa0324f3"
         },
         "LIVING_STATE.md": {
-          "hash": "d0244ca512d6c545aaf78ceced8b61ceb076d3d608b2791b07418eee32ebdf1d"
+          "hash": "75f520f9bc9f0824e743aeba73c7a283f957c7478d9aa4e8a6faec1afbee1ec4"
         },
         "MCP-COMPLETE-GUIDE.md": {
           "hash": "5e0afcf1d4c02dbe5f526d8355386182d6dce490fe7ba4500265fcdbeb309a79"
