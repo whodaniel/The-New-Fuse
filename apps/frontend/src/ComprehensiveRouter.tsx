@@ -248,17 +248,24 @@ const LazyPage = ({ name, path }: { name: string; path: string }) => (
 const SmartNavigation = lazy(() => import('./components/SmartNavigation'));
 // Orphan audit router - reachable via specific debug paths
 
-// Redirect component to force reload to static HTML pages
+// Redirect component to navigate to static landing page sections
 const RedirectToStatic = ({ to }: { to: string }) => {
   if (typeof window !== 'undefined') {
     const host = window.location.hostname;
-    // DO NOT redirect if we are on the app subdomain, as it should be handled by the SPA
+
+    // On the app subdomain: navigate to the landing page with hash anchor
+    // The landing page (index.html) is served for all paths via _redirects
     if (host === 'app.thenewfuse.com' || host.startsWith('app.')) {
+      // to is like "/#pricing" - navigate to the landing page with hash
+      const target = to.startsWith('/') ? to : '/' + to;
+      if (window.location.href !== window.location.origin + target) {
+        window.location.href = window.location.origin + target;
+      }
       return null;
     }
 
-    // Force redirect to the main site for static content to avoid SPA loops
-    const target = to.startsWith('/') ? `https://thenewfuse.com${to}` : to;
+    // On root domain: redirect to app subdomain (root domain is broken with 403)
+    const target = to.startsWith('/') ? `https://app.thenewfuse.com${to}` : to;
     if (window.location.href !== target) {
       window.location.href = target;
     }
