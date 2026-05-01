@@ -1,5 +1,5 @@
 {
-  "root": "d1c9c018589ea2c1a16ad363e5edc9b3d52c954757849f1fbd51d44c23c0e209",
+  "root": "62f9c6815f01a108e64360097c694aa3de02fa6d00603bdbc46e13c9adab331d",
   "libraries": {
     "Library:Intelligence": {
       "hash": "574a2f1e5f043032b7f2398a84909e13e78f917ff64180affc74331ce0632d56",
@@ -2616,7 +2616,7 @@
       }
     },
     "Library:Protocols": {
-      "hash": "9a0d20efbba8c5a3effb02c5f62dd82fa724f95b379c4532406deede28524b54",
+      "hash": "ed308b91cadbfede71f3f9a63f06c2d441556dd927267aac4b88d817c62c742c",
       "files": {
         "AGENT_STATUS_LEDGER.md": {
           "hash": "7deb931a7cd9d61473a39866e67e55d27aeff4e3ba2acee37a198f7f78756b76"
@@ -2637,7 +2637,7 @@
           "hash": "ff0ec8d013301e3d32f0b2b611c2b1ac143df9aa7395fec26390a6d0fa0324f3"
         },
         "LIVING_STATE.md": {
-          "hash": "9c96f30d85a9d1961d4b90acdf903c631a99c2902d4a3b7b961cd4b40429dd89"
+          "hash": "02804e3f770d2674513e4ccf85cc1ce25d1f58d51ca70087b2e64db164c1358e"
         },
         "MCP-COMPLETE-GUIDE.md": {
           "hash": "5e0afcf1d4c02dbe5f526d8355386182d6dce490fe7ba4500265fcdbeb309a79"
@@ -2649,16 +2649,16 @@
           "hash": "bb716dd7ca7b526c8ef494b5148b75e7670be54e1391819726b5ede1a4c5130c"
         },
         "TNF_CORPORATE_DEPARTMENT_ORCHESTRATION_MANUAL.md": {
-          "hash": "283108660dac57cfa4b78df7975145969c0f1d3360b38c52280cf3d18e246c35"
+          "hash": "2e651eb0c041ef0c40c328a492551a747d08eddb6f11839bcf84bf7a92858658"
         },
         "TNF_DOCUMENT_VETTING_PROCEDURE.md": {
           "hash": "5f27f9bf908f1d8859f8d2714d8f30c37ab270008adf00b7ac0900b04aa59b34"
         },
         "TNF_GOVERNANCE_TENETS.md": {
-          "hash": "1d4298d37fbc92e56f941a022b73eb45b454aded1d16834b3358261f9b40717c"
+          "hash": "b0650c4ef52565dfeaf32c77d8bfe9a1d3a61a81cd8f299a002fc861b66d7c14"
         },
         "TNF_RESOURCE_STRATEGY.md": {
-          "hash": "c432b0e4c98d80d762e9b2c535ff69d798a38b161a8257751f18a23344e6891d"
+          "hash": "9144ffdb8ea3e366ebfaf0f493e2ea17b82d2ce54b8736e72ca04ac829a854df"
         },
         "TNF_SYSTEM_LEXICON.md": {
           "hash": "5d870fdfeeb01f3fd63fbe6689eb3a3602be9a3f2b3b4ff1cd1fb5e550ac0647"

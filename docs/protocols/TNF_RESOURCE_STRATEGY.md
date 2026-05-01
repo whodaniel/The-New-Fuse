@@ -1,100 +1,56 @@
-# TNF Resource Strategy Protocol
+# ⚖️ TNF Resource Strategy Protocol (v2.0)
 
-**Maximize Leverage of Free LLM Accounts**
+**Status:** ACTIVE
+**Class:** [CLASS:PRIME]
+**Classified By:** Strategic Analyst (Traversal: INFRA-002)
 
-## Overview
+## 1. Overview
+The TNF Resource Strategy handles the intelligent selection, rotation, and management of LLM and compute resources. This v2.0 update integrates 312 distilled strategic artifacts to optimize for **Inference Arbitrage** and **Hardware-Native Autonomy**.
 
-The TNF Resource Strategy protocol is a new primitive designed to handle the
-intelligent selection, rotation, and management of LLM resources across The New
-Fuse ecosystem.
+---
 
-With the release of **Claude 4.6 (Sonnet) as a free default model**, agents can
-now scale horizontally by "multiplexing" across multiple free accounts without
-incurring costs. This protocol defines how messages and tasks signal their
-resource requirements and how gateways should handle account rotation.
+## 2. Strategic Primitives
 
-## Primitives
+### A. Inference Arbitrage (Cost/Reasoning Optimization)
+TNF agents must employ "Model-Task Mapping" to preserve high-value tokens.
+- **Tier 1 (Edge Reasoning):** Use SLMs (e.g., Llama 3.2 3B, Qwen-2.5 7B) for Turn-0 disambiguation, summarization, and regex-level routing.
+- **Tier 2 (Utility Reasoning):** Use mid-tier models (e.g., DeepSeek-V3, GPT-4o-mini) for routine implementation and documentation.
+- **Tier 3 (Frontier Logic):** Use high-reasoning models (e.g., Claude 3.7 Sonnet, Gemini 2.0 Pro) ONLY for strategic planning, complex refactoring, and final Forge audits.
 
-### 1. `ResourceTier`
+### B. Hardware-Native Strategy (The Forge Layer)
+TNF prioritizes **Hardware-Intimate Software** to bypass cloud latency.
+- **Native Operators:** Move from Python/Node scaffolding to C++/Rust/Wasm for real-time DSP, video, and state-management.
+- **Wasm as Silicon:** Utilize serverless Wasm runtimes (Cloudflare) for sub-millisecond cold starts in massive parallel swarms.
+- **LPU Acceleration:** Leverage specialized hardware (e.g., Groq LPU) for the "Conversation Threshold" in voice-agent interactions.
 
-Defines the economic level of the required resource:
+### C. Agentic Financial Strategy (Autonomous Liquidity)
+Agents act as independent economic actors via the **Onchain Persona**.
+- **Wallet-as-a-Resource:** Agents manage their own Coinbase Agent Kit wallets to pay for compute and API ingress.
+- **Micropayment Finality:** Use L2 protocols (Base/Optimism) for sub-second financial finality in agent-to-agent negotiation.
 
-- `free`: Standard free-tier accounts (e.g., Claude 4.6 Free, Gemini Flash
-  Free).
-- `pro`: Premium individual accounts.
-- `enterprise`: High-throughput corporate resources.
-- `shared`: Pooled community resources.
+---
 
-### 2. `ResourceStrategy`
+## 3. Advanced Strategy Patterns
 
-Allows an agent to define exactly how it wants its request handled:
+| Pattern Name | Logic Source | Strategic Goal |
+| :--- | :--- | :--- |
+| `INFERENCE_ARBITRAGE` | Artifact #602, #551 | 90% reduction in API spend via SLM-first routing. |
+| `CONTEXT_CACHING` | Artifact #355, #475 | Replace RAG with total-context ingestion for zero-latency retrieval. |
+| `SPECIALIST_SWARM` | Artifact #535, #519 | Decentralized task-allocation based on agent .skill density. |
+| `STATE_HYDRATION` | Artifact #218, #547 | Cross-session persistence via Redis state-injection. |
 
-```typescript
-{
-  tier: 'free',
-  selection: 'least-used', // Selection algorithm for account pools
-  onQuotaExhausted: 'switch-account', // Action to take on rate limits
-  maxRetries: 5
-}
-```
+---
 
-### 3. `resource-negotiate` Message
+## 4. Resource Negotiation Protocols
 
-A new TNF message type that allows agents and gateways to coordinate on pool
-status:
+### The `resource-negotiate` Message
+Agents must broadcast their strategy via the **TNF Envelope Protocol**:
+- `tier`: (free \| pro \| enterprise)
+- `arbitrage`: (true \| false) - Signals if the agent is authorized to fallback to SLMs.
+- `priority`: (low \| medium \| high) - Sets the hardware-acceleration tier.
 
-- `request-access`: Ask for a credential from a specific pool.
-- `pool-status`: Broadcast the remaining quota for a set of accounts.
+---
 
-## Usage Scenarios
-
-### Scenario A: Scaling Claude 4.6 Free
-
-An agent performing a large-scale codebase analysis can set its strategy to:
-
-- `tier: 'free'`
-- `onQuotaExhausted: 'switch-account'`
-- `poolId: 'my-claude-free-clones'`
-
-The TNF gateway will automatically rotate through the available Free account
-credentials until the task is complete, effectively circumventing single-account
-message caps.
-
-### Scenario B: Smart Hybrid Budgeting
-
-A budget-conscious agent can use `selection: 'priority-pro'`:
-
-1. Use the **Pro** account for high-complexity planning steps.
-2. Automatically switch to **Free** accounts for repetitive implementation
-   tasks.
-3. If all Free accounts are exhausted, fallback to `wait` or `upgrade` based on
-   instruction.
-
-## Implementation Details
-
-The primitives are located in:
-
-- `packages/relay-core/src/protocol/resource-protocol.ts`
-- `packages/relay-core/src/protocol/tnf-envelope.ts` (Integrated into the
-  envelope)
-- `packages/relay-core/src/protocol/task-protocol.ts` (Integrated into
-  orchestration tasks)
-
-## Example TNF Envelope
-
-```json
-{
-  "id": "...",
-  "type": "task",
-  "resource": {
-    "tier": "free",
-    "poolId": "universal-free-bridge",
-    "selection": "round-robin",
-    "onQuotaExhausted": "switch-account"
-  },
-  "payload": {
-    "action": "code-generation",
-    "content": "..."
-  }
-}
-```
+## 5. Governance Constraints
+- **The Least-Among-Us Rule:** Solutions MUST prioritize zero-cost execution (local scripts/regex) before invoking Tier 1+ resources.
+- **Sovereignty Gating:** Critical intelligence (Project IDs, Memory) must remain in **Library:Protocols** on local hardware.
