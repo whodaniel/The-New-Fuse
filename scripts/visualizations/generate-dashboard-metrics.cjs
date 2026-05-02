@@ -135,12 +135,42 @@ function getGraphStats(repoRoot) {
   };
 }
 
+function getIntelligenceStats(repoRoot) {
+  const kbPath = path.join(repoRoot, '../my-ai-knowledge-base/AI_Knowledge_Base.md');
+  const libPath = path.join(repoRoot, '../my-ai-knowledge-base/video-library/ai_video_library.html');
+  
+  let artifactsCount = 0;
+  let libraryCount = 0;
+
+  if (fs.existsSync(kbPath)) {
+    const kbContent = fs.readFileSync(kbPath, 'utf8');
+    const matches = kbContent.match(/## #(\d+):/g);
+    artifactsCount = matches ? matches.length : 0;
+  }
+
+  if (fs.existsSync(libPath)) {
+    const libContent = fs.readFileSync(libPath, 'utf8');
+    const matches = libContent.match(/<td class="index-col">(\d+)<\/td>/g);
+    if (matches) {
+      const indices = matches.map(m => parseInt(m.match(/\d+/)[0]));
+      libraryCount = Math.max(...indices);
+    }
+  }
+
+  return {
+    master_library: libraryCount,
+    executable_artifacts: artifactsCount,
+    extraction_density: libraryCount > 0 ? ((artifactsCount / libraryCount) * 100).toFixed(1) + '%' : '0%',
+    status: "[STATUS:SYNCHRONIZED]"
+  };
+}
+
 function getDashboardCardStats() {
   return {
     graph_cards: 7,
     system_cards: 6,
     docs_cards: 8,
-    interactive_visualizations: 13,
+    interactive_visualizations: 14, // Increased for Intelligence Map
   };
 }
 
@@ -158,6 +188,7 @@ function main() {
       repo_root: repoRoot,
       generator: 'scripts/visualizations/generate-dashboard-metrics.cjs',
     },
+    intelligence: getIntelligenceStats(repoRoot),
     agents: listPersonas(repoRoot),
     skills: getSkillStats(repoRoot),
     graph: getGraphStats(repoRoot),
@@ -170,6 +201,7 @@ function main() {
     JSON.stringify(
       {
         generated_at: payload.generated_at,
+        intelligence_density: payload.intelligence.extraction_density,
         agents_unique: payload.agents.unique_names,
         agents_raw: payload.agents.raw_files,
         domains: payload.graph.domain_subgraphs,
