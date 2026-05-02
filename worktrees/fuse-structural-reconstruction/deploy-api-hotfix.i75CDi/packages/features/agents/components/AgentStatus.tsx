@@ -1,0 +1,20 @@
+import React from 'react';
+import { Badge } from '@/components/ui/badge';
+export const AgentStatus: React.FC = ({ agent }) => {
+    const getStatusVariant = (status) => {
+        switch (status) {
+            case 'active':
+                return 'success';
+            case 'inactive':
+                return 'secondary';
+            case 'error':
+                return 'destructive';
+            default:
+                return 'default';
+        }
+    };
+    return (<Badge variant={getStatusVariant(agent.status)} className="capitalize">
+      {agent.status}
+    </Badge>);
+};
+//# sourceMappingURL=AgentStatus.js.map

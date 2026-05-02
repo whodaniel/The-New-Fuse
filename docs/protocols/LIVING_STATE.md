@@ -21,16 +21,9 @@
 10. [✅] Intelligence Vectorization (645 artifacts in `pgvector`).
 11. [✅] Semantic Search Enabled (Verified via `match_documents`).
 12. [✅] Protocol Intersection (Unified `brain_sync.sh` intersects with `youtube_pipeline.js`).
-13. [⚡] Strategic Analyst Traversal: Updating core protocols with distilled intelligence.
-
----
-
-## 🏗️ Integrated Intelligence Pipeline
-The TNF pipeline now operates as a multi-layered "Intersection" of protocols:
-- **Layer 1: Ingestion** (`youtube_pipeline.js`, `harvester.ts`) - Handles raw data retrieval.
-- **Layer 2: Distillation** (`Gemini CLI`, `forge_distiller.py`) - Extracts `[CLASS:INTEL]` into `AI_Knowledge_Base.md`.
-- **Layer 3: Synchronization** (`brain_sync.sh`) - Unifies the flat-file Brain with the Merkle Tree and pgvector.
-- **Layer 4: Traversal** (`Strategic Analyst`, `Governance Auditor`) - Proactively applies distilled intelligence to update `docs/protocols/`.
+13. [✅] Strategic Analyst Traversal: Protocols updated to v2.0.
+14. [✅] Synergistic Cohesion: Intelligence Search API exposed in `AgentController`.
+15. [✅] SAAS Frontend Deployment: Dashboard and Maps live on Cloudflare.
 
 ---
 
@@ -38,7 +31,8 @@ The TNF pipeline now operates as a multi-layered "Intersection" of protocols:
 - **Master Library:** 647
 - **Intelligence Density:** 100% (645 Artifacts)
 - **Vectorized Nodes:** 645 (`tnf_intelligence_artifacts`)
-- **Merkle Root:** `29c2f2f925a3e2334f6081d616878d468757f1de2019b8060f600034297f7af8`
+- **API Search:** `GET /api/agents/intelligence/search?q={query}`
+- **Merkle Root:** `44f882ca7bb1bfddda354bc70d3b8455b455ecc8c554be16d1f13b53ad76b8fc`
 - **Vault Status:** `SYNCHRONIZED` (GitHub Release active).
 
 

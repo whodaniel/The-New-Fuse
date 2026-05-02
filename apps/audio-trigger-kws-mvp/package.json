@@ -17,5 +17,8 @@
     "@types/node": "^24.0.13",
     "tsx": "^4.20.3",
     "typescript": "^6.0.2"
+  },
+  "dependencies": {
+    "ws": "^8.20.0"
   }
 }

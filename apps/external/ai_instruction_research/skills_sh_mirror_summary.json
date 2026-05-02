@@ -1,0 +1,129 @@
+{
+  "generated_at": "2026-03-08T07:46:45.675165+00:00",
+  "source": "skills.sh",
+  "crawled_pages": 120,
+  "failed_pages": 0,
+  "mirrored_entries_total": 155,
+  "sample_entries": [
+    {
+      "url": "https://skills.sh/obra/superpowers/receiving-code-review",
+      "title": "receiving-code-review by obra/superpowers",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/obra/superpowers/finishing-a-development-branch",
+      "title": "finishing-a-development-branch by obra/superpowers",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/obra/superpowers/executing-plans",
+      "title": "executing-plans by obra/superpowers",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/obra/superpowers/dispatching-parallel-agents",
+      "title": "dispatching-parallel-agents by obra/superpowers",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/obra/superpowers/brainstorming",
+      "title": "brainstorming by obra/superpowers",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/nextlevelbuilder/ui-ux-pro-max-skill/ui-ux-pro-max",
+      "title": "ui-ux-pro-max by nextlevelbuilder/ui-ux-pro-max-skill",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/microsoft/github-copilot-for-azure/microsoft-foundry",
+      "title": "microsoft-foundry by microsoft/github-copilot-for-azure",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/microsoft/github-copilot-for-azure/entra-app-registration",
+      "title": "entra-app-registration by microsoft/github-copilot-for-azure",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/microsoft/github-copilot-for-azure/azure-validate",
+      "title": "azure-validate by microsoft/github-copilot-for-azure",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/microsoft/github-copilot-for-azure/azure-storage",
+      "title": "azure-storage by microsoft/github-copilot-for-azure",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/microsoft/github-copilot-for-azure/azure-resource-visualizer",
+      "title": "azure-resource-visualizer by microsoft/github-copilot-for-azure",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/microsoft/github-copilot-for-azure/azure-resource-lookup",
+      "title": "azure-resource-lookup by microsoft/github-copilot-for-azure",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/microsoft/github-copilot-for-azure/azure-rbac",
+      "title": "azure-rbac by microsoft/github-copilot-for-azure",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/microsoft/github-copilot-for-azure/azure-prepare",
+      "title": "azure-prepare by microsoft/github-copilot-for-azure",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/microsoft/github-copilot-for-azure/azure-postgres",
+      "title": "azure-postgres by microsoft/github-copilot-for-azure",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/microsoft/github-copilot-for-azure/azure-observability",
+      "title": "azure-observability by microsoft/github-copilot-for-azure",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/microsoft/github-copilot-for-azure/azure-messaging",
+      "title": "azure-messaging by microsoft/github-copilot-for-azure",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/microsoft/github-copilot-for-azure/azure-kusto",
+      "title": "azure-kusto by microsoft/github-copilot-for-azure",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/microsoft/github-copilot-for-azure/azure-hosted-copilot-sdk",
+      "title": "azure-hosted-copilot-sdk by microsoft/github-copilot-for-azure",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    },
+    {
+      "url": "https://skills.sh/microsoft/github-copilot-for-azure/azure-diagnostics",
+      "title": "azure-diagnostics by microsoft/github-copilot-for-azure",
+      "brief": "Discover and install skills for AI agents.",
+      "tags": "skill-detail"
+    }
+  ]
+}

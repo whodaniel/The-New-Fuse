@@ -1,0 +1,124 @@
+#!/bin/bash
+set -euo pipefail
+
+if [[ -f "$HOME/bin/voicebridge-paths.sh" ]]; then
+  # shellcheck disable=SC1090
+  source "$HOME/bin/voicebridge-paths.sh"
+fi
+
+usage() {
+  cat <<'USAGE'
+Usage: voice-stt-selftest --profile <name> --text "..." [--voice <voice>] [--lang <code>]
+USAGE
+}
+
+normalize_profile() {
+  local raw="${1:-main}"
+  raw="$(printf '%s' "$raw" | tr '[:upper:]' '[:lower:]')"
+  raw="${raw//[^a-z0-9_-]/_}"
+  raw="${raw##_}"
+  raw="${raw%%_}"
+  [[ -n "$raw" ]] || raw="main"
+  printf '%s' "$raw"
+}
+
+infer_port() {
+  local profile="$1"
+  case "$profile" in
+    main|default|primary)
+      echo 50005
+      return
+      ;;
+  esac
+  local hash
+  hash="$(printf '%s' "$profile" | cksum | awk '{print $1}')"
+  echo $((50005 + (hash % 400) + 1))
+}
+
+default_voice() {
+  case "$1" in
+    b|samantha)
+      echo Samantha
+      ;;
+    *)
+      echo Daniel
+      ;;
+  esac
+}
+
+PROFILE=""
+TEXT=""
+VOICE=""
+LANG="en"
+THREADS="2"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --profile)
+      PROFILE="${2:-}"
+      shift 2
+      ;;
+    --text)
+      TEXT="${2:-}"
+      shift 2
+      ;;
+    --voice)
+      VOICE="${2:-}"
+      shift 2
+      ;;
+    --lang)
+      LANG="${2:-en}"
+      shift 2
+      ;;
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown arg: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+done
+
+if [[ -z "$PROFILE" || -z "$TEXT" ]]; then
+  usage >&2
+  exit 1
+fi
+
+PROFILE="$(normalize_profile "$PROFILE")"
+if [[ -z "$VOICE" ]]; then
+  VOICE="$(default_voice "$PROFILE")"
+fi
+PORT="$(infer_port "$PROFILE")"
+
+AUDIO_FILE="/tmp/voice_stt_selftest_${PROFILE}_$$.aiff"
+trap 'rm -f "$AUDIO_FILE"' EXIT
+
+say -v "$VOICE" -o "$AUDIO_FILE" "$TEXT"
+TRANSCRIPT="$(/Users/<owner>/bin/whisper.cpp -m "$HOME/.whisper-models/ggml-base.en.bin" -f "$AUDIO_FILE" -t "$THREADS" -l "$LANG" -nt -np 2>/dev/null | tr '\n' ' ' | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//')"
+
+if [[ -z "$TRANSCRIPT" ]]; then
+  echo "transcript-empty" >&2
+  exit 2
+fi
+
+python3 - <<'PY' "$PORT" "$TRANSCRIPT"
+import json
+import sys
+import urllib.request
+
+port = int(sys.argv[1])
+text = sys.argv[2]
+url = f"http://127.0.0.1:{port}/send"
+body = json.dumps({"text": text}).encode("utf-8")
+req = urllib.request.Request(url, data=body, method="POST", headers={"Content-Type": "application/json"})
+with urllib.request.urlopen(req, timeout=4) as resp:
+    out = resp.read().decode("utf-8", errors="replace")
+print(out)
+PY
+
+echo "profile=$PROFILE port=$PORT"
+echo "voice=$VOICE"
+echo "transcript=$TRANSCRIPT"

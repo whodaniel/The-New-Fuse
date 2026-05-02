@@ -1,0 +1,20 @@
+node_modules/
+dist/
+.env
+.env.local
+
+# User profile data (per-user, should not be committed)
+users/
+
+# Profile JSON files with personal data (keep default.json template)
+configs/profiles/*
+!configs/profiles/default.json
+
+# OS artifacts
+.DS_Store
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.idea/

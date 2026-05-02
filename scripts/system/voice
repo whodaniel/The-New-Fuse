@@ -1,0 +1,356 @@
+#!/bin/bash
+# voice: Start invisible background voice link
+set -euo pipefail
+
+if [[ -f "$HOME/bin/voicebridge-paths.sh" ]]; then
+    # shellcheck disable=SC1090
+    source "$HOME/bin/voicebridge-paths.sh"
+fi
+
+usage() {
+    echo "Usage: voice [--profile A|B|...] [--port N] [--no-open]"
+}
+
+profile="${VOICEBRIDGE_PROFILE:-main}"
+open_browser=1
+port_override=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --profile)
+            profile="${2:-}"
+            if [[ -z "$profile" ]]; then
+                echo "Missing value for --profile" >&2
+                exit 1
+            fi
+            shift 2
+            ;;
+        --profile=*)
+            profile="${1#--profile=}"
+            if [[ -z "$profile" ]]; then
+                echo "Missing value for --profile" >&2
+                exit 1
+            fi
+            shift
+            ;;
+        --port)
+            port_override="${2:-}"
+            if [[ -z "$port_override" ]]; then
+                echo "Missing value for --port" >&2
+                exit 1
+            fi
+            shift 2
+            ;;
+        --port=*)
+            port_override="${1#--port=}"
+            if [[ -z "$port_override" ]]; then
+                echo "Missing value for --port" >&2
+                exit 1
+            fi
+            shift
+            ;;
+        --no-open)
+            open_browser=0
+            shift
+            ;;
+        --help|-h)
+            usage
+            exit 0
+            ;;
+        *)
+            usage >&2
+            exit 1
+            ;;
+    esac
+done
+
+if command -v voicebridge_use_profile >/dev/null 2>&1; then
+    voicebridge_use_profile "$profile"
+fi
+VOICEBRIDGE_STATE_DIR="${VOICEBRIDGE_STATE_DIR:-$HOME/.voicebridge}"
+mkdir -p "$VOICEBRIDGE_STATE_DIR"
+if command -v voicebridge_init_state >/dev/null 2>&1; then
+    voicebridge_init_state
+fi
+export VOICEBRIDGE_STATE_DIR
+export VOICEBRIDGE_PROFILE
+
+profile_suffix=""
+if command -v voicebridge_profile_suffix >/dev/null 2>&1; then
+    profile_suffix="$(voicebridge_profile_suffix)"
+fi
+if [[ -z "$profile_suffix" ]]; then
+    normalized_profile="$(printf '%s' "$VOICEBRIDGE_PROFILE" | tr '[:upper:]' '[:lower:]')"
+    normalized_profile="${normalized_profile//[^a-z0-9_-]/_}"
+    case "$normalized_profile" in
+        ""|main|default|primary)
+            profile_suffix=""
+            ;;
+        *)
+            profile_suffix="_$normalized_profile"
+            ;;
+    esac
+fi
+
+if [[ -n "$port_override" ]]; then
+    VOICEBRIDGE_PORT="$port_override"
+elif [[ -n "${VOICEBRIDGE_PORT:-}" ]]; then
+    :
+else
+    if [[ -z "$profile_suffix" ]]; then
+        VOICEBRIDGE_PORT=50005
+    else
+        profile_hash="$(printf '%s' "$VOICEBRIDGE_PROFILE" | cksum | awk '{print $1}')"
+        VOICEBRIDGE_PORT=$((50005 + (profile_hash % 400) + 1))
+    fi
+fi
+if ! [[ "$VOICEBRIDGE_PORT" =~ ^[0-9]+$ ]]; then
+    echo "Invalid port: $VOICEBRIDGE_PORT" >&2
+    exit 1
+fi
+export VOICEBRIDGE_PORT
+
+is_default_profile=0
+case "$VOICEBRIDGE_PROFILE" in
+    main|default|primary)
+        is_default_profile=1
+        ;;
+esac
+
+kill_legacy_unprofiled_python_script() {
+    local script_name="$1"
+    python3 - "$script_name" <<'PY' || true
+import os
+import signal
+import subprocess
+import sys
+
+script = (sys.argv[1] if len(sys.argv) > 1 else "").strip().lower()
+if not script:
+    raise SystemExit(0)
+
+try:
+    output = subprocess.check_output(
+        ["ps", "-Ao", "pid=,command="],
+        text=True,
+        stderr=subprocess.DEVNULL,
+    )
+except Exception:
+    raise SystemExit(0)
+
+for raw in output.splitlines():
+    line = raw.strip()
+    if not line:
+        continue
+    parts = line.split(None, 1)
+    if len(parts) != 2:
+        continue
+    pid_text, cmd = parts
+    cmd_lower = cmd.lower()
+    if script not in cmd_lower:
+        continue
+    if "--profile" in cmd_lower:
+        continue
+    argv0 = os.path.basename(cmd.split()[0]).lower() if cmd.split() else ""
+    if "python" not in argv0:
+        continue
+    try:
+        pid = int(pid_text)
+    except Exception:
+        continue
+    try:
+        os.kill(pid, signal.SIGTERM)
+    except Exception:
+        pass
+PY
+}
+
+VOICE_SERVER_LOG="/tmp/voice_server${profile_suffix}.log"
+STREAM_WATCH_LOG="/tmp/stream_watch${profile_suffix}.log"
+RESPONSE_AUDIO_LOG="/tmp/voice_response_audio${profile_suffix}.log"
+CLICK_DAEMON_LOG="/tmp/voice_target_click.log"
+
+TARGET_TTY=""
+if command -v voicebridge_state_file >/dev/null 2>&1; then
+    RESPONSE_AUDIO_FLAG="$(voicebridge_state_file "voice_response_audio_enabled")"
+    CLOUD_ENV_FILE="$(voicebridge_state_file "voice_bridge_cloud.env")"
+else
+    RESPONSE_AUDIO_FLAG="$VOICEBRIDGE_STATE_DIR/voice_response_audio_enabled"
+    CLOUD_ENV_FILE="$VOICEBRIDGE_STATE_DIR/voice_bridge_cloud.env"
+fi
+
+# 1. Set the window title so the server can find us
+echo -ne "\033]0;GEMINI_ORCHESTRATOR_${VOICEBRIDGE_PROFILE}\007"
+echo "📡 Window title set to: GEMINI_ORCHESTRATOR_${VOICEBRIDGE_PROFILE}"
+
+# Cloud forwarding defaults (can be overridden in voice_bridge_cloud.env)
+if [[ -f "$CLOUD_ENV_FILE" ]]; then
+    # shellcheck disable=SC1090
+    source "$CLOUD_ENV_FILE"
+fi
+: "${VOICE_KWS_INGEST_URL:=https://tnf-audio-trigger-kws-gateway.bizsynth.workers.dev/v1/ingest/text}"
+: "${VOICE_KWS_FLUSH_URL:=https://tnf-audio-trigger-kws-gateway.bizsynth.workers.dev/v1/flush}"
+: "${VOICE_KWS_API_KEY:=2441e0d9a812c99690345e99fd0f5b0e6dcaba5eadb169eb}"
+export VOICE_KWS_INGEST_URL VOICE_KWS_FLUSH_URL VOICE_KWS_API_KEY
+
+# Default lock: current terminal tab (profile-scoped)
+if [[ -x "$HOME/bin/voice-target-here" ]]; then
+    TARGET_TTY_RAW="$("$HOME/bin/voice-target-here" --profile "$VOICEBRIDGE_PROFILE" --quiet 2>/dev/null || true)"
+    TARGET_TTY_RAW="${TARGET_TTY_RAW//$'\r'/}"
+    TARGET_TTY_RAW="${TARGET_TTY_RAW//$'\n'/}"
+    if [[ "$TARGET_TTY_RAW" =~ ^/dev/ttys[0-9]+$ ]]; then
+        TARGET_TTY="${TARGET_TTY_RAW#/dev/}"
+    elif [[ "$TARGET_TTY_RAW" =~ ^ttys[0-9]+$ ]]; then
+        TARGET_TTY="$TARGET_TTY_RAW"
+    else
+        TARGET_TTY=""
+    fi
+    if [[ -n "$TARGET_TTY" ]]; then
+        echo "🎯 [${VOICEBRIDGE_PROFILE}] Destination lock set to terminal: $TARGET_TTY"
+    fi
+fi
+
+# 2. Verify Python deps
+if ! python3 - <<'PY' >/dev/null 2>&1
+import flask  # noqa: F401
+PY
+then
+    echo "❌ Missing Python dependency: flask"
+    echo "Install with: python3 -m pip install --user --break-system-packages flask"
+    exit 1
+fi
+
+# 3. Start the server
+echo "🚀 Starting Invisible Voice Server [${VOICEBRIDGE_PROFILE}] on port ${VOICEBRIDGE_PORT}..."
+if [[ "$is_default_profile" -eq 1 ]]; then
+    kill_legacy_unprofiled_python_script "voice_server.py"
+fi
+pkill -f "voice_server.py.*--profile[ =]${VOICEBRIDGE_PROFILE}" >/dev/null 2>&1 || true
+nohup python3 "$HOME/bin/voice_server.py" --profile "$VOICEBRIDGE_PROFILE" --port "$VOICEBRIDGE_PORT" > "$VOICE_SERVER_LOG" 2>&1 &
+SERVER_PID=$!
+
+# Wait for server health
+READY=0
+for _ in {1..40}; do
+    if curl -fsS "http://127.0.0.1:${VOICEBRIDGE_PORT}/" >/dev/null 2>&1; then
+        READY=1
+        break
+    fi
+    sleep 0.2
+done
+
+if [[ "$READY" -ne 1 ]]; then
+    echo "❌ Voice server failed to start. See: $VOICE_SERVER_LOG"
+    tail -n 80 "$VOICE_SERVER_LOG" 2>/dev/null || true
+    exit 1
+fi
+
+# 4. Restart bridge (profile scoped)
+echo "🧵 Restarting stream bridge [${VOICEBRIDGE_PROFILE}]..."
+if [[ "$is_default_profile" -eq 1 ]]; then
+    kill_legacy_unprofiled_python_script "stream_watch.py"
+fi
+pkill -f "stream_watch.py.*--profile[ =]${VOICEBRIDGE_PROFILE}" >/dev/null 2>&1 || true
+STREAM_WATCH_CMD=(python3 -u "$HOME/bin/stream_watch.py" --profile "$VOICEBRIDGE_PROFILE")
+if [[ -n "${TARGET_TTY:-}" ]]; then
+    STREAM_WATCH_CMD+=(--target-tty "$TARGET_TTY")
+fi
+nohup "${STREAM_WATCH_CMD[@]}" > "$STREAM_WATCH_LOG" 2>&1 &
+BRIDGE_PID=$!
+
+# 4b. Start global click-anchor daemon (Cmd+Option+Click)
+CLICK_DAEMON_BIN="$HOME/bin/voice-target-click-daemon"
+CLICK_DAEMON_CMD=(swift "$HOME/bin/voice-target-click-daemon.swift")
+if [[ -x "$CLICK_DAEMON_BIN" ]]; then
+    CLICK_DAEMON_CMD=("$CLICK_DAEMON_BIN")
+fi
+
+if ! pgrep -f "voice-target-click-daemon" >/dev/null 2>&1; then
+    echo "🖱️ Starting click-anchor daemon..."
+    # Pass state dir and profile to the daemon so it matches this instance
+    export VOICEBRIDGE_STATE_DIR VOICEBRIDGE_PROFILE
+    nohup "${CLICK_DAEMON_CMD[@]}" > "$CLICK_DAEMON_LOG" 2>&1 &
+    CLICK_DAEMON_PID=$!
+else
+    CLICK_DAEMON_PID=""
+    echo "🖱️ Click-anchor daemon already running."
+fi
+
+# 4c. Start optional AI response audio watcher (profile scoped)
+if [[ -f "$HOME/bin/voice-response-audio-watch.py" ]]; then
+    echo "🔊 Starting response-audio watcher [${VOICEBRIDGE_PROFILE}]..."
+    if [[ "$is_default_profile" -eq 1 ]]; then
+        kill_legacy_unprofiled_python_script "voice-response-audio-watch.py"
+    fi
+    pkill -f "voice-response-audio-watch.py.*--profile[ =]${VOICEBRIDGE_PROFILE}" >/dev/null 2>&1 || true
+    RESPONSE_AUDIO_CMD=(python3 -u "$HOME/bin/voice-response-audio-watch.py" --profile "$VOICEBRIDGE_PROFILE")
+    if [[ -n "${TARGET_TTY:-}" ]]; then
+        RESPONSE_AUDIO_CMD+=(--target-tty "$TARGET_TTY")
+    fi
+    nohup "${RESPONSE_AUDIO_CMD[@]}" > "$RESPONSE_AUDIO_LOG" 2>&1 &
+    AUDIO_WATCH_PID=$!
+else
+    AUDIO_WATCH_PID=""
+    echo "⚠️ response-audio watcher not installed; run Install Voice Bridge.command to refresh tools."
+fi
+
+# 5. Open the browser
+if [[ "$open_browser" -eq 1 ]]; then
+    echo "🌐 Opening Beam Controller..."
+    sleep 1
+    open "http://localhost:${VOICEBRIDGE_PORT}"
+fi
+
+echo ""
+echo "🏔️  INVISIBLE VOICE LINK ACTIVE [${VOICEBRIDGE_PROFILE}]"
+echo "1. Click 'ACTIVATE BEAM' in the browser."
+echo "2. You can now use your Mac for anything else!"
+echo "3. Talk naturally. Your words will beam here automatically."
+echo ""
+echo "Controls:"
+echo "- Hold Cmd+Option and click target field to anchor destination."
+echo "- Lock destination to this terminal tab: voice-target-here --profile ${VOICEBRIDGE_PROFILE}"
+echo "- Lock destination to any app/window:    voice-target-pick --profile ${VOICEBRIDGE_PROFILE} --delay 3"
+echo "- Show current destination lock:          voice-target-show --profile ${VOICEBRIDGE_PROFILE}"
+echo "- Clear destination lock:                 voice-target-clear --profile ${VOICEBRIDGE_PROFILE}"
+echo "- Toggle mic on/off:                      voice-mic-toggle --profile ${VOICEBRIDGE_PROFILE}"
+echo "- Toggle AI response audio on/off:        voice-response-audio-toggle --profile ${VOICEBRIDGE_PROFILE}"
+echo ""
+echo "Profile: ${VOICEBRIDGE_PROFILE}"
+echo "Port: ${VOICEBRIDGE_PORT}"
+echo "State dir: $VOICEBRIDGE_STATE_DIR"
+echo "Logs:"
+echo "- server: $VOICE_SERVER_LOG"
+echo "- bridge: $STREAM_WATCH_LOG"
+echo "- audio : $RESPONSE_AUDIO_LOG"
+if [[ -f "$RESPONSE_AUDIO_FLAG" ]]; then
+    echo "AI response audio: ON"
+else
+    echo "AI response audio: OFF"
+fi
+if [[ -n "${VOICE_KWS_INGEST_URL:-}" ]]; then
+    echo "Cloud forwarding: ON -> $VOICE_KWS_INGEST_URL"
+else
+    echo "Cloud forwarding: OFF"
+fi
+echo ""
+echo "Press Ctrl+C to stop the link."
+
+# Cleanup on exit
+cleanup() {
+    [[ -n "${SERVER_PID:-}" ]] && kill "$SERVER_PID" >/dev/null 2>&1 || true
+    [[ -n "${BRIDGE_PID:-}" ]] && kill "$BRIDGE_PID" >/dev/null 2>&1 || true
+    pkill -f "stream_watch.py.*--profile[ =]${VOICEBRIDGE_PROFILE}" >/dev/null 2>&1 || true
+    if [[ "$is_default_profile" -eq 1 ]]; then
+        kill_legacy_unprofiled_python_script "stream_watch.py"
+    fi
+    [[ -n "${CLICK_DAEMON_PID:-}" ]] && kill "$CLICK_DAEMON_PID" >/dev/null 2>&1 || true
+    [[ -n "${AUDIO_WATCH_PID:-}" ]] && kill "$AUDIO_WATCH_PID" >/dev/null 2>&1 || true
+    pkill -f "voice-response-audio-watch.py.*--profile[ =]${VOICEBRIDGE_PROFILE}" >/dev/null 2>&1 || true
+    if [[ "$is_default_profile" -eq 1 ]]; then
+        kill_legacy_unprofiled_python_script "voice-response-audio-watch.py"
+    fi
+    echo "👋 Voice link stopped [${VOICEBRIDGE_PROFILE}]."
+}
+trap "cleanup; exit" SIGINT SIGTERM
+wait

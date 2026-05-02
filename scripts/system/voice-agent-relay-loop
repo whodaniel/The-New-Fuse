@@ -1,0 +1,176 @@
+#!/usr/bin/env python3
+"""
+Continuous A2A relay between two Voice Bridge profiles.
+
+Reads each profile's latest assistant-output marker written by
+voice-response-audio-watch.py and forwards it to the other profile via
+voice-agent-send. This creates an ongoing back-and-forth without manual sends.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import os
+import re
+import subprocess
+import time
+from dataclasses import dataclass
+
+
+def normalize_profile(raw: str | None) -> str:
+    profile = (raw or "main").strip().lower()
+    profile = re.sub(r"[^a-z0-9_-]+", "_", profile).strip("_")
+    return profile or "main"
+
+
+def is_default_profile(profile: str) -> bool:
+    return profile in {"main", "default", "primary"}
+
+
+def profile_suffix(profile: str) -> str:
+    return "" if is_default_profile(profile) else f"_{profile}"
+
+
+def read_assistant_output(profile: str) -> tuple[float, str] | None:
+    suffix = profile_suffix(profile)
+    ts_file = f"/tmp/voice_last_assistant_output_ts{suffix}"
+    text_file = f"/tmp/voice_last_assistant_output_text{suffix}"
+    if not os.path.exists(ts_file) or not os.path.exists(text_file):
+        return None
+    try:
+        ts_raw = open(ts_file, "r", encoding="utf-8").read().strip()
+        text_raw = open(text_file, "r", encoding="utf-8").read().strip()
+        ts = float(ts_raw)
+    except Exception:
+        return None
+    text = re.sub(r"\s+", " ", text_raw).strip()
+    if not text:
+        return None
+    return ts, text
+
+
+SKIP_PHRASES = (
+    "a2a from:",
+    "watcher status:",
+    "target stream:",
+    "process exited",
+    "voice bridge",
+    "conversation interrupted",
+    "hit /feedback",
+    "chunk id:",
+    "working (",
+    "explored",
+    " ran ",
+)
+
+
+def should_skip_text(text: str) -> bool:
+    lower = text.lower().strip()
+    if not lower:
+        return True
+    if len(lower) < 14:
+        return True
+    if lower.startswith(("[a2a", "usage:", "error:", "traceback")):
+        return True
+    if any(token in lower for token in SKIP_PHRASES):
+        return True
+    alpha = sum(ch.isalpha() for ch in lower)
+    if alpha / max(1, len(lower)) < 0.55:
+        return True
+    return False
+
+
+def hash_text(text: str) -> str:
+    return hashlib.sha1(text.lower().encode("utf-8")).hexdigest()
+
+
+def send_a2a(from_profile: str, to_profile: str, text: str) -> tuple[bool, str]:
+    cmd = [
+        os.path.expanduser("~/bin/voice-agent-send"),
+        "--from",
+        from_profile,
+        "--to",
+        to_profile,
+        "--text",
+        text,
+    ]
+    env = dict(os.environ)
+    env.setdefault("VOICE_AGENT_SEND_SPEAK", "1")
+    proc = subprocess.run(cmd, text=True, capture_output=True, env=env)
+    output = (proc.stdout or proc.stderr or "").strip()
+    return proc.returncode == 0, output
+
+
+@dataclass
+class DirectionState:
+    src: str
+    dst: str
+    last_ts: float = 0.0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Run continuous A2A relay between two profiles.")
+    parser.add_argument("--a", required=True, help="First profile")
+    parser.add_argument("--b", required=True, help="Second profile")
+    parser.add_argument("--interval-ms", type=int, default=250, help="Polling interval in ms")
+    parser.add_argument(
+        "--dedupe-window-ms",
+        type=int,
+        default=15000,
+        help="Ignore repeated identical chunks within this window",
+    )
+    args = parser.parse_args()
+
+    a = normalize_profile(args.a)
+    b = normalize_profile(args.b)
+    if a == b:
+        raise SystemExit("--a and --b must be different profiles")
+
+    interval_s = max(0.05, args.interval_ms / 1000.0)
+    dedupe_window_s = max(1.0, args.dedupe_window_ms / 1000.0)
+    dirs = [DirectionState(src=a, dst=b), DirectionState(src=b, dst=a)]
+    recently_sent: dict[str, float] = {}
+
+    print(f"voice-agent-relay-loop: {a} <-> {b} (interval={args.interval_ms}ms)")
+    print("Press Ctrl+C to stop.")
+
+    while True:
+        now = time.time()
+        stale = [k for k, ts in recently_sent.items() if (now - ts) > dedupe_window_s]
+        for key in stale:
+            recently_sent.pop(key, None)
+
+        for direction in dirs:
+            item = read_assistant_output(direction.src)
+            if not item:
+                continue
+            ts, text = item
+            if ts <= direction.last_ts:
+                continue
+            direction.last_ts = ts
+
+            if should_skip_text(text):
+                continue
+
+            msg_hash = hash_text(text)
+            route_key = f"{direction.src}->{direction.dst}:{msg_hash}"
+            if route_key in recently_sent:
+                continue
+
+            ok, out = send_a2a(direction.src, direction.dst, text)
+            if ok:
+                recently_sent[route_key] = time.time()
+                print(f"FWD {direction.src}->{direction.dst}: {text[:120]}")
+            else:
+                print(f"SEND_FAIL {direction.src}->{direction.dst}: {out[:180]}")
+
+        time.sleep(interval_s)
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except KeyboardInterrupt:
+        print("\nvoice-agent-relay-loop: stopped.")
+        raise SystemExit(0)

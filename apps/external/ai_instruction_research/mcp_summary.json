@@ -1,0 +1,225 @@
+{
+  "generated_at": "2026-03-08T08:15:11.412288+00:00",
+  "counts": {
+    "mcp_categories": 8,
+    "mcp_sources": 437,
+    "mcp_links": 4320,
+    "mcp_servers": 1038
+  },
+  "run_stats": {
+    "repo_candidates": 2313,
+    "repo_servers_inserted_estimate": 400
+  },
+  "latest_servers_sample": [
+    {
+      "server_name": "last9-mcp-server",
+      "server_url": "https://github.com/last9/last9-mcp-server",
+      "repo_url": "https://github.com/last9/last9-mcp-server",
+      "tags": "mcp",
+      "maintainer": "last9"
+    },
+    {
+      "server_name": "mcp-server-langfuse",
+      "server_url": "https://github.com/langfuse/mcp-server-langfuse",
+      "repo_url": "https://github.com/langfuse/mcp-server-langfuse",
+      "tags": "mcp,github",
+      "maintainer": "langfuse"
+    },
+    {
+      "server_name": "mcp-server-multiverse",
+      "server_url": "https://github.com/lamemind/mcp-server-multiverse",
+      "repo_url": "https://github.com/lamemind/mcp-server-multiverse",
+      "tags": "mcp,database,github",
+      "maintainer": "lamemind"
+    },
+    {
+      "server_name": "mcp-server",
+      "server_url": "https://github.com/lambda-capture/mcp-server",
+      "repo_url": "https://github.com/lambda-capture/mcp-server",
+      "tags": "mcp,github,search",
+      "maintainer": "lambda-capture"
+    },
+    {
+      "server_name": "mcp-server-tmdb",
+      "server_url": "https://github.com/Laksh-star/mcp-server-tmdb",
+      "repo_url": "https://github.com/Laksh-star/mcp-server-tmdb",
+      "tags": "mcp,database,search",
+      "maintainer": "Laksh-star"
+    },
+    {
+      "server_name": "mcp-ai-server-visual-studio",
+      "server_url": "https://github.com/LadislavSopko/mcp-ai-server-visual-studio",
+      "repo_url": "https://github.com/LadislavSopko/mcp-ai-server-visual-studio",
+      "tags": "mcp,github,search",
+      "maintainer": "LadislavSopko"
+    },
+    {
+      "server_name": "nba_mcp_server",
+      "server_url": "https://github.com/labeveryday/nba_mcp_server",
+      "repo_url": "https://github.com/labeveryday/nba_mcp_server",
+      "tags": "mcp,security,github,search",
+      "maintainer": "labeveryday"
+    },
+    {
+      "server_name": "trading212-mcp-server",
+      "server_url": "https://github.com/KyuRish/trading212-mcp-server",
+      "repo_url": "https://github.com/KyuRish/trading212-mcp-server",
+      "tags": "mcp,security,github,search",
+      "maintainer": "KyuRish"
+    },
+    {
+      "server_name": "mcp-server-nationalparks",
+      "server_url": "https://github.com/KyrieTangSheng/mcp-server-nationalparks",
+      "repo_url": "https://github.com/KyrieTangSheng/mcp-server-nationalparks",
+      "tags": "mcp,search",
+      "maintainer": "KyrieTangSheng"
+    },
+    {
+      "server_name": "kwdb-mcp-server",
+      "server_url": "https://github.com/KWDB/kwdb-mcp-server",
+      "repo_url": "https://github.com/KWDB/kwdb-mcp-server",
+      "tags": "mcp,database,security,github",
+      "maintainer": "KWDB"
+    },
+    {
+      "server_name": "kuzu-mcp-server",
+      "server_url": "https://github.com/kuzudb/kuzu-mcp-server",
+      "repo_url": "https://github.com/kuzudb/kuzu-mcp-server",
+      "tags": "mcp,database",
+      "maintainer": "kuzudb"
+    },
+    {
+      "server_name": "mcp-server",
+      "server_url": "https://github.com/kurrent-io/mcp-server",
+      "repo_url": "https://github.com/kurrent-io/mcp-server",
+      "tags": "mcp,database",
+      "maintainer": "kurrent-io"
+    },
+    {
+      "server_name": "kukapay-mcp-servers",
+      "server_url": "https://github.com/kukapay/kukapay-mcp-servers",
+      "repo_url": "https://github.com/kukapay/kukapay-mcp-servers",
+      "tags": "mcp,github,search",
+      "maintainer": "kukapay"
+    },
+    {
+      "server_name": "cryptopanic-mcp-server",
+      "server_url": "https://github.com/kukapay/cryptopanic-mcp-server",
+      "repo_url": "https://github.com/kukapay/cryptopanic-mcp-server",
+      "tags": "mcp,github",
+      "maintainer": "kukapay"
+    },
+    {
+      "server_name": "ks-mcp-server",
+      "server_url": "https://github.com/kubesphere/ks-mcp-server",
+      "repo_url": "https://github.com/kubesphere/ks-mcp-server",
+      "tags": "mcp,github",
+      "maintainer": "kubesphere"
+    },
+    {
+      "server_name": "mcp-apache-spark-history-server",
+      "server_url": "https://github.com/kubeflow/mcp-apache-spark-history-server",
+      "repo_url": "https://github.com/kubeflow/mcp-apache-spark-history-server",
+      "tags": "mcp,kubernetes,github",
+      "maintainer": "kubeflow"
+    },
+    {
+      "server_name": "mcp-server-duckdb",
+      "server_url": "https://github.com/ktanaka101/mcp-server-duckdb",
+      "repo_url": "https://github.com/ktanaka101/mcp-server-duckdb",
+      "tags": "mcp,database,security,browser,github",
+      "maintainer": "ktanaka101"
+    },
+    {
+      "server_name": "jira-mcp-server",
+      "server_url": "https://github.com/KS-GEN-AI/jira-mcp-server",
+      "repo_url": "https://github.com/KS-GEN-AI/jira-mcp-server",
+      "tags": "mcp,security,browser,github",
+      "maintainer": "KS-GEN-AI"
+    },
+    {
+      "server_name": "confluence-mcp-server",
+      "server_url": "https://github.com/KS-GEN-AI/confluence-mcp-server",
+      "repo_url": "https://github.com/KS-GEN-AI/confluence-mcp-server",
+      "tags": "mcp,security,browser,github,search",
+      "maintainer": "KS-GEN-AI"
+    },
+    {
+      "server_name": "search-mcp-server",
+      "server_url": "https://github.com/krzysztofkucmierz/search-mcp-server",
+      "repo_url": "https://github.com/krzysztofkucmierz/search-mcp-server",
+      "tags": "mcp,github,search",
+      "maintainer": "krzysztofkucmierz"
+    },
+    {
+      "server_name": "kaggle-mcp-server",
+      "server_url": "https://github.com/KrishnaPramodParupudi/kaggle-mcp-server",
+      "repo_url": "https://github.com/KrishnaPramodParupudi/kaggle-mcp-server",
+      "tags": "mcp,security",
+      "maintainer": "KrishnaPramodParupudi"
+    },
+    {
+      "server_name": "slack-mcp-server",
+      "server_url": "https://github.com/korotovsky/slack-mcp-server",
+      "repo_url": "https://github.com/korotovsky/slack-mcp-server",
+      "tags": "mcp,security,browser,github,search",
+      "maintainer": "korotovsky"
+    },
+    {
+      "server_name": "mcp_server_lark",
+      "server_url": "https://github.com/kone-net/mcp_server_lark",
+      "repo_url": "https://github.com/kone-net/mcp_server_lark",
+      "tags": "mcp",
+      "maintainer": "kone-net"
+    },
+    {
+      "server_name": "consul-mcp-server",
+      "server_url": "https://github.com/kocierik/consul-mcp-server",
+      "repo_url": "https://github.com/kocierik/consul-mcp-server",
+      "tags": "mcp,security,github",
+      "maintainer": "kocierik"
+    },
+    {
+      "server_name": "github-actions-mcp-server",
+      "server_url": "https://github.com/ko1ynnky/github-actions-mcp-server",
+      "repo_url": "https://github.com/ko1ynnky/github-actions-mcp-server",
+      "tags": "mcp,security,github",
+      "maintainer": "ko1ynnky"
+    },
+    {
+      "server_name": "gia-mcp-server",
+      "server_url": "https://github.com/knowledgepa3/gia-mcp-server",
+      "repo_url": "https://github.com/knowledgepa3/gia-mcp-server",
+      "tags": "mcp",
+      "maintainer": "knowledgepa3"
+    },
+    {
+      "server_name": "mcp-kibela-server",
+      "server_url": "https://github.com/kiwamizamurai/mcp-kibela-server",
+      "repo_url": "https://github.com/kiwamizamurai/mcp-kibela-server",
+      "tags": "mcp,github,search",
+      "maintainer": "kiwamizamurai"
+    },
+    {
+      "server_name": "mcp-server",
+      "server_url": "https://github.com/kintone/mcp-server",
+      "repo_url": "https://github.com/kintone/mcp-server",
+      "tags": "mcp,github",
+      "maintainer": "kintone"
+    },
+    {
+      "server_name": "mcp-server-kindred-offers",
+      "server_url": "https://github.com/kindred-app/mcp-server-kindred-offers",
+      "repo_url": "https://github.com/kindred-app/mcp-server-kindred-offers",
+      "tags": "mcp",
+      "maintainer": "kindred-app"
+    },
+    {
+      "server_name": "mcp-server-youtube-transcript",
+      "server_url": "https://github.com/kimtaeyoon83/mcp-server-youtube-transcript",
+      "repo_url": "https://github.com/kimtaeyoon83/mcp-server-youtube-transcript",
+      "tags": "mcp,security,github",
+      "maintainer": "kimtaeyoon83"
+    }
+  ]
+}

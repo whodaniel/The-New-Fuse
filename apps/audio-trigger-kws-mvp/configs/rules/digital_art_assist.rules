@@ -1,0 +1,75 @@
+# Digital Art Assist Rules
+# Trigger words and phrases for digital art workflow assistance
+
+RULE digital_art_session_start:
+  HIT(term:digital_art, min_conf=0.80, count>=1, window=10s)
+  AND HIT(term:start_session, min_conf=0.75, count>=1, window=10s)
+WITHIN 15s COOLDOWN 300s PRIORITY 15
+THEN enqueue_llm(digital_art_session_setup_v1)
+
+RULE reference_image_request:
+  HIT(term:reference, min_conf=0.70, count>=1, window=8s)
+  AND HIT(term:image, min_conf=0.70, count>=1, window=8s)
+  AND HIT(term:find|look_for|search, min_conf=0.65, count>=1, window=8s)
+WITHIN 10s COOLDOWN 60s PRIORITY 12
+THEN enqueue_llm(image_search_assist_v1)
+
+RULE color_palette_help:
+  HIT(term:color, min_conf=0.68, count>=1, window=6s)
+  AND HIT(term:palette|scheme|harmony, min_conf=0.68, count>=1, window=6s)
+  AND HIT(term:help|suggest|recommend, min_conf=0.65, count>=1, window=6s)
+WITHIN 8s COOLDOWN 45s PRIORITY 10
+THEN enqueue_llm(color_palette_v1)
+
+RULE technique_tutorial:
+  HIT(term:how_to|tutorial|technique, min_conf=0.70, count>=1, window=10s)
+  AND HIT(term:brush|layer|blend|mask, min_conf=0.65, count>=1, window=10s)
+WITHIN 12s COOLDOWN 90s PRIORITY 11
+THEN enqueue_llm(art_technique_v1)
+
+RULE feedback_request:
+  HIT(term:feedback|critique|opinion, min_conf=0.72, count>=1, window=8s)
+  AND HIT(term:my_work|this_piece|artwork, min_conf=0.70, count>=1, window=8s)
+WITHIN 10s COOLDOWN 120s PRIORITY 13
+THEN enqueue_llm(art_feedback_v1)
+
+RULE export_save_prompt:
+  HIT(term:export|save|file, min_conf=0.68, count>=1, window=6s)
+  AND HIT(term:format|resolution|quality, min_conf=0.65, count>=1, window=6s)
+  AND HIT(term:png|jpg|psd|tiff, min_conf=0.60, count>=1, window=6s)
+WITHIN 8s COOLDOWN 30s PRIORITY 9
+THEN enqueue_llm(export_settings_v1)
+
+RULE creative_block_help:
+  HIT(term:stuck|blocked|inspiration, min_conf=0.70, count>=1, window=10s)
+  AND HIT(term:idea|concept|direction, min_conf=0.68, count>=1, window=10s)
+  AND HIT(term:help|suggest|brainstorm, min_conf=0.65, count>=1, window=10s)
+WITHIN 12s COOLDOWN 180s PRIORITY 14
+THEN enqueue_llm(creative_prompt_v1)
+
+RULE layer_management:
+  HIT(term:layer, min_conf=0.65, count>=2, window=8s)
+  AND HIT(term:merge|group|organize|arrange, min_conf=0.65, count>=1, window=8s)
+WITHIN 10s COOLDOWN 40s PRIORITY 8
+THEN enqueue_llm(layer_management_v1)
+
+# Personalization rules based on user interests
+RULE digital_art_interest_profile:
+  HIT(term:digital_art|illustration|concept_art, min_conf=0.75, count>=2, window=30s)
+  AND HIT(term:photoshop|procreate|clip_studio, min_conf=0.70, count>=1, window=30s)
+WITHIN 60s COOLDOWN 600s PRIORITY 18
+THEN enqueue_llm(digital_art_profile_update_v1)
+
+# Assistive action triggers
+RULE quick_reference_lookup:
+  HIT(term:quick_ref|reference|lookup, min_conf=0.70, count>=1, window=5s)
+  AND HIT(term:anatomy|perspective|lighting|color_theory, min_conf=0.68, count>=1, window=5s)
+WITHIN 8s COOLDOWN 30s PRIORITY 11
+THEN enqueue_llm(quick_reference_v1)
+
+RULE time_management_prompt:
+  HIT(term:break|rest|stretch, min_conf=0.68, count>=1, window=10s)
+  AND HIT(term:timer|schedule|deadline, min_conf=0.65, count>=1, window=10s)
+WITHIN 12s COOLDOWN 120s PRIORITY 9
+THEN enqueue_llm(break_reminder_v1)
+

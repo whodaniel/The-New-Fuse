@@ -1,0 +1,88 @@
+import React, { FC } from "react";
+import { FeatureTracker, FeatureStage } from '@the-new-fuse/types';
+
+interface ProgressBarProps {
+  percentage: number;
+}
+
+const ProgressBar: FC<ProgressBarProps> = ({ percentage }) => (
+  <div className="w-full h-2 bg-gray-200 rounded-full">
+    <div
+      className="h-full bg-blue-500 rounded-full transition-all duration-300"
+      style={{ width: `${percentage}%` }}
+    />
+  </div>
+);
+
+interface StageIndicatorProps {
+  stage: FeatureStage;
+  isActive: boolean;
+  isCompleted: boolean;
+}
+
+const StageIndicator: FC<StageIndicatorProps> = ({
+  stage,
+  isActive,
+  isCompleted,
+}) => (
+  <div
+    className={`flex flex-col items-center ${
+      isActive ? 'text-blue-500' : isCompleted ? 'text-green-500' : 'text-gray-400'
+    }`}
+  >
+    <div
+      className={`w-4 h-4 rounded-full ${
+        isActive
+          ? 'bg-blue-500'
+          : isCompleted
+          ? 'bg-green-500'
+          : 'bg-gray-400'
+      }`}
+    />
+    <span className="text-sm mt-1">{stage}</span>
+  </div>
+);
+
+interface FeatureProgressProps {
+  feature: FeatureTracker;
+}
+
+export const FeatureProgress: FC<FeatureProgressProps> = ({ feature }) => {
+  // Calculate percentage based on stage
+  const getStagePercentage = (stage: FeatureStage): number => {
+    const stageValues = {
+      [FeatureStage.ANALYSIS]: 10,
+      [FeatureStage.DESIGN]: 30,
+      [FeatureStage.DEVELOPMENT]: 60,
+      [FeatureStage.TESTING]: 80,
+      [FeatureStage.DEPLOYMENT]: 90,
+      [FeatureStage.COMPLETED]: 100
+    };
+    
+    return stageValues[stage] || 0;
+  };
+  
+  const stagePercentage = getStagePercentage((feature as unknown).currentStage);
+  const totalPercentage = Math.floor((stagePercentage + (feature as unknown).completionPercentage) / 2);
+  
+  return (
+    <div className="feature-progress">
+      <h3>{(feature as unknown).name}</h3>
+      <div className="progress-bar">
+        <div 
+          className="progress-fill" 
+          style={{ width: `${totalPercentage}%` }}
+        />
+      </div>
+      <div className="progress-details">
+        <span>Stage: {(feature as unknown).currentStage} ({stagePercentage}%)</span>
+        <span>Completion: {(feature as unknown).completionPercentage}%</span>
+        <span>Overall: {totalPercentage}%</span>
+      </div>
+    </div>
+  );
+};
+
+export default FeatureProgress;
+
+export default FeatureProgress;

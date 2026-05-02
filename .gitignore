@@ -278,3 +278,5 @@ fix_landing/
 landing_clean_deploy/
 ui-audit-results/
 reports/
+apps/external/h17-webpilot/profile/
+apps/external/hardware/lightpanda

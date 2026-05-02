@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude"
+     ipr="trust200902"
+     category="info"
+     submissionType="IETF"
+     docName="draft-twip-00"
+     version="3"
+     sortRefs="true"
+     symRefs="true"
+     tocInclude="true">
+  <front>
+    <title abbrev="TWIP">Terminal Window Identity Protocol (TWIP)</title>
+
+    <seriesInfo name="Internet-Draft" value="draft-twip-00"/>
+
+    <author fullname="TWIP Editors" initials="T." surname="Editors">
+      <organization>TWIP Community</organization>
+    </author>
+
+    <date year="2026" month="March" day="18"/>
+
+    <area>Applications and Real-Time</area>
+    <workgroup>Independent</workgroup>
+
+    <keyword>terminal</keyword>
+    <keyword>identity</keyword>
+    <keyword>pty</keyword>
+    <keyword>multiplexer</keyword>
+
+    <abstract>
+      <t>
+        This document specifies the Terminal Window Identity Protocol
+        (TWIP), a unified identity model and discovery protocol for
+        terminal panes, tabs, and windows across terminal emulators,
+        shells, and multiplexers. TWIP defines a canonical identifier
+        ("twid"), a normalized schema for legacy identifiers (for
+        example, tty, process and session IDs, emulator-specific IDs,
+        and multiplexer IDs), and standardized discovery surfaces via
+        environment variables, OSC query and reply, and optional local
+        IPC APIs. TWIP also defines lifecycle events, capability
+        advertisement, security and privacy controls, and conformance
+        levels.
+      </t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section numbered="true" anchor="intro" toc="include">
+      <name>Introduction</name>
+      <t>
+        Terminal automation and observability workflows currently rely
+        on fragmented identity signals: kernel PTY and TTY paths,
+        process and session metadata, terminal-emulator-specific
+        environment variables, multiplexer-specific identifiers, and
+        optional GUI window metadata.
+      </t>
+      <t>
+        PTY and session terminology in this document follows common
+        POSIX process and terminal conventions <xref target="POSIX"/>.
+      </t>
+      <t>
+        These signals are not standardized into one interoperable
+        object. TWIP defines a common protocol for deriving,
+        representing, and querying terminal runtime identity.
+      </t>
+    </section>
+
+    <section numbered="true" anchor="conventions" toc="include">
+      <name>Conventions and Terminology</name>
+      <t>
+        The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+        "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT
+        RECOMMENDED", "MAY", and "OPTIONAL" in this document are to
+        be interpreted as described in BCP 14
+        <xref target="RFC2119"/> <xref target="RFC8174"/> when, and
+        only when, they appear in all capitals, as shown here.
+      </t>
+      <dl spacing="normal">
+        <dt>Window</dt>
+        <dd>A top-level GUI terminal container.</dd>
+        <dt>Tab</dt>
+        <dd>A GUI tab within a terminal window.</dd>
+        <dt>Pane</dt>
+        <dd>A visual terminal region bound to one active PTY stream.</dd>
+        <dt>Session</dt>
+        <dd>A runtime grouping defined by an emulator or multiplexer.</dd>
+        <dt>twid</dt>
+        <dd>
+          The canonical TWIP pane identity, encoded as UUIDv7
+          <xref target="RFC9562"/>.
+        </dd>
+        <dt>Incarnation</dt>
+        <dd>
+          A non-negative integer incremented when identity is explicitly
+          reconstituted (for example, clone or restore with rotation).
+        </dd>
+      </dl>
+    </section>
+
+    <section numbered="true" anchor="goals" toc="include">
+      <name>Design Goals and Non-Goals</name>
+      <section numbered="true" anchor="goals-list">
+        <name>Goals</name>
+        <ol>
+          <li>Provide one canonical twid per pane lifetime.</li>
+          <li>Normalize legacy identity sources into one schema.</li>
+          <li>Support portable local automation and telemetry tooling.</li>
+          <li>Operate with or without GUI and multiplexers.</li>
+          <li>Emit lifecycle events for machine-consumable transitions.</li>
+        </ol>
+      </section>
+      <section numbered="true" anchor="non-goals-list">
+        <name>Non-Goals</name>
+        <ol>
+          <li>Replacing kernel PTY or process semantics.</li>
+          <li>Standardizing terminal rendering behavior.</li>
+          <li>Mandating GUI metadata exposure by default.</li>
+        </ol>
+      </section>
+    </section>
+
+    <section numbered="true" anchor="overview" toc="include">
+      <name>Protocol Overview</name>
+      <t>TWIP defines three layers:</t>
+      <ol>
+        <li>Identity Object: canonical JSON structure.</li>
+        <li>Discovery Surfaces: environment variables, OSC, optional IPC.</li>
+        <li>Event and Capability Model: lifecycle streams and feature flags.</li>
+      </ol>
+      <t>
+        A conformant implementation MAY expose only a subset of discovery
+        surfaces, subject to conformance levels in
+        <xref target="conformance"/>.
+      </t>
+    </section>
+
+    <section numbered="true" anchor="identity" toc="include">
+      <name>Canonical Identity Object</name>
+      <t>A TWIP identity object MUST include these top-level fields:</t>
+      <ol>
+        <li>twid (UUIDv7 string; see <xref target="RFC9562"/>)</li>
+        <li>created_at (timestamp in RFC 3339 format; see <xref target="RFC3339"/>)</li>
+        <li>incarnation (non-negative integer)</li>
+        <li>scope</li>
+        <li>process (if available)</li>
+        <li>pty (if available)</li>
+        <li>multiplexer (if available)</li>
+        <li>legacy (normalized observations)</li>
+      </ol>
+
+      <section numbered="true" anchor="scope-object">
+        <name>Scope Object</name>
+        <t>The scope object SHOULD include:</t>
+        <ol>
+          <li>host_id (pseudonymous host identifier)</li>
+          <li>emulator_id (implementation-defined terminal ID)</li>
+          <li>window_id (nullable)</li>
+          <li>tab_id (nullable)</li>
+          <li>pane_id (nullable)</li>
+        </ol>
+      </section>
+
+      <section numbered="true" anchor="identity-stability">
+        <name>Identity Stability</name>
+        <ol>
+          <li>twid MUST remain stable for a pane lifetime.</li>
+          <li>
+            twid MUST rotate when a pane is duplicated into a distinct
+            runtime object.
+          </li>
+          <li>
+            incarnation MUST increase when explicit identity
+            reconstitution occurs.
+          </li>
+        </ol>
+      </section>
+    </section>
+
+    <section numbered="true" anchor="legacy" toc="include">
+      <name>Legacy Identifier Normalization</name>
+      <t>
+        Each observed legacy identifier MUST be represented as a tuple
+        with key, value, source, confidence, and observed_at.
+      </t>
+      <sourcecode type="json"><![CDATA[
+{
+  "key": "tty",
+  "value": "/dev/ttys003",
+  "source": "kernel",
+  "confidence": 1.0,
+  "observed_at": "2026-03-18T14:30:00Z"
+}
+]]></sourcecode>
+      <t>Required fields:</t>
+      <ol>
+        <li>key (string)</li>
+        <li>value (string, number, or scalar)</li>
+        <li>source (kernel, process, env, multiplexer, or gui)</li>
+        <li>confidence (0.0 to 1.0)</li>
+        <li>observed_at (timestamp in RFC 3339 format; see <xref target="RFC3339"/>)</li>
+      </ol>
+      <t>Recommended key values:</t>
+      <ol>
+        <li>tty</li>
+        <li>pty_inode</li>
+        <li>shell_pid</li>
+        <li>pgid</li>
+        <li>sid</li>
+        <li>iterm_session_id</li>
+        <li>term_session_id</li>
+        <li>windowid</li>
+        <li>tmux_session (see <xref target="TMUX"/>)</li>
+        <li>tmux_window (see <xref target="TMUX"/>)</li>
+        <li>tmux_pane (see <xref target="TMUX"/>)</li>
+        <li>screen_window (see <xref target="SCREEN"/>)</li>
+        <li>gui_window_handle</li>
+        <li>gui_window_title</li>
+      </ol>
+    </section>
+
+    <section numbered="true" anchor="discovery" toc="include">
+      <name>Discovery Mechanisms</name>
+
+      <section numbered="true" anchor="env-vars">
+        <name>Environment Variables</name>
+        <t>Implementations SHOULD expose:</t>
+        <ol>
+          <li>TERMINAL_TWID</li>
+          <li>TERMINAL_TWIP_VERSION</li>
+          <li>TERMINAL_PANE_ID</li>
+          <li>TERMINAL_TAB_ID (optional)</li>
+          <li>TERMINAL_WINDOW_ID (optional)</li>
+          <li>TERMINAL_TWIP_SOCKET (optional)</li>
+        </ol>
+      </section>
+
+      <section numbered="true" anchor="osc-query">
+        <name>OSC Query and Reply</name>
+        <t>
+          Until control-sequence allocation is standardized,
+          implementations MAY use a vendor-private OSC envelope.
+        </t>
+        <ol>
+          <li>query type: twip.query</li>
+          <li>reply type: twip.reply</li>
+          <li>reply body: Base64URL-encoded UTF-8 JSON identity object</li>
+        </ol>
+        <t>Receivers MUST ignore unknown fields.</t>
+      </section>
+
+      <section numbered="true" anchor="local-ipc">
+        <name>Local IPC API</name>
+        <t>
+          If TERMINAL_TWIP_SOCKET is present, it MUST reference a local
+          authenticated socket serving JSON.
+        </t>
+        <t>Required endpoints:</t>
+        <ol>
+          <li>GET /v1/identity</li>
+          <li>GET /v1/capabilities</li>
+          <li>GET /v1/events/stream</li>
+        </ol>
+      </section>
+    </section>
+
+    <section numbered="true" anchor="events" toc="include">
+      <name>Lifecycle Event Model</name>
+      <t>Event emitters SHOULD publish:</t>
+      <ol>
+        <li>pane.created</li>
+        <li>pane.focused</li>
+        <li>pane.blurred</li>
+        <li>pane.split</li>
+        <li>pane.moved</li>
+        <li>tab.created</li>
+        <li>tab.closed</li>
+        <li>window.created</li>
+        <li>window.closed</li>
+        <li>pane.closed</li>
+        <li>identity.reincarnated</li>
+      </ol>
+      <t>Each event MUST include twid, timestamp, event_seq, and event_type.</t>
+    </section>
+
+    <section numbered="true" anchor="capabilities" toc="include">
+      <name>Capability Advertisement</name>
+      <t>/v1/capabilities MUST include:</t>
+      <ol>
+        <li>twip_version</li>
+        <li>supports_gui_metadata</li>
+        <li>supports_focus_events</li>
+        <li>supports_multiplexer_mapping</li>
+        <li>supports_pty_inode</li>
+        <li>supports_remote_propagation</li>
+      </ol>
+    </section>
+
+    <section numbered="true" anchor="remote" toc="include">
+      <name>Remote Propagation</name>
+      <t>Cross-host propagation MUST be disabled by default.</t>
+      <t>When explicitly enabled, senders MAY forward:</t>
+      <ol>
+        <li>TWIP_ORIGIN_TWID</li>
+        <li>TWIP_ORIGIN_HOST_ID</li>
+        <li>TWIP_FORWARD_CHAIN</li>
+      </ol>
+      <t>
+        Receivers MUST NOT overwrite local twid; they MAY append origin
+        linkage metadata.
+      </t>
+    </section>
+
+    <section numbered="true" anchor="security" toc="include">
+      <name>Security Considerations</name>
+      <ol>
+        <li>Local IPC MUST enforce same-user filesystem permission checks.</li>
+        <li>Session-bound tokens SHOULD be used for IPC clients.</li>
+        <li>Implementations MUST treat OSC payloads as untrusted input.</li>
+        <li>Event subscribers SHOULD be isolated from mutation endpoints.</li>
+        <li>Implementations SHOULD rate-limit query interfaces.</li>
+      </ol>
+    </section>
+
+    <section numbered="true" anchor="privacy" toc="include">
+      <name>Privacy Considerations</name>
+      <ol>
+        <li>GUI title and handle exposure MUST be opt-in.</li>
+        <li>
+          Raw hostnames SHOULD NOT be exposed by default; pseudonymous
+          host_id SHOULD be used.
+        </li>
+        <li>Forwarded origin fields SHOULD be minimized in multi-hop paths.</li>
+        <li>Implementations SHOULD support per-field redaction policies.</li>
+      </ol>
+    </section>
+
+    <section numbered="true" anchor="conformance" toc="include">
+      <name>Conformance Levels</name>
+
+      <section numbered="true" anchor="l1">
+        <name>Level 1 (Core)</name>
+        <t>Required:</t>
+        <ol>
+          <li>
+            identity object with twid, created_at, incarnation, scope,
+            and legacy;
+          </li>
+          <li>environment variables TERMINAL_TWID and TERMINAL_TWIP_VERSION.</li>
+        </ol>
+      </section>
+
+      <section numbered="true" anchor="l2">
+        <name>Level 2 (Observable)</name>
+        <t>Level 1 plus capability endpoint and lifecycle event stream.</t>
+      </section>
+
+      <section numbered="true" anchor="l3">
+        <name>Level 3 (Full)</name>
+        <t>
+          Level 2 plus multiplexer normalization, GUI privacy controls,
+          and explicit remote propagation controls.
+        </t>
+      </section>
+    </section>
+
+    <section numbered="true" anchor="iana" toc="include">
+      <name>IANA Considerations</name>
+      <t>This document has no IANA actions in this revision.</t>
+      <t>
+        Future revisions may request standardized terminal control-
+        sequence allocation for TWIP query and reply semantics.
+      </t>
+    </section>
+
+    <section numbered="true" anchor="example" toc="include">
+      <name>Reference Identity Object</name>
+      <sourcecode type="json"><![CDATA[
+{
+  "twid": "0195f5f1-8f8f-7b1a-b1a4-9fa3d2b2d601",
+  "created_at": "2026-03-18T14:30:00Z",
+  "incarnation": 0,
+  "scope": {
+    "host_id": "h:9af31c2e",
+    "emulator_id": "wezterm",
+    "window_id": "win:42",
+    "tab_id": "tab:3",
+    "pane_id": "pane:7"
+  },
+  "process": {
+    "shell_pid": 84122,
+    "pgid": 84122,
+    "sid": 84122
+  },
+  "pty": {
+    "path": "/dev/ttys003",
+    "inode": 164889
+  },
+  "multiplexer": {
+    "kind": "tmux",
+    "session_id": "$1",
+    "window_id": "@12",
+    "pane_id": "%5"
+  },
+  "legacy": [
+    {
+      "key": "tty",
+      "value": "/dev/ttys003",
+      "source": "kernel",
+      "confidence": 1.0,
+      "observed_at": "2026-03-18T14:30:00Z"
+    }
+  ]
+}
+]]></sourcecode>
+    </section>
+
+    <section numbered="true" anchor="deployment" toc="include">
+      <name>Deployment Guidance</name>
+      <ol>
+        <li>Publish schema and conformance tests.</li>
+        <li>Ship local twipctl probe.</li>
+        <li>Add emulator and multiplexer adapters.</li>
+        <li>Collect interoperability test results.</li>
+        <li>Standardize control-sequence allocation.</li>
+      </ol>
+    </section>
+
+    <section numbered="true" anchor="open-issues" toc="include">
+      <name>Open Issues</name>
+      <ol>
+        <li>Control-sequence registration strategy.</li>
+        <li>Default confidence calibration for GUI-derived fields.</li>
+        <li>Restored-session semantics across emulators.</li>
+        <li>Nested multiplexer identity mapping profile.</li>
+      </ol>
+    </section>
+  </middle>
+
+  <back>
+    <references>
+      <name>Normative References</name>
+      <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
+      <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.3339.xml"/>
+      <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml"/>
+      <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.9562.xml"/>
+    </references>
+
+    <references>
+      <name>Informative References</name>
+      <reference anchor="POSIX" target="https://pubs.opengroup.org/onlinepubs/9699919799/">
+        <front>
+          <title>POSIX.1-2017 Base Specifications, Issue 7</title>
+          <author fullname="The Open Group"/>
+          <date year="2018"/>
+        </front>
+      </reference>
+      <reference anchor="TMUX" target="https://github.com/tmux/tmux/wiki">
+        <front>
+          <title>tmux Documentation</title>
+          <author fullname="tmux Project"/>
+          <date year="2026"/>
+        </front>
+      </reference>
+      <reference anchor="SCREEN" target="https://www.gnu.org/software/screen/manual/">
+        <front>
+          <title>GNU Screen Manual</title>
+          <author fullname="GNU Project"/>
+          <date year="2026"/>
+        </front>
+      </reference>
+    </references>
+  </back>
+</rfc>

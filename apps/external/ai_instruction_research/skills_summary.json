@@ -1,0 +1,115 @@
+{
+  "generated_at": "2026-03-08T05:15:55.737143+00:00",
+  "counts": {
+    "skill_categories": 8,
+    "skill_sources": 122,
+    "skill_links": 2870,
+    "skill_files": 2492
+  },
+  "run_stats": {
+    "repo_candidates": 291,
+    "skill_files_inserted_this_run_estimate": 2491
+  },
+  "top_sources_by_skill_files": [
+    {
+      "name": "cloudflare/skills",
+      "url": "https://github.com/cloudflare/skills",
+      "skill_files": 220
+    },
+    {
+      "name": "dmmulroy/cloudflare-skill",
+      "url": "https://github.com/dmmulroy/cloudflare-skill",
+      "skill_files": 220
+    },
+    {
+      "name": "microsoft/skills",
+      "url": "https://github.com/microsoft/skills",
+      "skill_files": 220
+    },
+    {
+      "name": "openai/skills",
+      "url": "https://github.com/openai/skills",
+      "skill_files": 220
+    },
+    {
+      "name": "trailofbits/skills",
+      "url": "https://github.com/trailofbits/skills",
+      "skill_files": 220
+    },
+    {
+      "name": "Orchestra-Research/AI-research-SKILLs",
+      "url": "https://github.com/Orchestra-Research/AI-research-SKILLs",
+      "skill_files": 165
+    },
+    {
+      "name": "vercel-labs/agent-skills",
+      "url": "https://github.com/vercel-labs/agent-skills",
+      "skill_files": 126
+    },
+    {
+      "name": "anthropics/skills",
+      "url": "https://github.com/anthropics/skills",
+      "skill_files": 117
+    },
+    {
+      "name": "muratcankoylan/Agent-Skills-for-Context-Engineering",
+      "url": "https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering",
+      "skill_files": 114
+    },
+    {
+      "name": "getsentry/skills",
+      "url": "https://github.com/getsentry/skills",
+      "skill_files": 84
+    },
+    {
+      "name": "huggingface/skills",
+      "url": "https://github.com/huggingface/skills",
+      "skill_files": 67
+    },
+    {
+      "name": "callstackincubator/agent-skills",
+      "url": "https://github.com/callstackincubator/agent-skills",
+      "skill_files": 65
+    },
+    {
+      "name": "gotalab/skillport",
+      "url": "https://github.com/gotalab/skillport",
+      "skill_files": 51
+    },
+    {
+      "name": "obra/superpowers-skills",
+      "url": "https://github.com/obra/superpowers-skills",
+      "skill_files": 51
+    },
+    {
+      "name": "supabase/agent-skills",
+      "url": "https://github.com/supabase/agent-skills",
+      "skill_files": 45
+    },
+    {
+      "name": "expo/skills",
+      "url": "https://github.com/expo/skills",
+      "skill_files": 44
+    },
+    {
+      "name": "ClickHouse/agent-skills",
+      "url": "https://github.com/ClickHouse/agent-skills",
+      "skill_files": 40
+    },
+    {
+      "name": "ComposioHQ/skills",
+      "url": "https://github.com/ComposioHQ/skills",
+      "skill_files": 40
+    },
+    {
+      "name": "remotion-dev/skills",
+      "url": "https://github.com/remotion-dev/skills",
+      "skill_files": 38
+    },
+    {
+      "name": "fabioc-aloha/spotify-skill",
+      "url": "https://github.com/fabioc-aloha/spotify-skill",
+      "skill_files": 34
+    }
+  ]
+}

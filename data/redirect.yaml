@@ -1,0 +1,4 @@
+name: extreamix-redirect
+defaultUrlRedirect:
+  redirectResponseCode: MOVED_PERMANENTLY_DEFAULT
+  httpsRedirect: true

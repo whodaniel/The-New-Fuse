@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euo pipefail
+rm -f "$HOME/.openclaw/voice_target.json" "$HOME/.openclaw/voice_target_tty"
+echo "🧹 Transcription destination lock cleared."

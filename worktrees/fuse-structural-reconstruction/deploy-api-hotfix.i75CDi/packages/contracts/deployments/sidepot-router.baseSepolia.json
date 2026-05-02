@@ -1,0 +1,11 @@
+{
+  "token": "0x8093123fA606b37CEE04294C3B014c2Ff47Af5e8",
+  "sidepotManager": "0x28e44C194011Ac7B71070F3cf6870563aCF8df47",
+  "hookRouter": "0xE73e5acdBEEa2439cd73feFF29Db5c9dde8D6367",
+  "prizeVault": "0xf49788782B6049DD8318A55C5e9cA16B9D3614aB",
+  "treasury": "0xf49788782B6049DD8318A55C5e9cA16B9D3614aB",
+  "sidepotId": 1,
+  "sidepotBps": 1000,
+  "treasuryBps": 1500,
+  "network": "baseSepolia"
+}

@@ -1,0 +1,23 @@
+{
+  "id": "1lnUBVdkzc3tf3U574aNLwuoq2ED4B7Ng",
+  "url": "https://aistudio.google.com/app/prompts/1lnUBVdkzc3tf3U574aNLwuoq2ED4B7Ng",
+  "importedAt": "2026-01-07T20:50:40.400Z",
+  "turns": [
+    {
+      "role": "model",
+      "text": "more_vertUser docs  progress_activity 3,694 tokens"
+    },
+    {
+      "role": "model",
+      "text": "more_vert docs  progress_activity 6,736 tokens"
+    },
+    {
+      "role": "model",
+      "text": "editmore_vert play_circle  648,986 tokens  arrow_split See branched conversationsBranch of Intelligence's Goldilocks Zone."
+    },
+    {
+      "role": "model",
+      "text": "editmore_vertNow process the remaining video in the same manner. I want to go even deeper by now listening not just to the list of concepts covered in this video, but in fact I want the ways in which each topic is put into words expressed as mathematic snippets, expressed as pure code. Kind of like how transformer architecture works in LLMs, but taking an outside look at those patterns that the words triggered in tokens, and modeling them mathematically. Each and every concept, question, explanation, and every subject and idea expressed can be broken down in this way that I am describing. I want it in as finite technical  detail as you are capable of!"
+    }
+  ]
+}

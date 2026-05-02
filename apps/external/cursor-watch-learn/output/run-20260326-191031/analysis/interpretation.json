@@ -1,0 +1,27 @@
+{
+  "generated_at": "2026-03-26T19:11:15.385048Z",
+  "event_count_total": 701,
+  "event_counts_by_type": {
+    "scroll": 497,
+    "move": 202,
+    "click_down": 1,
+    "click_up": 1
+  },
+  "event_span_seconds": 25.126,
+  "frame_count": 24,
+  "segment_count": 9,
+  "finding_count": 476,
+  "timeline_events_csv": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-191031/analysis/timeline_events.csv",
+  "frame_timeline_csv": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-191031/analysis/frame_timeline.csv",
+  "action_segments_csv": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-191031/analysis/action_segments.csv",
+  "hotspots_csv": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-191031/analysis/hotspots.csv",
+  "findings_json": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-191031/analysis/findings.json",
+  "llm_output_jsonl": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-191031/llm_interpretation.jsonl",
+  "llm_frames_total": 2,
+  "llm_frames_success": 2,
+  "llm_frames_error": 0,
+  "llm_intent_counts": {
+    "Scan recent code changes and line-level edits in the terminal output to verify modifications.": 1,
+    "Scan through a specific config/telemetry-related code section to verify or understand recent changes without interacting with other windows.": 1
+  }
+}

@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { env } from './config/env';
 import { AudioTriggerRuntime } from './runtime/audio-trigger-runtime';
+import { WebSocketService } from './services/websocket.service';
 import type { RuleFireEvent, ContextPackage, LlmBatchResult, ProfileUpdate } from './types/events';
 import type { UserProfile } from './services/profile/schema';
 
@@ -11,6 +12,25 @@ app.use(express.json());
 
 const runtime = new AudioTriggerRuntime();
 runtime.start();
+
+const wsService = new WebSocketService(process.env.RELAY_URL || 'ws://localhost:3000');
+wsService.connect();
+
+// Broadcast rule fires to TNF Relay
+runtime.on('rule_fired', (event: RuleFireEvent) => {
+  wsService.broadcast({
+    type: 'KWS_RULE_FIRED',
+    ...event
+  });
+});
+
+// Broadcast LLM results to TNF Relay
+runtime.on('llm_result', (result: LlmBatchResult) => {
+  wsService.broadcast({
+    type: 'KWS_LLM_RESULT',
+    ...result
+  });
+});
 
 const apiKeyMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (!env.api.requireIngestAuth) return next();

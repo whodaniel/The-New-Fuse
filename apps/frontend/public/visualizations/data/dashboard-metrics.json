@@ -1,23 +1,25 @@
 {
-  "generated_at": "2026-04-07T13:44:11.257Z",
+  "generated_at": "2026-05-02T01:07:08.472Z",
   "source": {
     "repo_root": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
     "generator": "scripts/visualizations/generate-dashboard-metrics.cjs"
   },
+  "intelligence": {
+    "master_library": 647,
+    "executable_artifacts": 645,
+    "extraction_density": "99.7%",
+    "status": "[STATUS:SYNCHRONIZED]"
+  },
   "agents": {
-    "raw_files": 298,
-    "unique_names": 184,
+    "raw_files": 288,
+    "unique_names": 176,
     "by_source": {
-      "agent_agents": 168,
+      "agent_agents": 171,
       "claude_agents": 117,
-      "config_ai_agents": 8,
-      "config_agents": 5
+      "config_ai_agents": 0,
+      "config_agents": 0
     },
     "duplicates": [
-      {
-        "name": "cursor-watch-learn-operator",
-        "count": 3
-      },
       {
         "name": "ab-testing-optimizer-agent",
         "count": 2
@@ -147,6 +149,10 @@
         "count": 2
       },
       {
+        "name": "cursor-watch-learn-operator",
+        "count": 2
+      },
+      {
         "name": "custom-slash-command-agent",
         "count": 2
       },
@@ -176,10 +182,6 @@
       },
       {
         "name": "ecom-platform-manager-agent",
-        "count": 2
-      },
-      {
-        "name": "email-custodian-agent",
         "count": 2
       },
       {
@@ -470,29 +472,21 @@
   },
   "skills": {
     "permanent_dot_skills": 231,
-    "permanent_agent_skills": 507,
-    "permanent_total": 738,
+    "permanent_agent_skills": 508,
+    "permanent_total": 739,
     "snapshot_skills": 729,
     "promoted_snapshot_skills": 24
   },
   "graph": {
-    "domain_subgraphs": 7,
-    "domain_list": [
-      "brand",
-      "content",
-      "funnel",
-      "ops",
-      "podcast",
-      "seo",
-      "social"
-    ],
-    "relationship_nodes": 120,
-    "relationship_edges": 437
+    "domain_subgraphs": 0,
+    "domain_list": [],
+    "relationship_nodes": 0,
+    "relationship_edges": 0
   },
   "dashboard": {
     "graph_cards": 7,
     "system_cards": 6,
     "docs_cards": 8,
-    "interactive_visualizations": 13
+    "interactive_visualizations": 14
   }
 }

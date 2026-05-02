@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+pydantic
+crawl4ai
+playwright
+python-dotenv

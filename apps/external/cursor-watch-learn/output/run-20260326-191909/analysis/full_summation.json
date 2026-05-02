@@ -1,0 +1,106 @@
+{
+  "generated_at": "2026-03-26T19:19:49.452362Z",
+  "run_dir": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-191909",
+  "capture": {
+    "frames_written": 22,
+    "interval_seconds": 1.0,
+    "duration_seconds": 39.953,
+    "screenshots_retained": 20,
+    "screenshots_pruned": 2
+  },
+  "event_summary": {
+    "total_events": 124,
+    "event_span_seconds": 1.476,
+    "average_event_rate_per_sec": 84.01,
+    "total_move_distance_px": 612.77,
+    "event_counts_by_type": {
+      "move": 122,
+      "click_down": 1,
+      "click_up": 1
+    }
+  },
+  "frame_summary": {
+    "frame_count": 22,
+    "active_frames": 1,
+    "idle_frames": 21,
+    "active_frame_ratio": 0.0455,
+    "average_events_per_frame": 5.64,
+    "peak_frame": {
+      "frame_id": 13,
+      "captured_at": "2026-03-26T19:19:21.487615Z",
+      "event_count": 124,
+      "app": "Terminal"
+    },
+    "intent_counts": {
+      "idle": 21,
+      "click_interaction": 1
+    },
+    "relationship_counts": {
+      "cursor_idle_or_hover": 21,
+      "cursor_triggered_action": 1
+    }
+  },
+  "finding_summary": {
+    "total_findings": 0,
+    "finding_type_counts": {},
+    "severity_counts": {},
+    "top_findings_sample": []
+  },
+  "llm_summary": {
+    "frames_total": 2,
+    "frames_success": 2,
+    "frames_error": 0,
+    "intent_counts": {
+      "Monitoring multi-terminal agent progress while paused, possibly deciding the next command.": 1,
+      "Pausing to think/review before continuing to type or send the next terminal instruction.": 1
+    },
+    "recommended_training_label_counts": {
+      "idle_monitoring_multiterminal_progress": 1,
+      "terminal_idle_hover_mid_draft": 1
+    },
+    "friction_or_opportunity_sample": [
+      "Opportunity: detect sustained idle-over-status behavior across parallel terminals and proactively surface a concise 'next best action' summary to reduce coordination overhead.",
+      "Opportunity: detect drafting hesitation in terminal workflows and offer lightweight next-step suggestions or autocomplete nudges without interrupting."
+    ]
+  },
+  "hotspot_summary": {
+    "top_hotspot": {
+      "rank": 1,
+      "cell_origin_x": 240,
+      "cell_origin_y": 600,
+      "events": 66
+    },
+    "top_10_hotspots": [
+      {
+        "rank": 1,
+        "cell_origin_x": 240,
+        "cell_origin_y": 600,
+        "events": 66
+      },
+      {
+        "rank": 2,
+        "cell_origin_x": 0,
+        "cell_origin_y": 600,
+        "events": 40
+      },
+      {
+        "rank": 3,
+        "cell_origin_x": 240,
+        "cell_origin_y": 720,
+        "events": 14
+      },
+      {
+        "rank": 4,
+        "cell_origin_x": 120,
+        "cell_origin_y": 600,
+        "events": 3
+      },
+      {
+        "rank": 5,
+        "cell_origin_x": 120,
+        "cell_origin_y": 720,
+        "events": 1
+      }
+    ]
+  }
+}

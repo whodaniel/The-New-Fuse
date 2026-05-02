@@ -1,0 +1,616 @@
+
+
+
+
+Independent                                                   T. Editors
+Internet-Draft                                            TWIP Community
+Intended status: Informational                             18 March 2026
+Expires: 19 September 2026
+
+
+                Terminal Window Identity Protocol (TWIP)
+                             draft-twip-00
+
+Abstract
+
+   This document specifies the Terminal Window Identity Protocol (TWIP),
+   a unified identity model and discovery protocol for terminal panes,
+   tabs, and windows across terminal emulators, shells, and
+   multiplexers.  TWIP defines a canonical identifier ("twid"), a
+   normalized schema for legacy identifiers (for example, tty, process
+   and session IDs, emulator-specific IDs, and multiplexer IDs), and
+   standardized discovery surfaces via environment variables, OSC query
+   and reply, and optional local IPC APIs.  TWIP also defines lifecycle
+   events, capability advertisement, security and privacy controls, and
+   conformance levels.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 19 September 2026.
+
+Copyright Notice
+
+   Copyright (c) 2026 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+
+
+
+Editors                 Expires 19 September 2026               [Page 1]
+
+Internet-Draft                    TWIP                        March 2026
+
+
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+   2.  Conventions and Terminology . . . . . . . . . . . . . . . . .   3
+   3.  Design Goals and Non-Goals  . . . . . . . . . . . . . . . . .   3
+     3.1.  Goals . . . . . . . . . . . . . . . . . . . . . . . . . .   3
+     3.2.  Non-Goals . . . . . . . . . . . . . . . . . . . . . . . .   3
+   4.  Protocol Overview . . . . . . . . . . . . . . . . . . . . . .   4
+   5.  Canonical Identity Object . . . . . . . . . . . . . . . . . .   4
+     5.1.  Scope Object  . . . . . . . . . . . . . . . . . . . . . .   4
+     5.2.  Identity Stability  . . . . . . . . . . . . . . . . . . .   5
+   6.  Legacy Identifier Normalization . . . . . . . . . . . . . . .   5
+   7.  Discovery Mechanisms  . . . . . . . . . . . . . . . . . . . .   6
+     7.1.  Environment Variables . . . . . . . . . . . . . . . . . .   6
+     7.2.  OSC Query and Reply . . . . . . . . . . . . . . . . . . .   6
+     7.3.  Local IPC API . . . . . . . . . . . . . . . . . . . . . .   7
+   8.  Lifecycle Event Model . . . . . . . . . . . . . . . . . . . .   7
+   9.  Capability Advertisement  . . . . . . . . . . . . . . . . . .   7
+   10. Remote Propagation  . . . . . . . . . . . . . . . . . . . . .   8
+   11. Security Considerations . . . . . . . . . . . . . . . . . . .   8
+   12. Privacy Considerations  . . . . . . . . . . . . . . . . . . .   8
+   13. Conformance Levels  . . . . . . . . . . . . . . . . . . . . .   8
+     13.1.  Level 1 (Core) . . . . . . . . . . . . . . . . . . . . .   9
+     13.2.  Level 2 (Observable) . . . . . . . . . . . . . . . . . .   9
+     13.3.  Level 3 (Full) . . . . . . . . . . . . . . . . . . . . .   9
+   14. IANA Considerations . . . . . . . . . . . . . . . . . . . . .   9
+   15. Reference Identity Object . . . . . . . . . . . . . . . . . .   9
+   16. Deployment Guidance . . . . . . . . . . . . . . . . . . . . .  10
+   17. Open Issues . . . . . . . . . . . . . . . . . . . . . . . . .  11
+   18. Normative References  . . . . . . . . . . . . . . . . . . . .  11
+   19. Informative References  . . . . . . . . . . . . . . . . . . .  11
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
+
+1.  Introduction
+
+   Terminal automation and observability workflows currently rely on
+   fragmented identity signals: kernel PTY and TTY paths, process and
+   session metadata, terminal-emulator-specific environment variables,
+   multiplexer-specific identifiers, and optional GUI window metadata.
+
+   PTY and session terminology in this document follows common POSIX
+   process and terminal conventions [POSIX].
+
+
+
+
+Editors                 Expires 19 September 2026               [Page 2]
+
+Internet-Draft                    TWIP                        March 2026
+
+
+   These signals are not standardized into one interoperable object.
+   TWIP defines a common protocol for deriving, representing, and
+   querying terminal runtime identity.
+
+2.  Conventions and Terminology
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+   Window  A top-level GUI terminal container.
+
+   Tab  A GUI tab within a terminal window.
+
+   Pane  A visual terminal region bound to one active PTY stream.
+
+   Session  A runtime grouping defined by an emulator or multiplexer.
+
+   twid  The canonical TWIP pane identity, encoded as UUIDv7 [RFC9562].
+
+   Incarnation  A non-negative integer incremented when identity is
+      explicitly reconstituted (for example, clone or restore with
+      rotation).
+
+3.  Design Goals and Non-Goals
+
+3.1.  Goals
+
+   1.  Provide one canonical twid per pane lifetime.
+
+   2.  Normalize legacy identity sources into one schema.
+
+   3.  Support portable local automation and telemetry tooling.
+
+   4.  Operate with or without GUI and multiplexers.
+
+   5.  Emit lifecycle events for machine-consumable transitions.
+
+3.2.  Non-Goals
+
+   1.  Replacing kernel PTY or process semantics.
+
+   2.  Standardizing terminal rendering behavior.
+
+   3.  Mandating GUI metadata exposure by default.
+
+
+
+
+Editors                 Expires 19 September 2026               [Page 3]
+
+Internet-Draft                    TWIP                        March 2026
+
+
+4.  Protocol Overview
+
+   TWIP defines three layers:
+
+   1.  Identity Object: canonical JSON structure.
+
+   2.  Discovery Surfaces: environment variables, OSC, optional IPC.
+
+   3.  Event and Capability Model: lifecycle streams and feature flags.
+
+   A conformant implementation MAY expose only a subset of discovery
+   surfaces, subject to conformance levels in Section 13.
+
+5.  Canonical Identity Object
+
+   A TWIP identity object MUST include these top-level fields:
+
+   1.  twid (UUIDv7 string; see [RFC9562])
+
+   2.  created_at (timestamp in RFC 3339 format; see [RFC3339])
+
+   3.  incarnation (non-negative integer)
+
+   4.  scope
+
+   5.  process (if available)
+
+   6.  pty (if available)
+
+   7.  multiplexer (if available)
+
+   8.  legacy (normalized observations)
+
+5.1.  Scope Object
+
+   The scope object SHOULD include:
+
+   1.  host_id (pseudonymous host identifier)
+
+   2.  emulator_id (implementation-defined terminal ID)
+
+   3.  window_id (nullable)
+
+   4.  tab_id (nullable)
+
+   5.  pane_id (nullable)
+
+
+
+
+
+Editors                 Expires 19 September 2026               [Page 4]
+
+Internet-Draft                    TWIP                        March 2026
+
+
+5.2.  Identity Stability
+
+   1.  twid MUST remain stable for a pane lifetime.
+
+   2.  twid MUST rotate when a pane is duplicated into a distinct
+       runtime object.
+
+   3.  incarnation MUST increase when explicit identity reconstitution
+       occurs.
+
+6.  Legacy Identifier Normalization
+
+   Each observed legacy identifier MUST be represented as a tuple with
+   key, value, source, confidence, and observed_at.
+
+   {
+     "key": "tty",
+     "value": "/dev/ttys003",
+     "source": "kernel",
+     "confidence": 1.0,
+     "observed_at": "2026-03-18T14:30:00Z"
+   }
+
+   Required fields:
+
+   1.  key (string)
+
+   2.  value (string, number, or scalar)
+
+   3.  source (kernel, process, env, multiplexer, or gui)
+
+   4.  confidence (0.0 to 1.0)
+
+   5.  observed_at (timestamp in RFC 3339 format; see [RFC3339])
+
+   Recommended key values:
+
+   1.   tty
+
+   2.   pty_inode
+
+   3.   shell_pid
+
+   4.   pgid
+
+   5.   sid
+
+   6.   iterm_session_id
+
+
+
+Editors                 Expires 19 September 2026               [Page 5]
+
+Internet-Draft                    TWIP                        March 2026
+
+
+   7.   term_session_id
+
+   8.   windowid
+
+   9.   tmux_session (see [TMUX])
+
+   10.  tmux_window (see [TMUX])
+
+   11.  tmux_pane (see [TMUX])
+
+   12.  screen_window (see [SCREEN])
+
+   13.  gui_window_handle
+
+   14.  gui_window_title
+
+7.  Discovery Mechanisms
+
+7.1.  Environment Variables
+
+   Implementations SHOULD expose:
+
+   1.  TERMINAL_TWID
+
+   2.  TERMINAL_TWIP_VERSION
+
+   3.  TERMINAL_PANE_ID
+
+   4.  TERMINAL_TAB_ID (optional)
+
+   5.  TERMINAL_WINDOW_ID (optional)
+
+   6.  TERMINAL_TWIP_SOCKET (optional)
+
+7.2.  OSC Query and Reply
+
+   Until control-sequence allocation is standardized, implementations
+   MAY use a vendor-private OSC envelope.
+
+   1.  query type: twip.query
+
+   2.  reply type: twip.reply
+
+   3.  reply body: Base64URL-encoded UTF-8 JSON identity object
+
+   Receivers MUST ignore unknown fields.
+
+
+
+
+
+Editors                 Expires 19 September 2026               [Page 6]
+
+Internet-Draft                    TWIP                        March 2026
+
+
+7.3.  Local IPC API
+
+   If TERMINAL_TWIP_SOCKET is present, it MUST reference a local
+   authenticated socket serving JSON.
+
+   Required endpoints:
+
+   1.  GET /v1/identity
+
+   2.  GET /v1/capabilities
+
+   3.  GET /v1/events/stream
+
+8.  Lifecycle Event Model
+
+   Event emitters SHOULD publish:
+
+   1.   pane.created
+
+   2.   pane.focused
+
+   3.   pane.blurred
+
+   4.   pane.split
+
+   5.   pane.moved
+
+   6.   tab.created
+
+   7.   tab.closed
+
+   8.   window.created
+
+   9.   window.closed
+
+   10.  pane.closed
+
+   11.  identity.reincarnated
+
+   Each event MUST include twid, timestamp, event_seq, and event_type.
+
+9.  Capability Advertisement
+
+   /v1/capabilities MUST include:
+
+   1.  twip_version
+
+   2.  supports_gui_metadata
+
+
+
+Editors                 Expires 19 September 2026               [Page 7]
+
+Internet-Draft                    TWIP                        March 2026
+
+
+   3.  supports_focus_events
+
+   4.  supports_multiplexer_mapping
+
+   5.  supports_pty_inode
+
+   6.  supports_remote_propagation
+
+10.  Remote Propagation
+
+   Cross-host propagation MUST be disabled by default.
+
+   When explicitly enabled, senders MAY forward:
+
+   1.  TWIP_ORIGIN_TWID
+
+   2.  TWIP_ORIGIN_HOST_ID
+
+   3.  TWIP_FORWARD_CHAIN
+
+   Receivers MUST NOT overwrite local twid; they MAY append origin
+   linkage metadata.
+
+11.  Security Considerations
+
+   1.  Local IPC MUST enforce same-user filesystem permission checks.
+
+   2.  Session-bound tokens SHOULD be used for IPC clients.
+
+   3.  Implementations MUST treat OSC payloads as untrusted input.
+
+   4.  Event subscribers SHOULD be isolated from mutation endpoints.
+
+   5.  Implementations SHOULD rate-limit query interfaces.
+
+12.  Privacy Considerations
+
+   1.  GUI title and handle exposure MUST be opt-in.
+
+   2.  Raw hostnames SHOULD NOT be exposed by default; pseudonymous
+       host_id SHOULD be used.
+
+   3.  Forwarded origin fields SHOULD be minimized in multi-hop paths.
+
+   4.  Implementations SHOULD support per-field redaction policies.
+
+13.  Conformance Levels
+
+
+
+
+Editors                 Expires 19 September 2026               [Page 8]
+
+Internet-Draft                    TWIP                        March 2026
+
+
+13.1.  Level 1 (Core)
+
+   Required:
+
+   1.  identity object with twid, created_at, incarnation, scope, and
+       legacy;
+
+   2.  environment variables TERMINAL_TWID and TERMINAL_TWIP_VERSION.
+
+13.2.  Level 2 (Observable)
+
+   Level 1 plus capability endpoint and lifecycle event stream.
+
+13.3.  Level 3 (Full)
+
+   Level 2 plus multiplexer normalization, GUI privacy controls, and
+   explicit remote propagation controls.
+
+14.  IANA Considerations
+
+   This document has no IANA actions in this revision.
+
+   Future revisions may request standardized terminal control- sequence
+   allocation for TWIP query and reply semantics.
+
+15.  Reference Identity Object
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Editors                 Expires 19 September 2026               [Page 9]
+
+Internet-Draft                    TWIP                        March 2026
+
+
+   {
+     "twid": "0195f5f1-8f8f-7b1a-b1a4-9fa3d2b2d601",
+     "created_at": "2026-03-18T14:30:00Z",
+     "incarnation": 0,
+     "scope": {
+       "host_id": "h:9af31c2e",
+       "emulator_id": "wezterm",
+       "window_id": "win:42",
+       "tab_id": "tab:3",
+       "pane_id": "pane:7"
+     },
+     "process": {
+       "shell_pid": 84122,
+       "pgid": 84122,
+       "sid": 84122
+     },
+     "pty": {
+       "path": "/dev/ttys003",
+       "inode": 164889
+     },
+     "multiplexer": {
+       "kind": "tmux",
+       "session_id": "$1",
+       "window_id": "@12",
+       "pane_id": "%5"
+     },
+     "legacy": [
+       {
+         "key": "tty",
+         "value": "/dev/ttys003",
+         "source": "kernel",
+         "confidence": 1.0,
+         "observed_at": "2026-03-18T14:30:00Z"
+       }
+     ]
+   }
+
+16.  Deployment Guidance
+
+   1.  Publish schema and conformance tests.
+
+   2.  Ship local twipctl probe.
+
+   3.  Add emulator and multiplexer adapters.
+
+   4.  Collect interoperability test results.
+
+   5.  Standardize control-sequence allocation.
+
+
+
+Editors                 Expires 19 September 2026              [Page 10]
+
+Internet-Draft                    TWIP                        March 2026
+
+
+17.  Open Issues
+
+   1.  Control-sequence registration strategy.
+
+   2.  Default confidence calibration for GUI-derived fields.
+
+   3.  Restored-session semantics across emulators.
+
+   4.  Nested multiplexer identity mapping profile.
+
+18.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC3339]  Klyne, G. and C. Newman, "Date and Time on the Internet:
+              Timestamps", RFC 3339, DOI 10.17487/RFC3339, July 2002,
+              <https://www.rfc-editor.org/info/rfc3339>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+   [RFC9562]  Davis, K., Peabody, B., and P. Leach, "Universally Unique
+              IDentifiers (UUIDs)", RFC 9562, DOI 10.17487/RFC9562, May
+              2024, <https://www.rfc-editor.org/info/rfc9562>.
+
+19.  Informative References
+
+   [POSIX]    Group, T. O., "POSIX.1-2017 Base Specifications, Issue 7",
+              2018, <https://pubs.opengroup.org/onlinepubs/9699919799/>.
+
+   [SCREEN]   Project, G., "GNU Screen Manual", 2026,
+              <https://www.gnu.org/software/screen/manual/>.
+
+   [TMUX]     Project, T., "tmux Documentation", 2026,
+              <https://github.com/tmux/tmux/wiki>.
+
+Author's Address
+
+   TWIP Editors
+   TWIP Community
+
+
+
+
+
+
+
+Editors                 Expires 19 September 2026              [Page 11]

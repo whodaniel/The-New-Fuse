@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-03-26T18:51:55.708020Z",
+  "event_count_total": 0,
+  "event_counts_by_type": {},
+  "event_span_seconds": 0.0,
+  "frame_count": 1,
+  "segment_count": 0,
+  "finding_count": 0,
+  "timeline_events_csv": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-185145/analysis/timeline_events.csv",
+  "frame_timeline_csv": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-185145/analysis/frame_timeline.csv",
+  "action_segments_csv": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-185145/analysis/action_segments.csv",
+  "hotspots_csv": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-185145/analysis/hotspots.csv",
+  "findings_json": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-185145/analysis/findings.json",
+  "llm_output_jsonl": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-185145/llm_interpretation.jsonl",
+  "llm_frames_total": 1,
+  "llm_frames_success": 1,
+  "llm_frames_error": 0,
+  "llm_intent_counts": {
+    "Pausing to read terminal output and decide the next command/message before typing.": 1
+  }
+}

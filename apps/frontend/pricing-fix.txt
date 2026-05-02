@@ -1,0 +1,29 @@
+TNF Missing Pages Fix Report
+============================
+
+Problem: Pages /pricing, /features, /docs return HTTP 308 (redirect to /app)
+Root Cause: App domain (app.thenewfuse.com) incorrectly uses RedirectToStatic component
+
+Analysis:
+- Router has RedirectToStatic component that checks hostname
+- On app.thenewfuse.com, it returns null (no redirect)
+- However, there is a 308 redirect happening at CDN/hosting level
+- Cloudflare Pages or another layer is redirecting missing pages
+
+Fix Applied:
+1. Changed /features and /pricing routes from RedirectToStatic to Navigate
+   - /features -> /#features
+   - /pricing -> /#pricing
+2. Removed reliance on external redirect logic
+
+Current Status:
+- Pages still return 308 because redirects are happening at hosting level
+- Need to investigate Cloudflare Pages redirect rules or static hosting config
+
+Recommendation:
+1. Check Cloudflare Pages _redirects file in build output
+2. Add explicit 200 routes for /pricing, /features, /docs
+3. Ensure they are not caught by catch-all redirect rules
+
+Files Modified:
+- apps/frontend/src/ComprehensiveRouter.tsx (lines 1260-1261, 1266)

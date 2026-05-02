@@ -1,0 +1,246 @@
+#!/bin/bash
+set -euo pipefail
+
+if [[ -f "$HOME/bin/voicebridge-paths.sh" ]]; then
+  # shellcheck disable=SC1090
+  source "$HOME/bin/voicebridge-paths.sh"
+fi
+
+usage() {
+  cat <<'USAGE'
+Usage: voice-agent-send --to <profile> [--from <profile>] (--text <msg> | --stdin) [--json]
+
+Examples:
+  voice-agent-send --from a --to b --text "ping from agent a"
+  echo "hello" | voice-agent-send --from b --to a --stdin
+USAGE
+}
+
+normalize_profile() {
+  local raw="${1:-main}"
+  raw="$(printf '%s' "$raw" | tr '[:upper:]' '[:lower:]')"
+  raw="${raw//[^a-z0-9_-]/_}"
+  raw="${raw##_}"
+  raw="${raw%%_}"
+  if [[ -z "$raw" ]]; then
+    raw="main"
+  fi
+  printf '%s' "$raw"
+}
+
+profile_default_voice() {
+  local profile
+  profile="$(normalize_profile "${1:-main}")"
+  case "$profile" in
+    b|samantha)
+      printf '%s' "Samantha"
+      ;;
+    a|george)
+      printf '%s' "Daniel"
+      ;;
+    *)
+      printf '%s' "Daniel"
+      ;;
+  esac
+}
+
+profile_identity_name() {
+  local profile
+  profile="$(normalize_profile "${1:-main}")"
+  case "$profile" in
+    a|george)
+      printf '%s' "${VOICE_AGENT_NAME_A:-George}"
+      ;;
+    b|samantha)
+      printf '%s' "${VOICE_AGENT_NAME_B:-Samantha}"
+      ;;
+    *)
+      printf '%s' "$profile"
+      ;;
+  esac
+}
+
+watcher_ready_for_profile() {
+  local profile
+  profile="$(normalize_profile "${1:-main}")"
+  if pgrep -f "stream_watch.py.*--profile[ =]${profile}" >/dev/null 2>&1; then
+    return 0
+  fi
+  case "$profile" in
+    main|default|primary)
+      pgrep -f "stream_watch.py" >/dev/null 2>&1
+      return $?
+      ;;
+  esac
+  return 1
+}
+
+from_profile="${VOICEBRIDGE_PROFILE:-main}"
+to_profile=""
+text=""
+use_stdin=0
+json_out=0
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --from)
+      from_profile="${2:-}"
+      [[ -n "$from_profile" ]] || { echo "Missing value for --from" >&2; exit 1; }
+      shift 2
+      ;;
+    --from=*)
+      from_profile="${1#--from=}"
+      [[ -n "$from_profile" ]] || { echo "Missing value for --from" >&2; exit 1; }
+      shift
+      ;;
+    --to)
+      to_profile="${2:-}"
+      [[ -n "$to_profile" ]] || { echo "Missing value for --to" >&2; exit 1; }
+      shift 2
+      ;;
+    --to=*)
+      to_profile="${1#--to=}"
+      [[ -n "$to_profile" ]] || { echo "Missing value for --to" >&2; exit 1; }
+      shift
+      ;;
+    --text)
+      text="${2:-}"
+      shift 2
+      ;;
+    --text=*)
+      text="${1#--text=}"
+      shift
+      ;;
+    --stdin)
+      use_stdin=1
+      shift
+      ;;
+    --json)
+      json_out=1
+      shift
+      ;;
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown arg: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+done
+
+if [[ -z "$to_profile" ]]; then
+  echo "--to is required" >&2
+  usage >&2
+  exit 1
+fi
+
+if [[ "$use_stdin" -eq 1 ]]; then
+  stdin_text="$(cat)"
+  if [[ -n "$stdin_text" ]]; then
+    text="$stdin_text"
+  fi
+fi
+
+text="$(printf '%s' "$text" | tr '\n' ' ' | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//')"
+if [[ -z "$text" ]]; then
+  echo "Message text is empty. Use --text or --stdin." >&2
+  exit 1
+fi
+
+if command -v voicebridge_use_profile >/dev/null 2>&1; then
+  voicebridge_use_profile "$to_profile"
+fi
+VOICEBRIDGE_STATE_DIR="${VOICEBRIDGE_STATE_DIR:-$HOME/.voicebridge}"
+mkdir -p "$VOICEBRIDGE_STATE_DIR"
+if command -v voicebridge_init_state >/dev/null 2>&1; then
+  voicebridge_init_state
+fi
+
+if command -v voicebridge_state_file >/dev/null 2>&1; then
+  target_stream="$(voicebridge_state_file "voice_stream.txt")"
+else
+  target_stream="$VOICEBRIDGE_STATE_DIR/voice_stream.txt"
+fi
+
+msg_id="$(date +%s)-$$-${RANDOM:-0}"
+timestamp="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+from_identity="${VOICE_AGENT_SEND_FROM_IDENTITY:-$(profile_identity_name "$from_profile")}"
+payload="[A2A from:${from_identity} profile:${from_profile} id:${msg_id}] ${text}"
+
+printf '%s\n' "$payload" >> "$target_stream"
+
+# Optional direct audio fallback for A2A delivery.
+# Modes:
+# - watcher (default): never speak directly; rely on target watcher only
+# - auto: speak only if target watcher is not active
+# - always / 1: always speak here
+# - never / 0: never speak here
+watch_ready=0
+if watcher_ready_for_profile "$to_profile"; then
+  watch_ready=1
+fi
+
+VOICE_AGENT_SEND_SPEAK_MODE="${VOICE_AGENT_SEND_SPEAK:-watcher}"
+VOICE_AGENT_SEND_SPEAK_MODE="$(printf '%s' "$VOICE_AGENT_SEND_SPEAK_MODE" | tr '[:upper:]' '[:lower:]')"
+VOICE_AGENT_SEND_VOICE="${VOICE_AGENT_SEND_VOICE:-$(profile_default_voice "$from_profile")}"
+
+should_speak=0
+case "$VOICE_AGENT_SEND_SPEAK_MODE" in
+  1|on|yes|true|always)
+    should_speak=1
+    ;;
+  0|off|no|false|never)
+    should_speak=0
+    ;;
+  watcher)
+    should_speak=0
+    ;;
+  auto|*)
+    if [[ "$watch_ready" -eq 0 ]]; then
+      should_speak=1
+    fi
+    ;;
+esac
+
+if [[ "$should_speak" -eq 1 ]]; then
+  suffix=""
+  if command -v voicebridge_profile_suffix >/dev/null 2>&1; then
+    suffix="$(voicebridge_profile_suffix)"
+  fi
+  ai_flag="/tmp/ai_is_speaking${suffix}"
+  ai_ts="/tmp/voice_last_ai_speech_ts${suffix}"
+  body="$text"
+  body="$(printf '%s' "$body" | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//')"
+  if [[ -n "$body" ]]; then
+    : > "$ai_flag" || true
+    say -v "$VOICE_AGENT_SEND_VOICE" "$body" >/dev/null 2>&1 || true
+    rm -f "$ai_flag" || true
+    printf '%.6f\n' "$(python3 - <<'PY'
+import time
+print(time.time())
+PY
+)" > "$ai_ts" 2>/dev/null || true
+  fi
+fi
+
+if [[ "$json_out" -eq 1 ]]; then
+  cat <<JSON
+{"ok":true,"to":"${to_profile}","from":"${from_profile}","msg_id":"${msg_id}","timestamp":"${timestamp}","target_stream":"${target_stream}","watch_ready":${watch_ready}}
+JSON
+else
+  echo "sent ${msg_id} from [${from_profile}] to [${to_profile}]"
+  echo "target stream: ${target_stream}"
+  if [[ "$should_speak" -eq 1 ]]; then
+    echo "audio: spoke A2A payload via say (${VOICE_AGENT_SEND_VOICE})"
+  else
+    echo "audio: delegated to target watcher"
+  fi
+  if [[ "$watch_ready" -eq 1 ]]; then
+    echo "watcher status: ready"
+  else
+    echo "watcher status: not-detected (start with: tnf voice up --profile ${to_profile})"
+  fi
+fi

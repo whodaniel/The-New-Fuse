@@ -1,0 +1,24 @@
+import React, { FC } from "react";
+import { LayoutProps } from '@the-new-fuse/types';
+import { LayoutProvider } from '@the-new-fuse/LayoutContext';
+import { Sidebar } from '@the-new-fuse/Sidebar';
+
+export const Layout: FC<LayoutProps> = ({
+  children,
+  sidebar = true,
+  header = true,
+  footer = true,
+}) => {
+  return (
+    <LayoutProvider>
+      <div className="flex h-screen">
+        {sidebar && <Sidebar />}
+        <div className="flex-1 flex flex-col">
+          {header && <header className="h-16 bg-white shadow-sm" />}
+          <main className="flex-1 overflow-auto">{children}</main>
+          {footer && <footer className="h-12 bg-white shadow-sm" />}
+        </div>
+      </div>
+    </LayoutProvider>
+  );
+};

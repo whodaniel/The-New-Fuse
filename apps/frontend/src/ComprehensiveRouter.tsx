@@ -70,6 +70,8 @@ const HostingControlCenterPage = lazy(() => import('./pages/Hosting/HostingContr
 const MarketplaceDashboard = lazy(() => import('./pages/Marketplace'));
 const MarketplacePublicPage = lazy(() => import('./pages/Marketplace/MarketplacePublicPage'));
 
+const VirtualLibrary = lazy(() => import('./pages/VirtualLibrary/VirtualLibraryPage'));
+
 // Performance loading component
 const LoadingFallback = ({ name }: { name: string }) => (
   <div className="flex items-center justify-center min-h-[400px]">
@@ -1273,6 +1275,14 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/onboarding" element={<Navigate to="/onboarding" replace />} />
               <Route path="/docs" element={<DocsPage />} />
               <Route path="/docs/*" element={<DocsPage />} />
+              <Route
+                path="/3d-library"
+                element={
+                  <Suspense fallback={<LoadingFallback name="3D Library" />}>
+                    <VirtualLibrary />
+                  </Suspense>
+                }
+              />
               <Route path="/visualizations" element={<VisualizationsPage />} />
               <Route path="/visualizations/terminals" element={<TerminalGraphPage />} />
               <Route path="/terminals" element={<TerminalGraphPage />} />

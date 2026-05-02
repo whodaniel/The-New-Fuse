@@ -1,0 +1,10 @@
+fastmcp>=0.4.0
+google-api-python-client>=2.100.0
+google-auth-httplib2>=0.2.0
+google-auth-oauthlib>=1.1.0
+pcloudapi>=0.6.0
+ardrive>=0.3.0
+python-dotenv>=1.0.0
+tqdm>=4.66.0
+python-magic>=0.4.27
+pathspec>=0.12.1

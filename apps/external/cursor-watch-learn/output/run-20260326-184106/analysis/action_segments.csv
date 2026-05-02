@@ -1,0 +1,2 @@
+segment_id,family,start_at,end_at,start_ts_epoch,end_ts_epoch,duration_ms,event_count,move_distance_px,click_down_count,click_up_count,scroll_event_count,avg_x,avg_y
+1,move,2026-03-26T18:41:09.152956Z,2026-03-26T18:41:09.561160Z,1774550469.152956,1774550469.5611598,408.2,51,45.53,0,0,0,412.33,344.59

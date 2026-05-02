@@ -1,0 +1,6 @@
+.venv_crawl/
+tmp_prompt_repos/
+__pycache__/
+instruction_research.sqlite
+instruction_research.sqlite-shm
+instruction_research.sqlite-wal

@@ -1,0 +1,36 @@
+{
+  "name": "@the-new-fuse/infrastructure",
+  "version": "1.0.0",
+  "description": "Unified infrastructure services for The New Fuse framework",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "build:foundation": "tsc",
+    "dev": "tsc --watch",
+    "test": "echo \"No tests for this package\"",
+    "lint": "eslint src/**/*.ts",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.1.16",
+    "@nestjs/config": "^4.0.2",
+    "ioredis": "^5.8.1",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.8.1",
+    "eslint": "^9.38.0",
+    "jest": "^30.3.0",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/config": "^3.0.0"
+  }
+}

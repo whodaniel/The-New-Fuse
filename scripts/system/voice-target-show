@@ -1,0 +1,95 @@
+#!/bin/bash
+set -euo pipefail
+
+if [[ -f "$HOME/bin/voicebridge-paths.sh" ]]; then
+  # shellcheck disable=SC1090
+  source "$HOME/bin/voicebridge-paths.sh"
+fi
+profile="${VOICEBRIDGE_PROFILE:-main}"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --profile)
+      profile="${2:-}"
+      if [[ -z "$profile" ]]; then
+        echo "Missing value for --profile" >&2
+        exit 1
+      fi
+      shift 2
+      ;;
+    --profile=*)
+      profile="${1#--profile=}"
+      if [[ -z "$profile" ]]; then
+        echo "Missing value for --profile" >&2
+        exit 1
+      fi
+      shift
+      ;;
+    *)
+      echo "Usage: voice-target-show [--profile A|B|...]" >&2
+      exit 1
+      ;;
+  esac
+done
+
+if command -v voicebridge_use_profile >/dev/null 2>&1; then
+  voicebridge_use_profile "$profile"
+fi
+VOICEBRIDGE_STATE_DIR="${VOICEBRIDGE_STATE_DIR:-$HOME/.voicebridge}"
+mkdir -p "$VOICEBRIDGE_STATE_DIR"
+if command -v voicebridge_init_state >/dev/null 2>&1; then
+  voicebridge_init_state
+fi
+
+if command -v voicebridge_state_file >/dev/null 2>&1; then
+  TARGET_JSON="$(voicebridge_state_file "voice_target.json")"
+  TARGET_TTY_FILE="$(voicebridge_state_file "voice_target_tty")"
+else
+  TARGET_JSON="$VOICEBRIDGE_STATE_DIR/voice_target.json"
+  TARGET_TTY_FILE="$VOICEBRIDGE_STATE_DIR/voice_target_tty"
+fi
+
+if [[ -f "$TARGET_JSON" ]]; then
+  TARGET_JSON="$TARGET_JSON" PROFILE_NAME="$VOICEBRIDGE_PROFILE" python3 - <<'PY'
+import json
+import os
+
+path = os.environ["TARGET_JSON"]
+profile = os.environ.get("PROFILE_NAME", "main")
+try:
+    data = json.load(open(path, "r", encoding="utf-8"))
+except Exception as e:
+    print(f"❌ Could not read {path}: {e}")
+    raise SystemExit(1)
+
+kind = data.get("kind")
+if kind == "terminal":
+    enter = "ON" if data.get("press_enter", True) else "OFF"
+    print(f"🎯 [{profile}] Target: terminal {data.get('tty', '?')} (Enter: {enter})")
+elif kind == "app":
+    enter = "ON" if data.get("press_enter", False) else "OFF"
+    window = data.get("window", "")
+    if window:
+        print(f"🎯 [{profile}] Target: app {data.get('app', '?')} | window: {window} (Enter: {enter})")
+    else:
+        print(f"🎯 [{profile}] Target: app {data.get('app', '?')} (Enter: {enter})")
+elif kind == "point":
+    enter = "ON" if data.get("press_enter", False) else "OFF"
+    app = data.get("app", "")
+    bundle_id = data.get("bundle_id", "")
+    app_part = f" app: {app}" if app else ""
+    bundle_part = f" bundle: {bundle_id}" if bundle_id else ""
+    print(f"🎯 [{profile}] Target: point {data.get('x', '?')},{data.get('y', '?')}{app_part}{bundle_part} (Enter: {enter})")
+else:
+    print(f"⚠️ Unknown target format in {path}: {data}")
+PY
+  exit 0
+fi
+
+if [[ -f "$TARGET_TTY_FILE" ]]; then
+  tty_val="$(cat "$TARGET_TTY_FILE")"
+  echo "🎯 [${VOICEBRIDGE_PROFILE}] Target (legacy): terminal ${tty_val} (Enter: ON)"
+  exit 0
+fi
+
+echo "⚠️ [${VOICEBRIDGE_PROFILE}] No transcription target is locked yet."

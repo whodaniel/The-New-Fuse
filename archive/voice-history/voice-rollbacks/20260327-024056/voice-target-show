@@ -1,0 +1,49 @@
+#!/bin/bash
+set -euo pipefail
+
+TARGET_JSON="$HOME/.openclaw/voice_target.json"
+TARGET_TTY_FILE="$HOME/.openclaw/voice_target_tty"
+
+if [[ -f "$TARGET_JSON" ]]; then
+  python3 - <<'PY'
+import json
+import os
+
+path = os.path.expanduser("~/.openclaw/voice_target.json")
+try:
+    data = json.load(open(path, "r", encoding="utf-8"))
+except Exception as e:
+    print(f"❌ Could not read {path}: {e}")
+    raise SystemExit(1)
+
+kind = data.get("kind")
+if kind == "terminal":
+    enter = "ON" if data.get("press_enter", True) else "OFF"
+    print(f"🎯 Target: terminal {data.get('tty', '?')} (Enter: {enter})")
+elif kind == "app":
+    enter = "ON" if data.get("press_enter", False) else "OFF"
+    window = data.get("window", "")
+    if window:
+        print(f"🎯 Target: app {data.get('app', '?')} | window: {window} (Enter: {enter})")
+    else:
+        print(f"🎯 Target: app {data.get('app', '?')} (Enter: {enter})")
+elif kind == "point":
+    enter = "ON" if data.get("press_enter", False) else "OFF"
+    app = data.get("app", "")
+    bundle_id = data.get("bundle_id", "")
+    app_part = f" app: {app}" if app else ""
+    bundle_part = f" bundle: {bundle_id}" if bundle_id else ""
+    print(f"🎯 Target: point {data.get('x', '?')},{data.get('y', '?')}{app_part}{bundle_part} (Enter: {enter})")
+else:
+    print(f"⚠️ Unknown target format in {path}: {data}")
+PY
+  exit 0
+fi
+
+if [[ -f "$TARGET_TTY_FILE" ]]; then
+  tty_val="$(cat "$TARGET_TTY_FILE")"
+  echo "🎯 Target (legacy): terminal ${tty_val} (Enter: ON)"
+  exit 0
+fi
+
+echo "⚠️ No transcription target is locked yet."

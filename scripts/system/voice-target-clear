@@ -1,0 +1,50 @@
+#!/bin/bash
+set -euo pipefail
+if [[ -f "$HOME/bin/voicebridge-paths.sh" ]]; then
+  # shellcheck disable=SC1090
+  source "$HOME/bin/voicebridge-paths.sh"
+fi
+profile="${VOICEBRIDGE_PROFILE:-main}"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --profile)
+      profile="${2:-}"
+      if [[ -z "$profile" ]]; then
+        echo "Missing value for --profile" >&2
+        exit 1
+      fi
+      shift 2
+      ;;
+    --profile=*)
+      profile="${1#--profile=}"
+      if [[ -z "$profile" ]]; then
+        echo "Missing value for --profile" >&2
+        exit 1
+      fi
+      shift
+      ;;
+    *)
+      echo "Usage: voice-target-clear [--profile A|B|...]" >&2
+      exit 1
+      ;;
+  esac
+done
+
+if command -v voicebridge_use_profile >/dev/null 2>&1; then
+  voicebridge_use_profile "$profile"
+fi
+VOICEBRIDGE_STATE_DIR="${VOICEBRIDGE_STATE_DIR:-$HOME/.voicebridge}"
+mkdir -p "$VOICEBRIDGE_STATE_DIR"
+if command -v voicebridge_init_state >/dev/null 2>&1; then
+  voicebridge_init_state
+fi
+if command -v voicebridge_state_file >/dev/null 2>&1; then
+  TARGET_JSON="$(voicebridge_state_file "voice_target.json")"
+  TARGET_TTY_FILE="$(voicebridge_state_file "voice_target_tty")"
+else
+  TARGET_JSON="$VOICEBRIDGE_STATE_DIR/voice_target.json"
+  TARGET_TTY_FILE="$VOICEBRIDGE_STATE_DIR/voice_target_tty"
+fi
+rm -f "$TARGET_JSON" "$TARGET_TTY_FILE"
+echo "🧹 [${VOICEBRIDGE_PROFILE}] Transcription destination lock cleared."

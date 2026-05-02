@@ -1,0 +1,27 @@
+{
+  "id": "12QvKzP0u905_tiVB6M7lLpZqhz6_ZKHF",
+  "url": "https://aistudio.google.com/app/prompts/12QvKzP0u905_tiVB6M7lLpZqhz6_ZKHF",
+  "importedAt": "2026-01-18T23:58:46.462Z",
+  "turns": [
+    {
+      "role": "model",
+      "text": "editmore_vert"
+    },
+    {
+      "role": "model",
+      "text": "editmore_vert"
+    },
+    {
+      "role": "model",
+      "text": "editmore_vert"
+    },
+    {
+      "role": "model",
+      "text": "more_vertModel Thoughts Examining Logical StructuresI'm currently focused on the common formats and challenges presented by different logic tests. I'm actively researching popular types and examples to get a better grasp of the landscape. My next step will be to explore recent and trending logic puzzles used online.Formulating Relevant TestsI'm now thinking about how to craft tests that are not only relevant but also suitably challenging for various users, be it for assessments or simply fun. I'm aiming for diversity in my test formats and plan to create a small logical challenge tailored to the user.Defining Logical CategoriesI've been reviewing the initial results, gaining a solid grasp of different logic test types. I'm focusing on defining and differentiating deductive, inductive, abstract, and diagrammatic reasoning, also some puzzle examples. The goal is to create a useful framework.Developing a Test StructureI'm now building the structure of the logic test. It will include several classic puzzle types: verbal/riddle, pattern-based questions, and deductive logic problems. I'll make sure to provide explanations and solutions for each, presenting it as a mini-assessment. I have several question options, like bulb switches or seating arrangements, to choose from.Crafting Interactive PuzzlesI've decided to refine the logic test component. Rather than a static set of problems, I'm aiming for an interactive, self-contained experience. I've curated some \"2026\" and \"2025\" labeled results that contain standard but high-quality logic questions. Now, I'm planning to select three puzzles and assemble a presentation of them, one deductive (classic lying/truth-teller), one pattern/sequence (like a digital sum or a shape sequence), and a lateral thinking puzzle (light switches or ropes). I'll provide a proper welcome and include instructions, which will require an interactive approach.Refining Test ScopeI'm currently thinking about the scope of the interactive test. While considering professional practice tests like \"Alva Labs Logic Test\" and \"SHL tests\", I've concluded that for a general introduction, focusing directly on engaging puzzles is the best approach. I will present a \"Hello Logic Test\" welcome instead. Expand to view model thoughts  chevron_right "
+    },
+    {
+      "role": "model",
+      "text": "more_vertHello! It sounds like you're ready for a challenge. To get started, I’ve put together a mini-logic test featuring three different types of reasoning: deductive logic, lateral thinking, and pattern recognition.Try to solve these without looking ahead to the answers!1. The Liar and the Truth-Teller (Deductive Reasoning)You are standing at a fork in the road. One path leads to the City of Truth, and the other leads to the City of Lies. Standing at the fork are two twins:One twin always tells the truth.[1]The other twin always tells a lie.[1]You don’t know which is which. You are allowed to ask one question to one of the twins to find out which path leads to the City of Truth.Question: What do you ask?2. The Burning Ropes (Lateral Thinking)You have two ropes.Each rope takes exactly 60 minutes to burn from end to end.The ropes are not uniform (one part might burn faster than another), so you cannot simply cut them in half to get 30 minutes.You have a box of matches.Question: How can you use these two ropes to measure exactly 45 minutes?3. The Number Sequence (Pattern Recognition)Look at the following sequence:2, 5, 11, 23, 47, ...Question: What is the next number in the sequence?Ready for the Answers?The Fork in the Road: Ask either twin: \"If I were to ask your brother which way leads to the City of Truth, what would he say?\"Whatever path they point to, take the opposite one. (The truth-teller would tell you the lie his brother would say; the liar would lie about the truth his brother would say. Both will point to the wrong path).The Burning Ropes:Light both ends of Rope A and one end of Rope B at the same time.[2][3]When Rope A finishes burning (30 minutes have passed), Rope B has 30 minutes of \"burn time\" left.[2]At that exact moment, light the other end of Rope B. It will burn out in 15 minutes.30 + 15 = 45 minutes.The Number Sequence: 95.The pattern is:         (PreviousNumber×2)+1(Previous Number \\times 2) + 1(PreviousNumber×2)+1\n      .        (47×2)+1=95(47 \\times 2) + 1 = 95(47×2)+1=95\n      .How did you do? Would you like a harder set, or perhaps a different type of puzzle? Sources  help hitbullseye.comloquiz.comparade.comGoogle Search Suggestions Display of Search Suggestions is required when using Grounding with Google Search.  Learn more types of logic tests common onlinehard logic puzzles with solutions for testinglatest logic reasoning questions and answers 2026popular logic test examples and puzzles 2026thumb_upthumb_down"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "records": [],
+  "timelineEvents": [
+    {
+      "id": "evt_9hgkpeb1dc",
+      "userId": "system",
+      "recordId": "4d8c8f09-5d9f-4d14-9b8b-2d6536a4bf5a",
+      "eventType": "historical_event",
+      "actor": "agent_handoff_service",
+      "timestamp": "2026-03-05T07:57:54.056Z",
+      "payload": {
+        "category": "handoff_publish",
+        "tenantId": "tnf-prod",
+        "packetId": "4d8c8f09-5d9f-4d14-9b8b-2d6536a4bf5a",
+        "fromAgentId": "agent-alpha",
+        "targetAgentIds": [
+          "agent-beta"
+        ],
+        "priority": "normal"
+      }
+    },
+    {
+      "id": "evt_kvwa2sv506",
+      "userId": "system",
+      "recordId": "4d8c8f09-5d9f-4d14-9b8b-2d6536a4bf5a",
+      "eventType": "historical_event",
+      "actor": "agent_handoff_service",
+      "timestamp": "2026-03-05T07:57:54.061Z",
+      "payload": {
+        "category": "handoff_ack",
+        "tenantId": "tnf-prod",
+        "packetId": "4d8c8f09-5d9f-4d14-9b8b-2d6536a4bf5a",
+        "agentId": "agent-beta",
+        "status": "received"
+      }
+    }
+  ],
+  "goals": [],
+  "plans": []
+}

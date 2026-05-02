@@ -1,0 +1,35 @@
+{
+  "name": "@the-new-fuse/jules-skill",
+  "version": "0.1.0",
+  "description": "Jules CLI integration skill for AI agent delegation - Enables agents to delegate coding tasks to Google Jules",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "private": true,
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "lint": "eslint src",
+    "type-check": "tsc --noEmit",
+    "mcp:start": "node dist/mcp-server.js",
+    "mcp:dev": "ts-node src/mcp-server.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "execa": "^9.6.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^24.8.1",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "keywords": [
+    "jules",
+    "google",
+    "ai-agent",
+    "mcp",
+    "delegation",
+    "coding-agent"
+  ]
+}

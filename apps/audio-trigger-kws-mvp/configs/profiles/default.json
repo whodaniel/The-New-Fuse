@@ -1,0 +1,19 @@
+{
+  "id": "default",
+  "name": "User",
+  "interests": [],
+  "triggerThresholds": {},
+  "keywordSets": {},
+  "researchData": {
+    "topics": [],
+    "lastUpdated": "",
+    "sources": []
+  },
+  "preferences": {
+    "assistiveActions": true,
+    "feedbackFrequency": "medium",
+    "preferredModalities": ["visual", "audio", "text"]
+  },
+  "createdAt": "",
+  "updatedAt": ""
+}

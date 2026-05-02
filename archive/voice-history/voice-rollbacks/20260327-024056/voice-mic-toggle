@@ -1,0 +1,13 @@
+#!/bin/bash
+set -euo pipefail
+
+MIC_FILE="$HOME/.openclaw/voice_mic_paused"
+mkdir -p "$HOME/.openclaw"
+
+if [[ -f "$MIC_FILE" ]]; then
+  rm -f "$MIC_FILE"
+  echo "🎙️ Mic capture: ON"
+else
+  touch "$MIC_FILE"
+  echo "🔇 Mic capture: OFF"
+fi

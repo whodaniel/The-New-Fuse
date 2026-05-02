@@ -1,0 +1,122 @@
+{
+  "name": "@the-new-fuse/workflow-engine",
+  "version": "1.0.0",
+  "description": "Unified Workflow Engine for The New Fuse Framework - Consolidates all workflow execution capabilities",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types/WorkflowTypes.js",
+      "require": "./dist/types/WorkflowTypes.js",
+      "types": "./dist/types/WorkflowTypes.d.ts"
+    },
+    "./engine": {
+      "import": "./dist/engine/WorkflowEngine.js",
+      "require": "./dist/engine/WorkflowEngine.js",
+      "types": "./dist/engine/WorkflowEngine.d.ts"
+    },
+    "./builder": {
+      "import": "./dist/builder/WorkflowBuilder.js",
+      "require": "./dist/builder/WorkflowBuilder.js",
+      "types": "./dist/builder/WorkflowBuilder.d.ts"
+    },
+    "./executor": {
+      "import": "./dist/executor/WorkflowExecutor.js",
+      "require": "./dist/executor/WorkflowExecutor.js",
+      "types": "./dist/executor/WorkflowExecutor.d.ts"
+    },
+    "./repository": {
+      "import": "./dist/repository/WorkflowRepository.js",
+      "require": "./dist/repository/WorkflowRepository.js",
+      "types": "./dist/repository/WorkflowRepository.d.ts"
+    },
+    "./validator": {
+      "import": "./dist/validator/WorkflowValidator.js",
+      "require": "./dist/validator/WorkflowValidator.js",
+      "types": "./dist/validator/WorkflowValidator.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "dev": "tsc --watch",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "test": "jest --config jest.config.cjs --passWithNoTests",
+    "test:watch": "jest --config jest.config.cjs --watch",
+    "test:coverage": "jest --config jest.config.cjs --coverage",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\""
+  },
+  "keywords": [
+    "workflow",
+    "engine",
+    "automation",
+    "agents",
+    "orchestration",
+    "the-new-fuse",
+    "typescript"
+  ],
+  "author": "The New Fuse Team",
+  "license": "MIT",
+  "dependencies": {
+    "@nestjs/event-emitter": "^3.0.1",
+    "@the-new-fuse/agent": "workspace:*",
+    "@the-new-fuse/core": "workspace:*",
+    "@the-new-fuse/mcp-core": "workspace:*",
+    "@the-new-fuse/relay-core": "workspace:*",
+    "events": "^3.3.0",
+    "ioredis": "^5.0.0",
+    "redis": "^5.10.0",
+    "zod": "^3.24.1",
+    "bullmq": "^5.34.2",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/sdk-node": "^0.52.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.47.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.8.1",
+    "@types/ws": "^8.18.1",
+    "@typescript-eslint/eslint-plugin": "^8.57.1",
+    "@typescript-eslint/parser": "^8.57.1",
+    "eslint": "^9.38.0",
+    "jest": "^30.3.0",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.9.3"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/the-new-fuse/framework.git",
+    "directory": "packages/workflow-engine"
+  },
+  "bugs": {
+    "url": "https://github.com/the-new-fuse/framework/issues"
+  },
+  "homepage": "https://github.com/the-new-fuse/framework/tree/main/packages/workflow-engine#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "volta": {
+    "node": "18.19.0",
+    "npm": "10.2.3"
+  }
+}

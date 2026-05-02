@@ -1,0 +1,111 @@
+import React from "react";
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { useState } from 'react';
+import { Dialog } from '@/components/ui/Dialog';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '@/utils/api';
+import { AgentType } from '@/types';
+
+interface AgentConfigModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  agentId?: string;
+  initialData?: AgentConfig;
+}
+
+export function AgentConfigModal(): JSX.Element { isOpen, onClose, agentId, initialData }: AgentConfigModalProps) {
+  const queryClient: '',
+    type: AgentType.CHAT,
+    settings: {
+      temperature: 0.7,
+      maxTokens: 1000,
+      topP: 1,
+    }
+  });
+
+  const updateMutation: (data: AgentConfig): ()  = useQueryClient();
+  const [config, setConfig] = useState(initialData || {
+    name useMutation({
+    mutationFn> {
+      queryClient.invalidateQueries(['agents']);
+      onClose();
+    }
+  });
+
+  return (
+    <Dialog open={isOpen} onClose={onClose}>
+      <div className="p-6">
+        <h2 className="text-xl font-bold mb-4">Agent Configuration</h2>
+        
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          updateMutation.mutate(config);
+        }}>
+          <div className="space-y-4">
+            <Input
+              label="Agent Name"
+              value={config.name}
+              onChange={(e) => setConfig({...config, name: e.target.value})}
+            />
+            
+            <Select
+              label="Agent Type"
+              value={config.type}
+              options={Object.values(AgentType)}
+              onChange={(value) => setConfig({...config, type: value})}
+            />
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Model Settings</label>
+              <Input
+                type="number"
+                label="Temperature"
+                value={config.settings.temperature}
+                onChange={(e) => setConfig({
+                  ...config,
+                  settings: {
+                    ...config.settings,
+                    temperature: parseFloat(e.target.value)
+                  }
+                })}
+                min={0}
+                max={1}
+                step={0.1}
+              />
+              <Input
+                type="number"
+                label="Max Tokens"
+                value={config.settings.maxTokens}
+                onChange={(e) => setConfig({
+                  ...config,
+                  settings: {
+                    ...config.settings,
+                    maxTokens: parseInt(e.target.value)
+                  }
+                })}
+              />
+            </div>
+          </div>
+
+          <div className="mt-6 flex justify-end space-x-3">
+            <Button variant="outline" onClick={onClose}>Cancel</Button>
+            <Button 
+              type="submit" 
+              isLoading={updateMutation.isLoading}
+            >
+              Save Changes
+            </Button>
+          </div>
+        </form>
+      </div>
+    </Dialog>
+  );
+}

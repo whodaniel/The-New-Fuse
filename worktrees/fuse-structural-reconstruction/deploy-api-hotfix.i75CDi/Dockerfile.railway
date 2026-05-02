@@ -1,0 +1,153 @@
+ARG NODE_VERSION=22
+ARG PNPM_VERSION=10.22.0
+ARG SERVICE_PATH
+ARG SERVICE_ROOT=apps
+ARG SERVICE_NAME
+
+# Cache bust: 2026-02-24-v3
+#------------------------------------------------------------------------------
+# Builder stage
+#------------------------------------------------------------------------------
+FROM node:${NODE_VERSION}-alpine AS builder
+ARG SERVICE_PATH
+ARG SERVICE_ROOT=apps
+ARG SERVICE_NAME
+ARG PNPM_VERSION=10.22.0
+RUN apk add --no-cache python3 make g++ cairo-dev pango-dev jpeg-dev giflib-dev
+RUN npm i -g pnpm@${PNPM_VERSION}
+
+WORKDIR /app
+
+# Copy all source files
+COPY . .
+
+# Copy explicit config files to ensure they are available
+COPY tsconfig.json ./
+COPY tsconfig.base.json ./
+COPY scripts ./scripts
+
+# Install all dependencies
+RUN pnpm install --frozen-lockfile --ignore-scripts || (echo "Lockfile compatibility issue detected, recreating lockfile..." && pnpm install --force --ignore-scripts)
+
+# Build foundational types first to satisfy downstream package builds
+RUN pnpm --filter @the-new-fuse/types build
+
+# Build database package (includes Drizzle schema compilation)
+RUN pnpm --filter @the-new-fuse/database build || echo "Database build skipped"
+
+# Build essential workspace packages
+RUN pnpm --filter @the-new-fuse/api-types build
+RUN pnpm --filter @the-new-fuse/utils build
+RUN pnpm --filter @the-new-fuse/common build
+RUN pnpm --filter @the-new-fuse/infrastructure build
+RUN pnpm --filter @the-new-fuse/ap2-protocol build
+RUN pnpm --filter @the-new-fuse/a2a-core build
+RUN pnpm --filter @the-new-fuse/core-error-handling build
+RUN pnpm --filter @the-new-fuse/core-monitoring build
+RUN pnpm --filter @the-new-fuse/core-vector-db build
+RUN pnpm --filter @the-new-fuse/api-client build
+RUN pnpm --filter @the-new-fuse/security build
+RUN pnpm --filter @the-new-fuse/mcp-core build
+RUN pnpm --filter @the-new-fuse/n8n-workflows build || echo "Skipping n8n-workflows"
+RUN pnpm --filter @the-new-fuse/relay-core build || echo "Skipping relay-core"
+RUN pnpm --filter @the-new-fuse/hooks build
+RUN pnpm --filter @the-new-fuse/ui-consolidated build
+RUN pnpm --filter @the-new-fuse/port-management build
+RUN pnpm --filter @the-new-fuse/prompt-templating build
+RUN pnpm --filter @the-new-fuse/core build
+RUN pnpm --filter @the-new-fuse/shared build
+
+# Build the target service package so runtime entrypoints exist (e.g. dist/main.js).
+RUN if [ -n "${SERVICE_NAME}" ]; then \
+      echo "Building target service ${SERVICE_NAME}"; \
+      pnpm --filter "${SERVICE_NAME}" build || \
+        (echo "WARN: Service package build failed for ${SERVICE_NAME}" && exit 1); \
+    elif [ "${SERVICE_ROOT}" = "apps" ] && [ "${SERVICE_PATH}" = "backend" ]; then \
+      echo "SERVICE_NAME not set; building backend app via fallback package filter"; \
+      pnpm --filter @the-new-fuse/backend-app build || \
+        (echo "WARN: Backend fallback build failed" && exit 1); \
+    elif [ "${SERVICE_ROOT}" = "apps" ] && [ "${SERVICE_PATH}" = "api" ]; then \
+      echo "SERVICE_NAME not set; building API app via fallback package filter"; \
+      pnpm --filter @the-new-fuse/api-server build || \
+        (echo "WARN: API fallback build failed" && exit 1); \
+    elif [ "${SERVICE_ROOT}" = "apps" ] && [ "${SERVICE_PATH}" = "api-gateway" ]; then \
+      echo "SERVICE_NAME not set; building API gateway app via fallback package filter"; \
+      pnpm --filter @the-new-fuse/api-gateway build || \
+        (echo "WARN: API gateway fallback build failed" && exit 1); \
+    elif [ "${SERVICE_ROOT}" = "apps" ] && [ "${SERVICE_PATH}" = "cloud-sandbox" ]; then \
+      echo "SERVICE_NAME not set; building cloud-sandbox app via fallback package filter"; \
+      pnpm --filter tnf-cloud-sandbox build || \
+        (echo "WARN: cloud-sandbox fallback build failed" && exit 1); \
+    elif [ "${SERVICE_ROOT}" = "apps" ] && [ "${SERVICE_PATH}" = "frontend" ]; then \
+      echo "SERVICE_NAME not set; building frontend app via fallback package filter"; \
+      pnpm --filter @the-new-fuse/frontend-app build || \
+        (echo "WARN: Frontend fallback build failed" && exit 1); \
+    else \
+      echo "No SERVICE_NAME provided and no known fallback for ${SERVICE_ROOT}/${SERVICE_PATH}"; \
+    fi
+
+# Verify critical package builds (warn-only to avoid blocking service deploy on optional artifacts)
+RUN echo "Verifying n8n-workflows build..." && ls -la packages/n8n-workflows/dist/index.js || echo "WARN: n8n-workflows dist not found; continuing"
+RUN echo "Verifying relay-core build..." && ls -la packages/relay-core/dist/index.js || echo "WARN: relay-core dist not found; continuing"
+
+# NOTE: Drizzle has been migrated to Drizzle ORM - no generation step needed
+
+
+#------------------------------------------------------------------------------
+# Runner stage
+#------------------------------------------------------------------------------
+FROM node:${NODE_VERSION}-alpine AS runner
+ARG SERVICE_PATH
+ARG SERVICE_ROOT=apps
+ARG PNPM_VERSION=10.22.0
+
+RUN apk add --no-cache netcat-openbsd curl && \
+    npm install -g pnpm@${PNPM_VERSION} && \
+    ln -sf /usr/local/bin/pnpm /bin/pnpm && \
+    ln -sf /usr/local/bin/pnpm /usr/bin/pnpm && \
+    echo "Files in /bin:" && ls -la /bin/pnpm && \
+    echo "Files in /usr/bin:" && ls -la /usr/bin/pnpm && \
+    pnpm --version
+
+# Ensure PATH includes all possible binary locations
+ENV PATH="/usr/local/bin:/usr/bin:/bin:${PATH}"
+
+
+
+RUN addgroup -S app-user && adduser -S app-user -G app-user
+WORKDIR /app
+
+# Copy the entire built workspace to maintain proper structure
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/apps ./apps
+COPY --from=builder /app/data/agent-registry ./data/agent-registry
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
+
+# Remove packageManager field to prevent npm from enforcing pnpm (fixes "pnpm not found" errors)
+RUN npm pkg delete packageManager || true
+
+# Verify critical dist folders exist in runner stage
+RUN echo "Runner stage - verifying types dist..." && ls -la packages/types/dist/index.js || (echo "ERROR: types dist not found in runner!" && exit 1)
+RUN echo "Runner stage - verifying types package.json..." && cat packages/types/package.json | grep -E '"main"|"type"'
+RUN echo "Runner stage - verifying n8n-workflows dist..." && ls -la packages/n8n-workflows/dist/index.js || echo "WARN: n8n-workflows dist not found in runner; continuing"
+RUN echo "Runner stage - verifying relay-core dist..." && ls -la packages/relay-core/dist/index.js || echo "WARN: relay-core dist not found in runner; continuing"
+RUN echo "Runner stage - checking node_modules symlink for n8n-workflows..." && ls -laR node_modules/@the-new-fuse/n8n-workflows 2>&1 | head -20 || echo "Symlink check failed"
+
+# Copy scripts from builder stage with executable permissions (before switching to non-root user)
+COPY --from=builder --chmod=755 /app/scripts/run-service.sh ./${SERVICE_ROOT}/${SERVICE_PATH}/run-service.sh
+COPY --from=builder --chmod=755 /app/scripts/healthcheck.sh ./${SERVICE_ROOT}/${SERVICE_PATH}/healthcheck.sh
+
+# Create logs directory with proper permissions for non-root user (fallback for local dev logging)
+RUN mkdir -p ./${SERVICE_ROOT}/${SERVICE_PATH}/logs && chown -R app-user:app-user ./${SERVICE_ROOT}/${SERVICE_PATH}/logs
+
+# Switch to non-root user for security
+USER app-user
+
+# Set working directory to the service
+WORKDIR /app/${SERVICE_ROOT}/${SERVICE_PATH}
+
+ENV SERVICE_PATH=$SERVICE_PATH
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD ["./healthcheck.sh"]
+CMD ["./run-service.sh"]

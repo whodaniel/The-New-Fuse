@@ -1,0 +1,1 @@
+segment_id,family,start_at,end_at,start_ts_epoch,end_ts_epoch,duration_ms,event_count,move_distance_px,click_down_count,click_up_count,scroll_event_count,avg_x,avg_y

@@ -1,0 +1,37 @@
+#!/bin/bash
+# ai-speak: Wrapper for 'say' that sets AI_SPEAKING_FLAG for interrupt detection
+
+set -e
+
+PROFILE="${VOICEBRIDGE_PROFILE:-main}"
+PROFILE_SUFFIX=""
+case "$PROFILE" in
+    main|default|primary) PROFILE_SUFFIX="" ;;
+    *) PROFILE_SUFFIX="_$PROFILE" ;;
+esac
+
+AI_SPEAKING_FLAG="/tmp/ai_is_speaking${PROFILE_SUFFIX}"
+LAST_AI_SPEECH_TS_FILE="/tmp/voice_last_ai_speech_ts${PROFILE_SUFFIX}"
+LAST_AI_SPEECH_TEXT_FILE="/tmp/voice_last_ai_speech_text${PROFILE_SUFFIX}"
+VOICE_NAME="${VOICE_RESPONSE_AUDIO_VOICE:-Samantha}"
+
+# Set the speaking flag
+touch "$AI_SPEAKING_FLAG"
+
+# Store the text we're about to speak
+TEXT="$*"
+if [[ -n "$TEXT" ]]; then
+    echo "$TEXT" > "$LAST_AI_SPEECH_TEXT_FILE"
+fi
+
+# Record the timestamp
+date +%s.%6N > "$LAST_AI_SPEECH_TS_FILE"
+
+# Speak
+say -v "$VOICE_NAME" "$TEXT" 2>/dev/null || true
+
+# Clean up
+rm -f "$AI_SPEAKING_FLAG" 2>/dev/null || true
+
+# Update timestamp after speech completes
+date +%s.%6N > "$LAST_AI_SPEECH_TS_FILE"

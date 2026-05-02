@@ -1,0 +1,47 @@
+{
+  "generated_at": "2026-03-26T19:22:14.541934Z",
+  "event_count_total": 0,
+  "event_counts_by_type": {},
+  "event_span_seconds": 0.0,
+  "average_event_rate_per_sec": 0.0,
+  "total_move_distance_px": 0,
+  "frame_count": 6,
+  "active_frames": 0,
+  "idle_frames": 6,
+  "average_events_per_frame": 0.0,
+  "peak_frame": {
+    "frame_id": 1,
+    "captured_at": "2026-03-26T19:21:37.861538Z",
+    "event_count": 0
+  },
+  "intent_counts": {
+    "idle": 6
+  },
+  "relationship_counts": {
+    "cursor_idle_or_hover": 6
+  },
+  "segment_count": 0,
+  "finding_count": 0,
+  "finding_type_counts": {},
+  "finding_severity_counts": {},
+  "timeline_events_csv": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-192137/analysis/timeline_events.csv",
+  "frame_timeline_csv": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-192137/analysis/frame_timeline.csv",
+  "action_segments_csv": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-192137/analysis/action_segments.csv",
+  "hotspots_csv": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-192137/analysis/hotspots.csv",
+  "findings_json": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-192137/analysis/findings.json",
+  "full_summation_json": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-192137/analysis/full_summation.json",
+  "llm_output_jsonl": "/Users/<owner>/tools/cursor-watch-learn/output/run-20260326-192137/llm_interpretation.jsonl",
+  "llm_frames_total": 3,
+  "llm_frames_success": 3,
+  "llm_frames_error": 0,
+  "llm_intent_counts": {
+    "Reviewing the agent\u2019s written status/thoughts before deciding the next instruction.": 1,
+    "Reviewing agent/log output before deciding the next command.": 1,
+    "Reviewing agent output and pausing before issuing the next command.": 1
+  },
+  "llm_recommended_training_label_counts": {
+    "idle_review_of_terminal_draft": 1,
+    "terminal_idle_review_output": 1,
+    "idle_reading_terminal_output": 1
+  }
+}

@@ -1,0 +1,26 @@
+#!/bin/bash
+# ai_say: Wrapper for high-fidelity buffered speech output with Echo Suppression flag.
+# v6.2: Volume control REMOVED per user mandate. Native AIFF/afplay for reliability.
+
+if [ -z "$1" ]; then
+    echo "Usage: ai_say <text>"
+    exit 1
+fi
+
+TEXT="$1"
+AUDIO_FILE="/tmp/ai_speech.aiff"
+FLAG_FILE="/tmp/ai_is_speaking"
+
+# 1. Set flag (Echo Suppression)
+touch "$FLAG_FILE"
+
+# 2. Render to AIFF (Native) and Play
+say -v Daniel "$TEXT" -o "$AUDIO_FILE"
+afplay "$AUDIO_FILE"
+
+# 3. Extra Suppression Window (Catch delayed browser transcripts)
+sleep 1
+
+# 4. Cleanup
+rm -f "$FLAG_FILE"
+(sleep 10; rm -f "$AUDIO_FILE") &

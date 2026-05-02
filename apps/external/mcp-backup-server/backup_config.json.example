@@ -1,0 +1,15 @@
+{
+  "google_drive_enabled": true,
+  "google_drive_source": "/path/to/business/files",
+  "pcloud_enabled": true,
+  "pcloud_source": "/path/to/personal/files",
+  "ardrive_enabled": true,
+  "ardrive_source": "/path/to/ai/images",
+  "exclude_patterns": [
+    "*.tmp",
+    "*.log",
+    ".DS_Store",
+    "__pycache__",
+    ".git/"
+  ]
+}
