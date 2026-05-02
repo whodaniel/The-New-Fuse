@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { db, drizzleAgentRepository, drizzleUserRepository } from '@the-new-fuse/database';
@@ -169,6 +170,15 @@ export class AgentController {
         agents: legacyAgents,
       };
     }
+  }
+
+  @Get('intelligence/search')
+  @ApiOperation({ summary: 'Search distilled intelligence artifacts' })
+  async searchIntelligence(@Query('q') query: string): Promise<any[]> {
+    if (!query) {
+      throw new HttpException('Query parameter "q" is required', HttpStatus.BAD_REQUEST);
+    }
+    return this.tnfRegistryService.searchIntelligence(query);
   }
 
   @Get(':id')

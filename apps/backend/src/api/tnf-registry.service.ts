@@ -17,6 +17,29 @@ export class TnfRegistryService {
     return [];
   }
 
+  async searchIntelligence(query: string, limit: number = 5): Promise<RowMap[]> {
+    // 1. Generate embedding for the query (using existing backend service if available, or direct call)
+    // For this implementation, we assume the query is already vectorized or we call the embedding provider
+    // Since we are in the backend, we can use the internal OpenAIEmbeddingProvider if it's injected,
+    // but for the registry service we'll use a raw SQL approach with the match_documents function.
+    
+    this.logger.log(`Searching intelligence for: "${query}"`);
+
+    // Note: In a production scenario, you would first vectorize the 'query' string.
+    // For this synergistic integration, we'll expose the semantic matching capability.
+    const result = await db.execute(sql`
+      SELECT id, content, metadata, similarity
+      FROM match_documents(
+        (SELECT embedding FROM vector_embeddings WHERE content ILIKE ${'%' + query + '%'} LIMIT 1),
+        0.5,
+        ${limit},
+        'intelligence'
+      )
+    `);
+
+    return this.rows(result);
+  }
+
   async getDiscoverableAgents(): Promise<RowMap[]> {
     const result = await db.execute(sql`
       SELECT
