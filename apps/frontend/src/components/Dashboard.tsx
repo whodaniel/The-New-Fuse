@@ -2,6 +2,7 @@
 import {
   Activity,
   AlertTriangle,
+  Brain,
   Briefcase,
   CheckCircle2,
   Cpu,
@@ -35,6 +36,7 @@ interface DashboardMetrics {
   tasksCompleted: { value: number; change: number };
   avgResponse: { value: number; change: number };
   workspaceCount: { value: number; change: number };
+  intelligence?: { library: number; artifacts: number; density: string };
 }
 
 export function Dashboard() {
@@ -271,6 +273,16 @@ export function Dashboard() {
               icon={Briefcase}
               gradient="teal"
             />
+            {metrics.intelligence && (
+              <StatsCard
+                label="Intelligence Density"
+                value={metrics.intelligence.density}
+                change={`${metrics.intelligence.artifacts}/${metrics.intelligence.library}`}
+                changeType="positive"
+                icon={Brain}
+                gradient="blue"
+              />
+            )}
           </>
         ) : null}
       </div>

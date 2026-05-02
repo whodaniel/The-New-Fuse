@@ -45,6 +45,36 @@ export class AdminDashboardController {
     );
     const apiStats = statsArray[0] || { count: 0, errorCount: 0 };
 
+    // 5. Intelligence Stats (from AI_Knowledge_Base.md)
+    let intelligenceStats = { library: 0, artifacts: 0, density: '0%' };
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      const kbPath = path.join(process.cwd(), '../my-ai-knowledge-base/AI_Knowledge_Base.md');
+      const libPath = path.join(process.cwd(), '../my-ai-knowledge-base/video-library/ai_video_library.html');
+
+      if (fs.existsSync(kbPath)) {
+        const kbContent = fs.readFileSync(kbPath, 'utf8');
+        const matches = kbContent.match(/## #(\d+):/g);
+        intelligenceStats.artifacts = matches ? matches.length : 0;
+      }
+
+      if (fs.existsSync(libPath)) {
+        const libContent = fs.readFileSync(libPath, 'utf8');
+        const libMatches = libContent.match(/<td class="index-col">(\d+)<\/td>/g);
+        if (libMatches) {
+          const indices = libMatches.map(m => parseInt(m.match(/\d+/)[0]));
+          intelligenceStats.library = Math.max(...indices);
+        }
+      }
+      
+      if (intelligenceStats.library > 0) {
+        intelligenceStats.density = ((intelligenceStats.artifacts / intelligenceStats.library) * 100).toFixed(1) + '%';
+      }
+    } catch (e) {
+      // Fallback if file system not accessible or files missing
+    }
+
     return {
       users: {
         total: totalUsers,
@@ -64,6 +94,7 @@ export class AdminDashboardController {
         requests: Number(apiStats.count),
         errors: Number(apiStats.errorCount),
       },
+      intelligence: intelligenceStats,
     };
   }
 }

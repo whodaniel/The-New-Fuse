@@ -1,6 +1,7 @@
 import {
   Activity,
   ArrowLeft,
+  Brain,
   Clock3,
   Cpu,
   Gauge,
@@ -819,13 +820,24 @@ const Visualizations: React.FC = () => {
               Drag gears into open mesh sockets, keep them coupled to the heartbeat, and inspect
               exact producer intervals with last-run and next-fire telemetry in one board.
             </p>
-            <Link
-              to="/visualizations/terminals"
-              className="mt-4 inline-flex items-center gap-2 rounded-full border border-cyan-300/35 bg-cyan-500/10 px-4 py-2 text-sm text-cyan-100 transition hover:border-cyan-200 hover:bg-cyan-500/20"
-            >
-              <TerminalSquare className="h-4 w-4" />
-              Open Terminal Graph View
-            </Link>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Link
+                to="/visualizations/terminals"
+                className="inline-flex items-center gap-2 rounded-full border border-cyan-300/35 bg-cyan-500/10 px-4 py-2 text-sm text-cyan-100 transition hover:border-cyan-200 hover:bg-cyan-500/20"
+              >
+                <TerminalSquare className="h-4 w-4" />
+                Open Terminal Graph View
+              </Link>
+              <a
+                href="/visualizations/TNF_INTELLIGENCE_DASHBOARD.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-purple-300/35 bg-purple-500/10 px-4 py-2 text-sm text-purple-100 transition hover:border-purple-200 hover:bg-purple-500/20"
+              >
+                <Brain className="h-4 w-4" />
+                Open Intelligence Density Map
+              </a>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
