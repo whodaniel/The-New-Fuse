@@ -4,6 +4,12 @@ import { useAuth } from '../hooks/useAuth';
 
 const REQAUTH_REDIRECT_KEY = '__tnf_require_auth_redirect__';
 
+const isLandingDomain = () => {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname;
+  return host === 'thenewfuse.com' || host === 'www.thenewfuse.com';
+};
+
 interface RequireAuthProps {
   children: React.ReactNode;
   redirectTo?: string;
@@ -33,7 +39,15 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
       }
       sessionStorage.setItem(REQAUTH_REDIRECT_KEY, String(redirectCount + 1));
       hasRedirected.current = true;
-      console.log('[RequireAuth] User not authenticated, redirecting to', redirectTo);
+
+      // If on the landing domain, redirect to the app subdomain for auth
+      if (isLandingDomain()) {
+        window.location.replace(
+          `https://app.thenewfuse.com${redirectTo}${window.location.search}`
+        );
+        return;
+      }
+
       navigate(redirectTo, { replace: true, state: { from: location } });
     }
   }, [isAuthenticated, isLoading, navigate, redirectTo, location]);

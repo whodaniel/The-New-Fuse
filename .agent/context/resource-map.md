@@ -154,6 +154,31 @@ capabilities.
   - Treats classification and skill chaining as first-class sub-skills
   - Defines cron and heartbeat contracts for the archaeology program
 
+### 13. **feature-parity-cli-extension** ⭐⭐
+
+- **Location**: `packages/agent/src/skill-bank/compiled/feature-parity-cli-extension.md`
+- **Purpose**: Analyze source CLI and extend target CLI to achieve full feature parity
+- **Use When**: Adding commands to TNF CLI to match hermes, openclaw, or other CLIs
+- **Key Features**:
+  - Gap analysis between source and target CLIs
+  - Command comparison table template
+  - Implementation patterns for new commands
+  - Verification steps
+
+### 14. **tnf-cli-agent-workflow** ⭐⭐⭐
+
+- **Location**: `packages/agent/src/skill-bank/compiled/tnf-cli-agent-workflow.md`
+- **Purpose**: Generic go-to skill for ANY AI agent working with TNF CLI
+- **Use When**: Any TNF-related task - this is the reference skill
+- **Key Features**:
+  - Quick Start commands for immediate orientation
+  - Core CLI architecture patterns
+  - Common agent tasks (6 categories)
+  - Command category reference table
+  - Services reference (all 13 services)
+  - Extension patterns
+  - Troubleshooting guide
+
 ### 12. **master-of-taxonomies** ⭐⭐
 
 - **Location**: `.agent/skills/master-of-taxonomies/SKILL.md`

@@ -29,23 +29,55 @@ const TerminalGraphPage = lazy(() => import('../pages/TerminalGraph'));
 const UnauthorizedPage = lazy(() => import('../pages/Unauthorized'));
 
 const RedirectToStatic = ({ to }: { to: string }) => {
- if (typeof window !== 'undefined') {
- // On app subdomain, hash routes like /#pricing should redirect to the
- // main landing site (thenewfuse.com) since the landing page owns those sections.
- // On the main domain, the hash fragment works as-is.
- const hostname = window.location.hostname;
- if (to.startsWith('/#') && (hostname === 'app.thenewfuse.com' || hostname.startsWith('app.'))) {
- window.location.href = `https://thenewfuse.com${to}`;
- } else {
- window.location.href = to;
- }
- }
- return null;
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    const isLanding = hostname === 'thenewfuse.com' || hostname === 'www.thenewfuse.com';
+    const isApp = hostname === 'app.thenewfuse.com' || hostname.startsWith('app.');
+    const target = to.startsWith('/') ? to : '/' + to;
+
+    // Hash-fragment routes on app subdomain → redirect to landing domain
+    if (target.startsWith('/#') && isApp) {
+      window.location.href = `https://thenewfuse.com${target}`;
+      return null;
+    }
+
+    // On the landing domain with a hash fragment — just scroll, no reload
+    if (isLanding && target.startsWith('/#')) {
+      const hash = target.slice(2);
+      const el = document.getElementById(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.location.hash = hash;
+      }
+      return null;
+    }
+
+    // On landing domain targeting '/' — just scroll to top, no reload
+    if (isLanding && target === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return null;
+    }
+
+    // General case: full navigation
+    window.location.href = to;
+  }
+  return null;
 };
 
 const MarketplaceRootRoute = () => {
-  if (typeof window !== 'undefined' && window.location.hostname === 'marketplace.thenewfuse.com') {
-    return <Navigate to="/marketplace" replace />;
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+
+    // Marketplace subdomain → show marketplace page
+    if (hostname === 'marketplace.thenewfuse.com') {
+      return <Navigate to="/marketplace" replace />;
+    }
+
+    // Landing domain → render nothing (static HTML is already showing)
+    if (hostname === 'thenewfuse.com' || hostname === 'www.thenewfuse.com') {
+      return null;
+    }
   }
   return <RedirectToStatic to="/" />;
 };

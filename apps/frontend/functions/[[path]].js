@@ -3,71 +3,93 @@ export async function onRequest(context) {
   const path = url.pathname;
   const host = url.hostname;
 
-  // 0. Special handling for missing pages on app subdomain
-  // On app.thenewfuse.com, /pricing, /features, /docs should redirect to
-  // the main landing site (thenewfuse.com) where those sections live.
-  if (host === 'app.thenewfuse.com' || host.startsWith('app.')) {
-    if (path === '/pricing') {
-      return Response.redirect(`https://thenewfuse.com/#pricing${url.search}${url.hash}`, 301);
-    }
-    if (path === '/features') {
-      return Response.redirect(`https://thenewfuse.com/#features${url.search}${url.hash}`, 301);
-    }
-    if (path === '/docs') {
-      return Response.redirect(`https://thenewfuse.com/docs${url.search}${url.hash}`, 301);
-    }
-  }
+  const isLandingDomain = host === 'thenewfuse.com' || host === 'www.thenewfuse.com';
+  const isAppDomain = !isLandingDomain; // Treat everything else as app subdomain
 
-  // 1. Force Redirect from Main Domain to App Subdomain for functional routes
-  if (host === 'thenewfuse.com' || host === 'www.thenewfuse.com') {
-    if (
-      path.startsWith('/auth') ||
-      path.startsWith('/login') ||
-      path.startsWith('/register') ||
-      path.startsWith('/dashboard') ||
-      path.startsWith('/app') ||
-      path === '/app.html'
-    ) {
-      // Remove '/app' or '/app.html' from the path when redirecting to the app subdomain
-      const cleanPath = path.replace(/^\/app(\.html)?/, '');
-      const redirectPath = cleanPath === '' ? '/dashboard' : cleanPath;
+  // 1. API & WebSocket Routes - Proxy to backend services
+  const API_GATEWAY = 'https://api.thenewfuse.com';
+  const RELAY_SERVER = 'https://relay.thenewfuse.com';
 
-      return Response.redirect(
-        `https://app.thenewfuse.com${redirectPath}${url.search}${url.hash}`,
-        301
-      );
-    }
-  }
-
-  // Cloud Run Backend Origins
-  const API_GATEWAY = 'https://api-gateway-241337102384.us-central1.run.app';
-  const RELAY_SERVER = 'https://relay-server-ipjhxcemfa-uc.a.run.app';
-
-  // 2. API & WebSocket Routes - Proxy to Cloud Run
   if (path.startsWith('/api/') || path.startsWith('/v1/') || path === '/api' || path === '/v1') {
-    const apiTarget = new URL(path + url.search, API_GATEWAY);
-    return fetch(new Request(apiTarget, context.request));
+    return fetch(new Request(new URL(path + url.search, API_GATEWAY), context.request));
   }
 
   if (path.startsWith('/ws/') || path === '/ws') {
-    const wsTarget = new URL(path + url.search, RELAY_SERVER);
-    return fetch(new Request(wsTarget, context.request));
+    return fetch(new Request(new URL(path + url.search, RELAY_SERVER), context.request));
   }
 
-  // 3. Fetch the requested asset from the static store
-  let response = await context.env.ASSETS.fetch(context.request);
+  // 2. Landing Domain Specific Logic
+  if (isLandingDomain) {
+    // Pricing, Features, Docs routes stay on landing domain
+    if (path === '/pricing' || path === '/features' || path === '/docs' || path.startsWith('/docs/')) {
+      return context.env.ASSETS.fetch(context.request);
+    }
 
-  // 4. Fallback logic for SPA routes (on the app subdomain)
-  if (
-    response.status === 404 &&
-    !path.includes('.') &&
-    (host === 'app.thenewfuse.com' || host.startsWith('app.'))
-  ) {
-    const appRequest = new Request(new URL('/app.html', url.origin), context.request);
-    return context.env.ASSETS.fetch(appRequest);
+    // Functional routes on landing domain -> redirect to app subdomain
+    const functionalPrefixes = ['/auth', '/login', '/register', '/dashboard', '/agents', '/workflows', '/settings', '/workspace', '/tasks', '/chat', '/admin', '/agency', '/mcp-hub', '/knowledge-hub', '/a2a-control', '/hub', '/resources', '/hosting', '/spaces', '/space', '/marketplace', '/suggestions', '/goals', '/plans', '/timeline', '/analytics', '/onboarding'];
+    const isFunctional = functionalPrefixes.some(p => path === p || path.startsWith(p + '/')) || path === '/app' || path === '/app.html';
+
+    if (isFunctional) {
+      const cleanPath = path.replace(/^\/app(\.html)?/, '');
+      const redirectPath = cleanPath === '' ? '/dashboard' : cleanPath;
+      return Response.redirect(`https://app.thenewfuse.com${redirectPath}${url.search}${url.hash}`, 301);
+    }
+  }
+
+  // 3. App Domain Specific Logic
+  if (isAppDomain) {
+    // Static assets (CSS, JS, images) -> let Cloudflare serve them
+    if (path.includes('.') && !path.endsWith('.html')) {
+      return context.env.ASSETS.fetch(context.request);
+    }
+
+    // Landing-only routes on app domain -> redirect to main site
+    if (path === '/pricing' || path === '/features' || path === '/docs' || path.startsWith('/docs/')) {
+      return Response.redirect(`https://thenewfuse.com${path}${url.search}`, 301);
+    }
+
+    // SPA routes on app domain -> serve app.html content
+    // We avoid fetching /app.html directly to prevent 308 loops (Clean URLs).
+    // Instead, we fetch /app which Cloudflare should resolve to app.html.
+    // If that fails, we fallback to /app.html but handle the response carefully.
+    const functionalPrefixes = ['/auth', '/login', '/register', '/dashboard', '/agents', '/workflows', '/settings', '/workspace', '/tasks', '/chat', '/admin', '/agency', '/mcp-hub', '/knowledge-hub', '/a2a-control', '/hub', '/resources', '/hosting', '/spaces', '/space', '/marketplace', '/suggestions', '/goals', '/plans', '/timeline', '/analytics', '/onboarding'];
+    const isFunctional = functionalPrefixes.some(p => path === p || path.startsWith(p + '/')) || path === '/app' || path === '/app.html' || path === '/';
+
+    if (isFunctional) {
+      // Fetch the app shell. We use the /app path which is the "Clean URL" target for app.html.
+      let appResponse = await context.env.ASSETS.fetch(new Request(new URL('/app', url.origin)));
+      
+      // If /app returns 404 (e.g. Clean URLs disabled), try /app.html
+      if (appResponse.status === 404 || appResponse.status === 308) {
+        appResponse = await context.env.ASSETS.fetch(new Request(new URL('/app.html', url.origin)));
+      }
+
+      // If we got a redirect (308/301), we follow it once internally or return the target content.
+      if (appResponse.status === 308 || appResponse.status === 301) {
+        const loc = appResponse.headers.get('location');
+        appResponse = await context.env.ASSETS.fetch(new Request(new URL(loc, url.origin)));
+      }
+
+      // Return the app shell content with a 200 status
+      return new Response(appResponse.body, {
+        status: 200,
+        headers: {
+          ...Object.fromEntries(appResponse.headers),
+          'Content-Type': 'text/html; charset=utf-8',
+          'X-TNF-Routing': 'SPA-App'
+        }
+      });
+    }
+  }
+
+  // 4. Final Fallback - Normal Cloudflare serving
+  const response = await context.env.ASSETS.fetch(context.request);
+  
+  // If still 404, serve the appropriate SPA root
+  if (response.status === 404) {
+    const rootPath = isLandingDomain ? '/' : '/app';
+    return context.env.ASSETS.fetch(new Request(new URL(rootPath, url.origin)));
   }
 
   return response;
 }
-// Force function deploy: Thu Apr 30 14:57:00 UTC 2026
-// Missing pages fix: redirect /pricing, /features, /docs to thenewfuse.com landing

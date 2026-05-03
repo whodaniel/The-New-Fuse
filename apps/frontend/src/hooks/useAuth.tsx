@@ -391,7 +391,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           redirectTo:
             window.location.hostname === 'localhost'
               ? `${window.location.origin}/auth/callback`
-              : 'https://app.thenewfuse.com/auth/callback',
+              : `${window.location.origin}/auth/callback`,
         },
       });
 

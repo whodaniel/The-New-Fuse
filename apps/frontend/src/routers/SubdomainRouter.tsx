@@ -3,7 +3,6 @@ import ComprehensiveRouter from '../ComprehensiveRouter';
 import ConnectExtensionPage from '../pages/ConnectExtension';
 import MarketplacePublicPage from '../pages/Marketplace/MarketplacePublicPage';
 
-// Determine if we are on a specific subdomain
 const getSubdomainInfo = () => {
   const hostname = window.location.hostname;
   const parts = hostname.split('.');
@@ -16,7 +15,6 @@ const getSubdomainInfo = () => {
       };
     }
   } else {
-    // production: parts = [subdomain, domain, tld] e.g. [app, thenewfuse, com]
     if (parts.length > 2 && parts[0] !== 'www') {
       return {
         name: parts[0],
@@ -25,6 +23,54 @@ const getSubdomainInfo = () => {
     }
   }
   return { name: null, isApp: false };
+};
+
+// Check if the current host is the main landing domain (thenewfuse.com/www.thenewfuse.com)
+const isLandingDomain = () => {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname;
+  return host === 'thenewfuse.com' || host === 'www.thenewfuse.com';
+};
+
+// Functional/app routes that should NOT be handled by the landing domain.
+// If a user lands on these paths on thenewfuse.com, redirect them to app.thenewfuse.com.
+const FUNCTIONAL_PATHS = [
+  '/auth/login',
+  '/auth/register',
+  '/login',
+  '/register',
+  '/dashboard',
+  '/agents',
+  '/workflows',
+  '/settings',
+  '/workspace',
+  '/tasks',
+  '/chat',
+  '/admin',
+  '/agency',
+  '/mcp-hub',
+  '/knowledge-hub',
+  '/a2a-control',
+  '/hub',
+  '/resources',
+  '/hosting',
+  '/spaces',
+  '/space',
+  '/marketplace',
+  '/suggestions',
+  '/goals',
+  '/plans',
+  '/timeline',
+  '/analytics',
+  '/onboarding',
+  '/app',
+  '/app.html',
+];
+
+const isFunctionalPath = (pathname: string) => {
+  return FUNCTIONAL_PATHS.some(
+    (fp) => pathname === fp || pathname.startsWith(fp + '/')
+  );
 };
 
 const SubdomainRouter: React.FC = () => {
@@ -39,25 +85,30 @@ const SubdomainRouter: React.FC = () => {
 
   useEffect(() => {
     const { name: sub, isApp: app } = getSubdomainInfo();
-    if (sub) console.log('Detected Agency Subdomain:', sub);
+    if (sub) console.log('Detected Subdomain:', sub);
     setSubdomain(sub);
     setIsApp(app);
   }, []);
 
-  // If we are on a subdomain (e.g., alpha.thenewfuse.hub), we might want to show
-  // the Agency's Public Landing Page OR their Admin Dashboard if they are logged in as owner.
-  // For the purpose of "Accessing their own super admin account",
-  // let's route /admin on a subdomain to the AgencyDashboard.
+  // ─── Landing domain guard ───
+  // On thenewfuse.com/www.thenewfuse.com, functional routes must redirect
+  // to app.thenewfuse.com. The landing domain only serves the marketing page.
+  // (The Cloudflare edge function handles this too, but this is a client-side
+  // safety net for SPA navigation or direct entry after initial load.)
+  if (isLandingDomain() && isFunctionalPath(window.location.pathname)) {
+    const targetPath = window.location.pathname.replace(/^\/app(\.html)?/, '') || '/dashboard';
+    window.location.replace(`https://app.thenewfuse.com${targetPath}${window.location.search}${window.location.hash}`);
+    return null;
+  }
 
-  // Actually, typical White Label structure:
-  // 1. agency.thenewfuse.hub -> The Agency's "SaaS" (multitenant instance for THEIR users)
-  // 2. app.thenewfuse.hub/agency/dashboard -> Where the Agency Owner manages their empire
-
-  // The user asked: "infrastructure... to have their own multitenent system for their own Users"
-  // So `agency.thenewfuse.hub` should look like a branded version of TNF.
+  // On the landing domain with no functional path, render the landing page.
+  // ComprehensiveRouter will return null for the root route on landing domain,
+  // letting the static HTML (index.html) content remain visible.
+  if (isLandingDomain()) {
+    return <ComprehensiveRouter isApp={false} />;
+  }
 
   if (subdomain) {
-    // Marketplace runs as a standalone surface, but it still uses shared TNF auth routes.
     if (subdomain === 'marketplace') {
       const pathname = window.location.pathname;
       const isSharedAuthPath =
@@ -73,17 +124,14 @@ const SubdomainRouter: React.FC = () => {
       return <MarketplacePublicPage />;
     }
 
-    // Keep connect subdomain at root URL and render a focused extension landing page.
     if (subdomain === 'connect' && window.location.pathname === '/') {
       return <ConnectExtensionPage />;
     }
 
-    // Treat 'app' or 'saas' as STANDARD MODE, not White Label/Agency mode
     if (isApp) {
       return <ComprehensiveRouter isApp={isApp} />;
     }
 
-    // WHITE LABEL MODE / AGENCY MODE
     return (
       <div data-agency-mode={subdomain}>
         <ComprehensiveRouter isApp={isApp} />
@@ -91,8 +139,7 @@ const SubdomainRouter: React.FC = () => {
     );
   }
 
-  // STANDARD MODE (Main Site or app. subdomain)
-  return <ComprehensiveRouter isApp={isApp} />;
+  return <ComprehensiveRouter isApp={false} />;
 };
 
 export default SubdomainRouter;

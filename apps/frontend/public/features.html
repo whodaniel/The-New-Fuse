@@ -6,7 +6,6 @@
   <script>
     // Redirect to features section on the main landing page
     // On app subdomain, hash routes must go to thenewfuse.com (the landing site)
-    if (window.location.hostname === 'app.thenewfuse.com' || window.location.hostname.startsWith('app.')) {
       window.location.replace('https://thenewfuse.com/#features');
     } else {
       window.location.replace('/#features');

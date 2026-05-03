@@ -24,6 +24,8 @@
 13. [✅] Strategic Analyst Traversal: Protocols updated to v2.0.
 14. [✅] Synergistic Cohesion: Intelligence Search API exposed in `AgentController`.
 15. [✅] SAAS Frontend Deployment: Dashboard and Maps live on Cloudflare.
+16. [✅] Forge Lane Discovery: Native hardware tools (`iphone_touch_send`) and 78+ system scripts promoted to TNF repo.
+17. [✅] Environmental Cleanup: Home directory consolidated; 1.7GB additional space freed.
 
 ---
 
@@ -31,6 +33,7 @@
 - **Master Library:** 647
 - **Intelligence Density:** 100% (645 Artifacts)
 - **Vectorized Nodes:** 645 (`tnf_intelligence_artifacts`)
+- **Native Hardware Control:** ACTIVE (`packages/hardware-bridge`)
 - **API Search:** `GET /api/agents/intelligence/search?q={query}`
 - **Merkle Root:** `44f882ca7bb1bfddda354bc70d3b8455b455ecc8c554be16d1f13b53ad76b8fc`
 - **Vault Status:** `SYNCHRONIZED` (GitHub Release active).

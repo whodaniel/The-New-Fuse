@@ -2,18 +2,18 @@
   "version": 1,
   "include": ["/*"],
   "exclude": [
-    "/index.html",
-    "/app.html",
-    "/pricing.html",
-    "/features.html",
-    "/docs.html",
     "/assets/*",
     "/favicon.ico",
-    "/images/*",
+    "/favicon-32x32.png",
+    "/favicon-16x16.png",
+    "/apple-touch-icon.png",
+    "/manifest.json",
     "/*.png",
     "/*.jpg",
     "/*.svg",
     "/*.css",
-    "/*.js"
+    "/*.js",
+    "/*.ico",
+    "/*.webmanifest"
   ]
 }

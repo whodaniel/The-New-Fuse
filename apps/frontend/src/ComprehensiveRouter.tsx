@@ -251,25 +251,45 @@ const SmartNavigation = lazy(() => import('./components/SmartNavigation'));
 // Orphan audit router - reachable via specific debug paths
 
 // Redirect component to navigate to static landing page sections
+// On the landing domain (thenewfuse.com), hash-fragment targets (/#pricing, /#features)
+// are on the static landing page — just scroll there, don't trigger a full reload.
+// On app subdomain, redirect cross-domain to the landing site.
 const RedirectToStatic = ({ to }: { to: string }) => {
   if (typeof window !== 'undefined') {
-    const host = window.location.hostname;
+    const isLandingHost = getIsLandingHost();
+    const isAppHost = getIsAppHost();
+    const target = to.startsWith('/') ? to : '/' + to;
 
-    // On the app subdomain: navigate to the landing page with hash anchor
-    // The landing page (index.html) is served for all paths via _redirects
-    if (host === 'app.thenewfuse.com' || host.startsWith('app.')) {
-      // to is like "/#pricing" - navigate to the landing page with hash
-      const target = to.startsWith('/') ? to : '/' + to;
-      if (window.location.href !== window.location.origin + target) {
-        window.location.href = window.location.origin + target;
+    // Hash-fragment routes on app subdomain → redirect to landing domain
+    if (target.startsWith('/#') && isAppHost) {
+      window.location.href = `https://thenewfuse.com${target}`;
+      return null;
+    }
+
+    // On the landing domain with a hash fragment — just scroll, no reload
+    if (isLandingHost && target.startsWith('/#')) {
+      const hash = target.slice(2); // remove '/#'
+      const el = document.getElementById(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // Element not yet in DOM (static HTML may not have it yet), navigate
+        window.location.hash = hash;
       }
       return null;
     }
 
-    // On root domain: redirect to app subdomain (root domain is broken with 403)
-    const target = to.startsWith('/') ? `https://app.thenewfuse.com${to}` : to;
-    if (window.location.href !== target) {
-      window.location.href = target;
+    // On landing domain with a non-hash path — don't hard-reload the same origin
+    // as that causes the React loop (index.html → React → RedirectToStatic → reload)
+    if (isLandingHost && target === '/') {
+      // Already on the landing page root — just scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return null;
+    }
+
+    // General case: full navigation
+    if (window.location.href !== window.location.origin + target) {
+      window.location.href = window.location.origin + target;
     }
   }
   return null;
@@ -279,11 +299,25 @@ interface ComprehensiveRouterProps {
   isApp?: boolean;
 }
 
-// Helper to detect if we are on an app host
+// Helper to detect if we are on an app host (app.thenewfuse.com, localhost, etc.)
+// NOTE: thenewfuse.com and www.thenewfuse.com are LANDING PAGE hosts, NOT app hosts.
+// The app lives at app.thenewfuse.com — mixing them caused redirect loops.
 const getIsAppHost = () => {
   if (typeof window === 'undefined') return false;
   const host = window.location.hostname;
-  return host === 'app.thenewfuse.com' || host.startsWith('app.') || host.includes('localhost');
+  return (
+    host === 'app.thenewfuse.com' ||
+    host.startsWith('app.') ||
+    host.includes('localhost') ||
+    host.includes('pages.dev')
+  );
+};
+
+// Helper to detect if we are on the marketing landing domain
+const getIsLandingHost = () => {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname;
+  return host === 'thenewfuse.com' || host === 'www.thenewfuse.com';
 };
 
 const MarketplaceRootRoute = () => {
@@ -294,6 +328,7 @@ const MarketplaceRootRoute = () => {
   const host = window.location.hostname;
   const isMarketplaceHost = host === 'marketplace.thenewfuse.com';
   const isAppHost = getIsAppHost();
+  const isLandingHost = getIsLandingHost();
 
   if (isMarketplaceHost) {
     return (
@@ -304,18 +339,24 @@ const MarketplaceRootRoute = () => {
   }
 
   if (isAppHost) {
-    // If we are on the app host, the root should go to the dashboard
     return <Navigate to="/dashboard" replace />;
   }
 
-  // If we are already on /landing, don't redirect back to / (to break Cloudflare 308 loops)
+  // On the landing domain (thenewfuse.com/www.thenewfuse.com), the root path
+  // should show the static landing page — do NOT redirect to /dashboard.
+  // The static index.html already renders the landing page; if React loaded,
+  // just render nothing so the static HTML remains visible.
+  if (isLandingHost) {
+    return null;
+  }
+
+  // On /landing, don't redirect back to / (to break Cloudflare 308 loops)
   if (window.location.pathname === '/landing') {
     return null;
   }
 
-  // ON MAIN SITE: / should trigger a hard reload to the static landing page
-  // Redirect to the canonical landing page domain to avoid relative loops
-  if (host !== 'thenewfuse.com' && !host.includes('localhost')) {
+  // Unknown hosts: redirect to the canonical landing page
+  if (!host.includes('localhost')) {
     window.location.href = 'https://thenewfuse.com/';
     return null;
   }
@@ -397,9 +438,9 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
             <Routes>
               {/* Core Routes - Root switches based on hostname (marketplace vs main landing) */}
               <Route path="/" element={<MarketplaceRootRoute />} />
-              <Route path="/landing" element={<MarketplaceRootRoute />} />
-              <Route path="/home" element={<RedirectToStatic to="/" />} />
-              <Route path="/app" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/landing" element={<MarketplaceRootRoute />} />
+      <Route path="/home" element={<Navigate to="/" replace />} />
+      <Route path="/app" element={<Navigate to="/dashboard" replace />} />
               {LEGACY_REDIRECTS.map((redirect) => (
                 <Route
                   key={`legacy-redirect:${redirect.from}`}
@@ -1264,10 +1305,10 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/auth/callback" element={<OAuthCallbackPage />} />
               <Route path="/auth/oauth-callback" element={<OAuthCallbackPage />} />
 
-              {/* Enhanced Landing Routes */}
-              <Route path="/about" element={<Navigate to="/brand" replace />} />
-              <Route path="/features" element={<Navigate to="/#features" replace />} />
-              <Route path="/pricing" element={<Navigate to="/#pricing" replace />} />
+      {/* Enhanced Landing Routes */}
+      <Route path="/about" element={<Navigate to="/brand" replace />} />
+      <Route path="/features" element={<RedirectToStatic to="/#features" />} />
+      <Route path="/pricing" element={<RedirectToStatic to="/#pricing" />} />
               <Route path="/community" element={<CommunityHubPage />} />
               <Route path="/membership" element={<MembershipPage />} />
               <Route path="/support" element={<SupportPage />} />

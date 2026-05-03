@@ -26,10 +26,12 @@ export interface ModelProvider {
 
 export class ModelsService {
   private modelsCachePath: string;
+  private defaultModelPath: string;
   private cacheExpiry: number = 24 * 60 * 60 * 1000; // 24 hours
 
   constructor(cachePath?: string) {
     this.modelsCachePath = cachePath || path.join(os.homedir(), '.cache', 'tnf', 'models.json');
+    this.defaultModelPath = path.join(os.homedir(), '.config', 'tnf', 'model.default.json');
   }
 
   async listProviders(): Promise<ModelProvider[]> {
@@ -155,5 +157,63 @@ export class ModelsService {
 
   async refreshCache(): Promise<ModelInfo[]> {
     return this.listModels(undefined, { refresh: true });
+  }
+
+  async setDefaultModel(
+    provider: string,
+    model: string
+  ): Promise<{ success: boolean; message: string }> {
+    const normalizedProvider = provider.trim();
+    const normalizedModel = model.trim();
+    if (!normalizedProvider || !normalizedModel) {
+      return { success: false, message: 'Both provider and model are required' };
+    }
+
+    const dir = path.dirname(this.defaultModelPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    const payload = {
+      provider: normalizedProvider,
+      model: normalizedModel,
+      updatedAt: Date.now(),
+      id: randomUUID(),
+    };
+
+    fs.writeFileSync(this.defaultModelPath, JSON.stringify(payload, null, 2));
+    process.env.TNF_LLM_MODEL = `${normalizedProvider}/${normalizedModel}`;
+
+    return { success: true, message: `Default model set to ${normalizedProvider}:${normalizedModel}` };
+  }
+
+  async getDefaultModel(): Promise<{ provider: string; model: string }> {
+    try {
+      if (fs.existsSync(this.defaultModelPath)) {
+        const parsed = JSON.parse(fs.readFileSync(this.defaultModelPath, 'utf8')) as {
+          provider?: string;
+          model?: string;
+        };
+        if (parsed.provider && parsed.model) {
+          return { provider: parsed.provider, model: parsed.model };
+        }
+      }
+    } catch {
+      // fall through to env defaults
+    }
+
+    const envModel = process.env.TNF_LLM_MODEL || process.env.OPENAI_MODEL || '';
+    if (envModel.includes(':')) {
+      const [provider, ...rest] = envModel.split(':');
+      return { provider, model: rest.join(':') };
+    }
+    if (envModel.includes('/')) {
+      const [provider, ...rest] = envModel.split('/');
+      return { provider, model: rest.join('/') };
+    }
+    if (envModel) {
+      return { provider: 'openai', model: envModel };
+    }
+    return { provider: 'openrouter', model: 'google/gemini-2.0-flash' };
   }
 }

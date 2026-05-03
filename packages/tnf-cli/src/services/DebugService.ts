@@ -11,10 +11,37 @@ export interface DebugPaths {
   logs: string;
 }
 
+export interface PermissionRules {
+  bash: Record<string, 'allow' | 'deny'>;
+  read: Record<string, 'allow' | 'deny'>;
+  external_directory: Record<string, 'allow' | 'deny'>;
+}
+
+export interface InlineMCPServerConfig {
+  type?: 'local' | 'remote' | 'sse' | 'ws';
+  command: string[] | string;
+  environment?: Record<string, string>;
+  env?: Record<string, string>;
+  cwd?: string;
+  enabled?: boolean;
+  args?: string[];
+  transport?: 'stdio' | 'sse' | 'ws';
+  url?: string;
+  oauth?: {
+    enabled: boolean;
+    authorizeUrl?: string;
+    tokenUrl?: string;
+    scopes?: string[];
+  };
+}
+
 export interface DebugConfig {
+  $schema?: string;
   provider?: string;
   model?: string;
   apiBaseUrl?: string;
+  permission?: PermissionRules;
+  mcp?: Record<string, InlineMCPServerConfig>;
   mcpServers?: Record<string, unknown>;
   agents?: Record<string, unknown>;
   custom?: Record<string, unknown>;
@@ -42,13 +69,23 @@ export class DebugService {
   getConfig(): DebugConfig {
     const config: DebugConfig = {};
 
-    const configPath = path.join(this.configDir, 'config.json');
+    const jsoncPath = path.join(this.configDir, 'tnf.jsonc');
+    const jsonPath = path.join(this.configDir, 'config.json');
+    const configPath = fs.existsSync(jsoncPath) ? jsoncPath : jsonPath;
+
     if (fs.existsSync(configPath)) {
       try {
-        const data = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        let raw = fs.readFileSync(configPath, 'utf8');
+        if (configPath.endsWith('.jsonc')) {
+          raw = raw.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+        }
+        const data = JSON.parse(raw);
+        config.$schema = data.$schema;
         config.provider = data.provider;
         config.model = data.model;
         config.apiBaseUrl = data.apiBaseUrl;
+        config.permission = data.permission;
+        config.mcp = data.mcp;
         config.mcpServers = data.mcpServers;
         config.agents = data.agents;
         config.custom = data.custom;

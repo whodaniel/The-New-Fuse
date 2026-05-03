@@ -146,7 +146,7 @@ export const useLibraryStore = create<LibraryStore>((set) => ({
   setSearchResults: (results) => set({ searchResults: results }),
 
   thoughtStream: [],
-  addThought: (text: string) =>
+  addThought: (text) =>
     set((state) => ({
       thoughtStream: [
         ...state.thoughtStream.slice(-9),

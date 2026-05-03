@@ -9,18 +9,17 @@ import { LayoutProvider } from './contexts/LayoutContext';
 import { ThemeProvider } from './providers/ThemeProvider';
 
 import { ShortcutsHelp } from './components/layout/ShortcutsHelp';
-import ComprehensiveRouter from './ComprehensiveRouter';
+import SubdomainRouter from './routers/SubdomainRouter';
 import { AuthProvider } from './hooks/useAuth';
 
 const queryClient = new QueryClient();
 
-// App performance wrapper
 const AppContent: React.FC = () => {
   const { showMonitor } = usePerformanceMonitor();
 
   return (
     <>
-      <ComprehensiveRouter isApp={true} />
+      <SubdomainRouter />
       <ShortcutsHelp />
       {showMonitor && <PerformanceMonitor position="bottom-right" compact={true} />}
     </>

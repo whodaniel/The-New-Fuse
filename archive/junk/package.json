@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "abort-controller": "^3.0.0",
-    "gtoken": "^8.0.0",
-    "redis": "^5.11.0",
-    "typebox": "^1.1.34",
-    "ws": "^8.20.0"
-  }
-}

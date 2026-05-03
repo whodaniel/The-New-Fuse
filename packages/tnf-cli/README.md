@@ -26,9 +26,16 @@ tnf menu
 
 ## Root behavior
 
-Running `tnf` with no arguments now prints an organized command menu. The menu
-includes a themed TNF splash animation by default. It also prints
-command-surface totals and points to expanded discovery.
+Running `tnf` with no arguments prints the TNF-native command menu with splash
+and command-surface discovery.
+
+OpenCode compatibility remains available explicitly:
+
+```bash
+tnf run "your prompt"
+tnf web
+tnf attach <url>
+```
 
 Use full inventory mode when you need the entire command surface:
 

@@ -6,12 +6,15 @@ import * as os from 'os';
 
 export interface MCPServerConfig {
   name: string;
+  type?: 'local' | 'remote' | 'sse' | 'ws';
   command: string;
   args?: string[];
   env?: Record<string, string>;
+  environment?: Record<string, string>;
   cwd?: string;
   transport?: 'stdio' | 'sse' | 'ws';
   url?: string;
+  enabled?: boolean;
   oauth?: {
     enabled: boolean;
     authorizeUrl?: string;
@@ -22,6 +25,8 @@ export interface MCPServerConfig {
 
 export interface MCPServerStatus {
   name: string;
+  type?: 'local' | 'remote' | 'sse' | 'ws';
+  enabled: boolean;
   configured: boolean;
   running: boolean;
   pid?: number;
@@ -31,6 +36,14 @@ export interface MCPServerStatus {
     authenticated: boolean;
     expiry?: string;
   };
+}
+
+export interface MCPToolStatus {
+  name: string;
+  type?: 'local' | 'remote' | 'sse' | 'ws';
+  enabled: boolean;
+  configured: boolean;
+  running: boolean;
 }
 
 export interface OAuthCredential {
@@ -57,10 +70,26 @@ export class MCPManagerService {
     if (fs.existsSync(configPath)) {
       try {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-        if (config.servers) {
-          for (const [name, serverConfig] of Object.entries(config.servers) as [string, MCPServerConfig][]) {
-            this.servers.set(name, { ...serverConfig, name });
-          }
+        const serversObj = config.servers || config.mcpServers || {};
+        for (const [name, serverConfig] of Object.entries(serversObj) as [string, any][]) {
+          const normalized: MCPServerConfig = {
+            name,
+            type: serverConfig.type || undefined,
+            command: Array.isArray(serverConfig.command)
+              ? serverConfig.command[0]
+              : serverConfig.command,
+            args: Array.isArray(serverConfig.command)
+              ? serverConfig.command.slice(1)
+              : serverConfig.args,
+            env: serverConfig.environment || serverConfig.env,
+            environment: serverConfig.environment,
+            cwd: serverConfig.cwd,
+            transport: serverConfig.transport,
+            url: serverConfig.url,
+            enabled: serverConfig.enabled !== false,
+            oauth: serverConfig.oauth,
+          };
+          this.servers.set(name, normalized);
         }
       } catch {
         // Config doesn't exist or is invalid
@@ -105,11 +134,25 @@ export class MCPManagerService {
       fs.mkdirSync(this.configDir, { recursive: true });
     }
     const configPath = path.join(this.configDir, 'mcp.json');
-    const serversObj: Record<string, MCPServerConfig> = {};
+    const serversObj: Record<string, any> = {};
     for (const [name, config] of this.servers) {
-      serversObj[name] = config;
+      const entry: Record<string, any> = {
+        name: config.name,
+        command: config.command,
+      };
+      if (config.type) entry.type = config.type;
+      if (config.args && config.args.length > 0) entry.args = config.args;
+      if (config.env) entry.env = config.env;
+      if (config.environment) entry.environment = config.environment;
+      if (config.cwd) entry.cwd = config.cwd;
+      if (config.transport) entry.transport = config.transport;
+      if (config.url) entry.url = config.url;
+      if (config.enabled !== undefined) entry.enabled = config.enabled;
+      if (config.oauth) entry.oauth = config.oauth;
+      serversObj[name] = entry;
     }
-    fs.writeFileSync(configPath, JSON.stringify({ servers: serversObj }, null, 2));
+    const data = JSON.stringify({ servers: serversObj }, null, 2);
+    fs.writeFileSync(configPath, data);
   }
 
   removeServer(name: string): boolean {
@@ -122,6 +165,49 @@ export class MCPManagerService {
     return existed;
   }
 
+  enableServer(name: string): boolean {
+    const config = this.servers.get(name);
+    if (!config) return false;
+    config.enabled = true;
+    this.saveConfig();
+    return true;
+  }
+
+  disableServer(name: string): boolean {
+    const config = this.servers.get(name);
+    if (!config) return false;
+    config.enabled = false;
+    this.saveConfig();
+    return true;
+  }
+
+  async listTools(enabledOnly = false): Promise<MCPToolStatus[]> {
+    const tools = this.listServers().map((server) => ({
+      name: server.name,
+      type: server.type,
+      enabled: server.enabled,
+      configured: server.configured,
+      running: server.running,
+    }));
+    return enabledOnly ? tools.filter((tool) => tool.enabled) : tools;
+  }
+
+  async enableTool(name: string): Promise<{ success: boolean; message: string }> {
+    if (!this.servers.has(name)) {
+      return { success: false, message: `MCP tool '${name}' not found` };
+    }
+    this.enableServer(name);
+    return { success: true, message: `MCP tool '${name}' enabled` };
+  }
+
+  async disableTool(name: string): Promise<{ success: boolean; message: string }> {
+    if (!this.servers.has(name)) {
+      return { success: false, message: `MCP tool '${name}' not found` };
+    }
+    this.disableServer(name);
+    return { success: true, message: `MCP tool '${name}' disabled` };
+  }
+
   listServers(): MCPServerStatus[] {
     const statuses: MCPServerStatus[] = [];
     for (const [name, config] of this.servers) {
@@ -130,6 +216,8 @@ export class MCPManagerService {
       const cred = this.credentials.get(name);
       statuses.push({
         name,
+        type: config.type,
+        enabled: config.enabled !== false,
         configured: true,
         running,
         pid: proc?.pid,
@@ -149,6 +237,10 @@ export class MCPManagerService {
       throw new Error(`MCP server '${name}' not found`);
     }
 
+    if (config.enabled === false) {
+      throw new Error(`MCP server '${name}' is disabled. Enable it in config or set enabled: true.`);
+    }
+
     if (config.oauth?.enabled) {
       const cred = this.credentials.get(name);
       if (!cred || (cred.expiresAt && cred.expiresAt <= Date.now())) {
@@ -156,9 +248,10 @@ export class MCPManagerService {
       }
     }
 
+    const mergedEnv = { ...process.env, ...config.env };
     const proc = spawn(config.command, config.args || [], {
       cwd: config.cwd,
-      env: { ...process.env, ...config.env },
+      env: mergedEnv,
       stdio: ['pipe', 'pipe', 'pipe'],
       detached: true,
     });

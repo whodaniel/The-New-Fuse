@@ -26,10 +26,12 @@ export interface AuthCredential {
 export class AuthService {
   private configDir: string;
   private credentials: Map<string, AuthCredential> = new Map();
+  private config: Record<string, string> = {};
 
   constructor(configDir?: string) {
     this.configDir = configDir || path.join(os.homedir(), '.config', 'tnf', 'auth');
     this.loadCredentials();
+    this.loadConfig();
   }
 
   private loadCredentials(): void {
@@ -56,6 +58,27 @@ export class AuthService {
       credsObj[name] = cred;
     }
     fs.writeFileSync(credPath, JSON.stringify(credsObj, null, 2));
+  }
+
+  private loadConfig(): void {
+    const configPath = path.join(this.configDir, 'config.json');
+    if (!fs.existsSync(configPath)) return;
+    try {
+      const data = JSON.parse(fs.readFileSync(configPath, 'utf8')) as Record<string, unknown>;
+      this.config = Object.fromEntries(
+        Object.entries(data).map(([key, value]) => [key, String(value)])
+      );
+    } catch {
+      this.config = {};
+    }
+  }
+
+  private saveConfig(): void {
+    if (!fs.existsSync(this.configDir)) {
+      fs.mkdirSync(this.configDir, { recursive: true });
+    }
+    const configPath = path.join(this.configDir, 'config.json');
+    fs.writeFileSync(configPath, JSON.stringify(this.config, null, 2));
   }
 
   listProviders(): AuthProvider[] {
@@ -242,5 +265,25 @@ export class AuthService {
 
   getCredential(provider: string): AuthCredential | undefined {
     return this.credentials.get(provider);
+  }
+
+  setConfig(key: string, value: string): boolean {
+    const normalizedKey = key.trim();
+    if (!normalizedKey) return false;
+    this.config[normalizedKey] = value;
+    this.saveConfig();
+    return true;
+  }
+
+  getConfig(key: string): string | null {
+    const normalizedKey = key.trim();
+    if (!normalizedKey) return null;
+    return Object.prototype.hasOwnProperty.call(this.config, normalizedKey)
+      ? this.config[normalizedKey]
+      : null;
+  }
+
+  listConfig(): Record<string, string> {
+    return { ...this.config };
   }
 }

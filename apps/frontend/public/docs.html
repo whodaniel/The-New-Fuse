@@ -6,7 +6,6 @@
   <script>
     // Redirect to docs on the main landing page
     // On app subdomain, /docs should go to thenewfuse.com/docs (the landing site has the docs page)
-    if (window.location.hostname === 'app.thenewfuse.com' || window.location.hostname.startsWith('app.')) {
       window.location.replace('https://thenewfuse.com/docs');
     } else {
       window.location.replace('/docs');
