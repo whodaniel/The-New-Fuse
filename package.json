@@ -119,6 +119,8 @@
     "tnf:journey:program:investigator-pulse": "node scripts/timeline/personal-archaeology-orchestrator.mjs investigator-pulse",
     "tnf:journey:program:digest": "node scripts/timeline/personal-archaeology-orchestrator.mjs digest",
     "tnf:journey:program:blocker-watch": "node scripts/timeline/personal-archaeology-orchestrator.mjs blocker-watch",
+    "tnf:library:audit": "python3 scripts/autonomy/virtual_library_surface_audit.py",
+    "tnf:library:sync": "bash scripts/autonomy/sync_virtual_library_mirror.sh",
     "qa:swarm:loop": "bash scripts/autonomous-qa-swarm-loop.sh",
     "qa:swarm:service:install": "bash scripts/swarm/qa-loop-service.sh install",
     "qa:swarm:service:start": "bash scripts/swarm/qa-loop-service.sh start",

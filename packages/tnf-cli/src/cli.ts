@@ -1153,6 +1153,18 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
       entries: [
         { path: 'tnf onboard', description: 'Run TNF frontload onboarding' },
         { path: 'tnf doctor', description: 'Run TNF diagnostics' },
+        {
+          path: 'tnf library status [--refresh]',
+          description: 'Show canonical Virtual Library status',
+        },
+        {
+          path: 'tnf library audit',
+          description: 'Generate Virtual Library surface audit artifacts',
+        },
+        {
+          path: 'tnf library sync [--apply] [--delete]',
+          description: 'Mirror canonical Virtual Library into TNF app path',
+        },
         { path: 'tnf scripts list', description: 'List runnable scripts and package commands' },
         {
           path: 'tnf scripts run <target> [args...]',
@@ -3162,6 +3174,94 @@ scriptsCommand
       throw new Error(
         `Unknown target '${target}'. Use 'tnf scripts list' to see available scripts.`
       );
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+const library = program
+  .command('library')
+  .description('Virtual Library consolidation, audit, and mirror sync operations');
+
+library
+  .command('audit')
+  .description('Generate canonical Virtual Library surface map and report')
+  .action(async () => {
+    try {
+      await runCommand('python3', ['scripts/autonomy/virtual_library_surface_audit.py']);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+library
+  .command('sync')
+  .description('Sync canonical Virtual Library repo into TNF mirror (dry-run by default)')
+  .option('--apply', 'Apply sync changes (default: dry-run)')
+  .option('--delete', 'Allow deletions in mirror during sync')
+  .action(async (options: { apply?: boolean; delete?: boolean }) => {
+    try {
+      const args = ['scripts/autonomy/sync_virtual_library_mirror.sh'];
+      if (options.apply) args.push('--apply');
+      if (options.delete) args.push('--delete');
+      await runCommand('bash', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+library
+  .command('status')
+  .description('Show Virtual Library canonicalization status')
+  .option('--refresh', 'Rebuild audit map before reading status')
+  .option('--json', 'Output machine-readable JSON')
+  .action(async (options: { refresh?: boolean; json?: boolean }) => {
+    try {
+      if (options.refresh) {
+        await runCommand('python3', ['scripts/autonomy/virtual_library_surface_audit.py']);
+      }
+
+      const mapPath = path.join(
+        repoRoot,
+        'docs/protocols/storage/tnf-virtual-library-surface-map.json'
+      );
+      if (!fs.existsSync(mapPath)) {
+        throw new Error(
+          `Surface map not found at ${mapPath}. Run 'tnf library audit' to generate it.`
+        );
+      }
+
+      const data = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
+      if (options.json) {
+        console.log(JSON.stringify(data, null, 2));
+        return;
+      }
+
+      const canonical = data?.canonicalization?.canonical_codebase || 'n/a';
+      const mirror = data?.canonicalization?.monorepo_mirror_codebase || 'n/a';
+      const drift = data?.canonicalization?.drift || {};
+      const generatedAt = data?.generated_at_utc || 'n/a';
+      const tables = Array.isArray(data?.surfaces?.story_data_authoritative_tables)
+        ? data.surfaces.story_data_authoritative_tables
+        : [];
+
+      console.log(chalk.bold('\n📚 TNF Virtual Library Status\n'));
+      console.log(`   Generated: ${chalk.dim(generatedAt)}`);
+      console.log(`   Canonical: ${chalk.cyan(canonical)}`);
+      console.log(`   Mirror:    ${chalk.cyan(mirror)}`);
+      console.log(
+        `   Drift: head=${chalk.yellow(String(!!drift.head_mismatch))} branch=${chalk.yellow(
+          String(!!drift.branch_mismatch)
+        )} remote=${chalk.yellow(String(!!drift.remote_mismatch))}`
+      );
+      console.log(`   Story authority tables: ${chalk.green(String(tables.length))}`);
+      for (const table of tables) {
+        console.log(`     - ${table}`);
+      }
+      console.log('');
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);

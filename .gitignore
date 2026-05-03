@@ -278,5 +278,7 @@ fix_landing/
 landing_clean_deploy/
 ui-audit-results/
 reports/
+!docs/protocols/reports/
+!docs/protocols/reports/TNF_VIRTUAL_LIBRARY_SURFACE_AUDIT.md
 apps/external/h17-webpilot/profile/
 apps/external/hardware/lightpanda
