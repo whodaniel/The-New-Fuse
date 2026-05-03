@@ -1,0 +1,4 @@
+interface:
+  display_name: "TNF CLI Agent Interoperability"
+  short_description: "Bridge any agent CLI into TNF safely"
+  default_prompt: "Use $tnf-cli-agent-interoperability to integrate an external AI agent CLI into TNF with explicit constraints and command-level acceptance checks."

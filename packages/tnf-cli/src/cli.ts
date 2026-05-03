@@ -1818,23 +1818,30 @@ mcp
   .argument('<name>', 'Server name')
   .requiredOption('--command <cmd>', 'Command to run')
   .option('--args <args...>', 'Arguments for the command')
-  .option('--env <json>', 'Environment variables as JSON')
+  .option('--env <json>', 'Environment variables as JSON (alias: --environment)')
+  .option('--environment <json>', 'Environment variables as JSON (kilo parity)')
+  .option('--type <type>', 'Server type (local|remote|sse|ws)', 'local')
   .option('--cwd <path>', 'Working directory')
+  .option('--enabled <bool>', 'Enable server (true|false)', 'true')
   .action(
-    (name: string, options: { command: string; args?: string[]; env?: string; cwd?: string }) => {
+    (name: string, options: { command: string; args?: string[]; env?: string; environment?: string; type?: string; cwd?: string; enabled?: string }) => {
       try {
         let env: Record<string, string> | undefined;
-        if (options.env) {
-          env = JSON.parse(options.env);
+        const envJson = options.environment || options.env;
+        if (envJson) {
+          env = JSON.parse(envJson);
         }
         const mcpManager = new MCPManagerService();
         mcpManager.addServer(name, {
           command: options.command,
           args: options.args,
           env,
+          environment: env,
+          type: options.type as 'local' | 'remote' | 'sse' | 'ws',
           cwd: options.cwd,
+          enabled: options.enabled !== 'false',
         });
-        console.log(chalk.green(`✅ Added MCP server '${name}'`));
+        console.log(chalk.green(`✅ Added MCP server '${name}' (type: ${options.type}, enabled: ${options.enabled !== 'false'})`));
       } catch (err: any) {
         console.error(chalk.red(`Error: ${err.message}`));
         process.exit(1);
@@ -1861,12 +1868,14 @@ mcp
       } else {
         for (const server of servers) {
           const status = server.running ? chalk.green('running') : chalk.yellow('stopped');
+          const enabled = server.enabled ? chalk.green('on') : chalk.red('off');
+          const type = server.type || 'local';
           const oauth = server.oauth?.enabled
             ? server.oauth.authenticated
               ? chalk.green('auth ✓')
               : chalk.red('auth ✗')
             : '';
-          console.log(`  ${chalk.cyan(server.name)}: ${status} ${oauth}`);
+          console.log(` ${chalk.cyan(server.name)}: ${status} [${type}] [${enabled}] ${oauth}`);
         }
       }
       console.log('');
@@ -1948,6 +1957,42 @@ mcp
         console.log(`  ${diag}`);
       }
       console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+mcp
+  .command('enable <name>')
+  .description('Enable an MCP server (kilo parity: per-server toggle)')
+  .action((name: string) => {
+    try {
+      const mcpManager = new MCPManagerService();
+      if (mcpManager.enableServer(name)) {
+        console.log(chalk.green(`✅ MCP server '${name}' enabled`));
+      } else {
+        console.log(chalk.red(`MCP server '${name}' not found`));
+        process.exit(1);
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+mcp
+  .command('disable <name>')
+  .description('Disable an MCP server without removing it (kilo parity: per-server toggle)')
+  .action((name: string) => {
+    try {
+      const mcpManager = new MCPManagerService();
+      if (mcpManager.disableServer(name)) {
+        console.log(chalk.green(`✅ MCP server '${name}' disabled`));
+      } else {
+        console.log(chalk.red(`MCP server '${name}' not found`));
+        process.exit(1);
+      }
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
@@ -4849,6 +4894,8 @@ import { ServeService } from './services/ServeService.js';
 import { SessionManagerService } from './services/SessionManagerService.js';
 import { StatsService } from './services/StatsService.js';
 import { UpgradeService } from './services/UpgradeService.js';
+import { PermissionService } from './services/PermissionService.js';
+import { ProjectConfigService } from './services/ProjectConfigService.js';
 
 // ACP command
 const acp = program.command('acp').description('Start ACP (Agent Client Protocol) server');
@@ -5234,6 +5281,385 @@ debug
   .action(() => {
     console.log(chalk.dim('Waiting... Press Ctrl+C to exit'));
     process.on('SIGINT', () => process.exit(0));
+  });
+
+// Config commands (kilo parity: unified config management)
+const configCmd = program.command('config').description('Manage TNF configuration (kilo.jsonc parity)');
+
+configCmd
+  .command('show')
+  .description('Show resolved configuration (global + project merge)')
+  .option('--json', 'Output machine-readable JSON')
+  .option('--path <key>', 'Get specific config path (dot notation)')
+  .action((options: { json?: boolean; path?: string }) => {
+    try {
+      if (options.path) {
+        const value = debugService.getConfigPath(options.path);
+        if (options.json) {
+          console.log(JSON.stringify({ path: options.path, value }, null, 2));
+        } else {
+          console.log(value !== undefined ? JSON.stringify(value, null, 2) : chalk.yellow('undefined'));
+        }
+      } else {
+        const config = debugService.getConfig();
+        if (options.json) {
+          console.log(JSON.stringify(config, null, 2));
+        } else {
+          console.log(chalk.bold('\nResolved Configuration\n'));
+          if (config.$schema) console.log(` Schema: ${chalk.dim(config.$schema)}`);
+          if (config.model) console.log(` Model: ${chalk.cyan(config.model)}`);
+          if (config.provider) console.log(` Provider: ${chalk.cyan(config.provider)}`);
+          if (config.apiBaseUrl) console.log(` API Base: ${chalk.dim(config.apiBaseUrl)}`);
+          if (config.permission) {
+            console.log(chalk.bold('\n Permissions\n'));
+            const bashCount = Object.keys(config.permission.bash || {}).length;
+            const readCount = Object.keys(config.permission.read || {}).length;
+            const extDirCount = Object.keys(config.permission.external_directory || {}).length;
+            console.log(`   Bash rules: ${bashCount}`);
+            console.log(`   Read rules: ${readCount}`);
+            console.log(`   External dir rules: ${extDirCount}`);
+          }
+          if (config.mcp) {
+            console.log(chalk.bold('\n MCP Servers (inline)\n'));
+            for (const [name, server] of Object.entries(config.mcp)) {
+              const enabled = server.enabled !== false ? chalk.green('enabled') : chalk.red('disabled');
+              const type = server.type || 'local';
+              console.log(`   ${chalk.cyan(name)}: ${type} ${enabled}`);
+            }
+          }
+          console.log('');
+        }
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+configCmd
+  .command('get <key>')
+  .description('Get a specific config value (dot notation)')
+  .action((key: string) => {
+    try {
+      const value = debugService.getConfigPath(key);
+      if (value !== undefined) {
+        console.log(typeof value === 'string' ? value : JSON.stringify(value, null, 2));
+      } else {
+        console.log(chalk.yellow(`Key '${key}' not found`));
+        process.exit(1);
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+configCmd
+  .command('paths')
+  .description('Show config file paths (global + project)')
+  .action(() => {
+    try {
+      const home = require('os').homedir();
+      const globalJsonc = path.join(home, '.config', 'tnf', 'tnf.jsonc');
+      const globalJson = path.join(home, '.config', 'tnf', 'config.json');
+      const mcpConfig = path.join(home, '.config', 'tnf', 'mcp', 'mcp.json');
+      const agentsConfig = path.join(home, '.config', 'tnf', 'agents', 'agents.json');
+      const projectJsonc = path.join(process.cwd(), 'tnf.jsonc');
+      const projectJson = path.join(process.cwd(), 'tnf.json');
+
+      console.log(chalk.bold('\nConfig Paths\n'));
+      console.log(` Global (JSONC): ${fs.existsSync(globalJsonc) ? chalk.green(globalJsonc) : chalk.dim(globalJsonc + ' (not found)')}`);
+      console.log(` Global (JSON):  ${fs.existsSync(globalJson) ? chalk.green(globalJson) : chalk.dim(globalJson + ' (not found)')}`);
+      console.log(` MCP servers:    ${fs.existsSync(mcpConfig) ? chalk.green(mcpConfig) : chalk.dim(mcpConfig + ' (not found)')}`);
+      console.log(` Agents:         ${fs.existsSync(agentsConfig) ? chalk.green(agentsConfig) : chalk.dim(agentsConfig + ' (not found)')}`);
+      console.log(` Project (JSONC):${fs.existsSync(projectJsonc) ? chalk.green(projectJsonc) : chalk.dim(projectJsonc + ' (not found)')}`);
+      console.log(` Project (JSON): ${fs.existsSync(projectJson) ? chalk.green(projectJson) : chalk.dim(projectJson + ' (not found)')}`);
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+configCmd
+  .command('set <key> <value>')
+  .description('Set a config value in global tnf.jsonc')
+  .action((key: string, value: string) => {
+    try {
+      const configDir = path.join(require('os').homedir(), '.config', 'tnf');
+      const configPath = path.join(configDir, 'tnf.jsonc');
+      let config: Record<string, any> = {};
+      if (fs.existsSync(configPath)) {
+        let raw = fs.readFileSync(configPath, 'utf8');
+        raw = raw.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+        config = JSON.parse(raw);
+      }
+      let parsedValue: any = value;
+      try { parsedValue = JSON.parse(value); } catch {}
+      const parts = key.split('.');
+      let target: Record<string, any> = config;
+      for (let i = 0; i < parts.length - 1; i++) {
+        if (!(parts[i] in target)) target[parts[i]] = {};
+        target = target[parts[i]];
+      }
+      target[parts[parts.length - 1]] = parsedValue;
+      if (!fs.existsSync(configDir)) fs.mkdirSync(configDir, { recursive: true });
+      fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+      console.log(chalk.green(`✅ Set ${key} = ${JSON.stringify(parsedValue)}`));
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Permission commands (kilo parity: granular bash/read/external_directory permissions)
+const permissionCmd = program.command('permission').description('Manage permission rules (bash, read, external_directory)');
+
+permissionCmd
+  .command('list')
+  .description('List all permission rules')
+  .option('--type <type>', 'Filter by type (bash|read|external_directory)')
+  .option('--scope <scope>', 'Filter by scope (global|project)')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { type?: string; scope?: string; json?: boolean }) => {
+    try {
+      const permService = new PermissionService(undefined, process.cwd());
+      const allRules: Array<{ category: string; pattern: string; action: string; source: string }> = [];
+
+      if (!options.type || options.type === 'bash') {
+        for (const r of permService.listBashRules()) {
+          if (!options.scope || options.scope === r.source) {
+            allRules.push({ category: 'bash', pattern: r.pattern, action: r.action, source: r.source });
+          }
+        }
+      }
+      if (!options.type || options.type === 'read') {
+        for (const r of permService.listReadRules()) {
+          if (!options.scope || options.scope === r.source) {
+            allRules.push({ category: 'read', pattern: r.pattern, action: r.action, source: r.source });
+          }
+        }
+      }
+      if (!options.type || options.type === 'external_directory') {
+        for (const r of permService.listExternalDirectoryRules()) {
+          if (!options.scope || options.scope === r.source) {
+            allRules.push({ category: 'external_directory', pattern: r.pattern, action: r.action, source: r.source });
+          }
+        }
+      }
+
+      if (options.json) {
+        console.log(JSON.stringify(allRules, null, 2));
+      } else {
+        console.log(chalk.bold('\nPermission Rules\n'));
+        if (allRules.length === 0) {
+          console.log(chalk.dim('No permission rules configured'));
+        } else {
+          for (const r of allRules) {
+            const action = r.action === 'allow' ? chalk.green('allow') : chalk.red('deny');
+            console.log(` ${chalk.cyan(r.category)} ${r.pattern}: ${action} (${chalk.dim(r.source)})`);
+          }
+        }
+        console.log('');
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+permissionCmd
+  .command('add <category> <pattern> <action>')
+  .description('Add a permission rule (category: bash|read|external_directory, action: allow|deny)')
+  .option('--scope <scope>', 'Scope: global or project', 'global')
+  .action((category: string, pattern: string, action: string, options: { scope: string }) => {
+    try {
+      if (!['bash', 'read', 'external_directory'].includes(category)) {
+        console.log(chalk.red(`Invalid category '${category}'. Must be: bash, read, or external_directory`));
+        process.exit(1);
+      }
+      if (!['allow', 'deny'].includes(action)) {
+        console.log(chalk.red(`Invalid action '${action}'. Must be: allow or deny`));
+        process.exit(1);
+      }
+      const permService = new PermissionService(undefined, process.cwd());
+      const scope = options.scope as 'global' | 'project';
+      if (category === 'bash') permService.addBashRule(pattern, action as 'allow' | 'deny', scope);
+      else if (category === 'read') permService.addReadRule(pattern, action as 'allow' | 'deny', scope);
+      else permService.addExternalDirectoryRule(pattern, action as 'allow' | 'deny', scope);
+      console.log(chalk.green(`✅ Added ${category} rule: ${pattern} → ${action} (${scope})`));
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+permissionCmd
+  .command('remove <category> <pattern>')
+  .description('Remove a permission rule')
+  .option('--scope <scope>', 'Scope: global or project', 'global')
+  .action((category: string, pattern: string, options: { scope: string }) => {
+    try {
+      const permService = new PermissionService(undefined, process.cwd());
+      const scope = options.scope as 'global' | 'project';
+      let removed = false;
+      if (category === 'bash') removed = permService.removeBashRule(pattern, scope);
+      else {
+        console.log(chalk.red(`Category '${category}' remove not yet supported. Use bash for now.`));
+        process.exit(1);
+      }
+      if (removed) {
+        console.log(chalk.green(`✅ Removed ${category} rule: ${pattern} (${scope})`));
+      } else {
+        console.log(chalk.yellow(`Rule '${pattern}' not found in ${category} (${scope})`));
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+permissionCmd
+  .command('check <command>')
+  .description('Check if a bash command is allowed by permission rules')
+  .option('--type <type>', 'Check type: bash|read|external_directory', 'bash')
+  .action((command: string, options: { type: string }) => {
+    try {
+      const permService = new PermissionService(undefined, process.cwd());
+      let result: { allowed: boolean; matchedRule?: string; action?: string; source?: string };
+      if (options.type === 'bash') result = permService.checkBashCommand(command);
+      else if (options.type === 'read') result = permService.checkReadPath(command);
+      else result = permService.checkExternalDirectory(command);
+      if (result.allowed) {
+        console.log(chalk.green(`✅ Allowed`) + (result.matchedRule ? ` (rule: ${result.matchedRule} → ${result.action}, ${result.source})` : ' (no rules matched, default allow)'));
+      } else {
+        console.log(chalk.red(`⛔ Denied`) + ` (rule: ${result.matchedRule} → ${result.action}, ${result.source})`);
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Project-level config commands (kilo parity: project tnf.json + .tnf/command + .tnf/agent)
+const projectCmd = program.command('project').description('Project-level configuration (tnf.jsonc, .tnf/command, .tnf/agent)');
+
+projectCmd
+  .command('init')
+  .description('Initialize project-level tnf.jsonc and .tnf/ directories')
+  .action(() => {
+    try {
+      const projService = new ProjectConfigService(process.cwd());
+      const existingPath = projService.getConfigPath();
+      if (existingPath) {
+        console.log(chalk.yellow(`Project config already exists at: ${existingPath}`));
+        process.exit(0);
+      }
+      const createdPath = projService.createDefaultConfig();
+      console.log(chalk.green(`✅ Created project config at: ${createdPath}`));
+      console.log(chalk.dim(`   Created: .tnf/command/ and .tnf/agent/ directories`));
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+projectCmd
+  .command('show')
+  .description('Show project-level configuration')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const projService = new ProjectConfigService(process.cwd());
+      const config = projService.getConfig();
+      const commands = projService.getCommands();
+      const agents = projService.getAgents();
+
+      if (options.json) {
+        console.log(JSON.stringify({ config, commands, agents }, null, 2));
+      } else {
+        console.log(chalk.bold('\nProject Configuration\n'));
+        if (config) {
+          if (config.model) console.log(` Model: ${chalk.cyan(config.model)}`);
+          if (config.provider) console.log(` Provider: ${chalk.cyan(config.provider)}`);
+          if (config.$schema) console.log(` Schema: ${chalk.dim(config.$schema)}`);
+          if (config.mcp && Object.keys(config.mcp).length > 0) {
+            console.log(chalk.bold('\n Project MCP Servers\n'));
+            for (const [name, server] of Object.entries(config.mcp)) {
+              const enabled = server.enabled !== false ? chalk.green('enabled') : chalk.red('disabled');
+              console.log(`   ${chalk.cyan(name)}: ${server.type || 'local'} ${enabled}`);
+            }
+          }
+        } else {
+          console.log(chalk.dim('No project config found. Run `tnf project init` to create one.'));
+        }
+
+        if (commands.length > 0) {
+          console.log(chalk.bold('\n Project Commands (.tnf/command/)\n'));
+          for (const cmd of commands) {
+            console.log(`   ${chalk.cyan(cmd.name)}: ${chalk.dim(cmd.filePath)}`);
+          }
+        }
+        if (agents.length > 0) {
+          console.log(chalk.bold('\n Project Agents (.tnf/agent/)\n'));
+          for (const agent of agents) {
+            console.log(`   ${chalk.cyan(agent.name)}: ${chalk.dim(agent.filePath)}`);
+          }
+        }
+        console.log('');
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+projectCmd
+  .command('commands')
+  .description('List project command definitions from .tnf/command/')
+  .action(() => {
+    try {
+      const projService = new ProjectConfigService(process.cwd());
+      const commands = projService.getCommands();
+      console.log(chalk.bold('\nProject Commands (.tnf/command/)\n'));
+      if (commands.length === 0) {
+        console.log(chalk.dim('No project commands found. Add .md files to .tnf/command/'));
+      } else {
+        for (const cmd of commands) {
+          console.log(` ${chalk.cyan(cmd.name)}`);
+          const firstLine = cmd.content.split('\n')[0]?.replace(/^#\s*/, '') || '';
+          if (firstLine) console.log(`   ${chalk.dim(firstLine)}`);
+        }
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+projectCmd
+  .command('agents')
+  .description('List project agent definitions from .tnf/agent/')
+  .action(() => {
+    try {
+      const projService = new ProjectConfigService(process.cwd());
+      const agents = projService.getAgents();
+      console.log(chalk.bold('\nProject Agents (.tnf/agent/)\n'));
+      if (agents.length === 0) {
+        console.log(chalk.dim('No project agents found. Add .md files to .tnf/agent/'));
+      } else {
+        for (const agent of agents) {
+          console.log(` ${chalk.cyan(agent.name)}`);
+          const firstLine = agent.content.split('\n')[0]?.replace(/^#\s*/, '') || '';
+          if (firstLine) console.log(`   ${chalk.dim(firstLine)}`);
+        }
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
   });
 
 // Session commands

@@ -1,0 +1,4 @@
+interface:
+  display_name: "TNF CLI SDK Interoperability"
+  short_description: "Map SDK features to TNF CLI surfaces"
+  default_prompt: "Use $tnf-cli-sdk-interoperability to map development SDK capabilities into TNF CLI commands with explicit contracts and validation checks."
