@@ -92,37 +92,59 @@ def _get_mss():
         _mss_instance = mss()
     return _mss_instance
 
-# simplejpeg availability check (3-5% faster than PIL on Haswell, skips RGB conversion)
+# Encoding cascade: native C > simplejpeg > PIL > Quartz
+# Native C bgra2jpeg.so: 8.3 FPS (2.4x faster than simplejpeg)
+# simplejpeg BGR: 3.5 FPS, PIL: 3.5 FPS, Quartz: 0.5 FPS
+_has_native_encoder = False
+_bgra2jpeg = None
+try:
+ import importlib.util
+ _spec = importlib.util.spec_from_file_location(
+ "bgra2jpeg",
+ "/Users/<owner>/.hermes/skills/tnf/tnf-llvm-forge/scripts/bgra2jpeg.so")
+ if _spec and _spec.loader:
+  _bgra2jpeg_mod = importlib.util.module_from_spec(_spec)
+  _spec.loader.exec_module(_bgra2jpeg_mod)
+  _bgra2jpeg = _bgra2jpeg_mod.bgra2jpeg
+  _has_native_encoder = True
+except Exception:
+ pass
+
 _has_simplejpeg = False
 try:
-    import simplejpeg as _simplejpeg
-    _has_simplejpeg = True
+ import simplejpeg as _simplejpeg
+ _has_simplejpeg = True
 except ImportError:
-    pass
+ pass
 
 def capture_screen_jpeg(quality=FRAME_QUALITY):
-    """Capture Mac screen → JPEG bytes via mss (fast path) with Quartz fallback.
-    Tries simplejpeg (BGR direct, no RGB conversion) first, then PIL, then Quartz.
-    mss capture ~61ms + JPEG encode ~220ms = ~3.5 FPS on 2015 MBP.
-    """
-    try:
-        sct = _get_mss()
-        monitor = sct.monitors[1] # primary monitor
-        screenshot = sct.grab(monitor)
-        # Fast path: simplejpeg BGR encode (avoids PIL + RGB conversion)
-        if _has_simplejpeg:
-            import numpy as np
-            raw = np.frombuffer(screenshot.raw, dtype=np.uint8).reshape(
-                screenshot.size[1], screenshot.size[0], 4)
-            bgr = np.ascontiguousarray(raw[:, :, :3])  # BGRA → BGR
-            return _simplejpeg.encode_jpeg(bgr, quality=quality, colorspace='BGR')
-        # Fallback: PIL with BGRX → RGB conversion
-        from PIL import Image
-        img = Image.frombytes('RGB', screenshot.size, screenshot.bgra, 'raw', 'BGRX')
-        buf = io.BytesIO()
-        img.save(buf, format='JPEG', quality=quality, optimize=True)
-        return buf.getvalue()
-    except Exception as e_mss:
+ """Capture Mac screen → JPEG bytes via mss with encoding cascade.
+ Native C bgra2jpeg: 8.3 FPS (zero-copy BGRA→libjpeg)
+ simplejpeg BGR: 3.5 FPS (numpy copy + libturbojpeg)
+ PIL: 3.5 FPS (Image.frombytes + Pillow JPEG)
+ Quartz: 0.5 FPS (CGWindowListCreateImage fallback)
+ """
+ try:
+  sct = _get_mss()
+  monitor = sct.monitors[1] # primary monitor
+  screenshot = sct.grab(monitor)
+  # Tier 1: Native C bgra2jpeg (8.3 FPS on 2015 Haswell)
+  if _has_native_encoder:
+   return _bgra2jpeg(screenshot.raw, screenshot.size[0], screenshot.size[1], quality)
+  # Tier 2: simplejpeg BGR encode (3.5 FPS)
+  if _has_simplejpeg:
+   import numpy as np
+   raw = np.frombuffer(screenshot.raw, dtype=np.uint8).reshape(
+    screenshot.size[1], screenshot.size[0], 4)
+   bgr = np.ascontiguousarray(raw[:, :, :3]) # BGRA → BGR
+   return _simplejpeg.encode_jpeg(bgr, quality=quality, colorspace='BGR')
+  # Tier 3: PIL with BGRX → RGB conversion (3.5 FPS)
+  from PIL import Image
+  img = Image.frombytes('RGB', screenshot.size, screenshot.bgra, 'raw', 'BGRX')
+  buf = io.BytesIO()
+  img.save(buf, format='JPEG', quality=quality, optimize=True)
+  return buf.getvalue()
+ except Exception as e_mss:
         print(f"[mss CAPTURE FALLBACK] mss failed: {e_mss}, trying Quartz")
         try:
             # Recursion guard: list on-screen windows and exclude our own

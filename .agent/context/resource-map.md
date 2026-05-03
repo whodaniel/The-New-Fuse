@@ -170,6 +170,22 @@ capabilities.
 - **Location**: `packages/agent/src/skill-bank/compiled/tnf-cli-agent-workflow.md`
 - **Purpose**: Generic go-to skill for ANY AI agent working with TNF CLI
 - **Use When**: Any TNF-related task - this is the reference skill
+
+### 15. **tnf-agent-orchestration** ⭐⭐⭐
+
+- **Location**: `packages/agent/src/skill-bank/compiled/tnf-agent-orchestration.md`
+- **Purpose**: Complete system for orchestrating AI agents - alignment, cohesion, growth, health
+- **Use When**: Understanding how TNF coordinates multiple agents
+- **Key Features**:
+  - Master heartbeat loop (15s)
+  - Agent discovery & registration
+  - Communication protocols (relay, twin, health)
+  - Health monitoring (terminal, supervisor, model, voice)
+  - Coordination (Director, Sub-Director)
+  - Self-improvement cycles
+  - Task distribution (resonance pool)
+  - Session management
+  - Knowledge systems
 - **Key Features**:
   - Quick Start commands for immediate orientation
   - Core CLI architecture patterns
