@@ -92,16 +92,32 @@ def _get_mss():
         _mss_instance = mss()
     return _mss_instance
 
-# Encoding cascade: native C > simplejpeg > PIL > Quartz
-# Native C bgra2jpeg.so: 8.3 FPS (2.4x faster than simplejpeg)
+# Encoding cascade: turbojpeg SIMD > stock libjpeg > simplejpeg > PIL > Quartz
+# turbojpeg BGRX: 11.8 FPS (SIMD-accelerated, zero BGRX→RGB conversion)
+# stock libjpeg: 8.3 FPS (C extension, manual BGRA→RGB scanline)
 # simplejpeg BGR: 3.5 FPS, PIL: 3.5 FPS, Quartz: 0.5 FPS
+_has_turbo_encoder = False
+_bgra2jpeg_turbo = None
+try:
+ import importlib.util
+ _spec = importlib.util.spec_from_file_location(
+ "bgra2jpeg_turbo",
+ os.path.join(os.path.dirname(os.path.abspath(__file__)), "native", "bgra2jpeg_turbo.so"))
+ if _spec and _spec.loader:
+  _turbo_mod = importlib.util.module_from_spec(_spec)
+  _spec.loader.exec_module(_turbo_mod)
+  _bgra2jpeg_turbo = _turbo_mod.bgra2jpeg_turbo_native
+  _has_turbo_encoder = True
+except Exception:
+ pass
+
 _has_native_encoder = False
 _bgra2jpeg = None
 try:
  import importlib.util
  _spec = importlib.util.spec_from_file_location(
  "bgra2jpeg",
- "/Users/<owner>/.hermes/skills/tnf/tnf-llvm-forge/scripts/bgra2jpeg.so")
+ os.path.join(os.path.dirname(os.path.abspath(__file__)), "native", "bgra2jpeg.so"))
  if _spec and _spec.loader:
   _bgra2jpeg_mod = importlib.util.module_from_spec(_spec)
   _spec.loader.exec_module(_bgra2jpeg_mod)
@@ -119,16 +135,20 @@ except ImportError:
 
 def capture_screen_jpeg(quality=FRAME_QUALITY):
  """Capture Mac screen → JPEG bytes via mss with encoding cascade.
- Native C bgra2jpeg: 8.3 FPS (zero-copy BGRA→libjpeg)
- simplejpeg BGR: 3.5 FPS (numpy copy + libturbojpeg)
- PIL: 3.5 FPS (Image.frombytes + Pillow JPEG)
- Quartz: 0.5 FPS (CGWindowListCreateImage fallback)
+ Tier 0: turbojpeg BGRX (11.8 FPS, SIMD-accelerated, zero conversion)
+ Tier 1: stock libjpeg C ext (8.3 FPS, zero-copy BGRA→libjpeg)
+ Tier 2: simplejpeg BGR (3.5 FPS, numpy copy + libturbojpeg)
+ Tier 3: PIL JPEG (3.5 FPS, Image.frombytes + Pillow)
+ Tier 4: Quartz CGWindowListCreateImage (0.5 FPS fallback)
  """
  try:
   sct = _get_mss()
   monitor = sct.monitors[1] # primary monitor
   screenshot = sct.grab(monitor)
-  # Tier 1: Native C bgra2jpeg (8.3 FPS on 2015 Haswell)
+  # Tier 0: turbojpeg BGRX native (11.8 FPS, SIMD)
+  if _has_turbo_encoder:
+   return _bgra2jpeg_turbo(screenshot.raw, screenshot.size[0], screenshot.size[1], quality)
+  # Tier 1: stock libjpeg C extension (8.3 FPS)
   if _has_native_encoder:
    return _bgra2jpeg(screenshot.raw, screenshot.size[0], screenshot.size[1], quality)
   # Tier 2: simplejpeg BGR encode (3.5 FPS)
