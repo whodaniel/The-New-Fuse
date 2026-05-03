@@ -82,61 +82,78 @@ def stop_caffeinate():
         print("[☕] Caffeinate OFF")
 
 
+# mss capture singleton — 30+ FPS on 2015 MBP (vs 0.3-0.7 FPS with screencapture)
+_mss_instance = None
+
+def _get_mss():
+    global _mss_instance
+    if _mss_instance is None:
+        from mss import mss
+        _mss_instance = mss()
+    return _mss_instance
+
 def capture_screen_jpeg(quality=FRAME_QUALITY):
-    """Capture Mac screen → JPEG bytes via Quartz + numpy.
-    RECURSION GUARD: Uses kCGWindowImageNominalResolution to avoid
-    capturing the relay's own browser tab (which would show the stream
-    inside the stream). If the caller is viewing the relay in a browser
-    on the same Mac, they should use a different display or the
-    /ai/frame endpoint instead.
+    """Capture Mac screen → JPEG bytes via mss (fast path) with Quartz fallback.
+    mss achieves ~30 FPS on 2015 MBP vs 0.3-0.7 FPS with Quartz+numpy pipeline.
+    Falls back to Quartz CGWindowListCreateImage if mss fails.
     """
     try:
-        # Recursion guard: list on-screen windows and exclude our own
-        window_ids_to_exclude = []
-        try:
-            window_list = Quartz.CGWindowListCopyWindowInfo(
-                kCGWindowListOptionOnScreenOnly, kCGNullWindowID
-            )
-            for w in (window_list or []):
-                owner = w.get("kCGWindowOwnerName", "") or ""
-                name = w.get("kCGWindowName", "") or ""
-                # Exclude browser tabs showing our relay (typical recursion)
-                if "8080" in name and any(x in owner for x in ["Safari", "Chrome", "Firefox", "Arc"]):
-                    wid = w.get("kCGWindowNumber", 0)
-                    if wid:
-                        window_ids_to_exclude.append(wid)
-        except Exception:
-            pass
-
-        image_ref = CGWindowListCreateImage(
-            Quartz.CGRectInfinite,
-            kCGWindowListOptionOnScreenOnly,
-            kCGNullWindowID,
-            kCGWindowImageDefault
-        )
-        if not image_ref:
-            return None
-        w = CGImageGetWidth(image_ref)
-        h = CGImageGetHeight(image_ref)
-        bytes_per_row = CGImageGetBytesPerRow(image_ref)
-        data_provider = CGImageGetDataProvider(image_ref)
-        pixel_data = CGDataProviderCopyData(data_provider)
-        if not pixel_data:
-            return None
-        arr = np.frombuffer(pixel_data, dtype=np.uint8)
-        if bytes_per_row == w * 4:
-            arr = arr.reshape((h, w, 4))
-        else:
-            arr = arr.reshape((h, bytes_per_row // 4, 4))[:, :w, :]
-        rgb = arr[:, :, 2::-1]  # BGRA -> RGB
+        sct = _get_mss()
+        monitor = sct.monitors[1]  # primary monitor
+        screenshot = sct.grab(monitor)
         from PIL import Image
-        img = Image.fromarray(rgb)
+        img = Image.frombytes('RGB', screenshot.size, screenshot.bgra, 'raw', 'BGRX')
         buf = io.BytesIO()
         img.save(buf, format='JPEG', quality=quality, optimize=True)
         return buf.getvalue()
-    except Exception as e:
-        print(f"[CAPTURE ERROR] {e}")
-        return None
+    except Exception as e_mss:
+        print(f"[mss CAPTURE FALLBACK] mss failed: {e_mss}, trying Quartz")
+        try:
+            # Recursion guard: list on-screen windows and exclude our own
+            window_ids_to_exclude = []
+            try:
+                window_list = Quartz.CGWindowListCopyWindowInfo(
+                    kCGWindowListOptionOnScreenOnly, kCGNullWindowID
+                )
+                for w in (window_list or []):
+                    owner = w.get("kCGWindowOwnerName", "") or ""
+                    name = w.get("kCGWindowName", "") or ""
+                    if "8080" in name and any(x in owner for x in ["Safari", "Chrome", "Firefox", "Arc"]):
+                        wid = w.get("kCGWindowNumber", 0)
+                        if wid:
+                            window_ids_to_exclude.append(wid)
+            except Exception:
+                pass
+
+            image_ref = CGWindowListCreateImage(
+                Quartz.CGRectInfinite,
+                kCGWindowListOptionOnScreenOnly,
+                kCGNullWindowID,
+                kCGWindowImageDefault
+            )
+            if not image_ref:
+                return None
+            w = CGImageGetWidth(image_ref)
+            h = CGImageGetHeight(image_ref)
+            bytes_per_row = CGImageGetBytesPerRow(image_ref)
+            data_provider = CGImageGetDataProvider(image_ref)
+            pixel_data = CGDataProviderCopyData(data_provider)
+            if not pixel_data:
+                return None
+            arr = np.frombuffer(pixel_data, dtype=np.uint8)
+            if bytes_per_row == w * 4:
+                arr = arr.reshape((h, w, 4))
+            else:
+                arr = arr.reshape((h, bytes_per_row // 4, 4))[:, :w, :]
+            rgb = arr[:, :, 2::-1]  # BGRA -> RGB
+            from PIL import Image
+            img = Image.fromarray(rgb)
+            buf = io.BytesIO()
+            img.save(buf, format='JPEG', quality=quality, optimize=True)
+            return buf.getvalue()
+        except Exception as e_quartz:
+            print(f"[CAPTURE ERROR] Both mss and Quartz failed. mss: {e_mss}, Quartz: {e_quartz}")
+            return None
 
 
 # --- Input Injection ---
