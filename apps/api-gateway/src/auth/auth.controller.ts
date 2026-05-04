@@ -9,17 +9,19 @@ import {
   Version,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 import { Request } from 'express';
 import { GatewayAuthGuard } from './gateway-auth.guard';
 import { GatewayAuthService } from './gateway-auth.service';
 
 class LoginDto {
   @IsEmail()
-  email: string = '';
+  @IsNotEmpty()
+  email: string;
 
   @IsString()
-  password: string = '';
+  @IsNotEmpty()
+  password: string;
 
   @IsString()
   @IsOptional()
