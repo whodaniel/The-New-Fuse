@@ -217,7 +217,7 @@ export class RelayConnectionService {
       payload: {
         clientType: 'vscode_extension',
         instanceId: this.instanceId,
-        version: '9.0.0',
+        version: '9.2.0',
         capabilities: ['chat', 'code_assistance', 'mcp_integration', 'federation', 'terminal'],
         metadata: {
           workspaceName: workspaceFolders?.[0]?.name,

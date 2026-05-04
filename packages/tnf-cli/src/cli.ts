@@ -3,6 +3,7 @@ import { spawn, spawnSync } from 'child_process';
 import { Command } from 'commander';
 import { createHash } from 'crypto';
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
@@ -1460,6 +1461,8 @@ function buildOpenClawCompatibilityReport() {
   };
 }
 
+const pkgVersion = JSON.parse(fs.readFileSync(path.join(_dirname, '../package.json'), 'utf8')).version || '1.0.0';
+
 program
   .name('tnf')
   .description(
@@ -1472,7 +1475,7 @@ program
       '    - Set the TNF_SUPER_ADMIN_INPUT_TOKEN environment variable\n' +
       '    - Set the CI_SUPER_ADMIN_TOKEN environment variable (for CI/CD)'
   )
-  .version('1.0.0')
+  .version(pkgVersion)
   .showSuggestionAfterError()
   .showHelpAfterError();
 
@@ -5459,7 +5462,7 @@ configCmd
   .description('Show config file paths (global + project)')
   .action(() => {
     try {
-      const home = require('os').homedir();
+        const home = os.homedir();
       const globalJsonc = path.join(home, '.config', 'tnf', 'tnf.jsonc');
       const globalJson = path.join(home, '.config', 'tnf', 'config.json');
       const mcpConfig = path.join(home, '.config', 'tnf', 'mcp', 'mcp.json');
@@ -5486,12 +5489,15 @@ configCmd
   .description('Set a config value in global tnf.jsonc')
   .action((key: string, value: string) => {
     try {
-      const configDir = path.join(require('os').homedir(), '.config', 'tnf');
+      const configDir = path.join(os.homedir(), '.config', 'tnf');
       const configPath = path.join(configDir, 'tnf.jsonc');
       let config: Record<string, any> = {};
       if (fs.existsSync(configPath)) {
         let raw = fs.readFileSync(configPath, 'utf8');
-        raw = raw.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+        if (configPath.endsWith('.jsonc')) {
+          const permService = new PermissionService(undefined, process.cwd());
+          raw = permService.stripJsoncCommentsPublic(raw);
+        }
         config = JSON.parse(raw);
       }
       let parsedValue: any = value;
@@ -5604,8 +5610,10 @@ permissionCmd
       const scope = options.scope as 'global' | 'project';
       let removed = false;
       if (category === 'bash') removed = permService.removeBashRule(pattern, scope);
+      else if (category === 'read') removed = permService.removeReadRule(pattern, scope);
+      else if (category === 'external_directory') removed = permService.removeExternalDirectoryRule(pattern, scope);
       else {
-        console.log(chalk.red(`Category '${category}' remove not yet supported. Use bash for now.`));
+        console.log(chalk.red(`Unknown category '${category}'. Must be: bash, read, or external_directory`));
         process.exit(1);
       }
       if (removed) {
@@ -6162,6 +6170,325 @@ program
       } else {
         console.log(chalk.red(result.message));
       }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Feedback command - for beta developer feedback integration
+const feedback = program
+  .command('feedback')
+  .description('Feedback management for beta developers');
+
+// Feedback submit
+feedback
+  .command('submit')
+  .description('Submit feedback (bug, feature, or suggestion)')
+  .option('-t, --type <type>', 'Feedback type (bug|feature|ux|other)', 'other')
+  .option('-p, --priority <priority>', 'Priority (low|medium|high|critical)', 'medium')
+  .option('-m, --message <message>', 'Feedback message (required)')
+  .option('-c, --context <context>', 'URL or context')
+  .option('--host <host>', 'API host', process.env.TNF_API_HOST || 'http://127.0.0.1:3001')
+  .action(async (options: { type?: string; priority?: string; message?: string; context?: string; host?: string }) => {
+    try {
+      if (!options.message) {
+        console.error(chalk.red('--message is required'));
+        process.exit(1);
+      }
+      const host = options.host || process.env.TNF_API_HOST || 'http://127.0.0.1:3001';
+      const body = {
+        type: options.type || 'other',
+        priority: options.priority || 'medium',
+        message: options.message,
+        contextUrl: options.context || '',
+        source: 'beta',
+      };
+      const url = `${host}/api/feedback`;
+      const curlArgs = [
+        '-fsS',
+        '-X', 'POST',
+        '-H', 'Content-Type: application/json',
+        '-d', JSON.stringify(body),
+        url,
+      ];
+      const result = spawnSync('curl', curlArgs, { encoding: 'utf8', env: process.env });
+      if (result.status !== 0) {
+        const err = result.stderr.trim() || `Failed to connect to ${url}. Is backend running?`;
+        console.error(chalk.red(err));
+        process.exit(1);
+      }
+      const response = JSON.parse(result.stdout.trim() || '{}');
+      const feedbackId = response.id;
+      console.log(chalk.green(`✅ Feedback submitted: ${feedbackId}`));
+      console.log(chalk.dim(`   Type: ${body.type}`));
+      console.log(chalk.dim(`   Priority: ${body.priority}`));
+      if (options.context) {
+        console.log(chalk.dim(`   Context: ${options.context}`));
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Feedback list
+feedback
+  .command('list')
+  .alias('ls')
+  .description('List all feedback')
+  .option('--status <status>', 'Filter by status (new|triaged|in_progress|done)')
+  .option('--type <type>', 'Filter by type (bug|feature|ux|other)')
+  .option('--json', 'Output as JSON')
+  .option('--host <host>', 'API host', process.env.TNF_API_HOST || 'http://127.0.0.1:3001')
+  .action(async (options: { status?: string; type?: string; json?: boolean; host?: string }) => {
+    try {
+      const host = options.host || process.env.TNF_API_HOST || 'http://127.0.0.1:3001';
+      let url = `${host}/api/feedback`;
+      const params = new URLSearchParams();
+      if (options.status) params.set('status', options.status);
+      if (options.type) params.set('type', options.type);
+      if (params.toString()) url += `?${params.toString()}`;
+      const result = spawnSync('curl', ['-fsS', url], { encoding: 'utf8', env: process.env });
+      if (result.status !== 0) {
+        const err = result.stderr.trim() || `Failed to connect to ${url}. Is backend running?`;
+        console.error(chalk.red(err));
+        process.exit(1);
+      }
+      const allFeedback = JSON.parse(result.stdout.trim() || '[]');
+      if (options.json) {
+        console.log(JSON.stringify(allFeedback, null, 2));
+        return;
+      }
+      console.log(chalk.bold(`\n📬 Feedback (${allFeedback.length} items)\n`));
+      for (const fb of allFeedback) {
+        const icon = fb.status === 'new' ? '🆕' : fb.status === 'in_progress' ? '🔄' : fb.status === 'done' ? '✅' : '⏳';
+        console.log(`   ${icon} ${chalk.cyan(fb.id)} [${fb.type}] ${fb.priority}`);
+        console.log(chalk.dim(`      ${fb.message?.substring(0, 60)}${fb.message?.length > 60 ? '...' : ''}`));
+ console.log(chalk.dim(` Status: ${fb.status} | Created: ${fb.createdAt}\n`));
+      }
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Feedback status
+feedback
+  .command('status')
+  .description('Show feedback status summary')
+  .option('--host <host>', 'API host', process.env.TNF_API_HOST || 'http://127.0.0.1:3001')
+  .action(async (options: { host?: string }) => {
+    try {
+      const host = options.host || process.env.TNF_API_HOST || 'http://127.0.0.1:3001';
+      const url = `${host}/api/feedback/stats`;
+      const result = spawnSync('curl', ['-fsS', url], { encoding: 'utf8', env: process.env });
+      if (result.status !== 0) {
+        const err = result.stderr.trim() || `Failed to connect to ${url}. Is backend running?`;
+        console.error(chalk.red(err));
+        process.exit(1);
+      }
+      const stats = JSON.parse(result.stdout.trim() || '{}');
+ const byStatus = stats.byStatus || {};
+ const byType = stats.byType || {};
+ const byPriority = stats.byPriority || {};
+ console.log(chalk.bold('\n📊 Feedback Summary\n'));
+ console.log(chalk.cyan('By Status:'));
+ console.log(` 🆕 New: ${byStatus.new || 0} | 🔄 In Progress: ${byStatus.in_progress || 0} | ✅ Done: ${byStatus.done || 0}`);
+ console.log(chalk.cyan('\nBy Type:'));
+ console.log(` 🐛 Bugs: ${byType.bug || 0} | ✨ Features: ${byType.feature || 0} | 🎨 UX: ${byType.ux || 0} | 📝 Other: ${byType.other || 0}`);
+ console.log(chalk.cyan('\nBy Priority:'));
+ console.log(` 🔴 Critical: ${byPriority.critical || 0} | 🟠 High: ${byPriority.high || 0} | 🟡 Medium: ${byPriority.medium || 0} | 🟢 Low: ${byPriority.low || 0}`);
+      console.log(chalk.dim(`\n   Total: ${stats.total || 0} items\n`));
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+// Extension commands
+const extensionCmd = program.command('extension').description('Manage TNF extensions (Chrome, VSCode, Tauri)');
+
+const EXTENSION_REGISTRY: Record<string, { id: string; name: string; type: string; description: string; appDir: string }> = {
+  chrome: {
+    id: 'chrome',
+    name: 'Fuse Connect (Chrome)',
+    type: 'browser-extension',
+    description: 'Universal AI chat bridge — chat detection, federation channels, multi-node connectivity',
+    appDir: 'apps/chrome-extension',
+  },
+  vscode: {
+    id: 'vscode',
+    name: 'The New Fuse (VSCode)',
+    type: 'vscode-extension',
+    description: 'AI dev assistant with multi-provider LLM, A2A protocol, MCP integration & agent federation',
+    appDir: 'apps/vscode-extension',
+  },
+  tauri: {
+    id: 'tauri',
+    name: 'The New Fuse (Tauri)',
+    type: 'desktop-app',
+    description: 'Native desktop app for TNF agent network',
+    appDir: 'apps/tauri-desktop',
+  },
+};
+
+function checkExtensionExists(appDir: string): boolean {
+  return fs.existsSync(path.join(repoRoot, appDir));
+}
+
+function getExtensionVersion(appDir: string): string | null {
+  const pkgPath = path.join(repoRoot, appDir, 'package.json');
+  if (!fs.existsSync(pkgPath)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(pkgPath, 'utf8')).version || null;
+  } catch {
+    return null;
+  }
+}
+
+extensionCmd
+  .command('list')
+  .description('List available TNF extensions and their status')
+  .option('--json', 'Output machine-readable JSON')
+  .action((options: { json?: boolean }) => {
+    try {
+      const entries = Object.values(EXTENSION_REGISTRY);
+      if (options.json) {
+        console.log(
+          JSON.stringify(
+            entries.map((ext) => ({
+              ...ext,
+              installed: checkExtensionExists(ext.appDir),
+              version: getExtensionVersion(ext.appDir),
+            })),
+            null,
+            2
+          )
+        );
+        return;
+      }
+      console.log(chalk.bold('\nTNF Extensions\n'));
+      for (const ext of entries) {
+        const installed = checkExtensionExists(ext.appDir);
+        const version = getExtensionVersion(ext.appDir);
+        const status = installed
+          ? chalk.green(`installed${version ? ` v${version}` : ''}`)
+          : chalk.dim('not found');
+        console.log(` ${chalk.cyan(ext.id.padEnd(8))} ${ext.name.padEnd(30)} ${status}`);
+        console.log(` ${''.padEnd(8)} ${chalk.dim(ext.description)}`);
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+extensionCmd
+  .command('status')
+  .description('Show detailed status for an extension')
+  .argument('<extension>', 'Extension ID (chrome, vscode, tauri)')
+  .action((extensionId: string) => {
+    try {
+      const ext = EXTENSION_REGISTRY[extensionId];
+      if (!ext) {
+        console.error(chalk.red(`Unknown extension: ${extensionId}`));
+        console.log(chalk.dim(`Available: ${Object.keys(EXTENSION_REGISTRY).join(', ')}`));
+        process.exit(1);
+      }
+      const installed = checkExtensionExists(ext.appDir);
+      const version = getExtensionVersion(ext.appDir);
+      const fullPath = path.join(repoRoot, ext.appDir);
+
+      console.log(chalk.bold(`\n${ext.name}\n`));
+      console.log(`  ID:          ${chalk.cyan(ext.id)}`);
+      console.log(`  Type:        ${ext.type}`);
+      console.log(`  Installed:   ${installed ? chalk.green('Yes') : chalk.red('No')}`);
+      if (version) console.log(`  Version:     ${chalk.cyan(version)}`);
+      console.log(`  Path:        ${chalk.dim(fullPath)}`);
+      console.log(`  Description: ${ext.description}`);
+
+      if (installed) {
+        const pkgPath = path.join(fullPath, 'package.json');
+        if (fs.existsSync(pkgPath)) {
+          try {
+            const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+            if (pkg.scripts) {
+              console.log(chalk.bold('\n  Available Scripts:\n'));
+              for (const [name, cmd] of Object.entries(pkg.scripts)) {
+                console.log(`    ${chalk.cyan(name.padEnd(20))} ${chalk.dim(cmd)}`);
+              }
+            }
+            if (pkg.dependencies && Object.keys(pkg.dependencies).length > 0) {
+              console.log(chalk.bold('\n  Key Dependencies:\n'));
+              const deps = Object.entries(pkg.dependencies);
+              for (const [name, ver] of deps.slice(0, 10)) {
+                console.log(`    ${chalk.cyan(name)} ${chalk.dim(ver)}`);
+              }
+              if (deps.length > 10) {
+                console.log(`    ${chalk.dim(`... and ${deps.length - 10} more`)}`);
+              }
+            }
+          } catch {}
+        }
+        const distExists = fs.existsSync(path.join(fullPath, 'dist'));
+        console.log(chalk.bold('\n  Build Status:\n'));
+        console.log(`    Built:  ${distExists ? chalk.green('Yes') : chalk.dim('No')}`);
+      }
+      console.log('');
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+extensionCmd
+  .command('install')
+  .description('Build and install an extension locally')
+  .argument('<extension>', 'Extension ID (chrome, vscode, tauri)')
+  .option('--watch', 'Watch for changes after build')
+  .action(async (extensionId: string, options: { watch?: boolean }) => {
+    try {
+      const ext = EXTENSION_REGISTRY[extensionId];
+      if (!ext) {
+        console.error(chalk.red(`Unknown extension: ${extensionId}`));
+        console.log(chalk.dim(`Available: ${Object.keys(EXTENSION_REGISTRY).join(', ')}`));
+        process.exit(1);
+      }
+      const fullPath = path.join(repoRoot, ext.appDir);
+      if (!checkExtensionExists(ext.appDir)) {
+        console.error(chalk.red(`Extension source not found at ${fullPath}`));
+        process.exit(1);
+      }
+      if (!fs.existsSync(path.join(fullPath, 'package.json'))) {
+        console.error(chalk.red(`No package.json found at ${fullPath}`));
+        process.exit(1);
+      }
+
+      console.log(chalk.bold(`\nBuilding ${ext.name}...\n`));
+
+      if (extensionId === 'chrome') {
+        const buildScript = path.join(fullPath, 'build-v7.sh');
+        if (fs.existsSync(buildScript)) {
+          await runCommand('bash', [buildScript], { cwd: fullPath });
+        } else {
+          await runCommand('pnpm', ['run', options.watch ? 'watch' : 'build'], { cwd: fullPath });
+        }
+      } else if (extensionId === 'vscode') {
+        await runCommand('pnpm', ['run', options.watch ? 'watch' : 'compile'], { cwd: fullPath });
+        if (!options.watch) {
+          console.log(chalk.dim('\nTo install in VSCode:'));
+          console.log(chalk.cyan(`  pnpm run package  (in ${fullPath})`));
+          console.log(chalk.dim('  then: code --install-extension the-new-fuse-*.vsix'));
+        }
+      } else if (extensionId === 'tauri') {
+        await runCommand('pnpm', ['run', options.watch ? 'dev' : 'build'], { cwd: fullPath });
+      } else {
+        await runCommand('pnpm', ['run', options.watch ? 'watch' : 'build'], { cwd: fullPath });
+      }
+
+      console.log(chalk.green(`\n ${ext.name} built successfully\n`));
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);

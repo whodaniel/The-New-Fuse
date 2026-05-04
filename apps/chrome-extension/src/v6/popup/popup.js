@@ -2,9 +2,7 @@
  * Fuse Connect v7 - Popup Logic
  */
 
-import { DEFAULT_NODES } from '../shared/constants.js';
-
-const NATIVE_HOST_NAME = 'com.thenewfuse.native_host';
+import { DEFAULT_NODES, NATIVE_HOST_NAME } from '../shared/constants.js';
 
 class FuseConnectPopup {
   constructor() {

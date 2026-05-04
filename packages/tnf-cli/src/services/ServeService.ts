@@ -3,6 +3,13 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { spawn, spawnSync } from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
+
+const CLI_VERSION = (() => {
+  try {
+    const pkgPath = path.join(__dirname, '../package.json');
+    return JSON.parse(fs.readFileSync(pkgPath, 'utf8')).version || '1.0.0';
+  } catch { return '1.0.0'; }
+})();
 import * as os from 'os';
 
 export interface ServeOptions {
@@ -100,7 +107,7 @@ export class ServeService {
       res.end(JSON.stringify({
         status: 'ok',
         service: 'tnf-server',
-        version: '1.0.0',
+        version: CLI_VERSION,
         pid: process.pid,
         clients: this.clients.size,
         cwd: this.options.cwd,

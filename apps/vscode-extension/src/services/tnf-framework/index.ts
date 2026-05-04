@@ -1,6 +1,6 @@
 /**
  * The New Fuse VSCode Extension - TNF Framework Services Index
- * Version 9.1.0 - Full TNF Framework Integration
+ * Version 9.2.0 - Full TNF Framework Integration
  */
 
 export { A2AProtocolService, getA2AProtocolService } from './A2AProtocolService';

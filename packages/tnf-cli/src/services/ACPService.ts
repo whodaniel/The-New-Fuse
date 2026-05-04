@@ -1,6 +1,15 @@
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 import { randomUUID } from 'crypto';
+import * as path from 'path';
+import * as fs from 'fs';
+
+const CLI_VERSION = (() => {
+  try {
+    const pkgPath = path.join(__dirname, '../package.json');
+    return JSON.parse(fs.readFileSync(pkgPath, 'utf8')).version || '1.0.0';
+  } catch { return '1.0.0'; }
+})();
 
 export interface ACPServerOptions {
   port?: number;
@@ -80,7 +89,7 @@ export class ACPService {
       res.end(JSON.stringify({
         status: 'ok',
         protocol: 'ACP',
-        version: '1.0.0',
+        version: CLI_VERSION,
         clients: this.clients.size,
         sessions: this.sessions.size,
       }));

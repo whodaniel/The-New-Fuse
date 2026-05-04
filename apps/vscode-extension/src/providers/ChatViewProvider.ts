@@ -1,6 +1,6 @@
 /**
  * The New Fuse VSCode Extension - Chat View Provider
- * Version 9.1.0 - Frontier Capabilities
+ * Version 9.2.0 - Frontier Capabilities
  *
  * Webview provider for the main chat interface
  * Now with streaming support and tool orchestration
@@ -8,6 +8,8 @@
 
 import * as vscode from 'vscode';
 import { ChatMessage, FileAttachment, WebviewOutboundMessage } from '../core/types';
+import { ConfigManager } from '../core/config';
+import { PROVIDER_MODELS, DEFAULT_MODEL_FALLBACKS } from '../core/models';
 import { getAIService } from '../services/AIService';
 import { getChatService } from '../services/ChatService';
 import { getMCPService } from '../services/MCPService';
@@ -222,15 +224,20 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         await mcpSvc.showServerPicker();
         break;
 
-      case 'model':
-        const models = ['gpt-4', 'gpt-3.5-turbo', 'claude-3-5-sonnet', 'gemini-1.5-pro'];
+      case 'model': {
+        const config = ConfigManager.getInstance().getConfig();
+        const currentProvider = config.defaultProvider;
+        const models = PROVIDER_MODELS[currentProvider || 'openai'] || DEFAULT_MODEL_FALLBACKS;
         const selection = await vscode.window.showQuickPick(models, {
-          placeHolder: 'Select AI model',
+          placeHolder: `Select AI model (${currentProvider || 'openai'})`,
         });
         if (selection) {
-          vscode.window.showInformationMessage(`Model set to: ${selection}`);
+          const providerConfig = vscode.workspace.getConfiguration(`theNewFuse.providers.${currentProvider || 'openai'}`);
+          await providerConfig.update('model', selection, vscode.ConfigurationTarget.Global);
+          vscode.window.showInformationMessage(`Model set to: ${selection} (provider: ${currentProvider || 'openai'})`);
         }
         break;
+      }
 
       default:
         const unknownMessage: ChatMessage = {

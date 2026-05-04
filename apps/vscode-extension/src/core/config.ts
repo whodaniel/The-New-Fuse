@@ -1,8 +1,10 @@
 /**
  * The New Fuse VSCode Extension - Configuration Management
- * Version 9.0.0 - Clean Architecture
+ * Version 9.2.0 - Full TNF Ecosystem Integration
  */
 
+import * as fs from 'fs';
+import * as path from 'path';
 import * as vscode from 'vscode';
 import {
   CLIAgentConfig,
@@ -13,6 +15,29 @@ import {
 } from './types';
 
 const CONFIG_NAMESPACE = 'theNewFuse';
+const EXTENSION_VERSION = '9.2.0';
+
+export interface TnfProjectConfig {
+  $schema?: string;
+  model?: string;
+  provider?: string;
+  apiBaseUrl?: string;
+  permission?: {
+    bash: Record<string, 'allow' | 'deny'>;
+    read: Record<string, 'allow' | 'deny'>;
+    external_directory: Record<string, 'allow' | 'deny'>;
+  };
+  mcp?: Record<string, {
+    type?: 'local' | 'remote' | 'sse' | 'ws';
+    command: string[] | string;
+    environment?: Record<string, string>;
+    env?: Record<string, string>;
+    enabled?: boolean;
+    args?: string[];
+    cwd?: string;
+  }>;
+  custom?: Record<string, unknown>;
+}
 
 /**
  * Centralized configuration manager for the extension
@@ -45,9 +70,10 @@ export class ConfigManager {
 
   getConfig(): ExtensionConfig {
     const config = vscode.workspace.getConfiguration(CONFIG_NAMESPACE);
+    const projectConfig = this.getTnfProjectConfig();
     return {
-      defaultProvider: config.get<LLMProviderType>('defaultProvider', 'openai'),
-      defaultModel: config.get<string>('defaultModel', 'gpt-4'),
+      defaultProvider: projectConfig.provider || config.get<LLMProviderType>('defaultProvider', 'openai'),
+      defaultModel: projectConfig.model || config.get<string>('defaultModel', 'gpt-5.2'),
       autoConnect: config.get<boolean>('autoConnect', true),
       enableTelemetry: config.get<boolean>('enableTelemetry', false),
       theme: config.get<'auto' | 'light' | 'dark'>('theme', 'auto'),
@@ -255,6 +281,147 @@ export class ConfigManager {
     const agents = this.getCLIAgents().filter((a) => a.name !== name);
     const config = vscode.workspace.getConfiguration(CONFIG_NAMESPACE);
     await config.update('cliAgents', agents, vscode.ConfigurationTarget.Global);
+  }
+
+  // ============================================
+  // tnf.jsonc Project Configuration
+  // ============================================
+
+  private stripJsoncComments(content: string): string {
+    let result = '';
+    let inString = false;
+    let escape = false;
+    let i = 0;
+    while (i < content.length) {
+      const ch = content[i];
+      if (escape) {
+        result += ch;
+        escape = false;
+        i++;
+        continue;
+      }
+      if (ch === '\\' && inString) {
+        result += ch;
+        escape = true;
+        i++;
+        continue;
+      }
+      if (ch === '"') {
+        inString = !inString;
+        result += ch;
+        i++;
+        continue;
+      }
+      if (!inString && ch === '/' && i + 1 < content.length) {
+        if (content[i + 1] === '/') {
+          while (i < content.length && content[i] !== '\n') i++;
+          continue;
+        }
+        if (content[i + 1] === '*') {
+          i += 2;
+          while (i + 1 < content.length && !(content[i] === '*' && content[i + 1] === '/')) i++;
+          i += 2;
+          continue;
+        }
+      }
+      result += ch;
+      i++;
+    }
+    return result;
+  }
+
+  private readTnfConfigFile(configPath: string): TnfProjectConfig | null {
+    try {
+      if (!fs.existsSync(configPath)) return null;
+      let raw = fs.readFileSync(configPath, 'utf8');
+      if (configPath.endsWith('.jsonc')) {
+        raw = this.stripJsoncComments(raw);
+      }
+      return JSON.parse(raw) as TnfProjectConfig;
+    } catch {
+      return null;
+    }
+  }
+
+  getTnfProjectConfig(): TnfProjectConfig {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (!workspaceFolders || workspaceFolders.length === 0) return {};
+
+    const root = workspaceFolders[0].uri.fsPath;
+    const jsoncPath = path.join(root, 'tnf.jsonc');
+    const jsonPath = path.join(root, 'tnf.json');
+
+    return this.readTnfConfigFile(jsoncPath) || this.readTnfConfigFile(jsonPath) || {};
+  }
+
+  getTnfProjectMcpServers(): MCPServerConfig[] {
+    const projectConfig = this.getTnfProjectConfig();
+    if (!projectConfig.mcp) return [];
+
+    const servers: MCPServerConfig[] = [];
+    for (const [name, server] of Object.entries(projectConfig.mcp)) {
+      if (server.enabled === false) continue;
+      servers.push({
+        name,
+        command: Array.isArray(server.command) ? server.command[0] : server.command,
+        args: Array.isArray(server.command) ? server.command.slice(1) : (server.args || []),
+        env: server.environment || server.env,
+        type: server.type,
+        enabled: server.enabled !== false,
+        cwd: server.cwd,
+      });
+    }
+    return servers;
+  }
+
+  getTnfProjectCommands(): Array<{ name: string; filePath: string }> {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (!workspaceFolders || workspaceFolders.length === 0) return [];
+    const root = workspaceFolders[0].uri.fsPath;
+    const commandDir = path.join(root, '.tnf', 'command');
+    if (!fs.existsSync(commandDir)) return [];
+    try {
+      return fs.readdirSync(commandDir)
+        .filter(f => f.endsWith('.md'))
+        .map(f => ({ name: f.replace(/\.md$/, ''), filePath: path.join(commandDir, f) }));
+    } catch { return []; }
+  }
+
+  getTnfProjectAgents(): Array<{ name: string; filePath: string }> {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (!workspaceFolders || workspaceFolders.length === 0) return [];
+    const root = workspaceFolders[0].uri.fsPath;
+    const agentDir = path.join(root, '.tnf', 'agent');
+    if (!fs.existsSync(agentDir)) return [];
+    try {
+      return fs.readdirSync(agentDir)
+        .filter(f => f.endsWith('.md'))
+        .map(f => ({ name: f.replace(/\.md$/, ''), filePath: path.join(agentDir, f) }));
+    } catch { return []; }
+  }
+
+  checkBashPermission(command: string): boolean {
+    const projectConfig = this.getTnfProjectConfig();
+    if (!projectConfig.permission?.bash) return true;
+    const cmdPart = command.trim().split(/\s+/)[0] || command.trim();
+    for (const [pattern, action] of Object.entries(projectConfig.permission.bash)) {
+      if (pattern === '*') return action === 'allow';
+      if (this.matchGlob(pattern, command.trim()) || this.matchGlob(pattern, cmdPart + ' *')) {
+        return action === 'allow';
+      }
+    }
+    return true;
+  }
+
+  private matchGlob(pattern: string, value: string): boolean {
+    const regexStr = pattern.replace(/\*/g, '.*').replace(/\?/g, '.');
+    try {
+      return new RegExp(`^${regexStr}$`).test(value);
+    } catch { return false; }
+  }
+
+  getExtensionVersion(): string {
+    return EXTENSION_VERSION;
   }
 }
 

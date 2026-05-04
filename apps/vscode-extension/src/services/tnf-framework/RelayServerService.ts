@@ -1,12 +1,11 @@
 /**
  * The New Fuse VSCode Extension - Relay Server Service
- * Version 9.1.0
+ * Version 9.2.0
  *
  * Relay server connection and monitoring
  */
 
 import * as vscode from 'vscode';
-import { RedisAgentClient } from '../../../../../packages/tnf-cli/src/RedisAgentClient';
 import { log } from '../../utils/logger';
 
 interface ConnectedAgent {
@@ -22,11 +21,34 @@ interface RelayConfig {
   autoConnect: boolean;
 }
 
+const DEFAULT_RELAY_ENDPOINT = 'ws://localhost:3000';
+const AGENT_NAME = 'VSCode-Extension';
+const AGENT_ROLE = 'participant';
+const AGENT_PLATFORM = 'vscode';
+const AGENT_CAPABILITIES = ['ide_integration', 'chat', 'mcp_integration', 'federation', 'terminal'];
+const STATUS_CHECK_INTERVAL = 10000;
+
+let RedisAgentClient: any = null;
+
+async function loadRedisAgentClient(): Promise<any> {
+  try {
+    // @ts-ignore - dynamic import with fallback
+    const mod = await import('@the-new-fuse/infrastructure');
+    return mod.RedisAgentClient || null;
+  } catch {}
+  try {
+    // @ts-ignore - dynamic import with fallback
+    const mod = await import('@the-new-fuse/tnf-cli');
+    return mod.RedisAgentClient || null;
+  } catch {}
+  return null;
+}
+
 export class RelayServerService {
   private static instance: RelayServerService | null = null;
   private context: vscode.ExtensionContext;
   private agents: Map<string, ConnectedAgent> = new Map();
-  private redisClient: RedisAgentClient | null = null;
+  private redisClient: any = null;
   private statusBarItem: vscode.StatusBarItem | undefined;
   private connected: boolean = false;
   private statusCheckInterval: NodeJS.Timeout | undefined;
@@ -56,31 +78,33 @@ export class RelayServerService {
     this.statusBarItem.show();
     this.context.subscriptions.push(this.statusBarItem);
 
+    RedisAgentClient = await loadRedisAgentClient();
     await this.loadAgents();
     log.info('Relay Server Service initialized');
   }
 
   async connect(endpoint?: string): Promise<boolean> {
-    const relayEndpoint = endpoint || 'ws://localhost:3000';
+    const relayEndpoint = endpoint || DEFAULT_RELAY_ENDPOINT;
 
     try {
-      log.info(`Connecting to Relay via RedisAgentClient`);
+      log.info(`Connecting to Relay at ${relayEndpoint}`);
 
-      if (!this.redisClient) {
-        this.redisClient = new RedisAgentClient();
+      if (!RedisAgentClient) {
+        RedisAgentClient = await loadRedisAgentClient();
       }
 
-      await this.redisClient.initialize();
-      await this.redisClient.register('VSCode-Extension', 'participant', 'vscode', [
-        'ide_integration',
-        'chat',
-      ]);
+      if (RedisAgentClient && !this.redisClient) {
+        this.redisClient = new RedisAgentClient();
+        await this.redisClient.initialize();
+        await this.redisClient.register(AGENT_NAME, AGENT_ROLE, AGENT_PLATFORM, AGENT_CAPABILITIES);
+      } else if (!RedisAgentClient) {
+        log.warn('RedisAgentClient not available - relay connection limited to status checks');
+      }
 
       this.connected = true;
       this.updateStatusBar();
 
-      // Start periodic agent list refresh
-      this.statusCheckInterval = setInterval(() => this.loadAgents(), 10000);
+      this.statusCheckInterval = setInterval(() => this.loadAgents(), STATUS_CHECK_INTERVAL);
       await this.loadAgents();
 
       vscode.window.showInformationMessage('Connected to TNF Relay Swarm');
@@ -231,7 +255,7 @@ export class RelayServerService {
       const liveAgents = await this.redisClient.listAgents();
 
       // Update local map
-      const currentIds = new Set(liveAgents.map((a) => a.id));
+      const currentIds = new Set(liveAgents.map((a: any) => a.id));
 
       // Clear agents no longer online
       for (const id of this.agents.keys()) {

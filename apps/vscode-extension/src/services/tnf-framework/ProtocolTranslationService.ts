@@ -1,12 +1,13 @@
 /**
  * The New Fuse VSCode Extension - Protocol Translation Service
- * Version 9.1.0
+ * Version 9.2.0
  *
  * Multi-protocol translation (MCP, LangChain, AutoGen, CrewAI)
  */
 
 import * as vscode from 'vscode';
 import { log } from '../../utils/logger';
+import { getRelayService } from '../RelayConnectionService';
 
 type ProtocolType = 'mcp' | 'langchain' | 'autogen' | 'crewai' | 'openai';
 
@@ -57,8 +58,21 @@ export class ProtocolTranslationService {
   ): Promise<TranslationResult> {
     log.info(`Translating message from ${sourceProtocol} to ${targetProtocol}`);
 
-    // Simulate translation
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    try {
+      const relay = getRelayService();
+      if (relay.getStatus() === 'connected') {
+        const result = await relay.request<TranslationResult>(
+          'PROTOCOL_TRANSLATE',
+          { message, sourceProtocol, targetProtocol },
+          5000
+        );
+        if (result && result.success) {
+          return result;
+        }
+      }
+    } catch {
+      log.debug('Protocol translation via relay unavailable, using local fallback');
+    }
 
     return {
       success: true,
@@ -75,7 +89,21 @@ export class ProtocolTranslationService {
   ): Promise<TranslationResult> {
     log.info(`Translating tool from ${sourceProtocol} to ${targetProtocol}`);
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    try {
+      const relay = getRelayService();
+      if (relay.getStatus() === 'connected') {
+        const result = await relay.request<TranslationResult>(
+          'PROTOCOL_TRANSLATE_TOOL',
+          { toolDefinition, sourceProtocol, targetProtocol },
+          5000
+        );
+        if (result && result.success) {
+          return result;
+        }
+      }
+    } catch {
+      log.debug('Protocol tool translation via relay unavailable, using local fallback');
+    }
 
     return {
       success: true,

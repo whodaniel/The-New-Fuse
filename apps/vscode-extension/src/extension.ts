@@ -1,9 +1,9 @@
 /**
  * The New Fuse VSCode Extension
- * Version 9.1.0 - Frontier Capabilities
+ * Version 9.2.0 - Full TNF Ecosystem Integration
  *
  * Main extension entry point
- * Now with tool orchestration, workspace awareness, and streaming support
+ * With tool orchestration, workspace awareness, streaming, tnf.jsonc integration, and permission system
  */
 
 import * as vscode from 'vscode';
@@ -30,6 +30,7 @@ import {
   ProtocolTranslationService,
   RelayServerService,
 } from './services/tnf-framework';
+import { RelayConnectionService, getRelayService, registerRelayCommands } from './services/RelayConnectionService';
 import { log, logger } from './utils/logger';
 
 let workspaceSyncService: WorkspaceSyncService | null = null;
@@ -45,7 +46,7 @@ export function getWorkspaceSyncService(): WorkspaceSyncService {
  * Extension activation
  */
 export async function activate(context: vscode.ExtensionContext): Promise<TheNewFuseAPI> {
-  log.info('🚀 The New Fuse v9.1.0 (Frontier Capabilities) activating...');
+  log.info('🚀 The New Fuse v9.2.0 (Full TNF Ecosystem Integration) activating...');
   const startTime = Date.now();
 
   try {
@@ -233,6 +234,10 @@ async function initializeServices(context: vscode.ExtensionContext): Promise<voi
   CollectiveOrchestratorService.getInstance(context);
   await CollectiveOrchestratorService.getInstance()!.initialize();
   log.debug('✓ Collective Orchestrator Service ready');
+
+  // Initialize Relay Connection Service
+  registerRelayCommands(context);
+  log.debug('✓ Relay Connection Service ready');
 }
 
 /**
@@ -267,6 +272,14 @@ export function deactivate(): void {
   try {
     const aiService = getAIService();
     aiService.cancelAllRequests();
+  } catch {
+    // Ignore errors during deactivation
+  }
+
+  // Disconnect from relay
+  try {
+    const relayService = getRelayService();
+    relayService.disconnect();
   } catch {
     // Ignore errors during deactivation
   }

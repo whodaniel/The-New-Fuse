@@ -1,6 +1,6 @@
 /**
  * The New Fuse VSCode Extension - AI Service
- * Version 9.0.0 - Clean Architecture (December 2025)
+ * Version 9.2.0 - Clean Architecture (December 2025)
  *
  * Unified AI service supporting multiple providers:
  * - OpenAI (GPT-5.2, GPT-5.1-Codex-Max)
@@ -263,6 +263,7 @@ export class AIService {
       case 'gemini-cli':
       case 'jules-cli':
       case 'aider-cli':
+      case 'opencode-cli':
       case 'custom-cli':
         return this.sendCLIAgentRequest(provider, request);
       default:

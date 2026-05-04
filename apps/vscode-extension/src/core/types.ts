@@ -1,6 +1,6 @@
 /**
  * The New Fuse VSCode Extension - Core Types
- * Version 9.0.0 - Clean Architecture
+ * Version 9.2.0 - Clean Architecture
  */
 
 // ============================================
@@ -139,9 +139,13 @@ export interface LLMResponse {
 
 export interface MCPServerConfig {
   name: string;
+  type?: 'local' | 'remote' | 'sse' | 'ws';
   command: string;
   args?: string[];
   env?: Record<string, string>;
+  cwd?: string;
+  url?: string;
+  transport?: 'stdio' | 'sse' | 'ws';
   enabled: boolean;
 }
 

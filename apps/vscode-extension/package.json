@@ -582,6 +582,7 @@
             "openrouter",
             "litellm",
             "copilot",
+            "opencode-cli",
             "claude-cli",
             "gemini-cli",
             "jules-cli",
@@ -637,30 +638,50 @@
           "items": {
             "type": "object",
             "properties": {
-              "name": {
-                "type": "string",
-                "description": "Server name"
+            "name": {
+              "type": "string",
+              "description": "Server name"
+            },
+            "type": {
+              "type": "string",
+              "enum": ["local", "remote", "sse", "ws"],
+              "default": "local",
+              "description": "Server type (local=stdio, remote=HTTP, sse=Server-Sent Events, ws=WebSocket)"
+            },
+            "command": {
+              "type": "string",
+              "description": "Command to start the server"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "type": "string"
               },
-              "command": {
-                "type": "string",
-                "description": "Command to start the server"
-              },
-              "args": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "description": "Command arguments"
-              },
-              "env": {
-                "type": "object",
-                "description": "Environment variables"
-              },
-              "enabled": {
-                "type": "boolean",
-                "default": true,
-                "description": "Whether the server is enabled"
-              }
+              "description": "Command arguments"
+            },
+            "env": {
+              "type": "object",
+              "description": "Environment variables"
+            },
+            "cwd": {
+              "type": "string",
+              "description": "Working directory for the server process"
+            },
+            "transport": {
+              "type": "string",
+              "enum": ["stdio", "sse", "ws"],
+              "default": "stdio",
+              "description": "Transport protocol for the MCP server"
+            },
+            "url": {
+              "type": "string",
+              "description": "URL for SSE/WS transport servers"
+            },
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Whether the server is enabled"
+            }
             },
             "required": [
               "name",
@@ -813,6 +834,41 @@
           }
         }
       }
+    },
+    "theNewFuse.relayUrl": {
+      "type": "string",
+      "default": "ws://localhost:3000",
+      "description": "TNF Relay server WebSocket URL"
+    },
+    "theNewFuse.a2aUrl": {
+      "type": "string",
+      "default": "ws://localhost:3000",
+      "description": "TNF A2A protocol endpoint URL"
+    },
+    "theNewFuse.aguiUrl": {
+      "type": "string",
+      "default": "ws://localhost:3000",
+      "description": "TNF AG-UI protocol endpoint URL"
+    },
+    "theNewFuse.redisHost": {
+      "type": "string",
+      "default": "localhost",
+      "description": "Redis host for agent relay communication"
+    },
+    "theNewFuse.redisPort": {
+      "type": "number",
+      "default": 6379,
+      "description": "Redis port for agent relay communication"
+    },
+    "theNewFuse.cloudSandboxUrl": {
+      "type": "string",
+      "default": "wss://api-gateway.tnf.computer/ws/sync",
+      "description": "Cloud sandbox sync URL for workspace mirroring"
+    },
+    "theNewFuse.loadTnfProjectConfig": {
+      "type": "boolean",
+      "default": true,
+      "description": "Load tnf.jsonc from workspace root for project-level MCP, permissions, and model settings"
     }
   },
   "scripts": {
@@ -829,6 +885,9 @@
     "@the-new-fuse/infrastructure": "workspace:*",
     "@the-new-fuse/auth": "workspace:*",
     "@the-new-fuse/data": "workspace:*",
+    "@the-new-fuse/sync-core": "workspace:*",
+    "@the-new-fuse/relay-core": "workspace:*",
+    "@the-new-fuse/types": "workspace:*",
     "@types/dompurify": "^3.2.0",
     "@types/node": "18.x",
     "@types/uuid": "^11.0.0",

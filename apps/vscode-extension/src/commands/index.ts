@@ -1,12 +1,13 @@
 /**
  * The New Fuse VSCode Extension - Command Registration
- * Version 9.0.0 - Clean Architecture
+ * Version 9.2.0 - Full TNF Ecosystem Integration
  *
  * Simple, flat command registration without unnecessary abstractions
  */
 
 import * as vscode from 'vscode';
 import { ConfigManager } from '../core/config';
+import { PROVIDER_MODELS, DEFAULT_MODEL_FALLBACKS } from '../core/models';
 import { getWorkspaceSyncService } from '../extension';
 import { ChatViewProvider } from '../providers/ChatViewProvider';
 import { getAIService } from '../services/AIService';
@@ -325,36 +326,8 @@ export function registerCommands(
             }
           } else {
             // For other providers, show a quick pick with common models
-            const configManager = ConfigManager.getInstance();
-            const providerModels: Record<string, string[]> = {
-              openai: [
-                'gpt-5.2',
-                'gpt-5.1-codex-max',
-                'gpt-4-turbo',
-                'gpt-4o',
-                'gpt-4o-mini',
-                'o1',
-                'o1-mini',
-              ],
-              anthropic: [
-                'claude-opus-4.5-20251124',
-                'claude-sonnet-4.5-20251124',
-                'claude-3-5-sonnet-20241022',
-                'claude-3-opus-20240229',
-              ],
-              gemini: ['gemini-3-pro', 'gemini-2.5-flash', 'gemini-1.5-pro', 'gemini-1.5-flash'],
-              deepseek: [
-                'deepseek-v3.2-speciale',
-                'deepseek-r1',
-                'deepseek-chat',
-                'deepseek-coder',
-              ],
-              qwen: ['qwen3-coder-480b', 'qwen-2.5-max', 'qwen-2.5-coder-32b', 'qwen-turbo'],
-              litellm: ['gpt-5.2', 'claude-opus-4.5', 'gemini-3-pro', 'custom-model'],
-              copilot: ['gpt-4', 'gpt-3.5-turbo'],
-            };
-
-            const models = providerModels[currentProvider || 'openai'] || ['gpt-4', 'claude-3'];
+      const configManager = ConfigManager.getInstance();
+      const models = PROVIDER_MODELS[currentProvider || 'openai'] || DEFAULT_MODEL_FALLBACKS;
             const modelSelection = await showQuickPick(
               models.map((m) => ({ label: m })),
               { placeHolder: `Select model for ${currentProvider || 'current provider'}` }
@@ -411,7 +384,7 @@ export function registerCommands(
         if (selection?.action === 'docs') {
           vscode.env.openExternal(vscode.Uri.parse('https://thenewfuse.com/docs'));
         } else if (selection?.action === 'about') {
-          showInfo('The New Fuse v9.0.0 - AI-Powered Development Assistant');
+          showInfo('The New Fuse v9.2.0 - AI-Powered Development Assistant');
         } else if (selection?.action === 'logs') {
           log.show();
         }

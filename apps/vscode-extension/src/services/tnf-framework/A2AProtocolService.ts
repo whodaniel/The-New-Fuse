@@ -1,6 +1,6 @@
 /**
  * The New Fuse VSCode Extension - A2A Protocol Service
- * Version 9.1.0
+ * Version 9.2.0
  *
  * Agent-to-Agent Protocol integration for multi-agent communication
  */
@@ -8,6 +8,7 @@
 import * as vscode from 'vscode';
 import { ConfigManager } from '../../core/config';
 import { log } from '../../utils/logger';
+import { getRelayService } from '../RelayConnectionService';
 
 interface A2AAgent {
   id: string;
@@ -75,14 +76,48 @@ export class A2AProtocolService {
    */
   async connect(endpoint?: string): Promise<boolean> {
     const config = ConfigManager.getInstance();
-    const relayEndpoint = endpoint || 'ws://localhost:3000';
+    const relayEndpoint =
+      endpoint ||
+      vscode.workspace.getConfiguration('theNewFuse').get<string>('a2aUrl') ||
+      'ws://localhost:3000';
 
     try {
       this.updateConnectionStatus('connecting');
       log.info(`Connecting to A2A network at ${relayEndpoint}`);
 
-      // Simulate connection delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const relay = getRelayService();
+      const connected = relay.getStatus() === 'connected'
+        ? true
+        : await relay.connect(relayEndpoint);
+
+      if (!connected) {
+        throw new Error('Relay connection failed');
+      }
+
+      relay.on('A2A_AGENT_DISCOVER', (msg) => {
+        const agent: A2AAgent = {
+          id: msg.payload?.id || '',
+          name: msg.payload?.name || 'Unknown',
+          status: msg.payload?.status || 'offline',
+          capabilities: msg.payload?.capabilities || [],
+          endpoint: msg.payload?.endpoint,
+        };
+        if (agent.id) {
+          this.agents.set(agent.id, agent);
+        }
+      });
+
+      relay.on('A2A_MESSAGE', (msg) => {
+        this.messageQueue.push({
+          id: msg.id,
+          from: msg.payload?.from || '',
+          to: msg.payload?.to || '',
+          type: msg.payload?.type || 'notification',
+          action: msg.payload?.action || '',
+          payload: msg.payload?.payload || {},
+          timestamp: msg.timestamp,
+        });
+      });
 
       this.updateConnectionStatus('connected');
       this.updateStatusBar();
@@ -112,28 +147,40 @@ export class A2AProtocolService {
   async discoverAgents(): Promise<A2AAgent[]> {
     log.info('Discovering A2A agents...');
 
-    const discoveredAgents: A2AAgent[] = [
-      {
-        id: 'composer-agent',
-        name: 'Composer Agent',
-        status: 'online',
-        capabilities: ['code-generation', 'refactoring', 'documentation'],
-      },
-      {
-        id: 'roo-coder-agent',
-        name: 'Roo Coder Agent',
-        status: 'online',
-        capabilities: ['code-completion', 'debugging', 'testing'],
-      },
-    ];
+    try {
+      const relay = getRelayService();
+      if (relay.getStatus() === 'connected') {
+        await relay.request('A2A_DISCOVER', {}, 5000);
+      }
+    } catch {
+      log.debug('A2A discover via relay unavailable, using cache');
+    }
 
-    for (const agent of discoveredAgents) {
-      this.agents.set(agent.id, agent);
+    const cachedAgents = Array.from(this.agents.values());
+    if (cachedAgents.length === 0) {
+      const defaultAgents: A2AAgent[] = [
+        {
+          id: 'composer-agent',
+          name: 'Composer Agent',
+          status: 'online',
+          capabilities: ['code-generation', 'refactoring', 'documentation'],
+        },
+        {
+          id: 'roo-coder-agent',
+          name: 'Roo Coder Agent',
+          status: 'online',
+          capabilities: ['code-completion', 'debugging', 'testing'],
+        },
+      ];
+
+      for (const agent of defaultAgents) {
+        this.agents.set(agent.id, agent);
+      }
     }
 
     await this.saveAgents();
-    log.info(`Discovered ${discoveredAgents.length} agents`);
-    return discoveredAgents;
+    log.info(`Discovered ${this.agents.size} agents`);
+    return Array.from(this.agents.values());
   }
 
   /**
@@ -152,6 +199,19 @@ export class A2AProtocolService {
 
     log.info(`Sending A2A message to ${fullMessage.to}: ${fullMessage.action}`);
     this.messageQueue.push(fullMessage);
+
+    try {
+      const relay = getRelayService();
+      if (relay.getStatus() === 'connected') {
+        relay.send({
+          type: 'A2A_MESSAGE',
+          target: { type: 'vscode', instanceId: fullMessage.to },
+          payload: fullMessage,
+        });
+      }
+    } catch {
+      log.debug('A2A message relay unavailable, queued locally');
+    }
 
     return fullMessage;
   }

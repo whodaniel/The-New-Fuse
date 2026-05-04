@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { minimatch } from 'minimatch';
+import { stripJsoncComments } from '../utils/jsonc.js';
 
 export type PermissionAction = 'allow' | 'deny';
 
@@ -36,16 +37,12 @@ export class PermissionService {
     this.loadProjectConfig();
   }
 
-  private stripJsoncComments(content: string): string {
-    return content.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
-  }
-
   private loadConfigFromPath(configPath: string): PermissionConfig | null {
     if (!fs.existsSync(configPath)) return null;
     try {
       let raw = fs.readFileSync(configPath, 'utf8');
       if (configPath.endsWith('.jsonc')) {
-        raw = this.stripJsoncComments(raw);
+        raw = stripJsoncComments(raw);
       }
       const data = JSON.parse(raw);
       if (data.permission) {
@@ -248,6 +245,26 @@ export class PermissionService {
     return true;
   }
 
+  removeReadRule(pattern: string, scope: 'global' | 'project' = 'global'): boolean {
+    const target = scope === 'global' ? this.globalConfig : this.projectConfig;
+    if (!target || !(pattern in target.read)) return false;
+    delete target.read[pattern];
+    this.saveConfig(scope);
+    return true;
+  }
+
+  removeExternalDirectoryRule(pattern: string, scope: 'global' | 'project' = 'global'): boolean {
+    const target = scope === 'global' ? this.globalConfig : this.projectConfig;
+    if (!target || !(pattern in target.external_directory)) return false;
+    delete target.external_directory[pattern];
+    this.saveConfig(scope);
+    return true;
+  }
+
+  stripJsoncCommentsPublic(content: string): string {
+    return stripJsoncComments(content);
+  }
+
   private ensureConfig(scope: 'global' | 'project'): PermissionConfig {
     const target = scope === 'global' ? this.globalConfig : this.projectConfig;
     if (target) return target;
@@ -278,7 +295,7 @@ export class PermissionService {
         try {
           let raw = fs.readFileSync(targetPath, 'utf8');
           if (targetPath.endsWith('.jsonc')) {
-            raw = this.stripJsoncComments(raw);
+            raw = stripJsoncComments(raw);
           }
           existing = JSON.parse(raw);
         } catch {}
@@ -305,7 +322,7 @@ export class PermissionService {
         try {
           let raw = fs.readFileSync(targetPath, 'utf8');
           if (targetPath.endsWith('.jsonc')) {
-            raw = this.stripJsoncComments(raw);
+            raw = stripJsoncComments(raw);
           }
           existing = JSON.parse(raw);
         } catch {}

@@ -57,10 +57,11 @@ class SimpleChatBridge {
     'perplexity.ai',
     'poe.com',
     'aistudio.google.com',
-    'openclaw-gateway.workers.dev', // OpenClaw cloud control UI
-    'localhost:3000', // Local dev with chat
-    'localhost:3000', // Local dev with chat
-    'localhost:3001', // Local backend
+    'chat.qwen.ai',
+    'qwen.ai',
+    'openclaw-gateway.workers.dev',
+    'localhost:3000',
+    'localhost:3001',
   ];
 
   private customSites: string[] = [];

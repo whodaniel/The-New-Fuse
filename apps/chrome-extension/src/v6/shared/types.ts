@@ -145,6 +145,7 @@ export interface NodeDiscoveryConfig {
     apiGateway: string;
     backend: string;
     saas: string;
+    tnfWorker?: string;
   };
   autoDiscover: boolean;
   healthCheckInterval: number;
@@ -454,6 +455,76 @@ export interface ServerStatus {
   relay: { running: boolean; port: number; pid?: number };
   api: { running: boolean; port: number; pid?: number };
   lastChecked: number;
+}
+
+export interface NativeHostResponse {
+  success: boolean;
+  action: string;
+  service?: string;
+  status?: 'running' | 'stopped' | 'error';
+  pid?: number;
+  port?: number;
+  output?: string;
+  error?: string;
+  services?: {
+    relay?: { running: boolean; port: number; pid?: number };
+    backend?: { running: boolean; port: number; pid?: number };
+    frontend?: { running: boolean; port: number; pid?: number };
+    masterClock?: { running: boolean; pid?: number };
+    monitor?: { running: boolean; pid?: number };
+  };
+}
+
+// ============================================
+// TRANSCRIPT & AI VIDEO PROCESSING
+// ============================================
+
+export type TranscriptRole = 'user' | 'assistant' | 'system' | 'tool';
+
+export interface TranscriptEntry {
+  role: TranscriptRole;
+  content: string;
+  timestamp: number;
+  metadata?: Record<string, unknown>;
+}
+
+export interface AIVideoQueueItem {
+  videoId: string;
+  title: string;
+  channelTitle?: string;
+  tier: ProcessingTier;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  progress?: number;
+  report?: string;
+  cost?: number;
+  error?: string;
+  startedAt?: number;
+  completedAt?: number;
+}
+
+export interface AIVideoProcessingState {
+  isProcessing: boolean;
+  isPaused: boolean;
+  queue: AIVideoQueueItem[];
+  currentIndex: number;
+  totalProcessed: number;
+  totalFailed: number;
+  sessionCost: number;
+  totalCost: number;
+}
+
+// ============================================
+// EXTENSION LOGGING
+// ============================================
+
+export type ExtensionLogLevel = 'debug' | 'info' | 'warn' | 'error' | 'trace';
+
+export interface ExtensionLogEntry {
+  level: ExtensionLogLevel;
+  message: string;
+  timestamp: number;
+  context?: string;
+  data?: Record<string, unknown>;
 }
 
 // ============================================

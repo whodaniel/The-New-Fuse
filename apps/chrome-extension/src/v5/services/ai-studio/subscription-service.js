@@ -3,7 +3,7 @@
 
 class SubscriptionService {
   constructor() {
-    this.apiUrl = process.env.API_URL || 'https://api.aivideointelligence.com';
+    this.apiUrl = (typeof __APP_CONFIG !== 'undefined' && __APP_CONFIG.API_URL) || 'https://api.aivideointelligence.com';
     this.tiers = {
       free: 'free',
       pro: 'pro',
