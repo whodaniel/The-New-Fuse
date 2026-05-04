@@ -1,6 +1,6 @@
 /**
  * The New Fuse VSCode Extension - Tool Orchestration Service
- * Version 9.1.0 - Frontier Capabilities
+ * Version 9.2.0 - Frontier Capabilities
  *
  * Bridges AIService and MCPService to enable function calling and tool execution.
  * Implements multi-turn orchestration loop for agentic behavior.

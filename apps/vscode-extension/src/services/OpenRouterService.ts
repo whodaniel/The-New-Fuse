@@ -1,6 +1,6 @@
 /**
  * The New Fuse VSCode Extension - OpenRouter Service
- * Version 9.0.0
+ * Version 9.2.0
  *
  * Handles OpenRouter API integration including dynamic model discovery
  */

@@ -1,6 +1,6 @@
 /**
  * The New Fuse VSCode Extension - MCP Server Discovery
- * Version 9.0.0
+ * Version 9.2.0
  *
  * Discovers and manages MCP (Model Context Protocol) servers
  */
