@@ -391,6 +391,36 @@
         "protocol": "docs/protocols/bridges/tnf-openclaw-command-assimilation.yml",
         "runbook": "docs/operations/super-admin-chronological-processes.md"
       }
+    },
+    "tnf-llm-arena-intel-collector": {
+      "title": "LLM Arena Intel Collector",
+      "cadence": "0 */4 * * *",
+      "timezone": "UTC",
+      "description": "Collects LLM arena rankings (LM Arena, Agent Arena, Artificial Analysis, HuggingFace, Aider, SWE-bench), news/sentiment (Reddit, HuggingFace, OpenAI, Anthropic blogs), and NVIDIA NGC health probes. Outputs structured JSON to data/llm-intel/.",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/llm-intel/llm-arena-intel-collector.cjs"],
+        "timeoutMs": 300000
+      },
+      "docs": {
+        "protocol": "docs/protocols/llm-intel/llm-arena-intel-protocol.md",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      }
+    },
+    "tnf-llm-ranking-optimizer": {
+      "title": "LLM Ranking Optimizer",
+      "cadence": "30 */4 * * *",
+      "timezone": "UTC",
+      "description": "Reads arena intel data and generates advisory ranking recommendations for model fallback chains. Updates data/llm-intel/ranking-recommendations.json and ranking-report-latest.md. Advisory only — no configs are modified automatically.",
+      "runNow": {
+        "command": "node",
+        "args": ["scripts/llm-intel/llm-ranking-optimizer.cjs"],
+        "timeoutMs": 30000
+      },
+      "docs": {
+        "protocol": "docs/protocols/llm-intel/llm-ranking-optimizer-protocol.md",
+        "runbook": "docs/operations/super-admin-chronological-processes.md"
+      }
     }
   }
 }

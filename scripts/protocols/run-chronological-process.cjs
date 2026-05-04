@@ -189,15 +189,36 @@ async function main() {
   state.updated_at = startedAt;
   writeJson(statePath, state);
 
-  const absoluteArgs = processCatalog.runNow.args.map((arg) => expandArg(repoRoot, arg));
-  const startedMs = Date.now();
-  let status = 'healthy';
-  let exitCode = 0;
-  let errorMessage = null;
-  let outputPreview = null;
+const absoluteArgs = processCatalog.runNow.args.map((arg) => expandArg(repoRoot, arg));
 
+function resolveCommand(cmd) {
+  if (cmd.includes('/') || cmd.includes('\\')) return cmd;
+  const homeDir = process.env.HOME || process.env.USERPROFILE || '/root';
+  const nvmPrefix = path.join(homeDir, '.nvm', 'versions', 'node');
   try {
-    const result = await execFileAsync(processCatalog.runNow.command, absoluteArgs, {
+    const versions = fs.readdirSync(nvmPrefix).sort().reverse();
+    for (const ver of versions) {
+      const candidate = path.join(nvmPrefix, ver, 'bin', cmd);
+      if (fs.existsSync(candidate)) return candidate;
+    }
+  } catch {}
+  const pathDirs = (process.env.PATH || '').split(path.delimiter);
+  for (const dir of pathDirs) {
+    const candidate = path.join(dir, cmd);
+    try { if (fs.statSync(candidate).isFile()) return candidate; } catch {}
+  }
+  return cmd;
+}
+
+const resolvedCommand = resolveCommand(processCatalog.runNow.command);
+const startedMs = Date.now();
+let status = 'healthy';
+let exitCode = 0;
+let errorMessage = null;
+let outputPreview = null;
+
+try {
+  const result = await execFileAsync(resolvedCommand, absoluteArgs, {
       cwd: repoRoot,
       timeout: timeoutMs,
       maxBuffer: 1024 * 1024 * 2,

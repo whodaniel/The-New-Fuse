@@ -67,6 +67,12 @@
       "scope": "tenant",
       "description": "Tenant-level terminal context reminders for user and tenant-agent workflows.",
       "requires_approval": false
+    },
+    {
+      "category": "llm_intelligence",
+      "scope": "system_framework",
+      "description": "LLM arena ranking collection, news/sentiment aggregation, and model ranking optimization.",
+      "requires_approval": false
     }
   ],
   "jobs": [
@@ -219,8 +225,25 @@
       "scope": "system_framework",
       "category": "observability",
       "owner_agent_id": "master-clock",
-      "owner_user_id": "super-admin",
-      "locked": false
-    }
-  ]
+    "owner_user_id": "super-admin",
+    "locked": false
+  },
+  {
+    "schedule_id": "tnf-llm-arena-intel-collector",
+    "scope": "system_framework",
+    "category": "observability",
+    "owner_agent_id": "llm-intel-collector",
+    "owner_user_id": "super-admin",
+    "locked": false,
+    "category": "llm_intelligence"
+  },
+  {
+    "schedule_id": "tnf-llm-ranking-optimizer",
+    "scope": "system_framework",
+    "category": "llm_intelligence",
+    "owner_agent_id": "llm-ranking-optimizer",
+    "owner_user_id": "super-admin",
+    "locked": false
+  }
+]
 }

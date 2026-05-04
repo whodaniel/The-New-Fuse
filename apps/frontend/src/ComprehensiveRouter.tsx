@@ -34,6 +34,7 @@ const KnowledgeHub = lazy(() => import('./pages/KnowledgeHub'));
 const ExecutionConsole = lazy(() => import('./pages/workflow-pages/ExecutionConsole'));
 const AgentIdentity = lazy(() => import('./pages/Agents/AgentIdentity'));
 const SystemObservatory = lazy(() => import('./pages/SystemObservatory'));
+const LLMRankingsDashboard = lazy(() => import('./pages/LLMRankingsDashboard'));
 const CommandCore = lazy(() => import('./pages/CommandCore'));
 const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
 const SpacesOverview = lazy(() => import('./pages/Spaces/SpacesOverview'));
@@ -699,10 +700,17 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route
                 path="/observatory"
                 element={
-                  <RequirePermission roles={['SUPER_ADMIN']}>
-                    <SystemObservatory />
-                  </RequirePermission>
-                }
+      <RequirePermission roles={['SUPER_ADMIN']}>
+            <SystemObservatory />
+          </RequirePermission>
+        } />
+        <Route
+          path="/llm-rankings"
+          element={
+            <RequirePermission roles={['SUPER_ADMIN']}>
+              <LLMRankingsDashboard />
+            </RequirePermission>
+          }
               />
               <Route
                 path="/command-center"
