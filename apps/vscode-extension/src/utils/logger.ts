@@ -1,6 +1,6 @@
 /**
  * The New Fuse VSCode Extension - Logger Utility
- * Version 9.0.0 - Clean Architecture
+ * Version 9.2.0 - Clean Architecture
  */
 
 import * as vscode from 'vscode';

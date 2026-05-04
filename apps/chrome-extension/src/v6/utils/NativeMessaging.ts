@@ -28,7 +28,7 @@ export interface NativeHostResponse {
   timestamp?: number;
 }
 
-const NATIVE_HOST_NAME = 'com.thenewfuse.native_host';
+import { NATIVE_HOST_NAME } from '../shared/constants';
 
 class NativeMessaging {
   private isConnected = false;

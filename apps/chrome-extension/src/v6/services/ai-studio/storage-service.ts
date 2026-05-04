@@ -1,14 +1,25 @@
-// Storage Service
-// Centralized storage management with sync and local storage
+interface StorageData {
+  [key: string]: unknown;
+}
+
+interface StorageUsage {
+  local: number;
+  sync: number;
+  total: number;
+  localLimit: number;
+  syncLimit: number;
+}
 
 class StorageService {
+  private local: Chrome.storage.LocalStorageArea;
+  private sync: Chrome.storage.SyncStorageArea;
+
   constructor() {
     this.local = chrome.storage.local;
     this.sync = chrome.storage.sync;
   }
 
-  // Get items from storage
-  async get(keys, useSync = false) {
+  async get(keys: string | string[], useSync = false): Promise<unknown> {
     const storage = useSync ? this.sync : this.local;
 
     if (typeof keys === 'string') {
@@ -19,41 +30,35 @@ class StorageService {
     return await storage.get(keys);
   }
 
-  // Set items in storage
-  async set(items, useSync = false) {
+  async set(items: StorageData, useSync = false): Promise<boolean> {
     const storage = useSync ? this.sync : this.local;
     await storage.set(items);
     return true;
   }
 
-  // Remove items from storage
-  async remove(keys, useSync = false) {
+  async remove(keys: string | string[], useSync = false): Promise<boolean> {
     const storage = useSync ? this.sync : this.local;
     await storage.remove(keys);
     return true;
   }
 
-  // Clear all storage
-  async clear(useSync = false) {
+  async clear(useSync = false): Promise<boolean> {
     const storage = useSync ? this.sync : this.local;
     await storage.clear();
     return true;
   }
 
-  // Get all items
-  async getAll(useSync = false) {
+  async getAll(useSync = false): Promise<StorageData> {
     const storage = useSync ? this.sync : this.local;
-    return await storage.get(null);
+    return (await storage.get(null)) as StorageData;
   }
 
-  // Check if key exists
-  async has(key, useSync = false) {
+  async has(key: string, useSync = false): Promise<boolean> {
     const data = await this.get(key, useSync);
     return data !== undefined;
   }
 
-  // Get storage usage
-  async getUsage() {
+  async getUsage(): Promise<StorageUsage> {
     const localUsage = await this.local.getBytesInUse();
     const syncUsage = await this.sync.getBytesInUse();
 

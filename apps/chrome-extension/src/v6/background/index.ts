@@ -10,17 +10,30 @@ import youtubeService from '../services/ai-studio/youtube-service';
 import {
   DEFAULT_NODES as DEFAULT_NODES_CONST,
   STORAGE_KEYS as STORAGE_KEYS_CONST,
+  NATIVE_HOST_NAME as NATIVE_HOST_NAME_CONST,
+  API_URLS,
+  AI_MODELS,
+  ACTIVITY_CHANNEL,
+  MESSAGE_TYPES,
+  TIMINGS,
 } from '../shared/constants';
 import type {
   Agent,
   AgentMessage,
   ConnectionStatus,
   FederationChannel,
+  MessageType,
   NodeType,
   Notification,
   NotificationType,
   ProtocolMessage,
   TNFNode,
+  TranscriptRole,
+  TranscriptEntry,
+  AIVideoQueueItem,
+  AIVideoProcessingState,
+  ExtensionLogLevel,
+  ExtensionLogEntry,
 } from '../shared/types';
 import { simpleHash } from '../shared/utils';
 
@@ -36,47 +49,8 @@ const STORAGE_KEYS = {
 };
 
 const DEFAULT_NODES = DEFAULT_NODES_CONST;
-
-// Native messaging host name
-const NATIVE_HOST_NAME = 'com.thenewfuse.native_host';
+const NATIVE_HOST_NAME = NATIVE_HOST_NAME_CONST;
 const AI_VIDEO_PROCESS_ALARM = 'ai_video_process_tick';
-
-type TranscriptRole = 'system' | 'user' | 'assistant' | 'tool';
-
-type TranscriptEntry = {
-  id: string;
-  ts: number;
-  role: TranscriptRole;
-  content: string;
-  meta?: Record<string, unknown>;
-};
-
-type AIVideoQueueItem = {
-  id: string;
-  title: string;
-  url: string;
-  addedAt: number;
-};
-
-type AIVideoProcessingState = {
-  isProcessing: boolean;
-  isPaused: boolean;
-  currentIndex: number;
-  totalCount: number;
-  currentVideo: AIVideoQueueItem | null;
-  lastUpdated: number;
-};
-
-type ExtensionLogLevel = 'debug' | 'info' | 'warn' | 'error';
-
-type ExtensionLogEntry = {
-  id: string;
-  ts: number;
-  level: ExtensionLogLevel;
-  category: string;
-  event: string;
-  details?: Record<string, unknown>;
-};
 
 class BackgroundService {
   // Connections
@@ -105,7 +79,7 @@ class BackgroundService {
 
   // Message deduplication - track recently sent/received message hashes
   private recentMessageHashes: Map<string, number> = new Map();
-  private readonly MESSAGE_DEDUP_WINDOW_MS = 10000; // 10 second dedup window
+  private readonly MESSAGE_DEDUP_WINDOW_MS = TIMINGS.messageDedupWindow;
 
   // Timers
   private reconnectTimers: Map<string, number> = new Map();
@@ -116,7 +90,7 @@ class BackgroundService {
   private nativeHostUnavailable: boolean = false;
   private nativeHostMissingLogged: boolean = false;
   private extensionEventLog: ExtensionLogEntry[] = [];
-  private readonly EVENT_LOG_LIMIT = 4000;
+  private readonly EVENT_LOG_LIMIT = TIMINGS.eventLogLimit;
   private eventLogFlushTimer: number | null = null;
   private eventLoggingEnabled = true;
 
@@ -1481,7 +1455,7 @@ class BackgroundService {
   }
 
   private async youtubeApiGet(path: string, token: string): Promise<any> {
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/${path}`, {
+    const response = await fetch(`${API_URLS.youtube}/${path}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -1584,7 +1558,7 @@ class BackgroundService {
     const diagnostics = this.getOAuthDiagnostics();
     const scopeParam = encodeURIComponent(scopes.join(' '));
     const authUrl =
-      `https://accounts.google.com/o/oauth2/auth?` +
+      `${API_URLS.googleOAuth}?` +
       `client_id=${encodeURIComponent(diagnostics.clientId)}` +
       `&response_type=token` +
       `&redirect_uri=${encodeURIComponent(diagnostics.redirectUri)}` +
@@ -1621,7 +1595,7 @@ class BackgroundService {
     name: string;
     picture: string;
   }> {
-    const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+    const response = await fetch(API_URLS.googleUserInfo, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -1811,7 +1785,7 @@ class BackgroundService {
   private async createNewAIStudioTab(): Promise<chrome.tabs.Tab> {
     console.log('🆕 Creating new AI Studio tab...');
     const tab = await chrome.tabs.create({
-      url: 'https://aistudio.google.com/app/prompts/new_chat?model=gemini-3-flash-preview',
+      url: `${API_URLS.aiStudio}/app/prompts/new_chat?model=${AI_MODELS.aiStudioDefault}`,
       active: true,
     });
 
@@ -2266,7 +2240,7 @@ class BackgroundService {
   private async sendActivityEvent(
     eventType: string,
     metadata: Record<string, unknown> = {},
-    channel = 'fuse-activity-log'
+    channel = ACTIVITY_CHANNEL
   ): Promise<void> {
     this.send({
       type: 'MESSAGE_SEND',
@@ -2631,12 +2605,11 @@ class BackgroundService {
                 success: false,
                 error: err.message || 'Authentication failed',
                 oauth: this.getOAuthDiagnostics(),
-              });
-            });
-          return true; // Async response
-          return true;
+});
+});
+return true; // Async response
 
-        case 'YOUTUBE_SIGN_OUT':
+case 'YOUTUBE_SIGN_OUT':
           this.signOutYouTube()
             .then(() => sendResponse({ success: true }))
             .catch((error) =>

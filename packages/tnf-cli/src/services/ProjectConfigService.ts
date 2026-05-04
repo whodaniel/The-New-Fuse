@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { stripJsoncComments } from '../utils/jsonc.js';
 
 export interface ProjectCommandDef {
   name: string;
@@ -47,10 +48,6 @@ export class ProjectConfigService {
     this.loadAgentDefs();
   }
 
-  private stripJsoncComments(content: string): string {
-    return content.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
-  }
-
   private loadConfig(): void {
     const jsoncPath = path.join(this.projectRoot, 'tnf.jsonc');
     const jsonPath = path.join(this.projectRoot, 'tnf.json');
@@ -61,7 +58,7 @@ export class ProjectConfigService {
     try {
       let raw = fs.readFileSync(configPath, 'utf8');
       if (configPath.endsWith('.jsonc')) {
-        raw = this.stripJsoncComments(raw);
+        raw = stripJsoncComments(raw);
       }
       this.config = JSON.parse(raw);
     } catch {

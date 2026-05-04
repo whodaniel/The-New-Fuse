@@ -42,6 +42,8 @@
         "https://*.perplexity.ai/*",
         "https://www.perplexity.ai/*",
         "https://poe.com/*",
+        "https://chat.qwen.ai/*",
+        "https://qwen.ai/*",
         "http://localhost:*/*",
         "http://127.0.0.1:*/*",
         "https://openclaw-gateway.workers.dev/*",

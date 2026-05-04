@@ -1,12 +1,13 @@
 /**
  * The New Fuse VSCode Extension - Collective Orchestrator Service
- * Version 9.1.0
+ * Version 9.2.0
  *
  * Multi-agent collective orchestration and task distribution
  */
 
 import * as vscode from 'vscode';
 import { log } from '../../utils/logger';
+import { getRelayService } from '../RelayConnectionService';
 
 interface CollectiveAgent {
   id: string;
@@ -114,6 +115,24 @@ export class CollectiveOrchestratorService {
 
     this.tasks.set(task.id, task);
     await this.saveState();
+
+    try {
+      const relay = getRelayService();
+      if (relay.getStatus() === 'connected') {
+        relay.send({
+          type: 'COLLECTIVE_TASK_DISTRIBUTE',
+          payload: {
+            taskId: task.id,
+            taskName: task.name,
+            description: task.description,
+            assignedTo: task.assignedTo,
+            mode: this.state.mode,
+          },
+        });
+      }
+    } catch {
+      log.debug('Collective task relay unavailable, distributed locally');
+    }
 
     log.info(`Task distributed: ${task.name}`);
     return task;

@@ -1,6 +1,6 @@
 /**
  * The New Fuse VSCode Extension - Chat Service
- * Version 9.1.0 - Frontier Capabilities
+ * Version 9.2.0 - Frontier Capabilities
  *
  * Manages chat history, message handling, and conversation state
  * Now with tool orchestration and streaming support

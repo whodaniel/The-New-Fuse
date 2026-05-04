@@ -1,6 +1,6 @@
 /**
  * The New Fuse VSCode Extension - Workspace Service
- * Version 9.1.0 - Frontier Capabilities
+ * Version 9.2.0 - Frontier Capabilities
  *
  * Provides codebase awareness through VSCode workspace APIs.
  * Implements glob search, grep, file operations, and workspace structure analysis.

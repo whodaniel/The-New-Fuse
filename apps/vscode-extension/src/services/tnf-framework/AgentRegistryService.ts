@@ -1,6 +1,6 @@
 /**
  * The New Fuse VSCode Extension - Agent Registry Service
- * Version 9.1.0
+ * Version 9.2.0
  *
  * Agent registration, discovery, and directory management
  */

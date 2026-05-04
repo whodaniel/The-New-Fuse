@@ -1,12 +1,14 @@
 /**
  * The New Fuse VSCode Extension - MCP Service
- * Version 9.0.0 - Clean Architecture
+ * Version 9.2.0 - Full TNF Ecosystem Integration
  *
  * Model Context Protocol (MCP) connection management
+ * Supports stdio, SSE, and WebSocket transports
  */
 
 import { Client } from '@modelcontextprotocol/sdk/client/index';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio';
+import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse';
 import * as vscode from 'vscode';
 import { ConfigManager } from '../core/config';
 import { MCPConnection, MCPResource, MCPServerConfig, MCPTool } from '../core/types';
@@ -36,8 +38,12 @@ export class MCPService {
     const config = ConfigManager.getInstance();
     const servers = config.getMCPServers();
 
-    // Auto-connect to enabled servers
-    for (const server of servers.filter((s) => s.enabled)) {
+    const projectMcpServers = config.getTnfProjectMcpServers();
+    const allServers = [...servers, ...projectMcpServers.filter(
+      ps => !servers.some(s => s.name === ps.name)
+    )];
+
+    for (const server of allServers.filter((s) => s.enabled)) {
       try {
         await this.connect(server);
       } catch (error) {
@@ -71,17 +77,24 @@ export class MCPService {
     this.notifyConnectionChange();
 
     try {
-      // Create transport
-      const transport = new StdioClientTransport({
-        command: serverConfig.command,
-        args: serverConfig.args || [],
-        env: serverConfig.env,
-      });
+      let transport;
 
-      // Create client
+      const transportType = serverConfig.transport || (serverConfig.url ? 'sse' : 'stdio');
+
+      if (transportType === 'sse' && serverConfig.url) {
+        transport = new SSEClientTransport(new URL(serverConfig.url));
+      } else {
+        transport = new StdioClientTransport({
+          command: serverConfig.command,
+          args: serverConfig.args || [],
+          env: serverConfig.env as Record<string, string>,
+          cwd: serverConfig.cwd,
+        });
+      }
+
       const client = new Client({
         name: 'the-new-fuse-vscode',
-        version: '9.0.0',
+        version: '9.2.0',
       });
 
       // Connect

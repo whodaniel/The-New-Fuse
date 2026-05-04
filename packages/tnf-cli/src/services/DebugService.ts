@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { spawnSync } from 'child_process';
+import { stripJsoncComments } from '../utils/jsonc.js';
 
 export interface DebugPaths {
   config: string;
@@ -77,7 +78,7 @@ export class DebugService {
       try {
         let raw = fs.readFileSync(configPath, 'utf8');
         if (configPath.endsWith('.jsonc')) {
-          raw = raw.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+          raw = stripJsoncComments(raw);
         }
         const data = JSON.parse(raw);
         config.$schema = data.$schema;
@@ -131,7 +132,7 @@ export class DebugService {
       try {
         let raw = fs.readFileSync(configPath, 'utf8');
         if (configPath.endsWith('.jsonc')) {
-          raw = raw.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+          raw = stripJsoncComments(raw);
         }
         const data = JSON.parse(raw);
         config.$schema = data.$schema;

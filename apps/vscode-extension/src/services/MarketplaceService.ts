@@ -1,6 +1,6 @@
 /**
  * The New Fuse VSCode Extension - MCP Marketplace Service
- * Version 9.0.0 - Ecosystem Expansion
+ * Version 9.2.0 - Ecosystem Expansion
  *
  * Manages the MCP server marketplace, allowing discovery and installation
  */

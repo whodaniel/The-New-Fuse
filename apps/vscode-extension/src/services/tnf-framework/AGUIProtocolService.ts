@@ -1,12 +1,13 @@
 /**
  * The New Fuse VSCode Extension - AG-UI Protocol Service
- * Version 9.1.0
+ * Version 9.2.0
  *
  * AG-UI Protocol integration for real-time visualization and bidirectional communication
  */
 
 import * as vscode from 'vscode';
 import { log } from '../../utils/logger';
+import { getRelayService } from '../RelayConnectionService';
 
 interface AGUISession {
   id: string;
@@ -64,30 +65,44 @@ export class AGUIProtocolService {
   /**
    * Connect to AG-UI WebSocket server
    */
-  async connect(endpoint: string = 'ws://localhost:8765'): Promise<boolean> {
-    try {
-      log.info(`Connecting to AG-UI server at ${endpoint}`);
+  async connect(endpoint?: string): Promise<boolean> {
+    const aguiEndpoint =
+      endpoint ||
+      vscode.workspace.getConfiguration('theNewFuse').get<string>('aguiUrl') ||
+      'ws://localhost:3000';
 
-      // Simulate connection
-      await new Promise((resolve) => setTimeout(resolve, 500));
+    try {
+      log.info(`Connecting to AG-UI server at ${aguiEndpoint}`);
+
+      const relay = getRelayService();
+      const connected = relay.getStatus() === 'connected'
+        ? true
+        : await relay.connect(aguiEndpoint);
+
+      if (!connected) {
+        throw new Error('Relay connection failed');
+      }
+
+      relay.on('AGUI_SESSION_UPDATE', (msg) => {
+        const session: AGUISession = {
+          id: msg.payload?.id || `session-${Date.now()}`,
+          agentId: msg.payload?.agentId || 'unknown',
+          status: msg.payload?.status || 'connected',
+          connectedAt: msg.payload?.connectedAt || new Date().toISOString(),
+          lastActivity: new Date().toISOString(),
+        };
+        this.sessions.set(session.id, session);
+      });
 
       this.connected = true;
       this.updateStatusBar();
-
-      // Add a demo session
-      const session: AGUISession = {
-        id: `session-${Date.now()}`,
-        agentId: 'demo-agent',
-        status: 'connected',
-        connectedAt: new Date().toISOString(),
-        lastActivity: new Date().toISOString(),
-      };
-      this.sessions.set(session.id, session);
 
       vscode.window.showInformationMessage('Connected to AG-UI server');
       return true;
     } catch (error) {
       log.error('Failed to connect to AG-UI server', error);
+      this.connected = false;
+      this.updateStatusBar();
       return false;
     }
   }

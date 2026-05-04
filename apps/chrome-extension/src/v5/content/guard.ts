@@ -23,7 +23,7 @@ try {
       ) {
         if (customElements.get(name)) {
           // If in development, log a warning, otherwise fail silently to prevent crash
-          if (process.env.NODE_ENV === 'development') {
+          if (typeof import.meta !== 'undefined' && (import.meta as any).env?.DEV) {
             console.warn(
               `[FuseConnect Guard] Custom element '${name}' is already defined. Skipping definition.`
             );

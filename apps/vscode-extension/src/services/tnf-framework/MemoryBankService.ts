@@ -1,12 +1,13 @@
 /**
  * The New Fuse VSCode Extension - Memory Bank Service
- * Version 9.1.0
+ * Version 9.2.0
  *
  * Memory Bank integration for project context management
  */
 
 import * as vscode from 'vscode';
 import { log } from '../../utils/logger';
+import { getRelayService } from '../RelayConnectionService';
 
 interface MemoryContext {
   id: string;
@@ -154,17 +155,30 @@ export class MemoryBankService {
       return;
     }
 
-    // Look for memory-bank directory
     const memoryBankPath = vscode.Uri.parse(workspaceFolder.uri.toString() + '/memory-bank');
 
     try {
-      // Check if memory-bank exists
       await vscode.workspace.fs.stat(memoryBankPath);
+
+      try {
+        const relay = getRelayService();
+        if (relay.getStatus() === 'connected') {
+          relay.send({
+            type: 'MEMORY_BANK_SYNC',
+            payload: {
+              workspaceName: workspaceFolder.name,
+              workspaceUri: workspaceFolder.uri.toString(),
+              memories: Array.from(this.memories.values()),
+            },
+          });
+        }
+      } catch {
+        log.debug('Memory bank relay sync unavailable');
+      }
 
       vscode.window.showInformationMessage('Memory Bank synced with workspace');
       log.info('Memory Bank synced with workspace');
     } catch {
-      // Create memory-bank directory
       await vscode.workspace.fs.createDirectory(memoryBankPath);
       vscode.window.showInformationMessage('Created memory-bank directory');
     }
