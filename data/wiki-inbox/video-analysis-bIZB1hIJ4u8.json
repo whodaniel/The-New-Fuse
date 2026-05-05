@@ -1,0 +1,27 @@
+{
+  "id": "video-analysis-bIZB1hIJ4u8",
+  "title": "GEOMETRIC DEEP LEARNING BLUEPRINT",
+  "category": "video-analysis",
+  "content": "Model 11:50 AMThinkingAnalyzing Video Transcript DataI'm currently focused on extracting structured information from a YouTube video transcript. My goal is to parse the raw text, ensuring valid JSON output. I'm prioritizing the identification of key points and AI concepts, along with any technical d",
+  "backlinks": [
+    "model"
+  ],
+  "metadata": {
+    "agentId": "transcript-processor-v2",
+    "timestamp": "2026-05-04T15:51:06.035Z",
+    "videoId": "bIZB1hIJ4u8",
+    "url": "https://www.youtube.com/watch?v=bIZB1hIJ4u8",
+    "qualityScore": 50,
+    "idNumber": "ID#:Bv",
+    "resourcePointers": {
+      "transcript": {
+        "uri": "file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/video-transcripts/633_GEOMETRIC_DEEP_LEARNING_BLUEPRINT.txt",
+        "mimeType": "text/plain"
+      },
+      "report": {
+        "uri": "file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/video-reports/v2_633_GEOMETRIC_DEEP_LEARNING_BLUEPRINT.md",
+        "mimeType": "text/markdown"
+      }
+    }
+  }
+}

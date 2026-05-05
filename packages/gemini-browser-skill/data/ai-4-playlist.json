@@ -1,0 +1,272 @@
+[
+  {
+    "index": 1,
+    "title": "Introducing Keras Recommenders: state-of-the-art recommendation techniques at your fingertips",
+    "url": "https://www.youtube.com/watch?v=ZYeE4sYoRkw",
+    "videoId": "ZYeE4sYoRkw"
+  },
+  {
+    "index": 2,
+    "title": "Full Workshop: Build Your Own Deep Research Agents - Louis-François Bouchard, Paul Iusztin, Samridhi",
+    "url": "https://www.youtube.com/watch?v=mYSRn6PC1mc",
+    "videoId": "mYSRn6PC1mc"
+  },
+  {
+    "index": 3,
+    "title": "Harness Engineering: How to Build Software When Humans Steer, Agents Execute — Ryan Lopopolo, OpenAI",
+    "url": "https://www.youtube.com/watch?v=am_oeAoUhew",
+    "videoId": "am_oeAoUhew"
+  },
+  {
+    "index": 4,
+    "title": "Developer recap of Next ‘26",
+    "url": "https://www.youtube.com/watch?v=N7N0TU9tkzw",
+    "videoId": "N7N0TU9tkzw"
+  },
+  {
+    "index": 5,
+    "title": "Build & deploy AI-powered apps — Paige Bailey, Google DeepMind",
+    "url": "https://www.youtube.com/watch?v=G_bHFmEAarM",
+    "videoId": "G_bHFmEAarM"
+  },
+  {
+    "index": 6,
+    "title": "RL for Agents Workshop - Deep Dive on Training Agents with RL and Open Source",
+    "url": "https://www.youtube.com/watch?v=cixmqTsi2A4",
+    "videoId": "cixmqTsi2A4"
+  },
+  {
+    "index": 7,
+    "title": "Fireside chat on an agentic simulation: Race Condition",
+    "url": "https://www.youtube.com/watch?v=WYPdz3OZfuQ",
+    "videoId": "WYPdz3OZfuQ"
+  },
+  {
+    "index": 8,
+    "title": "Explore a high-scale agentic AI-powered simulation sandbox with Gemini Enterprise Agent Platform",
+    "url": "https://www.youtube.com/watch?v=m6EyN2Z7HJk",
+    "videoId": "m6EyN2Z7HJk"
+  },
+  {
+    "index": 9,
+    "title": "NVIDIA's NEW All-in-One: Nemotron 3 Nano Omni for Multimodal Agents",
+    "url": "https://www.youtube.com/watch?v=XNaI4Xd4qXc",
+    "videoId": "XNaI4Xd4qXc"
+  },
+  {
+    "index": 10,
+    "title": "New Google Gemini AI Agents are INSANE!",
+    "url": "https://www.youtube.com/watch?v=7pmGdc078PY",
+    "videoId": "7pmGdc078PY"
+  },
+  {
+    "index": 11,
+    "title": "OpenSpec Will Change How You Vibe Code Forever",
+    "url": "https://www.youtube.com/watch?v=nFq4POtqom4",
+    "videoId": "nFq4POtqom4"
+  },
+  {
+    "index": 12,
+    "title": "Replacing 12K LoC with a 200 LoC Skill — David Gomes, Cursor",
+    "url": "https://www.youtube.com/watch?v=WE_Gnowy3uw",
+    "videoId": "WE_Gnowy3uw"
+  },
+  {
+    "index": 13,
+    "title": "Salesforce Killed The Browser. Every Agent Runs Your CRM Now.",
+    "url": "https://www.youtube.com/watch?v=dQK_pTXrGDk",
+    "videoId": "dQK_pTXrGDk"
+  },
+  {
+    "index": 14,
+    "title": "LLM codegen fails and how to stop 'em — Danilo Campos, PostHog",
+    "url": "https://www.youtube.com/watch?v=juoNbJiZUi0",
+    "videoId": "juoNbJiZUi0"
+  },
+  {
+    "index": 15,
+    "title": "Full Walkthrough: Workflow for AI Coding — Matt Pocock",
+    "url": "https://www.youtube.com/watch?v=-QFHIoCo-Ko",
+    "videoId": "-QFHIoCo-Ko"
+  },
+  {
+    "index": 16,
+    "title": "OpenAI Just Showed Us What Comes After the Harness. Here's The Layer Almost Everyone's Missing.",
+    "url": "https://www.youtube.com/watch?v=5p6h23Md4Zw",
+    "videoId": "5p6h23Md4Zw"
+  },
+  {
+    "index": 17,
+    "title": "Andrej Karpathy's Math Proves Agent Skills Will Fail. Here's What to Build Instead.",
+    "url": "https://www.youtube.com/watch?v=I2K81s0OQto",
+    "videoId": "I2K81s0OQto"
+  },
+  {
+    "index": 18,
+    "title": "DeepSeekV4 + Claude Code = 100X Cheaper",
+    "url": "https://www.youtube.com/watch?v=tn7zXRv3Xmo",
+    "videoId": "tn7zXRv3Xmo"
+  },
+  {
+    "index": 19,
+    "title": "CLAUDE CODE ADVANCED FULL COURSE (3 HOURS)",
+    "url": "https://www.youtube.com/watch?v=UPtmKh1vMN8",
+    "videoId": "UPtmKh1vMN8"
+  },
+  {
+    "index": 20,
+    "title": "DSPy: The End of Prompt Engineering - Kevin Madura, AlixPartners",
+    "url": "https://www.youtube.com/watch?v=-cKUW6n8hBU",
+    "videoId": "-cKUW6n8hBU"
+  },
+  {
+    "index": 21,
+    "title": "Your MCP Server is Bad (and you should feel bad) - Jeremiah Lowin, Prefect",
+    "url": "https://www.youtube.com/watch?v=96G7FLab8xc",
+    "videoId": "96G7FLab8xc"
+  },
+  {
+    "index": 22,
+    "title": "RTX 5090, Mac Studio, or DGX Spark? I tried all three.",
+    "url": "https://www.youtube.com/watch?v=iUSdS-6uwr4",
+    "videoId": "iUSdS-6uwr4"
+  },
+  {
+    "index": 23,
+    "title": "AI News: Everyone's Mad At Anthropic Now",
+    "url": "https://www.youtube.com/watch?v=qDI4odijz44",
+    "videoId": "qDI4odijz44"
+  },
+  {
+    "index": 24,
+    "title": "The insane engineering of Deepseek V4",
+    "url": "https://www.youtube.com/watch?v=XJUpuOBpT-4",
+    "videoId": "XJUpuOBpT-4"
+  },
+  {
+    "index": 25,
+    "title": "Build & Sell Claude Code Operating Systems (2+ Hour Course)",
+    "url": "https://www.youtube.com/watch?v=bCljOfCH8Ms",
+    "videoId": "bCljOfCH8Ms"
+  },
+  {
+    "index": 26,
+    "title": "[Full Workshop] Reinforcement Learning, Kernels, Reasoning, Quantization & Agents — Daniel Han",
+    "url": "https://www.youtube.com/watch?v=OkEGJ5G3foU",
+    "videoId": "OkEGJ5G3foU"
+  },
+  {
+    "index": 27,
+    "title": "Why Self-Distillation Is Taking Over LLM Post-Training (w/ the Researchers Behind It)",
+    "url": "https://www.youtube.com/watch?v=OgEGV7apEzI",
+    "videoId": "OgEGV7apEzI"
+  },
+  {
+    "index": 28,
+    "title": "New Grok 4.3 Update: Elon Musk's BEST Model?",
+    "url": "https://www.youtube.com/watch?v=nLkyFv4Cm08",
+    "videoId": "nLkyFv4Cm08"
+  },
+  {
+    "index": 29,
+    "title": "Anthropic Might Buy Atlassian For $40B. Here's Why It Makes Sense.",
+    "url": "https://www.youtube.com/watch?v=FDkvRl1RlT0",
+    "videoId": "FDkvRl1RlT0"
+  },
+  {
+    "index": 30,
+    "title": "What is an Agent Harness? and How to build a great one!",
+    "url": "https://www.youtube.com/watch?v=nWzXyjXCoCE",
+    "videoId": "nWzXyjXCoCE"
+  },
+  {
+    "index": 31,
+    "title": "Paperclip vs AionUI for Claude Code, Codex and OpenClaw",
+    "url": "https://www.youtube.com/watch?v=YYsBvMZKWm8",
+    "videoId": "YYsBvMZKWm8"
+  },
+  {
+    "index": 32,
+    "title": "FULLY FREE Unlimited Kimi K2.6 Coder / API: This IS REALLY GOOD!",
+    "url": "https://www.youtube.com/watch?v=T1eAwmWmhaA",
+    "videoId": "T1eAwmWmhaA"
+  },
+  {
+    "index": 33,
+    "title": "🔴LIVE - Full AI Video Generation Workflow Using Claude Code + Remotion + Archon",
+    "url": "https://www.youtube.com/watch?v=vhbaZJtW2Hg",
+    "videoId": "vhbaZJtW2Hg"
+  },
+  {
+    "index": 34,
+    "title": "Open WebUI vs Hermes WebUI: The Truth About Both",
+    "url": "https://www.youtube.com/watch?v=4r7NL81SE58",
+    "videoId": "4r7NL81SE58"
+  },
+  {
+    "index": 35,
+    "title": "Context Is the New Code — Patrick Debois, Tessl",
+    "url": "https://www.youtube.com/watch?v=bSG9wUYaHWU",
+    "videoId": "bSG9wUYaHWU"
+  },
+  {
+    "index": 36,
+    "title": "How Cursor Codes — Eric Zakariasson, Cursor",
+    "url": "https://www.youtube.com/watch?v=rnDm57Py54A",
+    "videoId": "rnDm57Py54A"
+  },
+  {
+    "index": 37,
+    "title": "Mergeable by default: Building the context engine to save time and tokens — Peter Werry, Unblocked",
+    "url": "https://www.youtube.com/watch?v=5ID22ACI7IM",
+    "videoId": "5ID22ACI7IM"
+  },
+  {
+    "index": 38,
+    "title": "I got a private AI masterclass from Pi Agent creator",
+    "url": "https://www.youtube.com/watch?v=sqtX2OmgOF0",
+    "videoId": "sqtX2OmgOF0"
+  },
+  {
+    "index": 39,
+    "title": "This Claude Code Setup Runs My Entire Business",
+    "url": "https://www.youtube.com/watch?v=7aQbN543Mec",
+    "videoId": "7aQbN543Mec"
+  },
+  {
+    "index": 40,
+    "title": "Google’s Agents CLI is here: Build, eval, and deploy AI agents in minutes | The Agent Factory",
+    "url": "https://www.youtube.com/watch?v=nXafozNIk3c",
+    "videoId": "nXafozNIk3c"
+  },
+  {
+    "index": 41,
+    "title": "TLMs: Tiny LLMs and Agents on Edge Devices with LiteRT-LM — Cormac Brick, Google",
+    "url": "https://www.youtube.com/watch?v=BKWpYIWvAo4",
+    "videoId": "BKWpYIWvAo4"
+  },
+  {
+    "index": 42,
+    "title": "I Tried 100+ Claude Code Skills. These 6 I Can’t Live Without",
+    "url": "https://www.youtube.com/watch?v=eRS3CmvrOvA",
+    "videoId": "eRS3CmvrOvA"
+  },
+  {
+    "index": 43,
+    "title": "Real-Time WebSockets Course | Build a Live Sports Dashboard with Node.js & PostgreSQL",
+    "url": "https://www.youtube.com/watch?v=pbOXOY78dNA",
+    "videoId": "pbOXOY78dNA"
+  },
+  {
+    "index": 44,
+    "title": "DeepSeek V4 + Claude Code = BEST AI Coder!",
+    "url": "https://www.youtube.com/watch?v=EibhUi-FnTs",
+    "videoId": "EibhUi-FnTs"
+  },
+  {
+    "index": 45,
+    "title": "Shipping complex AI applications — Braintrust & Trainline",
+    "url": "https://www.youtube.com/watch?v=ZdheJTfLu-s",
+    "videoId": "ZdheJTfLu-s"
+  }
+]

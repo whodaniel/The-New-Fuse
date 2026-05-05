@@ -319,7 +319,7 @@ const BLIND_LEVELS: [number, number][] = [
 const BLIND_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
 // Player tracking maps
-const socketToPlayer = new Map<string, { playerId: string; seat: number }>();
+const socketToPlayer = new Map<string, { playerId: string; seat: number; identity: string }>();
 const playerToSocket = new Map<string, string>();
 const socketDisplayNames = new Map<string, string>();
 const disconnectTimers = new Map<string, NodeJS.Timeout>();
@@ -821,12 +821,23 @@ io.on('connection', (socket) => {
     // so it's different each time — we must check by identity instead).
     const identity = socket.data.identity;
     if (identity) {
-      for (const [, info] of socketToPlayer.entries()) {
+      for (const [existingSocketId, info] of socketToPlayer.entries()) {
         if (info.identity === identity) {
           // This identity already has a seat. Reclaim it instead of creating a new one.
-          socket.emit('error', { message: 'You already have a seat. Reconnecting...' });
-          // Trigger reconnect logic for the existing seat
-          socket.emit('reclaim_seat', { seat: info.seat });
+          const oldTimer = disconnectTimers.get(info.playerId);
+          if (oldTimer) { clearTimeout(oldTimer); disconnectTimers.delete(info.playerId); }
+          socketToPlayer.delete(existingSocketId);
+          socketToPlayer.set(socket.id, { playerId: info.playerId, seat: info.seat, identity: identity || '' });
+          playerToSocket.set(info.playerId, socket.id);
+          const displayName = socketDisplayNames.get(existingSocketId) || info.playerId;
+          socketDisplayNames.set(socket.id, displayName);
+          socketDisplayNames.delete(existingSocketId);
+          try { holdemEngine.setConnection(pokerEngine, { playerId: info.playerId, connected: true }); } catch {}
+          if (actionTimeoutTimer && pokerEngine.hand?.actingSeat === info.seat) {
+            clearTimeout(actionTimeoutTimer); actionTimeoutTimer = null;
+          }
+          addLog(`${displayName} reclaimed seat ${info.seat}`);
+          broadcastState();
           return;
         }
       }

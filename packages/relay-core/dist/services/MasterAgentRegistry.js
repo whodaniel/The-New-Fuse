@@ -12,9 +12,9 @@ const ethers_1 = require("ethers");
 const events_1 = require("events");
 const VCIssuanceService_js_1 = require("./VCIssuanceService.js");
 const BlockchainService_js_1 = require("./shared/BlockchainService.js");
-// import { sha256 } from '../../../../src/utils/cryptoUtils';
-// import { AgentRegistry, Agent as LegacyAgent } from '../../../../src/services/AgentRegistry';
-// import { AgentMetadataManager } from '../../../../src/services/AgentMetadataManager';
+// import { sha256 } from '../../../../src/utils/cryptoUtils.js';
+// import { AgentRegistry, Agent as LegacyAgent } from '../../../../src/services/AgentRegistry.js';
+// import { AgentMetadataManager } from '../../../../src/services/AgentMetadataManager.js';
 // Stub implementations
 const sha256 = (input) => {
     // Simple hash implementation for build purposes

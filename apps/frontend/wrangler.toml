@@ -1,0 +1,3 @@
+name = "tnf-api-gateway-fix"
+main = "./functions/[[path]].js"
+compatibility_date = "2026-05-04"

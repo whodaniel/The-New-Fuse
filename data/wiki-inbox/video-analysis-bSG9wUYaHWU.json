@@ -1,0 +1,25 @@
+{
+  "id": "video-analysis-bSG9wUYaHWU",
+  "title": "Context Is the New Code — Patrick Debois, Tessl",
+  "category": "video-analysis",
+  "content": "{\"summary\": \"The speaker introduces the concept of the Context Development Life Cycle (CDLC), arguing that in the age of AI coding agents, managing context is becoming as important as writing code. He proposes a DevOps-inspired 'infinity loop' for context, focusing on how developers should generate,",
+  "backlinks": [],
+  "metadata": {
+    "agentId": "transcript-processor-v2",
+    "timestamp": "2026-05-03T18:58:37.788Z",
+    "videoId": "bSG9wUYaHWU",
+    "url": "https://www.youtube.com/watch?v=bSG9wUYaHWU",
+    "qualityScore": 50,
+    "idNumber": "ID#:Cm",
+    "resourcePointers": {
+      "transcript": {
+        "uri": "file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/video-transcripts/682_Context_Is_the_New_Code___Patrick_Debois__Tessl.txt",
+        "mimeType": "text/plain"
+      },
+      "report": {
+        "uri": "file:///Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/video-reports/v2_682_Context_Is_the_New_Code___Patrick_Debois__Tessl.md",
+        "mimeType": "text/markdown"
+      }
+    }
+  }
+}

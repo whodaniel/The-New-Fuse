@@ -1,0 +1,10 @@
+{
+  "id": "fb-1777830449875-xk9g0o",
+  "type": "bug",
+  "priority": "high",
+  "message": "Test feedback - Login fails on Safari",
+  "context": "https://the.newfuse.com/login",
+  "source": "beta",
+  "status": "new",
+  "created_at": "2026-05-03T17:47:29.875Z"
+}

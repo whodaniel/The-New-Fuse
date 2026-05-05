@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>The New Fuse - Documentation</title>
+  <meta http-equiv="refresh" content="0;url=https://thenewfuse.com/docs">
+  <script>
+    // Redirect to docs on the main landing page
+    // On app subdomain, /docs should go to thenewfuse.com/docs (the landing site has the docs page)
+      window.location.replace('https://thenewfuse.com/docs');
+    } else {
+      window.location.replace('/docs');
+    }
+  </script>
+</head>
+<body>
+  <p>Redirecting to documentation...</p>
+</body>
+</html>

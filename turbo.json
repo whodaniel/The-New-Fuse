@@ -1,0 +1,1 @@
+{"globalDependencies": ["package.json"],"tasks":{"build":{"dependsOn":["^build"],"outputs":["dist/**","lib/**"]},"dev":{"dependsOn":["^build"],"outputs":["dist/**","lib/**"]},"test":{"dependsOn":["^build"],"outputs":["coverage/**","test-results/**"]}}}

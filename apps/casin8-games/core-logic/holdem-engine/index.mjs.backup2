@@ -1239,11 +1239,7 @@ export function recoverySnapshot(engine) {
     audit: engine.audit,
     seq: engine.seq,
     events: engine.events,
-    idempotency: {
-      actions: Array.from(engine.idempotency.actions.entries()),
-      settlements: Array.from(engine.idempotency.settlements.entries()),
-      handStarts: Array.from(engine.idempotency.handStarts.entries()),
-    },
+    idempotency: engine.idempotency,
   });
 }
 
@@ -1267,15 +1263,8 @@ export function restoreFromRecovery(snapshot) {
   engine.audit = cloneJson(snapshot.audit || { lastEventHash: 'genesis' });
   engine.seq = Number(snapshot.seq || 0);
   engine.events = cloneJson(snapshot.events || []);
-  
-  // Restore idempotency caches (NEW-C fix)
-  if (snapshot.idempotency) {
-    engine.idempotency.actions = new Map(snapshot.idempotency.actions || []);
-    engine.idempotency.settlements = new Map(snapshot.idempotency.settlements || []);
-    engine.idempotency.handStarts = new Map(snapshot.idempotency.handStarts || []);
-  }
-  
-  return engine;
+
+  engine.idempotency = cloneJson(snapshot.idempotency || { actions: new Map(), settlements: new Map(), handStarts: new Map() });  return engine;
 }
 
 export function exportReplayLog(engine) {

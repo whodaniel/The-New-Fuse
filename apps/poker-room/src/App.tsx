@@ -1424,11 +1424,21 @@ function AppContent() {
 
     if (accessResolution) {
       if (!accessResolution.access?.canPlay) {
-        const error = new Error(accessResolution.pathSummary) as Error & {
-          accessResolution?: CommunityAccessResolution;
-        };
-        error.accessResolution = accessResolution;
-        throw error;
+        // If no email provided, create a guest membership for Quick Play access
+        if (!email) {
+          resolvedMembership = {
+            username: username.trim(),
+            status: 'guest',
+            role: 'guest',
+            addedAt: new Date().toISOString(),
+          };
+        } else {
+          const error = new Error(accessResolution.pathSummary) as Error & {
+            accessResolution?: CommunityAccessResolution;
+          };
+          error.accessResolution = accessResolution;
+          throw error;
+        }
       } else {
         resolvedMembership = {
           username: accessResolution.subject.username || username.trim(),
