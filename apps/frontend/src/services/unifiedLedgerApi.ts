@@ -85,6 +85,16 @@ export interface ProjectPlanRecord {
   updatedAt: string;
 }
 
+export interface GithubTimelineImportResult {
+  message: string;
+  importedCount: number;
+  skippedCount: number;
+  removedCount: number;
+  trackSummaries: Array<{ timelineId: string; total: number; imported: number; skipped: number }>;
+  totalCount: number;
+  generatedAt: string | null;
+}
+
 export interface RecordConnections {
   goals: GoalRecord[];
   plans: ProjectPlanRecord[];
@@ -306,6 +316,21 @@ export async function bootstrapPersonalTimeline(): Promise<{
   );
 }
 
+export async function importGithubTimelineNarrative(input?: {
+  reportPath?: string;
+  report?: unknown;
+  replaceExisting?: boolean;
+  actor?: string;
+}): Promise<GithubTimelineImportResult> {
+  return parse<GithubTimelineImportResult>(
+    await apiFetch('/api/timeline/github/import', {
+      method: 'POST',
+      headers: JSON_HEADERS,
+      body: JSON.stringify(input || {}),
+    })
+  );
+}
+
 export async function createGoal(input: {
   title: string;
   description: string;
@@ -482,4 +507,3 @@ export async function appendTaskExecutionLog(
     })
   );
 }
-

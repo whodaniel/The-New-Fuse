@@ -1,0 +1,32 @@
+name: GitHub History Timeline Sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      replace_existing:
+        description: "Replace previously imported github-history events before import"
+        required: false
+        default: "false"
+  schedule:
+    - cron: "25 5 * * *"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    if: ${{ secrets.TNF_API_URL != '' && secrets.TNF_AUTH_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run timeline import
+        env:
+          TNF_TIMELINE_IMPORT_URL: ${{ secrets.TNF_API_URL }}/api/timeline/github/import
+          TNF_AUTH_TOKEN: ${{ secrets.TNF_AUTH_TOKEN }}
+          GITHUB_HISTORY_NARRATIVE_PATH: ${{ secrets.GITHUB_HISTORY_NARRATIVE_PATH }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.replace_existing }}" = "true" ]; then
+            node scripts/timeline/import-github-history-to-timeline.mjs --replace-existing
+          else
+            node scripts/timeline/import-github-history-to-timeline.mjs
+          fi

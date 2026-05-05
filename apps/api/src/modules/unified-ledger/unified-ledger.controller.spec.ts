@@ -19,6 +19,7 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
     updateTimelineEvent: jest.fn(),
     deleteTimelineEvent: jest.fn(),
     bootstrapPersonalTimeline: jest.fn(),
+    importGithubNarrativeTimeline: jest.fn(),
   } as any;
 
   const controller = new UnifiedLedgerController(ledger);
@@ -198,5 +199,27 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
       UnauthorizedException
     );
     expect(ledger.bootstrapPersonalTimeline).not.toHaveBeenCalled();
+  });
+
+  it('imports GitHub narrative timeline using authenticated user scope', async () => {
+    ledger.importGithubNarrativeTimeline.mockResolvedValue({
+      message: 'Imported 4 events',
+      importedCount: 4,
+      skippedCount: 0,
+      removedCount: 0,
+      trackSummaries: [{ timelineId: 'tnf_platform_evolution', total: 4, imported: 4, skipped: 0 }],
+      totalCount: 17,
+      generatedAt: '2026-05-05T02:23:19.000Z',
+    });
+
+    const body = {
+      reportPath: '/tmp/whodaniel-github-history-narrative.json',
+      replaceExisting: true,
+      actor: 'github-sync-agent',
+    };
+    const result = await controller.importGithubNarrativeTimeline({ id: 'owner-1' }, body);
+
+    expect(result.importedCount).toBe(4);
+    expect(ledger.importGithubNarrativeTimeline).toHaveBeenCalledWith('owner-1', body);
   });
 });

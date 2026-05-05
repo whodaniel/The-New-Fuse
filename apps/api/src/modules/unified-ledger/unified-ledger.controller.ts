@@ -196,6 +196,21 @@ export class UnifiedLedgerController {
     });
   }
 
+  @Post('timeline/github/import')
+  async importGithubNarrativeTimeline(
+    @CurrentUser() user: { id?: string; sub?: string },
+    @Body()
+    body?: {
+      reportPath?: string;
+      report?: unknown;
+      replaceExisting?: boolean;
+      actor?: string;
+    }
+  ) {
+    const userId = this.requireUserId(user);
+    return this.ledger.importGithubNarrativeTimeline(userId, body || {});
+  }
+
   @Post('goals')
   async createGoal(@CurrentUser() user: { id?: string; sub?: string }, @Body() body: any) {
     const userId = this.requireUserId(user);

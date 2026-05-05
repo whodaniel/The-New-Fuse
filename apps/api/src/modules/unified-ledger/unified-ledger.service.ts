@@ -52,6 +52,32 @@ type TimelineAccessDecision = {
   ownerUserId: string | null;
 };
 
+type GithubNarrativeImportInput = {
+  reportPath?: string;
+  report?: unknown;
+  replaceExisting?: boolean;
+  actor?: string;
+};
+
+type GithubNarrativeReport = {
+  generated_at_utc?: string;
+  parallel_timelines?: GithubNarrativeTimeline[];
+  narrative_connections?: Array<Record<string, unknown>>;
+};
+
+type GithubNarrativeTimeline = {
+  timeline_id?: string;
+  description?: string;
+  events?: GithubNarrativeTimelineEvent[];
+};
+
+type GithubNarrativeTimelineEvent = {
+  date?: string;
+  title?: string;
+  track?: string;
+  evidence?: unknown;
+};
+
 @Injectable()
 export class UnifiedLedgerService implements OnModuleInit {
   private readonly logger = new Logger(UnifiedLedgerService.name);
@@ -525,6 +551,154 @@ export class UnifiedLedgerService implements OnModuleInit {
     };
   }
 
+  async importGithubNarrativeTimeline(
+    userId: string,
+    input: GithubNarrativeImportInput = {}
+  ): Promise<{
+    message: string;
+    importedCount: number;
+    skippedCount: number;
+    removedCount: number;
+    trackSummaries: Array<{ timelineId: string; total: number; imported: number; skipped: number }>;
+    totalCount: number;
+    generatedAt: string | null;
+  }> {
+    await this.ensureLoaded();
+
+    const report = await this.loadGithubNarrativeReport(input);
+    const timelines = Array.isArray(report.parallel_timelines) ? report.parallel_timelines : [];
+    const source = 'github-history-import';
+    const actor = (input.actor || '').trim() || userId;
+
+    if (timelines.length === 0) {
+      const currentEvents = await this.listTimelineEvents({ userId });
+      return {
+        message: 'GitHub narrative report has no parallel timelines to import',
+        importedCount: 0,
+        skippedCount: 0,
+        removedCount: 0,
+        trackSummaries: [],
+        totalCount: currentEvents.length,
+        generatedAt: this.normalizeOptionalTimestamp(report.generated_at_utc),
+      };
+    }
+
+    let removedCount = 0;
+    if (input.replaceExisting) {
+      const before = this.store.timelineEvents.length;
+      this.store.timelineEvents = this.store.timelineEvents.filter((event) => {
+        if (event.userId !== userId) return true;
+        const payload = this.safeJsonObject(event.payload);
+        return payload.source !== source;
+      });
+      removedCount = before - this.store.timelineEvents.length;
+    }
+
+    const existingStoryKeys = new Set(
+      this.store.timelineEvents
+        .filter((event) => event.userId === userId)
+        .map((event) => this.safeJsonObject(event.payload))
+        .filter((payload) => payload.source === source)
+        .map((payload) => String(payload.storyKey || '').trim())
+        .filter((storyKey) => storyKey.length > 0)
+    );
+
+    let importedCount = 0;
+    let skippedCount = 0;
+    const trackSummaries: Array<{
+      timelineId: string;
+      total: number;
+      imported: number;
+      skipped: number;
+    }> = [];
+
+    const normalizedGeneratedAt = this.normalizeOptionalTimestamp(report.generated_at_utc);
+
+    for (const timeline of timelines) {
+      const timelineId = this.normalizeTimelineId(timeline?.timeline_id);
+      const timelineDescription =
+        typeof timeline?.description === 'string' ? timeline.description.trim() : '';
+      const events = Array.isArray(timeline?.events) ? timeline.events : [];
+      const total = events.length;
+      let importedForTrack = 0;
+      let skippedForTrack = 0;
+      const denominator = Math.max(1, total - 1);
+
+      for (let index = 0; index < events.length; index += 1) {
+        const event = events[index];
+        const title = (event?.title || '').trim();
+        if (!title) {
+          skippedCount += 1;
+          skippedForTrack += 1;
+          continue;
+        }
+
+        const storyKey = this.buildGithubStoryKey(timelineId, event, index);
+        if (existingStoryKeys.has(storyKey)) {
+          skippedCount += 1;
+          skippedForTrack += 1;
+          continue;
+        }
+
+        const timestamp = this.normalizeGithubEventTimestamp(event?.date, normalizedGeneratedAt);
+        const evidenceRefs = this.extractGithubEvidenceRefs(event?.evidence);
+        const payload = {
+          title,
+          description: timelineDescription,
+          point: Math.round((index / denominator) * 100),
+          category: this.githubTimelineCategory(timelineId),
+          segment: timelineId,
+          timelineTrack: timelineId,
+          timelineCategory: 'github-history',
+          project: this.githubTimelineProject(timelineId),
+          evidenceRefs,
+          sources: evidenceRefs,
+          storyKey,
+          source,
+          confidence: 'hard',
+          isPrivate: true,
+          githubTrack: typeof event?.track === 'string' ? event.track : undefined,
+          githubGeneratedAt: normalizedGeneratedAt,
+          accessScope: 'owner_and_agents',
+        };
+
+        await this.createTimelineEvent({
+          userId,
+          actor,
+          eventType: 'historical_event',
+          timestamp,
+          payload,
+        });
+        existingStoryKeys.add(storyKey);
+        importedCount += 1;
+        importedForTrack += 1;
+      }
+
+      trackSummaries.push({
+        timelineId,
+        total,
+        imported: importedForTrack,
+        skipped: skippedForTrack,
+      });
+    }
+
+    const totalCount = (await this.listTimelineEvents({ userId })).length;
+    await this.persist();
+
+    return {
+      message:
+        importedCount > 0
+          ? `Imported ${importedCount} GitHub timeline events across ${trackSummaries.length} tracks`
+          : 'No new GitHub timeline events were imported',
+      importedCount,
+      skippedCount,
+      removedCount,
+      trackSummaries,
+      totalCount,
+      generatedAt: normalizedGeneratedAt,
+    };
+  }
+
   async updateTimelineEvent(
     id: string,
     patch: {
@@ -991,6 +1165,169 @@ export class UnifiedLedgerService implements OnModuleInit {
     if (track === 'media_empire_strategy') return 'Business & Projects';
     if (track === 'new_fuse_novel_development') return 'Creativity';
     return 'Identity';
+  }
+
+  private async loadGithubNarrativeReport(input: GithubNarrativeImportInput): Promise<GithubNarrativeReport> {
+    if (input.report && typeof input.report === 'object') {
+      return input.report as GithubNarrativeReport;
+    }
+
+    const reportPath = await this.resolveGithubNarrativePath(input.reportPath);
+    const raw = await fs.readFile(reportPath, 'utf8');
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== 'object') {
+      throw new Error(`Invalid GitHub narrative payload from ${reportPath}`);
+    }
+    return parsed as GithubNarrativeReport;
+  }
+
+  private async resolveGithubNarrativePath(explicitPath?: string): Promise<string> {
+    const candidateSet = new Set<string>();
+    const push = (value?: string) => {
+      if (!value) return;
+      const trimmed = value.trim();
+      if (!trimmed) return;
+      candidateSet.add(path.resolve(trimmed));
+    };
+
+    push(explicitPath);
+    push(process.env.GITHUB_HISTORY_NARRATIVE_PATH);
+    push(path.join(process.cwd(), 'github-history', 'whodaniel-github-history-narrative.json'));
+    push(path.join(process.cwd(), '..', 'github-history', 'whodaniel-github-history-narrative.json'));
+    push(path.join(process.cwd(), '..', '..', 'github-history', 'whodaniel-github-history-narrative.json'));
+    if (process.env.HOME) {
+      push(path.join(process.env.HOME, 'github-history', 'whodaniel-github-history-narrative.json'));
+    }
+
+    for (const candidate of candidateSet) {
+      try {
+        await fs.access(candidate);
+        return candidate;
+      } catch {
+        continue;
+      }
+    }
+
+    throw new Error(
+      'GitHub narrative report not found. Provide report in body or set GITHUB_HISTORY_NARRATIVE_PATH.'
+    );
+  }
+
+  private normalizeTimelineId(input?: string): string {
+    const raw = (input || '').trim();
+    if (!raw) return 'github_history';
+    return raw
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '') || 'github_history';
+  }
+
+  private normalizeOptionalTimestamp(input?: string): string | null {
+    if (!input) return null;
+    try {
+      return this.normalizeTimestamp(input);
+    } catch {
+      return null;
+    }
+  }
+
+  private normalizeGithubEventTimestamp(dateValue?: string, fallback?: string | null): string {
+    if (dateValue && /^\d{4}-\d{2}-\d{2}$/.test(dateValue.trim())) {
+      return `${dateValue.trim()}T00:00:00.000Z`;
+    }
+    if (dateValue) {
+      return this.normalizeTimestamp(dateValue);
+    }
+    if (fallback) {
+      return fallback;
+    }
+    return new Date().toISOString();
+  }
+
+  private buildGithubStoryKey(
+    timelineId: string,
+    event: GithubNarrativeTimelineEvent | undefined,
+    index: number
+  ): string {
+    const rawDate = (event?.date || '').trim() || 'unknown-date';
+    const rawTitle = (event?.title || '').trim() || `event-${index + 1}`;
+    const slug = rawTitle
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80);
+    return `github-history:${timelineId}:${rawDate}:${slug || `event-${index + 1}`}`;
+  }
+
+  private extractGithubEvidenceRefs(evidence: unknown): string[] {
+    if (!evidence) return [];
+    const refs = new Set<string>();
+
+    const add = (value: unknown) => {
+      if (typeof value !== 'string') return;
+      const trimmed = value.trim();
+      if (!trimmed) return;
+      refs.add(trimmed);
+    };
+
+    if (typeof evidence === 'string') {
+      add(evidence);
+      return Array.from(refs);
+    }
+
+    if (Array.isArray(evidence)) {
+      for (const item of evidence) {
+        add(item);
+      }
+      return Array.from(refs);
+    }
+
+    if (typeof evidence === 'object') {
+      const payload = evidence as Record<string, unknown>;
+      add(payload.url);
+      add(payload.type ? `github:${String(payload.type)}` : undefined);
+      if (typeof payload.repo === 'string') {
+        const repo = payload.repo.trim();
+        if (repo) {
+          if (/^[a-z0-9_.-]+\/[a-z0-9_.-]+$/i.test(repo)) {
+            refs.add(`https://github.com/${repo}`);
+          } else {
+            refs.add(repo);
+          }
+        }
+      }
+      if (typeof payload.title === 'string' && payload.title.trim()) {
+        refs.add(`github:title:${payload.title.trim()}`);
+      }
+    }
+
+    return Array.from(refs);
+  }
+
+  private githubTimelineCategory(timelineId: string): string {
+    if (timelineId.includes('tnf') || timelineId.includes('platform')) {
+      return 'Business & Projects';
+    }
+    if (timelineId.includes('knowledge') || timelineId.includes('library')) {
+      return 'Legacy';
+    }
+    if (timelineId.includes('media') || timelineId.includes('interactive')) {
+      return 'Creativity';
+    }
+    return 'Business & Projects';
+  }
+
+  private githubTimelineProject(timelineId: string): string {
+    if (timelineId.includes('tnf') || timelineId.includes('platform')) {
+      return 'The New Fuse Platform';
+    }
+    if (timelineId.includes('knowledge') || timelineId.includes('library')) {
+      return "Daniel Who's Media Empire";
+    }
+    if (timelineId.includes('media') || timelineId.includes('interactive')) {
+      return 'The New Fuse (Novel)';
+    }
+    return 'The New Fuse Platform';
   }
 
   private safeJsonObject(input: unknown): Record<string, unknown> {

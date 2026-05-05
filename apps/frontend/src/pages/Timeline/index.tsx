@@ -4,6 +4,7 @@ import {
   bootstrapPersonalTimeline,
   createTimelineEvent,
   deleteTimelineEvent,
+  importGithubTimelineNarrative,
   listTimelineEvents,
   updateTimelineEvent,
   type TimelineEvent,
@@ -118,6 +119,7 @@ export default function TimelinePage() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [bootstrapping, setBootstrapping] = useState(false);
+  const [syncingGithub, setSyncingGithub] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
@@ -382,6 +384,32 @@ export default function TimelinePage() {
     }
   };
 
+  const syncGithubHistory = async () => {
+    if (!userId) {
+      toast.error('Please sign in to sync GitHub timeline history');
+      return;
+    }
+    if (isDelegatedView) {
+      toast.error('Delegated timeline view is read-only');
+      return;
+    }
+
+    setSyncingGithub(true);
+    try {
+      const result = await importGithubTimelineNarrative({});
+      await load();
+      toast.success(
+        result.importedCount > 0
+          ? `Imported ${result.importedCount} GitHub timeline events`
+          : 'GitHub timeline is already up to date'
+      );
+    } catch {
+      toast.error('Failed to sync GitHub timeline history');
+    } finally {
+      setSyncingGithub(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100 p-4 lg:p-10">
       <div className="max-w-7xl mx-auto space-y-8">
@@ -401,6 +429,15 @@ export default function TimelinePage() {
             ) : null}
           </div>
           <div className="flex flex-wrap gap-2">
+            <Button
+              onClick={syncGithubHistory}
+              disabled={syncingGithub || saving || bootstrapping || !userId || isDelegatedView}
+              variant="outline"
+              className="border-sky-500/60 text-sky-300 hover:bg-sky-500/10"
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${syncingGithub ? 'animate-spin' : ''}`} />
+              {syncingGithub ? 'Syncing GitHub...' : 'Sync GitHub History'}
+            </Button>
             <Button
               onClick={() => runBootstrap(false)}
               disabled={bootstrapping || saving || !userId || isDelegatedView}

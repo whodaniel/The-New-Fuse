@@ -392,4 +392,84 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
     delete process.env.UNIFIED_LEDGER_STORE_PATH;
     await fs.rm(tmpStorePath, { force: true });
   });
+
+  it('imports GitHub narrative events idempotently for owner-scoped timeline tracks', async () => {
+    const tmpStorePath = path.join(
+      '/tmp',
+      `tnf-unified-ledger-github-import-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`
+    );
+    process.env.UNIFIED_LEDGER_STORE_PATH = tmpStorePath;
+
+    const service = new UnifiedLedgerService();
+    await service.onModuleInit();
+
+    const report = {
+      generated_at_utc: '2026-05-05T02:23:19Z',
+      parallel_timelines: [
+        {
+          timeline_id: 'tnf_platform_evolution',
+          description: 'Core TNF/Fuse architecture evolution.',
+          events: [
+            {
+              date: '2025-01-17',
+              title: 'The-New-Fuse initial repo appears',
+              track: 'tnf-core',
+              evidence: { type: 'repo_created', repo: 'whodaniel/The-New-Fuse' },
+            },
+            {
+              date: '2025-04-11',
+              title: 'Fuse core repo begins',
+              track: 'tnf-core',
+              evidence: { type: 'repo_created', repo: 'whodaniel/fuse' },
+            },
+          ],
+        },
+      ],
+      narrative_connections: [
+        {
+          from: 'whodaniel/The-New-Fuse',
+          to: 'whodaniel/fuse',
+          connection_type: 'architectural_refinement',
+        },
+      ],
+    };
+
+    const first = await service.importGithubNarrativeTimeline('owner-user', { report });
+    expect(first.importedCount).toBe(2);
+    expect(first.skippedCount).toBe(0);
+    expect(first.trackSummaries[0]?.timelineId).toBe('tnf_platform_evolution');
+
+    const second = await service.importGithubNarrativeTimeline('owner-user', { report });
+    expect(second.importedCount).toBe(0);
+    expect(second.skippedCount).toBe(2);
+
+    const otherUserImport = await service.importGithubNarrativeTimeline('other-user', { report });
+    expect(otherUserImport.importedCount).toBe(2);
+
+    const ownerEvents = await service.listTimelineEvents({ userId: 'owner-user' });
+    const otherEvents = await service.listTimelineEvents({ userId: 'other-user' });
+    const ownerImported = ownerEvents.filter((event) => {
+      const payload = event.payload as Record<string, unknown>;
+      return payload.source === 'github-history-import';
+    });
+    const otherImported = otherEvents.filter((event) => {
+      const payload = event.payload as Record<string, unknown>;
+      return payload.source === 'github-history-import';
+    });
+
+    expect(ownerImported).toHaveLength(2);
+    expect(otherImported).toHaveLength(2);
+    expect(ownerImported.every((event) => event.userId === 'owner-user')).toBe(true);
+    expect(otherImported.every((event) => event.userId === 'other-user')).toBe(true);
+
+    const replaced = await service.importGithubNarrativeTimeline('owner-user', {
+      report,
+      replaceExisting: true,
+    });
+    expect(replaced.removedCount).toBe(2);
+    expect(replaced.importedCount).toBe(2);
+
+    delete process.env.UNIFIED_LEDGER_STORE_PATH;
+    await fs.rm(tmpStorePath, { force: true });
+  });
 });
