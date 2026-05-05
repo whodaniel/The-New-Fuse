@@ -393,6 +393,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
       '/visualizations/terminals',
       '/terminals',
       '/product-map',
+      '/codebase-map',
       '/capabilities',
       '/design-system',
       '/app.html',

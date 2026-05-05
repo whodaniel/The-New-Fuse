@@ -63,6 +63,7 @@ const FUNCTIONAL_PATHS = [
   '/timeline',
   '/analytics',
   '/onboarding',
+  '/codebase-map',
   '/app',
   '/app.html',
 ];
