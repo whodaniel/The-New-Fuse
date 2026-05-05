@@ -13,12 +13,20 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    if: ${{ secrets.TNF_API_URL != '' && secrets.TNF_AUTH_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - name: Validate required secrets
+        env:
+          TNF_API_URL: ${{ secrets.TNF_API_URL }}
+          TNF_AUTH_TOKEN: ${{ secrets.TNF_AUTH_TOKEN }}
+        run: |
+          if [ -z "$TNF_API_URL" ] || [ -z "$TNF_AUTH_TOKEN" ]; then
+            echo "Missing required secrets TNF_API_URL or TNF_AUTH_TOKEN."
+            exit 1
+          fi
       - name: Run timeline import
         env:
           TNF_TIMELINE_IMPORT_URL: ${{ secrets.TNF_API_URL }}/api/timeline/github/import
