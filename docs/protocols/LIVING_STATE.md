@@ -26,6 +26,8 @@
 15. [✅] SAAS Frontend Deployment: Dashboard and Maps live on Cloudflare.
 16. [✅] Forge Lane Discovery: Native hardware tools (`iphone_touch_send`) and 78+ system scripts promoted to TNF repo.
 17. [✅] Environmental Cleanup: Home directory consolidated; 1.7GB additional space freed.
+18. [✅] Persistent Agent Relay: Deployed to `agent-communication/relay` via `scripts/automation/tnf_agent_relay_builder.applescript`.
+19. [✅] Codebase Map Super Cycle: Deep Agent/Protocol integration, UI Auth locks, and Turn Zero ingestion via `/codebase-map`.
 
 ---
 

@@ -24,7 +24,9 @@ import {
   Info, 
   X,
   Map as MapIcon,
-  Activity
+  Activity,
+  Lock,
+  Unlock
 } from 'lucide-react';
 
 // Dagre layouting engine
@@ -78,7 +80,10 @@ const CustomNode = ({ data, selected }: any) => {
           <div className="opacity-70">{config.icon}</div>
           <span className="font-black text-xs truncate uppercase tracking-tight">{data.label}</span>
         </div>
-        {isExpandable && <ChevronRight className="w-4 h-4 opacity-50 shrink-0" />}
+        <div className="flex items-center gap-2">
+          {data.authRequired && <Lock className="w-3 h-3 text-red-400" />}
+          {isExpandable && <ChevronRight className="w-4 h-4 opacity-50 shrink-0" />}
+        </div>
       </div>
       <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between">
         <span className="text-[9px] uppercase font-black tracking-widest opacity-60">{data.kind}</span>
