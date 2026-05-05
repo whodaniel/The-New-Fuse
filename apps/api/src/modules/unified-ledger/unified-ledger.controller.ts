@@ -211,6 +211,21 @@ export class UnifiedLedgerController {
     return this.ledger.importGithubNarrativeTimeline(userId, body || {});
   }
 
+  @Get('timeline/github/graph')
+  async githubNarrativeGraph(
+    @CurrentUser() user: { id?: string; sub?: string },
+    @Query('ownerId') ownerId?: string,
+    @Query('timelineTrack') timelineTrack?: string
+  ) {
+    const userId = this.requireUserId(user);
+    const scopedOwnerId = typeof ownerId === 'string' && ownerId.trim().length > 0 ? ownerId.trim() : userId;
+    return this.ledger.getGithubNarrativeGraph({
+      userId: scopedOwnerId,
+      viewerUserId: userId,
+      timelineTrack,
+    });
+  }
+
   @Post('goals')
   async createGoal(@CurrentUser() user: { id?: string; sub?: string }, @Body() body: any) {
     const userId = this.requireUserId(user);

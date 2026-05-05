@@ -63,6 +63,7 @@ type GithubNarrativeReport = {
   generated_at_utc?: string;
   parallel_timelines?: GithubNarrativeTimeline[];
   narrative_connections?: Array<Record<string, unknown>>;
+  connection_edges?: Array<Record<string, unknown>>;
 };
 
 type GithubNarrativeTimeline = {
@@ -76,6 +77,15 @@ type GithubNarrativeTimelineEvent = {
   title?: string;
   track?: string;
   evidence?: unknown;
+};
+
+type NormalizedGithubNarrativeConnection = {
+  from: string;
+  to: string;
+  connectionType: string;
+  rationale?: string;
+  evidenceRefs: string[];
+  strength: string;
 };
 
 @Injectable()
@@ -560,6 +570,8 @@ export class UnifiedLedgerService implements OnModuleInit {
     skippedCount: number;
     removedCount: number;
     trackSummaries: Array<{ timelineId: string; total: number; imported: number; skipped: number }>;
+    connectionCount: number;
+    matchedConnectionCount: number;
     totalCount: number;
     generatedAt: string | null;
   }> {
@@ -567,6 +579,8 @@ export class UnifiedLedgerService implements OnModuleInit {
 
     const report = await this.loadGithubNarrativeReport(input);
     const timelines = Array.isArray(report.parallel_timelines) ? report.parallel_timelines : [];
+    const normalizedConnections = this.normalizeGithubNarrativeConnections(report);
+    const connectionIndex = this.buildGithubConnectionIndex(normalizedConnections);
     const source = 'github-history-import';
     const actor = (input.actor || '').trim() || userId;
 
@@ -578,6 +592,8 @@ export class UnifiedLedgerService implements OnModuleInit {
         skippedCount: 0,
         removedCount: 0,
         trackSummaries: [],
+        connectionCount: normalizedConnections.length,
+        matchedConnectionCount: 0,
         totalCount: currentEvents.length,
         generatedAt: this.normalizeOptionalTimestamp(report.generated_at_utc),
       };
@@ -605,6 +621,7 @@ export class UnifiedLedgerService implements OnModuleInit {
 
     let importedCount = 0;
     let skippedCount = 0;
+    let matchedConnectionCount = 0;
     const trackSummaries: Array<{
       timelineId: string;
       total: number;
@@ -642,6 +659,9 @@ export class UnifiedLedgerService implements OnModuleInit {
 
         const timestamp = this.normalizeGithubEventTimestamp(event?.date, normalizedGeneratedAt);
         const evidenceRefs = this.extractGithubEvidenceRefs(event?.evidence);
+        const narrativeNodeRefs = this.extractGithubNodeRefs(event, evidenceRefs);
+        const narrativeConnections = this.matchGithubConnections(narrativeNodeRefs, connectionIndex);
+        matchedConnectionCount += narrativeConnections.length;
         const payload = {
           title,
           description: timelineDescription,
@@ -657,6 +677,11 @@ export class UnifiedLedgerService implements OnModuleInit {
           source,
           confidence: 'hard',
           isPrivate: true,
+          narrativeNodeRefs,
+          narrativeConnections,
+          narrativeConnectionRefs: narrativeConnections.map(
+            (connection) => `${connection.from}->${connection.to}#${connection.connectionType}`
+          ),
           githubTrack: typeof event?.track === 'string' ? event.track : undefined,
           githubGeneratedAt: normalizedGeneratedAt,
           accessScope: 'owner_and_agents',
@@ -694,8 +719,190 @@ export class UnifiedLedgerService implements OnModuleInit {
       skippedCount,
       removedCount,
       trackSummaries,
+      connectionCount: normalizedConnections.length,
+      matchedConnectionCount,
       totalCount,
       generatedAt: normalizedGeneratedAt,
+    };
+  }
+
+  async getGithubNarrativeGraph(params?: {
+    userId?: string;
+    viewerUserId?: string;
+    timelineTrack?: string;
+  }): Promise<{
+    ownerUserId: string | null;
+    eventCount: number;
+    nodeCount: number;
+    edgeCount: number;
+    generatedAt: string | null;
+    nodes: Array<{
+      id: string;
+      label: string;
+      kind: 'repo' | 'reference';
+      tracks: string[];
+      projects: string[];
+      eventCount: number;
+    }>;
+    edges: Array<{
+      from: string;
+      to: string;
+      connectionType: string;
+      weight: number;
+      rationale?: string;
+      strength: string;
+    }>;
+  }> {
+    await this.ensureLoaded();
+
+    const viewerUserId = params?.viewerUserId || params?.userId || null;
+    const ownerUserId = params?.userId || viewerUserId;
+    const access = await this.resolveTimelineAccess(viewerUserId, ownerUserId);
+    if (!access.allowed || !access.ownerUserId) {
+      return {
+        ownerUserId: null,
+        eventCount: 0,
+        nodeCount: 0,
+        edgeCount: 0,
+        generatedAt: null,
+        nodes: [],
+        edges: [],
+      };
+    }
+
+    const events = this.store.timelineEvents
+      .filter((event) => event.userId === access.ownerUserId)
+      .filter((event) => {
+        const payload = this.safeJsonObject(event.payload);
+        return payload.source === 'github-history-import';
+      })
+      .filter((event) => {
+        if (!params?.timelineTrack) return true;
+        const payload = this.safeJsonObject(event.payload);
+        const track = String(payload.timelineTrack || payload.segment || '').toLowerCase();
+        return track === params.timelineTrack.toLowerCase();
+      });
+
+    const nodeMap = new Map<
+      string,
+      {
+        id: string;
+        label: string;
+        kind: 'repo' | 'reference';
+        tracks: Set<string>;
+        projects: Set<string>;
+        eventIds: Set<string>;
+      }
+    >();
+    const edgeMap = new Map<
+      string,
+      {
+        from: string;
+        to: string;
+        connectionType: string;
+        weight: number;
+        rationale?: string;
+        strength: string;
+      }
+    >();
+    let generatedAt: string | null = null;
+
+    const ensureNode = (nodeId: string, track?: string, project?: string, eventId?: string) => {
+      const existing = nodeMap.get(nodeId);
+      const kind = /^[a-z0-9_.-]+\/[a-z0-9_.-]+$/i.test(nodeId) ? 'repo' : 'reference';
+      if (existing) {
+        if (track) existing.tracks.add(track);
+        if (project) existing.projects.add(project);
+        if (eventId) existing.eventIds.add(eventId);
+        return;
+      }
+      nodeMap.set(nodeId, {
+        id: nodeId,
+        label: nodeId,
+        kind,
+        tracks: new Set(track ? [track] : []),
+        projects: new Set(project ? [project] : []),
+        eventIds: new Set(eventId ? [eventId] : []),
+      });
+    };
+
+    for (const event of events) {
+      const payload = this.safeJsonObject(event.payload);
+      const track = typeof payload.timelineTrack === 'string' ? payload.timelineTrack : undefined;
+      const project = typeof payload.project === 'string' ? payload.project : undefined;
+      const eventGeneratedAt =
+        typeof payload.githubGeneratedAt === 'string'
+          ? this.normalizeOptionalTimestamp(payload.githubGeneratedAt)
+          : null;
+      if (eventGeneratedAt && (!generatedAt || eventGeneratedAt > generatedAt)) {
+        generatedAt = eventGeneratedAt;
+      }
+
+      const evidenceRefs = this.safeJsonStringArray(payload.evidenceRefs);
+      const nodeRefs = Array.from(
+        new Set([
+          ...this.safeJsonStringArray(payload.narrativeNodeRefs).map((value) =>
+            this.normalizeGithubNodeId(value)
+          ),
+          ...evidenceRefs.map((value) => this.normalizeGithubNodeId(value)),
+        ])
+      ).filter((value): value is string => typeof value === 'string' && value.length > 0);
+
+      for (const nodeRef of nodeRefs) {
+        ensureNode(nodeRef, track, project, event.id);
+      }
+
+      const rawConnections = Array.isArray(payload.narrativeConnections)
+        ? payload.narrativeConnections
+        : [];
+      const parsedConnections = rawConnections
+        .map((value) => this.normalizeGithubNarrativeConnection(value))
+        .filter((value): value is NormalizedGithubNarrativeConnection => value !== null);
+
+      for (const connection of parsedConnections) {
+        ensureNode(connection.from, track, project, event.id);
+        ensureNode(connection.to, track, project, event.id);
+        const edgeKey = `${connection.from}|${connection.to}|${connection.connectionType}`;
+        const existing = edgeMap.get(edgeKey);
+        if (existing) {
+          existing.weight += 1;
+          if (!existing.rationale && connection.rationale) {
+            existing.rationale = connection.rationale;
+          }
+        } else {
+          edgeMap.set(edgeKey, {
+            from: connection.from,
+            to: connection.to,
+            connectionType: connection.connectionType,
+            weight: 1,
+            rationale: connection.rationale,
+            strength: connection.strength,
+          });
+        }
+      }
+    }
+
+    return {
+      ownerUserId: access.ownerUserId,
+      eventCount: events.length,
+      nodeCount: nodeMap.size,
+      edgeCount: edgeMap.size,
+      generatedAt,
+      nodes: Array.from(nodeMap.values())
+        .map((node) => ({
+          id: node.id,
+          label: node.label,
+          kind: node.kind,
+          tracks: Array.from(node.tracks).sort(),
+          projects: Array.from(node.projects).sort(),
+          eventCount: node.eventIds.size,
+        }))
+        .sort((a, b) => a.id.localeCompare(b.id)),
+      edges: Array.from(edgeMap.values()).sort((a, b) => {
+        if (a.from !== b.from) return a.from.localeCompare(b.from);
+        if (a.to !== b.to) return a.to.localeCompare(b.to);
+        return a.connectionType.localeCompare(b.connectionType);
+      }),
     };
   }
 
@@ -1302,6 +1509,134 @@ export class UnifiedLedgerService implements OnModuleInit {
     }
 
     return Array.from(refs);
+  }
+
+  private normalizeGithubNarrativeConnections(
+    report: GithubNarrativeReport
+  ): NormalizedGithubNarrativeConnection[] {
+    const fromNarrative = Array.isArray(report.narrative_connections)
+      ? report.narrative_connections
+      : [];
+    const fromConnectionEdges = Array.isArray(report.connection_edges) ? report.connection_edges : [];
+    const combined = [...fromNarrative, ...fromConnectionEdges];
+    const deduped = new Map<string, NormalizedGithubNarrativeConnection>();
+
+    for (const candidate of combined) {
+      const normalized = this.normalizeGithubNarrativeConnection(candidate);
+      if (!normalized) continue;
+      const key = `${normalized.from}|${normalized.to}|${normalized.connectionType}`;
+      if (!deduped.has(key)) {
+        deduped.set(key, normalized);
+      }
+    }
+
+    return Array.from(deduped.values());
+  }
+
+  private normalizeGithubNarrativeConnection(
+    candidate: unknown
+  ): NormalizedGithubNarrativeConnection | null {
+    if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) {
+      return null;
+    }
+    const payload = candidate as Record<string, unknown>;
+    const from = this.normalizeGithubNodeId(payload.from);
+    const to = this.normalizeGithubNodeId(payload.to);
+    if (!from || !to) return null;
+
+    const connectionType = String(payload.connection_type || payload.connectionType || payload.type || 'related')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+    const rationale =
+      typeof payload.rationale === 'string' && payload.rationale.trim().length > 0
+        ? payload.rationale.trim()
+        : undefined;
+    const strength =
+      typeof payload.strength === 'string' && payload.strength.trim().length > 0
+        ? payload.strength.trim().toLowerCase()
+        : 'medium';
+    const evidenceRefs = [
+      ...this.extractGithubEvidenceRefs(payload.evidence_refs),
+      ...this.extractGithubEvidenceRefs(payload.evidence),
+    ];
+
+    return {
+      from,
+      to,
+      connectionType: connectionType || 'related',
+      rationale,
+      evidenceRefs,
+      strength,
+    };
+  }
+
+  private buildGithubConnectionIndex(
+    connections: NormalizedGithubNarrativeConnection[]
+  ): Map<string, NormalizedGithubNarrativeConnection[]> {
+    const index = new Map<string, NormalizedGithubNarrativeConnection[]>();
+    for (const connection of connections) {
+      const push = (nodeId: string) => {
+        const current = index.get(nodeId) || [];
+        current.push(connection);
+        index.set(nodeId, current);
+      };
+      push(connection.from);
+      push(connection.to);
+    }
+    return index;
+  }
+
+  private extractGithubNodeRefs(
+    event: GithubNarrativeTimelineEvent | undefined,
+    evidenceRefs: string[]
+  ): string[] {
+    const refs = new Set<string>();
+    const add = (value: unknown) => {
+      const normalized = this.normalizeGithubNodeId(value);
+      if (normalized) refs.add(normalized);
+    };
+
+    add((event?.evidence as Record<string, unknown> | undefined)?.repo);
+    add((event?.evidence as Record<string, unknown> | undefined)?.url);
+    for (const ref of evidenceRefs) {
+      add(ref);
+    }
+    return Array.from(refs);
+  }
+
+  private matchGithubConnections(
+    nodeRefs: string[],
+    index: Map<string, NormalizedGithubNarrativeConnection[]>
+  ): NormalizedGithubNarrativeConnection[] {
+    if (!nodeRefs.length) return [];
+    const found = new Map<string, NormalizedGithubNarrativeConnection>();
+    for (const nodeRef of nodeRefs) {
+      const candidates = index.get(nodeRef) || [];
+      for (const candidate of candidates) {
+        const key = `${candidate.from}|${candidate.to}|${candidate.connectionType}`;
+        found.set(key, candidate);
+      }
+    }
+    return Array.from(found.values());
+  }
+
+  private normalizeGithubNodeId(input: unknown): string | null {
+    if (typeof input !== 'string') return null;
+    const trimmed = input.trim();
+    if (!trimmed) return null;
+
+    const repoUrlMatch = trimmed.match(/^https?:\/\/github\.com\/([^/\s]+\/[^/\s#?]+)/i);
+    if (repoUrlMatch) {
+      return repoUrlMatch[1].replace(/\.git$/i, '');
+    }
+
+    if (/^[a-z0-9_.-]+\/[a-z0-9_.-]+$/i.test(trimmed)) {
+      return trimmed;
+    }
+
+    return null;
   }
 
   private githubTimelineCategory(timelineId: string): string {

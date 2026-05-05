@@ -438,6 +438,8 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
     expect(first.importedCount).toBe(2);
     expect(first.skippedCount).toBe(0);
     expect(first.trackSummaries[0]?.timelineId).toBe('tnf_platform_evolution');
+    expect(first.connectionCount).toBe(1);
+    expect(first.matchedConnectionCount).toBe(2);
 
     const second = await service.importGithubNarrativeTimeline('owner-user', { report });
     expect(second.importedCount).toBe(0);
@@ -461,6 +463,11 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
     expect(otherImported).toHaveLength(2);
     expect(ownerImported.every((event) => event.userId === 'owner-user')).toBe(true);
     expect(otherImported.every((event) => event.userId === 'other-user')).toBe(true);
+    const ownerConnectionPayloads = ownerImported
+      .map((event) => event.payload as Record<string, unknown>)
+      .map((payload) => payload.narrativeConnections)
+      .filter((value) => Array.isArray(value));
+    expect(ownerConnectionPayloads.length).toBeGreaterThan(0);
 
     const replaced = await service.importGithubNarrativeTimeline('owner-user', {
       report,
@@ -468,6 +475,73 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
     });
     expect(replaced.removedCount).toBe(2);
     expect(replaced.importedCount).toBe(2);
+    expect(replaced.connectionCount).toBe(1);
+
+    delete process.env.UNIFIED_LEDGER_STORE_PATH;
+    await fs.rm(tmpStorePath, { force: true });
+  });
+
+  it('builds github narrative graph from imported owner-scoped events', async () => {
+    const tmpStorePath = path.join(
+      '/tmp',
+      `tnf-unified-ledger-github-graph-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`
+    );
+    process.env.UNIFIED_LEDGER_STORE_PATH = tmpStorePath;
+
+    const service = new UnifiedLedgerService();
+    await service.onModuleInit();
+
+    const report = {
+      generated_at_utc: '2026-05-05T02:23:19Z',
+      parallel_timelines: [
+        {
+          timeline_id: 'tnf_platform_evolution',
+          description: 'Core TNF/Fuse architecture evolution.',
+          events: [
+            {
+              date: '2025-01-17',
+              title: 'The-New-Fuse initial repo appears',
+              track: 'tnf-core',
+              evidence: { type: 'repo_created', repo: 'whodaniel/The-New-Fuse' },
+            },
+            {
+              date: '2025-04-11',
+              title: 'Fuse core repo begins',
+              track: 'tnf-core',
+              evidence: { type: 'repo_created', repo: 'whodaniel/fuse' },
+            },
+          ],
+        },
+      ],
+      narrative_connections: [
+        {
+          from: 'whodaniel/The-New-Fuse',
+          to: 'whodaniel/fuse',
+          connection_type: 'architectural_refinement',
+          rationale: 'lineage',
+        },
+      ],
+    };
+
+    await service.importGithubNarrativeTimeline('owner-user', { report });
+    const graph = await service.getGithubNarrativeGraph({
+      userId: 'owner-user',
+      viewerUserId: 'owner-user',
+    });
+
+    expect(graph.eventCount).toBe(2);
+    expect(graph.nodeCount).toBeGreaterThanOrEqual(2);
+    expect(graph.edgeCount).toBeGreaterThanOrEqual(1);
+    expect(graph.edges.some((edge) => edge.connectionType === 'architectural_refinement')).toBe(
+      true
+    );
+
+    const denied = await service.getGithubNarrativeGraph({
+      userId: 'owner-user',
+      viewerUserId: 'other-user',
+    });
+    expect(denied.eventCount).toBe(0);
+    expect(denied.edgeCount).toBe(0);
 
     delete process.env.UNIFIED_LEDGER_STORE_PATH;
     await fs.rm(tmpStorePath, { force: true });

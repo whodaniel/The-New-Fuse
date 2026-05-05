@@ -119,6 +119,8 @@
     "tnf:journey:extract": "node scripts/timeline/extract-development-journey-evidence.mjs",
     "tnf:journey:extract:local": "node scripts/timeline/extract-development-journey-evidence.mjs --include-default-local-roots --include-project-roots",
     "tnf:journey:extract:all": "node scripts/timeline/extract-development-journey-evidence.mjs --include-default-local-roots --include-project-roots --include-code-artifacts --include-media-artifacts",
+    "tnf:timeline:github:generate": "node scripts/timeline/generate-github-history-narrative.mjs",
+    "tnf:timeline:github:sync": "node scripts/timeline/import-github-history-to-timeline.mjs --use-home-default",
     "tnf:journey:program:init": "node scripts/timeline/personal-archaeology-orchestrator.mjs init",
     "tnf:journey:program:pulse": "node scripts/timeline/personal-archaeology-orchestrator.mjs pulse",
     "tnf:journey:program:master-loop": "node scripts/timeline/personal-archaeology-orchestrator.mjs master-loop",

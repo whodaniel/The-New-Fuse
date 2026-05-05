@@ -91,8 +91,38 @@ export interface GithubTimelineImportResult {
   skippedCount: number;
   removedCount: number;
   trackSummaries: Array<{ timelineId: string; total: number; imported: number; skipped: number }>;
+  connectionCount: number;
+  matchedConnectionCount: number;
   totalCount: number;
   generatedAt: string | null;
+}
+
+export interface GithubNarrativeGraphNode {
+  id: string;
+  label: string;
+  kind: 'repo' | 'reference';
+  tracks: string[];
+  projects: string[];
+  eventCount: number;
+}
+
+export interface GithubNarrativeGraphEdge {
+  from: string;
+  to: string;
+  connectionType: string;
+  weight: number;
+  rationale?: string;
+  strength: string;
+}
+
+export interface GithubNarrativeGraphResult {
+  ownerUserId: string | null;
+  eventCount: number;
+  nodeCount: number;
+  edgeCount: number;
+  generatedAt: string | null;
+  nodes: GithubNarrativeGraphNode[];
+  edges: GithubNarrativeGraphEdge[];
 }
 
 export interface RecordConnections {
@@ -329,6 +359,17 @@ export async function importGithubTimelineNarrative(input?: {
       body: JSON.stringify(input || {}),
     })
   );
+}
+
+export async function getGithubNarrativeGraph(params?: {
+  ownerId?: string;
+  timelineTrack?: string;
+}): Promise<GithubNarrativeGraphResult> {
+  const search = new URLSearchParams();
+  if (params?.ownerId) search.set('ownerId', params.ownerId);
+  if (params?.timelineTrack) search.set('timelineTrack', params.timelineTrack);
+  const suffix = search.toString() ? `?${search.toString()}` : '';
+  return parse<GithubNarrativeGraphResult>(await apiFetch(`/api/timeline/github/graph${suffix}`));
 }
 
 export async function createGoal(input: {

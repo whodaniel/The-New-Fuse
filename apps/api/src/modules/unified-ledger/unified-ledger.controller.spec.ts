@@ -20,6 +20,7 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
     deleteTimelineEvent: jest.fn(),
     bootstrapPersonalTimeline: jest.fn(),
     importGithubNarrativeTimeline: jest.fn(),
+    getGithubNarrativeGraph: jest.fn(),
   } as any;
 
   const controller = new UnifiedLedgerController(ledger);
@@ -208,6 +209,8 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
       skippedCount: 0,
       removedCount: 0,
       trackSummaries: [{ timelineId: 'tnf_platform_evolution', total: 4, imported: 4, skipped: 0 }],
+      connectionCount: 2,
+      matchedConnectionCount: 4,
       totalCount: 17,
       generatedAt: '2026-05-05T02:23:19.000Z',
     });
@@ -221,5 +224,30 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
 
     expect(result.importedCount).toBe(4);
     expect(ledger.importGithubNarrativeTimeline).toHaveBeenCalledWith('owner-1', body);
+  });
+
+  it('returns github narrative graph scoped to authenticated user and optional owner view', async () => {
+    ledger.getGithubNarrativeGraph.mockResolvedValue({
+      ownerUserId: 'owner-graph',
+      eventCount: 12,
+      nodeCount: 6,
+      edgeCount: 5,
+      generatedAt: '2026-05-05T02:23:19.000Z',
+      nodes: [],
+      edges: [],
+    });
+
+    const result = await controller.githubNarrativeGraph(
+      { id: 'viewer-1' },
+      'owner-graph',
+      'tnf_platform_evolution'
+    );
+
+    expect(result.edgeCount).toBe(5);
+    expect(ledger.getGithubNarrativeGraph).toHaveBeenCalledWith({
+      userId: 'owner-graph',
+      viewerUserId: 'viewer-1',
+      timelineTrack: 'tnf_platform_evolution',
+    });
   });
 });

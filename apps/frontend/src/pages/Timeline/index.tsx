@@ -4,9 +4,11 @@ import {
   bootstrapPersonalTimeline,
   createTimelineEvent,
   deleteTimelineEvent,
+  getGithubNarrativeGraph,
   importGithubTimelineNarrative,
   listTimelineEvents,
   updateTimelineEvent,
+  type GithubNarrativeGraphResult,
   type TimelineEvent,
 } from '@/services/unifiedLedgerApi';
 import { format } from 'date-fns';
@@ -112,6 +114,32 @@ function readAssetRefs(event: TimelineEvent): string[] {
   return payload.assetRefs.filter((value): value is string => typeof value === 'string');
 }
 
+function readNarrativeConnections(event: TimelineEvent): Array<{
+  from: string;
+  to: string;
+  connectionType: string;
+  rationale?: string;
+}> {
+  const payload = (event.payload || {}) as Record<string, unknown>;
+  if (!Array.isArray(payload.narrativeConnections)) return [];
+  const connections: Array<{ from: string; to: string; connectionType: string; rationale?: string }> = [];
+  for (const candidate of payload.narrativeConnections) {
+    if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) continue;
+    const row = candidate as Record<string, unknown>;
+    const from = typeof row.from === 'string' ? row.from.trim() : '';
+    const to = typeof row.to === 'string' ? row.to.trim() : '';
+    if (!from || !to) continue;
+    const connectionType = typeof row.connectionType === 'string' && row.connectionType.trim().length > 0
+      ? row.connectionType.trim()
+      : 'related';
+    const rationale = typeof row.rationale === 'string' && row.rationale.trim().length > 0
+      ? row.rationale.trim()
+      : undefined;
+    connections.push({ from, to, connectionType, rationale });
+  }
+  return connections;
+}
+
 export default function TimelinePage() {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
@@ -120,9 +148,11 @@ export default function TimelinePage() {
   const [saving, setSaving] = useState(false);
   const [bootstrapping, setBootstrapping] = useState(false);
   const [syncingGithub, setSyncingGithub] = useState(false);
+  const [graphLoading, setGraphLoading] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
+  const [narrativeGraph, setNarrativeGraph] = useState<GithubNarrativeGraphResult | null>(null);
 
   const [createForm, setCreateForm] = useState<FormState>({
     title: '',
@@ -188,6 +218,10 @@ export default function TimelinePage() {
     () => filteredEvents.find((e) => e.id === selectedId) || null,
     [filteredEvents, selectedId]
   );
+  const selectedConnections = useMemo(
+    () => (selectedEvent ? readNarrativeConnections(selectedEvent) : []),
+    [selectedEvent]
+  );
 
   const runBootstrap = async (auto = false) => {
     if (!userId) return;
@@ -223,9 +257,12 @@ export default function TimelinePage() {
       return;
     }
     setLoading(true);
+    setGraphLoading(true);
     try {
       const rows = await listTimelineEvents(ownerScopeId ? { ownerId: ownerScopeId } : undefined);
+      const graph = await getGithubNarrativeGraph(ownerScopeId ? { ownerId: ownerScopeId } : undefined);
       setEvents(rows);
+      setNarrativeGraph(graph);
       if (rows.length && !selectedId) {
         setSelectedId(rows[0].id);
       } else if (rows.length === 0) {
@@ -233,8 +270,10 @@ export default function TimelinePage() {
       }
     } catch {
       toast.error('Failed to load your timeline');
+      setNarrativeGraph(null);
     } finally {
       setLoading(false);
+      setGraphLoading(false);
     }
   };
 
@@ -400,7 +439,7 @@ export default function TimelinePage() {
       await load();
       toast.success(
         result.importedCount > 0
-          ? `Imported ${result.importedCount} GitHub timeline events`
+          ? `Imported ${result.importedCount} GitHub timeline events (${result.matchedConnectionCount} edge matches)`
           : 'GitHub timeline is already up to date'
       );
     } catch {
@@ -488,6 +527,19 @@ export default function TimelinePage() {
               >
                 Timeline Demo
               </Link>
+            </div>
+            <div className="rounded-md border border-slate-800 bg-slate-950/60 px-3 py-2 text-xs text-slate-300">
+              {graphLoading ? (
+                <span>Loading narrative graph summary...</span>
+              ) : narrativeGraph ? (
+                <span>
+                  Narrative graph: <span className="text-sky-300">{narrativeGraph.nodeCount}</span> nodes,{' '}
+                  <span className="text-sky-300">{narrativeGraph.edgeCount}</span> edges,{' '}
+                  <span className="text-sky-300">{narrativeGraph.eventCount}</span> imported events.
+                </span>
+              ) : (
+                <span>Narrative graph unavailable for this scope.</span>
+              )}
             </div>
           </div>
         </Card>
@@ -587,6 +639,26 @@ export default function TimelinePage() {
                   <p className="text-xs text-fuchsia-300 mt-2">
                     Assets linked: {readAssetRefs(selectedEvent).length}
                   </p>
+                ) : null}
+                {selectedConnections.length > 0 ? (
+                  <div className="mt-3">
+                    <p className="text-xs text-slate-400 uppercase tracking-[0.18em]">
+                      Narrative Connections
+                    </p>
+                    <ul className="mt-1 space-y-2">
+                      {selectedConnections.slice(0, 8).map((connection, index) => (
+                        <li key={`${connection.from}-${connection.to}-${index}`} className="text-xs">
+                          <p className="text-emerald-300 break-all">
+                            {connection.from} → {connection.to}
+                          </p>
+                          <p className="text-slate-500">{connection.connectionType}</p>
+                          {connection.rationale ? (
+                            <p className="text-slate-400">{connection.rationale}</p>
+                          ) : null}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 ) : null}
               </div>
               <div className="flex items-center gap-2">
