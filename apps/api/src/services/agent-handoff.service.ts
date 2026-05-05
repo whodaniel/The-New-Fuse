@@ -3,10 +3,10 @@ import {
   Injectable,
   Logger,
   NotFoundException,
+  Optional,
   OnModuleDestroy,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PointerResolverService } from '@the-new-fuse/a2a-core';
 import {
   HandoffAckInput,
   HandoffPacketInput,
@@ -14,6 +14,7 @@ import {
   type HandoffAck,
   type HandoffPacket,
 } from '@the-new-fuse/relay-core';
+import * as fs from 'fs/promises';
 import { UnifiedLedgerService } from '../modules/unified-ledger/unified-ledger.service';
 
 const REQUIRED_GATE_CHAIN = [
@@ -40,7 +41,10 @@ export class AgentHandoffService implements OnModuleDestroy {
   constructor(
     private readonly configService: ConfigService,
     private readonly unifiedLedgerService: UnifiedLedgerService,
-    private readonly pointerResolver: PointerResolverService
+    @Optional()
+    private readonly pointerResolver?: {
+      resolve: (pointer: Record<string, unknown>) => Promise<unknown>;
+    }
   ) {
     this.store = new HandoffStoreService({
       redisUrl: this.configService.get<string>('REDIS_URL'),
@@ -59,7 +63,11 @@ export class AgentHandoffService implements OnModuleDestroy {
 
     for (const [key, pointer] of Object.entries(pointers)) {
       try {
-        resolved[key] = await this.pointerResolver.resolve(pointer);
+        if (this.pointerResolver?.resolve) {
+          resolved[key] = await this.pointerResolver.resolve(pointer as Record<string, unknown>);
+        } else {
+          resolved[key] = await this.resolvePointerFallback(pointer as Record<string, unknown>);
+        }
       } catch (error) {
         this.logger.error(
           `Failed to resolve pointer ${key} in packet ${packet.id}: ${(error as Error).message}`
@@ -68,6 +76,22 @@ export class AgentHandoffService implements OnModuleDestroy {
       }
     }
     return resolved;
+  }
+
+  private async resolvePointerFallback(pointer: Record<string, unknown>): Promise<unknown> {
+    const uri = typeof pointer.uri === 'string' ? pointer.uri : '';
+    if (!uri) {
+      throw new Error('Pointer is missing a uri field');
+    }
+
+    if (uri.startsWith('file://')) {
+      const filePath = uri.replace('file://', '');
+      return fs.readFile(filePath, 'utf8');
+    }
+
+    throw new Error(
+      `Pointer resolver unavailable for URI scheme. Enable A2A pointer resolver or use file:// pointers. uri=${uri}`
+    );
   }
 
   async publishForTenant(input: unknown, tenantId: string): Promise<HandoffPacket> {

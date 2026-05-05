@@ -128,6 +128,97 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
     await fs.rm(tmpStorePath, { force: true });
   });
 
+  it('allows delegated agent users to read owner timeline when explicitly authorized', async () => {
+    const tmpStorePath = path.join(
+      '/tmp',
+      `tnf-unified-ledger-agent-read-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`
+    );
+    process.env.UNIFIED_LEDGER_STORE_PATH = tmpStorePath;
+    process.env.TIMELINE_PRIVATE_OWNER_USER_ID = 'owner-user';
+    process.env.TIMELINE_PRIVATE_AGENT_USER_IDS = 'agent-user';
+
+    const service = new UnifiedLedgerService();
+    await service.onModuleInit();
+
+    await service.createTimelineEvent({
+      userId: 'owner-user',
+      actor: 'owner-user',
+      eventType: 'historical_event',
+      payload: {
+        title: 'Private owner milestone',
+      },
+    });
+
+    const denied = await service.listTimelineEvents({
+      viewerUserId: 'stranger-user',
+      userId: 'owner-user',
+    });
+    expect(denied.length).toBe(0);
+
+    const allowed = await service.listTimelineEvents({
+      viewerUserId: 'agent-user',
+      userId: 'owner-user',
+    });
+    expect(allowed.length).toBeGreaterThan(0);
+    expect(allowed[0].userId).toBe('owner-user');
+
+    delete process.env.TIMELINE_PRIVATE_OWNER_USER_ID;
+    delete process.env.TIMELINE_PRIVATE_AGENT_USER_IDS;
+    delete process.env.UNIFIED_LEDGER_STORE_PATH;
+    await fs.rm(tmpStorePath, { force: true });
+  });
+
+  it('allows delegated workspace members to read owner timeline without global env allowlist', async () => {
+    const tmpStorePath = path.join(
+      '/tmp',
+      `tnf-unified-ledger-workspace-access-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`
+    );
+    process.env.UNIFIED_LEDGER_STORE_PATH = tmpStorePath;
+    process.env.TIMELINE_PRIVATE_OWNER_USER_ID = 'owner-user';
+    process.env.TIMELINE_PRIVATE_AGENT_USER_IDS = '';
+
+    const mockDb = {
+      workspaceMembers: {
+        listByUser: async (userId: string) =>
+          userId === 'agent-user' ? [{ workspaceId: 'ws-owner', role: 'member' }] : [],
+      },
+      workspaces: {
+        findByOwnerWithOwner: async (ownerId: string) =>
+          ownerId === 'owner-user' ? [{ id: 'ws-owner' }] : [],
+      },
+    };
+
+    const service = new UnifiedLedgerService(mockDb as any);
+    await service.onModuleInit();
+
+    await service.createTimelineEvent({
+      userId: 'owner-user',
+      actor: 'owner-user',
+      eventType: 'historical_event',
+      payload: {
+        title: 'Private owner milestone',
+      },
+    });
+
+    const allowed = await service.listTimelineEvents({
+      viewerUserId: 'agent-user',
+      userId: 'owner-user',
+    });
+    expect(allowed.length).toBeGreaterThan(0);
+    expect(allowed[0].userId).toBe('owner-user');
+
+    const denied = await service.listTimelineEvents({
+      viewerUserId: 'stranger-user',
+      userId: 'owner-user',
+    });
+    expect(denied.length).toBe(0);
+
+    delete process.env.TIMELINE_PRIVATE_OWNER_USER_ID;
+    delete process.env.TIMELINE_PRIVATE_AGENT_USER_IDS;
+    delete process.env.UNIFIED_LEDGER_STORE_PATH;
+    await fs.rm(tmpStorePath, { force: true });
+  });
+
   it('enforces owner scoping for goals and plans linkage operations', async () => {
     const tmpStorePath = path.join(
       '/tmp',

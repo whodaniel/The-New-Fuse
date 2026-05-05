@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     "moduleResolution": "bundler",
     "module": "ESNext",
     "outDir": "./dist",

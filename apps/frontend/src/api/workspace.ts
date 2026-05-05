@@ -6,6 +6,11 @@ export interface Workspace {
   name: string;
   description?: string;
   members: number;
+  ownerId?: string;
+  membershipRole?: WorkspaceAccessRole;
+  owner?: {
+    email?: string | null;
+  } | null;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -28,6 +33,57 @@ export interface WorkspaceSubAccessMember {
   role: WorkspaceAccessRole;
   accessLevel: WorkspaceAccessRole;
   joinedAt: string;
+}
+
+export interface WorkspaceAssetSummaryProject {
+  projectName: string;
+  timelineTrackKeys: string[];
+  timelineEventCount: number;
+  linkedAssetCount: number;
+  latestEvidenceAt: string | null;
+}
+
+export interface WorkspaceAssetSummaryAsset {
+  ref: string;
+  occurrences: number;
+  projects: string[];
+  lastSeenAt: string | null;
+}
+
+export interface WorkspaceAssetSummaryEvent {
+  id: string;
+  title: string;
+  timestamp: string;
+  projectName: string;
+  linkedAssetCount: number;
+}
+
+export interface WorkspaceAssetSummary {
+  workspaceId: string;
+  ownerId: string;
+  scope: 'owner' | 'delegated';
+  totalTimelineEvents: number;
+  uniqueLinkedAssets: number;
+  assetPagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+  eventPagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+  appliedFilters: {
+    project: string | null;
+    timelineTrack: string | null;
+    assetSearch: string | null;
+  };
+  projects: WorkspaceAssetSummaryProject[];
+  assets: WorkspaceAssetSummaryAsset[];
+  recentEvents: WorkspaceAssetSummaryEvent[];
 }
 
 export class WorkspaceApiService {
@@ -206,6 +262,46 @@ export class WorkspaceApiService {
         success: false,
         error: this.toApiError(error, 'NETWORK_ERROR'),
         message: `Failed to fetch projects for workspace ${workspaceId}`,
+      };
+    }
+  }
+
+  async getWorkspaceAssets(
+    workspaceId: string,
+    params?: {
+      project?: string;
+      timelineTrack?: string;
+      assetSearch?: string;
+      assetPage?: number;
+      assetPageSize?: number;
+      eventPage?: number;
+      eventPageSize?: number;
+      projectLimit?: number;
+    }
+  ): Promise<ApiResponse<WorkspaceAssetSummary>> {
+    try {
+      const search = new URLSearchParams();
+      if (params?.project) search.set('project', params.project);
+      if (params?.timelineTrack) search.set('timelineTrack', params.timelineTrack);
+      if (params?.assetSearch) search.set('assetSearch', params.assetSearch);
+      if (params?.assetPage) search.set('assetPage', String(params.assetPage));
+      if (params?.assetPageSize) search.set('assetPageSize', String(params.assetPageSize));
+      if (params?.eventPage) search.set('eventPage', String(params.eventPage));
+      if (params?.eventPageSize) search.set('eventPageSize', String(params.eventPageSize));
+      if (params?.projectLimit) search.set('projectLimit', String(params.projectLimit));
+      const suffix = search.toString() ? `?${search.toString()}` : '';
+
+      const response = await fetch(`${this.baseUrl}/${workspaceId}/assets${suffix}`, {
+        method: 'GET',
+        headers: this.getAuthHeaders(),
+        credentials: 'include',
+      });
+      return this.handleResponse<WorkspaceAssetSummary>(response);
+    } catch (error) {
+      return {
+        success: false,
+        error: this.toApiError(error, 'NETWORK_ERROR'),
+        message: `Failed to fetch assets for workspace ${workspaceId}`,
       };
     }
   }

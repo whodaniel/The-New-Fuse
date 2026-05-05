@@ -32,18 +32,21 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
 
     const result = await controller.timeline(
       { id: 'user-1' },
+      'owner-1',
       'record-1',
       'goal-1',
       'plan-1',
       'historical_event',
       'user-1',
       '2026-01-01T00:00:00.000Z',
-      '2026-12-31T23:59:59.999Z'
+      '2026-12-31T23:59:59.999Z',
+      'tnf_platform_development'
     );
 
     expect(result).toEqual([{ id: 'evt_1' }]);
     expect(ledger.listTimelineEvents).toHaveBeenCalledWith({
-      userId: 'user-1',
+      userId: 'owner-1',
+      viewerUserId: 'user-1',
       recordId: 'record-1',
       goalId: 'goal-1',
       planId: 'plan-1',
@@ -51,6 +54,7 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
       actor: 'user-1',
       dateFrom: '2026-01-01T00:00:00.000Z',
       dateTo: '2026-12-31T23:59:59.999Z',
+      timelineTrack: 'tnf_platform_development',
     });
   });
 

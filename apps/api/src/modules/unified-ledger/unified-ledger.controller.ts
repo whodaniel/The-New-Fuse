@@ -118,17 +118,21 @@ export class UnifiedLedgerController {
   @Get('timeline/events')
   async timeline(
     @CurrentUser() user: { id?: string; sub?: string },
+    @Query('ownerId') ownerId?: string,
     @Query('recordId') recordId?: string,
     @Query('goalId') goalId?: string,
     @Query('planId') planId?: string,
     @Query('eventType') eventType?: string,
     @Query('actor') actor?: string,
     @Query('dateFrom') dateFrom?: string,
-    @Query('dateTo') dateTo?: string
+    @Query('dateTo') dateTo?: string,
+    @Query('timelineTrack') timelineTrack?: string
   ) {
     const userId = this.requireUserId(user);
+    const scopedOwnerId = typeof ownerId === 'string' && ownerId.trim().length > 0 ? ownerId.trim() : userId;
     return this.ledger.listTimelineEvents({
-      userId,
+      userId: scopedOwnerId,
+      viewerUserId: userId,
       recordId,
       goalId,
       planId,
@@ -136,6 +140,7 @@ export class UnifiedLedgerController {
       actor,
       dateFrom,
       dateTo,
+      timelineTrack,
     });
   }
 

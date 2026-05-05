@@ -1,6 +1,7 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, Optional } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { DatabaseService, sql } from '@the-new-fuse/database';
 import {
   FeedbackIteration,
   FunctionalLink,
@@ -33,6 +34,24 @@ type TaskExecutionLogEntry = {
   timestamp: string;
 };
 
+type LibrarianTimelineRow = {
+  timeline_event_id: string;
+  canonical_event_id: string;
+  event_at: string;
+  timeline_track: string;
+  category: string;
+  title: string;
+  description: string | null;
+  evidence_refs: unknown;
+  metadata: unknown;
+  confidence: string;
+};
+
+type TimelineAccessDecision = {
+  allowed: boolean;
+  ownerUserId: string | null;
+};
+
 @Injectable()
 export class UnifiedLedgerService implements OnModuleInit {
   private readonly logger = new Logger(UnifiedLedgerService.name);
@@ -40,6 +59,10 @@ export class UnifiedLedgerService implements OnModuleInit {
   private storePath = this.resolveStorePath();
   private store: UnifiedLedgerStore = { records: [], timelineEvents: [], goals: [], plans: [] };
   private initialized = false;
+  private cachedPrivateTimelineOwnerUserId: string | null = null;
+  private cachedPrivateTimelineOwnerResolvedAt = 0;
+
+  constructor(@Optional() private readonly db?: DatabaseService) {}
 
   async onModuleInit(): Promise<void> {
     await this.ensureLoaded();
@@ -339,6 +362,7 @@ export class UnifiedLedgerService implements OnModuleInit {
 
   async listTimelineEvents(params?: {
     userId?: string;
+    viewerUserId?: string;
     recordId?: string;
     goalId?: string;
     planId?: string;
@@ -346,12 +370,20 @@ export class UnifiedLedgerService implements OnModuleInit {
     actor?: string;
     dateFrom?: string;
     dateTo?: string;
+    timelineTrack?: string;
   }): Promise<TimelineEvent[]> {
     await this.ensureLoaded();
+    const viewerUserId = params?.viewerUserId || params?.userId || null;
+    const ownerUserId = params?.userId || viewerUserId;
+    const access = await this.resolveTimelineAccess(viewerUserId, ownerUserId);
+    if (!access.allowed || !access.ownerUserId) {
+      return [];
+    }
+
     const from = params?.dateFrom ? this.normalizeTimestamp(params.dateFrom) : undefined;
     const to = params?.dateTo ? this.normalizeTimestamp(params.dateTo) : undefined;
-    return this.store.timelineEvents
-      .filter((e) => (params?.userId ? e.userId === params.userId : true))
+    const storeEvents = this.store.timelineEvents
+      .filter((e) => (access.ownerUserId ? e.userId === access.ownerUserId : true))
       .filter((e) => (params?.recordId ? e.recordId === params.recordId : true))
       .filter((e) => (params?.goalId ? e.goalId === params.goalId : true))
       .filter((e) => (params?.planId ? e.planId === params.planId : true))
@@ -359,15 +391,35 @@ export class UnifiedLedgerService implements OnModuleInit {
       .filter((e) => (params?.actor ? e.actor === params.actor : true))
       .filter((e) => (from ? e.timestamp >= from : true))
       .filter((e) => (to ? e.timestamp <= to : true))
-      .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+      .filter((e) =>
+        params?.timelineTrack
+          ? String((e.payload || {}).segment || (e.payload || {}).timelineTrack || '').toLowerCase() ===
+            params.timelineTrack.toLowerCase()
+          : true
+      );
+
+    const librarianEvents = await this.listLibrarianTimelineEvents({
+      ownerUserId: access.ownerUserId,
+      dateFrom: from,
+      dateTo: to,
+      actor: params?.actor,
+      timelineTrack: params?.timelineTrack,
+      eventType: params?.eventType,
+    });
+
+    return [...storeEvents, ...librarianEvents].sort((a, b) => b.timestamp.localeCompare(a.timestamp));
   }
 
   async getTimelineEvent(id: string, userId?: string): Promise<TimelineEvent | null> {
     await this.ensureLoaded();
     const event = this.store.timelineEvents.find((e) => e.id === id) || null;
-    if (!event) return null;
-    if (userId && event.userId && event.userId !== userId) return null;
-    return event;
+    if (event) {
+      const access = await this.resolveTimelineAccess(userId || null, event.userId || userId || null);
+      if (!access.allowed) return null;
+      return event;
+    }
+
+    return this.getLibrarianTimelineEventById(id, userId || null);
   }
 
   async createTimelineEvent(input: {
@@ -800,6 +852,326 @@ export class UnifiedLedgerService implements OnModuleInit {
     });
     await this.persist();
     return updated;
+  }
+
+  private async resolveTimelineAccess(
+    viewerUserId: string | null,
+    ownerUserId: string | null
+  ): Promise<TimelineAccessDecision> {
+    if (!viewerUserId || !ownerUserId) {
+      return { allowed: false, ownerUserId: null };
+    }
+
+    if (viewerUserId === ownerUserId) {
+      return { allowed: true, ownerUserId };
+    }
+
+    const privateOwnerUserId = await this.resolvePrivateTimelineOwnerUserId();
+    if (privateOwnerUserId && ownerUserId === privateOwnerUserId) {
+      const allowedAgents = this.getPrivateTimelineAgentUserIds();
+      if (allowedAgents.has(viewerUserId)) {
+        return { allowed: true, ownerUserId };
+      }
+    }
+
+    const delegatedWorkspaceAccess = await this.hasWorkspaceDelegatedTimelineAccess(
+      viewerUserId,
+      ownerUserId
+    );
+    if (!delegatedWorkspaceAccess) {
+      return { allowed: false, ownerUserId: null };
+    }
+
+    return { allowed: true, ownerUserId };
+  }
+
+  private async hasWorkspaceDelegatedTimelineAccess(
+    viewerUserId: string,
+    ownerUserId: string
+  ): Promise<boolean> {
+    if (!this.db) return false;
+
+    try {
+      const memberRows = await this.db.workspaceMembers?.listByUser?.(viewerUserId);
+      if (!Array.isArray(memberRows) || memberRows.length === 0) {
+        return false;
+      }
+
+      const delegatedWorkspaceIds = new Set(
+        memberRows
+          .map((row: any) => (typeof row?.workspaceId === 'string' ? row.workspaceId.trim() : ''))
+          .filter((workspaceId: string) => workspaceId.length > 0)
+      );
+      if (delegatedWorkspaceIds.size === 0) {
+        return false;
+      }
+
+      const ownerWorkspaces = await this.db.workspaces?.findByOwnerWithOwner?.(ownerUserId);
+      if (!Array.isArray(ownerWorkspaces) || ownerWorkspaces.length === 0) {
+        return false;
+      }
+
+      return ownerWorkspaces.some((workspace: any) => {
+        const workspaceId = typeof workspace?.id === 'string' ? workspace.id.trim() : '';
+        return workspaceId.length > 0 && delegatedWorkspaceIds.has(workspaceId);
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed delegated workspace timeline access check for viewer ${viewerUserId}: ${
+          (error as Error).message
+        }`
+      );
+      return false;
+    }
+  }
+
+  private getPrivateTimelineAgentUserIds(): Set<string> {
+    return new Set(
+      (process.env.TIMELINE_PRIVATE_AGENT_USER_IDS || '')
+        .split(',')
+        .map((id) => id.trim())
+        .filter((id) => id.length > 0)
+    );
+  }
+
+  private shouldReadLibrarianTimeline(): boolean {
+    const raw = String(process.env.TIMELINE_USE_LIBRARIAN_SOURCE || 'true')
+      .trim()
+      .toLowerCase();
+    return raw !== '0' && raw !== 'false' && raw !== 'off' && raw !== 'no';
+  }
+
+  private async resolvePrivateTimelineOwnerUserId(): Promise<string | null> {
+    const now = Date.now();
+    if (this.cachedPrivateTimelineOwnerResolvedAt > 0 && now - this.cachedPrivateTimelineOwnerResolvedAt < 5 * 60_000) {
+      return this.cachedPrivateTimelineOwnerUserId;
+    }
+
+    const explicitOwnerId = String(process.env.TIMELINE_PRIVATE_OWNER_USER_ID || '').trim();
+    if (explicitOwnerId) {
+      this.cachedPrivateTimelineOwnerUserId = explicitOwnerId;
+      this.cachedPrivateTimelineOwnerResolvedAt = now;
+      return explicitOwnerId;
+    }
+
+    if (!this.db) {
+      this.cachedPrivateTimelineOwnerUserId = null;
+      this.cachedPrivateTimelineOwnerResolvedAt = now;
+      return null;
+    }
+
+    const ownerEmails = (process.env.TIMELINE_PRIVATE_OWNER_EMAILS || 'owner@example.com')
+      .split(',')
+      .map((email) => email.trim().toLowerCase())
+      .filter((email) => email.length > 0);
+
+    for (const email of ownerEmails) {
+      const user = await this.db.users.findByEmail(email);
+      if (user?.id) {
+        this.cachedPrivateTimelineOwnerUserId = user.id;
+        this.cachedPrivateTimelineOwnerResolvedAt = now;
+        return user.id;
+      }
+    }
+
+    this.cachedPrivateTimelineOwnerUserId = null;
+    this.cachedPrivateTimelineOwnerResolvedAt = now;
+    return null;
+  }
+
+  private timelineTrackToProject(track: string): string {
+    if (track === 'tnf_platform_development') return 'The New Fuse Platform';
+    if (track === 'media_empire_strategy') return "Daniel Who's Media Empire";
+    if (track === 'new_fuse_novel_development') return 'The New Fuse (Novel)';
+    return 'Identity & Aliases';
+  }
+
+  private timelineTrackToUiCategory(track: string): string {
+    if (track === 'tnf_platform_development') return 'Business & Projects';
+    if (track === 'media_empire_strategy') return 'Business & Projects';
+    if (track === 'new_fuse_novel_development') return 'Creativity';
+    return 'Identity';
+  }
+
+  private safeJsonObject(input: unknown): Record<string, unknown> {
+    return input && typeof input === 'object' && !Array.isArray(input)
+      ? (input as Record<string, unknown>)
+      : {};
+  }
+
+  private safeJsonStringArray(input: unknown): string[] {
+    if (!Array.isArray(input)) return [];
+    return input.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
+  }
+
+  private mapLibrarianRowsToTimelineEvents(
+    rows: LibrarianTimelineRow[],
+    ownerUserId: string
+  ): TimelineEvent[] {
+    if (!rows.length) return [];
+    const total = Math.max(1, rows.length - 1);
+
+    return rows
+      .sort((a, b) => a.event_at.localeCompare(b.event_at))
+      .map((row, index) => {
+        const metadata = this.safeJsonObject(row.metadata);
+        const evidenceRefs = this.safeJsonStringArray(row.evidence_refs);
+        const assetRefs = evidenceRefs
+          .filter((ref) => ref.startsWith('librarian:artifact:'))
+          .map((ref) => ref.replace('librarian:artifact:', ''));
+        const project = this.timelineTrackToProject(row.timeline_track);
+
+        return {
+          id: row.timeline_event_id,
+          userId: ownerUserId,
+          eventType: 'historical_event',
+          actor: 'timeline-archaeology',
+          timestamp: row.event_at,
+          payload: {
+            title: row.title,
+            description: row.description || '',
+            point: Math.round((index / total) * 100),
+            category: this.timelineTrackToUiCategory(row.timeline_track),
+            segment: row.timeline_track,
+            timelineTrack: row.timeline_track,
+            timelineCategory: row.category,
+            project,
+            confidence: row.confidence,
+            evidenceRefs,
+            sources: evidenceRefs,
+            source: 'librarian.timeline_event',
+            canonicalEventId: row.canonical_event_id,
+            assetRefs,
+            folderName:
+              typeof metadata.folder_name === 'string' ? metadata.folder_name : undefined,
+            sourceExternalRef:
+              typeof metadata.source_external_ref === 'string'
+                ? metadata.source_external_ref
+                : undefined,
+            accessScope: 'owner_and_agents',
+            isPrivate: true,
+          },
+        } as TimelineEvent;
+      })
+      .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+  }
+
+  private async listLibrarianTimelineEvents(params: {
+    ownerUserId: string;
+    dateFrom?: string;
+    dateTo?: string;
+    actor?: string;
+    timelineTrack?: string;
+    eventType?: string;
+  }): Promise<TimelineEvent[]> {
+    if (!this.db || !this.shouldReadLibrarianTimeline()) {
+      return [];
+    }
+
+    if (params.eventType && params.eventType !== 'historical_event') {
+      return [];
+    }
+
+    const ownerIsPrivateOwner =
+      (await this.resolvePrivateTimelineOwnerUserId()) === params.ownerUserId;
+    if (!ownerIsPrivateOwner) {
+      return [];
+    }
+
+    const predicates = [
+      sql`((metadata ->> 'owner_user_id') = ${params.ownerUserId} OR ((metadata ->> 'source_family') = 'apple_notes'))`,
+    ];
+
+    if (params.dateFrom) {
+      predicates.push(sql`event_at >= ${params.dateFrom}::timestamptz`);
+    }
+    if (params.dateTo) {
+      predicates.push(sql`event_at <= ${params.dateTo}::timestamptz`);
+    }
+    if (params.timelineTrack) {
+      predicates.push(sql`timeline_track = ${params.timelineTrack}`);
+    }
+    if (params.actor) {
+      predicates.push(sql`(timeline_track = ${params.actor} OR category = ${params.actor})`);
+    }
+
+    const whereSql = predicates.reduce((acc, predicate) => sql`${acc} AND ${predicate}`, sql`true`);
+
+    try {
+      const rows = (await this.db.client.execute(
+        sql`
+          SELECT
+            timeline_event_id::text,
+            canonical_event_id,
+            event_at::text,
+            timeline_track,
+            category,
+            title,
+            description,
+            evidence_refs,
+            metadata,
+            confidence
+          FROM librarian.timeline_event
+          WHERE ${whereSql}
+          ORDER BY event_at DESC
+          LIMIT 5000
+        `
+      )) as LibrarianTimelineRow[];
+
+      return this.mapLibrarianRowsToTimelineEvents(rows, params.ownerUserId);
+    } catch (error) {
+      this.logger.warn(`Failed loading librarian timeline events: ${(error as Error).message}`);
+      return [];
+    }
+  }
+
+  private async getLibrarianTimelineEventById(
+    id: string,
+    viewerUserId: string | null
+  ): Promise<TimelineEvent | null> {
+    if (!this.db || !this.shouldReadLibrarianTimeline() || !viewerUserId) {
+      return null;
+    }
+
+    try {
+      const rows = (await this.db.client.execute(
+        sql`
+          SELECT
+            timeline_event_id::text,
+            canonical_event_id,
+            event_at::text,
+            timeline_track,
+            category,
+            title,
+            description,
+            evidence_refs,
+            metadata,
+            confidence
+          FROM librarian.timeline_event
+          WHERE timeline_event_id::text = ${id} OR canonical_event_id = ${id}
+          LIMIT 1
+        `
+      )) as LibrarianTimelineRow[];
+
+      if (!rows.length) return null;
+      const row = rows[0];
+      const metadata = this.safeJsonObject(row.metadata);
+      const privateOwnerUserId = await this.resolvePrivateTimelineOwnerUserId();
+      const ownerFromMetadata =
+        typeof metadata.owner_user_id === 'string'
+          ? metadata.owner_user_id
+          : (metadata.source_family === 'apple_notes' ? privateOwnerUserId : null);
+      if (!ownerFromMetadata) return null;
+
+      const access = await this.resolveTimelineAccess(viewerUserId, ownerFromMetadata);
+      if (!access.allowed || !access.ownerUserId) return null;
+
+      const mapped = this.mapLibrarianRowsToTimelineEvents([row], access.ownerUserId);
+      return mapped[0] || null;
+    } catch (error) {
+      this.logger.warn(`Failed loading librarian timeline event ${id}: ${(error as Error).message}`);
+      return null;
+    }
   }
 
   private async ensureLoaded(): Promise<void> {

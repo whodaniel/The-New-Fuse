@@ -214,6 +214,7 @@ export async function voteSuggestion(
 }
 
 export async function listTimelineEvents(params?: {
+  ownerId?: string;
   userId?: string;
   recordId?: string;
   goalId?: string;
@@ -222,8 +223,10 @@ export async function listTimelineEvents(params?: {
   actor?: string;
   dateFrom?: string;
   dateTo?: string;
+  timelineTrack?: string;
 }): Promise<TimelineEvent[]> {
   const search = new URLSearchParams();
+  if (params?.ownerId) search.set('ownerId', params.ownerId);
   if (params?.userId) search.set('userId', params.userId);
   if (params?.recordId) search.set('recordId', params.recordId);
   if (params?.goalId) search.set('goalId', params.goalId);
@@ -232,6 +235,7 @@ export async function listTimelineEvents(params?: {
   if (params?.actor) search.set('actor', params.actor);
   if (params?.dateFrom) search.set('dateFrom', params.dateFrom);
   if (params?.dateTo) search.set('dateTo', params.dateTo);
+  if (params?.timelineTrack) search.set('timelineTrack', params.timelineTrack);
   const suffix = search.toString() ? `?${search.toString()}` : '';
   return parse<TimelineEvent[]>(await apiFetch(`/api/timeline/events${suffix}`));
 }
@@ -478,5 +482,4 @@ export async function appendTaskExecutionLog(
     })
   );
 }
-
 

@@ -12,7 +12,7 @@ import { format } from 'date-fns';
 import { Calendar, Pencil, Plus, RefreshCw, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 type FormState = {
   title: string;
@@ -94,8 +94,26 @@ function readSources(event: TimelineEvent): string[] {
   return Array.from(new Set([...fromEvidenceRefs, ...fromSources, ...fromSourceField]));
 }
 
+function readProject(event: TimelineEvent): string | null {
+  const payload = (event.payload || {}) as Record<string, unknown>;
+  if (typeof payload.project === 'string' && payload.project.trim().length > 0) {
+    return payload.project;
+  }
+  if (typeof payload.timelineTrack === 'string' && payload.timelineTrack.trim().length > 0) {
+    return payload.timelineTrack;
+  }
+  return null;
+}
+
+function readAssetRefs(event: TimelineEvent): string[] {
+  const payload = (event.payload || {}) as Record<string, unknown>;
+  if (!Array.isArray(payload.assetRefs)) return [];
+  return payload.assetRefs.filter((value): value is string => typeof value === 'string');
+}
+
 export default function TimelinePage() {
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -123,6 +141,15 @@ export default function TimelinePage() {
   });
 
   const userId = useMemo(() => user?.id || null, [user?.id]);
+  const ownerScopeId = useMemo(() => {
+    const requested = searchParams.get('ownerId');
+    if (requested && requested.trim().length > 0) return requested.trim();
+    return user?.id || null;
+  }, [searchParams, user?.id]);
+  const isDelegatedView = useMemo(
+    () => Boolean(userId && ownerScopeId && userId !== ownerScopeId),
+    [ownerScopeId, userId]
+  );
 
   const sortedEvents = useMemo(
     () =>
@@ -162,6 +189,10 @@ export default function TimelinePage() {
 
   const runBootstrap = async (auto = false) => {
     if (!userId) return;
+    if (isDelegatedView) {
+      if (!auto) toast.error('Delegated timeline view is read-only');
+      return;
+    }
     setBootstrapping(true);
     try {
       const result = await bootstrapPersonalTimeline();
@@ -191,7 +222,7 @@ export default function TimelinePage() {
     }
     setLoading(true);
     try {
-      const rows = await listTimelineEvents();
+      const rows = await listTimelineEvents(ownerScopeId ? { ownerId: ownerScopeId } : undefined);
       setEvents(rows);
       if (rows.length && !selectedId) {
         setSelectedId(rows[0].id);
@@ -207,11 +238,15 @@ export default function TimelinePage() {
 
   useEffect(() => {
     load();
-  }, [userId]);
+  }, [ownerScopeId, userId]);
 
   const createItem = async () => {
     if (!userId) {
       toast.error('Please sign in to create timeline items');
+      return;
+    }
+    if (isDelegatedView) {
+      toast.error('Delegated timeline view is read-only');
       return;
     }
     if (!createForm.title.trim()) {
@@ -277,6 +312,10 @@ export default function TimelinePage() {
       toast.error('Please sign in to update timeline items');
       return;
     }
+    if (isDelegatedView) {
+      toast.error('Delegated timeline view is read-only');
+      return;
+    }
     if (!editForm.title.trim()) {
       toast.error('Title is required');
       return;
@@ -321,6 +360,10 @@ export default function TimelinePage() {
       toast.error('Please sign in to delete timeline items');
       return;
     }
+    if (isDelegatedView) {
+      toast.error('Delegated timeline view is read-only');
+      return;
+    }
     setSaving(true);
     try {
       const ok = await deleteTimelineEvent(id);
@@ -351,11 +394,16 @@ export default function TimelinePage() {
             <p className="text-slate-400 mt-2">
               Add milestones to your own horizontal timeline, then edit or remove them anytime.
             </p>
+            {isDelegatedView ? (
+              <p className="text-xs text-amber-300 mt-2">
+                Delegated owner scope active (`ownerId`): read-only mode.
+              </p>
+            ) : null}
           </div>
           <div className="flex flex-wrap gap-2">
             <Button
               onClick={() => runBootstrap(false)}
-              disabled={bootstrapping || saving || !userId}
+              disabled={bootstrapping || saving || !userId || isDelegatedView}
               variant="outline"
               className="border-amber-500/60 text-amber-300 hover:bg-amber-500/10"
             >
@@ -481,6 +529,11 @@ export default function TimelinePage() {
                 <p className="text-xs text-amber-300 mt-1">
                   Category: {readPayload(selectedEvent).category}
                 </p>
+                {readProject(selectedEvent) ? (
+                  <p className="text-xs text-emerald-300 mt-1">
+                    Project: {readProject(selectedEvent)}
+                  </p>
+                ) : null}
                 {readSources(selectedEvent).length > 0 ? (
                   <div className="mt-2">
                     <p className="text-xs text-slate-400 uppercase tracking-[0.18em]">Sources</p>
@@ -493,6 +546,11 @@ export default function TimelinePage() {
                     </ul>
                   </div>
                 ) : null}
+                {readAssetRefs(selectedEvent).length > 0 ? (
+                  <p className="text-xs text-fuchsia-300 mt-2">
+                    Assets linked: {readAssetRefs(selectedEvent).length}
+                  </p>
+                ) : null}
               </div>
               <div className="flex items-center gap-2">
                 <Button
@@ -500,6 +558,7 @@ export default function TimelinePage() {
                   variant="outline"
                   className="border-slate-700"
                   onClick={() => startEdit(selectedEvent)}
+                  disabled={isDelegatedView}
                 >
                   <Pencil className="w-4 h-4 mr-2" />
                   Edit
@@ -509,6 +568,7 @@ export default function TimelinePage() {
                   variant="outline"
                   className="border-red-500/40 text-red-300 hover:bg-red-900/20"
                   onClick={() => removeItem(selectedEvent.id)}
+                  disabled={isDelegatedView}
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Delete
@@ -596,7 +656,7 @@ export default function TimelinePage() {
             <Button
               data-testid="timeline-create-submit"
               onClick={createItem}
-              disabled={saving}
+              disabled={saving || isDelegatedView}
               className="bg-amber-500 hover:bg-amber-600 text-black w-full"
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -681,7 +741,7 @@ export default function TimelinePage() {
                   <Button
                     data-testid="timeline-edit-save"
                     onClick={saveEdit}
-                    disabled={saving}
+                    disabled={saving || isDelegatedView}
                     className="bg-emerald-500 hover:bg-emerald-600 text-black flex-1"
                   >
                     Save Changes

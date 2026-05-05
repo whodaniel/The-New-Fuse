@@ -18,6 +18,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 // @ts-ignore
@@ -142,6 +143,57 @@ interface WorkspaceAccessContext {
   membership: WorkspaceMembership | null;
   isOwner: boolean;
   isAdmin: boolean;
+}
+
+interface WorkspaceAssetSummaryProject {
+  projectName: string;
+  timelineTrackKeys: string[];
+  timelineEventCount: number;
+  linkedAssetCount: number;
+  latestEvidenceAt: string | null;
+}
+
+interface WorkspaceAssetSummaryAsset {
+  ref: string;
+  occurrences: number;
+  projects: string[];
+  lastSeenAt: string | null;
+}
+
+interface WorkspaceAssetSummaryEvent {
+  id: string;
+  title: string;
+  timestamp: string;
+  projectName: string;
+  linkedAssetCount: number;
+}
+
+interface WorkspaceAssetSummaryResponse {
+  workspaceId: string;
+  ownerId: string;
+  scope: 'owner' | 'delegated';
+  totalTimelineEvents: number;
+  uniqueLinkedAssets: number;
+  assetPagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+  eventPagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+  appliedFilters: {
+    project: string | null;
+    timelineTrack: string | null;
+    assetSearch: string | null;
+  };
+  projects: WorkspaceAssetSummaryProject[];
+  assets: WorkspaceAssetSummaryAsset[];
+  recentEvents: WorkspaceAssetSummaryEvent[];
 }
 
 interface WorkspaceActor {
@@ -1240,6 +1292,89 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
     return userId;
   }
 
+  private timelineTrackToProjectName(track: string): string {
+    const normalized = track.trim();
+    if (normalized === 'tnf_platform_development') return 'The New Fuse Platform';
+    if (normalized === 'media_empire_strategy') return "Daniel Who's Media Empire";
+    if (normalized === 'new_fuse_novel_development') return 'The New Fuse (Novel)';
+    if (!normalized) return 'Unassigned';
+    return normalized.replace(/_/g, ' ');
+  }
+
+  private readTimelineProject(payload: Record<string, unknown>): {
+    projectName: string;
+    timelineTrackKey: string | null;
+  } {
+    const explicitProject =
+      typeof payload.project === 'string' ? payload.project.trim() : '';
+    const trackCandidate =
+      typeof payload.timelineTrack === 'string'
+        ? payload.timelineTrack
+        : typeof payload.segment === 'string'
+          ? payload.segment
+          : '';
+    const timelineTrackKey = trackCandidate.trim() || null;
+
+    if (explicitProject.length > 0) {
+      return { projectName: explicitProject, timelineTrackKey };
+    }
+    if (timelineTrackKey) {
+      return {
+        projectName: this.timelineTrackToProjectName(timelineTrackKey),
+        timelineTrackKey,
+      };
+    }
+
+    return { projectName: 'Unassigned', timelineTrackKey: null };
+  }
+
+  private readTimelineAssetRefs(payload: Record<string, unknown>): string[] {
+    const refs = new Set<string>();
+
+    if (Array.isArray(payload.assetRefs)) {
+      for (const value of payload.assetRefs) {
+        if (typeof value !== 'string') continue;
+        const trimmed = value.trim();
+        if (trimmed.length > 0) refs.add(trimmed);
+      }
+    }
+
+    if (Array.isArray(payload.evidenceRefs)) {
+      for (const value of payload.evidenceRefs) {
+        if (typeof value !== 'string') continue;
+        const trimmed = value.trim();
+        if (!trimmed.startsWith('librarian:artifact:')) continue;
+        refs.add(trimmed.replace('librarian:artifact:', ''));
+      }
+    }
+
+    return Array.from(refs);
+  }
+
+  private readTimelineEventTitle(event: any, payload: Record<string, unknown>): string {
+    if (typeof payload.title === 'string' && payload.title.trim().length > 0) {
+      return payload.title.trim();
+    }
+    if (typeof payload.note === 'string' && payload.note.trim().length > 0) {
+      return payload.note.trim();
+    }
+    if (typeof event?.eventType === 'string' && event.eventType.trim().length > 0) {
+      return event.eventType.trim();
+    }
+    return 'timeline_event';
+  }
+
+  private parsePositiveInt(
+    input: string | undefined,
+    fallback: number,
+    min: number,
+    max: number
+  ): number {
+    const value = Number.parseInt(String(input || ''), 10);
+    if (!Number.isFinite(value)) return fallback;
+    return Math.min(max, Math.max(min, value));
+  }
+
   private normalizeRole(role?: string): WorkspaceManageableRole {
     return role === 'admin' || role === 'member' || role === 'viewer' ? role : 'member';
   }
@@ -2080,6 +2215,254 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
       return { workspaceId: id, bookmarkId };
     } catch (error) {
       this.handleError(error, 'removeWorkspaceBookmark');
+    }
+  }
+
+  /**
+   * Get workspace asset exposure summary (owner-scoped timeline + linked assets).
+   */
+  @Get(':id/assets')
+  @ApiOperation({ summary: 'Get workspace asset exposure summary' })
+  @ApiResponse({ status: 200, description: 'Workspace asset summary' })
+  @ApiResponse({ status: 404, description: 'Workspace not found' })
+  @ApiResponse({ status: 403, description: 'Access denied' })
+  async getWorkspaceAssets(
+    @Param('id') id: string,
+    @CurrentUser('id') userId: string,
+    @Query('project') projectQuery?: string,
+    @Query('timelineTrack') timelineTrackQuery?: string,
+    @Query('assetSearch') assetSearchQuery?: string,
+    @Query('assetPage') assetPageQuery?: string,
+    @Query('assetPageSize') assetPageSizeQuery?: string,
+    @Query('eventPage') eventPageQuery?: string,
+    @Query('eventPageSize') eventPageSizeQuery?: string,
+    @Query('projectLimit') projectLimitQuery?: string
+  ) {
+    try {
+      this.validateUser(userId);
+      const access = await this.ensureWorkspaceAccess(id, userId);
+      const ownerId = access.workspace.ownerId;
+      const scope: 'owner' | 'delegated' = access.isOwner ? 'owner' : 'delegated';
+
+      const projectFilter = projectQuery?.trim().toLowerCase() || null;
+      const timelineTrackFilter = timelineTrackQuery?.trim().toLowerCase() || null;
+      const assetSearchFilter = assetSearchQuery?.trim().toLowerCase() || null;
+
+      const assetPage = this.parsePositiveInt(assetPageQuery, 1, 1, 10000);
+      const assetPageSize = this.parsePositiveInt(assetPageSizeQuery, 50, 1, 200);
+      const eventPage = this.parsePositiveInt(eventPageQuery, 1, 1, 10000);
+      const eventPageSize = this.parsePositiveInt(eventPageSizeQuery, 25, 1, 200);
+      const projectLimit = this.parsePositiveInt(projectLimitQuery, 200, 1, 1000);
+
+      const empty: WorkspaceAssetSummaryResponse = {
+        workspaceId: id,
+        ownerId,
+        scope,
+        totalTimelineEvents: 0,
+        uniqueLinkedAssets: 0,
+        assetPagination: {
+          page: assetPage,
+          pageSize: assetPageSize,
+          total: 0,
+          totalPages: 0,
+        },
+        eventPagination: {
+          page: eventPage,
+          pageSize: eventPageSize,
+          total: 0,
+          totalPages: 0,
+        },
+        appliedFilters: {
+          project: projectFilter,
+          timelineTrack: timelineTrackFilter,
+          assetSearch: assetSearchFilter,
+        },
+        projects: [],
+        assets: [],
+        recentEvents: [],
+      };
+
+      if (!this.unifiedLedger) {
+        return empty;
+      }
+
+      const allTimelineEvents = await this.unifiedLedger.listTimelineEvents({
+        userId: ownerId,
+        viewerUserId: userId,
+      });
+
+      const timelineEvents = allTimelineEvents.filter((event) => {
+        const payload =
+          event?.payload && typeof event.payload === 'object'
+            ? (event.payload as Record<string, unknown>)
+            : {};
+        const { projectName, timelineTrackKey } = this.readTimelineProject(payload);
+        if (projectFilter && !projectName.toLowerCase().includes(projectFilter)) {
+          return false;
+        }
+        if (
+          timelineTrackFilter &&
+          (!timelineTrackKey || timelineTrackKey.toLowerCase() !== timelineTrackFilter)
+        ) {
+          return false;
+        }
+        return true;
+      });
+
+      const projectMap = new Map<
+        string,
+        {
+          projectName: string;
+          timelineTrackKeys: Set<string>;
+          timelineEventCount: number;
+          linkedAssets: Set<string>;
+          latestEvidenceAt: string | null;
+        }
+      >();
+
+      const assetMap = new Map<
+        string,
+        { occurrences: number; projects: Set<string>; lastSeenAt: string | null }
+      >();
+
+      const recentEvents: WorkspaceAssetSummaryEvent[] = [];
+
+      for (const event of timelineEvents) {
+        const payload =
+          event?.payload && typeof event.payload === 'object'
+            ? (event.payload as Record<string, unknown>)
+            : {};
+        const { projectName, timelineTrackKey } = this.readTimelineProject(payload);
+        const assetRefs = this.readTimelineAssetRefs(payload);
+        const projectKey = projectName.trim().toLowerCase() || 'unassigned';
+
+        let projectEntry = projectMap.get(projectKey);
+        if (!projectEntry) {
+          projectEntry = {
+            projectName,
+            timelineTrackKeys: new Set<string>(),
+            timelineEventCount: 0,
+            linkedAssets: new Set<string>(),
+            latestEvidenceAt: null,
+          };
+          projectMap.set(projectKey, projectEntry);
+        }
+
+        projectEntry.timelineEventCount += 1;
+        if (timelineTrackKey) {
+          projectEntry.timelineTrackKeys.add(timelineTrackKey);
+        }
+        for (const assetRef of assetRefs) {
+          projectEntry.linkedAssets.add(assetRef);
+        }
+        if (!projectEntry.latestEvidenceAt || event.timestamp > projectEntry.latestEvidenceAt) {
+          projectEntry.latestEvidenceAt = event.timestamp;
+        }
+
+        for (const assetRef of assetRefs) {
+          let assetEntry = assetMap.get(assetRef);
+          if (!assetEntry) {
+            assetEntry = { occurrences: 0, projects: new Set<string>(), lastSeenAt: null };
+            assetMap.set(assetRef, assetEntry);
+          }
+          assetEntry.occurrences += 1;
+          assetEntry.projects.add(projectName);
+          if (!assetEntry.lastSeenAt || event.timestamp > assetEntry.lastSeenAt) {
+            assetEntry.lastSeenAt = event.timestamp;
+          }
+        }
+
+        recentEvents.push({
+          id: event.id,
+          title: this.readTimelineEventTitle(event, payload),
+          timestamp: event.timestamp,
+          projectName,
+          linkedAssetCount: assetRefs.length,
+        });
+      }
+
+      const projects: WorkspaceAssetSummaryProject[] = Array.from(projectMap.values())
+        .map((entry) => ({
+          projectName: entry.projectName,
+          timelineTrackKeys: Array.from(entry.timelineTrackKeys).sort(),
+          timelineEventCount: entry.timelineEventCount,
+          linkedAssetCount: entry.linkedAssets.size,
+          latestEvidenceAt: entry.latestEvidenceAt,
+        }))
+        .sort((a, b) => {
+          if (b.timelineEventCount !== a.timelineEventCount) {
+            return b.timelineEventCount - a.timelineEventCount;
+          }
+          return a.projectName.localeCompare(b.projectName);
+        })
+        .slice(0, projectLimit);
+
+      const sortedAssets: WorkspaceAssetSummaryAsset[] = Array.from(assetMap.entries())
+        .map(([ref, entry]) => ({
+          ref,
+          occurrences: entry.occurrences,
+          projects: Array.from(entry.projects).sort(),
+          lastSeenAt: entry.lastSeenAt,
+        }))
+        .sort((a, b) => {
+          if (b.occurrences !== a.occurrences) {
+            return b.occurrences - a.occurrences;
+          }
+          return a.ref.localeCompare(b.ref);
+        });
+
+      const filteredAssets = assetSearchFilter
+        ? sortedAssets.filter(
+            (asset) =>
+              asset.ref.toLowerCase().includes(assetSearchFilter) ||
+              asset.projects.some((project) => project.toLowerCase().includes(assetSearchFilter))
+          )
+        : sortedAssets;
+
+      const assetTotal = filteredAssets.length;
+      const assetTotalPages = assetTotal > 0 ? Math.ceil(assetTotal / assetPageSize) : 0;
+      const effectiveAssetPage =
+        assetTotalPages > 0 ? Math.min(assetPage, assetTotalPages) : assetPage;
+      const assetOffset = assetTotalPages > 0 ? (effectiveAssetPage - 1) * assetPageSize : 0;
+      const assets = filteredAssets.slice(assetOffset, assetOffset + assetPageSize);
+
+      const sortedRecentEvents = recentEvents.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+      const eventTotal = sortedRecentEvents.length;
+      const eventTotalPages = eventTotal > 0 ? Math.ceil(eventTotal / eventPageSize) : 0;
+      const effectiveEventPage =
+        eventTotalPages > 0 ? Math.min(eventPage, eventTotalPages) : eventPage;
+      const eventOffset = eventTotalPages > 0 ? (effectiveEventPage - 1) * eventPageSize : 0;
+      const paginatedRecentEvents = sortedRecentEvents.slice(eventOffset, eventOffset + eventPageSize);
+
+      return {
+        workspaceId: id,
+        ownerId,
+        scope,
+        totalTimelineEvents: timelineEvents.length,
+        uniqueLinkedAssets: assetMap.size,
+        assetPagination: {
+          page: effectiveAssetPage,
+          pageSize: assetPageSize,
+          total: assetTotal,
+          totalPages: assetTotalPages,
+        },
+        eventPagination: {
+          page: effectiveEventPage,
+          pageSize: eventPageSize,
+          total: eventTotal,
+          totalPages: eventTotalPages,
+        },
+        appliedFilters: {
+          project: projectFilter,
+          timelineTrack: timelineTrackFilter,
+          assetSearch: assetSearchFilter,
+        },
+        projects,
+        assets,
+        recentEvents: paginatedRecentEvents,
+      } satisfies WorkspaceAssetSummaryResponse;
+    } catch (error) {
+      this.handleError(error, 'getWorkspaceAssets');
     }
   }
 
