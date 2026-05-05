@@ -26,7 +26,7 @@ export async function onRequest(context) {
     }
 
     // Functional routes on landing domain -> redirect to app subdomain
-    const functionalPrefixes = ['/auth', '/login', '/register', '/dashboard', '/agents', '/workflows', '/settings', '/workspace', '/tasks', '/chat', '/admin', '/agency', '/mcp-hub', '/knowledge-hub', '/a2a-control', '/hub', '/resources', '/hosting', '/spaces', '/space', '/marketplace', '/suggestions', '/goals', '/plans', '/timeline', '/analytics', '/onboarding'];
+    const functionalPrefixes = ['/auth', '/login', '/register', '/dashboard', '/agents', '/workflows', '/settings', '/workspace', '/tasks', '/chat', '/admin', '/agency', '/mcp-hub', '/knowledge-hub', '/a2a-control', '/hub', '/resources', '/hosting', '/spaces', '/space', '/marketplace', '/suggestions', '/goals', '/plans', '/timeline', '/analytics', '/onboarding', '/codebase-map'];
     const isFunctional = functionalPrefixes.some(p => path === p || path.startsWith(p + '/')) || path === '/app' || path === '/app.html';
 
     if (isFunctional) {
@@ -52,7 +52,7 @@ export async function onRequest(context) {
     // We avoid fetching /app.html directly to prevent 308 loops (Clean URLs).
     // Instead, we fetch /app which Cloudflare should resolve to app.html.
     // If that fails, we fallback to /app.html but handle the response carefully.
-    const functionalPrefixes = ['/auth', '/login', '/register', '/dashboard', '/agents', '/workflows', '/settings', '/workspace', '/tasks', '/chat', '/admin', '/agency', '/mcp-hub', '/knowledge-hub', '/a2a-control', '/hub', '/resources', '/hosting', '/spaces', '/space', '/marketplace', '/suggestions', '/goals', '/plans', '/timeline', '/analytics', '/onboarding'];
+    const functionalPrefixes = ['/auth', '/login', '/register', '/dashboard', '/agents', '/workflows', '/settings', '/workspace', '/tasks', '/chat', '/admin', '/agency', '/mcp-hub', '/knowledge-hub', '/a2a-control', '/hub', '/resources', '/hosting', '/spaces', '/space', '/marketplace', '/suggestions', '/goals', '/plans', '/timeline', '/analytics', '/onboarding', '/codebase-map'];
     const isFunctional = functionalPrefixes.some(p => path === p || path.startsWith(p + '/')) || path === '/app' || path === '/app.html' || path === '/';
 
     if (isFunctional) {
