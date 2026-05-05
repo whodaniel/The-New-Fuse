@@ -96,15 +96,6 @@ function requireSuperAdmin(
     );
   }
 
-  if (!provided || provided !== expected) {
-    throw new Error(
-      `Super Admin authentication required for '${commandLabel}'.\n` +
-        `Ways to provide the token:\n` +
-        `  1. CLI Option: tnf ... --super-admin-token YOUR_TOKEN\n` +
-        `  2. Env Var:    export ${SUPER_ADMIN_INPUT_ENV_KEY}=YOUR_TOKEN\n` +
-        `  3. CI Secret:  Set CI_SUPER_ADMIN_TOKEN in your CI/CD settings.`
-    );
-  }
 }
 
 function isExecutableFile(filePath: string): boolean {

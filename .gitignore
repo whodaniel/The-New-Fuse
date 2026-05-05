@@ -188,6 +188,7 @@ data/video-reports/
 data/video-transcripts/
 data/protocols/*.snapshot.json
 data/protocols/twip-macro-board.state.json
+data/protocols/cron-job-locks/*.lock.json
 data/*-state.json
 data/AI_Knowledge_Base.md
 data/IMPLEMENTATION-PLAN.md
