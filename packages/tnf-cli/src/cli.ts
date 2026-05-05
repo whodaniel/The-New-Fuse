@@ -72,12 +72,27 @@ function requireSuperAdmin(
   const provided =
     options?.superAdminToken ||
     process.env[SUPER_ADMIN_INPUT_ENV_KEY] ||
-    process.env.CI_SUPER_ADMIN_TOKEN ||
-    process.env[SUPER_ADMIN_ENV_KEY]; // Allow the master secret to fulfill itself in local environments
+    process.env.CI_SUPER_ADMIN_TOKEN;
 
   if (!expected) {
     throw new Error(
       `Super Admin auth is not configured. Set ${SUPER_ADMIN_ENV_KEY} in the execution environment (e.g. ~/.zshrc or .env).`
+    );
+  }
+
+  if (!provided) {
+    throw new Error(
+      `Super Admin authentication required for '${commandLabel}'.\n` +
+      `No token provided. Ways to authenticate:\n` +
+      ` 1. CLI Option: tnf ... --super-admin-token YOUR_TOKEN\n` +
+      ` 2. Env Var: export ${SUPER_ADMIN_INPUT_ENV_KEY}=YOUR_TOKEN\n` +
+      ` 3. CI Secret: Set CI_SUPER_ADMIN_TOKEN in your CI/CD settings.`
+    );
+  }
+
+  if (provided !== expected) {
+    throw new Error(
+      `Super Admin authentication failed for '${commandLabel}'. Provided token does not match ${SUPER_ADMIN_ENV_KEY}.`
     );
   }
 

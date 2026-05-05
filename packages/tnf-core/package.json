@@ -2,13 +2,20 @@
   "name": "@the-new-fuse/tnf-core",
   "files": ["dist"],
   "version": "1.0.0",
-  "main": "src/index.js",
-  "types": "src/index.d.ts",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
-    ".": "./src/index.js",
-    "./chat/ChatManager": "./src/chat/ChatManager.js"
+    ".": "./dist/index.js",
+    "./chat/ChatManager": "./dist/chat/ChatManager.js"
   },
-  "dependencies": {
-    "events": "^3.3.0"
+  "scripts": {
+    "build": "tsc --build",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "@types/node": "^24.8.1"
   }
 }
