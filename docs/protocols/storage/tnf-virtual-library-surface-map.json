@@ -1,16 +1,16 @@
 {
   "canonicalization": {
-    "canonical_codebase": "/Users/<owner>/Projects/virtual-library-blueprints",
+    "canonical_codebase": "~/Projects/virtual-library-blueprints",
     "drift": {
       "branch_mismatch": true,
       "head_mismatch": true,
       "remote_mismatch": false
     },
-    "monorepo_mirror_codebase": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/virtual-library-blueprints"
+    "monorepo_mirror_codebase": "~/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/virtual-library-blueprints"
   },
-  "generated_at_utc": "2026-05-03T19:31:31.255010+00:00",
+  "generated_at_utc": "2026-05-06T21:14:10.589768+00:00",
   "process_contract": {
-    "authoritative_edit_path": "/Users/<owner>/Projects/virtual-library-blueprints",
+    "authoritative_edit_path": "~/Projects/virtual-library-blueprints",
     "mirror_sync_required": true,
     "owner_scope_keys": [
       "owner_principal_id",
@@ -24,20 +24,25 @@
     "agent_runtime_homes": {
       "gemini": {
         "exists": true,
-        "memory_file": "/Users/<owner>/.gemini/GEMINI.md",
-        "path": "/Users/<owner>/.gemini",
+        "memory_file": "~/.gemini/GEMINI.md",
+        "path": "~/.gemini",
         "role": "agent memory/skills/runtime state (not story source of truth)",
         "skills": [
-          "/Users/<owner>/.gemini/skills/autonomous-identity-architect/SKILL.md",
-          "/Users/<owner>/.gemini/skills/chrome-patient-scan/SKILL.md",
-          "/Users/<owner>/.gemini/skills/gcp-enterprise-agent-governance/SKILL.md",
-          "/Users/<owner>/.gemini/skills/skill-evolution/SKILL.md",
-          "/Users/<owner>/.gemini/skills/skill-synthesizer/SKILL.md",
-          "/Users/<owner>/.gemini/skills/sovereign-state-management.skill",
-          "/Users/<owner>/.gemini/skills/stitch-direct/SKILL.md",
-          "/Users/<owner>/.gemini/skills/tnf-frontend-deploy/SKILL.md",
-          "/Users/<owner>/.gemini/skills/tnf-youtube-ingestion/SKILL.md",
-          "/Users/<owner>/.gemini/skills/video-intelligence-architect/SKILL.md"
+          "~/.gemini/skills/autonomous-identity-architect/SKILL.md",
+          "~/.gemini/skills/chrome-patient-scan/SKILL.md",
+          "~/.gemini/skills/gcp-enterprise-agent-governance/SKILL.md",
+          "~/.gemini/skills/notebooklm-automation.skill/SKILL.md",
+          "~/.gemini/skills/skill-evolution/SKILL.md",
+          "~/.gemini/skills/skill-synthesizer/SKILL.md",
+          "~/.gemini/skills/sovereign-state-management.skill",
+          "~/.gemini/skills/sspdf/SKILL.md",
+          "~/.gemini/skills/sspdf-theme-generator/SKILL.md",
+          "~/.gemini/skills/sspdf-theme-generator.skill",
+          "~/.gemini/skills/sspdf.skill",
+          "~/.gemini/skills/stitch-direct/SKILL.md",
+          "~/.gemini/skills/tnf-frontend-deploy/SKILL.md",
+          "~/.gemini/skills/tnf-youtube-ingestion/SKILL.md",
+          "~/.gemini/skills/video-intelligence-architect/SKILL.md"
         ]
       },
       "kilo": {
@@ -45,7 +50,7 @@
           "@kilocode/plugin": "7.1.9"
         },
         "exists": true,
-        "path": "/Users/<owner>/.kilo",
+        "path": "~/.kilo",
         "role": "runtime/tooling state (not story source of truth)"
       },
       "opencode": {
@@ -54,7 +59,7 @@
           "@opencode-ai/plugin": "1.2.5"
         },
         "exists": true,
-        "path": "/Users/<owner>/.opencode",
+        "path": "~/.opencode",
         "role": "runtime/tooling state (not story source of truth)"
       }
     },
@@ -63,18 +68,18 @@
         "branch": "codex/story-privacy-wall",
         "dirty": true,
         "exists": true,
-        "head": "f0f9f115c12850a77bd1ac0d45ec9655f733b10e",
+        "head": "2a7a824eedd05a37644747e9bc411b8560d52797",
         "is_repo": true,
-        "path": "/Users/<owner>/Projects/virtual-library-blueprints",
+        "path": "~/Projects/virtual-library-blueprints",
         "remote": "https://github.com/whodaniel/virtual-library-blueprints.git"
       },
       "monorepo_mirror": {
         "branch": "main",
-        "dirty": true,
+        "dirty": false,
         "exists": true,
-        "head": "0cbcd8ba7534e97be2ad1e254fc82b61e869c6fa",
+        "head": "650d1682d3c9ec50cc7df95e233e3802c6a2ddf5",
         "is_repo": true,
-        "path": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/virtual-library-blueprints",
+        "path": "~/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/virtual-library-blueprints",
         "remote": "https://github.com/whodaniel/virtual-library-blueprints.git"
       }
     },
@@ -84,7 +89,7 @@
       "note_cards",
       "timeline_events",
       "library_navigation",
-      "story_session_agent_grants"
+      "story_session_agent_access"
     ]
   },
   "system": "TNF Virtual Library"

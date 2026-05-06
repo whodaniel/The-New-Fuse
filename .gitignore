@@ -104,6 +104,7 @@ data/protocols/manual-fact-intake.*.json
 docs/library/EMAIL_*.md
 data/unified-task-ledger.json
 data/unified-task-ledger.json.bak-*
+data/private/
 
 
 # OS

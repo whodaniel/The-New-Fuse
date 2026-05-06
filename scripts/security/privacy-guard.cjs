@@ -36,6 +36,8 @@ const blockedPathPatterns = [
   /^data\/mcp\.clients\//i,
   /^data\/mcp_config\.json$/i,
   /^data\/agent-registry\/agent-cards\.json$/i,
+  /^docs\/library\/README\.md$/i,
+  /^docs\/library\/REGISTRY\.md$/i,
   /^docs\/library\/EMAIL_.*\.md$/i,
   /^reports\/personal-archaeology\//i,
 ];
