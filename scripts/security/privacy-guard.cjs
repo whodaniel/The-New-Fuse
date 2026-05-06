@@ -28,6 +28,8 @@ const textFileExtensions = new Set([
 
 const blockedPathPatterns = [
   /^\.agent\//i,
+  /^data\/private\//i,
+  /^data\/protocols\/.*\.(json|jsonl)$/i,
   /^data\/unified-task-ledger\.json$/i,
   /^data\/unified-task-ledger\.json\.bak-/i,
   /^data\/protocols\/email-.*\.json$/i,
@@ -38,6 +40,7 @@ const blockedPathPatterns = [
   /^data\/agent-registry\/agent-cards\.json$/i,
   /^docs\/library\/README\.md$/i,
   /^docs\/library\/REGISTRY\.md$/i,
+  /^docs\/library\/.*\.md$/i,
   /^docs\/library\/EMAIL_.*\.md$/i,
   /^reports\/personal-archaeology\//i,
 ];
