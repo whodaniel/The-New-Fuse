@@ -98,6 +98,13 @@ documentation/scrapes/
 reports/personal-archaeology/
 apps/api/data/unified-task-ledger.json
 
+# Personal timeline and narrative archaeology artifacts (private)
+data/protocols/email-*.json
+data/protocols/manual-fact-intake.*.json
+docs/library/EMAIL_*.md
+data/unified-task-ledger.json
+data/unified-task-ledger.json.bak-*
+
 
 # OS
 .DS_Store
