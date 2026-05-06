@@ -12,6 +12,8 @@ As of 2026-05-06, email/timeline archaeology scripts default to private output.
 - `TNF_TIMELINE_OUTPUT_SCOPE=private|public` (default: `private`)
 - `TNF_TIMELINE_PRIVATE_DIR=/absolute/or/relative/path`
 - `TNF_TIMELINE_PUBLIC_DIR=/absolute/or/relative/path`
+- service-role API key environment variable (preferred for private Supabase
+  timeline sync/validation scripts)
 
 Helper used by scripts:
 

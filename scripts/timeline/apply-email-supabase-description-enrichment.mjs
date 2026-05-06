@@ -13,7 +13,11 @@ function parseArgs(argv) {
   const args = {
     queuePath: DEFAULT_QUEUE_PATH,
     url: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '',
-    anonKey: process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '',
+    anonKey:
+      process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      process.env.VITE_SUPABASE_ANON_KEY ||
+      process.env.SUPABASE_ANON_KEY ||
+      '',
     ownerPrincipalId: process.env.VITE_OWNER_PRINCIPAL_ID || process.env.OWNER_PRINCIPAL_ID || 'daniel',
     offset: 0,
     limit: 50,
@@ -109,7 +113,7 @@ Usage:
 Options:
   --queue <path>                Enrichment queue JSON path
   --url <supabase-url>          Supabase project URL
-  --anon-key <key>              Supabase anon key
+  --anon-key <key>              Supabase API key (service role recommended)
   --owner-principal-id <id>     Owner principal header (default: daniel)
   --offset <n>                  Start index in queue (default: 0)
   --limit <n>                   Max items in this batch (default: 50)

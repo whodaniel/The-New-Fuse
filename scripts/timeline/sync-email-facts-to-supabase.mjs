@@ -13,7 +13,11 @@ function parseArgs(argv) {
   const args = {
     payloadPath: DEFAULT_PAYLOAD_PATH,
     url: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '',
-    anonKey: process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '',
+    anonKey:
+      process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      process.env.VITE_SUPABASE_ANON_KEY ||
+      process.env.SUPABASE_ANON_KEY ||
+      '',
     ownerPrincipalId: process.env.VITE_OWNER_PRINCIPAL_ID || process.env.OWNER_PRINCIPAL_ID || 'daniel',
     userId: process.env.VITE_STORY_USER_ID || process.env.STORY_USER_ID || '',
     sessionId: '',
@@ -129,7 +133,7 @@ Usage:
 Options:
   --payload <path>              Sync payload JSON path
   --url <supabase-url>          Supabase project URL
-  --anon-key <key>              Supabase anon key
+  --anon-key <key>              Supabase API key (service role recommended)
   --owner-principal-id <id>     Owner principal header (x-owner-principal-id)
   --user-id <id>                Story user id for session bootstrap
   --session-id <uuid>           Optional existing story_sessions.id

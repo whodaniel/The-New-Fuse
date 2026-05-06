@@ -100,7 +100,11 @@ const TITLE_STOPWORDS = new Set([
 function parseArgs(argv) {
   const args = {
     url: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '',
-    anonKey: process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '',
+    anonKey:
+      process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      process.env.VITE_SUPABASE_ANON_KEY ||
+      process.env.SUPABASE_ANON_KEY ||
+      '',
     ownerPrincipalId: process.env.VITE_OWNER_PRINCIPAL_ID || process.env.OWNER_PRINCIPAL_ID || 'daniel',
     sessionId: '',
     excludedPath: DEFAULT_EXCLUDED_PATH,
@@ -194,7 +198,7 @@ Usage:
 
 Options:
   --url <supabase-url>            Supabase project URL
-  --anon-key <key>                Supabase anon key
+  --anon-key <key>                Supabase API key (service role recommended)
   --owner-principal-id <id>       Owner principal header (default: daniel)
   --session-id <uuid>             Optional explicit story session id
   --excluded <path>               Excluded review JSON path
