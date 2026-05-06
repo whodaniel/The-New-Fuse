@@ -47,6 +47,17 @@ Migration file created:
 
 - `apps/virtual-library-blueprints/supabase/migrations/20260506213800_harden_rls_auto_enable_execute_grants.sql`
 
+2. Restricted header-based scope fallbacks to service-role requests only:
+
+- `public.current_owner_principal_id()`
+- `public.current_agent_id()`
+- `public.has_collective_scope()`
+- helper added: `public.current_request_role()`
+
+Migration file created:
+
+- `apps/virtual-library-blueprints/supabase/migrations/20260506215000_restrict_header_scope_fallbacks.sql`
+
 ## REST Behavior Validation
 
 Using anon key:
@@ -57,7 +68,7 @@ Using anon key:
 
 2. `story_sessions` with `x-owner-principal-id: daniel`:
 
-- HTTP 200, rows: 3
+- HTTP 200, rows: 0
 
 3. `timeline_events` without owner header:
 
@@ -65,37 +76,16 @@ Using anon key:
 
 4. `timeline_events` with `x-owner-principal-id: daniel`:
 
-- HTTP 200, rows: 3 (sampled)
+- HTTP 200, rows: 0
 
-## Critical Residual Risk
+## Residual Risk
 
-`public.current_owner_principal_id()` currently accepts `x-owner-principal-id`
-directly when JWT lacks `owner_principal_id`.
-
-Current function behavior allows owner-context access via anon key + spoofed
-owner header. This means data isolation depends on secrecy of owner principal
-identifiers, which is not a strong security boundary for a public endpoint.
-
-## Required Next Hardening (Priority 0)
-
-1. Remove or constrain header fallback in:
-
-- `public.current_owner_principal_id()`
-- `public.current_agent_id()`
-- `public.has_collective_scope()`
-
-2. Recommended policy target:
-
-- Allow header-based fallback only for trusted server-side/service-role calls.
-- Require JWT claims for browser/anon paths.
-
-3. Re-run this verification report after policy/function update and confirm:
-
-- anon + forged owner header returns 0 rows.
+- Browser/anon clients no longer gain owner-scoped access via forged owner
+  header.
+- Any workflow that previously depended on anon + owner header must now use
+  authenticated JWT claims or trusted backend/service-role mediation.
 
 ## Outcome
 
 - Core RLS and schema-isolation posture is active.
-- One high-severity authorization gap remains in header-based owner/agent scope
-  fallback and should be remediated before treating timeline data as fully
-  private from public clients.
+- Header-spoof owner access path is closed for anon/public requests.
