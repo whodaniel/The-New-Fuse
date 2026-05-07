@@ -1,9 +1,0 @@
-[
-  {
-    "timestamp": "2026-03-26T19:20:04.298613Z",
-    "finding_type": "scroll_burst",
-    "severity": "info",
-    "details": "200 scroll events in 2.24s (89.22 events/s) from 2026-03-26T19:20:04.298613Z to 2026-03-26T19:20:06.540332Z.",
-    "action": "If this pattern repeats, add jump links or reduce content scanning overhead."
-  }
-]

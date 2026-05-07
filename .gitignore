@@ -101,6 +101,7 @@ reports/personal-archaeology/
 apps/api/data/unified-task-ledger.json
 data/protocols/*.json
 data/protocols/*.jsonl
+data/protocols/*.md
 docs/library/README.md
 docs/library/REGISTRY.md
 data/wiki-inbox/
@@ -117,6 +118,7 @@ data/private/
 data/original_master_data.csv
 worktrees/
 cloudflare-sharedstate/accelerator/target/
+apps/external/cursor-watch-learn/output/
 scripts/railway/openclaw-codex-tenants.json
 archive/junk/
 

@@ -1,3 +1,0 @@
-[console_scripts]
-freeride = main:main
-freeride-watcher = watcher:main

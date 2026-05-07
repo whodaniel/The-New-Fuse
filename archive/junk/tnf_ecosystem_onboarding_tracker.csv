@@ -1,7 +1,0 @@
-Step ID,Category,Action Item,Status,Priority,Cloud/Local,Notes
-1,OpenClaw Assessment,Check current OpenClaw config file location and contents,Completed,High,Local,"Verified openclaw.json. Gateway running correctly on 18789. Found 138 configured agents, including tnf-orchestrator."
-2,OpenClaw Assessment,Run OpenClaw doctor and health checks,Completed,High,Local,"Ran checks. System healthy. Found workers-bridge and stall-defense extensions loaded."
-3,OpenClaw Onboarding,Assess current channels and skills,Completed,Medium,Cloud/Local,"Telegram and Discord online. Verified Google-Antigravity and OpenAI providers are ready."
-4,TNF Integration,Check package.json for tnf:onboard script details,Completed,High,Cloud/Local,"Mapped onboarding paths via scripts/tnf-onboard.cjs and sync scripts."
-5,TNF Integration,Onboard OpenClaw instance into TNF protocol,Completed,High,Cloud,"Synced Railway routing vars (zeroclaw, picoclaw). Deployed Cloudflare worker (tnf-zeroclaw-relay.bizsynth.workers.dev)."
-6,Ecosystem Optimization,Maximize abilities for continuous self-improvement,Completed,High,Cloud/Local,"Fixed failing 'Nightly Maintenance' cron by bumping timeout. Added new 'TNF Continuous QA Loop' cron (every 6h) to execute tests autonomously."
