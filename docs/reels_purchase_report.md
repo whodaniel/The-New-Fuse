@@ -2,13 +2,13 @@
 Date: March 19, 2026 (Updated)
 
 ## Overview
-This report documents the purchases made by Daniel Adam Goldberg in the recent live sales by Jason Fulker (`ultimateconnect4u`). 
+This report documents the purchases made by Owner (Private) in the recent live sales by Jason Fulker (`ultimateconnect4u`). 
 
 ## The "Overlap" Point
 We have successfully identified the crossover point where your previous list (ending at $468) matches the video recordings:
-*   **Total 415:** Confirmed as "Daniel's 3 Zebras" (Matches `hear fossil (20) = 415`).
-*   **Total 450:** Confirmed as "Daniel Columar 3 Leopard Skin" (Matches `honey and green tower = 450`).
-*   **Total 468:** Confirmed as "$3 for Daniel" (Matches `3- silver necklace = 468`).
+*   **Total 415:** Confirmed as "Owner's 3 Zebras" (Matches `hear fossil (20) = 415`).
+*   **Total 450:** Confirmed as "Owner Columar 3 Leopard Skin" (Matches `honey and green tower = 450`).
+*   **Total 468:** Confirmed as "$3 for Owner" (Matches `3- silver necklace = 468`).
 
 ## New Purchases (After the $3 Silver Necklace)
 The following items were identified in the latter portions of the 5-day-ago live session and recent reels:

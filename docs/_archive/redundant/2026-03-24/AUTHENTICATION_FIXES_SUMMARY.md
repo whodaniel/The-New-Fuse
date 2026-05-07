@@ -53,7 +53,7 @@ Fixed critical authentication and authorization issues:
 ### Database Changes
 
 7. **[packages/database/drizzle/0003_fix_master_admin_email.sql](packages/database/drizzle/0003_fix_master_admin_email.sql)**
-   - New migration to fix email typo: `bisynth@gmail.com` → `owner@example.com`
+   - New migration to fix email typo: `owner@example.com` → `owner@example.com`
    - Sets SUPER_ADMIN role and roles array for the correct email
 
 ## How to Apply the Fixes

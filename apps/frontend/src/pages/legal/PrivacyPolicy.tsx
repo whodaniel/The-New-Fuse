@@ -70,8 +70,8 @@ const PrivacyPolicy = () => {
 
           <h2>9. Copyright Notice</h2>
           <p>
-            © 2025 Daniel Adam Goldberg. All rights reserved. The New Fuse and all related content,
-            software, and services are the intellectual property of Daniel Adam Goldberg.
+            © 2025 The New Fuse. All rights reserved. The New Fuse and all related content,
+            software, and services are the intellectual property of The New Fuse.
           </p>
         </div>
       </GlassCard>

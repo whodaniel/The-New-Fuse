@@ -1,6 +1,6 @@
 # Set Master Admin Guide
 
-**Email:** bisynth@gmail.com **Role:** SUPER_ADMIN (Master Admin)
+**Email:** owner@example.com **Role:** SUPER_ADMIN (Master Admin)
 
 ## Quick Start
 
@@ -14,13 +14,13 @@ pnpm --filter @the-new-fuse/database run admin:set-super
 
 ### 1. Account Must Exist First
 
-You need to have already registered an account with `bisynth@gmail.com`:
+You need to have already registered an account with `owner@example.com`:
 
 **Option A: Register via Frontend**
 
 1. Navigate to https://thenewfuse.com/register
 2. Create account with:
-   - Email: `bisynth@gmail.com`
+   - Email: `owner@example.com`
    - Password: (your secure password)
    - Other required fields
 
@@ -29,7 +29,7 @@ You need to have already registered an account with `bisynth@gmail.com`:
 ```sql
 SELECT id, email, role, roles, is_active, created_at
 FROM users
-WHERE email = 'bisynth@gmail.com';
+WHERE email = 'owner@example.com';
 ```
 
 ### 2. Database Connection
@@ -85,7 +85,7 @@ SET
   role = 'SUPER_ADMIN',
   roles = '["SUPER_ADMIN"]'::jsonb,
   updated_at = NOW()
-WHERE email = 'bisynth@gmail.com';
+WHERE email = 'owner@example.com';
 ```
 
 ## Expected Output
@@ -93,12 +93,12 @@ WHERE email = 'bisynth@gmail.com';
 Successful execution will show:
 
 ```
-🔧 Setting SUPER_ADMIN role for bisynth@gmail.com
+🔧 Setting SUPER_ADMIN role for owner@example.com
 📊 Connecting to database...
-🔍 Looking for user: bisynth@gmail.com
+🔍 Looking for user: owner@example.com
 ✅ User found: {
   id: 'uuid-here',
-  email: 'bisynth@gmail.com',
+  email: 'owner@example.com',
   currentRole: 'USER',
   currentRoles: [ 'USER' ]
 }
@@ -108,7 +108,7 @@ Successful execution will show:
 📋 Updated user details:
 {
   id: 'uuid-here',
-  email: 'bisynth@gmail.com',
+  email: 'owner@example.com',
   role: 'SUPER_ADMIN',
   roles: [ 'SUPER_ADMIN' ],
   isActive: true,
@@ -116,7 +116,7 @@ Successful execution will show:
 }
 
 🎉 All done! You can now log in as SUPER_ADMIN
-   Email: bisynth@gmail.com
+   Email: owner@example.com
    Access: Full admin dashboard at /admin
 ```
 
@@ -127,7 +127,7 @@ Successful execution will show:
 ```sql
 SELECT id, email, role, roles, is_active
 FROM users
-WHERE email = 'bisynth@gmail.com';
+WHERE email = 'owner@example.com';
 ```
 
 Expected:
@@ -141,7 +141,7 @@ is_active: true
 ### 2. Test Login
 
 1. Navigate to `/login`
-2. Sign in with `bisynth@gmail.com`
+2. Sign in with `owner@example.com`
 3. Should redirect to dashboard
 
 ### 3. Test Admin Access
