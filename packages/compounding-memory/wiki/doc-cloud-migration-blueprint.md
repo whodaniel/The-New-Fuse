@@ -22,7 +22,7 @@ Your new Supabase instance must replace the Railway Postgres service.
 - **Old URL**:
   `postgresql://postgres:...@postgres.railway.internal:5432/railway`
 - **New URL (`DATABASE_URL`)**:
-  `postgresql://postgres.wslydgtgindrywldatbv:pFhgQGRK38GfHWk4@aws-0-us-west-2.pooler.supabase.com:6543/postgres?sslmode=disable`
+  `postgresql://<user>:<password>@<supabase-host>:6543/postgres?sslmode=require`
 - **Required across**: `api-gateway`, `backend-jfal`, `relay-server`
 
 ## 2. Upstash (Redis)
@@ -60,7 +60,7 @@ Your new Upstash instance must replace the Railway Redis service.
 - **Critical Variables**:
   - `DATABASE_URL` (Supabase)
   - `REDIS_URL` (Upstash)
-  - `JWT_SECRET`: (Migrate from Railway: `d8k86eilz2jf3h513hoy20mvdiqkuzok`)
+  - `JWT_SECRET`: (Migrate from Railway secret manager; do not hardcode value)
   - `LOG_LEVEL`: `warn`
 
 ### C. Relay Server (`relay-server`)

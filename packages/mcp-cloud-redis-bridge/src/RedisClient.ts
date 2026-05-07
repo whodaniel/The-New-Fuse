@@ -16,7 +16,7 @@ export class CloudRedisClient extends EventEmitter {
   constructor(config: Partial<RedisConfig> = {}) {
     super();
     this.config = {
-      url: process.env.CLOUD_REDIS_URL || 'redis://default:default@tramway.proxy.rlwy.net:13570',
+      url: process.env.CLOUD_REDIS_URL || 'redis://localhost:6379',
       ingressChannel: config.ingressChannel || 'tnf:bus:ingress',
       egressPrefix: config.egressPrefix || 'tnf:bus:egress',
     };

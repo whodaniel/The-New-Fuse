@@ -9,8 +9,11 @@ import time
 
 # Configuration
 KB_PATH = "/Users/<owner>/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base/AI_Knowledge_Base.md"
-DATABASE_URL = "postgresql://postgres.wslydgtgindrywldatbv:pFhgQGRK38GfHWk4@aws-0-us-west-2.pooler.supabase.com:6543/postgres?sslmode=disable"
-GEMINI_API_KEY = "AIzaSyBTEYg9nHSjSJlzNmHmcv0bjhFHCGBFxus"
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql://username:password@localhost:5432/postgres?sslmode=disable",
+)
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "your-gemini-api-key")
 NAMESPACE = "intelligence"
 EMBEDDING_MODEL = "models/gemini-embedding-2-preview"
 DIMENSION = 1536

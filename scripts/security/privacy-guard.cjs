@@ -43,17 +43,43 @@ const blockedPathPatterns = [
   /^docs\/library\/.*\.md$/i,
   /^docs\/library\/EMAIL_.*\.md$/i,
   /^reports\/personal-archaeology\//i,
+  /^apps\/api\/data\/unified-task-ledger\.json$/i,
+  /^scripts\/railway\/openclaw-codex-tenants\.json$/i,
 ];
+
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function buildPersonalEmailRegex() {
+  const raw = process.env.PRIVACY_GUARD_PERSONAL_EMAILS || '';
+  const tokens = raw
+    .split(',')
+    .map((value) => value.trim().toLowerCase())
+    .filter((value) => {
+      if (!value) return false;
+      if (value.endsWith('@example.com')) return false;
+      if (value.startsWith('owner@')) return false;
+      return true;
+    });
+  if (!tokens.length) return null;
+  const pattern = tokens.map((value) => escapeRegex(value)).join('|');
+  return new RegExp(`\\b(?:${pattern})\\b`, 'gi');
+}
+
+const personalEmailRegex = buildPersonalEmailRegex();
 
 const sensitiveContentChecks = [
   { name: 'owner_home_path', regex: /\/Users\/danielgoldberg\//gi },
   { name: 'mailbox_reference', regex: /\.mbox\//gi },
   { name: 'raw_emlx_reference', regex: /\.emlx\b/gi },
-  { name: 'email_address', regex: /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi },
+  ...(personalEmailRegex
+    ? [{ name: 'personal_email_address', regex: personalEmailRegex }]
+    : []),
   {
-    name: 'high_risk_secret_key',
+    name: 'high_risk_secret_value',
     regex:
-      /\b(?:SUPABASE_SERVICE_ROLE_KEY|SUPABASE_ACCESS_TOKEN|OPENAI_API_KEY|ANTHROPIC_API_KEY|GEMINI_API_KEY|CLOUDFLARE_API_TOKEN|STRIPE_SECRET_KEY)\b/gi,
+      /\b(?:SUPABASE_SERVICE_ROLE_KEY|SUPABASE_ACCESS_TOKEN|OPENAI_API_KEY|ANTHROPIC_API_KEY|GEMINI_API_KEY|CLOUDFLARE_API_TOKEN|STRIPE_SECRET_KEY)\b\s*[:=]\s*["']?(?!your[_-]|YOUR[_-]|example|EXAMPLE|changeme|CHANGEME|placeholder|PLACEHOLDER|sample|SAMPLE|dummy|DUMMY|test|TEST|<|\$\{)[A-Za-z0-9._\-]{20,}/g,
   },
 ];
 

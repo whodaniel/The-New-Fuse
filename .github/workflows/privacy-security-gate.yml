@@ -1,0 +1,29 @@
+name: Privacy And Security Gate
+
+on:
+  pull_request:
+    branches: ["**"]
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  privacy-security-gate:
+    name: Privacy, Secrets, and Supabase RLS Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run privacy guard (repo mode)
+        run: node scripts/security/privacy-guard.cjs --mode=repo
+
+      - name: Run high-risk secret sweep (repo mode)
+        run: node scripts/security/secret-sweep.cjs --mode=repo
+
+      - name: Run Supabase RLS audit (strict with baseline)
+        run: node scripts/security/supabase-rls-audit.cjs --strict --baseline=scripts/security/supabase-rls-baseline.json

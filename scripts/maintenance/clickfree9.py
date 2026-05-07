@@ -13,7 +13,7 @@ tell application "Google Chrome"
                 var cells = rows[i].querySelectorAll('td');
                 if (cells.length > 0) {
                     var email = cells[0].innerText || '';
-                    if (email.indexOf('windsurfree9@findproductsandservices.com') > -1) {
+                    if (email.indexOf('owner@example.com') > -1) {
                         var links = cells[cells.length-1].querySelectorAll('a');
                         if (links.length > 0) {
                             links[0].click();

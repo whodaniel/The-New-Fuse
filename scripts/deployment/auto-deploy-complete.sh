@@ -6,7 +6,7 @@ set -e
 
 PROJECT_ID="041cee9d-8648-4074-b5a6-0eae436de1d1"
 ENV_ID="f706eaae-de9e-4a9b-a970-944dd4a6be41"
-JWT_SECRET="s5vELO0OEO1486BH7clWx5e00U77F7aoGlwalH9lSIA="
+JWT_SECRET="${JWT_SECRET:-your-jwt-secret-from-env}"
 
 echo "========================================="
 echo "Automated Railway Deployment"

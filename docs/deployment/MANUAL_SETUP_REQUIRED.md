@@ -159,7 +159,7 @@ NODE_ENV=production
 PORT=3001
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 REDIS_URL=${{Redis.REDIS_URL}}
-JWT_SECRET=s5vELO0OEO1486BH7clWx5e00U77F7aoGlwalH9lSIA=
+JWT_SECRET=your-jwt-secret-from-env
 ```
 
 ### Backend Service

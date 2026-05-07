@@ -6,12 +6,12 @@ Last Updated: 2026-04-25 (Gemini CLI Cleanup)
 The following accounts have confirmed LLM API usage quotas and are authenticated.
 
 ### Authoritative Account Registry
-- **19@findproductsandservices.com**: Provisioned/Verified (2026-03-24). `Approval=never`, `Sandbox=danger-full-access`.
+- **owner@example.com**: Provisioned/Verified (2026-03-24). `Approval=never`, `Sandbox=danger-full-access`.
 - **codex506@thenewfuse.com**: Provisioned/Verified (2026-03-24). `Approval=never`, `Sandbox=danger-full-access`.
 - **codex304@thenewfuse.com**: Active in live Codex lane.
 - **codex305@thenewfuse.com**: Active in live Codex lane.
 - **codex306@thenewfuse.com**: Active in live Codex lane.
-- **10@findproductsandservices.com**: Active/recent Codex persona.
+- **owner@example.com**: Active/recent Codex persona.
 
 ### Provisioning Rules
 If additional personas are needed, invoke **email-custodian-agent** at `~/.codex/skills/email-custodian-agent/SKILL.md`.

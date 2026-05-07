@@ -6,7 +6,7 @@ script = '''
 tell application "Google Chrome"
     activate
     tell active tab of window 1
-        set found to execute javascript "window.find('windsurfree9@findproductsandservices.com');"
+        set found to execute javascript "window.find('owner@example.com');"
     end tell
     return found as string
 end tell

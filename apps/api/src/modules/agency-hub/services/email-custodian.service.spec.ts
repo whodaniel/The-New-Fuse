@@ -111,7 +111,7 @@ describe('EmailCustodianService', () => {
 
     await service.provisionAccountForOwner('user-1', {
       accountType: 'hosted_email',
-      loginIdentifier: 'agent1@findproductsandservices.com',
+      loginIdentifier: 'owner@example.com',
       secret: 'Passw0rd!',
       hostingQuotaMb: 1024,
     });

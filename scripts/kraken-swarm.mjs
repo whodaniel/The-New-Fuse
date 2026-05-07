@@ -8,7 +8,7 @@ async function runKraken() {
     { name: 'Kraken-1', email: 'codex304@thenewfuse.com' },
     { name: 'Kraken-2', email: 'codex305@thenewfuse.com' },
     { name: 'Kraken-3', email: 'codex306@thenewfuse.com' },
-    { name: 'Kraken-4', email: '19@findproductsandservices.com' },
+    { name: 'Kraken-4', email: 'owner@example.com' },
   ];
 
   for (const agent of agents) {

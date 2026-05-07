@@ -5,7 +5,7 @@
 ✅ **Everything is prepared:**
 - All Dockerfiles configured
 - Railway project linked (TNF: 041cee9d-8648-4074-b5a6-0eae436de1d1)
-- JWT Secret generated: `s5vELO0OEO1486BH7clWx5e00U77F7aoGlwalH9lSIA=`
+- JWT Secret generated: `your-jwt-secret-from-env`
 - Databases exist (PostgreSQL, Redis)
 - Frontend service exists (but failing - needs rebuild)
 
@@ -66,7 +66,7 @@ NODE_ENV=production
 PORT=3001
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 REDIS_URL=${{Redis.REDIS_URL}}
-JWT_SECRET=s5vELO0OEO1486BH7clWx5e00U77F7aoGlwalH9lSIA=
+JWT_SECRET=your-jwt-secret-from-env
 ```
 
 **Backend Service:**
@@ -158,4 +158,4 @@ railway service
 cd /path/to/Desktop/A1-Inter-LLM-Com/The-New-Fuse && ./final-deploy.sh
 ```
 
-**JWT Secret:** `s5vELO0OEO1486BH7clWx5e00U77F7aoGlwalH9lSIA=`
+**JWT Secret:** `your-jwt-secret-from-env`

@@ -92,11 +92,20 @@ docs/project-management/*analysis*.md
 .agent/test-reports/
 
 # Additional Private Data
+.agent/
+.playwright-cli/
 data/autobiography/
 data/utp_events/
 documentation/scrapes/
 reports/personal-archaeology/
 apps/api/data/unified-task-ledger.json
+data/protocols/*.json
+data/protocols/*.jsonl
+docs/library/README.md
+docs/library/REGISTRY.md
+data/wiki-inbox/
+data/mcp.clients/
+data/mcp_config.json
 
 # Personal timeline and narrative archaeology artifacts (private)
 data/protocols/email-*.json
@@ -105,6 +114,11 @@ docs/library/EMAIL_*.md
 data/unified-task-ledger.json
 data/unified-task-ledger.json.bak-*
 data/private/
+data/original_master_data.csv
+worktrees/
+cloudflare-sharedstate/accelerator/target/
+scripts/railway/openclaw-codex-tenants.json
+archive/junk/
 
 
 # OS
