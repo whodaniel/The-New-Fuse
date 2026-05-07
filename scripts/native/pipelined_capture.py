@@ -57,7 +57,7 @@ class PipelinedCapture:
                 import importlib.util
                 spec = importlib.util.spec_from_file_location(
                     "bgra2jpeg_turbo",
-                    "/Users/<owner>/.hermes/skills/tnf/tnf-llvm-forge/scripts/bgra2jpeg_turbo.so")
+                    "./bgra2jpeg_turbo.so")
                 mod = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(mod)
                 print("[PipelinedCapture] Using turbojpeg SIMD encoder")
@@ -145,7 +145,7 @@ class DirectCapture:
                 import importlib.util
                 spec = importlib.util.spec_from_file_location(
                     "bgra2jpeg_turbo",
-                    "/Users/<owner>/.hermes/skills/tnf/tnf-llvm-forge/scripts/bgra2jpeg_turbo.so")
+                    "./bgra2jpeg_turbo.so")
                 mod = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(mod)
                 return mod.bgra2jpeg_turbo
@@ -219,7 +219,7 @@ def benchmark(iterations=50):
     import importlib.util
     spec = importlib.util.spec_from_file_location(
         "bgra2jpeg_turbo",
-        "/Users/<owner>/.hermes/skills/tnf/tnf-llvm-forge/scripts/bgra2jpeg_turbo.so")
+        "./bgra2jpeg_turbo.so")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     
