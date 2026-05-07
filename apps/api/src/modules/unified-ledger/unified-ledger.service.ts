@@ -2237,15 +2237,15 @@ export class UnifiedLedgerService implements OnModuleInit {
 
       return [
         {
-          key: 'birth-daniel-adam-goldberg-1975',
-          title: 'Birth: Daniel Adam Goldberg',
+          key: 'personal-origin-anchor-private',
+          title: 'Personal Origin Anchor (Private)',
           description:
-            'Daniel Adam Goldberg (Daniel Who) born on December 5, 1975. This marks the first anchor in the reconstructed personal timeline.',
+            'Owner-scoped private origin anchor. Exact birth details are maintained in private data stores and should not be embedded in public source.',
           point: 1,
-          timestamp: '1975-12-05T00:00:00.000Z',
+          timestamp: '1970-01-01T00:00:00.000Z',
           segment: 'Origins',
           confidence: 'hard',
-          evidenceRefs: ['provided-by-user:dob-1975-12-05'],
+          evidenceRefs: ['private://owner-origin-anchor'],
         },
         {
           key: 'origins-builder-identity',

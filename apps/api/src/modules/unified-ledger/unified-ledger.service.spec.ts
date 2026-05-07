@@ -382,7 +382,7 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
 
     const birthEvent = result.events.find((event) => {
       const payload = event.payload as Record<string, unknown>;
-      return payload.title === 'Birth: Daniel Adam Goldberg';
+      return payload.title === 'Personal Origin Anchor (Private)';
     });
 
     expect(result.createdCount).toBeGreaterThan(1);
