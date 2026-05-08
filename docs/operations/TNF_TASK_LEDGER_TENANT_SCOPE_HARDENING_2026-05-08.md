@@ -27,6 +27,8 @@ unified-ledger APIs, with backward-compatible owner scoping preserved.
 12. Remediated mutable `search_path` warnings for new private helper functions.
 13. Added and applied missing RLS policies for `workspaces` and
     `workspace_bookmarks`.
+14. Added and applied phase-1 self-access RLS policies for 16 user-owned tables
+    in `public`.
 
 ## Code Changes
 
@@ -88,6 +90,7 @@ Files:
 - `supabase/migrations/002_task_pipeline_execution_rls_scope_guards.sql`
 - `supabase/migrations/003_workspace_and_bookmark_rls_scope_guards.sql`
 - `supabase/migrations/004_fix_tnf_private_function_search_path.sql`
+- `supabase/migrations/005_user_owned_tables_rls_phase1.sql`
 
 ### Database Schema + Migration
 
@@ -117,6 +120,7 @@ Connected Supabase project migration state:
   `20260508215035 fix_tnf_private_function_search_path_20260508`
 - Applied migration:
   `20260508215616 workspace_and_bookmark_rls_scope_guards_20260508`
+- Applied migration: `20260508221801 user_owned_tables_rls_phase1_20260508`
 - Note: connected Supabase currently does **not** yet have `tenant_id` /
   `workspace_id` columns on `pipelines`, `tasks`, `task_executions`, nor
   `workspace_members`.
@@ -170,6 +174,26 @@ Executed via Supabase MCP (`execute_sql`, `list_migrations`, `get_advisors`):
   - `public.workspace_bookmarks`: select/insert/update/delete guards
 - Confirmed both `workspaces` and `workspace_bookmarks` are now
   `RLS enabled + has_policy=true`.
+- Confirmed phase-1 self-access policies (4 each: select/insert/update/delete)
+  now exist on:
+  - `users`
+  - `provider_api_keys`
+  - `jules_configs`
+  - `jules_usage_logs`
+  - `login_attempts`
+  - `notifications`
+  - `auth_events`
+  - `auth_sessions`
+  - `chat_messages`
+  - `resource_favorites`
+  - `workflow_topologies`
+  - `optimization_jobs`
+  - `agents`
+  - `chats`
+  - `read_receipts`
+  - `jules_sessions`
+- Verified `RLS enabled with no policy` table count dropped to `51` after
+  phase-1 rollout.
 - Security/performance advisors still report substantial pre-existing backlog
   across many unrelated tables/functions; no new blocker unique to this patch
   remained after `search_path` remediation.
