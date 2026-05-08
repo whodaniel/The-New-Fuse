@@ -29,6 +29,8 @@ unified-ledger APIs, with backward-compatible owner scoping preserved.
     `workspace_bookmarks`.
 14. Added and applied phase-1 self-access RLS policies for 16 user-owned tables
     in `public`.
+15. Added and applied phase-2 owner-column RLS policies for 9 additional tables
+    in `public`.
 
 ## Code Changes
 
@@ -91,6 +93,7 @@ Files:
 - `supabase/migrations/003_workspace_and_bookmark_rls_scope_guards.sql`
 - `supabase/migrations/004_fix_tnf_private_function_search_path.sql`
 - `supabase/migrations/005_user_owned_tables_rls_phase1.sql`
+- `supabase/migrations/006_owner_columns_rls_phase2.sql`
 
 ### Database Schema + Migration
 
@@ -121,6 +124,7 @@ Connected Supabase project migration state:
 - Applied migration:
   `20260508215616 workspace_and_bookmark_rls_scope_guards_20260508`
 - Applied migration: `20260508221801 user_owned_tables_rls_phase1_20260508`
+- Applied migration: `20260508230954 owner_columns_rls_phase2_20260508`
 - Note: connected Supabase currently does **not** yet have `tenant_id` /
   `workspace_id` columns on `pipelines`, `tasks`, `task_executions`, nor
   `workspace_members`.
@@ -194,6 +198,19 @@ Executed via Supabase MCP (`execute_sql`, `list_migrations`, `get_advisors`):
   - `jules_sessions`
 - Verified `RLS enabled with no policy` table count dropped to `51` after
   phase-1 rollout.
+- Confirmed phase-2 owner-column policies (4 each: select/insert/update/delete)
+  now exist on:
+  - `chat_room_participants`
+  - `chat_rooms`
+  - `code_execution_sessions`
+  - `registered_entities`
+  - `workflow_templates`
+  - `workflows`
+  - `feedback`
+  - `feedback_comments`
+  - `resource_shares`
+- Verified `RLS enabled with no policy` table count dropped further to `42`
+  after phase-2 rollout.
 - Security/performance advisors still report substantial pre-existing backlog
   across many unrelated tables/functions; no new blocker unique to this patch
   remained after `search_path` remediation.
