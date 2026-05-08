@@ -33,6 +33,8 @@ unified-ledger APIs, with backward-compatible owner scoping preserved.
     in `public`.
 16. Added and applied phase-3 agent/registration ownership policies for 8
     agent-registry tables in `public`.
+17. Added and applied phase-4 project/workflow scope policies for 4 additional
+    tables in `public`.
 
 ## Code Changes
 
@@ -97,6 +99,7 @@ Files:
 - `supabase/migrations/005_user_owned_tables_rls_phase1.sql`
 - `supabase/migrations/006_owner_columns_rls_phase2.sql`
 - `supabase/migrations/007_agent_registry_rls_phase3.sql`
+- `supabase/migrations/008_project_workflow_rls_phase4.sql`
 
 ### Database Schema + Migration
 
@@ -129,6 +132,7 @@ Connected Supabase project migration state:
 - Applied migration: `20260508221801 user_owned_tables_rls_phase1_20260508`
 - Applied migration: `20260508230954 owner_columns_rls_phase2_20260508`
 - Applied migration: `20260508231905 agent_registry_rls_phase3_20260508`
+- Applied migration: `20260508233254 project_workflow_rls_phase4_20260508`
 - Note: connected Supabase currently does **not** yet have `tenant_id` /
   `workspace_id` columns on `pipelines`, `tasks`, `task_executions`, nor
   `workspace_members`.
@@ -229,6 +233,16 @@ Executed via Supabase MCP (`execute_sql`, `list_migrations`, `get_advisors`):
   - `tnf_registration_owned(uuid)` (`SECURITY DEFINER`, pinned `search_path`)
 - Verified `RLS enabled with no policy` table count dropped further to `34`
   after phase-3 rollout.
+- Confirmed phase-4 policies (4 each: select/insert/update/delete) now exist on:
+  - `projects`
+  - `resource_allocations`
+  - `workflow_executions`
+  - `workflow_steps`
+- Confirmed new private helper functions in `private` schema:
+  - `tnf_project_visible(uuid)` (`SECURITY DEFINER`, pinned `search_path`)
+  - `tnf_workflow_owned(uuid)` (`SECURITY DEFINER`, pinned `search_path`)
+- Verified `RLS enabled with no policy` table count dropped further to `30`
+  after phase-4 rollout.
 - Security/performance advisors still report substantial pre-existing backlog
   across many unrelated tables/functions; no new blocker unique to this patch
   remained after `search_path` remediation.
