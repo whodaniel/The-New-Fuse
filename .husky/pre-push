@@ -22,3 +22,4 @@ done
 sort -u "$tmp_file" -o "$tmp_file"
 PRIVACY_GUARD_FILE_LIST="$tmp_file" pnpm run privacy:guard:pre-push
 PRIVACY_GUARD_FILE_LIST="$tmp_file" pnpm run secret:sweep:pre-push
+PRIVACY_GUARD_FILE_LIST="$tmp_file" pnpm run docs:pii:guard:pre-push

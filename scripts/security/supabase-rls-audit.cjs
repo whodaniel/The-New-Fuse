@@ -11,7 +11,22 @@ const baselinePath = baselineArg
   ? baselineArg.split('=').slice(1).join('=')
   : 'scripts/security/supabase-rls-baseline.json';
 
-const scanRoots = ['supabase/tables', 'supabase/migrations'];
+const defaultScanRoots = [
+  'supabase/tables',
+  'supabase/migrations',
+  'apps/virtual-library-blueprints/supabase/migrations',
+];
+
+function parseScanRoots() {
+  const raw = process.env.SUPABASE_RLS_AUDIT_SCAN_ROOTS || '';
+  if (!raw.trim()) return defaultScanRoots;
+  const provided = raw
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean);
+  if (!provided.length) return defaultScanRoots;
+  return [...new Set(provided)];
+}
 
 function walkSqlFiles(root) {
   if (!fs.existsSync(root)) return [];
@@ -87,6 +102,7 @@ function diffSet(currentList, baselineList) {
 }
 
 function main() {
+  const scanRoots = parseScanRoots();
   const files = scanRoots.flatMap((root) => walkSqlFiles(root));
   const createdTables = new Set();
   const rlsEnabledTables = new Set();

@@ -2,7 +2,9 @@
 
 Generated: 2026-05-07T18:31:02.684Z
 
-- Scope: files matched against identity markers (`Daniel Adam Goldberg`, `Daniel Who`, `whodaniel`, `bizsynth`, personal-provider email domains, local absolute paths).
+- Scope: files matched against identity markers (`<owner_full_name>`,
+  `Daniel Who`, `whodaniel`, `bizsynth`, personal-provider email domains, local
+  absolute paths).
 - Files reviewed: 78
 - public-allowed: 63
 - internal-only: 15
@@ -10,54 +12,73 @@ Generated: 2026-05-07T18:31:02.684Z
 
 ## private-restrict
 
-
 ## internal-only
 
-- apps/api/src/controllers/__tests__/workspace.controller.spec.ts
+- apps/api/src/controllers/**tests**/workspace.controller.spec.ts
   - reasons: contains bizsynth identity token
-  - action: keep in internal/private docs set; avoid mirroring to public docs repos
+  - action: keep in internal/private docs set; avoid mirroring to public docs
+    repos
 - apps/api/src/controllers/workspace.controller.ts
   - reasons: contains private narrative project label
-  - action: keep in internal/private docs set; avoid mirroring to public docs repos
+  - action: keep in internal/private docs set; avoid mirroring to public docs
+    repos
 - apps/api/src/modules/unified-ledger/unified-ledger.service.ts
-  - reasons: contains private narrative project label; contains public GitHub handle/repository reference; contains bizsynth identity token
-  - action: keep in internal/private docs set; avoid mirroring to public docs repos
+  - reasons: contains private narrative project label; contains public GitHub
+    handle/repository reference; contains bizsynth identity token
+  - action: keep in internal/private docs set; avoid mirroring to public docs
+    repos
 - apps/api/src/services/auth.service.spec.ts
   - reasons: contains bizsynth identity token
-  - action: keep in internal/private docs set; avoid mirroring to public docs repos
-- docs/_archive/2024-deployment-reports/DOCKER_HUB_DEPLOYMENT.md
-  - reasons: contains public GitHub handle/repository reference; contains bizsynth identity token
-  - action: keep in internal/private docs set; avoid mirroring to public docs repos
+  - action: keep in internal/private docs set; avoid mirroring to public docs
+    repos
+- docs/\_archive/2024-deployment-reports/DOCKER_HUB_DEPLOYMENT.md
+  - reasons: contains public GitHub handle/repository reference; contains
+    bizsynth identity token
+  - action: keep in internal/private docs set; avoid mirroring to public docs
+    repos
 - docs/HERMES_FEATURE_PARITY_PLAN.md
   - reasons: contains absolute local filesystem path
-  - action: keep in internal/private docs set; avoid mirroring to public docs repos
+  - action: keep in internal/private docs set; avoid mirroring to public docs
+    repos
 - docs/hermes_tnf_env.sh
   - reasons: contains absolute local filesystem path
-  - action: keep in internal/private docs set; avoid mirroring to public docs repos
+  - action: keep in internal/private docs set; avoid mirroring to public docs
+    repos
 - docs/library/COURSEFORGE_MANUSCRIPT_MAP_2026-05-05.md
-  - reasons: contains absolute local filesystem path; contains public GitHub handle/repository reference
-  - action: keep in internal/private docs set; avoid mirroring to public docs repos
+  - reasons: contains absolute local filesystem path; contains public GitHub
+    handle/repository reference
+  - action: keep in internal/private docs set; avoid mirroring to public docs
+    repos
 - docs/library/LIBRARIAN_INTEGRITY_CHECKPOINT_2026-05-05.md
-  - reasons: contains private narrative project label; contains public GitHub handle/repository reference
-  - action: keep in internal/private docs set; avoid mirroring to public docs repos
+  - reasons: contains private narrative project label; contains public GitHub
+    handle/repository reference
+  - action: keep in internal/private docs set; avoid mirroring to public docs
+    repos
 - docs/library/LIBRARIAN_RESUME_MAP.md
-  - reasons: contains private narrative project label; contains absolute local filesystem path; contains public GitHub handle/repository reference
-  - action: keep in internal/private docs set; avoid mirroring to public docs repos
+  - reasons: contains private narrative project label; contains absolute local
+    filesystem path; contains public GitHub handle/repository reference
+  - action: keep in internal/private docs set; avoid mirroring to public docs
+    repos
 - docs/operations/TNF_AUDIT_DIRECTOR_HANDOFF.md
   - reasons: contains absolute local filesystem path
-  - action: keep in internal/private docs set; avoid mirroring to public docs repos
+  - action: keep in internal/private docs set; avoid mirroring to public docs
+    repos
 - docs/roadmaps/TNF_FEDERATED_CONTROL_PLANE_OUTLINE_2026-03-18.md
   - reasons: contains bizsynth identity token
-  - action: keep in internal/private docs set; avoid mirroring to public docs repos
+  - action: keep in internal/private docs set; avoid mirroring to public docs
+    repos
 - docs/roadmaps/TNF_FEDERATED_ORCHESTRATION_GTM_PLAN_2026-03-18.md
   - reasons: contains bizsynth identity token
-  - action: keep in internal/private docs set; avoid mirroring to public docs repos
+  - action: keep in internal/private docs set; avoid mirroring to public docs
+    repos
 - docs/TNF_HERMES_FEATURE_PARITY_REPORT.md
   - reasons: contains absolute local filesystem path
-  - action: keep in internal/private docs set; avoid mirroring to public docs repos
+  - action: keep in internal/private docs set; avoid mirroring to public docs
+    repos
 - docs/TNF_HERMES_FEATURE_PARITY_SUMMARY.md
   - reasons: contains absolute local filesystem path
-  - action: keep in internal/private docs set; avoid mirroring to public docs repos
+  - action: keep in internal/private docs set; avoid mirroring to public docs
+    repos
 
 ## public-allowed
 
@@ -67,15 +88,15 @@ Generated: 2026-05-07T18:31:02.684Z
   - reasons: contains only low-risk public references
 - apps/api/src/modules/unified-ledger/unified-ledger.service.spec.ts
   - reasons: contains public GitHub handle/repository reference
-- docs/_archive/2024-pre-restructure/migration-docs/SETUP_INSTRUCTIONS.md
+- docs/\_archive/2024-pre-restructure/migration-docs/SETUP_INSTRUCTIONS.md
   - reasons: contains public GitHub handle/repository reference
-- docs/_archive/redundant-near/2026-03-24/security/SECURITY-FIXES-SUMMARY.md
+- docs/\_archive/redundant-near/2026-03-24/security/SECURITY-FIXES-SUMMARY.md
   - reasons: contains public GitHub handle/repository reference
-- docs/_archives/2024-migration/CLEANUP_COMPLETE_REPORT.md
+- docs/\_archives/2024-migration/CLEANUP_COMPLETE_REPORT.md
   - reasons: contains public GitHub handle/repository reference
 - docs/agents-and-protocols/AGENT_DEVELOPMENT_GUIDE.md
   - reasons: contains public GitHub handle/repository reference
-- docs/agents/_archive/development-guide.md
+- docs/agents/\_archive/development-guide.md
   - reasons: contains public GitHub handle/repository reference
 - docs/agents/AGENT_COMMUNICATION_PROTOCOL_SETUP_REPORT.md
   - reasons: contains public GitHub handle/repository reference
@@ -127,7 +148,7 @@ Generated: 2026-05-07T18:31:02.684Z
   - reasons: contains public GitHub handle/repository reference
 - docs/FRONTEND_PRODUCTION_READINESS_STATUS.md
   - reasons: contains public GitHub handle/repository reference
-- docs/getting-started/_archive/installation.md
+- docs/getting-started/\_archive/installation.md
   - reasons: contains public GitHub handle/repository reference
 - docs/guides/setup-instructions.md
   - reasons: contains public GitHub handle/repository reference
@@ -167,7 +188,7 @@ Generated: 2026-05-07T18:31:02.684Z
   - reasons: contains public GitHub handle/repository reference
 - docs/SKIDEANCER_DEPLOYMENT.md
   - reasons: contains public GitHub handle/repository reference
-- docs/specifications/_archive/MCP_TROUBLESHOOTING.md
+- docs/specifications/\_archive/MCP_TROUBLESHOOTING.md
   - reasons: contains public GitHub handle/repository reference
 - docs/STRATEGIC_ANTHROPIC_INTEGRATION_PLAN.md
   - reasons: contains public GitHub handle/repository reference
@@ -187,4 +208,3 @@ Generated: 2026-05-07T18:31:02.684Z
   - reasons: contains public GitHub handle/repository reference
 - docs/WEBSITE_QA_TESTING_LOG.md
   - reasons: contains public GitHub handle/repository reference
-

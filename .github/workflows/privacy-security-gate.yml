@@ -25,5 +25,8 @@ jobs:
       - name: Run high-risk secret sweep (repo mode)
         run: node scripts/security/secret-sweep.cjs --mode=repo
 
+      - name: Run docs PII guard (repo mode)
+        run: node scripts/security/docs-pii-guard.cjs --mode=repo
+
       - name: Run Supabase RLS audit (strict with baseline)
         run: node scripts/security/supabase-rls-audit.cjs --strict --baseline=scripts/security/supabase-rls-baseline.json
