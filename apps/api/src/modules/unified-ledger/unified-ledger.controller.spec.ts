@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 
 import { UnifiedLedgerController } from './unified-ledger.controller';
 
@@ -23,7 +23,16 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
     getGithubNarrativeGraph: jest.fn(),
   } as any;
 
-  const controller = new UnifiedLedgerController(ledger);
+  const db = {
+    workspaces: {
+      findByIdWithOwner: jest.fn(),
+    },
+    workspaceMembers: {
+      findMembership: jest.fn(),
+    },
+  } as any;
+
+  const controller = new UnifiedLedgerController(ledger, db);
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -249,5 +258,129 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
       viewerUserId: 'viewer-1',
       timelineTrack: 'tnf_platform_evolution',
     });
+  });
+
+  it('denies write when workspace does not exist', async () => {
+    db.workspaces.findByIdWithOwner.mockResolvedValueOnce(null);
+
+    await expect(
+      controller.create(
+        { id: 'author-1' },
+        { title: 'Private note', description: 'Body', workspaceId: 'ws-missing' }
+      )
+    ).rejects.toBeInstanceOf(NotFoundException);
+
+    expect(db.workspaces.findByIdWithOwner).toHaveBeenCalledWith('ws-missing');
+    expect(ledger.createRecord).not.toHaveBeenCalled();
+  });
+
+  it('denies write when user lacks workspace ownership and membership', async () => {
+    db.workspaces.findByIdWithOwner.mockResolvedValueOnce({
+      id: 'ws-1',
+      ownerId: 'owner-1',
+    });
+    db.workspaceMembers.findMembership.mockResolvedValueOnce(null);
+
+    await expect(
+      controller.patch({ id: 'user-2' }, 'rec-1', { title: 'updated', workspaceId: 'ws-1' })
+    ).rejects.toBeInstanceOf(ForbiddenException);
+
+    expect(db.workspaceMembers.findMembership).toHaveBeenCalledWith('ws-1', 'user-2');
+    expect(ledger.updateRecord).not.toHaveBeenCalled();
+  });
+
+  it('allows write when user is a workspace member', async () => {
+    db.workspaces.findByIdWithOwner.mockResolvedValueOnce({
+      id: 'ws-2',
+      ownerId: 'owner-2',
+    });
+    db.workspaceMembers.findMembership.mockResolvedValueOnce({
+      id: 'wm-1',
+      workspaceId: 'ws-2',
+      userId: 'member-1',
+      role: 'member',
+    });
+    ledger.createRecord.mockResolvedValueOnce({ id: 'rec-member-1' });
+
+    const result = await controller.create(
+      { id: 'member-1' },
+      { title: 'Allowed', description: 'Scoped', workspaceId: 'ws-2' }
+    );
+
+    expect(result).toEqual({ id: 'rec-member-1' });
+    expect(ledger.createRecord).toHaveBeenCalledWith({
+      title: 'Allowed',
+      description: 'Scoped',
+      workspaceId: 'ws-2',
+      owner: 'member-1',
+      source: 'api',
+    });
+  });
+
+  it('denies write when request workspaceId mismatches authenticated workspace scope', async () => {
+    await expect(
+      controller.create({ id: 'user-10', workspaceId: 'ws-auth-1' } as any, {
+        title: 'Scoped write',
+        description: 'Mismatch should fail',
+        workspaceId: 'ws-other-2',
+      })
+    ).rejects.toBeInstanceOf(ForbiddenException);
+
+    expect(ledger.createRecord).not.toHaveBeenCalled();
+    expect(db.workspaces.findByIdWithOwner).not.toHaveBeenCalled();
+  });
+
+  it('denies write when request tenantId mismatches authenticated tenant scope', async () => {
+    await expect(
+      controller.create({ id: 'user-11', tenantId: 'tenant-auth-1' } as any, {
+        title: 'Scoped write',
+        description: 'Tenant mismatch should fail',
+        tenantId: 'tenant-other-2',
+      })
+    ).rejects.toBeInstanceOf(ForbiddenException);
+
+    expect(ledger.createRecord).not.toHaveBeenCalled();
+  });
+
+  it('denies patch when request tenantId mismatches authenticated tenant scope', async () => {
+    await expect(
+      controller.patch({ id: 'user-12', tenantId: 'tenant-auth-1' } as any, 'rec-1', {
+        title: 'Tenant mismatch patch',
+        tenantId: 'tenant-other-2',
+      })
+    ).rejects.toBeInstanceOf(ForbiddenException);
+
+    expect(ledger.getRecord).not.toHaveBeenCalled();
+    expect(ledger.updateRecord).not.toHaveBeenCalled();
+  });
+
+  it('derives workspace from existing record for writes when workspaceId is omitted', async () => {
+    ledger.getRecord.mockResolvedValueOnce({
+      id: 'rec-owned-1',
+      owner: 'owner-55',
+      workspaceId: 'ws-derived-1',
+    });
+    db.workspaces.findByIdWithOwner.mockResolvedValueOnce({
+      id: 'ws-derived-1',
+      ownerId: 'owner-55',
+    });
+    ledger.updateRecord.mockResolvedValueOnce({ id: 'rec-owned-1' });
+
+    const result = await controller.patch({ id: 'owner-55' }, 'rec-owned-1', {
+      title: 'Derived workspace write',
+    });
+
+    expect(result).toEqual({ id: 'rec-owned-1' });
+    expect(db.workspaces.findByIdWithOwner).toHaveBeenCalledWith('ws-derived-1');
+    expect(ledger.updateRecord).toHaveBeenCalledWith(
+      'rec-owned-1',
+      {
+        title: 'Derived workspace write',
+        owner: 'owner-55',
+        workspaceId: 'ws-derived-1',
+      },
+      'owner-55',
+      { workspaceId: 'ws-derived-1' }
+    );
   });
 });
