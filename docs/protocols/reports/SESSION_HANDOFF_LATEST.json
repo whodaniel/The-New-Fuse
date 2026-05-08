@@ -1,10 +1,10 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "9ab4dd15-fd0c-4b0f-bace-024dd4c556e9",
-  "created_at": "2026-05-08T23:11:39.679Z",
+  "handoff_id": "59c4d423-8c52-47d5-a632-d3d03e30f56a",
+  "created_at": "2026-05-08T23:28:05.975Z",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "184dc21c4072cc875f5c2d941f2c2983170b1a00",
+  "head_sha": "9e743f4cb4032c1d1d9826b11145a4c436c68ad2",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
@@ -14,14 +14,14 @@
   ],
   "changed_paths": [
     "docs/operations/TNF_TASK_LEDGER_TENANT_SCOPE_HARDENING_2026-05-08.md",
-    "supabase/migrations/006_owner_columns_rls_phase2.sql"
+    "supabase/migrations/007_agent_registry_rls_phase3.sql"
   ],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "pass",
-    "notes": "Auto-verify 2026-05-08T23:11:40.721Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=pass"
+    "notes": "Auto-verify 2026-05-08T23:28:07.843Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=pass"
   },
   "continuation": {
     "owner": "tnf-orchestrator",
@@ -38,6 +38,6 @@
     "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": ["184dc21c4072cc875f5c2d941f2c2983170b1a00"]
+    "commits": ["9e743f4cb4032c1d1d9826b11145a4c436c68ad2"]
   }
 }
