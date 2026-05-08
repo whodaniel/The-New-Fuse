@@ -86,6 +86,8 @@ Files:
 - `apps/api/src/modules/unified-ledger/unified-ledger.controller.ts`
 - `apps/api/src/modules/unified-ledger/unified-ledger.controller.spec.ts`
 - `supabase/migrations/002_task_pipeline_execution_rls_scope_guards.sql`
+- `supabase/migrations/003_workspace_and_bookmark_rls_scope_guards.sql`
+- `supabase/migrations/004_fix_tnf_private_function_search_path.sql`
 
 ### Database Schema + Migration
 
