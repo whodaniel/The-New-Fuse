@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-08T23:28:05.975Z`  
-Handoff ID: `59c4d423-8c52-47d5-a632-d3d03e30f56a`
+Created At: `2026-05-08T23:41:21.992Z`  
+Handoff ID: `8f8e3766-f17c-4504-83f3-0cbb14ba67e6`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `9e743f4cb4032c1d1d9826b11145a4c436c68ad2`
+- Head SHA: `c0af30c0ecdd1a714cf773e4bbdaf000cdcb85b9`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -20,7 +20,7 @@ Handoff ID: `59c4d423-8c52-47d5-a632-d3d03e30f56a`
 ## Changed Paths
 
 - docs/operations/TNF_TASK_LEDGER_TENANT_SCOPE_HARDENING_2026-05-08.md
-- supabase/migrations/007_agent_registry_rls_phase3.sql
+- supabase/migrations/008_project_workflow_rls_phase4.sql
 
 ## Verification
 
