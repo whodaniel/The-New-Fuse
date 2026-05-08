@@ -36,7 +36,7 @@ export {
   createAuthService,
   type AuthResponse,
   type UserData
-} from './services/auth.service';
+} from './services/auth.service.js';
 
 // Workflow service exports
 export {
@@ -49,7 +49,7 @@ export {
   type WorkflowCreateData,
   type WorkflowUpdateData,
   WorkflowExecutionStatus
-} from './services/workflow.service';
+} from './services/workflow.service.js';
 
 // Agent service exports
 export {
@@ -61,7 +61,7 @@ export {
   type AgentUpdateData,
   type AgentExecutionResult,
   AgentStatus
-} from './services/agent.service';
+} from './services/agent.service.js';
 
 // User service exports
 export {
@@ -70,7 +70,7 @@ export {
   type User,
   type UserProfile,
   type UserUpdateData
-} from './services/user.service';
+} from './services/user.service.js';
 
 /**
  * Create a new API client with the given configuration
@@ -92,10 +92,10 @@ export async function createApiClient(config: {
   timeout?: number;
   headers?: Record<string, string>;
   options?: Record<string, any>;
-  tokenStorage?: import('./auth/TokenStorage').TokenStorage;
+  tokenStorage?: import('./auth/TokenStorage.js').TokenStorage;
 }) {
   const { baseURL, timeout, headers, options, tokenStorage } = config;
-  const ApiClientModule = await import('./client/ApiClient');
+  const ApiClientModule = await import('./client/ApiClient.js');
   return new ApiClientModule.ApiClient({
     baseURL,
     timeout,

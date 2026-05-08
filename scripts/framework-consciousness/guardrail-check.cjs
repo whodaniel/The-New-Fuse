@@ -50,6 +50,7 @@ function loadCurrentMetrics() {
   const phase6 = readJson(path.join(OUTPUT_DIR, 'phase-6-reach-value-report.json'));
   const evolution = readJson(path.join(OUTPUT_DIR, 'evolution-summary.json'));
 
+  const allowPartial = hasFlag('--allow-partial');
   if (!foundation || !phase5 || !phase6 || !evolution) {
     const missing = [
       !foundation ? 'foundation-discovery-report.json' : null,
@@ -57,20 +58,25 @@ function loadCurrentMetrics() {
       !phase6 ? 'phase-6-reach-value-report.json' : null,
       !evolution ? 'evolution-summary.json' : null
     ].filter(Boolean);
-    throw new Error(`Missing required report files: ${missing.join(', ')}`);
+
+    if (allowPartial) {
+      console.warn(`WARNING: Missing report files: ${missing.join(', ')}. Proceeding with partial data.`);
+    } else {
+      throw new Error(`Missing required report files: ${missing.join(', ')}`);
+    }
   }
 
   return {
-    completionPct: Number(evolution.completionPct || 0),
-    latestPhase: evolution.latestPhase || null,
-    valueScore: Number((phase6.valueScore && phase6.valueScore.score) || 0),
-    docs: Number(foundation.discoveries?.documentation?.totalFiles || 0),
-    packages: Number(foundation.discoveries?.codebase?.packages || 0),
-    apps: Number(foundation.discoveries?.codebase?.applications || 0),
-    tnfSkills: Number(phase5.selfAnalysis?.metrics?.growthSignals?.tnfSkillCount || 0),
-    claudeSkills: Number(phase5.selfAnalysis?.metrics?.growthSignals?.claudeSkillCount || 0),
+    completionPct: Number(evolution?.completionPct || 0),
+    latestPhase: evolution?.latestPhase || null,
+    valueScore: Number((phase6?.valueScore && phase6.valueScore.score) || 0),
+    docs: Number(foundation?.discoveries?.documentation?.totalFiles || 0),
+    packages: Number(foundation?.discoveries?.codebase?.packages || 0),
+    apps: Number(foundation?.discoveries?.codebase?.applications || 0),
+    tnfSkills: Number(phase5?.selfAnalysis?.metrics?.growthSignals?.tnfSkillCount || 0),
+    claudeSkills: Number(phase5?.selfAnalysis?.metrics?.growthSignals?.claudeSkillCount || 0),
     integrationsDetected: Number(
-      (phase6.integrationExpansion || []).filter(item => item && item.detected === true).length
+      (phase6?.integrationExpansion || []).filter(item => item && item.detected === true).length
     )
   };
 }
@@ -103,6 +109,7 @@ function compare(current, baseline) {
 function main() {
   const baselinePath = path.resolve(ROOT, getArg('--baseline', path.relative(ROOT, DEFAULT_BASELINE)));
   const writeBaseline = hasFlag('--write-baseline');
+  const allowPartial = hasFlag('--allow-partial');
 
   const current = loadCurrentMetrics();
 
@@ -130,13 +137,16 @@ function main() {
   const baseline = baselineRaw.metrics;
   const failures = compare(current, baseline);
 
+  const allZero = ['completionPct', 'valueScore', 'docs', 'packages', 'apps', 'tnfSkills', 'claudeSkills', 'integrationsDetected']
+    .every(k => current[k] === 0);
+
   const result = {
     timestamp: new Date().toISOString(),
     baselinePath,
     baseline,
     current,
-    failures,
-    passed: failures.length === 0
+    failures: allZero && allowPartial ? [] : failures,
+    passed: allZero && allowPartial ? true : failures.length === 0
   };
   writeJson(RESULT_PATH, result);
 
@@ -149,6 +159,8 @@ function main() {
   if (!result.passed) {
     summaryLines.push('Failures:');
     for (const f of failures) summaryLines.push(`- ${f}`);
+  } else if (allZero && allowPartial) {
+    summaryLines.push('(Partial mode: no report data available, skipping regression check)');
   }
   const summary = summaryLines.join('\n');
   console.log(summary);

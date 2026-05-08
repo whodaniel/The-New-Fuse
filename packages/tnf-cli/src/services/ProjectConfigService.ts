@@ -132,8 +132,8 @@ export class ProjectConfigService {
       $schema: 'https://tnf.ai/config.schema.json',
       model: '',
       permission: {
-        bash: {},
-        read: { '*': 'allow' },
+        bash: { 'ls *': 'allow', 'cat *': 'allow', 'echo *': 'allow', 'pwd': 'allow', 'which *': 'allow' },
+        read: { '.tnf/**': 'allow', 'tnf.jsonc': 'allow', 'tnf.json': 'allow' },
         external_directory: {},
       },
       mcp: {},

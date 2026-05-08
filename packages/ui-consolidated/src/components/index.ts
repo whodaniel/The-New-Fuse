@@ -29,6 +29,7 @@ export * from './Split.js';
 // Feature Components
 export * from './features/memory-inspector/MemoryInspector.js';
 export * from './features/metrics-dashboard/MetricsDashboard.js';
+export * from './features/concordance-viewer/ConcordanceViewer.js';
 
 export * from './GlassCard.js';
 export * from './MagneticButton.js';

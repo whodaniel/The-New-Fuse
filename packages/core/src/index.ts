@@ -26,4 +26,19 @@ export * from './services/PromptService.js';
 
 // Cascade
 export * from './services/CascadeService.js';
-export * from './types/index.js';
+export {
+  TYPES,
+  CommunicationPattern,
+  ModelType,
+  ResourceType,
+  TokenType,
+  WalletType,
+  MessageRole,
+  MessageType,
+  MessageStatus,
+  VerificationLevel,
+  ServiceState,
+  type ValidationError,
+  type ValidationWarning,
+  type AgentState,
+} from './types/index.js';

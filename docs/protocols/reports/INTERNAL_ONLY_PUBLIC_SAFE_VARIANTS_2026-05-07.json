@@ -1,0 +1,61 @@
+{
+  "generatedAt": "2026-05-07T18:47:26.879Z",
+  "input": "docs/protocols/reports/PII_CLASSIFICATION_AUDIT_2026-05-07.json",
+  "outputDir": "docs/protocols/reports/public-safe-variants",
+  "totals": {
+    "internalDocsCandidates": 11,
+    "variantsCreated": 3,
+    "skipped": 8
+  },
+  "created": [
+    {
+      "file": "docs/_archive/2024-deployment-reports/DOCKER_HUB_DEPLOYMENT.md",
+      "output": "docs/protocols/reports/public-safe-variants/docs/_archive/2024-deployment-reports/DOCKER_HUB_DEPLOYMENT.md",
+      "bytes": 10922
+    },
+    {
+      "file": "docs/roadmaps/TNF_FEDERATED_CONTROL_PLANE_OUTLINE_2026-03-18.md",
+      "output": "docs/protocols/reports/public-safe-variants/docs/roadmaps/TNF_FEDERATED_CONTROL_PLANE_OUTLINE_2026-03-18.md",
+      "bytes": 7147
+    },
+    {
+      "file": "docs/roadmaps/TNF_FEDERATED_ORCHESTRATION_GTM_PLAN_2026-03-18.md",
+      "output": "docs/protocols/reports/public-safe-variants/docs/roadmaps/TNF_FEDERATED_ORCHESTRATION_GTM_PLAN_2026-03-18.md",
+      "bytes": 8926
+    }
+  ],
+  "skipped": [
+    {
+      "file": "docs/HERMES_FEATURE_PARITY_PLAN.md",
+      "reason": "not tracked by git"
+    },
+    {
+      "file": "docs/hermes_tnf_env.sh",
+      "reason": "not tracked by git"
+    },
+    {
+      "file": "docs/library/COURSEFORGE_MANUSCRIPT_MAP_2026-05-05.md",
+      "reason": "not tracked by git"
+    },
+    {
+      "file": "docs/library/LIBRARIAN_INTEGRITY_CHECKPOINT_2026-05-05.md",
+      "reason": "not tracked by git"
+    },
+    {
+      "file": "docs/library/LIBRARIAN_RESUME_MAP.md",
+      "reason": "not tracked by git"
+    },
+    {
+      "file": "docs/operations/TNF_AUDIT_DIRECTOR_HANDOFF.md",
+      "reason": "not tracked by git"
+    },
+    {
+      "file": "docs/TNF_HERMES_FEATURE_PARITY_REPORT.md",
+      "reason": "not tracked by git"
+    },
+    {
+      "file": "docs/TNF_HERMES_FEATURE_PARITY_SUMMARY.md",
+      "reason": "not tracked by git"
+    }
+  ]
+}

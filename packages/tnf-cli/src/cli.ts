@@ -181,52 +181,42 @@ function inferVoiceBridgePort(profileInput?: string, explicitPort?: string): num
   const profile = normalizeVoiceProfile(profileInput);
   if (isDefaultVoiceProfile(profile)) return 50005;
 
-  const cksum = spawnSync('cksum', {
-    input: profile,
-    encoding: 'utf8',
-    env: process.env,
-  });
-
-  if (cksum.status === 0) {
-    const token = (cksum.stdout || '').trim().split(/\s+/)[0];
-    const hash = Number.parseInt(token || '', 10);
-    if (Number.isFinite(hash)) {
-      return 50005 + (hash % 400) + 1;
-    }
-  }
-
-  let fallbackHash = 0;
-  for (const char of profile) fallbackHash = (fallbackHash * 33 + char.charCodeAt(0)) >>> 0;
-  return 50005 + (fallbackHash % 400) + 1;
+  let hash = 0;
+  for (const char of profile) hash = ((hash * 33) + char.charCodeAt(0)) >>> 0;
+  return 50005 + (hash % 400) + 1;
 }
 
-function readVoiceBridgeJson(
+async function readVoiceBridgeJson(
   pathname: string,
   method: 'GET' | 'POST' = 'GET',
   port = 50005
-): unknown {
+): Promise<unknown> {
   const url = `http://127.0.0.1:${port}${pathname}`;
-  const args = ['-fsS', url];
-  if (method === 'POST') args.unshift('-X', 'POST');
-  const result = spawnSync('curl', args, {
-    encoding: 'utf8',
-    env: process.env,
-  });
-  if (result.status !== 0) {
-    const stderr = (result.stderr || '').trim();
-    throw new Error(
-      `Voice Bridge API call failed for ${method} ${pathname} on 127.0.0.1:${port}. ${
-        stderr || `Is voice server running on 127.0.0.1:${port}?`
-      }`
-    );
-  }
-
-  const body = (result.stdout || '').trim();
-  if (!body) return {};
   try {
-    return JSON.parse(body);
-  } catch {
-    throw new Error(`Voice Bridge API returned non-JSON for ${method} ${pathname}: ${body}`);
+    const response = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!response.ok) {
+      throw new Error(
+        `Voice Bridge API call failed for ${method} ${pathname} on 127.0.0.1:${port} (HTTP ${response.status}).`
+      );
+    }
+    const body = await response.text();
+    if (!body) return {};
+    try {
+      return JSON.parse(body);
+    } catch {
+      throw new Error(`Voice Bridge API returned non-JSON for ${method} ${pathname}: ${body}`);
+    }
+  } catch (err: any) {
+    if (err.name === 'TimeoutError' || err.code === 'ECONNREFUSED') {
+      throw new Error(
+        `Voice Bridge API call failed for ${method} ${pathname} on 127.0.0.1:${port}. Is voice server running?`
+      );
+    }
+    throw err;
   }
 }
 
@@ -424,11 +414,12 @@ function spawnDetachedVoiceCommand(
 async function waitForVoiceServer(port: number, timeoutMs = 12000): Promise<boolean> {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
-    const probe = spawnSync('curl', ['-fsS', `http://127.0.0.1:${port}/`], {
-      encoding: 'utf8',
-      env: process.env,
-    });
-    if (probe.status === 0) return true;
+    try {
+      const response = await fetch(`http://127.0.0.1:${port}/`, {
+        signal: AbortSignal.timeout(450),
+      });
+      if (response.ok) return true;
+    } catch {}
     await sleep(220);
   }
   return false;
@@ -465,54 +456,55 @@ function isRelayControlSignal(text: string): boolean {
   return false;
 }
 
-function postVoiceSend(port: number, text: string): { ok: boolean; body: string; error?: string } {
+async function postVoiceSend(port: number, text: string): Promise<{ ok: boolean; body: string; error?: string }> {
   const payload = JSON.stringify({ text });
-  const result = spawnSync(
-    'curl',
-    [
-      '-fsS',
-      '--max-time',
-      '2',
-      '-X',
-      'POST',
-      `http://127.0.0.1:${port}/send`,
-      '-H',
-      'Content-Type: application/json',
-      '--data',
-      payload,
-    ],
-    {
-      encoding: 'utf8',
-      env: process.env,
+  try {
+    const response = await fetch(`http://127.0.0.1:${port}/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload,
+      signal: AbortSignal.timeout(2000),
+    });
+    if (!response.ok) {
+      return {
+        ok: false,
+        body: '',
+        error: `HTTP ${response.status}`,
+      };
     }
-  );
-  if (result.status !== 0) {
+    const body = await response.text();
+    return { ok: true, body: body.trim() };
+  } catch (err: any) {
     return {
       ok: false,
       body: '',
-      error: (result.stderr || '').trim() || `curl exit ${result.status}`,
+      error: err.message || 'fetch failed',
     };
   }
-  return { ok: true, body: (result.stdout || '').trim() };
 }
 
-function postVoiceActivate(port: number): { ok: boolean; body: string; error?: string } {
-  const result = spawnSync(
-    'curl',
-    ['-fsS', '--max-time', '2', '-X', 'POST', `http://127.0.0.1:${port}/activate`],
-    {
-      encoding: 'utf8',
-      env: process.env,
+async function postVoiceActivate(port: number): Promise<{ ok: boolean; body: string; error?: string }> {
+  try {
+    const response = await fetch(`http://127.0.0.1:${port}/activate`, {
+      method: 'POST',
+      signal: AbortSignal.timeout(2000),
+    });
+    if (!response.ok) {
+      return {
+        ok: false,
+        body: '',
+        error: `HTTP ${response.status}`,
+      };
     }
-  );
-  if (result.status !== 0) {
+    const body = await response.text();
+    return { ok: true, body: body.trim() };
+  } catch (err: any) {
     return {
       ok: false,
       body: '',
-      error: (result.stderr || '').trim() || `curl exit ${result.status}`,
+      error: err.message || 'fetch failed',
     };
   }
-  return { ok: true, body: (result.stdout || '').trim() };
 }
 
 type RelayDirectionState = {
@@ -3672,14 +3664,14 @@ voiceBridgeCommand
                 down.push(`${profile}:${port}#${misses}`);
               }
 
-              if (heartbeatHeal) {
-                const activateResult = postVoiceActivate(port);
-                if (activateResult.ok) {
-                  healed.push(profile);
-                } else {
-                  healFailed.push(profile);
-                }
-              }
+      if (heartbeatHeal) {
+        const activateResult = await postVoiceActivate(port);
+        if (activateResult.ok) {
+          healed.push(profile);
+        } else {
+          healFailed.push(profile);
+        }
+      }
             }
 
             const shouldLogHeartbeat =
@@ -3748,9 +3740,9 @@ voiceBridgeCommand
               continue;
             }
 
-            const msgId = `${direction.fromProfile}_${direction.toProfile}_${now.toString(36)}_${input.hash.slice(0, 8)}`;
-            const sendResult = postVoiceSend(direction.toPort, input.text);
-            if (!sendResult.ok) {
+      const msgId = `${direction.fromProfile}_${direction.toProfile}_${now.toString(36)}_${input.hash.slice(0, 8)}`;
+      const sendResult = await postVoiceSend(direction.toPort, input.text);
+      if (!sendResult.ok) {
               direction.sendFailed += 1;
               console.log(
                 chalk.yellow(
@@ -3848,10 +3840,10 @@ voiceBridgeCommand
   .option('--profile <name>', 'Voice Bridge profile (default: main)')
   .option('--port <number>', 'Voice Bridge API port override')
   .option('--json', 'Output machine-readable JSON')
-  .action((options: { profile?: string; port?: string; json?: boolean }) => {
+  .action(async (options: { profile?: string; port?: string; json?: boolean }) => {
     try {
       const port = inferVoiceBridgePort(options.profile, options.port);
-      const payload = readVoiceBridgeJson('/activate', 'POST', port) as Record<string, unknown>;
+      const payload = (await readVoiceBridgeJson('/activate', 'POST', port)) as Record<string, unknown>;
       const started = Array.isArray(payload.started) ? payload.started.map(String) : [];
       if (options.json) {
         console.log(
@@ -3882,7 +3874,7 @@ voiceBridgeCommand
   .option('--profile <name>', 'Voice Bridge profile (default: main)')
   .option('--port <number>', 'Voice Bridge API port override')
   .option('--json', 'Output machine-readable JSON')
-  .action((options: { profile?: string; port?: string; json?: boolean }) => {
+  .action(async (options: { profile?: string; port?: string; json?: boolean }) => {
     try {
       const profile = normalizeVoiceProfile(options.profile);
       const port = inferVoiceBridgePort(profile, options.port);
@@ -3905,17 +3897,13 @@ voiceBridgeCommand
         }
       });
 
-      const healthProbe = spawnSync('curl', ['-fsS', `http://127.0.0.1:${port}/`], {
-        encoding: 'utf8',
-        env: process.env,
-      });
-      const serverReachable = healthProbe.status === 0;
+      const serverReachable = await waitForVoiceServer(port, 1000);
 
       let micState: Record<string, unknown> | null = null;
       let kwsState: Record<string, unknown> | null = null;
       if (serverReachable) {
-        micState = readVoiceBridgeJson('/mic_state', 'GET', port) as Record<string, unknown>;
-        kwsState = readVoiceBridgeJson('/kws_state', 'GET', port) as Record<string, unknown>;
+        micState = (await readVoiceBridgeJson('/mic_state', 'GET', port)) as Record<string, unknown>;
+        kwsState = (await readVoiceBridgeJson('/kws_state', 'GET', port)) as Record<string, unknown>;
       }
 
       const payload = {
@@ -4178,8 +4166,8 @@ voiceProtocolCommand
                 healResults.push({ profile: snapshot.profile, ok: false });
                 continue;
               }
-              const result = postVoiceActivate(snapshot.port);
-              healResults.push({ profile: snapshot.profile, ok: result.ok });
+        const result = await postVoiceActivate(snapshot.port);
+        healResults.push({ profile: snapshot.profile, ok: result.ok });
             }
           }
 
@@ -5645,7 +5633,7 @@ permissionCmd
       else if (options.type === 'read') result = permService.checkReadPath(command);
       else result = permService.checkExternalDirectory(command);
       if (result.allowed) {
-        console.log(chalk.green(`✅ Allowed`) + (result.matchedRule ? ` (rule: ${result.matchedRule} → ${result.action}, ${result.source})` : ' (no rules matched, default allow)'));
+        console.log(chalk.green(`✅ Allowed`) + (result.matchedRule ? ` (rule: ${result.matchedRule} → ${result.action}, ${result.source})` : ' (no rules matched, default deny)'));
       } else {
         console.log(chalk.red(`⛔ Denied`) + ` (rule: ${result.matchedRule} → ${result.action}, ${result.source})`);
       }
@@ -6211,26 +6199,23 @@ feedback
         source: 'beta',
       };
       const url = `${host}/api/feedback`;
-      const curlArgs = [
-        '-fsS',
-        '-X', 'POST',
-        '-H', 'Content-Type: application/json',
-        '-d', JSON.stringify(body),
-        url,
-      ];
-      const result = spawnSync('curl', curlArgs, { encoding: 'utf8', env: process.env });
-      if (result.status !== 0) {
-        const err = result.stderr.trim() || `Failed to connect to ${url}. Is backend running?`;
-        console.error(chalk.red(err));
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(5000),
+      });
+      if (!resp.ok) {
+        console.error(chalk.red(`Failed to submit feedback (HTTP ${resp.status}). Is backend running?`));
         process.exit(1);
       }
-      const response = JSON.parse(result.stdout.trim() || '{}');
+      const response = await resp.json() as Record<string, any>;
       const feedbackId = response.id;
       console.log(chalk.green(`✅ Feedback submitted: ${feedbackId}`));
-      console.log(chalk.dim(`   Type: ${body.type}`));
-      console.log(chalk.dim(`   Priority: ${body.priority}`));
+      console.log(chalk.dim(` Type: ${body.type}`));
+      console.log(chalk.dim(` Priority: ${body.priority}`));
       if (options.context) {
-        console.log(chalk.dim(`   Context: ${options.context}`));
+        console.log(chalk.dim(` Context: ${options.context}`));
       }
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -6238,7 +6223,7 @@ feedback
     }
   });
 
-// Feedback list
+  // Feedback list
 feedback
   .command('list')
   .alias('ls')
@@ -6255,13 +6240,12 @@ feedback
       if (options.status) params.set('status', options.status);
       if (options.type) params.set('type', options.type);
       if (params.toString()) url += `?${params.toString()}`;
-      const result = spawnSync('curl', ['-fsS', url], { encoding: 'utf8', env: process.env });
-      if (result.status !== 0) {
-        const err = result.stderr.trim() || `Failed to connect to ${url}. Is backend running?`;
-        console.error(chalk.red(err));
+      const resp = await fetch(url, { signal: AbortSignal.timeout(5000) });
+      if (!resp.ok) {
+        console.error(chalk.red(`Failed to connect to ${url} (HTTP ${resp.status}). Is backend running?`));
         process.exit(1);
       }
-      const allFeedback = JSON.parse(result.stdout.trim() || '[]');
+      const allFeedback = await resp.json() as any[];
       if (options.json) {
         console.log(JSON.stringify(allFeedback, null, 2));
         return;
@@ -6288,13 +6272,12 @@ feedback
     try {
       const host = options.host || process.env.TNF_API_HOST || 'http://127.0.0.1:3001';
       const url = `${host}/api/feedback/stats`;
-      const result = spawnSync('curl', ['-fsS', url], { encoding: 'utf8', env: process.env });
-      if (result.status !== 0) {
-        const err = result.stderr.trim() || `Failed to connect to ${url}. Is backend running?`;
-        console.error(chalk.red(err));
+      const resp = await fetch(url, { signal: AbortSignal.timeout(5000) });
+      if (!resp.ok) {
+        console.error(chalk.red(`Failed to connect to ${url} (HTTP ${resp.status}). Is backend running?`));
         process.exit(1);
       }
-      const stats = JSON.parse(result.stdout.trim() || '{}');
+      const stats = await resp.json() as Record<string, any>;
  const byStatus = stats.byStatus || {};
  const byType = stats.byType || {};
  const byPriority = stats.byPriority || {};

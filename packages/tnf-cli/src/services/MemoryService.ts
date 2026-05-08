@@ -77,6 +77,9 @@ export class MemoryService {
     }
   }
 
+  private static readonly MAX_CONTEXT_MEMORIES = 20;
+  private static readonly MAX_CONTEXT_CHARS = 8000;
+
   async query(query: string, categoryFilter?: string) {
     await this.ensureTree();
 
@@ -90,9 +93,26 @@ export class MemoryService {
       return `No memories found ${categoryFilter ? `in category '${categoryFilter}' ` : ''}in the project knowledge base. Try curating some first!`;
     }
 
-    // OOM PROTECTION: Only select the most recent 10 memories to prevent context overflow
-    // In a full RAG implementation, this would use the Core Vector DB service
-    const topMemories = allMemories.slice(-10);
+    const queryLower = query.toLowerCase();
+    const queryTerms = queryLower.split(/\s+/).filter((t) => t.length > 2);
+
+    const scoredMemories = allMemories.map((m) => {
+      let score = 0;
+      const nameLower = m.name.toLowerCase();
+      const catLower = m.category.toLowerCase();
+      for (const term of queryTerms) {
+        if (nameLower.includes(term)) score += 3;
+        if (catLower.includes(term)) score += 2;
+      }
+      return { ...m, score };
+    });
+
+    scoredMemories.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return b.name.localeCompare(a.name);
+    });
+
+    const topMemories = scoredMemories.slice(0, MemoryService.MAX_CONTEXT_MEMORIES);
 
     const loadedMemories = await Promise.all(
       topMemories.map(async (m) => {
@@ -104,16 +124,19 @@ export class MemoryService {
       })
     );
 
-    const context = loadedMemories
-      .map((m) => `\n--- Memory (${m.category}): ${m.name} ---\n${m.content}\n`)
-      .join('\n');
+    let context = '';
+    for (const m of loadedMemories) {
+      const entry = `\n--- Memory (${m.category}): ${m.name} (relevance: ${m.score}) ---\n${m.content}\n`;
+      if (context.length + entry.length > MemoryService.MAX_CONTEXT_CHARS) break;
+      context += entry;
+    }
 
     const systemPrompt = `
-      You are the Project Memory Query Engine. You have access to the project's long-term memory tree.
-      Synthesize an answer to the user's query using ONLY the provided memory context.
-      If the information is not in the context, say you don't know.
-      Always cite the memory files you use.
-    `;
+You are the Project Memory Query Engine. You have access to the project's long-term memory tree.
+Synthesize an answer to the user's query using ONLY the provided memory context.
+If the information is not in the context, say you don't know.
+Always cite the memory files you use.
+`;
 
     return await this.llm.chatComplete([
       { role: 'system', content: systemPrompt },

@@ -20,9 +20,12 @@
   "exclude": [
     "node_modules",
     "dist",
-    "***.test.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
     "**/*.spec.tsx",
-    "**/__tests____mocks__/**"
+    "**/__tests__/**",
+    "**/__mocks__/**"
   ],
   "references": [
     {

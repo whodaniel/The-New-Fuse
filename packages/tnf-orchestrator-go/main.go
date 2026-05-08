@@ -5,37 +5,42 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"sync"
+	"sync/atomic"
 
 	"gopkg.in/yaml.v3"
 )
 
-// AgentCard represents the A2A Agent Card
 type AgentCard struct {
-	AgentID     string   `json:"agentId"`
-	Name        string   `json:"name"`
-	Endpoint    string   `json:"endpoint"`
+	AgentID      string   `json:"agentId"`
+	Name         string   `json:"name"`
+	Endpoint     string   `json:"endpoint"`
 	Capabilities []string `json:"capabilities"`
 }
 
-// Message represents an A2A message payload
 type Message struct {
 	SenderID   string          `json:"senderId"`
 	ReceiverID string          `json:"receiverId"`
 	Payload    json.RawMessage `json:"payload"`
 }
 
-// Orchestrator manages agent routing
 type Orchestrator struct {
-	agents map[string]AgentCard
-	mu     sync.RWMutex
-	bus    chan Message
+	agents      map[string]AgentCard
+	mu          sync.RWMutex
+	bus         chan Message
+	droppedMsgs int64
 }
+
+const BusCapacity = 1000
 
 func NewOrchestrator() *Orchestrator {
 	return &Orchestrator{
-		agents: make(map[string]AgentCard),
-		bus:    make(chan Message, 1000),
+		agents:      make(map[string]AgentCard),
+		bus:         make(chan Message, BusCapacity),
+		droppedMsgs: 0,
 	}
 }
 
@@ -46,7 +51,6 @@ func (o *Orchestrator) RegisterAgent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Governance: Calculate AARS Score
 	score := o.CalculateAARS(card)
 	fmt.Printf("Agent Registered: %s (AARS: %.2f)\n", card.Name, score)
 
@@ -58,7 +62,6 @@ func (o *Orchestrator) RegisterAgent(w http.ResponseWriter, r *http.Request) {
 }
 
 func (o *Orchestrator) CalculateAARS(card AgentCard) float64 {
-	// Simple multiplier logic based on capabilities
 	score := 1.0
 	for _, cap := range card.Capabilities {
 		if cap == "filesystem-access" {
@@ -78,9 +81,15 @@ func (o *Orchestrator) HandleMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Dispatch message to bus for concurrent processing
-	o.bus <- msg
-	w.WriteHeader(http.StatusAccepted)
+	select {
+	case o.bus <- msg:
+		w.WriteHeader(http.StatusAccepted)
+	default:
+		atomic.AddInt64(&o.droppedMsgs, 1)
+		log.Printf("Bus full (%d capacity), dropping message from %s to %s (total dropped: %d)\n",
+			BusCapacity, msg.SenderID, msg.ReceiverID, atomic.LoadInt64(&o.droppedMsgs))
+		http.Error(w, "message bus at capacity, retry later", http.StatusServiceUnavailable)
+	}
 }
 
 func (o *Orchestrator) StartRouter() {
@@ -95,7 +104,6 @@ func (o *Orchestrator) StartRouter() {
 				return
 			}
 
-			// In a real implementation, we would forward the message to agent.Endpoint
 			log.Printf("Routing message from %s to %s at %s\n", m.SenderID, agent.Name, agent.Endpoint)
 		}(msg)
 	}
@@ -132,7 +140,7 @@ type NegotiationRequest struct {
 
 type NegotiationResponse struct {
 	SessionID string `json:"sessionId"`
-	Status    string `json:"status"` // "accepted", "rejected", "negotiating"
+	Status    string `json:"status"`
 }
 
 func (o *Orchestrator) HandleNegotiate(w http.ResponseWriter, r *http.Request) {
@@ -143,10 +151,17 @@ func (o *Orchestrator) HandleNegotiate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Printf("Negotiation Initiated: %s -> %s for task: %s\n", req.RequesterID, req.TargetID, req.TaskDetails)
-	
-	// Mock response for now
+
+	reqID := req.RequesterID
+	tgtID := req.TargetID
+	if len(reqID) > 4 {
+		reqID = reqID[:4]
+	}
+	if len(tgtID) > 4 {
+		tgtID = tgtID[:4]
+	}
 	resp := NegotiationResponse{
-		SessionID: "sess-" + req.RequesterID[:4] + "-" + req.TargetID[:4],
+		SessionID: "sess-" + reqID + "-" + tgtID,
 		Status:    "accepted",
 	}
 	json.NewEncoder(w).Encode(resp)
@@ -169,17 +184,30 @@ func (o *Orchestrator) HandleMemoryHook(w http.ResponseWriter, r *http.Request) 
 
 	fmt.Printf("[Memory-Hook] Compounding decision from %s: %s\n", req.AgentID, req.Title)
 
-	// Call the Python Wiki Compiler (Bridge to Mojo Kernel)
 	go func(r MemoryHookRequest) {
-		cmd := fmt.Sprintf("python3 /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/wiki_compiler.py '%s'", r.EntryID)
-		// Note: Real implementation would pass the full JSON payload
-		_ = cmd
+		scriptPath := os.Getenv("TNF_WIKI_COMPILER_PATH")
+		if scriptPath == "" {
+			exe, err := os.Executable()
+			if err != nil {
+				log.Printf("[Memory-Hook] Failed to resolve executable path: %v\n", err)
+				return
+			}
+			projectRoot := filepath.Dir(filepath.Dir(filepath.Dir(exe)))
+			scriptPath = filepath.Join(projectRoot, "scripts", "wiki_compiler.py")
+		}
+		if _, err := os.Stat(scriptPath); err != nil {
+			log.Printf("[Memory-Hook] Wiki compiler script not found at %s: %v\n", scriptPath, err)
+			return
+		}
+		cmd := exec.Command("python3", scriptPath, r.EntryID)
+		if err := cmd.Run(); err != nil {
+			log.Printf("[Memory-Hook] Wiki compiler failed for %s: %v\n", r.EntryID, err)
+		}
 	}(req)
 
 	w.WriteHeader(http.StatusAccepted)
 }
 
-// GooseRecipe represents the deconstructed Goose YAML structure
 type GooseRecipe struct {
 	Version      string `yaml:"version"`
 	Title        string `yaml:"title"`
@@ -201,7 +229,6 @@ func (o *Orchestrator) IngestGooseRecipe(w http.ResponseWriter, r *http.Request)
 
 	fmt.Printf("[Borg-Deconstruction] Assimilating Goose Recipe: %s\n", recipe.Title)
 
-	// Translate to TNF Native Go Routine
 	go o.ExecuteAssimilatedGoose(recipe)
 
 	w.WriteHeader(http.StatusAccepted)
@@ -209,9 +236,8 @@ func (o *Orchestrator) IngestGooseRecipe(w http.ResponseWriter, r *http.Request)
 
 func (o *Orchestrator) ExecuteAssimilatedGoose(recipe GooseRecipe) {
 	fmt.Printf("[Native-Execution] Running '%s' at native speed...\n", recipe.Title)
-	// In a full implementation, we would map recipe.Extensions to Go channels or MCP clients
 	for _, ext := range recipe.Extensions {
-		fmt.Printf("  -> Activating Extension: %s (%s)\n", ext.Name, ext.Type)
+		fmt.Printf(" -> Activating Extension: %s (%s)\n", ext.Name, ext.Type)
 	}
 }
 

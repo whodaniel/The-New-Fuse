@@ -1,0 +1,44 @@
+# Session Handoff Enforcement (TNF)
+
+This protocol is mandatory for critical-path changes.
+
+## Rule
+
+If a change set touches critical paths (`apps/`, `packages/`, `supabase/`,
+`scripts/`, `data/`, `docs/protocols/`, `.github/workflows/`), the same change
+set MUST include:
+
+1. `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`
+2. `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
+3. `docs/protocols/AGENT_STATUS_LEDGER.md`
+
+## Required ACK
+
+`SESSION_HANDOFF_LATEST.json` and `.md` must include:
+
+- `protocol_ack = TNF_PROTOCOL_ACK`
+
+## Validation
+
+- Schema: `docs/protocols/schemas/tnf-session-handoff.schema.json`
+- Gate script: `scripts/protocols/enforce-session-handoff.cjs`
+
+## Automation Commands
+
+- Emit/update handoff artifacts:
+  - `pnpm run handoff:emit`
+- Validate handoff gate in CI-mode:
+  - `pnpm run validate:session-handoff`
+- Pre-push enforcement:
+  - `pnpm run handoff:pre-push`
+
+## CI + Hook Integration
+
+- `.husky/pre-push` calls `handoff:pre-push`.
+- `.github/workflows/privacy-security-gate.yml` runs the handoff gate on the
+  changed-file set for PR/push.
+
+## Operator Intent
+
+This eliminates silent continuity failures by making handoff artifacts a hard
+gate, not a best-effort guideline.

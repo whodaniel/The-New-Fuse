@@ -14,6 +14,7 @@ const requiredFiles = [
   'tnf-master-cumulative-id.schema.json',
   'tnf-agent-self-edit.schema.json',
   'tnf-cron-governance.schema.json',
+  'tnf-session-handoff.schema.json',
 ];
 
 function fail(message) {
@@ -164,6 +165,42 @@ function validateCronGovernance(schema) {
   });
 }
 
+function validateSessionHandoff(schema) {
+  if (!schema) return;
+  const required = new Set(schema.required || []);
+  [
+    'spec',
+    'handoff_id',
+    'created_at',
+    'repository',
+    'branch',
+    'head_sha',
+    'protocol_ack',
+    'work_summary',
+    'changed_paths',
+    'verification',
+    'continuation',
+    'next_actions',
+  ].forEach((key) => {
+    assert(required.has(key), `tnf-session-handoff.schema.json: required must include ${key}`);
+  });
+
+  assert(
+    schema?.properties?.spec?.const === 'tnf/session-handoff/0.1',
+    'tnf-session-handoff.schema.json: spec const must be tnf/session-handoff/0.1',
+  );
+
+  assert(
+    schema?.properties?.protocol_ack?.const === 'TNF_PROTOCOL_ACK',
+    'tnf-session-handoff.schema.json: protocol_ack const must be TNF_PROTOCOL_ACK',
+  );
+
+  const priorityEnum = schema?.properties?.continuation?.properties?.priority?.enum || [];
+  ['low', 'medium', 'high', 'critical'].forEach((priority) => {
+    assert(priorityEnum.includes(priority), `tnf-session-handoff.schema.json: priority enum missing ${priority}`);
+  });
+}
+
 function main() {
   if (!fs.existsSync(schemaDir)) {
     fail(`Missing schema directory: ${schemaDir}`);
@@ -191,6 +228,7 @@ function main() {
   validateMasterCumulativeId(parsed['tnf-master-cumulative-id.schema.json']);
   validateAgentSelfEdit(parsed['tnf-agent-self-edit.schema.json']);
   validateCronGovernance(parsed['tnf-cron-governance.schema.json']);
+  validateSessionHandoff(parsed['tnf-session-handoff.schema.json']);
 
   if (process.exitCode) {
     process.exit(process.exitCode);

@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "tnf-merkle-tree",
+  "title": "TNF Codebase Merkle Tree Schema",
+  "description": "Schema for the Merkle tree data structure that ensures integrity across all 15,707 nodes in the TNF codebase.",
+  "type": "object",
+  "required": ["merkle_root", "merkle_timestamp", "nodes", "tree_signature"],
+  "properties": {
+    "merkle_root": {
+      "type": "string",
+      "description": "The root hash of the entire codebase Merkle tree. This is the single source of truth for codebase integrity. Changes to any leaf node will change this root hash.",
+      "pattern": "^[a-f0-9]{64}$",
+      "example": "a1b2c3d4e5f6..."
+    },
+    "merkle_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when the Merkle tree was last computed."
+    },
+    "merkle_algorithm": {
+      "type": "string",
+      "enum": ["sha256"],
+      "default": "sha256",
+      "description": "The hash algorithm used to construct the Merkle tree. Currently fixed to sha256."
+    },
+    "tree_version": {
+      "type": "string",
+      "description": "Semantic version of the Merkle tree schema."
+    },
+    "tree_signature": {
+      "type": "string",
+      "description": "Optional cryptographic signature of the merkle_root, signed by the Super Admin. Used for tamper-evident verification."
+    },
+    "nodes": {
+      "type": "array",
+      "description": "Array of all nodes in the codebase, each with their Merkle hash and sibling path.",
+      "items": {
+        "$ref": "#/definitions/MerkleNode"
+      }
+    }
+  },
+  "definitions": {
+    "MerkleNode": {
+      "type": "object",
+      "required": ["id", "merkle_hash", "merkle_level", "content_hash"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier of this node (e.g., PROTO_14, N1234, file_path)."
+        },
+        "merkle_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "For leaf nodes: hash of the node's content. For intermediate nodes: hash of (left_child_hash || right_child_hash)."
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "Hash of the actual content (file text, protocol text). For leaf nodes, this is the hash of the file contents. For intermediate nodes, this is null."
+        },
+        "merkle_level": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "0 for leaf nodes (files, protocols). Increments by 1 for each level up the tree."
+        },
+        "parent_id": {
+          "type": "string",
+          "description": "ID of the parent node in the Merkle tree (null for root)."
+        },
+        "merkle_siblings": {
+          "type": "array",
+          "description": "Ordered list of sibling hashes at each level going from this node up to the root. Used for verification.",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "node_type": {
+          "type": "string",
+          "enum": ["leaf", "intermediate", "root"],
+          "description": "Type of node in the Merkle tree."
+        },
+        "children_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of child nodes (for intermediate nodes)."
+        }
+      }
+    }
+  }
+}

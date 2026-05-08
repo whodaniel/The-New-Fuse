@@ -12,14 +12,14 @@ class ForgeCompiler:
         self.output_dir = output_dir
         os.makedirs(self.output_dir, exist_ok=True)
 
-    def compile_c(self, source_code: str, name: str, optimization_level: str = "-O3", shared: bool = False) -> str:
-        return self._compile(source_code, name, "clang", ".c", optimization_level, shared)
+    def compile_c(self, source_code: str, name: str, optimization_level: str = "-O3", shared: bool = False, extra_args: Optional[List[str]] = None) -> str:
+        return self._compile(source_code, name, "clang", ".c", optimization_level, shared, extra_args)
 
-    def compile_cpp(self, source_code: str, name: str, optimization_level: str = "-O3", shared: bool = False) -> str:
+    def compile_cpp(self, source_code: str, name: str, optimization_level: str = "-O3", shared: bool = False, extra_args: Optional[List[str]] = None) -> str:
         """Compiles C++ code into a native binary or shared library using Clang++."""
-        return self._compile(source_code, name, "clang++", ".cpp", optimization_level, shared)
+        return self._compile(source_code, name, "clang++", ".cpp", optimization_level, shared, extra_args)
 
-    def compile_rust(self, source_code: str, name: str, optimization_level: str = "3") -> str:
+    def compile_rust(self, source_code: str, name: str, optimization_level: str = "3", extra_args: Optional[List[str]] = None) -> str:
         """Compiles Rust code into a standalone native binary."""
         with tempfile.NamedTemporaryFile(suffix=".rs", delete=False) as f:
             f.write(source_code.encode())
@@ -29,6 +29,8 @@ class ForgeCompiler:
         
         # Use rustc (LLVM-based)
         cmd = ["rustc", "-C", f"opt-level={optimization_level}", source_path, "-o", output_path]
+        if extra_args:
+            cmd.extend(extra_args)
         
         print(f"Forging Rust tool: {name}...")
         result = subprocess.run(cmd, capture_output=True, text=True)
@@ -40,7 +42,7 @@ class ForgeCompiler:
             
         return output_path
 
-    def _compile(self, source_code: str, name: str, compiler: str, suffix: str, optimization_level: str, shared: bool) -> str:
+    def _compile(self, source_code: str, name: str, compiler: str, suffix: str, optimization_level: str, shared: bool, extra_args: Optional[List[str]] = None) -> str:
         with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as f:
             f.write(source_code.encode())
             source_path = f.name
@@ -53,6 +55,8 @@ class ForgeCompiler:
             cmd.extend(["-shared", "-fPIC"])
         if compiler == "clang++":
             cmd.append("-std=c++17")
+        if extra_args:
+            cmd.extend(extra_args)
         
         print(f"Forging {compiler} {'shared library' if shared else 'tool'}: {name}...")
         result = subprocess.run(cmd, capture_output=True, text=True)

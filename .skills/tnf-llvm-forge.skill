@@ -22,6 +22,25 @@ The following scaffolding scripts are available in the TNF project (`~/Desktop/A
 - `binary_hook_forge.py`: Forges `DYLD_INSERT_LIBRARIES` hooks to spy on and learn from legacy binaries.
 - `tnf_deconstructor.py`: Blueprint scanner for mapping TNF's evolutionary path.
 
+## Vision Bridge (High-Speed Mirrroring)
+The Forge provides the foundation for the iPhone and Remote Vision Bridge.
+- **Optimal Pipeline:** MSS (Python) for capture + `bgra2jpeg_turbo.so` (Native SIMD) for encoding. 
+- **Benchmarks:** Achieved ~34 FPS (29ms latency) on dual-core hardware, enabling real-time remote control.
+- **Native Modules:**
+  - `bgra2jpeg_turbo.so`: AVX2/SSE2 accelerated JPEG encoding.
+  - `screencap.so`: Quartz-based one-shot capture (fallback).
+  - `vision_mapper.dylib`: C++ template matching for visual anchors.
+
+## Audio Trigger (Spectral Matching)
+The Forge enables sub-millisecond acoustic signature detection.
+- **Implementation:** C++ with macOS `Accelerate.framework` (vDSP) for hardware-accelerated FFT.
+- **Capabilities:**
+  - Real-time PCM pattern matching.
+  - Frequency spike detection (e.g., whistle/tone triggers).
+  - Zero-wait peak bin analysis.
+- **Native Modules:**
+  - `audio_spectral_matcher.so`: The core vDSP-backed FFT engine.
+
 ## CLI Integration
 - `tnf forge status`: Checks toolchain readiness.
 - `tnf forge test-math`: Tests C compilation speedup.

@@ -70,7 +70,8 @@ export class RedisAgentClient {
     new Map();
   private heartbeatTimer: NodeJS.Timeout | null = null;
   public currentConversation: string | null = null;
-  private redisErrorLogged = false;
+  private lastRedisErrorLoggedAt = 0;
+  private static readonly REDIS_ERROR_LOG_COOLDOWN_MS = 30000;
 
   constructor() {}
 
@@ -111,8 +112,9 @@ export class RedisAgentClient {
   }
 
   private logRedisClientError(kind: 'publisher' | 'subscriber', error: Error) {
-    if (this.redisErrorLogged) return;
-    this.redisErrorLogged = true;
+    const now = Date.now();
+    if (now - this.lastRedisErrorLoggedAt < RedisAgentClient.REDIS_ERROR_LOG_COOLDOWN_MS) return;
+    this.lastRedisErrorLoggedAt = now;
     const details = error?.message || error?.name || 'unknown';
     console.error(`Redis ${kind} error:`, details);
   }

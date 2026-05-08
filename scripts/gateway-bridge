@@ -1,0 +1,45 @@
+#!/bin/sh
+start() {
+echo "🚀 Starting Hermes-TNF Gateway Bridge..."
+pgrep -f "hermes-gateway-bridge" | xargs kill -9 2>/dev/null
+node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/hermes-gateway-bridge.cjs & 
+sleep 3
+echo "
+🔥 Gateway Bridge Started!
+🔌 Hermes Gateway: ws://localhost:7788
+🔌 TNF Relay: ws://localhost:3000
+🔌 Bridge Status: http://localhost:4000/health"
+}
+
+stop() {
+echo "⏹ Stopping Hermes-TNF Gateway Bridge..."
+pgrep -f "hermes-gateway-bridge" | xargs kill -9 2>/dev/null
+echo "☑ Bridge stopped"
+}
+
+restart() {
+stop
+start
+}
+
+status() {
+if pgrep -f "hermes-gateway-bridge" >/dev/null; then echo "👍 Bridge is RUNNING"; else echo "❌ Bridge is STOPPED"; fi
+}
+
+case "$1" in
+start)
+ start
+ ;;
+stop)
+ stop
+ ;;
+restart)
+ restart
+ ;;
+status)
+ status
+ ;;
+*)
+echo "Usage: $0 {start|stop|restart|status}"
+ exit 1
+esac

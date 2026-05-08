@@ -55,7 +55,7 @@ export class DatabaseService {
   }
 
   async query(sql: string, options: DatabaseOptions = {}): Promise<QueryResult> {
-    const tableMatch = sql.match(/(?:FROM|from)\s+(\w+)/);
+    const tableMatch = sql.match(/(?:FROM|from)\s+[`"']?(\w+)[`"']?/);
     const tableName = tableMatch ? tableMatch[1] : null;
 
     if (!tableName) {
@@ -67,10 +67,41 @@ export class DatabaseService {
     const columns = tableData.length > 0 ? Object.keys(tableData[0] as Record<string, unknown>) : [];
     let rows = tableData as Record<string, unknown>[];
 
-    const whereMatch = sql.match(/WHERE\s+(\w+)\s*=\s*['"]?([^'"\s]+)['"]?/i);
-    if (whereMatch) {
-      const [, col, val] = whereMatch;
-      rows = rows.filter(r => String((r as Record<string, unknown>)[col]) === val);
+    const whereMatches = [...sql.matchAll(/WHERE\s+[`"']?(\w+)[`"']?\s*(=|!=|>|<|>=|<=|LIKE)\s*['"]?([^'"\s;]+)['"]?/gi)];
+    if (whereMatches.length > 0) {
+      for (const match of whereMatches) {
+        const col = match[1];
+        const op = match[2].toUpperCase();
+        const val = match[3];
+        rows = rows.filter(r => {
+          const cellVal = String((r as Record<string, unknown>)[col] ?? '');
+          switch (op) {
+            case '=': return cellVal === val;
+            case '!=': return cellVal !== val;
+            case '>': return cellVal > val;
+            case '<': return cellVal < val;
+            case '>=': return cellVal >= val;
+            case '<=': return cellVal <= val;
+            case 'LIKE': {
+              const pattern = val.replace(/%/g, '.*').replace(/_/g, '.');
+              return new RegExp(`^${pattern}$`, 'i').test(cellVal);
+            }
+            default: return true;
+          }
+        });
+      }
+    }
+
+    const orderMatch = sql.match(/ORDER\s+BY\s+[`"']?(\w+)[`"']?\s*(ASC|DESC)?/i);
+    if (orderMatch) {
+      const sortCol = orderMatch[1];
+      const sortDir = (orderMatch[2] || 'ASC').toUpperCase();
+      rows = [...rows].sort((a, b) => {
+        const aVal = String((a as Record<string, unknown>)[sortCol] ?? '');
+        const bVal = String((b as Record<string, unknown>)[sortCol] ?? '');
+        const cmp = aVal.localeCompare(bVal, undefined, { numeric: true });
+        return sortDir === 'DESC' ? -cmp : cmp;
+      });
     }
 
     const limitMatch = sql.match(/LIMIT\s+(\d+)/i);

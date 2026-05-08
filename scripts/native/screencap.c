@@ -53,7 +53,7 @@ static PyObject* py_capture_bgra(PyObject* self, PyObject* args) {
         bounds,
         kCGWindowListOptionOnScreenOnly,
         kCGNullWindowID,
-        kCGWindowImageNominalResolutionRatio
+        kCGWindowImageNominalResolution
     );
     
     if (!image) {
@@ -158,7 +158,7 @@ static PyObject* py_capture_jpeg(PyObject* self, PyObject* args) {
     // Capture at logical resolution (not Retina)
     CGImageRef image = CGWindowListCreateImage(
         bounds, kCGWindowListOptionOnScreenOnly,
-        kCGNullWindowID, kCGWindowImageNominalResolutionRatio
+        kCGNullWindowID, kCGWindowImageNominalResolution
     );
     
     if (!image) {

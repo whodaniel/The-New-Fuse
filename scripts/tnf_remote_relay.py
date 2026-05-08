@@ -96,6 +96,21 @@ def _get_mss():
 # turbojpeg BGRX: 11.8 FPS (SIMD-accelerated, zero BGRX→RGB conversion)
 # stock libjpeg: 8.3 FPS (C extension, manual BGRA→RGB scanline)
 # simplejpeg BGR: 3.5 FPS, PIL: 3.5 FPS, Quartz: 0.5 FPS
+_has_one_shot_capture = False
+_screencap = None
+try:
+ import importlib.util
+ _spec = importlib.util.spec_from_file_location(
+ "screencap",
+ os.path.join(os.path.dirname(os.path.abspath(__file__)), "native", "screencap.so"))
+ if _spec and _spec.loader:
+  _screencap_mod = importlib.util.module_from_spec(_spec)
+  _spec.loader.exec_module(_screencap_mod)
+  _screencap = _screencap_mod.capture_jpeg
+  _has_one_shot_capture = True
+except Exception:
+ pass
+
 _has_turbo_encoder = False
 _bgra2jpeg_turbo = None
 try:
@@ -135,6 +150,7 @@ except ImportError:
 
 def capture_screen_jpeg(quality=FRAME_QUALITY):
  """Capture Mac screen → JPEG bytes via mss with encoding cascade.
+ Tier -1: one-shot native capture + turbojpeg (20+ FPS)
  Tier 0: turbojpeg BGRX (11.8 FPS, SIMD-accelerated, zero conversion)
  Tier 1: stock libjpeg C ext (8.3 FPS, zero-copy BGRA→libjpeg)
  Tier 2: simplejpeg BGR (3.5 FPS, numpy copy + libturbojpeg)
@@ -142,6 +158,10 @@ def capture_screen_jpeg(quality=FRAME_QUALITY):
  Tier 4: Quartz CGWindowListCreateImage (0.5 FPS fallback)
  """
  try:
+  # Tier -1: One-shot native capture + turbojpeg
+  if _has_one_shot_capture:
+   return _screencap(quality)
+
   sct = _get_mss()
   monitor = sct.monitors[1] # primary monitor
   screenshot = sct.grab(monitor)

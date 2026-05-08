@@ -241,12 +241,26 @@ export class UpgradeService {
   private async upgradeViaCurl(version: string): Promise<UpgradeResult> {
     const currentVersion = this.getCurrentVersion();
     const installUrl = `https://get.thenewfuse.com/tnf-cli/${version}`;
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tnf-upgrade-'));
+    const scriptPath = path.join(tmpDir, 'install.sh');
 
     try {
-      const result = spawnSync('curl', ['-fsSL', installUrl, '|', 'sh'], {
+      const response = await fetch(installUrl);
+      if (!response.ok) {
+        return {
+          success: false,
+          previousVersion: currentVersion,
+          message: `Download failed: HTTP ${response.status}`,
+        };
+      }
+
+      const script = await response.text();
+      fs.writeFileSync(scriptPath, script, { mode: 0o700 });
+
+      const result = spawnSync(scriptPath, [], {
         encoding: 'utf8',
-        shell: true,
         stdio: 'inherit',
+        timeout: 120_000,
       });
 
       if (result.status === 0) {
@@ -269,6 +283,10 @@ export class UpgradeService {
         previousVersion: currentVersion,
         message: `curl upgrade failed: ${(e as Error).message}`,
       };
+    } finally {
+      try {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      } catch {}
     }
   }
 
