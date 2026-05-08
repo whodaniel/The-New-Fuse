@@ -1,45 +1,41 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-08T20:00:51.974Z`  
-Handoff ID: `b0fb3c7b-9ea3-413b-b182-b913ec6c852d`
+Created At: `2026-05-08T22:04:27.786Z`  
+Handoff ID: `5d02211d-7fb5-44de-8b4b-f430dbc499f0`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `11dd9240908dbda67706573ba8e7b008c965bc70`
+- Head SHA: `2cdad2ca95c69251cb62d336dba17c72c528311c`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Committed TNF handoff continuity enforcement with Supabase-aware verification
-  gates.
-- Hardened handoff emitter ledger insertion to match markdown tables regardless
-  spacing/alignment style and emitted fresh verified snapshot.
+- Protocol enforcement layer implemented for mandatory session handoff
+  continuity.
+- CI/hook gates now block critical changes without fresh handoff artifacts.
 
 ## Changed Paths
 
-- .github/workflows/privacy-security-gate.yml
-- .github/workflows/protocol-schema-gate.yml
-- .husky/pre-push
+- apps/api/src/modules/unified-ledger/unified-ledger.controller.spec.ts
+- apps/api/src/modules/unified-ledger/unified-ledger.controller.ts
+- docs/operations/TNF_TASK_LEDGER_TENANT_SCOPE_HARDENING_2026-05-08.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/SESSION_HANDOFF_ENFORCEMENT.md
-- docs/protocols/SESSION_HANDOFF_TEMPLATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/schemas/tnf-session-handoff.schema.json
-- package.json
 - scripts/protocols/emit-session-handoff.cjs
-- scripts/protocols/enforce-session-handoff.cjs
-- scripts/validate-protocol-schemas.cjs
+- supabase/migrations/002_task_pipeline_execution_rls_scope_guards.sql
+- supabase/migrations/003_workspace_and_bookmark_rls_scope_guards.sql
+- supabase/migrations/004_fix_tnf_private_function_search_path.sql
 
 ## Verification
 
 - privacy_guard: `pass`
 - secret_sweep: `pass`
 - docs_pii_guard: `pass`
-- supabase_rls_audit: `na`
+- supabase_rls_audit: `pass`
 
 ## Continuation
 
@@ -56,8 +52,7 @@ Handoff ID: `b0fb3c7b-9ea3-413b-b182-b913ec6c852d`
 
 ## Next Actions
 
-- Use `pnpm run handoff:emit:verified` for every critical-path closeout.
-- Require `verification.supabase_rls_audit=pass` whenever Supabase-sensitive
-  paths change.
-- Continue preserving private narrative data exclusively behind authenticated
-  Supabase/RLS boundaries.
+- Continue priority queue from SESSION_HANDOFF_LATEST.json
+  continuation.resume_checklist.
+- Emit a fresh handoff artifact immediately after completing the next critical
+  work unit.
