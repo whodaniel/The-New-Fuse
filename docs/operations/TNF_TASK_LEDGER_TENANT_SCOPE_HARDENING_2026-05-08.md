@@ -25,6 +25,8 @@ unified-ledger APIs, with backward-compatible owner scoping preserved.
 11. Applied Supabase RLS scope migration on live project and verified policy
     creation.
 12. Remediated mutable `search_path` warnings for new private helper functions.
+13. Added and applied missing RLS policies for `workspaces` and
+    `workspace_bookmarks`.
 
 ## Code Changes
 
@@ -111,6 +113,8 @@ Connected Supabase project migration state:
   `20260508214944 task_pipeline_execution_rls_scope_guards_v2_20260508`
 - Applied migration:
   `20260508215035 fix_tnf_private_function_search_path_20260508`
+- Applied migration:
+  `20260508215616 workspace_and_bookmark_rls_scope_guards_20260508`
 - Note: connected Supabase currently does **not** yet have `tenant_id` /
   `workspace_id` columns on `pipelines`, `tasks`, `task_executions`, nor
   `workspace_members`.
@@ -159,6 +163,11 @@ Executed via Supabase MCP (`execute_sql`, `list_migrations`, `get_advisors`):
   - `private.tnf_tenant_visible` → `search_path=private, auth, pg_catalog`
   - `private.tnf_workspace_member_or_owner` →
     `search_path=public, auth, pg_catalog`
+- Confirmed workspace-level policies now exist:
+  - `public.workspaces`: select/insert/update/delete guards
+  - `public.workspace_bookmarks`: select/insert/update/delete guards
+- Confirmed both `workspaces` and `workspace_bookmarks` are now
+  `RLS enabled + has_policy=true`.
 - Security/performance advisors still report substantial pre-existing backlog
   across many unrelated tables/functions; no new blocker unique to this patch
   remained after `search_path` remediation.
@@ -200,6 +209,6 @@ Result:
    accepting free-form `workspaceId` without auth-context reconciliation.
 4. Roll out equivalent Supabase migration to staging/production environments not
    yet patched, then re-run advisors and smoke tests.
-5. Add deterministic policy rollout for high-priority `rls_enabled_no_policy`
-   tables (`workspaces`, `workspace_bookmarks`, and owner-content tables) to
+5. Continue deterministic policy rollout for remaining high-priority
+   `rls_enabled_no_policy` tables (owner-content and user-content tables) to
    reduce the existing security backlog.
