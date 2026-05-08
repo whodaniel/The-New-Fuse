@@ -7,6 +7,8 @@ on:
       - "docs/protocols/**"
       - "scripts/validate-protocol-schemas.cjs"
       - "scripts/protocols/twip-conformance.cjs"
+      - "scripts/protocols/enforce-session-handoff.cjs"
+      - "scripts/protocols/emit-session-handoff.cjs"
       - ".github/workflows/protocol-schema-gate.yml"
       - "package.json"
   push:
@@ -15,6 +17,8 @@ on:
       - "docs/protocols/**"
       - "scripts/validate-protocol-schemas.cjs"
       - "scripts/protocols/twip-conformance.cjs"
+      - "scripts/protocols/enforce-session-handoff.cjs"
+      - "scripts/protocols/emit-session-handoff.cjs"
       - ".github/workflows/protocol-schema-gate.yml"
       - "package.json"
   workflow_dispatch:

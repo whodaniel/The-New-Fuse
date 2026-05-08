@@ -18,6 +18,15 @@ set MUST include:
 
 - `protocol_ack = TNF_PROTOCOL_ACK`
 
+## Supabase Rule
+
+If the change set touches Supabase-sensitive paths (`supabase/**`,
+`apps/virtual-library-blueprints/supabase/**`, `apps/api/supabase/**`), then:
+
+- `verification.supabase_rls_audit` in `SESSION_HANDOFF_LATEST.json` MUST be
+  `pass`.
+- Run strict audit before emit: `pnpm run supabase:rls:audit:strict`.
+
 ## Validation
 
 - Schema: `docs/protocols/schemas/tnf-session-handoff.schema.json`
@@ -27,6 +36,8 @@ set MUST include:
 
 - Emit/update handoff artifacts:
   - `pnpm run handoff:emit`
+  - `pnpm run handoff:emit:verified` (auto-runs guard checks and records
+    verification states)
 - Validate handoff gate in CI-mode:
   - `pnpm run validate:session-handoff`
 - Pre-push enforcement:

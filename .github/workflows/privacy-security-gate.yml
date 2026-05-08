@@ -19,6 +19,27 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Build changed file list
+        run: |
+          set -euo pipefail
+          zero_sha='0000000000000000000000000000000000000000'
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch --no-tags --prune --depth=1 origin "${{ github.base_ref }}"
+            git diff --name-only --diff-filter=ACMR "origin/${{ github.base_ref }}...HEAD" > .tnf_changed_files
+          else
+            if [ "${{ github.event.before }}" = "$zero_sha" ]; then
+              git diff --name-only --diff-filter=ACMR HEAD~1...HEAD > .tnf_changed_files
+            else
+              git diff --name-only --diff-filter=ACMR "${{ github.event.before }}...${{ github.sha }}" > .tnf_changed_files
+            fi
+          fi
+          sort -u .tnf_changed_files -o .tnf_changed_files
+          echo "Changed files:"
+          cat .tnf_changed_files || true
+
+      - name: Enforce session handoff protocol (changed-file scope)
+        run: TNF_HANDOFF_FILE_LIST=.tnf_changed_files node scripts/protocols/enforce-session-handoff.cjs --mode=ci
+
       - name: Run privacy guard (repo mode)
         run: node scripts/security/privacy-guard.cjs --mode=repo
 

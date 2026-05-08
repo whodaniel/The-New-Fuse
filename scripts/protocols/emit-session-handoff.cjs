@@ -3,6 +3,7 @@
 const { execSync } = require('node:child_process');
 const crypto = require('node:crypto');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 
 const repoRoot = process.cwd();
@@ -10,11 +11,12 @@ const handoffJsonPath = path.join(repoRoot, 'docs/protocols/reports/SESSION_HAND
 const handoffMdPath = path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.md');
 const ledgerPath = path.join(repoRoot, 'docs/protocols/AGENT_STATUS_LEDGER.md');
 
-function run(command) {
+function run(command, options = {}) {
   return execSync(command, {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
     maxBuffer: 1024 * 1024 * 128,
+    ...options,
   }).trim();
 }
 
@@ -41,6 +43,13 @@ function parseArgs(argv) {
       ? process.env.TNF_HANDOFF_RESUME_CHECKLIST.split('||').map((item) => item.trim()).filter(Boolean)
       : [],
     verificationNotes: process.env.TNF_HANDOFF_VERIFICATION_NOTES || '',
+    verificationStates: {
+      privacy_guard: process.env.TNF_HANDOFF_VERIFICATION_PRIVACY_GUARD || 'na',
+      secret_sweep: process.env.TNF_HANDOFF_VERIFICATION_SECRET_SWEEP || 'na',
+      docs_pii_guard: process.env.TNF_HANDOFF_VERIFICATION_DOCS_PII_GUARD || 'na',
+      supabase_rls_audit: process.env.TNF_HANDOFF_VERIFICATION_SUPABASE_RLS_AUDIT || 'na',
+    },
+    autoVerify: /^(1|true|yes)$/i.test(process.env.TNF_HANDOFF_AUTO_VERIFY || ''),
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -73,27 +82,142 @@ function parseArgs(argv) {
         .split('||')
         .map((item) => item.trim())
         .filter(Boolean);
-    }
+    } else if (token === '--auto-verify') args.autoVerify = true;
   }
 
   return args;
 }
 
-function gatherChangedPaths() {
-  let out = '';
+function touchesSupabasePaths(changedPaths) {
+  return changedPaths.some((entry) => {
+    const normalized = String(entry || '').replace(/\\/g, '/').toLowerCase();
+    return (
+      normalized.startsWith('supabase/') ||
+      normalized.startsWith('apps/virtual-library-blueprints/supabase/') ||
+      normalized.startsWith('apps/api/supabase/')
+    );
+  });
+}
+
+function runCheck(label, command, envOverrides) {
   try {
-    out = run('git diff --name-only --diff-filter=ACMR HEAD~1..HEAD');
-  } catch {
-    out = run('git status --porcelain').replace(/^..\s+/gm, '');
+    run(command, {
+      env: { ...process.env, ...(envOverrides || {}) },
+    });
+    return { state: 'pass', detail: `${label}=pass` };
+  } catch (error) {
+    const detail = error?.stderr ? String(error.stderr).trim() : String(error.message || error);
+    return { state: 'fail', detail: `${label}=fail (${detail.split('\n').slice(-1)[0]})` };
+  }
+}
+
+function computeVerification(input, changedPaths) {
+  if (!input.autoVerify) {
+    return {
+      states: { ...input.verificationStates },
+      notes: input.verificationNotes || '',
+    };
   }
 
-  const changed = out
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => line.replace(/\\/g, '/'));
+  const tempFile = path.join(
+    os.tmpdir(),
+    `tnf-handoff-files-${process.pid}-${crypto.randomUUID()}.txt`,
+  );
+  fs.writeFileSync(tempFile, `${changedPaths.join('\n')}\n`, 'utf8');
 
-  return [...new Set(changed)];
+  const env = {
+    PRIVACY_GUARD_FILE_LIST: tempFile,
+    TNF_HANDOFF_FILE_LIST: tempFile,
+  };
+  const details = [];
+  const states = { ...input.verificationStates };
+
+  const privacyResult = runCheck('privacy_guard', 'node scripts/security/privacy-guard.cjs --mode=pre-push', env);
+  states.privacy_guard = privacyResult.state;
+  details.push(privacyResult.detail);
+
+  const secretResult = runCheck('secret_sweep', 'node scripts/security/secret-sweep.cjs --mode=pre-push', env);
+  states.secret_sweep = secretResult.state;
+  details.push(secretResult.detail);
+
+  const docsResult = runCheck('docs_pii_guard', 'node scripts/security/docs-pii-guard.cjs --mode=pre-push', env);
+  states.docs_pii_guard = docsResult.state;
+  details.push(docsResult.detail);
+
+  if (touchesSupabasePaths(changedPaths)) {
+    const supabaseResult = runCheck(
+      'supabase_rls_audit',
+      'node scripts/security/supabase-rls-audit.cjs --strict --baseline=scripts/security/supabase-rls-baseline.json',
+      env,
+    );
+    states.supabase_rls_audit = supabaseResult.state;
+    details.push(supabaseResult.detail);
+  } else {
+    states.supabase_rls_audit = 'na';
+    details.push('supabase_rls_audit=na (no Supabase-sensitive path changes detected)');
+  }
+
+  fs.unlinkSync(tempFile);
+
+  const failed = Object.entries(states)
+    .filter(([, state]) => state === 'fail')
+    .map(([name]) => name);
+  const generatedNote = `Auto-verify ${new Date().toISOString()}: ${details.join('; ')}`;
+  const notes = [generatedNote, input.verificationNotes || ''].filter(Boolean).join(' | ');
+
+  if (failed.length) {
+    throw new Error(`Auto verification failed for: ${failed.join(', ')}`);
+  }
+
+  return { states, notes };
+}
+
+function gatherChangedPaths() {
+  const explicit = process.env.TNF_HANDOFF_FILE_LIST || process.env.PRIVACY_GUARD_FILE_LIST;
+  if (explicit && fs.existsSync(explicit)) {
+    const listed = fs
+      .readFileSync(explicit, 'utf8')
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => line.replace(/\\/g, '/'));
+    return [...new Set(listed)];
+  }
+
+  const commands = [
+    'git diff --cached --name-only --diff-filter=ACMR',
+    'git diff --name-only --diff-filter=ACMR',
+    'git diff --name-only --diff-filter=ACMR HEAD~1..HEAD',
+  ];
+
+  for (const command of commands) {
+    try {
+      const out = run(command);
+      if (!out) continue;
+      const changed = out
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => line.replace(/\\/g, '/'));
+      if (changed.length) return [...new Set(changed)];
+    } catch {
+      continue;
+    }
+  }
+
+  try {
+    const porcelain = run('git status --porcelain');
+    const changed = porcelain
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => line.replace(/^..\s+/, '').trim())
+      .map((line) => line.replace(/\\/g, '/'))
+      .filter(Boolean);
+    return [...new Set(changed)];
+  } catch {
+    return [];
+  }
 }
 
 function ensureDirFor(filePath) {
@@ -108,16 +232,19 @@ function updateLedger(handoffId) {
 
   const content = fs.readFileSync(ledgerPath, 'utf8');
   if (content.includes(handoffId)) return;
-  const reportHeader = '\n## 🔔 Reporting Protocol';
   const row = `| ${new Date().toISOString().slice(0, 10)} | Orchestrator | Published SESSION_HANDOFF_LATEST (${handoffId}) | ✅ HANDOFF_READY |`;
+  const lines = content.split('\n');
 
-  if (!content.includes(reportHeader)) {
-    fs.writeFileSync(ledgerPath, `${content.trimEnd()}\n\n${row}\n`, 'utf8');
+  const headerIndex = lines.findIndex((line) => line.trim() === '| Date | Agent | Action | Outcome |');
+  const alignIndex = lines.findIndex((line, index) => index > headerIndex && line.trim().startsWith('| :---'));
+
+  if (headerIndex !== -1 && alignIndex !== -1) {
+    lines.splice(alignIndex + 1, 0, row);
+    fs.writeFileSync(ledgerPath, `${lines.join('\n').replace(/\n+$/g, '\n')}`, 'utf8');
     return;
   }
 
-  const updated = content.replace(reportHeader, `${row}${reportHeader}`);
-  fs.writeFileSync(ledgerPath, updated, 'utf8');
+  fs.writeFileSync(ledgerPath, `${content.trimEnd()}\n\n${row}\n`, 'utf8');
 }
 
 function main() {
@@ -135,6 +262,8 @@ function main() {
         'Protocol enforcement layer implemented for mandatory session handoff continuity.',
         'CI/hook gates now block critical changes without fresh handoff artifacts.',
       ];
+
+  const verification = computeVerification(input, changedPaths);
 
   const nextActions = input.nextActions.length
     ? input.nextActions
@@ -164,11 +293,11 @@ function main() {
     work_summary: summary,
     changed_paths: changedPaths.length ? changedPaths : ['(no-diff-detected)'],
     verification: {
-      privacy_guard: 'pass',
-      secret_sweep: 'pass',
-      docs_pii_guard: 'pass',
-      supabase_rls_audit: 'pass',
-      notes: input.verificationNotes,
+      privacy_guard: verification.states.privacy_guard,
+      secret_sweep: verification.states.secret_sweep,
+      docs_pii_guard: verification.states.docs_pii_guard,
+      supabase_rls_audit: verification.states.supabase_rls_audit,
+      notes: verification.notes,
     },
     continuation: {
       owner: input.owner,

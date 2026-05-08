@@ -28,6 +28,12 @@ const criticalPathPatterns = [
   /^\.github\/workflows\//i,
 ];
 
+const supabaseSensitivePatterns = [
+  /^supabase\//i,
+  /^apps\/virtual-library-blueprints\/supabase\//i,
+  /^apps\/api\/supabase\//i,
+];
+
 const excludedFromCritical = new Set(
   [
     HANDOFF_JSON,
@@ -181,6 +187,20 @@ function ensureHandoffCoverage(handoff, criticalFiles) {
   }
 }
 
+function ensureSupabaseAuditCoverage(handoff, changedFiles) {
+  const touchesSupabase = changedFiles.some((file) =>
+    supabaseSensitivePatterns.some((pattern) => pattern.test(normalizePath(file))),
+  );
+  if (!touchesSupabase) return;
+
+  const supabaseAuditState = handoff?.verification?.supabase_rls_audit;
+  if (supabaseAuditState !== 'pass') {
+    fail(
+      'Supabase-sensitive changes require verification.supabase_rls_audit to be "pass". Run the strict RLS audit before emitting handoff artifacts.',
+    );
+  }
+}
+
 function ensureMarkdownAck(mdPath) {
   if (!fs.existsSync(mdPath)) fail(`Missing handoff markdown: ${mdPath}`);
   const content = fs.readFileSync(mdPath, 'utf8');
@@ -220,6 +240,7 @@ function main() {
   const handoff = validateSchemaAndPayload(HANDOFF_JSON, HANDOFF_SCHEMA);
   ensureFreshHandoff(handoff);
   ensureHandoffCoverage(handoff, criticalFiles);
+  ensureSupabaseAuditCoverage(handoff, files);
   ensureMarkdownAck(HANDOFF_MD);
 
   if (!fs.existsSync(STATUS_LEDGER)) {
