@@ -25,6 +25,12 @@ export class VectorDatabaseService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
+    if (!this.dbConfig?.provider || !this.embeddingConfig?.provider) {
+      this.logger.warn(
+        'Vector DB configuration is incomplete. Skipping vector provider initialization for this runtime.'
+      );
+      return;
+    }
     await this.initializeProviders();
     this.logger.log('Vector Database Service initialized');
   }

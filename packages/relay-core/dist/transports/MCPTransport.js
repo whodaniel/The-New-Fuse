@@ -8,9 +8,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MCPTransport = void 0;
 const events_1 = require("events");
-const index_1 = require("@modelcontextprotocol/sdk/server/index");
-const stdio_1 = require("@modelcontextprotocol/sdk/server/stdio");
-const types_1 = require("@modelcontextprotocol/sdk/types");
+const server_1 = require("@modelcontextprotocol/sdk/server");
+const stdio_1 = require("@modelcontextprotocol/sdk/server/stdio.js");
+const types_1 = require("@modelcontextprotocol/sdk/types.js");
 class MCPTransport extends events_1.EventEmitter {
     constructor(config) {
         super();
@@ -26,7 +26,7 @@ class MCPTransport extends events_1.EventEmitter {
             return true;
         }
         try {
-            this.mcpServer = new index_1.Server({
+            this.mcpServer = new server_1.Server({
                 name: this.config.relayId,
                 version: this.config.version,
             }, {

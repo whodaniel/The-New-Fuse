@@ -4,17 +4,21 @@
  * Provides Model Context Protocol server for AI agency platform capabilities
  */
 
-import { Server } from '@modelcontextprotocol/sdk/server/index';
-import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
+import { Server } from '@modelcontextprotocol/sdk/server';
+import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
   CallToolRequest,
   CallToolRequestSchema,
   ErrorCode,
+  GetPromptRequestSchema,
+  ListPromptsRequestSchema,
+  ListResourcesRequestSchema,
   ListToolsRequestSchema,
   McpError,
+  ReadResourceRequestSchema,
   Tool,
-} from '@modelcontextprotocol/sdk/types';
+} from '@modelcontextprotocol/sdk/types.js';
 import express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -53,6 +57,8 @@ export class TheNewFuseMCPServer {
       {
         capabilities: {
           tools: {},
+          resources: {},
+          prompts: {},
         },
       }
     );
@@ -424,6 +430,124 @@ export class TheNewFuseMCPServer {
         },
       ] as Tool[],
     }));
+
+    // Resource handlers
+    this.server.setRequestHandler(ListResourcesRequestSchema, async () => ({
+      resources: [
+        {
+          uri: 'tnf://system/status',
+          name: 'System Status',
+          description: 'TNF platform health and service status',
+          mimeType: 'application/json',
+        },
+        {
+          uri: 'tnf://system/config',
+          name: 'System Configuration',
+          description: 'TNF runtime configuration and environment',
+          mimeType: 'application/json',
+        },
+        {
+          uri: 'tnf://agents',
+          name: 'Agent Registry',
+          description: 'All registered agents and their capabilities',
+          mimeType: 'application/json',
+        },
+        {
+          uri: 'tnf://workflows',
+          name: 'Workflow Registry',
+          description: 'Available workflow definitions',
+          mimeType: 'application/json',
+        },
+        {
+          uri: 'tnf://protocols',
+          name: 'Protocol Registry',
+          description: 'Active TNF protocols and their status',
+          mimeType: 'application/json',
+        },
+        {
+          uri: 'tnf://timeline/events',
+          name: 'Timeline Events',
+          description: 'Recent timeline events across all branches',
+          mimeType: 'application/json',
+        },
+        {
+          uri: 'tnf://library/sessions',
+          name: 'Library Sessions',
+          description: 'Virtual Library story sessions',
+          mimeType: 'application/json',
+        },
+      ],
+    }));
+
+    this.server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+      const { uri } = request.params;
+
+      try {
+        const resource = await this.handleReadResource(uri);
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'application/json',
+              text: JSON.stringify(resource, null, 2),
+            },
+          ],
+        };
+      } catch (error) {
+        throw new McpError(ErrorCode.InvalidParams, `Resource not found: ${uri}`);
+      }
+    });
+
+    // Prompt handlers
+    this.server.setRequestHandler(ListPromptsRequestSchema, async () => ({
+      prompts: [
+        {
+          name: 'analyze_agent',
+          description: "Analyze an agent's capabilities, status, and recent activity",
+          arguments: [{ name: 'agentId', description: 'Agent ID to analyze', required: true }],
+        },
+        {
+          name: 'review_workflow',
+          description: 'Review a workflow definition for issues and optimizations',
+          arguments: [{ name: 'workflowId', description: 'Workflow ID to review', required: true }],
+        },
+        {
+          name: 'summarize_timeline',
+          description: 'Summarize timeline events for a given period or branch',
+          arguments: [
+            { name: 'branch', description: 'Timeline branch name', required: false },
+            { name: 'limit', description: 'Maximum events to include', required: false },
+          ],
+        },
+        {
+          name: 'explore_library',
+          description: 'Explore Virtual Library sessions and note cards',
+          arguments: [
+            { name: 'shelfCode', description: 'DDC shelf code to browse', required: false },
+            { name: 'sessionId', description: 'Specific session to explore', required: false },
+          ],
+        },
+        {
+          name: 'diagnose_system',
+          description: 'Run system diagnostics and report health status',
+          arguments: [],
+        },
+        {
+          name: 'agent_handoff',
+          description: 'Generate a structured handoff summary for agent-to-agent transfer',
+          arguments: [
+            { name: 'fromAgent', description: 'Source agent ID', required: true },
+            { name: 'toAgent', description: 'Target agent ID', required: true },
+            { name: 'context', description: 'Handoff context summary', required: true },
+          ],
+        },
+      ],
+    }));
+
+    this.server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+      const { name, arguments: args } = request.params;
+      return await this.handleGetPrompt(name, args || {});
+    });
 
     // Tool execution handler
     this.server.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest) => {
@@ -1130,6 +1254,368 @@ export class TheNewFuseMCPServer {
     }
 
     throw new McpError(ErrorCode.MethodNotFound, `Action ${action} not supported`);
+  }
+
+  // Resource handler implementations
+  private async handleReadResource(uri: string): Promise<any> {
+    switch (uri) {
+      case 'tnf://system/status':
+        return this.getSystemStatus();
+
+      case 'tnf://system/config':
+        return {
+          environment: process.env.NODE_ENV || 'development',
+          nodeVersion: process.version,
+          platform: process.platform,
+          services: {
+            api: { port: process.env.API_PORT || 3001 },
+            gateway: { port: process.env.GATEWAY_PORT || 3005 },
+            database: { type: 'postgresql', host: process.env.DB_HOST || 'localhost' },
+            redis: {
+              host: process.env.REDIS_HOST || 'localhost',
+              port: process.env.REDIS_PORT || 6380,
+            },
+          },
+          workspace: this.getWorkspaceRoot(),
+        };
+
+      case 'tnf://agents':
+        if (this.services.agent) {
+          const agents = await this.services.agent.listAgents({ status: 'all' });
+          return agents;
+        }
+        return {
+          agents: [
+            { id: 'agent-1', name: 'Director Agent', type: 'director', status: 'active' },
+            { id: 'agent-2', name: 'Chat Agent', type: 'chat', status: 'active' },
+            { id: 'agent-3', name: 'Workflow Agent', type: 'workflow', status: 'inactive' },
+          ],
+          total: 3,
+        };
+
+      case 'tnf://workflows':
+        if (this.services.workflow) {
+          return await this.services.workflow.listWorkflows({ status: 'all' });
+        }
+        return {
+          workflows: [],
+          total: 0,
+        };
+
+      case 'tnf://protocols':
+        return {
+          protocols: [
+            {
+              name: 'UTP',
+              version: '1.0',
+              status: 'active',
+              description: 'Universal Timeline Protocol',
+            },
+            {
+              name: 'TWIP',
+              version: '0.1',
+              status: 'active',
+              description: 'Terminal Window Identity Protocol',
+            },
+            {
+              name: 'SGP',
+              version: '0.1',
+              status: 'draft',
+              description: 'Spreadsheet Graph Protocol',
+            },
+            {
+              name: 'MCP',
+              version: '2.1',
+              status: 'active',
+              description: 'Model Context Protocol',
+            },
+          ],
+        };
+
+      case 'tnf://timeline/events':
+        return {
+          events: [],
+          message: 'Timeline events available via timeline API',
+        };
+
+      case 'tnf://library/sessions':
+        return {
+          sessions: [],
+          message: 'Library sessions available via virtual-library-blueprints',
+        };
+
+      default:
+        if (uri.startsWith('tnf://agents/')) {
+          const agentId = uri.replace('tnf://agents/', '');
+          if (this.services.agent) {
+            return await this.services.agent.getAgentStatus(agentId);
+          }
+          return { id: agentId, status: 'unknown' };
+        }
+
+        if (uri.startsWith('tnf://workflows/')) {
+          const workflowId = uri.replace('tnf://workflows/', '');
+          if (this.services.workflow) {
+            return await this.services.workflow.listWorkflows({ status: 'all' });
+          }
+          return { id: workflowId, status: 'unknown' };
+        }
+
+        throw new Error(`Unknown resource URI: ${uri}`);
+    }
+  }
+
+  private getSystemStatus() {
+    return {
+      status: this.services.agent ? 'healthy' : 'degraded',
+      initialized: true,
+      version: '2.1.0',
+      uptime: process.uptime(),
+      services: {
+        agent: !!this.services.agent,
+        chat: !!this.services.chat,
+        workflow: !!this.services.workflow,
+        claudeDev: !!this.services.claudeDev,
+        agentGrants: !!this.services.agentGrants,
+      },
+      memory: process.memoryUsage(),
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  // Prompt handler implementations
+  private async handleGetPrompt(name: string, args: Record<string, string>): Promise<any> {
+    switch (name) {
+      case 'analyze_agent': {
+        const agentId = args.agentId || 'unknown';
+        let agentStatus: any = { id: agentId, status: 'unknown' };
+        if (this.services.agent) {
+          try {
+            agentStatus = await this.services.agent.getAgentStatus(agentId);
+          } catch (_e) {
+            agentStatus = { id: agentId, status: 'not-found' };
+          }
+        }
+        return {
+          description: `Analysis of agent ${agentId}`,
+          messages: [
+            {
+              role: 'user',
+              content: {
+                type: 'text',
+                text: `Please provide a detailed analysis of agent ${agentId} including its capabilities, current status, recent tasks, and any recommendations for optimization.`,
+              },
+            },
+            {
+              role: 'assistant',
+              content: {
+                type: 'text',
+                text: [
+                  `# Agent Analysis: ${agentId}`,
+                  '',
+                  '## Current Status',
+                  `- Status: ${agentStatus.status || 'unknown'}`,
+                  agentStatus.health ? `- Health: ${agentStatus.health}` : null,
+                  '',
+                  '## Recommendations',
+                  '- Review agent task queue for bottlenecks',
+                  '- Check resource utilization',
+                  '- Verify agent communication channels',
+                ]
+                  .filter(Boolean)
+                  .join('\n'),
+              },
+            },
+          ],
+        };
+      }
+
+      case 'review_workflow': {
+        const workflowId = args.workflowId || 'unknown';
+        return {
+          description: `Review of workflow ${workflowId}`,
+          messages: [
+            {
+              role: 'user',
+              content: {
+                type: 'text',
+                text: `Review workflow ${workflowId} for potential issues, optimization opportunities, and compliance with TNF guidelines.`,
+              },
+            },
+            {
+              role: 'assistant',
+              content: {
+                type: 'text',
+                text: [
+                  `# Workflow Review: ${workflowId}`,
+                  '',
+                  '## Checklist',
+                  '- [ ] Error handling defined for all steps',
+                  '- [ ] Timeout configurations set',
+                  '- [ ] Input validation in place',
+                  '- [ ] Output contracts documented',
+                  '- [ ] Dependencies explicitly defined',
+                  '',
+                  '## Optimization Opportunities',
+                  '- Consider parallel execution for independent steps',
+                  '- Add retry logic for transient failures',
+                  '- Implement circuit breaker for external calls',
+                ].join('\n'),
+              },
+            },
+          ],
+        };
+      }
+
+      case 'summarize_timeline': {
+        const branch = args.branch || 'main';
+        const limit = args.limit || '10';
+        return {
+          description: `Timeline summary for branch ${branch}`,
+          messages: [
+            {
+              role: 'user',
+              content: {
+                type: 'text',
+                text: `Summarize the most recent ${limit} timeline events on branch "${branch}", highlighting key milestones and patterns.`,
+              },
+            },
+            {
+              role: 'assistant',
+              content: {
+                type: 'text',
+                text: [
+                  `# Timeline Summary: ${branch}`,
+                  '',
+                  `Branch: ${branch}`,
+                  `Recent Events: ${limit}`,
+                  '',
+                  '## Key Milestones',
+                  '- Last N events analyzed for patterns',
+                  '',
+                  '## Notes',
+                  '- Full timeline available via tnf://timeline/events resource',
+                  '- Events can be filtered by branch, date range, and type',
+                ].join('\n'),
+              },
+            },
+          ],
+        };
+      }
+
+      case 'explore_library': {
+        const scope = args.shelfCode || args.sessionId || 'all';
+        return {
+          description: `Library exploration: ${scope}`,
+          messages: [
+            {
+              role: 'user',
+              content: {
+                type: 'text',
+                text: `Explore the Virtual Library with focus on "${scope}". Identify relevant sessions, note cards, and knowledge artifacts.`,
+              },
+            },
+            {
+              role: 'assistant',
+              content: {
+                type: 'text',
+                text: [
+                  '# Virtual Library Exploration',
+                  '',
+                  `Scope: ${scope}`,
+                  '',
+                  '## Available Resources',
+                  '- Story sessions with 5-ring question system',
+                  '- Note cards with captured discoveries',
+                  '- Timeline events linked to sessions',
+                  '- Agent access-controlled knowledge',
+                  '',
+                  'Full library data available via tnf://library/sessions resource',
+                ].join('\n'),
+              },
+            },
+          ],
+        };
+      }
+
+      case 'diagnose_system':
+        return {
+          description: 'System diagnostics report',
+          messages: [
+            {
+              role: 'user',
+              content: {
+                type: 'text',
+                text: 'Run comprehensive system diagnostics and report the health of all TNF services.',
+              },
+            },
+            {
+              role: 'assistant',
+              content: {
+                type: 'text',
+                text: [
+                  '# System Diagnostics',
+                  '',
+                  '## Service Status',
+                  `- Agent Service: ${this.services.agent ? '✅ Connected' : '❌ Disconnected'}`,
+                  `- Chat Service: ${this.services.chat ? '✅ Connected' : '❌ Disconnected'}`,
+                  `- Workflow Service: ${this.services.workflow ? '✅ Connected' : '❌ Disconnected'}`,
+                  `- ClaudeDev Service: ${this.services.claudeDev ? '✅ Connected' : '❌ Disconnected'}`,
+                  `- Agent Grants: ${this.services.agentGrants ? '✅ Connected' : '❌ Disconnected'}`,
+                  '',
+                  '## Resource Check',
+                  `- Uptime: ${Math.floor(process.uptime())}s`,
+                  `- Memory: ${JSON.stringify(process.memoryUsage())}`,
+                  `- Node: ${process.version}`,
+                ].join('\n'),
+              },
+            },
+          ],
+        };
+
+      case 'agent_handoff':
+        return {
+          description: 'Agent handoff summary',
+          messages: [
+            {
+              role: 'user',
+              content: {
+                type: 'text',
+                text: `Generate a structured handoff from ${args.fromAgent || 'unknown'} to ${args.toAgent || 'unknown'}. Context: ${args.context || 'No context provided'}.`,
+              },
+            },
+            {
+              role: 'assistant',
+              content: {
+                type: 'text',
+                text: [
+                  '# Agent Handoff Summary',
+                  '',
+                  `## Transfer: ${args.fromAgent || 'unknown'} → ${args.toAgent || 'unknown'}`,
+                  '',
+                  '## Context',
+                  args.context || 'No context provided',
+                  '',
+                  '## Verification Checklist',
+                  '- [ ] Merkle hash computed for handoff integrity',
+                  '- [ ] State snapshot captured pre-transfer',
+                  '- [ ] Outstanding tasks transferred',
+                  '- [ ] Communication channels handed over',
+                  '',
+                  '## Instructions for Receiving Agent',
+                  '1. Verify handoff Merkle hash before proceeding',
+                  '2. Review state snapshot for continuity',
+                  '3. Confirm receipt of all queued tasks',
+                  '4. Establish communication with active channels',
+                ].join('\n'),
+              },
+            },
+          ],
+        };
+
+      default:
+        throw new McpError(ErrorCode.MethodNotFound, `Unknown prompt: ${name}`);
+    }
   }
 
   /**

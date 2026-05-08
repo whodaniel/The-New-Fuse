@@ -25,8 +25,8 @@ import { AgentProxyController } from './controllers/agent-proxy.controller';
 import { AiController } from './controllers/ai.controller';
 import { CommunityController } from './controllers/community.controller';
 import { CompoundingMemoryController } from './controllers/compounding-memory.controller';
-import { LLMIntelController } from './controllers/llm-intel.controller';
 import { HealthController } from './controllers/health.controller';
+import { LLMIntelController } from './controllers/llm-intel.controller';
 import { MCPServerController } from './controllers/mcp.controller';
 import { ModelsController } from './controllers/models.controller';
 import { N8nWorkflowsController } from './controllers/n8n-workflows.controller';
@@ -86,6 +86,16 @@ import { SecurityValidationMiddleware } from './middleware/security-validation.m
 import { SecurityModule as GlobalSecurityModule } from './security/security.module';
 
 import { WorkflowExecutionService } from './services/workflow/WorkflowExecutionService';
+
+const graphqlAdapterAvailable = (() => {
+  try {
+    require.resolve('@as-integrations/express5');
+    return true;
+  } catch {
+    return false;
+  }
+})();
+const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAvailable;
 
 @Module({
   imports: [
@@ -150,7 +160,7 @@ import { WorkflowExecutionService } from './services/workflow/WorkflowExecutionS
     UnifiedLedgerModule,
     BrandConsistencyAgentModule, // Self-Improving Brand Consistency Agent
     BrowserHubSwarmModule, // Browser Hub Improvement Agent Swarm
-    GraphqlModule, // GraphQL API
+    ...(enableGraphql ? [GraphqlModule] : []), // GraphQL API (optional in local runtime)
     TNFAutonomousModule, // 🔮 Autonomous System (Director, BMAD, Swarm)
     BillingModule,
   ],
