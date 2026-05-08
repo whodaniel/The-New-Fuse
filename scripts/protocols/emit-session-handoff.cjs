@@ -235,8 +235,10 @@ function updateLedger(handoffId) {
   const row = `| ${new Date().toISOString().slice(0, 10)} | Orchestrator | Published SESSION_HANDOFF_LATEST (${handoffId}) | ✅ HANDOFF_READY |`;
   const lines = content.split('\n');
 
-  const headerIndex = lines.findIndex((line) => line.trim() === '| Date | Agent | Action | Outcome |');
-  const alignIndex = lines.findIndex((line, index) => index > headerIndex && line.trim().startsWith('| :---'));
+  const headerPattern = /^\|\s*Date\s*\|\s*Agent\s*\|\s*Action\s*\|\s*Outcome\s*\|$/i;
+  const alignPattern = /^\|\s*:?-{2,}.*\|$/;
+  const headerIndex = lines.findIndex((line) => headerPattern.test(line.trim()));
+  const alignIndex = lines.findIndex((line, index) => index > headerIndex && alignPattern.test(line.trim()));
 
   if (headerIndex !== -1 && alignIndex !== -1) {
     lines.splice(alignIndex + 1, 0, row);
