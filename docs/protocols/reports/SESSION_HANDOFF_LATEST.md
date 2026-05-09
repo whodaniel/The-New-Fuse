@@ -1,26 +1,26 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-09T00:25:56.153Z`  
-Handoff ID: `c3143ce4-923b-4b04-b1dc-4554e4527cbe`
+Created At: `2026-05-09T00:33:18.033Z`  
+Handoff ID: `6cbeeb5a-ce3b-4297-96e3-2f597c4b4b13`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `8215b2aa0a5641321ab7360acb528bcb32549ff6`
+- Head SHA: `26e7ec25f4ab69b85af39d6f6ebdc88526e11d92`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Applied phase-6 Supabase RLS policies to remaining public tables with
-  deterministic owner/tenant logic and explicit system-table deny policies.
-- Reduced live RLS-enabled-no-policy backlog from 22 to 0 and cleared related
-  advisor lint class.
+- Applied phase-7 public function hardening in Supabase: removed public SECURITY
+  DEFINER exposure and pinned search_path on legacy helper functions.
+- Reduced security advisor backlog to two residual non-RLS items (vector
+  extension placement and auth leaked-password-protection setting).
 
 ## Changed Paths
 
-- supabase/migrations/010_remaining_public_rls_phase6.sql
+- supabase/migrations/011_public_function_security_hardening_phase7.sql
 - docs/operations/TNF_TASK_LEDGER_TENANT_SCOPE_HARDENING_2026-05-08.md
 
 ## Verification
@@ -38,13 +38,13 @@ Handoff ID: `c3143ce4-923b-4b04-b1dc-4554e4527cbe`
 
 ### Resume Checklist
 
-- Review phase-6 migration and policy matrix in
+- Review phase-7 function hardening details in
   docs/operations/TNF_TASK_LEDGER_TENANT_SCOPE_HARDENING_2026-05-08.md.
-- Start next remediation pass from current security advisor warnings, preserving
-  privacy-first defaults.
+- Start residual security remediation from current advisor output and preserve
+  TNF privacy guards.
 
 ## Next Actions
 
-- Prioritize advisor remediation for security-definer executable public
-  functions.
-- Plan follow-up migration for mutable public function search_path hardening.
+- Plan controlled migration of vector extension out of public schema.
+- Enable Supabase leaked password protection in Auth settings and validate
+  compatibility.
