@@ -338,6 +338,22 @@ Executed via Supabase MCP (`execute_sql`, `list_migrations`, `get_advisors`):
   - live vector-search smoke check passed (`match_documents` returns rows)
 - Security advisor output after phase-8 now shows only:
   - `auth_leaked_password_protection` (Auth setting)
+- Confirmed live Auth config posture via Management API
+  (`GET /v1/projects/{ref}/config/auth`):
+  - `password_hibp_enabled=false`
+  - `password_min_length=6` (pre-remediation)
+- Attempted direct remediation via Management API
+  (`PATCH /v1/projects/{ref}/config/auth` with
+  `{"password_hibp_enabled":true}`):
+  - API response: `HTTP 402`
+  - Message: leaked-password protection is available on Pro plans and above
+- Applied compensating control via Management API:
+  - set `password_min_length=8` successfully
+  - confirmed live config now `password_min_length=8` and
+    `password_hibp_enabled=false`
+- Verified security advisors after compensating control:
+  - `GET /v1/projects/{ref}/advisors/security` returns 1 lint total:
+    `auth_leaked_password_protection`
 
 ### Type-check
 
@@ -379,3 +395,7 @@ Result:
 5. Complete remaining auth posture remediation: enable leaked-password
    protection in Supabase Auth settings and verify sign-up/password-reset
    behavior against TNF client flows.
+6. If project remains on Free plan, treat leaked-password protection as a
+   documented plan-gated risk acceptance and maintain compensating controls
+   (minimum password length, optional required-character policy, MFA, and
+   rate-limit/captcha posture).
