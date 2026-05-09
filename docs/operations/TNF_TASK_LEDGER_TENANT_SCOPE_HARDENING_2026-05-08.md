@@ -37,6 +37,8 @@ unified-ledger APIs, with backward-compatible owner scoping preserved.
     tables in `public`.
 18. Added and applied phase-5 marketplace/revenue/wallet scope policies for 8
     additional tables in `public`.
+19. Added and applied phase-6 remaining-table policy coverage for the final 22
+    `public` tables with `RLS enabled + no policy`.
 
 ## Code Changes
 
@@ -103,6 +105,7 @@ Files:
 - `supabase/migrations/007_agent_registry_rls_phase3.sql`
 - `supabase/migrations/008_project_workflow_rls_phase4.sql`
 - `supabase/migrations/009_marketplace_wallet_revenue_rls_phase5.sql`
+- `supabase/migrations/010_remaining_public_rls_phase6.sql`
 
 ### Database Schema + Migration
 
@@ -138,6 +141,7 @@ Connected Supabase project migration state:
 - Applied migration: `20260508233254 project_workflow_rls_phase4_20260508`
 - Applied migration:
   `20260509001447 marketplace_wallet_revenue_rls_phase5_20260508`
+- Applied migration: `20260509002318 remaining_public_rls_phase6_20260509`
 - Note: connected Supabase currently does **not** yet have `tenant_id` /
   `workspace_id` columns on `pipelines`, `tasks`, `task_executions`, nor
   `workspace_members`.
@@ -267,9 +271,40 @@ Executed via Supabase MCP (`execute_sql`, `list_migrations`, `get_advisors`):
     `search_path`)
 - Verified `RLS enabled with no policy` table count dropped further to `22`
   after phase-5 rollout.
-- Security/performance advisors still report substantial pre-existing backlog
-  across many unrelated tables/functions; no new blocker unique to this patch
-  remained after `search_path` remediation.
+- Confirmed phase-6 policies (4 each: select/insert/update/delete) now exist on:
+  - `agent_memories`
+  - `ai_insights`
+  - `business_analytics`
+  - `business_events`
+  - `business_metrics`
+  - `code_execution_usage`
+  - `error_logs`
+  - `feedback_to_tasks`
+  - `llm_configs`
+  - `messages`
+  - `prompt_snippets`
+  - `prompt_templates`
+  - `prompt_versions`
+  - `sse_subscriptions`
+  - `sync_conflicts`
+  - `sync_states`
+  - `system_configurations`
+  - `system_settings`
+  - `validation_datasets`
+  - `vector_embeddings`
+  - `webhook_configurations`
+  - `webhook_delivery_logs`
+- Confirmed new private helper functions in `private` schema:
+  - `tnf_feedback_owned(uuid)` (`SECURITY DEFINER`, pinned `search_path`)
+  - `tnf_message_visible(uuid, uuid, uuid, uuid)` (`SECURITY DEFINER`, pinned
+    `search_path`)
+  - `tnf_text_actor_matches(text)` (`SECURITY DEFINER`, pinned `search_path`)
+- Verified `RLS enabled with no policy` table count dropped to `0` after phase-6
+  rollout.
+- Security advisor output no longer reports `rls_enabled_no_policy`; remaining
+  warnings are pre-existing (`search_path` mutability in legacy public
+  functions, security-definer execute grants in public RPC functions, extension
+  placement, and auth posture).
 
 ### Type-check
 
@@ -308,6 +343,6 @@ Result:
    accepting free-form `workspaceId` without auth-context reconciliation.
 4. Roll out equivalent Supabase migration to staging/production environments not
    yet patched, then re-run advisors and smoke tests.
-5. Continue deterministic policy rollout for remaining high-priority
-   `rls_enabled_no_policy` tables (owner-content and user-content tables) to
-   reduce the existing security backlog.
+5. Continue with targeted advisor remediation (public security-definer execute
+   grants, mutable `search_path` legacy functions, and extension/schema posture)
+   now that `rls_enabled_no_policy` has reached zero.
