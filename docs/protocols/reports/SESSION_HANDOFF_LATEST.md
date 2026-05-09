@@ -1,26 +1,26 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-09T00:17:27.555Z`  
-Handoff ID: `b7adee4d-22c7-4e08-b4e8-91cdb794930b`
+Created At: `2026-05-09T00:25:56.153Z`  
+Handoff ID: `c3143ce4-923b-4b04-b1dc-4554e4527cbe`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `eb9af517c5e5be90e51b454f147868a2571711f1`
+- Head SHA: `8215b2aa0a5641321ab7360acb528bcb32549ff6`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Applied phase-5 Supabase RLS policies for marketplace/revenue/wallet tables
-  and verified live policy coverage.
-- Reduced live RLS-enabled-no-policy backlog from 30 to 22 with helper-function
-  hardening.
+- Applied phase-6 Supabase RLS policies to remaining public tables with
+  deterministic owner/tenant logic and explicit system-table deny policies.
+- Reduced live RLS-enabled-no-policy backlog from 22 to 0 and cleared related
+  advisor lint class.
 
 ## Changed Paths
 
-- supabase/migrations/009_marketplace_wallet_revenue_rls_phase5.sql
+- supabase/migrations/010_remaining_public_rls_phase6.sql
 - docs/operations/TNF_TASK_LEDGER_TENANT_SCOPE_HARDENING_2026-05-08.md
 
 ## Verification
@@ -38,13 +38,13 @@ Handoff ID: `b7adee4d-22c7-4e08-b4e8-91cdb794930b`
 
 ### Resume Checklist
 
-- Review phase-5 migration and live verification notes in
+- Review phase-6 migration and policy matrix in
   docs/operations/TNF_TASK_LEDGER_TENANT_SCOPE_HARDENING_2026-05-08.md.
-- Start next migration from current no-policy table inventory query and keep
-  deterministic ownership gates.
+- Start next remediation pass from current security advisor warnings, preserving
+  privacy-first defaults.
 
 ## Next Actions
 
-- Continue with phase-6 rollout for remaining no-policy public tables.
-- Address high-risk security advisor warnings for public security-definer
-  execution grants.
+- Prioritize advisor remediation for security-definer executable public
+  functions.
+- Plan follow-up migration for mutable public function search_path hardening.
