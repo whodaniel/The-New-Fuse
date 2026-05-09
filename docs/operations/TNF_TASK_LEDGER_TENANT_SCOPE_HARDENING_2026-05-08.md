@@ -35,6 +35,8 @@ unified-ledger APIs, with backward-compatible owner scoping preserved.
     agent-registry tables in `public`.
 17. Added and applied phase-4 project/workflow scope policies for 4 additional
     tables in `public`.
+18. Added and applied phase-5 marketplace/revenue/wallet scope policies for 8
+    additional tables in `public`.
 
 ## Code Changes
 
@@ -100,6 +102,7 @@ Files:
 - `supabase/migrations/006_owner_columns_rls_phase2.sql`
 - `supabase/migrations/007_agent_registry_rls_phase3.sql`
 - `supabase/migrations/008_project_workflow_rls_phase4.sql`
+- `supabase/migrations/009_marketplace_wallet_revenue_rls_phase5.sql`
 
 ### Database Schema + Migration
 
@@ -133,6 +136,8 @@ Connected Supabase project migration state:
 - Applied migration: `20260508230954 owner_columns_rls_phase2_20260508`
 - Applied migration: `20260508231905 agent_registry_rls_phase3_20260508`
 - Applied migration: `20260508233254 project_workflow_rls_phase4_20260508`
+- Applied migration:
+  `20260509001447 marketplace_wallet_revenue_rls_phase5_20260508`
 - Note: connected Supabase currently does **not** yet have `tenant_id` /
   `workspace_id` columns on `pipelines`, `tasks`, `task_executions`, nor
   `workspace_members`.
@@ -243,6 +248,25 @@ Executed via Supabase MCP (`execute_sql`, `list_migrations`, `get_advisors`):
   - `tnf_workflow_owned(uuid)` (`SECURITY DEFINER`, pinned `search_path`)
 - Verified `RLS enabled with no policy` table count dropped further to `30`
   after phase-4 rollout.
+- Confirmed phase-5 policies (4 each: select/insert/update/delete) now exist on:
+  - `fractional_shares`
+  - `marketplace_catalog_items`
+  - `marketplace_listings`
+  - `marketplace_offers`
+  - `revenue_streams`
+  - `revenue_distributions`
+  - `wallets`
+  - `transactions`
+- Confirmed new private helper functions in `private` schema:
+  - `tnf_agent_nft_owned(uuid)` (`SECURITY DEFINER`, pinned `search_path`)
+  - `tnf_marketplace_listing_owned(uuid)` (`SECURITY DEFINER`, pinned
+    `search_path`)
+  - `tnf_revenue_stream_owned(uuid)` (`SECURITY DEFINER`, pinned `search_path`)
+  - `tnf_wallet_owned(uuid)` (`SECURITY DEFINER`, pinned `search_path`)
+  - `tnf_catalog_created_by_match(text)` (`SECURITY DEFINER`, pinned
+    `search_path`)
+- Verified `RLS enabled with no policy` table count dropped further to `22`
+  after phase-5 rollout.
 - Security/performance advisors still report substantial pre-existing backlog
   across many unrelated tables/functions; no new blocker unique to this patch
   remained after `search_path` remediation.
