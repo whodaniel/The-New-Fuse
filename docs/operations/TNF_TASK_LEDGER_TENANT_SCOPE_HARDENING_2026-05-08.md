@@ -41,6 +41,8 @@ unified-ledger APIs, with backward-compatible owner scoping preserved.
     `public` tables with `RLS enabled + no policy`.
 20. Added and applied phase-7 public-function hardening to remove remaining
     mutable `search_path` findings and public `SECURITY DEFINER` RPC exposure.
+21. Added and applied phase-8 vector-extension schema hardening to clear
+    `extension_in_public` while preserving vector search behavior.
 
 ## Code Changes
 
@@ -109,6 +111,7 @@ Files:
 - `supabase/migrations/009_marketplace_wallet_revenue_rls_phase5.sql`
 - `supabase/migrations/010_remaining_public_rls_phase6.sql`
 - `supabase/migrations/011_public_function_security_hardening_phase7.sql`
+- `supabase/migrations/012_vector_extension_schema_hardening_phase8.sql`
 
 ### Database Schema + Migration
 
@@ -147,6 +150,8 @@ Connected Supabase project migration state:
 - Applied migration: `20260509002318 remaining_public_rls_phase6_20260509`
 - Applied migration:
   `20260509003106 public_function_security_hardening_phase7_20260509`
+- Applied migration:
+  `20260509003947 vector_extension_schema_hardening_phase8_20260509`
 - Note: connected Supabase currently does **not** yet have `tenant_id` /
   `workspace_id` columns on `pipelines`, `tasks`, `task_executions`, nor
   `workspace_members`.
@@ -326,6 +331,13 @@ Executed via Supabase MCP (`execute_sql`, `list_migrations`, `get_advisors`):
 - Security advisor output after phase-7 now shows only:
   - `extension_in_public` (`vector` extension placement)
   - `auth_leaked_password_protection` (Auth setting)
+- Confirmed phase-8 extension hardening:
+  - `vector` extension moved from schema `public` to schema `extensions`
+  - `public.match_documents(...)` updated to use
+    `search_path=public, extensions, pg_catalog`
+  - live vector-search smoke check passed (`match_documents` returns rows)
+- Security advisor output after phase-8 now shows only:
+  - `auth_leaked_password_protection` (Auth setting)
 
 ### Type-check
 
@@ -364,5 +376,6 @@ Result:
    accepting free-form `workspaceId` without auth-context reconciliation.
 4. Roll out equivalent Supabase migration to staging/production environments not
    yet patched, then re-run advisors and smoke tests.
-5. Continue with targeted advisor remediation for remaining residual items:
-   `extension_in_public` (`vector`) and auth leaked-password protection posture.
+5. Complete remaining auth posture remediation: enable leaked-password
+   protection in Supabase Auth settings and verify sign-up/password-reset
+   behavior against TNF client flows.
