@@ -1,26 +1,26 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-09T00:33:18.033Z`  
-Handoff ID: `6cbeeb5a-ce3b-4297-96e3-2f597c4b4b13`
+Created At: `2026-05-09T00:42:09.254Z`  
+Handoff ID: `97610355-ca12-4433-b560-3e2bcae5716f`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `26e7ec25f4ab69b85af39d6f6ebdc88526e11d92`
+- Head SHA: `8d2f4c7438d0bc74e55b75bb8b9faf22ead1ada7`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Applied phase-7 public function hardening in Supabase: removed public SECURITY
-  DEFINER exposure and pinned search_path on legacy helper functions.
-- Reduced security advisor backlog to two residual non-RLS items (vector
-  extension placement and auth leaked-password-protection setting).
+- Applied phase-8 Supabase extension hardening by moving pgvector from public to
+  extensions schema and updating match_documents search_path/type compatibility.
+- Security advisor backlog is now reduced to one residual item: leaked password
+  protection disabled in Auth settings.
 
 ## Changed Paths
 
-- supabase/migrations/011_public_function_security_hardening_phase7.sql
+- supabase/migrations/012_vector_extension_schema_hardening_phase8.sql
 - docs/operations/TNF_TASK_LEDGER_TENANT_SCOPE_HARDENING_2026-05-08.md
 
 ## Verification
@@ -38,13 +38,13 @@ Handoff ID: `6cbeeb5a-ce3b-4297-96e3-2f597c4b4b13`
 
 ### Resume Checklist
 
-- Review phase-7 function hardening details in
+- Review phase-8 migration and verification notes in
   docs/operations/TNF_TASK_LEDGER_TENANT_SCOPE_HARDENING_2026-05-08.md.
-- Start residual security remediation from current advisor output and preserve
-  TNF privacy guards.
+- Apply final auth posture setting change and validate downstream TNF auth
+  clients.
 
 ## Next Actions
 
-- Plan controlled migration of vector extension out of public schema.
-- Enable Supabase leaked password protection in Auth settings and validate
+- Enable leaked password protection in Supabase Auth settings.
+- Run auth-flow smoke tests after enabling to verify login/signup/reset
   compatibility.

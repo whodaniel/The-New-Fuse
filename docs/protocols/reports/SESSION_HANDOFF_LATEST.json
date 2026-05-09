@@ -1,19 +1,19 @@
 {
   "spec": "tnf/session-handoff/0.1",
-  "handoff_id": "6cbeeb5a-ce3b-4297-96e3-2f597c4b4b13",
-  "created_at": "2026-05-09T00:33:18.033Z",
+  "handoff_id": "97610355-ca12-4433-b560-3e2bcae5716f",
+  "created_at": "2026-05-09T00:42:09.254Z",
   "repository": "The-New-Fuse",
   "branch": "main",
-  "head_sha": "26e7ec25f4ab69b85af39d6f6ebdc88526e11d92",
+  "head_sha": "8d2f4c7438d0bc74e55b75bb8b9faf22ead1ada7",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SUPABASE-RLS"],
   "work_summary": [
-    "Applied phase-7 public function hardening in Supabase: removed public SECURITY DEFINER exposure and pinned search_path on legacy helper functions.",
-    "Reduced security advisor backlog to two residual non-RLS items (vector extension placement and auth leaked-password-protection setting)."
+    "Applied phase-8 Supabase extension hardening by moving pgvector from public to extensions schema and updating match_documents search_path/type compatibility.",
+    "Security advisor backlog is now reduced to one residual item: leaked password protection disabled in Auth settings."
   ],
   "changed_paths": [
-    "supabase/migrations/011_public_function_security_hardening_phase7.sql",
+    "supabase/migrations/012_vector_extension_schema_hardening_phase8.sql",
     "docs/operations/TNF_TASK_LEDGER_TENANT_SCOPE_HARDENING_2026-05-08.md"
   ],
   "verification": {
@@ -21,22 +21,22 @@
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "pass",
-    "notes": "Auto-verify 2026-05-09T00:33:18.729Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=pass"
+    "notes": "Auto-verify 2026-05-09T00:42:10.156Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=pass"
   },
   "continuation": {
     "owner": "story-architect",
     "targets": ["story-architect", "librarian"],
     "priority": "high",
     "resume_checklist": [
-      "Review phase-7 function hardening details in docs/operations/TNF_TASK_LEDGER_TENANT_SCOPE_HARDENING_2026-05-08.md.",
-      "Start residual security remediation from current advisor output and preserve TNF privacy guards."
+      "Review phase-8 migration and verification notes in docs/operations/TNF_TASK_LEDGER_TENANT_SCOPE_HARDENING_2026-05-08.md.",
+      "Apply final auth posture setting change and validate downstream TNF auth clients."
     ]
   },
   "next_actions": [
-    "Plan controlled migration of vector extension out of public schema.",
-    "Enable Supabase leaked password protection in Auth settings and validate compatibility."
+    "Enable leaked password protection in Supabase Auth settings.",
+    "Run auth-flow smoke tests after enabling to verify login/signup/reset compatibility."
   ],
   "artifacts": {
-    "commits": ["26e7ec25f4ab69b85af39d6f6ebdc88526e11d92"]
+    "commits": ["8d2f4c7438d0bc74e55b75bb8b9faf22ead1ada7"]
   }
 }
