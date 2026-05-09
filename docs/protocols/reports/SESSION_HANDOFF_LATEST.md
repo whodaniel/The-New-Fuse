@@ -1,26 +1,27 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-08T23:41:21.992Z`  
-Handoff ID: `8f8e3766-f17c-4504-83f3-0cbb14ba67e6`
+Created At: `2026-05-09T00:17:27.555Z`  
+Handoff ID: `b7adee4d-22c7-4e08-b4e8-91cdb794930b`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `c0af30c0ecdd1a714cf773e4bbdaf000cdcb85b9`
+- Head SHA: `eb9af517c5e5be90e51b454f147868a2571711f1`
 - Sensitive Scope: `internal`
 
 ## Work Summary
 
-- Protocol enforcement layer implemented for mandatory session handoff
-  continuity.
-- CI/hook gates now block critical changes without fresh handoff artifacts.
+- Applied phase-5 Supabase RLS policies for marketplace/revenue/wallet tables
+  and verified live policy coverage.
+- Reduced live RLS-enabled-no-policy backlog from 30 to 22 with helper-function
+  hardening.
 
 ## Changed Paths
 
+- supabase/migrations/009_marketplace_wallet_revenue_rls_phase5.sql
 - docs/operations/TNF_TASK_LEDGER_TENANT_SCOPE_HARDENING_2026-05-08.md
-- supabase/migrations/008_project_workflow_rls_phase4.sql
 
 ## Verification
 
@@ -31,20 +32,19 @@ Handoff ID: `8f8e3766-f17c-4504-83f3-0cbb14ba67e6`
 
 ## Continuation
 
-- Owner: `tnf-orchestrator`
+- Owner: `story-architect`
 - Targets: `story-architect`, `librarian`
 - Priority: `high`
 
 ### Resume Checklist
 
-- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against
-  docs/protocols/schemas/tnf-session-handoff.schema.json
-- Execute listed next actions in order and preserve privacy/security gates
+- Review phase-5 migration and live verification notes in
+  docs/operations/TNF_TASK_LEDGER_TENANT_SCOPE_HARDENING_2026-05-08.md.
+- Start next migration from current no-policy table inventory query and keep
+  deterministic ownership gates.
 
 ## Next Actions
 
-- Continue priority queue from SESSION_HANDOFF_LATEST.json
-  continuation.resume_checklist.
-- Emit a fresh handoff artifact immediately after completing the next critical
-  work unit.
+- Continue with phase-6 rollout for remaining no-policy public tables.
+- Address high-risk security advisor warnings for public security-definer
+  execution grants.
