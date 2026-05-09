@@ -39,6 +39,8 @@ unified-ledger APIs, with backward-compatible owner scoping preserved.
     additional tables in `public`.
 19. Added and applied phase-6 remaining-table policy coverage for the final 22
     `public` tables with `RLS enabled + no policy`.
+20. Added and applied phase-7 public-function hardening to remove remaining
+    mutable `search_path` findings and public `SECURITY DEFINER` RPC exposure.
 
 ## Code Changes
 
@@ -106,6 +108,7 @@ Files:
 - `supabase/migrations/008_project_workflow_rls_phase4.sql`
 - `supabase/migrations/009_marketplace_wallet_revenue_rls_phase5.sql`
 - `supabase/migrations/010_remaining_public_rls_phase6.sql`
+- `supabase/migrations/011_public_function_security_hardening_phase7.sql`
 
 ### Database Schema + Migration
 
@@ -142,6 +145,8 @@ Connected Supabase project migration state:
 - Applied migration:
   `20260509001447 marketplace_wallet_revenue_rls_phase5_20260508`
 - Applied migration: `20260509002318 remaining_public_rls_phase6_20260509`
+- Applied migration:
+  `20260509003106 public_function_security_hardening_phase7_20260509`
 - Note: connected Supabase currently does **not** yet have `tenant_id` /
   `workspace_id` columns on `pipelines`, `tasks`, `task_executions`, nor
   `workspace_members`.
@@ -305,6 +310,22 @@ Executed via Supabase MCP (`execute_sql`, `list_migrations`, `get_advisors`):
   warnings are pre-existing (`search_path` mutability in legacy public
   functions, security-definer execute grants in public RPC functions, extension
   placement, and auth posture).
+- Confirmed phase-7 function hardening:
+  - `public.agent_has_story_session_read_access(uuid)` now `SECURITY INVOKER`
+    with pinned `search_path`
+  - `public.agent_has_story_session_write_access(uuid)` now `SECURITY INVOKER`
+    with pinned `search_path`
+  - `public.can_read_story_session(uuid)` now has pinned `search_path`
+  - `public.can_write_story_session(uuid)` now has pinned `search_path`
+  - `public.current_request_role()` now has pinned `search_path`
+  - `public.current_owner_principal_id()` now has pinned `search_path`
+  - `public.current_agent_id()` now has pinned `search_path`
+  - `public.has_collective_scope()` now has pinned `search_path`
+  - `public.match_documents(...)` now has pinned `search_path`
+  - `public.update_updated_at()` now has pinned `search_path`
+- Security advisor output after phase-7 now shows only:
+  - `extension_in_public` (`vector` extension placement)
+  - `auth_leaked_password_protection` (Auth setting)
 
 ### Type-check
 
@@ -343,6 +364,5 @@ Result:
    accepting free-form `workspaceId` without auth-context reconciliation.
 4. Roll out equivalent Supabase migration to staging/production environments not
    yet patched, then re-run advisors and smoke tests.
-5. Continue with targeted advisor remediation (public security-definer execute
-   grants, mutable `search_path` legacy functions, and extension/schema posture)
-   now that `rls_enabled_no_policy` has reached zero.
+5. Continue with targeted advisor remediation for remaining residual items:
+   `extension_in_public` (`vector`) and auth leaked-password protection posture.
