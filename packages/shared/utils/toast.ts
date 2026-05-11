@@ -1,24 +1,25 @@
-export const showSuccessToast = (message): any => {
-    toast.success(message, {
-        duration: 4000,
-        position: bottom-right',
-    });
+import toast from 'react-hot-toast';
+
+export const showSuccessToast = (message: string): void => {
+  toast.success(message, {
+    duration: 4000,
+    position: 'bottom-right',
+  });
 };
-export const showErrorToast = (message): any => {
-    toast.error(message, {
-        duration: 4000,
-        position: bottom-right',
-    });
+export const showErrorToast = (message: string): void => {
+  toast.error(message, {
+    duration: 4000,
+    position: 'bottom-right',
+  });
 };
-export const showInfoToast = (message): any => {
-    toast(message, {
-        duration: 4000,
-        position: bottom-right',
-    });
+export const showInfoToast = (message: string): void => {
+  toast(message, {
+    duration: 4000,
+    position: 'bottom-right',
+  });
 };
 export default {
-    showSuccessToast,
-    showErrorToast,
-    showInfoToast,
+  showSuccessToast,
+  showErrorToast,
+  showInfoToast,
 };
-//# sourceMappingURL=toast.js.map

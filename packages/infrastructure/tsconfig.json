@@ -9,8 +9,7 @@
     "types": [],
     "composite": true,
     "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "ignoreDeprecations": "5.0"
+    "moduleResolution": "Bundler"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]

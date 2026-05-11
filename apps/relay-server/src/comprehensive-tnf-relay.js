@@ -56,6 +56,47 @@ class ComprehensiveTNFRelay {
     require('fs').mkdir(this.workspaceDir, { recursive: true }, () => {});
 
     this.setupInterceptRules();
+    this.initializeSynapseBridge();
+  }
+
+  initializeSynapseBridge() {
+    const synapseUrl = process.env.TNF_SYNAPSE_URL || 'ws://localhost:3006/synapse';
+    this.synapseBridge = null;
+    this.useSynapse = false;
+
+    const connect = () => {
+      try {
+        const bridge = new WebSocket(synapseUrl);
+        bridge.on('open', () => {
+          this.log('[🧠] Synapse Bridge Active: High-speed offloading enabled');
+          this.synapseBridge = bridge;
+          this.useSynapse = true;
+        });
+        bridge.on('message', (data) => {
+          try {
+            const message = JSON.parse(data.toString());
+            // Fan out to local clients (legacy path)
+            const broadcastMessage = JSON.stringify(message);
+            [...this.agents.values(), ...this.chromeExtensions.values()].forEach((client) => {
+              if (client.id !== message.source) {
+                client.ws.send(broadcastMessage);
+              }
+            });
+          } catch (e) {}
+        });
+        bridge.on('error', () => {
+          this.useSynapse = false;
+        });
+        bridge.on('close', () => {
+          this.useSynapse = false;
+          setTimeout(connect, 5000); // Reconnect loop
+        });
+      } catch (e) {
+        this.useSynapse = false;
+      }
+    };
+
+    connect();
   }
 
   setupInterceptRules() {
@@ -357,6 +398,12 @@ class ComprehensiveTNFRelay {
   }
 
   async handleBroadcast(senderWs, message) {
+    // Phase 3.1 Autophagy: Offload to Native Synapse if active
+    if (this.useSynapse && this.synapseBridge) {
+      this.synapseBridge.send(JSON.stringify(message));
+      return;
+    }
+
     const { payload } = message;
     const broadcastMessage = JSON.stringify({
       type: 'BROADCAST_EVENT',

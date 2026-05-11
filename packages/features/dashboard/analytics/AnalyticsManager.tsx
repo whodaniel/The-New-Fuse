@@ -1,9 +1,4 @@
-import {
-  UserAction,
-  DashboardMetrics,
-  DashboardPerformanceMetrics,
-  UserMetrics,
-} from './types.js';
+import { DashboardMetrics, DashboardPerformanceMetrics, UserAction, UserMetrics } from './types.js';
 
 export class AnalyticsManager {
   private actions: UserAction[];
@@ -22,7 +17,7 @@ export class AnalyticsManager {
     this.storageKey = storageKey;
     this.loadState();
   }
-  
+
   trackAction(action: Omit<UserAction, 'id' | 'timestamp'>): void {
     const newAction: UserAction = {
       ...action,
@@ -36,10 +31,7 @@ export class AnalyticsManager {
   }
 
   // Dashboard Metrics
-  getDashboardMetrics(
-    dashboardId: string,
-    period: { start: Date; end: Date }
-  ): DashboardMetrics {
+  getDashboardMetrics(dashboardId: string, period: { start: Date; end: Date }): DashboardMetrics {
     const metrics = this.dashboardMetrics.get(dashboardId);
     if (!metrics) {
       return this.createDashboardMetrics(dashboardId);
@@ -48,14 +40,12 @@ export class AnalyticsManager {
   }
 
   // Performance Metrics
-  trackPerformance(
-    metrics: Omit<DashboardPerformanceMetrics, 'id'>
-  ): void {
+  trackPerformance(metrics: Omit<DashboardPerformanceMetrics, 'id'>): void {
     const newMetrics: DashboardPerformanceMetrics = {
       ...metrics,
-      id: (crypto as any).randomUUID()
+      id: (crypto as any).randomUUID(),
     };
-    
+
     const dashboardId = metrics.dashboardId;
     const existingMetrics = this.performanceMetrics.get(dashboardId) || [];
     existingMetrics.push(newMetrics);
@@ -69,21 +59,17 @@ export class AnalyticsManager {
   ): DashboardPerformanceMetrics[] {
     const metrics = this.performanceMetrics.get(dashboardId) || [];
     if (!period) return metrics;
-    
-    return metrics.filter(
-      (m) => {
-        const timestamp = new Date(m.timestamp);
-        return (!period.start || timestamp >= period.start) && 
-               (!period.end || timestamp <= period.end);
-      }
-    );
+
+    return metrics.filter((m) => {
+      const timestamp = new Date(m.timestamp);
+      return (
+        (!period.start || timestamp >= period.start) && (!period.end || timestamp <= period.end)
+      );
+    });
   }
 
   // User Metrics
-  getUserMetrics(
-    userId: string,
-    period: { start: Date; end: Date }
-  ): UserMetrics {
+  getUserMetrics(userId: string, period: { start: Date; end: Date }): UserMetrics {
     const metrics = this.userMetrics.get(userId);
     if (!metrics) {
       return this.createUserMetrics(userId);
@@ -102,16 +88,14 @@ export class AnalyticsManager {
   } {
     const metrics = this.getDashboardMetrics(dashboardId, period);
     const performance = this.getPerformanceMetrics(dashboardId, period);
-    
+
     // Get top users based on interactions
     const userMetricsArray = Array.from(this.userMetrics.entries())
       .map(([userId, metrics]) => ({ userId, metrics }))
-      .filter(
-        ({ metrics }) => metrics.dashboardViews && metrics.dashboardViews[dashboardId]
-      )
+      .filter(({ metrics }) => metrics.dashboardViews && metrics.dashboardViews[dashboardId])
       .sort(
-        (a, b) => 
-          (b.metrics.dashboardViews[dashboardId] || 0) - 
+        (a, b) =>
+          (b.metrics.dashboardViews[dashboardId] || 0) -
           (a.metrics.dashboardViews[dashboardId] || 0)
       )
       .slice(0, 10);
@@ -119,7 +103,7 @@ export class AnalyticsManager {
     return {
       metrics,
       performance,
-      topUsers: userMetricsArray
+      topUsers: userMetricsArray,
     };
   }
 
@@ -136,22 +120,19 @@ export class AnalyticsManager {
     }>;
   } {
     const metrics = this.getUserMetrics(userId, period);
-    
+
     // Filter actions by user and period
     const actions = this.actions.filter(
-      (a) => a.userId === userId && 
-             a.timestamp >= period.start && 
-             a.timestamp <= period.end
+      (a) => a.userId === userId && a.timestamp >= period.start && a.timestamp <= period.end
     );
-    
+
     // Get top dashboards for this user
     const topDashboards = Object.entries(metrics.dashboardViews || {})
       .map(([dashboardId, views]) => ({
         dashboardId,
         views,
-        interactions: actions.filter(a => 
-          a.metadata && a.metadata.dashboardId === dashboardId
-        ).length,
+        interactions: actions.filter((a) => a.metadata && a.metadata.dashboardId === dashboardId)
+          .length,
       }))
       .sort((a, b) => b.views - a.views)
       .slice(0, 10);
@@ -164,7 +145,7 @@ export class AnalyticsManager {
   }
 
   // Track experiment metrics
-  async trackExperimentMetrics(): Promise<void> {
+  async trackExperimentMetrics(
     experimentId: string,
     variantId: string,
     metrics: Record<string, number>
@@ -174,7 +155,7 @@ export class AnalyticsManager {
   }
 
   // Get experiment metrics for analysis
-  async getExperimentMetrics(): Promise<void> {experimentId: string): Promise<any> {
+  async getExperimentMetrics(experimentId: string): Promise<any> {
     // Implementation to retrieve experiment metrics
     // This would return metrics for experiment analysis
     return {};
@@ -184,18 +165,18 @@ export class AnalyticsManager {
   private updateMetrics(action: UserAction): void {
     const dashboardId = action.metadata?.dashboardId as string | undefined;
     if (dashboardId) {
-      const metrics = this.dashboardMetrics.get(dashboardId) || 
-                     this.createDashboardMetrics(dashboardId);
+      const metrics =
+        this.dashboardMetrics.get(dashboardId) || this.createDashboardMetrics(dashboardId);
       this.updateDashboardMetrics(metrics, action);
     }
-    
-    const userMetrics = this.userMetrics.get(action.userId) || 
-                        this.createUserMetrics(action.userId);
+
+    const userMetrics =
+      this.userMetrics.get(action.userId) || this.createUserMetrics(action.userId);
     this.updateUserMetrics(userMetrics, action);
   }
 
   private updateDashboardMetrics(metrics: DashboardMetrics, action: UserAction): void {
-    switch(action.type) {
+    switch (action.type) {
       case 'view_dashboard':
         metrics.views++;
         // Convert uniqueUsers to a Set temporarily for deduplication
@@ -209,7 +190,7 @@ export class AnalyticsManager {
         }
         metrics.uniqueUsers = uniqueUserSet.size;
         break;
-        
+
       case 'edit_widget':
       case 'delete_widget':
         const widgetId = action.metadata?.widgetId as string | undefined;
@@ -226,7 +207,7 @@ export class AnalyticsManager {
       case 'apply_filter':
         const filterId = action.metadata?.filterId as string | undefined;
         if (filterId) {
-          const filterUsage = metrics.filterUsage.find(f => f.filterId === filterId);
+          const filterUsage = metrics.filterUsage.find((f) => f.filterId === filterId);
           if (filterUsage) {
             filterUsage.applications++;
             // Increment unique users count - in a real app we'd track individual users
@@ -235,12 +216,12 @@ export class AnalyticsManager {
             metrics.filterUsage.push({
               filterId: filterId,
               applications: 1,
-              uniqueUsers: 1
+              uniqueUsers: 1,
             });
           }
         }
         break;
-        
+
       case 'export_data': // Changed to match the type definition
         metrics.exports.total++;
         const format = action.metadata?.format as string | undefined;
@@ -248,7 +229,7 @@ export class AnalyticsManager {
           metrics.exports.byFormat[format] = (metrics.exports.byFormat[format] || 0) + 1;
         }
         break;
-        
+
       case 'comment':
         metrics.collaboration.comments++;
         break;
@@ -274,10 +255,10 @@ export class AnalyticsManager {
     if (dashboardId) {
       metrics.dashboardViews[dashboardId] = (metrics.dashboardViews[dashboardId] || 0) + 1;
     }
-    
+
     metrics.totalInteractions++;
-    
-    switch(action.type) {
+
+    switch (action.type) {
       case 'comment':
         metrics.contributedComments++;
         break;
@@ -304,7 +285,7 @@ export class AnalyticsManager {
       dashboardId: dashboardId,
       period: {
         start: new Date(0), // Set to epoch start
-        end: new Date(),    // Set to current date
+        end: new Date(), // Set to current date
       },
       views: 0,
       uniqueUsers: 0,
@@ -335,7 +316,7 @@ export class AnalyticsManager {
       userId: userId,
       period: {
         start: new Date(0), // Set to epoch start
-        end: new Date(),    // Set to current date
+        end: new Date(), // Set to current date
       },
       dashboardViews: {},
       totalInteractions: 0,
@@ -371,7 +352,7 @@ export class AnalyticsManager {
       actions: this.actions,
       dashboardMetrics: Object.fromEntries(this.dashboardMetrics),
       performanceMetrics: Object.fromEntries(this.performanceMetrics),
-      userMetrics: Object.fromEntries(this.userMetrics)
+      userMetrics: Object.fromEntries(this.userMetrics),
     };
     this.storage.setItem(this.storageKey, JSON.stringify(state));
   }

@@ -4139,6 +4139,118 @@ async function handleMttState(req, res, urlObj) {
   writeJson(res, 200, { ok: true, mtt: mod.getMttSnapshot(mtt) });
 }
 
+function normalizeHoldemLegalRows(rawLegalActions) {
+  if (!Array.isArray(rawLegalActions)) return [];
+  return rawLegalActions
+    .map((row) => {
+      if (typeof row === 'string') return { action: String(row).trim().toLowerCase() };
+      if (!row || typeof row !== 'object') return null;
+      return {
+        action: String(row.action || '')
+          .trim()
+          .toLowerCase(),
+        min: Number(row.min ?? 0),
+        max: Number(row.max ?? 0),
+      };
+    })
+    .filter((row) => row && row.action);
+}
+
+function legalRowsByAction(legalRows) {
+  const out = new Map();
+  for (const row of legalRows || []) {
+    if (!row?.action) continue;
+    out.set(row.action, row);
+  }
+  return out;
+}
+
+function holdemTableRuleSet(table) {
+  const mode = String(table?.mode || 'cash')
+    .trim()
+    .toLowerCase();
+  const maxSeats =
+    Number(table?.maxSeats || 0) ||
+    (Array.isArray(table?.seats) ? Number(table.seats.length || 0) : 0) ||
+    0;
+  const tableFormat = maxSeats <= 2 ? 'heads-up' : maxSeats <= 6 ? '6-max' : '9-max';
+  const isTournament = mode === 'tournament';
+  return {
+    game: 'no-limit-holdem',
+    tableMode: isTournament ? 'tournament' : 'cash',
+    tableFormat,
+    straddleAllowed: !isTournament,
+    manualSeatChangeAllowed: !isTournament,
+  };
+}
+
+function seatForPlayer(table, playerId) {
+  const rows = Array.isArray(table?.seats) ? table.seats : [];
+  return (
+    rows.find(
+      (row) => row && String(row.playerId || '').trim() === String(playerId || '').trim()
+    ) || null
+  );
+}
+
+function normalizeActionAmount(action, amountValue) {
+  const actionKey = String(action || '')
+    .trim()
+    .toLowerCase();
+  const amount = Number(amountValue);
+  const safeAmount = Number.isFinite(amount) ? amount : 0;
+  if (actionKey === 'fold' || actionKey === 'check') return 0;
+  return Math.max(0, Math.floor(safeAmount));
+}
+
+function validateHoldemActionRequest({ action, amount, legalRows, helper }) {
+  const actionKey = String(action || '')
+    .trim()
+    .toLowerCase();
+  const legalByAction = legalRowsByAction(legalRows);
+  if (!legalByAction.has(actionKey)) {
+    throw new Error(`Action ${actionKey} is not legal in the current state`);
+  }
+
+  const normalizedAmount = normalizeActionAmount(actionKey, amount);
+  if (actionKey === 'fold' || actionKey === 'check') {
+    return { action: actionKey, amount: 0 };
+  }
+
+  if (actionKey === 'call') {
+    const toCall = Math.max(
+      0,
+      Number(
+        legalByAction.get('call')?.min ?? legalByAction.get('call')?.max ?? helper?.toCall ?? 0
+      )
+    );
+    return { action: actionKey, amount: Math.floor(toCall) };
+  }
+
+  if (actionKey === 'allin') {
+    const row = legalByAction.get('allin');
+    const target = Math.max(
+      0,
+      Number(row?.max ?? row?.min ?? helper?.seatStack ?? normalizedAmount)
+    );
+    return { action: actionKey, amount: Math.floor(target) };
+  }
+
+  if (actionKey === 'raise' || actionKey === 'bet') {
+    const row = legalByAction.get(actionKey);
+    const min = Number(row?.min ?? 0);
+    const max = Number(row?.max ?? Number.MAX_SAFE_INTEGER);
+    if (!Number.isFinite(normalizedAmount) || normalizedAmount < min || normalizedAmount > max) {
+      throw new Error(
+        `${actionKey} amount must be between ${Math.floor(min)} and ${Math.floor(max)}`
+      );
+    }
+    return { action: actionKey, amount: Math.floor(normalizedAmount) };
+  }
+
+  return { action: actionKey, amount: normalizedAmount };
+}
+
 async function handleV2HoldemTablesList(req, res) {
   await ensureHoldemLobbySeeded();
   const tables = [];
@@ -4319,12 +4431,36 @@ async function handleV2HoldemAction(req, res) {
       return conflict(res, 'RESUME_TOKEN_HAND_MISMATCH');
     }
   }
+  const seat = seatForPlayer(table, playerId);
+  if (!seat) return badRequest(res, 'Unknown playerId');
+  if (seat.connected === false) return badRequest(res, 'Player disconnected');
+  if (!table.hand || table.hand.status === 'settled' || table.hand.readyForSettlement) {
+    return badRequest(res, 'No active hand');
+  }
+  if (Number(table.hand.actingSeat) !== Number(seat.seat)) {
+    return conflict(res, 'NOT_YOUR_TURN');
+  }
+  const agent = table.hand ? mod.agentState(table, { seat: seat.seat }) : null;
+  const legalRows = normalizeHoldemLegalRows(agent?.legalActions);
+  let validatedAction;
+  try {
+    validatedAction = validateHoldemActionRequest({
+      action: String(body.action || '').trim(),
+      amount: body.amount == null ? 0 : Number(body.amount),
+      legalRows,
+      helper: agent?.helper || {},
+    });
+  } catch (err) {
+    const msg = String(err?.message || '');
+    if (msg.includes('not legal')) return conflict(res, 'ILLEGAL_ACTION');
+    return badRequest(res, msg || 'Invalid action');
+  }
   let out;
   try {
     out = mod.applyAction(table, {
       playerId,
-      action: String(body.action || '').trim(),
-      amount: body.amount == null ? 0 : Number(body.amount),
+      action: validatedAction.action,
+      amount: validatedAction.amount,
       idempotencyKey: String(body.idempotencyKey || crypto.randomUUID()),
       expectedReplayCursor:
         body.expectedReplayCursor == null ? undefined : Number(body.expectedReplayCursor),
@@ -4337,10 +4473,13 @@ async function handleV2HoldemAction(req, res) {
   }
   await persistV2HoldemTable(table);
   const snapshot = mod.tableSnapshot(table);
+  const postActionAgent = table.hand ? mod.agentState(table, { seat: seat.seat }) : null;
   writeJson(res, 200, {
     ok: true,
     result: out,
     table: redactHoldemSnapshot(snapshot, playerId),
+    agent: postActionAgent,
+    rules: holdemTableRuleSet(table),
   });
 }
 
@@ -4376,6 +4515,7 @@ async function handleV2HoldemResume(req, res) {
     },
     state: redactHoldemSnapshot(snapshot, playerId),
     agent,
+    rules: holdemTableRuleSet(table),
   });
 }
 
@@ -4400,6 +4540,10 @@ async function handleV2HoldemSeatChange(req, res) {
   const body = await readBodyJson(req);
   const mod = await holdemEnginePromise;
   const table = await getOrCreateHoldemTable(String(body.tableId || '').trim());
+  const rules = holdemTableRuleSet(table);
+  if (!rules.manualSeatChangeAllowed) {
+    return conflict(res, 'SEAT_CHANGE_NOT_ALLOWED_IN_TOURNAMENT');
+  }
   const out = mod.requestSeatChange(table, {
     playerId: String(body.playerId || '').trim(),
     toSeat: Number(body.toSeat ?? 0),
@@ -4411,6 +4555,7 @@ async function handleV2HoldemSeatChange(req, res) {
     ok: true,
     seatChange: out,
     table: redactHoldemSnapshot(snapshot, body.playerId),
+    rules,
   });
 }
 
@@ -4470,7 +4615,15 @@ async function handleV2HoldemControl(req, res) {
 
   seatRow.controlMode = normalizeControlMode(body.controlMode, seatRow.controlMode || 'human');
   await persistV2HoldemTable(table);
-  writeJson(res, 200, { ok: true, seat: seatRow, table: mod.tableSnapshot(table) });
+  const snapshot = mod.tableSnapshot(table);
+  const agent = table.hand ? mod.agentState(table, { seat: seatRow.seat }) : null;
+  writeJson(res, 200, {
+    ok: true,
+    seat: seatRow,
+    table: redactHoldemSnapshot(snapshot, playerId),
+    agent,
+    rules: holdemTableRuleSet(table),
+  });
 }
 
 // Quick-play endpoint: creates a bot-filled table and seats the player in one call.
@@ -4560,12 +4713,17 @@ async function handleV2HoldemQuickplay(req, res) {
 
   await persistV2HoldemTable(table);
   const finalSnapshot = mod.tableSnapshot(table);
+  const quickplaySeat = seatForPlayer(table, playerId);
+  const quickplayAgent =
+    quickplaySeat && table.hand ? mod.agentState(table, { seat: quickplaySeat.seat }) : null;
   writeJson(res, 201, {
     ok: true,
     tableId,
     playerId,
     playerSeat,
-    table: finalSnapshot,
+    table: redactHoldemSnapshot(finalSnapshot, playerId),
+    agent: quickplayAgent,
+    rules: holdemTableRuleSet(table),
     recovery: mod.recoverySnapshot(table),
   });
 }
@@ -4577,6 +4735,8 @@ async function handleV2HoldemState(req, res, urlObj) {
   );
   if (!table) return badRequest(res, 'Unknown tableId');
   const playerId = String(urlObj.searchParams.get('playerId') || '').trim();
+  const seat = playerId ? seatForPlayer(table, playerId) : null;
+  const agent = seat && table.hand ? mod.agentState(table, { seat: seat.seat }) : null;
   const snapshot = mod.tableSnapshot(table);
   writeJson(res, 200, {
     ok: true,
@@ -4591,6 +4751,8 @@ async function handleV2HoldemState(req, res, urlObj) {
       },
       playerId || null
     ),
+    agent,
+    rules: holdemTableRuleSet(table),
     recovery: mod.recoverySnapshot(table),
   });
 }

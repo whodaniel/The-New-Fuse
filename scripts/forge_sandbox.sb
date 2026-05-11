@@ -1,0 +1,26 @@
+(version 1)
+(deny default)
+
+; Allow basics
+(allow process-exec)
+(allow process-fork)
+(allow sysctl-read)
+
+; Allow system libraries and resources
+(allow file-read*
+    (subpath "/usr/lib")
+    (subpath "/usr/share")
+    (subpath "/System/Library")
+    (subpath "/Library/Preferences")
+)
+
+; Allow the binary to read itself
+(allow file-read* (subpath "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/bin/forged"))
+
+; Specifically deny access to the user's home directory sensitive files
+(deny file-read* (subpath "/Users/danielgoldberg/.zshrc"))
+(deny file-read* (subpath "/Users/danielgoldberg/.ssh"))
+
+; Allow write access only to specific temporary locations
+(allow file-write* (subpath "/private/var/folders"))
+(allow file-read* (subpath "/private/var/folders"))

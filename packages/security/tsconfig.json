@@ -6,12 +6,17 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "types": [],
-    "ignoreDeprecations": "5.0",
     "composite": true,
     "declaration": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts", "**/__tests__/**"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/__tests__/**"
+  ],
   "references": [
     {
       "path": "../database"

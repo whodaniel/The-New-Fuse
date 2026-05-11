@@ -1,0 +1,128 @@
+{
+  "spec": "tnf/executable-intelligence/0.2",
+  "artifact_id": "eia-6c456866097b40e7",
+  "generated_at": "2026-05-09T06:12:11+00:00",
+  "classification": {
+    "class": "INTEL",
+    "status": "PENDING"
+  },
+  "namespace": "intelligence",
+  "ownership": {
+    "owner_principal_id": "danielgoldberg",
+    "visibility": "private",
+    "release_state": "sealed",
+    "agent_allowlist": [],
+    "release_approved_by": "",
+    "released_at": "",
+    "release_note": ""
+  },
+  "source": {
+    "source_id": "yt-bIZB1hIJ4u8-633",
+    "source_type": "video",
+    "source_uri": "https://www.youtube.com/watch?v=bIZB1hIJ4u8",
+    "source_title": "GEOMETRIC DEEP LEARNING BLUEPRINT",
+    "source_author": "Unknown",
+    "source_publisher": "YouTube",
+    "source_published_at": "2026-05-04",
+    "retrieved_at": "2026-05-09T06:12:10+00:00",
+    "resource_pointer": "https://www.youtube.com/watch?v=bIZB1hIJ4u8",
+    "source_digest_sha256": "e1511a2e4fe13bd3872d01e191aadb6ce4bf1de1a818bb3c85720b5f3a4b1120"
+  },
+  "taxonomy": {
+    "procedural": [
+      "[3:18:05] uh so you just change the order of the nodes if node one and two were connected",
+      "[3:18:10] nodes if node one and two were connected",
+      "[3:18:15] nodes if node one and two were connected and you apply permutation and move those",
+      "[3:18:25] and you apply permutation and move those to node three and four then now three",
+      "[3:18:30] to node three and four then now three",
+      "[3:18:35] to node three and four then now three and four has to be connected so that's",
+      "[7:28:00] travel it's also used by the various companies that leverage the maps api so",
+      "[7:28:05] companies that leverage the maps api so",
+      "[7:28:10] companies that leverage the maps api so they can tell their customers what's the",
+      "[8:32:00] super simple categories that have just one node right you can do a lot more",
+      "[8:32:05] one node right you can do a lot more",
+      "[8:32:10] one node right you can do a lot more complicated things if you use this more",
+      "[9:46:35] structured observations generally with models like deep walk and node to vect",
+      "[9:46:40] models like deep walk and node to vect",
+      "[9:46:45] models like deep walk and node to vect basically the same idea treat a node's",
+      "[9:46:50] basically the same idea treat a node's",
+      "[9:46:55] basically the same idea treat a node's representation as everything that's",
+      "[10:43:35] vertex and then at every point i say the distance of my particular node is",
+      "[10:43:40] the distance of my particular node is",
+      "[10:43:45] the distance of my particular node is the minimum"
+    ],
+    "strategic": [
+      "[8:45] deep theoretical links between some of the recent deep learning model",
+      "[8:50] the recent deep learning model",
+      "[8:55] the recent deep learning model architectures particularly the ones on",
+      "[14:55] gives you the most expressive yet the most expensive model",
+      "[15:00] most expensive model",
+      "[15:05] most expensive model but that would be cool it would model",
+      "[15:10] but that would be cool it would model",
+      "[15:15] but that would be cool it would model the high order interactions between the",
+      "[28:25] approximation error which is how good is your model in that hypothesis space if",
+      "[28:30] your model in that hypothesis space if",
+      "[28:35] your model in that hypothesis space if your function space is too small then",
+      "[35:15] true function has a certain geometrical property which will bias into the model",
+      "[35:20] property which will bias into the model",
+      "[35:25] property which will bias into the model so introducing the geometrical deep",
+      "[40:35] described so far they don't prescribe a specific architecture but rather a",
+      "[40:40] specific architecture but rather a",
+      "[40:45] specific architecture but rather a series of necessary conditions the book",
+      "[1:08:35] for example the the standard model of particle physics",
+      "[1:08:40] the standard model of particle physics",
+      "[1:08:45] the standard model of particle physics can entirely be derived"
+    ],
+    "governance": [
+      "[34:15] the space of possible functions that we search through which means less risk of",
+      "[34:20] search through which means less risk of",
+      "[34:25] search through which means less risk of statistical error and less risk of",
+      "[34:30] statistical error and less risk of",
+      "[34:35] statistical error and less risk of overfitting we should be able to do this",
+      "[10:08:25] bottleneck were the cause of the abject failure",
+      "[10:08:30] failure",
+      "[10:08:35] failure of good old-fashioned ai or symbolic ai",
+      "[15:14:30] assuming you give it a markov decision process will give you the perfect policy",
+      "[15:14:35] process will give you the perfect policy",
+      "[15:14:40] process will give you the perfect policy for that markov decision process so it's",
+      "[15:22:10] before you have to already learn a meaningful policy so that's one side i",
+      "[15:22:15] meaningful policy so that's one side i",
+      "[15:22:20] meaningful policy so that's one side i think and just generally in"
+    ]
+  },
+  "utility_metrics": {
+    "freshness_decay": "Medium",
+    "implementation_density": 0.002,
+    "verification_difficulty": "Hard"
+  },
+  "gate_results": {
+    "definition_class_validation": {
+      "passed": true,
+      "reason": "Artifact follows executable intelligence schema and taxonomy."
+    },
+    "library_namespace_assignment": {
+      "passed": true,
+      "namespace": "intelligence"
+    },
+    "flag_integrity": {
+      "passed": true,
+      "class": "INTEL",
+      "status": "PENDING"
+    },
+    "linkage_attribution": {
+      "passed": true,
+      "resource_pointer": "https://www.youtube.com/watch?v=bIZB1hIJ4u8"
+    },
+    "ownership_scope_gate": {
+      "passed": true,
+      "owner_principal_id": "danielgoldberg",
+      "visibility": "private",
+      "release_state": "sealed"
+    }
+  },
+  "synthesis": "Artifact captures 20 procedural, 20 strategic, and 14 governance units. Use procedural units for immediate execution, then vet strategic and governance units through TNF gates before protocol adoption.",
+  "raw_stats": {
+    "char_count": 744586,
+    "unit_count": 12055
+  }
+}

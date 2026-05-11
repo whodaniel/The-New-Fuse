@@ -19,20 +19,23 @@ class ForgeCompiler:
         """Compiles C++ code into a native binary or shared library using Clang++."""
         return self._compile(source_code, name, "clang++", ".cpp", optimization_level, shared, extra_args)
 
-    def compile_rust(self, source_code: str, name: str, optimization_level: str = "3", extra_args: Optional[List[str]] = None) -> str:
-        """Compiles Rust code into a standalone native binary."""
+    def compile_rust(self, source_code: str, name: str, optimization_level: str = "3", shared: bool = False, extra_args: Optional[List[str]] = None) -> str:
+        """Compiles Rust code into a standalone native binary or cdylib."""
         with tempfile.NamedTemporaryFile(suffix=".rs", delete=False) as f:
             f.write(source_code.encode())
             source_path = f.name
 
-        output_path = os.path.join(self.output_dir, name)
+        extension = ".dylib" if shared else ""
+        output_path = os.path.join(self.output_dir, name + extension)
         
         # Use rustc (LLVM-based)
         cmd = ["rustc", "-C", f"opt-level={optimization_level}", source_path, "-o", output_path]
+        if shared:
+            cmd.extend(["--crate-type", "cdylib"])
         if extra_args:
             cmd.extend(extra_args)
         
-        print(f"Forging Rust tool: {name}...")
+        print(f"Forging Rust {'shared library' if shared else 'tool'}: {name}...")
         result = subprocess.run(cmd, capture_output=True, text=True)
         
         os.unlink(source_path)
@@ -41,6 +44,45 @@ class ForgeCompiler:
             raise Exception(f"Forge failed: {result.stderr}")
             
         return output_path
+
+    def forge_cargo_project(self, project_name: str, main_rs: str, cargo_toml: str) -> str:
+        """Forges a full Cargo project for complex native components."""
+        project_dir = os.path.join(self.output_dir, project_name + "_project")
+        os.makedirs(os.path.join(project_dir, "src"), exist_ok=True)
+        
+        with open(os.path.join(project_dir, "Cargo.toml"), "w") as f:
+            f.write(cargo_toml)
+        with open(os.path.join(project_dir, "src/main.rs"), "w") as f:
+            f.write(main_rs)
+            
+        print(f"Forging Cargo project: {project_name}...")
+        cmd = ["cargo", "build", "--release"]
+        result = subprocess.run(cmd, cwd=project_dir, capture_output=True, text=True)
+        
+        if result.returncode != 0:
+            raise Exception(f"Cargo Forge failed: {result.stderr}")
+            
+        binary_path = os.path.join(project_dir, "target/release", project_name)
+        final_output = os.path.join(self.output_dir, project_name)
+        shutil.copy(binary_path, final_output)
+        
+        return final_output
+
+    def run_sandboxed(self, binary_path: str, args: List[str] = [], profile: str = "forge_sandbox.sb") -> subprocess.CompletedProcess:
+        """Runs a forged binary within the macOS sandbox."""
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        profile_path = os.path.join(base_dir, profile)
+        
+        if not os.path.exists(profile_path):
+            # Fallback to local profile if not in scripts/
+            if os.path.exists(profile):
+                profile_path = profile
+            else:
+                raise FileNotFoundError(f"Sandbox profile not found: {profile}")
+            
+        cmd = ["sandbox-exec", "-f", profile_path, binary_path] + args
+        print(f"[🛡️] Running sandboxed: {' '.join(cmd)}")
+        return subprocess.run(cmd, capture_output=True, text=True)
 
     def _compile(self, source_code: str, name: str, compiler: str, suffix: str, optimization_level: str, shared: bool, extra_args: Optional[List[str]] = None) -> str:
         with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as f:

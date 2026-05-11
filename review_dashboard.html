@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TNF Review Dashboard</title>
+  <style>
+    :root {
+      --bg: #0a0a0f; --surface: #111118; --text: #e0e0e5; --text-muted: #8888a0; --accent: #3b82f6; --border: #2a2a35;
+      --ok: #10b981; --warn: #f59e0b; --err: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: var(--bg); color: var(--text); padding: 2rem; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 { margin-bottom: 1rem; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; }
+    .card .num { font-size: 2rem; font-weight: 700; color: var(--accent); }
+    .card .name { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
+    .progress-bar { width: 100%; height: 20px; background: var(--bg); border-radius: 10px; overflow: hidden; margin-top: 1rem; }
+    .progress-fill { height: 100%; background: var(--accent); transition: width 0.5s ease; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 0.75rem; border-bottom: 1px solid var(--border); }
+    th { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; }
+    .status-RECONCILED { color: var(--ok); }
+    .status-SYNTHESIZED { color: var(--accent); }
+    .status-CHALLENGED { color: var(--warn); }
+    .status-DISCOVERED { color: var(--warn); }
+    .status-UNREVIEWED { color: var(--text-muted); }
+    .severity-high { color: var(--err); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔬 TNF Systematic Review Dashboard</h1>
+    <p style="color: var(--text-muted)">Nonprejudgest, nonassuming. Every node tracked.</p>
+
+    <div class="stats">
+      <div class="card">
+        <div class="num">0.00%</div>
+        <div class="name">Complete</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:0.00%"></div></div>
+      </div>
+      <div class="card">
+        <div class="num">0</div>
+        <div class="name">Reconciled</div>
+      </div>
+      <div class="card">
+        <div class="num">15,703</div>
+        <div class="name">Unreviewed</div>
+      </div>
+      <div class="card">
+        <div class="num">1</div>
+        <div class="name">Open Contradictions</div>
+      </div>
+    </div>
+
+    <h2>📊 By Cycle</h2>
+    <table>
+      <thead><tr><th>Cycle</th><th>Count</th><th>% of Total</th></tr></thead>
+      <tbody>
+        <tr><td class="status-UNREVIEWED">UNREVIEWED</td><td>15,703</td><td>100.0%</td></tr>
+        <tr><td class="status-DISCOVERED">DISCOVERED</td><td>3</td><td>0.0%</td></tr>
+        <tr><td class="status-CHALLENGED">CHALLENGED</td><td>1</td><td>0.0%</td></tr>
+        <tr><td class="status-SYNTHESIZED">SYNTHESIZED</td><td>0</td><td>0.0%</td></tr>
+        <tr><td class="status-RECONCILED">RECONCILED</td><td>0</td><td>0.0%</td></tr>
+      </tbody>
+    </table>
+
+    <h2>⚠️ Active Contradictions</h2>
+    <table>
+      <thead><tr><th>From</th><th>To</th><th>Severity</th><th>Discovered</th><th>Status</th></tr></thead>
+      <tbody>
+        
+          <tr>
+            <td>PROTO_14</td>
+            <td>PROTO_27</td>
+            <td class="severity-high">high</td>
+            <td>2026-05-06T17:30:20.984Z</td>
+            <td>open</td>
+          </tr>
+        
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

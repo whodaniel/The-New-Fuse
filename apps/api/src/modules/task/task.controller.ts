@@ -22,6 +22,12 @@ import {
 } from './dto/task.dto';
 import { TaskService } from './task.service';
 
+type AuthUser = {
+  id?: string;
+  sub?: string;
+  tenantId?: string;
+};
+
 @Controller('tasks')
 @UseGuards(JwtAuthGuard)
 export class TaskController {
@@ -30,7 +36,7 @@ export class TaskController {
     private readonly unifiedLedgerService: UnifiedLedgerService
   ) {}
 
-  private requireUserId(user: { id?: string; sub?: string } | undefined): string {
+  private requireUserId(user: AuthUser | undefined): string {
     const userId = user?.id || user?.sub;
     if (!userId) {
       throw new UnauthorizedException('Missing authenticated user');
@@ -38,14 +44,29 @@ export class TaskController {
     return userId;
   }
 
+  private resolveTenantId(user: AuthUser | undefined): string | undefined {
+    const tenantId = user?.tenantId;
+    if (typeof tenantId !== 'string') return undefined;
+    const normalized = tenantId.trim();
+    return normalized.length > 0 ? normalized : undefined;
+  }
+
+  private scopeArgs(tenantId?: string): [] | [{ tenantId: string }] {
+    if (!tenantId) return [];
+    return [{ tenantId }];
+  }
+
   @Get()
-  async listTasks(@CurrentUser() user: { id?: string; sub?: string }, @Query() query: ListTasksQueryDto) {
+  async listTasks(@CurrentUser() user: AuthUser, @Query() query: ListTasksQueryDto) {
     const userId = this.requireUserId(user);
+    const tenantId = this.resolveTenantId(user);
 
     const { tasks, total } = await this.taskService.listTasks(userId, {
       status: query.status,
       page: query.page,
       limit: query.limit,
+      tenantId,
+      workspaceId: query.workspaceId,
     });
 
     return {
@@ -60,10 +81,11 @@ export class TaskController {
   }
 
   @Post()
-  async createTask(@CurrentUser() user: { id?: string; sub?: string }, @Body() dto: CreateTaskDto) {
+  async createTask(@CurrentUser() user: AuthUser, @Body() dto: CreateTaskDto) {
     const userId = this.requireUserId(user);
+    const tenantId = this.resolveTenantId(user);
 
-    const taskInput: NewTask = {
+    const taskInput = {
       type: dto.type,
       title: dto.title,
       description: dto.description,
@@ -74,16 +96,23 @@ export class TaskController {
       pipelineId: dto.pipelineId,
       assignedToId: dto.assignedToId,
       userId,
-    };
+      ...(tenantId ? { tenantId } : {}),
+      ...(dto.workspaceId ? { workspaceId: dto.workspaceId } : {}),
+    } as NewTask;
 
     return this.taskService.createTask(taskInput);
   }
 
   @Get(':taskId')
-  async getTask(@CurrentUser() user: { id?: string; sub?: string }, @Param('taskId') taskId: string) {
+  async getTask(@CurrentUser() user: AuthUser, @Param('taskId') taskId: string) {
     const userId = this.requireUserId(user);
+    const tenantId = this.resolveTenantId(user);
 
-    const task = await this.taskService.getTaskByIdForUser(taskId, userId);
+    const task = await this.taskService.getTaskByIdForUser(
+      taskId,
+      userId,
+      ...this.scopeArgs(tenantId)
+    );
     if (!task) {
       throw new NotFoundException('Task not found');
     }
@@ -93,13 +122,18 @@ export class TaskController {
 
   @Patch(':taskId/status')
   async updateTaskStatus(
-    @CurrentUser() user: { id?: string; sub?: string },
+    @CurrentUser() user: AuthUser,
     @Param('taskId') taskId: string,
     @Body() dto: UpdateTaskStatusDto
   ) {
     const userId = this.requireUserId(user);
+    const tenantId = this.resolveTenantId(user);
 
-    const existing = await this.taskService.getTaskByIdForUser(taskId, userId);
+    const existing = await this.taskService.getTaskByIdForUser(
+      taskId,
+      userId,
+      ...this.scopeArgs(tenantId)
+    );
     if (!existing) {
       throw new NotFoundException('Task not found');
     }
@@ -113,13 +147,15 @@ export class TaskController {
   }
 
   @Get(':taskId/execution-logs')
-  async getExecutionLogs(
-    @CurrentUser() user: { id?: string; sub?: string },
-    @Param('taskId') taskId: string
-  ) {
+  async getExecutionLogs(@CurrentUser() user: AuthUser, @Param('taskId') taskId: string) {
     const userId = this.requireUserId(user);
+    const tenantId = this.resolveTenantId(user);
 
-    const task = await this.taskService.getTaskByIdForUser(taskId, userId);
+    const task = await this.taskService.getTaskByIdForUser(
+      taskId,
+      userId,
+      ...this.scopeArgs(tenantId)
+    );
     if (!task) {
       throw new NotFoundException('Task not found');
     }
@@ -134,20 +170,32 @@ export class TaskController {
 
   @Post(':taskId/execution-logs')
   async createExecutionLog(
-    @CurrentUser() user: { id?: string; sub?: string },
+    @CurrentUser() user: AuthUser,
     @Param('taskId') taskId: string,
     @Body() dto: CreateTaskExecutionLogDto
   ) {
     const userId = this.requireUserId(user);
+    const tenantId = this.resolveTenantId(user);
 
-    const task = await this.taskService.getTaskByIdForUser(taskId, userId);
+    const task = await this.taskService.getTaskByIdForUser(
+      taskId,
+      userId,
+      ...this.scopeArgs(tenantId)
+    );
     if (!task) {
       throw new NotFoundException('Task not found');
     }
 
     const logEntry = await this.taskService.appendExecutionLog(taskId, dto);
+    const metadataWorkspaceId =
+      typeof dto.metadata?.workspaceId === 'string' ? dto.metadata.workspaceId : undefined;
 
+    const taskWorkspaceId =
+      typeof (task as any)?.workspaceId === 'string' ? (task as any).workspaceId : undefined;
     await this.unifiedLedgerService.createTimelineEvent({
+      userId,
+      tenantId,
+      workspaceId: taskWorkspaceId || metadataWorkspaceId,
       eventType: 'historical_event',
       actor: dto.actor,
       payload: {

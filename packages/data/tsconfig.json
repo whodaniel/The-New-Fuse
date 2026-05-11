@@ -12,8 +12,7 @@
       "@the-new-fuse/database": ["../../packages/database/dist"],
       "@the-new-fuse/core-vector-db": ["../../packages/core-vector-db/dist"],
       "@the-new-fuse/infrastructure": ["../../packages/infrastructure/dist"]
-    },
-    "ignoreDeprecations": "5.0"
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]

@@ -19,8 +19,7 @@
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
     "typeRoots": ["./node_modules/@types"],
-    "esModuleInterop": true,
-    "ignoreDeprecations": "5.0"
+    "esModuleInterop": true
   },
   "exclude": ["node_modules", "dist"]
 }

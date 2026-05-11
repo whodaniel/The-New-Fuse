@@ -1,9 +1,0 @@
-{
-  "$schema": "https://railway.com/railway.schema.json",
-  "deploy": {
-    "port": 8080,
-    "startCommand": "/entrypoint.sh",
-    "healthcheckPath": "/health",
-    "healthcheckTimeout": 30
-  }
-}

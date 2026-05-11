@@ -16,8 +16,7 @@
     "declaration": true,
     "sourceMap": true,
     "noImplicitAny": false,
-    "strict": false,
-    "ignoreDeprecations": "5.0"
+    "strict": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.spec.tsx"],

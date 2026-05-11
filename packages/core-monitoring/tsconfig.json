@@ -8,8 +8,7 @@
     "sourceMap": true,
     "types": ["node", "jest"],
     "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "ignoreDeprecations": "5.0"
+    "moduleResolution": "Bundler"
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules", "**/*.test.ts"]

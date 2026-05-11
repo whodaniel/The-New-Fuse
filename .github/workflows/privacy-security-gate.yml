@@ -38,7 +38,10 @@ jobs:
           cat .tnf_changed_files || true
 
       - name: Enforce session handoff protocol (changed-file scope)
-        run: TNF_HANDOFF_FILE_LIST=.tnf_changed_files node scripts/protocols/enforce-session-handoff.cjs --mode=ci
+        run: |
+          node scripts/protocols/validate-turn-zero-authority.cjs --mode=ci
+          node scripts/protocols/validate-handoff-source-drift.cjs --mode=ci
+          TNF_HANDOFF_FILE_LIST=.tnf_changed_files node scripts/protocols/enforce-session-handoff.cjs --mode=ci
 
       - name: Run privacy guard (repo mode)
         run: node scripts/security/privacy-guard.cjs --mode=repo

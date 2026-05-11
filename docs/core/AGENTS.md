@@ -13,6 +13,7 @@ pnpm run tnf:onboard
 3. `.agent/context/agent-onboarding.md`
 4. `.agent/workflows/frontload.md`
 5. `.agent/handoff_notes.txt` (if present)
+6. `docs/protocols/TURN_ZERO_MANDATE.md` (canonical Turn Zero authority)
 
 ## Where Resources Live
 
@@ -41,13 +42,19 @@ At session start, the agent should:
 
 When a task involves OpenClaw or other Claw-type agents:
 
-1. Use `tnf` as the control plane.
-2. Prefer native TNF commands and implicit TNF-compatible routes first.
-3. If TNF has not yet assimilated a native surface, use `tnf openclaw ...` or
+1. Treat TNF as the primary control plane.
+2. Treat OpenClaw as an optional interoperability surface through TNF.
+3. Prefer native TNF commands and implicit TNF-compatible routes first.
+4. If TNF has not yet assimilated a native surface, use `tnf openclaw ...` or
    `tnf claw ...`.
-4. Do not invoke raw `openclaw ...` directly unless the task is explicitly about
-   debugging TNF/OpenClaw compatibility or the user explicitly asks for raw
+5. Do not invoke raw `openclaw ...` directly unless the task is explicitly about
+   debugging the TNF<->OpenClaw adapter or the user explicitly asks for raw
    OpenClaw CLI usage.
+
+Turn Zero authority:
+
+- Canonical source: `docs/protocols/TURN_ZERO_MANDATE.md`.
+- Any external mirror (for example `~/GEMINI.md`) is non-authoritative.
 
 Use `tnf compat openclaw` as the source of truth for current routing coverage.
 

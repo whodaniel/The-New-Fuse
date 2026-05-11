@@ -7,8 +7,7 @@
     "rootDir": ".",
     "declaration": true,
     "sourceMap": true,
-    "types": [],
-    "ignoreDeprecations": "5.0"
+    "types": []
   },
   "include": ["src/**/*", "metrics*"],
   "exclude": ["node_modules", "dist", "**/*.test.*"],

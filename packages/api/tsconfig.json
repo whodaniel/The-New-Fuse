@@ -16,8 +16,7 @@
     "skipLibCheck": true,
     "strict": false,
     "noImplicitAny": false,
-    "types": ["jest", "node"],
-    "ignoreDeprecations": "5.0"
+    "types": ["jest", "node"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "src/test-db.ts"],

@@ -1,4 +1,5 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ForgeDriver } from './drivers/forge.driver.js';
 import { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider.js';
 import { PgVectorDriver } from './drivers/pgvector.driver.js';
 import { QdrantDriver } from './drivers/qdrant.driver.js';
@@ -43,6 +44,9 @@ export class VectorDatabaseService implements OnModuleInit {
         break;
       case 'qdrant':
         this.vectorDb = new QdrantDriver(this.dbConfig);
+        break;
+      case 'forge':
+        this.vectorDb = new ForgeDriver(this.dbConfig);
         break;
       case 'chroma':
       case 'weaviate':

@@ -9,8 +9,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
-    "types": ["node", "jest"],
-    "ignoreDeprecations": "5.0"
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*"],
   "exclude": [

@@ -9,6 +9,8 @@ on:
       - "scripts/protocols/twip-conformance.cjs"
       - "scripts/protocols/enforce-session-handoff.cjs"
       - "scripts/protocols/emit-session-handoff.cjs"
+      - "scripts/protocols/validate-handoff-source-drift.cjs"
+      - "scripts/protocols/validate-turn-zero-authority.cjs"
       - ".github/workflows/protocol-schema-gate.yml"
       - "package.json"
   push:
@@ -19,6 +21,8 @@ on:
       - "scripts/protocols/twip-conformance.cjs"
       - "scripts/protocols/enforce-session-handoff.cjs"
       - "scripts/protocols/emit-session-handoff.cjs"
+      - "scripts/protocols/validate-handoff-source-drift.cjs"
+      - "scripts/protocols/validate-turn-zero-authority.cjs"
       - ".github/workflows/protocol-schema-gate.yml"
       - "package.json"
   workflow_dispatch:
@@ -41,3 +45,9 @@ jobs:
 
       - name: Run TWIP conformance suite
         run: node scripts/protocols/twip-conformance.cjs
+
+      - name: Validate handoff source drift
+        run: node scripts/protocols/validate-handoff-source-drift.cjs --mode=ci
+
+      - name: Validate Turn Zero authority
+        run: node scripts/protocols/validate-turn-zero-authority.cjs --mode=ci

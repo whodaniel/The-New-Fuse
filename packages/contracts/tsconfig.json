@@ -10,8 +10,7 @@
     "resolveJsonModule": true,
     "outDir": "dist",
     "composite": true,
-    "declaration": true,
-    "ignoreDeprecations": "5.0"
+    "declaration": true
   },
   "include": ["./test", "./scripts", "./hardhat.config.js"],
   "exclude": ["node_modules"]

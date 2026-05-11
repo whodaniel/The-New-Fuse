@@ -1,0 +1,13 @@
+{
+  "root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+  "generated": "2026-05-08T16:32:06Z",
+  "files_indexed": 8904,
+  "total_size_bytes": 69798331,
+  "unique_identifiers": 149475,
+  "total_occurrences": 6173434,
+  "output_files": {
+    "concordance_tsv_gz": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results/concordance.tsv.gz",
+    "per_file_index_tsv_gz": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results/per_file_index.tsv.gz",
+    "summary": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results/concordance_summary.txt"
+  }
+}

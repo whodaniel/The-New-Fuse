@@ -141,6 +141,7 @@ const ConnectExtensionPage = lazy(() => import('./pages/ConnectExtension'));
 const MembershipPage = lazy(() => import('./pages/Membership'));
 const VisualizationsPage = lazy(() => import('./pages/Visualizations'));
 const TerminalGraphPage = lazy(() => import('./pages/TerminalGraph'));
+const ConcordanceViewerPage = lazy(() => import('./pages/ConcordanceViewer'));
 const CodebaseMapPage = lazy(() => import('./pages/CodebaseMap'));
 
 // AI Agent Onboarding - Critical for autonomous agent self-registration
@@ -391,6 +392,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
       '/marketplace',
       '/visualizations',
       '/visualizations/terminals',
+      '/visualizations/concordance',
       '/terminals',
       '/product-map',
       '/codebase-map',
@@ -441,9 +443,9 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
             <Routes>
               {/* Core Routes - Root switches based on hostname (marketplace vs main landing) */}
               <Route path="/" element={<MarketplaceRootRoute />} />
-      <Route path="/landing" element={<MarketplaceRootRoute />} />
-      <Route path="/home" element={<Navigate to="/" replace />} />
-      <Route path="/app" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/landing" element={<MarketplaceRootRoute />} />
+              <Route path="/home" element={<Navigate to="/" replace />} />
+              <Route path="/app" element={<Navigate to="/dashboard" replace />} />
               {LEGACY_REDIRECTS.map((redirect) => (
                 <Route
                   key={`legacy-redirect:${redirect.from}`}
@@ -702,17 +704,18 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route
                 path="/observatory"
                 element={
-      <RequirePermission roles={['SUPER_ADMIN']}>
-            <SystemObservatory />
-          </RequirePermission>
-        } />
-        <Route
-          path="/llm-rankings"
-          element={
-            <RequirePermission roles={['SUPER_ADMIN']}>
-              <LLMRankingsDashboard />
-            </RequirePermission>
-          }
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <SystemObservatory />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/llm-rankings"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN']}>
+                    <LLMRankingsDashboard />
+                  </RequirePermission>
+                }
               />
               <Route
                 path="/command-center"
@@ -1315,10 +1318,10 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/auth/callback" element={<OAuthCallbackPage />} />
               <Route path="/auth/oauth-callback" element={<OAuthCallbackPage />} />
 
-      {/* Enhanced Landing Routes */}
-      <Route path="/about" element={<Navigate to="/brand" replace />} />
-      <Route path="/features" element={<RedirectToStatic to="/#features" />} />
-      <Route path="/pricing" element={<RedirectToStatic to="/#pricing" />} />
+              {/* Enhanced Landing Routes */}
+              <Route path="/about" element={<Navigate to="/brand" replace />} />
+              <Route path="/features" element={<RedirectToStatic to="/#features" />} />
+              <Route path="/pricing" element={<RedirectToStatic to="/#pricing" />} />
               <Route path="/community" element={<CommunityHubPage />} />
               <Route path="/membership" element={<MembershipPage />} />
               <Route path="/support" element={<SupportPage />} />
@@ -1336,6 +1339,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               />
               <Route path="/visualizations" element={<VisualizationsPage />} />
               <Route path="/visualizations/terminals" element={<TerminalGraphPage />} />
+              <Route path="/visualizations/concordance" element={<ConcordanceViewerPage />} />
               <Route path="/terminals" element={<TerminalGraphPage />} />
               <Route path="/codebase-map" element={<CodebaseMapPage />} />
               <Route path="/connect" element={<ConnectExtensionPage />} />

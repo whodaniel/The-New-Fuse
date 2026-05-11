@@ -17,6 +17,11 @@ export class ListTasksQueryDto {
   status?: string;
 
   @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  workspaceId?: string;
+
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
@@ -66,6 +71,11 @@ export class CreateTaskDto {
   @IsOptional()
   @IsUUID()
   assignedToId?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  workspaceId?: string;
 }
 
 export class UpdateTaskStatusDto {

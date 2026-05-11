@@ -1,1 +1,0 @@
-redis-cli psubscribe "agent:trae" "agent:broadcast" "agent:augment" "agent:heartbeat" "monitoring:metrics" "monitoring:alerts"

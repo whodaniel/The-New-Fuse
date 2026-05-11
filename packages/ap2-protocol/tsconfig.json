@@ -2,7 +2,6 @@
   "compilerOptions": {
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "ignoreDeprecations": "5.0",
     "composite": true,
     "declaration": true,
     "removeComments": true,

@@ -8,8 +8,7 @@
     "declaration": true,
     "composite": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "tsBuildInfoFile": "./dist/.tsbuildinfo",
-    "ignoreDeprecations": "5.0"
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]

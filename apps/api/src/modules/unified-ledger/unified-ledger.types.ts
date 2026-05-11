@@ -101,6 +101,8 @@ export interface UnifiedTaskRecord {
   status: UnifiedRecordStatus;
   priority: UnifiedRecordPriority;
   owner: string;
+  tenantId?: string;
+  workspaceId?: string;
   assignee?: string;
   color?: string;
   startTime?: string;
@@ -123,6 +125,8 @@ export interface UnifiedTaskRecord {
 export interface TimelineEvent {
   id: string;
   userId?: string;
+  tenantId?: string;
+  workspaceId?: string;
   recordId?: string;
   goalId?: string;
   planId?: string;
@@ -156,6 +160,8 @@ export interface GoalRecord {
   description: string;
   status: 'draft' | 'active' | 'paused' | 'completed' | 'archived';
   owner: string;
+  tenantId?: string;
+  workspaceId?: string;
   linkedRecordIds: string[];
   milestones: GoalMilestone[];
   createdAt: string;
@@ -167,6 +173,8 @@ export interface ProjectPlanRecord {
   name: string;
   objective: string;
   owner: string;
+  tenantId?: string;
+  workspaceId?: string;
   status: 'draft' | 'active' | 'completed' | 'archived';
   linkedGoalIds: string[];
   linkedRecordIds: string[];

@@ -1,6 +1,7 @@
 import {
   Activity,
   ArrowLeft,
+  BookOpen,
   Brain,
   Clock3,
   Cpu,
@@ -836,6 +837,15 @@ const Visualizations: React.FC = () => {
               >
                 <Brain className="h-4 w-4" />
                 Open Intelligence Density Map
+              </a>
+              <a
+                href="/visualizations/TNF_CONCORDANCE_VISUALIZER.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-emerald-300/35 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-100 transition hover:border-emerald-200 hover:bg-emerald-500/20"
+              >
+                <BookOpen className="h-4 w-4" />
+                Open Concordance Visualizer
               </a>
             </div>
           </div>

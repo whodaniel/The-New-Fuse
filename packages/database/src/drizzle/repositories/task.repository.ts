@@ -14,10 +14,35 @@ import type {
   TaskExecution,
 } from '../types.js';
 
+type TaskScope = {
+  tenantId?: string;
+  workspaceId?: string;
+};
+
 /**
  * Task Repository - provides data access for Task entities
  */
 export class DrizzleTaskRepository {
+  private appendTaskScopeConditions(conditions: any[], scope?: TaskScope): void {
+    if (!scope) return;
+    if (scope.tenantId) {
+      conditions.push(eq(tasks.tenantId, scope.tenantId));
+    }
+    if (scope.workspaceId) {
+      conditions.push(eq(tasks.workspaceId, scope.workspaceId));
+    }
+  }
+
+  private appendPipelineScopeConditions(conditions: any[], scope?: TaskScope): void {
+    if (!scope) return;
+    if (scope.tenantId) {
+      conditions.push(eq(pipelines.tenantId, scope.tenantId));
+    }
+    if (scope.workspaceId) {
+      conditions.push(eq(pipelines.workspaceId, scope.workspaceId));
+    }
+  }
+
   /**
    * Create a new task
    */
@@ -29,22 +54,32 @@ export class DrizzleTaskRepository {
   /**
    * Find tasks created after a certain date
    */
-  async findTasksCreatedAfter(date: Date, userId: string): Promise<Task[]> {
+  async findTasksCreatedAfter(date: Date, userId: string, scope?: TaskScope): Promise<Task[]> {
+    const conditions = [
+      gte(tasks.createdAt, date),
+      eq(tasks.userId, userId),
+      isNull(tasks.deletedAt),
+    ];
+    this.appendTaskScopeConditions(conditions, scope);
+
     return db
       .select()
       .from(tasks)
-      .where(and(gte(tasks.createdAt, date), eq(tasks.userId, userId), isNull(tasks.deletedAt)))
+      .where(and(...conditions))
       .orderBy(desc(tasks.createdAt));
   }
 
   /**
    * Find task by ID
    */
-  async findTaskById(id: string): Promise<Task | null> {
+  async findTaskById(id: string, scope?: TaskScope): Promise<Task | null> {
+    const conditions = [eq(tasks.id, id), isNull(tasks.deletedAt)];
+    this.appendTaskScopeConditions(conditions, scope);
+
     const [task] = await db
       .select()
       .from(tasks)
-      .where(and(eq(tasks.id, id), isNull(tasks.deletedAt)));
+      .where(and(...conditions));
 
     return task ?? null;
   }
@@ -52,11 +87,14 @@ export class DrizzleTaskRepository {
   /**
    * Find tasks by user ID
    */
-  async findTasksByUserId(userId: string): Promise<Task[]> {
+  async findTasksByUserId(userId: string, scope?: TaskScope): Promise<Task[]> {
+    const conditions = [eq(tasks.userId, userId), isNull(tasks.deletedAt)];
+    this.appendTaskScopeConditions(conditions, scope);
+
     return db
       .select()
       .from(tasks)
-      .where(and(eq(tasks.userId, userId), isNull(tasks.deletedAt)))
+      .where(and(...conditions))
       .orderBy(desc(tasks.createdAt));
   }
 
@@ -85,10 +123,13 @@ export class DrizzleTaskRepository {
   /**
    * Find tasks by status
    */
-  async findTasksByStatus(status: string, userId: string): Promise<Task[]> {
+  async findTasksByStatus(status: string, userId?: string, scope?: TaskScope): Promise<Task[]> {
     const conditions = [eq(tasks.status, status as any), isNull(tasks.deletedAt)];
 
-    conditions.push(eq(tasks.userId, userId));
+    if (userId) {
+      conditions.push(eq(tasks.userId, userId));
+    }
+    this.appendTaskScopeConditions(conditions, scope);
 
     return db
       .select()
@@ -100,10 +141,17 @@ export class DrizzleTaskRepository {
   /**
    * Find tasks by multiple statuses
    */
-  async findTasksByStatuses(statuses: string[], userId: string): Promise<Task[]> {
+  async findTasksByStatuses(
+    statuses: string[],
+    userId?: string,
+    scope?: TaskScope
+  ): Promise<Task[]> {
     const conditions = [inArray(tasks.status, statuses as any[]), isNull(tasks.deletedAt)];
 
-    conditions.push(eq(tasks.userId, userId));
+    if (userId) {
+      conditions.push(eq(tasks.userId, userId));
+    }
+    this.appendTaskScopeConditions(conditions, scope);
 
     return db
       .select()
@@ -126,10 +174,13 @@ export class DrizzleTaskRepository {
   /**
    * Find tasks by priority
    */
-  async findTasksByPriority(priority: string, userId: string): Promise<Task[]> {
+  async findTasksByPriority(priority: string, userId?: string, scope?: TaskScope): Promise<Task[]> {
     const conditions = [eq(tasks.priority, priority as any), isNull(tasks.deletedAt)];
 
-    conditions.push(eq(tasks.userId, userId));
+    if (userId) {
+      conditions.push(eq(tasks.userId, userId));
+    }
+    this.appendTaskScopeConditions(conditions, scope);
 
     return db
       .select()
@@ -209,12 +260,16 @@ export class DrizzleTaskRepository {
   /**
    * Count tasks by status
    */
-  async countTasksByStatus(userId?: string): Promise<{ status: string; count: number }[]> {
+  async countTasksByStatus(
+    userId?: string,
+    scope?: TaskScope
+  ): Promise<{ status: string; count: number }[]> {
     const conditions = [isNull(tasks.deletedAt)];
 
     if (userId) {
       conditions.push(eq(tasks.userId, userId));
     }
+    this.appendTaskScopeConditions(conditions, scope);
 
     const result = await db
       .select({
@@ -251,11 +306,14 @@ export class DrizzleTaskRepository {
   /**
    * Find pipelines by user ID
    */
-  async findPipelinesByUserId(userId: string): Promise<Pipeline[]> {
+  async findPipelinesByUserId(userId: string, scope?: TaskScope): Promise<Pipeline[]> {
+    const conditions = [eq(pipelines.userId, userId), isNull(pipelines.deletedAt)];
+    this.appendPipelineScopeConditions(conditions, scope);
+
     return db
       .select()
       .from(pipelines)
-      .where(and(eq(pipelines.userId, userId), isNull(pipelines.deletedAt)))
+      .where(and(...conditions))
       .orderBy(desc(pipelines.createdAt));
   }
 

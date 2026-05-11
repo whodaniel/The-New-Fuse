@@ -2,10 +2,9 @@
  * Feedback Repository - Drizzle ORM Implementation
  * Provides data access for Feedback entities
  */
-import { and, desc, eq, gte, sql } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 import { db } from '../client.js';
 import { feedback } from '../schema.js';
-import type { FeedbackInsert } from '../schema/feedback.js';
 
 export class DrizzleFeedbackRepository {
   async create(data: {
@@ -16,39 +15,50 @@ export class DrizzleFeedbackRepository {
     priority?: string;
     reporterName?: string;
     reporterEmail?: string;
-  }): Promise<{ id: string; type: string; message: string; source: string; priority: string; status: string; createdAt: Date }> {
-    const [record] = await db.insert(feedback).values({
-      type: data.type || 'other',
-      message: data.message,
-      source: data.source || 'beta',
-      contextUrl: data.contextUrl,
-      priority: data.priority || 'medium',
-      status: 'new',
-      reporterName: data.reporterName,
-      reporterEmail: data.reporterEmail,
-    }).returning();
+  }): Promise<{
+    id: string;
+    type: string;
+    message: string;
+    source: string;
+    priority: string;
+    status: string;
+    createdAt: Date;
+  }> {
+    const [record] = await db
+      .insert(feedback)
+      .values({
+        type: data.type || 'other',
+        message: data.message,
+        source: data.source || 'beta',
+        contextUrl: data.contextUrl,
+        priority: data.priority || 'medium',
+        status: 'new',
+        reporterName: data.reporterName,
+        reporterEmail: data.reporterEmail,
+      })
+      .returning();
     return record as any;
   }
 
- async findAll(query?: {
- status?: string;
- type?: string;
- limit?: number;
- offset?: number;
- }): Promise<any[]> {
- const conditions = [];
- if (query?.status) conditions.push(eq(feedback.status, query.status));
- if (query?.type) conditions.push(eq(feedback.type, query.type));
+  async findAll(query?: {
+    status?: string;
+    type?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<any[]> {
+    const conditions = [];
+    if (query?.status) conditions.push(eq(feedback.status, query.status));
+    if (query?.type) conditions.push(eq(feedback.type, query.type));
 
- let q = db.select().from(feedback).orderBy(desc(feedback.createdAt));
- if (conditions.length > 0) {
- q = q.where(and(...conditions));
- }
- if (query?.limit) {
- q = q.limit(query.limit);
- }
- return q.execute();
- }
+    let q: any = db.select().from(feedback).orderBy(desc(feedback.createdAt));
+    if (conditions.length > 0) {
+      q = q.where(and(...conditions));
+    }
+    if (query?.limit) {
+      q = q.limit(query.limit);
+    }
+    return q.execute();
+  }
 
   async findById(id: string): Promise<any | null> {
     const [record] = await db.select().from(feedback).where(eq(feedback.id, id));

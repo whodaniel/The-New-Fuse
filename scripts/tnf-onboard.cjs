@@ -6,6 +6,12 @@ const dotenv = require('dotenv');
 const postgres = require('postgres');
 
 const ROOT = process.cwd();
+const CANONICAL_SESSION_HANDOFF_JSON = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json';
+const CANONICAL_SESSION_HANDOFF_MD = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.md';
+const CANONICAL_TURN_ZERO_MANDATE = 'docs/protocols/TURN_ZERO_MANDATE.md';
+const LEGACY_OPENCLAW_LATEST_MD = process.env.HOME
+  ? path.join(process.env.HOME, '.openclaw', 'workspace', 'handoff', 'LATEST.md')
+  : null;
 
 function exists(relPath) {
   return fs.existsSync(path.join(ROOT, relPath));
@@ -58,6 +64,71 @@ function printMcpConfig(relPath) {
     const cmd = def.command || '<none>';
     const args = Array.isArray(def.args) ? def.args.join(' ') : '';
     console.log(`  - ${name}: ${cmd}${args ? ` ${args}` : ''}`);
+  }
+}
+
+function resolveCanonicalSessionHandoff() {
+  if (exists(CANONICAL_SESSION_HANDOFF_JSON)) {
+    const parsed = readJson(CANONICAL_SESSION_HANDOFF_JSON);
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return {
+        mode: 'json',
+        path: CANONICAL_SESSION_HANDOFF_JSON,
+        payload: parsed,
+      };
+    }
+    return {
+      mode: 'json-invalid',
+      path: CANONICAL_SESSION_HANDOFF_JSON,
+    };
+  }
+
+  if (exists(CANONICAL_SESSION_HANDOFF_MD)) {
+    return {
+      mode: 'markdown',
+      path: CANONICAL_SESSION_HANDOFF_MD,
+    };
+  }
+
+  if (exists('.agent/handoff_notes.txt')) {
+    return {
+      mode: 'legacy',
+      path: '.agent/handoff_notes.txt',
+    };
+  }
+
+  return { mode: 'missing' };
+}
+
+function inspectLegacyOpenClawLatestPointer() {
+  if (!LEGACY_OPENCLAW_LATEST_MD) {
+    return { status: 'unavailable' };
+  }
+  if (!fs.existsSync(LEGACY_OPENCLAW_LATEST_MD)) {
+    return { status: 'missing', path: LEGACY_OPENCLAW_LATEST_MD };
+  }
+
+  try {
+    const stat = fs.lstatSync(LEGACY_OPENCLAW_LATEST_MD);
+    if (!stat.isSymbolicLink()) {
+      return { status: 'present', path: LEGACY_OPENCLAW_LATEST_MD };
+    }
+    const target = fs.readlinkSync(LEGACY_OPENCLAW_LATEST_MD);
+    const absTarget = path.resolve(path.dirname(LEGACY_OPENCLAW_LATEST_MD), target);
+    if (!fs.existsSync(absTarget)) {
+      return {
+        status: 'broken',
+        path: LEGACY_OPENCLAW_LATEST_MD,
+        target,
+      };
+    }
+    return { status: 'present', path: LEGACY_OPENCLAW_LATEST_MD, target };
+  } catch (error) {
+    return {
+      status: 'error',
+      path: LEGACY_OPENCLAW_LATEST_MD,
+      error: error?.message || 'unknown error',
+    };
   }
 }
 
@@ -273,7 +344,48 @@ async function main() {
     '.agent/context/agent-onboarding.md',
     '.agent/workflows/frontload.md',
     '.agent/handoff_notes.txt',
+    CANONICAL_TURN_ZERO_MANDATE,
   ].forEach((p) => console.log(`- ${p}: ${exists(p) ? 'present' : 'missing'}`));
+
+  printHeader('Turn Zero Authority');
+  console.log(`- canonical source: ${CANONICAL_TURN_ZERO_MANDATE}`);
+  console.log('- external mirrors (for example ~/GEMINI.md) are non-authoritative');
+
+  printHeader('Canonical Session Handoff');
+  const handoff = resolveCanonicalSessionHandoff();
+  if (handoff.mode === 'json') {
+    console.log(`- source: ${handoff.path}`);
+    console.log(`- handoff_id: ${handoff.payload.handoff_id || 'unknown'}`);
+    console.log(`- created_at: ${handoff.payload.created_at || 'unknown'}`);
+    console.log(`- priority: ${handoff.payload?.continuation?.priority || 'unknown'}`);
+    const nextActions = Array.isArray(handoff.payload?.next_actions)
+      ? handoff.payload.next_actions.length
+      : 0;
+    console.log(`- next_actions: ${nextActions}`);
+  } else if (handoff.mode === 'json-invalid') {
+    console.log(`- source: ${handoff.path}`);
+    console.log('- WARN canonical handoff JSON is invalid');
+  } else if (handoff.mode === 'markdown') {
+    console.log(`- source: ${handoff.path}`);
+    console.log('- WARN canonical handoff JSON missing; markdown fallback active');
+  } else if (handoff.mode === 'legacy') {
+    console.log(`- source: ${handoff.path}`);
+    console.log('- WARN canonical handoff report missing; legacy fallback active');
+  } else {
+    console.log('- source: missing');
+    console.log('- WARN no handoff source discovered');
+  }
+
+  const legacyLatest = inspectLegacyOpenClawLatestPointer();
+  if (legacyLatest.status === 'broken') {
+    console.log(
+      `- WARN legacy LATEST.md pointer broken: ${legacyLatest.path} -> ${legacyLatest.target}`
+    );
+  } else if (legacyLatest.status === 'missing') {
+    console.log(`- WARN legacy LATEST.md missing: ${legacyLatest.path}`);
+  } else if (legacyLatest.status === 'error') {
+    console.log(`- WARN legacy LATEST.md inspection failed: ${legacyLatest.error}`);
+  }
 
   printHeader('Specialized Agent Files');
   const tnfAgents = listFiles('.agent/agents', (f) => f.endsWith('.md'));
@@ -315,10 +427,11 @@ async function main() {
   await writeRuntimeStateSnapshot();
 
   printHeader('OpenClaw / Claw Operator Policy');
-  console.log('- Use TNF as the control plane for OpenClaw and other Claw-type agents');
+  console.log('- TNF is the primary control plane');
+  console.log('- OpenClaw is an optional integration surface routed through TNF');
   console.log('- Prefer native TNF commands and implicit TNF-compatible routes first');
   console.log('- Use: tnf openclaw ... or tnf claw ... when TNF has not yet assimilated a native route');
-  console.log('- Avoid raw openclaw ... unless debugging the TNF/OpenClaw bridge or explicitly requested');
+  console.log('- Avoid raw openclaw ... unless debugging the TNF<->OpenClaw adapter or explicitly requested');
   console.log('- Audit current compatibility with: tnf compat openclaw');
 
   printHeader('How To Start New Sessions');

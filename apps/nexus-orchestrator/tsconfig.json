@@ -15,7 +15,6 @@
       "@/*": ["./*"]
     },
     "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "ignoreDeprecations": "5.0"
+    "noEmit": true
   }
 }

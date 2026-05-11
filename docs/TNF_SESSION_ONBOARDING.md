@@ -11,8 +11,11 @@ pnpm run tnf:onboard
 
 ## OpenClaw / Claw Operator Policy
 
-Future TNF sessions should treat `tnf` as the operator entrypoint for OpenClaw
-and other Claw-type agents.
+Future TNF sessions should treat TNF as the primary control plane.
+
+- OpenClaw is an optional interoperability surface, not TNF's parent system.
+- Canonical Turn Zero authority lives in `docs/protocols/TURN_ZERO_MANDATE.md`.
+- Any external mirror (for example `~/GEMINI.md`) is non-authoritative.
 
 - Prefer native TNF commands first.
 - Use implicit TNF-compatible routes when available, for example `tnf status` or
@@ -20,7 +23,7 @@ and other Claw-type agents.
 - When TNF has not yet assimilated a native route, use `tnf openclaw ...` or
   `tnf claw ...`.
 - Avoid raw `openclaw ...` unless the task is explicitly about debugging the
-  TNF/OpenClaw bridge or the operator explicitly asks for direct OpenClaw CLI
+  TNF<->OpenClaw adapter or the operator explicitly asks for direct OpenClaw CLI
   usage.
 
 Audit current routing coverage with:

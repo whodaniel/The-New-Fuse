@@ -10,8 +10,7 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "customConditions": ["build"],
-    "strict": true,
-    "ignoreDeprecations": "5.0"
+    "strict": true
   },
   "include": ["src/**/*", "generated*"],
   "exclude": ["dist", "node_modules", "**/*.spec.ts"],

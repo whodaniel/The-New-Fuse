@@ -7,6 +7,9 @@ LOG_DIR="${ROOT_DIR}/.agent/runtime-logs"
 RUNTIME_STATE_DIR="${ROOT_DIR}/.agent/runtime-state"
 LIVE_API_CACHE_FILE="${RUNTIME_STATE_DIR}/live-api-url.txt"
 REDIS_RESOLVER="${ROOT_DIR}/scripts/runtime/resolve-cloud-redis.sh"
+REDIS_FAIL_OPEN="${FACTORY_BOOT_REDIS_FAIL_OPEN:-true}"
+LOCAL_REDIS_URL="${FACTORY_BOOT_LOCAL_REDIS_URL:-redis://localhost:6379}"
+START_LOCAL_REDIS_ON_FALLBACK="${FACTORY_BOOT_START_LOCAL_REDIS:-true}"
 mkdir -p "${LOG_DIR}"
 mkdir -p "${RUNTIME_STATE_DIR}"
 
@@ -65,8 +68,33 @@ if ! command -v redis-cli >/dev/null 2>&1; then
 fi
 
 if ! redis-cli -u "${REDIS_URL}" ping >/dev/null 2>&1; then
-  echo "[factory-boot] ERROR: Redis not reachable at ${REDIS_URL}"
-  exit 1
+  echo "[factory-boot] WARNING: Redis not reachable at ${REDIS_URL}"
+  is_remote_target="true"
+  if [[ "${REDIS_URL}" == *"localhost"* ]] || [[ "${REDIS_URL}" == *"127.0.0.1"* ]]; then
+    is_remote_target="false"
+  fi
+
+  if [[ "${REDIS_FAIL_OPEN}" == "true" ]] && [[ "${is_remote_target}" == "true" ]]; then
+    echo "[factory-boot] attempting local Redis fallback: ${LOCAL_REDIS_URL}"
+    if ! redis-cli -u "${LOCAL_REDIS_URL}" ping >/dev/null 2>&1; then
+      if [[ "${START_LOCAL_REDIS_ON_FALLBACK}" == "true" ]] && command -v redis-server >/dev/null 2>&1; then
+        echo "[factory-boot] local Redis not responding; starting redis-server --daemonize yes"
+        redis-server --daemonize yes >/dev/null 2>&1 || true
+        sleep 1
+      fi
+    fi
+
+    if redis-cli -u "${LOCAL_REDIS_URL}" ping >/dev/null 2>&1; then
+      REDIS_URL="${LOCAL_REDIS_URL}"
+      echo "[factory-boot] fallback active; redis target=local (${REDIS_URL})"
+    else
+      echo "[factory-boot] ERROR: local Redis fallback failed (${LOCAL_REDIS_URL})"
+      exit 1
+    fi
+  else
+    echo "[factory-boot] ERROR: Redis unreachable and fail-open disabled"
+    exit 1
+  fi
 fi
 
 if curl -fsS --max-time 2 "${LEDGER_API_BASE%/}/api/health" >/dev/null 2>&1; then

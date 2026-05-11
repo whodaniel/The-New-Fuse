@@ -18,7 +18,10 @@ async function bootstrap() {
   });
 
   // Disable Express "X-Powered-By" header (information leakage)
-  app.getHttpAdapter().set('x-powered-by', false);
+  const adapter = app.getHttpAdapter();
+  if (typeof (adapter as any).set === 'function') {
+    (adapter as any).set('x-powered-by', false);
+  }
   // Alternative: app.disable('x-powered-by') — but getHttpAdapter is safer in NestJS
 
   // Security headers middleware — applied before all routes
@@ -26,10 +29,7 @@ async function bootstrap() {
     // HSTS: enforce HTTPS for 1 year (include subdomains), preload for browser HSTS lists
     // Only set in production; dev environments often use HTTP locally
     if (process.env.NODE_ENV === 'production') {
-      res.setHeader(
-        'Strict-Transport-Security',
-        'max-age=31536000; includeSubDomains; preload',
-      );
+      res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
     }
     // Prevent MIME-type sniffing
     res.setHeader('X-Content-Type-Options', 'nosniff');

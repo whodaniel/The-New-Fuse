@@ -26,6 +26,7 @@ const OnboardingPreviewPage = lazy(() => import('../pages/preview/OnboardingPrev
 const NotFound = lazy(() => import('../pages/NotFound'));
 const VisualizationsPage = lazy(() => import('../pages/Visualizations'));
 const TerminalGraphPage = lazy(() => import('../pages/TerminalGraph'));
+const ConcordanceViewerPage = lazy(() => import('../pages/ConcordanceViewer'));
 const UnauthorizedPage = lazy(() => import('../pages/Unauthorized'));
 
 const RedirectToStatic = ({ to }: { to: string }) => {
@@ -126,6 +127,11 @@ export const coreRoutes: ReactElement[] = [
     path="/visualizations/terminals"
     element={<TerminalGraphPage />}
   />,
+  <Route
+    key="concordance-visualization"
+    path="/visualizations/concordance"
+    element={<ConcordanceViewerPage />}
+  />,
   <Route key="terminal-graph" path="/terminals" element={<TerminalGraphPage />} />,
 
   // Connect/Extension
@@ -165,6 +171,7 @@ export const PUBLIC_ROUTES = [
   '/marketplace',
   '/visualizations',
   '/visualizations/terminals',
+  '/visualizations/concordance',
   '/terminals',
   '/product-map',
   '/capabilities',

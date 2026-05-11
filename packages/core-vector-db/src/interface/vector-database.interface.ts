@@ -71,7 +71,7 @@ export interface IVectorDatabase {
  * Vector Database Provider Configuration
  */
 export interface VectorDatabaseConfig {
-  provider: 'chroma' | 'pgvector' | 'qdrant' | 'weaviate' | 'pinecone';
+  provider: 'chroma' | 'pgvector' | 'qdrant' | 'weaviate' | 'pinecone' | 'forge';
   host?: string;
   port?: number;
   database?: string;

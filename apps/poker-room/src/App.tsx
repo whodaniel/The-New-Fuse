@@ -167,6 +167,144 @@ const formatBotId = (name: string, index: number) => {
   return slug || `CUSTOM_${index + 1}`;
 };
 
+type HoldemLegalRow = {
+  action: string;
+  min: number;
+  max: number;
+};
+
+const normalizeHoldemLegalRows = (raw: any): HoldemLegalRow[] => {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((row: any) => {
+      if (typeof row === 'string') {
+        const action = String(row).trim().toLowerCase();
+        if (!action) return null;
+        return { action, min: 0, max: 0 };
+      }
+      if (!row || typeof row !== 'object') return null;
+      const action = String(row.action || '')
+        .trim()
+        .toLowerCase();
+      if (!action) return null;
+      return {
+        action,
+        min: Number.isFinite(Number(row.min)) ? Math.floor(Number(row.min)) : 0,
+        max: Number.isFinite(Number(row.max)) ? Math.floor(Number(row.max)) : 0,
+      };
+    })
+    .filter((row: HoldemLegalRow | null): row is HoldemLegalRow => Boolean(row));
+};
+
+const legalRowsByAction = (rows: HoldemLegalRow[]) => {
+  const out = new Map<string, HoldemLegalRow>();
+  for (const row of rows) {
+    if (!row?.action) continue;
+    out.set(row.action, row);
+  }
+  return out;
+};
+
+const clampInt = (value: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, Math.floor(Number(value) || 0)));
+
+const resolveHoldemActionForSubmission = (
+  desiredAction: string,
+  desiredAmount: number,
+  agent: any
+) => {
+  const legalRows = normalizeHoldemLegalRows(agent?.legalActions);
+  if (legalRows.length === 0) {
+    throw new Error('No legal actions available for this seat right now.');
+  }
+  const byAction = legalRowsByAction(legalRows);
+  const helper = agent?.helper || {};
+  const toCall = Math.max(0, Math.floor(Number(helper.toCall || 0)));
+  const callRow = byAction.get('call');
+  const checkRow = byAction.get('check');
+  const foldRow = byAction.get('fold');
+  const allinRow = byAction.get('allin');
+  const raiseRow = byAction.get('raise');
+  const betRow = byAction.get('bet');
+  const raiseLikeRow = raiseRow || betRow;
+  const raiseLikeAction = raiseRow ? 'raise' : betRow ? 'bet' : '';
+
+  const action = String(desiredAction || '')
+    .trim()
+    .toLowerCase();
+  if (action === 'fold') {
+    if (!foldRow) throw new Error('Fold is not legal in the current state.');
+    return { action: 'fold', amount: 0, legalRows, helper };
+  }
+  if (action === 'check') {
+    if (checkRow) return { action: 'check', amount: 0, legalRows, helper };
+    if (callRow) {
+      const callTo = Math.max(0, Math.floor(Number(callRow.min || callRow.max || toCall || 0)));
+      return { action: 'call', amount: callTo, legalRows, helper };
+    }
+    throw new Error('Check is not legal in the current state.');
+  }
+  if (action === 'call') {
+    if (callRow) {
+      const callTo = Math.max(0, Math.floor(Number(callRow.min || callRow.max || toCall || 0)));
+      return { action: 'call', amount: callTo, legalRows, helper };
+    }
+    if (checkRow) return { action: 'check', amount: 0, legalRows, helper };
+    throw new Error('Call is not legal in the current state.');
+  }
+  if (action === 'raise' || action === 'bet') {
+    if (raiseLikeRow && raiseLikeAction) {
+      const min = Math.max(0, Math.floor(Number(raiseLikeRow.min || 0)));
+      const max = Math.max(min, Math.floor(Number(raiseLikeRow.max || min)));
+      const target = clampInt(desiredAmount > 0 ? desiredAmount : min, min, max);
+      return { action: raiseLikeAction, amount: target, legalRows, helper };
+    }
+    if (allinRow) {
+      const allinAmount = Math.max(
+        0,
+        Math.floor(Number(allinRow.max || allinRow.min || helper.seatStack || 0))
+      );
+      return { action: 'allin', amount: allinAmount, legalRows, helper };
+    }
+    throw new Error('Raise/bet is not legal in the current state.');
+  }
+  if (action === 'allin') {
+    if (!allinRow) throw new Error('All-in is not legal in the current state.');
+    const allinAmount = Math.max(
+      0,
+      Math.floor(Number(allinRow.max || allinRow.min || helper.seatStack || 0))
+    );
+    return { action: 'allin', amount: allinAmount, legalRows, helper };
+  }
+
+  const fallback = legalRows[0];
+  if (!fallback?.action) throw new Error('No legal action fallback available.');
+  if (fallback.action === 'check' || fallback.action === 'fold') {
+    return { action: fallback.action, amount: 0, legalRows, helper };
+  }
+  if (fallback.action === 'call') {
+    const callTo = Math.max(0, Math.floor(Number(fallback.min || fallback.max || toCall || 0)));
+    return { action: 'call', amount: callTo, legalRows, helper };
+  }
+  const min = Math.max(0, Math.floor(Number(fallback.min || 0)));
+  const max = Math.max(min, Math.floor(Number(fallback.max || min)));
+  return {
+    action: fallback.action,
+    amount: clampInt(desiredAmount > 0 ? desiredAmount : min, min, max),
+    legalRows,
+    helper,
+  };
+};
+
+const attachHoldemContext = (table: any, context: { agent?: any; rules?: any } = {}) => {
+  if (!table || typeof table !== 'object') return table;
+  return {
+    ...table,
+    __agent: context.agent ?? table.__agent ?? null,
+    __rules: context.rules ?? table.__rules ?? null,
+  };
+};
+
 type PokerView = PokerRouteView;
 
 const VIEW_SURFACE_POLICY: Record<PokerView, PokerSurfaceGroup> = ROUTE_SURFACE_POLICY;
@@ -279,6 +417,31 @@ const PokerTable: React.FC<PokerTableProps> = ({
     gameState.turnIndex === mySeatIdx &&
     gameState.round !== 'WAITING' &&
     gameState.round !== 'SHOWDOWN';
+  const heroLegalRows = normalizeHoldemLegalRows(gameState.heroLegalActions);
+  const legalByAction = legalRowsByAction(heroLegalRows);
+  const hasLegalContext = heroLegalRows.length > 0;
+  const checkRow = legalByAction.get('check');
+  const callRow = legalByAction.get('call');
+  const foldRow = legalByAction.get('fold');
+  const raiseRow = legalByAction.get('raise') || legalByAction.get('bet');
+  const hasRaise = legalByAction.has('raise');
+  const allinRow = legalByAction.get('allin');
+  const callAmount = Math.max(
+    0,
+    Math.floor(Number(callRow?.min ?? callRow?.max ?? gameState?.heroActionHelper?.toCall ?? 0))
+  );
+  const raiseMin = Math.max(0, Math.floor(Number(raiseRow?.min ?? 0)));
+  const raiseMax = Math.max(raiseMin, Math.floor(Number(raiseRow?.max ?? raiseMin)));
+  const raiseDefault =
+    raiseMin > 0 ? raiseMin : Math.max(0, gameState.currentBet + (gameState.blinds?.[1] || 0));
+  const canFold = isMyTurn && (!hasLegalContext || Boolean(foldRow));
+  const canCheckOrCall = isMyTurn && (!hasLegalContext || Boolean(checkRow || callRow));
+  const canRaiseOrBet = isMyTurn && (!hasLegalContext || Boolean(raiseRow));
+  const canAllIn = isMyTurn && hasLegalContext && Boolean(allinRow);
+  const checkOrCallLabel =
+    checkRow && !callRow ? 'Check' : callRow ? `Call $${callAmount}` : 'Check / Call';
+  const raiseIntent = hasRaise ? 'RAISE' : 'BET';
+  const raiseButtonLabel = hasRaise ? 'Raise' : 'Bet';
 
   const getSeatPos = (i: number) => {
     const seatTotal = Math.max(2, gameState.seats.length || 0);
@@ -505,7 +668,7 @@ const PokerTable: React.FC<PokerTableProps> = ({
           <div className="flex flex-col gap-2 w-full sm:w-auto">
             <div className="flex gap-2 w-full">
               <button
-                disabled={!isMyTurn}
+                disabled={!canFold}
                 onClick={() => handleAction('FOLD')}
                 onMouseEnter={playHover}
                 className="flex-1 sm:flex-none px-6 py-3 rounded-lg bg-slate-900 border-2 border-slate-800 text-xs font-black uppercase text-slate-400 hover:border-red-500 hover:text-red-500 disabled:opacity-50 transition-all"
@@ -513,15 +676,27 @@ const PokerTable: React.FC<PokerTableProps> = ({
                 Fold
               </button>
               <button
-                disabled={!isMyTurn}
-                onClick={() => handleAction('CALL')}
+                disabled={!canCheckOrCall}
+                onClick={() => handleAction(checkRow && !callRow ? 'CHECK' : 'CALL')}
                 onMouseEnter={playHover}
                 className="flex-1 sm:flex-none px-6 py-3 rounded-lg bg-cyan-900/30 border-2 border-cyan-500/50 text-xs font-black uppercase text-cyan-400 hover:bg-cyan-600 hover:text-white disabled:opacity-50 transition-all"
               >
-                {gameState.currentBet === mySeat.bet
-                  ? 'Check'
-                  : `Call $${gameState.currentBet - mySeat.bet}`}
+                {hasLegalContext
+                  ? checkOrCallLabel
+                  : gameState.currentBet === mySeat.bet
+                    ? 'Check'
+                    : `Call $${gameState.currentBet - mySeat.bet}`}
               </button>
+              {canAllIn && (
+                <button
+                  disabled={!canAllIn}
+                  onClick={() => handleAction('ALLIN')}
+                  onMouseEnter={playHover}
+                  className="flex-1 sm:flex-none px-4 py-3 rounded-lg bg-amber-900/30 border-2 border-amber-500/50 text-xs font-black uppercase text-amber-300 hover:bg-amber-700 hover:text-white disabled:opacity-50 transition-all"
+                >
+                  All-In
+                </button>
+              )}
             </div>
             <button
               onClick={getAIInsight}
@@ -558,24 +733,35 @@ const PokerTable: React.FC<PokerTableProps> = ({
 
           <div className="hidden sm:flex h-full py-2">
             <input
+              key={`${gameState.handId || 'na'}-${raiseMin}-${raiseMax}-${gameState.turnIndex}`}
               type="number"
               id="raiseAmount"
-              defaultValue={gameState.currentBet + (gameState.blinds?.[1] || 0)}
+              min={hasLegalContext && raiseRow ? raiseMin : undefined}
+              max={hasLegalContext && raiseRow ? raiseMax : undefined}
+              defaultValue={
+                hasLegalContext && raiseRow
+                  ? raiseDefault
+                  : gameState.currentBet + (gameState.blinds?.[1] || 0)
+              }
               className="w-24 bg-black border-2 border-slate-800 rounded-l-lg px-3 font-mono text-cyan-400 text-sm outline-none focus:border-cyan-500 transition-colors"
             />
             <button
-              disabled={!isMyTurn}
+              disabled={!canRaiseOrBet}
               onClick={() => {
                 const el = document.getElementById('raiseAmount') as HTMLInputElement | null;
                 const val = el
                   ? parseInt(el.value)
                   : gameState.currentBet + (gameState.blinds?.[1] || 0);
-                if (!isNaN(val)) handleAction('RAISE', val);
+                if (!isNaN(val)) {
+                  const normalized =
+                    hasLegalContext && raiseRow ? clampInt(val, raiseMin, raiseMax) : val;
+                  handleAction(raiseIntent, normalized);
+                }
               }}
               onMouseEnter={playHover}
               className="px-6 bg-slate-100 rounded-r-lg font-black text-xs uppercase text-black border-b-4 border-slate-400 hover:bg-white active:border-b-0 active:translate-y-1 disabled:opacity-50 transition-all"
             >
-              Raise
+              {hasLegalContext ? raiseButtonLabel : 'Raise'}
             </button>
           </div>
         </div>
@@ -963,6 +1149,21 @@ function AppContent() {
           : street === 'river' || street === 'showdown' || hand?.status === 'settled'
             ? 5
             : 0;
+    const heroSeatRow = orderedSeats.find((s: any) => s?.playerId === user?.username) || null;
+    const heroSeatNo =
+      heroSeatRow && Number.isInteger(heroSeatRow.__seatNo)
+        ? heroSeatRow.__seatNo
+        : heroSeatRow && Number.isInteger(heroSeatRow.seat)
+          ? heroSeatRow.seat
+          : null;
+    const agentSeat = Number(table?.__agent?.seat);
+    const agentMatchesHero =
+      heroSeatNo != null && Number.isInteger(agentSeat) ? agentSeat === heroSeatNo : false;
+    const heroLegalActions = agentMatchesHero
+      ? normalizeHoldemLegalRows(table?.__agent?.legalActions)
+      : [];
+    const heroActionHelper = agentMatchesHero ? table?.__agent?.helper || null : null;
+    const rules = table?.__rules || null;
 
     return {
       ...table,
@@ -1016,6 +1217,10 @@ function AppContent() {
       pot: hand?.pot ?? 0,
       terminal: hand?.status === 'settled' || hand?.readyForSettlement || false,
       lastAction: Array.isArray(hand?.actionLog) ? hand.actionLog[hand.actionLog.length - 1] : null,
+      heroSeatNo,
+      heroLegalActions,
+      heroActionHelper,
+      rules,
     };
   };
 
@@ -1110,7 +1315,7 @@ function AppContent() {
         try {
           const res = await holdemV2Api.state(activeTableId, user.username);
           if (active && res.ok && res.table) {
-            const table = res.table;
+            const table = attachHoldemContext(res.table, { agent: res.agent, rules: res.rules });
             setGameState((prev: any) => {
               const next = deriveGameStateFromV2(table, prev);
               if (
@@ -1553,7 +1758,8 @@ function AppContent() {
         stack: 20000,
       });
       if (res?.ok && res.table) {
-        setGameState((prev: any) => deriveGameStateFromV2(res.table, prev));
+        const nextTable = attachHoldemContext(res.table, { agent: res.agent, rules: res.rules });
+        setGameState((prev: any) => deriveGameStateFromV2(nextTable, prev));
         setActiveTableId(res.tableId || tid);
         v2BotLoopRef.current = { tableId: res.tableId || tid, lastActionAt: Date.now() };
         return;
@@ -1578,15 +1784,19 @@ function AppContent() {
     }
 
     // Fallback 2: try provisioning a dedicated quick-play table.
-    await handleJoinCashTable(tid, {
-      name: 'Quick Play',
-      maxPlayers: 6,
-      stakes: '$1/$2',
-      type: '6-Max',
-    }, {
-      sessionUser: activeUser,
-      skipAccessCheck: true,
-    });
+    await handleJoinCashTable(
+      tid,
+      {
+        name: 'Quick Play',
+        maxPlayers: 6,
+        stakes: '$1/$2',
+        type: '6-Max',
+      },
+      {
+        sessionUser: activeUser,
+        skipAccessCheck: true,
+      }
+    );
   };
 
   const handleJoinCashTable = async (
@@ -1618,7 +1828,9 @@ function AppContent() {
     let table = null;
     try {
       const res = await holdemV2Api.state(tid, currentUser.username);
-      if (res?.ok && res.table) table = res.table;
+      if (res?.ok && res.table) {
+        table = attachHoldemContext(res.table, { agent: res.agent, rules: res.rules });
+      }
     } catch {
       table = null;
     }
@@ -1638,7 +1850,12 @@ function AppContent() {
           bigBlind,
           ante: 0,
         });
-        if (createRes?.ok && createRes.table) table = createRes.table;
+        if (createRes?.ok && createRes.table) {
+          table = attachHoldemContext(createRes.table, {
+            agent: createRes.agent,
+            rules: createRes.rules,
+          });
+        }
       } catch {
         table = null;
       }
@@ -1659,17 +1876,21 @@ function AppContent() {
       if (!canAutoSpawn) return false;
       const fallbackId = `bot-table-${Date.now()}`;
       notify('SYSTEM', 'Table Full', reason);
-      await handleJoinCashTable(fallbackId, {
-        ...(tableMeta || {}),
-        name: `${tableMeta?.name || 'AUTO TABLE'} (Copy)`,
-        maxPlayers: seatCount,
-        maxSeats: seatCount,
-        type: tableMeta?.type || '6-Max',
-        stakes: tableMeta?.stakes || '$1/$2',
-      }, {
-        sessionUser: currentUser,
-        skipAccessCheck: true,
-      });
+      await handleJoinCashTable(
+        fallbackId,
+        {
+          ...(tableMeta || {}),
+          name: `${tableMeta?.name || 'AUTO TABLE'} (Copy)`,
+          maxPlayers: seatCount,
+          maxSeats: seatCount,
+          type: tableMeta?.type || '6-Max',
+          stakes: tableMeta?.stakes || '$1/$2',
+        },
+        {
+          sessionUser: currentUser,
+          skipAccessCheck: true,
+        }
+      );
       return true;
     };
 
@@ -1710,7 +1931,12 @@ function AppContent() {
           autoPostBlinds: true,
           controlMode: currentUser.controlMode || 'human',
         });
-        if (seatRes?.ok && seatRes.table) table = seatRes.table;
+        if (seatRes?.ok && seatRes.table) {
+          table = attachHoldemContext(seatRes.table, {
+            agent: seatRes.agent,
+            rules: seatRes.rules,
+          });
+        }
       } catch (err) {
         const message = String((err as Error)?.message || 'Unable to seat.');
         const lower = message.toLowerCase();
@@ -1760,7 +1986,12 @@ function AppContent() {
       }
       try {
         const refreshed = await holdemV2Api.state(tid, currentUser.username);
-        if (refreshed?.ok && refreshed.table) table = refreshed.table;
+        if (refreshed?.ok && refreshed.table) {
+          table = attachHoldemContext(refreshed.table, {
+            agent: refreshed.agent,
+            rules: refreshed.rules,
+          });
+        }
       } catch {
         // Ignore refresh failures.
       }
@@ -1776,7 +2007,12 @@ function AppContent() {
           seat: Number(resumeRes.resume.seat || 0),
         };
       }
-      if (resumeRes?.state) table = resumeRes.state;
+      if (resumeRes?.state) {
+        table = attachHoldemContext(resumeRes.state, {
+          agent: resumeRes.agent,
+          rules: resumeRes.rules,
+        });
+      }
     } catch {
       // Resume is required for actions but we can still render state.
     }
@@ -1786,7 +2022,12 @@ function AppContent() {
     if (!table.hand || table.hand.status === 'settled') {
       try {
         const startRes = await holdemV2Api.startHand(tid);
-        if (startRes?.ok && startRes.table) table = startRes.table;
+        if (startRes?.ok && startRes.table) {
+          table = attachHoldemContext(startRes.table, {
+            agent: startRes.agent,
+            rules: startRes.rules,
+          });
+        }
         const resumeRes = await holdemV2Api.resume(tid, currentUser.username);
         if (resumeRes?.ok && resumeRes.resume) {
           v2ResumeRef.current = {
@@ -1795,6 +2036,12 @@ function AppContent() {
             handId: String(resumeRes.resume.handId || ''),
             seat: Number(resumeRes.resume.seat || 0),
           };
+        }
+        if (resumeRes?.state) {
+          table = attachHoldemContext(resumeRes.state, {
+            agent: resumeRes.agent,
+            rules: resumeRes.rules,
+          });
         }
       } catch {
         // Table may already be active or not have enough players.
@@ -1810,7 +2057,8 @@ function AppContent() {
       if (tableProtocol === 'v2') {
         const res = await holdemV2Api.control(activeTableId, user.username, mode);
         if (res?.ok && res.table) {
-          setGameState((prev: any) => deriveGameStateFromV2(res.table, prev));
+          const nextTable = attachHoldemContext(res.table, { agent: res.agent, rules: res.rules });
+          setGameState((prev: any) => deriveGameStateFromV2(nextTable, prev));
         }
       } else if (activeTournamentId) {
         await tournamentApi.control(activeTournamentId, user.username, mode);
@@ -2049,7 +2297,9 @@ function AppContent() {
       FOLD: 'fold',
       CALL: 'call',
       RAISE: 'raise',
+      BET: 'bet',
       CHECK: 'check',
+      ALLIN: 'allin',
     };
     const action = actionMap[type] || type.toLowerCase();
     if (action === 'fold') playClick();
@@ -2059,19 +2309,7 @@ function AppContent() {
       try {
         const resumeRes = await holdemV2Api.resume(activeTableId, user.username);
         if (!resumeRes?.ok || !resumeRes.resume) throw new Error('Resume failed');
-        const helper = resumeRes.agent?.helper || {};
-        const minRaiseTo = Number(helper.minRaiseTo || 0);
-        const toCall = Number(helper.toCall || 0);
-        let resolvedAction = action;
-        let resolvedAmount = amount;
-        if (action === 'call') resolvedAmount = toCall;
-        if (action === 'raise' || action === 'bet') {
-          resolvedAmount = Math.max(minRaiseTo || 0, amount || 0);
-        }
-        if (action === 'check' && toCall > 0) {
-          resolvedAction = 'call';
-          resolvedAmount = toCall;
-        }
+        const resolved = resolveHoldemActionForSubmission(action, amount, resumeRes.agent);
         v2ResumeRef.current = {
           token: resumeRes.resume.token,
           replayCursor: Number(resumeRes.resume.replayCursor || 0),
@@ -2081,13 +2319,17 @@ function AppContent() {
         const actionRes = await holdemV2Api.action({
           tableId: activeTableId,
           playerId: user.username,
-          action: resolvedAction,
-          amount: resolvedAmount,
+          action: resolved.action,
+          amount: resolved.amount,
           resumeToken: resumeRes.resume.token,
           expectedReplayCursor: Number(resumeRes.resume.replayCursor || 0),
         });
         if (actionRes?.ok && actionRes.table) {
-          setGameState((prev: any) => deriveGameStateFromV2(actionRes.table, prev));
+          const nextTable = attachHoldemContext(actionRes.table, {
+            agent: actionRes.agent,
+            rules: actionRes.rules,
+          });
+          setGameState((prev: any) => deriveGameStateFromV2(nextTable, prev));
         }
       } catch (err) {
         notify(
@@ -2586,6 +2828,8 @@ function AppContent() {
             playHover={playHover}
             handleAction={handleAction}
             handleTakeover={handleTakeover}
+            handleAutopilot={handleAutopilot}
+            preferredControlMode={user?.controlMode || 'agent'}
             getAIInsight={getAIInsight}
             aiInsight={aiInsight}
             setAiInsight={setAiInsight}

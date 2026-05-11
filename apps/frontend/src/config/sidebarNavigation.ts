@@ -1,6 +1,7 @@
 import {
   Activity,
   BarChart3,
+  BookOpen,
   Bot,
   Boxes,
   Bug,
@@ -125,6 +126,13 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     name: 'Viz Hub',
     href: '/visualizations',
     icon: Activity,
+    section: 'nexus',
+    access: 'authenticated',
+  },
+  {
+    name: 'Concordance',
+    href: '/visualizations/concordance',
+    icon: BookOpen,
     section: 'nexus',
     access: 'authenticated',
   },

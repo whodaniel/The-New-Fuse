@@ -1,6 +1,4 @@
 {
   "extends": "./tsconfig.build.json",
-  "compilerOptions": {
-    "ignoreDeprecations": "5.0"
-  }
+  "compilerOptions": {}
 }

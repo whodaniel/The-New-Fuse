@@ -1,0 +1,217 @@
+TNF Codebase Concordance
+============================================================
+Generated: 2026-05-08T16:32:06Z
+Files indexed: 8904
+Total size: 66.6 MB
+Unique identifiers: 149475
+Total occurrences: 6173434
+
+Top 100 most frequent:
+Identifier                         Count     
+---------------------------------------------
+this                               131175    
+const                              112814    
+return                             109837    
+if                                 94521     
+string                             54270     
+className                          49990     
+text                               49566     
+function                           47865     
+div                                42711     
+for                                39148     
+null                               39012     
+error                              38824     
+id                                 36289     
+new                                35386     
+from                               32841     
+to                                 31880     
+await                              31691     
+type                               31537     
+name                               28394     
+length                             26897     
+var                                26717     
+children                           26206     
+message                            24373     
+import                             23940     
+data                               23277     
+async                              23104     
+value                              23061     
+in                                 21286     
+the                                21136     
+jsx                                21033     
+true                               20288     
+as                                 19953     
+void                               19216     
+log                                18717     
+status                             17925     
+console                            17642     
+number                             17309     
+export                             16764     
+and                                16732     
+border                             16587     
+px                                 16426     
+agent                              15923     
+path                               15387     
+echo                               14340     
+bg                                 14223     
+any                                14133     
+let                                14070     
+flex                               13608     
+private                            13594     
+Date                               13553     
+Promise                            13541     
+case                               13448     
+description                        13360     
+false                              13159     
+Error                              13013     
+result                             12980     
+try                                12707     
+get                                12621     
+content                            12429     
+else                               12234     
+config                             12199     
+catch                              12129     
+not                                12037     
+of                                 11778     
+typeof                             11640     
+with                               11605     
+key                                10847     
+font                               10692     
+push                               10594     
+Math                               10529     
+js                                 10497     
+throw                              10476     
+label                              10156     
+jsxs                               10142     
+is                                 10012     
+center                             9678      
+map                                9529      
+json                               9470      
+items                              9359      
+Object                             9066      
+state                              8950      
+class                              8843      
+response                           8735      
+expect                             8734      
+default                            8589      
+md                                 8582      
+node                               8332      
+button                             8272      
+boolean                            8217      
+title                              8204      
+options                            8149      
+sm                                 8088      
+rounded                            8078      
+input                              8073      
+logger                             8029      
+span                               7964      
+interface                          7936      
+now                                7887      
+success                            7885      
+args                               7842      
+
+Bottom 50 (rarest):
+Identifier                         Count     
+---------------------------------------------
+idFromName                         1         
+MISCONFIGURED_MISSING_SECRET       1         
+CONTEXT_PACK_REQUIRED              1         
+mirror_context_pack                1         
+withdraw_context                   1         
+withdrawId                         1         
+BLOBKEY_REQUIRED                   1         
+Patience                           1         
+hugedomains                        1         
+dan                                1         
+run_staff_review_cycle             1         
+Dont                               1         
+Checkpoints                        1         
+accountable                        1         
+tracebacks                         1         
+BridgeSpec                         1         
+run_staffing_director_cycle        1         
+Proposals                          1         
+missing_staffing_director_role     1         
+missing_staff_review_role          1         
+missing_staffing_skill             1         
+missing_staff_review_skill         1         
+low_staff_coordination_schedule_coverage1         
+missing_staff_review_schedule      1         
+blocker_driven_staffing_pressure   1         
+corporation                        1         
+nCaptured                          1         
+static_page                        1         
+after_submit                       1         
+nScreenshot                        1         
+system_terminal_awareness          1         
+bdeny                              1         
+bblocked                           1         
+bfreeze                            1         
+bmanual                            1         
+bdisabled                          1         
+brequires_approval                 1         
+bprohibit                          1         
+run_growth_blocker_audit           1         
+Hotspots                           1         
+unjustified                        1         
+resolvedAlwaysInjectAgentIds       1         
+skippedReason                      1         
+handoffLog                         1         
+masterHeartbeatStatus              1         
+resolvedSidecarsCsv                1         
+frontloadVerifierOutput            1         
+caring                             1         
+tnf_help                           1         
+get_relay_messages                 1         
+
+Files with most identifiers:
+  19233    apps/skideancer-ide/static/browser-hub/extensions/claude/1.0.40_0/assets/index-B1WmHw2Q.js
+  11282    apps/skideancer-ide/static/browser-hub/extensions/claude/1.0.40_0/assets/sidepanel-yURUk1gX.js
+  7903     apps/skideancer-ide/static/browser-hub/extensions/claude/1.0.40_0/assets/ModelSelector-GDUcHpDy.js
+  7452     clean_landing/assets/js/index.7C7WOePO.js
+  7452     app_deploy_final/assets/js/index.7C7WOePO.js
+  7403     apps/skideancer-ide/static/browser-hub/extensions/claude/1.0.40_0/assets/Main-DIS361Sg.js
+  4744     clean_landing/assets/js/app.DfN3N-yC.js
+  4744     app_deploy_final/assets/js/app.DfN3N-yC.js
+  4007     clean_landing/assets/js/recharts.CFmByAGp.js
+  4007     app_deploy_final/assets/js/recharts.CFmByAGp.js
+  3747     apps/skideancer-ide/static/browser-hub/extensions/claude/1.0.40_0/assets/SentryService-Bpayo6Ny.js
+  3617     clean_landing/assets/js/web3-vendor.CBb2x0HN.js
+  3617     app_deploy_final/assets/js/web3-vendor.CBb2x0HN.js
+  3109     clean_landing/assets/js/node-polyfills.Rs4QYAsf.js
+  3109     app_deploy_final/assets/js/node-polyfills.Rs4QYAsf.js
+  2836     apps/skideancer-ide/static/browser-hub/extensions/claude/1.0.40_0/assets/index-B7-_3Ura.js
+  2776     apps/gemini-bridge-extension/dist-v6/content/index.js
+  2721     clean_landing/assets/js/react-vendor.gXWPjf_h.js
+  2721     app_deploy_final/assets/js/react-vendor.gXWPjf_h.js
+  2605     apps/chrome-extension/dist-v6/content/index.js
+  2416     apps/casin8-games/server.js
+  2366     clean_landing/assets/js/agentVisualProfiles.mgjAKn3S.js
+  2366     app_deploy_final/assets/js/agentVisualProfiles.mgjAKn3S.js
+  2358     clean_landing/assets/js/Calendar.CSMurnYR.js
+  2358     app_deploy_final/assets/js/Calendar.CSMurnYR.js
+  2341     apps/skideancer-ide/static/browser-hub/extensions/claude/1.0.40_0/assets/mcpPermissions-juDHLu3j.js
+  2338     apps/skideancer-ide/static/browser-hub/extensions/claude/1.0.40_0/assets/datadog-BkLmkJ5p.js
+  2314     apps/skideancer-ide/static/browser-hub/extensions/tnf-extension/content/index.js
+  2205     packages/tnf-cli/src/cli.ts
+  1993     packages/tnf-cli/src/cli.js
+  1870     apps/skideancer-ide/static/browser-hub/extensions/claude/1.0.40_0/assets/newtab-CqhUGFUi.js
+  1797     clean_landing/assets/js/Builder.CqFjehFV.js
+  1797     app_deploy_final/assets/js/Builder.CqFjehFV.js
+  1796     clean_landing/assets/js/CommandCore.BBPBab9Q.js
+  1796     app_deploy_final/assets/js/CommandCore.BBPBab9Q.js
+  1717     apps/gemini-bridge-extension/dist-v6/background/index.js
+  1682     clean_landing/assets/js/framer-motion.CLt5v46a.js
+  1682     app_deploy_final/assets/js/framer-motion.CLt5v46a.js
+  1599     apps/gemini-bridge-extension/src/v6/background/index.ts
+  1530     apps/chrome-extension/src/v6/background/index.ts
+  1527     apps/casin8-games/script.js
+  1470     apps/chrome-extension/dist-v7/content/index.js
+  1439     clean_landing/assets/js/d3-vendor.DdOl8A3X.js
+  1439     app_deploy_final/assets/js/d3-vendor.DdOl8A3X.js
+  1428     .agent/skills/antigravity/loki-mode/autonomy/run.sh
+  1344     apps/gemini-bridge-extension/src/v6/content/injectable/FloatingPanel.ts
+  1331     .agent/skill-bank/snapshots/project-agent/stock-analysis-6ae566bd/scripts/analyze_stock.py
+  1331     .agent/skills/stock-analysis/scripts/analyze_stock.py
+  1297     clean_landing/assets/js/reactflow.DNFqK20s.js
+  1297     app_deploy_final/assets/js/reactflow.DNFqK20s.js

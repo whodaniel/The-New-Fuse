@@ -17,8 +17,7 @@
       "@the-new-fuse/database": ["../database/dist"],
       "@the-new-fuse/types": ["../types/dist"],
       "@the-new-fuse/tnf-cli": ["../tnf-cli/dist"]
-    },
-    "ignoreDeprecations": "5.0"
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts"],

@@ -4,8 +4,7 @@
     "moduleResolution": "NodeNext",
     "module": "NodeNext",
     "outDir": "./dist",
-    "rootDir": "./src",
-    "ignoreDeprecations": "5.0"
+    "rootDir": "./src"
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

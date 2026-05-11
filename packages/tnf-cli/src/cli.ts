@@ -64,15 +64,34 @@ async function runCommand(
   });
 }
 
+function normalizeToken(value: string | undefined): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function resolveProvidedSuperAdminToken(options?: { superAdminToken?: string }): {
+  token?: string;
+  source?: string;
+} {
+  const candidates = [
+    { token: normalizeToken(options?.superAdminToken), source: '--super-admin-token' },
+    {
+      token: normalizeToken(process.env[SUPER_ADMIN_INPUT_ENV_KEY]),
+      source: SUPER_ADMIN_INPUT_ENV_KEY,
+    },
+    { token: normalizeToken(process.env.CI_SUPER_ADMIN_TOKEN), source: 'CI_SUPER_ADMIN_TOKEN' },
+    { token: normalizeToken(process.env[SUPER_ADMIN_ENV_KEY]), source: SUPER_ADMIN_ENV_KEY },
+  ];
+  return candidates.find((candidate) => Boolean(candidate.token)) ?? {};
+}
+
 function requireSuperAdmin(
   options: { superAdminToken?: string } | undefined,
   commandLabel: string
 ): void {
-  const expected = process.env[SUPER_ADMIN_ENV_KEY];
-  const provided =
-    options?.superAdminToken ||
-    process.env[SUPER_ADMIN_INPUT_ENV_KEY] ||
-    process.env.CI_SUPER_ADMIN_TOKEN;
+  const expected = normalizeToken(process.env[SUPER_ADMIN_ENV_KEY]);
+  const provided = resolveProvidedSuperAdminToken(options);
 
   if (!expected) {
     throw new Error(
@@ -80,22 +99,27 @@ function requireSuperAdmin(
     );
   }
 
-  if (!provided) {
+  if (!provided.token) {
     throw new Error(
       `Super Admin authentication required for '${commandLabel}'.\n` +
-      `No token provided. Ways to authenticate:\n` +
-      ` 1. CLI Option: tnf ... --super-admin-token YOUR_TOKEN\n` +
-      ` 2. Env Var: export ${SUPER_ADMIN_INPUT_ENV_KEY}=YOUR_TOKEN\n` +
-      ` 3. CI Secret: Set CI_SUPER_ADMIN_TOKEN in your CI/CD settings.`
+        `No token provided. Ways to authenticate:\n` +
+        ` 1. CLI Option: tnf ... --super-admin-token YOUR_TOKEN\n` +
+        ` 2. Env Var: export ${SUPER_ADMIN_INPUT_ENV_KEY}=YOUR_TOKEN\n` +
+        ` 3. CI Secret: Set CI_SUPER_ADMIN_TOKEN in your CI/CD settings.\n` +
+        ` 4. Env Var: export ${SUPER_ADMIN_ENV_KEY}=YOUR_TOKEN`
     );
   }
 
-  if (provided !== expected) {
+  if (provided.token !== expected) {
     throw new Error(
-      `Super Admin authentication failed for '${commandLabel}'. Provided token does not match ${SUPER_ADMIN_ENV_KEY}.`
+      `Super Admin authentication failed for '${commandLabel}'. Token from ${provided.source || 'unknown source'} does not match ${SUPER_ADMIN_ENV_KEY}.`
     );
   }
 
+  // Normalize downstream command behavior to the input token channel.
+  if (!process.env[SUPER_ADMIN_INPUT_ENV_KEY]) {
+    process.env[SUPER_ADMIN_INPUT_ENV_KEY] = provided.token;
+  }
 }
 
 function isExecutableFile(filePath: string): boolean {
@@ -182,7 +206,7 @@ function inferVoiceBridgePort(profileInput?: string, explicitPort?: string): num
   if (isDefaultVoiceProfile(profile)) return 50005;
 
   let hash = 0;
-  for (const char of profile) hash = ((hash * 33) + char.charCodeAt(0)) >>> 0;
+  for (const char of profile) hash = (hash * 33 + char.charCodeAt(0)) >>> 0;
   return 50005 + (hash % 400) + 1;
 }
 
@@ -456,7 +480,10 @@ function isRelayControlSignal(text: string): boolean {
   return false;
 }
 
-async function postVoiceSend(port: number, text: string): Promise<{ ok: boolean; body: string; error?: string }> {
+async function postVoiceSend(
+  port: number,
+  text: string
+): Promise<{ ok: boolean; body: string; error?: string }> {
   const payload = JSON.stringify({ text });
   try {
     const response = await fetch(`http://127.0.0.1:${port}/send`, {
@@ -483,7 +510,9 @@ async function postVoiceSend(port: number, text: string): Promise<{ ok: boolean;
   }
 }
 
-async function postVoiceActivate(port: number): Promise<{ ok: boolean; body: string; error?: string }> {
+async function postVoiceActivate(
+  port: number
+): Promise<{ ok: boolean; body: string; error?: string }> {
   try {
     const response = await fetch(`http://127.0.0.1:${port}/activate`, {
       method: 'POST',
@@ -1459,7 +1488,8 @@ function buildOpenClawCompatibilityReport() {
   };
 }
 
-const pkgVersion = JSON.parse(fs.readFileSync(path.join(_dirname, '../package.json'), 'utf8')).version || '1.0.0';
+const pkgVersion =
+  JSON.parse(fs.readFileSync(path.join(_dirname, '../package.json'), 'utf8')).version || '1.0.0';
 
 program
   .name('tnf')
@@ -1536,139 +1566,203 @@ program
     '--super-admin-token <token>',
     'Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)'
   )
-  .action(async (name: string, options: { superAdminToken?: string }) => {
-    try {
-      requireSuperAdmin(options, 'boot');
-      console.log(chalk.bold.cyan(`\n🚀 Booting TNF Stack: ${chalk.yellow(name)}\n`));
+  .option('--non-interactive', 'Skip interactive client launches (OpenClaw UI and browser open)')
+  .option('--strict-gates', 'Treat all boot step failures as fatal')
+  .option('--skip-env-validation', 'Skip template environment validation step')
+  .action(
+    async (
+      name: string,
+      options: {
+        superAdminToken?: string;
+        nonInteractive?: boolean;
+        strictGates?: boolean;
+        skipEnvValidation?: boolean;
+      }
+    ) => {
+      try {
+        requireSuperAdmin(options, 'boot');
+        console.log(chalk.bold.cyan(`\n🚀 Booting TNF Stack: ${chalk.yellow(name)}\n`));
+        if (options.nonInteractive) {
+          console.log(chalk.dim('Boot mode: non-interactive'));
+        }
+        if (options.strictGates) {
+          console.log(chalk.dim('Gate mode: strict'));
+        }
 
-      const steps = [
-        {
-          label: 'Verifying environment variables',
-          action: async () => {
-            await runCommand('bash', ['scripts/validate-env.sh']);
-          },
-        },
-        {
-          label: 'Mounting volumes (ensuring directories)',
-          action: async () => {
-            const dirs = [
-              '.agent/runtime-state',
-              '.agent/runtime-logs',
-              '.agent/test-reports',
-              'data/agent-registry',
-            ];
-            for (const dir of dirs) {
-              if (!fs.existsSync(path.join(repoRoot, dir))) {
-                fs.mkdirSync(path.join(repoRoot, dir), { recursive: true });
-                console.log(chalk.dim(`   Created ${dir}`));
+        type BootStep = {
+          label: string;
+          critical: boolean;
+          action: () => Promise<void>;
+        };
+
+        const steps: BootStep[] = [
+          {
+            label: 'Verifying environment variables',
+            critical: false,
+            action: async () => {
+              if (options.skipEnvValidation) {
+                console.log(chalk.dim('   Skipped (--skip-env-validation)'));
+                return;
               }
-            }
+              await runCommand('bash', ['scripts/validate-env.sh']);
+            },
           },
-        },
-        {
-          label: 'Starting LLM health monitor',
-          action: async () => {
-            await runCommand('node', ['scripts/mcp-health-check.cjs']);
+          {
+            label: 'Mounting volumes (ensuring directories)',
+            critical: true,
+            action: async () => {
+              const dirs = [
+                '.agent/runtime-state',
+                '.agent/runtime-logs',
+                '.agent/test-reports',
+                'data/agent-registry',
+              ];
+              for (const dir of dirs) {
+                if (!fs.existsSync(path.join(repoRoot, dir))) {
+                  fs.mkdirSync(path.join(repoRoot, dir), { recursive: true });
+                  console.log(chalk.dim(`   Created ${dir}`));
+                }
+              }
+            },
           },
-        },
-        {
-          label: 'Starting directive rotation scheduler',
-          action: async () => {
-            // Run supercycle flywheel in background if not already running
-            await runCommand('pnpm', ['run', 'factory:supercycle'], { isBackground: true });
+          {
+            label: 'Starting LLM health monitor',
+            critical: false,
+            action: async () => {
+              await runCommand('node', ['scripts/mcp-health-check.cjs']);
+            },
           },
-        },
-        {
-          label: 'Starting LLM provider tester agent',
-          action: async () => {
-            // Run tester agent in background to continuously cycle through API keys and ensure viability
-            await runCommand('node', ['scripts/swarm/llm-provider-tester.cjs'], {
-              isBackground: true,
-            });
+          {
+            label: 'Starting directive rotation scheduler',
+            critical: false,
+            action: async () => {
+              // Run supercycle flywheel in background if not already running
+              await runCommand('pnpm', ['run', 'factory:supercycle'], { isBackground: true });
+            },
           },
-        },
-        {
-          label: 'Starting model fallback chain',
-          action: async () => {
-            await runCommand('node', ['scripts/orchestrator/zeroclaw-boot.cjs']);
+          {
+            label: 'Starting LLM provider tester agent',
+            critical: false,
+            action: async () => {
+              // Run tester agent in background to continuously cycle through API keys and ensure viability
+              await runCommand('node', ['scripts/swarm/llm-provider-tester.cjs'], {
+                isBackground: true,
+              });
+            },
           },
-        },
-        {
-          label: 'Initializing handoff matrix',
-          action: async () => {
-            // RelayHealthCheck often handles initial handoff state
-            if (fs.existsSync(path.join(repoRoot, 'scripts/RelayHealthCheck.cjs'))) {
-              await runCommand('node', ['scripts/RelayHealthCheck.cjs']);
-            } else {
-              console.log(chalk.dim('   Handoff matrix already synchronized'));
-            }
+          {
+            label: 'Starting model fallback chain',
+            critical: false,
+            action: async () => {
+              await runCommand('node', ['scripts/orchestrator/zeroclaw-boot.cjs']);
+            },
           },
-        },
-        {
-          label: 'Starting platform gateways',
-          action: async () => {
-            await runCommand('bash', ['scripts/orchestrator/factory-boot.sh']);
+          {
+            label: 'Initializing handoff matrix',
+            critical: false,
+            action: async () => {
+              // RelayHealthCheck often handles initial handoff state
+              if (fs.existsSync(path.join(repoRoot, 'scripts/RelayHealthCheck.cjs'))) {
+                await runCommand('node', ['scripts/RelayHealthCheck.cjs']);
+              } else {
+                console.log(chalk.dim('   Handoff matrix already synchronized'));
+              }
+            },
           },
-        },
-        {
-          label: 'Booting agent swarm',
-          action: async () => {
-            await runCommand('bash', ['scripts/start-agent-network.sh', '--all']);
+          {
+            label: 'Starting platform gateways',
+            critical: false,
+            action: async () => {
+              await runCommand('bash', ['scripts/orchestrator/factory-boot.sh'], {
+                env: {
+                  FACTORY_BOOT_REDIS_FAIL_OPEN: options.strictGates ? 'false' : 'true',
+                },
+              });
+            },
           },
-        },
-        {
-          label: 'Starting OpenClaw gateway',
-          action: async () => {
-            await runCommand('node', ['scripts/tnf-start-ai.cjs', 'openclaw']);
+          {
+            label: 'Booting agent swarm',
+            critical: true,
+            action: async () => {
+              await runCommand('bash', ['scripts/start-agent-network.sh', '--all']);
+            },
           },
-        },
-        {
-          label: 'Starting Hermes operator agent',
-          action: async () => {
-            // Spawn hermes in detached background mode
-            await runCommand('hermes', ['--daemon'], { isBackground: true });
+          {
+            label: 'Starting OpenClaw gateway',
+            critical: false,
+            action: async () => {
+              const args = ['scripts/tnf-start-ai.cjs', 'openclaw'];
+              if (options.nonInteractive) args.push('--no-launch');
+              await runCommand('node', args);
+            },
           },
-        },
-        {
-          label: 'Bringing up browser control panel',
-          action: async () => {
-            if (process.platform === 'darwin') {
-              await runCommand('open', ['https://thenewfuse.com/health']);
-            } else {
-              console.log(chalk.yellow('   Manual action: Open https://thenewfuse.com/health'));
-            }
+          {
+            label: 'Starting Hermes operator agent',
+            critical: false,
+            action: async () => {
+              // Spawn hermes in detached background mode
+              await runCommand('hermes', ['--daemon'], { isBackground: true });
+            },
           },
-        },
-        {
-          label: 'Executing self-test and reporting status',
-          action: async () => {
-            await runCommand('bash', ['scripts/system-health-verification.sh']);
+          {
+            label: 'Bringing up browser control panel',
+            critical: false,
+            action: async () => {
+              if (options.nonInteractive) {
+                console.log(chalk.dim('   Skipped (--non-interactive)'));
+                return;
+              }
+              if (process.platform === 'darwin') {
+                await runCommand('open', ['https://thenewfuse.com/health']);
+              } else {
+                console.log(chalk.yellow('   Manual action: Open https://thenewfuse.com/health'));
+              }
+            },
           },
-        },
-      ];
+          {
+            label: 'Executing self-test and reporting status',
+            critical: false,
+            action: async () => {
+              await runCommand('bash', ['scripts/system-health-verification.sh']);
+            },
+          },
+        ];
 
-      for (let i = 0; i < steps.length; i++) {
-        const step = steps[i];
-        process.stdout.write(chalk.white(`[${i + 1}/${steps.length}] ${step.label}... `));
-        try {
-          await step.action();
-          process.stdout.write(chalk.green('OK\n'));
-        } catch (err: any) {
-          process.stdout.write(chalk.red('FAILED\n'));
-          console.error(chalk.red(`   Error in step "${step.label}": ${err.message}`));
-          if (i < 2) {
-            // Critical steps
-            throw new Error(`Critical boot failure in step: ${step.label}`);
+        const warnings: string[] = [];
+        for (let i = 0; i < steps.length; i++) {
+          const step = steps[i];
+          process.stdout.write(chalk.white(`[${i + 1}/${steps.length}] ${step.label}... `));
+          try {
+            await step.action();
+            process.stdout.write(chalk.green('OK\n'));
+          } catch (err: any) {
+            process.stdout.write(chalk.red('FAILED\n'));
+            const message = err?.message || String(err);
+            const isFatal = Boolean(options.strictGates) || step.critical;
+            if (isFatal) {
+              console.error(chalk.red(`   Error in step "${step.label}": ${message}`));
+              throw new Error(`Critical boot failure in step: ${step.label}`);
+            }
+            const warningLine = `${step.label}: ${message}`;
+            warnings.push(warningLine);
+            console.error(chalk.yellow(`   Warning in step "${step.label}": ${message}`));
           }
         }
-      }
 
-      console.log(chalk.bold.green(`\n✅ TNF Stack "${name}" is now operational!\n`));
-    } catch (err: any) {
-      console.error(chalk.red(`\n❌ Boot sequence aborted: ${err.message}`));
-      process.exit(1);
+        console.log(chalk.bold.green(`\n✅ TNF Stack "${name}" is now operational!\n`));
+        if (warnings.length > 0) {
+          console.log(chalk.yellow(`⚠️  Completed with ${warnings.length} warning(s):`));
+          for (const warning of warnings) {
+            console.log(chalk.yellow(`   - ${warning}`));
+          }
+          console.log('');
+        }
+      } catch (err: any) {
+        console.error(chalk.red(`\n❌ Boot sequence aborted: ${err.message}`));
+        process.exit(1);
+      }
     }
-  });
+  );
 
 program
   .command('register')
@@ -1837,7 +1931,18 @@ mcp
   .option('--cwd <path>', 'Working directory')
   .option('--enabled <bool>', 'Enable server (true|false)', 'true')
   .action(
-    (name: string, options: { command: string; args?: string[]; env?: string; environment?: string; type?: string; cwd?: string; enabled?: string }) => {
+    (
+      name: string,
+      options: {
+        command: string;
+        args?: string[];
+        env?: string;
+        environment?: string;
+        type?: string;
+        cwd?: string;
+        enabled?: string;
+      }
+    ) => {
       try {
         let env: Record<string, string> | undefined;
         const envJson = options.environment || options.env;
@@ -1854,7 +1959,11 @@ mcp
           cwd: options.cwd,
           enabled: options.enabled !== 'false',
         });
-        console.log(chalk.green(`✅ Added MCP server '${name}' (type: ${options.type}, enabled: ${options.enabled !== 'false'})`));
+        console.log(
+          chalk.green(
+            `✅ Added MCP server '${name}' (type: ${options.type}, enabled: ${options.enabled !== 'false'})`
+          )
+        );
       } catch (err: any) {
         console.error(chalk.red(`Error: ${err.message}`));
         process.exit(1);
@@ -3664,14 +3773,14 @@ voiceBridgeCommand
                 down.push(`${profile}:${port}#${misses}`);
               }
 
-      if (heartbeatHeal) {
-        const activateResult = await postVoiceActivate(port);
-        if (activateResult.ok) {
-          healed.push(profile);
-        } else {
-          healFailed.push(profile);
-        }
-      }
+              if (heartbeatHeal) {
+                const activateResult = await postVoiceActivate(port);
+                if (activateResult.ok) {
+                  healed.push(profile);
+                } else {
+                  healFailed.push(profile);
+                }
+              }
             }
 
             const shouldLogHeartbeat =
@@ -3740,9 +3849,9 @@ voiceBridgeCommand
               continue;
             }
 
-      const msgId = `${direction.fromProfile}_${direction.toProfile}_${now.toString(36)}_${input.hash.slice(0, 8)}`;
-      const sendResult = await postVoiceSend(direction.toPort, input.text);
-      if (!sendResult.ok) {
+            const msgId = `${direction.fromProfile}_${direction.toProfile}_${now.toString(36)}_${input.hash.slice(0, 8)}`;
+            const sendResult = await postVoiceSend(direction.toPort, input.text);
+            if (!sendResult.ok) {
               direction.sendFailed += 1;
               console.log(
                 chalk.yellow(
@@ -3843,7 +3952,10 @@ voiceBridgeCommand
   .action(async (options: { profile?: string; port?: string; json?: boolean }) => {
     try {
       const port = inferVoiceBridgePort(options.profile, options.port);
-      const payload = (await readVoiceBridgeJson('/activate', 'POST', port)) as Record<string, unknown>;
+      const payload = (await readVoiceBridgeJson('/activate', 'POST', port)) as Record<
+        string,
+        unknown
+      >;
       const started = Array.isArray(payload.started) ? payload.started.map(String) : [];
       if (options.json) {
         console.log(
@@ -3902,8 +4014,14 @@ voiceBridgeCommand
       let micState: Record<string, unknown> | null = null;
       let kwsState: Record<string, unknown> | null = null;
       if (serverReachable) {
-        micState = (await readVoiceBridgeJson('/mic_state', 'GET', port)) as Record<string, unknown>;
-        kwsState = (await readVoiceBridgeJson('/kws_state', 'GET', port)) as Record<string, unknown>;
+        micState = (await readVoiceBridgeJson('/mic_state', 'GET', port)) as Record<
+          string,
+          unknown
+        >;
+        kwsState = (await readVoiceBridgeJson('/kws_state', 'GET', port)) as Record<
+          string,
+          unknown
+        >;
       }
 
       const payload = {
@@ -4166,8 +4284,8 @@ voiceProtocolCommand
                 healResults.push({ profile: snapshot.profile, ok: false });
                 continue;
               }
-        const result = await postVoiceActivate(snapshot.port);
-        healResults.push({ profile: snapshot.profile, ok: result.ok });
+              const result = await postVoiceActivate(snapshot.port);
+              healResults.push({ profile: snapshot.profile, ok: result.ok });
             }
           }
 
@@ -4986,13 +5104,13 @@ import { DatabaseService } from './services/DatabaseService.js';
 import { DebugService } from './services/DebugService.js';
 import { MCPManagerService } from './services/MCPManagerService.js';
 import { ModelsService } from './services/ModelsService.js';
+import { PermissionService } from './services/PermissionService.js';
+import { ProjectConfigService } from './services/ProjectConfigService.js';
 import { RemoteService } from './services/RemoteService.js';
 import { ServeService } from './services/ServeService.js';
 import { SessionManagerService } from './services/SessionManagerService.js';
 import { StatsService } from './services/StatsService.js';
 import { UpgradeService } from './services/UpgradeService.js';
-import { PermissionService } from './services/PermissionService.js';
-import { ProjectConfigService } from './services/ProjectConfigService.js';
 
 // ACP command
 const acp = program.command('acp').description('Start ACP (Agent Client Protocol) server');
@@ -5381,7 +5499,9 @@ debug
   });
 
 // Config commands (kilo parity: unified config management)
-const configCmd = program.command('config').description('Manage TNF configuration (kilo.jsonc parity)');
+const configCmd = program
+  .command('config')
+  .description('Manage TNF configuration (kilo.jsonc parity)');
 
 configCmd
   .command('show')
@@ -5395,7 +5515,9 @@ configCmd
         if (options.json) {
           console.log(JSON.stringify({ path: options.path, value }, null, 2));
         } else {
-          console.log(value !== undefined ? JSON.stringify(value, null, 2) : chalk.yellow('undefined'));
+          console.log(
+            value !== undefined ? JSON.stringify(value, null, 2) : chalk.yellow('undefined')
+          );
         }
       } else {
         const config = debugService.getConfig();
@@ -5419,7 +5541,8 @@ configCmd
           if (config.mcp) {
             console.log(chalk.bold('\n MCP Servers (inline)\n'));
             for (const [name, server] of Object.entries(config.mcp)) {
-              const enabled = server.enabled !== false ? chalk.green('enabled') : chalk.red('disabled');
+              const enabled =
+                server.enabled !== false ? chalk.green('enabled') : chalk.red('disabled');
               const type = server.type || 'local';
               console.log(`   ${chalk.cyan(name)}: ${type} ${enabled}`);
             }
@@ -5456,7 +5579,7 @@ configCmd
   .description('Show config file paths (global + project)')
   .action(() => {
     try {
-        const home = os.homedir();
+      const home = os.homedir();
       const globalJsonc = path.join(home, '.config', 'tnf', 'tnf.jsonc');
       const globalJson = path.join(home, '.config', 'tnf', 'config.json');
       const mcpConfig = path.join(home, '.config', 'tnf', 'mcp', 'mcp.json');
@@ -5465,12 +5588,24 @@ configCmd
       const projectJson = path.join(process.cwd(), 'tnf.json');
 
       console.log(chalk.bold('\nConfig Paths\n'));
-      console.log(` Global (JSONC): ${fs.existsSync(globalJsonc) ? chalk.green(globalJsonc) : chalk.dim(globalJsonc + ' (not found)')}`);
-      console.log(` Global (JSON):  ${fs.existsSync(globalJson) ? chalk.green(globalJson) : chalk.dim(globalJson + ' (not found)')}`);
-      console.log(` MCP servers:    ${fs.existsSync(mcpConfig) ? chalk.green(mcpConfig) : chalk.dim(mcpConfig + ' (not found)')}`);
-      console.log(` Agents:         ${fs.existsSync(agentsConfig) ? chalk.green(agentsConfig) : chalk.dim(agentsConfig + ' (not found)')}`);
-      console.log(` Project (JSONC):${fs.existsSync(projectJsonc) ? chalk.green(projectJsonc) : chalk.dim(projectJsonc + ' (not found)')}`);
-      console.log(` Project (JSON): ${fs.existsSync(projectJson) ? chalk.green(projectJson) : chalk.dim(projectJson + ' (not found)')}`);
+      console.log(
+        ` Global (JSONC): ${fs.existsSync(globalJsonc) ? chalk.green(globalJsonc) : chalk.dim(globalJsonc + ' (not found)')}`
+      );
+      console.log(
+        ` Global (JSON):  ${fs.existsSync(globalJson) ? chalk.green(globalJson) : chalk.dim(globalJson + ' (not found)')}`
+      );
+      console.log(
+        ` MCP servers:    ${fs.existsSync(mcpConfig) ? chalk.green(mcpConfig) : chalk.dim(mcpConfig + ' (not found)')}`
+      );
+      console.log(
+        ` Agents:         ${fs.existsSync(agentsConfig) ? chalk.green(agentsConfig) : chalk.dim(agentsConfig + ' (not found)')}`
+      );
+      console.log(
+        ` Project (JSONC):${fs.existsSync(projectJsonc) ? chalk.green(projectJsonc) : chalk.dim(projectJsonc + ' (not found)')}`
+      );
+      console.log(
+        ` Project (JSON): ${fs.existsSync(projectJson) ? chalk.green(projectJson) : chalk.dim(projectJson + ' (not found)')}`
+      );
       console.log('');
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -5495,7 +5630,9 @@ configCmd
         config = JSON.parse(raw);
       }
       let parsedValue: any = value;
-      try { parsedValue = JSON.parse(value); } catch {}
+      try {
+        parsedValue = JSON.parse(value);
+      } catch {}
       const parts = key.split('.');
       let target: Record<string, any> = config;
       for (let i = 0; i < parts.length - 1; i++) {
@@ -5513,7 +5650,9 @@ configCmd
   });
 
 // Permission commands (kilo parity: granular bash/read/external_directory permissions)
-const permissionCmd = program.command('permission').description('Manage permission rules (bash, read, external_directory)');
+const permissionCmd = program
+  .command('permission')
+  .description('Manage permission rules (bash, read, external_directory)');
 
 permissionCmd
   .command('list')
@@ -5524,26 +5663,42 @@ permissionCmd
   .action((options: { type?: string; scope?: string; json?: boolean }) => {
     try {
       const permService = new PermissionService(undefined, process.cwd());
-      const allRules: Array<{ category: string; pattern: string; action: string; source: string }> = [];
+      const allRules: Array<{ category: string; pattern: string; action: string; source: string }> =
+        [];
 
       if (!options.type || options.type === 'bash') {
         for (const r of permService.listBashRules()) {
           if (!options.scope || options.scope === r.source) {
-            allRules.push({ category: 'bash', pattern: r.pattern, action: r.action, source: r.source });
+            allRules.push({
+              category: 'bash',
+              pattern: r.pattern,
+              action: r.action,
+              source: r.source,
+            });
           }
         }
       }
       if (!options.type || options.type === 'read') {
         for (const r of permService.listReadRules()) {
           if (!options.scope || options.scope === r.source) {
-            allRules.push({ category: 'read', pattern: r.pattern, action: r.action, source: r.source });
+            allRules.push({
+              category: 'read',
+              pattern: r.pattern,
+              action: r.action,
+              source: r.source,
+            });
           }
         }
       }
       if (!options.type || options.type === 'external_directory') {
         for (const r of permService.listExternalDirectoryRules()) {
           if (!options.scope || options.scope === r.source) {
-            allRules.push({ category: 'external_directory', pattern: r.pattern, action: r.action, source: r.source });
+            allRules.push({
+              category: 'external_directory',
+              pattern: r.pattern,
+              action: r.action,
+              source: r.source,
+            });
           }
         }
       }
@@ -5557,7 +5712,9 @@ permissionCmd
         } else {
           for (const r of allRules) {
             const action = r.action === 'allow' ? chalk.green('allow') : chalk.red('deny');
-            console.log(` ${chalk.cyan(r.category)} ${r.pattern}: ${action} (${chalk.dim(r.source)})`);
+            console.log(
+              ` ${chalk.cyan(r.category)} ${r.pattern}: ${action} (${chalk.dim(r.source)})`
+            );
           }
         }
         console.log('');
@@ -5575,7 +5732,9 @@ permissionCmd
   .action((category: string, pattern: string, action: string, options: { scope: string }) => {
     try {
       if (!['bash', 'read', 'external_directory'].includes(category)) {
-        console.log(chalk.red(`Invalid category '${category}'. Must be: bash, read, or external_directory`));
+        console.log(
+          chalk.red(`Invalid category '${category}'. Must be: bash, read, or external_directory`)
+        );
         process.exit(1);
       }
       if (!['allow', 'deny'].includes(action)) {
@@ -5585,7 +5744,8 @@ permissionCmd
       const permService = new PermissionService(undefined, process.cwd());
       const scope = options.scope as 'global' | 'project';
       if (category === 'bash') permService.addBashRule(pattern, action as 'allow' | 'deny', scope);
-      else if (category === 'read') permService.addReadRule(pattern, action as 'allow' | 'deny', scope);
+      else if (category === 'read')
+        permService.addReadRule(pattern, action as 'allow' | 'deny', scope);
       else permService.addExternalDirectoryRule(pattern, action as 'allow' | 'deny', scope);
       console.log(chalk.green(`✅ Added ${category} rule: ${pattern} → ${action} (${scope})`));
     } catch (err: any) {
@@ -5605,9 +5765,12 @@ permissionCmd
       let removed = false;
       if (category === 'bash') removed = permService.removeBashRule(pattern, scope);
       else if (category === 'read') removed = permService.removeReadRule(pattern, scope);
-      else if (category === 'external_directory') removed = permService.removeExternalDirectoryRule(pattern, scope);
+      else if (category === 'external_directory')
+        removed = permService.removeExternalDirectoryRule(pattern, scope);
       else {
-        console.log(chalk.red(`Unknown category '${category}'. Must be: bash, read, or external_directory`));
+        console.log(
+          chalk.red(`Unknown category '${category}'. Must be: bash, read, or external_directory`)
+        );
         process.exit(1);
       }
       if (removed) {
@@ -5633,9 +5796,17 @@ permissionCmd
       else if (options.type === 'read') result = permService.checkReadPath(command);
       else result = permService.checkExternalDirectory(command);
       if (result.allowed) {
-        console.log(chalk.green(`✅ Allowed`) + (result.matchedRule ? ` (rule: ${result.matchedRule} → ${result.action}, ${result.source})` : ' (no rules matched, default deny)'));
+        console.log(
+          chalk.green(`✅ Allowed`) +
+            (result.matchedRule
+              ? ` (rule: ${result.matchedRule} → ${result.action}, ${result.source})`
+              : ' (no rules matched, default deny)')
+        );
       } else {
-        console.log(chalk.red(`⛔ Denied`) + ` (rule: ${result.matchedRule} → ${result.action}, ${result.source})`);
+        console.log(
+          chalk.red(`⛔ Denied`) +
+            ` (rule: ${result.matchedRule} → ${result.action}, ${result.source})`
+        );
       }
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -5644,7 +5815,9 @@ permissionCmd
   });
 
 // Project-level config commands (kilo parity: project tnf.json + .tnf/command + .tnf/agent)
-const projectCmd = program.command('project').description('Project-level configuration (tnf.jsonc, .tnf/command, .tnf/agent)');
+const projectCmd = program
+  .command('project')
+  .description('Project-level configuration (tnf.jsonc, .tnf/command, .tnf/agent)');
 
 projectCmd
   .command('init')
@@ -5688,7 +5861,8 @@ projectCmd
           if (config.mcp && Object.keys(config.mcp).length > 0) {
             console.log(chalk.bold('\n Project MCP Servers\n'));
             for (const [name, server] of Object.entries(config.mcp)) {
-              const enabled = server.enabled !== false ? chalk.green('enabled') : chalk.red('disabled');
+              const enabled =
+                server.enabled !== false ? chalk.green('enabled') : chalk.red('disabled');
               console.log(`   ${chalk.cyan(name)}: ${server.type || 'local'} ${enabled}`);
             }
           }
@@ -6171,9 +6345,7 @@ program
   });
 
 // Feedback command - for beta developer feedback integration
-const feedback = program
-  .command('feedback')
-  .description('Feedback management for beta developers');
+const feedback = program.command('feedback').description('Feedback management for beta developers');
 
 // Feedback submit
 feedback
@@ -6184,46 +6356,56 @@ feedback
   .option('-m, --message <message>', 'Feedback message (required)')
   .option('-c, --context <context>', 'URL or context')
   .option('--host <host>', 'API host', process.env.TNF_API_HOST || 'http://127.0.0.1:3001')
-  .action(async (options: { type?: string; priority?: string; message?: string; context?: string; host?: string }) => {
-    try {
-      if (!options.message) {
-        console.error(chalk.red('--message is required'));
+  .action(
+    async (options: {
+      type?: string;
+      priority?: string;
+      message?: string;
+      context?: string;
+      host?: string;
+    }) => {
+      try {
+        if (!options.message) {
+          console.error(chalk.red('--message is required'));
+          process.exit(1);
+        }
+        const host = options.host || process.env.TNF_API_HOST || 'http://127.0.0.1:3001';
+        const body = {
+          type: options.type || 'other',
+          priority: options.priority || 'medium',
+          message: options.message,
+          contextUrl: options.context || '',
+          source: 'beta',
+        };
+        const url = `${host}/api/feedback`;
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(5000),
+        });
+        if (!resp.ok) {
+          console.error(
+            chalk.red(`Failed to submit feedback (HTTP ${resp.status}). Is backend running?`)
+          );
+          process.exit(1);
+        }
+        const response = (await resp.json()) as Record<string, any>;
+        const feedbackId = response.id;
+        console.log(chalk.green(`✅ Feedback submitted: ${feedbackId}`));
+        console.log(chalk.dim(` Type: ${body.type}`));
+        console.log(chalk.dim(` Priority: ${body.priority}`));
+        if (options.context) {
+          console.log(chalk.dim(` Context: ${options.context}`));
+        }
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
         process.exit(1);
       }
-      const host = options.host || process.env.TNF_API_HOST || 'http://127.0.0.1:3001';
-      const body = {
-        type: options.type || 'other',
-        priority: options.priority || 'medium',
-        message: options.message,
-        contextUrl: options.context || '',
-        source: 'beta',
-      };
-      const url = `${host}/api/feedback`;
-      const resp = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(5000),
-      });
-      if (!resp.ok) {
-        console.error(chalk.red(`Failed to submit feedback (HTTP ${resp.status}). Is backend running?`));
-        process.exit(1);
-      }
-      const response = await resp.json() as Record<string, any>;
-      const feedbackId = response.id;
-      console.log(chalk.green(`✅ Feedback submitted: ${feedbackId}`));
-      console.log(chalk.dim(` Type: ${body.type}`));
-      console.log(chalk.dim(` Priority: ${body.priority}`));
-      if (options.context) {
-        console.log(chalk.dim(` Context: ${options.context}`));
-      }
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
     }
-  });
+  );
 
-  // Feedback list
+// Feedback list
 feedback
   .command('list')
   .alias('ls')
@@ -6242,20 +6424,31 @@ feedback
       if (params.toString()) url += `?${params.toString()}`;
       const resp = await fetch(url, { signal: AbortSignal.timeout(5000) });
       if (!resp.ok) {
-        console.error(chalk.red(`Failed to connect to ${url} (HTTP ${resp.status}). Is backend running?`));
+        console.error(
+          chalk.red(`Failed to connect to ${url} (HTTP ${resp.status}). Is backend running?`)
+        );
         process.exit(1);
       }
-      const allFeedback = await resp.json() as any[];
+      const allFeedback = (await resp.json()) as any[];
       if (options.json) {
         console.log(JSON.stringify(allFeedback, null, 2));
         return;
       }
       console.log(chalk.bold(`\n📬 Feedback (${allFeedback.length} items)\n`));
       for (const fb of allFeedback) {
-        const icon = fb.status === 'new' ? '🆕' : fb.status === 'in_progress' ? '🔄' : fb.status === 'done' ? '✅' : '⏳';
+        const icon =
+          fb.status === 'new'
+            ? '🆕'
+            : fb.status === 'in_progress'
+              ? '🔄'
+              : fb.status === 'done'
+                ? '✅'
+                : '⏳';
         console.log(`   ${icon} ${chalk.cyan(fb.id)} [${fb.type}] ${fb.priority}`);
-        console.log(chalk.dim(`      ${fb.message?.substring(0, 60)}${fb.message?.length > 60 ? '...' : ''}`));
- console.log(chalk.dim(` Status: ${fb.status} | Created: ${fb.createdAt}\n`));
+        console.log(
+          chalk.dim(`      ${fb.message?.substring(0, 60)}${fb.message?.length > 60 ? '...' : ''}`)
+        );
+        console.log(chalk.dim(` Status: ${fb.status} | Created: ${fb.createdAt}\n`));
       }
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -6274,20 +6467,28 @@ feedback
       const url = `${host}/api/feedback/stats`;
       const resp = await fetch(url, { signal: AbortSignal.timeout(5000) });
       if (!resp.ok) {
-        console.error(chalk.red(`Failed to connect to ${url} (HTTP ${resp.status}). Is backend running?`));
+        console.error(
+          chalk.red(`Failed to connect to ${url} (HTTP ${resp.status}). Is backend running?`)
+        );
         process.exit(1);
       }
-      const stats = await resp.json() as Record<string, any>;
- const byStatus = stats.byStatus || {};
- const byType = stats.byType || {};
- const byPriority = stats.byPriority || {};
- console.log(chalk.bold('\n📊 Feedback Summary\n'));
- console.log(chalk.cyan('By Status:'));
- console.log(` 🆕 New: ${byStatus.new || 0} | 🔄 In Progress: ${byStatus.in_progress || 0} | ✅ Done: ${byStatus.done || 0}`);
- console.log(chalk.cyan('\nBy Type:'));
- console.log(` 🐛 Bugs: ${byType.bug || 0} | ✨ Features: ${byType.feature || 0} | 🎨 UX: ${byType.ux || 0} | 📝 Other: ${byType.other || 0}`);
- console.log(chalk.cyan('\nBy Priority:'));
- console.log(` 🔴 Critical: ${byPriority.critical || 0} | 🟠 High: ${byPriority.high || 0} | 🟡 Medium: ${byPriority.medium || 0} | 🟢 Low: ${byPriority.low || 0}`);
+      const stats = (await resp.json()) as Record<string, any>;
+      const byStatus = stats.byStatus || {};
+      const byType = stats.byType || {};
+      const byPriority = stats.byPriority || {};
+      console.log(chalk.bold('\n📊 Feedback Summary\n'));
+      console.log(chalk.cyan('By Status:'));
+      console.log(
+        ` 🆕 New: ${byStatus.new || 0} | 🔄 In Progress: ${byStatus.in_progress || 0} | ✅ Done: ${byStatus.done || 0}`
+      );
+      console.log(chalk.cyan('\nBy Type:'));
+      console.log(
+        ` 🐛 Bugs: ${byType.bug || 0} | ✨ Features: ${byType.feature || 0} | 🎨 UX: ${byType.ux || 0} | 📝 Other: ${byType.other || 0}`
+      );
+      console.log(chalk.cyan('\nBy Priority:'));
+      console.log(
+        ` 🔴 Critical: ${byPriority.critical || 0} | 🟠 High: ${byPriority.high || 0} | 🟡 Medium: ${byPriority.medium || 0} | 🟢 Low: ${byPriority.low || 0}`
+      );
       console.log(chalk.dim(`\n   Total: ${stats.total || 0} items\n`));
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -6296,21 +6497,28 @@ feedback
   });
 
 // Extension commands
-const extensionCmd = program.command('extension').description('Manage TNF extensions (Chrome, VSCode, Tauri)');
+const extensionCmd = program
+  .command('extension')
+  .description('Manage TNF extensions (Chrome, VSCode, Tauri)');
 
-const EXTENSION_REGISTRY: Record<string, { id: string; name: string; type: string; description: string; appDir: string }> = {
+const EXTENSION_REGISTRY: Record<
+  string,
+  { id: string; name: string; type: string; description: string; appDir: string }
+> = {
   chrome: {
     id: 'chrome',
     name: 'Fuse Connect (Chrome)',
     type: 'browser-extension',
-    description: 'Universal AI chat bridge — chat detection, federation channels, multi-node connectivity',
+    description:
+      'Universal AI chat bridge — chat detection, federation channels, multi-node connectivity',
     appDir: 'apps/chrome-extension',
   },
   vscode: {
     id: 'vscode',
     name: 'The New Fuse (VSCode)',
     type: 'vscode-extension',
-    description: 'AI dev assistant with multi-provider LLM, A2A protocol, MCP integration & agent federation',
+    description:
+      'AI dev assistant with multi-provider LLM, A2A protocol, MCP integration & agent federation',
     appDir: 'apps/vscode-extension',
   },
   tauri: {

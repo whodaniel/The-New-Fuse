@@ -8,6 +8,11 @@ import type { NewTask, NewTaskExecution, Task, TaskExecution } from '@the-new-fu
 import { DatabaseService } from '@the-new-fuse/database';
 import type { TaskExecutionLogEntry, TaskExecutionLogPayload } from './task.types';
 
+type TaskScope = {
+  tenantId?: string;
+  workspaceId?: string;
+};
+
 @Injectable()
 export class TaskService {
   private readonly logger = new Logger(TaskService.name);
@@ -60,15 +65,19 @@ export class TaskService {
   /**
    * Get task by ID
    */
-  async getTaskById(taskId: string): Promise<Task | null> {
-    return this.db.tasks.findTaskById(taskId);
+  async getTaskById(taskId: string, scope?: TaskScope): Promise<Task | null> {
+    return this.db.tasks.findTaskById(taskId, scope);
   }
 
   /**
    * Get task by ID scoped to a specific user.
    */
-  async getTaskByIdForUser(taskId: string, userId: string): Promise<Task | null> {
-    const task = await this.getTaskById(taskId);
+  async getTaskByIdForUser(
+    taskId: string,
+    userId: string,
+    scope?: TaskScope
+  ): Promise<Task | null> {
+    const task = await this.getTaskById(taskId, scope);
     if (!task) return null;
     return task.userId === userId ? task : null;
   }
@@ -85,12 +94,19 @@ export class TaskService {
    */
   async listTasks(
     userId: string,
-    options?: { status?: string; page?: number; limit?: number }
+    options?: {
+      status?: string;
+      page?: number;
+      limit?: number;
+      tenantId?: string;
+      workspaceId?: string;
+    }
   ): Promise<{ tasks: Task[]; total: number }> {
-    const { status, page = 1, limit = 20 } = options || {};
+    const { status, page = 1, limit = 20, tenantId, workspaceId } = options || {};
+    const scope: TaskScope = { tenantId, workspaceId };
     const allTasks = status
-      ? await this.db.tasks.findTasksByStatus(status, userId)
-      : await this.db.tasks.findTasksByUserId(userId);
+      ? await this.db.tasks.findTasksByStatus(status, userId, scope)
+      : await this.db.tasks.findTasksByUserId(userId, scope);
 
     const safePage = Math.max(page, 1);
     const safeLimit = Math.max(limit, 1);

@@ -9,8 +9,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "jsx": "react-jsx",
-    "types": ["jest"],
-    "ignoreDeprecations": "5.0"
+    "types": ["jest"]
   },
   "include": ["src/**/*"],
   "exclude": [

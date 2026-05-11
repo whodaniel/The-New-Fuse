@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit, Optional } from '@nestjs/common';
+import { DatabaseService, sql } from '@the-new-fuse/database';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { DatabaseService, sql } from '@the-new-fuse/database';
 import {
   FeedbackIteration,
   FunctionalLink,
@@ -88,6 +88,11 @@ type NormalizedGithubNarrativeConnection = {
   strength: string;
 };
 
+type LedgerScope = {
+  tenantId?: string;
+  workspaceId?: string;
+};
+
 @Injectable()
 export class UnifiedLedgerService implements OnModuleInit {
   private readonly logger = new Logger(UnifiedLedgerService.name);
@@ -104,8 +109,53 @@ export class UnifiedLedgerService implements OnModuleInit {
     await this.ensureLoaded();
   }
 
+  private normalizeScope(scope?: LedgerScope): LedgerScope {
+    const tenantId =
+      typeof scope?.tenantId === 'string' && scope.tenantId.trim().length > 0
+        ? scope.tenantId.trim()
+        : undefined;
+    const workspaceId =
+      typeof scope?.workspaceId === 'string' && scope.workspaceId.trim().length > 0
+        ? scope.workspaceId.trim()
+        : undefined;
+    return { tenantId, workspaceId };
+  }
+
+  private isScopeMatch(
+    entity: { tenantId?: string; workspaceId?: string } | null | undefined,
+    scope?: LedgerScope
+  ): boolean {
+    const normalized = this.normalizeScope(scope);
+    if (!normalized.tenantId && !normalized.workspaceId) {
+      return true;
+    }
+
+    const entityTenantId =
+      typeof entity?.tenantId === 'string' && entity.tenantId.trim().length > 0
+        ? entity.tenantId.trim()
+        : undefined;
+    const entityWorkspaceId =
+      typeof entity?.workspaceId === 'string' && entity.workspaceId.trim().length > 0
+        ? entity.workspaceId.trim()
+        : undefined;
+
+    if (normalized.tenantId && entityTenantId && entityTenantId !== normalized.tenantId) {
+      return false;
+    }
+    if (
+      normalized.workspaceId &&
+      entityWorkspaceId &&
+      entityWorkspaceId !== normalized.workspaceId
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   async listRecords(filters?: {
     owner?: string;
+    tenantId?: string;
+    workspaceId?: string;
     kind?: UnifiedRecordKind;
     status?: UnifiedRecordStatus;
     lane?: UnifiedWorkLane;
@@ -118,6 +168,7 @@ export class UnifiedLedgerService implements OnModuleInit {
     if (filters?.owner) {
       rows = rows.filter((r) => r.owner === filters.owner);
     }
+    rows = rows.filter((r) => this.isScopeMatch(r, filters));
     if (filters?.kind) {
       rows = rows.filter((r) => r.kind === filters.kind);
     }
@@ -143,11 +194,16 @@ export class UnifiedLedgerService implements OnModuleInit {
     return rows.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }
 
-  async getRecord(id: string, owner?: string): Promise<UnifiedTaskRecord | null> {
+  async getRecord(
+    id: string,
+    owner?: string,
+    scope?: LedgerScope
+  ): Promise<UnifiedTaskRecord | null> {
     await this.ensureLoaded();
     const record = this.store.records.find((r) => r.id === id) || null;
     if (!record) return null;
     if (owner && record.owner !== owner) return null;
+    if (!this.isScopeMatch(record, scope)) return null;
     return record;
   }
 
@@ -162,6 +218,8 @@ export class UnifiedLedgerService implements OnModuleInit {
       status: input.status || 'submitted',
       priority: input.priority || 'medium',
       owner: input.owner || 'system',
+      tenantId: input.tenantId,
+      workspaceId: input.workspaceId,
       assignee: input.assignee,
       color: input.color,
       startTime: input.startTime,
@@ -206,6 +264,9 @@ export class UnifiedLedgerService implements OnModuleInit {
 
     this.store.records.push(record);
     this.pushEvent({
+      userId: record.owner,
+      tenantId: record.tenantId,
+      workspaceId: record.workspaceId,
       recordId: record.id,
       eventType: 'record_created',
       actor: record.owner,
@@ -218,7 +279,8 @@ export class UnifiedLedgerService implements OnModuleInit {
   async updateRecord(
     id: string,
     patch: Partial<UnifiedTaskRecord>,
-    owner?: string
+    owner?: string,
+    scope?: LedgerScope
   ): Promise<UnifiedTaskRecord | null> {
     await this.ensureLoaded();
     const index = this.store.records.findIndex((r) => r.id === id);
@@ -226,6 +288,9 @@ export class UnifiedLedgerService implements OnModuleInit {
 
     const current = this.store.records[index];
     if (owner && current.owner !== owner) {
+      return null;
+    }
+    if (!this.isScopeMatch(current, scope)) {
       return null;
     }
     const updated: UnifiedTaskRecord = {
@@ -248,6 +313,9 @@ export class UnifiedLedgerService implements OnModuleInit {
     this.store.records[index] = updated;
     this.pushEvent({
       recordId: updated.id,
+      userId: updated.owner,
+      tenantId: updated.tenantId,
+      workspaceId: updated.workspaceId,
       eventType: 'record_updated',
       actor: String((patch.metadata as any)?.actor || 'system'),
       payload: { patchKeys: Object.keys(patch || {}) },
@@ -259,15 +327,19 @@ export class UnifiedLedgerService implements OnModuleInit {
   async voteRecord(
     id: string,
     direction: 'up' | 'down',
-    owner?: string
+    owner?: string,
+    scope?: LedgerScope
   ): Promise<UnifiedTaskRecord | null> {
-    const row = await this.getRecord(id, owner);
+    const row = await this.getRecord(id, owner, scope);
     if (!row) return null;
     const votes = { ...row.votes, [direction]: row.votes[direction] + 1 };
-    const updated = await this.updateRecord(id, { votes }, owner);
+    const updated = await this.updateRecord(id, { votes }, owner, scope);
     if (updated) {
       this.pushEvent({
         recordId: id,
+        userId: updated.owner,
+        tenantId: updated.tenantId,
+        workspaceId: updated.workspaceId,
         eventType: 'record_voted',
         actor: 'ui-user',
         payload: { direction, votes: updated.votes },
@@ -280,15 +352,19 @@ export class UnifiedLedgerService implements OnModuleInit {
   async addFunctionalLink(
     id: string,
     link: Omit<FunctionalLink, 'createdAt'>,
-    owner?: string
+    owner?: string,
+    scope?: LedgerScope
   ): Promise<UnifiedTaskRecord | null> {
-    const row = await this.getRecord(id, owner);
+    const row = await this.getRecord(id, owner, scope);
     if (!row) return null;
     const next: FunctionalLink = { ...link, createdAt: new Date().toISOString() };
-    const updated = await this.updateRecord(id, { links: [...row.links, next] }, owner);
+    const updated = await this.updateRecord(id, { links: [...row.links, next] }, owner, scope);
     if (updated) {
       this.pushEvent({
         recordId: id,
+        userId: updated.owner,
+        tenantId: updated.tenantId,
+        workspaceId: updated.workspaceId,
         eventType: 'functional_link_added',
         actor: 'system',
         payload: { targetId: next.targetId, linkType: next.linkType, weight: next.weight },
@@ -301,9 +377,10 @@ export class UnifiedLedgerService implements OnModuleInit {
   async addFeedbackIteration(
     id: string,
     input: Omit<FeedbackIteration, 'id' | 'createdAt' | 'iteration'> & { iteration?: number },
-    owner?: string
+    owner?: string,
+    scope?: LedgerScope
   ): Promise<UnifiedTaskRecord | null> {
-    const row = await this.getRecord(id, owner);
+    const row = await this.getRecord(id, owner, scope);
     if (!row) return null;
     const nextIteration = input.iteration || row.rag.feedbackIterations.length + 1;
     const feedback: FeedbackIteration = {
@@ -316,10 +393,13 @@ export class UnifiedLedgerService implements OnModuleInit {
       ...row.rag,
       feedbackIterations: [...row.rag.feedbackIterations, feedback],
     };
-    const updated = await this.updateRecord(id, { rag }, owner);
+    const updated = await this.updateRecord(id, { rag }, owner, scope);
     if (updated) {
       this.pushEvent({
         recordId: id,
+        userId: updated.owner,
+        tenantId: updated.tenantId,
+        workspaceId: updated.workspaceId,
         eventType: 'feedback_iteration_added',
         actor: 'system',
         payload: {
@@ -363,7 +443,10 @@ export class UnifiedLedgerService implements OnModuleInit {
     return record;
   }
 
-  async getGrid(owner?: string): Promise<{
+  async getGrid(
+    owner?: string,
+    scope?: LedgerScope
+  ): Promise<{
     total: number;
     byKind: Record<string, number>;
     byStatus: Record<string, number>;
@@ -374,19 +457,20 @@ export class UnifiedLedgerService implements OnModuleInit {
     const rows = owner
       ? this.store.records.filter((record) => record.owner === owner)
       : this.store.records;
+    const scopedRows = rows.filter((record) => this.isScopeMatch(record, scope));
     const byKind: Record<string, number> = {};
     const byStatus: Record<string, number> = {};
     let sumProgress = 0;
     let sumBpm = 0;
 
-    for (const row of rows) {
+    for (const row of scopedRows) {
       byKind[row.kind] = (byKind[row.kind] || 0) + 1;
       byStatus[row.status] = (byStatus[row.status] || 0) + 1;
       sumProgress += row.fractal.progressPercent;
       sumBpm += row.fractal.rhythmBpm;
     }
 
-    const total = rows.length;
+    const total = scopedRows.length;
     return {
       total,
       byKind,
@@ -399,6 +483,8 @@ export class UnifiedLedgerService implements OnModuleInit {
   async listTimelineEvents(params?: {
     userId?: string;
     viewerUserId?: string;
+    tenantId?: string;
+    workspaceId?: string;
     recordId?: string;
     goalId?: string;
     planId?: string;
@@ -420,6 +506,7 @@ export class UnifiedLedgerService implements OnModuleInit {
     const to = params?.dateTo ? this.normalizeTimestamp(params.dateTo) : undefined;
     const storeEvents = this.store.timelineEvents
       .filter((e) => (access.ownerUserId ? e.userId === access.ownerUserId : true))
+      .filter((e) => this.isScopeMatch(e, params))
       .filter((e) => (params?.recordId ? e.recordId === params.recordId : true))
       .filter((e) => (params?.goalId ? e.goalId === params.goalId : true))
       .filter((e) => (params?.planId ? e.planId === params.planId : true))
@@ -429,8 +516,9 @@ export class UnifiedLedgerService implements OnModuleInit {
       .filter((e) => (to ? e.timestamp <= to : true))
       .filter((e) =>
         params?.timelineTrack
-          ? String((e.payload || {}).segment || (e.payload || {}).timelineTrack || '').toLowerCase() ===
-            params.timelineTrack.toLowerCase()
+          ? String(
+              (e.payload || {}).segment || (e.payload || {}).timelineTrack || ''
+            ).toLowerCase() === params.timelineTrack.toLowerCase()
           : true
       );
 
@@ -443,15 +531,25 @@ export class UnifiedLedgerService implements OnModuleInit {
       eventType: params?.eventType,
     });
 
-    return [...storeEvents, ...librarianEvents].sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+    return [...storeEvents, ...librarianEvents].sort((a, b) =>
+      b.timestamp.localeCompare(a.timestamp)
+    );
   }
 
-  async getTimelineEvent(id: string, userId?: string): Promise<TimelineEvent | null> {
+  async getTimelineEvent(
+    id: string,
+    userId?: string,
+    scope?: LedgerScope
+  ): Promise<TimelineEvent | null> {
     await this.ensureLoaded();
     const event = this.store.timelineEvents.find((e) => e.id === id) || null;
     if (event) {
-      const access = await this.resolveTimelineAccess(userId || null, event.userId || userId || null);
+      const access = await this.resolveTimelineAccess(
+        userId || null,
+        event.userId || userId || null
+      );
       if (!access.allowed) return null;
+      if (!this.isScopeMatch(event, scope)) return null;
       return event;
     }
 
@@ -460,6 +558,8 @@ export class UnifiedLedgerService implements OnModuleInit {
 
   async createTimelineEvent(input: {
     userId?: string;
+    tenantId?: string;
+    workspaceId?: string;
     recordId?: string;
     goalId?: string;
     planId?: string;
@@ -476,6 +576,8 @@ export class UnifiedLedgerService implements OnModuleInit {
     const eventType = this.validateEventType(input.eventType);
     const deduped = this.findDuplicateTimelineEvent({
       userId: input.userId,
+      tenantId: input.tenantId,
+      workspaceId: input.workspaceId,
       recordId: input.recordId,
       goalId: input.goalId,
       planId: input.planId,
@@ -490,6 +592,8 @@ export class UnifiedLedgerService implements OnModuleInit {
     const event: TimelineEvent = {
       id: `evt_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
       userId: input.userId,
+      tenantId: input.tenantId,
+      workspaceId: input.workspaceId,
       recordId: input.recordId,
       goalId: input.goalId,
       planId: input.planId,
@@ -660,7 +764,10 @@ export class UnifiedLedgerService implements OnModuleInit {
         const timestamp = this.normalizeGithubEventTimestamp(event?.date, normalizedGeneratedAt);
         const evidenceRefs = this.extractGithubEvidenceRefs(event?.evidence);
         const narrativeNodeRefs = this.extractGithubNodeRefs(event, evidenceRefs);
-        const narrativeConnections = this.matchGithubConnections(narrativeNodeRefs, connectionIndex);
+        const narrativeConnections = this.matchGithubConnections(
+          narrativeNodeRefs,
+          connectionIndex
+        );
         matchedConnectionCount += narrativeConnections.length;
         const payload = {
           title,
@@ -910,10 +1017,13 @@ export class UnifiedLedgerService implements OnModuleInit {
     id: string,
     patch: {
       userId?: string;
+      tenantId?: string;
+      workspaceId?: string;
       actor?: string;
       timestamp?: string;
       payload?: Record<string, unknown>;
-    }
+    },
+    scope?: LedgerScope
   ): Promise<TimelineEvent | null> {
     await this.ensureLoaded();
     const idx = this.store.timelineEvents.findIndex((e) => e.id === id);
@@ -922,8 +1032,19 @@ export class UnifiedLedgerService implements OnModuleInit {
     if (patch.userId && current.userId !== patch.userId) {
       return null;
     }
+    if (!this.isScopeMatch(current, scope)) {
+      return null;
+    }
+    if (patch.tenantId && current.tenantId && current.tenantId !== patch.tenantId) {
+      return null;
+    }
+    if (patch.workspaceId && current.workspaceId && current.workspaceId !== patch.workspaceId) {
+      return null;
+    }
     const updated: TimelineEvent = {
       ...current,
+      tenantId: patch.tenantId ?? current.tenantId,
+      workspaceId: patch.workspaceId ?? current.workspaceId,
       actor: patch.actor || current.actor,
       timestamp: patch.timestamp ? this.normalizeTimestamp(patch.timestamp) : current.timestamp,
       payload: patch.payload ? { ...current.payload, ...patch.payload } : current.payload,
@@ -933,12 +1054,15 @@ export class UnifiedLedgerService implements OnModuleInit {
     return updated;
   }
 
-  async deleteTimelineEvent(id: string, userId?: string): Promise<boolean> {
+  async deleteTimelineEvent(id: string, userId?: string, scope?: LedgerScope): Promise<boolean> {
     await this.ensureLoaded();
     const idx = this.store.timelineEvents.findIndex((e) => e.id === id);
     if (idx < 0) return false;
     const current = this.store.timelineEvents[idx];
     if (userId && current.userId !== userId) {
+      return false;
+    }
+    if (!this.isScopeMatch(current, scope)) {
       return false;
     }
     this.store.timelineEvents.splice(idx, 1);
@@ -950,6 +1074,8 @@ export class UnifiedLedgerService implements OnModuleInit {
     title: string;
     description: string;
     owner?: string;
+    tenantId?: string;
+    workspaceId?: string;
     linkedRecordIds?: string[];
   }): Promise<GoalRecord> {
     await this.ensureLoaded();
@@ -960,6 +1086,8 @@ export class UnifiedLedgerService implements OnModuleInit {
       description: input.description,
       status: 'active',
       owner: input.owner || 'system',
+      tenantId: input.tenantId,
+      workspaceId: input.workspaceId,
       linkedRecordIds: input.linkedRecordIds || [],
       milestones: [],
       createdAt: now,
@@ -967,6 +1095,9 @@ export class UnifiedLedgerService implements OnModuleInit {
     };
     this.store.goals.push(goal);
     this.pushEvent({
+      userId: goal.owner,
+      tenantId: goal.tenantId,
+      workspaceId: goal.workspaceId,
       goalId: goal.id,
       eventType: 'goal_created',
       actor: goal.owner,
@@ -976,18 +1107,24 @@ export class UnifiedLedgerService implements OnModuleInit {
     return goal;
   }
 
-  async listGoals(filters?: { owner?: string }): Promise<GoalRecord[]> {
+  async listGoals(filters?: {
+    owner?: string;
+    tenantId?: string;
+    workspaceId?: string;
+  }): Promise<GoalRecord[]> {
     await this.ensureLoaded();
     return [...this.store.goals]
       .filter((g) => (filters?.owner ? g.owner === filters.owner : true))
+      .filter((g) => this.isScopeMatch(g, filters))
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }
 
-  async getGoal(goalId: string, owner?: string): Promise<GoalRecord | null> {
+  async getGoal(goalId: string, owner?: string, scope?: LedgerScope): Promise<GoalRecord | null> {
     await this.ensureLoaded();
     const goal = this.store.goals.find((g) => g.id === goalId) || null;
     if (!goal) return null;
     if (owner && goal.owner !== owner) return null;
+    if (!this.isScopeMatch(goal, scope)) return null;
     return goal;
   }
 
@@ -995,13 +1132,15 @@ export class UnifiedLedgerService implements OnModuleInit {
     goalId: string,
     recordId: string,
     actor = 'system',
-    owner?: string
+    owner?: string,
+    scope?: LedgerScope
   ): Promise<GoalRecord | null> {
     await this.ensureLoaded();
     const idx = this.store.goals.findIndex((g) => g.id === goalId);
     if (idx < 0) return null;
     const current = this.store.goals[idx];
     if (owner && current.owner !== owner) return null;
+    if (!this.isScopeMatch(current, scope)) return null;
     const linkedRecordIds = current.linkedRecordIds.includes(recordId)
       ? current.linkedRecordIds
       : [...current.linkedRecordIds, recordId];
@@ -1012,6 +1151,9 @@ export class UnifiedLedgerService implements OnModuleInit {
     };
     this.store.goals[idx] = updated;
     this.pushEvent({
+      userId: updated.owner,
+      tenantId: updated.tenantId,
+      workspaceId: updated.workspaceId,
       goalId,
       recordId,
       eventType: 'goal_linked',
@@ -1029,13 +1171,15 @@ export class UnifiedLedgerService implements OnModuleInit {
       title: string;
       dueAt?: string;
       status?: 'pending' | 'in_progress' | 'completed' | 'blocked';
-    }
+    },
+    scope?: LedgerScope
   ): Promise<GoalRecord | null> {
     await this.ensureLoaded();
     const idx = this.store.goals.findIndex((g) => g.id === goalId);
     if (idx < 0) return null;
     const current = this.store.goals[idx];
     if (input.owner && current.owner !== input.owner) return null;
+    if (!this.isScopeMatch(current, scope)) return null;
     const milestone = {
       id: `ms_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`,
       title: input.title,
@@ -1049,6 +1193,9 @@ export class UnifiedLedgerService implements OnModuleInit {
     };
     this.store.goals[idx] = updated;
     this.pushEvent({
+      userId: updated.owner,
+      tenantId: updated.tenantId,
+      workspaceId: updated.workspaceId,
       goalId,
       eventType: 'milestone_updated',
       actor: input.owner || 'system',
@@ -1066,13 +1213,15 @@ export class UnifiedLedgerService implements OnModuleInit {
       title?: string;
       dueAt?: string;
       status?: 'pending' | 'in_progress' | 'completed' | 'blocked';
-    }
+    },
+    scope?: LedgerScope
   ): Promise<GoalRecord | null> {
     await this.ensureLoaded();
     const idx = this.store.goals.findIndex((g) => g.id === goalId);
     if (idx < 0) return null;
     const current = this.store.goals[idx];
     if (patch.owner && current.owner !== patch.owner) return null;
+    if (!this.isScopeMatch(current, scope)) return null;
     const milestones = current.milestones.map((m) =>
       m.id === milestoneId
         ? {
@@ -1091,6 +1240,9 @@ export class UnifiedLedgerService implements OnModuleInit {
     };
     this.store.goals[idx] = updated;
     this.pushEvent({
+      userId: updated.owner,
+      tenantId: updated.tenantId,
+      workspaceId: updated.workspaceId,
       goalId,
       eventType: 'milestone_updated',
       actor: patch.owner || 'system',
@@ -1103,13 +1255,15 @@ export class UnifiedLedgerService implements OnModuleInit {
   async removeGoalMilestone(
     goalId: string,
     milestoneId: string,
-    owner?: string
+    owner?: string,
+    scope?: LedgerScope
   ): Promise<GoalRecord | null> {
     await this.ensureLoaded();
     const idx = this.store.goals.findIndex((g) => g.id === goalId);
     if (idx < 0) return null;
     const current = this.store.goals[idx];
     if (owner && current.owner !== owner) return null;
+    if (!this.isScopeMatch(current, scope)) return null;
     const milestones = current.milestones.filter((m) => m.id !== milestoneId);
     if (milestones.length === current.milestones.length) return null;
     const updated: GoalRecord = {
@@ -1119,6 +1273,9 @@ export class UnifiedLedgerService implements OnModuleInit {
     };
     this.store.goals[idx] = updated;
     this.pushEvent({
+      userId: updated.owner,
+      tenantId: updated.tenantId,
+      workspaceId: updated.workspaceId,
       goalId,
       eventType: 'milestone_updated',
       actor: owner || 'system',
@@ -1132,6 +1289,8 @@ export class UnifiedLedgerService implements OnModuleInit {
     name: string;
     objective: string;
     owner?: string;
+    tenantId?: string;
+    workspaceId?: string;
     linkedGoalIds?: string[];
     linkedRecordIds?: string[];
     cadence?: { cycleDays?: number; reviewBpm?: number; progressPercent?: number };
@@ -1143,6 +1302,8 @@ export class UnifiedLedgerService implements OnModuleInit {
       name: input.name,
       objective: input.objective,
       owner: input.owner || 'system',
+      tenantId: input.tenantId,
+      workspaceId: input.workspaceId,
       status: 'active',
       linkedGoalIds: input.linkedGoalIds || [],
       linkedRecordIds: input.linkedRecordIds || [],
@@ -1156,6 +1317,9 @@ export class UnifiedLedgerService implements OnModuleInit {
     };
     this.store.plans.push(plan);
     this.pushEvent({
+      userId: plan.owner,
+      tenantId: plan.tenantId,
+      workspaceId: plan.workspaceId,
       planId: plan.id,
       eventType: 'plan_created',
       actor: plan.owner,
@@ -1165,47 +1329,66 @@ export class UnifiedLedgerService implements OnModuleInit {
     return plan;
   }
 
-  async listPlans(filters?: { owner?: string }): Promise<ProjectPlanRecord[]> {
+  async listPlans(filters?: {
+    owner?: string;
+    tenantId?: string;
+    workspaceId?: string;
+  }): Promise<ProjectPlanRecord[]> {
     await this.ensureLoaded();
     return [...this.store.plans]
       .filter((p) => (filters?.owner ? p.owner === filters.owner : true))
+      .filter((p) => this.isScopeMatch(p, filters))
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }
 
-  async getPlan(planId: string, owner?: string): Promise<ProjectPlanRecord | null> {
+  async getPlan(
+    planId: string,
+    owner?: string,
+    scope?: LedgerScope
+  ): Promise<ProjectPlanRecord | null> {
     await this.ensureLoaded();
     const plan = this.store.plans.find((p) => p.id === planId) || null;
     if (!plan) return null;
     if (owner && plan.owner !== owner) return null;
+    if (!this.isScopeMatch(plan, scope)) return null;
     return plan;
   }
 
   async getRecordConnections(
     recordId: string,
-    owner?: string
+    owner?: string,
+    scope?: LedgerScope
   ): Promise<{
     goals: GoalRecord[];
     plans: ProjectPlanRecord[];
   }> {
     await this.ensureLoaded();
     const goals = this.store.goals.filter(
-      (g) => g.linkedRecordIds.includes(recordId) && (!owner || g.owner === owner)
+      (g) =>
+        g.linkedRecordIds.includes(recordId) &&
+        (!owner || g.owner === owner) &&
+        this.isScopeMatch(g, scope)
     );
     const plans = this.store.plans.filter(
-      (p) => p.linkedRecordIds.includes(recordId) && (!owner || p.owner === owner)
+      (p) =>
+        p.linkedRecordIds.includes(recordId) &&
+        (!owner || p.owner === owner) &&
+        this.isScopeMatch(p, scope)
     );
     return { goals, plans };
   }
 
   async linkPlan(
     planId: string,
-    input: { owner?: string; goalId?: string; recordId?: string; actor?: string }
+    input: { owner?: string; goalId?: string; recordId?: string; actor?: string },
+    scope?: LedgerScope
   ): Promise<ProjectPlanRecord | null> {
     await this.ensureLoaded();
     const idx = this.store.plans.findIndex((p) => p.id === planId);
     if (idx < 0) return null;
     const current = this.store.plans[idx];
     if (input.owner && current.owner !== input.owner) return null;
+    if (!this.isScopeMatch(current, scope)) return null;
     const linkedGoalIds = input.goalId
       ? current.linkedGoalIds.includes(input.goalId)
         ? current.linkedGoalIds
@@ -1224,6 +1407,9 @@ export class UnifiedLedgerService implements OnModuleInit {
     };
     this.store.plans[idx] = updated;
     this.pushEvent({
+      userId: updated.owner,
+      tenantId: updated.tenantId,
+      workspaceId: updated.workspaceId,
       planId,
       goalId: input.goalId,
       recordId: input.recordId,
@@ -1324,7 +1510,10 @@ export class UnifiedLedgerService implements OnModuleInit {
 
   private async resolvePrivateTimelineOwnerUserId(): Promise<string | null> {
     const now = Date.now();
-    if (this.cachedPrivateTimelineOwnerResolvedAt > 0 && now - this.cachedPrivateTimelineOwnerResolvedAt < 5 * 60_000) {
+    if (
+      this.cachedPrivateTimelineOwnerResolvedAt > 0 &&
+      now - this.cachedPrivateTimelineOwnerResolvedAt < 5 * 60_000
+    ) {
       return this.cachedPrivateTimelineOwnerUserId;
     }
 
@@ -1374,7 +1563,9 @@ export class UnifiedLedgerService implements OnModuleInit {
     return 'Identity';
   }
 
-  private async loadGithubNarrativeReport(input: GithubNarrativeImportInput): Promise<GithubNarrativeReport> {
+  private async loadGithubNarrativeReport(
+    input: GithubNarrativeImportInput
+  ): Promise<GithubNarrativeReport> {
     if (input.report && typeof input.report === 'object') {
       return input.report as GithubNarrativeReport;
     }
@@ -1400,10 +1591,22 @@ export class UnifiedLedgerService implements OnModuleInit {
     push(explicitPath);
     push(process.env.GITHUB_HISTORY_NARRATIVE_PATH);
     push(path.join(process.cwd(), 'github-history', 'whodaniel-github-history-narrative.json'));
-    push(path.join(process.cwd(), '..', 'github-history', 'whodaniel-github-history-narrative.json'));
-    push(path.join(process.cwd(), '..', '..', 'github-history', 'whodaniel-github-history-narrative.json'));
+    push(
+      path.join(process.cwd(), '..', 'github-history', 'whodaniel-github-history-narrative.json')
+    );
+    push(
+      path.join(
+        process.cwd(),
+        '..',
+        '..',
+        'github-history',
+        'whodaniel-github-history-narrative.json'
+      )
+    );
     if (process.env.HOME) {
-      push(path.join(process.env.HOME, 'github-history', 'whodaniel-github-history-narrative.json'));
+      push(
+        path.join(process.env.HOME, 'github-history', 'whodaniel-github-history-narrative.json')
+      );
     }
 
     for (const candidate of candidateSet) {
@@ -1423,10 +1626,12 @@ export class UnifiedLedgerService implements OnModuleInit {
   private normalizeTimelineId(input?: string): string {
     const raw = (input || '').trim();
     if (!raw) return 'github_history';
-    return raw
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '_')
-      .replace(/^_+|_+$/g, '') || 'github_history';
+    return (
+      raw
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '') || 'github_history'
+    );
   }
 
   private normalizeOptionalTimestamp(input?: string): string | null {
@@ -1517,7 +1722,9 @@ export class UnifiedLedgerService implements OnModuleInit {
     const fromNarrative = Array.isArray(report.narrative_connections)
       ? report.narrative_connections
       : [];
-    const fromConnectionEdges = Array.isArray(report.connection_edges) ? report.connection_edges : [];
+    const fromConnectionEdges = Array.isArray(report.connection_edges)
+      ? report.connection_edges
+      : [];
     const combined = [...fromNarrative, ...fromConnectionEdges];
     const deduped = new Map<string, NormalizedGithubNarrativeConnection>();
 
@@ -1544,7 +1751,9 @@ export class UnifiedLedgerService implements OnModuleInit {
     const to = this.normalizeGithubNodeId(payload.to);
     if (!from || !to) return null;
 
-    const connectionType = String(payload.connection_type || payload.connectionType || payload.type || 'related')
+    const connectionType = String(
+      payload.connection_type || payload.connectionType || payload.type || 'related'
+    )
       .trim()
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '_')
@@ -1673,7 +1882,9 @@ export class UnifiedLedgerService implements OnModuleInit {
 
   private safeJsonStringArray(input: unknown): string[] {
     if (!Array.isArray(input)) return [];
-    return input.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
+    return input.filter(
+      (item): item is string => typeof item === 'string' && item.trim().length > 0
+    );
   }
 
   private mapLibrarianRowsToTimelineEvents(
@@ -1714,8 +1925,7 @@ export class UnifiedLedgerService implements OnModuleInit {
             source: 'librarian.timeline_event',
             canonicalEventId: row.canonical_event_id,
             assetRefs,
-            folderName:
-              typeof metadata.folder_name === 'string' ? metadata.folder_name : undefined,
+            folderName: typeof metadata.folder_name === 'string' ? metadata.folder_name : undefined,
             sourceExternalRef:
               typeof metadata.source_external_ref === 'string'
                 ? metadata.source_external_ref
@@ -1832,7 +2042,9 @@ export class UnifiedLedgerService implements OnModuleInit {
       const ownerFromMetadata =
         typeof metadata.owner_user_id === 'string'
           ? metadata.owner_user_id
-          : (metadata.source_family === 'apple_notes' ? privateOwnerUserId : null);
+          : metadata.source_family === 'apple_notes'
+            ? privateOwnerUserId
+            : null;
       if (!ownerFromMetadata) return null;
 
       const access = await this.resolveTimelineAccess(viewerUserId, ownerFromMetadata);
@@ -1841,7 +2053,9 @@ export class UnifiedLedgerService implements OnModuleInit {
       const mapped = this.mapLibrarianRowsToTimelineEvents([row], access.ownerUserId);
       return mapped[0] || null;
     } catch (error) {
-      this.logger.warn(`Failed loading librarian timeline event ${id}: ${(error as Error).message}`);
+      this.logger.warn(
+        `Failed loading librarian timeline event ${id}: ${(error as Error).message}`
+      );
       return null;
     }
   }
@@ -2141,6 +2355,8 @@ export class UnifiedLedgerService implements OnModuleInit {
 
   private validateTimelineRefs(input: {
     userId?: string;
+    tenantId?: string;
+    workspaceId?: string;
     recordId?: string;
     goalId?: string;
     planId?: string;
@@ -2165,6 +2381,8 @@ export class UnifiedLedgerService implements OnModuleInit {
 
   private findDuplicateTimelineEvent(candidate: {
     userId?: string;
+    tenantId?: string;
+    workspaceId?: string;
     recordId?: string;
     goalId?: string;
     planId?: string;
@@ -2177,6 +2395,8 @@ export class UnifiedLedgerService implements OnModuleInit {
     const payloadKey = JSON.stringify(candidate.payload || {});
     const existing = this.store.timelineEvents.find((e) => {
       if ((e.userId || '') !== (candidate.userId || '')) return false;
+      if ((e.tenantId || '') !== (candidate.tenantId || '')) return false;
+      if ((e.workspaceId || '') !== (candidate.workspaceId || '')) return false;
       if (e.recordId !== candidate.recordId) return false;
       if (e.goalId !== candidate.goalId) return false;
       if (e.planId !== candidate.planId) return false;

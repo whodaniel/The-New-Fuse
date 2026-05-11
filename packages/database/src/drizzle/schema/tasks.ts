@@ -6,6 +6,7 @@ import { jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-c
 import { agents } from './agents.js';
 import { pipelineStatusEnum, taskPriorityEnum, taskStatusEnum } from './enums.js';
 import { users } from './users.js';
+import { workspaces } from './workspace.js';
 
 // =============================================================================
 // PIPELINE
@@ -20,6 +21,8 @@ export const pipelines = pgTable('pipelines', {
   userId: uuid('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
+  tenantId: varchar('tenant_id', { length: 255 }),
+  workspaceId: text('workspace_id').references(() => workspaces.id, { onDelete: 'set null' }),
   agentId: uuid('agent_id')
     .notNull()
     .references(() => agents.id),
@@ -49,6 +52,8 @@ export const tasks = pgTable('tasks', {
   userId: uuid('user_id')
     .notNull()
     .references(() => users.id),
+  tenantId: varchar('tenant_id', { length: 255 }),
+  workspaceId: text('workspace_id').references(() => workspaces.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
   deletedAt: timestamp('deleted_at'),
@@ -64,6 +69,9 @@ export const taskExecutions = pgTable('task_executions', {
   taskId: uuid('task_id')
     .notNull()
     .references(() => tasks.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+  tenantId: varchar('tenant_id', { length: 255 }),
+  workspaceId: text('workspace_id').references(() => workspaces.id, { onDelete: 'set null' }),
   status: varchar('status', { length: 50 }).notNull(),
   output: jsonb('output'),
   error: text('error'),

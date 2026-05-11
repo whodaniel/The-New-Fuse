@@ -11,8 +11,7 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "declaration": true,
-    "types": ["node", "express", "ws"],
-    "ignoreDeprecations": "5.0"
+    "types": ["node", "express", "ws"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

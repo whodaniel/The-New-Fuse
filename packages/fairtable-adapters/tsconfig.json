@@ -8,8 +8,7 @@
     "declaration": true,
     "declarationMap": true,
     "jsx": "react-jsx",
-    "types": ["node"],
-    "ignoreDeprecations": "5.0"
+    "types": ["node"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.*"],

@@ -17,6 +17,7 @@ export * from './chat.js';
 export * from './code-execution.js';
 export * from './configuration.js';
 export * from './entitlements.js';
+export * from './feedback.js';
 export * from './jules.js';
 export * from './marketplace.js';
 export * from './mass.js';

@@ -1,53 +1,53 @@
 {
-  "id": "intel_1777953608158",
-  "collectedAt": "2026-05-05T04:00:08.110Z",
+  "id": "intel_1778472008219",
+  "collectedAt": "2026-05-11T04:00:07.942Z",
   "arenaData": [
     {
       "source": "lm-arena-leaderboard",
       "sourceName": "LM Arena (Chatbot Arena)",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard",
-      "collectedAt": "2026-05-05T04:00:12.182Z",
+      "collectedAt": "2026-05-11T04:00:12.087Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 332071
+      "rawLength": 343870
     },
     {
       "source": "lm-arena-vision",
       "sourceName": "LM Arena Vision",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard&category=vision",
-      "collectedAt": "2026-05-05T04:00:14.860Z",
+      "collectedAt": "2026-05-11T04:00:13.575Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 332127
+      "rawLength": 343924
     },
     {
       "source": "lm-arena-hard",
       "sourceName": "LM Arena Hard Prompts",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard&category=hard",
-      "collectedAt": "2026-05-05T04:00:17.427Z",
+      "collectedAt": "2026-05-11T04:00:14.104Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 332123
+      "rawLength": 343919
     },
     {
       "source": "lm-arena-code",
       "sourceName": "LM Arena Coding",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard&category=coding",
-      "collectedAt": "2026-05-05T04:00:19.019Z",
+      "collectedAt": "2026-05-11T04:00:14.747Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 332124
+      "rawLength": 343923
     },
     {
       "source": "agent-arena",
       "sourceName": "Agent Arena",
       "sourceType": "arena",
       "url": "https://agent-arena.com/leaderboard",
-      "collectedAt": "2026-05-05T04:00:21.459Z",
+      "collectedAt": "2026-05-11T04:00:15.477Z",
       "status": "success",
       "rankings": [],
       "rawLength": 862
@@ -57,27 +57,27 @@
       "sourceName": "Artificial Analysis",
       "sourceType": "benchmark",
       "url": "https://artificialanalysis.ai/leaderboard",
-      "collectedAt": "2026-05-05T04:00:25.960Z",
+      "collectedAt": "2026-05-11T04:00:15.677Z",
       "status": "partial",
       "rankings": [],
-      "rawLength": 17077
+      "rawLength": 17470
     },
     {
       "source": "open-llm-leaderboard",
       "sourceName": "Open LLM Leaderboard (HuggingFace)",
       "sourceType": "benchmark",
       "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
-      "collectedAt": "2026-05-05T04:00:28.350Z",
+      "collectedAt": "2026-05-11T04:00:16.089Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 42675
+      "rawLength": 42827
     },
     {
       "source": "aider-leaderboard",
       "sourceName": "Aider Coding Leaderboard",
       "sourceType": "benchmark",
       "url": "https://aider.chat/docs/leaderboards/",
-      "collectedAt": "2026-05-05T04:00:33.009Z",
+      "collectedAt": "2026-05-11T04:00:16.550Z",
       "status": "success",
       "rankings": [
         {
@@ -98,7 +98,7 @@
       "sourceName": "SWE-bench Leaderboard",
       "sourceType": "benchmark",
       "url": "https://www.swebench.com/",
-      "collectedAt": "2026-05-05T04:00:47.950Z",
+      "collectedAt": "2026-05-11T04:00:18.742Z",
       "status": "success",
       "rankings": [
         {
@@ -119,16 +119,14 @@
     {
       "feed": "HuggingFace Blog",
       "url": "https://huggingface.co/blog/feed.xml",
-      "collectedAt": "2026-05-05T04:00:50.131Z",
+      "collectedAt": "2026-05-11T04:00:18.905Z",
       "status": "success",
       "articles": [
         {
           "title": "DeepSeek-V4: a million-token context that agents can actually use",
           "url": "https://huggingface.co/blog/deepseekv4",
-          "publishedAt": "2026-05-05T04:00:50.131Z",
-          "modelMentions": [
-            "deepseek-v4"
-          ],
+          "publishedAt": "2026-05-11T04:00:18.905Z",
+          "modelMentions": ["deepseek-v4"],
           "sentiment": "neutral"
         }
       ]
@@ -136,7 +134,7 @@
     {
       "feed": "OpenAI Blog",
       "url": "https://openai.com/blog/rss.xml",
-      "collectedAt": "2026-05-05T04:00:51.597Z",
+      "collectedAt": "2026-05-11T04:00:19.212Z",
       "status": "error",
       "error": "Invalid URL",
       "articles": []
@@ -144,7 +142,7 @@
     {
       "feed": "Anthropic News",
       "url": "https://www.anthropic.com/rss.xml",
-      "collectedAt": "2026-05-05T04:00:58.233Z",
+      "collectedAt": "2026-05-11T04:00:22.845Z",
       "status": "error",
       "error": "HTTP 404",
       "articles": []
@@ -152,7 +150,7 @@
     {
       "feed": "r/LocalLLaMA",
       "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
-      "collectedAt": "2026-05-05T04:00:59.732Z",
+      "collectedAt": "2026-05-11T04:00:23.023Z",
       "status": "error",
       "error": "HTTP 403",
       "articles": []
@@ -160,7 +158,7 @@
     {
       "feed": "r/MachineLearning",
       "url": "https://www.reddit.com/r/MachineLearning/new/.json",
-      "collectedAt": "2026-05-05T04:01:00.624Z",
+      "collectedAt": "2026-05-11T04:00:23.147Z",
       "status": "error",
       "error": "HTTP 403",
       "articles": []
@@ -169,9 +167,9 @@
   "nvidiaHealth": [
     {
       "model": "z-ai/glm-5.1",
-      "status": "live",
-      "httpStatus": 200,
-      "latencyMs": 5094
+      "status": "timeout",
+      "httpStatus": 0,
+      "latencyMs": null
     },
     {
       "model": "moonshotai/kimi-k2.6",
@@ -187,9 +185,9 @@
     },
     {
       "model": "minimaxai/minimax-m2.5",
-      "status": "timeout",
-      "httpStatus": 0,
-      "latencyMs": null
+      "status": "live",
+      "httpStatus": 200,
+      "latencyMs": 322
     },
     {
       "model": "deepseek-ai/deepseek-v4-flash",
@@ -207,19 +205,19 @@
       "model": "qwen/qwen3.5-397b-a17b",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 3056
+      "latencyMs": 4167
     },
     {
       "model": "qwen/qwen3.5-122b-a10b",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 3141
+      "latencyMs": 4663
     },
     {
       "model": "mistralai/mistral-large-3-675b-instruct-2512",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 1721
+      "latencyMs": 8622
     },
     {
       "model": "mistralai/mistral-medium-3.5-128b",
@@ -229,111 +227,111 @@
     },
     {
       "model": "mistralai/devstral-2-123b-instruct-2512",
-      "status": "live",
-      "httpStatus": 200,
-      "latencyMs": 2392
+      "status": "eol",
+      "httpStatus": 410,
+      "latencyMs": null
     },
     {
       "model": "mistralai/mistral-small-4-119b-2603",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 1558
+      "latencyMs": 396
     },
     {
       "model": "mistralai/magistral-small-2506",
-      "status": "live",
-      "httpStatus": 200,
-      "latencyMs": 2494
+      "status": "eol",
+      "httpStatus": 410,
+      "latencyMs": null
     },
     {
       "model": "mistralai/ministral-14b-instruct-2512",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 2522
+      "latencyMs": 301
     },
     {
       "model": "google/gemma-3n-e4b-it",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 2588
+      "latencyMs": 432
     },
     {
       "model": "google/gemma-3-27b-it",
-      "status": "live",
-      "httpStatus": 200,
-      "latencyMs": 1707
-    },
-    {
-      "model": "meta/llama-4-maverick-17b-128e-instruct",
-      "status": "live",
-      "httpStatus": 200,
-      "latencyMs": 267
-    },
-    {
-      "model": "meta/llama-3.3-70b-instruct",
-      "status": "live",
-      "httpStatus": 200,
-      "latencyMs": 578
-    },
-    {
-      "model": "meta/llama-3.1-405b-instruct",
-      "status": "live",
-      "httpStatus": 200,
-      "latencyMs": 13310
-    },
-    {
-      "model": "meta/llama-3.2-90b-vision-instruct",
-      "status": "live",
-      "httpStatus": 200,
-      "latencyMs": 337
-    },
-    {
-      "model": "meta/llama-guard-4-12b",
-      "status": "live",
-      "httpStatus": 200,
-      "latencyMs": 518
-    },
-    {
-      "model": "openai/gpt-oss-120b",
-      "status": "live",
-      "httpStatus": 200,
-      "latencyMs": 584
-    },
-    {
-      "model": "openai/gpt-oss-20b",
-      "status": "live",
-      "httpStatus": 200,
-      "latencyMs": 729
-    },
-    {
-      "model": "microsoft/phi-4-multimodal-instruct",
-      "status": "live",
-      "httpStatus": 200,
-      "latencyMs": 671
-    },
-    {
-      "model": "microsoft/phi-4-mini-instruct",
       "status": "timeout",
       "httpStatus": 0,
       "latencyMs": null
     },
     {
-      "model": "bytedance/seed-oss-36b-instruct",
+      "model": "meta/llama-4-maverick-17b-128e-instruct",
+      "status": "timeout",
+      "httpStatus": 0,
+      "latencyMs": null
+    },
+    {
+      "model": "meta/llama-3.3-70b-instruct",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 2399
+      "latencyMs": 289
+    },
+    {
+      "model": "meta/llama-3.1-405b-instruct",
+      "status": "eol",
+      "httpStatus": 410,
+      "latencyMs": null
+    },
+    {
+      "model": "meta/llama-3.2-90b-vision-instruct",
+      "status": "live",
+      "httpStatus": 200,
+      "latencyMs": 211
+    },
+    {
+      "model": "meta/llama-guard-4-12b",
+      "status": "live",
+      "httpStatus": 200,
+      "latencyMs": 342
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "status": "live",
+      "httpStatus": 200,
+      "latencyMs": 216
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "status": "live",
+      "httpStatus": 200,
+      "latencyMs": 361
+    },
+    {
+      "model": "microsoft/phi-4-multimodal-instruct",
+      "status": "error",
+      "httpStatus": 400,
+      "latencyMs": null
+    },
+    {
+      "model": "microsoft/phi-4-mini-instruct",
+      "status": "live",
+      "httpStatus": 200,
+      "latencyMs": 383
+    },
+    {
+      "model": "bytedance/seed-oss-36b-instruct",
+      "status": "error",
+      "httpStatus": 400,
+      "latencyMs": null
     },
     {
       "model": "stockmark/stockmark-2-100b-instruct",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 1424
+      "latencyMs": 333
     },
     {
       "model": "abacusai/dracarys-llama-3.1-70b-instruct",
-      "status": "live",
-      "httpStatus": 200,
-      "latencyMs": 1434
+      "status": "timeout",
+      "httpStatus": 0,
+      "latencyMs": null
     },
     {
       "model": "google/gemma-4-31b-it",
@@ -343,51 +341,51 @@
     },
     {
       "model": "moonshotai/kimi-k2-instruct-0905",
-      "status": "timeout",
-      "httpStatus": 0,
+      "status": "eol",
+      "httpStatus": 410,
       "latencyMs": null
     },
     {
       "model": "moonshotai/kimi-k2-thinking",
-      "status": "timeout",
-      "httpStatus": 0,
-      "latencyMs": null
+      "status": "live",
+      "httpStatus": 200,
+      "latencyMs": 8874
     },
     {
       "model": "moonshotai/kimi-k2-instruct",
-      "status": "timeout",
-      "httpStatus": 0,
-      "latencyMs": null
+      "status": "live",
+      "httpStatus": 200,
+      "latencyMs": 847
     },
     {
       "model": "z-ai/glm5",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 11006
+      "latencyMs": 6899
     },
     {
       "model": "z-ai/glm4.7",
-      "status": "live",
-      "httpStatus": 200,
-      "latencyMs": 8602
+      "status": "timeout",
+      "httpStatus": 0,
+      "latencyMs": null
     },
     {
       "model": "qwen/qwen3-coder-480b-a35b-instruct",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 4521
+      "latencyMs": 1661
     },
     {
       "model": "qwen/qwen3-next-80b-a3b-instruct",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 1320
+      "latencyMs": 570
     },
     {
       "model": "qwen/qwen3-next-80b-a3b-thinking",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 1041
+      "latencyMs": 568
     }
   ],
   "summary": {
@@ -398,9 +396,9 @@
     "newsFeedsOk": 1,
     "totalArticles": 1,
     "nvidiaModelsProbed": 37,
-    "nvidiaLive": 26,
+    "nvidiaLive": 20,
     "nvidiaSlow": 11,
-    "nvidiaEol": 0
+    "nvidiaEol": 4
   },
-  "completedAt": "2026-05-05T04:02:40.656Z"
+  "completedAt": "2026-05-11T04:01:40.058Z"
 }
