@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-11T12:06:57.303Z`  
-Handoff ID: `fea8cad3-3654-4145-81ab-a3d45b515605`
+Created At: `2026-05-11T12:44:25.285Z`  
+Handoff ID: `a948453a-9d5c-4e85-99a2-0de098be8399`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `38fe750d12def3ab28960b90686423d2273d2baf`
+- Head SHA: `41ad149d15197848348bf35bceecc3abcb0dcb4f`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -19,21 +19,19 @@ Handoff ID: `fea8cad3-3654-4145-81ab-a3d45b515605`
 
 ## Changed Paths
 
-- .gitignore
-- apps/casin8-games/core-logic/holdem-tournaments/index.mjs
-- apps/casin8-games/security_payments.test.mjs
-- apps/casin8-games/server.hands-hints.test.mjs
-- apps/casin8-games/server.js
-- apps/casin8-games/server.poker-qa.test.mjs
-- apps/casin8-games/server.test.mjs
-- apps/casin8-games/swarm/day8-core-production.test.mjs
-- apps/casin8-games/swarm_g_h_i.test.mjs
-- apps/poker-room/cloudflare-community-api/src/worker.ts
-- apps/poker-room/functions/\_middleware.ts
-- apps/poker-room/functions/api/[[path]].ts
-- apps/poker-room/global.d.ts
-- apps/poker-room/src/App.tsx
-- apps/poker-room/tsconfig.json
+- apps/frontend/docs/audits/experience-architecture-audit.json
+- apps/frontend/docs/audits/experience-architecture-audit.md
+- apps/frontend/docs/audits/navigation-route-audit.json
+- apps/frontend/docs/audits/navigation-route-audit.md
+- apps/frontend/docs/audits/route-guard-audit.json
+- apps/frontend/docs/audits/route-guard-audit.md
+- apps/frontend/docs/audits/sidebar-page-health-audit.json
+- apps/frontend/docs/audits/sidebar-page-health-audit.md
+- apps/frontend/scripts/audit-sidebar-page-health.mjs
+- apps/frontend/src/ComprehensiveRouter.tsx
+- apps/frontend/src/routes/RouterProtection.test.tsx
+- apps/frontend/src/routes/index.ts
+- apps/frontend/src/routes/routes.test.tsx
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
