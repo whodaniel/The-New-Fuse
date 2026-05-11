@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK`  
-Created At: `2026-05-11T18:45:11.566Z`  
-Handoff ID: `60f8bc2b-dabb-4c78-ab35-1573eb299c3d`
+Created At: `2026-05-11T19:06:32.672Z`  
+Handoff ID: `8da47304-efee-40d7-b1d2-933e32f514f4`
 
 ## Scope
 
 - Repository: `The-New-Fuse`
 - Branch: `main`
-- Head SHA: `568dbb66fd0b134b83ffc56037b373d8ce4da412`
+- Head SHA: `de33d61a393f3733556107b5bbffffc9e8d551db`
 - Sensitive Scope: `internal`
 
 ## Work Summary
@@ -19,25 +19,7 @@ Handoff ID: `60f8bc2b-dabb-4c78-ab35-1573eb299c3d`
 
 ## Changed Paths
 
-- apps/frontend/docs/audits/all-routes-semantic-audit.json
-- apps/frontend/docs/audits/all-routes-semantic-audit.md
-- apps/frontend/docs/audits/experience-architecture-audit.json
-- apps/frontend/docs/audits/experience-architecture-audit.md
-- apps/frontend/docs/audits/live-link-crawl.json
-- apps/frontend/docs/audits/live-link-crawl.md
-- apps/frontend/docs/audits/navigation-route-audit.json
-- apps/frontend/docs/audits/navigation-route-audit.md
-- apps/frontend/docs/audits/route-guard-audit.json
-- apps/frontend/docs/audits/route-guard-audit.md
-- apps/frontend/docs/audits/sidebar-page-health-audit.json
-- apps/frontend/docs/audits/sidebar-page-health-audit.md
 - apps/frontend/functions/[[path]].js
-- apps/frontend/scripts/audit-all-routes-semantic.mjs
-- apps/frontend/scripts/audit-live-links.mjs
-- apps/frontend/src/config/sidebarNavigation.ts
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 
 ## Verification
 
