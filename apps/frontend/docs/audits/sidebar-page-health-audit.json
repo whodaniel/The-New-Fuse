@@ -1,23 +1,82 @@
 {
-  "generatedAt": "2026-03-08T00:14:45.063Z",
+  "generatedAt": "2026-05-11T12:35:25.248Z",
   "counts": {
-    "total": 21,
-    "working": 20,
-    "partialMedium": 0,
-    "partialHigh": 1,
+    "total": 56,
+    "working": 51,
+    "partialMedium": 1,
+    "partialHigh": 4,
     "broken": 0
   },
   "results": [
     {
-      "name": "Admin",
+      "name": "Admin Dashboard",
       "route": "/admin",
       "targetRoute": "/admin",
       "component": "ComprehensiveAdminDashboard",
       "file": "pages/Admin/ComprehensiveAdminDashboard.tsx",
       "surface": "admin",
+      "risk": 3,
+      "status": "working",
+      "hits": [
+        {
+          "id": "timeout_simulation",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "name": "Agent Management",
+      "route": "/admin/agent-management",
+      "targetRoute": "/admin/agent-management",
+      "component": "AgentManagementFull",
+      "file": "pages/Admin/AgentManagementFull.tsx",
+      "surface": "admin",
+      "risk": 2,
+      "status": "working",
+      "hits": [
+        {
+          "id": "raw_fetch",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "name": "Agent Skills",
+      "route": "/admin/agents/skills",
+      "targetRoute": "/admin/agents/skills",
+      "component": "AdminAgentSkillsPage",
+      "file": "pages/Admin/Agents/skills.tsx",
+      "surface": "admin",
       "risk": 0,
       "status": "working",
       "hits": []
+    },
+    {
+      "name": "Web Search Providers",
+      "route": "/admin/agents/web-search",
+      "targetRoute": "/admin/agents/web-search",
+      "component": "WebSearchSelection",
+      "file": "pages/Admin/Agents/WebSearchSelection/index.tsx",
+      "surface": "admin",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "API Analytics",
+      "route": "/admin/api-analytics",
+      "targetRoute": "/admin/api-analytics",
+      "component": "APIAnalyticsFull",
+      "file": "pages/Admin/APIAnalyticsFull.tsx",
+      "surface": "admin",
+      "risk": 1,
+      "status": "working",
+      "hits": [
+        {
+          "id": "raw_fetch",
+          "count": 1
+        }
+      ]
     },
     {
       "name": "Audit Logs",
@@ -36,27 +95,245 @@
       ]
     },
     {
-      "name": "Agent Fleet",
-      "route": "/agents",
-      "targetRoute": "/agents",
-      "component": "ErrorBoundary",
-      "file": "components/ErrorBoundary.tsx",
-      "surface": "app",
-      "risk": 158,
+      "name": "Backup & Restore",
+      "route": "/admin/backup-restore",
+      "targetRoute": "/admin/backup-restore",
+      "component": "BackupRestore",
+      "file": "pages/Admin/BackupRestore.tsx",
+      "surface": "admin",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Configuration",
+      "route": "/admin/configuration",
+      "targetRoute": "/admin/configuration",
+      "component": "ConfigurationManagement",
+      "file": "pages/Admin/ConfigurationManagement.tsx",
+      "surface": "admin",
+      "risk": 2,
+      "status": "working",
+      "hits": [
+        {
+          "id": "raw_fetch",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "name": "Super Admin Panel",
+      "route": "/admin/control-panel",
+      "targetRoute": "/admin/control-panel",
+      "component": "SuperAdminControlPanel",
+      "file": "pages/Admin/SuperAdminControlPanel.tsx",
+      "surface": "admin",
+      "risk": 12,
       "status": "partial-high-risk",
       "hits": [
         {
-          "id": "fallback_demo",
-          "count": 78
+          "id": "randomized_behavior",
+          "count": 1
         },
         {
-          "id": "randomized_behavior",
+          "id": "raw_fetch",
+          "count": 10
+        }
+      ]
+    },
+    {
+      "name": "Database",
+      "route": "/admin/database",
+      "targetRoute": "/admin/database",
+      "component": "DatabaseAdminPanel",
+      "file": "pages/Admin/DatabaseAdminPanel.tsx",
+      "surface": "admin",
+      "risk": 1,
+      "status": "working",
+      "hits": [
+        {
+          "id": "raw_fetch",
           "count": 1
         }
       ]
     },
     {
-      "name": "Command Center",
+      "name": "Feature Flags",
+      "route": "/admin/feature-flags",
+      "targetRoute": "/admin/feature-flags",
+      "component": "AdminFeatureFlags",
+      "file": "pages/Admin/FeatureFlags.tsx",
+      "surface": "admin",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Admin Layout",
+      "route": "/admin/layout",
+      "targetRoute": "/admin/layout",
+      "component": "LazyPage",
+      "file": "ComprehensiveRouter.tsx",
+      "surface": "admin",
+      "risk": 72,
+      "status": "partial-high-risk",
+      "hits": [
+        {
+          "id": "fallback_demo",
+          "count": 36
+        }
+      ]
+    },
+    {
+      "name": "Admin Marketplace",
+      "route": "/admin/marketplace",
+      "targetRoute": "/admin/marketplace",
+      "component": "MarketplaceDashboard",
+      "file": "pages/Marketplace/index.tsx",
+      "surface": "admin",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "OpenClaw Security",
+      "route": "/admin/openclaw-security",
+      "targetRoute": "/admin/openclaw-security",
+      "component": "OpenClawSecurity",
+      "file": "pages/Admin/OpenClawSecurity.tsx",
+      "surface": "admin",
+      "risk": 1,
+      "status": "working",
+      "hits": [
+        {
+          "id": "timeout_simulation",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "name": "Port Management",
+      "route": "/admin/port-management",
+      "targetRoute": "/admin/port-management",
+      "component": "AdminPortManagement",
+      "file": "pages/Admin/PortManagement.tsx",
+      "surface": "admin",
+      "risk": 2,
+      "status": "working",
+      "hits": [
+        {
+          "id": "raw_fetch",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "name": "Admin Settings",
+      "route": "/admin/settings",
+      "targetRoute": "/admin/settings",
+      "component": "AdminSettings",
+      "file": "pages/Admin/AdminSettings.tsx",
+      "surface": "admin",
+      "risk": 3,
+      "status": "working",
+      "hits": [
+        {
+          "id": "timeout_simulation",
+          "count": 1
+        },
+        {
+          "id": "raw_fetch",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "name": "System Health",
+      "route": "/admin/system-health",
+      "targetRoute": "/admin/system-health",
+      "component": "SystemHealth",
+      "file": "pages/Admin/SystemHealth.tsx",
+      "surface": "admin",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "System Metrics",
+      "route": "/admin/system-metrics",
+      "targetRoute": "/admin/system-metrics",
+      "component": "SystemMetricsDashboard",
+      "file": "pages/Admin/SystemMetricsDashboard.tsx",
+      "surface": "admin",
+      "risk": 3,
+      "status": "working",
+      "hits": [
+        {
+          "id": "fallback_demo",
+          "count": 1
+        },
+        {
+          "id": "raw_fetch",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "name": "User Management (Full)",
+      "route": "/admin/user-management",
+      "targetRoute": "/admin/user-management",
+      "component": "UserManagementFull",
+      "file": "pages/Admin/UserManagementFull.tsx",
+      "surface": "admin",
+      "risk": 6,
+      "status": "partial-medium-risk",
+      "hits": [
+        {
+          "id": "raw_fetch",
+          "count": 6
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "route": "/admin/users",
+      "targetRoute": "/admin/users",
+      "component": "AdminUserManagement",
+      "file": "pages/Admin/UserManagement.tsx",
+      "surface": "admin",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Workspaces",
+      "route": "/admin/workspaces",
+      "targetRoute": "/admin/workspaces",
+      "component": "WorkspaceManagement",
+      "file": "pages/Admin/WorkspaceManagement.tsx",
+      "surface": "admin",
+      "risk": 3,
+      "status": "working",
+      "hits": [
+        {
+          "id": "raw_fetch",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "name": "Agent Fleet",
+      "route": "/agents",
+      "targetRoute": "/agents",
+      "component": "AgentsPage",
+      "file": "pages/AgentsRevolution.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "AI Command Center",
       "route": "/ai-command-center",
       "targetRoute": "/ai-command-center",
       "component": "AICommandCenter",
@@ -83,11 +360,44 @@
       ]
     },
     {
+      "name": "Surface Map",
+      "route": "/all-pages",
+      "targetRoute": "/all-pages",
+      "component": "AllPages",
+      "file": "pages/AllPages.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
       "name": "Analytics",
       "route": "/analytics",
       "targetRoute": "/analytics",
       "component": "Analytics",
       "file": "pages/dashboard/Analytics.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Billing",
+      "route": "/billing",
+      "targetRoute": "/billing",
+      "component": "MembershipPage",
+      "file": "pages/Membership.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Build Info",
+      "route": "/build-info",
+      "targetRoute": "/build-info",
+      "component": "BuildInfoPage",
+      "file": "pages/BuildInfo.tsx",
       "surface": "app",
       "risk": 0,
       "status": "working",
@@ -105,7 +415,18 @@
       "hits": []
     },
     {
-      "name": "Dashboard",
+      "name": "Command Center",
+      "route": "/command-center",
+      "targetRoute": "/command-center",
+      "component": "CommandCore",
+      "file": "pages/CommandCore.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Workspace",
       "route": "/dashboard",
       "targetRoute": "/dashboard",
       "component": "Dashboard",
@@ -143,6 +464,17 @@
       "hits": []
     },
     {
+      "name": "General Settings",
+      "route": "/general-settings",
+      "targetRoute": "/general-settings",
+      "component": "GeneralSettings",
+      "file": "pages/GeneralSettings/index.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
       "name": "TNF Hub",
       "route": "/hub",
       "targetRoute": "/hub",
@@ -170,15 +502,36 @@
       ]
     },
     {
-      "name": "Platform",
+      "name": "Live View",
+      "route": "/live-view",
+      "targetRoute": "/live-view",
+      "component": "LiveViewPage",
+      "file": "pages/LiveView.tsx",
+      "surface": "app",
+      "risk": 2,
+      "status": "working",
+      "hits": [
+        {
+          "id": "randomized_behavior",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "name": "Marketplace",
       "route": "/marketplace",
       "targetRoute": "/marketplace",
       "component": "MarketplacePublicPage",
       "file": "pages/Marketplace/MarketplacePublicPage.tsx",
       "surface": "app",
-      "risk": 0,
+      "risk": 4,
       "status": "working",
-      "hits": []
+      "hits": [
+        {
+          "id": "fallback_demo",
+          "count": 2
+        }
+      ]
     },
     {
       "name": "MCP Hub",
@@ -186,6 +539,17 @@
       "targetRoute": "/mcp-hub",
       "component": "MCPHub",
       "file": "pages/mcp/MCPHub.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Nexus 3D",
+      "route": "/nexus",
+      "targetRoute": "/nexus",
+      "component": "NexusVisualizer",
+      "file": "pages/SystemObservatory.tsx",
       "surface": "app",
       "risk": 0,
       "status": "working",
@@ -203,11 +567,66 @@
       "hits": []
     },
     {
-      "name": "Settings",
+      "name": "Platform Parity",
+      "route": "/platform-parity",
+      "targetRoute": "/platform-parity",
+      "component": "PlatformParityDashboard",
+      "file": "pages/Parity/PlatformParityDashboard.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "General",
       "route": "/settings",
       "targetRoute": "/settings",
       "component": "Settings",
       "file": "pages/Settings.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "API Keys",
+      "route": "/settings/api",
+      "targetRoute": "/settings/api",
+      "component": "SettingsAPI",
+      "file": "pages/settings/API.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Appearance",
+      "route": "/settings/appearance",
+      "targetRoute": "/settings/appearance",
+      "component": "SettingsAppearance",
+      "file": "pages/settings/Appearance.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Notifications",
+      "route": "/settings/notifications",
+      "targetRoute": "/settings/notifications",
+      "component": "SettingsNotifications",
+      "file": "pages/settings/Notifications.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Security",
+      "route": "/settings/security",
+      "targetRoute": "/settings/security",
+      "component": "SettingsSecurity",
+      "file": "pages/settings/Security.tsx",
       "surface": "app",
       "risk": 0,
       "status": "working",
@@ -242,14 +661,68 @@
       "component": "TimelinePage",
       "file": "pages/Timeline/index.tsx",
       "surface": "app",
-      "risk": 2,
+      "risk": 0,
       "status": "working",
+      "hits": []
+    },
+    {
+      "name": "Profile",
+      "route": "/user/profile",
+      "targetRoute": "/user/profile",
+      "component": "UserProfilePage",
+      "file": "components/profile/UserProfilePage.tsx",
+      "surface": "app",
+      "risk": 61,
+      "status": "partial-high-risk",
       "hits": [
         {
-          "id": "randomized_behavior",
+          "id": "fallback_demo",
+          "count": 27
+        },
+        {
+          "id": "timeout_simulation",
+          "count": 5
+        },
+        {
+          "id": "raw_fetch",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "name": "Viz Hub",
+      "route": "/visualizations",
+      "targetRoute": "/visualizations",
+      "component": "VisualizationsPage",
+      "file": "pages/Visualizations.tsx",
+      "surface": "app",
+      "risk": 20,
+      "status": "partial-high-risk",
+      "hits": [
+        {
+          "id": "fallback_demo",
+          "count": 9
+        },
+        {
+          "id": "timeout_simulation",
+          "count": 1
+        },
+        {
+          "id": "raw_fetch",
           "count": 1
         }
       ]
+    },
+    {
+      "name": "Concordance",
+      "route": "/visualizations/concordance",
+      "targetRoute": "/visualizations/concordance",
+      "component": "ConcordanceViewerPage",
+      "file": "pages/ConcordanceViewer.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
     },
     {
       "name": "Workflows",
@@ -266,6 +739,17 @@
           "count": 1
         }
       ]
+    },
+    {
+      "name": "LLM Selection",
+      "route": "/workspace-settings/llm-selection",
+      "targetRoute": "/workspace-settings/llm-selection",
+      "component": "WorkspaceLLMSelectionPage",
+      "file": "pages/WorkspaceSettings/ChatSettings/WorkspaceLLMSelection/index.tsx",
+      "surface": "app",
+      "risk": 0,
+      "status": "working",
+      "hits": []
     },
     {
       "name": "Workspace",

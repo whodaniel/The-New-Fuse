@@ -16,6 +16,9 @@ export * from './core.routes';
 // Auth Routes
 export * from './auth.routes';
 
+// App Router entrypoint for tests/integration usage
+export { default as AppRoutes } from '../ComprehensiveRouter';
+
 // Additional route modules will be exported here as they are split out of
 // `ComprehensiveRouter.tsx`. Keep this registry restricted to existing files
 // so the incremental router refactor does not break compilation.

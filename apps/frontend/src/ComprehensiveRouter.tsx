@@ -37,6 +37,7 @@ const SystemObservatory = lazy(() => import('./pages/SystemObservatory'));
 const LLMRankingsDashboard = lazy(() => import('./pages/LLMRankingsDashboard'));
 const CommandCore = lazy(() => import('./pages/CommandCore'));
 const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
+const PlatformParityDashboard = lazy(() => import('./pages/Parity/PlatformParityDashboard'));
 const SpacesOverview = lazy(() => import('./pages/Spaces/SpacesOverview'));
 const AgentsPage = lazy(() => import('./pages/AgentsRevolution')); // REVOLUTIONARY NEW DESIGN
 const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
@@ -528,6 +529,22 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 }
               />
               <Route
+                path="/fairtable"
+                element={
+                  <RequireAuth>
+                    <FairtableDashboard />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/fairtable/:viewType"
+                element={
+                  <RequireAuth>
+                    <FairtableDashboard />
+                  </RequireAuth>
+                }
+              />
+              <Route
                 path="/dashboard/calendar"
                 element={
                   <RequireMemberAccess>
@@ -722,6 +739,14 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 element={
                   <RequirePermission roles={['SUPER_ADMIN']}>
                     <CommandCore />
+                  </RequirePermission>
+                }
+              />
+              <Route
+                path="/platform-parity"
+                element={
+                  <RequirePermission roles={['SUPER_ADMIN', 'ADMIN']}>
+                    <PlatformParityDashboard />
                   </RequirePermission>
                 }
               />
@@ -1324,6 +1349,14 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/pricing" element={<RedirectToStatic to="/#pricing" />} />
               <Route path="/community" element={<CommunityHubPage />} />
               <Route path="/membership" element={<MembershipPage />} />
+              <Route
+                path="/billing"
+                element={
+                  <RequireAuth>
+                    <MembershipPage />
+                  </RequireAuth>
+                }
+              />
               <Route path="/support" element={<SupportPage />} />
               <Route path="/contact" element={<SupportPage />} />
               <Route path="/onboarding" element={<Navigate to="/onboarding" replace />} />

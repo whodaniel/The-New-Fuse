@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-03-08T00:06:25.077Z",
+  "generatedAt": "2026-05-11T12:35:56.277Z",
   "counts": {
     "canonicalProduction": 13,
-    "routeCatalogPaths": 158,
-    "sidebarPaths": 21,
+    "routeCatalogPaths": 186,
+    "sidebarPaths": 56,
     "missingFromRouteCatalog": 0,
     "missingFromSidebar": 0
   },

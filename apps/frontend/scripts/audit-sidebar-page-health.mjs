@@ -54,7 +54,7 @@ function extractImportMap(src) {
   let m;
   while ((m = directImportRe.exec(src)) !== null) importMap.set(m[1], m[2]);
 
-  const lazyImportRe = /^const\s+([A-Za-z0-9_]+)\s*=\s*lazy\(\(\)\s*=>\s*import\('([^']+)'/gm;
+  const lazyImportRe = /^const\s+([A-Za-z0-9_]+)\s*=\s*lazy\(\s*\(\)\s*=>\s*import\('([^']+)'/gm;
   while ((m = lazyImportRe.exec(src)) !== null) importMap.set(m[1], m[2]);
 
   return importMap;
@@ -65,11 +65,13 @@ function extractRouteMap(src, importMap) {
   const wrappers = new Set([
     'Route',
     'RequireAuth',
+    'RequireMemberAccess',
     'RequirePermission',
     'Navigate',
     'LoadingFallback',
     'Suspense',
     'Fragment',
+    'ErrorBoundary',
   ]);
   const routeBlocks = [];
   const lines = src.split('\n');
@@ -105,10 +107,15 @@ function extractRouteMap(src, importMap) {
     if (!componentName) continue;
 
     const importPath = importMap.get(componentName);
-    if (!importPath) continue;
+    const isLocalComponent =
+      new RegExp(`\\bconst\\s+${componentName}\\s*=\\s*`, 'm').test(src) ||
+      new RegExp(`\\bfunction\\s+${componentName}\\s*\\(`, 'm').test(src);
+    if (!importPath && !isLocalComponent) continue;
+
     out.set(routePath, {
       componentName,
-      importPath,
+      importPath: importPath || null,
+      local: !importPath && isLocalComponent,
     });
   }
   return out;
@@ -166,7 +173,11 @@ function main() {
   const pages = sidebarItems.map((item) => {
     const targetRoute = redirectMap.get(item.href) || item.href;
     const routeTarget = routeMap.get(targetRoute);
-    const file = routeTarget ? resolveImportFile(routeTarget.importPath) : null;
+    const file = routeTarget
+      ? routeTarget.local
+        ? 'ComprehensiveRouter.tsx'
+        : resolveImportFile(routeTarget.importPath)
+      : null;
     return {
       name: item.name,
       route: item.href,

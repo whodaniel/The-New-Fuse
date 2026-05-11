@@ -15,6 +15,13 @@ vi.mock('../hooks/useAuthorization', () => ({
   useAuthorization: () => mockUseAuthorization(),
 }));
 
+// Membership checks use network fetch + window redirects; keep this suite focused on router auth guards.
+vi.mock('../components/auth/RequireMembership', () => ({
+  __esModule: true,
+  default: ({ children }: any) => <>{children}</>,
+  RequireMembership: ({ children }: any) => <>{children}</>,
+}));
+
 // Mock specific pages to verify if they are rendered
 vi.mock('@/pages/auth/Login', () => ({
   default: () => <div data-testid="login-page">Login Page</div>,
@@ -28,8 +35,8 @@ vi.mock('@/pages/BuildInfo', () => ({ default: () => <div>Build Info</div> }));
 vi.mock('@/pages/Debug', () => ({ default: () => <div>Debug</div> }));
 vi.mock('@/pages/DebugRouting', () => ({ default: () => <div>Debug Routing</div> }));
 vi.mock('@/pages/Test', () => ({ default: () => <div>Test</div> }));
-vi.mock('@/components/Dashboard', () => ({
-  Dashboard: () => <div data-testid="page-dashboard">Dashboard</div>,
+vi.mock('@/pages/dashboard/TNFConsoleDashboard', () => ({
+  default: () => <div data-testid="page-dashboard">Dashboard</div>,
 }));
 vi.mock('@/pages/workspace/Settings', () => ({
   default: () => <div data-testid="page-workspace-settings">Workspace Settings</div>,
