@@ -1,19 +1,19 @@
 # Navigation and Route Audit
 
-Generated: 2026-05-11T12:33:09.596Z
+Generated: 2026-05-11T18:04:10.110Z
 
 ## Counts
 
-- router paths: 197
+- router paths: 196
 - legacy redirect from-paths: 36
-- effective router paths (router + redirects): 233
+- effective router paths (router + redirects): 232
 - all-pages paths: 186
 - canonical sidebar paths: 56
 - canonical sidebar paths not in router: 0
 - sidebar paths: 56
 - sidebar paths not in router: 0
 - all-pages paths not in router: 20
-- router paths not in all-pages: 43
+- router paths not in all-pages: 42
 
 ## Canonical Sidebar Paths Not In Router
 
@@ -67,7 +67,6 @@ Generated: 2026-05-11T12:33:09.596Z
 - `/dashboard/datasets`
 - `/dashboard/fairtable`
 - `/dashboard/files`
-- `/dashboard/hub/premium`
 - `/dashboard/launchpad`
 - `/dashboard/logs`
 - `/dashboard/observability`

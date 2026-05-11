@@ -136,7 +136,6 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     section: 'nexus',
     access: 'authenticated',
   },
-  { name: 'TNF Hub', href: '/hub', icon: Globe, section: 'nexus', access: 'authenticated' },
   {
     name: 'Marketplace',
     href: '/marketplace',
@@ -144,6 +143,7 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     section: 'nexus',
     access: 'public',
   },
+  { name: 'TNF Hub', href: '/hub', icon: Compass, section: 'nexus', access: 'authenticated' },
   {
     name: 'Knowledge Hub',
     href: '/knowledge-hub',

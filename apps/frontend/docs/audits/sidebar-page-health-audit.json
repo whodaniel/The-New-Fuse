@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-11T12:35:25.248Z",
+  "generatedAt": "2026-05-11T18:04:13.709Z",
   "counts": {
     "total": 56,
     "working": 51,
@@ -175,12 +175,12 @@
       "component": "LazyPage",
       "file": "ComprehensiveRouter.tsx",
       "surface": "admin",
-      "risk": 72,
+      "risk": 68,
       "status": "partial-high-risk",
       "hits": [
         {
           "id": "fallback_demo",
-          "count": 36
+          "count": 34
         }
       ]
     },

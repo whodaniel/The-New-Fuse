@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, resolve } from 'node:path';
 import { chromium } from 'playwright';
@@ -23,6 +23,16 @@ const MAX_EXTERNAL_CHECKS_PER_DOMAIN = Number.parseInt(process.env.LIVE_AUDIT_MA
 const NAV_TIMEOUT_MS = Number.parseInt(process.env.LIVE_AUDIT_NAV_TIMEOUT_MS || '35000', 10);
 const FETCH_TIMEOUT_MS = Number.parseInt(process.env.LIVE_AUDIT_FETCH_TIMEOUT_MS || '20000', 10);
 const FAIL_ON_BROKEN = String(process.env.FAIL_ON_BROKEN || '1') !== '0';
+const CHROMIUM_EXECUTABLE_CANDIDATES = [
+  process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
+  process.env.CHROME_EXECUTABLE_PATH,
+  process.platform === 'darwin' ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : null,
+  process.platform === 'linux' ? '/usr/bin/google-chrome' : null,
+  process.platform === 'linux' ? '/usr/bin/chromium-browser' : null,
+  process.platform === 'linux' ? '/usr/bin/chromium' : null,
+  process.platform === 'win32' ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' : null,
+  process.platform === 'win32' ? 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe' : null,
+].filter(Boolean);
 
 const skipHref = (href) => {
   if (!href) return true;
@@ -34,6 +44,20 @@ const skipHref = (href) => {
     trimmed.startsWith('tel:') ||
     trimmed.startsWith('javascript:')
   );
+};
+
+const resolveChromiumLaunchOptions = () => {
+  const executablePath = CHROMIUM_EXECUTABLE_CANDIDATES.find((candidate) => existsSync(candidate));
+  const channel = (process.env.PLAYWRIGHT_CHROMIUM_CHANNEL || process.env.PLAYWRIGHT_CHROME_CHANNEL || '').trim();
+  if (executablePath) {
+    console.log(`[live-link-audit] using local Chromium executable: ${executablePath}`);
+    return { headless: true, executablePath };
+  }
+  if (channel) {
+    console.log(`[live-link-audit] using Chromium channel: ${channel}`);
+    return { headless: true, channel };
+  }
+  return { headless: true };
 };
 
 const normalizeUrl = (value) => {
@@ -296,7 +320,7 @@ const crawlDomain = async (browser, seed) => {
 
 const main = async () => {
   const startedAt = new Date().toISOString();
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch(resolveChromiumLaunchOptions());
   const results = [];
 
   try {

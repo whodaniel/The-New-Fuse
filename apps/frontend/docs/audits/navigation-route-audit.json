@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-05-11T12:33:09.596Z",
+  "generatedAt": "2026-05-11T18:04:10.110Z",
   "counts": {
-    "routerPaths": 197,
+    "routerPaths": 196,
     "redirectFromPaths": 36,
-    "effectiveRouterPaths": 233,
+    "effectiveRouterPaths": 232,
     "allPagesPaths": 186,
     "canonicalSidebarPaths": 56,
     "canonicalSidebarNotInRouter": 0,
     "sidebarPaths": 56,
     "sidebarNotInRouter": 0,
     "allPagesNotInRouter": 20,
-    "routerNotInAllPages": 43
+    "routerNotInAllPages": 42
   },
   "paths": {
     "routerPaths": [
@@ -99,7 +99,6 @@
       "/dashboard/datasets",
       "/dashboard/fairtable",
       "/dashboard/files",
-      "/dashboard/hub/premium",
       "/dashboard/launchpad",
       "/dashboard/logs",
       "/dashboard/observability",
@@ -347,7 +346,6 @@
       "/dashboard/datasets",
       "/dashboard/fairtable",
       "/dashboard/files",
-      "/dashboard/hub/premium",
       "/dashboard/launchpad",
       "/dashboard/logs",
       "/dashboard/observability",
@@ -838,7 +836,6 @@
       "/dashboard/datasets",
       "/dashboard/fairtable",
       "/dashboard/files",
-      "/dashboard/hub/premium",
       "/dashboard/launchpad",
       "/dashboard/logs",
       "/dashboard/observability",

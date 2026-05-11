@@ -1,6 +1,6 @@
 # Sidebar Page Health Audit
 
-Generated: 2026-05-11T12:35:25.248Z
+Generated: 2026-05-11T18:04:13.709Z
 
 ## Counts
 
@@ -13,7 +13,7 @@ Generated: 2026-05-11T12:35:25.248Z
 ## Page Results
 
 - `/admin/layout` -> target `/admin/layout` -> `ComprehensiveRouter.tsx` |
-  status: `partial-high-risk` | risk: 72 | hits: fallback_demo:36
+  status: `partial-high-risk` | risk: 68 | hits: fallback_demo:34
 - `/user/profile` -> target `/user/profile` ->
   `components/profile/UserProfilePage.tsx` | status: `partial-high-risk` | risk:
   61 | hits: fallback_demo:27, timeout_simulation:5, raw_fetch:2
