@@ -412,7 +412,7 @@ const PokerTable: React.FC<PokerTableProps> = ({
   const canTakeover = myControlMode !== 'human';
   const autopilotMode =
     preferredControlMode && preferredControlMode !== 'human' ? preferredControlMode : 'agent';
-  const canAutopilot = myControlMode === 'human' && autopilotMode !== 'human';
+  const canAutopilot = myControlMode === 'human';
   const isMyTurn =
     gameState.turnIndex === mySeatIdx &&
     gameState.round !== 'WAITING' &&
@@ -912,6 +912,9 @@ function AppContent() {
     };
   }, [view, activeTableId, gameState]);
   const [lastObservedState, setLastObservedState] = useState<any>(null);
+  const currentUsername = user?.username || '';
+  const currentAvatar = user?.avatar || '';
+  const currentControlMode = user?.controlMode || 'human';
   const lastInitAttemptRef = useRef(0);
   const autoJoinRef = useRef(false);
   const v2ResumeRef = useRef<{
@@ -1110,14 +1113,14 @@ function AppContent() {
     }, -1);
     const inferredCount = maxSeatNo >= 0 ? maxSeatNo + 1 : 0;
     const seatCount = Math.max(2, Math.min(9, explicitMax || inferredCount || 6));
-    const seatMap = new Map(
+    const seatMap = new Map<number, any>(
       rawSeats
         .map((s: any, idx: number) => ({
           seat: Number.isInteger(s?.seat) ? s.seat : idx,
           row: s,
         }))
-        .filter((entry) => Number.isInteger(entry.seat))
-        .map((entry) => [entry.seat, entry.row])
+        .filter((entry: { seat: number; row: any }) => Number.isInteger(entry.seat))
+        .map((entry: { seat: number; row: any }) => [entry.seat, entry.row])
     );
     const orderedSeats = Array.from({ length: seatCount }, (_, idx) => {
       const row = seatMap.get(idx);
@@ -1149,7 +1152,7 @@ function AppContent() {
           : street === 'river' || street === 'showdown' || hand?.status === 'settled'
             ? 5
             : 0;
-    const heroSeatRow = orderedSeats.find((s: any) => s?.playerId === user?.username) || null;
+    const heroSeatRow = orderedSeats.find((s: any) => s?.playerId === currentUsername) || null;
     const heroSeatNo =
       heroSeatRow && Number.isInteger(heroSeatRow.__seatNo)
         ? heroSeatRow.__seatNo
@@ -1179,17 +1182,19 @@ function AppContent() {
         return {
           id: playerId || `seat-${seatNo}`,
           name:
-            playerId === user?.username ? user.username : botProfile?.name || playerId || 'EMPTY',
+            playerId === currentUsername
+              ? currentUsername
+              : botProfile?.name || playerId || 'EMPTY',
           avatar:
-            playerId === user?.username
-              ? user.avatar
+            playerId === currentUsername
+              ? currentAvatar
               : botProfile?.avatar || BOT_PROFILES[i % BOT_PROFILES.length]?.avatar || '',
           style: botProfile?.style || '',
           stack: s.stack || 0,
           bet: Number(streetCommitted[String(seatNo)] || 0),
           cards:
             playerId && hand
-              ? playerId === user?.username && Array.isArray(holeCardsBySeat[String(seatNo)])
+              ? playerId === currentUsername && Array.isArray(holeCardsBySeat[String(seatNo)])
                 ? holeCardsBySeat[String(seatNo)]
                 : ['hidden', 'hidden']
               : [],
@@ -1198,7 +1203,7 @@ function AppContent() {
           isAllIn:
             allInSeats.includes(seatNo) ||
             (s.stack === 0 && Number(committedBySeat[String(seatNo)] || 0) > 0),
-          isHero: playerId === user?.username,
+          isHero: playerId === currentUsername,
           controlMode: s.controlMode || inferredMode,
         };
       }),
@@ -1259,12 +1264,12 @@ function AppContent() {
         return {
           id: s.playerId || `seat-${seatNo}`,
           name:
-            s.playerId === user?.username
-              ? user.username
+            s.playerId === currentUsername
+              ? currentUsername
               : BOT_PROFILES.find((b) => b.id === s.playerId)?.name || s.playerId || 'EMPTY',
           avatar:
-            s.playerId === user?.username
-              ? user.avatar
+            s.playerId === currentUsername
+              ? currentAvatar
               : BOT_PROFILES.find((b) => b.id === s.playerId)?.avatar ||
                 BOT_PROFILES[i % BOT_PROFILES.length]?.avatar ||
                 '',
@@ -1273,14 +1278,14 @@ function AppContent() {
           bet: snapshot.streetBets?.[String(seatNo)] || 0,
           cards:
             snapshot.holeCards?.[String(seatNo)] ||
-            (s.playerId && s.playerId !== user?.username && snapshot.street
+            (s.playerId && s.playerId !== currentUsername && snapshot.street
               ? ['hidden', 'hidden']
               : []),
           active: !!s.playerId,
           folded: s.folded || false,
           isAllIn: s.stack === 0 && (snapshot.streetBets?.[String(seatNo)] || 0) > 0,
-          isHero: s.playerId === user?.username,
-          controlMode: s.playerId === user?.username ? user?.controlMode || 'human' : inferredMode,
+          isHero: s.playerId === currentUsername,
+          controlMode: s.playerId === currentUsername ? currentControlMode : inferredMode,
         };
       }),
       round: snapshot.street
@@ -1359,7 +1364,7 @@ function AppContent() {
               if (actingRow && actingRow.playerId) {
                 const isUserSeat = actingRow.playerId === user.username;
                 const control = String(
-                  actingRow.controlMode || (isUserSeat ? user.controlMode : '')
+                  actingRow.controlMode || (isUserSeat ? currentControlMode : '')
                 ).toLowerCase();
                 if (control !== 'human') {
                   const now = Date.now();
@@ -1510,8 +1515,20 @@ function AppContent() {
     }
 
     const deltaLines: Array<{ id: string; text: string }> = [];
-    const prevById = new Map((lastObservedState.seats || []).map((s: any) => [s.id, s]));
-    for (const seat of gameState.seats || []) {
+    type SeatDeltaState = {
+      id: string;
+      name?: string;
+      folded?: boolean;
+      bet?: number;
+      stack?: number;
+    };
+    const prevById = new Map<string, SeatDeltaState>(
+      (lastObservedState.seats || []).map((s: any): [string, SeatDeltaState] => [
+        String(s.id),
+        s as SeatDeltaState,
+      ])
+    );
+    for (const seat of (gameState.seats || []) as SeatDeltaState[]) {
       const prev = prevById.get(seat.id);
       if (!prev) continue;
       if (!!seat.folded && !prev.folded) {

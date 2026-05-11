@@ -10,6 +10,7 @@ import {
   requestStraddle,
   requestSeatChange,
   setConnection,
+  forceFoldDisconnected,
   exportReplayLog,
   verifyReplayLog,
   recoverySnapshot as holdemRecoverySnapshot,
@@ -55,6 +56,7 @@ test('cash edge-cases: straddle + queued seat change + disconnect fold path', ()
     const pid = e.seats[acting].playerId;
     if (pid === 'c') {
       setConnection(e, { playerId: 'c', connected: false });
+      forceFoldDisconnected(e, { playerId: 'c' });
       continue;
     }
     const toCall = Math.max(

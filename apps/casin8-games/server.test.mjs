@@ -6,6 +6,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 
 const cwd = import.meta.dirname || process.cwd();
 const TEST_API_TOKEN = 'test-token';
+const dataDirByPort = new Map();
 
 async function waitForHealth(baseUrl, timeoutMs = 8000) {
   const start = Date.now();
@@ -22,7 +23,15 @@ async function waitForHealth(baseUrl, timeoutMs = 8000) {
 }
 
 function startServer(port) {
-  const dataDir = path.join(cwd, '.data-tests', `port-${port}`);
+  let dataDir = dataDirByPort.get(port);
+  if (!dataDir) {
+    dataDir = path.join(
+      cwd,
+      '.data-tests',
+      `port-${port}-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`
+    );
+    dataDirByPort.set(port, dataDir);
+  }
   const proc = spawn('node', ['server.js'], {
     cwd,
     env: {

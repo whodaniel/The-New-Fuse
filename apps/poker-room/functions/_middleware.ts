@@ -1,6 +1,6 @@
 // Cloudflare Worker: Proxy /api/* requests from poker.ai-arcade.xyz to casin8-games Cloud Run
 export default {
-  async fetch(request, env) {
+  async fetch(request: Request, env: PagesEnv) {
     const url = new URL(request.url);
 
     // Only proxy /api/* paths
@@ -46,8 +46,9 @@ export default {
         status: response.status,
         headers: newHeaders,
       });
-    } catch (err) {
-      return new Response(JSON.stringify({ ok: false, error: err.message }), {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      return new Response(JSON.stringify({ ok: false, error: message }), {
         status: 502,
         headers: { 'content-type': 'application/json', ...corsHeaders },
       });

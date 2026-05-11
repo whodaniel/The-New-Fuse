@@ -830,7 +830,7 @@ const handler = async (request: Request, env: Env) => {
       .all<any>();
 
     const apps = await Promise.all(
-      (rows.results || []).map(async (app) => {
+      (rows.results || []).map(async (app: any) => {
         const since = new Date(Date.now() - 7 * DAY_MS).toISOString();
         const ev = await env.COMMUNITY_DB.prepare(
           'SELECT type, user_id, timestamp FROM community_events WHERE app_id = ? AND timestamp >= ? ORDER BY timestamp ASC'
@@ -997,7 +997,7 @@ const handler = async (request: Request, env: Env) => {
       .bind(appId, userId, now)
       .run();
 
-    const duplicate = !inserted.meta.changes;
+    const duplicate = !(inserted.meta?.changes ?? 0);
     if (!duplicate) {
       await env.COMMUNITY_DB.batch([
         env.COMMUNITY_DB.prepare('UPDATE community_apps SET votes = votes + 1 WHERE id = ?').bind(
@@ -1183,7 +1183,7 @@ const handler = async (request: Request, env: Env) => {
       'SELECT id, app_id, user_id, text, created_at FROM community_comments ORDER BY created_at DESC LIMIT 200'
     ).all<{ id: string; app_id: string; user_id: string; text: string; created_at: string }>();
 
-    const actionItems = (actionRows.results || []).map((event) => ({
+    const actionItems = (actionRows.results || []).map((event: any) => ({
       id: `act-${event.app_id}-${event.type}-${event.timestamp}`,
       kind: 'action',
       appId: event.app_id,
@@ -1202,7 +1202,7 @@ const handler = async (request: Request, env: Env) => {
       timestamp: event.timestamp,
     }));
 
-    const commentItems = (commentRows.results || []).map((comment) => ({
+    const commentItems = (commentRows.results || []).map((comment: any) => ({
       id: `comment-${comment.id}`,
       kind: 'comment',
       appId: comment.app_id,

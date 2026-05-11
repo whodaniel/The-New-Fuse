@@ -10,7 +10,7 @@ const CORS_HEADERS = {
     'content-type, authorization, x-tnf-identity, x-community-api-key',
 };
 
-export async function onRequest(context) {
+export async function onRequest(context: PagesFunctionContext) {
   const { request } = context;
 
   // Handle CORS preflight
@@ -43,8 +43,9 @@ export async function onRequest(context) {
       status: response.status,
       headers: newHeaders,
     });
-  } catch (err) {
-    return new Response(JSON.stringify({ ok: false, error: String(err.message || err) }), {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    return new Response(JSON.stringify({ ok: false, error: message }), {
       status: 502,
       headers: { 'content-type': 'application/json', ...CORS_HEADERS },
     });

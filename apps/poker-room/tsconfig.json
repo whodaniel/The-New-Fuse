@@ -9,13 +9,24 @@
     "moduleResolution": "bundler",
     "isolatedModules": true,
     "moduleDetection": "force",
-    "allowJs": true,
+    "allowJs": false,
     "jsx": "react-jsx",
     "paths": {
       "@/*": ["./*"]
     },
     "allowImportingTsExtensions": true,
     "esModuleInterop": true,
-    "noEmit": true
-  }
+    "noEmit": true,
+    "types": ["vite/client"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "functions/**/*.ts",
+    "cloudflare-community-api/src/**/*.ts",
+    "server.ts",
+    "vite.config.ts",
+    "global.d.ts"
+  ],
+  "exclude": ["dist", "node_modules", "output"]
 }

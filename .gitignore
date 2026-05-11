@@ -25,6 +25,7 @@ out/
 # Compiled TypeScript output in source directories
 **/*.d.ts
 **/*.d.ts.map
+!apps/poker-room/global.d.ts
 # **/*.js # Commented out: unsafe for mixed TS/JS projects
 # **/*.js.map # Commented out: unsafe for mixed TS/JS projects
 !**/*.config.js

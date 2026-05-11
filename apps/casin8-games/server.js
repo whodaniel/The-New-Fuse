@@ -7,6 +7,7 @@ const { Hand } = require('pokersolver');
 const { createRiskDb } = require('./risk-db');
 
 const PORT = Number(process.env.PORT || 3000);
+const HOST = String(process.env.HOST || '0.0.0.0');
 const root = __dirname;
 const dataDir = process.env.CASIN8_DATA_DIR
   ? path.resolve(process.env.CASIN8_DATA_DIR)
@@ -1066,6 +1067,14 @@ function requireAnyRole(req, res, allowedRoles) {
     return { ok: false };
   }
   return { ok: true, devBypass: false, roles };
+}
+
+function hasValidApiToken(req) {
+  const configured = apiTokenRoles;
+  if (configured.size === 0) return false;
+  const token = extractApiToken(req);
+  if (!token) return false;
+  return configured.has(token);
 }
 
 function requiresPokerAuth(method, pathname) {
@@ -6491,13 +6500,93 @@ async function handleTableRoundAuto(req, res) {
   let snapshot = swarmState.tableSnapshots.get(tableId);
 
   if (!snapshot) {
+    const seats = (Array.isArray(body.seats) ? body.seats : [{ seat: 0 }, { seat: 1 }]).map(
+      (seat, idx) => ({
+        seat: Number.isInteger(seat?.seat) ? seat.seat : idx,
+        folded: false,
+        stack: Number.isFinite(Number(seat?.stack)) ? Number(seat.stack) : 1000,
+        invested: 0,
+        playerId: String(seat?.playerId || '').trim() || `player-${idx}`,
+        agentId: String(seat?.agentId || '').trim() || String(seat?.playerId || '').trim() || null,
+        temperament: seat?.temperament == null ? null : normalizeTemperament(seat.temperament),
+        maxRiskBps:
+          Number.isFinite(Number(seat?.maxRiskBps)) && Number(seat?.maxRiskBps) > 0
+            ? Math.floor(Number(seat.maxRiskBps))
+            : null,
+      })
+    );
     snapshot = engineCore.createTableSnapshot({
       tableId,
       handId: String(body.handId || crypto.randomUUID()).trim(),
       actingSeat: 0,
-      seats: Array.isArray(body.seats) ? body.seats : [{ seat: 0 }, { seat: 1 }],
+      seats,
       pot: 0,
     });
+    snapshot.variant = 'holdem-cash';
+    snapshot.street = 'preflop';
+    snapshot.communityCards = [];
+    snapshot.deckCards = [];
+    snapshot.holeCards = {};
+    snapshot.actionCountStreet = 0;
+    snapshot.settled = false;
+    snapshot.winnerSeat = null;
+    snapshot.payoutUnits = 0;
+    snapshot.showdown = null;
+    snapshot.actedSeats = [];
+    snapshot.streetBets = {};
+    snapshot.actionTimeline = [];
+    snapshot.currentBet = 0;
+    snapshot.handHistoryPersistedAt = null;
+    snapshot.sessionBySeat =
+      body.sessionBySeat && typeof body.sessionBySeat === 'object' ? body.sessionBySeat : null;
+
+    const handId = String(snapshot.handId || body.handId || '').trim();
+    const shuffleRng = engine.createRng(`${tableId}:${handId}:holdem-cash`);
+    const deck = engine.buildDeck();
+    for (let i = deck.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(shuffleRng() * (i + 1));
+      const tmp = deck[i];
+      deck[i] = deck[j];
+      deck[j] = tmp;
+    }
+    snapshot.deckCards = deck.map((card) => engine.cardToString(card));
+    for (const seat of seats) {
+      snapshot.holeCards[String(seat.seat)] = dealFromDeck(snapshot, 2);
+    }
+
+    const sb = Math.max(1, Number(body.smallBlind || 10));
+    const bb = Math.max(sb, Number(body.bigBlind || 20));
+    const snapshotSeats = Array.isArray(snapshot.seats) ? snapshot.seats : [];
+    snapshot.buttonSeat = Number.isInteger(body.buttonSeat) ? Number(body.buttonSeat) : 0;
+    const sbSeat = nextActiveSeat(snapshot, snapshot.buttonSeat);
+    const bbSeat = nextActiveSeat(snapshot, sbSeat);
+    const sbRow = snapshotSeats.find((s) => s.seat === sbSeat);
+    const bbRow = snapshotSeats.find((s) => s.seat === bbSeat);
+    if (sbRow) {
+      const post = Math.min(Number(sbRow.stack || 0), sb);
+      sbRow.stack -= post;
+      sbRow.invested += post;
+      snapshot.streetBets[String(sbSeat)] = post;
+      snapshot.pot += post;
+    }
+    if (bbRow) {
+      const post = Math.min(Number(bbRow.stack || 0), bb);
+      bbRow.stack -= post;
+      bbRow.invested += post;
+      snapshot.streetBets[String(bbSeat)] = post;
+      snapshot.pot += post;
+    }
+    snapshot.currentBet = Math.max(
+      Number(snapshot.streetBets[String(sbSeat)] || 0),
+      Number(snapshot.streetBets[String(bbSeat)] || 0)
+    );
+    snapshot.blinds = { smallBlind: sb, bigBlind: bb, sbSeat, bbSeat };
+    snapshot.minRaise = bb;
+    snapshot.lastRaiseSize = bb;
+    snapshot.lastAggressorSeat = bbSeat;
+    snapshot.bettingRoundId = 1;
+    snapshot.actingSeat = nextActiveSeat(snapshot, bbSeat);
+
     swarmState.tableSnapshots.set(tableId, snapshot);
     persistTableSnapshot(tableId, snapshot);
   }
@@ -7420,13 +7509,15 @@ async function handleApi(req, res, urlObj) {
   const key = `${req.method} ${urlObj.pathname}`;
   const route = API_ROUTES.get(key);
   if (!route) return notFound(res);
-  if (requiresMembershipGate(req.method, urlObj.pathname)) {
-    const membership = await requireMembership(req, res, urlObj);
-    if (!membership.ok) return;
-  }
+  // Service/API-token calls should not be forced through membership identity checks.
+  const apiTokenAuthorized = hasValidApiToken(req);
   if (requiresPokerAuth(req.method, urlObj.pathname)) {
     const auth = requireRoles(req, res, ['poker']);
     if (!auth.ok) return;
+  }
+  if (requiresMembershipGate(req.method, urlObj.pathname) && !apiTokenAuthorized) {
+    const membership = await requireMembership(req, res, urlObj);
+    if (!membership.ok) return;
   }
   const routeKey = `${req.method} ${urlObj.pathname}`;
   const started = process.hrtime.bigint();
@@ -7858,8 +7949,8 @@ async function seedInitialTournaments() {
   }
 }
 
-server.listen(PORT, () => {
-  console.log(`Casin8 games listening on :${PORT}`);
+server.listen(PORT, HOST, () => {
+  console.log(`Casin8 games listening on ${HOST}:${PORT}`);
   seedInitialTables().catch((err) => console.error('[casin8] Failed to seed tables:', err));
   seedInitialTournaments().catch((err) =>
     console.error('[casin8] Failed to seed tournaments:', err)

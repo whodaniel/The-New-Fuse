@@ -383,7 +383,11 @@ export function advanceTournamentClock(t, seconds) {
       if (t.levelIndex > t.lateReg.byLevelInclusive) {
         t.lateReg.open = false;
       }
-      if (t.levelIndex > 0 && (t.levelIndex + 1) % t.breakConfig.everyLevels === 0) {
+      // Breaks are scheduled after N completed levels (1-based).
+      // `levelIndex` is 0-based and already incremented here, so a break
+      // should trigger when `levelIndex % everyLevels === 0` (e.g., index 2
+      // means level 3 completed when everyLevels=3).
+      if (t.levelIndex > 0 && t.levelIndex % t.breakConfig.everyLevels === 0) {
         t.onBreak = true;
         t.breakRemainingSec = t.breakConfig.breakDurationSec;
       }
