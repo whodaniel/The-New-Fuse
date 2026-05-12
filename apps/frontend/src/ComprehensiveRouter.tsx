@@ -33,7 +33,7 @@ const MCPHub = lazy(() => import('./pages/mcp/MCPHub'));
 const A2AControl = lazy(() => import('./pages/A2AControl'));
 const ExecutionConsole = lazy(() => import('./pages/workflow-pages/ExecutionConsole'));
 const AgentIdentity = lazy(() => import('./pages/Agents/AgentIdentity'));
-const SystemObservatory = lazy(() => import('./pages/SystemObservatory'));
+const SystemObservatory = lazy(() => import('./pages/SynapticNexus'));
 const LLMRankingsDashboard = lazy(() => import('./pages/LLMRankingsDashboard'));
 const CommandCore = lazy(() => import('./pages/CommandCore'));
 const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
