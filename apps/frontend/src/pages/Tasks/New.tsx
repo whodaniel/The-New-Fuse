@@ -1,6 +1,6 @@
 import { Badge, Button, Card, Input, Label, Textarea } from '@/components/ui';
 import { createTask, type LedgerStatus } from '@/services/unifiedLedgerApi';
-import { Calendar, ChevronLeft, Clock, Paperclip, Plus, Tag, X } from 'lucide-react';
+import { Calendar, ChevronLeft, Clock, Paperclip, Plus, Tag, X, Zap } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';

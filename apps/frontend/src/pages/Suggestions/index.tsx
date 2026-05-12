@@ -1,6 +1,6 @@
 import { Badge, Button, Card, Input } from '@/components/ui';
 import { LedgerRecord, listSuggestions, voteSuggestion } from '@/services/unifiedLedgerApi';
-import { MessageSquare, Plus, Search, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { MessageSquare, Plus, Search, ThumbsDown, ThumbsUp, X } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
