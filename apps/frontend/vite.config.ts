@@ -265,6 +265,15 @@ export default defineConfig(({ mode }) => {
           // Advanced chunk splitting strategy
           // Implement chunk splitting to improve load performance
           manualChunks: (id) => {
+            // Keep Vite's preload helper isolated so app entry doesn't
+            // accidentally pull in a heavy vendor chunk just for `__vitePreload`.
+            if (
+              id.includes('vite/preload-helper.js') ||
+              id.includes('vite/modulepreload-polyfill')
+            ) {
+              return 'preload-helper';
+            }
+
             // Core React runtime and routing - loaded on every page
             if (
               id.includes('node_modules/react/') ||
@@ -298,9 +307,13 @@ export default defineConfig(({ mode }) => {
               return 'recharts';
             }
 
-            // Three.js / 3D
+            // Three.js / 3D - keep @react-three packages with three to avoid
+            // circular imports between react-vendor and three-vendor.
+            // @react-three/fiber accesses React internals but Vite's module graph
+            // will handle the shared React dependency correctly if they're in the
+            // same chunk as Three.js.
             if (
-              id.includes('node_modules/three') ||
+              id.includes('node_modules/three/') ||
               id.includes('node_modules/@react-three/') ||
               id.includes('node_modules/@react-three/drei') ||
               id.includes('node_modules/@react-three/fiber')
@@ -358,7 +371,13 @@ export default defineConfig(({ mode }) => {
               return 'content-vendor';
             }
 
-            // Node polyfills can bloat generic utility chunks; isolate them
+            // Node polyfills bundled INTO react-vendor to prevent load-order errors.
+            // The node-polyfills modules share runtime helpers (globalThis, process,
+            // React, __esModule) with react-vendor. When split into a separate chunk,
+            // the browser may execute node-polyfills before react-vendor finishes
+            // initializing, causing "Cannot read properties of undefined
+            // (reading 'ReactCurrentBatchConfig')". Merging them ensures a single
+            // module scope with zero inter-chunk dependency issues.
             if (
               id.includes('node_modules/vm-browserify') ||
               id.includes('node_modules/crypto-browserify') ||
@@ -376,7 +395,7 @@ export default defineConfig(({ mode }) => {
               id.includes('node_modules/safe-buffer') ||
               id.includes('node_modules/base64-js')
             ) {
-              return 'node-polyfills';
+              return 'react-vendor';
             }
 
             // Split large utility ecosystems instead of one oversized "utils" chunk

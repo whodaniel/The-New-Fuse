@@ -60,7 +60,7 @@ export default function PlatformParityDashboard() {
           </thead>
           <tbody>
             {PLATFORM_PARITY_FEATURES.map((feature) => (
-              <tr key={feature.id} className="border-b border-white/5 last:border-b-0">
+              <tr key={feature.id} className="border-b border-white/10 last:border-b-0">
                 <td className="px-4 py-3 text-white font-medium">{feature.targetFeature}</td>
                 <td className="px-4 py-3">
                   <Link

@@ -115,7 +115,7 @@ export default function LaunchpadDashboard() {
           </p>
         </div>
         <div className="text-right">
-          <div className="text-xs font-mono text-gray-500">STATUS</div>
+          <div className="text-xs font-mono text-gray-400">STATUS</div>
           <motion.div
             className="text-2xl font-bold text-green-400 flex items-center gap-2 justify-end"
             animate={{ opacity: isLive ? [1, 0.4, 1] : 1 }}
@@ -123,7 +123,7 @@ export default function LaunchpadDashboard() {
           >
             {isLive ? '🌱 ALIVE' : '💀'}
           </motion.div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-xs text-gray-400 mt-1">
             Next cycle in ~{300 - Math.round((Date.now() / 1000) % 300)}s
           </div>
         </div>
@@ -161,7 +161,7 @@ export default function LaunchpadDashboard() {
         </h2>
         <div className="space-y-3 max-h-96 overflow-y-auto">
           {cycles.length === 0 ? (
-            <div className="text-gray-500 text-center py-8">
+            <div className="text-gray-400 text-center py-8">
               No cycles yet. Launchpad is warming up...
             </div>
           ) : (
@@ -181,7 +181,7 @@ export default function LaunchpadDashboard() {
                     <div className="text-white font-medium mt-1">
                       Launched: {cycle.launched} item{cycle.launched !== 1 ? 's' : ''}
                     </div>
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-gray-400 mt-1">
                       {cycle.items?.map((item) => item.name).join(', ') || 'standing by'}
                     </div>
                   </div>

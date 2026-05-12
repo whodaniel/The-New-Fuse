@@ -14,7 +14,7 @@ import type {
   WorkflowExecution,
   WorkflowStep,
   WorkflowTemplate,
-} from '../types.js';
+} from '../types/index.js';
 
 /**
  * Workflow Repository - provides data access for Workflow entities

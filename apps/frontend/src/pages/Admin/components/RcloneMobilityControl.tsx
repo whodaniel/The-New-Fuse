@@ -1003,8 +1003,8 @@ export function RcloneMobilityControl() {
                 </PremiumButton>
               </div>
               <div className="text-slate-400 mt-0.5">{provider.supportMode}</div>
-              <div className="text-slate-500 mt-0.5">Status: {provider.status}</div>
-              <div className="text-slate-500 mt-0.5">Backend: {provider.backendHint}</div>
+              <div className="text-slate-400 mt-0.5">Status: {provider.status}</div>
+              <div className="text-slate-400 mt-0.5">Backend: {provider.backendHint}</div>
               <div className="text-slate-400 mt-1">{provider.notes}</div>
               {!!provider.docs?.length && (
                 <div className="mt-1 flex flex-wrap gap-1">
@@ -1023,14 +1023,14 @@ export function RcloneMobilityControl() {
               )}
             </div>
           ))}
-          {!providers.length && <div className="text-xs text-slate-500">No providers loaded.</div>}
+          {!providers.length && <div className="text-xs text-slate-400">No providers loaded.</div>}
         </div>
         <div className="rounded border border-white/10 bg-black/30 p-2 text-xs">
           <div className="flex items-center justify-between gap-2">
             <div className="font-semibold text-slate-200">
               {selectedProviderId.toUpperCase()} Blueprint
             </div>
-            {providerBlueprintLoading && <div className="text-slate-500">Loading...</div>}
+            {providerBlueprintLoading && <div className="text-slate-400">Loading...</div>}
           </div>
           {providerBlueprint ? (
             <div className="mt-1 space-y-1 text-slate-300">
@@ -1046,7 +1046,7 @@ export function RcloneMobilityControl() {
               )}
             </div>
           ) : (
-            <div className="mt-1 text-slate-500">No blueprint loaded.</div>
+            <div className="mt-1 text-slate-400">No blueprint loaded.</div>
           )}
         </div>
         {selectedProviderId === 'ardrive' && (
@@ -1191,7 +1191,7 @@ export function RcloneMobilityControl() {
                   {ardriveWorkerStatus.worker.lastSummary.failed}
                 </div>
               ) : (
-                <div className="text-slate-500">No worker tick summary yet.</div>
+                <div className="text-slate-400">No worker tick summary yet.</div>
               )}
             </div>
             {ardrivePreflight && (
@@ -1223,7 +1223,7 @@ export function RcloneMobilityControl() {
                     {item.fileName} ({Math.ceil(item.fileSizeBytes / 1024)} KiB) · attempts{' '}
                     {item.attempts}
                   </div>
-                  <div className="text-slate-500">
+                  <div className="text-slate-400">
                     Quote: {item.quoteSource} · {item.quoteId || 'n/a'} · winc{' '}
                     {item.quotedWinc || 'n/a'}
                   </div>
@@ -1362,7 +1362,7 @@ export function RcloneMobilityControl() {
                   </div>
                 </div>
               ))}
-              {!ardriveQueue.length && <div className="text-slate-500">No queue items yet.</div>}
+              {!ardriveQueue.length && <div className="text-slate-400">No queue items yet.</div>}
             </div>
           </div>
         )}
@@ -1442,7 +1442,7 @@ export function RcloneMobilityControl() {
       <div className="rounded-md border border-white/10 bg-slate-950/70 p-3 space-y-2">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
           <div className="text-xs text-slate-300 break-all">
-            <span className="text-slate-500">GUI URL:</span> {guiUrl || 'Unavailable'}
+            <span className="text-slate-400">GUI URL:</span> {guiUrl || 'Unavailable'}
           </div>
           <div className="flex items-center gap-2">
             <PremiumButton
@@ -1491,7 +1491,7 @@ export function RcloneMobilityControl() {
           Mobility Workflows
         </div>
 
-        <div className="text-[11px] text-slate-500">
+        <div className="text-[11px] text-slate-400">
           Pause uses process suspension to keep the run state live; resume continues the same
           process.
         </div>
@@ -1766,7 +1766,7 @@ export function RcloneMobilityControl() {
               })}
             </div>
           ) : (
-            <div className="text-xs text-slate-500">No workflow runs recorded yet.</div>
+            <div className="text-xs text-slate-400">No workflow runs recorded yet.</div>
           )}
         </div>
       </div>
@@ -1787,7 +1787,7 @@ export function RcloneMobilityControl() {
               <div className="opacity-90">{check.detail}</div>
             </div>
           ))}
-          {!doctorData && <div className="text-xs text-slate-500">No doctor data loaded yet.</div>}
+          {!doctorData && <div className="text-xs text-slate-400">No doctor data loaded yet.</div>}
         </div>
       </div>
 
@@ -1821,7 +1821,7 @@ export function RcloneMobilityControl() {
             className="w-full h-[460px] rounded border border-white/20 bg-black"
           />
         ) : (
-          <div className="text-xs text-slate-500">
+          <div className="text-xs text-slate-400">
             Enable iframe to attempt inline GUI rendering. If blocked by browser or server headers,
             use Open GUI instead.
           </div>

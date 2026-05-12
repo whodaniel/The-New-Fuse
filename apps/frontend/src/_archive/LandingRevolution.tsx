@@ -253,7 +253,7 @@ export const LandingPageRevolution = () => {
               <ArrowRight className="ml-2 sm:ml-3 lg:ml-4 h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8" />
             </Link>
           </Button>
-          <p className="mt-6 sm:mt-8 text-sm sm:text-base text-gray-500">
+          <p className="mt-6 sm:mt-8 text-sm sm:text-base text-gray-400">
             No credit card required · Deploy in 60 seconds
           </p>
         </div>

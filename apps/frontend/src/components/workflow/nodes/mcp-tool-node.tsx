@@ -432,7 +432,7 @@ const MCPToolNode: React.FC<NodeProps> = memo(({ id, data }) => {
             MCP (Model Context Protocol) servers provide tools for agents to interact with external
             systems.
           </p>
-          <p className="mt-2 text-slate-500 text-xs">
+          <p className="mt-2 text-slate-400 text-xs">
             Configure MCP servers in your settings to enable this node.
           </p>
         </div>

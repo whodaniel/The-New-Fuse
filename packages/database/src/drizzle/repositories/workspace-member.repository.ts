@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 import { and, eq, inArray } from 'drizzle-orm';
 import { db } from '../client.js';
 import { users, workspaceMembers, workspaces } from '../schema.js';
-import type { NewWorkspaceMember, WorkspaceMember } from '../types.js';
+import type { NewWorkspaceMember, WorkspaceMember } from '../types/index.js';
 
 export class DrizzleWorkspaceMemberRepository {
   async addMember(

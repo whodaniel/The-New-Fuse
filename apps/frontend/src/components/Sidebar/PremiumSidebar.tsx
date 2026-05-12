@@ -97,7 +97,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
               return (
                 <div key={section.key}>
                   {!isCollapsed && (
-                    <div className="px-2 pb-2 text-[10px] tracking-wide uppercase text-slate-500">
+                    <div className="px-2 pb-2 text-[10px] tracking-wide uppercase text-slate-400">
                       {section.label}
                     </div>
                   )}
@@ -121,7 +121,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
                           aria-label={isCollapsed ? item.name : undefined}
                         >
                           <item.icon
-                            className={`w-5 h-5 shrink-0 ${isActive ? 'text-slate-100' : 'text-slate-500 group-hover:text-slate-300'}`}
+                            className={`w-5 h-5 shrink-0 ${isActive ? 'text-slate-100' : 'text-slate-400 group-hover:text-slate-300'}`}
                           />
                           {!isCollapsed && (
                             <span className="text-sm font-medium whitespace-nowrap">
@@ -141,7 +141,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowAdvanced((prev) => !prev)}
-                  className="w-full px-2 pb-2 text-[10px] tracking-wide uppercase text-slate-500 flex items-center justify-between hover:text-slate-300 transition-colors"
+                  className="w-full px-2 pb-2 text-[10px] tracking-wide uppercase text-slate-400 flex items-center justify-between hover:text-slate-300 transition-colors"
                   aria-expanded={showAdvanced}
                   aria-controls="advanced-nav-items"
                 >
@@ -171,7 +171,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
                           }`}
                         >
                           <item.icon
-                            className={`w-5 h-5 shrink-0 ${isActive ? 'text-slate-100' : 'text-slate-500 group-hover:text-slate-300'}`}
+                            className={`w-5 h-5 shrink-0 ${isActive ? 'text-slate-100' : 'text-slate-400 group-hover:text-slate-300'}`}
                           />
                           <span className="text-sm font-medium whitespace-nowrap">{item.name}</span>
                         </NavLink>

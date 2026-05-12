@@ -66,7 +66,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
             id="agent"
             value={nodeData.agentId || ''}
             onChange={(value) => handleChange('agentId', value)}
-            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:border-blue-500"
           >
             <option value="">Select an agent</option>
             {agents.map((agent) => (
@@ -85,7 +85,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
             id="action"
             value={nodeData.action || ''}
             onChange={(value) => handleChange('action', value)}
-            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:border-blue-500"
           >
             <option value="">Select an action</option>
             <option value="analyze">Analyze</option>
@@ -105,7 +105,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
             value={nodeData.timeout || 60}
             onChange={(e) => handleChange('timeout', parseInt(e.target.value))}
             min={1}
-            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:border-blue-500"
           />
         </div>
 
@@ -119,7 +119,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
             value={nodeData.retries || 0}
             onChange={(e) => handleChange('retries', parseInt(e.target.value))}
             min={0}
-            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:border-blue-500"
           />
         </div>
       </div>
@@ -137,7 +137,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
             id="tool"
             value={nodeData.toolId || ''}
             onChange={(value) => handleChange('toolId', value)}
-            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:border-blue-500"
           >
             <option value="">Select a tool</option>
             {tools.map((tool) => (
@@ -164,7 +164,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
               }
             }}
             rows={5}
-            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500 font-mono text-sm"
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:border-blue-500 font-mono text-sm"
           />
         </div>
       </div>
@@ -182,7 +182,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
             id="condition"
             value={nodeData.conditionType || 'expression'}
             onChange={(value) => handleChange('conditionType', value)}
-            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:border-blue-500"
           >
             <option value="expression">Expression</option>
             <option value="status">Status Check</option>
@@ -200,7 +200,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
             onChange={(e) => handleChange('expression', e.target.value)}
             placeholder="result.success === true"
             rows={3}
-            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500 font-mono text-sm"
+            className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:border-blue-500 font-mono text-sm"
           />
           <p className="text-xs text-gray-400 mt-1">
             Use JavaScript expressions to define conditions.
@@ -296,7 +296,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
               value={nodeData.label || ''}
               onChange={(e) => handleChange('label', e.target.value)}
               placeholder="Node Label"
-              className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
+              className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:border-blue-500"
             />
           </div>
 
@@ -310,7 +310,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
               onChange={(e) => handleChange('description', e.target.value)}
               placeholder="Describe what this node does"
               rows={3}
-              className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
+              className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:border-blue-500"
             />
           </div>
         </TabsContent>
@@ -328,7 +328,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
               id="errorHandling"
               value={nodeData.errorHandling || 'continue'}
               onChange={(value) => handleChange('errorHandling', value)}
-              className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
+              className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:border-blue-500"
             >
               <option value="continue">Continue Workflow</option>
               <option value="stop">Stop Workflow</option>
@@ -346,7 +346,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({ node }) => {
               value={nodeData.customId || ''}
               onChange={(e) => handleChange('customId', e.target.value)}
               placeholder="Optional custom identifier"
-              className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500"
+              className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:border-blue-500"
             />
           </div>
         </TabsContent>

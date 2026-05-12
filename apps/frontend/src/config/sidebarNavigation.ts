@@ -52,7 +52,7 @@ export interface SidebarNavItem {
 export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
   // DASHBOARD: Overview & Trends
   {
-    name: 'Workspace',
+    name: 'Home',
     href: '/dashboard',
     icon: LayoutDashboard,
     section: 'dashboard',
@@ -121,21 +121,21 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
   },
 
   // NEXUS: Ecosystem & Knowledge
-  { name: 'Nexus 3D', href: '/nexus', icon: Network, section: 'nexus', access: 'authenticated' },
   {
-    name: 'Viz Hub',
-    href: '/visualizations',
-    icon: Activity,
+    name: 'Synaptic Nexus',
+    href: '/nexus',
+    icon: Network,
     section: 'nexus',
     access: 'authenticated',
   },
   {
-    name: 'Concordance',
-    href: '/visualizations/concordance',
+    name: 'System Lexicon',
+    href: '/nexus?layer=lexicon',
     icon: BookOpen,
     section: 'nexus',
     access: 'authenticated',
   },
+
   {
     name: 'Marketplace',
     href: '/marketplace',
@@ -143,14 +143,12 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     section: 'nexus',
     access: 'public',
   },
-  { name: 'TNF Hub', href: '/hub', icon: Compass, section: 'nexus', access: 'authenticated' },
   {
-    name: 'Knowledge Hub',
-    href: '/knowledge-hub',
+    name: 'Sovereign Memory',
+    href: '/nexus?layer=memory',
     icon: Database,
     section: 'nexus',
     access: 'authenticated',
-    requiredRoles: ['SUPER_ADMIN'],
   },
   { name: 'MCP Hub', href: '/mcp-hub', icon: Boxes, section: 'nexus', access: 'authenticated' },
   { name: 'Docs', href: '/docs', icon: Library, section: 'nexus', access: 'public' },

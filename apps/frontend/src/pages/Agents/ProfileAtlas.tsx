@@ -161,11 +161,11 @@ const AgentAtlasCard = ({ agent }: { agent: AgentVisualProfileRecord }) => (
 
         <div className="grid grid-cols-2 gap-3 rounded-2xl border border-white/8 bg-black/20 p-4">
           <div>
-            <p className="mb-1 text-[10px] uppercase tracking-[0.24em] text-slate-500">Profile</p>
+            <p className="mb-1 text-[10px] uppercase tracking-[0.24em] text-slate-400">Profile</p>
             <p className="text-sm text-white">{agent.profile.promptStatus}</p>
           </div>
           <div>
-            <p className="mb-1 text-[10px] uppercase tracking-[0.24em] text-slate-500">Motifs</p>
+            <p className="mb-1 text-[10px] uppercase tracking-[0.24em] text-slate-400">Motifs</p>
             <p className="text-sm text-white">
               {agent.profile.visualMotifs.slice(0, 2).join(', ')}
             </p>
@@ -173,7 +173,7 @@ const AgentAtlasCard = ({ agent }: { agent: AgentVisualProfileRecord }) => (
         </div>
 
         <div className="flex items-center justify-between border-t border-white/10 pt-3">
-          <span className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-slate-500">
+          <span className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-slate-400">
             <Fingerprint className="h-3.5 w-3.5" />
             {agent.profile.machineId}
           </span>

@@ -1,10 +1,9 @@
-
 /**
  * Agent Registry for The New Fuse Relay System
  */
 
 import { EventEmitter } from 'events';
-import { Agent } from '../types.js';
+import { Agent } from '../types/index.js';
 import { Logger } from './Logger.js';
 
 export class AgentRegistry extends EventEmitter {

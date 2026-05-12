@@ -110,7 +110,7 @@ async function bootstrap() {
   // and skips paths that already have a version prefix (e.g. /api/v1/*, /api/v2/*).
   app.use((req, _res, next) => {
     // Match /api/{segment}/* but NOT /api/v{N}/* (already versioned) and NOT /api/health
-    const unversionedApiPath = /^\/api\/(?!v\d+|health)([^/?#]+)([/?#].*)?$/;
+    const unversionedApiPath = /^\/api\/(?!v\d+|health|docs)([^/?#]+)([/?#].*)?$/;
     const match = req.url.match(unversionedApiPath);
     if (match) {
       req.url = `/api/v1/${match[1]}${match[2] || ''}`;

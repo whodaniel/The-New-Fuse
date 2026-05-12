@@ -114,21 +114,21 @@ const AgentCatalogProfile = () => {
               </div>
               <div className="mt-4 space-y-3 text-sm text-slate-300">
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-slate-500">Machine ID</span>
+                  <span className="text-slate-400">Machine ID</span>
                   <span className="font-mono text-white">{profile.profile.machineId}</span>
                 </div>
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-slate-500">Source Kind</span>
+                  <span className="text-slate-400">Source Kind</span>
                   <span className="text-white">{profile.sourceKind}</span>
                 </div>
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-slate-500">Source File</span>
+                  <span className="text-slate-400">Source File</span>
                   <span className="max-w-[240px] truncate font-mono text-white">
                     {profile.sourceFile}
                   </span>
                 </div>
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-slate-500">Style System</span>
+                  <span className="text-slate-400">Style System</span>
                   <span className="text-white">{profile.promptSpec.styleName}</span>
                 </div>
               </div>
@@ -192,7 +192,7 @@ const AgentCatalogProfile = () => {
               </div>
 
               <div className="mt-5 rounded-[24px] border border-white/8 bg-black/20 p-5">
-                <p className="mb-2 text-[11px] uppercase tracking-[0.24em] text-slate-500">
+                <p className="mb-2 text-[11px] uppercase tracking-[0.24em] text-slate-400">
                   Negative Prompt
                 </p>
                 <p className="text-sm leading-7 text-slate-300">

@@ -13,7 +13,7 @@ import {
   ProxyRequest,
   SecurityPolicy,
   WebScrapingConfig,
-} from '../types.js';
+} from '../types/index.js';
 
 /**
  * Simple handler interface for web scraping tools

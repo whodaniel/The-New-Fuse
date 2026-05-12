@@ -288,7 +288,7 @@ export default function FeatureFlagsAdmin() {
                         </div>
                       </Card>
                     </div>
-                    <div className="p-4 rounded-md bg-black/20 border border-white/5">
+                    <div className="p-4 rounded-md bg-black/20 border border-white/10">
                       <h4 className="font-medium text-gray-400 mb-1">Last Used</h4>
                       <div className="text-white">
                         {selectedFeature.metadata?.metrics?.lastUsed

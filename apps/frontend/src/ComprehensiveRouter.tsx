@@ -3,6 +3,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { LEGACY_REDIRECTS } from './config/legacyRedirects';
 // Lazy load layouts for code splitting
 const PerpetualStatus = lazy(() => import('./pages/PerpetualStatus'));
+const SystemStatus = lazy(() => import('./pages/SystemStatus'));
 const LaunchpadDashboard = lazy(() => import('./pages/LaunchpadDashboard'));
 const PremiumLayout = lazy(() => import('./layouts/PremiumLayout'));
 const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
@@ -30,7 +31,6 @@ const AgencyDashboard = lazy(() => import('./pages/Agency/AgencyDashboard'));
 const AgencyOnboarding = lazy(() => import('./pages/Agency/AgencyOnboarding'));
 const MCPHub = lazy(() => import('./pages/mcp/MCPHub'));
 const A2AControl = lazy(() => import('./pages/A2AControl'));
-const KnowledgeHub = lazy(() => import('./pages/KnowledgeHub'));
 const ExecutionConsole = lazy(() => import('./pages/workflow-pages/ExecutionConsole'));
 const AgentIdentity = lazy(() => import('./pages/Agents/AgentIdentity'));
 const SystemObservatory = lazy(() => import('./pages/SystemObservatory'));
@@ -42,7 +42,7 @@ const SpacesOverview = lazy(() => import('./pages/Spaces/SpacesOverview'));
 const AgentsPage = lazy(() => import('./pages/AgentsRevolution')); // REVOLUTIONARY NEW DESIGN
 const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
 const Workflows = lazy(() => import('./pages/Workflows.tsx'));
-const WorkflowBuilder = lazy(() => import('./pages/workflow-pages/Builder'));
+const WorkflowBuilder = lazy(() => import('./pages/SynapticNexus'));
 const WorkflowEditorWrapper = lazy(() => import('./components/WorkflowEditor'));
 const Analytics = lazy(() => import('./pages/dashboard/Analytics'));
 const Dashboard = lazy(() => import('./pages/dashboard/TNFConsoleDashboard'));
@@ -61,8 +61,6 @@ const UnifiedAgentCreator = lazy(() => import('./pages/Agents/UnifiedAgentCreato
 const PfpStudioPage = lazy(() => import('./pages/Agents/PfpStudio'));
 const PfpPromptCatalogPage = lazy(() => import('./pages/Agents/PfpPromptCatalog'));
 const CatalogProfilePage = lazy(() => import('./pages/Agents/CatalogProfile'));
-const SophisticatedTNFHub = lazy(() => import('./pages/Hub/SophisticatedTNFHub'));
-const ModernHub = lazy(() => import('./pages/Hub/ModernHub'));
 
 // Resources pages
 const ResourcesDashboard = lazy(() => import('./pages/Resources/ResourcesDashboard'));
@@ -122,7 +120,7 @@ const AuditLogViewer = lazy(() => import('./pages/Admin/AuditLogViewer'));
 const BackupRestore = lazy(() => import('./pages/Admin/BackupRestore'));
 const OpenClawSecurity = lazy(() => import('./pages/Admin/OpenClawSecurity'));
 const SuperAdminControlPanel = lazy(() => import('./pages/Admin/SuperAdminControlPanel'));
-const NexusVisualizer = lazy(() => import('./pages/SystemObservatory'));
+const NexusVisualizer = lazy(() => import('./pages/SynapticNexus'));
 
 // Auth components
 const AuthIndexPage = lazy(() => import('./pages/auth'));
@@ -141,6 +139,7 @@ const BlogPage = lazy(() => import('./pages/Blog').then((module) => ({ default: 
 const ConnectExtensionPage = lazy(() => import('./pages/ConnectExtension'));
 const MembershipPage = lazy(() => import('./pages/Membership'));
 const VisualizationsPage = lazy(() => import('./pages/Visualizations'));
+const VisualizationSurfaceViewerPage = lazy(() => import('./pages/VisualizationSurfaceViewer'));
 const TerminalGraphPage = lazy(() => import('./pages/TerminalGraph'));
 const ConcordanceViewerPage = lazy(() => import('./pages/ConcordanceViewer'));
 const CodebaseMapPage = lazy(() => import('./pages/CodebaseMap'));
@@ -392,8 +391,11 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
       '/blog',
       '/marketplace',
       '/visualizations',
+      '/visualizations/surface',
       '/visualizations/terminals',
       '/visualizations/concordance',
+      '/status',
+      '/system-status',
       '/terminals',
       '/product-map',
       '/codebase-map',
@@ -584,24 +586,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                   </RequireMemberAccess>
                 }
               />
-              <Route
-                path="/dashboard/hub/premium"
-                element={
-                  <RequireMemberAccess>
-                    <SophisticatedTNFHub />
-                  </RequireMemberAccess>
-                }
-              />
-              <Route
-                path="/hub"
-                element={
-                  <RequireMemberAccess>
-                    <Suspense fallback={<LoadingFallback name="Hub" />}>
-                      <ModernHub />
-                    </Suspense>
-                  </RequireMemberAccess>
-                }
-              />
+              <Route path="/hub" element={<Navigate to="/nexus" replace />} />
 
               {/* Public Marketplace */}
               <Route path="/marketplace" element={<MarketplacePublicPage />} />
@@ -645,6 +630,22 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 element={
                   <RequireMemberAccess>
                     <AIAgentDashboard />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/ai-portal/pfp-studio"
+                element={
+                  <RequireMemberAccess>
+                    <PfpStudioPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/ai-portal/pfp-prompts"
+                element={
+                  <RequireMemberAccess>
+                    <PfpPromptCatalogPage />
                   </RequireMemberAccess>
                 }
               />
@@ -776,19 +777,15 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               />
               <Route
                 path="/agents/pfp-studio"
-                element={
-                  <RequireMemberAccess>
-                    <PfpStudioPage />
-                  </RequireMemberAccess>
-                }
+                element={<Navigate to="/ai-portal/pfp-studio" replace />}
               />
               <Route
                 path="/agents/pfp-catalog"
-                element={
-                  <RequireMemberAccess>
-                    <PfpPromptCatalogPage />
-                  </RequireMemberAccess>
-                }
+                element={<Navigate to="/ai-portal/pfp-prompts" replace />}
+              />
+              <Route
+                path="/agents/pfp-prompts"
+                element={<Navigate to="/ai-portal/pfp-prompts" replace />}
               />
               <Route
                 path="/agents/catalog/:id"
@@ -1142,12 +1139,9 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               />
               <Route
                 path="/knowledge-hub"
-                element={
-                  <RequirePermission roles={['SUPER_ADMIN', 'super_admin']}>
-                    <KnowledgeHub />
-                  </RequirePermission>
-                }
+                element={<Navigate to="/nexus?layer=memory" replace />}
               />
+
               <Route
                 path="/a2a-control"
                 element={
@@ -1371,8 +1365,11 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 }
               />
               <Route path="/visualizations" element={<VisualizationsPage />} />
+              <Route path="/visualizations/surface" element={<VisualizationSurfaceViewerPage />} />
               <Route path="/visualizations/terminals" element={<TerminalGraphPage />} />
               <Route path="/visualizations/concordance" element={<ConcordanceViewerPage />} />
+              <Route path="/status" element={<SystemStatus />} />
+              <Route path="/system-status" element={<SystemStatus />} />
               <Route path="/terminals" element={<TerminalGraphPage />} />
               <Route path="/codebase-map" element={<CodebaseMapPage />} />
               <Route path="/connect" element={<ConnectExtensionPage />} />

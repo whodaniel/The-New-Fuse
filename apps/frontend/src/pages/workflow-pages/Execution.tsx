@@ -232,9 +232,9 @@ const WorkflowExecution: React.FC = () => {
             <p className="text-gray-400">No logs yet. Execute the workflow to see logs here.</p>
           </div>
         ) : (
-          <div className="bg-black/40 text-gray-100 p-4 rounded-md font-mono text-sm overflow-auto max-h-96 border border-white/5">
+          <div className="bg-black/40 text-gray-100 p-4 rounded-md font-mono text-sm overflow-auto max-h-96 border border-white/10">
             {executionLogs.map((log, index) => (
-              <div key={index} className="py-1 border-b border-white/5 last:border-0">
+              <div key={index} className="py-1 border-b border-white/10 last:border-0">
                 {log}
               </div>
             ))}

@@ -39,12 +39,12 @@ const EnhancedTimelineView = ({
           </div>
           <div className="mt-2">
             <span
-              className={`inline-block px-2 py-1 text-xs rounded ${
+              className={`inline-block px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded border ${
                 event.data?.priority === 'HIGH'
-                  ? 'bg-red-100 text-red-800'
+                  ? 'bg-red-500/10 text-red-400 border-red-500/20'
                   : event.data?.priority === 'MEDIUM'
-                    ? 'bg-yellow-100 text-yellow-800'
-                    : 'bg-green-100 text-green-800'
+                    ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                    : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
               }`}
             >
               {event.data?.priority || 'NORMAL'}

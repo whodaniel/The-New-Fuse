@@ -11,7 +11,7 @@ export * from './transports/FileTransport.js';
 export * from './transports/HTTPTransport.js';
 export * from './transports/MCPTransport.js';
 export * from './transports/WebSocketTransport.js';
-export * from './types.js';
+export * from './types/index.js';
 export * from './utils/AgentRegistry.js';
 export * from './utils/Logger.js';
 export * from './utils/MessageRouter.js';

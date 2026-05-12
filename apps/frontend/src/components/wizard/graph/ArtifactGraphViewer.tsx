@@ -1,5 +1,5 @@
+import { Download, FileJson, Loader2, Maximize2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { Loader2, FileJson, Share2, Download, Maximize2 } from 'lucide-react';
 import { GraphVisualizer } from './GraphVisualizer';
 
 interface ArtifactGraphViewerProps {
@@ -18,18 +18,18 @@ export const ArtifactGraphViewer: React.FC<ArtifactGraphViewerProps> = ({ artifa
       try {
         const response = await fetch(artifactUrl);
         if (!response.ok) throw new Error(`Failed to load artifact: ${response.statusText}`);
-        
+
         const jsonData = await response.json();
-        
+
         // Transform data if it's in a slightly different format
         const nodes = (jsonData.nodes || []).map((n: any) => ({
           id: n.id,
           data: {
             label: n.label || n.name || n.id,
             kind: n.kind || n.type || 'node',
-            ...n
+            ...n,
           },
-          position: n.position || { x: Math.random() * 400, y: Math.random() * 400 }
+          position: n.position || { x: Math.random() * 400, y: Math.random() * 400 },
         }));
 
         const edges = (jsonData.edges || []).map((e: any) => ({
@@ -38,7 +38,7 @@ export const ArtifactGraphViewer: React.FC<ArtifactGraphViewerProps> = ({ artifa
           target: e.target,
           label: e.type || e.label,
           animated: true,
-          data: { ...e }
+          data: { ...e },
         }));
 
         setData({ nodes, edges });
@@ -54,7 +54,7 @@ export const ArtifactGraphViewer: React.FC<ArtifactGraphViewerProps> = ({ artifa
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 space-y-4 bg-black/20 rounded-xl border border-white/5">
+      <div className="flex flex-col items-center justify-center p-12 space-y-4 bg-black/20 rounded-xl border border-white/10">
         <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
         <div className="text-sm font-medium text-gray-400">Synthesizing graph structure...</div>
       </div>
@@ -71,8 +71,8 @@ export const ArtifactGraphViewer: React.FC<ArtifactGraphViewerProps> = ({ artifa
   }
 
   return (
-    <div className="flex flex-col h-full bg-black/40 rounded-xl border border-white/5 overflow-hidden shadow-2xl">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-white/5">
+    <div className="flex flex-col h-full bg-black/40 rounded-xl border border-white/10 overflow-hidden shadow-2xl">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/5">
         <div className="flex items-center gap-2">
           <FileJson className="w-4 h-4 text-indigo-400" />
           <span className="text-xs font-bold text-gray-200 uppercase tracking-widest">
@@ -80,25 +80,33 @@ export const ArtifactGraphViewer: React.FC<ArtifactGraphViewerProps> = ({ artifa
           </span>
         </div>
         <div className="flex items-center gap-1">
-          <button className="p-1.5 hover:bg-white/10 rounded-md transition-colors text-gray-400" title="Full Screen">
+          <button
+            className="p-1.5 hover:bg-white/10 rounded-md transition-colors text-gray-400"
+            title="Full Screen"
+          >
             <Maximize2 className="w-4 h-4" />
           </button>
-          <button className="p-1.5 hover:bg-white/10 rounded-md transition-colors text-gray-400" title="Export">
+          <button
+            className="p-1.5 hover:bg-white/10 rounded-md transition-colors text-gray-400"
+            title="Export"
+          >
             <Download className="w-4 h-4" />
           </button>
         </div>
       </div>
-      
+
       <div className="flex-1 relative min-h-[500px]">
-        <GraphVisualizer 
-          nodes={data.nodes} 
+        <GraphVisualizer
+          nodes={data.nodes}
           edges={data.edges}
           onNodeClick={(e, node) => console.log('Node clicked:', node)}
         />
       </div>
 
-      <div className="flex items-center justify-between px-4 py-2 border-t border-white/5 bg-black/20 text-[10px] text-gray-500 font-mono">
-        <div>{data.nodes.length} nodes • {data.edges.length} edges</div>
+      <div className="flex items-center justify-between px-4 py-2 border-t border-white/10 bg-black/20 text-[10px] text-gray-400 font-mono">
+        <div>
+          {data.nodes.length} nodes • {data.edges.length} edges
+        </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />

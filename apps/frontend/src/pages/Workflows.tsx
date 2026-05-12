@@ -305,7 +305,7 @@ export default function Workflows() {
               </table>
             </div>
           ) : (
-            <div className="text-center py-8 text-slate-500">No recent executions found.</div>
+            <div className="text-center py-8 text-slate-400">No recent executions found.</div>
           )}
         </GlassCard>
       </div>

@@ -8,6 +8,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui';
+import { API_BASE } from '@/config/api';
 // @ts-nocheck
 import { useToast } from '@/hooks/useToast';
 import axios from 'axios';
@@ -129,6 +130,64 @@ const unwrapApiData = (payload: unknown): Record<string, any> => {
   return obj;
 };
 
+interface AnalyticsErrorState {
+  userMessage: string;
+  technicalMessage?: string;
+  statusCode?: number;
+}
+
+interface AnalyticsRequestAttempt {
+  url: string;
+  statusCode?: number;
+  message?: string;
+}
+
+const buildAnalyticsBaseCandidates = (apiBase: string): string[] => {
+  const normalize = (value: string) => value.replace(/\/+$/, '');
+  const primary = normalize(apiBase);
+  const withoutVersion = primary.replace(/\/v\d+$/, '');
+
+  const candidates = [
+    `${primary}/analytics/default`,
+    `${withoutVersion}/analytics/default`,
+    '/api/v1/analytics/default',
+    '/api/analytics/default',
+    '/analytics/default',
+  ];
+
+  return Array.from(new Set(candidates.map((candidate) => normalize(candidate))));
+};
+
+const buildAnalyticsFailure = (
+  attempts: AnalyticsRequestAttempt[],
+  lastError: unknown,
+  message: string
+) => {
+  const error = new Error(message) as Error & {
+    statusCode?: number;
+    attempts: AnalyticsRequestAttempt[];
+  };
+  error.attempts = attempts;
+  const statusCode = Number((lastError as any)?.response?.status ?? 0);
+  if (statusCode) {
+    error.statusCode = statusCode;
+  }
+  return error;
+};
+
+const shouldContinueAnalyticsFallback = (statusCode: number) => {
+  if (!statusCode) return true;
+  return statusCode === 404 || statusCode === 405 || statusCode >= 500;
+};
+
+const formatAttemptDetails = (attempts: AnalyticsRequestAttempt[]) => {
+  if (!attempts.length) return '';
+  return attempts
+    .slice(0, 4)
+    .map((attempt) => `${attempt.url}${attempt.statusCode ? ` → ${attempt.statusCode}` : ''}`)
+    .join(' • ');
+};
+
 // Custom dark-themed tooltip for charts
 const CustomTooltip = ({
   active,
@@ -158,46 +217,107 @@ const CustomTooltip = ({
 const Analytics = () => {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorState, setErrorState] = useState<AnalyticsErrorState | null>(null);
   const [timeRange, setTimeRange] = useState('7d');
   const [refreshing, setRefreshing] = useState(false);
   const { toast } = useToast();
+  const analyticsBaseCandidates = buildAnalyticsBaseCandidates(API_BASE);
 
   useEffect(() => {
     fetchAnalyticsData();
   }, [timeRange]);
 
   const fetchAnalyticsData = async () => {
+    const requestAnalyticsJson = async (pathWithQuery: string) => {
+      const attempts: AnalyticsRequestAttempt[] = [];
+      let lastError: unknown;
+
+      for (const baseUrl of analyticsBaseCandidates) {
+        const url = `${baseUrl}/${pathWithQuery}`;
+        try {
+          const response = await axios.get(url);
+          return response.data;
+        } catch (error) {
+          const statusCode = Number((error as any)?.response?.status ?? 0);
+          attempts.push({
+            url,
+            statusCode: statusCode || undefined,
+            message: error instanceof Error ? error.message : 'Request failed',
+          });
+
+          lastError = error;
+          if (!shouldContinueAnalyticsFallback(statusCode)) {
+            break;
+          }
+        }
+      }
+
+      throw buildAnalyticsFailure(
+        attempts,
+        lastError,
+        'Analytics endpoint request failed for all known base paths.'
+      );
+    };
+
     try {
       setLoading(true);
-      setErrorMessage(null);
+      setErrorState(null);
 
       const responses = await Promise.allSettled([
-        axios.get(`/api/analytics/default/overview?timeframe=${timeRange}`),
-        axios.get(`/api/analytics/default/performance?timeframe=${timeRange}`),
-        axios.get(`/api/analytics/default/providers/performance?timeframe=${timeRange}`),
-        axios.get(`/api/analytics/default/quality-trends?timeframe=${timeRange}`),
+        requestAnalyticsJson(`overview?timeframe=${encodeURIComponent(timeRange)}`),
+        requestAnalyticsJson(`performance?timeframe=${encodeURIComponent(timeRange)}`),
+        requestAnalyticsJson(`providers/performance?timeframe=${encodeURIComponent(timeRange)}`),
+        requestAnalyticsJson(`quality-trends?timeframe=${encodeURIComponent(timeRange)}`),
       ]);
 
       const failed = responses.find((response) => response.status === 'rejected');
       if (failed) {
-        const statusCode =
-          failed.status === 'rejected' ? Number((failed.reason as any)?.response?.status ?? 0) : 0;
+        const reason = failed.status === 'rejected' ? (failed.reason as any) : null;
+        const statusCode = Number(reason?.statusCode ?? reason?.response?.status ?? 0);
+        const attemptDetails = formatAttemptDetails(
+          Array.isArray(reason?.attempts) ? reason.attempts : []
+        );
+
         if (statusCode === 501) {
-          setErrorMessage(
-            'Analytics features are not deployed on this backend yet. Enable agency analytics services to activate this dashboard.'
-          );
+          setErrorState({
+            userMessage:
+              'Analytics is not available on this environment yet. Please check back shortly.',
+            technicalMessage: 'Analytics service returned HTTP 501.',
+            statusCode,
+          });
           setData(null);
           return;
         }
-        throw new Error(
-          `Analytics endpoint request failed${statusCode > 0 ? ` (${statusCode})` : ''}`
-        );
+
+        if (statusCode === 404) {
+          setErrorState({
+            userMessage:
+              'We could not find the analytics endpoint for this environment yet. Please try again shortly.',
+            technicalMessage: attemptDetails
+              ? `Analytics endpoint resolution failed. Tried: ${attemptDetails}`
+              : 'Analytics endpoint resolution failed with HTTP 404.',
+            statusCode,
+          });
+          setData(null);
+          return;
+        }
+
+        setErrorState({
+          userMessage: 'We could not retrieve your analytics data right now. Please try again.',
+          technicalMessage: attemptDetails
+            ? `Analytics request attempts: ${attemptDetails}`
+            : statusCode > 0
+              ? `Analytics endpoint request failed with HTTP ${statusCode}.`
+              : 'Analytics endpoint request failed before a status code was returned.',
+          statusCode: statusCode || undefined,
+        });
+        setData(null);
+        return;
       }
 
       const fulfilled = responses as Array<PromiseFulfilledResult<any>>;
       const [overviewPayload, performancePayload, providersPayload, qualityPayload] = fulfilled.map(
-        (response) => response.value?.data ?? {}
+        (response) => response.value ?? {}
       );
 
       const overviewData = unwrapApiData(overviewPayload);
@@ -292,7 +412,19 @@ const Analytics = () => {
       setData(normalizedData);
     } catch (error) {
       console.error('Error fetching analytics:', error);
-      setErrorMessage(error instanceof Error ? error.message : 'Failed to load analytics data');
+      const statusCode = Number(
+        (error as any)?.statusCode ?? (error as any)?.response?.status ?? 0
+      );
+      const attemptDetails = formatAttemptDetails(
+        Array.isArray((error as any)?.attempts) ? (error as any).attempts : []
+      );
+      setErrorState({
+        userMessage:
+          'We could not retrieve your analytics data right now. Please verify your connection and try again.',
+        technicalMessage:
+          attemptDetails || (error instanceof Error ? error.message : 'Unknown request failure.'),
+        statusCode: statusCode || undefined,
+      });
       setData(null);
       toast({
         title: 'Error',
@@ -311,12 +443,38 @@ const Analytics = () => {
   };
 
   const handleExport = async () => {
-    try {
-      const response = await axios.get(
-        `/api/analytics/default/export?timeframe=${timeRange}&format=json`,
-        {
-          responseType: 'blob',
+    const requestAnalyticsBlob = async (pathWithQuery: string) => {
+      const attempts: AnalyticsRequestAttempt[] = [];
+      let lastError: unknown;
+
+      for (const baseUrl of analyticsBaseCandidates) {
+        const url = `${baseUrl}/${pathWithQuery}`;
+        try {
+          return await axios.get(url, { responseType: 'blob' });
+        } catch (error) {
+          const statusCode = Number((error as any)?.response?.status ?? 0);
+          attempts.push({
+            url,
+            statusCode: statusCode || undefined,
+            message: error instanceof Error ? error.message : 'Request failed',
+          });
+          lastError = error;
+          if (!shouldContinueAnalyticsFallback(statusCode)) {
+            break;
+          }
         }
+      }
+
+      throw buildAnalyticsFailure(
+        attempts,
+        lastError,
+        'Analytics export request failed for all known base paths.'
+      );
+    };
+
+    try {
+      const response = await requestAnalyticsBlob(
+        `export?timeframe=${encodeURIComponent(timeRange)}&format=json`
       );
       const blob = response.data as Blob;
       const url = window.URL.createObjectURL(blob);
@@ -331,11 +489,21 @@ const Analytics = () => {
         description: 'Analytics data exported successfully',
       });
     } catch (error) {
-      const statusCode = Number((error as any)?.response?.status ?? 0);
+      const statusCode = Number(
+        (error as any)?.statusCode ?? (error as any)?.response?.status ?? 0
+      );
       if (statusCode === 501) {
         toast({
           title: 'Unavailable',
           description: 'Analytics export is not deployed on this backend.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      if (statusCode === 404) {
+        toast({
+          title: 'Unavailable',
+          description: 'Analytics export endpoint could not be located in this environment.',
           variant: 'destructive',
         });
         return;
@@ -361,17 +529,47 @@ const Analytics = () => {
     );
   }
 
-  if (errorMessage) {
+  if (errorState) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
-        <GlassCard className="max-w-md">
-          <div className="p-4 text-center">
+        <GlassCard className="max-w-lg border border-red-300/45 bg-[linear-gradient(180deg,rgba(15,23,42,0.95),rgba(15,23,42,0.88))] shadow-[0_24px_48px_rgba(2,6,23,0.72)]">
+          <div className="p-6 text-center">
             <Zap className="w-12 h-12 text-red-400 mx-auto mb-4" />
-            <p className="text-gray-300 font-medium">Unable to load analytics</p>
-            <p className="text-muted-foreground text-sm mt-2">{errorMessage}</p>
-            <PremiumButton onClick={handleRefresh} className="mt-4" icon={RefreshCw}>
-              Retry
-            </PremiumButton>
+            <p className="text-gray-100 font-semibold text-lg">Unable to load analytics</p>
+            <p className="text-gray-300 text-sm mt-2">{errorState.userMessage}</p>
+            {errorState.technicalMessage && (
+              <details className="mt-4 rounded-md border border-white/10 bg-slate-800/70 p-3 text-left">
+                <summary className="cursor-pointer text-xs text-slate-300 uppercase tracking-wide">
+                  Technical details
+                </summary>
+                <p className="mt-2 text-xs text-slate-400">
+                  {errorState.technicalMessage}
+                  {errorState.statusCode ? ` (HTTP ${errorState.statusCode})` : ''}
+                </p>
+              </details>
+            )}
+            <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={handleRefresh}
+                className="inline-flex items-center justify-center gap-2 rounded-md border border-rose-300/30 bg-rose-500/20 px-4 py-3 text-sm text-rose-50 transition-colors hover:bg-rose-500/30"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Retry
+              </button>
+              <a
+                href="/status"
+                className="inline-flex items-center justify-center rounded-md border border-white/15 px-4 py-3 text-sm text-slate-200 hover:bg-white/5 transition-colors"
+              >
+                System Status
+              </a>
+              <a
+                href="mailto:support@thenewfuse.com?subject=Analytics%20Page%20Issue"
+                className="inline-flex items-center justify-center rounded-md border border-white/15 px-4 py-3 text-sm text-slate-200 hover:bg-white/5 transition-colors"
+              >
+                Contact Support
+              </a>
+            </div>
           </div>
         </GlassCard>
       </div>
@@ -580,7 +778,7 @@ const Analytics = () => {
                 <motion.div variants={itemVariants}>
                   <StatsCard
                     label="Active Rate"
-                    value={`${Math.round((data.overview.activeAgents / data.overview.totalAgents) * 100)}%`}
+                    value={`${data.overview.totalAgents > 0 ? Math.round((data.overview.activeAgents / data.overview.totalAgents) * 100) : 0}%`}
                     change="Agent utilization"
                     changeType="positive"
                     icon={Zap}

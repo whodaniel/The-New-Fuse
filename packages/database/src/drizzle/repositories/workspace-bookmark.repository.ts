@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 import { and, asc, eq } from 'drizzle-orm';
 import { db } from '../client.js';
 import { workspaceBookmarks } from '../schema.js';
-import type { NewWorkspaceBookmark, WorkspaceBookmark } from '../types.js';
+import type { NewWorkspaceBookmark, WorkspaceBookmark } from '../types/index.js';
 
 export class DrizzleWorkspaceBookmarkRepository {
   async listByWorkspace(workspaceId: string): Promise<WorkspaceBookmark[]> {
@@ -92,7 +92,9 @@ export class DrizzleWorkspaceBookmarkRepository {
   async updateBookmark(
     workspaceId: string,
     id: string,
-    data: Partial<Omit<NewWorkspaceBookmark, 'id' | 'workspaceId' | 'createdAt' | 'createdByUserId'>>
+    data: Partial<
+      Omit<NewWorkspaceBookmark, 'id' | 'workspaceId' | 'createdAt' | 'createdByUserId'>
+    >
   ): Promise<WorkspaceBookmark | null> {
     const [bookmark] = await db
       .update(workspaceBookmarks)
@@ -106,7 +108,9 @@ export class DrizzleWorkspaceBookmarkRepository {
     workspaceId: string,
     id: string,
     userId: string,
-    data: Partial<Omit<NewWorkspaceBookmark, 'id' | 'workspaceId' | 'createdAt' | 'createdByUserId'>>
+    data: Partial<
+      Omit<NewWorkspaceBookmark, 'id' | 'workspaceId' | 'createdAt' | 'createdByUserId'>
+    >
   ): Promise<WorkspaceBookmark | null> {
     const [bookmark] = await db
       .update(workspaceBookmarks)

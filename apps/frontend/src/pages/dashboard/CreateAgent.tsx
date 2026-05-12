@@ -662,7 +662,7 @@ const CreateAgent: React.FC = () => {
             </div>
 
             <motion.div variants={itemVariants} className="space-y-4 pt-4">
-              <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
+              <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/10">
                 <div>
                   <p className="font-medium text-white">Make this agent publicly available</p>
                   <p className="text-sm text-gray-400">Others can discover and use this agent</p>
@@ -673,7 +673,7 @@ const CreateAgent: React.FC = () => {
                 />
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
+              <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/10">
                 <div>
                   <p className="font-medium text-white">Enable conversation logging</p>
                   <p className="text-sm text-gray-400">Store conversation history for analysis</p>
@@ -684,7 +684,7 @@ const CreateAgent: React.FC = () => {
                 />
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
+              <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/10">
                 <div>
                   <p className="font-medium text-white">Enable performance metrics</p>
                   <p className="text-sm text-gray-400">Track response times and usage stats</p>

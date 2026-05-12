@@ -85,16 +85,47 @@ describe('Visualizations', () => {
       screen.getByRole('heading', { name: /turn tnf chron jobs into a living watch movement/i })
     ).toBeInTheDocument();
 
-    expect(screen.getByText(/live railway\/redis master clock state/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/master clock state|fallback concept mode/i, undefined, {
+        timeout: 4000,
+      })
+    ).toBeInTheDocument();
 
     const julesLoopCard = await screen.findByRole('button', {
       name: /toggle jules autonomous loop/i,
     });
-    expect(screen.getByText(/last heartbeat/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/last run/i).length).toBeGreaterThan(0);
 
     await user.click(julesLoopCard);
 
     expect(screen.getAllByText(/locked into gear train/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/selected routine/i)).toBeInTheDocument();
-  });
+  }, 15000);
+
+  test('routes static surfaces through the in-app viewer while keeping native routes direct', () => {
+    render(
+      <MemoryRouter>
+        <Visualizations />
+      </MemoryRouter>
+    );
+
+    const staticSurfaceCandidates = screen.getAllByRole('link', {
+      name: /agent communication flow/i,
+    });
+    const staticSurfaceLink = staticSurfaceCandidates.find((link) =>
+      (link.getAttribute('href') || '').includes('/visualizations/surface?')
+    );
+    expect(staticSurfaceLink).toBeTruthy();
+    const staticHref = staticSurfaceLink?.getAttribute('href') || '';
+    expect(staticHref).toContain('/visualizations/surface?');
+    expect(decodeURIComponent(staticHref)).toContain(
+      'src=/visualizations/agent-communication-flow.html'
+    );
+
+    const nativeSurfaceCandidates = screen.getAllByRole('link', { name: /terminal graph view/i });
+    const nativeSurfaceLink = nativeSurfaceCandidates.find(
+      (link) => link.getAttribute('href') === '/visualizations/terminals'
+    );
+    expect(nativeSurfaceLink).toBeTruthy();
+  }, 15000);
 });

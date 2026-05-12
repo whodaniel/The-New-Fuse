@@ -1,24 +1,24 @@
 /**
  * WebSocket Gateway for Real-Time Web Scraping
- * 
+ *
  * Integrates with existing WebSocket infrastructure to provide
  * real-time scraping updates and streaming capabilities.
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { 
-  WebSocketGateway, 
-  WebSocketServer, 
-  SubscribeMessage, 
-  ConnectedSocket, 
+import {
+  ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
-  OnGatewayDisconnect 
+  OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { WebScrapingService } from '../core/WebScrapingService.js';
 import { ProxyService } from '../proxy/ProxyService.js';
-import { WebScrapingConfig, ScrapingResult } from '../types.js';
+import { ScrapingResult, WebScrapingConfig } from '../types/index.js';
 
 interface ScrapingSession {
   id: string;
@@ -32,9 +32,9 @@ interface ScrapingSession {
 @WebSocketGateway({
   cors: {
     origin: '*',
-    methods: ['GET', 'POST']
+    methods: ['GET', 'POST'],
   },
-  namespace: '/web-scraping'
+  namespace: '/web-scraping',
 })
 @Injectable()
 export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -55,7 +55,7 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
    */
   async handleConnection(@ConnectedSocket() client: Socket): Promise<void> {
     this.logger.log(`Web scraping client connected: ${client.id}`);
-    
+
     // Send welcome message with available commands
     client.emit('scraping_connected', {
       message: 'Connected to web scraping service',
@@ -67,8 +67,8 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
         'get_session_status',
         'pause_session',
         'resume_session',
-        'stop_session'
-      ]
+        'stop_session',
+      ],
     });
   }
 
@@ -85,7 +85,7 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
       }
       this.clientSessions.delete(client.id);
     }
-    
+
     this.logger.log(`Web scraping client disconnected: ${client.id}`);
   }
 
@@ -99,14 +99,14 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
   ): Promise<void> {
     try {
       const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
+
       const session: ScrapingSession = {
         id: sessionId,
         userId: data.userId,
         tenantId: data.tenantId,
         startTime: new Date(),
         status: 'active',
-        results: []
+        results: [],
       };
 
       this.activeSessions.set(sessionId, session);
@@ -115,13 +115,13 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
       client.emit('session_started', {
         sessionId,
         status: 'active',
-        startTime: session.startTime
+        startTime: session.startTime,
       });
 
       this.logger.log(`Started scraping session ${sessionId} for client ${client.id}`);
     } catch (error) {
-      client.emit('error', { 
-        error: error instanceof Error ? error.message : 'Failed to start session' 
+      client.emit('error', {
+        error: error instanceof Error ? error.message : 'Failed to start session',
       });
     }
   }
@@ -132,7 +132,8 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
   @SubscribeMessage('scrape_url')
   async handleScrapeUrl(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: {
+    @MessageBody()
+    data: {
       url: string;
       method?: 'simple' | 'full' | 'auto';
       config?: WebScrapingConfig;
@@ -150,7 +151,7 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
       client.emit('scraping_started', {
         url: data.url,
         method: data.method || 'auto',
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       let result: ScrapingResult;
@@ -158,24 +159,17 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
       // Execute scraping based on method
       switch (data.method) {
         case 'simple':
-          result = await this.webScrapingService.scrapeSimple(
-            data.url, 
-            data.config || {}, 
-            { mainContentOnly: true }
-          );
+          result = await this.webScrapingService.scrapeSimple(data.url, data.config || {}, {
+            mainContentOnly: true,
+          });
           break;
         case 'full':
-          result = await this.webScrapingService.scrapeFull(
-            data.url, 
-            data.config || {}, 
-            { includeMetadata: true }
-          );
+          result = await this.webScrapingService.scrapeFull(data.url, data.config || {}, {
+            includeMetadata: true,
+          });
           break;
         default:
-          result = await this.webScrapingService.scrapeAuto(
-            data.url, 
-            data.config || {}
-          );
+          result = await this.webScrapingService.scrapeAuto(data.url, data.config || {});
       }
 
       // Store result in session
@@ -195,17 +189,16 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
           links: result.links?.slice(0, 10),
           images: result.images?.slice(0, 5),
           statusCode: result.statusCode,
-          executionTime: result.metadata?.executionTime
+          executionTime: result.metadata?.executionTime,
         },
         error: result.error,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
-
     } catch (error) {
       client.emit('scraping_failed', {
         url: data.url,
         error: error instanceof Error ? error.message : 'Scraping failed',
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
   }
@@ -216,7 +209,8 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
   @SubscribeMessage('scrape_batch')
   async handleScrapeBatch(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: {
+    @MessageBody()
+    data: {
       urls: string[];
       method?: 'simple' | 'full' | 'auto';
       config?: WebScrapingConfig;
@@ -231,31 +225,31 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
 
     try {
       const { urls, method = 'auto', config = {}, batchSize = 3 } = data;
-      
+
       client.emit('batch_started', {
         totalUrls: urls.length,
         batchSize,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       // Process URLs in batches
       for (let i = 0; i < urls.length; i += batchSize) {
         const batch = urls.slice(i, i + batchSize);
-        
+
         // Send batch progress
         client.emit('batch_progress', {
           currentBatch: Math.floor(i / batchSize) + 1,
           totalBatches: Math.ceil(urls.length / batchSize),
           processedUrls: i,
           totalUrls: urls.length,
-          currentBatchUrls: batch
+          currentBatchUrls: batch,
         });
 
         // Process batch concurrently
         const batchPromises = batch.map(async (url) => {
           try {
             let result: ScrapingResult;
-            
+
             switch (method) {
               case 'simple':
                 result = await this.webScrapingService.scrapeSimple(url, config);
@@ -273,35 +267,34 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
               success: result.success,
               title: result.title,
               executionTime: result.metadata?.executionTime,
-              error: result.error
+              error: result.error,
             });
 
             return result;
           } catch (error) {
             client.emit('batch_item_failed', {
               url,
-              error: error instanceof Error ? error.message : 'Failed'
+              error: error instanceof Error ? error.message : 'Failed',
             });
             return null;
           }
         });
 
         await Promise.all(batchPromises);
-        
+
         // Small delay between batches to prevent overwhelming
         if (i + batchSize < urls.length) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }
 
       client.emit('batch_completed', {
         totalUrls: urls.length,
-        completedAt: new Date()
+        completedAt: new Date(),
       });
-
     } catch (error) {
       client.emit('batch_failed', {
-        error: error instanceof Error ? error.message : 'Batch scraping failed'
+        error: error instanceof Error ? error.message : 'Batch scraping failed',
       });
     }
   }
@@ -312,7 +305,8 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
   @SubscribeMessage('proxy_request')
   async handleProxyRequest(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: {
+    @MessageBody()
+    data: {
       url: string;
       method?: string;
       headers?: Record<string, string>;
@@ -324,7 +318,7 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
         url: data.url,
         method: (data.method as any) || 'GET',
         headers: data.headers,
-        body: data.body
+        body: data.body,
       });
 
       client.emit('proxy_response', {
@@ -334,12 +328,11 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
         body: result.body.substring(0, 5000), // Limit for WebSocket
         contentType: result.contentType,
         executionTime: result.metadata.executionTime,
-        error: result.error
+        error: result.error,
       });
-
     } catch (error) {
       client.emit('proxy_error', {
-        error: error instanceof Error ? error.message : 'Proxy request failed'
+        error: error instanceof Error ? error.message : 'Proxy request failed',
       });
     }
   }
@@ -366,8 +359,8 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
       status: session.status,
       startTime: session.startTime,
       resultsCount: session.results.length,
-      successfulScrapes: session.results.filter(r => r.success).length,
-      failedScrapes: session.results.filter(r => !r.success).length
+      successfulScrapes: session.results.filter((r) => r.success).length,
+      failedScrapes: session.results.filter((r) => !r.success).length,
     });
   }
 
@@ -413,15 +406,15 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
         session.status = 'completed';
         this.activeSessions.delete(sessionId);
         this.clientSessions.delete(client.id);
-        
+
         client.emit('session_stopped', {
           sessionId,
           finalStats: {
             totalResults: session.results.length,
-            successfulScrapes: session.results.filter(r => r.success).length,
-            failedScrapes: session.results.filter(r => !r.success).length,
-            duration: Date.now() - session.startTime.getTime()
-          }
+            successfulScrapes: session.results.filter((r) => r.success).length,
+            failedScrapes: session.results.filter((r) => !r.success).length,
+            duration: Date.now() - session.startTime.getTime(),
+          },
         });
       }
     }
@@ -441,15 +434,17 @@ export class WebScrapingWebSocketGateway implements OnGatewayConnection, OnGatew
     const sessions = Array.from(this.activeSessions.values());
     return {
       totalSessions: sessions.length,
-      activeSessions: sessions.filter(s => s.status === 'active').length,
-      pausedSessions: sessions.filter(s => s.status === 'paused').length,
+      activeSessions: sessions.filter((s) => s.status === 'active').length,
+      pausedSessions: sessions.filter((s) => s.status === 'paused').length,
       totalResults: sessions.reduce((sum, s) => sum + s.results.length, 0),
-      successfulScrapes: sessions.reduce((sum, s) => 
-        sum + s.results.filter(r => r.success).length, 0
+      successfulScrapes: sessions.reduce(
+        (sum, s) => sum + s.results.filter((r) => r.success).length,
+        0
       ),
-      failedScrapes: sessions.reduce((sum, s) => 
-        sum + s.results.filter(r => !r.success).length, 0
-      )
+      failedScrapes: sessions.reduce(
+        (sum, s) => sum + s.results.filter((r) => !r.success).length,
+        0
+      ),
     };
   }
 }

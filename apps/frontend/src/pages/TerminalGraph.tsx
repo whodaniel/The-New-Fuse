@@ -295,7 +295,7 @@ const TerminalGraphPage: React.FC = () => {
         <section className="mb-6 rounded-2xl border border-white/10 bg-slate-900/60 p-4">
           <div className="mb-3 flex items-center justify-between gap-3">
             <div className="text-sm text-slate-300">Topology Canvas</div>
-            <div className="text-xs text-slate-500">
+            <div className="text-xs text-slate-400">
               Column layout: tenant to host to terminal to pane/process/runtime
             </div>
           </div>
@@ -363,7 +363,7 @@ const TerminalGraphPage: React.FC = () => {
                 {(data?.terminals || []).map((terminal, index) => (
                   <tr
                     key={String(terminal.twid || `terminal-${index}`)}
-                    className="border-b border-white/5"
+                    className="border-b border-white/10"
                   >
                     <td className="px-3 py-2 font-mono text-xs text-cyan-100">
                       {String(terminal.twid || 'n/a')}
@@ -396,7 +396,7 @@ const TerminalGraphPage: React.FC = () => {
                           ))}
                         </div>
                       ) : (
-                        <span className="text-xs text-slate-500">None</span>
+                        <span className="text-xs text-slate-400">None</span>
                       )}
                     </td>
                     <td className="px-3 py-2">
@@ -409,7 +409,7 @@ const TerminalGraphPage: React.FC = () => {
                           ))}
                         </div>
                       ) : (
-                        <span className="text-xs text-slate-500">Redacted</span>
+                        <span className="text-xs text-slate-400">Redacted</span>
                       )}
                     </td>
                   </tr>

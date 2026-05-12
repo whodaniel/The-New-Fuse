@@ -69,7 +69,7 @@ export const ShortcutsHelp: React.FC = () => {
               ))}
             </div>
 
-            <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
+            <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Keyboard className="w-4 h-4" />
                 <span>

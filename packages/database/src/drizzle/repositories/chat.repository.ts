@@ -25,7 +25,7 @@ import type {
   NewMessage,
   NewReadReceipt,
   ReadReceipt,
-} from '../types.js';
+} from '../types/index.js';
 
 /**
  * Chat Repository - provides data access for Chat entities

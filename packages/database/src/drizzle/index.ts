@@ -19,7 +19,7 @@ export {
 export * from './schema.js';
 
 // Export all inferred types
-export * from './types.js';
+export * from './types/index.js';
 
 // Export all repositories
 export * from './repositories.js';

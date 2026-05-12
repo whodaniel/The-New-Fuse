@@ -122,19 +122,26 @@ function readNarrativeConnections(event: TimelineEvent): Array<{
 }> {
   const payload = (event.payload || {}) as Record<string, unknown>;
   if (!Array.isArray(payload.narrativeConnections)) return [];
-  const connections: Array<{ from: string; to: string; connectionType: string; rationale?: string }> = [];
+  const connections: Array<{
+    from: string;
+    to: string;
+    connectionType: string;
+    rationale?: string;
+  }> = [];
   for (const candidate of payload.narrativeConnections) {
     if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) continue;
     const row = candidate as Record<string, unknown>;
     const from = typeof row.from === 'string' ? row.from.trim() : '';
     const to = typeof row.to === 'string' ? row.to.trim() : '';
     if (!from || !to) continue;
-    const connectionType = typeof row.connectionType === 'string' && row.connectionType.trim().length > 0
-      ? row.connectionType.trim()
-      : 'related';
-    const rationale = typeof row.rationale === 'string' && row.rationale.trim().length > 0
-      ? row.rationale.trim()
-      : undefined;
+    const connectionType =
+      typeof row.connectionType === 'string' && row.connectionType.trim().length > 0
+        ? row.connectionType.trim()
+        : 'related';
+    const rationale =
+      typeof row.rationale === 'string' && row.rationale.trim().length > 0
+        ? row.rationale.trim()
+        : undefined;
     connections.push({ from, to, connectionType, rationale });
   }
   return connections;
@@ -260,7 +267,9 @@ export default function TimelinePage() {
     setGraphLoading(true);
     try {
       const rows = await listTimelineEvents(ownerScopeId ? { ownerId: ownerScopeId } : undefined);
-      const graph = await getGithubNarrativeGraph(ownerScopeId ? { ownerId: ownerScopeId } : undefined);
+      const graph = await getGithubNarrativeGraph(
+        ownerScopeId ? { ownerId: ownerScopeId } : undefined
+      );
       setEvents(rows);
       setNarrativeGraph(graph);
       if (rows.length && !selectedId) {
@@ -450,7 +459,7 @@ export default function TimelinePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-100 p-4 lg:p-10">
+    <div className="dark min-h-screen bg-[#020617] text-slate-100 p-4 lg:p-10">
       <div className="max-w-7xl mx-auto space-y-8">
         <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
@@ -497,44 +506,44 @@ export default function TimelinePage() {
           </div>
         </header>
 
-        <Card className="bg-slate-900/50 border-slate-800 p-4 rounded-md">
+        <Card className="bg-slate-900/50 border-slate-800 p-5 rounded-md">
           <div className="flex flex-col gap-3">
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-400 font-bold">
               Related Timeline Views
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
               <Link
                 to="/timeline"
-                className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-200 hover:bg-amber-500/20"
+                className="rounded-md border border-amber-500/40 bg-amber-500/20 px-3 py-2 text-sm font-bold text-amber-400 hover:bg-amber-500/30 transition-all text-center"
               >
                 Personal Timeline
               </Link>
               <Link
                 to="/macro-timeline"
-                className="rounded-md border border-sky-500/40 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-200 hover:bg-sky-500/20"
+                className="rounded-md border border-sky-500/40 bg-sky-500/20 px-3 py-2 text-sm font-bold text-sky-400 hover:bg-sky-500/30 transition-all text-center"
               >
-                Macro Timeline (Multi-Track)
+                Macro Timeline
               </Link>
               <Link
                 to="/timeline/module"
-                className="rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-200 hover:bg-emerald-500/20"
+                className="rounded-md border border-emerald-500/40 bg-emerald-500/20 px-3 py-2 text-sm font-bold text-emerald-400 hover:bg-emerald-500/30 transition-all text-center"
               >
-                Timeline Module Lab
+                Module Lab
               </Link>
               <Link
                 to="/timeline-demo"
-                className="rounded-md border border-fuchsia-500/40 bg-fuchsia-500/10 px-3 py-2 text-sm font-semibold text-fuchsia-200 hover:bg-fuchsia-500/20"
+                className="rounded-md border border-fuchsia-500/40 bg-fuchsia-500/20 px-3 py-2 text-sm font-bold text-fuchsia-400 hover:bg-fuchsia-500/30 transition-all text-center"
               >
-                Timeline Demo
+                Visual Demo
               </Link>
             </div>
-            <div className="rounded-md border border-slate-800 bg-slate-950/60 px-3 py-2 text-xs text-slate-300">
+            <div className="rounded-md border border-slate-800 bg-slate-950/60 px-3 py-2 text-xs text-slate-300 mt-2">
               {graphLoading ? (
                 <span>Loading narrative graph summary...</span>
               ) : narrativeGraph ? (
                 <span>
-                  Narrative graph: <span className="text-sky-300">{narrativeGraph.nodeCount}</span> nodes,{' '}
-                  <span className="text-sky-300">{narrativeGraph.edgeCount}</span> edges,{' '}
+                  Narrative graph: <span className="text-sky-300">{narrativeGraph.nodeCount}</span>{' '}
+                  nodes, <span className="text-sky-300">{narrativeGraph.edgeCount}</span> edges,{' '}
                   <span className="text-sky-300">{narrativeGraph.eventCount}</span> imported events.
                 </span>
               ) : (
@@ -549,16 +558,16 @@ export default function TimelinePage() {
           className="bg-slate-900/50 border-slate-800 p-4 rounded-md space-y-5"
         >
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-2 text-slate-300 text-sm">
-              <Calendar className="w-4 h-4" />
-              Traditional horizontal timeline slider with node dots
+            <div className="flex items-center gap-2 text-slate-300 text-sm font-medium">
+              <Calendar className="w-4 h-4 text-amber-500" />
+              Chronological Roadmap
             </div>
             <div className="flex items-center gap-2">
-              <Label className="text-xs text-slate-400">Category</Label>
+              <Label className="text-xs text-slate-400">Filter By Category</Label>
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="h-9 rounded-md border border-slate-700 bg-slate-950 px-2 text-sm"
+                className="h-9 rounded-md border border-slate-700 bg-slate-950 px-2 text-sm text-slate-200 outline-none focus:border-amber-500/50"
               >
                 {availableCategories.map((category) => (
                   <option key={category} value={category}>
@@ -569,9 +578,9 @@ export default function TimelinePage() {
             </div>
           </div>
 
-          <div className="relative px-2 py-8 overflow-x-auto">
+          <div className="relative px-2 py-10 overflow-x-auto">
             <div className="min-w-[680px]">
-              <div className="h-[2px] bg-slate-700 relative">
+              <div className="h-[2px] bg-slate-700/50 relative">
                 {filteredEvents.map((event) => {
                   const payload = readPayload(event);
                   const active = selectedId === event.id;
@@ -581,15 +590,15 @@ export default function TimelinePage() {
                       type="button"
                       data-testid={`timeline-node-${event.id}`}
                       onClick={() => setSelectedId(event.id)}
-                      className="absolute -top-3 -translate-x-1/2 group"
+                      className="absolute -top-3 -translate-x-1/2 group z-10"
                       style={{ left: `${payload.point}%` }}
                       title={payload.title}
                     >
                       <span
                         className={`block w-6 h-6 rounded-full border-2 transition-all ${
                           active
-                            ? 'bg-amber-500 border-amber-200 scale-110'
-                            : 'bg-slate-800 border-slate-500 group-hover:border-amber-400'
+                            ? 'bg-amber-500 border-amber-200 scale-125 shadow-[0_0_15px_rgba(245,158,11,0.5)]'
+                            : 'bg-slate-800 border-slate-600 group-hover:border-amber-400 group-hover:scale-110'
                         }`}
                       />
                     </button>
@@ -602,80 +611,111 @@ export default function TimelinePage() {
           {selectedEvent ? (
             <div
               data-testid="timeline-selected-card"
-              className="rounded-md border border-slate-700 bg-slate-950/60 p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
+              className="rounded-md border border-slate-700 bg-slate-950/40 p-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between animate-in fade-in slide-in-from-left-2 duration-300"
             >
-              <div>
-                <h2 data-testid="timeline-selected-title" className="text-lg font-semibold">
-                  {readPayload(selectedEvent).title}
-                </h2>
-                <p className="text-slate-300 text-sm mt-1">
-                  {readPayload(selectedEvent).description || 'No details added yet.'}
+              <div className="space-y-1">
+                <div className="flex items-center gap-3">
+                  <h2
+                    data-testid="timeline-selected-title"
+                    className="text-xl font-bold text-white"
+                  >
+                    {readPayload(selectedEvent).title}
+                  </h2>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 font-bold uppercase tracking-wider">
+                    {readPayload(selectedEvent).category}
+                  </span>
+                </div>
+                <p className="text-slate-300 text-sm max-w-2xl leading-relaxed">
+                  {readPayload(selectedEvent).description ||
+                    'No additional context provided for this milestone.'}
                 </p>
-                <p className="text-xs text-slate-500 mt-2">
-                  Point {readPayload(selectedEvent).point} •{' '}
-                  {format(new Date(selectedEvent.timestamp), 'PPP p')}
-                </p>
-                <p className="text-xs text-amber-300 mt-1">
-                  Category: {readPayload(selectedEvent).category}
-                </p>
-                {readProject(selectedEvent) ? (
-                  <p className="text-xs text-emerald-300 mt-1">
-                    Project: {readProject(selectedEvent)}
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3">
+                  <p className="text-xs text-slate-400">
+                    <span className="text-slate-500">Position:</span>{' '}
+                    {readPayload(selectedEvent).point}%
                   </p>
-                ) : null}
+                  <p className="text-xs text-slate-400">
+                    <span className="text-slate-500">Timestamp:</span>{' '}
+                    {format(new Date(selectedEvent.timestamp), 'PPP p')}
+                  </p>
+                  {readProject(selectedEvent) ? (
+                    <p className="text-xs text-emerald-400">
+                      <span className="text-slate-500">Project:</span> {readProject(selectedEvent)}
+                    </p>
+                  ) : null}
+                </div>
+
                 {readSources(selectedEvent).length > 0 ? (
-                  <div className="mt-2">
-                    <p className="text-xs text-slate-400 uppercase tracking-[0.18em]">Sources</p>
-                    <ul className="mt-1 space-y-1">
+                  <div className="mt-4 pt-4 border-t border-slate-800/50">
+                    <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-bold">
+                      Evidence & Sources
+                    </p>
+                    <ul className="mt-2 space-y-1">
                       {readSources(selectedEvent).map((source) => (
-                        <li key={source} className="text-xs text-sky-300 break-all">
+                        <li
+                          key={source}
+                          className="text-xs text-sky-400/80 hover:text-sky-300 transition-colors break-all flex items-center gap-2"
+                        >
+                          <div className="w-1 h-1 rounded-full bg-sky-500/40" />
                           {source}
                         </li>
                       ))}
                     </ul>
                   </div>
                 ) : null}
+
                 {readAssetRefs(selectedEvent).length > 0 ? (
-                  <p className="text-xs text-fuchsia-300 mt-2">
-                    Assets linked: {readAssetRefs(selectedEvent).length}
+                  <p className="text-[10px] text-fuchsia-400 mt-3 font-bold uppercase tracking-wider">
+                    Linked Assets: {readAssetRefs(selectedEvent).length}
                   </p>
                 ) : null}
+
                 {selectedConnections.length > 0 ? (
-                  <div className="mt-3">
-                    <p className="text-xs text-slate-400 uppercase tracking-[0.18em]">
-                      Narrative Connections
+                  <div className="mt-4 pt-4 border-t border-slate-800/50">
+                    <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-bold">
+                      Narrative Links
                     </p>
-                    <ul className="mt-1 space-y-2">
+                    <ul className="mt-2 space-y-2">
                       {selectedConnections.slice(0, 8).map((connection, index) => (
-                        <li key={`${connection.from}-${connection.to}-${index}`} className="text-xs">
-                          <p className="text-emerald-300 break-all">
-                            {connection.from} → {connection.to}
+                        <li
+                          key={`${connection.from}-${connection.to}-${index}`}
+                          className="text-xs bg-slate-900/40 p-2 rounded border border-slate-800/40"
+                        >
+                          <p className="text-emerald-400 font-medium">
+                            {connection.from} <span className="text-slate-500">→</span>{' '}
+                            {connection.to}
                           </p>
-                          <p className="text-slate-500">{connection.connectionType}</p>
-                          {connection.rationale ? (
-                            <p className="text-slate-400">{connection.rationale}</p>
-                          ) : null}
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[10px] text-slate-500 uppercase">
+                              {connection.connectionType}
+                            </span>
+                            {connection.rationale ? (
+                              <span className="text-slate-400 italic">
+                                — {connection.rationale}
+                              </span>
+                            ) : null}
+                          </div>
                         </li>
                       ))}
                     </ul>
                   </div>
                 ) : null}
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex md:flex-col items-stretch gap-2">
                 <Button
                   data-testid="timeline-edit-selected"
                   variant="outline"
-                  className="border-slate-700"
+                  className="border-slate-800 bg-slate-900/50 hover:bg-slate-800"
                   onClick={() => startEdit(selectedEvent)}
                   disabled={isDelegatedView}
                 >
                   <Pencil className="w-4 h-4 mr-2" />
-                  Edit
+                  Edit Event
                 </Button>
                 <Button
                   data-testid="timeline-delete-selected"
                   variant="outline"
-                  className="border-red-500/40 text-red-300 hover:bg-red-900/20"
+                  className="border-red-500/20 text-red-400 hover:bg-red-950/30 hover:border-red-500/40"
                   onClick={() => removeItem(selectedEvent.id)}
                   disabled={isDelegatedView}
                 >
@@ -685,137 +725,67 @@ export default function TimelinePage() {
               </div>
             </div>
           ) : (
-            <p className="text-slate-400 text-sm">
-              No selected point. Add one below to start your timeline.
-            </p>
+            <div className="flex flex-col items-center justify-center py-10 text-center space-y-2">
+              <div className="w-12 h-12 rounded-full bg-slate-800/50 flex items-center justify-center text-slate-500">
+                <Calendar className="w-6 h-6" />
+              </div>
+              <p className="text-slate-400 text-sm">
+                No milestone selected. Click a node on the timeline to view details.
+              </p>
+            </div>
           )}
         </Card>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <Card
             data-testid="timeline-create-card"
-            className="bg-slate-900/50 border-slate-800 p-4 rounded-md space-y-4"
+            className="bg-slate-900/50 border-slate-800 p-6 rounded-md space-y-5"
           >
-            <h3 className="text-xl font-bold">Add Timeline Point</h3>
-            <div className="space-y-2">
-              <Label>Title</Label>
-              <Input
-                data-testid="timeline-create-title"
-                value={createForm.title}
-                onChange={(e) => setCreateForm((s) => ({ ...s, title: e.target.value }))}
-                placeholder="Launch MVP"
-                className="bg-slate-950 border-slate-700"
-              />
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded bg-amber-500/10 flex items-center justify-center text-amber-500">
+                <Plus className="w-5 h-5" />
+              </div>
+              <h3 className="text-xl font-bold text-white">Record New Milestone</h3>
             </div>
-            <div className="space-y-2">
-              <Label>Description</Label>
-              <Textarea
-                data-testid="timeline-create-description"
-                value={createForm.description}
-                onChange={(e) => setCreateForm((s) => ({ ...s, description: e.target.value }))}
-                placeholder="What happened at this point?"
-                className="bg-slate-950 border-slate-700 min-h-[100px]"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Sources (one per line)</Label>
-              <Textarea
-                value={createForm.sourcesText}
-                onChange={(e) => setCreateForm((s) => ({ ...s, sourcesText: e.target.value }))}
-                placeholder="https://example.com/reference\nnotes: personal journal"
-                className="bg-slate-950 border-slate-700 min-h-[90px]"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Category</Label>
-              <select
-                value={createForm.category}
-                onChange={(e) => setCreateForm((s) => ({ ...s, category: e.target.value }))}
-                className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm"
-              >
-                {selectableCategories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label>Timeline Position: {createForm.point}</Label>
-              <input
-                data-testid="timeline-create-point"
-                type="range"
-                min={0}
-                max={100}
-                value={createForm.point}
-                onChange={(e) => setCreateForm((s) => ({ ...s, point: Number(e.target.value) }))}
-                className="w-full accent-amber-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Date & Time</Label>
-              <Input
-                data-testid="timeline-create-when"
-                type="datetime-local"
-                value={createForm.when}
-                onChange={(e) => setCreateForm((s) => ({ ...s, when: e.target.value }))}
-                className="bg-slate-950 border-slate-700"
-              />
-            </div>
-            <Button
-              data-testid="timeline-create-submit"
-              onClick={createItem}
-              disabled={saving || isDelegatedView}
-              className="bg-amber-500 hover:bg-amber-600 text-black w-full"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Point
-            </Button>
-          </Card>
 
-          <Card
-            data-testid="timeline-edit-card"
-            className="bg-slate-900/50 border-slate-800 p-4 rounded-md space-y-4"
-          >
-            <h3 className="text-xl font-bold">Edit Selected Point</h3>
-            {!editingId ? (
-              <p className="text-slate-400 text-sm">
-                Select a node and click <span className="text-slate-200">Edit</span> to modify it.
-              </p>
-            ) : (
-              <>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-slate-300">Title</Label>
+                <Input
+                  data-testid="timeline-create-title"
+                  value={createForm.title}
+                  onChange={(e) => setCreateForm((s) => ({ ...s, title: e.target.value }))}
+                  placeholder="e.g. Project Launch"
+                  className="bg-slate-950 border-slate-700 text-slate-200 focus:ring-amber-500/20"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-slate-300">Narrative Description</Label>
+                <Textarea
+                  data-testid="timeline-create-description"
+                  value={createForm.description}
+                  onChange={(e) => setCreateForm((s) => ({ ...s, description: e.target.value }))}
+                  placeholder="Describe the significance of this event..."
+                  className="bg-slate-950 border-slate-700 min-h-[100px] text-slate-200"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-slate-300">Sources & Evidence (one per line)</Label>
+                <Textarea
+                  value={createForm.sourcesText}
+                  onChange={(e) => setCreateForm((s) => ({ ...s, sourcesText: e.target.value }))}
+                  placeholder="URLs or citations..."
+                  className="bg-slate-950 border-slate-700 min-h-[90px] text-slate-200"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Title</Label>
-                  <Input
-                    data-testid="timeline-edit-title"
-                    value={editForm.title}
-                    onChange={(e) => setEditForm((s) => ({ ...s, title: e.target.value }))}
-                    className="bg-slate-950 border-slate-700"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Description</Label>
-                  <Textarea
-                    data-testid="timeline-edit-description"
-                    value={editForm.description}
-                    onChange={(e) => setEditForm((s) => ({ ...s, description: e.target.value }))}
-                    className="bg-slate-950 border-slate-700 min-h-[100px]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Sources (one per line)</Label>
-                  <Textarea
-                    value={editForm.sourcesText}
-                    onChange={(e) => setEditForm((s) => ({ ...s, sourcesText: e.target.value }))}
-                    className="bg-slate-950 border-slate-700 min-h-[90px]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Category</Label>
+                  <Label className="text-slate-300">Category</Label>
                   <select
-                    value={editForm.category}
-                    onChange={(e) => setEditForm((s) => ({ ...s, category: e.target.value }))}
-                    className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm"
+                    value={createForm.category}
+                    onChange={(e) => setCreateForm((s) => ({ ...s, category: e.target.value }))}
+                    className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200 outline-none focus:border-amber-500/50"
                   >
                     {selectableCategories.map((category) => (
                       <option key={category} value={category}>
@@ -825,7 +795,133 @@ export default function TimelinePage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Timeline Position: {editForm.point}</Label>
+                  <Label className="text-slate-300">Date & Time</Label>
+                  <Input
+                    data-testid="timeline-create-when"
+                    type="datetime-local"
+                    value={createForm.when}
+                    onChange={(e) => setCreateForm((s) => ({ ...s, when: e.target.value }))}
+                    className="bg-slate-950 border-slate-700 text-slate-200"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                <div className="flex justify-between items-center">
+                  <Label className="text-slate-300 text-xs font-bold uppercase tracking-wider">
+                    Timeline Position
+                  </Label>
+                  <span className="text-amber-400 font-mono font-bold text-sm">
+                    {createForm.point}%
+                  </span>
+                </div>
+                <input
+                  data-testid="timeline-create-point"
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={createForm.point}
+                  onChange={(e) => setCreateForm((s) => ({ ...s, point: Number(e.target.value) }))}
+                  className="w-full accent-amber-500 cursor-pointer"
+                />
+              </div>
+            </div>
+
+            <Button
+              data-testid="timeline-create-submit"
+              onClick={createItem}
+              disabled={saving || isDelegatedView}
+              className="bg-amber-500 hover:bg-amber-600 text-black w-full font-bold shadow-lg shadow-amber-500/10 h-11"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add to Timeline
+            </Button>
+          </Card>
+
+          <Card
+            data-testid="timeline-edit-card"
+            className="bg-slate-900/50 border-slate-800 p-6 rounded-md space-y-5"
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded bg-sky-500/10 flex items-center justify-center text-sky-500">
+                <Pencil className="w-5 h-5" />
+              </div>
+              <h3 className="text-xl font-bold text-white">Edit Selection</h3>
+            </div>
+
+            {!editingId ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center opacity-50">
+                <Pencil className="w-10 h-10 text-slate-600 mb-4" />
+                <p className="text-slate-400 text-sm max-w-[240px]">
+                  Select an event on the timeline and click{' '}
+                  <span className="text-slate-200 font-bold">Edit</span> to populate this form.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
+                <div className="space-y-2">
+                  <Label className="text-slate-300">Title</Label>
+                  <Input
+                    data-testid="timeline-edit-title"
+                    value={editForm.title}
+                    onChange={(e) => setEditForm((s) => ({ ...s, title: e.target.value }))}
+                    className="bg-slate-950 border-slate-700 text-slate-200"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-slate-300">Description</Label>
+                  <Textarea
+                    data-testid="timeline-edit-description"
+                    value={editForm.description}
+                    onChange={(e) => setEditForm((s) => ({ ...s, description: e.target.value }))}
+                    className="bg-slate-950 border-slate-700 min-h-[100px] text-slate-200"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-slate-300">Sources</Label>
+                  <Textarea
+                    value={editForm.sourcesText}
+                    onChange={(e) => setEditForm((s) => ({ ...s, sourcesText: e.target.value }))}
+                    className="bg-slate-950 border-slate-700 min-h-[90px] text-slate-200"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-slate-300">Category</Label>
+                    <select
+                      value={editForm.category}
+                      onChange={(e) => setEditForm((s) => ({ ...s, category: e.target.value }))}
+                      className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200 outline-none focus:border-sky-500/50"
+                    >
+                      {selectableCategories.map((category) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-slate-300">Date & Time</Label>
+                    <Input
+                      data-testid="timeline-edit-when"
+                      type="datetime-local"
+                      value={editForm.when}
+                      onChange={(e) => setEditForm((s) => ({ ...s, when: e.target.value }))}
+                      className="bg-slate-950 border-slate-700 text-slate-200"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-3 pt-2">
+                  <div className="flex justify-between items-center">
+                    <Label className="text-slate-300 text-xs font-bold uppercase tracking-wider">
+                      Position
+                    </Label>
+                    <span className="text-sky-400 font-mono font-bold text-sm">
+                      {editForm.point}%
+                    </span>
+                  </div>
                   <input
                     data-testid="timeline-edit-point"
                     type="range"
@@ -833,38 +929,29 @@ export default function TimelinePage() {
                     max={100}
                     value={editForm.point}
                     onChange={(e) => setEditForm((s) => ({ ...s, point: Number(e.target.value) }))}
-                    className="w-full accent-amber-500"
+                    className="w-full accent-sky-500 cursor-pointer"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label>Date & Time</Label>
-                  <Input
-                    data-testid="timeline-edit-when"
-                    type="datetime-local"
-                    value={editForm.when}
-                    onChange={(e) => setEditForm((s) => ({ ...s, when: e.target.value }))}
-                    className="bg-slate-950 border-slate-700"
-                  />
-                </div>
-                <div className="flex gap-2">
+
+                <div className="flex gap-3 pt-4">
                   <Button
                     data-testid="timeline-edit-save"
                     onClick={saveEdit}
                     disabled={saving || isDelegatedView}
-                    className="bg-emerald-500 hover:bg-emerald-600 text-black flex-1"
+                    className="bg-emerald-500 hover:bg-emerald-600 text-black font-bold flex-1 h-11"
                   >
-                    Save Changes
+                    Update Record
                   </Button>
                   <Button
                     data-testid="timeline-edit-cancel"
                     variant="outline"
-                    className="border-slate-700"
+                    className="border-slate-700 bg-slate-900/50 hover:bg-slate-800 h-11 px-6"
                     onClick={() => setEditingId(null)}
                   >
                     Cancel
                   </Button>
                 </div>
-              </>
+              </div>
             )}
           </Card>
         </div>

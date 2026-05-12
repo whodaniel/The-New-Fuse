@@ -333,7 +333,7 @@ export default function PfpPromptCatalogPage() {
 
                 <div className="grid gap-3 lg:grid-cols-2">
                   <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-                    <p className="mb-2 text-[11px] uppercase tracking-[0.2em] text-slate-500">
+                    <p className="mb-2 text-[11px] uppercase tracking-[0.2em] text-slate-400">
                       Negative Prompt
                     </p>
                     <p className="text-sm leading-6 text-slate-300">
@@ -341,7 +341,7 @@ export default function PfpPromptCatalogPage() {
                     </p>
                   </div>
                   <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-                    <p className="mb-2 text-[11px] uppercase tracking-[0.2em] text-slate-500">
+                    <p className="mb-2 text-[11px] uppercase tracking-[0.2em] text-slate-400">
                       Render Notes
                     </p>
                     <ul className="space-y-1 text-sm text-slate-300">

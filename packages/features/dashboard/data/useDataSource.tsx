@@ -1,13 +1,13 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { DataFetcher } from './DataFetcher.js';
 import { WebSocketManager } from './WebSocketManager.js';
 import {
-  DataSourceState,
-  DataFetcherConfig,
-  WebSocketConfig,
   CacheConfig,
+  DataFetcherConfig,
+  DataSourceState,
   DataTransformer,
-} from './types.js';
+  WebSocketConfig,
+} from './types/index.js';
 
 interface UseDataSourceOptions<T = any, R = any> {
   type: 'rest' | 'websocket';
@@ -67,7 +67,7 @@ export function useDataSource<T = any, R = any>({
     if (!wsManager.current) {
       wsManager.current = new WebSocketManager();
     }
-    
+
     // Configure and connect
     wsManager.current.configure(config as WebSocketConfig);
     wsManager.current.connect();
@@ -102,7 +102,7 @@ export function useDataSource<T = any, R = any>({
       if (refreshInterval) {
         refreshTimeout.current = setInterval(fetchData, refreshInterval);
       }
-      
+
       return () => {
         if (refreshTimeout.current) {
           clearInterval(refreshTimeout.current);

@@ -3,17 +3,16 @@
  */
 
 import {
-  SystemResources,
-  MemoryUsage,
-  BuildStrategy,
-  BuildConfiguration,
+  BuildEventCallback,
+  BuildEventData,
   BuildResult,
   BuildStage,
-  PackageDependency,
-  BuildEventData,
+  BuildStrategy,
   MemoryCallback,
-  BuildEventCallback
-} from '../types.js';
+  MemoryUsage,
+  PackageDependency,
+  SystemResources,
+} from '../types/index.js';
 
 /**
  * Interface for system resource detection

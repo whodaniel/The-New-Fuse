@@ -1,4 +1,4 @@
-export * from './types.js';
 export * from './DataFetcher.js';
-export * from './WebSocketManager.js';
+export * from './types/index.js';
 export * from './useDataSource.js';
+export * from './WebSocketManager.js';

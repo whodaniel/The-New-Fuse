@@ -12,7 +12,7 @@ import type {
   Pipeline,
   Task,
   TaskExecution,
-} from '../types.js';
+} from '../types/index.js';
 
 type TaskScope = {
   tenantId?: string;

@@ -41,7 +41,7 @@ const AttachItem: React.FC<AttachItemProps> = ({ id, name, size, type, onRemove,
         <div className="p-2 bg-slate-100 rounded">{getFileIcon()}</div>
         <div>
           <p className="text-sm font-medium text-slate-900 truncate max-w-48">{name}</p>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-400">
             {formatFileSize(size)} • {type}
           </p>
         </div>

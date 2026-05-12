@@ -9,7 +9,7 @@ import { Server } from '@modelcontextprotocol/sdk/server';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { EventEmitter } from 'events';
-import { RelayMessage, Transport } from '../types.js';
+import { RelayMessage, Transport } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
 
 export interface MCPTransportConfig {

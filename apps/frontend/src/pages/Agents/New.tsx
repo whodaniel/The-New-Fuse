@@ -401,7 +401,7 @@ const NewAgent: React.FC = () => {
                         <motion.div
                           key={item.id}
                           variants={itemVariants}
-                          className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5"
+                          className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/10"
                         >
                           <div className="flex items-center gap-3">
                             {formData.capabilities[item.id] ? (
@@ -515,7 +515,7 @@ const NewAgent: React.FC = () => {
                         <motion.div
                           key={item.id}
                           variants={itemVariants}
-                          className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5"
+                          className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/10"
                         >
                           <div className="flex items-center gap-3">
                             <div

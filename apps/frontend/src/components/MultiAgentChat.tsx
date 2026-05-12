@@ -279,7 +279,7 @@ export const MultiAgentChat: React.FC = () => {
               <span>Protocol Mode</span>
               <Sparkles className="w-3 h-3 text-amber-400" />
             </div>
-            <div className="p-3 rounded-md bg-black/40 border border-white/5 text-[10px] text-gray-400 leading-relaxed italic">
+            <div className="p-3 rounded-md bg-black/40 border border-white/10 text-[10px] text-gray-400 leading-relaxed italic">
               "Agents are operating in Consensus Mode. All responses require cross-verification
               through the Relay Broker."
             </div>
@@ -387,7 +387,7 @@ const ParamSlider: React.FC<{ label: string; value: number }> = ({ label, value 
       <span>{label}</span>
       <span className="text-white">{value}</span>
     </div>
-    <div className="h-1 w-full bg-transparent/5 rounded-full overflow-hidden border border-white/5">
+    <div className="h-1 w-full bg-transparent/5 rounded-full overflow-hidden border border-white/10">
       <div className="h-full bg-blue-600 rounded-full" style={{ width: `${value * 100}%` }} />
     </div>
   </div>

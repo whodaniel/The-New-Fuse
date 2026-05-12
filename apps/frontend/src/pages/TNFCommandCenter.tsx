@@ -462,7 +462,7 @@ const QuickActionsPanel: React.FC<{
               className={`flex items-center gap-2 p-3 rounded-md border transition-all text-left ${
                 availability.enabled
                   ? 'bg-black/20 hover:bg-black/40 border-white/10 hover:border-white/20'
-                  : 'bg-black/10 border-white/5 opacity-50 cursor-not-allowed'
+                  : 'bg-black/10 border-white/10 opacity-50 cursor-not-allowed'
               }`}
             >
               <action.icon className={`w-4 h-4 ${action.color}`} />

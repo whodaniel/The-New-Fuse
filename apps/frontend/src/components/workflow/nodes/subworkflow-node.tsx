@@ -248,7 +248,7 @@ const SubworkflowNode: React.FC<NodeProps> = memo(({ id, data }) => {
           <p className="mt-1 text-slate-400 leading-relaxed">
             Create and save other workflows to use them as subworkflows here.
           </p>
-          <p className="mt-2 text-slate-500 text-xs">
+          <p className="mt-2 text-slate-400 text-xs">
             Subworkflows allow you to reuse complex logic across multiple workflows.
           </p>
         </div>

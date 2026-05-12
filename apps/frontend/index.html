@@ -21,7 +21,8 @@
       --border-hover: rgba(59,130,246,0.4);
       --text: #f8fafc;
       --text-secondary: #94a3b8;
-      --text-muted: #64748b;
+	--text-muted: #7c8ca4;
+	--text-badge: #cbd5e1;
       --accent-blue: #3b82f6;
       --accent-purple: #a855f7;
       --accent-pink: #ec4899;
@@ -136,8 +137,8 @@
       transform: translateY(-1px);
     }
     .btn-secondary {
-      background: rgba(255,255,255,0.05); color: var(--text);
-      border: 1px solid var(--border);
+	background: rgba(255,255,255,0.05); color: #e2e8f0;
+	border: 1px solid rgba(148,163,184,0.2);
     }
     .btn-secondary:hover {
       background: rgba(255,255,255,0.08);
@@ -164,7 +165,7 @@
       display: inline-flex; align-items: center; gap: 8px;
       padding: 8px 18px; border-radius: 999px;
       background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-      font-size: 13px; font-weight: 500; color: var(--text-secondary);
+      font-size: 13px; font-weight: 500; color: var(--text-badge);
       margin-bottom: 32px;
       animation: fadeInUp 0.6s ease-out;
     }
@@ -224,7 +225,7 @@
     }
     .proof-item {
       display: flex; align-items: center; gap: 8px;
-      font-size: 14px; color: var(--text-muted); font-weight: 500;
+	font-size: 14px; color: var(--text-badge); font-weight: 500;
     }
     .proof-item .icon { font-size: 18px; }
 
@@ -316,7 +317,7 @@
     .code-preview .kw { color: #c084fc; }
     .code-preview .fn { color: #60a5fa; }
     .code-preview .str { color: #4ade80; }
-    .code-preview .cm { color: #475569; }
+    .code-preview .cm { color: #7c8ca4; }
     .code-preview .num { color: #fbbf24; }
 
     /* ═══════════════════════════════════════════════

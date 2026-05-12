@@ -447,7 +447,7 @@ export default function TasksPage() {
                     ))}
                   </AnimatePresence>
                   {statusTasks.length === 0 && (
-                    <div className="text-center py-8 border-2 border-dashed border-white/5 rounded-md">
+                    <div className="text-center py-8 border-2 border-dashed border-white/10 rounded-md">
                       <p className="text-xs text-muted-foreground">No tasks</p>
                     </div>
                   )}

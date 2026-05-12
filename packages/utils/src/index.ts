@@ -1,4 +1,4 @@
-export * from './auth.js';
+export * from './auth/index.js';
 export * from './cn.js';
 export * from './config.js';
 export * from './date.js';

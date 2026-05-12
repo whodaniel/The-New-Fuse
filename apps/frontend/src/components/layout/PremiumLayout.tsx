@@ -53,7 +53,7 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
         {showSidebar && layout.sidebarOpen && (
           <aside className="hidden md:block w-60 fixed left-0 top-16 bottom-0 bg-slate-900 border-r border-slate-800 overflow-y-auto">
             <nav className="p-3 space-y-1">
-              <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.18em] mb-3 px-2">
+              <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.18em] mb-3 px-2">
                 Main Fleet
               </div>
               <SidebarLink
@@ -68,7 +68,7 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
                 label="Swarms"
               />
 
-              <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.18em] mt-6 mb-3 px-2">
+              <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.18em] mt-6 mb-3 px-2">
                 Engineering
               </div>
               <SidebarLink
@@ -82,7 +82,7 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
                 label="Pipeline Editor"
               />
 
-              <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.18em] mt-6 mb-3 px-2">
+              <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.18em] mt-6 mb-3 px-2">
                 Monitoring
               </div>
               <SidebarLink

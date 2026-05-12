@@ -17,6 +17,7 @@ export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isSlowLoading: boolean;
   login: (
     emailOrToken: string,
     password?: string,

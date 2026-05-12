@@ -26,7 +26,7 @@ const STYLES = {
         ? 'bg-[var(--theme-sidebar-thread-selected)] border border-solid border-transparent light:border-blue-400'
         : 'hover:bg-theme-sidebar-subitem-hover'
     } rounded-[4px]`,
-  deletedText: 'text-left text-sm text-slate-400/50 light:text-slate-500 italic',
+  deletedText: 'text-left text-sm text-slate-400/50 light:text-slate-400 italic',
   threadName: (isActive) =>
     `text-left text-sm ${isActive ? 'font-medium text-white' : 'text-theme-text-primary'}`,
   optionsButton:

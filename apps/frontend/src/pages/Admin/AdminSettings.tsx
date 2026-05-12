@@ -460,7 +460,7 @@ const AdminSettings: React.FC = () => {
                 </div>
               </div>
 
-              <div className="space-y-4 pt-6 border-t border-white/5">
+              <div className="space-y-4 pt-6 border-t border-white/10">
                 <h3 className="text-lg font-semibold text-white">Password Policy</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -625,7 +625,7 @@ const AdminSettings: React.FC = () => {
                 </div>
               </div>
 
-              <div className="space-y-4 pt-6 border-t border-white/5">
+              <div className="space-y-4 pt-6 border-t border-white/10">
                 <h3 className="text-lg font-semibold text-white">Alert Thresholds (%)</h3>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
@@ -705,7 +705,7 @@ const AdminSettings: React.FC = () => {
                 </div>
               </div>
 
-              <div className="border-t border-white/5" />
+              <div className="border-t border-white/10" />
 
               {/* GitHub Copilot Section */}
               <div className="space-y-4">
@@ -727,7 +727,7 @@ const AdminSettings: React.FC = () => {
                 </div>
               </div>
 
-              <div className="border-t border-white/5" />
+              <div className="border-t border-white/10" />
 
               {/* OpenCode Section */}
               <div className="space-y-4">
@@ -763,7 +763,7 @@ const AdminSettings: React.FC = () => {
                 </div>
               </div>
 
-              <div className="border-t border-white/5" />
+              <div className="border-t border-white/10" />
 
               {/* Anthropic Section */}
               <div className="space-y-4">

@@ -54,7 +54,12 @@ export async function api(path: string, options: any = {}) {
         signal: ctl.signal,
       });
       const json = await res.json().catch(() => ({ ok: false, error: 'Invalid response' }));
-      if (!res.ok || json.ok === false) throw new Error(json.error || `HTTP ${res.status}`);
+      if (!res.ok || json.ok === false) {
+        const error: any = new Error(json.error || `HTTP ${res.status}`);
+        error.status = res.status;
+        error.payload = json;
+        throw error;
+      }
       return json;
     } catch (err) {
       lastErr = err;
@@ -82,7 +87,12 @@ export async function communityApiRequest(path: string, options: any = {}) {
         signal: ctl.signal,
       });
       const json = await res.json().catch(() => ({ ok: false, error: 'Invalid response' }));
-      if (!res.ok || json.ok === false) throw new Error(json.error || `HTTP ${res.status}`);
+      if (!res.ok || json.ok === false) {
+        const error: any = new Error(json.error || `HTTP ${res.status}`);
+        error.status = res.status;
+        error.payload = json;
+        throw error;
+      }
       return json;
     } catch (err) {
       lastErr = err;

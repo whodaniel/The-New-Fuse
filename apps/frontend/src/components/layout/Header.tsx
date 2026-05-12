@@ -12,6 +12,8 @@ export function Header() {
   const navigate = useNavigate();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const unreadNotificationCount = 0;
+  const hasUnreadNotifications = unreadNotificationCount > 0;
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
@@ -74,11 +76,26 @@ export function Header() {
           {/* Notification Bell with Badge */}
           <button
             className="relative p-2 rounded-md text-white hover:bg-transparent/10 transition-all duration-200"
-            aria-label="Notifications"
-            title="Notifications"
+            aria-label={
+              hasUnreadNotifications
+                ? `Notifications (${unreadNotificationCount} unread)`
+                : 'Notifications (no unread alerts)'
+            }
+            title={
+              hasUnreadNotifications
+                ? `${unreadNotificationCount} unread notification${unreadNotificationCount === 1 ? '' : 's'}`
+                : 'No unread notifications'
+            }
           >
             <Bell className="h-5 w-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+            {hasUnreadNotifications && (
+              <>
+                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                <span className="absolute -top-1 -right-1 min-w-[16px] rounded-full bg-red-500 px-1 text-center text-[10px] font-semibold text-white">
+                  {Math.min(unreadNotificationCount, 99)}
+                </span>
+              </>
+            )}
           </button>
 
           {user ? (

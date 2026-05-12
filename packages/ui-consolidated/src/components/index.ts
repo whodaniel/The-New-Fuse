@@ -18,7 +18,7 @@ export * from './Textarea.js';
 export * from './Tooltip.js';
 
 // Auth Components
-export * from './auth.js';
+export * from './auth/index.js';
 
 // Layout Components
 export * from './Container.js';
@@ -27,9 +27,9 @@ export * from './Sidebar.js';
 export * from './Split.js';
 
 // Feature Components
+export * from './features/concordance-viewer/ConcordanceViewer.js';
 export * from './features/memory-inspector/MemoryInspector.js';
 export * from './features/metrics-dashboard/MetricsDashboard.js';
-export * from './features/concordance-viewer/ConcordanceViewer.js';
 
 export * from './GlassCard.js';
 export * from './MagneticButton.js';

@@ -39,7 +39,7 @@ type AuthUser = {
   permissions?: unknown;
 };
 
-@Controller()
+@Controller('unified-ledger')
 @UseGuards(JwtAuthGuard)
 export class UnifiedLedgerController {
   constructor(

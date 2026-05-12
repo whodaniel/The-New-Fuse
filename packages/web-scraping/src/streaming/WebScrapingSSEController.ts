@@ -1,15 +1,15 @@
 /**
  * Server-Sent Events Controller for Web Scraping
- * 
+ *
  * Provides streaming updates for long-running scraping operations
  * using SSE for better browser compatibility than WebSockets.
  */
 
-import { Controller, Get, Query, Logger, Sse, MessageEvent } from '@nestjs/common';
-import { Observable, Subject, interval, takeUntil, mergeMap } from 'rxjs';
+import { Controller, Get, Logger, MessageEvent, Query, Sse } from '@nestjs/common';
+import { Observable, Subject, interval, mergeMap, takeUntil } from 'rxjs';
 import { WebScrapingService } from '../core/WebScrapingService.js';
 import { ProxyService } from '../proxy/ProxyService.js';
-import { ScrapingResult } from '../types.js';
+import { ScrapingResult } from '../types/index.js';
 
 interface StreamingSession {
   id: string;
@@ -45,8 +45,9 @@ export class WebScrapingSSEController {
   ): Observable<MessageEvent> {
     try {
       const urls = JSON.parse(urlsParam) as string[];
-      const currentSessionId = sessionId || `stream_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
+      const currentSessionId =
+        sessionId || `stream_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
       // Create session
       const session: StreamingSession = {
         id: currentSessionId,
@@ -55,12 +56,12 @@ export class WebScrapingSSEController {
         progress: {
           total: urls.length,
           completed: 0,
-          failed: 0
-        }
+          failed: 0,
+        },
       };
 
       this.activeSessions.set(currentSessionId, session);
-      
+
       // Create subject for this session
       const subject = new Subject<MessageEvent>();
       this.sessionSubjects.set(currentSessionId, subject);
@@ -70,17 +71,16 @@ export class WebScrapingSSEController {
 
       // Return observable that emits session events
       return subject.asObservable();
-
     } catch (error) {
       this.logger.error('Failed to start batch scraping stream:', error);
-      
+
       // Return error stream
-      return new Observable<MessageEvent>(subscriber => {
+      return new Observable<MessageEvent>((subscriber) => {
         subscriber.next({
           data: JSON.stringify({
             type: 'error',
-            error: error instanceof Error ? error.message : 'Failed to start stream'
-          })
+            error: error instanceof Error ? error.message : 'Failed to start stream',
+          }),
         } as MessageEvent);
         subscriber.complete();
       });
@@ -96,9 +96,9 @@ export class WebScrapingSSEController {
     @Query('method') method: 'simple' | 'full' | 'auto' = 'auto',
     @Query('includeScreenshot') includeScreenshot: boolean = false
   ): Observable<MessageEvent> {
-    return new Observable<MessageEvent>(subscriber => {
+    return new Observable<MessageEvent>((subscriber) => {
       const sessionId = `single_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
+
       // Send start event
       subscriber.next({
         data: JSON.stringify({
@@ -106,21 +106,21 @@ export class WebScrapingSSEController {
           sessionId,
           url,
           method,
-          timestamp: new Date()
-        })
+          timestamp: new Date(),
+        }),
       } as MessageEvent);
 
       // Execute scraping
       this.executeSingleScraping(url, method, includeScreenshot)
-        .then(result => {
+        .then((result) => {
           // Send progress updates during scraping
           subscriber.next({
             data: JSON.stringify({
               type: 'progress',
               sessionId,
               stage: 'processing',
-              message: 'Extracting content...'
-            })
+              message: 'Extracting content...',
+            }),
           } as MessageEvent);
 
           // Send final result
@@ -137,22 +137,22 @@ export class WebScrapingSSEController {
                 images: result.images?.slice(0, 8),
                 statusCode: result.statusCode,
                 executionTime: result.metadata?.executionTime,
-                screenshot: includeScreenshot ? result.screenshot : undefined
+                screenshot: includeScreenshot ? result.screenshot : undefined,
               },
               error: result.error,
-              timestamp: new Date()
-            })
+              timestamp: new Date(),
+            }),
           } as MessageEvent);
 
           subscriber.complete();
         })
-        .catch(error => {
+        .catch((error) => {
           subscriber.next({
             data: JSON.stringify({
               type: 'error',
               sessionId,
-              error: error instanceof Error ? error.message : 'Scraping failed'
-            })
+              error: error instanceof Error ? error.message : 'Scraping failed',
+            }),
           } as MessageEvent);
           subscriber.complete();
         });
@@ -167,9 +167,9 @@ export class WebScrapingSSEController {
     @Query('url') url: string,
     @Query('method') method: string = 'GET'
   ): Observable<MessageEvent> {
-    return new Observable<MessageEvent>(subscriber => {
+    return new Observable<MessageEvent>((subscriber) => {
       const sessionId = `proxy_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
+
       // Send start event
       subscriber.next({
         data: JSON.stringify({
@@ -177,13 +177,14 @@ export class WebScrapingSSEController {
           sessionId,
           url,
           method,
-          timestamp: new Date()
-        })
+          timestamp: new Date(),
+        }),
       } as MessageEvent);
 
       // Execute proxy request
-      this.proxyService.proxyRequest({ url, method: method as any })
-        .then(result => {
+      this.proxyService
+        .proxyRequest({ url, method: method as any })
+        .then((result) => {
           // Send headers first
           subscriber.next({
             data: JSON.stringify({
@@ -191,14 +192,14 @@ export class WebScrapingSSEController {
               sessionId,
               statusCode: result.statusCode,
               headers: result.headers,
-              contentType: result.contentType
-            })
+              contentType: result.contentType,
+            }),
           } as MessageEvent);
 
           // Send body in chunks if large
           const body = result.body;
           const chunkSize = 1000; // 1KB chunks for SSE
-          
+
           if (body.length > chunkSize) {
             for (let i = 0; i < body.length; i += chunkSize) {
               const chunk = body.substring(i, i + chunkSize);
@@ -208,8 +209,8 @@ export class WebScrapingSSEController {
                   sessionId,
                   chunk,
                   chunkIndex: Math.floor(i / chunkSize),
-                  totalChunks: Math.ceil(body.length / chunkSize)
-                })
+                  totalChunks: Math.ceil(body.length / chunkSize),
+                }),
               } as MessageEvent);
             }
           } else {
@@ -217,8 +218,8 @@ export class WebScrapingSSEController {
               data: JSON.stringify({
                 type: 'proxy_body',
                 sessionId,
-                body
-              })
+                body,
+              }),
             } as MessageEvent);
           }
 
@@ -229,19 +230,19 @@ export class WebScrapingSSEController {
               sessionId,
               success: result.success,
               executionTime: result.metadata.executionTime,
-              error: result.error
-            })
+              error: result.error,
+            }),
           } as MessageEvent);
 
           subscriber.complete();
         })
-        .catch(error => {
+        .catch((error) => {
           subscriber.next({
             data: JSON.stringify({
               type: 'proxy_error',
               sessionId,
-              error: error instanceof Error ? error.message : 'Proxy request failed'
-            })
+              error: error instanceof Error ? error.message : 'Proxy request failed',
+            }),
           } as MessageEvent);
           subscriber.complete();
         });
@@ -259,18 +260,22 @@ export class WebScrapingSSEController {
   ): Observable<MessageEvent> {
     const sessionId = `monitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const stopSubject = new Subject<void>();
-    
+
     return interval(intervalMs).pipe(
       takeUntil(stopSubject),
       mergeMap(async (index) => {
         try {
           // Scrape the website
-          const result = await this.webScrapingService.scrapeAuto(url, {
-            timeout: 15000
-          }, {
-            selectors: selector ? [selector] : undefined,
-            mainContentOnly: true
-          });
+          const result = await this.webScrapingService.scrapeAuto(
+            url,
+            {
+              timeout: 15000,
+            },
+            {
+              selectors: selector ? [selector] : undefined,
+              mainContentOnly: true,
+            }
+          );
 
           return {
             data: JSON.stringify({
@@ -285,8 +290,8 @@ export class WebScrapingSSEController {
               statusCode: result.statusCode,
               executionTime: result.metadata?.executionTime,
               error: result.error,
-              changes: index > 0 ? 'Content change detection not implemented' : undefined
-            })
+              changes: index > 0 ? 'Content change detection not implemented' : undefined,
+            }),
           } as MessageEvent;
         } catch (error) {
           return {
@@ -295,8 +300,8 @@ export class WebScrapingSSEController {
               sessionId,
               index,
               timestamp: new Date(),
-              error: error instanceof Error ? error.message : 'Monitoring failed'
-            })
+              error: error instanceof Error ? error.message : 'Monitoring failed',
+            }),
           } as MessageEvent;
         }
       })
@@ -318,7 +323,7 @@ export class WebScrapingSSEController {
       status: session.status,
       startTime: session.startTime,
       progress: session.progress,
-      duration: Date.now() - session.startTime.getTime()
+      duration: Date.now() - session.startTime.getTime(),
     };
   }
 
@@ -329,19 +334,19 @@ export class WebScrapingSSEController {
   stopSession(@Query('sessionId') sessionId: string) {
     const session = this.activeSessions.get(sessionId);
     const subject = this.sessionSubjects.get(sessionId);
-    
+
     if (session) {
       session.status = 'completed';
       this.activeSessions.delete(sessionId);
     }
-    
+
     if (subject) {
       subject.next({
         data: JSON.stringify({
           type: 'session_stopped',
           sessionId,
-          timestamp: new Date()
-        })
+          timestamp: new Date(),
+        }),
       } as MessageEvent);
       subject.complete();
       this.sessionSubjects.delete(sessionId);
@@ -368,8 +373,8 @@ export class WebScrapingSSEController {
         type: 'batch_started',
         sessionId,
         totalUrls: urls.length,
-        timestamp: new Date()
-      })
+        timestamp: new Date(),
+      }),
     } as MessageEvent);
 
     // Process URLs sequentially to avoid overwhelming
@@ -387,8 +392,8 @@ export class WebScrapingSSEController {
             totalUrls: urls.length,
             currentUrl: url,
             completed: session.progress.completed,
-            failed: session.progress.failed
-          })
+            failed: session.progress.failed,
+          }),
         } as MessageEvent);
 
         // Execute scraping
@@ -420,26 +425,25 @@ export class WebScrapingSSEController {
             title: result.title,
             executionTime: result.metadata?.executionTime,
             error: result.error,
-            progress: { ...session.progress }
-          })
+            progress: { ...session.progress },
+          }),
         } as MessageEvent);
-
       } catch (error) {
         session.progress.failed++;
-        
+
         subject.next({
           data: JSON.stringify({
             type: 'item_failed',
             sessionId,
             url,
             error: error instanceof Error ? error.message : 'Failed',
-            progress: { ...session.progress }
-          })
+            progress: { ...session.progress },
+          }),
         } as MessageEvent);
       }
 
       // Small delay between requests
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
     // Send completion
@@ -452,10 +456,10 @@ export class WebScrapingSSEController {
           total: session.progress.total,
           completed: session.progress.completed,
           failed: session.progress.failed,
-          duration: Date.now() - session.startTime.getTime()
+          duration: Date.now() - session.startTime.getTime(),
         },
-        timestamp: new Date()
-      })
+        timestamp: new Date(),
+      }),
     } as MessageEvent);
 
     subject.complete();

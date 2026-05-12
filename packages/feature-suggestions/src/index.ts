@@ -8,27 +8,27 @@ export { default as TimelineSlider } from './components/TimelineSlider.js';
 export { default as TimelineView } from './components/TimelineView.js';
 
 // Export types - explicitly export SuggestionStatus from types to resolve ambiguity
-export { SuggestionStatus, SuggestionPriority, FeatureStage } from './types.js';
-export type { 
-  FeatureSuggestion, 
-  TodoItem, 
-  DraggableItem, 
-  KanbanColumn, 
-  VotingRecord, 
-  Comment 
-} from './types.js';
+export { FeatureStage, SuggestionPriority, SuggestionStatus } from './types/index.js';
+export type {
+  Comment,
+  DraggableItem,
+  FeatureSuggestion,
+  KanbanColumn,
+  TodoItem,
+  VotingRecord,
+} from './types/index.js';
 
 // Export timeline types
 export type {
+  TimelineBranch,
   TimelineEvent,
+  TimelineEventType,
   TimelineItem,
   TimelineNote,
+  TimelinePosition,
   TimelineRange,
-  TimelineBranch,
   TimelineWorkflow,
-  TimelineEventType,
   WorkflowStep,
-  TimelinePosition
 } from './types/timeline.js';
 
 // Export service types

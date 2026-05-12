@@ -150,15 +150,15 @@ export * from './export.js';
 export * from './llm.js';
 export * from './marketplace.js';
 export * from './metrics.js';
-export * from './resource-search.js';
 export * from './resource-search-protocol.js';
+export * from './resource-search.js';
 export * from './security.js';
 export type { SecurityScheme } from './security.js';
 export * from './session.js';
 export * from './state.js';
 export * from './suggestion.js';
 export * from './user.js';
-export * from './validation.js';
+export * from './validation/index.js';
 export * from './webhooks.js';
 
 // Core enums

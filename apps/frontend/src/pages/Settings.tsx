@@ -285,7 +285,7 @@ export default function Settings() {
                         />
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
+                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/10">
                         <div>
                           <p className="font-medium text-white">Enable Auto-save</p>
                           <p className="text-sm text-gray-400">
@@ -330,7 +330,7 @@ export default function Settings() {
                   >
                     <div className="space-y-6 mt-6">
                       {/* Profile Section */}
-                      <div className="flex items-center gap-4 p-4 bg-black/20 rounded-md border border-white/5">
+                      <div className="flex items-center gap-4 p-4 bg-black/20 rounded-md border border-white/10">
                         <div className="w-20 h-20 rounded-md bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center border border-white/10">
                           <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
                             {user?.displayName?.[0] || 'U'}
@@ -505,7 +505,7 @@ export default function Settings() {
                     gradient="green"
                   >
                     <div className="space-y-4 mt-6">
-                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
+                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/10">
                         <div>
                           <p className="font-medium text-white">Email Notifications</p>
                           <p className="text-sm text-gray-400">
@@ -515,7 +515,7 @@ export default function Settings() {
                         <ToggleSwitch checked={emailNotif} onChange={setEmailNotif} />
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
+                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/10">
                         <div>
                           <p className="font-medium text-white">Push Notifications</p>
                           <p className="text-sm text-gray-400">
@@ -525,7 +525,7 @@ export default function Settings() {
                         <ToggleSwitch checked={pushNotif} onChange={setPushNotif} />
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
+                      <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/10">
                         <div>
                           <p className="font-medium text-white">Agent Activity Alerts</p>
                           <p className="text-sm text-gray-400">
@@ -578,7 +578,7 @@ export default function Settings() {
 
                       <div className="mt-8 pt-6 border-t border-white/10">
                         <h3 className="text-lg font-medium text-white mb-4">Legacy Settings</h3>
-                        <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
+                        <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/10">
                           <div>
                             <p className="font-medium text-white">API Access</p>
                             <p className="text-sm text-gray-400">

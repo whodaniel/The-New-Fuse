@@ -4,11 +4,11 @@ import {
   Bot,
   BrainCircuit,
   Check,
-  Globe,
   Code2,
   Cpu,
   ExternalLink,
   Fingerprint,
+  Globe,
   Keyboard,
   MousePointer2,
   Network,
@@ -28,7 +28,7 @@ import { useEffect, useRef, useState } from 'react';
 /* ────────────────────────────────────────────── DESIGN TOKENS ── */
 const gradientText = 'bg-clip-text text-transparent bg-gradient-to-r';
 const glassCard =
-  'relative rounded-md border border-white/[0.08] bg-transparent/[0.03] backdrop-blur-md transition-all duration-300';
+  'relative rounded-md border border-white/[0.12] bg-transparent/[0.03] backdrop-blur-md transition-all duration-300';
 const accentCyan = 'from-cyan-400 to-blue-500';
 const accentPurple = 'from-purple-400 to-indigo-500';
 const accentMixed = 'from-cyan-400 via-purple-400 to-pink-500';
@@ -80,7 +80,7 @@ const PlatformBadge = ({ name, delay }: { name: string; delay: number }) => {
       initial={{ opacity: 0, scale: 0.85 }}
       animate={isInView ? { opacity: 1, scale: 1 } : {}}
       transition={{ duration: 0.4, delay }}
-      className="flex items-center gap-2 rounded-full border border-white/[0.08] bg-transparent/[0.04] px-5 py-2.5 text-sm font-medium text-slate-300 backdrop-blur-sm transition-all hover:border-cyan-500/30 hover:bg-transparent/[0.07]"
+      className="flex items-center gap-2 rounded-full border border-white/[0.12] bg-transparent/[0.04] px-5 py-2.5 text-sm font-medium text-slate-300 backdrop-blur-sm transition-all hover:border-cyan-500/30 hover:bg-transparent/[0.07]"
     >
       <div className="h-2 w-2 rounded-full bg-green-400 shadow-[0_0_6px_rgba(74,222,128,0.6)]" />
       {name}
@@ -161,7 +161,7 @@ const PricingCard = ({
       className={`relative flex flex-col rounded-md border p-4 ${
         highlighted
           ? 'border-cyan-500/40 bg-gradient-to-b from-cyan-500/[0.08] to-transparent shadow-[0_0_60px_rgba(0,200,255,0.1)]'
-          : 'border-white/[0.08] bg-transparent/[0.03]'
+          : 'border-white/[0.12] bg-transparent/[0.03]'
       }`}
     >
       {badge && (
@@ -174,7 +174,7 @@ const PricingCard = ({
         <h3 className="mb-1 text-lg font-bold text-white">{title}</h3>
         <div className="flex items-baseline gap-1">
           <span className="text-4xl font-extrabold text-white">{price}</span>
-          {period && <span className="text-sm text-slate-500">{period}</span>}
+          {period && <span className="text-sm text-slate-400">{period}</span>}
         </div>
       </div>
 
@@ -389,7 +389,7 @@ export default function ConnectExtensionPage() {
                 Fuse Connect
               </span>
             </span>
-            <span className="ml-2 rounded-md bg-transparent/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+            <span className="ml-2 rounded-md bg-transparent/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
               v8.0
             </span>
           </div>
@@ -495,7 +495,7 @@ export default function ConnectExtensionPage() {
             initial={{ opacity: 0 }}
             animate={isHeroInView ? { opacity: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-10 flex flex-wrap items-center justify-center gap-4 text-xs text-slate-500"
+            className="mt-10 flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400"
           >
             {[
               { icon: ShieldCheck, label: 'Manifest V3 Compliant' },
@@ -639,7 +639,7 @@ export default function ConnectExtensionPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.15 }}
-              className="rounded-md border border-white/[0.08] bg-[#0c0c12] p-1 shadow-none"
+              className="rounded-md border border-white/[0.12] bg-[#0c0c12] p-1 shadow-none"
             >
               <div className="flex items-center justify-between rounded-t-xl border-b border-white/[0.06] bg-transparent/[0.02] px-4 py-2">
                 <div className="flex items-center gap-2">
@@ -799,7 +799,7 @@ export default function ConnectExtensionPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-br from-cyan-500/[0.08] via-purple-500/[0.05] to-transparent p-12 sm:p-16 text-center"
+            className="relative overflow-hidden rounded-3xl border border-white/[0.12] bg-gradient-to-br from-cyan-500/[0.08] via-purple-500/[0.05] to-transparent p-12 sm:p-16 text-center"
           >
             <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-cyan-500/10 blur-[80px]" />
             <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-purple-500/10 blur-[80px]" />
@@ -856,7 +856,7 @@ export default function ConnectExtensionPage() {
       <footer className="border-t border-white/[0.04] bg-[#050508] py-12">
         <div className="mx-auto max-w-7xl px-3 lg:px-8">
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-            <div className="flex items-center gap-2.5 text-sm text-slate-500">
+            <div className="flex items-center gap-2.5 text-sm text-slate-400">
               <div className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-cyan-400 to-purple-500">
                 <Sparkles className="h-3.5 w-3.5 text-white" />
               </div>

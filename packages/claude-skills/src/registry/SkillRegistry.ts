@@ -4,7 +4,7 @@
  * Manages Claude skills and integrates with The New Fuse resource registry
  */
 
-import type { ClaudeSkill, ISkillRegistry, SkillFilter } from '../types.js';
+import type { ClaudeSkill, ISkillRegistry, SkillFilter } from '../types/index.js';
 
 /**
  * In-memory skill registry implementation

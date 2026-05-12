@@ -229,9 +229,9 @@ const AgentNode: React.FC<NodeProps> = memo(({ id, data }) => {
       {/* Empty state */}
       {!selectedAgent && !loading && (
         <div className="text-xs text-slate-400 bg-slate-700/30 p-3 rounded border border-slate-600/50 text-center">
-          <Bot className="h-6 w-6 mx-auto mb-2 text-slate-500" />
+          <Bot className="h-6 w-6 mx-auto mb-2 text-slate-400" />
           <p>Select an agent template to configure this node.</p>
-          <p className="mt-1 text-slate-500">
+          <p className="mt-1 text-slate-400">
             {agents.length} agents available across {categoriesWithCounts.length} categories.
           </p>
         </div>

@@ -1,5 +1,5 @@
 import { CompressionUtil, CompressionMiddleware } from './compression.js';
-import { CompressionAlgorithm } from '../types.js';
+import { CompressionAlgorithm } from '../types/index.js';
 
 describe('CompressionUtil', () => {
   const testData = {
@@ -69,7 +69,11 @@ describe('CompressionUtil', () => {
 
     it('should not compress if not beneficial (small data)', () => {
       const smallData = { a: 1 };
-      const result = CompressionUtil.compressIfBeneficial(smallData, CompressionAlgorithm.GZIP, 1000);
+      const result = CompressionUtil.compressIfBeneficial(
+        smallData,
+        CompressionAlgorithm.GZIP,
+        1000
+      );
       expect(result.compressed).toBe(false);
       expect(result.data).toEqual(smallData);
     });

@@ -8,7 +8,7 @@ export * from './providers.js';
 export * from './hooks.js';
 
 // Export utilities
-export * from './utils.js';
+export * from './utils/index.js';
 
 // Export theme and brand tokens
 export * from './styles/brand-tokens.js';

@@ -25,7 +25,7 @@ const EnhancedChromeExtensionDemo: React.FC = () => {
             </div>
             <Button
               variant="outline"
-              className="text-white border-white/50 hover:bg-transparent/10 flex items-center gap-2"
+              className="text-white border-white/100 hover:bg-transparent/10 flex items-center gap-2"
               onClick={() => setShowPopup(!showPopup)}
             >
               <ExternalLink size={16} /> Launch Extension

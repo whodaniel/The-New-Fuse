@@ -5,7 +5,7 @@
  */
 
 // Core types
-export * from './types.js';
+export * from './types/index.js';
 
 // Parser
 export { SkillParser } from './parser.js';

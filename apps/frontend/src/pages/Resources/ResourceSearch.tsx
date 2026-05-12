@@ -324,7 +324,7 @@ export default function ResourceSearch() {
             </details>
           )}
         </div>
-        <div className="flex items-center space-x-2 bg-black/40 p-1 rounded-md border border-white/5">
+        <div className="flex items-center space-x-2 bg-black/40 p-1 rounded-md border border-white/10">
           <button
             onClick={() => setViewMode('grid')}
             className={`p-2 rounded-md transition-all ${
@@ -423,7 +423,7 @@ export default function ResourceSearch() {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 text-xs text-gray-400 border-t border-white/5 pt-3">
+                  <div className="grid grid-cols-2 gap-2 text-xs text-gray-400 border-t border-white/10 pt-3">
                     <div className="flex items-center">
                       <Download className="w-3 h-3 mr-1.5" />
                       {resource.downloads.toLocaleString()}

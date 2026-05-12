@@ -17,9 +17,9 @@ export type {
   MCPConnection,
   MCPResource,
   MCPTool,
-} from './interfaces.js';
+} from './interfaces/index.js';
 
-export { AgentStatus } from './interfaces.js';
+export { AgentStatus } from './interfaces/index.js';
 
 // Core message types
 export type {
@@ -79,10 +79,10 @@ export type {
   MCPServerInfo,
   MCPServiceInfo,
   ServiceStatus,
-} from './types.js';
+} from './types/index.js';
 
 // Skill types (used by workflow-engine and agent packages)
-export type { ResourceRequirement, Skill } from './types.js';
+export type { ResourceRequirement, Skill } from './types/index.js';
 
 // Error types and classes
 export {
@@ -94,28 +94,28 @@ export {
 } from './types/error.js';
 
 // Validation utilities
-export { MessageSerializer, MessageValidator, SerializationUtils } from './validation.js';
+export { MessageSerializer, MessageValidator, SerializationUtils } from './validation/index.js';
 
 export type {
   DeserializationResult,
   ValidationResult as MessageValidationResult,
   SerializationResult,
-} from './validation.js';
+} from './validation/index.js';
 
 // Handler base classes
-export * from './handlers.js';
+export * from './handlers/index.js';
 
 // Server implementation
-export { MCPServer } from './server.js';
+export { MCPServer } from './server/index.js';
 
 // Client implementation
-export * from './client.js';
+export * from './client/index.js';
 
 // Broker implementation
-export * from './broker.js';
+export * from './broker/index.js';
 
 // Factory for integrated system
-export * from './factory.js';
+export * from './factory/index.js';
 
 // Integration bridges
 export {
@@ -125,13 +125,13 @@ export {
   ServiceMeshMonitor,
   ServiceMeshScaler,
   WorkflowExecutionMonitor,
-} from './integrations.js';
+} from './integrations/index.js';
 
 // Authentication and authorization
-export * from './auth.js';
+export * from './auth/index.js';
 
 // Monitoring and metrics (prefer monitoring over integrations for Alert types)
-export * from './monitoring.js';
+export * from './monitoring/index.js';
 
 // Performance optimization
 export {
@@ -142,7 +142,7 @@ export {
   MultiLevelCache,
   OptimizedConnectionPool,
   PerformanceValidator,
-} from './performance.js';
+} from './performance/index.js';
 
 // Version information
 export const VERSION = '1.0.0';

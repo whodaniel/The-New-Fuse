@@ -88,7 +88,7 @@ export function CollaborativeWorkflow() {
               <div key={agent.id} className="border rounded p-3 flex items-center">
                 <div className="flex-1">
                   <div className="font-medium">{agent.name}</div>
-                  <div className="text-sm text-gray-500">{agent.capabilities.join(', ')}</div>
+                  <div className="text-sm text-gray-400">{agent.capabilities.join(', ')}</div>
                 </div>
                 <div className="h-3 w-3 rounded-full bg-green-500" />
               </div>

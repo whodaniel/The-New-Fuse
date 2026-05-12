@@ -39,7 +39,7 @@ const SponsorBidPanel: React.FC<SponsorBidPanelProps> = ({
 
       <div className="space-y-4">
         <div>
-          <label className="block text-xs uppercase text-slate-500 font-bold mb-1">
+          <label className="block text-xs uppercase text-slate-400 font-bold mb-1">
             Your Bid (MATIC)
           </label>
           <input
@@ -56,7 +56,7 @@ const SponsorBidPanel: React.FC<SponsorBidPanelProps> = ({
           disabled={loading || !bidAmount || parseFloat(bidAmount) <= currentBid}
           className={`w-full py-2 rounded-md font-bold text-lg transition-all ${
             loading || !bidAmount || parseFloat(bidAmount) <= currentBid
-              ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
+              ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
               : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-500/20 shadow-none'
           }`}
         >

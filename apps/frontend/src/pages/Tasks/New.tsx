@@ -1,6 +1,6 @@
-import { Badge, Button, Card, Input, Label, Select, Textarea } from '@/components/ui';
+import { Badge, Button, Card, Input, Label, Textarea } from '@/components/ui';
 import { createTask, type LedgerStatus } from '@/services/unifiedLedgerApi';
-import { Calendar, ChevronLeft, Clock, Paperclip, Plus, Save, Tag, X } from 'lucide-react';
+import { Calendar, ChevronLeft, Clock, Paperclip, Plus, Tag, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
@@ -155,236 +155,284 @@ const NewTask: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="flex items-center mb-6">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/tasks')} className="mr-4">
+    <div className="dark max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
+      <div className="flex items-center mb-8">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate('/tasks')}
+          className="mr-4 border-slate-800 bg-slate-900/50 hover:bg-slate-800 text-slate-300"
+        >
           <ChevronLeft className="h-4 w-4 mr-1" />
-          Back
+          Return to Ledger
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Create New Task</h1>
-          <p className="text-muted-foreground">Create a new task for an agent</p>
+          <h1 className="text-3xl font-black text-white tracking-tight">Create New Task</h1>
+          <p className="text-slate-400 mt-1">Initialize a new operative directive for the swarm.</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <Card className="mb-6">
-          <div className="p-4">
-            <h3 className="text-lg font-semibold mb-4">Task Details</h3>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="title">Task Title</Label>
+        <Card className="mb-6 bg-slate-900/50 border-slate-800 backdrop-blur-md overflow-hidden">
+          <div className="p-6 border-b border-slate-800 bg-slate-800/20">
+            <h3 className="text-lg font-bold text-white uppercase tracking-widest flex items-center gap-2">
+              <Zap className="w-4 h-4 text-amber-500" />
+              Directives & Intent
+            </h3>
+          </div>
+          <div className="p-6 space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="title" className="text-slate-200 font-semibold tracking-wide">
+                Task Title
+              </Label>
+              <Input
+                id="title"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                placeholder="e.g. SIMD-optimize vision broadcast loop"
+                className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-600 focus:ring-amber-500/20 h-11"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description" className="text-slate-200 font-semibold">
+                Description & Technical Rationale
+              </Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Detail the scope, expected outcome, and any specific constraints..."
+                className="bg-slate-950 border-slate-700 min-h-[120px] text-slate-100 placeholder:text-slate-600 focus:ring-amber-500/20"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="status" className="text-slate-200 font-semibold">
+                  Operating Status
+                </Label>
+                <select
+                  id="status"
+                  name="status"
+                  value={formData.status}
+                  onChange={(e) => handleSelectChange('status')(e.target.value)}
+                  className="h-11 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200 outline-none focus:border-amber-500/50"
+                  required
+                >
+                  <option value="not_started">Not Started (Submitted)</option>
+                  <option value="in_progress">In Progress (Forging)</option>
+                  <option value="pending_review">Pending Review (Audit)</option>
+                  <option value="completed">Completed (Deployed)</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="priority" className="text-slate-200 font-semibold">
+                  Priority Level
+                </Label>
+                <select
+                  id="priority"
+                  name="priority"
+                  value={formData.priority}
+                  onChange={(e) => handleSelectChange('priority')(e.target.value)}
+                  className="h-11 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200 outline-none focus:border-amber-500/50"
+                  required
+                >
+                  <option value="low">Low (Standard)</option>
+                  <option value="medium">Medium (Routine)</option>
+                  <option value="high">High (Elevated)</option>
+                  <option value="critical">Critical (Prime)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="category" className="text-slate-200 font-semibold">
+                  Classification
+                </Label>
+                <select
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={(e) => handleSelectChange('category')(e.target.value)}
+                  className="h-11 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200 outline-none focus:border-amber-500/50"
+                  required
+                >
+                  <option value="development">Development (Code)</option>
+                  <option value="design">Design (UI/UX)</option>
+                  <option value="documentation">Documentation (Knowledge)</option>
+                  <option value="testing">Testing (Validation)</option>
+                  <option value="bug_fixing">Bug Fixing (Remediation)</option>
+                  <option value="feature">Feature (Synthesis)</option>
+                  <option value="maintenance">Maintenance (Optimization)</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="assignedTo" className="text-slate-200 font-semibold">
+                  Agent Designation
+                </Label>
+                <select
+                  id="assignedTo"
+                  name="assignedTo"
+                  value={formData.assignedTo}
+                  onChange={(e) => handleSelectChange('assignedTo')(e.target.value)}
+                  className="h-11 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-200 outline-none focus:border-amber-500/50"
+                  required
+                >
+                  <option value="">Select an autonomous agent</option>
+                  {loading && <option disabled>Loading fleet status...</option>}
+                  {agents.map((agent) => (
+                    <option key={agent.id} value={agent.id.toString()}>
+                      {agent.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="dueDate" className="text-slate-200 font-semibold flex items-center">
+                  <Calendar className="h-4 w-4 mr-2 text-sky-400" />
+                  Target Deadline
+                </Label>
                 <Input
-                  id="title"
-                  name="title"
-                  value={formData.title}
+                  id="dueDate"
+                  name="dueDate"
+                  type="date"
+                  value={formData.dueDate}
                   onChange={handleInputChange}
-                  placeholder="Enter task title"
+                  className="bg-slate-950 border-slate-700 text-slate-100 h-11"
                   required
                 />
               </div>
 
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  placeholder="Describe the task in detail..."
-                  rows={4}
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="status">Status</Label>
-                  <Select
-                    id="status"
-                    name="status"
-                    value={formData.status}
-                    onChange={handleSelectChange('status')}
-                    required
-                  >
-                    <option value="not_started">Not Started</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="pending_review">Pending Review</option>
-                    <option value="completed">Completed</option>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label htmlFor="priority">Priority</Label>
-                  <Select
-                    id="priority"
-                    name="priority"
-                    value={formData.priority}
-                    onChange={handleSelectChange('priority')}
-                    required
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="critical">Critical</option>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="category">Category</Label>
-                  <Select
-                    id="category"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleSelectChange('category')}
-                    required
-                  >
-                    <option value="development">Development</option>
-                    <option value="design">Design</option>
-                    <option value="documentation">Documentation</option>
-                    <option value="testing">Testing</option>
-                    <option value="bug_fixing">Bug Fixing</option>
-                    <option value="feature">Feature</option>
-                    <option value="maintenance">Maintenance</option>
-                    <option value="other">Other</option>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label htmlFor="assignedTo">Assign To</Label>
-                  <Select
-                    id="assignedTo"
-                    name="assignedTo"
-                    value={formData.assignedTo}
-                    onChange={handleSelectChange('assignedTo')}
-                    required
-                  >
-                    <option value="">Select an agent</option>
-                    {loading && <option disabled>Loading...</option>}
-                    {agents.map((agent) => (
-                      <option key={agent.id} value={agent.id.toString()}>
-                        {agent.name}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="dueDate" className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    Due Date
-                  </Label>
-                  <Input
-                    id="dueDate"
-                    name="dueDate"
-                    type="date"
-                    value={formData.dueDate}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="estimatedHours" className="flex items-center">
-                    <Clock className="h-4 w-4 mr-1" />
-                    Estimated Hours
-                  </Label>
-                  <Input
-                    id="estimatedHours"
-                    name="estimatedHours"
-                    type="number"
-                    min="0.5"
-                    step="0.5"
-                    value={formData.estimatedHours}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="newTag" className="flex items-center">
-                  <Tag className="h-4 w-4 mr-1" />
-                  Tags
+              <div className="space-y-2">
+                <Label
+                  htmlFor="estimatedHours"
+                  className="text-slate-200 font-semibold flex items-center"
+                >
+                  <Clock className="h-4 w-4 mr-2 text-amber-400" />
+                  Estimated Complexity (Hours)
                 </Label>
-                <div className="flex items-center">
-                  <Input
-                    id="newTag"
-                    name="newTag"
-                    value={formData.newTag}
-                    onChange={handleInputChange}
-                    onKeyDown={handleTagKeyDown}
-                    placeholder="Add tags and press Enter"
-                    className="mr-2"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      if (
-                        formData.newTag.trim() &&
-                        !formData.tags.includes(formData.newTag.trim())
-                      ) {
-                        setFormData((prev) => ({
-                          ...prev,
-                          tags: [...prev.tags, prev.newTag.trim()],
-                          newTag: '',
-                        }));
-                      }
-                    }}
-                    disabled={
-                      !formData.newTag.trim() || formData.tags.includes(formData.newTag.trim())
+                <Input
+                  id="estimatedHours"
+                  name="estimatedHours"
+                  type="number"
+                  min="0.5"
+                  step="0.5"
+                  value={formData.estimatedHours}
+                  onChange={handleInputChange}
+                  className="bg-slate-950 border-slate-700 text-slate-100 h-11"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="newTag" className="text-slate-200 font-semibold flex items-center">
+                <Tag className="h-4 w-4 mr-2 text-emerald-400" />
+                Contextual Tags
+              </Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="newTag"
+                  name="newTag"
+                  value={formData.newTag}
+                  onChange={handleInputChange}
+                  onKeyDown={handleTagKeyDown}
+                  placeholder="e.g. LLVM, Hot-Swap, Zero-Copy"
+                  className="bg-slate-950 border-slate-700 text-slate-100 h-11 focus:ring-emerald-500/20"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-slate-700 bg-slate-900/50 hover:bg-slate-800 h-11 px-4"
+                  onClick={() => {
+                    if (formData.newTag.trim() && !formData.tags.includes(formData.newTag.trim())) {
+                      setFormData((prev) => ({
+                        ...prev,
+                        tags: [...prev.tags, prev.newTag.trim()],
+                        newTag: '',
+                      }));
                     }
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-                {formData.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {formData.tags.map((tag, index) => (
-                      <Badge key={index} variant="outline" className="flex items-center">
-                        {tag}
-                        <button
-                          type="button"
-                          className="ml-1 text-muted-foreground hover:text-foreground"
-                          onClick={() => removeTag(tag)}
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </Badge>
-                    ))}
-                  </div>
-                )}
+                  }}
+                  disabled={
+                    !formData.newTag.trim() || formData.tags.includes(formData.newTag.trim())
+                  }
+                >
+                  <Plus className="h-5 w-5" />
+                </Button>
               </div>
+              {formData.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {formData.tags.map((tag, index) => (
+                    <Badge
+                      key={index}
+                      className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border-emerald-500/20 text-emerald-400 text-xs font-bold"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        className="text-emerald-500/60 hover:text-emerald-400 transition-colors"
+                        onClick={() => removeTag(tag)}
+                        aria-label={`Remove tag ${tag}`}
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
 
-              <div>
-                <Label className="flex items-center">
-                  <Paperclip className="h-4 w-4 mr-1" />
-                  Attachments
-                </Label>
-                <div className="mt-2">
-                  <Input type="file" multiple className="cursor-pointer" />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    You can upload multiple files. Maximum file size: 10MB.
-                  </p>
+            <div className="pt-4 mt-4 border-t border-slate-800/50">
+              <Label className="text-slate-200 font-semibold flex items-center mb-3">
+                <Paperclip className="h-4 w-4 mr-2 text-fuchsia-400" />
+                Technical Attachments
+              </Label>
+              <div className="relative group">
+                <div className="absolute inset-0 bg-slate-950 border-2 border-dashed border-slate-800 group-hover:border-slate-700 rounded-lg flex items-center justify-center transition-colors pointer-events-none">
+                  <div className="text-center">
+                    <Paperclip className="h-6 w-6 text-slate-600 mx-auto mb-2" />
+                    <p className="text-xs text-slate-500">Click to upload or drag artifacts here</p>
+                  </div>
                 </div>
+                <Input
+                  type="file"
+                  multiple
+                  className="opacity-0 h-24 w-full cursor-pointer z-10 relative"
+                />
               </div>
+              <p className="text-[10px] text-slate-500 mt-2 uppercase tracking-wider font-bold">
+                Max file size: 10MB • Multi-upload enabled
+              </p>
             </div>
           </div>
         </Card>
 
-        <div className="flex justify-end space-x-2">
-          <Button type="button" variant="outline" onClick={() => navigate('/tasks')}>
-            <X className="h-4 w-4 mr-2" />
-            Cancel
+        <div className="flex justify-end gap-3 mt-8">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate('/tasks')}
+            className="border-slate-800 bg-slate-900/50 hover:bg-slate-800 text-slate-400 h-12 px-6"
+          >
+            Discard
           </Button>
-          <Button type="submit">
-            <Save className="h-4 w-4 mr-2" />
-            Create Task
+          <Button
+            type="submit"
+            className="bg-amber-500 hover:bg-amber-600 text-black font-bold h-12 px-10 shadow-lg shadow-amber-500/10"
+          >
+            Initialize Objective
           </Button>
         </div>
       </form>

@@ -24,17 +24,23 @@
         --text: #e2e8f0;
         --muted: #8892a4;
         --accent: #3b82f6;
-        --accent-dim: rgba(59, 130, 246, 0.12);
-        --green: #22c55e;
-        --green-dim: rgba(34, 197, 94, 0.12);
-        --purple: #a855f7;
-        --purple-dim: rgba(168, 85, 247, 0.12);
-        --amber: #f59e0b;
-        --amber-dim: rgba(245, 158, 11, 0.12);
-        --red: #ef4444;
-        --red-dim: rgba(239, 68, 68, 0.12);
-        --cyan: #06b6d4;
-        --cyan-dim: rgba(6, 182, 212, 0.12);
+  --accent-dim: rgba(59, 130, 246, 0.12);
+  --accent-badge-bg: rgba(59, 130, 246, 0.25);
+  --green: #22c55e;
+  --green-dim: rgba(34, 197, 94, 0.12);
+  --green-badge-bg: rgba(34, 197, 94, 0.25);
+  --purple: #a855f7;
+  --purple-dim: rgba(168, 85, 247, 0.12);
+  --purple-badge-bg: rgba(168, 85, 247, 0.25);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245, 158, 11, 0.12);
+  --amber-badge-bg: rgba(245, 158, 11, 0.25);
+  --red: #ef4444;
+  --red-dim: rgba(239, 68, 68, 0.12);
+  --red-badge-bg: rgba(239, 68, 68, 0.25);
+  --cyan: #06b6d4;
+  --cyan-dim: rgba(6, 182, 212, 0.12);
+  --cyan-badge-bg: rgba(6, 182, 212, 0.25);
       }
 
       * {
@@ -305,9 +311,9 @@
       .cmd-block .prompt {
         color: var(--green);
       }
-      .cmd-block .comment {
-        color: #475569;
-      }
+  .cmd-block .comment {
+    color: #7c8ca4;
+  }
 
       /* ---- Footer ---- */
       .footer {
@@ -553,7 +559,7 @@
     <script>
       // ---- Data ----
       // All paths are RELATIVE to this HTML file's location (visualizations/)
-      const graphBase = '../tools/agent-relationship-graph/subgraphs/';
+      const graphBase = './graphs/agent-relationship-graph/subgraphs/';
       const subgraphs = [
         {
           title: 'Content Domain',
@@ -740,14 +746,14 @@
       ];
 
       // ---- Color map ----
-      const colorMap = {
-        accent: { bg: 'var(--accent-dim)', text: '#60a5fa', accent: 'var(--accent)' },
-        purple: { bg: 'var(--purple-dim)', text: '#c084fc', accent: 'var(--purple)' },
-        green: { bg: 'var(--green-dim)', text: '#4ade80', accent: 'var(--green)' },
-        amber: { bg: 'var(--amber-dim)', text: '#fbbf24', accent: 'var(--amber)' },
-        red: { bg: 'var(--red-dim)', text: '#f87171', accent: 'var(--red)' },
-        cyan: { bg: 'var(--cyan-dim)', text: '#22d3ee', accent: 'var(--cyan)' },
-      };
+  const colorMap = {
+    accent: { bg: 'var(--accent-dim)', badgeBg: 'var(--accent-badge-bg)', text: '#60a5fa', badgeText: '#dbeafe', accent: 'var(--accent)' },
+    purple: { bg: 'var(--purple-dim)', badgeBg: 'var(--purple-badge-bg)', text: '#c084fc', badgeText: '#ede9fe', accent: 'var(--purple)' },
+    green: { bg: 'var(--green-dim)', badgeBg: 'var(--green-badge-bg)', text: '#4ade80', badgeText: '#dcfce7', accent: 'var(--green)' },
+    amber: { bg: 'var(--amber-dim)', badgeBg: 'var(--amber-badge-bg)', text: '#fbbf24', badgeText: '#fef3c7', accent: 'var(--amber)' },
+    red: { bg: 'var(--red-dim)', badgeBg: 'var(--red-badge-bg)', text: '#f87171', badgeText: '#fee2e2', accent: 'var(--red)' },
+    cyan: { bg: 'var(--cyan-dim)', badgeBg: 'var(--cyan-badge-bg)', text: '#22d3ee', badgeText: '#cffafe', accent: 'var(--cyan)' },
+  };
 
       // ---- Render ----
       function renderCards(containerId, items) {
@@ -763,9 +769,9 @@
           <div class="card-icon" style="background:${c.bg}">${item.icon}</div>
           <div class="card-title">${item.title}</div>
           <div class="card-desc">${item.desc}</div>
-          <div class="card-meta">
-            ${item.badges.map((b) => `<span class="badge" style="background:${c.bg};color:${c.text}">${b}</span>`).join('')}
-            ${item.isDoc ? '<span class="badge" style="background:rgba(255,255,255,0.04);color:var(--muted)">📄 Doc</span>' : '<span class="badge" style="background:rgba(255,255,255,0.04);color:var(--muted)">🖥️ Interactive</span>'}
+        <div class="card-meta">
+          ${item.badges.map((b) => `<span class="badge" style="background:${c.badgeBg};color:${c.badgeText}">${b}</span>`).join('')}
+          ${item.isDoc ? '<span class="badge" style="background:rgba(255,255,255,0.08);color:var(--text)">📄 Doc</span>' : '<span class="badge" style="background:rgba(255,255,255,0.08);color:var(--text)">🖥️ Interactive</span>'}
           </div>
         `;
           el.appendChild(card);
@@ -792,4 +798,3 @@
     </script>
   </body>
 </html>
-

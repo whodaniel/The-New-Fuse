@@ -1,9 +1,9 @@
 // Export all security services and types
-export * from './audit.js';
-export * from './auth.js';
+export * from './audit/index.js';
+export * from './auth/index.js';
 export * from './EncryptionService.js';
-export * from './middleware.js';
-export * from './rate-limiting.js';
+export * from './middleware/index.js';
+export * from './rate-limiting/index.js';
 export * from './SecurityService.js';
 
 // Re-export types

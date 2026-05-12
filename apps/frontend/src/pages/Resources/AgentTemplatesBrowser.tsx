@@ -195,7 +195,7 @@ export default function AgentTemplatesBrowser() {
           </div>
         </div>
 
-        <div className="space-y-1 bg-transparent/5 p-2 rounded-md border border-white/5">
+        <div className="space-y-1 bg-transparent/5 p-2 rounded-md border border-white/10">
           <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
             Key Capabilities
           </p>
@@ -322,7 +322,7 @@ export default function AgentTemplatesBrowser() {
 
               <div className="px-8 pb-8 space-y-8">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-transparent/5 p-4 rounded-md border border-white/5">
+                  <div className="bg-transparent/5 p-4 rounded-md border border-white/10">
                     <div className="text-xs text-muted-foreground font-bold uppercase mb-1">
                       Model
                     </div>
@@ -330,7 +330,7 @@ export default function AgentTemplatesBrowser() {
                       <Cpu className="w-4 h-4 text-blue-400" /> {selectedTemplate.model}
                     </div>
                   </div>
-                  <div className="bg-transparent/5 p-4 rounded-md border border-white/5">
+                  <div className="bg-transparent/5 p-4 rounded-md border border-white/10">
                     <div className="text-xs text-muted-foreground font-bold uppercase mb-1">
                       Users
                     </div>
@@ -349,7 +349,7 @@ export default function AgentTemplatesBrowser() {
                     {selectedTemplate.capabilities.map((cap: string, i: number) => (
                       <div
                         key={i}
-                        className="flex items-center gap-2 text-sm text-gray-300 bg-transparent/5 p-3 rounded-md border border-white/5"
+                        className="flex items-center gap-2 text-sm text-gray-300 bg-transparent/5 p-3 rounded-md border border-white/10"
                       >
                         <div className="w-1.5 h-1.5 rounded-full bg-orange-500"></div>
                         {cap}
@@ -380,7 +380,7 @@ export default function AgentTemplatesBrowser() {
                   <h3 className="text-white font-semibold flex items-center gap-2 mb-4">
                     <Bot className="w-4 h-4 text-purple-400" /> System Prompt Preview
                   </h3>
-                  <div className="bg-black/40 p-4 rounded-md border border-white/5 font-mono text-xs text-gray-400 overflow-x-auto">
+                  <div className="bg-black/40 p-4 rounded-md border border-white/10 font-mono text-xs text-gray-400 overflow-x-auto">
                     {selectedTemplate.systemPrompt}
                   </div>
                 </div>

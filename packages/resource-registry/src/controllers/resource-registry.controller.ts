@@ -20,7 +20,7 @@ import {
   ResourceAccessControlService,
 } from '../services/resource-access-control.service.js';
 import { ResourceRegistryService } from '../services/resource-registry.service.js';
-import { Resource, ResourceAction, SearchResult } from '../types.js';
+import { Resource, ResourceAction, SearchResult } from '../types/index.js';
 
 // Import authentication guards - use service or user auth to support both
 // JWT tokens (users) and API keys (services/agents)

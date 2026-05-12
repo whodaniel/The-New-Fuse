@@ -277,7 +277,7 @@ export default function WorkflowBrowser() {
 
               <div className="px-8 pb-8 space-y-8">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-transparent/5 p-4 rounded-md border border-white/5">
+                  <div className="bg-transparent/5 p-4 rounded-md border border-white/10">
                     <p className="text-sm text-muted-foreground mb-1">Complexity</p>
                     <span
                       className={`inline-block px-3 py-1 text-sm font-medium rounded-full border ${getComplexityColor(selectedWorkflow.complexity)}`}
@@ -285,7 +285,7 @@ export default function WorkflowBrowser() {
                       {selectedWorkflow.complexity}
                     </span>
                   </div>
-                  <div className="bg-transparent/5 p-4 rounded-md border border-white/5">
+                  <div className="bg-transparent/5 p-4 rounded-md border border-white/10">
                     <p className="text-sm text-muted-foreground mb-1">Nodes</p>
                     <p className="text-lg font-semibold text-white flex items-center gap-2">
                       <GitBranch className="w-4 h-4 text-green-400" /> {selectedWorkflow.nodes}
@@ -301,7 +301,7 @@ export default function WorkflowBrowser() {
                     {selectedWorkflow.triggers.map((trigger, i) => (
                       <div
                         key={i}
-                        className="flex items-center gap-2 text-sm text-gray-300 bg-transparent/5 p-2 px-3 rounded-md border border-white/5"
+                        className="flex items-center gap-2 text-sm text-gray-300 bg-transparent/5 p-2 px-3 rounded-md border border-white/10"
                       >
                         {trigger}
                       </div>
@@ -317,7 +317,7 @@ export default function WorkflowBrowser() {
                     {selectedWorkflow.actions.map((action, i) => (
                       <div
                         key={i}
-                        className="flex items-center gap-2 text-sm text-gray-300 bg-transparent/5 p-2 px-3 rounded-md border border-white/5"
+                        className="flex items-center gap-2 text-sm text-gray-300 bg-transparent/5 p-2 px-3 rounded-md border border-white/10"
                       >
                         {action}
                       </div>

@@ -2,7 +2,7 @@ import * as crypto from 'crypto';
 import { and, eq } from 'drizzle-orm';
 import { db } from '../client.js';
 import { providerApiKeys } from '../schema.js';
-import { ProviderApiKey } from '../types.js';
+import { ProviderApiKey } from '../types/index.js';
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;

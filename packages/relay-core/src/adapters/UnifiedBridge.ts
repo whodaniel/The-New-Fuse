@@ -1,7 +1,6 @@
-
 /**
  * Unified Bridge for The New Fuse Framework
- * 
+ *
  * Consolidates bridge patterns from:
  * - message-bridge.js (file-based agent coordination)
  * - terminal_bridge.js (AI agent terminal sharing)
@@ -10,7 +9,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { RelayMessage, Transport } from '../types.js';
+import { RelayMessage, Transport } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
 
 export class UnifiedBridge extends EventEmitter {

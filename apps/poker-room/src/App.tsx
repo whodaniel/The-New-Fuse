@@ -2481,8 +2481,21 @@ function AppContent() {
           model: 'gemini-2.0-flash',
         },
       });
-      return json.candidates?.[0]?.content?.parts?.[0]?.text || 'No tactical advice available.';
-    } catch {
+      const textOut =
+        typeof json?.text === 'string'
+          ? json.text
+          : json?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      return textOut || 'No tactical advice available.';
+    } catch (err: any) {
+      const retryAfterMs = Number(err?.payload?.retryAfterMs || 0);
+      if (retryAfterMs > 0) {
+        const seconds = Math.max(1, Math.ceil(retryAfterMs / 1000));
+        return `Tactical engine is rate-limited. Retry in about ${seconds}s.`;
+      }
+      const errMsg = String(err?.message || '');
+      if (/quota|rate limit|resource exhausted|too many requests|429/i.test(errMsg)) {
+        return 'Tactical engine is rate-limited. Retry in a moment.';
+      }
       return 'Error connecting to tactical engine.';
     }
   };

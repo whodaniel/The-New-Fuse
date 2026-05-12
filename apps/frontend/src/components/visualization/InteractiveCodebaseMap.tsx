@@ -1,33 +1,32 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import ReactFlow, { 
-  Background, 
-  Controls, 
-  Node, 
-  Edge, 
-  useNodesState, 
-  useEdgesState,
+import dagre from 'dagre';
+import {
+  Activity,
+  Box,
+  ChevronRight,
+  Code,
+  ExternalLink,
+  FileCode,
+  Info,
+  Layers,
+  Lock,
+  Map as MapIcon,
+  Search,
+  X,
+} from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import ReactFlow, {
+  Background,
+  Controls,
+  Edge,
+  Node,
   Panel,
   ReactFlowProvider,
-  useReactFlow
+  useEdgesState,
+  useNodesState,
+  useReactFlow,
 } from 'reactflow';
-import dagre from 'dagre';
 import 'reactflow/dist/style.css';
 import codebaseData from '../../data/codebase_map.json';
-import { 
-  Search, 
-  ChevronRight, 
-  Code, 
-  FileCode, 
-  Box, 
-  Layers, 
-  ExternalLink, 
-  Info, 
-  X,
-  Map as MapIcon,
-  Activity,
-  Lock,
-  Unlock
-} from 'lucide-react';
 
 // Dagre layouting engine
 const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'LR') => {
@@ -62,19 +61,36 @@ const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'LR') => 
 
 const CustomNode = ({ data, selected }: any) => {
   const isExpandable = data.childCount > 0;
-  
-  const kindConfig: Record<string, { color: string, icon: any }> = {
-    pkg: { color: 'border-blue-500 bg-blue-500/10 text-blue-400', icon: <Box className="w-4 h-4" /> },
-    file: { color: 'border-cyan-500 bg-cyan-500/10 text-cyan-400', icon: <FileCode className="w-4 h-4" /> },
-    cls: { color: 'border-purple-500 bg-purple-500/10 text-purple-400', icon: <Layers className="w-4 h-4" /> },
-    mth: { color: 'border-emerald-500 bg-emerald-500/10 text-emerald-400', icon: <Code className="w-4 h-4" /> },
-    default: { color: 'border-gray-500 bg-gray-500/10 text-gray-400', icon: <Info className="w-4 h-4" /> }
+
+  const kindConfig: Record<string, { color: string; icon: any }> = {
+    pkg: {
+      color: 'border-blue-500 bg-blue-500/10 text-blue-400',
+      icon: <Box className="w-4 h-4" />,
+    },
+    file: {
+      color: 'border-cyan-500 bg-cyan-500/10 text-cyan-400',
+      icon: <FileCode className="w-4 h-4" />,
+    },
+    cls: {
+      color: 'border-purple-500 bg-purple-500/10 text-purple-400',
+      icon: <Layers className="w-4 h-4" />,
+    },
+    mth: {
+      color: 'border-emerald-500 bg-emerald-500/10 text-emerald-400',
+      icon: <Code className="w-4 h-4" />,
+    },
+    default: {
+      color: 'border-gray-500 bg-gray-500/10 text-gray-400',
+      icon: <Info className="w-4 h-4" />,
+    },
   };
 
   const config = kindConfig[data.kind] || kindConfig.default;
 
   return (
-    <div className={`px-5 py-4 rounded-2xl border backdrop-blur-xl shadow-2xl min-w-[220px] transition-all hover:scale-105 duration-300 ${config.color} ${selected ? 'ring-2 ring-white/40 ring-offset-4 ring-offset-black' : ''}`}>
+    <div
+      className={`px-5 py-4 rounded-2xl border backdrop-blur-xl shadow-2xl min-w-[220px] transition-all hover:scale-105 duration-300 ${config.color} ${selected ? 'ring-2 ring-white/40 ring-offset-4 ring-offset-black' : ''}`}
+    >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 overflow-hidden">
           <div className="opacity-70">{config.icon}</div>
@@ -85,8 +101,10 @@ const CustomNode = ({ data, selected }: any) => {
           {isExpandable && <ChevronRight className="w-4 h-4 opacity-50 shrink-0" />}
         </div>
       </div>
-      <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between">
-        <span className="text-[9px] uppercase font-black tracking-widest opacity-60">{data.kind}</span>
+      <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between">
+        <span className="text-[9px] uppercase font-black tracking-widest opacity-60">
+          {data.kind}
+        </span>
         {isExpandable && (
           <div className="flex items-center gap-1">
             <Activity className="w-3 h-3 text-white/20" />
@@ -113,22 +131,31 @@ const CodebaseMapInner = () => {
   const [selectedNode, setSelectedNode] = useState<any>(null);
   const { fitView } = useReactFlow();
 
-  const refreshGraph = useCallback((rootId: string) => {
-    const directChildren = codebaseData.nodes.filter(n => n.data.parentId === rootId);
-    const rootNode = codebaseData.nodes.find(n => n.id === rootId);
-    
-    const relevantNodes = [rootNode, ...directChildren].filter(Boolean) as Node[];
-    const relevantEdges = codebaseData.edges.filter(e => 
-      e.source === rootId || (directChildren.some(dc => dc.id === e.source) && directChildren.some(dc => dc.id === e.target))
-    );
+  const refreshGraph = useCallback(
+    (rootId: string) => {
+      const directChildren = codebaseData.nodes.filter((n) => n.data.parentId === rootId);
+      const rootNode = codebaseData.nodes.find((n) => n.id === rootId);
 
-    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(relevantNodes, relevantEdges);
-    setNodes(layoutedNodes);
-    setEdges(layoutedEdges);
-    
-    // Zoom to fit after layout
-    setTimeout(() => fitView({ duration: 800, padding: 0.2 }), 50);
-  }, [setNodes, setEdges, fitView]);
+      const relevantNodes = [rootNode, ...directChildren].filter(Boolean) as Node[];
+      const relevantEdges = codebaseData.edges.filter(
+        (e) =>
+          e.source === rootId ||
+          (directChildren.some((dc) => dc.id === e.source) &&
+            directChildren.some((dc) => dc.id === e.target))
+      );
+
+      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+        relevantNodes,
+        relevantEdges
+      );
+      setNodes(layoutedNodes);
+      setEdges(layoutedEdges);
+
+      // Zoom to fit after layout
+      setTimeout(() => fitView({ duration: 800, padding: 0.2 }), 50);
+    },
+    [setNodes, setEdges, fitView]
+  );
 
   useEffect(() => {
     refreshGraph('TNF');
@@ -147,7 +174,7 @@ const CodebaseMapInner = () => {
     if (!term) return;
 
     // Search all 15k nodes for label match
-    const match = codebaseData.nodes.find(n => 
+    const match = codebaseData.nodes.find((n) =>
       n.data.label.toLowerCase().includes(term.toLowerCase())
     );
 
@@ -161,7 +188,7 @@ const CodebaseMapInner = () => {
   };
 
   const goBack = () => {
-    const currentNode = codebaseData.nodes.find(n => n.id === currentRoot);
+    const currentNode = codebaseData.nodes.find((n) => n.id === currentRoot);
     if (currentNode?.data.parentId) {
       setCurrentRoot(currentNode.data.parentId);
       refreshGraph(currentNode.data.parentId);
@@ -174,10 +201,10 @@ const CodebaseMapInner = () => {
   // Breadcrumb path calculation
   const path = useMemo(() => {
     const segments = [];
-    let curr = codebaseData.nodes.find(n => n.id === currentRoot);
+    let curr = codebaseData.nodes.find((n) => n.id === currentRoot);
     while (curr) {
       segments.unshift(curr);
-      curr = codebaseData.nodes.find(n => n.id === curr.data.parentId);
+      curr = codebaseData.nodes.find((n) => n.id === curr.data.parentId);
     }
     return segments;
   }, [currentRoot]);
@@ -185,25 +212,38 @@ const CodebaseMapInner = () => {
   return (
     <div className="w-full h-full bg-[#050505] text-white flex overflow-hidden font-sans">
       {/* Main Graph Area */}
-      <div className="flex-1 flex flex-col relative border-r border-white/5">
+      <div className="flex-1 flex flex-col relative border-r border-white/10">
         {/* Superior Top Bar */}
-        <div className="h-20 px-8 flex items-center justify-between bg-black/40 backdrop-blur-2xl border-b border-white/5 z-10">
+        <div className="h-20 px-8 flex items-center justify-between bg-black/40 backdrop-blur-2xl border-b border-white/10 z-10">
           <div className="flex flex-col">
             <div className="flex items-center gap-3 mb-1">
               <div className="p-2 bg-blue-500/20 rounded-lg border border-blue-500/30">
                 <MapIcon className="w-4 h-4 text-blue-400" />
               </div>
-              <h2 className="text-xl font-black tracking-tighter uppercase italic italic-shadow">TNF Ecosystem Map</h2>
+              <h2 className="text-xl font-black tracking-tighter uppercase italic italic-shadow">
+                TNF Ecosystem Map
+              </h2>
             </div>
             {/* Real-time Breadcrumbs */}
             <div className="flex items-center gap-1 overflow-hidden max-w-md">
-              <span className="text-[10px] font-black text-white/30 uppercase tracking-widest cursor-pointer hover:text-white transition-colors" onClick={() => { setCurrentRoot('TNF'); refreshGraph('TNF'); }}>ROOT</span>
+              <span
+                className="text-[10px] font-black text-white/30 uppercase tracking-widest cursor-pointer hover:text-white transition-colors"
+                onClick={() => {
+                  setCurrentRoot('TNF');
+                  refreshGraph('TNF');
+                }}
+              >
+                ROOT
+              </span>
               {path.map((seg, i) => (
                 <React.Fragment key={seg.id}>
                   <ChevronRight className="w-3 h-3 text-white/10 shrink-0" />
-                  <span 
+                  <span
                     className={`text-[10px] font-black uppercase tracking-widest truncate cursor-pointer hover:text-white transition-colors ${i === path.length - 1 ? 'text-blue-400' : 'text-white/40'}`}
-                    onClick={() => { setCurrentRoot(seg.id); refreshGraph(seg.id); }}
+                    onClick={() => {
+                      setCurrentRoot(seg.id);
+                      refreshGraph(seg.id);
+                    }}
                   >
                     {seg.data.label}
                   </span>
@@ -215,16 +255,16 @@ const CodebaseMapInner = () => {
           <div className="flex items-center gap-6">
             <div className="relative group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 group-focus-within:text-blue-400 transition-colors" />
-              <input 
-                type="text" 
-                placeholder="Lookup Specific Logic Node..." 
+              <input
+                type="text"
+                placeholder="Lookup Specific Logic Node..."
                 className="bg-white/5 border border-white/10 rounded-2xl pl-12 pr-6 py-3 text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:bg-white/10 transition-all w-80 font-mono tracking-tight"
                 value={searchTerm}
                 onChange={(e) => handleGlobalSearch(e.target.value)}
               />
             </div>
-            <button 
-              onClick={goBack} 
+            <button
+              onClick={goBack}
               className="h-11 px-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 flex items-center gap-2"
             >
               Move Up Architecture
@@ -247,22 +287,32 @@ const CodebaseMapInner = () => {
           >
             <Background color="#111" gap={30} size={1} />
             <Controls className="!bg-black/60 !border-white/10 !fill-white" />
-            
+
             {/* Dynamic Status HUD */}
             <Panel position="bottom-left" className="m-6">
               <div className="bg-black/60 p-5 rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl flex flex-col gap-4">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-white/50">Core AST Live Sync</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-white/50">
+                    Core AST Live Sync
+                  </span>
                 </div>
                 <div className="grid grid-cols-2 gap-6">
                   <div className="flex flex-col">
-                    <span className="text-[9px] uppercase font-bold text-white/30 mb-1">Total Intelligence</span>
-                    <span className="text-sm font-mono font-black">{codebaseData.nodes.length.toLocaleString()} nodes</span>
+                    <span className="text-[9px] uppercase font-bold text-white/30 mb-1">
+                      Total Intelligence
+                    </span>
+                    <span className="text-sm font-mono font-black">
+                      {codebaseData.nodes.length.toLocaleString()} nodes
+                    </span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[9px] uppercase font-bold text-white/30 mb-1">Active Context</span>
-                    <span className="text-sm font-mono font-black text-blue-400">{nodes.length} units</span>
+                    <span className="text-[9px] uppercase font-bold text-white/30 mb-1">
+                      Active Context
+                    </span>
+                    <span className="text-sm font-mono font-black text-blue-400">
+                      {nodes.length} units
+                    </span>
                   </div>
                 </div>
               </div>
@@ -272,20 +322,29 @@ const CodebaseMapInner = () => {
       </div>
 
       {/* Logic Inspection Side-Panel */}
-      <div className={`w-[400px] bg-[#080808] border-l border-white/5 flex flex-col transition-all duration-500 ${selectedNode ? 'translate-x-0' : 'translate-x-full absolute right-0 h-full'}`}>
+      <div
+        className={`w-[400px] bg-[#080808] border-l border-white/10 flex flex-col transition-all duration-500 ${selectedNode ? 'translate-x-0' : 'translate-x-full absolute right-0 h-full'}`}
+      >
         {selectedNode && (
           <>
-            <div className="p-8 border-b border-white/5">
+            <div className="p-8 border-b border-white/10">
               <div className="flex justify-between items-start mb-6">
                 <div className="p-3 bg-white/5 rounded-2xl border border-white/10">
                   <Activity className="w-5 h-5 text-blue-400" />
                 </div>
-                <button onClick={() => setSelectedNode(null)} className="p-2 hover:bg-white/5 rounded-xl transition-colors">
+                <button
+                  onClick={() => setSelectedNode(null)}
+                  className="p-2 hover:bg-white/5 rounded-xl transition-colors"
+                >
                   <X className="w-5 h-5 text-white/30" />
                 </button>
               </div>
-              <h3 className="text-2xl font-black tracking-tighter uppercase italic">{selectedNode.data.label}</h3>
-              <p className="text-[10px] font-black tracking-[0.2em] text-white/30 uppercase mt-2">{selectedNode.data.kind} Unit</p>
+              <h3 className="text-2xl font-black tracking-tighter uppercase italic">
+                {selectedNode.data.label}
+              </h3>
+              <p className="text-[10px] font-black tracking-[0.2em] text-white/30 uppercase mt-2">
+                {selectedNode.data.kind} Unit
+              </p>
             </div>
 
             <div className="flex-1 overflow-y-auto p-8 space-y-8">
@@ -294,13 +353,21 @@ const CodebaseMapInner = () => {
                   <Layers className="w-3 h-3" /> Hierarchical Context
                 </h4>
                 <div className="space-y-3">
-                  <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                    <span className="text-[9px] font-black text-white/30 uppercase block mb-1">Parent Identity</span>
-                    <code className="text-xs text-blue-400 font-mono">{selectedNode.data.parentId || 'N/A (Root)'}</code>
+                  <div className="bg-white/5 p-4 rounded-2xl border border-white/10">
+                    <span className="text-[9px] font-black text-white/30 uppercase block mb-1">
+                      Parent Identity
+                    </span>
+                    <code className="text-xs text-blue-400 font-mono">
+                      {selectedNode.data.parentId || 'N/A (Root)'}
+                    </code>
                   </div>
-                  <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                    <span className="text-[9px] font-black text-white/30 uppercase block mb-1">Logic Complexity</span>
-                    <code className="text-xs text-emerald-400 font-mono">{selectedNode.data.childCount} Downstream Connections</code>
+                  <div className="bg-white/5 p-4 rounded-2xl border border-white/10">
+                    <span className="text-[9px] font-black text-white/30 uppercase block mb-1">
+                      Logic Complexity
+                    </span>
+                    <code className="text-xs text-emerald-400 font-mono">
+                      {selectedNode.data.childCount} Downstream Connections
+                    </code>
                   </div>
                 </div>
               </section>
@@ -324,10 +391,13 @@ const CodebaseMapInner = () => {
               <section className="bg-amber-500/5 border border-amber-500/10 p-6 rounded-3xl">
                 <div className="flex items-center gap-2 mb-3">
                   <Info className="w-4 h-4 text-amber-500" />
-                  <span className="text-[10px] font-black uppercase text-amber-500 tracking-widest">Attribution Note</span>
+                  <span className="text-[10px] font-black uppercase text-amber-500 tracking-widest">
+                    Attribution Note
+                  </span>
                 </div>
                 <p className="text-[11px] text-amber-500/70 leading-relaxed font-medium">
-                  This node represents a verified logical unit within the TNF Kernel. All downstream modifications must adhere to the Attribution Overrule protocol.
+                  This node represents a verified logical unit within the TNF Kernel. All downstream
+                  modifications must adhere to the Attribution Overrule protocol.
                 </p>
               </section>
             </div>

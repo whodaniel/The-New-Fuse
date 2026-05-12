@@ -344,7 +344,7 @@ export default function AgentsPage() {
             <div className="flex gap-3">
               <PremiumButton
                 variant="outline"
-                onClick={() => navigate('/agents/pfp-studio')}
+                onClick={() => navigate('/ai-portal/pfp-studio')}
                 icon={ImageIcon}
                 iconPosition="left"
                 size="md"
@@ -353,7 +353,7 @@ export default function AgentsPage() {
               </PremiumButton>
               <PremiumButton
                 variant="outline"
-                onClick={() => navigate('/agents/pfp-prompts')}
+                onClick={() => navigate('/ai-portal/pfp-prompts')}
                 icon={Edit3}
                 iconPosition="left"
                 size="md"
@@ -564,13 +564,13 @@ export default function AgentsPage() {
 
                         {/* Model & Owner */}
                         <div className="grid grid-cols-2 gap-4 mb-4">
-                          <div className="bg-black/20 rounded-md p-3 border border-white/5">
+                          <div className="bg-black/20 rounded-md p-3 border border-white/10">
                             <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
                               <Brain className="w-3 h-3" /> Model
                             </p>
                             <p className="text-sm font-medium text-white">{agent.model}</p>
                           </div>
-                          <div className="bg-black/20 rounded-md p-3 border border-white/5">
+                          <div className="bg-black/20 rounded-md p-3 border border-white/10">
                             <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
                               <Users className="w-3 h-3" /> Owner
                             </p>
@@ -602,19 +602,19 @@ export default function AgentsPage() {
 
                         {/* Metrics */}
                         <div className="grid grid-cols-3 gap-2 mb-4">
-                          <div className="text-center bg-black/20 rounded-md p-2 border border-white/5">
+                          <div className="text-center bg-black/20 rounded-md p-2 border border-white/10">
                             <p className="text-xs text-muted-foreground">Messages</p>
                             <p className="text-sm font-bold text-blue-400">
                               {agent.messagesCount.toLocaleString()}
                             </p>
                           </div>
-                          <div className="text-center bg-black/20 rounded-md p-2 border border-white/5">
+                          <div className="text-center bg-black/20 rounded-md p-2 border border-white/10">
                             <p className="text-xs text-muted-foreground">Success</p>
                             <p className="text-sm font-bold text-emerald-400">
                               {agent.successRate}%
                             </p>
                           </div>
-                          <div className="text-center bg-black/20 rounded-md p-2 border border-white/5">
+                          <div className="text-center bg-black/20 rounded-md p-2 border border-white/10">
                             <p className="text-xs text-muted-foreground">Response</p>
                             <p className="text-sm font-bold text-purple-400">
                               {agent.avgResponseTime}s

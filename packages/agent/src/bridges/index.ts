@@ -59,7 +59,7 @@ export abstract class BaseBridge extends EventEmitter {
 export * from './cline_bridge.js';
 
 // Export types (primary source)
-export * from './types.js';
+export * from './types/index.js';
 
 // Core bridges
 export * from './cascade_bridge.js';

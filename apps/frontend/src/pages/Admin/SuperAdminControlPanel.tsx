@@ -1135,23 +1135,23 @@ export default function SuperAdminControlPanel() {
             <h3 className="text-sm uppercase tracking-widest font-bold text-slate-300">
               Realtime Orchestration Trends
             </h3>
-            <span className="text-[10px] text-slate-500">Window: last 5 minutes</span>
+            <span className="text-[10px] text-slate-400">Window: last 5 minutes</span>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
             <div className="rounded-md border border-white/10 bg-transparent/5 p-3">
-              <div className="text-slate-500 uppercase tracking-wide mb-1">Events / Min</div>
+              <div className="text-slate-400 uppercase tracking-wide mb-1">Events / Min</div>
               <div className="text-xl font-bold text-cyan-300">{realtimeTrends.eventsPerMin}</div>
             </div>
             <div className="rounded-md border border-white/10 bg-transparent/5 p-3">
-              <div className="text-slate-500 uppercase tracking-wide mb-1">Queued / Min</div>
+              <div className="text-slate-400 uppercase tracking-wide mb-1">Queued / Min</div>
               <div className="text-xl font-bold text-indigo-300">{realtimeTrends.queuePerMin}</div>
             </div>
             <div className="rounded-md border border-white/10 bg-transparent/5 p-3">
-              <div className="text-slate-500 uppercase tracking-wide mb-1">Avg Score</div>
+              <div className="text-slate-400 uppercase tracking-wide mb-1">Avg Score</div>
               <div className="text-xl font-bold text-emerald-300">{realtimeTrends.avgScore}</div>
             </div>
             <div className="rounded-md border border-white/10 bg-transparent/5 p-3">
-              <div className="text-slate-500 uppercase tracking-wide mb-1">Vote Pressure</div>
+              <div className="text-slate-400 uppercase tracking-wide mb-1">Vote Pressure</div>
               <div
                 className={`text-xl font-bold ${realtimeTrends.votePressure >= 0 ? 'text-amber-300' : 'text-rose-300'}`}
               >
@@ -1160,7 +1160,7 @@ export default function SuperAdminControlPanel() {
               </div>
             </div>
           </div>
-          <div className="mt-3 text-[10px] text-slate-500">
+          <div className="mt-3 text-[10px] text-slate-400">
             Sampled events: {realtimeTrends.sampleSize}
           </div>
         </GlassCard>
@@ -1172,7 +1172,7 @@ export default function SuperAdminControlPanel() {
             <h3 className="text-sm uppercase tracking-widest font-bold text-slate-300">
               Nested Orchestration Map
             </h3>
-            <span className="text-[10px] text-slate-500">
+            <span className="text-[10px] text-slate-400">
               Master Clock → Source → Event Type → Lane → Horizon → Task
             </span>
           </div>
@@ -1190,7 +1190,7 @@ export default function SuperAdminControlPanel() {
                 Selected node:{' '}
                 <span className="font-semibold">{selectedGraphNode?.label || 'none'}</span>
               </div>
-              <div className="text-slate-500">
+              <div className="text-slate-400">
                 Stream matches: {filteredActivities.length}/{activities.length}
               </div>
             </div>
@@ -1259,7 +1259,7 @@ export default function SuperAdminControlPanel() {
         {/* Live Interaction Feed */}
         <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
           <GlassCard className="flex flex-col h-[650px] overflow-hidden group">
-            <div className="p-4 border-b border-white/5 bg-transparent/2 flex items-center justify-between">
+            <div className="p-4 border-b border-white/10 bg-transparent/2 flex items-center justify-between">
               <h3 className="text-xl font-semibold flex items-center gap-2">
                 <Zap className="w-5 h-5 text-yellow-400 animate-pulse" />
                 Live Interaction Stream
@@ -1269,7 +1269,7 @@ export default function SuperAdminControlPanel() {
                   <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
                   LISTENING
                 </div>
-                <div className="text-[10px] text-slate-500 font-mono">TNF:ACTIVITY:STREAM</div>
+                <div className="text-[10px] text-slate-400 font-mono">TNF:ACTIVITY:STREAM</div>
               </div>
             </div>
 
@@ -1282,7 +1282,7 @@ export default function SuperAdminControlPanel() {
                     className="h-full flex flex-col items-center justify-center text-slate-600 gap-4"
                   >
                     <Search className="w-12 h-12 opacity-20" />
-                    <p className="text-slate-500 tracking-widest text-xs uppercase">
+                    <p className="text-slate-400 tracking-widest text-xs uppercase">
                       Awaiting mesh synchronization...
                     </p>
                   </motion.div>
@@ -1293,7 +1293,7 @@ export default function SuperAdminControlPanel() {
                       initial={{ x: -20, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="p-4 rounded-md bg-transparent/2 border border-white/5 hover:border-white/10 hover:bg-transparent/5 transition-all group/item"
+                      className="p-4 rounded-md bg-transparent/2 border border-white/10 hover:border-white/10 hover:bg-transparent/5 transition-all group/item"
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-3">
@@ -1308,12 +1308,12 @@ export default function SuperAdminControlPanel() {
                           >
                             {activity.source}
                           </span>
-                          <span className="text-slate-500 text-[10px] tabular-nums">
+                          <span className="text-slate-400 text-[10px] tabular-nums">
                             {activity.timestamp.toLocaleTimeString()}
                           </span>
                         </div>
                         {activity.channelId && (
-                          <div className="text-[10px] text-slate-500 group-hover/item:text-slate-400 transition-colors">
+                          <div className="text-[10px] text-slate-400 group-hover/item:text-slate-400 transition-colors">
                             CHL:{' '}
                             <span className="text-slate-400 font-bold">
                               {activity.channelId.slice(0, 8)}...
@@ -1325,7 +1325,7 @@ export default function SuperAdminControlPanel() {
                         {activity.content}
                       </div>
                       {activity.metadata && Object.keys(activity.metadata).length > 0 && (
-                        <div className="mt-3 pt-3 border-t border-white/5 text-[10px] text-slate-500 grid grid-cols-2 gap-x-4 gap-y-1">
+                        <div className="mt-3 pt-3 border-t border-white/10 text-[10px] text-slate-400 grid grid-cols-2 gap-x-4 gap-y-1">
                           {Object.entries(activity.metadata)
                             .slice(0, 4)
                             .map(([k, v]: [string, unknown]) => (
@@ -1358,7 +1358,7 @@ export default function SuperAdminControlPanel() {
               </span>
             </div>
             {orchestrationSignals.length === 0 ? (
-              <div className="text-slate-500 text-xs">No vote-driven task events yet.</div>
+              <div className="text-slate-400 text-xs">No vote-driven task events yet.</div>
             ) : (
               <div className="space-y-2">
                 {orchestrationSignals.slice(0, 6).map((signal) => (
@@ -1370,7 +1370,7 @@ export default function SuperAdminControlPanel() {
                       <span className="font-semibold text-indigo-300 uppercase tracking-wide">
                         {signal.eventType}
                       </span>
-                      <span className="text-slate-500">
+                      <span className="text-slate-400">
                         {signal.timestamp.toLocaleTimeString()}
                       </span>
                     </div>
@@ -1412,7 +1412,7 @@ export default function SuperAdminControlPanel() {
                     <div className="w-12 h-12 bg-transparent/5 rounded-full flex items-center justify-center mx-auto mb-3">
                       <Bot className="w-6 h-6 text-slate-600" />
                     </div>
-                    <p className="text-slate-500 text-xs">No active nodes detected</p>
+                    <p className="text-slate-400 text-xs">No active nodes detected</p>
                   </div>
                 ) : (
                   agents.slice(0, 6).map((agent) => (
@@ -1421,7 +1421,7 @@ export default function SuperAdminControlPanel() {
                       className={`flex items-center justify-between p-3 rounded-md hover:bg-transparent/5 border transition-all group ${
                         highlightedAgentId === agent.id
                           ? 'border-cyan-400/60 bg-cyan-500/10'
-                          : 'border-transparent hover:border-white/5'
+                          : 'border-transparent hover:border-white/10'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -1433,7 +1433,7 @@ export default function SuperAdminControlPanel() {
                         </div>
                         <div>
                           <div className="text-sm font-semibold">{agent.name}</div>
-                          <div className="text-[10px] text-slate-500 font-mono">
+                          <div className="text-[10px] text-slate-400 font-mono">
                             {agent.id.slice(0, 8)}
                           </div>
                         </div>
@@ -1530,7 +1530,7 @@ export default function SuperAdminControlPanel() {
                   <option value="title_asc">Sort: Title</option>
                 </select>
               </div>
-              <div className="text-slate-500">
+              <div className="text-slate-400">
                 Showing {chronologicalFilteredProcesses.length}/{chronologicalProcesses.length}
               </div>
             </div>
@@ -1542,11 +1542,11 @@ export default function SuperAdminControlPanel() {
             )}
 
             {chronologicalLoading && chronologicalProcesses.length === 0 ? (
-              <div className="text-[10px] text-slate-500">Loading schedules...</div>
+              <div className="text-[10px] text-slate-400">Loading schedules...</div>
             ) : (
               <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
                 {chronologicalFilteredProcesses.length === 0 ? (
-                  <div className="text-[10px] text-slate-500">
+                  <div className="text-[10px] text-slate-400">
                     No chronological processes match the current filters.
                   </div>
                 ) : (
@@ -1568,7 +1568,7 @@ export default function SuperAdminControlPanel() {
                             <div className="text-slate-100 font-semibold leading-tight">
                               {process.title}
                             </div>
-                            <div className="text-slate-500 font-mono">{process.id}</div>
+                            <div className="text-slate-400 font-mono">{process.id}</div>
                           </div>
                           <div
                             className={`uppercase px-2 py-0.5 rounded border ${
@@ -1655,7 +1655,7 @@ export default function SuperAdminControlPanel() {
                           </button>
                         </div>
 
-                        <div className="text-slate-500 leading-relaxed">
+                        <div className="text-slate-400 leading-relaxed">
                           <div>Next: {process.procedural.nextRunHint || '-'}</div>
                           <div>
                             Next At:{' '}
@@ -1685,7 +1685,7 @@ export default function SuperAdminControlPanel() {
                                       <span className="font-mono">{run.status}</span>
                                       <span>{run.durationMs}ms</span>
                                     </div>
-                                    <div className="text-slate-500">
+                                    <div className="text-slate-400">
                                       {new Date(run.finishedAt).toLocaleString()} · exit{' '}
                                       {run.exitCode}
                                     </div>
@@ -1710,7 +1710,7 @@ export default function SuperAdminControlPanel() {
                     <div className="text-sm font-semibold text-slate-100">
                       {historyModalProcess.title} Run History
                     </div>
-                    <div className="text-[10px] text-slate-500 font-mono">
+                    <div className="text-[10px] text-slate-400 font-mono">
                       {historyModalProcess.id}
                     </div>
                   </div>
@@ -1723,7 +1723,7 @@ export default function SuperAdminControlPanel() {
                 </div>
                 <div className="max-h-[65vh] overflow-y-auto p-4 text-[11px]">
                   {historyModalLoading && (
-                    <div className="text-slate-500">Loading execution history...</div>
+                    <div className="text-slate-400">Loading execution history...</div>
                   )}
                   {historyModalError && (
                     <div className="rounded border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-rose-200">
@@ -1736,7 +1736,7 @@ export default function SuperAdminControlPanel() {
                         Showing {historyModalData.runs.length} of {historyModalData.total} runs
                       </div>
                       {historyModalData.runs.length === 0 ? (
-                        <div className="text-slate-500">No runs recorded yet.</div>
+                        <div className="text-slate-400">No runs recorded yet.</div>
                       ) : (
                         historyModalData.runs.map((run) => (
                           <div
@@ -1763,7 +1763,7 @@ export default function SuperAdminControlPanel() {
                             </div>
                             {run.error && <div className="mt-1 text-rose-300">{run.error}</div>}
                             {run.outputPreview && (
-                              <div className="mt-1 text-slate-500 break-all">
+                              <div className="mt-1 text-slate-400 break-all">
                                 {run.outputPreview}
                               </div>
                             )}
@@ -1810,7 +1810,7 @@ export default function SuperAdminControlPanel() {
             </h3>
             <div className="space-y-4">
               {meshInstances.length === 0 ? (
-                <div className="text-[10px] text-slate-500 font-mono flex items-center gap-2">
+                <div className="text-[10px] text-slate-400 font-mono flex items-center gap-2">
                   <RefreshCw className="w-3 h-3 animate-spin" />
                   ANALYZING MESH...
                 </div>

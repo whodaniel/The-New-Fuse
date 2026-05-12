@@ -78,12 +78,6 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
     description: 'Dashboard Agent Detail',
   },
   {
-    name: 'Sophisticated Hub',
-    path: '/sophisticated-hub',
-    description: 'Advanced AI Control Center',
-  },
-  { name: 'Modern Hub', path: '/hub', description: 'Modern Integrated AI Workspace' },
-  {
     name: 'A2A Control',
     path: '/a2a-control',
     description: 'Agent-to-Agent Communication Control',

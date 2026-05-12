@@ -330,7 +330,7 @@ const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
         ref={ref}
         variant="glass"
         className={cn(
-          'backdrop-blur-md bg-transparent/[0.03] dark:bg-slate-900/[0.35] border border-white/[0.08]',
+          'backdrop-blur-md bg-transparent/[0.03] dark:bg-slate-900/[0.35] border border-white/[0.12]',
           gradient,
           className
         )}

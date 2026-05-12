@@ -254,7 +254,7 @@ function SmartNavigation() {
               </span>
             )}
           </div>
-          <div className="text-[10px] text-slate-500 truncate">{item.description}</div>
+          <div className="text-[10px] text-slate-400 truncate">{item.description}</div>
         </div>
       </Link>
     );
@@ -390,7 +390,7 @@ function SmartNavigation() {
                                     </span>
                                   )}
                                 </div>
-                                <div className="text-[10px] text-slate-500 truncate">
+                                <div className="text-[10px] text-slate-400 truncate">
                                   {item.description}
                                 </div>
                               </div>
@@ -424,7 +424,7 @@ function SmartNavigation() {
                     {isSuperAdmin && (
                       <Link
                         to="/admin/control-panel"
-                        className="flex items-center gap-3 px-3 py-2 hover:bg-transparent/5 rounded-md text-red-400 font-bold border-b border-white/5 mb-1"
+                        className="flex items-center gap-3 px-3 py-2 hover:bg-transparent/5 rounded-md text-red-400 font-bold border-b border-white/10 mb-1"
                       >
                         <Zap className="w-4 h-4" />
                         MASTER CONTROL
@@ -466,13 +466,13 @@ function SmartNavigation() {
                 <div className="w-7 h-7 bg-blue-500 rounded-md flex items-center justify-center text-[10px] font-bold">
                   {user?.name?.substring(0, 2).toUpperCase() || 'BS'}
                 </div>
-                <ChevronDown className="w-3 h-3 text-slate-500" />
+                <ChevronDown className="w-3 h-3 text-slate-400" />
               </button>
               {activeDropdown === 'user' && (
                 <div className="absolute top-full right-0 mt-2 w-56 bg-slate-900 border border-white/10 rounded-md shadow-none p-2 z-50">
                   <div className="px-3 py-2">
                     <div className="text-sm font-medium text-white">{user?.name}</div>
-                    <div className="text-[10px] text-slate-500 truncate">{user?.email}</div>
+                    <div className="text-[10px] text-slate-400 truncate">{user?.email}</div>
                   </div>
                   <div className="my-1 border-t border-white/10" />
                   <Link
@@ -496,7 +496,7 @@ function SmartNavigation() {
                     <CreditCard className="w-4 h-4 text-slate-400" />
                     <span className="text-sm">Membership & Billing</span>
                   </Link>
-                  <div className="my-1 border-t border-white/5" />
+                  <div className="my-1 border-t border-white/10" />
                   <button
                     onClick={() => logout()}
                     className="w-full flex items-center gap-3 px-3 py-2 hover:bg-red-500/10 rounded-md text-red-400 transition-colors"
@@ -508,7 +508,10 @@ function SmartNavigation() {
               )}
             </div>
 
-            <button aria-label="Open mobile menu" className="lg:hidden w-10 h-10 flex items-center justify-center rounded-md bg-transparent/5 text-slate-400 hover:text-white transition-colors">
+            <button
+              aria-label="Open mobile menu"
+              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-md bg-transparent/5 text-slate-400 hover:text-white transition-colors"
+            >
               <Menu className="w-6 h-6" />
             </button>
           </div>

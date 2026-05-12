@@ -13,4 +13,4 @@ export * from './dto/search-resource.dto.js';
 export * from './dto/update-resource.dto.js';
 
 // Types
-export * from './types.js';
+export * from './types/index.js';

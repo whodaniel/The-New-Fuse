@@ -42,7 +42,7 @@ const STYLES = {
   mobileContentWrapper: 'w-full h-full flex flex-col overflow-x-hidden items-between',
   mobileHeaderInner: 'flex w-full items-center justify-between gap-x-4',
   mobileLogoContainer: 'flex shrink-1 w-fit items-center justify-start',
-  mobileSettingsContainer: 'flex gap-x-2 items-center text-slate-500 shink-0',
+  mobileSettingsContainer: 'flex gap-x-2 items-center text-slate-400 shink-0',
   mobileMainContent: 'h-full flex flex-col w-full justify-between pt-4',
   mobileWorkspaceArea: 'h-auto md:sidebar-items',
   mobileFooter:

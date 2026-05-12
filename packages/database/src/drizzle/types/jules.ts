@@ -9,4 +9,4 @@ export type {
   NewJulesConfig,
   NewJulesSession,
   NewJulesUsageLog,
-} from '../types.js';
+} from '../types/index.js';

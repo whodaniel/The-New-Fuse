@@ -1,7 +1,7 @@
 import { and, desc, eq, gte, sql } from 'drizzle-orm';
 import { db } from '../client.js';
 import { agentApiGrantUsage, agentApiGrants } from '../schema.js';
-import { NewAgentApiGrant, NewAgentApiGrantUsage } from '../types.js';
+import { NewAgentApiGrant, NewAgentApiGrantUsage } from '../types/index.js';
 
 export class DrizzleAgentApiGrantRepository {
   async listByUser(userId: string) {

@@ -60,7 +60,7 @@ const MessageListItem = React.memo<{ msg: A2AMessage }>(({ msg }) => (
           {msg.receiverId}
         </span>
       </div>
-      <div className="text-sm text-gray-200 truncate font-mono bg-black/40 p-2 rounded border border-white/5 group-hover:border-white/10 transition-colors">
+      <div className="text-sm text-gray-200 truncate font-mono bg-black/40 p-2 rounded border border-white/10 group-hover:border-white/10 transition-colors">
         {JSON.stringify(msg.payload)}
       </div>
     </div>
@@ -271,7 +271,7 @@ export const A2AControl: React.FC = () => {
                           {msg.receiverId}
                         </span>
                       </div>
-                      <div className="text-sm text-gray-200 truncate font-mono bg-black/40 p-2 rounded border border-white/5 group-hover:border-white/10 transition-colors">
+                      <div className="text-sm text-gray-200 truncate font-mono bg-black/40 p-2 rounded border border-white/10 group-hover:border-white/10 transition-colors">
                         {JSON.stringify(msg.payload)}
                       </div>
                     </div>

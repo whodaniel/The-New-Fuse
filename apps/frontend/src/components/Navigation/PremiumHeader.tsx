@@ -23,6 +23,8 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
   const { user, logout } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const unreadNotificationCount = 0;
+  const hasUnreadNotifications = unreadNotificationCount > 0;
 
   const handleLogout = async () => {
     try {
@@ -35,14 +37,19 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
   };
 
   const handleNotificationClick = () => {
-    toast('No new notifications', {
-      icon: '🔔',
-      style: {
-        background: '#1e293b',
-        color: '#fff',
-        border: '1px solid rgba(255,255,255,0.1)',
-      },
-    });
+    toast(
+      hasUnreadNotifications
+        ? `${unreadNotificationCount} unread notification${unreadNotificationCount === 1 ? '' : 's'}`
+        : 'No new notifications',
+      {
+        icon: '🔔',
+        style: {
+          background: '#1e293b',
+          color: '#fff',
+          border: '1px solid rgba(255,255,255,0.1)',
+        },
+      }
+    );
   };
 
   return (
@@ -79,10 +86,23 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ onMenuClick, title
             <button
               onClick={handleNotificationClick}
               className="p-2 text-gray-400 hover:text-white rounded-full hover:bg-transparent/10 transition-colors relative"
-              aria-label="View notifications"
+              aria-label={
+                hasUnreadNotifications
+                  ? `View notifications (${unreadNotificationCount} unread)`
+                  : 'View notifications'
+              }
+              title={
+                hasUnreadNotifications
+                  ? `${unreadNotificationCount} unread notification${
+                      unreadNotificationCount === 1 ? '' : 's'
+                    }`
+                  : 'Notifications'
+              }
             >
               <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
+              {hasUnreadNotifications && (
+                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
+              )}
             </button>
 
             <div className="h-8 w-px bg-transparent/10 mx-2" />

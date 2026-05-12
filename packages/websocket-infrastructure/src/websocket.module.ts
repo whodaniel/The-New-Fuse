@@ -1,6 +1,6 @@
 import { Module, DynamicModule, Provider, Global } from '@nestjs/common';
 import { WebSocketGateway } from './websocket.gateway';
-import { WebSocketConfig } from './types.js';
+import { WebSocketConfig } from './types/index.js';
 import { ConnectionPool } from './connection/connection-pool.js';
 import { ConnectionManager } from './connection/connection-manager.js';
 import { RedisWebSocketAdapter } from './adapters/redis-adapter.js';

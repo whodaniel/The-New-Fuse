@@ -68,7 +68,7 @@ const AgencyOnboarding: React.FC = () => {
 
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-bold uppercase text-slate-500 mb-2">
+            <label className="block text-sm font-bold uppercase text-slate-400 mb-2">
               Agency Name
             </label>
             <div className="flex">
@@ -81,7 +81,7 @@ const AgencyOnboarding: React.FC = () => {
                 placeholder="my-agency"
                 className="flex-1 bg-slate-800 text-white p-4 rounded-l-xl border border-slate-700 focus:border-blue-500 outline-none text-xl"
               />
-              <span className="bg-slate-800 text-slate-500 p-4 rounded-r-xl border border-l-0 border-slate-700 text-xl font-mono">
+              <span className="bg-slate-800 text-slate-400 p-4 rounded-r-xl border border-l-0 border-slate-700 text-xl font-mono">
                 .thenewfuse.hub
               </span>
             </div>
@@ -114,7 +114,7 @@ const AgencyOnboarding: React.FC = () => {
             disabled={loading || !agencyName}
             className={`w-full py-2 rounded-md font-bold text-xl transition-all ${
               loading || !agencyName
-                ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
+                ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
                 : 'bg-blue-600 hover:bg-blue-500 text-white shadow-none shadow-blue-500/20'
             }`}
           >

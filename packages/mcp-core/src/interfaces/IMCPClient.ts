@@ -1,13 +1,9 @@
-import { 
-  MCPRequest, 
-  MCPResponse, 
-  MCPNotification
-} from './IMCPMessage.js';
-import { MCPResource, ResourceContent } from './IMCPResource.js';
+import { NotificationCallback } from '../types/index.js';
 import { MCPCapability } from './IMCPCapability.js';
-import { ToolResult } from './IMCPTool.js';
 import { ConnectionOptions } from './IMCPConnection.js';
-import { NotificationCallback } from '../types.js';
+import { MCPNotification, MCPRequest, MCPResponse } from './IMCPMessage.js';
+import { MCPResource, ResourceContent } from './IMCPResource.js';
+import { ToolResult } from './IMCPTool.js';
 
 /**
  * Core MCP Client interface that defines the contract for MCP client implementations.

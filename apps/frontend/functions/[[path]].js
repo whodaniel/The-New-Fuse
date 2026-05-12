@@ -75,8 +75,19 @@ export async function onRequest(context) {
 
   // 3. App Domain Specific Logic
   if (isAppDomain) {
-    // Static assets (CSS, JS, images) -> let Cloudflare serve them
-    if (path.includes('.') && !path.endsWith('.html')) {
+    // Serve known visualization HTML assets directly on app domain.
+    // Without this, the SPA shell captures these paths and hides the visualization surfaces.
+    if (path === '/visualizations/dashboard') {
+      return context.env.ASSETS.fetch(
+        new Request(new URL('/visualizations/dashboard.html' + url.search, url.origin))
+      );
+    }
+
+    const isStaticAsset = path.includes('.') && !path.endsWith('.html');
+    const isVisualizationHtmlAsset = path.startsWith('/visualizations/') && path.endsWith('.html');
+
+    // Static assets (CSS, JS, images) and explicit visualization HTML -> let Cloudflare serve them
+    if (isStaticAsset || isVisualizationHtmlAsset) {
       return context.env.ASSETS.fetch(context.request);
     }
 

@@ -60,7 +60,7 @@ describe('Tooltip Snapshots', () => {
         content={
           <div className="space-y-2">
             <p className="font-semibold">Rich Content</p>
-            <p className="text-sm text-gray-500">With multiple lines</p>
+            <p className="text-sm text-gray-400">With multiple lines</p>
             <div className="h-1 w-full bg-gray-200 rounded" />
             <p className="text-xs">And custom formatting</p>
           </div>

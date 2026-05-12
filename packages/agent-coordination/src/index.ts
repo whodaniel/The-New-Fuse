@@ -49,4 +49,4 @@ export * from './state.js';
 export * from './patterns.js';
 
 // Monitoring
-export * from './monitoring.js';
+export * from './monitoring/index.js';

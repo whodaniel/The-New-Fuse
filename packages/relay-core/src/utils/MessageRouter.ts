@@ -1,10 +1,9 @@
-
 /**
  * Message Router for The New Fuse Relay System
  */
 
 import { EventEmitter } from 'events';
-import { RelayMessage, Transport } from '../types.js';
+import { RelayMessage, Transport } from '../types/index.js';
 import { AgentRegistry } from './AgentRegistry.js';
 import { Logger } from './Logger.js';
 

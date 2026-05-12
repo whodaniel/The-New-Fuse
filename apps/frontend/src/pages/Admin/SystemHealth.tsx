@@ -201,7 +201,7 @@ export const SystemHealth: React.FC = () => {
             {services.map((service) => (
               <GlassCard
                 key={service.name}
-                className="p-5 border-white/5 hover:border-white/20 transition-all group"
+                className="p-5 border-white/10 hover:border-white/20 transition-all group"
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="p-2 rounded-md bg-transparent/5 border border-white/10 text-gray-400 group-hover:text-white transition-colors">

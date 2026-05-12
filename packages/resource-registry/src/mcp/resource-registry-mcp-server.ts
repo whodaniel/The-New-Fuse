@@ -8,7 +8,12 @@ import {
 import { SearchResourceDto } from '../dto.js';
 import { ResourceAccessControlService } from '../services/resource-access-control.service.js';
 import { ResourceRegistryService } from '../services/resource-registry.service.js';
-import { ResourceAction, ResourceCategory, ResourceType, ResourceVisibility } from '../types.js';
+import {
+  ResourceAction,
+  ResourceCategory,
+  ResourceType,
+  ResourceVisibility,
+} from '../types/index.js';
 
 /**
  * MCP Server for Resource Registry

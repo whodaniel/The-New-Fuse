@@ -82,7 +82,7 @@ const GeneralSettings = () => {
             </TabsContent>
           </Tabs>
 
-          <div className="mt-6 flex justify-end space-x-2 border-t border-white/5 pt-6">
+          <div className="mt-6 flex justify-end space-x-2 border-t border-white/10 pt-6">
             <Button variant="outline">Cancel</Button>
             <Button variant="primary">Save Changes</Button>
           </div>

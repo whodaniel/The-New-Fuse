@@ -561,7 +561,7 @@ const AgentDetail: React.FC = () => {
                       <motion.div
                         key={task.id}
                         whileHover={{ scale: 1.01 }}
-                        className="flex justify-between items-center p-4 bg-black/20 rounded-md border border-white/5"
+                        className="flex justify-between items-center p-4 bg-black/20 rounded-md border border-white/10"
                       >
                         <div>
                           <div className="font-medium text-white">{task.title}</div>
@@ -607,7 +607,7 @@ const AgentDetail: React.FC = () => {
                       {agent.recentTasks.map((task: Task) => (
                         <div
                           key={task.id}
-                          className="flex justify-between items-center p-4 bg-black/20 rounded-md border border-white/5"
+                          className="flex justify-between items-center p-4 bg-black/20 rounded-md border border-white/10"
                         >
                           <div>
                             <div className="font-medium text-white">{task.title}</div>
@@ -654,7 +654,7 @@ const AgentDetail: React.FC = () => {
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.05 }}
-                          className="flex items-start gap-4 p-3 bg-black/20 rounded-md border-b border-white/5 last:border-0"
+                          className="flex items-start gap-4 p-3 bg-black/20 rounded-md border-b border-white/10 last:border-0"
                         >
                           <div className="w-32 shrink-0 text-xs text-muted-foreground">
                             {formatTimestamp(log.timestamp)}
@@ -687,7 +687,7 @@ const AgentDetail: React.FC = () => {
                       ([key, value]: [string, string | number]) => (
                         <div
                           key={key}
-                          className="flex justify-between items-center p-4 bg-black/20 rounded-md border border-white/5"
+                          className="flex justify-between items-center p-4 bg-black/20 rounded-md border border-white/10"
                         >
                           <div className="font-medium text-gray-300 capitalize">
                             {key.replace(/([A-Z])/g, ' $1').trim()}

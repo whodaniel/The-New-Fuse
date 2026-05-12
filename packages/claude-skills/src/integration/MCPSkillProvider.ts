@@ -6,7 +6,7 @@
 
 import type { SkillExecutor } from '../executor.js';
 import type { SkillRegistry } from '../registry.js';
-import type { ClaudeSkill, SkillMCPTool } from '../types.js';
+import type { ClaudeSkill, SkillMCPTool } from '../types/index.js';
 
 /**
  * MCP Skill Provider

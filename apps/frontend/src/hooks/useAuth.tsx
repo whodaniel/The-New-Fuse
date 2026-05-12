@@ -93,6 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSlowLoading, setIsSlowLoading] = useState(false);
 
   // -----------------------------------------------------------------------
   // Core API helpers
@@ -505,6 +506,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let cancelled = false;
 
+    // Safety timeout to prevent infinite spinner
+    const slowLoadingTimer = setTimeout(() => {
+      if (isLoading && !cancelled) {
+        console.warn('[Auth] Bootstrap is taking a long time...');
+        setIsSlowLoading(true);
+      }
+    }, 5000);
+
+    const forceStopLoadingTimer = setTimeout(() => {
+      if (isLoading && !cancelled) {
+        console.error('[Auth] Bootstrap timed out after 15 seconds. Forcing isLoading to false.');
+        setIsLoading(false);
+      }
+    }, 15000);
+
     const bootstrap = async () => {
       console.log('[Auth] ▶ Bootstrap starting');
       setIsLoading(true);
@@ -532,18 +548,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           try {
             const { data, error: sessErr } = await supabase.auth.getSession();
             if (!sessErr && data?.session?.access_token) {
-          console.log('[Auth] Supabase session found, exchanging…');
-          const result = await exchangeSupabaseToken(data.session.access_token);
-          if (cancelled) return;
-          if (result) {
-            console.log('[Auth] ✓ Supabase session exchange succeeded');
-            setUser(result.user);
-            setIsLoading(false);
-            return;
-          }
-          console.log('[Auth] ✗ Supabase exchange failed — signing out stale session to prevent redirect loop');
-          try { await supabase.auth.signOut(); } catch { /* ignore */ }
-          clearAuthToken();
+              console.log('[Auth] Supabase session found, exchanging…');
+              const result = await exchangeSupabaseToken(data.session.access_token);
+              if (cancelled) return;
+              if (result) {
+                console.log('[Auth] ✓ Supabase session exchange succeeded');
+                setUser(result.user);
+                setIsLoading(false);
+                return;
+              }
+              console.log(
+                '[Auth] ✗ Supabase exchange failed — signing out stale session to prevent redirect loop'
+              );
+              try {
+                await supabase.auth.signOut();
+              } catch {
+                /* ignore */
+              }
+              clearAuthToken();
             } else {
               console.log('[Auth] No active Supabase session');
             }
@@ -560,13 +582,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {
         console.error('[Auth] Bootstrap error:', err);
       } finally {
-        if (!cancelled) setIsLoading(false);
+        if (!cancelled) {
+          setIsLoading(false);
+          clearTimeout(slowLoadingTimer);
+          clearTimeout(forceStopLoadingTimer);
+        }
       }
     };
 
     bootstrap();
     return () => {
       cancelled = true;
+      clearTimeout(slowLoadingTimer);
+      clearTimeout(forceStopLoadingTimer);
     };
   }, [fetchMe, exchangeSupabaseToken]);
 
@@ -579,6 +607,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user,
       isAuthenticated: !!user,
       isLoading,
+      isSlowLoading,
       login,
       register,
       signInWithGoogle,

@@ -281,7 +281,7 @@ const WorkspaceManagement: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex gap-2 pt-2 border-t border-white/5">
+                  <div className="flex gap-2 pt-2 border-t border-white/10">
                     <Button
                       variant="outline"
                       size="sm"

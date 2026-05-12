@@ -339,7 +339,7 @@ export default function SkillsBrowser() {
                     {selectedSkill.capabilities.map((cap: string, i: number) => (
                       <div
                         key={i}
-                        className="flex items-center gap-2 text-sm text-gray-300 bg-transparent/5 p-3 rounded-md border border-white/5"
+                        className="flex items-center gap-2 text-sm text-gray-300 bg-transparent/5 p-3 rounded-md border border-white/10"
                       >
                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
                         {cap}
@@ -355,7 +355,7 @@ export default function SkillsBrowser() {
                     </h3>
                     <div className="space-y-4">
                       {selectedSkill.examples.map((example: SkillExample, i: number) => (
-                        <div key={i} className="bg-black/40 rounded-md p-4 border border-white/5">
+                        <div key={i} className="bg-black/40 rounded-md p-4 border border-white/10">
                           <h4 className="text-sm font-medium text-white mb-1">{example.title}</h4>
                           <p className="text-xs text-muted-foreground mb-3">
                             {example.description}

@@ -476,7 +476,7 @@ export const WorkflowsPage: React.FC = () => {
                   gradient="purple"
                 >
                   <motion.div variants={itemVariants} className="p-4 space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
+                    <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/10">
                       <div>
                         <p className="font-medium text-white">Enable version tracking</p>
                         <p className="text-sm text-gray-400">
@@ -490,7 +490,7 @@ export const WorkflowsPage: React.FC = () => {
                         }
                       />
                     </div>
-                    <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
+                    <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/10">
                       <div>
                         <p className="font-medium text-white">Auto-save templates</p>
                         <p className="text-sm text-gray-400">
@@ -504,7 +504,7 @@ export const WorkflowsPage: React.FC = () => {
                         }
                       />
                     </div>
-                    <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/5">
+                    <div className="flex items-center justify-between p-4 bg-black/20 rounded-md border border-white/10">
                       <div>
                         <p className="font-medium text-white">Show usage analytics</p>
                         <p className="text-sm text-gray-400">

@@ -1,6 +1,6 @@
 // Main exports
 export * from './websocket.gateway.js';
-export * from './types.js';
+export * from './types/index.js';
 
 // Connection management
 export * from './connection/connection-manager.js';

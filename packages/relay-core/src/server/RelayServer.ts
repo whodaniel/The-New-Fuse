@@ -9,6 +9,7 @@
  * - message-bridge.js
  */
 
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { EventEmitter } from 'events';
 import { UnifiedBridge } from '../adapters/UnifiedBridge.js';
 import { createAuthService, JWTAuthService } from '../auth/JWTAuthService.js';
@@ -25,7 +26,6 @@ import { HTTPTransport } from '../transports/HTTPTransport.js';
 import { MCPTransport } from '../transports/MCPTransport.js';
 import { RedisTransport } from '../transports/RedisTransport.js';
 import { WebSocketTransport } from '../transports/WebSocketTransport.js';
-import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import {
   Agent,
   InterceptRule,
@@ -33,7 +33,7 @@ import {
   RelayMessage,
   SystemStatus,
   Transport,
-} from '../types.js';
+} from '../types/index.js';
 import { AgentRegistry } from '../utils/AgentRegistry.js';
 import { Logger } from '../utils/Logger.js';
 import { MessageRouter } from '../utils/MessageRouter.js';
@@ -57,7 +57,7 @@ export class RelayServer extends EventEmitter {
     super();
     this.config = config;
     this.logger = new Logger(config.logLevel, config.workspaceDir);
-    
+
     // Initialize or use provided redis service
     if (redisService) {
       this.redisService = redisService;
@@ -67,7 +67,7 @@ export class RelayServer extends EventEmitter {
       this.redisService = (async () => {
         const { UnifiedRedisService, RedisConfig } = await import('@the-new-fuse/infrastructure');
         // This is a bit complex for a constructor, let's assume we'll fix it in main.ts
-        return null as any; 
+        return null as any;
       })() as any;
     }
     this.transports = new Map();

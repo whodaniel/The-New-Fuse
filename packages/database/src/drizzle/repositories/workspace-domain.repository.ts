@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 import { and, asc, eq } from 'drizzle-orm';
 import { db } from '../client.js';
 import { workspaceDomains } from '../schema.js';
-import type { NewWorkspaceDomain, WorkspaceDomain } from '../types.js';
+import type { NewWorkspaceDomain, WorkspaceDomain } from '../types/index.js';
 
 export class DrizzleWorkspaceDomainRepository {
   async listByWorkspace(workspaceId: string): Promise<WorkspaceDomain[]> {
@@ -22,7 +22,10 @@ export class DrizzleWorkspaceDomainRepository {
   }
 
   async findByDomain(domain: string): Promise<WorkspaceDomain | null> {
-    const [entry] = await db.select().from(workspaceDomains).where(eq(workspaceDomains.domain, domain));
+    const [entry] = await db
+      .select()
+      .from(workspaceDomains)
+      .where(eq(workspaceDomains.domain, domain));
     return entry ?? null;
   }
 

@@ -7,6 +7,9 @@ import { ProxyService } from '../proxy/proxy.service';
 @Controller('analytics')
 export class AnalyticsGatewayController {
   constructor(private readonly proxyService: ProxyService) {}
+  private shouldFallback(status: number): boolean {
+    return status === 404 || status >= 500;
+  }
 
   @All('*path')
   @Version('1')
@@ -27,31 +30,79 @@ export class AnalyticsGatewayController {
     if (!path) path = '/';
     if (!path.startsWith('/')) path = `/${path}`;
 
-    // Fix: Backend expects /analytics prefix or direct routes?
-    // The backend AnalyticsController has @Controller('analytics')
-    // So if we proxy to Agency Hub, we might need to prepend /analytics if it's stripped
+    // Backend analytics routes are mounted under @Controller('analytics/default').
+    // Keep an /analytics-prefixed target path for backend compatibility.
     const targetPath = path.startsWith('/analytics') ? path : `/analytics${path}`;
 
     try {
-      const headers = {
+      const headers: Record<string, string> = {
         'X-Gateway': 'the-new-fuse-api-gateway',
         'X-Forwarded-By': 'api-gateway',
       };
-      return await this.proxyService.proxyRequest(
-        'casin8',
+
+      if (req.headers.authorization) {
+        headers.Authorization = String(req.headers.authorization);
+      }
+      if (req.headers['x-api-key']) {
+        headers['x-api-key'] = String(req.headers['x-api-key']);
+      }
+
+      const primaryResponse = await this.proxyService.proxyRequest(
+        'backend',
         targetPath,
         req.method,
         headers,
         body,
         query
       );
+      if (!this.shouldFallback(primaryResponse.status)) {
+        return res.status(primaryResponse.status).json(primaryResponse.data);
+      }
+
+      try {
+        const fallbackResponse = await this.proxyService.proxyRequest(
+          'api',
+          targetPath,
+          req.method,
+          headers,
+          body,
+          query
+        );
+        return res.status(fallbackResponse.status).json(fallbackResponse.data);
+      } catch {
+        // Preserve backend response when fallback service is unavailable.
+        return res.status(primaryResponse.status).json(primaryResponse.data);
+      }
     } catch (error: any) {
-      const status = error.response?.status || HttpStatus.BAD_GATEWAY;
-      const data = error.response?.data || {
-        message: 'Analytics service unavailable',
-        error: error.message,
+      const headers: Record<string, string> = {
+        'X-Gateway': 'the-new-fuse-api-gateway',
+        'X-Forwarded-By': 'api-gateway',
       };
-      return res.status(status).json(data);
+      if (req.headers.authorization) {
+        headers.Authorization = String(req.headers.authorization);
+      }
+      if (req.headers['x-api-key']) {
+        headers['x-api-key'] = String(req.headers['x-api-key']);
+      }
+
+      try {
+        const fallbackResponse = await this.proxyService.proxyRequest(
+          'api',
+          targetPath,
+          req.method,
+          headers,
+          body,
+          query
+        );
+        return res.status(fallbackResponse.status).json(fallbackResponse.data);
+      } catch (fallbackError: any) {
+        const status = fallbackError.response?.status || HttpStatus.BAD_GATEWAY;
+        const data = fallbackError.response?.data || {
+          message: 'Analytics service unavailable',
+          error: fallbackError.message || error.message,
+        };
+        return res.status(status).json(data);
+      }
     }
   }
 }

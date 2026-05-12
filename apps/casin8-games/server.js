@@ -1546,14 +1546,19 @@ function appendHandHistoryRow(row) {
   fs.appendFileSync(handHistoryPath, `${line}\n`, 'utf8');
 }
 
-function writeJson(res, statusCode, payload) {
+function writeJsonWithHeaders(res, statusCode, payload, headers = {}) {
   const body = jsonStringifySafe(payload);
   res.writeHead(statusCode, {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
     'Content-Length': Buffer.byteLength(body),
+    ...headers,
   });
   res.end(body);
+}
+
+function writeJson(res, statusCode, payload) {
+  writeJsonWithHeaders(res, statusCode, payload);
 }
 
 function recordRouteLatency(routeKey, ms) {
@@ -7184,37 +7189,169 @@ function serveStatic(req, res) {
 const endpoint = (handler) => async (req, res, _urlObj) => handler(req, res);
 const endpointWithQuery = (handler) => async (req, res, urlObj) => handler(req, res, urlObj);
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function parseJsonSafe(raw) {
+  if (typeof raw !== 'string' || raw.trim() === '') return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function parseRetryAfterMs(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return 0;
+  const asSeconds = Number(raw);
+  if (Number.isFinite(asSeconds) && asSeconds >= 0) {
+    return Math.round(asSeconds * 1000);
+  }
+  const asDateMs = Date.parse(raw);
+  if (Number.isFinite(asDateMs)) {
+    return Math.max(0, asDateMs - Date.now());
+  }
+  return 0;
+}
+
+function parseRetryDelayStringToMs(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return 0;
+  const secMatch = raw.match(/^([0-9]+(?:\.[0-9]+)?)s$/i);
+  if (secMatch) return Math.max(0, Math.round(Number(secMatch[1]) * 1000));
+  const asSeconds = Number(raw);
+  if (Number.isFinite(asSeconds) && asSeconds >= 0) {
+    return Math.round(asSeconds * 1000);
+  }
+  return 0;
+}
+
+function getGeminiRetryDelayMs(errorPayload, rawText) {
+  const details =
+    errorPayload &&
+    errorPayload.error &&
+    Array.isArray(errorPayload.error.details) &&
+    errorPayload.error.details.length > 0
+      ? errorPayload.error.details
+      : [];
+  for (const detail of details) {
+    if (!detail || typeof detail !== 'object') continue;
+    const retryDelayMs = parseRetryDelayStringToMs(detail.retryDelay);
+    if (retryDelayMs > 0) return retryDelayMs;
+  }
+  const message = String(errorPayload?.error?.message || rawText || '');
+  const messageMatch = message.match(/retry in\s+([0-9]+(?:\.[0-9]+)?)s/i);
+  if (messageMatch) return Math.max(0, Math.round(Number(messageMatch[1]) * 1000));
+  return 0;
+}
+
+function sanitizeGeminiModel(value) {
+  const fallback = String(process.env.CASIN8_GEMINI_MODEL || 'gemini-2.5-flash').trim();
+  const raw = String(value || fallback).trim();
+  return /^[a-zA-Z0-9._-]{3,80}$/.test(raw) ? raw : fallback;
+}
+
+function buildGeminiContents(contents) {
+  if (Array.isArray(contents) && contents.length > 0) return contents;
+  if (contents && typeof contents === 'object' && Array.isArray(contents.parts)) {
+    return [contents];
+  }
+  const prompt =
+    typeof contents === 'string' ? contents : jsonStringifySafe(contents == null ? '' : contents);
+  return [{ role: 'user', parts: [{ text: prompt }] }];
+}
+
 async function handleGeminiContent(req, res) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return writeJson(res, 500, { ok: false, error: 'GEMINI_API_KEY not configured' });
   const body = await readBodyJson(req);
-  const prompt = typeof body.contents === 'string' ? body.contents : JSON.stringify(body.contents);
-  const sysInst = body.config?.systemInstruction
-    ? { parts: [{ text: body.config.systemInstruction }] }
-    : undefined;
+  const model = sanitizeGeminiModel(body.model);
+  const sysText =
+    typeof body.config?.systemInstruction === 'string'
+      ? body.config.systemInstruction
+      : typeof body.systemInstruction === 'string'
+        ? body.systemInstruction
+        : '';
+  const sysInst = sysText.trim() ? { parts: [{ text: sysText.trim() }] } : undefined;
+  const contents = buildGeminiContents(body.contents);
+  const maxAttempts = Math.max(1, Math.min(4, Number(process.env.CASIN8_GEMINI_MAX_ATTEMPTS || 3)));
+  const maxRetryWaitMs = Math.max(
+    500,
+    Math.min(30_000, Number(process.env.CASIN8_GEMINI_MAX_RETRY_WAIT_MS || 4000))
+  );
+
   try {
-    const gRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          systemInstruction: sysInst,
-        }),
+    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+      const gRes = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents,
+            systemInstruction: sysInst,
+          }),
+        }
+      );
+      if (gRes.ok) {
+        const data = await gRes.json();
+        const textOut = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        return writeJson(res, 200, {
+          ok: true,
+          text: textOut,
+          candidates: Array.isArray(data.candidates) ? data.candidates : [],
+          usageMetadata: data.usageMetadata || null,
+          model,
+        });
       }
-    );
-    if (!gRes.ok) {
+
       const errText = await gRes.text();
-      return writeJson(res, gRes.status, {
+      const errJson = parseJsonSafe(errText);
+      const providerStatus =
+        errJson && errJson.error && typeof errJson.error.status === 'string'
+          ? errJson.error.status
+          : '';
+      const providerMessage =
+        errJson && errJson.error && typeof errJson.error.message === 'string'
+          ? errJson.error.message
+          : '';
+      const retryAfterMs = Math.max(
+        parseRetryAfterMs(gRes.headers.get('retry-after')),
+        getGeminiRetryDelayMs(errJson, errText)
+      );
+      const traceId = String(
+        gRes.headers.get('x-cloudaicompanion-trace-id') || gRes.headers.get('x-request-id') || ''
+      ).trim();
+      const retryable = gRes.status === 429 || gRes.status === 503;
+
+      if (retryable && attempt < maxAttempts) {
+        const fallbackDelayMs = 400 * 2 ** (attempt - 1) + Math.floor(Math.random() * 200);
+        const waitMs = Math.min(maxRetryWaitMs, Math.max(250, retryAfterMs || fallbackDelayMs));
+        await sleep(waitMs);
+        continue;
+      }
+
+      const responsePayload = {
         ok: false,
-        error: 'Gemini API error',
-        details: errText,
-      });
+        error: gRes.status === 429 ? 'Gemini quota exhausted' : 'Gemini API error',
+        status: gRes.status,
+        providerStatus: providerStatus || null,
+        providerMessage: providerMessage || null,
+        retryAfterMs: retryAfterMs > 0 ? retryAfterMs : null,
+        traceId: traceId || null,
+        model,
+        details: errText ? String(errText).slice(0, 2000) : null,
+      };
+      const retryAfterHeader =
+        gRes.status === 429 && retryAfterMs > 0
+          ? { 'Retry-After': String(Math.max(1, Math.ceil(retryAfterMs / 1000))) }
+          : {};
+      return writeJsonWithHeaders(res, gRes.status, responsePayload, retryAfterHeader);
     }
-    const data = await gRes.json();
-    const textOut = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    writeJson(res, 200, { ok: true, text: textOut });
+
+    writeJson(res, 500, { ok: false, error: 'Gemini retries exhausted', model });
   } catch (err) {
     writeJson(res, 500, { ok: false, error: err.message });
   }

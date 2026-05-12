@@ -136,7 +136,7 @@ const SidebarItem = ({ icon, label, path, active = false }: SidebarItemProps) =>
 // Enhanced Header Component
 const EnhancedHeader = () => {
   return (
-    <header className="sticky top-0 z-50 border-b border-white/5 bg-slate-900/40 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-900/40">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-900/40 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-900/40">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center space-x-4">
           <h1 className="text-xl font-bold">The New Fuse</h1>

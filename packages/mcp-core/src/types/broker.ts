@@ -2,8 +2,14 @@
  * MCP Broker type definitions
  */
 
-import { ServiceStatus, LoadBalancingStrategy, FilterConfig, SortConfig, Pagination } from './common.js';
-import { MCPResource, MCPTool, MCPCapability } from '../interfaces.js';
+import { MCPResource, MCPTool } from '../interfaces/index.js';
+import {
+  FilterConfig,
+  LoadBalancingStrategy,
+  Pagination,
+  ServiceStatus,
+  SortConfig,
+} from './common.js';
 import { Skill } from './skill.js';
 
 /**

@@ -242,7 +242,7 @@ const WorkflowTemplates: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="pt-4 border-t border-white/5">
+                      <div className="pt-4 border-t border-white/10">
                         <Button
                           variant="primary"
                           size="sm"

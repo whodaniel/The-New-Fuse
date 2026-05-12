@@ -11,7 +11,7 @@ export * from './caching.js';
 export * from './cdn.js';
 
 // Monitoring
-export * from './monitoring.js';
+export * from './monitoring/index.js';
 
 // Quota Management
 export * from './quota.js';

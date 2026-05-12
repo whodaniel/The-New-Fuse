@@ -921,7 +921,7 @@ export default function ComprehensiveAdminDashboard() {
               <div className="text-2xl font-semibold text-slate-900">
                 {metrics.totalUsers.toLocaleString()}
               </div>
-              <div className="text-xs text-slate-500">Total Users</div>
+              <div className="text-xs text-slate-400">Total Users</div>
               <div className="mt-2 text-xs text-slate-400">
                 {metrics.activeUsers} active right now
               </div>
@@ -932,7 +932,7 @@ export default function ComprehensiveAdminDashboard() {
                 <Activity className="h-4 w-4 text-emerald-500" />
               </div>
               <div className="text-2xl font-semibold text-slate-900">{metrics.totalAgents}</div>
-              <div className="text-xs text-slate-500">Total Agents</div>
+              <div className="text-xs text-slate-400">Total Agents</div>
               <div className="mt-2 text-xs text-slate-400">{metrics.runningAgents} running</div>
             </div>
             <div className="bg-transparent rounded-md border border-slate-200/70 p-4 shadow-none-none">
@@ -943,7 +943,7 @@ export default function ComprehensiveAdminDashboard() {
               <div className="text-2xl font-semibold text-slate-900">
                 {metrics.apiRequests.toLocaleString()}
               </div>
-              <div className="text-xs text-slate-500">API Requests</div>
+              <div className="text-xs text-slate-400">API Requests</div>
               <div className="mt-2 text-xs text-slate-400">{metrics.apiErrors} flagged errors</div>
             </div>
             <div className="bg-transparent rounded-md border border-slate-200/70 p-4 shadow-none-none">
@@ -952,7 +952,7 @@ export default function ComprehensiveAdminDashboard() {
                 <Activity className="h-4 w-4 text-emerald-500" />
               </div>
               <div className="text-2xl font-semibold text-slate-900">{metrics.totalWorkspaces}</div>
-              <div className="text-xs text-slate-500">Workspaces</div>
+              <div className="text-xs text-slate-400">Workspaces</div>
               <div className="mt-2 text-xs text-slate-400">{metrics.activeWorkspaces} active</div>
             </div>
           </div>
@@ -974,16 +974,16 @@ export default function ComprehensiveAdminDashboard() {
                 <XCircle className="h-5 w-5 text-rose-600" />
               )}
               <div>
-                <div className="text-sm text-slate-500">System Status</div>
+                <div className="text-sm text-slate-400">System Status</div>
                 <div className="text-lg font-semibold text-slate-900 capitalize">
                   {metrics.serverHealth}
                 </div>
               </div>
             </div>
-            <div className="text-xs text-slate-500">Uptime: {metrics.systemUptime}</div>
+            <div className="text-xs text-slate-400">Uptime: {metrics.systemUptime}</div>
             <div className="mt-4 space-y-3">
               <div>
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
                   <span>CPU</span>
                   <span>{metrics.cpuUsage}%</span>
                 </div>
@@ -995,7 +995,7 @@ export default function ComprehensiveAdminDashboard() {
                 </div>
               </div>
               <div>
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
                   <span>Memory</span>
                   <span>{metrics.memoryUsage}%</span>
                 </div>
@@ -1007,7 +1007,7 @@ export default function ComprehensiveAdminDashboard() {
                 </div>
               </div>
               <div>
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
                   <span>Disk</span>
                   <span>{metrics.diskUsage}%</span>
                 </div>
@@ -1028,7 +1028,7 @@ export default function ComprehensiveAdminDashboard() {
           <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
             <div>
               <h2 className="text-xl font-semibold text-slate-900">Network Activity Control</h2>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-400">
                 Manage relay channels, sockets, and action controls.
               </p>
             </div>
@@ -1092,7 +1092,7 @@ export default function ComprehensiveAdminDashboard() {
                   ))
                 )}
               </select>
-              <p className="text-xs text-slate-500 mt-1">Selected: {selectedChannelName}</p>
+              <p className="text-xs text-slate-400 mt-1">Selected: {selectedChannelName}</p>
               {relayChannels.length !== filteredChannels.length && (
                 <p className="text-[11px] text-slate-400 mt-1">
                   Showing {filteredChannels.length} of {relayChannels.length}
@@ -1143,7 +1143,7 @@ export default function ComprehensiveAdminDashboard() {
               </button>
             </div>
 
-            <div className="flex flex-col gap-2 text-xs text-slate-500">
+            <div className="flex flex-col gap-2 text-xs text-slate-400">
               <div className="flex items-center justify-between gap-2">
                 <span>Relay HTTP</span>
                 <button
@@ -1173,7 +1173,7 @@ export default function ComprehensiveAdminDashboard() {
           </div>
           <div className="space-y-4">
             {alerts.filter((a) => !a.resolved).length === 0 ? (
-              <div className="text-center py-8 text-slate-500">
+              <div className="text-center py-8 text-slate-400">
                 <CheckCircle className="h-12 w-12 mx-auto mb-2 text-emerald-500" />
                 <p>No active alerts</p>
               </div>
@@ -1198,7 +1198,7 @@ export default function ComprehensiveAdminDashboard() {
                       <div className="flex-1">
                         <div className="text-sm font-semibold capitalize">{alert.level}</div>
                         <div className="text-sm text-slate-700 mt-1">{alert.message}</div>
-                        <div className="text-xs text-slate-500 mt-2">
+                        <div className="text-xs text-slate-400 mt-2">
                           {formatTimestamp(alert.timestamp)}
                         </div>
                       </div>
@@ -1224,11 +1224,11 @@ export default function ComprehensiveAdminDashboard() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl font-semibold text-slate-900">Federation Gate Health</h2>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-400">
                   API handoff gate outcomes for the selected time window.
                 </p>
               </div>
-              <div className="text-xs text-slate-500">
+              <div className="text-xs text-slate-400">
                 Window: {federationGateMetrics.window.hours}h | Events:{' '}
                 {federationGateMetrics.apiHandoff.total}
               </div>
@@ -1250,7 +1250,7 @@ export default function ComprehensiveAdminDashboard() {
                 subtitle="handoff_gate_evaluation outcome=deny"
               />
             </div>
-            <div className="mt-4 text-xs text-slate-500">
+            <div className="mt-4 text-xs text-slate-400">
               Top reason:{' '}
               {federationGateMetrics.apiHandoff.topReasons[0]
                 ? `${federationGateMetrics.apiHandoff.topReasons[0].reason} (${federationGateMetrics.apiHandoff.topReasons[0].count})`
@@ -1259,7 +1259,7 @@ export default function ComprehensiveAdminDashboard() {
           </div>
           <div className="bg-transparent rounded-md shadow-none-none border border-slate-200/70 p-4">
             <h3 className="text-lg font-semibold text-slate-900 mb-2">Broker Gate Counters</h3>
-            <p className="text-sm text-slate-500 mb-3">
+            <p className="text-sm text-slate-400 mb-3">
               Redis hash: {federationGateMetrics.broker.metricsKey}
             </p>
             <div className="space-y-2 text-sm">
@@ -1350,7 +1350,7 @@ export default function ComprehensiveAdminDashboard() {
           </div>
           <div className="space-y-4 max-h-[460px] overflow-y-auto pr-1">
             {recentActivities.length === 0 ? (
-              <div className="text-center py-8 text-slate-500">No recent relay activity.</div>
+              <div className="text-center py-8 text-slate-400">No recent relay activity.</div>
             ) : (
               recentActivities.map((activity) => (
                 <div
@@ -1391,23 +1391,23 @@ export default function ComprehensiveAdminDashboard() {
           <div className="grid grid-cols-2 gap-4 text-center">
             <div>
               <div className="text-2xl font-semibold text-slate-900">{metrics?.systemUptime}</div>
-              <div className="text-xs text-slate-500">System Uptime</div>
+              <div className="text-xs text-slate-400">System Uptime</div>
             </div>
             <div>
               <div className="text-2xl font-semibold text-slate-900">
                 {metrics?.databaseConnections}
               </div>
-              <div className="text-xs text-slate-500">DB Connections</div>
+              <div className="text-xs text-slate-400">DB Connections</div>
             </div>
             <div>
               <div className="text-2xl font-semibold text-slate-900">{metrics?.cacheHitRate}%</div>
-              <div className="text-xs text-slate-500">Cache Hit Rate</div>
+              <div className="text-xs text-slate-400">Cache Hit Rate</div>
             </div>
             <div>
               <div className="text-2xl font-semibold text-slate-900">
                 {(((metrics?.apiErrors || 0) / (metrics?.apiRequests || 1)) * 100).toFixed(2)}%
               </div>
-              <div className="text-xs text-slate-500">Error Rate</div>
+              <div className="text-xs text-slate-400">Error Rate</div>
             </div>
           </div>
         </div>
@@ -1417,7 +1417,7 @@ export default function ComprehensiveAdminDashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-semibold text-slate-900">Admin Tools</h2>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-400">
               Grouped access to operational, observability, data, and security tooling.
             </p>
           </div>
@@ -1430,7 +1430,7 @@ export default function ComprehensiveAdminDashboard() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-lg font-semibold text-slate-900">{group.title}</h3>
-                <p className="text-sm text-slate-500">{group.description}</p>
+                <p className="text-sm text-slate-400">{group.description}</p>
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -1449,7 +1449,7 @@ export default function ComprehensiveAdminDashboard() {
                     )}
                   </div>
                   <h4 className="text-sm font-semibold text-slate-900">{section.title}</h4>
-                  <p className="text-xs text-slate-500 mt-1">{section.description}</p>
+                  <p className="text-xs text-slate-400 mt-1">{section.description}</p>
                 </Link>
               ))}
             </div>

@@ -4,15 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Import Map: Provides fallback resolution for bare module specifiers that external scripts may try to load -->
-    <script type="importmap">
-      {
-        "imports": {
-          "scheduler": "data:text/javascript,export const unstable_scheduleCallback=(p,c)=>setTimeout(c,0);export const unstable_cancelCallback=t=>clearTimeout(t);export const unstable_now=()=>performance.now();export const unstable_getCurrentPriorityLevel=()=>3;export const unstable_ImmediatePriority=1;export const unstable_UserBlockingPriority=2;export const unstable_NormalPriority=3;export const unstable_LowPriority=4;export const unstable_IdlePriority=5;export const unstable_runWithPriority=(p,c)=>c();export const unstable_next=c=>c();export const unstable_wrapCallback=c=>c;export const unstable_shouldYield=()=>false;export const unstable_requestPaint=()=>{};export const unstable_Profiling=null;export default{unstable_scheduleCallback,unstable_cancelCallback,unstable_now,unstable_getCurrentPriorityLevel,unstable_ImmediatePriority,unstable_UserBlockingPriority,unstable_NormalPriority,unstable_LowPriority,unstable_IdlePriority,unstable_runWithPriority,unstable_next,unstable_wrapCallback,unstable_shouldYield,unstable_requestPaint,unstable_Profiling};",
-          "scheduler/tracing": "data:text/javascript,export const __interactionsRef={current:new Set};export const __subscriberRef={current:null};export const unstable_clear=c=>c();export const unstable_getCurrent=()=>new Set;export const unstable_getThreadID=()=>0;export const unstable_subscribe=()=>{};export const unstable_trace=(n,t,c)=>c();export const unstable_unsubscribe=()=>{};export const unstable_wrap=c=>c;"
-        }
-      }
-    </script>
+  <!-- Import Map removed: Vite bundles all modules correctly. The previous scheduler polyfill
+       was overriding Vite's bundled scheduler, causing React 19's ReactCurrentBatchConfig to
+       be undefined, which crashed the entire app at boot. -->
 
     <!-- CRITICAL: Custom Element Guard MUST be first to intercept browser extension scripts -->
     <script>

@@ -110,7 +110,7 @@ const HelpLayout: React.FC = () => {
                           className={`${
                             item.current
                               ? 'text-blue-600'
-                              : 'text-gray-400 group-hover:text-gray-500'
+                              : 'text-gray-400 group-hover:text-gray-400'
                           } mr-3 flex-shrink-0 h-5 w-5`}
                         />
                         {item.name}

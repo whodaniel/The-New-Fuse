@@ -118,7 +118,7 @@ export const UserTypeDetection: React.FC<UserTypeDetectionProps> = ({ onDetectio
         />
       </div>
 
-      <div className="space-y-4 text-left mb-6 bg-transparent/5 rounded-md p-4 border border-white/5">
+      <div className="space-y-4 text-left mb-6 bg-transparent/5 rounded-md p-4 border border-white/10">
         {detectionSteps.map((step, index) => (
           <div key={index} className="flex items-center gap-3">
             {step.complete ? (

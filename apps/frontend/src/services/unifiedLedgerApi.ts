@@ -130,8 +130,6 @@ export interface RecordConnections {
   plans: ProjectPlanRecord[];
 }
 
-
-
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
 function getAuthHeaders(): Record<string, string> {
@@ -220,19 +218,17 @@ export async function updateTask(id: string, patch: Partial<LedgerRecord>): Prom
   );
 }
 
-
-
 export async function listSuggestions(): Promise<LedgerRecord[]> {
-  return parse<LedgerRecord[]>(await apiFetch('/api/suggestions'));
+  return parse<LedgerRecord[]>(await apiFetch('/api/unified-ledger/suggestions'));
 }
 
 export async function getSuggestion(id: string): Promise<LedgerRecord | null> {
-  return parse<LedgerRecord | null>(await apiFetch(`/api/suggestions/${id}`));
+  return parse<LedgerRecord | null>(await apiFetch(`/api/unified-ledger/suggestions/${id}`));
 }
 
 export async function createSuggestion(input: Partial<LedgerRecord>): Promise<LedgerRecord> {
   return parse<LedgerRecord>(
-    await apiFetch('/api/suggestions', {
+    await apiFetch('/api/unified-ledger/suggestions', {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(input),
@@ -245,7 +241,7 @@ export async function voteSuggestion(
   direction: 'up' | 'down'
 ): Promise<LedgerRecord | null> {
   return parse<LedgerRecord | null>(
-    await apiFetch(`/api/suggestions/${id}/vote`, {
+    await apiFetch(`/api/unified-ledger/suggestions/${id}/vote`, {
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify({ direction }),

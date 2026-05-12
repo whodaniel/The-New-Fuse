@@ -136,7 +136,7 @@ export const AgentIdentityPage: React.FC = () => {
             </div>
           </GlassCard>
 
-          <GlassCard className="p-4 bg-black/40 border-white/5 font-mono">
+          <GlassCard className="p-4 bg-black/40 border-white/10 font-mono">
             <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-4 flex items-center gap-2">
               <Terminal className="w-4 h-4" /> Sovereign Key
             </h3>
@@ -200,7 +200,7 @@ export const AgentIdentityPage: React.FC = () => {
                   identity.privileges.map((priv) => (
                     <div
                       key={priv}
-                      className="flex items-center justify-between p-3 rounded-md bg-black/20 border border-white/5"
+                      className="flex items-center justify-between p-3 rounded-md bg-black/20 border border-white/10"
                     >
                       <span className="text-xs text-gray-300 font-mono">{priv}</span>
                       <ShieldCheck className="w-4 h-4 text-emerald-400" />
@@ -220,7 +220,7 @@ export const AgentIdentityPage: React.FC = () => {
           </GlassCard>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <GlassCard className="p-4 border-white/5 flex items-center gap-4">
+            <GlassCard className="p-4 border-white/10 flex items-center gap-4">
               <div className="p-3 rounded-md bg-blue-500/10 text-blue-400">
                 <Layers className="w-6 h-6" />
               </div>
@@ -231,7 +231,7 @@ export const AgentIdentityPage: React.FC = () => {
                 <div className="text-lg font-bold text-white">Distributed Mesh</div>
               </div>
             </GlassCard>
-            <GlassCard className="p-4 border-white/5 flex items-center gap-4">
+            <GlassCard className="p-4 border-white/10 flex items-center gap-4">
               <div className="p-3 rounded-md bg-purple-500/10 text-purple-400">
                 <Zap className="w-6 h-6" />
               </div>
@@ -255,7 +255,7 @@ const IdentityField: React.FC<{
   mono?: boolean;
   highlight?: string;
 }> = ({ label, value, mono, highlight }) => (
-  <div className="flex justify-between items-center py-2 border-b border-white/5 last:border-0">
+  <div className="flex justify-between items-center py-2 border-b border-white/10 last:border-0">
     <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
       {label}
     </span>

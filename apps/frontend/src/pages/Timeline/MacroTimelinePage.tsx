@@ -39,13 +39,13 @@ const MacroTimelinePage: React.FC = () => {
             <div className="flex space-x-4 mt-2">
               <button
                 onClick={() => setViewMode('timeline')}
-                className={`text-xs uppercase tracking-widest font-bold ${viewMode === 'timeline' ? 'text-sky-400 border-b-2 border-sky-400' : 'text-slate-500'}`}
+                className={`text-xs uppercase tracking-widest font-bold ${viewMode === 'timeline' ? 'text-sky-400 border-b-2 border-sky-400' : 'text-slate-400'}`}
               >
                 Timeline
               </button>
               <button
                 onClick={() => setViewMode('board')}
-                className={`text-xs uppercase tracking-widest font-bold ${viewMode === 'board' ? 'text-sky-400 border-b-2 border-sky-400' : 'text-slate-500'}`}
+                className={`text-xs uppercase tracking-widest font-bold ${viewMode === 'board' ? 'text-sky-400 border-b-2 border-sky-400' : 'text-slate-400'}`}
               >
                 Kanban Board
               </button>
@@ -55,24 +55,24 @@ const MacroTimelinePage: React.FC = () => {
             <div className="flex items-center gap-2">
               <Link
                 to="/timeline"
-                className="px-3 py-1 border border-amber-500/40 bg-amber-500/10 text-amber-200 text-xs font-semibold rounded"
+                className="px-3 py-1 border border-amber-500/40 bg-amber-500/20 text-amber-400 text-xs font-bold rounded hover:bg-amber-500/30 transition-all"
               >
                 Personal
               </Link>
               <Link
                 to="/timeline/module"
-                className="px-3 py-1 border border-emerald-500/40 bg-emerald-500/10 text-emerald-200 text-xs font-semibold rounded"
+                className="px-3 py-1 border border-emerald-500/40 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded hover:bg-emerald-500/30 transition-all"
               >
                 Module
               </Link>
               <Link
                 to="/timeline-demo"
-                className="px-3 py-1 border border-fuchsia-500/40 bg-fuchsia-500/10 text-fuchsia-200 text-xs font-semibold rounded"
+                className="px-3 py-1 border border-fuchsia-500/40 bg-fuchsia-500/20 text-fuchsia-400 text-xs font-bold rounded hover:bg-fuchsia-500/30 transition-all"
               >
                 Demo
               </Link>
             </div>
-            <div className="text-[10px] text-slate-500 text-right">
+            <div className="text-[10px] text-slate-400 text-right">
               <span className="text-white font-bold">{tasks.length}</span> Active Tasks
               <br />
               <span className="text-white font-bold">{suggestions.length}</span> Suggestions
@@ -97,7 +97,7 @@ const MacroTimelinePage: React.FC = () => {
                   key={status}
                   className="flex flex-col space-y-4 bg-slate-900/20 p-4 rounded-md border border-slate-800/50"
                 >
-                  <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter flex justify-between">
+                  <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter flex justify-between">
                     {status.replace('_', ' ')}
                     <span>{tasks.filter((t: any) => t.status === status).length}</span>
                   </h3>
@@ -118,7 +118,7 @@ const MacroTimelinePage: React.FC = () => {
                               className={`text-[8px] px-1.5 py-0.5 rounded border ${
                                 task.priority === 'high' || task.priority === 'critical'
                                   ? 'border-red-500/30 text-red-400 bg-red-500/5'
-                                  : 'border-slate-700 text-slate-500'
+                                  : 'border-slate-700 text-slate-400'
                               }`}
                             >
                               {task.priority}
@@ -157,7 +157,7 @@ const MacroTimelinePage: React.FC = () => {
             </div>
             <button
               onClick={() => setSelectedRecord(null)}
-              className="text-slate-500 hover:text-white"
+              className="text-slate-400 hover:text-white"
             >
               ✕
             </button>
@@ -183,7 +183,7 @@ const MacroTimelinePage: React.FC = () => {
           <div className="space-y-4">
             {/* ... keep inputs same ... */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-500 uppercase">Title</label>
+              <label className="text-[10px] font-bold text-slate-400 uppercase">Title</label>
               <input
                 className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-sm text-white focus:border-sky-500 outline-none"
                 value={selectedRecord.title}
@@ -192,7 +192,7 @@ const MacroTimelinePage: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-500 uppercase">Status</label>
+              <label className="text-[10px] font-bold text-slate-400 uppercase">Status</label>
               <select
                 className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-2 text-xs text-white"
                 value={selectedRecord.status}
@@ -206,7 +206,7 @@ const MacroTimelinePage: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-500 uppercase">
+              <label className="text-[10px] font-bold text-slate-400 uppercase">
                 Color Identity
               </label>
               <div className="flex space-x-2">
@@ -224,7 +224,7 @@ const MacroTimelinePage: React.FC = () => {
             {/* Assignment & Tracking */}
             <div className="pt-4 border-t border-slate-800 space-y-4">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase">Assignee</label>
+                <label className="text-[10px] font-bold text-slate-400 uppercase">Assignee</label>
                 <input
                   className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-sm text-white focus:border-sky-500 outline-none"
                   placeholder="Enter username..."

@@ -55,7 +55,7 @@ const EmbeddingPreference = () => {
             </div>
           </div>
 
-          <div className="pt-6 flex justify-end space-x-2 border-t border-white/5">
+          <div className="pt-6 flex justify-end space-x-2 border-t border-white/10">
             <Button variant="outline">Reset to Defaults</Button>
             <Button variant="primary">Save Changes</Button>
           </div>

@@ -25,8 +25,10 @@ const BlogPage = lazy(() => import('../pages/Blog').then((module) => ({ default:
 const OnboardingPreviewPage = lazy(() => import('../pages/preview/OnboardingPreview'));
 const NotFound = lazy(() => import('../pages/NotFound'));
 const VisualizationsPage = lazy(() => import('../pages/Visualizations'));
+const VisualizationSurfaceViewerPage = lazy(() => import('../pages/VisualizationSurfaceViewer'));
 const TerminalGraphPage = lazy(() => import('../pages/TerminalGraph'));
 const ConcordanceViewerPage = lazy(() => import('../pages/ConcordanceViewer'));
+const SystemStatusPage = lazy(() => import('../pages/SystemStatus'));
 const UnauthorizedPage = lazy(() => import('../pages/Unauthorized'));
 
 const RedirectToStatic = ({ to }: { to: string }) => {
@@ -123,6 +125,11 @@ export const coreRoutes: ReactElement[] = [
   // Visualizations
   <Route key="visualizations" path="/visualizations" element={<VisualizationsPage />} />,
   <Route
+    key="visualization-surface-viewer"
+    path="/visualizations/surface"
+    element={<VisualizationSurfaceViewerPage />}
+  />,
+  <Route
     key="terminal-graph-visualization"
     path="/visualizations/terminals"
     element={<TerminalGraphPage />}
@@ -132,6 +139,8 @@ export const coreRoutes: ReactElement[] = [
     path="/visualizations/concordance"
     element={<ConcordanceViewerPage />}
   />,
+  <Route key="public-status" path="/status" element={<SystemStatusPage />} />,
+  <Route key="public-system-status" path="/system-status" element={<SystemStatusPage />} />,
   <Route key="terminal-graph" path="/terminals" element={<TerminalGraphPage />} />,
 
   // Connect/Extension
@@ -170,8 +179,11 @@ export const PUBLIC_ROUTES = [
   '/blog',
   '/marketplace',
   '/visualizations',
+  '/visualizations/surface',
   '/visualizations/terminals',
   '/visualizations/concordance',
+  '/status',
+  '/system-status',
   '/terminals',
   '/product-map',
   '/capabilities',

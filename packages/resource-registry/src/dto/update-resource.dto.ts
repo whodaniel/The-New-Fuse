@@ -8,7 +8,12 @@ import {
   IsString,
   Matches,
 } from 'class-validator';
-import { ResourceCategory, ResourceStatus, ResourceType, ResourceVisibility } from '../types.js';
+import {
+  ResourceCategory,
+  ResourceStatus,
+  ResourceType,
+  ResourceVisibility,
+} from '../types/index.js';
 
 export class UpdateResourceDto {
   @ApiPropertyOptional({ description: 'Resource name' })

@@ -31,7 +31,7 @@ export default {
     // General back-compat: rewrite /api/{resource}/* → /api/v1/{resource}/*
     // for ALL unversioned API paths (agents, chat, workflows, etc.)
     // Skips paths already containing a version prefix (/api/v1/*, /api/v2/*)
-    const unversionedMatch = url.pathname.match(/^\/api\/(?!v\d+|health)([^/?#]+)([/?#].*)?$/);
+    const unversionedMatch = url.pathname.match(/^\/api\/(?!v\d+|health|docs)([^/?#]+)([/?#].*)?$/);
     if (unversionedMatch) {
       url.pathname = `/api/v1/${unversionedMatch[1]}${unversionedMatch[2] || ''}`;
     }
@@ -68,23 +68,29 @@ export default {
         newResponse.headers.set('Access-Control-Allow-Origin', '*');
       }
 
-      newResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD');
+      newResponse.headers.set(
+        'Access-Control-Allow-Methods',
+        'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD'
+      );
       newResponse.headers.set('Access-Control-Allow-Headers', '*');
       newResponse.headers.set('Access-Control-Allow-Credentials', 'true');
 
       return newResponse;
     } catch (error) {
       console.error('Proxy fetch failed:', error);
-      return new Response(JSON.stringify({
-        error: 'Proxy Fetch Failed',
-        message: error instanceof Error ? error.message : String(error),
-      }), {
-        status: 502,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': origin || '*',
-        },
-      });
+      return new Response(
+        JSON.stringify({
+          error: 'Proxy Fetch Failed',
+          message: error instanceof Error ? error.message : String(error),
+        }),
+        {
+          status: 502,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': origin || '*',
+          },
+        }
+      );
     }
   },
 };

@@ -1,18 +1,25 @@
 import {
   Activity,
+  AlertCircle,
   ArrowLeft,
   BookOpen,
   Brain,
+  CheckCircle,
   Clock3,
   Cpu,
+  ExternalLink,
   Gauge,
   Grip,
+  LayoutGrid,
+  Network,
   Orbit,
+  RefreshCw,
   TerminalSquare,
   ToggleLeft,
   ToggleRight,
+  Wrench,
 } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 type ChronJob = {
@@ -128,6 +135,39 @@ type DragState = {
   pointerId: number;
 };
 
+type VisualizationSurfaceStatus = 'stable' | 'needs-work';
+type VisualizationSurfaceIntegration = 'native-route' | 'static-html';
+
+type VisualizationSurface = {
+  title: string;
+  description: string;
+  href: string;
+  tags: string[];
+  status: VisualizationSurfaceStatus;
+  integration: VisualizationSurfaceIntegration;
+};
+
+type VisualizationSection = {
+  id: string;
+  label: string;
+  summary: string;
+  items: VisualizationSurface[];
+};
+
+type VisualizationSurfaceHealthState = 'idle' | 'checking' | 'reachable' | 'failing';
+
+type VisualizationSurfaceHealth = {
+  state: VisualizationSurfaceHealthState;
+  statusCode?: number;
+  checkedAt?: string;
+  error?: string;
+};
+
+type VisualizationSurfaceEntry = VisualizationSurface & {
+  sectionId: string;
+  sectionLabel: string;
+};
+
 const CONCEPT_MASTER_CADENCE_SECONDS = 60;
 const MASTER_GEAR_SIZE = 210;
 const SNAP_DISTANCE_PERCENT = 15;
@@ -219,6 +259,231 @@ const LIVE_GEAR_STYLE = [
 const INITIAL_LOCKED_IDS = ['heartbeat', 'broker', 'director'];
 const TIME_SCALES = [0.5, 1, 2, 4];
 
+const VISUALIZATION_SECTIONS: VisualizationSection[] = [
+  {
+    id: 'agent-graphs',
+    label: 'Agent Relationship Graphs',
+    summary: 'Domain-level subgraphs generated from the relationship graph artifact pipeline.',
+    items: [
+      {
+        title: 'Content Domain Subgraph',
+        description: 'Content systems, editorial orchestration, and SEO-linked workflows.',
+        href: '/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.html',
+        tags: ['Graph', 'Domain'],
+        status: 'stable',
+        integration: 'static-html',
+      },
+      {
+        title: 'SEO Domain Subgraph',
+        description: 'Keyword planning, technical SEO, and search performance dependencies.',
+        href: '/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-seo-subgraph.html',
+        tags: ['Graph', 'Search'],
+        status: 'stable',
+        integration: 'static-html',
+      },
+      {
+        title: 'Social Domain Subgraph',
+        description: 'Social publishing, distribution loops, and engagement pathways.',
+        href: '/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-social-subgraph.html',
+        tags: ['Graph', 'Social'],
+        status: 'stable',
+        integration: 'static-html',
+      },
+      {
+        title: 'Brand Domain Subgraph',
+        description: 'Brand integrity, voice controls, legal/compliance adjacencies.',
+        href: '/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-brand-subgraph.html',
+        tags: ['Graph', 'Brand'],
+        status: 'stable',
+        integration: 'static-html',
+      },
+      {
+        title: 'Podcast Domain Subgraph',
+        description: 'Recording, editing, distribution, and analytics role topology.',
+        href: '/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-podcast-subgraph.html',
+        tags: ['Graph', 'Podcast'],
+        status: 'stable',
+        integration: 'static-html',
+      },
+      {
+        title: 'Funnel Domain Subgraph',
+        description: 'Acquisition and conversion pathways across funnel orchestration agents.',
+        href: '/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-funnel-subgraph.html',
+        tags: ['Graph', 'Funnel'],
+        status: 'stable',
+        integration: 'static-html',
+      },
+      {
+        title: 'Operations Domain Subgraph',
+        description: 'Core operational agents, orchestration controls, and execution routing.',
+        href: '/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-ops-subgraph.html',
+        tags: ['Graph', 'Ops'],
+        status: 'stable',
+        integration: 'static-html',
+      },
+    ],
+  },
+  {
+    id: 'system-views',
+    label: 'System Views',
+    summary:
+      'Runtime, architecture, and telemetry surfaces used for operational and workflow debugging.',
+    items: [
+      {
+        title: 'Terminal Graph View',
+        description: 'Route-integrated terminal board for macro state and execution context.',
+        href: '/visualizations/terminals',
+        tags: ['Route', 'Terminal'],
+        status: 'stable',
+        integration: 'native-route',
+      },
+      {
+        title: 'Agent Communication Flow',
+        description: 'Message routing and protocol exchange map across services and workflows.',
+        href: '/visualizations/agent-communication-flow.html',
+        tags: ['Flow', 'Interactive'],
+        status: 'needs-work',
+        integration: 'static-html',
+      },
+      {
+        title: 'Service Architecture Map',
+        description: 'Service topology and interface boundaries for system-level tracing.',
+        href: '/visualizations/service-architecture-map.html',
+        tags: ['Architecture', 'Topology'],
+        status: 'needs-work',
+        integration: 'static-html',
+      },
+      {
+        title: 'Monitoring Dashboard',
+        description: 'Legacy operations dashboard for high-level runtime telemetry.',
+        href: '/visualizations/monitoring-dashboard.html',
+        tags: ['Monitoring', 'Legacy'],
+        status: 'needs-work',
+        integration: 'static-html',
+      },
+      {
+        title: 'Bundle Size Analyzer',
+        description: 'Bundle composition and package weight analysis for frontend payload tuning.',
+        href: '/visualizations/bundle-size-analyzer.html',
+        tags: ['Bundle', 'Performance'],
+        status: 'needs-work',
+        integration: 'static-html',
+      },
+      {
+        title: 'Workflow Dependencies',
+        description: 'DAG-style graph of workflow dependencies and task execution order.',
+        href: '/visualizations/workflow-dependencies.html',
+        tags: ['Workflow', 'Dependencies'],
+        status: 'needs-work',
+        integration: 'static-html',
+      },
+      {
+        title: 'Workflow Preview',
+        description: 'Legacy preview surface for validating workflow graph structures.',
+        href: '/visualizations/workflow-preview.html',
+        tags: ['Workflow', 'Preview'],
+        status: 'needs-work',
+        integration: 'static-html',
+      },
+      {
+        title: 'TNF Intelligence Dashboard',
+        description: 'Large-format intelligence board with expanded analysis context.',
+        href: '/visualizations/TNF_INTELLIGENCE_DASHBOARD.html',
+        tags: ['Intelligence', 'Legacy'],
+        status: 'needs-work',
+        integration: 'static-html',
+      },
+      {
+        title: 'TNF Concordance Visualizer',
+        description: 'Concordance explorer for indexed codebase term frequency and relationships.',
+        href: '/visualizations/TNF_CONCORDANCE_VISUALIZER.html',
+        tags: ['Concordance', 'Search'],
+        status: 'needs-work',
+        integration: 'static-html',
+      },
+    ],
+  },
+  {
+    id: 'docs-and-briefs',
+    label: 'Docs And Briefs',
+    summary: 'Supporting documentation linked to visualization systems and integration patterns.',
+    items: [
+      {
+        title: 'AG-UI Integration Analysis',
+        description: 'Architecture and implementation analysis for AG-UI integration.',
+        href: '/visualizations/AG-UI-INTEGRATION-ANALYSIS.html',
+        tags: ['Docs', 'AG-UI'],
+        status: 'needs-work',
+        integration: 'static-html',
+      },
+      {
+        title: 'AG-UI Integration Guide',
+        description: 'Step-by-step implementation guidance for AG-UI integration.',
+        href: '/visualizations/AG-UI-INTEGRATION-GUIDE.html',
+        tags: ['Docs', 'Guide'],
+        status: 'needs-work',
+        integration: 'static-html',
+      },
+      {
+        title: 'Capability Packaging Brief',
+        description: 'Packaging and distribution documentation for capability bundles.',
+        href: '/visualizations/CAPABILITY-PACKAGING-COMPLETE.html',
+        tags: ['Docs', 'Packaging'],
+        status: 'needs-work',
+        integration: 'static-html',
+      },
+      {
+        title: 'Claude Code At Scale',
+        description: 'Scale patterns and architecture notes for Claude-based development.',
+        href: '/visualizations/CLAUDE-CODE-AT-SCALE.html',
+        tags: ['Docs', 'Scale'],
+        status: 'needs-work',
+        integration: 'static-html',
+      },
+      {
+        title: 'Gemini Code Assist Integration',
+        description: 'Integration notes and architecture pointers for Gemini assistance.',
+        href: '/visualizations/GEMINI-CODE-ASSIST-INTEGRATION.html',
+        tags: ['Docs', 'Gemini'],
+        status: 'needs-work',
+        integration: 'static-html',
+      },
+      {
+        title: 'Project Summary',
+        description: 'High-level summary of visualization deliverables and architecture direction.',
+        href: '/visualizations/PROJECT-SUMMARY.html',
+        tags: ['Docs', 'Summary'],
+        status: 'needs-work',
+        integration: 'static-html',
+      },
+    ],
+  },
+];
+
+const VISUALIZATION_SURFACE_ENTRIES: VisualizationSurfaceEntry[] = VISUALIZATION_SECTIONS.flatMap(
+  (section) =>
+    section.items.map((item) => ({
+      ...item,
+      sectionId: section.id,
+      sectionLabel: section.label,
+    }))
+);
+
+const VISUALIZATION_SURFACE_TOTAL = VISUALIZATION_SECTIONS.reduce(
+  (total, section) => total + section.items.length,
+  0
+);
+const VISUALIZATION_NEEDS_WORK_TOTAL = VISUALIZATION_SECTIONS.reduce(
+  (total, section) => total + section.items.filter((item) => item.status === 'needs-work').length,
+  0
+);
+const VISUALIZATION_NATIVE_ROUTE_TOTAL = VISUALIZATION_SECTIONS.reduce(
+  (total, section) =>
+    total + section.items.filter((item) => item.integration === 'native-route').length,
+  0
+);
+const SURFACE_HEALTH_PROBE_TIMEOUT_MS = 7000;
+
 function describeCadence(cadenceSeconds: number) {
   if (cadenceSeconds < 60) {
     return `Every ${cadenceSeconds}s`;
@@ -256,6 +521,37 @@ function formatCountdown(ageMs?: number | null) {
   if (lagSeconds < 60) return `${lagSeconds}s late`;
   const lagMinutes = Math.floor(lagSeconds / 60);
   return `${lagMinutes}m late`;
+}
+
+function surfaceHealthPriority(state: VisualizationSurfaceHealthState) {
+  switch (state) {
+    case 'failing':
+      return 0;
+    case 'checking':
+      return 1;
+    case 'idle':
+      return 2;
+    case 'reachable':
+    default:
+      return 3;
+  }
+}
+
+async function fetchWithTimeout(
+  input: RequestInfo | URL,
+  init: RequestInit,
+  timeoutMs: number
+): Promise<Response> {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error('timeout')), timeoutMs);
+  });
+
+  try {
+    return (await Promise.race([fetch(input, init), timeoutPromise])) as Response;
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
 }
 
 function inferLiveRole(process: TelemetryProcess) {
@@ -477,7 +773,45 @@ const Visualizations: React.FC = () => {
   const [dragPosition, setDragPosition] = useState<{ jobId: string; x: number; y: number } | null>(
     null
   );
+  const [surfaceHealth, setSurfaceHealth] = useState<Record<string, VisualizationSurfaceHealth>>(
+    {}
+  );
+  const [surfaceProbeRun, setSurfaceProbeRun] = useState<number>(0);
+  const [surfaceProbeActive, setSurfaceProbeActive] = useState<boolean>(false);
   const meshRef = useRef<HTMLDivElement | null>(null);
+
+  const surfaceHealthStats = useMemo(() => {
+    let reachable = 0;
+    let failing = 0;
+    let checking = 0;
+    let idle = 0;
+
+    for (const entry of VISUALIZATION_SURFACE_ENTRIES) {
+      const state = surfaceHealth[entry.href]?.state || 'idle';
+      if (state === 'reachable') reachable += 1;
+      else if (state === 'failing') failing += 1;
+      else if (state === 'checking') checking += 1;
+      else idle += 1;
+    }
+
+    return { reachable, failing, checking, idle };
+  }, [surfaceHealth]);
+
+  const repairQueue = useMemo(
+    () =>
+      VISUALIZATION_SURFACE_ENTRIES.filter((entry) => entry.status === 'needs-work')
+        .map((entry) => ({
+          entry,
+          health: surfaceHealth[entry.href] || ({ state: 'idle' } as VisualizationSurfaceHealth),
+        }))
+        .sort((left, right) => {
+          const priorityDiff =
+            surfaceHealthPriority(left.health.state) - surfaceHealthPriority(right.health.state);
+          if (priorityDiff !== 0) return priorityDiff;
+          return left.entry.title.localeCompare(right.entry.title);
+        }),
+    [surfaceHealth]
+  );
 
   const displayJobs =
     telemetry?.superCycle?.processes?.length && telemetry.status === 'ok'
@@ -499,6 +833,126 @@ const Visualizations: React.FC = () => {
     }, 80);
     return () => window.clearInterval(animationTimer);
   }, []);
+
+  useEffect(() => {
+    if (import.meta.env.MODE === 'test') return;
+
+    let isActive = true;
+
+    const markChecking = () => {
+      setSurfaceHealth((current) => {
+        const next = { ...current };
+        for (const surface of VISUALIZATION_SURFACE_ENTRIES) {
+          next[surface.href] = {
+            ...next[surface.href],
+            state: 'checking',
+          };
+        }
+        return next;
+      });
+    };
+
+    const probeSurface = async (
+      surface: VisualizationSurfaceEntry
+    ): Promise<VisualizationSurfaceHealth> => {
+      const checkedAt = new Date().toISOString();
+      try {
+        const headResponse = await fetchWithTimeout(
+          surface.href,
+          {
+            method: 'HEAD',
+            credentials: 'include',
+            cache: 'no-store',
+          },
+          SURFACE_HEALTH_PROBE_TIMEOUT_MS
+        );
+        if (headResponse.ok) {
+          if (headResponse.headers.get('X-TNF-Routing') === 'SPA-App') {
+            return {
+              state: 'failing',
+              statusCode: headResponse.status,
+              checkedAt,
+              error: 'SPA shell returned instead of visualization asset',
+            };
+          }
+          return { state: 'reachable', statusCode: headResponse.status, checkedAt };
+        }
+        if (![405, 501].includes(headResponse.status)) {
+          return {
+            state: 'failing',
+            statusCode: headResponse.status,
+            checkedAt,
+            error: `HTTP ${headResponse.status}`,
+          };
+        }
+      } catch (error) {
+        const message = (error as Error).message || 'request failed';
+        if (message !== 'timeout') {
+          // Continue to GET fallback for network-adjacent issues.
+        }
+      }
+
+      try {
+        const getResponse = await fetchWithTimeout(
+          surface.href,
+          {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+            headers: { Accept: 'text/html,*/*' },
+          },
+          SURFACE_HEALTH_PROBE_TIMEOUT_MS
+        );
+        if (!getResponse.ok) {
+          return {
+            state: 'failing',
+            statusCode: getResponse.status,
+            checkedAt,
+            error: `HTTP ${getResponse.status}`,
+          };
+        }
+        if (getResponse.headers.get('X-TNF-Routing') === 'SPA-App') {
+          return {
+            state: 'failing',
+            statusCode: getResponse.status,
+            checkedAt,
+            error: 'SPA shell returned instead of visualization asset',
+          };
+        }
+        return { state: 'reachable', statusCode: getResponse.status, checkedAt };
+      } catch (error) {
+        return {
+          state: 'failing',
+          checkedAt,
+          error: (error as Error).message || 'request failed',
+        };
+      }
+    };
+
+    const runProbe = async () => {
+      setSurfaceProbeActive(true);
+      markChecking();
+
+      for (const surface of VISUALIZATION_SURFACE_ENTRIES) {
+        const health = await probeSurface(surface);
+        if (!isActive) return;
+        setSurfaceHealth((current) => ({
+          ...current,
+          [surface.href]: health,
+        }));
+      }
+
+      if (isActive) {
+        setSurfaceProbeActive(false);
+      }
+    };
+
+    void runProbe();
+
+    return () => {
+      isActive = false;
+    };
+  }, [surfaceProbeRun]);
 
   useEffect(() => {
     let isActive = true;
@@ -830,23 +1284,34 @@ const Visualizations: React.FC = () => {
                 Open Terminal Graph View
               </Link>
               <a
-                href="/visualizations/TNF_INTELLIGENCE_DASHBOARD.html"
-                target="_blank"
-                rel="noopener noreferrer"
+                href={`/visualizations/surface?${new URLSearchParams({
+                  src: '/visualizations/TNF_INTELLIGENCE_DASHBOARD.html',
+                  title: 'TNF Intelligence Dashboard',
+                  section: 'System Views',
+                }).toString()}`}
                 className="inline-flex items-center gap-2 rounded-full border border-purple-300/35 bg-purple-500/10 px-4 py-2 text-sm text-purple-100 transition hover:border-purple-200 hover:bg-purple-500/20"
               >
                 <Brain className="h-4 w-4" />
                 Open Intelligence Density Map
               </a>
               <a
-                href="/visualizations/TNF_CONCORDANCE_VISUALIZER.html"
-                target="_blank"
-                rel="noopener noreferrer"
+                href={`/visualizations/surface?${new URLSearchParams({
+                  src: '/visualizations/dashboard.html',
+                  title: 'Legacy Visualization Card Dashboard',
+                  section: 'System Views',
+                }).toString()}`}
+                className="inline-flex items-center gap-2 rounded-full border border-blue-300/35 bg-blue-500/10 px-4 py-2 text-sm text-blue-100 transition hover:border-blue-200 hover:bg-blue-500/20"
+              >
+                <LayoutGrid className="h-4 w-4" />
+                Open Legacy Card Dashboard
+              </a>
+              <Link
+                to="/nexus?layer=lexicon"
                 className="inline-flex items-center gap-2 rounded-full border border-emerald-300/35 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-100 transition hover:border-emerald-200 hover:bg-emerald-500/20"
               >
                 <BookOpen className="h-4 w-4" />
-                Open Concordance Visualizer
-              </a>
+                Open Codebase Lexicon
+              </Link>
             </div>
           </div>
 
@@ -875,6 +1340,242 @@ const Visualizations: React.FC = () => {
             </div>
           </div>
         </div>
+
+        <section className="rounded-[2rem] border border-white/10 bg-slate-950/45 p-5 shadow-[0_24px_80px_rgba(2,6,23,0.4)] backdrop-blur md:p-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-300/25 bg-blue-400/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-blue-100">
+                <LayoutGrid className="h-3.5 w-3.5" />
+                Visualization Surfaces
+              </div>
+              <h2 className="mt-4 text-2xl font-semibold text-white sm:text-3xl">
+                Full catalog wiring is now inside this route.
+              </h2>
+              <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
+                Each card links to a live surface and marks whether the experience is route-native
+                or legacy static HTML. The cards flagged as needs-work represent the cleanup queue.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Surfaces</div>
+                <div className="mt-2 text-2xl font-semibold text-white">
+                  {VISUALIZATION_SURFACE_TOTAL}
+                </div>
+              </div>
+              <div className="rounded-2xl border border-amber-300/20 bg-amber-400/10 px-4 py-3">
+                <div className="text-xs uppercase tracking-[0.2em] text-amber-100">Needs Work</div>
+                <div className="mt-2 text-2xl font-semibold text-amber-50">
+                  {VISUALIZATION_NEEDS_WORK_TOTAL}
+                </div>
+              </div>
+              <div className="rounded-2xl border border-emerald-300/20 bg-emerald-400/10 px-4 py-3">
+                <div className="text-xs uppercase tracking-[0.2em] text-emerald-100">
+                  Native Routes
+                </div>
+                <div className="mt-2 text-2xl font-semibold text-emerald-50">
+                  {VISUALIZATION_NATIVE_ROUTE_TOTAL}
+                </div>
+              </div>
+              <div className="rounded-2xl border border-rose-300/20 bg-rose-400/10 px-4 py-3">
+                <div className="text-xs uppercase tracking-[0.2em] text-rose-100">Failing Now</div>
+                <div className="mt-2 text-2xl font-semibold text-rose-50">
+                  {surfaceHealthStats.failing}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 bg-slate-900/35 px-4 py-3">
+            <div className="text-sm text-slate-300">
+              {surfaceProbeActive
+                ? `Probing ${VISUALIZATION_SURFACE_TOTAL} surfaces now…`
+                : `Reachable ${surfaceHealthStats.reachable}/${VISUALIZATION_SURFACE_TOTAL} • checking ${surfaceHealthStats.checking} • idle ${surfaceHealthStats.idle}`}
+            </div>
+            <button
+              type="button"
+              onClick={() => setSurfaceProbeRun((current) => current + 1)}
+              className="inline-flex items-center gap-2 rounded-full border border-cyan-300/35 bg-cyan-500/10 px-4 py-2 text-sm text-cyan-100 transition hover:border-cyan-200 hover:bg-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+              disabled={surfaceProbeActive}
+            >
+              <RefreshCw className={`h-4 w-4 ${surfaceProbeActive ? 'animate-spin' : ''}`} />
+              {surfaceProbeActive ? 'Checking Surfaces' : 'Recheck Surfaces'}
+            </button>
+          </div>
+
+          <div className="mt-7 space-y-6">
+            {VISUALIZATION_SECTIONS.map((section) => (
+              <div
+                key={section.id}
+                className="rounded-[1.4rem] border border-white/10 bg-white/5 p-4 md:p-5"
+              >
+                <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                  <div className="flex items-center gap-2">
+                    <Network className="h-4 w-4 text-cyan-300" />
+                    <h3 className="text-lg font-semibold text-white">{section.label}</h3>
+                  </div>
+                  <div className="text-xs uppercase tracking-[0.2em] text-slate-400">
+                    {section.items.length} surfaces
+                  </div>
+                </div>
+                <p className="mt-2 text-sm leading-6 text-slate-300">{section.summary}</p>
+
+                <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                  {section.items.map((item) => {
+                    const isStaticHtml = item.integration === 'static-html';
+                    const needsWork = item.status === 'needs-work';
+                    const health = surfaceHealth[item.href];
+                    const healthState = health?.state || 'idle';
+                    const cardHref = isStaticHtml
+                      ? `/visualizations/surface?${new URLSearchParams({
+                          src: item.href,
+                          title: item.title,
+                          section: section.label,
+                        }).toString()}`
+                      : item.href;
+                    return (
+                      <a
+                        key={item.href}
+                        href={cardHref}
+                        className="rounded-2xl border border-white/10 bg-slate-950/45 p-4 transition hover:border-cyan-300/30 hover:bg-slate-900/70"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <h4 className="text-sm font-semibold text-white">{item.title}</h4>
+                          <ExternalLink className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+                        </div>
+                        <p className="mt-2 text-sm leading-6 text-slate-300">{item.description}</p>
+
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <span
+                            className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] ${
+                              isStaticHtml
+                                ? 'border-purple-300/25 bg-purple-400/10 text-purple-100'
+                                : 'border-emerald-300/25 bg-emerald-400/10 text-emerald-100'
+                            }`}
+                          >
+                            {isStaticHtml ? (
+                              <Wrench className="h-3 w-3" />
+                            ) : (
+                              <CheckCircle className="h-3 w-3" />
+                            )}
+                            {isStaticHtml ? 'Static HTML' : 'Route Native'}
+                          </span>
+
+                          <span
+                            className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] ${
+                              needsWork
+                                ? 'border-amber-300/25 bg-amber-400/10 text-amber-100'
+                                : 'border-cyan-300/25 bg-cyan-400/10 text-cyan-100'
+                            }`}
+                          >
+                            {needsWork ? (
+                              <AlertCircle className="h-3 w-3" />
+                            ) : (
+                              <CheckCircle className="h-3 w-3" />
+                            )}
+                            {needsWork ? 'Needs Work' : 'Stable'}
+                          </span>
+
+                          <span
+                            className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] ${
+                              healthState === 'reachable'
+                                ? 'border-emerald-300/25 bg-emerald-400/10 text-emerald-100'
+                                : healthState === 'failing'
+                                  ? 'border-rose-300/25 bg-rose-400/10 text-rose-100'
+                                  : 'border-slate-300/25 bg-slate-400/10 text-slate-100'
+                            }`}
+                          >
+                            {healthState === 'reachable' ? (
+                              <CheckCircle className="h-3 w-3" />
+                            ) : healthState === 'failing' ? (
+                              <AlertCircle className="h-3 w-3" />
+                            ) : (
+                              <Clock3 className="h-3 w-3" />
+                            )}
+                            {healthState === 'reachable'
+                              ? `Reachable${health?.statusCode ? ` ${health.statusCode}` : ''}`
+                              : healthState === 'failing'
+                                ? `Failing${health?.statusCode ? ` ${health.statusCode}` : ''}`
+                                : healthState === 'checking'
+                                  ? 'Checking'
+                                  : 'Unchecked'}
+                          </span>
+
+                          {item.tags.slice(0, 2).map((tag) => (
+                            <span
+                              key={`${item.href}-${tag}`}
+                              className="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-[11px] uppercase tracking-[0.14em] text-slate-300"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                        {health?.checkedAt ? (
+                          <div className="mt-3 text-xs uppercase tracking-[0.16em] text-slate-400">
+                            Checked {new Date(health.checkedAt).toLocaleTimeString()}
+                          </div>
+                        ) : null}
+                        {healthState === 'failing' && health?.error ? (
+                          <div className="mt-1 text-xs text-rose-200/90">{health.error}</div>
+                        ) : null}
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-7 rounded-[1.4rem] border border-white/10 bg-white/5 p-4 md:p-5">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-lg font-semibold text-white">Priority Repair Queue</h3>
+              <span className="text-xs uppercase tracking-[0.2em] text-slate-400">
+                {repairQueue.length} items
+              </span>
+            </div>
+            <p className="mt-2 text-sm text-slate-300">
+              Needs-work surfaces ranked by current runtime health first, then alphabetical.
+            </p>
+            <div className="mt-4 grid gap-2 md:grid-cols-2">
+              {repairQueue.slice(0, 8).map(({ entry, health }) => {
+                const queueHref =
+                  entry.integration === 'static-html'
+                    ? `/visualizations/surface?${new URLSearchParams({
+                        src: entry.href,
+                        title: entry.title,
+                        section: entry.sectionLabel,
+                      }).toString()}`
+                    : entry.href;
+                return (
+                  <a
+                    key={`queue-${entry.href}`}
+                    href={queueHref}
+                    className="rounded-xl border border-white/10 bg-slate-950/35 px-3 py-2 transition hover:border-cyan-300/30 hover:bg-slate-900/65"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="text-sm font-medium text-white">{entry.title}</div>
+                      <div
+                        className={`rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] ${
+                          health.state === 'failing'
+                            ? 'border-rose-300/35 bg-rose-400/10 text-rose-100'
+                            : health.state === 'reachable'
+                              ? 'border-emerald-300/35 bg-emerald-400/10 text-emerald-100'
+                              : 'border-slate-300/35 bg-slate-400/10 text-slate-100'
+                        }`}
+                      >
+                        {health.state}
+                      </div>
+                    </div>
+                    <div className="mt-1 text-xs uppercase tracking-[0.14em] text-slate-400">
+                      {entry.sectionLabel}
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
         <div
           className={`flex flex-col gap-3 rounded-[1.4rem] border px-5 py-4 text-sm backdrop-blur md:flex-row md:items-center md:justify-between ${
@@ -972,7 +1673,7 @@ const Visualizations: React.FC = () => {
                   >
                     Master heartbeat
                   </div>
-                  <div className="text-xs uppercase tracking-[0.26em] text-slate-500">1 turn</div>
+                  <div className="text-xs uppercase tracking-[0.26em] text-slate-400">1 turn</div>
                   <div className="mt-1 text-3xl font-semibold text-white">
                     {masterCadenceSeconds}s
                   </div>
@@ -1095,11 +1796,11 @@ const Visualizations: React.FC = () => {
                         {locked ? (
                           <ToggleRight className="h-5 w-5 text-emerald-300" />
                         ) : (
-                          <ToggleLeft className="h-5 w-5 text-slate-500" />
+                          <ToggleLeft className="h-5 w-5 text-slate-400" />
                         )}
                       </div>
 
-                      <div className="mt-4 flex items-center justify-between text-xs uppercase tracking-[0.22em] text-slate-500">
+                      <div className="mt-4 flex items-center justify-between text-xs uppercase tracking-[0.22em] text-slate-400">
                         <span>{describeCadence(job.cadenceSeconds)}</span>
                         <span>{relativeRate.toFixed(2)}x rate</span>
                       </div>
@@ -1116,7 +1817,7 @@ const Visualizations: React.FC = () => {
                         {locked ? 'Locked into gear train' : 'Pulled off the train'}
                       </div>
                       {job.live ? (
-                        <div className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-500">
+                        <div className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-400">
                           {job.status || 'running'} • run {formatAge(job.lastRunAgeMs)} • next{' '}
                           {formatCountdown(job.nextFireInMs)}
                         </div>
@@ -1139,13 +1840,13 @@ const Visualizations: React.FC = () => {
 
               <div className="mt-6 space-y-3">
                 <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
-                  <div className="text-xs uppercase tracking-[0.24em] text-slate-500">Cadence</div>
+                  <div className="text-xs uppercase tracking-[0.24em] text-slate-400">Cadence</div>
                   <div className="mt-2 text-lg font-semibold text-white">
                     {selectedJob ? describeCadence(selectedJob.cadenceSeconds) : 'Unavailable'}
                   </div>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
-                  <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
+                  <div className="text-xs uppercase tracking-[0.24em] text-slate-400">
                     Relative Rotation
                   </div>
                   <div className="mt-2 text-lg font-semibold text-white">
@@ -1155,7 +1856,7 @@ const Visualizations: React.FC = () => {
                   </div>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
-                  <div className="text-xs uppercase tracking-[0.24em] text-slate-500">Coupling</div>
+                  <div className="text-xs uppercase tracking-[0.24em] text-slate-400">Coupling</div>
                   <div className="mt-2 text-lg font-semibold text-white">
                     {selectedJob && lockedJobs.has(selectedJob.id)
                       ? 'Locked and turning'
@@ -1165,7 +1866,7 @@ const Visualizations: React.FC = () => {
                 {selectedJob?.live ? (
                   <>
                     <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
-                      <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
+                      <div className="text-xs uppercase tracking-[0.24em] text-slate-400">
                         Interval Contract
                       </div>
                       <div className="mt-2 text-lg font-semibold text-white">
@@ -1182,7 +1883,7 @@ const Visualizations: React.FC = () => {
                       </div>
                     </div>
                     <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
-                      <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
+                      <div className="text-xs uppercase tracking-[0.24em] text-slate-400">
                         Execution Window
                       </div>
                       <div className="mt-2 text-lg font-semibold text-white">
@@ -1196,7 +1897,7 @@ const Visualizations: React.FC = () => {
                       </div>
                     </div>
                     <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
-                      <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
+                      <div className="text-xs uppercase tracking-[0.24em] text-slate-400">
                         Latest Timeline Event
                       </div>
                       <div className="mt-2 text-lg font-semibold text-white">
@@ -1235,7 +1936,7 @@ const Visualizations: React.FC = () => {
                         <div className="flex-1 rounded-2xl border border-white/10 bg-slate-950/35 p-3">
                           <div className="flex items-center justify-between gap-3">
                             <div className="text-sm font-medium text-white">{job.label}</div>
-                            <div className="text-xs uppercase tracking-[0.22em] text-slate-500">
+                            <div className="text-xs uppercase tracking-[0.22em] text-slate-400">
                               {describeCadence(job.cadenceSeconds)}
                             </div>
                           </div>
@@ -1267,7 +1968,7 @@ const Visualizations: React.FC = () => {
                     >
                       <div className="flex items-center justify-between gap-3">
                         <div className="text-sm font-medium text-white">{entry.eventType}</div>
-                        <div className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                        <div className="text-xs uppercase tracking-[0.18em] text-slate-400">
                           {entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : 'now'}
                         </div>
                       </div>

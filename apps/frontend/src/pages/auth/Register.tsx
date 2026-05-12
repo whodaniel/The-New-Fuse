@@ -130,7 +130,7 @@ const Register: React.FC = () => {
             <div className="font-mono text-xs text-blue-200/70 break-all">
               user_{name.toLowerCase().replace(/[^a-z0-9]/g, '') || '...'}_[TIMESTAMP]
             </div>
-            <p className="text-[9px] text-gray-500 mt-1">
+            <p className="text-[9px] text-gray-400 mt-1">
               Your unique protocol identifier for strict attribution and mesh sovereignty.
             </p>
           </div>

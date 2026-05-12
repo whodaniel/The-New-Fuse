@@ -108,9 +108,9 @@ const MetricCard: React.FC<MetricCardProps> = ({
     <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{title}</p>
+          <p className="text-sm text-gray-400 dark:text-gray-400">{title}</p>
           <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{value}</p>
-          {subtitle && <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{subtitle}</p>}
+          {subtitle && <p className="text-xs text-gray-400 dark:text-gray-400 mt-1">{subtitle}</p>}
         </div>
         <div className={`p-2 rounded-lg ${colorClasses[color]}`}>{icon}</div>
       </div>
@@ -338,7 +338,7 @@ const CacheSection: React.FC = () => {
                   <tr key={key.key} className="border-t border-gray-200 dark:border-gray-700">
                     <td className="px-4 py-2 font-mono text-xs truncate max-w-xs">{key.key}</td>
                     <td className="px-4 py-2 text-right">{key.hits}</td>
-                    <td className="px-4 py-2 text-right text-gray-500">
+                    <td className="px-4 py-2 text-right text-gray-400">
                       {new Date(key.lastAccessed).toLocaleString()}
                     </td>
                   </tr>
@@ -621,10 +621,10 @@ const SystemSection: React.FC = () => {
                   />
                   <div>
                     <p className="font-medium text-gray-900 dark:text-white">{service.name}</p>
-                    <p className="text-xs text-gray-500">{service.message}</p>
+                    <p className="text-xs text-gray-400">{service.message}</p>
                   </div>
                 </div>
-                <div className="text-right text-sm text-gray-500">
+                <div className="text-right text-sm text-gray-400">
                   <p>{service.responseTime}ms</p>
                   <p className="text-xs">{new Date(service.lastChecked).toLocaleTimeString()}</p>
                 </div>
@@ -646,19 +646,19 @@ const SystemSection: React.FC = () => {
               <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                 {((metrics.network.bytesIn || 0) / 1024 / 1024).toFixed(1)} MB
               </p>
-              <p className="text-sm text-gray-500">Inbound</p>
+              <p className="text-sm text-gray-400">Inbound</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                 {((metrics.network.bytesOut || 0) / 1024 / 1024).toFixed(1)} MB
               </p>
-              <p className="text-sm text-gray-500">Outbound</p>
+              <p className="text-sm text-gray-400">Outbound</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                 {metrics.network.connections}
               </p>
-              <p className="text-sm text-gray-500">Connections</p>
+              <p className="text-sm text-gray-400">Connections</p>
             </div>
           </div>
         </div>
@@ -910,7 +910,7 @@ const RelaySection: React.FC = () => {
               {agents.map((agent: RelayAgent) => (
                 <tr key={agent.id} className="border-t border-gray-200 dark:border-gray-700">
                   <td className="px-4 py-2 font-medium">{agent.name}</td>
-                  <td className="px-4 py-2 text-gray-500">{agent.platform}</td>
+                  <td className="px-4 py-2 text-gray-400">{agent.platform}</td>
                   <td className="px-4 py-2 text-center">
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${
@@ -974,7 +974,7 @@ const LostFunctionsDashboard: React.FC = () => {
                 <Settings className="w-6 h-6 text-blue-600" />
                 Lost Functions Dashboard
               </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-sm text-gray-400 dark:text-gray-400 mt-1">
                 Backend functions now surfaced in the frontend
               </p>
             </div>

@@ -291,13 +291,13 @@ const AgentDashboard: React.FC = () => {
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1">
               <div className="relative group/search">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within/search:text-cyan-400 transition-colors" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within/search:text-cyan-400 transition-colors" />
                 <input
                   type="text"
                   placeholder="Search agent signature or tags..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-2 bg-slate-900/50 border border-white/5 rounded-md focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent text-white placeholder-slate-500 transition-all font-mono text-sm"
+                  className="w-full pl-12 pr-4 py-2 bg-slate-900/50 border border-white/10 rounded-md focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent text-white placeholder-slate-500 transition-all font-mono text-sm"
                 />
               </div>
             </div>
@@ -359,7 +359,7 @@ const AgentDashboard: React.FC = () => {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3 }}
               >
-                <GlassCard className="h-full relative overflow-hidden group/card hover:shadow-[0_0_50px_rgba(0,0,0,0.5)] border-white/5 hover:border-cyan-500/30 p-0">
+                <GlassCard className="h-full relative overflow-hidden group/card hover:shadow-[0_0_50px_rgba(0,0,0,0.5)] border-white/10 hover:border-cyan-500/30 p-0">
                   {/* Status Pulse Border */}
                   <div
                     className={`absolute top-0 right-0 w-32 h-32 opacity-10 blur-3xl rounded-full translate-x-16 -translate-y-16 transition-all duration-500 ${
@@ -375,7 +375,7 @@ const AgentDashboard: React.FC = () => {
                     {/* Header */}
                     <div className="flex items-start justify-between mb-6">
                       <div className="flex items-center space-x-4">
-                        <div className="p-3 bg-slate-900 border border-white/5 rounded-md group-hover/card:border-cyan-500/50 group-hover/card:bg-slate-800 transition-all duration-500">
+                        <div className="p-3 bg-slate-900 border border-white/10 rounded-md group-hover/card:border-cyan-500/50 group-hover/card:bg-slate-800 transition-all duration-500">
                           {getTypeIcon(agent.type)}
                         </div>
                         <div>
@@ -392,7 +392,7 @@ const AgentDashboard: React.FC = () => {
                                     : 'bg-slate-500'
                               }`}
                             />
-                            <span className="text-[10px] uppercase font-black tracking-widest text-slate-500">
+                            <span className="text-[10px] uppercase font-black tracking-widest text-slate-400">
                               {agent.status}
                             </span>
                           </div>
@@ -401,7 +401,7 @@ const AgentDashboard: React.FC = () => {
 
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="p-2 hover:bg-transparent/10 rounded-md transition-colors text-slate-500 hover:text-white">
+                          <button className="p-2 hover:bg-transparent/10 rounded-md transition-colors text-slate-400 hover:text-white">
                             <MoreVertical className="w-5 h-5" />
                           </button>
                         </DropdownMenuTrigger>
@@ -455,7 +455,7 @@ const AgentDashboard: React.FC = () => {
 
                     {/* Metrics Grid */}
                     <div className="grid grid-cols-2 gap-4 mb-8">
-                      <div className="bg-transparent/2 p-3 rounded-md border border-white/5">
+                      <div className="bg-transparent/2 p-3 rounded-md border border-white/10">
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">
                           Success
                         </p>
@@ -463,7 +463,7 @@ const AgentDashboard: React.FC = () => {
                           {agent.successRate}%
                         </p>
                       </div>
-                      <div className="bg-transparent/2 p-3 rounded-md border border-white/5">
+                      <div className="bg-transparent/2 p-3 rounded-md border border-white/10">
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">
                           Total Load
                         </p>
@@ -474,8 +474,8 @@ const AgentDashboard: React.FC = () => {
                     </div>
 
                     {/* Footer Tags */}
-                    <div className="flex flex-wrap gap-2 pt-6 border-t border-white/5">
-                      <div className="flex items-center gap-2 px-3 py-1 bg-slate-900 rounded-full border border-white/5 text-[10px] font-bold text-slate-400">
+                    <div className="flex flex-wrap gap-2 pt-6 border-t border-white/10">
+                      <div className="flex items-center gap-2 px-3 py-1 bg-slate-900 rounded-full border border-white/10 text-[10px] font-bold text-slate-400">
                         {getDeploymentIcon(agent.deployment)}
                         {agent.model}
                       </div>
@@ -491,7 +491,7 @@ const AgentDashboard: React.FC = () => {
 
                     {/* Interactive Action Bar */}
                     <div className="mt-6 flex items-center justify-between opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 bg-slate-900/80 backdrop-blur-xl -mx-6 -mb-6 p-4 border-t border-cyan-500/20">
-                      <div className="text-[10px] text-slate-500 font-mono">
+                      <div className="text-[10px] text-slate-400 font-mono">
                         SIG://{agent.id.slice(0, 12)}
                       </div>
                       <Link
@@ -520,7 +520,7 @@ const AgentDashboard: React.FC = () => {
               <Cpu className="w-10 h-10 text-slate-600 animate-pulse" />
             </div>
             <h3 className="text-2xl font-bold text-white mb-3">No entities detected in sector</h3>
-            <p className="text-slate-500 max-w-md mx-auto mb-10 font-medium">
+            <p className="text-slate-400 max-w-md mx-auto mb-10 font-medium">
               Sector synchronization returned zero active agent signatures. Initialize a new entity
               to begin orchestration.
             </p>

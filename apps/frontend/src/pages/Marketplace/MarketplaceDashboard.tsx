@@ -1,4 +1,4 @@
-import { GlassCard, PremiumButton, StatsCard } from '@/components/ui';
+import { Badge, GlassCard, PremiumButton } from '@/components/ui';
 // @ts-nocheck
 import { useAuthorization } from '@/hooks/useAuthorization';
 import {
@@ -6,23 +6,25 @@ import {
   type MarketplaceCatalogItem,
   type MarketplaceKind,
 } from '@/services/marketplace.service';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Boxes, Compass, Gamepad2, GitBranch, Music2, Sparkles, Store, Wrench } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
-
-const ARCADE_EXPERIENCE_CATEGORIES = [
-  'games',
-  'music',
-  'content',
-  'social',
-  'social-toys',
-  'pooltogether',
-  'community',
-  'lab',
-] as const;
+import {
+  Boxes,
+  Brain,
+  Cpu,
+  Eye,
+  Fingerprint,
+  HardDrive,
+  LayoutGrid,
+  Network,
+  Plus,
+  Search,
+  ShieldCheck,
+  Terminal,
+  Wand2,
+} from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const PRIMITIVE_KINDS: MarketplaceKind[] = [
   'workflow',
@@ -30,727 +32,276 @@ const PRIMITIVE_KINDS: MarketplaceKind[] = [
   'skill',
   'prompt',
   'agent_template',
-  'agent',
   'model',
 ];
 
-const TABS: { id: 'all' | MarketplaceKind; label: string }[] = [
-  { id: 'all', label: 'All' },
-  { id: 'experience', label: 'Experiences' },
-  { id: 'workflow', label: 'Workflows' },
-  { id: 'mcp_server', label: 'MCP Servers' },
-  { id: 'skill', label: 'Skills' },
-  { id: 'prompt', label: 'Prompts' },
-  { id: 'agent_template', label: 'Templates' },
-  { id: 'model', label: 'Models' },
+const TABS: { id: 'all' | MarketplaceKind; label: string; icon: any }[] = [
+  { id: 'all', label: 'All Primitives', icon: LayoutGrid },
+  { id: 'skill', label: 'Sensory & Skills', icon: Eye },
+  { id: 'workflow', label: 'Synapses', icon: Network },
+  { id: 'agent_template', label: 'Operatives', icon: Brain },
+  { id: 'model', label: 'Neural Backbones', icon: Cpu },
+  { id: 'mcp_server', label: 'Hardware Hubs', icon: HardDrive },
 ];
 
 function kindIcon(kind: MarketplaceKind) {
-  if (kind === 'experience') return <Gamepad2 className="w-4 h-4" />;
-  if (kind === 'workflow') return <GitBranch className="w-4 h-4" />;
-  if (kind === 'mcp_server') return <Boxes className="w-4 h-4" />;
-  if (kind === 'skill') return <Sparkles className="w-4 h-4" />;
-  if (kind === 'prompt') return <Compass className="w-4 h-4" />;
-  if (kind === 'agent_template') return <Store className="w-4 h-4" />;
-  return <Wrench className="w-4 h-4" />;
+  if (kind === 'workflow') return <Network className="w-4 h-4" />;
+  if (kind === 'mcp_server') return <HardDrive className="w-4 h-4" />;
+  if (kind === 'skill') return <Eye className="w-4 h-4" />;
+  if (kind === 'agent_template') return <Brain className="w-4 h-4" />;
+  if (kind === 'model') return <Cpu className="w-4 h-4" />;
+  return <Terminal className="w-4 h-4" />;
 }
 
 type PublicationStatus = 'draft' | 'review' | 'published' | 'archived';
 
 export default function MarketplaceDashboard() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { isAdmin } = useAuthorization();
   const [tab, setTab] = useState<'all' | MarketplaceKind>('all');
-  const [surface, setSurface] = useState<'all' | 'arcade' | 'marketplace'>('all');
-  const [statusFilter, setStatusFilter] = useState<'all' | PublicationStatus>('published');
   const [search, setSearch] = useState('');
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [newExperience, setNewExperience] = useState({
-    name: '',
-    description: '',
-    category: 'community',
-    launchUrl: '',
-    tags: '',
-  });
-  const [newPrimitive, setNewPrimitive] = useState({
-    kind: 'skill' as MarketplaceKind,
-    name: '',
-    description: '',
-    category: 'development',
-    launchUrl: '',
-    tags: '',
-    capabilities: '',
-  });
-
-  useEffect(() => {
-    if (surface === 'arcade' && tab !== 'all' && tab !== 'experience') {
-      setTab('experience');
-      return;
-    }
-
-    if (surface === 'marketplace' && tab === 'experience') {
-      setTab('all');
-    }
-  }, [surface, tab]);
-
-  const effectiveStatusFilter: 'all' | PublicationStatus = isAdmin ? statusFilter : 'published';
-  const effectiveKind = useMemo(() => {
-    if (surface === 'arcade') {
-      return 'experience' as MarketplaceKind;
-    }
-    if (surface === 'marketplace') {
-      if (tab === 'all' || tab === 'experience') {
-        return undefined;
-      }
-      return tab;
-    }
-    return tab === 'all' ? undefined : tab;
-  }, [surface, tab]);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ['marketplace-catalog', effectiveKind, effectiveStatusFilter, search, isAdmin],
+    queryKey: ['marketplace-catalog', tab, search],
     queryFn: () =>
       marketplaceService.getCatalog({
-        kind: effectiveKind,
-        status: effectiveStatusFilter === 'all' ? undefined : effectiveStatusFilter,
+        kind: tab === 'all' ? undefined : tab,
+        status: 'published',
         q: search.trim() || undefined,
       }),
   });
 
-  const submitExperienceMutation = useMutation({
-    mutationFn: (input: {
-      name: string;
-      description: string;
-      category: string;
-      launchUrl?: string;
-      tags?: string[];
-    }) => marketplaceService.submitExperience(input),
-    onSuccess: () => {
-      toast.success('Experience submitted to review queue.');
-      setNewExperience({
-        name: '',
-        description: '',
-        category: 'community',
-        launchUrl: '',
-        tags: '',
-      });
-      queryClient.invalidateQueries({ queryKey: ['marketplace-catalog'] });
-    },
-    onError: () => {
-      toast.error('Failed to submit experience.');
-    },
-  });
-
-  const submitPrimitiveMutation = useMutation({
-    mutationFn: (input: {
-      name: string;
-      description: string;
-      kind: MarketplaceKind;
-      category: string;
-      launchUrl?: string;
-      tags?: string[];
-      capabilities?: string[];
-    }) => marketplaceService.submitCatalogItem(input),
-    onSuccess: () => {
-      toast.success('Primitive submitted to review queue.');
-      setNewPrimitive({
-        kind: 'skill',
-        name: '',
-        description: '',
-        category: 'development',
-        launchUrl: '',
-        tags: '',
-        capabilities: '',
-      });
-      queryClient.invalidateQueries({ queryKey: ['marketplace-catalog'] });
-    },
-    onError: (error) => {
-      const message = (error as any)?.response?.data?.message || 'Failed to submit primitive.';
-      toast.error(String(message));
-    },
-  });
-
-  const moderationMutation = useMutation({
-    mutationFn: ({ id, toStatus }: { id: string; toStatus: PublicationStatus }) =>
-      marketplaceService.updatePublicationStatus(id, {
-        toStatus,
-        moderatedBy: 'marketplace-admin',
-      }),
-    onSuccess: () => {
-      toast.success('Publication status updated.');
-      queryClient.invalidateQueries({ queryKey: ['marketplace-catalog'] });
-    },
-    onError: (error) => {
-      const message =
-        (error as any)?.response?.data?.message || 'Failed to update publication status.';
-      toast.error(String(message));
-    },
-  });
-
   const items = data?.items || [];
 
-  const filteredItems = useMemo(() => {
-    const bySurface = items.filter((item) => {
-      if (surface === 'arcade') return item.kind === 'experience';
-      if (surface === 'marketplace') return PRIMITIVE_KINDS.includes(item.kind);
-      return true;
-    });
-
-    return [...bySurface].sort(
-      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-    );
-  }, [items, surface]);
-
-  const experienceCount = items.filter((item) => item.kind === 'experience').length;
-  const publishedCount = items.filter((item) => item.publicationStatus === 'published').length;
-  const reviewCount = items.filter((item) => item.publicationStatus === 'review').length;
-  const reviewQueue = filteredItems
-    .filter((item) => item.publicationStatus === 'review')
-    .slice(0, 6);
-  const selectedCount = selectedIds.size;
-
-  const toggleSelected = (id: string, checked: boolean) => {
-    setSelectedIds((previous) => {
-      const next = new Set(previous);
-      if (checked) {
-        next.add(id);
-      } else {
-        next.delete(id);
-      }
-      return next;
-    });
-  };
-
-  const bulkModerate = async (toStatus: PublicationStatus) => {
-    if (selectedCount === 0) {
-      return;
-    }
-
-    const ids = Array.from(selectedIds);
-    try {
-      await Promise.all(ids.map((id) => moderationMutation.mutateAsync({ id, toStatus })));
-      setSelectedIds(new Set());
-      toast.success(`Updated ${ids.length} item(s) to ${toStatus}.`);
-    } catch {
-      // Already handled with mutation error toast.
-    }
-  };
-
   return (
-    <div className="space-y-8">
+    <div className="dark min-h-screen bg-[#020617] text-slate-100 p-4 lg:p-10 space-y-12 relative overflow-hidden">
+      {/* Dynamic Background */}
+      <div
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
+        }}
+      />
+
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.5 }}
       >
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent">
-              TNF Marketplace
-            </h1>
-            <p className="text-slate-400 mt-2">
-              Canonical catalog for experiences, MCP servers, skills, prompts, templates, and
-              primitives.
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <PremiumButton variant="outline" onClick={() => refetch()}>
-              Refresh Catalog
-            </PremiumButton>
-            <PremiumButton variant="gradient" asChild>
-              <a href="https://ai-arcade.xyz" target="_blank" rel="noreferrer">
-                Open AI Arcade
-              </a>
-            </PremiumButton>
-          </div>
-        </div>
-      </motion.div>
-
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatsCard
-          label="Catalog Items"
-          value={String(items.length)}
-          icon={Store}
-          gradient="blue"
-        />
-        <StatsCard
-          label="Published"
-          value={String(publishedCount)}
-          icon={Sparkles}
-          gradient="green"
-        />
-        <StatsCard
-          label="Arcade Experiences"
-          value={String(experienceCount)}
-          icon={Gamepad2}
-          gradient="purple"
-        />
-        <StatsCard
-          label="Needs Review"
-          value={String(reviewCount)}
-          icon={Compass}
-          gradient="orange"
-        />
-      </div>
-
-      {isAdmin && (
-        <GlassCard>
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div className="space-y-4">
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.3em] text-amber-500">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              Verified Intelligence Catalog
+            </div>
             <div>
-              <h3 className="font-semibold text-white">Review Queue</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Fast moderation lane for submissions waiting on approval.
+              <h1 className="text-5xl font-black text-white tracking-tighter uppercase leading-none">
+                Nexus Marketplace
+              </h1>
+              <p className="text-slate-400 font-bold uppercase text-xs tracking-[0.2em] mt-3 flex items-center gap-2">
+                <Terminal className="w-3.5 h-3.5 text-amber-500" />
+                Augment the Hive with Hardware-Intimate Primitives
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <PremiumButton
-                variant="outline"
-                onClick={() => {
-                  setStatusFilter('review');
-                  setSelectedIds(new Set(reviewQueue.map((item) => item.id)));
-                }}
-              >
-                Focus Queue
-              </PremiumButton>
-              <PremiumButton
-                variant="outline"
-                onClick={() => bulkModerate('published')}
-                disabled={selectedCount === 0 || moderationMutation.isPending}
-              >
-                Publish Selected
-              </PremiumButton>
-              <PremiumButton
-                variant="outline"
-                onClick={() => bulkModerate('archived')}
-                disabled={selectedCount === 0 || moderationMutation.isPending}
-              >
-                Archive Selected
-              </PremiumButton>
-            </div>
           </div>
-          <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3">
-            {reviewQueue.length === 0 ? (
-              <p className="text-sm text-slate-400">No items currently in review.</p>
-            ) : (
-              reviewQueue.map((item) => (
-                <div
-                  key={item.id}
-                  className="rounded-md border border-white/10 bg-slate-900/50 p-3"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-medium text-white">{item.name}</p>
-                      <p className="text-xs text-slate-400">
-                        {item.kind.replace('_', ' ')} • {item.category}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <PremiumButton
-                        variant="outline"
-                        onClick={() =>
-                          moderationMutation.mutate({ id: item.id, toStatus: 'published' })
-                        }
-                        disabled={moderationMutation.isPending}
-                      >
-                        Approve
-                      </PremiumButton>
-                      <PremiumButton
-                        variant="outline"
-                        onClick={() =>
-                          moderationMutation.mutate({ id: item.id, toStatus: 'archived' })
-                        }
-                        disabled={moderationMutation.isPending}
-                      >
-                        Reject
-                      </PremiumButton>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </GlassCard>
-      )}
-
-      <GlassCard>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-4">
-          <input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-400"
-            placeholder="Search catalog by name, description, tags..."
-          />
-          <select
-            value={effectiveStatusFilter}
-            onChange={(event) =>
-              setStatusFilter(
-                event.target.value as 'all' | 'draft' | 'review' | 'published' | 'archived'
-              )
-            }
-            className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
-            disabled={!isAdmin}
-          >
-            {isAdmin ? (
-              <>
-                <option value="all">All statuses</option>
-                <option value="draft">Draft</option>
-                <option value="review">Review</option>
-                <option value="published">Published</option>
-                <option value="archived">Archived</option>
-              </>
-            ) : (
-              <option value="published">Published</option>
-            )}
-          </select>
-          <div className="flex justify-end">
-            <div className="flex items-center gap-2">
-              <PremiumButton variant="outline" onClick={() => refetch()}>
-                Refresh
-              </PremiumButton>
-              {isAdmin && (
-                <PremiumButton
-                  variant="outline"
-                  onClick={() => {
-                    const allIds = filteredItems.map((item) => item.id);
-                    setSelectedIds(new Set(allIds));
-                  }}
-                >
-                  Select All
-                </PremiumButton>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-2 mb-4">
-          {[
-            { id: 'all', label: 'All Surfaces' },
-            { id: 'arcade', label: 'Arcade Only' },
-            { id: 'marketplace', label: 'Primitives Only' },
-          ].map((item) => (
-            <button
-              key={item.id}
-              className={`px-3 py-2 rounded-md text-sm border transition-colors ${
-                surface === item.id
-                  ? 'bg-blue-500/20 border-blue-400 text-blue-200'
-                  : 'bg-slate-900/50 border-white/10 text-slate-300 hover:bg-slate-800/70'
-              }`}
-              onClick={() => setSurface(item.id as 'all' | 'arcade' | 'marketplace')}
+          <div className="flex items-center gap-3">
+            <PremiumButton
+              variant="outline"
+              onClick={() => refetch()}
+              className="border-slate-800 bg-slate-900/50 text-slate-400 h-12 px-6"
             >
-              {item.label}
-            </button>
-          ))}
-        </div>
+              Refresh Index
+            </PremiumButton>
+            <PremiumButton className="bg-amber-500 hover:bg-amber-600 text-black font-black h-12 px-8 shadow-lg shadow-amber-500/10">
+              <Plus className="mr-2 h-5 w-5" />
+              Propose Primitive
+            </PremiumButton>
+          </div>
+        </header>
+      </motion.div>
 
-        <div className="flex flex-wrap gap-2 mb-6">
-          {TABS.map((item) => {
-            const disabled =
-              (surface === 'arcade' && item.id !== 'all' && item.id !== 'experience') ||
-              (surface === 'marketplace' && item.id === 'experience');
-            return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: 'CATALOG SIZE', value: items.length, icon: Boxes, color: 'text-amber-500' },
+          {
+            label: 'SENSORY NODES',
+            value: items.filter((i) => i.category === 'sensory').length,
+            icon: Eye,
+            color: 'text-sky-500',
+          },
+          {
+            label: 'FORGE BLUPRINTS',
+            value: items.filter((i) => i.kind === 'workflow').length,
+            icon: Wand2,
+            color: 'text-fuchsia-500',
+          },
+          {
+            label: 'NEURAL BACKBONES',
+            value: items.filter((i) => i.kind === 'model').length,
+            icon: Cpu,
+            color: 'text-emerald-500',
+          },
+        ].map((stat) => (
+          <GlassCard
+            key={stat.label}
+            className="p-5 border-white/5 bg-slate-900/40 flex items-center gap-4"
+          >
+            <div className={`p-3 rounded-xl bg-black/40 border border-white/5 ${stat.color}`}>
+              <stat.icon className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                {stat.label}
+              </p>
+              <p className="text-2xl font-black text-white tracking-tight">{stat.value}</p>
+            </div>
+          </GlassCard>
+        ))}
+      </div>
+
+      <GlassCard className="p-4 bg-slate-900/40 border-white/5">
+        <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
+          <div className="flex-1 relative group w-full">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500 w-4 h-4 group-focus-within:text-amber-500 transition-colors" />
+            <PremiumInput
+              placeholder="Search by capability, tag, or hardware spec..."
+              className="pl-12 h-14 bg-slate-950/50 border-slate-800 text-slate-100 placeholder:text-slate-600"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          <div className="flex items-center gap-2 bg-black/20 p-1.5 rounded-xl border border-white/5 overflow-x-auto max-w-full">
+            {TABS.map((item) => (
               <button
                 key={item.id}
-                className={`px-3 py-2 rounded-md text-sm border transition-colors ${
-                  tab === item.id
-                    ? 'bg-cyan-500/20 border-cyan-400 text-cyan-200'
-                    : 'bg-slate-900/50 border-white/10 text-slate-300 hover:bg-slate-800/70'
-                }`}
-                disabled={disabled}
-                aria-disabled={disabled}
-                title={disabled ? 'Not available for selected surface' : undefined}
-                style={disabled ? { opacity: 0.45, cursor: 'not-allowed' } : undefined}
                 onClick={() => setTab(item.id)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                  tab === item.id
+                    ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
+                    : 'text-slate-500 hover:text-white hover:bg-white/5'
+                }`}
               >
-                {item.label}
+                <item.icon className="w-3.5 h-3.5" />
+                <span>{item.label}</span>
               </button>
-            );
-          })}
-        </div>
-
-        {isLoading ? (
-          <p className="text-slate-400">Loading marketplace catalog...</p>
-        ) : isError ? (
-          <p className="text-red-300">Failed to load marketplace catalog.</p>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {filteredItems.map((item: MarketplaceCatalogItem) => (
-              <div key={item.id} className="rounded-md border border-white/10 bg-slate-900/40 p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-3">
-                    {isAdmin && (
-                      <input
-                        type="checkbox"
-                        className="mt-1 h-4 w-4 rounded border-white/20 bg-slate-900"
-                        checked={selectedIds.has(item.id)}
-                        onChange={(event) => toggleSelected(item.id, event.target.checked)}
-                      />
-                    )}
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">{item.name}</h3>
-                      <p className="text-xs text-slate-400 mt-1">
-                        {item.category} • {item.publicationStatus}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 text-cyan-300 text-xs uppercase tracking-wider">
-                    {kindIcon(item.kind)}
-                    <span>{item.kind.replace('_', ' ')}</span>
-                  </div>
-                </div>
-                <p className="text-sm text-slate-300 mt-3">{item.description}</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {item.tags.slice(0, 4).map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs px-2 py-1 rounded bg-transparent/5 border border-white/10 text-slate-300"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                {isAdmin && (
-                  <div className="mt-4 flex items-center gap-2">
-                    <select
-                      value={item.publicationStatus}
-                      className="rounded-md border border-white/10 bg-slate-900/70 px-2 py-1 text-xs text-slate-100"
-                      onChange={(event) =>
-                        moderationMutation.mutate({
-                          id: item.id,
-                          toStatus: event.target.value as PublicationStatus,
-                        })
-                      }
-                      disabled={moderationMutation.isPending}
-                    >
-                      <option value="draft">draft</option>
-                      <option value="review">review</option>
-                      <option value="published">published</option>
-                      <option value="archived">archived</option>
-                    </select>
-                    <span className="text-[11px] text-slate-400">Moderation</span>
-                  </div>
-                )}
-              </div>
             ))}
           </div>
-        )}
+        </div>
       </GlassCard>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <GlassCard>
-          <div className="flex items-center gap-2 mb-2 text-cyan-200">
-            <Gamepad2 className="w-4 h-4" />
-            <h3 className="font-semibold">Arcade Surface</h3>
-          </div>
-          <p className="text-sm text-slate-300 mb-4">
-            Arcade should display only published experiences: games, music, social toys, pool
-            variations, and community creations.
+      {isLoading ? (
+        <div className="py-32 text-center space-y-4">
+          <div className="w-12 h-12 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-slate-500 text-xs font-black uppercase tracking-[0.3em]">
+            Syncing Intelligence Hub...
           </p>
-          <PremiumButton variant="gradient" asChild>
-            <a href="https://ai-arcade.xyz" target="_blank" rel="noreferrer">
-              Go To Arcade
-            </a>
-          </PremiumButton>
-        </GlassCard>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {items.map((item: MarketplaceCatalogItem) => (
+            <GlassCard
+              key={item.id}
+              className="group relative p-0 rounded-2xl border border-white/5 bg-slate-900/40 hover:border-amber-500/30 transition-all duration-300 overflow-hidden backdrop-blur-xl"
+            >
+              <div className="absolute top-0 left-0 w-1 h-full bg-slate-800 group-hover:bg-amber-500 transition-colors" />
+              <div className="p-6 space-y-6">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-xl bg-slate-950 border border-white/10 flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xl">
+                      {kindIcon(item.kind)}
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-black text-white tracking-tight group-hover:text-amber-400 transition-colors uppercase leading-tight">
+                        {item.name}
+                      </h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge className="bg-slate-950 border-slate-800 text-slate-500 text-[9px] font-black uppercase px-2 py-0.5">
+                          {item.category}
+                        </Badge>
+                        <span className="text-[10px] font-bold text-slate-600 uppercase tracking-tighter">
+                          {item.successRate}% Success
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs font-black text-white">
+                      {item.pricePerRun === 0 ? 'FREE' : `$${item.pricePerRun}`}
+                    </div>
+                    <p className="text-[8px] text-slate-500 font-bold uppercase mt-0.5">
+                      Per Execution
+                    </p>
+                  </div>
+                </div>
 
-        <GlassCard>
-          <div className="flex items-center gap-2 mb-2 text-blue-200">
-            <Music2 className="w-4 h-4" />
-            <h3 className="font-semibold">Submit Experience</h3>
-          </div>
-          <p className="text-sm text-slate-300 mb-4">
-            Community creators can submit arcade experiences here for moderation and publishing.
-          </p>
-          <div className="space-y-2">
-            <input
-              value={newExperience.name}
-              onChange={(event) =>
-                setNewExperience((prev) => ({ ...prev, name: event.target.value }))
-              }
-              className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
-              placeholder="Experience name"
-            />
-            <textarea
-              value={newExperience.description}
-              onChange={(event) =>
-                setNewExperience((prev) => ({ ...prev, description: event.target.value }))
-              }
-              className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
-              rows={3}
-              placeholder="Describe the gameplay or interaction..."
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <select
-                value={newExperience.category}
-                onChange={(event) =>
-                  setNewExperience((prev) => ({ ...prev, category: event.target.value }))
-                }
-                className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
-              >
-                {ARCADE_EXPERIENCE_CATEGORIES.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-              <input
-                value={newExperience.launchUrl}
-                onChange={(event) =>
-                  setNewExperience((prev) => ({ ...prev, launchUrl: event.target.value }))
-                }
-                className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
-                placeholder="Launch URL (optional)"
-              />
-            </div>
-            <input
-              value={newExperience.tags}
-              onChange={(event) =>
-                setNewExperience((prev) => ({ ...prev, tags: event.target.value }))
-              }
-              className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
-              placeholder="Tags comma-separated (optional)"
-            />
-            <div className="flex items-center gap-2">
-              <PremiumButton variant="outline" asChild>
-                <Link to="/resources">Open Resources Dashboard</Link>
-              </PremiumButton>
-              <PremiumButton
-                variant="gradient"
-                onClick={() =>
-                  submitExperienceMutation.mutate({
-                    name: newExperience.name.trim(),
-                    description: newExperience.description.trim(),
-                    category: newExperience.category.trim() || 'community',
-                    launchUrl: newExperience.launchUrl.trim() || undefined,
-                    tags: newExperience.tags
-                      .split(',')
-                      .map((tag) => tag.trim())
-                      .filter(Boolean),
-                  })
-                }
-                disabled={
-                  submitExperienceMutation.isPending ||
-                  !newExperience.name.trim() ||
-                  !newExperience.description.trim()
-                }
-              >
-                Submit
-              </PremiumButton>
-            </div>
-          </div>
-        </GlassCard>
+                <p className="text-slate-400 text-sm line-clamp-2 leading-relaxed font-medium">
+                  {item.description}
+                </p>
 
-        <GlassCard>
-          <div className="flex items-center gap-2 mb-2 text-indigo-200">
-            <Boxes className="w-4 h-4" />
-            <h3 className="font-semibold">Submit Primitive</h3>
+                <div className="space-y-3">
+                  <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest px-1">
+                    Hardware Capabilities
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {item.capabilities.slice(0, 3).map((cap) => (
+                      <Badge
+                        key={cap}
+                        className="bg-white/5 text-slate-400 border-white/5 text-[9px] font-black uppercase"
+                      >
+                        {cap.replace('_', ' ')}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      {item.status}
+                    </span>
+                  </div>
+                  <PremiumButton
+                    variant="outline"
+                    size="sm"
+                    className="border-slate-800 h-8 px-4 text-[10px] font-black uppercase bg-slate-900/50 hover:bg-slate-800"
+                  >
+                    Clone Primitive
+                  </PremiumButton>
+                </div>
+              </div>
+            </GlassCard>
+          ))}
+          {items.length === 0 && (
+            <div className="col-span-full py-32 text-center bg-slate-950/20 rounded-[3rem] border border-dashed border-slate-800 opacity-50">
+              <Boxes className="w-12 h-12 mx-auto mb-4 text-slate-700" />
+              <p className="text-xs font-black uppercase tracking-widest">
+                No primitives detected in this sector
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      <footer className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 opacity-50">
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-2 text-[10px] font-black uppercase text-slate-500 tracking-widest">
+            <Fingerprint className="w-3.5 h-3.5" /> Identity:{' '}
+            <span className="text-emerald-500">AUTHENTICATED</span>
           </div>
-          <p className="text-sm text-slate-300 mb-4">
-            Use this lane for MCP servers, skills, prompts, workflows, templates, ready agents, and
-            models.
-          </p>
-          <div className="space-y-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <select
-                value={newPrimitive.kind}
-                onChange={(event) =>
-                  setNewPrimitive((prev) => ({
-                    ...prev,
-                    kind: event.target.value as MarketplaceKind,
-                  }))
-                }
-                className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
-              >
-                {PRIMITIVE_KINDS.map((kind) => (
-                  <option key={kind} value={kind}>
-                    {kind}
-                  </option>
-                ))}
-              </select>
-              <input
-                value={newPrimitive.category}
-                onChange={(event) =>
-                  setNewPrimitive((prev) => ({ ...prev, category: event.target.value }))
-                }
-                className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
-                placeholder="Category"
-              />
-            </div>
-            <input
-              value={newPrimitive.name}
-              onChange={(event) =>
-                setNewPrimitive((prev) => ({ ...prev, name: event.target.value }))
-              }
-              className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
-              placeholder="Primitive name"
-            />
-            <textarea
-              value={newPrimitive.description}
-              onChange={(event) =>
-                setNewPrimitive((prev) => ({ ...prev, description: event.target.value }))
-              }
-              className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
-              rows={3}
-              placeholder="Describe the primitive..."
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <input
-                value={newPrimitive.launchUrl}
-                onChange={(event) =>
-                  setNewPrimitive((prev) => ({ ...prev, launchUrl: event.target.value }))
-                }
-                className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
-                placeholder="Docs / endpoint URL (optional)"
-              />
-              <input
-                value={newPrimitive.tags}
-                onChange={(event) =>
-                  setNewPrimitive((prev) => ({ ...prev, tags: event.target.value }))
-                }
-                className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
-                placeholder="Tags comma-separated (optional)"
-              />
-            </div>
-            <input
-              value={newPrimitive.capabilities}
-              onChange={(event) =>
-                setNewPrimitive((prev) => ({ ...prev, capabilities: event.target.value }))
-              }
-              className="w-full rounded-md border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
-              placeholder="Capabilities comma-separated (optional)"
-            />
-            <div className="flex items-center gap-2">
-              <PremiumButton
-                variant="gradient"
-                onClick={() =>
-                  submitPrimitiveMutation.mutate({
-                    kind: newPrimitive.kind,
-                    name: newPrimitive.name.trim(),
-                    description: newPrimitive.description.trim(),
-                    category: newPrimitive.category.trim() || 'development',
-                    launchUrl: newPrimitive.launchUrl.trim() || undefined,
-                    tags: newPrimitive.tags
-                      .split(',')
-                      .map((tag) => tag.trim())
-                      .filter(Boolean),
-                    capabilities: newPrimitive.capabilities
-                      .split(',')
-                      .map((capability) => capability.trim())
-                      .filter(Boolean),
-                  })
-                }
-                disabled={
-                  submitPrimitiveMutation.isPending ||
-                  !newPrimitive.kind ||
-                  !newPrimitive.name.trim() ||
-                  !newPrimitive.description.trim()
-                }
-              >
-                Submit Primitive
-              </PremiumButton>
-            </div>
+          <div className="flex items-center gap-2 text-[10px] font-black uppercase text-slate-500 tracking-widest">
+            <Network className="w-3.5 h-3.5" /> Synaptic Link:{' '}
+            <span className="text-sky-500">ACTIVE</span>
           </div>
-        </GlassCard>
-      </div>
+        </div>
+        <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.2em]">
+          © 2026 THE NEW FUSE • NEXUS-CATALOG-V1
+        </p>
+      </footer>
     </div>
   );
 }

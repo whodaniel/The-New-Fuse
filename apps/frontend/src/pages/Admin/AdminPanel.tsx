@@ -410,7 +410,7 @@ export default function AdminPanel() {
           ].map((activity, i) => (
             <div
               key={i}
-              className="flex items-center space-x-4 p-3 bg-transparent/5 rounded-md border border-white/5 hover:bg-transparent/10 transition-colors"
+              className="flex items-center space-x-4 p-3 bg-transparent/5 rounded-md border border-white/10 hover:bg-transparent/10 transition-colors"
             >
               <div className="text-2xl">{activity.icon}</div>
               <div className="flex-1">

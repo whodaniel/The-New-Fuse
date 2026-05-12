@@ -187,7 +187,7 @@ export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({
   }, [clusters, width, height]);
 
   return (
-    <div className="relative w-full h-full bg-slate-950/20 rounded-md border border-white/5 overflow-hidden backdrop-blur-sm group">
+    <div className="relative w-full h-full bg-slate-950/20 rounded-md border border-white/10 overflow-hidden backdrop-blur-sm group">
       <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
         <div className="p-2 rounded-md bg-blue-500/10 border border-blue-500/20">
           <Database className="w-5 h-5 text-blue-400" />

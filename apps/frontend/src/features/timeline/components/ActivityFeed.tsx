@@ -50,7 +50,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ events, loading }) => {
           <div key={date} className="space-y-4">
             <div className="flex items-center gap-4">
               <div className="h-px bg-slate-800 flex-grow" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 whitespace-nowrap">
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 whitespace-nowrap">
                 {getDateLabel(date)}
               </span>
               <div className="h-px bg-slate-800 flex-grow" />
@@ -69,7 +69,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ events, loading }) => {
                   <div className="flex-grow min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-xs font-black text-slate-200">{event.actor}</span>
-                      <span className="text-xs text-slate-500 italic">
+                      <span className="text-xs text-slate-400 italic">
                         {event.eventType?.replace(/_/g, ' ')}
                       </span>
                       <span className="text-xs font-bold text-sky-400">

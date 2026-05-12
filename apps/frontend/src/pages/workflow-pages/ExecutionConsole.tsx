@@ -177,7 +177,7 @@ export const ExecutionConsole: React.FC = () => {
                           <span>Step Progress</span>
                           <span>{exec.progress}%</span>
                         </div>
-                        <div className="h-1.5 w-full bg-black/40 rounded-full overflow-hidden border border-white/5">
+                        <div className="h-1.5 w-full bg-black/40 rounded-full overflow-hidden border border-white/10">
                           <div
                             className={`h-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-1000`}
                             style={{ width: `${exec.progress}%` }}
@@ -219,7 +219,7 @@ const StatusSummary: React.FC<{ label: string; value: string; color: string }> =
   value,
   color,
 }) => (
-  <GlassCard className="p-4 flex items-center justify-between border-white/5">
+  <GlassCard className="p-4 flex items-center justify-between border-white/10">
     <div>
       <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
         {label}

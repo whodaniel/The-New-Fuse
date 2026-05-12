@@ -127,7 +127,7 @@ export default function PerpetualStatus() {
           <div className="text-5xl font-mono text-green-400">
             <AnimatedPulse color="#4ade80">●</AnimatedPulse> {formatUptime(seconds)}
           </div>
-          <div className="text-gray-500 text-sm mt-1">System Uptime</div>
+          <div className="text-gray-400 text-sm mt-1">System Uptime</div>
         </div>
       </div>
 
@@ -180,7 +180,7 @@ export default function PerpetualStatus() {
                   >
                     {proc.status === 'alive' ? '● ALIVE' : '✕ DEAD'}
                   </motion.div>
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-xs text-gray-400 mt-1">
                     Last beat: {new Date(proc.lastBeat).toLocaleTimeString()}
                   </div>
                 </div>
@@ -222,16 +222,16 @@ export default function PerpetualStatus() {
             <h3 className="text-xl font-bold text-white">Relay Network</h3>
           </div>
           {relayPeers.length === 0 ? (
-            <div className="text-gray-500 text-sm">Connecting to relay...</div>
+            <div className="text-gray-400 text-sm">Connecting to relay...</div>
           ) : (
             relayPeers.map((peer) => (
               <div
                 key={peer.id}
-                className="flex items-center justify-between py-2 border-b border-white/5 last:border-0"
+                className="flex items-center justify-between py-2 border-b border-white/10 last:border-0"
               >
                 <div>
                   <div className="text-white font-medium">{peer.id}</div>
-                  <div className="text-xs text-gray-500">v{peer.version}</div>
+                  <div className="text-xs text-gray-400">v{peer.version}</div>
                 </div>
                 <div className="text-right">
                   <div
@@ -239,7 +239,7 @@ export default function PerpetualStatus() {
                   >
                     {peer.status === 'connected' ? '●' : '○'} {peer.status}
                   </div>
-                  <div className="text-xs text-gray-500">{peer.latency}ms</div>
+                  <div className="text-xs text-gray-400">{peer.latency}ms</div>
                 </div>
               </div>
             ))

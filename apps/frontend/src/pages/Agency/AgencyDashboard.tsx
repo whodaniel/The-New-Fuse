@@ -173,7 +173,7 @@ export const AgencyDashboard: React.FC = () => {
             {recentAgencies.map((agency) => (
               <GlassCard
                 key={agency.id}
-                className="p-4 border-white/5 hover:border-blue-500/30 transition-all cursor-pointer group"
+                className="p-4 border-white/10 hover:border-blue-500/30 transition-all cursor-pointer group"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -263,7 +263,7 @@ const MetricBox: React.FC<{ icon: React.ReactNode; label: string; value: string;
   value,
   sub,
 }) => (
-  <GlassCard className="p-4 border-white/5 hover:border-white/10 transition-all">
+  <GlassCard className="p-4 border-white/10 hover:border-white/10 transition-all">
     <div className="flex justify-between items-start mb-4">
       <div className="p-2 rounded-md bg-transparent/5 border border-white/10">{icon}</div>
       <ArrowUpRight className="w-4 h-4 text-foreground" />

@@ -216,7 +216,7 @@ const InputNode: React.FC<NodeProps> = memo((props) => {
         {Object.keys(inputMapping).length === 0 ? (
           <div className="text-center py-8 px-4 border-2 border-dashed border-slate-600/50 rounded-md bg-slate-800/30">
             <div className="flex flex-col items-center gap-2">
-              <div className="text-slate-500 text-sm font-medium">No inputs defined yet</div>
+              <div className="text-slate-400 text-sm font-medium">No inputs defined yet</div>
               <div className="text-xs text-slate-400 max-w-[200px]">
                 Add your first input below to get started
               </div>

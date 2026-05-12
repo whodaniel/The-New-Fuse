@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { EncryptionService } from './EncryptionService.js';
-import { AuditService } from './audit.js';
-import { AuthService } from './auth.js';
-import { RateLimitingService } from './rate-limiting.js';
+import { AuditService } from './audit/index.js';
+import { AuthService } from './auth/index.js';
+import { RateLimitingService } from './rate-limiting/index.js';
 
 @Injectable()
 export class SecurityService {

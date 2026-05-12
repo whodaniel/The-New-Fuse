@@ -250518,7 +250518,7 @@
         "label": "Core Protocols & Directives",
         "kind": "premium",
         "parentId": "TNF",
-        "childCount": 39,
+        "childCount": 40,
         "authRequired": false,
         "description": null
       },
@@ -250883,6 +250883,22 @@
       "id": "PROTO_22",
       "type": "file",
       "data": {
+        "label": "TURN_ZERO_MANDATE",
+        "kind": "file",
+        "parentId": "DOMAIN_PROTOCOLS",
+        "childCount": 0,
+        "authRequired": false,
+        "description": "Protocol Document: TURN_ZERO_MANDATE.md"
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "PROTO_23",
+      "type": "file",
+      "data": {
         "label": "UTP_SPEC_v1.0",
         "kind": "file",
         "parentId": "DOMAIN_PROTOCOLS",
@@ -250896,7 +250912,7 @@
       }
     },
     {
-      "id": "PROTO_23",
+      "id": "PROTO_24",
       "type": "file",
       "data": {
         "label": "aca-usage",
@@ -250912,7 +250928,7 @@
       }
     },
     {
-      "id": "PROTO_24",
+      "id": "PROTO_25",
       "type": "file",
       "data": {
         "label": "agent-self-edit-protocol-v0.1",
@@ -250928,7 +250944,7 @@
       }
     },
     {
-      "id": "PROTO_25",
+      "id": "PROTO_26",
       "type": "file",
       "data": {
         "label": "draft-sgp-0001",
@@ -250944,7 +250960,7 @@
       }
     },
     {
-      "id": "PROTO_26",
+      "id": "PROTO_27",
       "type": "file",
       "data": {
         "label": "draft-twip-0001",
@@ -250960,7 +250976,7 @@
       }
     },
     {
-      "id": "PROTO_27",
+      "id": "PROTO_28",
       "type": "file",
       "data": {
         "label": "mcp-nestjs-integration",
@@ -250976,7 +250992,7 @@
       }
     },
     {
-      "id": "PROTO_28",
+      "id": "PROTO_29",
       "type": "file",
       "data": {
         "label": "resource-search-protocol-bridge",
@@ -250992,7 +251008,7 @@
       }
     },
     {
-      "id": "PROTO_29",
+      "id": "PROTO_30",
       "type": "file",
       "data": {
         "label": "resource-search-revision-implementation-plan",
@@ -251008,7 +251024,7 @@
       }
     },
     {
-      "id": "PROTO_30",
+      "id": "PROTO_31",
       "type": "file",
       "data": {
         "label": "tnf-cron-governance-protocol-v0.1",
@@ -251024,7 +251040,7 @@
       }
     },
     {
-      "id": "PROTO_31",
+      "id": "PROTO_32",
       "type": "file",
       "data": {
         "label": "tnf-log-to-dom-protocol",
@@ -251040,7 +251056,7 @@
       }
     },
     {
-      "id": "PROTO_32",
+      "id": "PROTO_33",
       "type": "file",
       "data": {
         "label": "twip-federation-state-2026-03-18",
@@ -251056,7 +251072,7 @@
       }
     },
     {
-      "id": "PROTO_33",
+      "id": "PROTO_34",
       "type": "file",
       "data": {
         "label": "twip-operator-runbook",
@@ -251072,7 +251088,7 @@
       }
     },
     {
-      "id": "PROTO_34",
+      "id": "PROTO_35",
       "type": "file",
       "data": {
         "label": "twip-orchestration-extension-v0.1",
@@ -251088,7 +251104,7 @@
       }
     },
     {
-      "id": "PROTO_35",
+      "id": "PROTO_36",
       "type": "file",
       "data": {
         "label": "twip-terminal-graph-api",
@@ -251104,7 +251120,7 @@
       }
     },
     {
-      "id": "PROTO_36",
+      "id": "PROTO_37",
       "type": "file",
       "data": {
         "label": "twip-terminal-identification-surfaces",
@@ -251120,7 +251136,7 @@
       }
     },
     {
-      "id": "PROTO_37",
+      "id": "PROTO_38",
       "type": "file",
       "data": {
         "label": "twip-terminal-macro-board",
@@ -251136,7 +251152,7 @@
       }
     },
     {
-      "id": "PROTO_38",
+      "id": "PROTO_39",
       "type": "file",
       "data": {
         "label": "twip-universalization-playbook",
@@ -345327,6 +345343,12 @@
       "id": "e-15695",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_38",
+      "animated": true
+    },
+    {
+      "id": "e-15696",
+      "source": "DOMAIN_PROTOCOLS",
+      "target": "PROTO_39",
       "animated": true
     }
   ]

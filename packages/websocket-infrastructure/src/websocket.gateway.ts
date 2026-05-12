@@ -10,7 +10,7 @@ import {
 } from '@nestjs/websockets';
 import { Injectable, Logger, UseGuards, Inject, Optional } from '@nestjs/common';
 import { Server } from 'socket.io';
-import { AuthenticatedSocket, WebSocketConfig } from './types.js';
+import { AuthenticatedSocket, WebSocketConfig } from './types/index.js';
 import { ConnectionPool } from './connection/connection-pool.js';
 import { ConnectionManager } from './connection/connection-manager.js';
 import { RedisWebSocketAdapter } from './adapters/redis-adapter.js';

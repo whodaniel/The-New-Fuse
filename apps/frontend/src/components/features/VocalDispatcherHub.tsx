@@ -54,14 +54,14 @@ const VocalDispatcherHub: React.FC = () => {
                   className={`p-2 rounded-full ${
                     activeDest === dest.id
                       ? 'bg-orange-500 text-white'
-                      : 'bg-zinc-800 text-zinc-500'
+                      : 'bg-zinc-800 text-zinc-400'
                   }`}
                 >
                   {dest.type === 'terminal' ? <Terminal size={18} /> : <Settings size={18} />}
                 </div>
                 <div>
                   <div className="font-medium">{dest.name}</div>
-                  <div className="text-xs text-zinc-500 font-mono uppercase">{dest.id}</div>
+                  <div className="text-xs text-zinc-400 font-mono uppercase">{dest.id}</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -82,7 +82,7 @@ const VocalDispatcherHub: React.FC = () => {
           ))}
         </div>
 
-        <div className="pt-4 border-t border-zinc-800 flex items-center justify-between text-xs text-zinc-500 italic">
+        <div className="pt-4 border-t border-zinc-800 flex items-center justify-between text-xs text-zinc-400 italic">
           <div className="flex items-center gap-1">
             <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
             Direct Buffer Injection Active

@@ -395,7 +395,7 @@ const UserProfilePage: React.FC = () => {
 
           <div className="grid grid-cols-1 gap-4">
             {/* Dynamic Agency / Context Info */}
-            <div className="p-4 rounded-md bg-black/40 border border-white/5">
+            <div className="p-4 rounded-md bg-black/40 border border-white/10">
               <div className="flex justify-between items-start mb-2">
                 <span className="text-xs font-bold text-muted-foreground uppercase">
                   Current Scope

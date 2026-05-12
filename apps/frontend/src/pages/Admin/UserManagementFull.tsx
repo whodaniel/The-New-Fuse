@@ -326,7 +326,7 @@ export default function UserManagementFull() {
         <div className="bg-white/40 backdrop-blur-md border border-white/20 rounded-2xl shadow-sm p-6 transition-all hover:shadow-md hover:translate-y-[-2px]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
+              <p className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
                 Total Users
               </p>
               <p className="text-3xl font-extrabold text-slate-900 mt-1">{totalUsers}</p>
@@ -339,7 +339,7 @@ export default function UserManagementFull() {
         <div className="bg-white/40 backdrop-blur-md border border-white/20 rounded-2xl shadow-sm p-6 transition-all hover:shadow-md hover:translate-y-[-2px]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
+              <p className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
                 Active
               </p>
               <p className="text-3xl font-extrabold text-emerald-600 mt-1">{stats.active}</p>
@@ -352,7 +352,7 @@ export default function UserManagementFull() {
         <div className="bg-white/40 backdrop-blur-md border border-white/20 rounded-2xl shadow-sm p-6 transition-all hover:shadow-md hover:translate-y-[-2px]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
+              <p className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
                 Admins
               </p>
               <p className="text-3xl font-extrabold text-violet-600 mt-1">{stats.admins}</p>
@@ -365,7 +365,7 @@ export default function UserManagementFull() {
         <div className="bg-white/40 backdrop-blur-md border border-white/20 rounded-2xl shadow-sm p-6 transition-all hover:shadow-md hover:translate-y-[-2px]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
+              <p className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
                 Inactive
               </p>
               <p className="text-3xl font-extrabold text-amber-600 mt-1">{stats.inactive}</p>
@@ -698,7 +698,7 @@ function UserModal({ title, user, onClose, onSave, isProcessing }: UserModalProp
             onClick={onClose}
             className="p-2 hover:bg-gray-200 rounded-full transition-colors"
           >
-            <X className="h-5 w-5 text-gray-500" />
+            <X className="h-5 w-5 text-gray-400" />
           </button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">

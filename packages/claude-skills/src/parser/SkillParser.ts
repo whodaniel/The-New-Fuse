@@ -8,8 +8,8 @@ import * as fs from 'fs/promises';
 import matter from 'gray-matter';
 import * as path from 'path';
 import { z } from 'zod';
-import type { ClaudeSkill, SkillMetadata } from '../types.js';
-import { SkillCategory } from '../types.js';
+import type { ClaudeSkill, SkillMetadata } from '../types/index.js';
+import { SkillCategory } from '../types/index.js';
 
 /**
  * Zod schema for skill frontmatter validation

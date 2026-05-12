@@ -272,20 +272,6 @@ export const sitemap: SiteMapNode[] = [
     lifecycle: 'production',
   },
   {
-    path: '/sophisticated-hub',
-    title: 'Sophisticated Hub',
-    description: 'Advanced AI Control Center',
-    requiresAuth: true,
-    lifecycle: 'beta',
-  },
-  {
-    path: '/hub',
-    title: 'Modern Hub',
-    description: 'Modern Integrated AI Workspace',
-    requiresAuth: true,
-    lifecycle: 'production',
-  },
-  {
     path: '/a2a-control',
     title: 'A2A Control',
     description: 'Agent-to-Agent Communication Control',
