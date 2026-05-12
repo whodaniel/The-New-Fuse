@@ -6,7 +6,6 @@ import {
   PremiumSelect,
   StatsCard,
 } from '@/components/ui';
-// @ts-nocheck
 import { agentService, type Agent, type LocalAICapabilityStatus } from '@/services/AgentService';
 import { AnimatePresence, motion } from 'framer-motion';
 import {

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { NodeToolbox, WorkflowCanvas } from '@/components/workflow';
 import WorkflowAIAssistantPanel from '@/components/workflow/WorkflowAIAssistantPanel';
 import { WorkflowProvider } from '@/contexts/WorkflowContext';
@@ -8,6 +7,7 @@ import axios from 'axios';
 import {
   Activity,
   BookOpen,
+  Bot,
   Brain,
   Clock,
   Cpu,
@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ReactFlowProvider } from 'reactflow';
+import { Edge, Node, ReactFlowProvider } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { MemoryVisualizer } from '../components/memory/visualization/MemoryVisualizer';
 import { Badge } from '../components/ui/badge';
@@ -37,8 +37,6 @@ import { GraphVisualizerWrapper as GraphVisualizer } from '../components/wizard/
 const CONCORDANCE_HTML =
   (import.meta.env.VITE_CONCORDANCE_URL as string) ||
   '/visualizations/TNF_CONCORDANCE_VISUALIZER.html';
-
-const SOURCE_UNRESOLVED = 'unresolved';
 
 // --- Types ---
 interface AgentIndex {
@@ -55,10 +53,6 @@ interface AgentEntry {
   traits?: string[];
   abilities?: string[];
   overlayTools?: string[];
-  semantic?: {
-    relatedConcepts?: Array<{ concept: string; score: number }>;
-    definingDocs?: Array<{ path: string; score: number; snippet?: string }>;
-  };
 }
 
 interface NexusMetrics {
@@ -77,7 +71,7 @@ export const SynapticNexus: React.FC = () => {
   const [searchParams] = useSearchParams();
   const initialLayer = (searchParams.get('layer') as any) || 'topology';
 
-  const { capabilities } = useFeatureCapabilities();
+  const { capabilities: _caps } = useFeatureCapabilities();
   const {
     workflows,
     loadWorkflows,
@@ -96,15 +90,15 @@ export const SynapticNexus: React.FC = () => {
 
   // Workflow Forge State
   const [workflowName, setWorkflowName] = useState(currentWorkflow?.name || 'Untitled Synapse');
-  const [workflowDescription, setWorkflowDescription] = useState(
-    currentWorkflow?.description || ''
-  );
   const [isSaving, setIsSaving] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   const [showAiPanel, setShowAiPanel] = useState(false);
 
   // Data State
-  const [topologyGraph, setTopologyGraph] = useState({ nodes: [], edges: [] });
+  const [topologyGraph, setTopologyGraph] = useState<{ nodes: Node[]; edges: Edge[] }>({
+    nodes: [],
+    edges: [],
+  });
   const [topologyLoading, setTopologyLoading] = useState(true);
   const [metrics, setMetrics] = useState<NexusMetrics>({
     activeNodes: null,
@@ -113,22 +107,7 @@ export const SynapticNexus: React.FC = () => {
     memoryUsagePercent: null,
   });
 
-  const fetchData = useCallback(async () => {
-    await Promise.all([loadWorkflows(), loadExecutions(), fetchAgentIndex(), fetchTopology()]);
-  }, [loadWorkflows, loadExecutions]);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (currentWorkflow) {
-      setWorkflowName(currentWorkflow.name);
-      setWorkflowDescription(currentWorkflow.description || '');
-    }
-  }, [currentWorkflow]);
-
-  const fetchAgentIndex = async () => {
+  const fetchAgentIndex = useCallback(async () => {
     try {
       setAgentIndexLoading(true);
       const res = await axios.get('/observatory/agents.index.json');
@@ -138,15 +117,15 @@ export const SynapticNexus: React.FC = () => {
     } finally {
       setAgentIndexLoading(false);
     }
-  };
+  }, []);
 
-  const fetchTopology = async () => {
+  const fetchTopology = useCallback(async () => {
     try {
       setTopologyLoading(true);
       const res = await axios.get('/api/orchestrator/agents');
       const agents = Array.isArray(res.data.agents) ? res.data.agents : [];
 
-      const nodes = [
+      const nodes: Node[] = [
         {
           id: 'orchestrator',
           data: { label: 'Orchestrator' },
@@ -154,9 +133,9 @@ export const SynapticNexus: React.FC = () => {
           type: 'input',
         },
       ];
-      const edges = [];
+      const edges: Edge[] = [];
 
-      agents.forEach((agent: any, idx: number) => {
+      agents.forEach((agent: { id?: string }, idx: number) => {
         const id = agent.id || `agent-${idx}`;
         nodes.push({
           id: `agent:${id}`,
@@ -183,7 +162,21 @@ export const SynapticNexus: React.FC = () => {
     } finally {
       setTopologyLoading(false);
     }
-  };
+  }, []);
+
+  const fetchData = useCallback(async () => {
+    await Promise.all([loadWorkflows(), loadExecutions(), fetchAgentIndex(), fetchTopology()]);
+  }, [loadWorkflows, loadExecutions, fetchAgentIndex, fetchTopology]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    if (currentWorkflow) {
+      setWorkflowName(currentWorkflow.name);
+    }
+  }, [currentWorkflow]);
 
   const filteredAgents = useMemo(() => {
     const agents = agentIndex?.agents ?? [];
@@ -194,23 +187,51 @@ export const SynapticNexus: React.FC = () => {
     );
   }, [agentIndex, agentSearch]);
 
-  // Memory Mock Clusters (Aligning with Sovereign Memory mandate)
+  const semanticGraph = useMemo(() => {
+    const nodes: Node[] = [];
+    const edges: Edge[] = [];
+    filteredAgents.slice(0, 25).forEach((agent, i) => {
+      nodes.push({
+        id: `agent:${agent.id}`,
+        data: { label: agent.name },
+        position: { x: 100 + (i % 5) * 150, y: 100 + Math.floor(i / 5) * 100 },
+      });
+    });
+    return { nodes, edges };
+  }, [filteredAgents]);
+
   const memoryClusters = useMemo(
     () => [
       {
         id: 'cluster_1',
         label: 'Core Objectives',
         items: [
-          { content: 'Implement SIMD Vision', metadata: { confidence: 0.98, source: 'brain' } },
-          { content: 'Forge Synaptic Bus', metadata: { confidence: 0.95, source: 'ledger' } },
+          {
+            id: '1-1',
+            content: 'Implement SIMD Vision',
+            metadata: { confidence: 0.98, source: 'brain' },
+          },
+          {
+            id: '1-2',
+            content: 'Forge Synaptic Bus',
+            metadata: { confidence: 0.95, source: 'ledger' },
+          },
         ],
       },
       {
         id: 'cluster_2',
         label: 'Security Constraints',
         items: [
-          { content: 'Enforce RLS Polices', metadata: { confidence: 1.0, source: 'governance' } },
-          { content: 'IR Safety Gating', metadata: { confidence: 0.99, source: 'forge' } },
+          {
+            id: '2-1',
+            content: 'Enforce RLS Polices',
+            metadata: { confidence: 1.0, source: 'governance' },
+          },
+          {
+            id: '2-2',
+            content: 'IR Safety Gating',
+            metadata: { confidence: 0.99, source: 'forge' },
+          },
         ],
       },
     ],
@@ -224,7 +245,6 @@ export const SynapticNexus: React.FC = () => {
         await saveWorkflow({
           ...currentWorkflow,
           name: workflowName,
-          description: workflowDescription,
         });
       }
     } finally {
@@ -245,7 +265,6 @@ export const SynapticNexus: React.FC = () => {
 
   return (
     <div className="dark min-h-screen bg-[#020617] text-slate-100 flex flex-col relative overflow-hidden">
-      {/* Dynamic Background */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
@@ -254,7 +273,6 @@ export const SynapticNexus: React.FC = () => {
         }}
       />
 
-      {/* Header */}
       <header className="relative z-20 border-b border-white/5 bg-slate-950/40 backdrop-blur-xl px-6 py-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -308,12 +326,17 @@ export const SynapticNexus: React.FC = () => {
             <div className="flex-1 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-500">
               <div className="h-14 border-b border-white/5 bg-slate-900/60 backdrop-blur-md px-4 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <PremiumInput
-                    value={workflowName}
-                    onChange={(e) => setWorkflowName(e.target.value)}
-                    className="h-9 bg-transparent border-none text-sm font-bold text-white focus:ring-0 w-48 placeholder:text-slate-600"
-                    placeholder="Name this synapse..."
-                  />
+                  <div className="flex items-center gap-2">
+                    <PremiumInput
+                      value={workflowName}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setWorkflowName(e.target.value)
+                      }
+                      className="h-9 bg-transparent border-none text-sm font-bold text-white focus:ring-0 w-48 placeholder:text-slate-600"
+                      placeholder="Name this synapse..."
+                    />
+                  </div>
+                  <div className="h-4 w-px bg-white/10" />
                   <button
                     onClick={() => setShowAiPanel(!showAiPanel)}
                     className={`flex items-center gap-2 text-[10px] font-black uppercase px-3 py-1.5 rounded border transition-all ${showAiPanel ? 'bg-sky-500 text-black' : 'text-sky-400 border-sky-400/20 hover:bg-sky-500/10'}`}
@@ -351,6 +374,24 @@ export const SynapticNexus: React.FC = () => {
                         Node Components
                       </h3>
                       <NodeToolbox />
+                      <div className="mt-8 pt-8 border-t border-white/5">
+                        <h3 className="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] mb-4">
+                          Kernel Operatives
+                        </h3>
+                        <div className="space-y-2 opacity-60">
+                          {filteredAgents.slice(0, 5).map((agent) => (
+                            <div
+                              key={agent.id}
+                              className="p-2.5 rounded bg-black/40 border border-white/5 flex items-center gap-3 cursor-not-allowed"
+                            >
+                              <Bot className="w-4 h-4 text-slate-400" />
+                              <span className="text-[11px] font-bold truncate text-slate-400">
+                                {agent.name}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                     <div className="flex-1 relative">
                       <WorkflowCanvas onNodeSelect={() => {}} />
@@ -367,9 +408,8 @@ export const SynapticNexus: React.FC = () => {
                             </div>
                             <div className="p-4 overflow-y-auto h-[calc(100%-56px)]">
                               <WorkflowAIAssistantPanel
-                                onApplyMeta={(n, d) => {
-                                  setWorkflowName(n);
-                                  setWorkflowDescription(d);
+                                onApplyMeta={(n: string, _d?: string) => {
+                                  if (n) setWorkflowName(n);
                                 }}
                               />
                             </div>
@@ -398,7 +438,7 @@ export const SynapticNexus: React.FC = () => {
               {activeLayer === 'semantic' && (
                 <div className="h-full grid grid-cols-1 lg:grid-cols-3 gap-6 p-6 animate-in fade-in duration-500">
                   <div className="lg:col-span-2">
-                    <GraphVisualizer nodes={[]} edges={[]} />
+                    <GraphVisualizer nodes={semanticGraph.nodes} edges={semanticGraph.edges} />
                   </div>
                   <GlassCard className="p-5 border-white/10 bg-black/40 h-full overflow-y-auto">
                     <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">
@@ -408,7 +448,9 @@ export const SynapticNexus: React.FC = () => {
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-500" />
                       <PremiumInput
                         value={agentSearch}
-                        onChange={(e) => setAgentSearch(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setAgentSearch(e.target.value)
+                        }
                         placeholder="Filter entities..."
                         className="pl-9 h-10 bg-slate-950/50"
                       />
@@ -624,7 +666,7 @@ const MetricsCard: React.FC<{ title: string; value: string; progress: number; co
     <p className="text-4xl font-black text-white mb-6 tracking-tighter">{value}</p>
     <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
       <div
-        className={`h-full bg-${color}-500 shadow-[0_0_10px_rgba(var(--color-${color}),0.5)]`}
+        className={`h-full bg-${color}-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]`}
         style={{ width: `${progress}%` }}
       />
     </div>

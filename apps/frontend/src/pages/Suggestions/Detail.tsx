@@ -162,7 +162,7 @@ const SuggestionDetail: React.FC = () => {
             <p className="mt-2 text-muted-foreground whitespace-pre-line">{row.description}</p>
             <div className="flex gap-2 mt-4">
               <Badge>{row.status}</Badge>
-              <Badge variant="outline">Priority: {row.priority}</Badge>
+              <Badge variant="secondary">Priority: {row.priority}</Badge>
             </div>
           </div>
           <div className="text-sm text-right">

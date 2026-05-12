@@ -1,5 +1,4 @@
 import { Badge, GlassCard, PremiumButton, PremiumInput, PremiumSelect } from '@/components/ui';
-// @ts-nocheck
 import { useToast } from '@/hooks/useToast';
 import { agentService } from '@/services/AgentService';
 import {
@@ -18,6 +17,7 @@ import {
   Shield,
   Terminal,
   Wand2,
+  X,
   Zap,
 } from 'lucide-react';
 import React, { useState } from 'react';

@@ -1,12 +1,11 @@
-import { Badge, GlassCard, PremiumButton } from '@/components/ui';
-// @ts-nocheck
+import { Badge, GlassCard, PremiumButton, PremiumInput } from '@/components/ui';
 import { useAuthorization } from '@/hooks/useAuthorization';
 import {
   marketplaceService,
   type MarketplaceCatalogItem,
   type MarketplaceKind,
 } from '@/services/marketplace.service';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
   Boxes,
@@ -24,16 +23,6 @@ import {
   Wand2,
 } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-const PRIMITIVE_KINDS: MarketplaceKind[] = [
-  'workflow',
-  'mcp_server',
-  'skill',
-  'prompt',
-  'agent_template',
-  'model',
-];
 
 const TABS: { id: 'all' | MarketplaceKind; label: string; icon: any }[] = [
   { id: 'all', label: 'All Primitives', icon: LayoutGrid },
@@ -53,17 +42,12 @@ function kindIcon(kind: MarketplaceKind) {
   return <Terminal className="w-4 h-4" />;
 }
 
-type PublicationStatus = 'draft' | 'review' | 'published' | 'archived';
-
 export default function MarketplaceDashboard() {
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const { isAdmin } = useAuthorization();
   const [tab, setTab] = useState<'all' | MarketplaceKind>('all');
   const [search, setSearch] = useState('');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ['marketplace-catalog', tab, search],
     queryFn: () =>
       marketplaceService.getCatalog({
@@ -128,19 +112,19 @@ export default function MarketplaceDashboard() {
           { label: 'CATALOG SIZE', value: items.length, icon: Boxes, color: 'text-amber-500' },
           {
             label: 'SENSORY NODES',
-            value: items.filter((i) => i.category === 'sensory').length,
+            value: items.filter((i: MarketplaceCatalogItem) => i.category === 'sensory').length,
             icon: Eye,
             color: 'text-sky-500',
           },
           {
             label: 'FORGE BLUPRINTS',
-            value: items.filter((i) => i.kind === 'workflow').length,
+            value: items.filter((i: MarketplaceCatalogItem) => i.kind === 'workflow').length,
             icon: Wand2,
             color: 'text-fuchsia-500',
           },
           {
             label: 'NEURAL BACKBONES',
-            value: items.filter((i) => i.kind === 'model').length,
+            value: items.filter((i: MarketplaceCatalogItem) => i.kind === 'model').length,
             icon: Cpu,
             color: 'text-emerald-500',
           },
@@ -170,7 +154,7 @@ export default function MarketplaceDashboard() {
               placeholder="Search by capability, tag, or hardware spec..."
               className="pl-12 h-14 bg-slate-950/50 border-slate-800 text-slate-100 placeholder:text-slate-600"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
             />
           </div>
 
@@ -247,7 +231,7 @@ export default function MarketplaceDashboard() {
                     Hardware Capabilities
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {item.capabilities.slice(0, 3).map((cap) => (
+                    {item.capabilities.slice(0, 3).map((cap: string) => (
                       <Badge
                         key={cap}
                         className="bg-white/5 text-slate-400 border-white/5 text-[9px] font-black uppercase"

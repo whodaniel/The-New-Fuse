@@ -33,7 +33,14 @@ const MCPHub = lazy(() => import('./pages/mcp/MCPHub'));
 const A2AControl = lazy(() => import('./pages/A2AControl'));
 const ExecutionConsole = lazy(() => import('./pages/workflow-pages/ExecutionConsole'));
 const AgentIdentity = lazy(() => import('./pages/Agents/AgentIdentity'));
-const SystemObservatory = lazy(() => import('./pages/SynapticNexus'));
+const SystemObservatory = lazy(() => import('./pages/SystemObservatory'));
+const ConcordanceViewerPage = lazy(() => import('./pages/ConcordanceViewer'));
+const KnowledgeHubPage = lazy(() =>
+  import('./pages/KnowledgeHub').then((m) => ({ default: m.KnowledgeHub }))
+);
+const SophisticatedTNFHub = lazy(() =>
+  import('./pages/Hub/SophisticatedTNFHub').then((m) => ({ default: m.SophisticatedTNFHub }))
+);
 const LLMRankingsDashboard = lazy(() => import('./pages/LLMRankingsDashboard'));
 const CommandCore = lazy(() => import('./pages/CommandCore'));
 const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
@@ -585,7 +592,14 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                   </RequireMemberAccess>
                 }
               />
-              <Route path="/hub" element={<Navigate to="/nexus" replace />} />
+              <Route
+                path="/hub"
+                element={
+                  <RequireMemberAccess>
+                    <SophisticatedTNFHub />
+                  </RequireMemberAccess>
+                }
+              />
 
               {/* Public Marketplace */}
               <Route path="/marketplace" element={<MarketplacePublicPage />} />
@@ -1138,7 +1152,11 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               />
               <Route
                 path="/knowledge-hub"
-                element={<Navigate to="/nexus?layer=memory" replace />}
+                element={
+                  <RequireMemberAccess>
+                    <KnowledgeHubPage />
+                  </RequireMemberAccess>
+                }
               />
 
               <Route
@@ -1364,6 +1382,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 }
               />
               <Route path="/visualizations" element={<VisualizationsPage />} />
+              <Route path="/visualizations/concordance" element={<ConcordanceViewerPage />} />
               <Route path="/visualizations/surface" element={<VisualizationSurfaceViewerPage />} />
               <Route path="/visualizations/terminals" element={<TerminalGraphPage />} />
               <Route path="/status" element={<SystemStatus />} />
