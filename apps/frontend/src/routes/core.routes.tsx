@@ -27,7 +27,6 @@ const NotFound = lazy(() => import('../pages/NotFound'));
 const VisualizationsPage = lazy(() => import('../pages/Visualizations'));
 const VisualizationSurfaceViewerPage = lazy(() => import('../pages/VisualizationSurfaceViewer'));
 const TerminalGraphPage = lazy(() => import('../pages/TerminalGraph'));
-const ConcordanceViewerPage = lazy(() => import('../pages/ConcordanceViewer'));
 const SystemStatusPage = lazy(() => import('../pages/SystemStatus'));
 const UnauthorizedPage = lazy(() => import('../pages/Unauthorized'));
 
@@ -133,11 +132,6 @@ export const coreRoutes: ReactElement[] = [
     key="terminal-graph-visualization"
     path="/visualizations/terminals"
     element={<TerminalGraphPage />}
-  />,
-  <Route
-    key="concordance-visualization"
-    path="/visualizations/concordance"
-    element={<ConcordanceViewerPage />}
   />,
   <Route key="public-status" path="/status" element={<SystemStatusPage />} />,
   <Route key="public-system-status" path="/system-status" element={<SystemStatusPage />} />,
