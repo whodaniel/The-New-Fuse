@@ -18,10 +18,41 @@ interface State {
 }
 
 const logger = new Logger('ErrorBoundary');
+const CHUNK_RELOAD_KEY = '__tnf_chunk_reload_once__';
+
+const isChunkLoadError = (error: Error | null | undefined): boolean => {
+  if (!error) return false;
+
+  const message = String(error.message || error.toString?.() || '').toLowerCase();
+  return (
+    message.includes('failed to fetch dynamically imported module') ||
+    message.includes('importing a module script failed') ||
+    message.includes('loading chunk') ||
+    message.includes('chunkloaderror')
+  );
+};
 
 class ErrorBoundary extends Component<Props, State> {
   private retryCount = 0;
   private readonly maxRetries = 3;
+
+  private attemptChunkRecovery = (): boolean => {
+    if (typeof window === 'undefined') return false;
+
+    try {
+      const alreadyRetried = sessionStorage.getItem(CHUNK_RELOAD_KEY) === '1';
+      if (alreadyRetried) return false;
+
+      sessionStorage.setItem(CHUNK_RELOAD_KEY, '1');
+      const url = new URL(window.location.href);
+      url.searchParams.set('_tnf_refresh', String(Date.now()));
+      window.location.replace(url.toString());
+      return true;
+    } catch {
+      window.location.reload();
+      return true;
+    }
+  };
 
   constructor(props: Props) {
     super(props);
@@ -77,10 +108,32 @@ class ErrorBoundary extends Component<Props, State> {
       (window as any).monitoring.captureException(error, errorData);
     }
 
+    if (isChunkLoadError(error)) {
+      logger.warn('Detected chunk-load failure. Attempting one-time hard refresh.', {
+        errorId: this.state.errorId,
+        message: error.message,
+      });
+
+      if (this.attemptChunkRecovery()) {
+        return;
+      }
+    }
+
     this.setState({ errorInfo });
   }
 
   private handleRetry = (): void => {
+    if (isChunkLoadError(this.state.error)) {
+      logger.info('Retry requested for chunk-load failure. Forcing full page reload.', {
+        errorId: this.state.errorId,
+      });
+
+      if (!this.attemptChunkRecovery()) {
+        window.location.reload();
+      }
+      return;
+    }
+
     if (this.retryCount < this.maxRetries) {
       this.retryCount++;
       logger.info(`Retrying component render (attempt ${this.retryCount}/${this.maxRetries})`, {
@@ -100,6 +153,11 @@ class ErrorBoundary extends Component<Props, State> {
 
   private handleReload = (): void => {
     logger.info('User requested page reload', { errorId: this.state.errorId });
+
+    if (isChunkLoadError(this.state.error) && this.attemptChunkRecovery()) {
+      return;
+    }
+
     window.location.reload();
   };
 
@@ -112,6 +170,7 @@ class ErrorBoundary extends Component<Props, State> {
 
       const canRetry = this.retryCount < this.maxRetries;
       const isDevelopment = import.meta.env.DEV;
+      const isChunkError = isChunkLoadError(this.state.error);
 
       return (
         <div className="error-boundary min-h-[200px] p-4 bg-red-50 border border-red-200 rounded-md">
@@ -132,12 +191,18 @@ class ErrorBoundary extends Component<Props, State> {
               {this.state.error?.message || 'An unexpected error occurred'}
             </p>
 
+            {isChunkError && (
+              <p className="text-red-600 mb-4">
+                A new app version may have been deployed. Refresh to load the latest assets.
+              </p>
+            )}
+
             {isDevelopment && this.state.errorId && (
               <p className="text-sm text-red-600 mb-4 font-mono">Error ID: {this.state.errorId}</p>
             )}
 
             <div className="flex gap-3 justify-center">
-              {canRetry && (
+              {canRetry && !isChunkError && (
                 <button
                   onClick={this.handleRetry}
                   className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
@@ -150,7 +215,7 @@ class ErrorBoundary extends Component<Props, State> {
                 onClick={this.handleReload}
                 className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
               >
-                Reload Page
+                {isChunkError ? 'Refresh App' : 'Reload Page'}
               </button>
             </div>
 
