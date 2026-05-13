@@ -1,4 +1,6 @@
 import { Button, Card, Input, Label, Textarea } from '@/components/ui';
+import TimelineView from '@/features/timeline/components/TimelineView';
+import { useTimeline } from '@/features/timeline/hooks/useTimeline';
 import { useAuth } from '@/providers/AuthProvider';
 import {
   bootstrapPersonalTimeline,
@@ -15,7 +17,7 @@ import { format } from 'date-fns';
 import { Calendar, Pencil, Plus, RefreshCw, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 type FormState = {
   title: string;
@@ -150,6 +152,7 @@ function readNarrativeConnections(event: TimelineEvent): Array<{
 export default function TimelinePage() {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
+  const { data: macroData, loading: macroLoading, updateRecord } = useTimeline();
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -157,6 +160,7 @@ export default function TimelinePage() {
   const [syncingGithub, setSyncingGithub] = useState(false);
   const [graphLoading, setGraphLoading] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedMacroRecord, setSelectedMacroRecord] = useState<any>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
   const [narrativeGraph, setNarrativeGraph] = useState<GithubNarrativeGraphResult | null>(null);
@@ -464,12 +468,37 @@ export default function TimelinePage() {
         <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-amber-400 text-xs uppercase tracking-[0.2em] font-semibold">
-              Personal Space
+              Mission Control
             </p>
-            <h1 className="text-4xl md:text-5xl font-black mt-2">My Timeline</h1>
-            <p className="text-slate-400 mt-2">
-              Add milestones to your own horizontal timeline, then edit or remove them anytime.
-            </p>
+            <h1 className="text-4xl md:text-5xl font-black mt-2 tracking-tight">
+              Unified Timeline
+            </h1>
+            <div className="flex flex-wrap gap-4 mt-4">
+              <div className="bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-lg">
+                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">
+                  Personal Milestones
+                </p>
+                <p className="text-xl font-black text-amber-500">{events.length}</p>
+              </div>
+              <div className="bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-lg">
+                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">
+                  Active Macro Tasks
+                </p>
+                <p className="text-xl font-black text-sky-500">
+                  {macroData?.plans
+                    ?.flatMap((p: any) => p.records || [])
+                    .filter((r: any) => r.kind === 'task').length || 0}
+                </p>
+              </div>
+              <div className="bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-lg">
+                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">
+                  Narrative Nodes
+                </p>
+                <p className="text-xl font-black text-emerald-500">
+                  {narrativeGraph?.nodeCount || 0}
+                </p>
+              </div>
+            </div>
             {isDelegatedView ? (
               <p className="text-xs text-amber-300 mt-2">
                 Delegated owner scope active (`ownerId`): read-only mode.
@@ -506,61 +535,116 @@ export default function TimelinePage() {
           </div>
         </header>
 
-        <Card className="bg-slate-900/50 border-slate-800 p-5 rounded-md">
-          <div className="flex flex-col gap-3">
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-400 font-bold">
-              Related Timeline Views
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-              <Link
-                to="/timeline"
-                className="rounded-md border border-amber-500/40 bg-amber-500/20 px-3 py-2 text-sm font-bold text-amber-400 hover:bg-amber-500/30 transition-all text-center"
-              >
-                Personal Timeline
-              </Link>
-              <Link
-                to="/macro-timeline"
-                className="rounded-md border border-sky-500/40 bg-sky-500/20 px-3 py-2 text-sm font-bold text-sky-400 hover:bg-sky-500/30 transition-all text-center"
-              >
-                Macro Timeline
-              </Link>
-              <Link
-                to="/timeline/module"
-                className="rounded-md border border-emerald-500/40 bg-emerald-500/20 px-3 py-2 text-sm font-bold text-emerald-400 hover:bg-emerald-500/30 transition-all text-center"
-              >
-                Module Lab
-              </Link>
-              <Link
-                to="/timeline-demo"
-                className="rounded-md border border-fuchsia-500/40 bg-fuchsia-500/20 px-3 py-2 text-sm font-bold text-fuchsia-400 hover:bg-fuchsia-500/30 transition-all text-center"
-              >
-                Visual Demo
-              </Link>
+        <Card className="bg-slate-900/40 border-slate-800 p-6 rounded-md overflow-hidden relative">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-500 border border-sky-500/20">
+                <Calendar className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white tracking-tight">Macro Horizon</h3>
+                <p className="text-xs text-slate-500 uppercase font-bold tracking-widest mt-0.5">
+                  Project Workspace & Global Roadmap
+                </p>
+              </div>
             </div>
-            <div className="rounded-md border border-slate-800 bg-slate-950/60 px-3 py-2 text-xs text-slate-300 mt-2">
-              {graphLoading ? (
-                <span>Loading narrative graph summary...</span>
-              ) : narrativeGraph ? (
-                <span>
-                  Narrative graph: <span className="text-sky-300">{narrativeGraph.nodeCount}</span>{' '}
-                  nodes, <span className="text-sky-300">{narrativeGraph.edgeCount}</span> edges,{' '}
-                  <span className="text-sky-300">{narrativeGraph.eventCount}</span> imported events.
-                </span>
-              ) : (
-                <span>Narrative graph unavailable for this scope.</span>
-              )}
+            <div className="flex items-center gap-2">
+              <div className="px-3 py-1 bg-sky-500/10 border border-sky-500/20 rounded text-[10px] font-bold text-sky-400 uppercase tracking-tighter">
+                Live Sync Active
+              </div>
             </div>
+          </div>
+
+          <div className="h-[450px] w-full">
+            {macroLoading ? (
+              <div className="h-full w-full flex flex-col items-center justify-center space-y-4 bg-slate-950/40 rounded-lg border border-slate-800/50">
+                <div className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin" />
+                <p className="text-sm text-slate-400 font-medium">
+                  Synchronizing with Macro Ledger...
+                </p>
+              </div>
+            ) : (
+              <TimelineView
+                plans={macroData?.plans || []}
+                onRecordClick={(record) => setSelectedMacroRecord(record)}
+                onRecordUpdate={(id, patch) => updateRecord(id, patch)}
+              />
+            )}
           </div>
         </Card>
 
+        {selectedMacroRecord && (
+          <Card className="bg-slate-900/60 border-sky-500/30 p-6 rounded-md animate-in slide-in-from-top-4 duration-300">
+            <div className="flex justify-between items-start">
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-4 h-4 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.5)]"
+                  style={{ backgroundColor: selectedMacroRecord.color || '#38bdf8' }}
+                />
+                <div>
+                  <h4 className="text-lg font-bold text-white uppercase tracking-wider">
+                    {selectedMacroRecord.title}
+                  </h4>
+                  <p className="text-xs text-slate-400">
+                    ID: {selectedMacroRecord.id} • Kind:{' '}
+                    <span className="text-sky-400 font-bold uppercase">
+                      {selectedMacroRecord.kind}
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedMacroRecord(null)}
+                className="text-slate-500 hover:text-white transition-colors"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  Status
+                </label>
+                <div className="text-sm text-slate-200 bg-slate-950 px-3 py-2 rounded border border-slate-800">
+                  {selectedMacroRecord.status || 'No Status'}
+                </div>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  Time Window
+                </label>
+                <div className="text-sm text-slate-200 bg-slate-950 px-3 py-2 rounded border border-slate-800">
+                  {selectedMacroRecord.startTime
+                    ? format(new Date(selectedMacroRecord.startTime), 'MMM d, yyyy')
+                    : 'No Start'}
+                  {' — '}
+                  {selectedMacroRecord.endTime
+                    ? format(new Date(selectedMacroRecord.endTime), 'MMM d, yyyy')
+                    : 'No End'}
+                </div>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  Assignee
+                </label>
+                <div className="text-sm text-slate-200 bg-slate-950 px-3 py-2 rounded border border-slate-800">
+                  {selectedMacroRecord.assignee || 'Unassigned'}
+                </div>
+              </div>
+            </div>
+          </Card>
+        )}
+
         <Card
           data-testid="timeline-rail-card"
-          className="bg-slate-900/50 border-slate-800 p-4 rounded-md space-y-5"
+          className="bg-slate-900/40 border-slate-800 p-6 rounded-md space-y-6"
         >
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-2 text-slate-300 text-sm font-medium">
-              <Calendar className="w-4 h-4 text-amber-500" />
-              Chronological Roadmap
+            <div className="flex flex-col">
+              <h3 className="text-xl font-bold text-white tracking-tight">Personal Narrative</h3>
+              <p className="text-xs text-slate-500 uppercase font-bold tracking-widest mt-0.5">
+                Milestones, Identity & Life Events
+              </p>
             </div>
             <div className="flex items-center gap-2">
               <Label className="text-xs text-slate-400">Filter By Category</Label>
@@ -734,6 +818,40 @@ export default function TimelinePage() {
               </p>
             </div>
           )}
+          <div className="flex gap-4 border-t border-slate-800/50 pt-6">
+            <div className="flex-1 rounded-md border border-slate-800 bg-slate-950/60 px-4 py-3 text-xs text-slate-400">
+              {graphLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 border-2 border-amber-500/50 border-t-transparent rounded-full animate-spin" />
+                  <span>Loading narrative graph intelligence...</span>
+                </div>
+              ) : narrativeGraph ? (
+                <div className="flex flex-wrap gap-x-6 gap-y-2">
+                  <p>
+                    Nodes:{' '}
+                    <span className="text-amber-400 font-mono font-bold">
+                      {narrativeGraph.nodeCount}
+                    </span>
+                  </p>
+                  <p>
+                    Edges:{' '}
+                    <span className="text-amber-400 font-mono font-bold">
+                      {narrativeGraph.edgeCount}
+                    </span>
+                  </p>
+                  <p>
+                    Total Events:{' '}
+                    <span className="text-amber-400 font-mono font-bold">
+                      {narrativeGraph.eventCount}
+                    </span>
+                  </p>
+                  <p className="ml-auto italic opacity-70">Narrative Intelligence Engine Active</p>
+                </div>
+              ) : (
+                <span>Narrative graph unavailable for this scope.</span>
+              )}
+            </div>
+          </div>
         </Card>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">

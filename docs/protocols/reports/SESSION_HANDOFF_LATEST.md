@@ -1,30 +1,53 @@
-# Session Handoff — 2026-05-12T16:44Z
+# SESSION_HANDOFF_LATEST
 
-TNF_PROTOCOL_ACK
+Protocol ACK: `TNF_PROTOCOL_ACK`  
+Created At: `2026-05-13T14:37:01.590Z`  
+Handoff ID: `a32d5ff0-d240-40d8-805f-1a00bc8aa2cf`
 
-## Summary
+## Scope
 
-Restored 6 frontend pages deleted by the "unified orchestration 4.5" commit
-(`eac6e8eff`). Fixed router to re-add standalone routes for SystemObservatory,
-KnowledgeHub, ConcordanceViewer, and SophisticatedTNFHub.
+- Repository: `The-New-Fuse`
+- Branch: `main`
+- Head SHA: `dcd4a167dda9d4b1035e4f256912eaff0547cde9`
+- Sensitive Scope: `internal`
 
-## Changes
+## Work Summary
 
-- **Restored**: `SystemObservatory.tsx` (1,668 lines), `KnowledgeHub.tsx`,
-  `ConcordanceViewer.tsx`, `SophisticatedTNFHub.tsx`, `ModernHub.tsx`,
-  `ModernHub.css`
-- **Fixed**: `ComprehensiveRouter.tsx` — re-added imports and routes for all
-  restored pages
-- **Verified**: Vite build succeeds, all pages return HTTP 200
+- Protocol enforcement layer implemented for mandatory session handoff
+  continuity.
+- CI/hook gates now block critical changes without fresh handoff artifacts.
 
-## Next Actions
+## Changed Paths
 
-1. Deploy to Cloudflare Pages
-2. Consider reverting UI vocabulary changes on modified pages
-3. Remote rewire: next-gen becomes origin
+- apps/frontend/src/features/timeline/hooks/useTimeline.ts
+- apps/frontend/src/pages/Timeline/index.tsx
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 
 ## Verification
 
-- privacy_guard: pass
-- secret_sweep: pass
-- build: pass (exit code 0)
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
+- supabase_rls_audit: `na`
+
+## Continuation
+
+- Owner: `tnf-orchestrator`
+- Targets: `story-architect`, `librarian`
+- Priority: `high`
+
+### Resume Checklist
+
+- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- Validate SESSION_HANDOFF_LATEST.json against
+  docs/protocols/schemas/tnf-session-handoff.schema.json
+- Execute listed next actions in order and preserve privacy/security gates
+
+## Next Actions
+
+- Continue priority queue from SESSION_HANDOFF_LATEST.json
+  continuation.resume_checklist.
+- Emit a fresh handoff artifact immediately after completing the next critical
+  work unit.
